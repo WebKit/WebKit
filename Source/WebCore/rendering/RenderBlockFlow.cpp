@@ -3724,7 +3724,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
         if (isVisibleRenderText(descendent) && resizeTextPermitted(descendent)) {
             RenderText& text = downcast<RenderText>(*descendent);
             RenderStyle& oldStyle = text.style();
-            FontDescription fontDescription = oldStyle.fontDescription();
+            auto fontDescription = oldStyle.fontDescription();
             float specifiedSize = fontDescription.specifiedSize();
             float scaledSize = roundf(specifiedSize * scale);
             if (scaledSize > 0 && scaledSize < minFontSize) {

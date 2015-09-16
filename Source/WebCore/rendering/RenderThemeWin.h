@@ -145,7 +145,7 @@ private:
     virtual ~RenderThemeWin();
 
     // System fonts.
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
     void addIntrinsicMargins(RenderStyle&) const;
     void close();

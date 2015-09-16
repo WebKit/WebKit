@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class FontCascadeDescription;
 class FontDescription;
 class FontSelectorClient;
 
@@ -44,7 +45,7 @@ public:
     virtual PassRefPtr<Font> fallbackFontAt(const FontDescription&, size_t) = 0;
 
     virtual size_t fallbackFontCount() = 0;
-    virtual bool resolvesFamilyFor(const FontDescription&) const = 0;
+    virtual bool resolvesFamilyFor(const FontCascadeDescription&) const = 0;
 
     virtual void fontCacheInvalidated() { }
 

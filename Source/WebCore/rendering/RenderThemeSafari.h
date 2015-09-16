@@ -83,7 +83,7 @@ public:
 
 protected:
     // System fonts.
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
     // Methods for each appearance value.
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&);

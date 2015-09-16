@@ -161,7 +161,7 @@ bool TextAutoSizingValue::adjustNodeSizes()
             }
             
             RefPtr<RenderStyle> style = cloneRenderStyleWithState(text->style());
-            FontDescription fontDescription = style->fontDescription();
+            auto fontDescription = style->fontDescription();
             fontDescription.setComputedSize(averageSize);
             style->setFontDescription(fontDescription);
             style->fontCascade().update(&autoSizingNode->document().fontSelector());
@@ -214,7 +214,7 @@ void TextAutoSizingValue::reset()
         if (!text)
             continue;
         // Reset the font size back to the original specified size
-        FontDescription fontDescription = text->style().fontDescription();
+        auto fontDescription = text->style().fontDescription();
         float originalSize = fontDescription.specifiedSize();
         if (fontDescription.computedSize() != originalSize) {
             fontDescription.setComputedSize(originalSize);

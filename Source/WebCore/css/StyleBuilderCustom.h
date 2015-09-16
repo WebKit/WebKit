@@ -693,7 +693,7 @@ inline void StyleBuilderCustom::applyValueWebkitLocale(StyleResolver& styleResol
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
     if (primitiveValue.getValueID() == CSSValueAuto)
         fontDescription.setLocale(nullAtom);
     else
@@ -823,8 +823,8 @@ inline void StyleBuilderCustom::applyValueWebkitBoxShadow(StyleResolver& styleRe
 
 inline void StyleBuilderCustom::applyInitialFontFamily(StyleResolver& styleResolver)
 {
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
-    FontDescription initialDesc = FontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
+    auto initialDesc = FontCascadeDescription();
 
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
     if (fontDescription.useFixedDefaultSize()) {
@@ -839,8 +839,8 @@ inline void StyleBuilderCustom::applyInitialFontFamily(StyleResolver& styleResol
 
 inline void StyleBuilderCustom::applyInheritFontFamily(StyleResolver& styleResolver)
 {
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
-    FontDescription parentFontDescription = styleResolver.parentStyle()->fontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
+    auto parentFontDescription = styleResolver.parentStyle()->fontDescription();
 
     fontDescription.setFamilies(parentFontDescription.families());
     fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
@@ -851,7 +851,7 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
 {
     auto& valueList = downcast<CSSValueList>(value);
 
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
     // Before mapping in a new font-family property, we should reset the generic family.
     bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
 
@@ -1242,14 +1242,14 @@ inline void StyleBuilderCustom::applyValueWebkitSvgShadow(StyleResolver& styleRe
 
 inline void StyleBuilderCustom::applyInitialFontWeight(StyleResolver& styleResolver)
 {
-    FontDescription fontDescription = styleResolver.fontDescription();
+    auto fontDescription = styleResolver.fontDescription();
     fontDescription.setWeight(FontWeightNormal);
     styleResolver.setFontDescription(fontDescription);
 }
 
 inline void StyleBuilderCustom::applyInheritFontWeight(StyleResolver& styleResolver)
 {
-    FontDescription fontDescription = styleResolver.fontDescription();
+    auto fontDescription = styleResolver.fontDescription();
     fontDescription.setWeight(styleResolver.parentFontDescription().weight());
     styleResolver.setFontDescription(fontDescription);
 }
@@ -1257,7 +1257,7 @@ inline void StyleBuilderCustom::applyInheritFontWeight(StyleResolver& styleResol
 inline void StyleBuilderCustom::applyValueFontWeight(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    FontDescription fontDescription = styleResolver.fontDescription();
+    auto fontDescription = styleResolver.fontDescription();
     switch (primitiveValue.getValueID()) {
     case CSSValueInvalid:
         ASSERT_NOT_REACHED();
@@ -1390,19 +1390,19 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
 
 inline void StyleBuilderCustom::applyInitialWebkitFontVariantLigatures(StyleResolver& styleResolver)
 {
-    FontDescription fontDescription = styleResolver.fontDescription();
+    auto fontDescription = styleResolver.fontDescription();
 
-    fontDescription.setCommonLigaturesState(FontDescription::NormalLigaturesState);
-    fontDescription.setDiscretionaryLigaturesState(FontDescription::NormalLigaturesState);
-    fontDescription.setHistoricalLigaturesState(FontDescription::NormalLigaturesState);
+    fontDescription.setCommonLigaturesState(FontCascadeDescription::NormalLigaturesState);
+    fontDescription.setDiscretionaryLigaturesState(FontCascadeDescription::NormalLigaturesState);
+    fontDescription.setHistoricalLigaturesState(FontCascadeDescription::NormalLigaturesState);
 
     styleResolver.setFontDescription(fontDescription);
 }
 
 inline void StyleBuilderCustom::applyInheritWebkitFontVariantLigatures(StyleResolver& styleResolver)
 {
-    const FontDescription& parentFontDescription = styleResolver.parentFontDescription();
-    FontDescription fontDescription = styleResolver.fontDescription();
+    const auto& parentFontDescription = styleResolver.parentFontDescription();
+    auto fontDescription = styleResolver.fontDescription();
 
     fontDescription.setCommonLigaturesState(parentFontDescription.commonLigaturesState());
     fontDescription.setDiscretionaryLigaturesState(parentFontDescription.discretionaryLigaturesState());
@@ -1413,30 +1413,30 @@ inline void StyleBuilderCustom::applyInheritWebkitFontVariantLigatures(StyleReso
 
 inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
 {
-    FontDescription::LigaturesState commonLigaturesState = FontDescription::NormalLigaturesState;
-    FontDescription::LigaturesState discretionaryLigaturesState = FontDescription::NormalLigaturesState;
-    FontDescription::LigaturesState historicalLigaturesState = FontDescription::NormalLigaturesState;
+    auto commonLigaturesState = FontCascadeDescription::NormalLigaturesState;
+    auto discretionaryLigaturesState = FontCascadeDescription::NormalLigaturesState;
+    auto historicalLigaturesState = FontCascadeDescription::NormalLigaturesState;
 
     if (is<CSSValueList>(value)) {
         for (auto& item : downcast<CSSValueList>(value)) {
             switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
             case CSSValueNoCommonLigatures:
-                commonLigaturesState = FontDescription::DisabledLigaturesState;
+                commonLigaturesState = FontCascadeDescription::DisabledLigaturesState;
                 break;
             case CSSValueCommonLigatures:
-                commonLigaturesState = FontDescription::EnabledLigaturesState;
+                commonLigaturesState = FontCascadeDescription::EnabledLigaturesState;
                 break;
             case CSSValueNoDiscretionaryLigatures:
-                discretionaryLigaturesState = FontDescription::DisabledLigaturesState;
+                discretionaryLigaturesState = FontCascadeDescription::DisabledLigaturesState;
                 break;
             case CSSValueDiscretionaryLigatures:
-                discretionaryLigaturesState = FontDescription::EnabledLigaturesState;
+                discretionaryLigaturesState = FontCascadeDescription::EnabledLigaturesState;
                 break;
             case CSSValueNoHistoricalLigatures:
-                historicalLigaturesState = FontDescription::DisabledLigaturesState;
+                historicalLigaturesState = FontCascadeDescription::DisabledLigaturesState;
                 break;
             case CSSValueHistoricalLigatures:
-                historicalLigaturesState = FontDescription::EnabledLigaturesState;
+                historicalLigaturesState = FontCascadeDescription::EnabledLigaturesState;
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -1446,7 +1446,7 @@ inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolv
     } else
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
 
-    FontDescription fontDescription = styleResolver.fontDescription();
+    auto fontDescription = styleResolver.fontDescription();
     fontDescription.setCommonLigaturesState(commonLigaturesState);
     fontDescription.setDiscretionaryLigaturesState(discretionaryLigaturesState);
     fontDescription.setHistoricalLigaturesState(historicalLigaturesState);
@@ -1455,7 +1455,7 @@ inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolv
 
 inline void StyleBuilderCustom::applyInitialFontSize(StyleResolver& styleResolver)
 {
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
     float size = Style::fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), styleResolver.document());
 
     if (size < 0)
@@ -1468,13 +1468,13 @@ inline void StyleBuilderCustom::applyInitialFontSize(StyleResolver& styleResolve
 
 inline void StyleBuilderCustom::applyInheritFontSize(StyleResolver& styleResolver)
 {
-    const FontDescription& parentFontDescription = styleResolver.parentStyle()->fontDescription();
+    const auto& parentFontDescription = styleResolver.parentStyle()->fontDescription();
     float size = parentFontDescription.specifiedSize();
 
     if (size < 0)
         return;
 
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
     fontDescription.setKeywordSize(parentFontDescription.keywordSize());
     styleResolver.setFontSize(fontDescription, size);
     styleResolver.setFontDescription(fontDescription);
@@ -1516,7 +1516,7 @@ inline float StyleBuilderCustom::determineRubyTextSizeMultiplier(StyleResolver& 
 
 inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver, CSSValue& value)
 {
-    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    auto fontDescription = styleResolver.style()->fontDescription();
     fontDescription.setKeywordSizeFromIdentifier(CSSValueInvalid);
 
     float parentSize = 0;

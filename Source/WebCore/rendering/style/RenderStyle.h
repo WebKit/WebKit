@@ -699,7 +699,7 @@ public:
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
     WEBCORE_EXPORT const FontMetrics& fontMetrics() const;
-    WEBCORE_EXPORT const FontDescription& fontDescription() const;
+    WEBCORE_EXPORT const FontCascadeDescription& fontDescription() const;
     float specifiedFontSize() const;
     float computedFontSize() const;
     int fontSize() const;
@@ -1334,7 +1334,7 @@ public:
     void setClear(EClear v) { noninherited_flags.setClear(v); }
     void setTableLayout(ETableLayout v) { noninherited_flags.setTableLayout(v); }
 
-    bool setFontDescription(const FontDescription&);
+    bool setFontDescription(const FontCascadeDescription&);
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
 

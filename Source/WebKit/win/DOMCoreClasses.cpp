@@ -66,7 +66,6 @@ using WTF::AtomicString;
 using WebCore::BString;
 using WebCore::Element;
 using WebCore::ExceptionCode;
-using WebCore::FontDescription;
 using WebCore::Frame;
 using WebCore::IntRect;
 using WTF::String;
@@ -1267,7 +1266,7 @@ HRESULT DOMElement::font(_Out_ WebFontDescription* webFontDescription)
     if (!renderer)
         return E_FAIL;
 
-    FontDescription fontDescription = renderer->style().fontCascade().fontDescription();
+    auto fontDescription = renderer->style().fontCascade().fontDescription();
     AtomicString family = fontDescription.firstFamily();
 
     // FIXME: This leaks. Delete this whole function to get rid of the leak.

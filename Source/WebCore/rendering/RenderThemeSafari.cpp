@@ -192,7 +192,7 @@ static float systemFontSizeForControlSize(NSControlSize controlSize)
     return sizes[controlSize];
 }
 
-void RenderThemeSafari::updateCachedSystemFontDescription(CSSValueID valueID, FontDescription& fontDescription) const
+void RenderThemeSafari::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
 {
     float fontSize;
     switch (valueID) {
@@ -360,7 +360,7 @@ void RenderThemeSafari::setSizeFromFont(RenderStyle& style, const IntSize* sizes
 
 void RenderThemeSafari::setFontFromControlSize(StyleResolver& styleResolver, RenderStyle& style, NSControlSize controlSize) const
 {
-    FontDescription fontDescription;
+    FontCascadeDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
 
     float fontSize = systemFontSizeForControlSize(controlSize);

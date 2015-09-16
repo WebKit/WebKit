@@ -115,7 +115,7 @@ public:
 class FontCascade {
 public:
     WEBCORE_EXPORT FontCascade();
-    WEBCORE_EXPORT FontCascade(const FontDescription&, float letterSpacing, float wordSpacing);
+    WEBCORE_EXPORT FontCascade(const FontCascadeDescription&, float letterSpacing, float wordSpacing);
     // This constructor is only used if the platform wants to start with a native font.
     WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = AutoSmoothing);
 
@@ -125,7 +125,7 @@ public:
     WEBCORE_EXPORT bool operator==(const FontCascade& other) const;
     bool operator!=(const FontCascade& other) const { return !(*this == other); }
 
-    const FontDescription& fontDescription() const { return m_fontDescription; }
+    const FontCascadeDescription& fontDescription() const { return m_fontDescription; }
 
     int pixelSize() const { return fontDescription().computedPixelSize(); }
     float size() const { return fontDescription().computedSize(); }
@@ -318,24 +318,24 @@ private:
         }
 
         switch (m_fontDescription.kerning()) {
-        case FontDescription::NoneKerning:
+        case FontCascadeDescription::NoneKerning:
             features &= ~Kerning;
             break;
-        case FontDescription::NormalKerning:
+        case FontCascadeDescription::NormalKerning:
             features |= Kerning;
             break;
-        case FontDescription::AutoKerning:
+        case FontCascadeDescription::AutoKerning:
             break;
         }
 
         switch (m_fontDescription.commonLigaturesState()) {
-        case FontDescription::DisabledLigaturesState:
+        case FontCascadeDescription::DisabledLigaturesState:
             features &= ~Ligatures;
             break;
-        case FontDescription::EnabledLigaturesState:
+        case FontCascadeDescription::EnabledLigaturesState:
             features |= Ligatures;
             break;
-        case FontDescription::NormalLigaturesState:
+        case FontCascadeDescription::NormalLigaturesState:
             break;
         }
 
@@ -344,7 +344,7 @@ private:
 
     static TypesettingFeatures s_defaultTypesettingFeatures;
 
-    FontDescription m_fontDescription;
+    FontCascadeDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;
     WeakPtrFactory<FontCascade> m_weakPtrFactory;
     float m_letterSpacing;

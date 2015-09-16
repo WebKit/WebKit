@@ -42,7 +42,7 @@ public:
     
     virtual int baselinePositionAdjustment(ControlPart) const override;
 
-    virtual Optional<FontDescription> controlFont(ControlPart, const FontCascade&, float zoomFactor) const override;
+    virtual Optional<FontCascadeDescription> controlFont(ControlPart, const FontCascade&, float zoomFactor) const override;
     
     virtual LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const override;
     virtual LengthSize minimumControlSize(ControlPart, const FontCascade&, float zoomFactor) const override;

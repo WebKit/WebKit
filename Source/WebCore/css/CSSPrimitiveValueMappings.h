@@ -3438,18 +3438,18 @@ template<> inline CSSPrimitiveValue::operator EPointerEvents() const
     return PE_ALL;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontDescription::Kerning kerning)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontCascadeDescription::Kerning kerning)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (kerning) {
-    case FontDescription::AutoKerning:
+    case FontCascadeDescription::AutoKerning:
         m_value.valueID = CSSValueAuto;
         return;
-    case FontDescription::NormalKerning:
+    case FontCascadeDescription::NormalKerning:
         m_value.valueID = CSSValueNormal;
         return;
-    case FontDescription::NoneKerning:
+    case FontCascadeDescription::NoneKerning:
         m_value.valueID = CSSValueNone;
         return;
     }
@@ -3458,23 +3458,23 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontDescription::Kerning 
     m_value.valueID = CSSValueAuto;
 }
 
-template<> inline CSSPrimitiveValue::operator FontDescription::Kerning() const
+template<> inline CSSPrimitiveValue::operator FontCascadeDescription::Kerning() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
     case CSSValueAuto:
-        return FontDescription::AutoKerning;
+        return FontCascadeDescription::AutoKerning;
     case CSSValueNormal:
-        return FontDescription::NormalKerning;
+        return FontCascadeDescription::NormalKerning;
     case CSSValueNone:
-        return FontDescription::NoneKerning;
+        return FontCascadeDescription::NoneKerning;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return FontDescription::AutoKerning;
+    return FontCascadeDescription::AutoKerning;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ObjectFit fit)

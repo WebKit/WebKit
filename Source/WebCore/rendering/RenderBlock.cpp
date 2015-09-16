@@ -2985,7 +2985,7 @@ static RenderStyle& styleForFirstLetter(RenderElement* firstLetterBlock, RenderO
         
         // Set the font to be one line too big and then ratchet back to get to a precise fit. We can't just set the desired font size based off font height metrics
         // because many fonts bake ascent into the font metrics. Therefore we have to look at actual measured cap height values in order to know when we have a good fit.
-        FontDescription newFontDescription = pseudoStyle->fontDescription();
+        auto newFontDescription = pseudoStyle->fontDescription();
         float capRatio = pseudoStyle->fontMetrics().floatCapHeight() / pseudoStyle->fontSize();
         float startingFontSize = ((pseudoStyle->initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight()) / capRatio;
         newFontDescription.setSpecifiedSize(startingFontSize);
@@ -2996,7 +2996,7 @@ static RenderStyle& styleForFirstLetter(RenderElement* firstLetterBlock, RenderO
         int desiredCapHeight = (pseudoStyle->initialLetterHeight() - 1) * lineHeight + paragraph->style().fontMetrics().capHeight();
         int actualCapHeight = pseudoStyle->fontMetrics().capHeight();
         while (actualCapHeight > desiredCapHeight) {
-            FontDescription newFontDescription = pseudoStyle->fontDescription();
+            auto newFontDescription = pseudoStyle->fontDescription();
             newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
             newFontDescription.setComputedSize(newFontDescription.computedSize() -1);
             pseudoStyle->setFontDescription(newFontDescription);

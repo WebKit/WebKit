@@ -97,7 +97,7 @@ void RenderCombineText::combineText()
     if (style().isHorizontalWritingMode())
         return;
 
-    FontDescription description = originalFont().fontDescription();
+    auto description = originalFont().fontDescription();
     float emWidth = description.computedSize() * textCombineMargin;
     bool shouldUpdateFont = false;
 

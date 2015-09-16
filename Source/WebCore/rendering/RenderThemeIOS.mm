@@ -1078,25 +1078,25 @@ bool RenderThemeIOS::shouldHaveCapsLockIndicator(HTMLInputElement&) const
     return false;
 }
 
-FontDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID valueID) const
+FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID valueID) const
 {
-    static NeverDestroyed<FontDescription> systemFont;
-    static NeverDestroyed<FontDescription> headlineFont;
-    static NeverDestroyed<FontDescription> bodyFont;
-    static NeverDestroyed<FontDescription> subheadlineFont;
-    static NeverDestroyed<FontDescription> footnoteFont;
-    static NeverDestroyed<FontDescription> caption1Font;
-    static NeverDestroyed<FontDescription> caption2Font;
-    static NeverDestroyed<FontDescription> shortHeadlineFont;
-    static NeverDestroyed<FontDescription> shortBodyFont;
-    static NeverDestroyed<FontDescription> shortSubheadlineFont;
-    static NeverDestroyed<FontDescription> shortFootnoteFont;
-    static NeverDestroyed<FontDescription> shortCaption1Font;
-    static NeverDestroyed<FontDescription> tallBodyFont;
+    static NeverDestroyed<FontCascadeDescription> systemFont;
+    static NeverDestroyed<FontCascadeDescription> headlineFont;
+    static NeverDestroyed<FontCascadeDescription> bodyFont;
+    static NeverDestroyed<FontCascadeDescription> subheadlineFont;
+    static NeverDestroyed<FontCascadeDescription> footnoteFont;
+    static NeverDestroyed<FontCascadeDescription> caption1Font;
+    static NeverDestroyed<FontCascadeDescription> caption2Font;
+    static NeverDestroyed<FontCascadeDescription> shortHeadlineFont;
+    static NeverDestroyed<FontCascadeDescription> shortBodyFont;
+    static NeverDestroyed<FontCascadeDescription> shortSubheadlineFont;
+    static NeverDestroyed<FontCascadeDescription> shortFootnoteFont;
+    static NeverDestroyed<FontCascadeDescription> shortCaption1Font;
+    static NeverDestroyed<FontCascadeDescription> tallBodyFont;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
-    static NeverDestroyed<FontDescription> title1Font;
-    static NeverDestroyed<FontDescription> title2Font;
-    static NeverDestroyed<FontDescription> title3Font;
+    static NeverDestroyed<FontCascadeDescription> title1Font;
+    static NeverDestroyed<FontCascadeDescription> title2Font;
+    static NeverDestroyed<FontCascadeDescription> title3Font;
 #endif
 
     static CFStringRef userTextSize = contentSizeCategory();
@@ -1158,7 +1158,7 @@ FontDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID valueID)
     }
 }
 
-void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontDescription& fontDescription) const
+void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
 {
     RetainPtr<CTFontDescriptorRef> fontDescriptor;
     CFStringRef textStyle;

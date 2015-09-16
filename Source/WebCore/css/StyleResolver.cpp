@@ -1399,11 +1399,11 @@ static void checkForOrientationChange(RenderStyle* style)
     NonCJKGlyphOrientation glyphOrientation;
     style->getFontAndGlyphOrientation(fontOrientation, glyphOrientation);
 
-    const FontDescription& fontDescription = style->fontDescription();
+    const auto& fontDescription = style->fontDescription();
     if (fontDescription.orientation() == fontOrientation && fontDescription.nonCJKGlyphOrientation() == glyphOrientation)
         return;
 
-    FontDescription newFontDescription(fontDescription);
+    auto newFontDescription = fontDescription;
     newFontDescription.setNonCJKGlyphOrientation(glyphOrientation);
     newFontDescription.setOrientation(fontOrientation);
     style->setFontDescription(newFontDescription);
@@ -1958,7 +1958,7 @@ void StyleResolver::checkForTextSizeAdjust(RenderStyle* style)
     if (style->textSizeAdjust().isAuto())
         return;
 
-    FontDescription newFontDescription(style->fontDescription());
+    auto newFontDescription = style->fontDescription();
     if (!style->textSizeAdjust().isNone())
         newFontDescription.setComputedSize(newFontDescription.specifiedSize() * style->textSizeAdjust().multiplier());
     else
@@ -1975,20 +1975,20 @@ void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentSt
     if (style->effectiveZoom() == parentStyle->effectiveZoom() && style->textZoom() == parentStyle->textZoom())
         return;
 
-    const FontDescription& childFont = style->fontDescription();
-    FontDescription newFontDescription(childFont);
+    const auto& childFont = style->fontDescription();
+    auto newFontDescription = childFont;
     setFontSize(newFontDescription, childFont.specifiedSize());
     style->setFontDescription(newFontDescription);
 }
 
 void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle* parentStyle)
 {
-    const FontDescription& childFont = style->fontDescription();
+    const auto& childFont = style->fontDescription();
 
     if (childFont.isAbsoluteSize() || !parentStyle)
         return;
 
-    const FontDescription& parentFont = parentStyle->fontDescription();
+    const auto& parentFont = parentStyle->fontDescription();
     if (childFont.useFixedDefaultSize() == parentFont.useFixedDefaultSize())
         return;
     // We know the parent is monospace or the child is monospace, and that font
@@ -2008,14 +2008,14 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
                 childFont.specifiedSize() * fixedScaleFactor;
     }
 
-    FontDescription newFontDescription(childFont);
+    auto newFontDescription = childFont;
     setFontSize(newFontDescription, size);
     style->setFontDescription(newFontDescription);
 }
 
 void StyleResolver::initializeFontStyle(Settings* settings)
 {
-    FontDescription fontDescription;
+    FontCascadeDescription fontDescription;
     if (settings)
         fontDescription.setRenderingMode(settings->fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
@@ -2024,7 +2024,7 @@ void StyleResolver::initializeFontStyle(Settings* settings)
     setFontDescription(fontDescription);
 }
 
-void StyleResolver::setFontSize(FontDescription& fontDescription, float size)
+void StyleResolver::setFontSize(FontCascadeDescription& fontDescription, float size)
 {
     fontDescription.setSpecifiedSize(size);
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), m_state.style(), document()));

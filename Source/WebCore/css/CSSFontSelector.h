@@ -44,7 +44,6 @@ class CSSFontFaceRule;
 class CSSSegmentedFontFace;
 class CachedFont;
 class Document;
-class FontDescription;
 class StyleRuleFontFace;
 
 class CSSFontSelector final : public FontSelector {
@@ -63,7 +62,7 @@ public:
     virtual PassRefPtr<Font> fallbackFontAt(const FontDescription&, size_t) override;
     CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
 
-    virtual bool resolvesFamilyFor(const FontDescription&) const override;
+    virtual bool resolvesFamilyFor(const FontCascadeDescription&) const override;
 
     void clearDocument();
 

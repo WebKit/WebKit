@@ -590,7 +590,7 @@ void CSSFontSelector::beginLoadTimerFired()
         m_document->frame()->loader().checkLoadComplete();
 }
 
-bool CSSFontSelector::resolvesFamilyFor(const FontDescription& description) const
+bool CSSFontSelector::resolvesFamilyFor(const FontCascadeDescription& description) const
 {
     for (unsigned i = 0; i < description.familyCount(); ++i) {
         const AtomicString& familyName = description.familyAt(i);

@@ -119,9 +119,9 @@ void RenderListBox::updateFromElement()
                 text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             else if (is<HTMLOptGroupElement>(*element)) {
                 text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
-                FontDescription d = itemFont.fontDescription();
-                d.setWeight(d.bolderWeight());
-                itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+                auto description = itemFont.fontDescription();
+                description.setWeight(description.bolderWeight());
+                itemFont = FontCascade(description, itemFont.letterSpacing(), itemFont.wordSpacing());
                 itemFont.update(&document().fontSelector());
             }
 
@@ -405,9 +405,9 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     r.move(itemOffsetForAlignment(textRun, &itemStyle, itemFont, r));
 
     if (is<HTMLOptGroupElement>(*listItemElement)) {
-        FontDescription d = itemFont.fontDescription();
-        d.setWeight(d.bolderWeight());
-        itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+        auto description = itemFont.fontDescription();
+        description.setWeight(description.bolderWeight());
+        itemFont = FontCascade(description, itemFont.letterSpacing(), itemFont.wordSpacing());
         itemFont.update(&document().fontSelector());
     }
 

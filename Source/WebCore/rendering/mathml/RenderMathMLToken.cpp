@@ -87,7 +87,7 @@ void RenderMathMLToken::updateStyle()
     if (tokenElement.hasTagName(MathMLNames::miTag)) {
         // This tries to emulate the default mathvariant value on <mi> using the CSS font-style property.
         // FIXME: This should be revised when mathvariant is implemented (http://wkbug/85735) and when fonts with Mathematical Alphanumeric Symbols characters are more popular.
-        FontDescription fontDescription(newStyle.get().fontDescription());
+        auto fontDescription = newStyle.get().fontDescription();
         FontSelector* fontSelector = newStyle.get().fontCascade().fontSelector();
         if (!m_containsElement && element().textContent().stripWhiteSpace().simplifyWhiteSpace().length() == 1 && !tokenElement.hasAttribute(mathvariantAttr))
             fontDescription.setItalic(FontItalicOn);

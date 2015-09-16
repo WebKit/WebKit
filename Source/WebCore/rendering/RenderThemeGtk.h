@@ -46,7 +46,7 @@ public:
 
 private:
     // System fonts.
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
 public:
 #ifndef GTK_API_VERSION_2

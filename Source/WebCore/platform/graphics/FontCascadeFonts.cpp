@@ -117,7 +117,7 @@ FontCascadeFonts::~FontCascadeFonts()
 {
 }
 
-void FontCascadeFonts::determinePitch(const FontDescription& description)
+void FontCascadeFonts::determinePitch(const FontCascadeDescription& description)
 {
     auto& primaryRanges = realizeFallbackRangesAt(description, 0);
     unsigned numRanges = primaryRanges.size();
@@ -136,7 +136,7 @@ bool FontCascadeFonts::isLoadingCustomFonts() const
     return false;
 }
 
-static FontRanges realizeNextFallback(const FontDescription& description, unsigned& index, FontSelector* fontSelector)
+static FontRanges realizeNextFallback(const FontCascadeDescription& description, unsigned& index, FontSelector* fontSelector)
 {
     ASSERT(index < description.familyCount());
 
@@ -156,10 +156,14 @@ static FontRanges realizeNextFallback(const FontDescription& description, unsign
     // We didn't find a font. Try to find a similar font using our own specific knowledge about our platform.
     // For example on OS X, we know to map any families containing the words Arabic, Pashto, or Urdu to the
     // Geeza Pro font.
-    return FontRanges(fontCache.similarFont(description));
+    for (auto& family : description.families()) {
+        if (auto font = fontCache.similarFont(description, family))
+            return FontRanges(WTF::move(font));
+    }
+    return { };
 }
 
-const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontDescription& description, unsigned index)
+const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDescription& description, unsigned index)
 {
     if (index < m_realizedFallbackRanges.size())
         return m_realizedFallbackRanges[index];
@@ -312,7 +316,7 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(UChar32 charact
     return data;
 }
 
-GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontDescription& description, FontVariant variant)
+GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontCascadeDescription& description, FontVariant variant)
 {
     // System fallback is character-dependent.
     auto& primaryRanges = realizeFallbackRangesAt(description, 0);
@@ -349,7 +353,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 c, const FontDesc
     return fallbackGlyphData;
 }
 
-GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontDescription& description, FontVariant variant, unsigned fallbackIndex)
+GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontCascadeDescription& description, FontVariant variant, unsigned fallbackIndex)
 {
     while (true) {
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex++);
@@ -370,7 +374,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontDescription
     return glyphDataForSystemFallback(c, description, variant);
 }
 
-GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontDescription& description)
+GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontCascadeDescription& description)
 {
     for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex);
@@ -421,7 +425,7 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
     return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
 }
 
-GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontDescription& description, FontVariant variant)
+GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDescription& description, FontVariant variant)
 {
     ASSERT(isMainThread());
     ASSERT(variant != AutoVariant);

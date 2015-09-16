@@ -42,7 +42,7 @@ using namespace Unicode;
 
 namespace WebCore {
 
-static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription&, RefPtr<FontSelector>&&);
+static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, RefPtr<FontSelector>&&);
 
 const uint8_t FontCascade::s_roundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -107,7 +107,7 @@ FontCascade::FontCascade()
 {
 }
 
-FontCascade::FontCascade(const FontDescription& fd, float letterSpacing, float wordSpacing)
+FontCascade::FontCascade(const FontCascadeDescription& fd, float letterSpacing, float wordSpacing)
     : m_fontDescription(fd)
     , m_weakPtrFactory(this)
     , m_letterSpacing(letterSpacing)
@@ -230,7 +230,7 @@ void clearWidthCaches()
         value->fonts.get().widthCache().clear();
 }
 
-static FontCascadeCacheKey makeFontCascadeCacheKey(const FontDescription& description, FontSelector* fontSelector)
+static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     FontCascadeCacheKey key;
     key.fontDescriptionKey = FontDescriptionKey(description);
@@ -269,7 +269,7 @@ void pruneSystemFallbackFonts()
         entry->fonts->pruneSystemFallbacks();
 }
 
-static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
+static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
 {
     auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
 

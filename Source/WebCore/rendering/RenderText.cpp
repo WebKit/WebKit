@@ -230,7 +230,7 @@ bool RenderText::isTextFragment() const
 bool RenderText::computeUseBackslashAsYenSymbol() const
 {
     const RenderStyle& style = this->style();
-    const FontDescription& fontDescription = style.fontCascade().fontDescription();
+    const auto& fontDescription = style.fontDescription();
     if (style.fontCascade().useBackslashAsYenSymbol())
         return true;
     if (fontDescription.isSpecifiedFont())

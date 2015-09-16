@@ -341,7 +341,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const FontCascade& f
 
     // SVG font context sensitive selection failed and there is no defined missing glyph. Drop down to a default font.
     // The behavior does not seem to be specified. For simplicity we don't try to resolve font fallbacks context-sensitively.
-    FontDescription fallbackDescription = font.fontDescription();
+    auto fallbackDescription = font.fontDescription();
     fallbackDescription.setFamilies(Vector<AtomicString> { sansSerifFamily });
     FontCascade fallbackFont(fallbackDescription, font.letterSpacing(), font.wordSpacing());
     fallbackFont.update(font.fontSelector());

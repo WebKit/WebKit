@@ -84,7 +84,7 @@ public:
     // Methods used to adjust the RenderStyles of controls.
     
     // The font description result should have a zoomed font size.
-    virtual Optional<FontDescription> controlFont(ControlPart, const FontCascade&, float /*zoomFactor*/) const { return Nullopt; }
+    virtual Optional<FontCascadeDescription> controlFont(ControlPart, const FontCascade&, float /*zoomFactor*/) const { return Nullopt; }
     
     // The size here is in zoomed coordinates already. If a new size is returned, it also needs to be in zoomed coordinates.
     virtual LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float /*zoomFactor*/) const { return zoomedSize; }

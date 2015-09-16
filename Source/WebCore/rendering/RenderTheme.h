@@ -173,7 +173,7 @@ public:
     virtual double caretBlinkInterval() const { return 0.5; }
 
     // System fonts and colors for CSS.
-    void systemFont(CSSValueID, FontDescription&) const;
+    void systemFont(CSSValueID, FontCascadeDescription&) const;
     virtual Color systemColor(CSSValueID) const;
 
     virtual int minimumMenuListSize(RenderStyle&) const { return 0; }
@@ -255,8 +255,8 @@ public:
 #endif
 
 protected:
-    virtual FontDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
-    virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontDescription&) const = 0;
+    virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const;
+    virtual void updateCachedSystemFontDescription(CSSValueID systemFontID, FontCascadeDescription&) const = 0;
 
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;

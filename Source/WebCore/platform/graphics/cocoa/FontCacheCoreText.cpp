@@ -243,48 +243,39 @@ uint16_t toCoreTextFontWeight(FontWeight fontWeight)
     return coreTextFontWeights[fontWeight];
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription& description)
+RefPtr<Font> FontCache::similarFont(const FontDescription& description, const AtomicString& family)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in
     // the requested names. For example, we'll match any name that contains "Arabic" to Geeza Pro.
-    RefPtr<Font> font;
-    for (unsigned i = 0; i < description.familyCount(); ++i) {
-        const AtomicString& family = description.familyAt(i);
-        if (family.isEmpty())
-            continue;
+    if (family.isEmpty())
+        return nullptr;
 
 #if PLATFORM(IOS)
-        // Substitute the default monospace font for well-known monospace fonts.
-        static NeverDestroyed<AtomicString> monaco("monaco", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> menlo("menlo", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
-        if (equalIgnoringCase(family, monaco) || equalIgnoringCase(family, menlo)) {
-            font = fontForFamily(description, courier);
-            continue;
-        }
+    // Substitute the default monospace font for well-known monospace fonts.
+    static NeverDestroyed<AtomicString> monaco("monaco", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> menlo("menlo", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
+    if (equalIgnoringCase(family, monaco) || equalIgnoringCase(family, menlo))
+        return fontForFamily(description, courier);
 
-        // Substitute Verdana for Lucida Grande.
-        static NeverDestroyed<AtomicString> lucidaGrande("lucida grande", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
-        if (equalIgnoringCase(family, lucidaGrande)) {
-            font = fontForFamily(description, verdana);
-            continue;
-        }
+    // Substitute Verdana for Lucida Grande.
+    static NeverDestroyed<AtomicString> lucidaGrande("lucida grande", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
+    if (equalIgnoringCase(family, lucidaGrande))
+        return fontForFamily(description, verdana);
 #endif
 
-        static NeverDestroyed<String> arabic(ASCIILiteral("Arabic"));
-        static NeverDestroyed<String> pashto(ASCIILiteral("Pashto"));
-        static NeverDestroyed<String> urdu(ASCIILiteral("Urdu"));
-        static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
-        static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
-        static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
-        for (String* matchWord : matchWords) {
-            if (family.contains(*matchWord, false))
-                font = fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
-        }
+    static NeverDestroyed<String> arabic(ASCIILiteral("Arabic"));
+    static NeverDestroyed<String> pashto(ASCIILiteral("Pashto"));
+    static NeverDestroyed<String> urdu(ASCIILiteral("Urdu"));
+    static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
+    static NeverDestroyed<AtomicString> geezaPlain("GeezaPro", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
+    for (String* matchWord : matchWords) {
+        if (family.contains(*matchWord, false))
+            return fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
     }
-
-    return font.release();
+    return nullptr;
 }
 
 Vector<FontTraitsMask> FontCache::getTraitsInFamily(const AtomicString& familyName)

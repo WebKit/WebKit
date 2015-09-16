@@ -700,11 +700,11 @@ int ThemeMac::baselinePositionAdjustment(ControlPart part) const
     return Theme::baselinePositionAdjustment(part);
 }
 
-Optional<FontDescription> ThemeMac::controlFont(ControlPart part, const FontCascade& font, float zoomFactor) const
+Optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const FontCascade& font, float zoomFactor) const
 {
     switch (part) {
         case PushButtonPart: {
-            FontDescription fontDescription;
+            FontCascadeDescription fontDescription;
             fontDescription.setIsAbsoluteSize(true);
 
             NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];

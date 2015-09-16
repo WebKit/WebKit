@@ -505,7 +505,7 @@ void FullscreenVideoController::draw()
     m_timeSlider.draw(context);
 
     // Draw the text strings
-    FontDescription desc;
+    FontCascadeDescription desc;
 
     NONCLIENTMETRICS metrics;
     metrics.cbSize = sizeof(metrics);

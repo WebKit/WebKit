@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class FontDescription;
+class FontCascadeDescription;
 class FontPlatformData;
 class FontSelector;
 class GraphicsContext;
@@ -52,10 +52,10 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    GlyphData glyphDataForCharacter(UChar32, const FontDescription&, FontVariant);
+    GlyphData glyphDataForCharacter(UChar32, const FontCascadeDescription&, FontVariant);
 
-    bool isFixedPitch(const FontDescription&);
-    void determinePitch(const FontDescription&);
+    bool isFixedPitch(const FontCascadeDescription&);
+    void determinePitch(const FontCascadeDescription&);
 
     bool isLoadingCustomFonts() const;
 
@@ -67,8 +67,8 @@ public:
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
-    const Font& primaryFont(const FontDescription&);
-    WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontDescription&, unsigned fallbackIndex);
+    const Font& primaryFont(const FontCascadeDescription&);
+    WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
 
@@ -76,9 +76,9 @@ private:
     FontCascadeFonts(RefPtr<FontSelector>&&);
     FontCascadeFonts(const FontPlatformData&);
 
-    GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontVariant);
-    GlyphData glyphDataForNormalVariant(UChar32, const FontDescription&);
-    GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontVariant, unsigned fallbackIndex);
+    GlyphData glyphDataForSystemFallback(UChar32, const FontCascadeDescription&, FontVariant);
+    GlyphData glyphDataForNormalVariant(UChar32, const FontCascadeDescription&);
+    GlyphData glyphDataForVariant(UChar32, const FontCascadeDescription&, FontVariant, unsigned fallbackIndex);
 
     Vector<FontRanges, 1> m_realizedFallbackRanges;
     unsigned m_lastRealizedFallbackIndex { 0 };
@@ -115,14 +115,14 @@ private:
     bool m_isForPlatformFont { false };
 };
 
-inline bool FontCascadeFonts::isFixedPitch(const FontDescription& description)
+inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& description)
 {
     if (m_pitch == UnknownPitch)
         determinePitch(description);
     return m_pitch == FixedPitch;
 };
 
-inline const Font& FontCascadeFonts::primaryFont(const FontDescription& description)
+inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description)
 {
     ASSERT(isMainThread());
     if (!m_cachedPrimaryFont) {

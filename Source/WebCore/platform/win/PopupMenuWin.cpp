@@ -341,7 +341,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
         FontCascade itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(i)) {
-            FontDescription d = itemFont.fontDescription();
+            auto d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
             itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());
@@ -647,7 +647,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         
         FontCascade itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(index)) {
-            FontDescription d = itemFont.fontDescription();
+            auto d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
             itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());

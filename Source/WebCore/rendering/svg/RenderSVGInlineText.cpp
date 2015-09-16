@@ -235,7 +235,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
         return;
     }
 
-    FontDescription fontDescription(style.fontDescription());
+    auto fontDescription = style.fontDescription();
 
     // FIXME: We need to better handle the case when we compute very small fonts below (below 1pt).
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), scalingFactor, renderer.document()));

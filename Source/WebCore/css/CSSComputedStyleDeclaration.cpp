@@ -2724,20 +2724,20 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWebkitFontSmoothing:
             return cssValuePool.createValue(style->fontDescription().fontSmoothing());
         case CSSPropertyWebkitFontVariantLigatures: {
-            FontDescription::LigaturesState commonLigaturesState = style->fontDescription().commonLigaturesState();
-            FontDescription::LigaturesState discretionaryLigaturesState = style->fontDescription().discretionaryLigaturesState();
-            FontDescription::LigaturesState historicalLigaturesState = style->fontDescription().historicalLigaturesState();
-            if (commonLigaturesState == FontDescription::NormalLigaturesState && discretionaryLigaturesState == FontDescription::NormalLigaturesState
-                && historicalLigaturesState == FontDescription::NormalLigaturesState)
+            auto commonLigaturesState = style->fontDescription().commonLigaturesState();
+            auto discretionaryLigaturesState = style->fontDescription().discretionaryLigaturesState();
+            auto historicalLigaturesState = style->fontDescription().historicalLigaturesState();
+            if (commonLigaturesState == FontCascadeDescription::NormalLigaturesState && discretionaryLigaturesState == FontCascadeDescription::NormalLigaturesState
+                && historicalLigaturesState == FontCascadeDescription::NormalLigaturesState)
                 return cssValuePool.createIdentifierValue(CSSValueNormal);
 
             RefPtr<CSSValueList> valueList = CSSValueList::createSpaceSeparated();
-            if (commonLigaturesState != FontDescription::NormalLigaturesState)
-                valueList->append(cssValuePool.createIdentifierValue(commonLigaturesState == FontDescription::DisabledLigaturesState ? CSSValueNoCommonLigatures : CSSValueCommonLigatures));
-            if (discretionaryLigaturesState != FontDescription::NormalLigaturesState)
-                valueList->append(cssValuePool.createIdentifierValue(discretionaryLigaturesState == FontDescription::DisabledLigaturesState ? CSSValueNoDiscretionaryLigatures : CSSValueDiscretionaryLigatures));
-            if (historicalLigaturesState != FontDescription::NormalLigaturesState)
-                valueList->append(cssValuePool.createIdentifierValue(historicalLigaturesState == FontDescription::DisabledLigaturesState ? CSSValueNoHistoricalLigatures : CSSValueHistoricalLigatures));
+            if (commonLigaturesState != FontCascadeDescription::NormalLigaturesState)
+                valueList->append(cssValuePool.createIdentifierValue(commonLigaturesState == FontCascadeDescription::DisabledLigaturesState ? CSSValueNoCommonLigatures : CSSValueCommonLigatures));
+            if (discretionaryLigaturesState != FontCascadeDescription::NormalLigaturesState)
+                valueList->append(cssValuePool.createIdentifierValue(discretionaryLigaturesState == FontCascadeDescription::DisabledLigaturesState ? CSSValueNoDiscretionaryLigatures : CSSValueDiscretionaryLigatures));
+            if (historicalLigaturesState != FontCascadeDescription::NormalLigaturesState)
+                valueList->append(cssValuePool.createIdentifierValue(historicalLigaturesState == FontCascadeDescription::DisabledLigaturesState ? CSSValueNoHistoricalLigatures : CSSValueHistoricalLigatures));
             return valueList;
         }
         case CSSPropertyZIndex:

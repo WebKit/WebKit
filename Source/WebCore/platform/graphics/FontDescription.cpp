@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-struct SameSizeAsFontDescription {
+struct SameSizeAsFontCascadeDescription {
     void* pointers[3];
     float sizes[2];
     // FIXME: Make them fit into one word.
@@ -42,7 +42,7 @@ struct SameSizeAsFontDescription {
     uint32_t bitfields2 : 8;
 };
 
-COMPILE_ASSERT(sizeof(FontDescription) == sizeof(SameSizeAsFontDescription), FontDescription_should_stay_small);
+COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), FontCascadeDescription_should_stay_small);
 
 FontDescription::FontDescription()
     : m_orientation(Horizontal)
@@ -50,72 +50,12 @@ FontDescription::FontDescription()
     , m_widthVariant(RegularWidth)
     , m_italic(FontItalicOff)
     , m_smallCaps(FontSmallCapsOff)
-    , m_isAbsoluteSize(false)
     , m_weight(FontWeightNormal)
     , m_renderingMode(NormalRenderingMode)
-    , m_kerning(AutoKerning)
-    , m_commonLigaturesState(NormalLigaturesState)
-    , m_discretionaryLigaturesState(NormalLigaturesState)
-    , m_historicalLigaturesState(NormalLigaturesState)
-    , m_keywordSize(0)
-    , m_fontSmoothing(AutoSmoothing)
     , m_textRendering(AutoTextRendering)
-    , m_isSpecifiedFont(false)
     , m_script(localeToScriptCodeForFontSelection(m_locale))
-    , m_fontSynthesis(initialFontSynthesis())
+    , m_fontSynthesis(FontSynthesisWeight | FontSynthesisStyle)
 {
-}
-
-FontWeight FontDescription::lighterWeight(void) const
-{
-    switch (m_weight) {
-        case FontWeight100:
-        case FontWeight200:
-        case FontWeight300:
-        case FontWeight400:
-        case FontWeight500:
-            return FontWeight100;
-
-        case FontWeight600:
-        case FontWeight700:
-            return FontWeight400;
-
-        case FontWeight800:
-        case FontWeight900:
-            return FontWeight700;
-    }
-    ASSERT_NOT_REACHED();
-    return FontWeightNormal;
-}
-
-FontWeight FontDescription::bolderWeight(void) const
-{
-    switch (m_weight) {
-        case FontWeight100:
-        case FontWeight200:
-        case FontWeight300:
-            return FontWeight400;
-
-        case FontWeight400:
-        case FontWeight500:
-            return FontWeight700;
-
-        case FontWeight600:
-        case FontWeight700:
-        case FontWeight800:
-        case FontWeight900:
-            return FontWeight900;
-    }
-    ASSERT_NOT_REACHED();
-    return FontWeightNormal;
-}
-
-FontTraitsMask FontDescription::traitsMask() const
-{
-    return static_cast<FontTraitsMask>((m_italic ? FontStyleItalicMask : FontStyleNormalMask)
-            | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
-            | (FontWeight100Mask << (m_weight - FontWeight100)));
-    
 }
 
 void FontDescription::setLocale(const AtomicString& locale)
@@ -124,8 +64,72 @@ void FontDescription::setLocale(const AtomicString& locale)
     m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
+FontTraitsMask FontDescription::traitsMask() const
+{
+    return static_cast<FontTraitsMask>((m_italic ? FontStyleItalicMask : FontStyleNormalMask)
+        | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
+        | (FontWeight100Mask << (m_weight - FontWeight100)));
+    
+}
+
+FontCascadeDescription::FontCascadeDescription()
+    : m_isAbsoluteSize(false)
+    , m_kerning(AutoKerning)
+    , m_commonLigaturesState(NormalLigaturesState)
+    , m_discretionaryLigaturesState(NormalLigaturesState)
+    , m_historicalLigaturesState(NormalLigaturesState)
+    , m_keywordSize(0)
+    , m_fontSmoothing(AutoSmoothing)
+    , m_isSpecifiedFont(false)
+{
+}
+
+FontWeight FontCascadeDescription::lighterWeight(void) const
+{
+    switch (weight()) {
+    case FontWeight100:
+    case FontWeight200:
+    case FontWeight300:
+    case FontWeight400:
+    case FontWeight500:
+        return FontWeight100;
+
+    case FontWeight600:
+    case FontWeight700:
+        return FontWeight400;
+
+    case FontWeight800:
+    case FontWeight900:
+        return FontWeight700;
+    }
+    ASSERT_NOT_REACHED();
+    return FontWeightNormal;
+}
+
+FontWeight FontCascadeDescription::bolderWeight(void) const
+{
+    switch (weight()) {
+    case FontWeight100:
+    case FontWeight200:
+    case FontWeight300:
+        return FontWeight400;
+
+    case FontWeight400:
+    case FontWeight500:
+        return FontWeight700;
+
+    case FontWeight600:
+    case FontWeight700:
+    case FontWeight800:
+    case FontWeight900:
+        return FontWeight900;
+    }
+    ASSERT_NOT_REACHED();
+    return FontWeightNormal;
+}
+
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-bool FontDescription::familiesEqualForTextAutoSizing(const FontDescription& other) const
+bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const
 {
     unsigned thisFamilyCount = familyCount();
     unsigned otherFamilyCount = other.familyCount();

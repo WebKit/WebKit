@@ -1401,7 +1401,7 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
 
 const FontCascade& RenderStyle::fontCascade() const { return inherited->fontCascade; }
 const FontMetrics& RenderStyle::fontMetrics() const { return inherited->fontCascade.fontMetrics(); }
-const FontDescription& RenderStyle::fontDescription() const { return inherited->fontCascade.fontDescription(); }
+const FontCascadeDescription& RenderStyle::fontDescription() const { return inherited->fontCascade.fontDescription(); }
 float RenderStyle::specifiedFontSize() const { return fontDescription().specifiedSize(); }
 float RenderStyle::computedFontSize() const { return fontDescription().computedSize(); }
 int RenderStyle::fontSize() const { return inherited->fontCascade.pixelSize(); }
@@ -1409,7 +1409,7 @@ int RenderStyle::fontSize() const { return inherited->fontCascade.pixelSize(); }
 const Length& RenderStyle::wordSpacing() const { return rareInheritedData->wordSpacing; }
 float RenderStyle::letterSpacing() const { return inherited->fontCascade.letterSpacing(); }
 
-bool RenderStyle::setFontDescription(const FontDescription& v)
+bool RenderStyle::setFontDescription(const FontCascadeDescription& v)
 {
     if (inherited->fontCascade.fontDescription() != v) {
         inherited.access()->fontCascade = FontCascade(v, inherited->fontCascade.letterSpacing(), inherited->fontCascade.wordSpacing());
@@ -1494,19 +1494,19 @@ void RenderStyle::setFontSize(float size)
         size = std::min(maximumAllowedFontSize, size);
 
     FontSelector* currentFontSelector = fontCascade().fontSelector();
-    FontDescription desc(fontDescription());
-    desc.setSpecifiedSize(size);
-    desc.setComputedSize(size);
+    auto description = fontDescription();
+    description.setSpecifiedSize(size);
+    description.setComputedSize(size);
 
 #if ENABLE(TEXT_AUTOSIZING)
     float multiplier = textAutosizingMultiplier();
     if (multiplier > 1) {
         float autosizedFontSize = TextAutosizer::computeAutosizedFontSize(size, multiplier);
-        desc.setComputedSize(min(maximumAllowedFontSize, autosizedFontSize));
+        description.setComputedSize(min(maximumAllowedFontSize, autosizedFontSize));
     }
 #endif
 
-    setFontDescription(desc);
+    setFontDescription(description);
     fontCascade().update(currentFontSelector);
 }
 

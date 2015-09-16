@@ -319,7 +319,7 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor() const
     return platformActiveSelectionForegroundColor();
 }
 
-static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFont, float fontSize)
+static void fillFontDescription(FontCascadeDescription& fontDescription, LOGFONT& logFont, float fontSize)
 {    
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(String(logFont.lfFaceName));
@@ -328,7 +328,7 @@ static void fillFontDescription(FontDescription& fontDescription, LOGFONT& logFo
     fontDescription.setIsItalic(logFont.lfItalic);
 }
 
-void RenderThemeWin::updateCachedSystemFontDescription(CSSValueID valueID, FontDescription& fontDescription) const
+void RenderThemeWin::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
 {
     static bool initialized;
     static NONCLIENTMETRICS ncm;

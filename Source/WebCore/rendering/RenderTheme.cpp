@@ -1159,18 +1159,18 @@ void RenderTheme::platformColorsDidChange()
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 
-FontDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const
+FontCascadeDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const
 {
-    static NeverDestroyed<FontDescription> caption;
-    static NeverDestroyed<FontDescription> icon;
-    static NeverDestroyed<FontDescription> menu;
-    static NeverDestroyed<FontDescription> messageBox;
-    static NeverDestroyed<FontDescription> smallCaption;
-    static NeverDestroyed<FontDescription> statusBar;
-    static NeverDestroyed<FontDescription> webkitMiniControl;
-    static NeverDestroyed<FontDescription> webkitSmallControl;
-    static NeverDestroyed<FontDescription> webkitControl;
-    static NeverDestroyed<FontDescription> defaultDescription;
+    static NeverDestroyed<FontCascadeDescription> caption;
+    static NeverDestroyed<FontCascadeDescription> icon;
+    static NeverDestroyed<FontCascadeDescription> menu;
+    static NeverDestroyed<FontCascadeDescription> messageBox;
+    static NeverDestroyed<FontCascadeDescription> smallCaption;
+    static NeverDestroyed<FontCascadeDescription> statusBar;
+    static NeverDestroyed<FontCascadeDescription> webkitMiniControl;
+    static NeverDestroyed<FontCascadeDescription> webkitSmallControl;
+    static NeverDestroyed<FontCascadeDescription> webkitControl;
+    static NeverDestroyed<FontCascadeDescription> defaultDescription;
 
     switch (systemFontID) {
     case CSSValueCaption:
@@ -1199,7 +1199,7 @@ FontDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontI
     }
 }
 
-void RenderTheme::systemFont(CSSValueID systemFontID, FontDescription& fontDescription) const
+void RenderTheme::systemFont(CSSValueID systemFontID, FontCascadeDescription& fontDescription) const
 {
     fontDescription = cachedSystemFontDescription(systemFontID);
     if (fontDescription.isAbsoluteSize())

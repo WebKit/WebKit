@@ -1018,7 +1018,7 @@ void RenderThemeEfl::setDefaultFontSize(int size)
     defaultFontSize = size;
 }
 
-void RenderThemeEfl::updateCachedSystemFontDescription(CSSValueID, FontDescription& fontDescription) const
+void RenderThemeEfl::updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription& fontDescription) const
 {
     // It was called by RenderEmbeddedObject::paintReplaced to render alternative string.
     // To avoid cairo_error while rendering, fontDescription should be passed.

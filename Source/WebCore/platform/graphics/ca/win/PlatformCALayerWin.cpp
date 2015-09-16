@@ -780,7 +780,7 @@ void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloa
 {
     String text(message, length);
 
-    FontDescription desc;
+    FontCascadeDescription desc;
 
     NONCLIENTMETRICS metrics;
     metrics.cbSize = sizeof(metrics);

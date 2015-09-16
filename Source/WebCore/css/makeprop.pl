@@ -709,8 +709,8 @@ sub generateInitialValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"AnimationProperty"}) {
     $setterContent .= generateAnimationPropertyInitialValueSetter($name, $indent . "    ");
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FontProperty"}) {
-    $setterContent .= $indent . "    FontDescription fontDescription = styleResolver.fontDescription();\n";
-    $setterContent .= $indent . "    fontDescription." . $setter . "(FontDescription::" . $initial . "());\n";
+    $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    fontDescription." . $setter . "(FontCascadeDescription::" . $initial . "());\n";
     $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FillLayerProperty"}) {
     $setterContent .= generateFillLayerPropertyInitialValueSetter($name, $indent . "    ");
@@ -753,7 +753,7 @@ sub generateInheritValueSetter {
     $setterContent .= generateAnimationPropertyInheritValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FontProperty"}) {
-    $setterContent .= $indent . "    FontDescription fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(styleResolver.parentFontDescription()." . $getter . "());\n";
     $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
     $didCallSetValue = 1;
@@ -807,7 +807,7 @@ sub generateValueSetter {
     $setterContent .= generateAnimationPropertyValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FontProperty"}) {
-    $setterContent .= $indent . "    FontDescription fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    auto fontDescription = styleResolver.fontDescription();\n";
     $setterContent .= $indent . "    fontDescription." . $setter . "(" . $convertedValue . ");\n";
     $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
     $didCallSetValue = 1;

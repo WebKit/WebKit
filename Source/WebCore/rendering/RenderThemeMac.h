@@ -107,7 +107,7 @@ protected:
     virtual ~RenderThemeMac();
 
     // System fonts.
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
 #if ENABLE(VIDEO)
     // Media controls

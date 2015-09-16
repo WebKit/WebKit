@@ -85,7 +85,7 @@ static Ref<RenderStyle> createFullScreenStyle()
     // Create a stacking context:
     fullscreenStyle.get().setZIndex(INT_MAX);
 
-    fullscreenStyle.get().setFontDescription(FontDescription());
+    fullscreenStyle.get().setFontDescription({ });
     fullscreenStyle.get().fontCascade().update(nullptr);
 
     fullscreenStyle.get().setDisplay(FLEX);

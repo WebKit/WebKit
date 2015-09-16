@@ -6651,7 +6651,7 @@ void CSSParser::parseSystemFont(bool important)
     ASSERT(systemFontID >= CSSValueCaption && systemFontID <= CSSValueStatusBar);
     m_valueList->next();
 
-    FontDescription fontDescription;
+    FontCascadeDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(systemFontID, fontDescription);
     if (!fontDescription.isAbsoluteSize())
         return;

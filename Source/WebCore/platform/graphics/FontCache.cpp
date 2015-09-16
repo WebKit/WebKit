@@ -539,7 +539,7 @@ void FontCache::invalidate()
 }
 
 #if !PLATFORM(COCOA)
-RefPtr<Font> FontCache::similarFont(const FontDescription&)
+RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomicString&)
 {
     return nullptr;
 }

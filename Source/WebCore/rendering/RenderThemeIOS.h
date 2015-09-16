@@ -48,8 +48,8 @@ public:
     WEBCORE_EXPORT static void setContentSizeCategory(const String&);
 
 protected:
-    virtual FontDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+    virtual FontCascadeDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
     virtual int baselinePosition(const RenderBox&) const override;
 
     virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;

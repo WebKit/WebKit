@@ -192,7 +192,7 @@ private:
     }
 
     // System fonts.
-    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override;
 
     ALWAYS_INLINE Ecore_Evas* canvas() const { return m_canvas.get(); }
     ALWAYS_INLINE Evas_Object* edje() const { return m_edje.get(); }
