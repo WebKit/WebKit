@@ -150,9 +150,7 @@ public:
     virtual void setNeedsCommit() override;
     virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, const char* text, size_t length) const override;
 
-#ifndef NDEBUG
     virtual String layerTreeAsString() const override;
-#endif
 
     virtual PassRefPtr<PlatformCALayer> clone(PlatformCALayerClient* owner) const override;
 
