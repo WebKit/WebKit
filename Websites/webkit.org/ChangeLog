@@ -1,3 +1,9 @@
+2015-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add anchor tags for scroll snapping examples.
+
+        * demos/scroll-snap/index.html: Added anchor tags.
+
 2015-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add scroll snap blog post resources.

@@ -216,6 +216,7 @@
         <h1>The <code>scroll-snap-*</code> Properties.</h1>
         <p id="subtext">The following examples are overflow-scrolling <code>div</code>s. In the second, third and fourth examples, the <span>blue</span> cross represents the location of each container&rsquo;s scroll snap destination.</p>
         <!-- Normal scrolling container (no snapping) -->
+        <a name="scroll-normal"></a>
         <h3 style="margin-top: 5vh;">This first container does not have any scroll snapping behavior.</h3>
         <div class="container">
             <div class="child">
@@ -249,6 +250,7 @@
         </div>
 
         <!-- Simple scroll snapping container (using repeat) -->
+        <a name="scroll-snap-1"></a>
         <h3>This second container shows what basic scroll snapping can do for us.</h3>
         <div class="container" id="snap-scroll-container">
             <img src="images/bluecross.svg" class="snap-destination"></img>
@@ -285,6 +287,7 @@
         <pre>-webkit-scroll-snap-type: mandatory;<br>-webkit-scroll-snap-points-x: repeat(100%);</pre>
 
         <!-- Scroll snapping container using coordinates -->
+        <a name="scroll-snap-2"></a>
         <h3>This next container snaps to elements of different sizes when scrolling.</h3>
         <div class="container" id="snap-scroll-container-coordinates">
             <img src="images/bluecross.svg" class="snap-destination"></img>
@@ -344,6 +347,7 @@
         <pre>-webkit-scroll-snap-coordinate: 0% 0%;</pre>
 
         <!-- Centered scroll snapping container using coordinates -->
+        <a name="scroll-snap-3"></a>
         <h3>Here, we snap elements of different sizes to the center of the container.</h3>
         <div class="container" id="snap-scroll-container-coordinates-centered">
             <img src="images/bluecross.svg" class="snap-destination-centered"></img>
@@ -403,6 +407,7 @@
         <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
 
         <!-- Centered scroll snapping container in 2D -->
+        <a name="scroll-snap-4"></a>
         <h3>This container shows centered scroll snapping in a 2D grid.</h3>
         <div class="container" id="snap-scroll-container-2D">
             <img src="images/1.png"/><img src="images/2.png"/><img src="images/3.png"/><img src="images/4.png"/><br>
@@ -416,6 +421,7 @@
         <pre>-webkit-scroll-snap-coordinate: 50% 50%;</pre>
 
         <!-- Centered scroll snapping container in 2D, rotated -->
+        <a name="scroll-snap-5"></a>
         <h3>This example takes the 2D scroll snapping grid above and rotates it by 30 degrees.</h3>
         <div class="container" id="snap-scroll-container-2D-rotated">
             <img src="images/1.png"/><img src="images/2.png"/><img src="images/3.png"/><img src="images/4.png"/><br>
