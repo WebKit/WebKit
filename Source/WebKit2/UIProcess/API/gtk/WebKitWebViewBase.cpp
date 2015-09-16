@@ -1360,6 +1360,9 @@ void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWe
 
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
 {
+    // Queue a resize to ensure the new DrawingAreaProxy is resized.
+    gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
+
 #if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
         return;
