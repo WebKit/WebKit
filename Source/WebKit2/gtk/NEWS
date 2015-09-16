@@ -1,4 +1,19 @@
 =================
+WebKitGTK+ 2.9.92
+=================
+
+What's new in WebKitGTK+ 2.9.92?
+
+  - Data URLs are now decoded in the Web Process instead of the Network Process.
+  - Fix Web Process crash recovery.
+  - Fix a crash when sqlite3_initialize() is called from multiple threads.
+  - Fix the volume bar in media controls.
+  - Fix JavaScriptCore build with GCC 5.
+  - Fix the build when accelerated 2D canvas is enabled but cairo was built without GLX.
+  - Fix everal memory leaks.
+  - Translation updates: Bulgarian, Gujarati, Polish, Slovenian, Spanish, Tamil, Turkish.
+
+=================
 WebKitGTK+ 2.9.91
 =================
 
