@@ -84,7 +84,7 @@ void WASMModuleParser::parseModule(ExecState* exec)
     PROPAGATE_ERROR();
     parseFunctionImportSection(exec);
     PROPAGATE_ERROR();
-    parseGlobalSection();
+    parseGlobalSection(exec);
     PROPAGATE_ERROR();
     parseFunctionDeclarationSection();
     PROPAGATE_ERROR();
@@ -181,7 +181,7 @@ void WASMModuleParser::parseFunctionImportSection(ExecState* exec)
     FAIL_IF_FALSE(m_module->functionImportSignatures().size() == numberOfFunctionImportSignatures, "The number of function import signatures is incorrect.");
 }
 
-void WASMModuleParser::parseGlobalSection()
+void WASMModuleParser::parseGlobalSection(ExecState* exec)
 {
     uint32_t numberOfInternalI32GlobalVariables;
     uint32_t numberOfInternalF32GlobalVariables;
@@ -218,19 +218,31 @@ void WASMModuleParser::parseGlobalSection()
         String importName;
         READ_STRING_OR_FAIL(importName, "Cannot read the import name of an int32 global variable.");
         globalVariableTypes.uncheckedAppend(WASMType::I32);
-        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0)); // FIXME: Import the value.
+        JSValue value;
+        getImportedValue(exec, importName, value);
+        PROPAGATE_ERROR();
+        FAIL_IF_FALSE(value.isPrimitive() && !value.isSymbol(), "\"" + importName + "\" is not a primitive or is a Symbol.");
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(value.toInt32(exec)));
     }
     for (uint32_t i = 0; i < numberOfImportedF32GlobalVariables; ++i) {
         String importName;
         READ_STRING_OR_FAIL(importName, "Cannot read the import name of a float32 global variable.");
         globalVariableTypes.uncheckedAppend(WASMType::F32);
-        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0.0f)); // FIXME: Import the value.
+        JSValue value;
+        getImportedValue(exec, importName, value);
+        PROPAGATE_ERROR();
+        FAIL_IF_FALSE(value.isPrimitive() && !value.isSymbol(), "\"" + importName + "\" is not a primitive or is a Symbol.");
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(static_cast<float>(value.toNumber(exec))));
     }
     for (uint32_t i = 0; i < numberOfImportedF64GlobalVariables; ++i) {
         String importName;
         READ_STRING_OR_FAIL(importName, "Cannot read the import name of a float64 global variable.");
         globalVariableTypes.uncheckedAppend(WASMType::F64);
-        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(0.0)); // FIXME: Import the value.
+        JSValue value;
+        getImportedValue(exec, importName, value);
+        PROPAGATE_ERROR();
+        FAIL_IF_FALSE(value.isPrimitive() && !value.isSymbol(), "\"" + importName + "\" is not a primitive or is a Symbol.");
+        globalVariables.uncheckedAppend(JSWASMModule::GlobalVariable(value.toNumber(exec)));
     }
 }
 

@@ -50,7 +50,7 @@ private:
     void parseConstantPoolSection();
     void parseSignatureSection();
     void parseFunctionImportSection(ExecState*);
-    void parseGlobalSection();
+    void parseGlobalSection(ExecState*);
     void parseFunctionDeclarationSection();
     void parseFunctionPointerTableSection();
     void parseFunctionDefinitionSection();

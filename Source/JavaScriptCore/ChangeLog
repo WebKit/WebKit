@@ -1,5 +1,29 @@
 2015-09-15  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
+        Implement imported global variables in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149206
+
+        Reviewed by Filip Pizlo.
+
+        Values can now be imported to a WebAssembly module through properties of
+        the imports object that is passed to loadWebAssembly(). In order to
+        avoid any side effect when accessing the imports object, we check that
+        the properties are data properties. We also check that each value is a
+        primitive and is not a Symbol. According to the ECMA262 6.0 spec,
+        calling ToNumber() on a primitive that is not a Symbol should not cause
+        any side effect.[1]
+
+        [1]: http://www.ecma-international.org/ecma-262/6.0/#sec-tonumber
+
+        * tests/stress/wasm-globals.js:
+        * tests/stress/wasm/globals.wasm:
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::parseModule):
+        (JSC::WASMModuleParser::parseGlobalSection):
+        * wasm/WASMModuleParser.h:
+
+2015-09-15  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
         Fix asm.js errors in WebAssembly tests
         https://bugs.webkit.org/show_bug.cgi?id=149203
 
