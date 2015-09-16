@@ -376,9 +376,10 @@ bool AccessibilityObject::isBlockquote() const
 bool AccessibilityObject::isTextControl() const
 {
     switch (roleValue()) {
+    case ComboBoxRole:
+    case SearchFieldRole:
     case TextAreaRole:
     case TextFieldRole:
-    case ComboBoxRole:
         return true;
     default:
         return false;
