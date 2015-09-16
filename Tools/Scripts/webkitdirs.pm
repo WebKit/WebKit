@@ -1723,7 +1723,7 @@ sub isCachedArgumentfileOutOfDate($@)
 
 sub jhbuildWrapperPrefixIfNeeded()
 {
-    if (isWindows() || isCygwin()) {
+    if (isWindows()) {
         return ();
     }
     if (-e getJhbuildPath()) {
@@ -1859,8 +1859,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, @cmakeArgs if @cmakeArgs;
     push @args, $additionalCMakeArgs if $additionalCMakeArgs;
 
-    my $cmakeSourceDir = isCygwin() ? windowsSourceDir() : sourceDir();
-    push @args, '"' . $cmakeSourceDir . '"';
+    push @args, '"' . sourceDir() . '"';
 
     # Compiler options to keep floating point values consistent
     # between 32-bit and 64-bit architectures.
