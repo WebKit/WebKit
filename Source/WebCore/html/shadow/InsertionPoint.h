@@ -87,7 +87,7 @@ public:
     
 private:
     ShadowRootWithInsertionPoints(Document& document)
-        : ShadowRoot(document, UserAgentShadowRoot)
+        : ShadowRoot(document, Type::UserAgent)
     { }
 
     virtual void childrenChanged(const ChildChange&) override;

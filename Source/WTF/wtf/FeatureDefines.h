@@ -134,6 +134,10 @@
 #define ENABLE_RESPECT_EXIF_ORIENTATION 1
 #endif
 
+#if !defined(ENABLE_SHADOW_DOM)
+#define ENABLE_SHADOW_DOM 1
+#endif
+
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 0
 #endif
@@ -256,6 +260,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 #define ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
+#endif
+
+#if !defined(ENABLE_SHADOW_DOM)
+#define ENABLE_SHADOW_DOM 1
 #endif
 
 #endif /* PLATFORM(MAC) */
@@ -677,6 +685,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_SATURATED_LAYOUT_ARITHMETIC)
 #define ENABLE_SATURATED_LAYOUT_ARITHMETIC 1
+#endif
+
+#if !defined(ENABLE_SHADOW_DOM)
+#define ENABLE_SHADOW_DOM 0
 #endif
 
 #if !defined(ENABLE_SMOOTH_SCROLLING)

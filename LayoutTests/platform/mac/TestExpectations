@@ -1291,3 +1291,5 @@ webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validat
 [ Mavericks Yosemite ] fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
+
+webkit.org/b/148695 fast/shadow-dom [ Pass ]

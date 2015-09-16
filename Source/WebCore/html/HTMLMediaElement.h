@@ -487,6 +487,9 @@ private:
 
     virtual bool alwaysCreateUserAgentShadowRoot() const override { return true; }
 
+    // FIXME: Shadow DOM spec says we should be able to create shadow root on audio and video elements
+    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+
     virtual bool hasCustomFocusLogic() const override;
     virtual bool supportsFocus() const override;
     virtual bool isMouseFocusable() const override;

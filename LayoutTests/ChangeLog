@@ -1,3 +1,25 @@
+2015-09-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add ShadowRoot interface and Element.prototype.attachShadow
+        https://bugs.webkit.org/show_bug.cgi?id=149187
+
+        Reviewed by Antti Koivisto.
+
+        Add new tests for Shadow DOM with failing expectations on all platforms but Mac.
+
+        * TestExpectations:
+        * fast/shadow-dom: Added.
+        * fast/shadow-dom/Element-interface-attachShadow-expected.txt: Added.
+        * fast/shadow-dom/Element-interface-attachShadow.html: Added.
+        * fast/shadow-dom/Element-interface-shadowRoot-attribute-expected.txt: Added.
+        * fast/shadow-dom/Element-interface-shadowRoot-attribute.html: Added.
+        * fast/shadow-dom/ShadowRoot-interface-expected.txt: Added.
+        * fast/shadow-dom/ShadowRoot-interface.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+
 2015-09-15  Jinyoung Hur  <hur.ims@navercorp.com>
 
         [WebGL] Only require that the stencil value and write masks have as many bits set as the stencil buffer is deep

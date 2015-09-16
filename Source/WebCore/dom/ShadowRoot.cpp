@@ -43,18 +43,12 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
 
-enum ShadowRootUsageOriginType {
-    ShadowRootUsageOriginWeb = 0,
-    ShadowRootUsageOriginNotWeb,
-    ShadowRootUsageOriginMax
-};
-
-ShadowRoot::ShadowRoot(Document& document, ShadowRootType type)
+ShadowRoot::ShadowRoot(Document& document, Type type)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_resetStyleInheritance(false)
     , m_type(type)
-    , m_host(0)
+    , m_host(nullptr)
 {
 }
 

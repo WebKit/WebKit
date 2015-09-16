@@ -128,6 +128,8 @@ private:
     
     virtual bool canStartSelection() const override { return false; }
 
+    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+
     virtual bool isEnumeratable() const override { return true; }
     virtual bool supportLabels() const override { return true; }
 

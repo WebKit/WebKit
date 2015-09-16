@@ -331,6 +331,7 @@ private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override final;
+    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
 
     virtual void willChangeForm() override final;
     virtual void didChangeForm() override final;

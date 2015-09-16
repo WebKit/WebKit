@@ -770,8 +770,12 @@ String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const
     }
 
     switch (downcast<ShadowRoot>(*root).type()) {
-    case ShadowRoot::UserAgentShadowRoot:
+    case ShadowRoot::Type::UserAgent:
         return String("UserAgentShadowRoot");
+    case ShadowRoot::Type::Closed:
+        return String("ClosedShadowRoot");
+    case ShadowRoot::Type::Open:
+        return String("OpenShadowRoot");
     default:
         ASSERT_NOT_REACHED();
         return String("Unknown");

@@ -39,6 +39,7 @@ namespace WebCore {
 class ClientRect;
 class ClientRectList;
 class DatasetDOMStringMap;
+class Dictionary;
 class DOMTokenList;
 class ElementRareData;
 class HTMLDocument;
@@ -246,6 +247,9 @@ public:
 
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
     WEBCORE_EXPORT RefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
+
+    ShadowRoot* bindingShadowRoot() const;
+    RefPtr<ShadowRoot> attachShadow(const Dictionary&, ExceptionCode&);
 
     ShadowRoot* userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();

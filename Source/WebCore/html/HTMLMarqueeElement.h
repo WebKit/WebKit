@@ -62,6 +62,8 @@ private:
     virtual void resume() override;
     virtual const char* activeDOMObjectName() const override { return "HTMLMarqueeElement"; }
 
+    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+
     RenderMarquee* renderMarquee() const;
 };
 

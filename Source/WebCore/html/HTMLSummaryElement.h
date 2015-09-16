@@ -42,6 +42,10 @@ private:
     virtual void defaultEventHandler(Event*) override;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;
+
+    // FIXME: Shadow DOM spec says we should be able to create shadow root on this element
+    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+
     HTMLDetailsElement* detailsElement() const;
 
     virtual bool supportsFocus() const override;

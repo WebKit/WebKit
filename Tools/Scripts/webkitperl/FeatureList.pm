@@ -123,6 +123,7 @@ my (
     $resourceTimingSupport,
     $scriptedSpeechSupport,
     $seccompFiltersSupport,
+    $shadowDOMSupport,
     $streamsAPISupport,
     $styleScopedSupport,
     $subtleCrypto,
@@ -383,6 +384,9 @@ my @features = (
 
     { option => "scripted-speech", desc => "Toggle Scripted Speech support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
+
+    { option => "shadow-dom", desc => "Toggle Shadow DOM support",
+      define => "ENABLE_SHADOW_DOM", default => (isAppleMacWebKit() || isIOSWebKit()), value => \$shadowDOMSupport },
 
     { option => "streams-api", desc => "Toggle Streams API support",
       define => "ENABLE_STREAMS_API", default => 1, value => \$streamsAPISupport },

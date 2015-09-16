@@ -40,11 +40,13 @@ class ContentDistributor;
 
 class ShadowRoot : public DocumentFragment, public TreeScope {
 public:
-    enum ShadowRootType {
-        UserAgentShadowRoot = 0,
+    enum class Type : uint8_t {
+        UserAgent = 0,
+        Closed,
+        Open,
     };
 
-    static Ref<ShadowRoot> create(Document& document, ShadowRootType type)
+    static Ref<ShadowRoot> create(Document& document, Type type)
     {
         return adoptRef(*new ShadowRoot(document, type));
     }
@@ -62,7 +64,7 @@ public:
 
     Element* activeElement() const;
 
-    ShadowRootType type() const { return static_cast<ShadowRootType>(m_type); }
+    Type type() const { return m_type; }
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
@@ -71,7 +73,7 @@ public:
     virtual ContentDistributor* distributor() { return nullptr; }
 
 protected:
-    ShadowRoot(Document&, ShadowRootType);
+    ShadowRoot(Document&, Type);
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
     bool isOrphan() const { return !m_host; }
@@ -81,8 +83,8 @@ private:
 
     virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    unsigned m_resetStyleInheritance : 1;
-    unsigned m_type : 1;
+    bool m_resetStyleInheritance : 1;
+    Type m_type;
 
     Element* m_host;
 };

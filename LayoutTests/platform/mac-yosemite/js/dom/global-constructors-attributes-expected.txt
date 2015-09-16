@@ -1753,6 +1753,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Selection').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').value is ShadowRoot
+PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ShadowRoot').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').value is SpeechSynthesisEvent
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').hasOwnProperty('set') is false

@@ -66,6 +66,7 @@ PASS a["classList"] is
 PASS a["dataset"] is [object DOMStringMap]
 PASS a["uiactions"] is 
 PASS a["webkitRegionOverset"] is undefined
+PASS a["shadowRoot"] is null
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]
 PASS a["children"] is [object HTMLCollection]

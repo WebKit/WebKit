@@ -52,6 +52,8 @@ private:
     virtual void reset() override;
     virtual bool shouldSaveAndRestoreFormControlState() const override;
 
+    virtual bool canHaveUserAgentShadowRoot() const override final { return true; }
+
     HTMLSelectElement* shadowSelect() const;
 };
 
