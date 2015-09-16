@@ -256,19 +256,14 @@ for my $dir (@projects) {
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit() || isWinCairo()) {
         chdirWebKit();
-        if (isWinCairo()) {
-            if (exitStatus(generateBuildSystemFromCMakeProject("WinCairo"))) {
-                die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
-            }
-            if (canUseNinja()) {
-                chdir "WebKitBuild/" . configuration();
-                $result = system("ninja");
-            } else {
-                $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
-            }
+        if (exitStatus(generateBuildSystemFromCMakeProject("WinCairo"))) {
+            die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
+        }
+        if (canUseNinja()) {
+            chdir "WebKitBuild/" . configuration();
+            $result = system("ninja");
         } else {
-            my $webkitSolutionPath = "Source/WebKit/WebKit.vcxproj/WebKit.sln";
-            $result = buildVisualStudioProject($webkitSolutionPath, $clean);
+            $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
         }
     }
     # Various build* calls above may change the CWD.

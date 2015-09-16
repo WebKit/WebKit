@@ -1,3 +1,21 @@
+2015-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Switch AppleWin build to use CMake
+        https://bugs.webkit.org/show_bug.cgi?id=149163
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-webkit:
+        Build with CMake.
+        * Scripts/run-api-tests:
+        (runTest):
+        (listAllTests):
+        (prepareEnvironmentForRunningTestTool):
+        (testToolPaths):
+        (testToolPath): Deleted.
+        Run the API tests as separate executables on Windows.
+        It used to be TestWebKitAPI.exe, and it is now TestWTF.exe, TestWebCore.exe, and TestWebKit.exe.
+
 2015-09-16  Alexey Proskuryakov  <ap@apple.com>
 
         Add newer build.webkit.org pages to robots.txt
