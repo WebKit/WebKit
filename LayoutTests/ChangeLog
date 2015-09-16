@@ -1,5 +1,15 @@
 2015-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop dom/xhtml/level3/core/nodegetbaseuri03.xhtml test.
+
+        This test is outdated and we have more recent DOM tests covering
+        the newly expected behavior.
+
+        * dom/xhtml/level3/core/nodegetbaseuri03.js: Removed.
+        * dom/xhtml/level3/core/nodegetbaseuri03.xhtml: Removed.
+
+2015-09-16  Chris Dumez  <cdumez@apple.com>
+
         Add initial support for [Unforgeable] IDL extended attribute
         https://bugs.webkit.org/show_bug.cgi?id=149147
 
