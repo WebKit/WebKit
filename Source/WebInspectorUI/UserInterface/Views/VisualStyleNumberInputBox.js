@@ -111,12 +111,16 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         if (value && value === this.value)
             return;
 
-        if (this._updatedValues.propertyMissing && isNaN(value)) {
-            this._unchangedOptionElement.selected = true;
-            this._numberInputIsEditable = false;
-            this.contentElement.classList.remove("number-input-editable");
-            this.specialPropertyPlaceholderElement.hidden = false;
-            return;
+        if (this._updatedValues.propertyMissing) {
+            if (value || this._updatedValues.placeholder)
+                this.specialPropertyPlaceholderElement.textContent = (value || this._updatedValues.placeholder) + (this._updatedValues.units || "");
+
+            if (isNaN(value)) {
+                this._unchangedOptionElement.selected = true;
+                this._setNumberInputIsEditable();
+                this.specialPropertyPlaceholderElement.hidden = false;
+                return;
+            }
         }
 
         this.specialPropertyPlaceholderElement.hidden = true;
@@ -128,16 +132,14 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         }
 
         if (!isNaN(value)) {
-            this._numberInputIsEditable = true;
-            this.contentElement.classList.add("number-input-editable");
+            this._setNumberInputIsEditable(true);
             this._valueNumberInputElement.value = Math.round(value * 100) / 100;
             this._markUnitsContainerIfInputHasValue();
             return;
         }
 
         if (this.valueIsSupportedKeyword(value)) {
-            this._numberInputIsEditable = false;
-            this.contentElement.classList.remove("number-input-editable");
+            this._setNumberInputIsEditable();
             this._keywordSelectElement.value = value;
             return;
         }
@@ -169,8 +171,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         if (this._valueIsSupportedAdvancedUnit(unit))
             this._addAdvancedUnits();
 
-        this._numberInputIsEditable = true;
-        this.contentElement.classList.add("number-input-editable");
+        this._setNumberInputIsEditable(true);
         this._keywordSelectElement.value = unit;
         this._unitsElementTextContent = unit;
     }
@@ -231,6 +232,12 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
         this._markUnitsContainerIfInputHasValue();
     }
 
+    _setNumberInputIsEditable(flag)
+    {
+        this._numberInputIsEditable = flag || false;
+        this.contentElement.classList.toggle("number-input-editable", this._numberInputIsEditable);
+    }
+
     _markUnitsContainerIfInputHasValue()
     {
         let numberInputValue = this._valueNumberInputElement.value;
@@ -246,9 +253,9 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
                 this._valueNumberInputElement.value = null;
 
             this._unitsElementTextContent = this._keywordSelectElement.value;
-            this._numberInputIsEditable = selectedKeywordIsUnit;
-            this.contentElement.classList.toggle("number-input-editable", selectedKeywordIsUnit);
-        }
+            this._setNumberInputIsEditable(selectedKeywordIsUnit);
+        } else
+            this._setNumberInputIsEditable(false);
 
         this._valueDidChange();
         this.specialPropertyPlaceholderElement.hidden = !unchangedOptionSelected;
@@ -272,6 +279,7 @@ WebInspector.VisualStyleNumberInputBox = class VisualStyleNumberInputBox extends
             if (!this._allowNegativeValues && newValue < 0)
                 newValue = 0;
 
+            this._updatedValues.propertyMissing = false;
             this.value = Math.round(newValue * 100) / 100;
             this._valueDidChange();
         }
