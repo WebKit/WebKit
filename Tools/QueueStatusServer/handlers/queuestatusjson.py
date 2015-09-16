@@ -78,7 +78,7 @@ class QueueStatusJSON(webapp.RequestHandler):
 
     def _bots(self, queue):
         # First, collect all bots that ever served this queue.
-        bot_id_statuses = QueueStatus.all(projection=['bot_id'], distinct=True).filter('queue_name =', queue.name()).fetch(500)
+        bot_id_statuses = QueueStatus.all(projection=['bot_id'], distinct=True).filter('queue_name =', queue.name()).order('-date').fetch(500)
         bot_ids = list(entry.bot_id for entry in bot_id_statuses)
         result = []
         for bot_id in bot_ids:

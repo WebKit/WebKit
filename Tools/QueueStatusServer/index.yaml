@@ -49,10 +49,10 @@ indexes:
 
 - kind: QueueStatus
   properties:
-  - name: bot_id
   - name: queue_name
   - name: date
     direction: desc
+  - name: bot_id
 
 - kind: QueueStatus
   properties:

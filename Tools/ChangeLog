@@ -1,3 +1,15 @@
+2015-09-15  Aakash Jain  <aakash_jain@apple.com>
+
+        Appscale queue status json output lacks bots
+        https://bugs.webkit.org/show_bug.cgi?id=149194
+        <rdar://problem/22171089>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/handlers/queuestatusjson.py:
+        (QueueStatusJSON._bots): Order the results by date so as to get latest events, this was default in AppEngine.
+        * QueueStatusServer/index.yaml: Index according to appscale requirements.
+
 2015-09-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Provide a means for viewing the layer tree
