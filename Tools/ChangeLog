@@ -1,3 +1,10 @@
+2015-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Rollout r189851 and 189853 because they didn’t actually fix the permissions issue
+
+        * BuildSlaveSupport/built-product-archive:
+        (unzipArchive):
+
 2015-09-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix the help message of separated web process option of MiniBrowser
