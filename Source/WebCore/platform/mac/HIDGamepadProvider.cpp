@@ -203,7 +203,7 @@ void HIDGamepadProvider::deviceRemoved(IOHIDDeviceRef device)
     ASSERT(removedGamepad);
 
     // Any time we get a device removed callback we know it's a real event and not an 'already connected' event.
-    // We should always stop supressing callbacks when we receive such an event.
+    // We should always stop suppressing callbacks when we receive such an event.
     m_shouldDispatchCallbacks = true;
 
     for (auto& client : m_clients)

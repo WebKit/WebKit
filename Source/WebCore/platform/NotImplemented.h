@@ -29,9 +29,9 @@
 #include <wtf/Assertions.h>
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    #define supressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
+    #define suppressNotImplementedWarning() getenv("DISABLE_NI_WARNING")
 #else
-    #define supressNotImplementedWarning() false
+    #define suppressNotImplementedWarning() false
 #endif
 
 #if LOG_DISABLED
@@ -44,7 +44,7 @@ WEBCORE_EXPORT WTFLogChannel* notImplementedLoggingChannel();
 
 #define notImplemented() do { \
         static bool havePrinted = false; \
-        if (!havePrinted && !supressNotImplementedWarning()) { \
+        if (!havePrinted && !suppressNotImplementedWarning()) { \
             WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, WebCore::notImplementedLoggingChannel(), "UNIMPLEMENTED: "); \
             havePrinted = true; \
         } \

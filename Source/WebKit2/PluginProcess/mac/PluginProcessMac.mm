@@ -440,7 +440,7 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
 
     m_pluginBundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
 
-    // FIXME: Workaround for Java not liking its plugin process to be supressed - <rdar://problem/14267843>
+    // FIXME: Workaround for Java not liking its plugin process to be suppressed - <rdar://problem/14267843>
     if (m_pluginBundleIdentifier == "com.oracle.java.JavaAppletPlugin")
         (new UserActivity("com.oracle.java.JavaAppletPlugin"))->start();
 }

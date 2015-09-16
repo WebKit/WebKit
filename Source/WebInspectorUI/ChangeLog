@@ -1,5 +1,18 @@
 2015-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Fix common typo "supress" => "suppress"
+        https://bugs.webkit.org/show_bug.cgi?id=149199
+
+        Reviewed by Gyuyoung Kim.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.select):
+        (WebInspector.DataGridNode.prototype.deselect):
+        * UserInterface/Views/SearchBar.js:
+        (WebInspector.SearchBar):
+
+2015-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Turn off line wrapping in resource text editors
         https://bugs.webkit.org/show_bug.cgi?id=149121
 

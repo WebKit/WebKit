@@ -1722,7 +1722,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         this.dispatchEventToListeners("revealed");
     }
 
-    select(supressSelectedEvent)
+    select(suppressSelectedEvent)
     {
         if (!this.dataGrid || !this.selectable || this.selected)
             return;
@@ -1736,7 +1736,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (this._element)
             this._element.classList.add("selected");
 
-        if (!supressSelectedEvent)
+        if (!suppressSelectedEvent)
             this.dataGrid.dispatchEventToListeners(WebInspector.DataGrid.Event.SelectedNodeChanged);
     }
 
@@ -1746,7 +1746,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         this.select();
     }
 
-    deselect(supressDeselectedEvent)
+    deselect(suppressDeselectedEvent)
     {
         if (!this.dataGrid || this.dataGrid.selectedNode !== this || !this.selected)
             return;
@@ -1757,7 +1757,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (this._element)
             this._element.classList.remove("selected");
 
-        if (!supressDeselectedEvent)
+        if (!suppressDeselectedEvent)
             this.dataGrid.dispatchEventToListeners(WebInspector.DataGrid.Event.SelectedNodeChanged);
     }
 

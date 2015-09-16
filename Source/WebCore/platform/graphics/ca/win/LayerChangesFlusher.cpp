@@ -70,10 +70,10 @@ void LayerChangesFlusher::cancelPendingFlush(AbstractCACFLayerTreeHost* host)
 
 LRESULT LayerChangesFlusher::hookCallback(int code, WPARAM wParam, LPARAM lParam)
 {
-    // Supress the exception handler Windows puts around all hook calls so we can 
+    // Suppress the exception handler Windows puts around all hook calls so we can 
     // crash for debugging purposes if an exception is hit. 
     ExceptionRegistration registrationStruct; // Note: must be stack allocated.
-    StructuredExceptionHandlerSuppressor supressor(registrationStruct);
+    StructuredExceptionHandlerSuppressor suppressor(registrationStruct);
     return singleton().hookFired(code, wParam, lParam);
 }
 
