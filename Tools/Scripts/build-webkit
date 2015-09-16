@@ -256,7 +256,7 @@ for my $dir (@projects) {
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit() || isWinCairo()) {
         chdirWebKit();
-        if (exitStatus(generateBuildSystemFromCMakeProject("WinCairo"))) {
+        if (exitStatus(generateBuildSystemFromCMakeProject(isWinCairo() ? "WinCairo" : "AppleWin"))) {
             die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
         }
         if (canUseNinja()) {
