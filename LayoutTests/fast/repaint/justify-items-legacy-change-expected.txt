@@ -1,0 +1,6 @@
+Tests invalidation on justify-items style change (legacy value). Passes if green bars are centerd inside their red container.
+
+(repaint rects
+  (rect 0 52 300 400)
+)
+

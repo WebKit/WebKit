@@ -196,7 +196,7 @@ ItemPosition RenderStyle::resolveAlignment(const RenderStyle& parentStyle, const
 
 OverflowAlignment RenderStyle::resolveAlignmentOverflow(const RenderStyle& parentStyle, const RenderStyle& childStyle)
 {
-    return resolveJustificationData(parentStyle, childStyle, ItemPositionStretch).overflow();
+    return resolveAlignmentData(parentStyle, childStyle, ItemPositionStretch).overflow();
 }
 
 ItemPosition RenderStyle::resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer)
@@ -524,7 +524,9 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             || rareNonInheritedData->m_alignContent != other.rareNonInheritedData->m_alignContent
             || rareNonInheritedData->m_alignItems != other.rareNonInheritedData->m_alignItems
             || rareNonInheritedData->m_alignSelf != other.rareNonInheritedData->m_alignSelf
-            || rareNonInheritedData->m_justifyContent != other.rareNonInheritedData->m_justifyContent)
+            || rareNonInheritedData->m_justifyContent != other.rareNonInheritedData->m_justifyContent
+            || rareNonInheritedData->m_justifyItems != other.rareNonInheritedData->m_justifyItems
+            || rareNonInheritedData->m_justifySelf != other.rareNonInheritedData->m_justifySelf)
             return true;
 
         if (!rareNonInheritedData->reflectionDataEquivalent(*other.rareNonInheritedData.get()))

@@ -1,3 +1,43 @@
+2015-09-17  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Relayout whenever Box Alignment properties change
+        https://bugs.webkit.org/show_bug.cgi?id=148070
+
+        Reviewed by Darin Adler.
+
+        Tests to verify we force a layout of grid container or grid items, as appropriated,
+        whenever Box Alignment properties change their value.
+
+        This patch also adds some repaint tests, so we can ensure we generate the correct
+        repaint rects as well.
+
+        * fast/css-grid-layout/relayout-align-items-changed-expected.txt: Added.
+        * fast/css-grid-layout/relayout-align-items-changed.html: Added.
+        * fast/css-grid-layout/relayout-align-self-changed-expected.txt: Added.
+        * fast/css-grid-layout/relayout-align-self-changed.html: Added.
+        * fast/css-grid-layout/relayout-justify-items-changed-expected.txt: Added.
+        * fast/css-grid-layout/relayout-justify-items-changed.html: Added.
+        * fast/css-grid-layout/relayout-justify-self-changed-expected.txt: Added.
+        * fast/css-grid-layout/relayout-justify-self-changed.html: Added.
+        * fast/repaint/align-items-change-expected.txt: Added.
+        * fast/repaint/align-items-change.html: Added.
+        * fast/repaint/align-items-overflow-change-expected.txt: Added.
+        * fast/repaint/align-items-overflow-change.html: Added.
+        * fast/repaint/align-self-change-expected.txt: Added.
+        * fast/repaint/align-self-change.html: Added.
+        * fast/repaint/align-self-overflow-change-expected.txt: Added.
+        * fast/repaint/align-self-overflow-change.html: Added.
+        * fast/repaint/justify-items-change-expected.txt: Added.
+        * fast/repaint/justify-items-change.html: Added.
+        * fast/repaint/justify-items-legacy-change-expected.txt: Added.
+        * fast/repaint/justify-items-legacy-change.html: Added.
+        * fast/repaint/justify-items-overflow-change-expected.txt: Added.
+        * fast/repaint/justify-items-overflow-change.html: Added.
+        * fast/repaint/justify-self-change-expected.txt: Added.
+        * fast/repaint/justify-self-change.html: Added.
+        * fast/repaint/justify-self-overflow-change-expected.txt: Added.
+        * fast/repaint/justify-self-overflow-change.html: Added.
+
 2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         printing does not use minimum page zoom factor
