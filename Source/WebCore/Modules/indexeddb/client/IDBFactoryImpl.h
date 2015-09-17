@@ -33,6 +33,8 @@
 namespace WebCore {
 namespace IDBClient {
 
+class IDBOpenDBRequest;
+
 class IDBFactory : public WebCore::IDBFactory {
 public:
     static Ref<IDBFactory> create();
@@ -47,6 +49,8 @@ public:
 
 private:
     IDBFactory();
+    
+    RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&);
 };
 
 } // namespace IDBClient

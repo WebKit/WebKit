@@ -1,0 +1,35 @@
+This test calls open on window.indexedDB in various ways, verifying that IDBOpenDBRequest objects are returned when expected and exceptions are thrown when expected.
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function done()
+{
+    alert("Done");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var request = window.indexedDB.open("TestDatabase");
+alert(request);
+
+request = window.indexedDB.open("");
+alert(request);
+
+try {
+	var request = window.indexedDB.open();
+} catch (e) {
+	alert(e);
+}
+
+try {
+	var request = window.indexedDB.open("name", 0);
+} catch (e) {
+	alert(e);
+}
+
+done();
+</script>

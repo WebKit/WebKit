@@ -1,3 +1,13 @@
+2015-09-16  Brady Eidson  <beidson@apple.com>
+
+        Have window.indexedDB.open return an IDBOpenDBRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=149234
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/opendatabase-request-expected.txt: Added.
+        * storage/indexeddb/modern/opendatabase-request.html: Added.
+
 2015-09-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Create a font which can be used for testing font features

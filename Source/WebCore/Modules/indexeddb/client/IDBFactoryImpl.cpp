@@ -73,14 +73,47 @@ PassRefPtr<WebCore::IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionCont
     return nullptr;
 }
 
-PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, ExceptionCode&)
+PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
-    return nullptr;
+    LOG(IndexedDB, "IDBFactory::open");
+    
+    return openInternal(context, name, 0, ec).release();
 }
 
-PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext*, const String&, unsigned long long, ExceptionCode&)
+PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
 {
-    return nullptr;
+    LOG(IndexedDB, "IDBFactory::open");
+    
+    if (!version) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    return openInternal(context, name, 0, ec).release();
+}
+
+RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* context, const String& name, unsigned long long, ExceptionCode& ec)
+{
+    if (name.isNull()) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    if (shouldThrowSecurityException(context)) {
+        ec = SECURITY_ERR;
+        return nullptr;
+    }
+
+    ASSERT(context->securityOrigin());
+    ASSERT(context->topOrigin());
+    IDBDatabaseIdentifier databaseIdentifier(name, *context->securityOrigin(), *context->topOrigin());
+    if (!databaseIdentifier.isValid()) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    auto request = IDBOpenDBRequest::create(context);
+    return adoptRef(&request.leakRef());
 }
 
 PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)

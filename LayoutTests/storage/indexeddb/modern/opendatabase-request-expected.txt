@@ -1,0 +1,6 @@
+ALERT: [object IDBOpenDBRequest]
+ALERT: [object IDBOpenDBRequest]
+ALERT: TypeError: Not enough arguments
+ALERT: TypeError: Type error
+ALERT: Done
+This test calls open on window.indexedDB in various ways, verifying that IDBOpenDBRequest objects are returned when expected and exceptions are thrown when expected.
