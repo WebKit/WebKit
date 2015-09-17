@@ -335,7 +335,8 @@ void MachineThreads::removeThreadIfFound(PlatformThread platformThread)
         delete t;
     }
 }
-    
+
+SUPPRESS_ASAN
 void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackOrigin, void* stackTop, RegisterState& calleeSavedRegisters)
 {
     void* registersBegin = &calleeSavedRegisters;
@@ -519,6 +520,7 @@ std::pair<void*, size_t> MachineThreads::Thread::captureStack(void* stackTop)
     return std::make_pair(begin, static_cast<char*>(end) - static_cast<char*>(begin));
 }
 
+SUPPRESS_ASAN
 static void copyMemory(void* dst, const void* src, size_t size)
 {
     size_t dstAsSize = reinterpret_cast<size_t>(dst);

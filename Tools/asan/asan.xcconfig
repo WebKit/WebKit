@@ -12,7 +12,7 @@ GCC_OPTIMIZATION_LEVEL_Release = 1;
 
 CLANG_ADDRESS_SANITIZER=YES
 
-ASAN_OTHER_CFLAGS = -fsanitize-blacklist=$(ASAN_IGNORE) -fno-omit-frame-pointer -g;
+ASAN_OTHER_CFLAGS = -fno-omit-frame-pointer -g;
 ASAN_OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CFLAGS);
 
 GCC_ENABLE_OBJC_GC = NO;
