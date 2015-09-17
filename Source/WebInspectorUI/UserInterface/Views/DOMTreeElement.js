@@ -890,10 +890,10 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
     _attributeEditingCommitted(element, newText, oldText, attributeName, moveDirection)
     {
+        this._editing = false;
+
         if (newText === oldText)
             return;
-
-        this._editing = false;
 
         var treeOutline = this.treeOutline;
         function moveToNextAttributeIfNeeded(error)
