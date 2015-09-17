@@ -1,3 +1,16 @@
+2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        printing does not use minimum page zoom factor
+        https://bugs.webkit.org/show_bug.cgi?id=108507
+
+        Reviewed by Darin Adler.
+
+        Pass a the frame as a reference instead of using pointers.
+
+        * Misc/WebCoreStatistics.mm:
+        (-[WebFrame numberOfPagesWithPageWidth:pageHeight:]):
+        (-[WebFrame printToCGContext:pageWidth:pageHeight:]):
+
 2015-09-16  Brady Eidson  <beidson@apple.com>
 
         Have window.indexedDB.deleteDatabase return an IDBOpenDBRequest.

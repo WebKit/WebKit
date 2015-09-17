@@ -40,6 +40,7 @@ enum {
     SnapshotOptionsExcludeDeviceScaleFactor = 1 << 5,
     SnapshotOptionsForceBlackText = 1 << 6,
     SnapshotOptionsForceWhiteText = 1 << 7,
+    SnapshotOptionsPrinting = 1 << 8,
 };
 typedef uint32_t SnapshotOptions;
 

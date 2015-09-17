@@ -301,32 +301,36 @@ String PrintContext::pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, in
            String::number(marginTop) + ' ' + String::number(marginRight) + ' ' + String::number(marginBottom) + ' ' + String::number(marginLeft);
 }
 
-int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)
+bool PrintContext::beginAndComputePageRectsWithPageSize(Frame& frame, const FloatSize& pageSizeInPixels)
 {
-    frame->document()->updateLayout();
+    if (!frame.document() || !frame.view() || !frame.document()->renderView())
+        return false;
 
-    FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
-    PrintContext printContext(frame);
-    printContext.begin(pageRect.width(), pageRect.height());
+    frame.document()->updateLayout();
+
+    begin(pageSizeInPixels.width(), pageSizeInPixels.height());
     // Account for shrink-to-fit.
     FloatSize scaledPageSize = pageSizeInPixels;
-    scaledPageSize.scale(frame->view()->contentsSize().width() / pageRect.width());
-    printContext.computePageRectsWithPageSize(scaledPageSize, false);
+    scaledPageSize.scale(frame.view()->contentsSize().width() / pageSizeInPixels.width());
+    computePageRectsWithPageSize(scaledPageSize, false);
+
+    return true;
+}
+
+int PrintContext::numberOfPages(Frame& frame, const FloatSize& pageSizeInPixels)
+{
+    PrintContext printContext(&frame);
+    if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
+        return -1;
+
     return printContext.pageCount();
 }
 
-void PrintContext::spoolAllPagesWithBoundaries(Frame* frame, GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
+void PrintContext::spoolAllPagesWithBoundaries(Frame& frame, GraphicsContext& graphicsContext, const FloatSize& pageSizeInPixels)
 {
-    if (!frame->document() || !frame->view() || !frame->document()->renderView())
+    PrintContext printContext(&frame);
+    if (!printContext.beginAndComputePageRectsWithPageSize(frame, pageSizeInPixels))
         return;
-
-    frame->document()->updateLayout();
-
-    PrintContext printContext(frame);
-    printContext.begin(pageSizeInPixels.width(), pageSizeInPixels.height());
-
-    float pageHeight;
-    printContext.computePageRects(FloatRect(FloatPoint(0, 0), pageSizeInPixels), 0, 0, 1, pageHeight);
 
     const float pageWidth = pageSizeInPixels.width();
     const Vector<IntRect>& pageRects = printContext.pageRects();
@@ -337,18 +341,24 @@ void PrintContext::spoolAllPagesWithBoundaries(Frame* frame, GraphicsContext& gr
     graphicsContext.fillRect(FloatRect(0, 0, pageWidth, totalHeight));
 
     graphicsContext.save();
+#if PLATFORM(COCOA)
     graphicsContext.translate(0, totalHeight);
     graphicsContext.scale(FloatSize(1, -1));
+#endif
 
     int currentHeight = 0;
     for (size_t pageIndex = 0; pageIndex < pageRects.size(); pageIndex++) {
         // Draw a line for a page boundary if this isn't the first page.
         if (pageIndex > 0) {
+#if PLATFORM(COCOA)
+            int boundaryLineY = currentHeight;
+#else
+            int boundaryLineY = currentHeight - 1;
+#endif
             graphicsContext.save();
             graphicsContext.setStrokeColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
             graphicsContext.setFillColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
-            graphicsContext.drawLine(IntPoint(0, currentHeight),
-                                     IntPoint(pageWidth, currentHeight));
+            graphicsContext.drawLine(IntPoint(0, boundaryLineY), IntPoint(pageWidth, boundaryLineY));
             graphicsContext.restore();
         }
 

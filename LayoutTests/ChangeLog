@@ -1,3 +1,15 @@
+2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        printing does not use minimum page zoom factor
+        https://bugs.webkit.org/show_bug.cgi?id=108507
+
+        Reviewed by Darin Adler.
+
+        Unskip printing reftests that should pass now.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2015-09-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add failing expectation to css3/font-feature-settings-rendering-2.html on Mavericks.
