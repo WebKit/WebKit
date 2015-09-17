@@ -49,12 +49,12 @@
 
     // DOM Level 2 Core
 
-    [ObjCLegacyUnnamedParameters, TreatReturnedNullStringAs=Null] DOMString getAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, TreatReturnedNullStringAs=Null] DOMString getAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                             [Default=Undefined] optional DOMString localName);
-    [ObjCLegacyUnnamedParameters, RaisesException] void setAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, RaisesException] void setAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                        [Default=Undefined] optional DOMString qualifiedName, 
                                        [Default=Undefined] optional DOMString value);
-    [ObjCLegacyUnnamedParameters] void removeAttributeNS([TreatNullAs=NullString] DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters] void removeAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString namespaceURI,
                                           DOMString localName);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
@@ -62,11 +62,11 @@
 #else
     HTMLCollection getElementsByTagNameNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI, [Default=Undefined] optional DOMString localName);
 #endif
-    [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                            [Default=Undefined] optional DOMString localName);
     [RaisesException] Attr setAttributeNodeNS([Default=Undefined] optional Attr newAttr);
     boolean hasAttribute(DOMString name);
-    [ObjCLegacyUnnamedParameters] boolean hasAttributeNS([TreatNullAs=NullString,Default=Undefined] optional DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters] boolean hasAttributeNS([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString namespaceURI,
                                           [Default=Undefined] optional DOMString localName);
 
     readonly attribute CSSStyleDeclaration style;

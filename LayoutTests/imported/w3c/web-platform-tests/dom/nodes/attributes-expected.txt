@@ -33,7 +33,7 @@ PASS Only lowercase attributes are returned on HTML elements (upper case attribu
 PASS Only lowercase attributes are returned on HTML elements (mixed case attribute) 
 PASS First set attribute is returned with mapped attribute set first 
 PASS First set attribute is returned with mapped attribute set later 
-FAIL Non-HTML element with upper-case attribute assert_equals: el.hasAttributeNS(undefined) expected true but got false
+PASS Non-HTML element with upper-case attribute 
 PASS Attribute with prefix in local name 
 PASS Attribute loses its owner when removed 
 

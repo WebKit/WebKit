@@ -1,3 +1,15 @@
+2015-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Element's attribute NS API should treat defined undefined namespace as null
+        https://bugs.webkit.org/show_bug.cgi?id=149238
+        <rdar://problem/22562204>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C DOM test that one more check is passing.
+
+        * web-platform-tests/dom/nodes/attributes-expected.txt:
+
 2015-09-15  Chris Dumez  <cdumez@apple.com>
 
         Document.createElement(localName) does not handle correctly missing or null parameter
