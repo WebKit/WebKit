@@ -37,9 +37,9 @@ class ObjCRuntimeObject : public RuntimeObject {
 public:
     typedef RuntimeObject Base;
 
-    static ObjCRuntimeObject* create(VM& vm, Structure* structure, PassRefPtr<ObjcInstance> inst)
+    static ObjCRuntimeObject* create(VM& vm, Structure* structure, RefPtr<ObjcInstance>&& inst)
     {
-        ObjCRuntimeObject* object = new (NotNull, allocateCell<ObjCRuntimeObject>(vm.heap)) ObjCRuntimeObject(vm, structure, inst);
+        ObjCRuntimeObject* object = new (NotNull, allocateCell<ObjCRuntimeObject>(vm.heap)) ObjCRuntimeObject(vm, structure, WTF::move(inst));
         object->finishCreation(vm);
         return object;
     }
@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    ObjCRuntimeObject(VM&, Structure*, PassRefPtr<ObjcInstance>);
+    ObjCRuntimeObject(VM&, Structure*, RefPtr<ObjcInstance>&&);
     void finishCreation(VM&);
 };
 

@@ -37,9 +37,9 @@ namespace Bindings {
 
 WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base::s_info, 0, CREATE_METHOD_TABLE(RuntimeObject) };
 
-RuntimeObject::RuntimeObject(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
+RuntimeObject::RuntimeObject(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
     : JSDestructibleObject(vm, structure)
-    , m_instance(instance)
+    , m_instance(WTF::move(instance))
 {
 }
 

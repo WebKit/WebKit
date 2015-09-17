@@ -35,7 +35,7 @@ namespace Bindings {
 
 const ClassInfo ObjCRuntimeObject::s_info = { "ObjCRuntimeObject", &RuntimeObject::s_info, 0, CREATE_METHOD_TABLE(ObjCRuntimeObject) };
 
-ObjCRuntimeObject::ObjCRuntimeObject(VM& vm, Structure* structure, PassRefPtr<ObjcInstance> instance)
+ObjCRuntimeObject::ObjCRuntimeObject(VM& vm, Structure* structure, RefPtr<ObjcInstance>&& instance)
     : RuntimeObject(vm, structure, instance)
 {
 }

@@ -80,9 +80,9 @@ RootObject::InvalidationCallback::~InvalidationCallback()
 {
 }
 
-PassRefPtr<RootObject> RootObject::create(const void* nativeHandle, JSGlobalObject* globalObject)
+Ref<RootObject> RootObject::create(const void* nativeHandle, JSGlobalObject* globalObject)
 {
-    return adoptRef(new RootObject(nativeHandle, globalObject));
+    return adoptRef(*new RootObject(nativeHandle, globalObject));
 }
 
 RootObject::RootObject(const void* nativeHandle, JSGlobalObject* globalObject)

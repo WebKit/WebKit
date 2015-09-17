@@ -70,7 +70,7 @@ public:
 
 class Instance : public RefCounted<Instance> {
 public:
-    WEBCORE_EXPORT Instance(PassRefPtr<RootObject>);
+    WEBCORE_EXPORT Instance(RefPtr<RootObject>&&);
 
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
@@ -121,7 +121,7 @@ private:
 class Array {
     WTF_MAKE_NONCOPYABLE(Array);
 public:
-    Array(PassRefPtr<RootObject>);
+    explicit Array(RefPtr<RootObject>&&);
     virtual ~Array();
 
     virtual void setValueAt(ExecState*, unsigned index, JSValue) const = 0;

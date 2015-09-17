@@ -38,8 +38,8 @@ namespace JSC {
 
 namespace Bindings {
 
-Array::Array(PassRefPtr<RootObject> rootObject)
-    : m_rootObject(rootObject)
+Array::Array(RefPtr<RootObject>&& rootObject)
+    : m_rootObject(WTF::move(rootObject))
 {
     ASSERT(m_rootObject);
 }
@@ -48,8 +48,8 @@ Array::~Array()
 {
 }
 
-Instance::Instance(PassRefPtr<RootObject> rootObject)
-    : m_rootObject(rootObject)
+Instance::Instance(RefPtr<RootObject>&& rootObject)
+    : m_rootObject(WTF::move(rootObject))
 {
     ASSERT(m_rootObject);
 }

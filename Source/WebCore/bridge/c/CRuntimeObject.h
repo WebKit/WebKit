@@ -44,9 +44,9 @@ class CRuntimeObject : public RuntimeObject {
 public:
     typedef RuntimeObject Base;
 
-    static CRuntimeObject* create(VM& vm, Structure* structure, PassRefPtr<CInstance> instance)
+    static CRuntimeObject* create(VM& vm, Structure* structure, RefPtr<CInstance>&& instance)
     {
-        CRuntimeObject* object = new (NotNull, allocateCell<CRuntimeObject>(vm.heap)) CRuntimeObject(vm, structure, instance);
+        CRuntimeObject* object = new (NotNull, allocateCell<CRuntimeObject>(vm.heap)) CRuntimeObject(vm, structure, WTF::move(instance));
         object->finishCreation(vm);
         return object;
     }
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    CRuntimeObject(VM&, Structure*, PassRefPtr<CInstance>);
+    CRuntimeObject(VM&, Structure*, RefPtr<CInstance>&&);
     void finishCreation(VM&);
 };
 

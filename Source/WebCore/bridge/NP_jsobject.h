@@ -47,7 +47,7 @@ struct JavaScriptObject
     JSC::Bindings::RootObject* rootObject;
 };
 
-NPObject* _NPN_CreateScriptObject(NPP npp, JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> rootObject);
+NPObject* _NPN_CreateScriptObject(NPP, JSC::JSObject*, RefPtr<JSC::Bindings::RootObject>&&);
 NPObject* _NPN_CreateNoScriptObject(void);
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

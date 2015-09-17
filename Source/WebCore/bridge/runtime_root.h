@@ -33,7 +33,6 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace JSC {
@@ -57,7 +56,7 @@ class RootObject : public RefCounted<RootObject>, private JSC::WeakHandleOwner {
 public:
     WEBCORE_EXPORT virtual ~RootObject();
     
-    static PassRefPtr<RootObject> create(const void* nativeHandle, JSGlobalObject*);
+    static Ref<RootObject> create(const void* nativeHandle, JSGlobalObject*);
 
     bool isValid() { return m_isValid; }
     void invalidate();

@@ -37,7 +37,7 @@ class ObjcClass;
 
 class ObjcInstance : public Instance {
 public:
-    static PassRefPtr<ObjcInstance> create(ObjectStructPtr, PassRefPtr<RootObject>);
+    static RefPtr<ObjcInstance> create(ObjectStructPtr, RefPtr<RootObject>&&);
     virtual ~ObjcInstance();
     
     static void setGlobalException(NSString*, JSGlobalObject* exceptionEnvironment = 0); // A null exceptionEnvironment means the exception should propogate to any execution environment.
@@ -70,7 +70,7 @@ private:
     friend class ObjcField;
     static void moveGlobalExceptionToExecState(ExecState*);
 
-    ObjcInstance(ObjectStructPtr, PassRefPtr<RootObject>);
+    ObjcInstance(ObjectStructPtr, RefPtr<RootObject>&&);
 
     virtual RuntimeObject* newRuntimeObject(ExecState*);
 

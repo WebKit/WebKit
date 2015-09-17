@@ -78,8 +78,8 @@ void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
     globalExceptionString() = String();
 }
 
-CInstance::CInstance(NPObject* o, PassRefPtr<RootObject> rootObject)
-    : Instance(rootObject)
+CInstance::CInstance(NPObject* o, RefPtr<RootObject>&& rootObject)
+    : Instance(WTF::move(rootObject))
 {
     _object = _NPN_RetainObject(o);
     _class = 0;

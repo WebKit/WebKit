@@ -37,9 +37,9 @@ public:
     typedef JSDestructibleObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | TypeOfShouldCallGetCallData;
 
-    static RuntimeObject* create(VM& vm, Structure* structure, PassRefPtr<Instance> instance)
+    static RuntimeObject* create(VM& vm, Structure* structure, RefPtr<Instance>&& instance)
     {
-        RuntimeObject* object = new (NotNull, allocateCell<RuntimeObject>(vm.heap)) RuntimeObject(vm, structure, instance);
+        RuntimeObject* object = new (NotNull, allocateCell<RuntimeObject>(vm.heap)) RuntimeObject(vm, structure, WTF::move(instance));
         object->finishCreation(vm);
         return object;
     }
@@ -74,7 +74,7 @@ public:
     }
 
 protected:
-    RuntimeObject(VM&, Structure*, PassRefPtr<Instance>);
+    RuntimeObject(VM&, Structure*, RefPtr<Instance>&&);
     void finishCreation(VM&);
 
 private:
