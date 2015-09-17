@@ -1,3 +1,21 @@
+2015-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add failing expectation to css3/font-feature-settings-rendering-2.html on Mavericks.
+        The test failure is tracked by webkit.org/b/149246.
+
+        Also rebaseline js/dom/global-constructors-attributes-idb.html on WK1 after r189879.
+
+        * js/dom/global-constructors-attributes-idb-expected.txt: Replaced with LayoutTests/platform/wk2/js/dom/global-constructors-attributes-idb-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/wk2/js/dom/global-constructors-attributes-idb-expected.txt: Removed.
+
+2015-09-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add failing expectation to css3/font-feature-settings-rendering-2.html on Mavericks.
+        The test failure is tracked by webkit.org/b/149246.
+
+        * platform/mac/TestExpectations:
+
 2015-09-16  Brady Eidson  <beidson@apple.com>
 
         Have window.indexedDB.open return an IDBOpenDBRequest.
