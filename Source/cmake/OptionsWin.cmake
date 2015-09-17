@@ -108,7 +108,11 @@ endif ()
 WEBKIT_OPTION_END()
 
 if (NOT WEBKIT_LIBRARIES_DIR)
-    set(WEBKIT_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/win")
+    if (DEFINED ENV{WEBKIT_LIBRARIES})
+        set(WEBKIT_LIBRARIES_DIR "$ENV{WEBKIT_LIBRARIES}")
+    else ()
+        set(WEBKIT_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/win")
+    endif ()
 endif ()
 
 include_directories("${WEBKIT_LIBRARIES_DIR}/include")
