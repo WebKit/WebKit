@@ -827,6 +827,17 @@ static std::string testPath(const WKURLRef url)
     return std::string();
 }
 
+static bool parseBooleanTestHeaderValue(const std::string& value)
+{
+    if (value == "true")
+        return true;
+    if (value == "false")
+        return false;
+
+    LOG_ERROR("Found unexpected value '%s' for boolean option. Expected 'true' or 'false'.", value.c_str());
+    return false;
+}
+
 static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const TestInvocation& test)
 {
     std::string filename = testPath(test.url());
@@ -863,6 +874,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const Test
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         if (key == "language")
             String(value.c_str()).split(",", false, testOptions.overrideLanguages);
+        if (key == "useThreadedScrolling")
+            testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -875,9 +888,9 @@ TestOptions TestController::testOptionsForTest(const TestInvocation& test) const
     options.shouldShowWebView = m_shouldShowWebView;
     options.useFixedLayout = shouldUseFixedLayout(test);
 
-    updateTestOptionsFromTestHeader(options, test);
-
     updatePlatformSpecificTestOptionsForTest(options, test);
+
+    updateTestOptionsFromTestHeader(options, test);
 
     return options;
 }

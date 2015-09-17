@@ -1,0 +1,135 @@
+<!-- webkit-test-runner [ useThreadedScrolling=true ] -->
+<!-- This test has to use threaded scrolling because we don't
+properly support swipe pinning with the antique scrolling path. -->
+
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+function startSwipeGesture()
+{
+    eventSender.mouseMoveTo(100, 100);
+
+    // The first swipe should fail because we're scrolled to the middle of the document
+    // and this is all a single gesture. We can only start swipes if we *begin*
+    // pinned to the edge.
+    eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+    eventQueue.enqueueScrollEvent(10, 0, 'began');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(10, 0, 'changed');
+    eventQueue.enqueueScrollEvent(0, 0, 'ended');
+
+    eventQueue.callAfterEventDispatch(function () {
+        testRunner.clearTestRunnerCallbacks();
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+        setTimeout(function () {
+            // The second swipe should succeed because we are now scrolled to the left edge.
+            eventQueue.enqueueSwipeEvent(0, 0, 'maybegin');
+            eventQueue.enqueueScrollEvent(1, 0, 'began');
+            eventQueue.enqueueScrollEvent(10, 0, 'changed');
+        }, 0);
+    })
+}
+
+function completeSwipeGesture()
+{
+    eventQueue.enqueueSwipeEvent(1, 0, 'changed');
+    eventQueue.enqueueSwipeEvent(256, 0, 'changed');
+    eventQueue.enqueueSwipeEvent(0, 0, 'ended');
+}
+
+function didBeginSwipeNotReachedCallback()
+{
+    log("Failure. Should never begin a swipe, because we were in the middle of a scrolling gesture that started when the main frame was not pinned to the left.");
+}
+
+function didBeginSwipeCallback()
+{
+    log("didBeginSwipe");
+
+    shouldBe(false, eventQueue.hasPendingEvents(), "Event queue should be empty. Both scroll events should be required to start the swipe because of the swipe-start hysteresis.");
+
+    completeSwipeGesture();
+}
+
+function willEndSwipeCallback()
+{
+    log("willEndSwipe");
+
+    shouldBe(false, isFirstPage(), "The swipe should not yet have navigated away from the second page.");
+}
+
+function didEndSwipeCallback()
+{
+    log("didEndSwipe");
+
+    shouldBe(0, eventQueue.hasPendingEvents(), "Event queue should be empty. The swipe isn't complete until we see the end of the gesture.");
+    startMeasuringDuration("snapshotRemoval");
+}
+
+function didRemoveSwipeSnapshotCallback()
+{
+    log("didRemoveSwipeSnapshot");
+
+    shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
+    measuredDurationShouldBeLessThan("snapshotRemoval", 1000, "Because we're using the page cache, it shouldn't be long between the gesture completing and the snapshot being removed.")
+
+    testComplete();
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+window.onload = function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.getElementById("large").innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    document.getElementById("large").innerHTML = isFirstPage() ? "first" : "second";
+
+    if (isFirstPage()) {
+        initializeSwipeTest();
+
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeNotReachedCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        setTimeout(function () {
+            window.location.href = window.location.href + "?second";
+        }, 0);
+        return;
+    }
+
+    // Second page loaded.
+    window.scrollTo(1000, 0);
+    startSwipeGesture();
+};
+</script>
+</head>
+<body>
+<div id="large" style="width: 2000px; height: 2000px;"></div>
+</body>
