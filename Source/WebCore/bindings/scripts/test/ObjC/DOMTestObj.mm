@@ -424,6 +424,20 @@
     WebCore::raiseOnDOMError(ec);
 }
 
+- (DOMTestObj *)strictTypeCheckingAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->strictTypeCheckingAttribute()));
+}
+
+- (void)setStrictTypeCheckingAttribute:(DOMTestObj *)newStrictTypeCheckingAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newStrictTypeCheckingAttribute);
+
+    IMPL->setStrictTypeCheckingAttribute(core(newStrictTypeCheckingAttribute));
+}
+
 - (int)customAttr
 {
     WebCore::JSMainThreadNullState state;

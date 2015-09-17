@@ -95,7 +95,7 @@ HTMLTableSectionElement* HTMLTableElement::tHead() const
 
 void HTMLTableElement::setTHead(PassRefPtr<HTMLTableSectionElement> newHead, ExceptionCode& ec)
 {
-    if (newHead && !newHead->hasTagName(theadTag)) {
+    if (UNLIKELY(newHead && !newHead->hasTagName(theadTag))) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
@@ -124,7 +124,7 @@ HTMLTableSectionElement* HTMLTableElement::tFoot() const
 
 void HTMLTableElement::setTFoot(PassRefPtr<HTMLTableSectionElement> newFoot, ExceptionCode& ec)
 {
-    if (newFoot && !newFoot->hasTagName(tfootTag)) {
+    if (UNLIKELY(newFoot && !newFoot->hasTagName(tfootTag))) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }

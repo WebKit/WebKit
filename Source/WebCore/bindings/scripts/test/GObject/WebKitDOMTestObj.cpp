@@ -105,6 +105,7 @@ enum {
     PROP_ATTR_WITH_SETTER_EXCEPTION,
     PROP_STRING_ATTR_WITH_GETTER_EXCEPTION,
     PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
+    PROP_STRICT_TYPE_CHECKING_ATTRIBUTE,
     PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
     PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES,
@@ -334,6 +335,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_STRING_ATTR_WITH_SETTER_EXCEPTION:
         g_value_take_string(value, webkit_dom_test_obj_get_string_attr_with_setter_exception(self));
+        break;
+    case PROP_STRICT_TYPE_CHECKING_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_strict_type_checking_attribute(self));
         break;
     case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
         g_value_set_long(value, webkit_dom_test_obj_get_with_script_state_attribute(self));
@@ -714,6 +718,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "read-write gchar* TestObj:string-attr-with-setter-exception",
             "",
             WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_STRICT_TYPE_CHECKING_ATTRIBUTE,
+        g_param_spec_object(
+            "strict-type-checking-attribute",
+            "TestObj:strict-type-checking-attribute",
+            "read-only WebKitDOMTestObj* TestObj:strict-type-checking-attribute",
+            WEBKIT_DOM_TYPE_TEST_OBJ,
+            WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(
         gobjectClass,
@@ -1975,6 +1989,25 @@ void webkit_dom_test_obj_set_string_attr_with_setter_exception(WebKitDOMTestObj*
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
+}
+
+WebKitDOMTestObj* webkit_dom_test_obj_get_strict_type_checking_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->strictTypeCheckingAttribute());
+    return WebKit::kit(gobjectResult.get());
+}
+
+void webkit_dom_test_obj_set_strict_type_checking_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestObj* convertedValue = WebKit::core(value);
+    item->setStrictTypeCheckingAttribute(convertedValue);
 }
 
 glong webkit_dom_test_obj_get_with_script_state_attribute(WebKitDOMTestObj* self)

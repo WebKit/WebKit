@@ -2662,7 +2662,7 @@ sub GenerateImplementation
 
                     my $argType = $attribute->signature->type;
                     if ($codeGenerator->IsWrapperType($argType)) {
-                        push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info())) {\n");
+                        push(@implContent, "    if (UNLIKELY(!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info()))) {\n");
                         push(@implContent, "        throwAttributeTypeError(*exec, \"$interfaceName\", \"$name\", \"$argType\");\n");
                         push(@implContent, "        return;\n");
                         push(@implContent, "    };\n");

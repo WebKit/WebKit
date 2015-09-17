@@ -104,6 +104,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [GetterRaisesException] attribute DOMString stringAttrWithGetterException;
     [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
 
+    // Strict type checking.
+    [StrictTypeChecking] attribute TestObj strictTypeCheckingAttribute;
+
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
     [Custom] void customMethod();

@@ -1151,6 +1151,27 @@ WEBKIT_API void
 webkit_dom_test_obj_set_string_attr_with_setter_exception(WebKitDOMTestObj* self, const gchar* value, GError** error);
 
 /**
+ * webkit_dom_test_obj_get_strict_type_checking_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none): A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API WebKitDOMTestObj*
+webkit_dom_test_obj_get_strict_type_checking_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_strict_type_checking_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #WebKitDOMTestObj
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_strict_type_checking_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
+
+/**
  * webkit_dom_test_obj_get_with_script_state_attribute:
  * @self: A #WebKitDOMTestObj
  *
