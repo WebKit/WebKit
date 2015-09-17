@@ -79,11 +79,11 @@ WebInspector.BasicBlockAnnotator = class BasicBlockAnnotator extends WebInspecto
                 else if (!hasKey && !hasExecuted) {
                     var marker = this._highlightTextForBasicBlock(block);
                     this._basicBlockMarkers.set(key, marker);
-                } 
+                }
             }
 
             var totalTime = Date.now() - startTime;
-            var timeoutTime = Math.min(Math.max(6500, totalTime), 30 * totalTime);
+            var timeoutTime = Number.constrain(30 * totalTime, 500, 5000);
             this._timeoutIdentifier = setTimeout(this.insertAnnotations.bind(this), timeoutTime);
         }.bind(this));
     }

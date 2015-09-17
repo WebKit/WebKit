@@ -1,5 +1,18 @@
 2015-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Reduce Annotation Update Frequency
+        https://bugs.webkit.org/show_bug.cgi?id=149250
+
+        Reviewed by Saam Barati.
+
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        (WebInspector.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges):
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.BasicBlockAnnotator.prototype.insertAnnotations):
+        Set a lower bound of 500ms on update frequency for both annotators.
+
+2015-09-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix common typo "supress" => "suppress"
         https://bugs.webkit.org/show_bug.cgi?id=149199
 

@@ -68,8 +68,7 @@ WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.
             nodesWithUpdatedTypes.forEach(this._insertTypeToken, this);
 
             var totalTime = Date.now() - startTime;
-            var timeoutTime = Math.max(100, Math.min(2000, 8 * totalTime));
-
+            var timeoutTime = Number.constrain(8 * totalTime, 500, 2000);
             this._timeoutIdentifier = setTimeout(function timeoutUpdate() {
                 this._timeoutIdentifier = null;
                 this.insertAnnotations();
