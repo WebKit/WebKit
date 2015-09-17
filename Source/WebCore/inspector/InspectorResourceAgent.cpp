@@ -81,8 +81,8 @@ namespace {
 class InspectorThreadableLoaderClient final : public ThreadableLoaderClient {
     WTF_MAKE_NONCOPYABLE(InspectorThreadableLoaderClient);
 public:
-    InspectorThreadableLoaderClient(PassRefPtr<LoadResourceCallback> callback)
-        : m_callback(callback) { }
+    InspectorThreadableLoaderClient(RefPtr<LoadResourceCallback>&& callback)
+        : m_callback(WTF::move(callback)) { }
 
     virtual ~InspectorThreadableLoaderClient() { }
 
@@ -140,9 +140,9 @@ public:
         dispose();
     }
 
-    void setLoader(PassRefPtr<ThreadableLoader> loader)
+    void setLoader(RefPtr<ThreadableLoader>&& loader)
     {
-        m_loader = loader;
+        m_loader = WTF::move(loader);
     }
 
 private:

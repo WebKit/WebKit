@@ -1112,7 +1112,7 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const Inspec
     if (!highlightConfig)
         return;
 
-    m_overlay->highlightNodeList(nodes, *highlightConfig);
+    m_overlay->highlightNodeList(WTF::move(nodes), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString& errorString, const InspectorObject& highlightInspectorObject, const int* nodeId, const String* objectId)

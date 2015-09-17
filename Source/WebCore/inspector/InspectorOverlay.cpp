@@ -259,10 +259,10 @@ void InspectorOverlay::hideHighlight()
     update();
 }
 
-void InspectorOverlay::highlightNodeList(PassRefPtr<NodeList> nodes, const HighlightConfig& highlightConfig)
+void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const HighlightConfig& highlightConfig)
 {
     m_nodeHighlightConfig = highlightConfig;
-    m_highlightNodeList = nodes;
+    m_highlightNodeList = WTF::move(nodes);
     m_highlightNode = nullptr;
     update();
 }

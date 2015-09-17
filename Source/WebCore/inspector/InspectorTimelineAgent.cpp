@@ -223,19 +223,19 @@ void InspectorTimelineAgent::setPageScriptDebugServer(PageScriptDebugServer* scr
     m_scriptDebugServer = scriptDebugServer;
 }
 
-static inline void startProfiling(JSC::ExecState* exec, const String& title, PassRefPtr<Stopwatch> stopwatch)
+static inline void startProfiling(JSC::ExecState* exec, const String& title, RefPtr<Stopwatch>&& stopwatch)
 {
-    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, stopwatch);
+    JSC::LegacyProfiler::profiler()->startProfiling(exec, title, WTF::move(stopwatch));
 }
 
-static inline PassRefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const String& title)
+static inline RefPtr<JSC::Profile> stopProfiling(JSC::ExecState* exec, const String& title)
 {
     return JSC::LegacyProfiler::profiler()->stopProfiling(exec, title);
 }
 
-static inline void startProfiling(Frame* frame, const String& title, PassRefPtr<Stopwatch> stopwatch)
+static inline void startProfiling(Frame* frame, const String& title, RefPtr<Stopwatch>&& stopwatch)
 {
-    startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title, stopwatch);
+    startProfiling(toJSDOMWindow(frame, debuggerWorld())->globalExec(), title, WTF::move(stopwatch));
 }
 
 static inline PassRefPtr<JSC::Profile> stopProfiling(Frame* frame, const String& title)
@@ -264,7 +264,7 @@ void InspectorTimelineAgent::startFromConsole(JSC::ExecState* exec, const String
     m_pendingConsoleProfileRecords.append(createRecordEntry(TimelineRecordFactory::createConsoleProfileData(title), TimelineRecordType::ConsoleProfile, true, frameFromExecState(exec)));
 }
 
-PassRefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState* exec, const String& title)
+RefPtr<JSC::Profile> InspectorTimelineAgent::stopFromConsole(JSC::ExecState* exec, const String& title)
 {
     // Stop profiles in reverse order. If the title is empty, then stop the last profile.
     // Otherwise, match the title of the profile to stop.

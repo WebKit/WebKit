@@ -136,7 +136,7 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
     m_requestIdToResourceDataMap.set(requestId, new ResourceData(requestId, loaderId));
 }
 
-static PassRefPtr<TextResourceDecoder> createOtherResourceTextDecoder(const String& mimeType, const String& textEncodingName)
+static RefPtr<TextResourceDecoder> createOtherResourceTextDecoder(const String& mimeType, const String& textEncodingName)
 {
     RefPtr<TextResourceDecoder> decoder;
     if (!textEncodingName.isEmpty())
@@ -237,12 +237,12 @@ void NetworkResourcesData::addCachedResource(const String& requestId, CachedReso
     resourceData->setCachedResource(cachedResource);
 }
 
-void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, PassRefPtr<SharedBuffer> buffer, const String& textEncodingName)
+void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, RefPtr<SharedBuffer>&& buffer, const String& textEncodingName)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
-    resourceData->setBuffer(buffer);
+    resourceData->setBuffer(WTF::move(buffer));
     resourceData->setTextEncodingName(textEncodingName);
 }
 

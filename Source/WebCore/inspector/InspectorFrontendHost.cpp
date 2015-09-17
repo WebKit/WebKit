@@ -59,9 +59,9 @@ namespace WebCore {
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
 public:
-    static PassRefPtr<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, Deprecated::ScriptObject frontendApiObject, const Vector<ContextMenuItem>& items)
+    static Ref<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, Deprecated::ScriptObject frontendApiObject, const Vector<ContextMenuItem>& items)
     {
-        return adoptRef(new FrontendMenuProvider(frontendHost, frontendApiObject, items));
+        return adoptRef(*new FrontendMenuProvider(frontendHost, frontendApiObject, items));
     }
     
     void disconnect()

@@ -973,7 +973,7 @@ void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrume
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
         return;
     if (InspectorDatabaseAgent* dbAgent = instrumentingAgents.inspectorDatabaseAgent())
-        dbAgent->didOpenDatabase(database, domain, name, version);
+        dbAgent->didOpenDatabase(WTF::move(database), domain, name, version);
 }
 
 void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)

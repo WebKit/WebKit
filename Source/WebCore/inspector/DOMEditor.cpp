@@ -79,10 +79,10 @@ private:
 class DOMEditor::InsertBeforeAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(InsertBeforeAction);
 public:
-    InsertBeforeAction(Node* parentNode, PassRefPtr<Node> node, Node* anchorNode)
+    InsertBeforeAction(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode)
         : InspectorHistory::Action("InsertBefore")
         , m_parentNode(parentNode)
-        , m_node(node)
+        , m_node(WTF::move(node))
         , m_anchorNode(anchorNode)
     {
     }
@@ -281,10 +281,10 @@ private:
 class DOMEditor::ReplaceChildNodeAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(ReplaceChildNodeAction);
 public:
-    ReplaceChildNodeAction(Node* parentNode, PassRefPtr<Node> newNode, Node* oldNode)
+    ReplaceChildNodeAction(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode)
         : InspectorHistory::Action("ReplaceChildNode")
         , m_parentNode(parentNode)
-        , m_newNode(newNode)
+        , m_newNode(WTF::move(newNode))
         , m_oldNode(oldNode)
     {
     }
@@ -348,9 +348,9 @@ DOMEditor::DOMEditor(InspectorHistory* history) : m_history(history) { }
 
 DOMEditor::~DOMEditor() { }
 
-bool DOMEditor::insertBefore(Node* parentNode, PassRefPtr<Node> node, Node* anchorNode, ExceptionCode& ec)
+bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode, ExceptionCode& ec)
 {
-    return m_history->perform(std::make_unique<InsertBeforeAction>(parentNode, node, anchorNode), ec);
+    return m_history->perform(std::make_unique<InsertBeforeAction>(parentNode, WTF::move(node), anchorNode), ec);
 }
 
 bool DOMEditor::removeChild(Node* parentNode, Node* node, ExceptionCode& ec)
@@ -383,9 +383,9 @@ bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ExceptionCo
     return m_history->perform(std::make_unique<ReplaceWholeTextAction>(textNode, text), ec);
 }
 
-bool DOMEditor::replaceChild(Node* parentNode, PassRefPtr<Node> newNode, Node* oldNode, ExceptionCode& ec)
+bool DOMEditor::replaceChild(Node* parentNode, RefPtr<Node>&& newNode, Node* oldNode, ExceptionCode& ec)
 {
-    return m_history->perform(std::make_unique<ReplaceChildNodeAction>(parentNode, newNode, oldNode), ec);
+    return m_history->perform(std::make_unique<ReplaceChildNodeAction>(parentNode, WTF::move(newNode), oldNode), ec);
 }
 
 bool DOMEditor::setNodeValue(Node* node, const String& value, ExceptionCode& ec)
@@ -401,10 +401,10 @@ static void populateErrorString(const ExceptionCode& ec, ErrorString& errorStrin
     }
 }
 
-bool DOMEditor::insertBefore(Node* parentNode, PassRefPtr<Node> node, Node* anchorNode, ErrorString& errorString)
+bool DOMEditor::insertBefore(Node* parentNode, RefPtr<Node>&& node, Node* anchorNode, ErrorString& errorString)
 {
     ExceptionCode ec = 0;
-    bool result = insertBefore(parentNode, node, anchorNode, ec);
+    bool result = insertBefore(parentNode, WTF::move(node), anchorNode, ec);
     populateErrorString(ec, errorString);
     return result;
 }

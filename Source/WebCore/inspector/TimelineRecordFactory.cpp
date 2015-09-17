@@ -183,9 +183,9 @@ Ref<InspectorObject> TimelineRecordFactory::createAnimationFrameData(int callbac
     return WTF::move(data);
 }
 
-static PassRefPtr<InspectorArray> createQuad(const FloatQuad& quad)
+static Ref<InspectorArray> createQuad(const FloatQuad& quad)
 {
-    RefPtr<InspectorArray> array = InspectorArray::create();
+    Ref<InspectorArray> array = InspectorArray::create();
     array->pushDouble(quad.p1().x());
     array->pushDouble(quad.p1().y());
     array->pushDouble(quad.p2().x());

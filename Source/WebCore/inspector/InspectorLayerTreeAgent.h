@@ -34,7 +34,6 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorProtocolObjects.h>
 #include "RenderLayer.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

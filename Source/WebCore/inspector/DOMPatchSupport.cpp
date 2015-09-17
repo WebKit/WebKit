@@ -468,7 +468,7 @@ bool DOMPatchSupport::removeChildAndMoveToNew(Digest* oldDigest, ExceptionCode& 
     if (it != m_unusedNodesMap.end()) {
         Digest* newDigest = it->value;
         Node* newNode = newDigest->m_node;
-        if (!m_domEditor->replaceChild(newNode->parentNode(), oldNode, newNode, ec))
+        if (!m_domEditor->replaceChild(newNode->parentNode(), WTF::move(oldNode), newNode, ec))
             return false;
         newDigest->m_node = oldNode.get();
         markNodeAsUsed(newDigest);

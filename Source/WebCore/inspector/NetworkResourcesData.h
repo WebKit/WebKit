@@ -129,7 +129,7 @@ public:
     void maybeAddResourceData(const String& requestId, const char* data, size_t dataLength);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
-    void addResourceSharedBuffer(const String& requestId, PassRefPtr<SharedBuffer>, const String& textEncodingName);
+    void addResourceSharedBuffer(const String& requestId, RefPtr<SharedBuffer>&&, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
     Vector<String> removeCachedResource(CachedResource*);
     void clear(const String& preservedLoaderId = String());

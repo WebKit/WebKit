@@ -193,14 +193,14 @@ private:
 
 } // namespace
 
-void InspectorDatabaseAgent::didOpenDatabase(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
+void InspectorDatabaseAgent::didOpenDatabase(RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
     if (InspectorDatabaseResource* resource = findByFileName(database->fileName())) {
-        resource->setDatabase(database);
+        resource->setDatabase(WTF::move(database));
         return;
     }
 
-    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
+    RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(WTF::move(database), domain, name, version);
     m_resources.set(resource->id(), resource);
     // Resources are only bound while visible.
     if (m_enabled)

@@ -134,7 +134,7 @@ public:
 
     // Methods called from WebCore.
     void startFromConsole(JSC::ExecState*, const String &title);
-    PassRefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
+    RefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
 
     // InspectorInstrumentation callbacks.
     void didInstallTimer(int timerId, int timeout, bool singleShot, Frame*);
@@ -198,8 +198,11 @@ private:
     struct TimelineRecordEntry {
         TimelineRecordEntry()
             : type(TimelineRecordType::EventDispatch) { }
-        TimelineRecordEntry(PassRefPtr<Inspector::InspectorObject> record, PassRefPtr<Inspector::InspectorObject> data, PassRefPtr<Inspector::InspectorArray> children, TimelineRecordType type)
-            : record(record), data(data), children(children), type(type)
+        TimelineRecordEntry(RefPtr<Inspector::InspectorObject>&& record, RefPtr<Inspector::InspectorObject>&& data, RefPtr<Inspector::InspectorArray>&& children, TimelineRecordType type)
+            : record(WTF::move(record))
+            , data(WTF::move(data))
+            , children(WTF::move(children))
+            , type(type)
         {
         }
 

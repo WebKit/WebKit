@@ -67,7 +67,7 @@ public:
     // Called from the injected script.
     String databaseId(Database*);
 
-    void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+    void didOpenDatabase(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 private:
     Database* databaseForId(const String& databaseId);
     InspectorDatabaseResource* findByFileName(const String& fileName);

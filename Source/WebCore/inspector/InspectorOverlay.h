@@ -120,7 +120,7 @@ public:
     void setPausedInDebuggerMessage(const String*);
 
     void hideHighlight();
-    void highlightNodeList(PassRefPtr<NodeList>, const HighlightConfig&);
+    void highlightNodeList(RefPtr<NodeList>&&, const HighlightConfig&);
     void highlightNode(Node*, const HighlightConfig&);
     void highlightQuad(std::unique_ptr<FloatQuad>, const HighlightConfig&);
     
