@@ -64,13 +64,18 @@ public:
 
     // APIs to control the module loader.
     JSValue provide(ExecState*, JSValue key, Status, const String&);
+    JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer);
     JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer);
+    JSInternalPromise* linkAndEvaluateModule(ExecState*, JSValue moduleKey);
 
     // Platform dependent hooked APIs.
     JSInternalPromise* resolve(ExecState*, JSValue name, JSValue referrer);
     JSInternalPromise* fetch(ExecState*, JSValue key);
     JSInternalPromise* translate(ExecState*, JSValue key, JSValue payload);
     JSInternalPromise* instantiate(ExecState*, JSValue key, JSValue source);
+
+    // Additional platform dependent hooked APIs.
+    JSValue evaluate(ExecState*, JSValue key, JSValue moduleRecord);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 

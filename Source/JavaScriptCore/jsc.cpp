@@ -707,7 +707,7 @@ protected:
 };
 
 const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
-const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, 0, &shouldInterruptScriptBeforeTimeout, &moduleLoaderResolve, &moduleLoaderFetch, nullptr, nullptr };
+const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, 0, &shouldInterruptScriptBeforeTimeout, &moduleLoaderResolve, &moduleLoaderFetch, nullptr, nullptr, nullptr };
 
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure)
@@ -1466,7 +1466,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadModule(ExecState* exec)
     if (!fetchScriptFromLocalFileSystem(fileName, script))
         return JSValue::encode(exec->vm().throwException(exec, createError(exec, ASCIILiteral("Could not open file."))));
 
-    JSInternalPromise* promise = evaluateModule(exec, fileName);
+    JSInternalPromise* promise = loadAndEvaluateModule(exec, fileName);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1639,7 +1639,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         if (scripts[i].isFile) {
             fileName = scripts[i].argument;
             if (module)
-                promise = evaluateModule(globalObject->globalExec(), fileName);
+                promise = loadAndEvaluateModule(globalObject->globalExec(), fileName);
             else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer))
                     return false; // fail early so we can catch missing files
@@ -1655,7 +1655,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
 
         if (module) {
             if (!promise)
-                promise = evaluateModule(globalObject->globalExec(), jscSource(scriptBuffer, fileName));
+                promise = loadAndEvaluateModule(globalObject->globalExec(), jscSource(scriptBuffer, fileName));
             globalObject->globalExec()->clearException();
             promise->then(globalObject->globalExec(), nullptr, errorHandler);
             globalObject->vm().drainMicrotasks();

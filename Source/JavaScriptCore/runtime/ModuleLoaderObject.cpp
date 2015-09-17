@@ -85,8 +85,10 @@ const ClassInfo ModuleLoaderObject::s_info = { "ModuleLoader", &Base::s_info, &m
     moduleDeclarationInstantiation moduleLoaderObjectModuleDeclarationInstantiation DontEnum|Function 2
     moduleEvaluation               moduleLoaderObjectModuleEvaluation               DontEnum|Function 2
     evaluate                       moduleLoaderObjectEvaluate                       DontEnum|Function 2
-    loadModule                     moduleLoaderObjectLoadModule                     DontEnum|Function 2
     provide                        moduleLoaderObjectProvide                        DontEnum|Function 3
+    loadAndEvaluateModule          moduleLoaderObjectLoadAndEvaluateModule          DontEnum|Function 2
+    loadModule                     moduleLoaderObjectLoadModule                     DontEnum|Function 2
+    linkAndEvaluateModule          moduleLoaderObjectLinkAndEvaluateModule          DontEnum|Function 1
     parseModule                    moduleLoaderObjectParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderObjectRequestedModules               DontEnum|Function 1
     resolve                        moduleLoaderObjectResolve                        DontEnum|Function 1
@@ -146,6 +148,20 @@ JSValue ModuleLoaderObject::provide(ExecState* exec, JSValue key, Status status,
     return call(exec, function, callType, callData, this, arguments);
 }
 
+JSInternalPromise* ModuleLoaderObject::loadAndEvaluateModule(ExecState* exec, JSValue moduleName, JSValue referrer)
+{
+    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadAndEvaluateModulePublicName()));
+    CallData callData;
+    CallType callType = JSC::getCallData(function, callData);
+    ASSERT(callType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(moduleName);
+    arguments.append(referrer);
+
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+}
+
 JSInternalPromise* ModuleLoaderObject::loadModule(ExecState* exec, JSValue moduleName, JSValue referrer)
 {
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadModulePublicName()));
@@ -156,6 +172,19 @@ JSInternalPromise* ModuleLoaderObject::loadModule(ExecState* exec, JSValue modul
     MarkedArgumentBuffer arguments;
     arguments.append(moduleName);
     arguments.append(referrer);
+
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
+}
+
+JSInternalPromise* ModuleLoaderObject::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey)
+{
+    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().linkAndEvaluateModulePublicName()));
+    CallData callData;
+    CallType callType = JSC::getCallData(function, callData);
+    ASSERT(callType != CallTypeNone);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(moduleKey);
 
     return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments));
 }
@@ -217,6 +246,21 @@ JSInternalPromise* ModuleLoaderObject::instantiate(ExecState* exec, JSValue key,
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
     deferred->resolve(exec, jsUndefined());
     return deferred->promise();
+}
+
+JSValue ModuleLoaderObject::evaluate(ExecState* exec, JSValue key, JSValue moduleRecordValue)
+{
+    if (Options::dumpModuleLoadingState())
+        dataLog("Loader [evaluate] ", printableModuleKey(exec, key), "\n");
+
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    if (globalObject->globalObjectMethodTable()->moduleLoaderEvaluate)
+        return globalObject->globalObjectMethodTable()->moduleLoaderEvaluate(globalObject, exec, key, moduleRecordValue);
+
+    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(moduleRecordValue);
+    if (!moduleRecord)
+        return jsUndefined();
+    return moduleRecord->evaluate(exec);
 }
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderObjectParseModule(ExecState* exec)
@@ -281,18 +325,6 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectModuleDeclarationInstantiation(Ex
     return JSValue::encode(jsUndefined());
 }
 
-EncodedJSValue JSC_HOST_CALL moduleLoaderObjectEvaluate(ExecState* exec)
-{
-    JSModuleRecord* moduleRecord = jsDynamicCast<JSModuleRecord*>(exec->argument(0));
-    if (!moduleRecord)
-        return JSValue::encode(jsUndefined());
-
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [evaluate] ", moduleRecord->moduleKey(), "\n");
-
-    return JSValue::encode(moduleRecord->execute(exec));
-}
-
 // ------------------------------ Hook Functions ---------------------------
 
 EncodedJSValue JSC_HOST_CALL moduleLoaderObjectResolve(ExecState* exec)
@@ -344,6 +376,19 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderObjectInstantiate(ExecState* exec)
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->instantiate(exec, exec->argument(0), exec->argument(1)));
+}
+
+// ------------------- Additional Hook Functions ---------------------------
+
+EncodedJSValue JSC_HOST_CALL moduleLoaderObjectEvaluate(ExecState* exec)
+{
+    // To instrument and retrieve the errors raised from the module execution,
+    // we inserted the hook point here.
+
+    ModuleLoaderObject* loader = jsDynamicCast<ModuleLoaderObject*>(exec->thisValue());
+    if (!loader)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(loader->evaluate(exec, exec->argument(0), exec->argument(1)));
 }
 
 } // namespace JSC

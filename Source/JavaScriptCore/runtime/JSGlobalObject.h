@@ -170,6 +170,9 @@ struct GlobalObjectMethodTable {
 
     typedef JSInternalPromise* (*ModuleLoaderInstantiatePtr)(JSGlobalObject*, ExecState*, JSValue, JSValue);
     ModuleLoaderInstantiatePtr moduleLoaderInstantiate;
+
+    typedef JSValue (*ModuleLoaderEvaluatePtr)(JSGlobalObject*, ExecState*, JSValue, JSValue);
+    ModuleLoaderEvaluatePtr moduleLoaderEvaluate;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {

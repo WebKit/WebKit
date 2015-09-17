@@ -45,9 +45,17 @@ inline JSValue evaluate(ExecState* exec, const SourceCode& sourceCode, JSValue t
     NakedPtr<Exception> unused;
     return evaluate(exec, sourceCode, thisValue, unused);
 }
-JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(ExecState*, const SourceCode&);
-JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(ExecState*, const Identifier& moduleName);
-JS_EXPORT_PRIVATE JSInternalPromise* evaluateModule(ExecState*, const String& moduleName);
+
+// Load the module source and evaluate it.
+JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const String& moduleName);
+JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(ExecState*, const SourceCode&);
+
+// Fetch the module source, and instantiate the module record.
+JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const String& moduleName);
+JS_EXPORT_PRIVATE JSInternalPromise* loadModule(ExecState*, const SourceCode&);
+
+// Link and evaluate the already linked module.
+JS_EXPORT_PRIVATE JSInternalPromise* linkAndEvaluateModule(ExecState*, const Identifier& moduleKey);
 
 } // namespace JSC
 

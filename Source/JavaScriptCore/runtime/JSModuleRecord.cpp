@@ -844,7 +844,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
     m_moduleEnvironment.set(vm, this, moduleEnvironment);
 }
 
-JSValue JSModuleRecord::execute(ExecState* exec)
+JSValue JSModuleRecord::evaluate(ExecState* exec)
 {
     if (!m_moduleProgramExecutable)
         return jsUndefined();

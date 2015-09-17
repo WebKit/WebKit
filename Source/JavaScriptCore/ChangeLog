@@ -1,3 +1,53 @@
+2015-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add more fine-grained APIs and additional hooks to control module loader from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=149129
+
+        Reviewed by Saam Barati.
+
+        No behavior change.
+
+        Module tag `<script type="module>` will be executed asynchronously.
+        But we would like to fetch the resources before when the postTask-ed task is performed.
+        So instead of 1 API that fetch, instantiate and execute the module,
+        we need 2 fine-grained APIs.
+
+        1. Fetch and initialize a module, but not execute it yet.
+        2. Link and execute a module specified by the key (this will be invoked asynchronously).
+
+        And to instrument the script execution (like reporting the execution time of the module to
+        the inspector), we need a hook to inject code around an execution of a module body.
+
+        * builtins/ModuleLoaderObject.js:
+        (moduleEvaluation):
+        (loadAndEvaluateModule):
+        (loadModule):
+        (linkAndEvaluateModule):
+        * jsc.cpp:
+        (functionLoadModule):
+        (runWithScripts):
+        * runtime/Completion.cpp:
+        (JSC::identifierToJSValue):
+        (JSC::createSymbolForEntryPointModule):
+        (JSC::rejectPromise):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::linkAndEvaluateModule):
+        (JSC::evaluateModule): Deleted.
+        * runtime/Completion.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::evaluate):
+        (JSC::JSModuleRecord::execute): Deleted.
+        * runtime/JSModuleRecord.h:
+        * runtime/ModuleLoaderObject.cpp:
+        (JSC::ModuleLoaderObject::loadAndEvaluateModule):
+        (JSC::ModuleLoaderObject::linkAndEvaluateModule):
+        (JSC::ModuleLoaderObject::evaluate):
+        (JSC::moduleLoaderObjectEvaluate):
+        * runtime/ModuleLoaderObject.h:
+
 2015-09-17  Saam barati  <sbarati@apple.com>
 
         Implement try/catch in the DFG.

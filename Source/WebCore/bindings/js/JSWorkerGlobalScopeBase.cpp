@@ -43,7 +43,7 @@ namespace WebCore {
 
 const ClassInfo JSWorkerGlobalScopeBase::s_info = { "WorkerGlobalScope", &JSDOMGlobalObject::s_info, 0, CREATE_METHOD_TABLE(JSWorkerGlobalScopeBase) };
 
-const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout, nullptr, nullptr, nullptr, nullptr };
+const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, &queueTaskToEventLoop, &shouldInterruptScriptBeforeTimeout, nullptr, nullptr, nullptr, nullptr, nullptr };
 
 JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerGlobalScope> impl)
     : JSDOMGlobalObject(vm, structure, &normalWorld(vm), &s_globalObjectMethodTable)

@@ -123,7 +123,7 @@ public:
     }
 
     void link(ExecState*);
-    JSValue execute(ExecState*);
+    JS_EXPORT_PRIVATE JSValue evaluate(ExecState*);
 
     ModuleProgramExecutable* moduleProgramExecutable() const { return m_moduleProgramExecutable.get(); }
 

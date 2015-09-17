@@ -483,22 +483,10 @@ function moduleEvaluation(moduleRecord)
         var requiredModuleRecord = pair.value;
         this.moduleEvaluation(requiredModuleRecord);
     }
-    this.evaluate(moduleRecord);
+    this.evaluate(entry.key, moduleRecord);
 }
 
-function loadModule(moduleName, referrer)
-{
-    "use strict";
-
-    var loader = this;
-    // Loader.resolve hook point.
-    // resolve: moduleName => Promise(moduleKey)
-    // Take the name and resolve it to the unique identifier for the resource location.
-    // For example, take the "jquery" and return the URL for the resource.
-    return this.resolve(moduleName, referrer).then(function (key) {
-        return loader.requestReady(key);
-    });
-}
+// APIs to control the module loader.
 
 function provide(key, stage, value)
 {
@@ -534,4 +522,41 @@ function provide(key, stage, value)
     }
 
     throw new @TypeError("Requested module is already ready to be executed.");
+}
+
+function loadAndEvaluateModule(moduleName, referrer)
+{
+    "use strict";
+
+    var loader = this;
+    // Loader.resolve hook point.
+    // resolve: moduleName => Promise(moduleKey)
+    // Take the name and resolve it to the unique identifier for the resource location.
+    // For example, take the "jquery" and return the URL for the resource.
+    return this.resolve(moduleName, referrer).then(function (key) {
+        return loader.requestReady(key);
+    });
+}
+
+function loadModule(moduleName, referrer)
+{
+    "use strict";
+
+    var loader = this;
+    // Loader.resolve hook point.
+    // resolve: moduleName => Promise(moduleKey)
+    // Take the name and resolve it to the unique identifier for the resource location.
+    // For example, take the "jquery" and return the URL for the resource.
+    return this.resolve(moduleName, referrer).then(function (key) {
+        return loader.requestInstantiateAll(key);
+    }).then(function (entry) {
+        return entry.key;
+    });
+}
+
+function linkAndEvaluateModule(key)
+{
+    "use strict";
+
+    return this.requestReady(key);
 }
