@@ -1,3 +1,110 @@
+2015-09-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r189821.
+
+    2015-09-15  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Tiled drawing is rendering more times than it should
+            https://bugs.webkit.org/show_bug.cgi?id=149144
+            <rdar://problem/22313905>
+
+            Reviewed by Simon Fraser.
+
+            Provide a more faithful implemenation of the Objective C tiled drawing logic.
+            (1) Create a new WebTiledBackingLayerWin class that represents a the
+                container of tiles. This matches the Objective C design.
+            (2) Move implementation of several methods (e.g., isOpaque) to the internal
+                class implementation so that the Tile Drawing logic can perform special
+                handling in these cases.
+            (3) Remove the duplicated Tiled Drawing logic from PlatformCALayerWinInternal,
+                since it was just duplicating code in TileController and TileGrid.
+            (4) Clean up the display callback code to avoid performing incorrect flipping
+                of the coordinate system.
+
+            * PlatformAppleWin.cmake: Add new WebTiledBackingLayerWin file.            
+            * WebCore.vcxproj/WebCore.vcxproj: Add the new WebTiledBackingLayerWin files.
+            * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+            * platform/graphics/ca/PlatformCALayer.cpp:
+            (PlatformCALayer::flipContext): Added convenience method.
+            (PlatformCALayer::drawRepaintIndicator): Ditto.
+            * platform/graphics/ca/TileGrid.cpp:
+            (TileGrid::platformCALayerPaintContents): Flip the context before drawing the repaint
+            indicator on Windows.
+            * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+            (PlatformCALayerWin::PlatformCALayerWin): Create a WebTiledBackingLayerWin
+            object if using tiled drawing.
+            (PlatformCALayerWin::~PlatformCALayerWin):
+            (PlatformCALayerWin::isOpaque): Move implementation to internal class.
+            (PlatformCALayerWin::setOpaque): Ditto.
+            (PlatformCALayerWin::setBorderWidth): Ditto.
+            (PlatformCALayerWin::setBorderColor): Ditto.
+            (PlatformCALayerWin::contentsScale): Ditto.
+            (PlatformCALayerWin::setContentsScale): Ditto.
+            (PlatformCALayerWin::cornerRadius): Ditto.
+            (PlatformCALayerWin::tiledBacking): Ditto.
+            (PlatformCALayerWin::drawTextAtPoint): New helper method to draw repaint counter
+            text. Needed to work around bug in CG.
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+            (PlatformCALayerWinInternal::PlatformCALayerWinInternal): Remove tiling-logic
+            related member variables.
+            (PlatformCALayerWinInternal::~PlatformCALayerWinInternal):
+            (shouldInvertBeforeDrawingContent): Added convenience method.
+            (shouldInvertBeforeDrawingRepaintCounters): Ditto.
+            (PlatformCALayerWinInternal::displayCallback):
+            (PlatformCALayerWinInternal::drawRepaintCounters): Helper method to
+            share code between the two layer classes.
+            (PlatformCALayerWinInternal::internalSetNeedsDisplay): use nullptr.
+            (PlatformCALayerWinInternal::setNeedsDisplay): Ditto.
+            (PlatformCALayerWinInternal::setNeedsDisplayInRect): Move tiled code
+            to WebTiledBackingLayerWin and simplify the remaing code.
+            (PlatformCALayerWinInternal::setSublayers): Remove tile code.
+            (PlatformCALayerWinInternal::getSublayers): Ditto.
+            (PlatformCALayerWinInternal::removeAllSublayers): Ditto.
+            (PlatformCALayerWinInternal::insertSublayer): Ditto.
+            (PlatformCALayerWinInternal::sublayerCount): Ditto.
+            (PlatformCALayerWinInternal::indexOfSublayer): Ditto.
+            (PlatformCALayerWinInternal::sublayerAtIndex): Ditto.
+            (PlatformCALayerWinInternal::setBounds): Ditto.
+            (PlatformCALayerWinInternal::setFrame): Ditto.
+            (PlatformCALayerWinInternal::isOpaque): Ditto.
+            (PlatformCALayerWinInternal::setOpaque): Ditto.
+            (PlatformCALayerWinInternal::contentsScale): Ditto.
+            (PlatformCALayerWinInternal::setContentsScale): Ditto.
+            (PlatformCALayerWinInternal::setBorderWidth): Ditto.
+            (PlatformCALayerWinInternal::setBorderColor): Ditto.
+            (layerTypeIsTiled): Deleted.
+            (PlatformCALayerWinInternal::constrainedSize): Deleted.
+            (PlatformCALayerWinInternal::tileDisplayCallback): Deleted.
+            (PlatformCALayerWinInternal::addTile): Deleted.
+            (PlatformCALayerWinInternal::removeTile): Deleted.
+            (PlatformCALayerWinInternal::tileAtIndex): Deleted.
+            (PlatformCALayerWinInternal::tileCount): Deleted.
+            (PlatformCALayerWinInternal::updateTiles): Deleted.
+            (PlatformCALayerWinInternal::drawTile): Deleted.
+            (PlatformCALayerWinInternal::createTileController): Deleted.
+            (PlatformCALayerWinInternal::tiledBacking): Deleted.
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.h:
+            (WebCore::PlatformCALayerWinInternal::owner):
+            * platform/graphics/ca/win/WebTiledBackingLayerWin.cpp: Added.
+            (WebTiledBackingLayerWin::WebTiledBackingLayerWin):
+            (WebTiledBackingLayerWin::~WebTiledBackingLayerWin):
+            (DisplayOnMainThreadContext::DisplayOnMainThreadContext):
+            (redispatchOnMainQueue):
+            (WebTiledBackingLayerWin::displayCallback):
+            (WebTiledBackingLayerWin::setNeedsDisplay):
+            (WebTiledBackingLayerWin::setNeedsDisplayInRect):
+            (WebTiledBackingLayerWin::setBounds):
+            (WebTiledBackingLayerWin::isOpaque):
+            (WebTiledBackingLayerWin::setOpaque):
+            (WebTiledBackingLayerWin::contentsScale):
+            (WebTiledBackingLayerWin::setContentsScale):
+            (WebTiledBackingLayerWin::setBorderWidth):
+            (WebTiledBackingLayerWin::setBorderColor):
+            (WebTiledBackingLayerWin::createTileController):
+            (WebTiledBackingLayerWin::tiledBacking):
+            (WebTiledBackingLayerWin::invalidate):
+            * platform/graphics/ca/win/WebTiledBackingLayerWin.h: Added.
+
 2015-09-11  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r189598.

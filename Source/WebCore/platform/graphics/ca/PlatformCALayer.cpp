@@ -62,9 +62,11 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     snprintf(text, sizeof(text), "%d", repaintCount);
     
     CGRect indicatorBox = platformCALayer->bounds();
+
+    CGContextSaveGState(context);
+
     indicatorBox.size.width = 12 + 10 * strlen(text);
     indicatorBox.size.height = 27;
-    CGContextSaveGState(context);
     
     CGContextSetAlpha(context, 0.5f);
     CGContextBeginTransparencyLayerWithRect(context, indicatorBox, 0);
@@ -81,15 +83,27 @@ void PlatformCALayer::drawRepaintIndicator(CGContextRef context, PlatformCALayer
     else
         CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     
+    platformCALayer->drawTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
+    
+    CGContextEndTransparencyLayer(context);
+    CGContextRestoreGState(context);
+}
+
+void PlatformCALayer::flipContext(CGContextRef context, CGFloat height)
+{
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -height);
+}
+
+// This function is needed to work around a bug in Windows CG <rdar://problem/22703470>
+void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, const char* text, size_t length) const
+{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
     CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
-    CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
+    CGContextShowTextAtPoint(context, x, y, text, length);
 #pragma clang diagnostic pop
-    
-    CGContextEndTransparencyLayer(context);
-    CGContextRestoreGState(context);
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size)
