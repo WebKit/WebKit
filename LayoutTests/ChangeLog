@@ -1,3 +1,11 @@
+2015-09-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip a media test that fails when an AppleTV is around.
+
+        This will be fixed soon by https://bugs.webkit.org/show_bug.cgi?id=148912
+
+        * platform/mac/TestExpectations:
+
 2015-09-17  Tim Horton  <timothy_horton@apple.com>
 
         Add a test ensuring that scrolling in the middle of a page can't start a swipe gesture

@@ -1192,6 +1192,9 @@ webkit.org/b/142142 fullscreen/video-controls-override.html [ Skip ]
 webkit.org/b/142142 http/tests/media/hls/video-controls-live-stream.html [ Skip ]
 webkit.org/b/142142 media/video-volume-slider-drag.html [ Skip ]
 
+# Fails when an actual AppleTV is nearby.
+webkit.org/b/148912 media/controls/airplay-picker.html [ Pass Failure ]
+
 # Mavericks and prior do not support APNG.
 webkit.org/b/17022 [ MountainLion Mavericks ] fast/images/animated-png.html [ Skip ]
 
