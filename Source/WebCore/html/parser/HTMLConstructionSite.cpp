@@ -102,9 +102,9 @@ static inline void insert(HTMLConstructionSiteTask& task)
         parent->parserRemoveChild(*task.child);
 
     if (task.nextChild)
-        task.parent->parserInsertBefore(task.child.get(), task.nextChild.get());
+        task.parent->parserInsertBefore(*task.child, *task.nextChild);
     else
-        task.parent->parserAppendChild(task.child.get());
+        task.parent->parserAppendChild(*task.child);
 }
 
 static inline void executeInsertTask(HTMLConstructionSiteTask& task)
@@ -126,7 +126,7 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
     if (ContainerNode* parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
 
-    task.parent->parserAppendChild(task.child);
+    task.parent->parserAppendChild(*task.child);
 }
 
 static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask& task)

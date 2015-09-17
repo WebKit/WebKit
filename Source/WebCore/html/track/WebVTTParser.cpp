@@ -540,8 +540,8 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
-        RefPtr<Text> child = Text::create(document, m_token.characters());
-        m_currentNode->parserAppendChild(child);
+        auto child = Text::create(document, m_token.characters());
+        m_currentNode->parserAppendChild(WTF::move(child));
         break;
     }
     case WebVTTTokenTypes::StartTag: {
@@ -554,7 +554,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         if (nodeType == WebVTTNodeTypeRubyText && currentType != WebVTTNodeTypeRuby)
             break;
 
-        RefPtr<WebVTTElement> child = WebVTTElement::create(nodeType, document);
+        auto child = WebVTTElement::create(nodeType, document);
         if (!m_token.classes().isEmpty())
             child->setAttribute(classAttr, m_token.classes());
 
@@ -566,8 +566,8 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         }
         if (!m_languageStack.isEmpty())
             child->setLanguage(m_languageStack.last());
-        m_currentNode->parserAppendChild(child);
-        m_currentNode = child;
+        m_currentNode->parserAppendChild(child.copyRef());
+        m_currentNode = WTF::move(child);
         break;
     }
     case WebVTTTokenTypes::EndTag: {

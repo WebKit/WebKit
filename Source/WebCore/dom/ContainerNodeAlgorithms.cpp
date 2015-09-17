@@ -157,6 +157,71 @@ void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
     child.document().notifyRemovePendingSheetIfNeeded();
 }
 
+void addChildNodesToDeletionQueue(Node*& head, Node*& tail, ContainerNode& container)
+{
+    // We have to tell all children that their parent has died.
+    Node* next = nullptr;
+    for (auto* node = container.firstChild(); node; node = next) {
+        ASSERT(!node->m_deletionHasBegun);
+
+        next = node->nextSibling();
+        node->setNextSibling(nullptr);
+        node->setParentNode(nullptr);
+        container.setFirstChild(next);
+        if (next)
+            next->setPreviousSibling(nullptr);
+
+        if (!node->refCount()) {
+#ifndef NDEBUG
+            node->m_deletionHasBegun = true;
+#endif
+            // Add the node to the list of nodes to be deleted.
+            // Reuse the nextSibling pointer for this purpose.
+            if (tail)
+                tail->setNextSibling(node);
+            else
+                head = node;
+
+            tail = node;
+        } else {
+            Ref<Node> protect(*node); // removedFromDocument may remove remove all references to this node.
+            if (Document* containerDocument = container.ownerDocument())
+                containerDocument->adoptIfNeeded(node);
+            if (node->inDocument())
+                notifyChildNodeRemoved(container, *node);
+        }
+    }
+
+    container.setLastChild(nullptr);
+}
+
+void removeDetachedChildrenInContainer(ContainerNode& container)
+{
+    // List of nodes to be deleted.
+    Node* head = nullptr;
+    Node* tail = nullptr;
+
+    addChildNodesToDeletionQueue(head, tail, container);
+
+    Node* node;
+    Node* next;
+    while ((node = head)) {
+        ASSERT(node->m_deletionHasBegun);
+
+        next = node->nextSibling();
+        node->setNextSibling(nullptr);
+
+        head = next;
+        if (!next)
+            tail = nullptr;
+
+        if (is<ContainerNode>(node))
+            addChildNodesToDeletionQueue(head, tail, downcast<ContainerNode>(*node));
+        
+        delete node;
+    }
+}
+
 #ifndef NDEBUG
 static unsigned assertConnectedSubrameCountIsConsistent(ContainerNode& node)
 {

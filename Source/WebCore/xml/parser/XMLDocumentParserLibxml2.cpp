@@ -819,23 +819,19 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     m_sawFirstElement = true;
 
     QualifiedName qName(prefix, localName, uri);
-    RefPtr<Element> newElement = m_currentNode->document().createElement(qName, true);
-    if (!newElement) {
-        stopParsing();
-        return;
-    }
+    auto newElement = m_currentNode->document().createElement(qName, true);
 
     Vector<Attribute> prefixedAttributes;
     ExceptionCode ec = 0;
     handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, nb_namespaces, ec);
     if (ec) {
-        setAttributes(newElement.get(), prefixedAttributes, parserContentPolicy());
+        setAttributes(newElement.ptr(), prefixedAttributes, parserContentPolicy());
         stopParsing();
         return;
     }
 
     handleElementAttributes(prefixedAttributes, libxmlAttributes, nb_attributes, ec);
-    setAttributes(newElement.get(), prefixedAttributes, parserContentPolicy());
+    setAttributes(newElement.ptr(), prefixedAttributes, parserContentPolicy());
     if (ec) {
         stopParsing();
         return;
@@ -843,25 +839,25 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     newElement->beginParsingChildren();
 
-    ScriptElement* scriptElement = toScriptElementIfPossible(newElement.get());
+    ScriptElement* scriptElement = toScriptElementIfPossible(newElement.ptr());
     if (scriptElement)
         m_scriptStartPosition = textPosition();
 
-    m_currentNode->parserAppendChild(newElement.get());
+    m_currentNode->parserAppendChild(newElement.copyRef());
     if (!m_currentNode) // Synchronous DOM events may have removed the current node.
         return;
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    if (is<HTMLTemplateElement>(*newElement))
-        pushCurrentNode(downcast<HTMLTemplateElement>(*newElement).content());
+    if (is<HTMLTemplateElement>(newElement))
+        pushCurrentNode(downcast<HTMLTemplateElement>(newElement.get()).content());
     else
-        pushCurrentNode(newElement.get());
+        pushCurrentNode(newElement.ptr());
 #else
     pushCurrentNode(newElement.get());
 #endif
 
-    if (is<HTMLHtmlElement>(*newElement))
-        downcast<HTMLHtmlElement>(*newElement).insertedByParser();
+    if (is<HTMLHtmlElement>(newElement))
+        downcast<HTMLHtmlElement>(newElement.get()).insertedByParser();
 
     if (!m_parsingFragment && isFirstElement && document()->frame())
         document()->frame()->injectUserScripts(InjectAtDocumentStart);
@@ -999,14 +995,14 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     // ### handle exceptions
     ExceptionCode ec = 0;
-    RefPtr<ProcessingInstruction> pi = m_currentNode->document().createProcessingInstruction(
+    Ref<ProcessingInstruction> pi = *m_currentNode->document().createProcessingInstruction(
         toString(target), toString(data), ec);
     if (ec)
         return;
 
     pi->setCreatedByParser(true);
 
-    m_currentNode->parserAppendChild(pi.get());
+    m_currentNode->parserAppendChild(pi.copyRef());
 
     pi->finishParsingChildren();
 
@@ -1031,8 +1027,8 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 
     exitText();
 
-    RefPtr<CDATASection> newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
-    m_currentNode->parserAppendChild(newNode.release());
+    auto newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
+    m_currentNode->parserAppendChild(WTF::move(newNode));
 }
 
 void XMLDocumentParser::comment(const xmlChar* s)
@@ -1047,8 +1043,8 @@ void XMLDocumentParser::comment(const xmlChar* s)
 
     exitText();
 
-    RefPtr<Comment> newNode = Comment::create(m_currentNode->document(), toString(s));
-    m_currentNode->parserAppendChild(newNode.release());
+    auto newNode = Comment::create(m_currentNode->document(), toString(s));
+    m_currentNode->parserAppendChild(WTF::move(newNode));
 }
 
 enum StandaloneInfo {
