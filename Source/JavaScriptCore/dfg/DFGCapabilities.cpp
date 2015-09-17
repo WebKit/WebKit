@@ -211,6 +211,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_new_arrow_func_exp:
     case op_create_lexical_environment:
     case op_get_parent_scope:
+    case op_catch:
         return CanCompileAndInline;
 
     case op_put_to_scope: {

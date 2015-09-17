@@ -434,7 +434,6 @@ private:
         m_currentBlock->variablesAtTail.local(local) = node;
         return node;
     }
-
     Node* setLocal(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
         CodeOrigin oldSemanticOrigin = m_currentSemanticOrigin;
@@ -3780,6 +3779,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             flushForTerminal();
             addToGraph(Unreachable);
             LAST_OPCODE(op_throw_static_error);
+
+        case op_catch:
+            m_graph.m_hasExceptionHandlers = true;
+            NEXT_OPCODE(op_catch);
             
         case op_call:
             handleCall(currentInstruction, Call, CodeForCall);

@@ -131,6 +131,7 @@ public:
 
     Frame& operator*() { return m_frame; }
     ALWAYS_INLINE Frame* operator->() { return &m_frame; }
+    CodeBlock* unwindToMachineCodeBlockFrame();
 
 private:
     JS_EXPORT_PRIVATE StackVisitor(CallFrame* startFrame);

@@ -245,7 +245,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             break;
         }
     }
-    
+
     // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit. This
     // could toast some stack that the DFG used. We need to do it before storing to stack offsets
     // used by baseline.
@@ -384,7 +384,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     reifyInlinedCallFrames(m_jit, exit);
 
     // And finish.
-    adjustAndJumpToTarget(m_jit, exit);
+    adjustAndJumpToTarget(m_jit, exit, exit.m_isExceptionHandler);
 }
 
 } } // namespace JSC::DFG

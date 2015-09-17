@@ -1,3 +1,209 @@
+2015-09-17  Saam barati  <sbarati@apple.com>
+
+        Implement try/catch in the DFG.
+        https://bugs.webkit.org/show_bug.cgi?id=147374
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements try/catch inside the DFG JIT.
+        It also prevents tier up to the FTL for any functions
+        that have an op_catch in them that are DFG compiled.
+
+        This patch accomplishes implementing try/catch inside
+        the DFG by OSR exiting to op_catch when an exception is thrown.
+        We can OSR exit from an exception inside the DFG in two ways:
+        1) We have a JS call (can also be via implicit getter/setter in GetById/PutById)
+        2) We have an exception when returing from a callOperation
+
+        In the case of (1), we get to the OSR exit from genericUnwind because
+        the exception was thrown in a child call frame. This means these
+        OSR exits must act as defacto op_catches (even though we will still OSR
+        exit to a baseline op_catch). That means they must restore the stack pointer
+        and call frame.
+
+        In the case of (2), we can skip genericUnwind because we know the exception 
+        check will take us to a particular OSR exit. Instead, we link these
+        exception checks as jumps to a particular OSR exit.
+
+        Both types of OSR exits will exit into op_catch inside the baseline JIT.
+        Because they exit to op_catch, these OSR exits must set callFrameForCatch
+        to the proper call frame pointer.
+
+        We "handle" all exceptions inside the machine frame of the DFG code
+        block. This means the machine code block is responsible for "catching"
+        exceptions of any inlined frames' try/catch. OSR exit will then exit to 
+        the proper baseline CodeBlock after reifying the inlined frames
+        (DFG::OSRExit::m_codeOrigin corresponds to the op_catch we will exit to). 
+        Also, genericUnwind will never consult an inlined call frame's CodeBlock to 
+        see if they can catch the exception because they can't. We always unwind to the 
+        next machine code block frame. The DFG CodeBlock changes how the exception 
+        handler table is keyed: it is now keyed by CallSiteIndex for DFG code blocks. 
+
+        So, when consulting call sites that throw, we keep track of the CallSiteIndex,
+        and the HandlerInfo for the corresponding baseline exception handler for
+        that particular CallSiteIndex (if an exception at that call site will be caught). 
+        Then, when we're inside DFG::JITCompiler::link(), we install new HandlerInfo's
+        inside the DFG CodeBlock and key it by the corresponding CallSiteIndex.
+        (The CodeBlock only has HandlerInfos for the OSR exits that are to be arrived
+        at from genericUnwind).
+
+        Also, each OSR exit will know if it acting as an exception handler, and
+        whether or not it will be arrived at from genericUnwind. When we know we 
+        will arrive at an OSR exit from genericUnwind, we set the corresponding 
+        HandlerInfo's nativeCode CodeLocationLabel field to be the OSR exit.
+
+        This patch also introduces a new Phase inside the DFG that ensures
+        that DFG CodeBlocks that handle exceptions take the necessary
+        steps to keep live variables at "op_catch" live according the
+        OSR exit value recovery machinery. We accomplish this by flushing
+        all live op_catch variables to the stack when inside a "try" block.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        (JSC::CodeBlock::handlerForIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearExceptionHandlers):
+        (JSC::CodeBlock::appendExceptionHandler):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::computePreciseJumpTargets):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::addCodeOrigin):
+        (JSC::DFG::CommonData::lastCallSite):
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        (JSC::DFG::JITCompiler::willCatchExceptionInMachineFrame):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        (JSC::DFG::JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitStoreCodeOrigin):
+        (JSC::DFG::JITCompiler::emitStoreCallSiteIndex):
+        (JSC::DFG::JITCompiler::appendCall):
+        (JSC::DFG::JITCompiler::exceptionCheckWithCallFrameRollback):
+        (JSC::DFG::JITCompiler::blockHeads):
+        (JSC::DFG::JITCompiler::exceptionCheck): Deleted.
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp: Added.
+        (JSC::DFG::FlushLiveCatchVariablesInsertionPhase::FlushLiveCatchVariablesInsertionPhase):
+        (JSC::DFG::FlushLiveCatchVariablesInsertionPhase::run):
+        (JSC::DFG::FlushLiveCatchVariablesInsertionPhase::willCatchException):
+        (JSC::DFG::FlushLiveCatchVariablesInsertionPhase::handleBlock):
+        (JSC::DFG::FlushLiveCatchVariablesInsertionPhase::newVariableAccessData):
+        (JSC::DFG::performLiveCatchVariablePreservationPhase):
+        * dfg/DFGLiveCatchVariablePreservationPhase.h: Added.
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::OSRExit::setPatchableCodeOffset):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::SlowPathGenerator):
+        (JSC::DFG::SlowPathGenerator::~SlowPathGenerator):
+        (JSC::DFG::SlowPathGenerator::generate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/Interpreter.cpp:
+        (JSC::GetCatchHandlerFunctor::operator()):
+        (JSC::UnwindFunctor::operator()):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::gotoNextFrame):
+        (JSC::StackVisitor::unwindToMachineCodeBlockFrame):
+        (JSC::StackVisitor::readFrame):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::operator*):
+        (JSC::StackVisitor::operator->):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        (JSC::AssemblyHelpers::emitNonPatchableExceptionCheck):
+        (JSC::AssemblyHelpers::emitStoreStructureWithTypeInfo):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitCount):
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/VM.h:
+        (JSC::VM::clearException):
+        (JSC::VM::clearLastException):
+        (JSC::VM::addressOfCallFrameForCatch):
+        (JSC::VM::exception):
+        (JSC::VM::addressOfException):
+        * tests/stress/dfg-exception-try-catch-in-constructor-with-inlined-throw.js: Added.
+        (f):
+        (bar):
+        (Foo):
+        * tests/stress/es6-for-of-loop-exception.js: Added.
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        (baz):
+        (foo):
+        * tests/stress/exception-dfg-inlined-frame-not-strict-equal.js: Added.
+        (assert):
+        (o.valueOf):
+        (o.toString):
+        (read):
+        (bar):
+        (foo):
+        * tests/stress/exception-dfg-not-strict-equal.js: Added.
+        (foo):
+        (o.valueOf):
+        (o.toString):
+        (assert):
+        (shouldDoSomethingInFinally):
+        (catch):
+        * tests/stress/exception-dfg-operation-read-value.js: Added.
+        (assert):
+        (o.valueOf):
+        (o.toString):
+        (read):
+        (foo):
+        * tests/stress/exception-dfg-throw-from-catch-block.js: Added.
+        (assert):
+        (baz):
+        (bar):
+        (foo):
+
 2015-09-17  Filip Pizlo  <fpizlo@apple.com>
 
         0.0 should really be 0.0

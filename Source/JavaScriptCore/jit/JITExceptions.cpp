@@ -54,7 +54,14 @@ void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
     void* catchRoutine;
     Instruction* catchPCForInterpreter = 0;
     if (handler) {
-        catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
+        // handler->target is meaningless for getting a code offset when catching
+        // the exception in a DFG frame. This bytecode target offset could be
+        // something that's in an inlined frame, which means an array access
+        // with this bytecode offset in the machine frame is utterly meaningless
+        // and can cause an overflow. OSR exit properly exits to handler->target
+        // in the proper frame.
+        if (callFrame->codeBlock()->jitType() != JITCode::DFGJIT)
+            catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
 #if ENABLE(JIT)
         catchRoutine = handler->nativeCode.executableAddress();
 #else

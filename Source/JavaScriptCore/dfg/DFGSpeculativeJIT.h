@@ -2476,6 +2476,7 @@ public:
     
     Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;
     Vector<SilentRegisterSavePlan> m_plans;
+    unsigned m_outOfLineStreamIndex { UINT_MAX };
 };
 
 

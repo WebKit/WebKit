@@ -195,6 +195,7 @@ public:
         AnyHandler
     };
     HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler = RequiredHandler::AnyHandler);
+    HandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
     unsigned lineNumberForBytecodeOffset(unsigned bytecodeOffset);
     unsigned columnNumberForBytecodeOffset(unsigned bytecodeOffset);
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
@@ -909,6 +910,18 @@ public:
 
         EvalCodeCache m_evalCodeCache;
     };
+
+    void clearExceptionHandlers()
+    {
+        if (m_rareData)
+            m_rareData->m_exceptionHandlers.clear();
+    }
+
+    void appendExceptionHandler(const HandlerInfo& handler)
+    {
+        createRareDataIfNecessary(); // We may be handling the exception of an inlined call frame.
+        m_rareData->m_exceptionHandlers.append(handler);
+    }
 
 protected:
     virtual void visitWeakReferences(SlotVisitor&) override;

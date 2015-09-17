@@ -57,6 +57,12 @@ CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)
     return CallSiteIndex(index);
 }
 
+CallSiteIndex CommonData::lastCallSite() const
+{
+    ASSERT(codeOrigins.size());
+    return CallSiteIndex(codeOrigins.size() - 1);
+}
+
 void CommonData::shrinkToFit()
 {
     codeOrigins.shrinkToFit();
