@@ -856,7 +856,9 @@ inline SlowPathReturnType virtualForWithFunction(
 #if ENABLE(WEBASSEMBLY)
             if (!isCall(kind)) {
                 exec->vm().throwException(exec, createNotAConstructorError(exec, function));
-                return reinterpret_cast<char*>(vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress());
+                return encodeResult(
+                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                    reinterpret_cast<void*>(KeepTheFrame));
             }
 
             WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
