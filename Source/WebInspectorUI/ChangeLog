@@ -1,3 +1,18 @@
+2015-09-17  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        REGRESSION(r188427): Web Inspector: Extra whitespace left behind in styles sidebar after clicking in and out
+        https://bugs.webkit.org/show_bug.cgi?id=149197
+
+        Reviewed by Timothy Hatcher.
+
+        In r188427, logic was added to preserve the leading whitespace of styles in a CSS file.
+        An unfortunate side effect of this was that extra newlines in between CSS properties
+        were treated as valid and left where they were.  This is undesired behaviour and often
+        clutters the styles sidebar.  These changes remove the extra newlines.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._formattedContent):
+
 2015-09-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce Annotation Update Frequency

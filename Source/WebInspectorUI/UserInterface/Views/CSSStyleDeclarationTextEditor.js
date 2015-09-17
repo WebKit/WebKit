@@ -726,7 +726,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // Add the suffix whitespace we stripped.
         content += this._suffixWhitespace;
 
-        return content;
+        // This regular expression replacement removes extra newlines
+        // in between properties while preserving leading whitespace
+        return content.replace(/\s*\n\s*\n(\s*)/g, "\n$1");
     }
 
     _commitChanges()
