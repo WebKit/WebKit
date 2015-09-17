@@ -68,6 +68,10 @@
     -webkit-grid-template-columns: minmax(10%, calc(50% + 15px));
     -webkit-grid-template-rows: minmax(calc(20px + 10%), 50%);
 }
+.gridWithAutoInsideMinMax {
+    -webkit-grid-template-columns: minmax(auto, 20px);
+    -webkit-grid-template-rows: minmax(-webkit-min-content, auto);
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -88,6 +92,7 @@
 <div class="gridWithCalcComplex" id="gridWithCalcComplex"></div>
 <div class="gridWithCalcInsideMinMax" id="gridWithCalcInsideMinMax"></div>
 <div class="gridWithCalcComplexInsideMinMax" id="gridWithCalcComplexInsideMinMax"></div>
+<div class="gridWithAutoInsideMinMax" id="gridWithAutoInsideMinMax"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script src="resources/non-grid-columns-rows-get-set.js"></script>
 <script src="../../resources/js-test-post.js"></script>

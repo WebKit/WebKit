@@ -1,3 +1,35 @@
+2015-09-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout]  Using automatic (instead of min-content) minimums for 'auto' tracks
+        https://bugs.webkit.org/show_bug.cgi?id=142329
+
+        Reviewed by Darin Adler.
+
+        Based on Blink's r198697 by <svillar@igalia.com> and r200478 by <jfernandez@igalia.com>
+
+        New tests to verify that auto is a valid keyword inside
+        minmax. Updated the expectations of existing tests to
+        reflect the new status of auto.
+
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-columns-rows-get-set.html:
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-columns-expected.txt: Added.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-columns.html: Added.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-rows-expected.txt: Added.
+        * fast/css-grid-layout/grid-automatic-minimum-for-auto-rows.html: Added.
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set-multiple.html:
+        * fast/css-grid-layout/non-grid-columns-rows-get-set.html:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js:
+
 2015-09-17  Javier Fernandez  <jfernandez@igalia.com>
 
         [CSS Grid Layout] Relayout whenever Box Alignment properties change

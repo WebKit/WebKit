@@ -19,6 +19,7 @@ testGridTemplatesValues(document.getElementById("gridWithCalcCalc"), "200px 100p
 testGridTemplatesValues(document.getElementById("gridWithCalcAndFixed"), "50% 80px", "88px 25%", "400px 80px", "88px 150px");
 testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "190px minmax(-webkit-min-content, 80px)", "minmax(25%, -webkit-max-content) 53px", "190px 80px", "150px 53px");
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(103px, 400px) 120px", "150px minmax(5%, 175px)", "400px 120px", "150px 175px");
+testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "0px 30px", "132px 60px");
 
 debug("");
 debug("Test the initial value");
@@ -37,6 +38,7 @@ testGridTemplatesSetJSValues("16em minmax(16px, 20px)", "minmax(10%, 15%) auto",
 testGridTemplatesSetJSValues("16em 2fr", "14fr auto", "160px 640px", "600px 0px");
 testGridTemplatesSetJSValues("calc(25px) calc(2em)", "auto calc(10%)", "25px 20px", "0px 60px", "calc(25px) calc(2em)", "auto calc(10%)");
 testGridTemplatesSetJSValues("calc(25px + 40%) minmax(-webkit-min-content, calc(10% + 12px))", "minmax(calc(75% - 350px), -webkit-max-content) auto", "345px 92px", "100px 0px", "calc(25px + 40%) minmax(-webkit-min-content, calc(10% + 12px))", "minmax(calc(75% - 350px), -webkit-max-content) auto");
+testGridTemplatesSetJSValues("auto minmax(16px, auto)", "minmax(auto, 15%) 10vw", "0px 16px", "90px 80px");
 
 debug("");
 debug("Test getting wrong values set from CSS");
@@ -51,7 +53,6 @@ testGridTemplatesSetBadJSValues("none none", "none none");
 testGridTemplatesSetBadJSValues("auto none", "auto none");
 testGridTemplatesSetBadJSValues("auto none 16em", "auto 18em none");
 testGridTemplatesSetBadJSValues("-webkit-fit-content -webkit-fit-content", "-webkit-fit-available -webkit-fit-available");
-testGridTemplatesSetBadJSValues("auto minmax(16px, auto)", "minmax(auto, 15%) 10vw");
 
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-10px minmax(16px, 32px)", "minmax(10%, 15%) -10vw");

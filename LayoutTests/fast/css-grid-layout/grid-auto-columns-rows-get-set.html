@@ -26,6 +26,11 @@
     -webkit-grid-template-columns: 20px;
 }
 
+.gridAutoAutoInMinMax {
+    -webkit-grid-auto-rows: minmax(auto, 8vh);
+    -webkit-grid-auto-columns: minmax(10vw, auto);
+}
+
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
@@ -34,6 +39,7 @@
 <div class="grid gridAutoFixedFixed" id="gridAutoFixedFixed"></div>
 <div class="grid gridAutoMinMax" id="gridAutoMinMax"></div>
 <div class="grid gridAutoMinMaxContent" id="gridAutoMinMaxContent"></div>
+<div class="grid gridAutoAutoInMinMax" id="gridAutoAutoInMinMax"></div>
 <div class="grid gridAutoFixedFixed" id="gridAutoFixedFixedWithChildren">
     <div class="sizedToGridArea firstRowFirstColumn"></div>
 </div>
@@ -48,6 +54,7 @@ debug("Test getting -webkit-grid-auto-columns and -webkit-grid-auto-rows set thr
 testGridAutoDefinitionsValues(document.getElementById("gridAutoFixedFixed"), "30px", "50px");
 testGridAutoDefinitionsValues(document.getElementById("gridAutoMinMax"), "minmax(10%, 15px)", "minmax(30%, 100px)");
 testGridAutoDefinitionsValues(document.getElementById("gridAutoMinMaxContent"), "-webkit-min-content", "-webkit-max-content");
+testGridAutoDefinitionsValues(document.getElementById("gridAutoAutoInMinMax"), "minmax(auto, 48px)", "minmax(80px, auto)");
 
 debug("");
 debug("Test that getting grid-template-columns and grid-template-rows set through CSS lists every track listed whether implicitly or explicitly created");
@@ -117,14 +124,6 @@ document.body.appendChild(element);
 element.style.webkitGridAutoColumns = "minmax()";
 // No comma.
 element.style.webkitGridAutoRows = "minmax(30px 30% 30em)";
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
-shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
-
-element = document.createElement("div");
-document.body.appendChild(element);
-// Auto is not allowed inside minmax.
-element.style.webkitGridAutoColumns = "minmax(auto, 8vh)";
-element.style.webkitGridAutoRows = "minmax(10vw, auto)";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
 

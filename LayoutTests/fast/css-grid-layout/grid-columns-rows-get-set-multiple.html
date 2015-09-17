@@ -99,6 +99,10 @@
     -webkit-grid-template-rows: calc(150px) minmax(5%, calc(50% - 125px));
     font: 10px Ahem;
 }
+.gridWithAutoInsideMinMax {
+    -webkit-grid-template-columns: minmax(auto, -webkit-min-content) 30px;
+    -webkit-grid-template-rows: calc(100px + 2em) minmax(10%, auto);
+}
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
@@ -130,6 +134,7 @@
 <div class="grid gridWithCalcAndFixed" id="gridWithCalcAndFixed"></div>
 <div class="grid gridWithCalcAndMinMax" id="gridWithCalcAndMinMax"></div>
 <div class="grid gridWithCalcInsideMinMax" id="gridWithCalcInsideMinMax"></div>
+<div class="grid gridWithAutoInsideMinMax" id="gridWithAutoInsideMinMax"></div>
 <script src="resources/grid-definitions-parsing-utils.js"></script>
 <script src="resources/grid-columns-rows-get-set-multiple.js"></script>
 <script src="../../resources/js-test-post.js"></script>

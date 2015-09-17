@@ -17,6 +17,7 @@ testGridTemplatesValues(document.getElementById("gridWithCalcCalc"), "200px 100p
 testGridTemplatesValues(document.getElementById("gridWithCalcAndFixed"), "50% 80px", "88px 25%");
 testGridTemplatesValues(document.getElementById("gridWithCalcAndMinMax"), "calc(30px + 20%) minmax(-webkit-min-content, 80px)", "minmax(25%, -webkit-max-content) calc(10% - 7px)");
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(calc(23px + 10%), 400px) 120px", "150px minmax(5%, calc(50% - 125px))");
+testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px) 10%", "-webkit-max-content minmax(-webkit-min-content, auto)");
 
 debug("");
 debug("Test the initial value");
@@ -34,6 +35,7 @@ testNonGridTemplatesSetJSValues("auto 16em 22px", "56% 10em auto", "auto 160px 2
 testNonGridTemplatesSetJSValues("16em minmax(16px, 20px)", "minmax(10%, 15%) auto", "160px minmax(16px, 20px)");
 testNonGridTemplatesSetJSValues("16em 2fr", "14fr auto", "160px 2fr");
 testNonGridTemplatesSetJSValues("50% 12vw", "5% 85vh", "50% 96px", "5% 510px");
+testNonGridTemplatesSetJSValues("auto minmax(16px, auto)", "minmax(auto, 15%) 10vw", "auto minmax(16px, auto)", "minmax(auto, 15%) 80px");
 
 debug("");
 debug("Test getting wrong values set from CSS");
@@ -53,7 +55,6 @@ testGridTemplatesSetBadJSValues("none none", "none none");
 testGridTemplatesSetBadJSValues("auto none", "auto none");
 testGridTemplatesSetBadJSValues("auto none 16em", "auto 18em none");
 testGridTemplatesSetBadJSValues("-webkit-fit-content -webkit-fit-content", "-webkit-fit-available -webkit-fit-available");
-testGridTemplatesSetBadJSValues("auto minmax(16px, auto)", "minmax(auto, 15%) 10vw");
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-10px minmax(16px, 32px)", "minmax(10%, 15%) -10vw");
 testGridTemplatesSetBadJSValues("10px minmax(16px, -1vw)", "minmax(-1%, 15%) 10vw");

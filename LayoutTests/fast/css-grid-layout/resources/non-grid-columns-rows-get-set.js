@@ -15,6 +15,7 @@ testGridTemplatesValues(document.getElementById("gridWithCalc"), "150px", "75px"
 testGridTemplatesValues(document.getElementById("gridWithCalcComplex"), "calc(50% + 150px)", "calc(65% + 75px)");
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMax"), "minmax(10%, 15px)", "minmax(20px, 50%)");
 testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMax"), "minmax(10%, calc(50% + 15px))", "minmax(calc(20px + 10%), 50%)");
+testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMax"), "minmax(auto, 20px)", "minmax(-webkit-min-content, auto)");
 
 debug("");
 debug("Test getting wrong values for grid-template-columns and grid-template-rows through CSS (they should resolve to the default: 'none')");
@@ -54,6 +55,7 @@ testNonGridTemplatesSetJSValues("3600Fr", "154fR", "3600fr", "154fr", "3600fr", 
 testNonGridTemplatesSetJSValues("3.1459fr", "2.718fr");
 // A leading '+' is allowed.
 testNonGridTemplatesSetJSValues("+3fr", "+4fr", "3fr", "4fr", "3fr", "4fr");
+testNonGridTemplatesSetJSValues("minmax(auto, 8vh)", "minmax(10vw, auto)", "minmax(auto, 48px)", "minmax(80px, auto)");
 
 debug("");
 debug("Test setting grid-template-columns and grid-template-rows to bad values through JS");
@@ -63,8 +65,6 @@ testGridTemplatesSetBadJSValues("minmax(10px 20px)", "minmax(10px)")
 testGridTemplatesSetBadJSValues("minmax(minmax(10px, 20px), 20px)", "minmax(10px, 20px, 30px)");
 // No breadth value and no comma.
 testGridTemplatesSetBadJSValues("minmax()", "minmax(30px 30% 30em)");
-// Auto is not allowed inside minmax.
-testGridTemplatesSetBadJSValues("minmax(auto, 8vh)", "minmax(10vw, auto)");
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
 testGridTemplatesSetBadJSValues("0fr", "1r");

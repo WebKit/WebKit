@@ -10,6 +10,8 @@ PASS window.getComputedStyle(gridAutoMinMax, '').getPropertyValue('-webkit-grid-
 PASS window.getComputedStyle(gridAutoMinMax, '').getPropertyValue('-webkit-grid-auto-columns') is "minmax(30%, 100px)"
 PASS window.getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('-webkit-grid-auto-rows') is "-webkit-min-content"
 PASS window.getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('-webkit-grid-auto-columns') is "-webkit-max-content"
+PASS window.getComputedStyle(gridAutoAutoInMinMax, '').getPropertyValue('-webkit-grid-auto-rows') is "minmax(auto, 48px)"
+PASS window.getComputedStyle(gridAutoAutoInMinMax, '').getPropertyValue('-webkit-grid-auto-columns') is "minmax(80px, auto)"
 
 Test that getting grid-template-columns and grid-template-rows set through CSS lists every track listed whether implicitly or explicitly created
 PASS window.getComputedStyle(gridAutoFixedFixedWithChildren, '').getPropertyValue('-webkit-grid-auto-rows') is "30px"
@@ -42,8 +44,6 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is 'minmax(-webkit-max-content, -webkit-min-content)'
 
 Test setting grid-auto-columns and grid-auto-rows to bad minmax value through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is 'auto'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns') is 'auto'

@@ -20,6 +20,7 @@ testGridTemplatesValues(document.getElementById("gridWithCalcElement"), "150px",
 testGridTemplatesValues(document.getElementById("gridWithCalcComplexElement"), "550px", "465px");
 testGridTemplatesValues(document.getElementById("gridWithCalcInsideMinMaxElement"), "minmax(10%, 15px)", "minmax(20px, 50%)", "80px", "300px");
 testGridTemplatesValues(document.getElementById("gridWithCalcComplexInsideMinMaxElement"), "minmax(10%, 415px)", "minmax(80px, 50%)", "415px", "300px");
+testGridTemplatesValues(document.getElementById("gridWithAutoInsideMinMaxElement"), "20px", "11px");
 
 debug("");
 debug("Test getting wrong values for -webkit-grid-template-columns and -webkit-grid-template-rows through CSS (they should resolve to the default: 'none')");
@@ -51,6 +52,7 @@ testGridTemplatesSetJSValues("minmax(22em, 8vh)", "minmax(10vw, 5em)", "220px", 
 testGridTemplatesSetJSValues("minmax(-webkit-min-content, 8vh)", "minmax(10vw, -webkit-min-content)", "48px", "80px");
 testGridTemplatesSetJSValues("minmax(22em, -webkit-max-content)", "minmax(-webkit-max-content, 5em)", "220px", "50px");
 testGridTemplatesSetJSValues("minmax(-webkit-min-content, -webkit-max-content)", "minmax(-webkit-max-content, -webkit-min-content)", "0px", "0px");
+testGridTemplatesSetJSValues("minmax(auto, -webkit-max-content)", "minmax(10vw, auto)", "0px", "80px");
 // Unit comparison should be case-insensitive.
 testGridTemplatesSetJSValues("3600Fr", "154fR", "800px", "600px", "3600fr", "154fr");
 
@@ -76,8 +78,6 @@ testGridTemplatesSetBadJSValues("minmax(minmax(10px, 20px), 20px)", "minmax(10px
 // No breadth value and no comma.
 testGridTemplatesSetBadJSValues("minmax()", "minmax(30px 30% 30em)");
 
-// Auto is not allowed inside minmax.
-testGridTemplatesSetBadJSValues("minmax(auto, 8vh)", "minmax(10vw, auto)");
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
 testGridTemplatesSetBadJSValues("0fr", "1r");

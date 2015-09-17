@@ -40,6 +40,8 @@ PASS window.getComputedStyle(gridWithCalcAndMinMax, '').getPropertyValue('-webki
 PASS window.getComputedStyle(gridWithCalcAndMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "150px 53px"
 PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "400px 120px"
 PASS window.getComputedStyle(gridWithCalcInsideMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "150px 175px"
+PASS window.getComputedStyle(gridWithAutoInsideMinMax, '').getPropertyValue('-webkit-grid-template-columns') is "0px 30px"
+PASS window.getComputedStyle(gridWithAutoInsideMinMax, '').getPropertyValue('-webkit-grid-template-rows') is "132px 60px"
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is 'none'
@@ -78,6 +80,10 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-colum
 PASS element.style.webkitGridTemplateColumns is "calc(25px + 40%) minmax(-webkit-min-content, calc(10% + 12px))"
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "100px 0px"
 PASS element.style.webkitGridTemplateRows is "minmax(calc(75% - 350px), -webkit-max-content) auto"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "0px 16px"
+PASS element.style.webkitGridTemplateColumns is "auto minmax(16px, auto)"
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "90px 80px"
+PASS element.style.webkitGridTemplateRows is "minmax(auto, 15%) 10vw"
 
 Test getting wrong values set from CSS
 PASS window.getComputedStyle(gridWithNoneAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "none"
@@ -86,8 +92,6 @@ PASS window.getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit
 PASS window.getComputedStyle(gridWithNoneAndFixed, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 
 Test setting and getting wrong values from JS
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-grid-template-columns') is "none"

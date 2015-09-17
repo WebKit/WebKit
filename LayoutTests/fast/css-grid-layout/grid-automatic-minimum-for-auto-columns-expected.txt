@@ -1,0 +1,84 @@
+Check that min-width is honored when sizing auto columns.
+PASS window.getComputedStyle(gridAuto, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridAutoItemSmallerThanMinSize, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridMinMaxAutoAuto, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridMinMaxAutoMaxContent, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridMinMaxMinContentAuto, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridAutoMultipleItems, '').getPropertyValue('-webkit-grid-template-columns') is "30px"
+PASS window.getComputedStyle(gridMinMaxAutoAutoMultipleItemsOneWithoutMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "60px"
+PASS window.getComputedStyle(gridMinMaxAutoMaxContentMultipleItemsOneWithAutoMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "80px"
+
+Check that min-width is honored when sizing auto columns and spanning grid items.
+PASS window.getComputedStyle(gridAutoAndAutoOneSpanningOneNonSpannig, '').getPropertyValue('-webkit-grid-template-columns') is "35px 15px"
+PASS window.getComputedStyle(gridAutoAndAutoOneSpanningMultipleNonSpanning, '').getPropertyValue('-webkit-grid-template-columns') is "20px 40px"
+PASS window.getComputedStyle(gridAutoAndMinMaxAutoAutoOneSpanningOneNonSpanning, '').getPropertyValue('-webkit-grid-template-columns') is "20px 50px"
+PASS window.getComputedStyle(gridAutoAndMinMaxAutoAutoMultipleSpanning, '').getPropertyValue('-webkit-grid-template-columns') is "35px 35px"
+PASS window.getComputedStyle(gridMinMaxAutoMaxContentAndAutoOneSpanningMultipleNonSpanning, '').getPropertyValue('-webkit-grid-template-columns') is "25px 65px"
+PASS window.getComputedStyle(gridMinMaxAutoMaxContentAndAutoMultipleSpanningMultipleNonSpanning, '').getPropertyValue('-webkit-grid-template-columns') is "40px 50px"
+
+Check the interactions between width and min-width and auto tracks.
+PASS window.getComputedStyle(gridAutoWithFixedWidthChild, '').getPropertyValue('-webkit-grid-template-columns') is "60px"
+PASS window.getComputedStyle(gridAutoWithFixedWidthChildAndMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridAutoWithFixedWidthChildAndHigherMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "90px"
+PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidth, '').getPropertyValue('-webkit-grid-template-columns') is "25px 25px"
+PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidthAndMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "25px 25px"
+PASS window.getComputedStyle(gridAutoAndAutoOneSpanningFixedWidthAndHigherMinWidth, '').getPropertyValue('-webkit-grid-template-columns') is "35px 35px"
+
+Check that borders and paddings are considering when computing min sizes.
+PASS window.getComputedStyle(gridAutoFixedMinWidthWithBorder, '').getPropertyValue('-webkit-grid-template-columns') is "50px"
+PASS window.getComputedStyle(gridAutoFixedMinWidthWithPadding, '').getPropertyValue('-webkit-grid-template-columns') is "56px"
+PASS window.getComputedStyle(gridAutoFixedMinWidthWithBorderAndPadding, '').getPropertyValue('-webkit-grid-template-columns') is "66px"
+PASS window.getComputedStyle(gridAutoAutoMinWidthWithBorder, '').getPropertyValue('-webkit-grid-template-columns') is "40px"
+PASS window.getComputedStyle(gridAutoAutoMinWidthWithPadding, '').getPropertyValue('-webkit-grid-template-columns') is "46px"
+PASS window.getComputedStyle(gridAutoAutoMinWidthWithBorderAndPadding, '').getPropertyValue('-webkit-grid-template-columns') is "56px"
+PASS window.getComputedStyle(gridAutoMaxContentMinWidthWithBorder, '').getPropertyValue('-webkit-grid-template-columns') is "90px"
+PASS window.getComputedStyle(gridAutoMaxContentMinWidthWithPadding, '').getPropertyValue('-webkit-grid-template-columns') is "96px"
+PASS window.getComputedStyle(gridAutoMaxContentMinWidthWithBorderAndPadding, '').getPropertyValue('-webkit-grid-template-columns') is "106px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+XXXXXX
+XX
+XX XX XX
+XXX XX X
+X X X X X X
+XX
+XXXX XXXX
+XX XXXXX X
+XX
+XXXXXX
+XXXX XXXX
+XX
+XX XXXXXXXX
+XXXX XXXX
+XX XX
+XXXXXX X XXX
+XX XX XX
+X X
+XXXX
+X XXX XX
+XXX XXXX
+XX XX XX
+XXXXX X XXXXX
+X XXX XX
+XXXXX XXXXX
+XX XX
+XX XX XX XX
+XXX
+X XX XXX
+X XX X
+XXX X
+XXX X
+XXX X
+XX XXX
+XX XXX XX
+XX XXX XX
+XXXXXX
+XXXXXX
+XXXXXX
+XX XXX X
+XX XXX X
+XX XXX X
+X XXXX X
+X XXXX X
+X XXXX X
