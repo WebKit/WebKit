@@ -3369,9 +3369,6 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     if (!windowID || ![window isVisible])
         return nullptr;
 
-    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
-    RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
-
     RetainPtr<CGImageRef> windowSnapshotImage = takeWindowSnapshot(windowID, false);
     if (!windowSnapshotImage)
         return nullptr;

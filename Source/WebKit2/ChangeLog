@@ -1,3 +1,15 @@
+2015-09-17  Timothy Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r189287): 2.5% PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=149277
+        <rdar://problem/22657219>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _takeViewSnapshot]):
+        Don't take an extra unused snapshot.
+
 2015-09-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Crash in WebKit::BackingStore::createBackend running under Wayland
