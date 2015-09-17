@@ -252,6 +252,7 @@ fast/overflow/scrollbar-restored-and-then-locked.html [ Skip ]
 # TODO IndexedDB is not yet enabled.
 storage/indexeddb/ [ Skip ]
 imported/w3c/indexeddb [ Skip ]
+js/dom/global-constructors-attributes-idb.html [ Skip ]
 http/tests/security/cross-origin-indexeddb-allowed.html [ Skip ]
 http/tests/security/cross-origin-indexeddb.html [ Skip ]
 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Skip ]
@@ -1283,6 +1284,9 @@ accessibility/svg-element-press.html [ Skip ]
 # Missing cellForColumnAndRow implementation in DRT
 webkit.org/b/143081 accessibility/table-cell-display-block.html [ Skip ]
 accessibility/aria-table-with-presentational-elements.html [ Skip ]
+
+# stringValue is not implemented.
+webkit.org/b/149177 accessibility/ax-value-with-search.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
