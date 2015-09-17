@@ -1,3 +1,14 @@
+2015-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update licence in r189890
+        https://bugs.webkit.org/show_bug.cgi?id=149306
+
+        Reviewed by Dean Jackson.
+
+        * FontWithFeatures/FontWithFeatures/FontCreator.cpp:
+        * FontWithFeatures/FontWithFeatures/FontCreator.h:
+        * FontWithFeatures/FontWithFeatures/main.cpp:
+
 2015-09-17  Mark Lam  <mark.lam@apple.com>
 
         Add the ability to skip JIT stress tests in run-javascriptcore-tests.
