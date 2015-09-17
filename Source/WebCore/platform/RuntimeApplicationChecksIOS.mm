@@ -75,12 +75,6 @@ bool applicationIsFacebook()
     return isFacebook;
 }
 
-bool applicationIsEpicurious()
-{
-    static const bool isEpicurious = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.condenet.Epicurious"];
-    return isEpicurious;
-}
-
 bool applicationIsDaijisenDictionary()
 {
     static const bool isDaijisenDictionary = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"jp.co.shogakukan.daijisen2009i"];
@@ -91,16 +85,6 @@ bool applicationIsNASAHD()
 {
     static const bool isNASAHD = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"gov.nasa.NASAHD"];
     return isNASAHD;
-}
-
-bool applicationIsMASH()
-{
-    static const bool isMASH = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashgame"]
-        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashlitegame"]
-        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashchristmas"]
-        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashhalloween"]
-        || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashvalentines"];
-    return isMASH;
 }
 
 bool applicationIsTheEconomistOnIPhone()

@@ -28,6 +28,6 @@
 
 namespace WebCore {
 
-void systemBeep() { NSLog(@"Webcore NSBeep()!"); }    
+void systemBeep() { }    
 
 } // namespace WebCore
