@@ -1,3 +1,15 @@
+2015-09-17  Mark Lam  <mark.lam@apple.com>
+
+        Add the ability to skip JIT stress tests in run-javascriptcore-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=149285
+
+        Reviewed by Saam Barati.
+
+        Just need to add an option to pass --no-jit to run-jsc-stress-test.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2015-09-17  Alex Christensen  <achristensen@webkit.org>
 
         Switch AppleWin build to use CMake
