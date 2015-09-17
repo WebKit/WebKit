@@ -1,3 +1,25 @@
+2015-09-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Save and restore callee save registers in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149247
+
+        Reviewed by Michael Saboff.
+
+        Save callee save registers when entering WebAssembly functions
+        and restore them when returning.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::webAssemblyCalleeSaveRegisters):
+        * jit/RegisterSet.h:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::buildReturn):
+        (JSC::WASMFunctionCompiler::localAddress):
+        (JSC::WASMFunctionCompiler::temporaryAddress):
+        (JSC::WASMFunctionCompiler::boxArgumentsAndAdjustStackPointer):
+        (JSC::WASMFunctionCompiler::callAndUnboxResult):
+
 2015-09-16  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement indirect calls in WebAssembly

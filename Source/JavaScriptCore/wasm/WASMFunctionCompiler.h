@@ -91,16 +91,22 @@ public:
 
     void startFunction(const Vector<WASMType>& arguments, uint32_t numberOfI32LocalVariables, uint32_t numberOfF32LocalVariables, uint32_t numberOfF64LocalVariables)
     {
+        m_calleeSaveSpace = WTF::roundUpToMultipleOf(sizeof(StackSlot), RegisterSet::webAssemblyCalleeSaveRegisters().numberOfSetRegisters() * sizeof(void*));
+        m_codeBlock->setCalleeSaveRegisters(RegisterSet::webAssemblyCalleeSaveRegisters());
+
         emitFunctionPrologue();
         emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 
         m_beginLabel = label();
 
-        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, GPRInfo::regT1);
+        addPtr(TrustedImm32(-m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, GPRInfo::regT1);
         m_stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfStackLimit()), GPRInfo::regT1);
 
         move(GPRInfo::regT1, stackPointerRegister);
         checkStackPointerAlignment();
+
+        emitSaveCalleeSaves();
+        emitMaterializeTagCheckRegisters();
 
         m_numberOfLocals = arguments.size() + numberOfI32LocalVariables + numberOfF32LocalVariables + numberOfF64LocalVariables;
 
@@ -159,6 +165,7 @@ public:
         JSValueRegs returnValueRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
 #endif
         moveTrustedValue(jsUndefined(), returnValueRegs);
+        emitRestoreCalleeSaves();
         emitFunctionEpilogue();
         ret();
 
@@ -183,6 +190,8 @@ public:
 
         if (!m_exceptionChecks.empty()) {
             m_exceptionChecks.link(this);
+
+            copyCalleeSavesToVMCalleeSavesBuffer();
 
             // lookupExceptionHandler is passed two arguments, the VM and the exec (the CallFrame*).
             move(TrustedImmPtr(vm()), GPRInfo::argumentGPR0);
@@ -289,6 +298,7 @@ public:
         default:
             ASSERT_NOT_REACHED();
         }
+        emitRestoreCalleeSaves();
         emitFunctionEpilogue();
         ret();
     }
@@ -804,13 +814,13 @@ private:
     Address localAddress(unsigned localIndex) const
     {
         ASSERT(localIndex < m_numberOfLocals);
-        return Address(GPRInfo::callFrameRegister, -(localIndex + 1) * sizeof(StackSlot));
+        return Address(GPRInfo::callFrameRegister, -m_calleeSaveSpace - (localIndex + 1) * sizeof(StackSlot));
     }
 
     Address temporaryAddress(unsigned temporaryIndex) const
     {
         ASSERT(m_numberOfLocals + temporaryIndex < m_stackHeight);
-        return Address(GPRInfo::callFrameRegister, -(m_numberOfLocals + temporaryIndex + 1) * sizeof(StackSlot));
+        return Address(GPRInfo::callFrameRegister, -m_calleeSaveSpace - (m_numberOfLocals + temporaryIndex + 1) * sizeof(StackSlot));
     }
 
     void appendCall(const FunctionPtr& function)
@@ -913,7 +923,7 @@ private:
     void boxArgumentsAndAdjustStackPointer(const Vector<WASMType>& arguments)
     {
         size_t argumentCount = arguments.size();
-        int stackOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_numberOfLocals + m_tempStackTop + argumentCount + 1 + JSStack::CallFrameHeaderSize);
+        int stackOffset = -m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_numberOfLocals + m_tempStackTop + argumentCount + 1 + JSStack::CallFrameHeaderSize);
 
         storeTrustedValue(jsUndefined(), Address(GPRInfo::callFrameRegister, (stackOffset + CallFrame::thisArgumentOffset()) * sizeof(Register)));
 
@@ -966,7 +976,7 @@ private:
         m_callCompilationInfo.last().callReturnLocation = emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).code());
 
         end.link(this);
-        addPtr(TrustedImm32(-WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, stackPointerRegister);
+        addPtr(TrustedImm32(-m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, stackPointerRegister);
         checkStackPointerAlignment();
 
         switch (returnType) {
@@ -1048,6 +1058,7 @@ private:
     unsigned m_stackHeight;
     unsigned m_numberOfLocals;
     unsigned m_tempStackTop { 0 };
+    unsigned m_calleeSaveSpace;
 
     Vector<JumpTarget> m_breakTargets;
     Vector<JumpTarget> m_continueTargets;

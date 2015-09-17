@@ -54,6 +54,9 @@ public:
     static RegisterSet llintBaselineCalleeSaveRegisters(); // Registers saved and used by the LLInt.
     static RegisterSet dfgCalleeSaveRegisters(); // Registers saved and used by the DFG JIT.
     static RegisterSet ftlCalleeSaveRegisters(); // Registers that might be saved and used by the FTL JIT.
+#if ENABLE(WEBASSEMBLY)
+    static RegisterSet webAssemblyCalleeSaveRegisters(); // Registers saved and used by the WebAssembly JIT.
+#endif
     static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
     static RegisterSet allGPRs();
     static RegisterSet allFPRs();
