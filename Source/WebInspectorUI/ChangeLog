@@ -1,5 +1,74 @@
 2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make Find / Save keyboard shortcuts work better globally
+        https://bugs.webkit.org/show_bug.cgi?id=149198
+
+        Reviewed by Brian Burg.
+
+        Previously find/save keyboard shortcuts required the user have the
+        ContentView in the ContentBrowser focused. That means nothing would
+        happen if you clicked / focused in the Sidebars. This change considers
+        the keyboard shortcuts globally, like Copy.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Add global find and save keyboard shortcuts.
+
+        (WebInspector._focusChanged):
+        It is often useful to have the currentFocusedElement know if it is
+        in a TextEditor or other CodeMirror editor. When editable the <textarea>
+        is selected and not updating focused element. 
+
+        (WebInspector._focusedContentBrowser):
+        (WebInspector._focusedContentView):
+        Provide helpers for getting a good approximation of the current focused
+        or visible content view that users would expect to be interacting with.
+        Since the focus event may not fire when clicking around to elements
+        like the <body>. Rather than make it explicitly focusable, check the
+        document.activeElement, and if it is body aim for the main content
+        browser instead of the currentFocusedElement which may be stale.
+        Likewise, if the QuickConsole is focused and the split console is
+        showing, treat it like the split browser is focused.
+
+        (WebInspector._focusedOrVisibleContentBrowser):
+        (WebInspector._focusedOrVisibleContentView):
+        If nothing is focused, default to the main content browser.
+
+        (WebInspector._find):
+        Pass on to the ContentView which typically handles Find
+        by showing its find banner.
+
+        (WebInspector._save):
+        (WebInspector._saveAs):
+        Check and save the current ContentView if supported.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.get supportsSearch):
+        (WebInspector.LogContentView.prototype.handleFindEvent):
+        Add custom find handling for LogContentView from the routed through the
+        BrowserController instead of special event handlers in the controller.
+
+        (WebInspector.LogContentView.prototype.get supportsSave):
+        (WebInspector.LogContentView.prototype.save): Deleted.
+        (WebInspector.LogContentView.prototype.saveAs): Deleted.
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController): Deleted.
+        (WebInspector.JavaScriptLogViewController.prototype._handleFindShortcut): Deleted.
+        (WebInspector.JavaScriptLogViewController.prototype._save): Deleted.
+        (WebInspector.JavaScriptLogViewController.prototype._saveAs): Deleted.
+        Special save handling is no longer needed in the log view controller.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype.handleFindEvent):
+        (WebInspector.ContentBrowser): Deleted.
+        (WebInspector.ContentBrowser.prototype._save): Deleted.
+        (WebInspector.ContentBrowser.prototype._saveAs): Deleted.
+        (WebInspector.ContentBrowser.prototype._showFindBanner): Deleted.
+        Save functionality moved globally, find functionality moved to a
+        public method called like copy event handling.
+
+2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Inactive window may cause many layers to be created due to Dashboard opacity
         https://bugs.webkit.org/show_bug.cgi?id=149274
 

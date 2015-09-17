@@ -178,8 +178,27 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         WebInspector.quickConsole.updateLayout();
     }
 
+    get supportsSearch()
+    {
+        return true;
+    }
+
+    handleFindEvent(event)
+    {
+        if (!this.visible)
+            return;
+
+        this._searchBar.focus();
+    }
+
     get supportsSave()
     {
+        if (!this.visible)
+            return false;
+
+        if (WebInspector.isShowingSplitConsole())
+            return false;
+
         return true;
     }
 
@@ -196,36 +215,6 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
         event.clipboardData.setData("text/plain", this._formatMessagesAsData(true));
         event.stopPropagation();
         event.preventDefault();
-    }
-
-    focusSearchBar()
-    {
-        if (!this.visible)
-            return;
-
-        this._searchBar.focus();
-    }
-
-    save()
-    {
-        if (!this.visible)
-            return;
-
-        if (WebInspector.isShowingSplitConsole())
-            return;
-
-        WebInspector.saveDataToFile(this.saveData);
-    }
-
-    saveAs()
-    {
-        if (!this.visible)
-            return;
-
-        if (WebInspector.isShowingSplitConsole())
-            return;
-
-        WebInspector.saveDataToFile(this.saveData, true);
     }
 
     highlightPreviousSearchMatch()
