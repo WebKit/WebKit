@@ -1,3 +1,25 @@
+2015-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Switch AppleWin build to use CMake
+        https://bugs.webkit.org/show_bug.cgi?id=149163
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-webkit:
+        * Scripts/run-api-tests:
+        (runTest):
+        (listAllTests):
+        (prepareEnvironmentForRunningTestTool):
+        (testToolPaths):
+        (testToolPath): Deleted.
+        Run the API tests as separate executables on Windows.
+        It used to be TestWebKitAPI.exe, and it is now TestWTF.exe, TestWebCore.exe, and TestWebKit.exe.
+        * Scripts/webkitdirs.pm:
+        (checkRequiredSystemConfig):
+        (jhbuildWrapperPrefixIfNeeded):
+        (generateBuildSystemFromCMakeProject):
+        Fix configuration quirks.
+
 2015-09-17  Dean Johnson  <dean_johnson@apple.com>
 
         Added toggle options for hiding and showing certain platform families on the dashboard.

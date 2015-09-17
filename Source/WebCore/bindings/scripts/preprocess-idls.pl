@@ -23,6 +23,7 @@ use strict;
 use File::Basename;
 use Getopt::Long;
 use Cwd;
+use Config;
 
 my $defines;
 my $preprocessor;
@@ -49,9 +50,19 @@ die('Must specify an output file using --workerGlobalScopeConstructorsFile.') un
 die('Must specify an output file using --dedicatedWorkerGlobalScopeConstructorsFile.') unless defined($dedicatedWorkerGlobalScopeConstructorsFile);
 die('Must specify the file listing all IDLs using --idlFilesList.') unless defined($idlFilesList);
 
+$supplementalDependencyFile = CygwinPathIfNeeded($supplementalDependencyFile);
+$windowConstructorsFile = CygwinPathIfNeeded($windowConstructorsFile);
+$workerGlobalScopeConstructorsFile = CygwinPathIfNeeded($workerGlobalScopeConstructorsFile);
+$dedicatedWorkerGlobalScopeConstructorsFile = CygwinPathIfNeeded($dedicatedWorkerGlobalScopeConstructorsFile);
+$supplementalMakefileDeps = CygwinPathIfNeeded($supplementalMakefileDeps);
+
 open FH, "< $idlFilesList" or die "Cannot open $idlFilesList\n";
-my @idlFiles = <FH>;
-chomp(@idlFiles);
+my @idlFilesIn = <FH>;
+chomp(@idlFilesIn);
+my @idlFiles = ();
+foreach (@idlFilesIn) {
+    push @idlFiles, CygwinPathIfNeeded($_);
+}
 close FH;
 
 my %interfaceNameToIdlFile;
@@ -162,6 +173,16 @@ if ($supplementalMakefileDeps) {
     }
 
     WriteFileIfChanged($supplementalMakefileDeps, $makefileDeps);
+}
+
+sub CygwinPathIfNeeded
+{
+    my $path = shift;
+    if ($path && $Config{osname} eq "cygwin") {
+        chomp($path = `cygpath -u '$path'`);
+        $path =~ s/[\r\n]//;
+    }
+    return $path;
 }
 
 sub WriteFileIfChanged
