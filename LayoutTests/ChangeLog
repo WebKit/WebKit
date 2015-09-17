@@ -1,3 +1,17 @@
+2015-09-16  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r189862.
+
+    2015-09-16  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: No VO typing feedback in some text fields
+            https://bugs.webkit.org/show_bug.cgi?id=149177
+
+            Reviewed by Mario Sanchez Prada.
+
+            * accessibility/ax-value-with-search-expected.txt: Added.
+            * accessibility/ax-value-with-search.html: Added.
+
 2015-09-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r189469.
