@@ -1,3 +1,48 @@
+2015-09-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Remove obsolete code for deleting CodeBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=149231
+
+        Reviewed by Mark Lam.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteAllCodeBlocks): ASSERT that we're called in a valid
+        state, and do the compiler waiting ourselves instead of having our
+        caller do it. This is more appropriate to our new limited use.
+
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::deleteOldCode): Deleted. Don't call deleteAllCodeBlocks
+        periodically because it's not such a good idea to delete everything
+        at once, and CodeBlocks now have a more precise individual policy for
+        when to delete. Also, this function used to fail all or nearly all of
+        the time because its invariants that we were not executing or compiling
+        could not be met.
+
+        * heap/Heap.h:
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionDeleteAllCompiledCode): Deleted.
+        * tests/stress/deleteAllCompiledCode.js: Removed. Removed this testing
+        code because it did not do what it thought it did. All of this code
+        was guaranteed to no-op since it would run JavaScript to call a function
+        that would return early because JavaScript was running.
+
+        * runtime/VM.cpp:
+        (JSC::VM::deleteAllCode): This code is simpler now becaue 
+        heap.deleteAllCodeBlocks does some work for us.
+
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope): Don't delete code on VM entry. This
+        policy was old, and it dated back to a time when we 
+
+            (a) couldn't run in the interpreter if compilation failed;
+
+            (b) didn't reduce the rate of compilation in response to executable
+            memory pressure;
+
+            (c) didn't throw away individual CodeBlocks automatically.
+
 2015-09-16  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Implement tail calls in the LLInt and Baseline JIT

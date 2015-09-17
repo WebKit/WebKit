@@ -346,7 +346,6 @@ Heap::Heap(VM* vm, HeapType heapType)
     // schedule the timer if we've never done a collection.
     , m_lastFullGCLength(0.01)
     , m_lastEdenGCLength(0.01)
-    , m_lastCodeDiscardTime(WTF::monotonicallyIncreasingTime())
     , m_fullActivityCallback(GCActivityCallback::createFullTimer(this))
 #if ENABLE(GGC)
     , m_edenActivityCallback(GCActivityCallback::createEdenTimer(this))
@@ -892,26 +891,13 @@ std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
 
 void Heap::deleteAllCodeBlocks()
 {
-    // If JavaScript is running, it's not safe to delete JavaScript code, since
+    // If JavaScript is running, it's not safe to delete all JavaScript code, since
     // we'll end up returning to deleted code.
-    if (m_vm->entryScope)
-        return;
-    
-    // If we have things on any worklist, then don't delete code. This is kind of
-    // a weird heuristic. It's definitely not safe to throw away code that is on
-    // the worklist. But this change was made in a hurry so we just avoid throwing
-    // away any code if there is any code on any worklist. I suspect that this
-    // might not actually be too dumb: if there is code on worklists then that
-    // means that we are running some hot JS code right now. Maybe causing
-    // recompilations isn't a good idea.
+    RELEASE_ASSERT(!m_vm->entryScope);
+
 #if ENABLE(DFG_JIT)
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i)) {
-            if (worklist->isActiveForVM(*vm()))
-                return;
-        }
-    }
-#endif // ENABLE(DFG_JIT)
+    DFG::completeAllPlansForVM(*m_vm);
+#endif
 
     for (ExecutableBase* current : m_executables) {
         if (!current->isFunctionExecutable())
@@ -983,8 +969,6 @@ void Heap::collectAndSweep(HeapOperation collectionType)
     sweepAllLogicallyEmptyWeakBlocks();
 }
 
-static double minute = 60.0;
-
 NEVER_INLINE void Heap::collect(HeapOperation collectionType)
 {
     void* stackTop;
@@ -1035,7 +1019,6 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
         m_verifier->gatherLiveObjects(HeapVerifier::Phase::BeforeMarking);
     }
 
-    deleteOldCode(gcStartTime);
     flushOldStructureIDTables();
     stopAllocation();
     flushWriteBarrierBuffer();
@@ -1123,19 +1106,6 @@ void Heap::willStartCollection(HeapOperation collectionType)
 
     if (m_edenActivityCallback)
         m_edenActivityCallback->willCollect();
-}
-
-void Heap::deleteOldCode(double gcStartTime)
-{
-    if (m_operationInProgress == EdenCollection)
-        return;
-
-    GCPHASE(DeleteOldCode);
-    if (gcStartTime - m_lastCodeDiscardTime > minute) {
-        m_vm->regExpCache()->deleteAllCode();
-        deleteAllCodeBlocks();
-        m_lastCodeDiscardTime = WTF::monotonicallyIncreasingTime();
-    }
 }
 
 void Heap::flushOldStructureIDTables()

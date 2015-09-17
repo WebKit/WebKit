@@ -280,7 +280,6 @@ private:
 
     void suspendCompilerThreads();
     void willStartCollection(HeapOperation collectionType);
-    void deleteOldCode(double gcStartTime);
     void flushOldStructureIDTables();
     void flushWriteBarrierBuffer();
     void stopAllocation();
@@ -387,7 +386,6 @@ private:
     VM* m_vm;
     double m_lastFullGCLength;
     double m_lastEdenGCLength;
-    double m_lastCodeDiscardTime;
 
     Vector<ExecutableBase*> m_executables;
 

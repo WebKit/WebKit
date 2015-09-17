@@ -498,9 +498,6 @@ void VM::deleteAllCode()
     whenIdle([this]() {
         m_codeCache->clear();
         m_regExpCache->deleteAllCode();
-#if ENABLE(DFG_JIT)
-        DFG::completeAllPlansForVM(*this);
-#endif
         heap.deleteAllCodeBlocks();
         heap.deleteAllUnlinkedCodeBlocks();
         heap.reportAbandonedObjectGraph();

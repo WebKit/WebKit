@@ -461,7 +461,6 @@ static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
-static EncodedJSValue JSC_HOST_CALL functionDeleteAllCompiledCode(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState*);
 #ifndef NDEBUG
 static EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState*);
@@ -621,7 +620,6 @@ protected:
         addFunction(vm, "fullGC", functionFullGC, 0);
         addFunction(vm, "edenGC", functionEdenGC, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
-        addFunction(vm, "deleteAllCompiledCode", functionDeleteAllCompiledCode, 0);
         addFunction(vm, "addressOf", functionAddressOf, 1);
 #ifndef NDEBUG
         addFunction(vm, "dumpCallFrame", functionDumpCallFrame, 0);
@@ -1131,13 +1129,6 @@ EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState* exec)
 {
     JSLockHolder lock(exec);
     return JSValue::encode(jsNumber(exec->heap()->size()));
-}
-
-EncodedJSValue JSC_HOST_CALL functionDeleteAllCompiledCode(ExecState* exec)
-{
-    JSLockHolder lock(exec);
-    exec->heap()->deleteAllCodeBlocks();
-    return JSValue::encode(jsUndefined());
 }
 
 // This function is not generally very helpful in 64-bit code as the tag and payload

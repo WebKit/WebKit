@@ -40,10 +40,6 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
 {
     ASSERT(wtfThreadData().stack().isGrowingDownward());
     if (!vm.entryScope) {
-#if ENABLE(ASSEMBLER)
-        if (ExecutableAllocator::underMemoryPressure())
-            vm.heap.deleteAllCodeBlocks();
-#endif
         vm.entryScope = this;
 
         // Reset the date cache between JS invocations to force the VM to
