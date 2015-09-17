@@ -745,13 +745,13 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         if (!hasAnonymousInlineBlock() && (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants()))) {
             if (!setLineTop) {
                 setLineTop = true;
-                lineTop = pixelSnappedLogicalTop();
+                lineTop = logicalTop();
                 lineTopIncludingMargins = lineTop;
             } else {
-                lineTop = std::min<LayoutUnit>(lineTop, pixelSnappedLogicalTop());
+                lineTop = std::min<LayoutUnit>(lineTop, logicalTop());
                 lineTopIncludingMargins = std::min(lineTop, lineTopIncludingMargins);
             }
-            lineBottom = std::max<LayoutUnit>(lineBottom, pixelSnappedLogicalBottom());
+            lineBottom = std::max<LayoutUnit>(lineBottom, logicalBottom());
             lineBottomIncludingMargins = std::max(lineBottom, lineBottomIncludingMargins);
         }
         
@@ -837,15 +837,15 @@ inline void InlineFlowBox::addBoxShadowVisualOverflow(LayoutRect& logicalVisualO
     LayoutUnit shadowLogicalTop = lineStyle.isFlippedLinesWritingMode() ? -boxShadowLogicalBottom : boxShadowLogicalTop;
     LayoutUnit shadowLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? -boxShadowLogicalTop : boxShadowLogicalBottom;
     
-    LayoutUnit logicalTopVisualOverflow = std::min(pixelSnappedLogicalTop() + shadowLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(pixelSnappedLogicalBottom() + shadowLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalTopVisualOverflow = std::min<LayoutUnit>(logicalTop() + shadowLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = std::max<LayoutUnit>(logicalBottom() + shadowLogicalBottom, logicalVisualOverflow.maxY());
     
     LayoutUnit boxShadowLogicalLeft;
     LayoutUnit boxShadowLogicalRight;
     lineStyle.getBoxShadowInlineDirectionExtent(boxShadowLogicalLeft, boxShadowLogicalRight);
 
-    LayoutUnit logicalLeftVisualOverflow = std::min(pixelSnappedLogicalLeft() + boxShadowLogicalLeft, logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(pixelSnappedLogicalRight() + boxShadowLogicalRight, logicalVisualOverflow.maxX());
+    LayoutUnit logicalLeftVisualOverflow = std::min<LayoutUnit>(logicalLeft() + boxShadowLogicalLeft, logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = std::max<LayoutUnit>(logicalRight() + boxShadowLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
@@ -873,14 +873,14 @@ inline void InlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logicalVisu
     LayoutUnit outsetLogicalTop = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalBottom : borderOutsetLogicalTop;
     LayoutUnit outsetLogicalBottom = lineStyle.isFlippedLinesWritingMode() ? borderOutsetLogicalTop : borderOutsetLogicalBottom;
 
-    LayoutUnit logicalTopVisualOverflow = std::min(pixelSnappedLogicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(pixelSnappedLogicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalTopVisualOverflow = std::min<LayoutUnit>(logicalTop() - outsetLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = std::max<LayoutUnit>(logicalBottom() + outsetLogicalBottom, logicalVisualOverflow.maxY());
 
     LayoutUnit outsetLogicalLeft = includeLogicalLeftEdge() ? borderOutsetLogicalLeft : LayoutUnit();
     LayoutUnit outsetLogicalRight = includeLogicalRightEdge() ? borderOutsetLogicalRight : LayoutUnit();
 
-    LayoutUnit logicalLeftVisualOverflow = std::min(pixelSnappedLogicalLeft() - outsetLogicalLeft, logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(pixelSnappedLogicalRight() + outsetLogicalRight, logicalVisualOverflow.maxX());
+    LayoutUnit logicalLeftVisualOverflow = std::min<LayoutUnit>(logicalLeft() - outsetLogicalLeft, logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = std::max<LayoutUnit>(logicalRight() + outsetLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
@@ -935,10 +935,10 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
     LayoutUnit childOverflowLogicalLeft = std::min<LayoutUnit>(textShadowLogicalLeft + leftGlyphOverflow, leftGlyphOverflow);
     LayoutUnit childOverflowLogicalRight = std::max<LayoutUnit>(textShadowLogicalRight + rightGlyphOverflow, rightGlyphOverflow);
 
-    LayoutUnit logicalTopVisualOverflow = std::min(textBox.pixelSnappedLogicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
-    LayoutUnit logicalBottomVisualOverflow = std::max(textBox.pixelSnappedLogicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
-    LayoutUnit logicalLeftVisualOverflow = std::min(textBox.pixelSnappedLogicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
-    LayoutUnit logicalRightVisualOverflow = std::max(textBox.pixelSnappedLogicalRight() + childOverflowLogicalRight, logicalVisualOverflow.maxX());
+    LayoutUnit logicalTopVisualOverflow = std::min<LayoutUnit>(textBox.logicalTop() + childOverflowLogicalTop, logicalVisualOverflow.y());
+    LayoutUnit logicalBottomVisualOverflow = std::max<LayoutUnit>(textBox.logicalBottom() + childOverflowLogicalBottom, logicalVisualOverflow.maxY());
+    LayoutUnit logicalLeftVisualOverflow = std::min<LayoutUnit>(textBox.logicalLeft() + childOverflowLogicalLeft, logicalVisualOverflow.x());
+    LayoutUnit logicalRightVisualOverflow = std::max<LayoutUnit>(textBox.logicalRight() + childOverflowLogicalRight, logicalVisualOverflow.maxX());
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                        logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
