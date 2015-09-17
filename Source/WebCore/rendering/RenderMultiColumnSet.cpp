@@ -577,7 +577,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     const RenderStyle& blockStyle = parent()->style();
     const Color& ruleColor = blockStyle.visitedDependentColor(CSSPropertyColumnRuleColor);
     bool ruleTransparent = blockStyle.columnRuleIsTransparent();
-    EBorderStyle ruleStyle = blockStyle.columnRuleStyle();
+    EBorderStyle ruleStyle = collapsedBorderStyle(blockStyle.columnRuleStyle());
     LayoutUnit ruleThickness = blockStyle.columnRuleWidth();
     LayoutUnit colGap = columnGap();
     bool renderRule = ruleStyle > BHIDDEN && !ruleTransparent;

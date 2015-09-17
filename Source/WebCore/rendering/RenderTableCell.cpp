@@ -1090,15 +1090,6 @@ void RenderTableCell::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset
     RenderBlockFlow::paint(paintInfo, paintOffset);
 }
 
-static EBorderStyle collapsedBorderStyle(EBorderStyle style)
-{
-    if (style == OUTSET)
-        return GROOVE;
-    if (style == INSET)
-        return RIDGE;
-    return style;
-}
-
 struct CollapsedBorder {
     CollapsedBorderValue borderValue;
     BoxSide side;

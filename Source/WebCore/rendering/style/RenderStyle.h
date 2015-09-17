@@ -2227,6 +2227,15 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
     return value / style.effectiveZoom();
 }
 
+inline EBorderStyle collapsedBorderStyle(EBorderStyle style)
+{
+    if (style == OUTSET)
+        return GROOVE;
+    if (style == INSET)
+        return RIDGE;
+    return style;
+}
+
 inline bool RenderStyle::setZoom(float f)
 {
     setEffectiveZoom(effectiveZoom() * f);

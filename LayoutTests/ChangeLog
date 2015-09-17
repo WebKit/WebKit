@@ -1,3 +1,15 @@
+2015-09-17  Zalan Bujtas  <zalan@apple.com>
+
+        column-rule-style: outset/inset doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=148815
+
+        Reviewed by David Hyatt.
+
+        https://drafts.csswg.org/css-multicol-1/#crs
+        The <‘border-style’> values are interpreted as in the collapsing border model.
+
+        * TestExpectations:
+
 2015-09-17  Alex Christensen  <achristensen@webkit.org>
 
         Make Windows tests green.
