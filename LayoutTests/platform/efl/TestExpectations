@@ -78,6 +78,7 @@ fast/text/arabic-times-new-roman.html [ Skip ]
 
 # Need to implement font feature seeting for EFL port since r188146.
 css3/font-feature-settings-preinstalled-fonts.html [ Skip ]
+css3/font-feature-settings-rendering-2.html [ Skip ]
 
 # No support system font punctuation in EFL yet. This test was added by r188377.
 fast/text/system-font-punctuation.html [ Skip ]

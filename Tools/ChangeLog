@@ -1,3 +1,114 @@
+2015-09-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Create a font which can be used for testing font features
+        https://bugs.webkit.org/show_bug.cgi?id=149237
+
+        Reviewed by Simon Fraser.
+
+        This patch adds a new project in the Tools/ directory which generates a font which can
+        be used for testing font features. This is a standalone project consisting of two files:
+        1. A file which actually generates the byte vector representing the font. This file has
+        a single public function: std::vector<uint8_t> generateFont(). This file is not platform
+        specific, and only relies on the C++ STL.
+        2. A file with a main() which calls generateFont() and writes out the font, as well as
+        uses the font to render some demonstration text into a .png file. This file is platform
+        specific.
+
+        The font itself only supports the following characters:
+        ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+        However, the shape of these letters are either an X or a check mark.
+
+        The letter "A" always is a check mark.
+        The letter "B" always is an X.
+        Without any font features turned on, the rest of the letters are shown as X.
+
+        Each font feature has an letter associated with it. When the font feature is enabled,
+        that letter is shown as a check mark. For example, when "smcp" is enabled, "J" is shown
+        as a check mark.
+
+        Here are the mappings of font features to letters:
+        liga: C
+        clig: D
+        dlig: E
+        hlig: F
+        calt: G
+        subs: H
+        sups: I
+        smcp: J
+        c2sc: K
+        pcap: L
+        c2pc: M
+        unic: N
+        titl: O
+        onum: P
+        pnum: Q
+        tnum: R
+        frac: S
+        afrc: T
+        ordn: U
+        zero: V
+        hist: W
+        jp78: X
+        jp83: Y
+        jp90: Z
+        jp04: a
+        smpl: b
+        trad: c
+        fwid: d
+        pwid: e
+        ruby: f
+
+        * FontWithFeatures/FontWithFeatures.xcodeproj/project.pbxproj: Added.
+        * FontWithFeatures/FontWithFeatures/FontCreator.cpp: Added.
+        (integralLog2):
+        (roundDownToPowerOfTwo):
+        (isFourByteAligned):
+        (clampTo):
+        (append32):
+        (writeCFFEncodedNumber):
+        (CFFBuilder::CFFBuilder):
+        (CFFBuilder::takeResult):
+        (CFFBuilder::moveTo):
+        (CFFBuilder::lineTo):
+        (CFFBuilder::curveToCubic):
+        (CFFBuilder::closePath):
+        (CFFBuilder::writePoint):
+        (generateBoxCharString):
+        (generateCheckCharString):
+        (generateXCharString):
+        (charStringForGlyph):
+        (Generator::generate):
+        (Generator::Placeholder::Placeholder):
+        (Generator::Placeholder::populate):
+        (Generator::Placeholder::~Placeholder):
+        (Generator::placeholder):
+        (Generator::append16):
+        (Generator::append32):
+        (Generator::append32BitCode):
+        (Generator::overwrite16):
+        (Generator::overwrite32):
+        (Generator::appendCFFTable):
+        (Generator::appendSubstitutionSubtable):
+        (Generator::appendScriptSubtable):
+        (Generator::appendGSUBTable):
+        (Generator::appendOS2Table):
+        (Generator::appendFormat12CMAPTable):
+        (Generator::appendFormat4CMAPTable):
+        (Generator::appendCMAPTable):
+        (Generator::appendHEADTable):
+        (Generator::appendHHEATable):
+        (Generator::appendHMTXTable):
+        (Generator::appendMAXPTable):
+        (Generator::appendNAMETable):
+        (Generator::appendPOSTTable):
+        (Generator::calculateChecksum):
+        (Generator::appendTable):
+        (generateFont):
+        * FontWithFeatures/FontWithFeatures/FontCreator.h: Added.
+        * FontWithFeatures/FontWithFeatures/main.cpp: Added.
+        (drawTextWithFeature):
+        (main):
+
 2015-09-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189875 and r189878.
