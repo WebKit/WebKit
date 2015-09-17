@@ -62,6 +62,9 @@ JSObject* createTerminatedExecutionException(VM* vm)
 
 bool isTerminatedExecutionException(Exception* exception)
 {
+    if (!exception->value().isObject())
+        return false;
+
     return exception->value().inherits(TerminatedExecutionError::info());
 }
 

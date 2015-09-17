@@ -201,6 +201,13 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(P_JITOperation_E operation
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperationNoExceptionCheck(Z_JITOperation_E operation)
+{
+    setupArgumentsExecState();
+    updateTopCallFrame();
+    return appendCall(operation);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_E operation)
 {
     setupArgumentsExecState();

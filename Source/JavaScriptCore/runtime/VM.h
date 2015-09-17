@@ -402,14 +402,10 @@ public:
         return OBJECT_OFFSETOF(VM, targetMachinePCForThrow);
     }
 
+    void restorePreviousException(Exception* exception) { setException(exception); }
+
     void clearException() { m_exception = nullptr; }
     void clearLastException() { m_lastException = nullptr; }
-
-    void setException(Exception* exception)
-    {
-        m_exception = exception;
-        m_lastException = exception;
-    }
 
     Exception* exception() const { return m_exception; }
     JSCell** addressOfException() { return reinterpret_cast<JSCell**>(&m_exception); }
@@ -588,6 +584,12 @@ private:
     void createNativeThunk();
 
     void updateStackLimit();
+
+    void setException(Exception* exception)
+    {
+        m_exception = exception;
+        m_lastException = exception;
+    }
 
 #if ENABLE(ASSEMBLER)
     bool m_canUseAssembler;

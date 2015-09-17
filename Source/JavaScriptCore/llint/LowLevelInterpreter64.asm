@@ -1731,6 +1731,15 @@ _llint_op_catch:
     subp PB, PC
     rshiftp 3, PC
 
+    callSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
+    bpeq r1, 0, .isCatchableException
+    jmp _llint_throw_from_slow_path_trampoline
+
+.isCatchableException:
+    loadp Callee[cfr], t3
+    andp MarkedBlockMask, t3
+    loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
+
     loadq VM::m_exception[t3], t0
     storeq 0, VM::m_exception[t3]
     loadisFromInstruction(1, t2)

@@ -448,7 +448,8 @@ static bool unwindCallFrame(StackVisitor& visitor)
         ASSERT(!callFrame->hadException());
     }
 
-    return !visitor->callerIsVMEntryFrame();
+    bool shouldContinueUnwinding = !visitor->callerIsVMEntryFrame();
+    return shouldContinueUnwinding;
 }
 
 static StackFrameCodeType getStackFrameCodeType(StackVisitor& visitor)
@@ -646,17 +647,24 @@ public:
         m_codeBlock = visitor->codeBlock();
         unsigned bytecodeOffset = visitor->bytecodeOffset();
 
-        if (m_isTermination || !(m_handler = (m_codeBlock && !isWebAssemblyExecutable(m_codeBlock->ownerExecutable())) ? m_codeBlock->handlerForBytecodeOffset(bytecodeOffset) : nullptr)) {
-            if (!unwindCallFrame(visitor)) {
-                if (LegacyProfiler* profiler = vm.enabledProfiler())
-                    profiler->exceptionUnwind(m_callFrame);
+        m_handler = nullptr;
+        if (!m_isTermination) {
+            if (m_codeBlock && !isWebAssemblyExecutable(m_codeBlock->ownerExecutable()))
+                m_handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset);
+        }
 
-                copyCalleeSavesToVMCalleeSavesBuffer(visitor);
-
-                return StackVisitor::Done;
-            }
-        } else
+        if (m_handler)
             return StackVisitor::Done;
+
+        bool shouldContinueUnwinding = unwindCallFrame(visitor);
+        if (!shouldContinueUnwinding) {
+            if (LegacyProfiler* profiler = vm.enabledProfiler())
+                profiler->exceptionUnwind(m_callFrame);
+
+            copyCalleeSavesToVMCalleeSavesBuffer(visitor);
+
+            return StackVisitor::Done;
+        }
 
         copyCalleeSavesToVMCalleeSavesBuffer(visitor);
 
@@ -716,7 +724,6 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     }
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    bool isTermination = false;
 
     JSValue exceptionValue = exception->value();
     ASSERT(!exceptionValue.isEmpty());
@@ -726,16 +733,23 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     if (exceptionValue.isEmpty() || (exceptionValue.isCell() && !exceptionValue.asCell()))
         exceptionValue = jsNull();
 
-    if (exceptionValue.isObject())
-        isTermination = isTerminatedExecutionException(exception);
-
     ASSERT(vm.exception() && vm.exception()->stack().size());
 
+    // Calculate an exception handler vPC, unwinding call frames as necessary.
+    HandlerInfo* handler = nullptr;
+    UnwindFunctor functor(callFrame, isTerminatedExecutionException(exception), codeBlock, handler);
+    callFrame->iterate(functor);
+    if (!handler)
+        return nullptr;
+
+    return handler;
+}
+
+void Interpreter::notifyDebuggerOfExceptionToBeThrown(CallFrame* callFrame, Exception* exception)
+{
+    bool isTermination = isTerminatedExecutionException(exception);
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
-        // We need to clear the exception here in order to see if a new exception happens.
-        // Afterwards, the values are put back to continue processing this error.
-        SuspendExceptionScope scope(&vm);
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
         // frames.
@@ -752,22 +766,9 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
             hasCatchHandler = !!handler;
         }
 
-        debugger->exception(callFrame, exceptionValue, hasCatchHandler);
-        ASSERT(!callFrame->hadException());
+        debugger->exception(callFrame, exception->value(), hasCatchHandler);
     }
     exception->setDidNotifyInspectorOfThrow();
-
-    // Calculate an exception handler vPC, unwinding call frames as necessary.
-    HandlerInfo* handler = nullptr;
-    UnwindFunctor functor(callFrame, isTermination, codeBlock, handler);
-    callFrame->iterate(functor);
-    if (!handler)
-        return nullptr;
-
-    if (LegacyProfiler* profiler = vm.enabledProfiler())
-        profiler->exceptionUnwind(callFrame);
-
-    return handler;
 }
 
 static inline JSValue checkedReturn(JSValue returnValue)

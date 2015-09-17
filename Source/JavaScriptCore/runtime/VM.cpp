@@ -531,8 +531,11 @@ void VM::throwException(ExecState* exec, Exception* exception)
         dataLog("In call frame ", RawPointer(exec), " for code block ", *exec->codeBlock(), "\n");
         CRASH();
     }
-    
+
     ASSERT(exec == topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
+
+    interpreter->notifyDebuggerOfExceptionToBeThrown(exec, exception);
+
     setException(exception);
 }
 

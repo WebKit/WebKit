@@ -1454,6 +1454,19 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
+{
+    LLINT_BEGIN();
+    RELEASE_ASSERT(!!vm.exception());
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->exceptionUnwind(exec);
+
+    if (isTerminatedExecutionException(vm.exception()))
+        LLINT_RETURN_TWO(pc, bitwise_cast<void*>(static_cast<uintptr_t>(1)));
+    LLINT_RETURN_TWO(pc, 0);
+}
+
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM* vm, ProtoCallFrame* protoFrame)
 {
     ExecState* exec = vm->topCallFrame;

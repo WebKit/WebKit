@@ -1,3 +1,71 @@
+2015-09-17  Saam barati  <sbarati@apple.com>
+
+        Interpreter::unwind() shouldn't be responsible for filtering out uncatchable exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=149228
+
+        Reviewed by Mark Lam.
+
+        op_catch is now responsible for filtering exceptions that
+        aren't catchable. When op_catch encounters an uncatchable
+        exception, it will call back into genericUnwind and throw
+        the exception further down the call stack. This is necessary
+        in a later patch that will implement exception handling
+        in the DFG, and part of that patch includes exception
+        handling that doesn't go through genericUnwind. The DFG try/catch
+        patch will not go through genericUnwind when it knows that
+        an exception check after a callOperation will be caught inside the 
+        machine frame or any inlined frames. This patch enables that 
+        patch by destroying the notion that all exception handling must 
+        filter through genericUnwind.
+
+        This patch maintains compatibility with the debugger and
+        profiler by ensuring we notify the debugger when an
+        exception is thrown inside VM::throwException and not
+        in genericUnwind. It also notifies the profiler that we've
+        potentially changed call frames inside op_catch.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * interpreter/Interpreter.cpp:
+        (JSC::unwindCallFrame):
+        (JSC::getStackFrameCodeType):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        (JSC::checkedReturn):
+        * interpreter/Interpreter.h:
+        (JSC::SuspendExceptionScope::SuspendExceptionScope):
+        (JSC::SuspendExceptionScope::~SuspendExceptionScope):
+        (JSC::Interpreter::sampler):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        (JSC::JIT::callOperationNoExceptionCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::llint_throw_stack_overflow_error):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::isTerminatedExecutionException):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::targetMachinePCForThrowOffset):
+        (JSC::VM::restorePreviousException):
+        (JSC::VM::clearException):
+        (JSC::VM::clearLastException):
+        (JSC::VM::exception):
+        (JSC::VM::addressOfException):
+        (JSC::VM::setException):
+
 2015-09-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Calling a float function on x86 in WebAssembly incorrectly returns a double

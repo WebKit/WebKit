@@ -116,7 +116,7 @@ namespace JSC {
         }
         ~SuspendExceptionScope()
         {
-            m_vm->setException(oldException);
+            m_vm->restorePreviousException(oldException);
         }
     private:
         Exception* oldException;
@@ -226,6 +226,7 @@ namespace JSC {
         SamplingTool* sampler() { return m_sampler.get(); }
 
         NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*, UnwindStart);
+        void notifyDebuggerOfExceptionToBeThrown(CallFrame*, Exception*);
         NEVER_INLINE void debug(CallFrame*, DebugHookID);
         JSString* stackTraceAsString(ExecState*, Vector<StackFrame>);
 

@@ -504,6 +504,12 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
+    callOperationNoExceptionCheck(operationCheckIfExceptionIsUncatchableAndNotifyProfiler);
+    Jump isCatchableException = branchTest32(Zero, returnValueGPR);
+    jumpToExceptionHandler();
+    isCatchableException.link(this);
+
+    move(TrustedImmPtr(m_vm), regT3);
     load64(Address(regT3, VM::exceptionOffset()), regT0);
     store64(TrustedImm64(JSValue::encode(JSValue())), Address(regT3, VM::exceptionOffset()));
     emitPutVirtualRegister(currentInstruction[1].u.operand);

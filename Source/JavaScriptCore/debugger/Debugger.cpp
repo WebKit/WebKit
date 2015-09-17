@@ -625,6 +625,7 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     {
         PauseReasonDeclaration reason(*this, didHitBreakpoint ? PausedForBreakpoint : m_reasonForPause);
         handlePause(vmEntryGlobalObject, m_reasonForPause);
+        RELEASE_ASSERT(!callFrame->hadException());
     }
 
     m_pausingBreakpointID = noBreakpointID;

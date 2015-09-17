@@ -2135,6 +2135,22 @@ void JIT_OPERATION operationProcessTypeProfilerLog(ExecState* exec)
     exec->vm().typeProfilerLog()->processLogEntries(ASCIILiteral("Log Full, called from inside baseline JIT"));
 }
 
+int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    RELEASE_ASSERT(!!vm.exception());
+
+    if (LegacyProfiler* profiler = vm.enabledProfiler())
+        profiler->exceptionUnwind(exec);
+
+    if (isTerminatedExecutionException(vm.exception())) {
+        genericUnwind(&vm, exec);
+        return 1;
+    } else
+        return 0;
+}
+
 } // extern "C"
 
 // Note: getHostCallReturnValueWithExecState() needs to be placed before the

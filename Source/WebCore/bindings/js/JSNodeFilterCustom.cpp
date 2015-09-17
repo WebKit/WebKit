@@ -53,7 +53,7 @@ uint16_t JSNodeFilter::acceptNode(Node* node)
     JSValue value = m_data->invokeCallback(args, JSCallbackData::CallbackType::FunctionOrObject, Identifier::fromString(exec, "acceptNode"), returnedException);
     if (returnedException) {
         // Rethrow exception.
-        exec->vm().setException(returnedException);
+        exec->vm().throwException(exec, returnedException);
 
         return NodeFilter::FILTER_REJECT;
     }

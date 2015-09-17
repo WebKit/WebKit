@@ -357,6 +357,8 @@ void JIT_OPERATION operationInitGlobalConst(ExecState*, Instruction*);
 
 void JIT_OPERATION operationExceptionFuzz(ExecState*);
 
+int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState*);
+
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
 EncodedJSValue JIT_OPERATION operationHasIndexedProperty(ExecState*, JSCell*, int32_t);
 JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, JSCell*);

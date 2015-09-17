@@ -776,6 +776,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
         MacroAssembler::Call callOperation(J_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID);
+        MacroAssembler::Call callOperationNoExceptionCheck(Z_JITOperation_E);
 #if USE(JSVALUE64)
         MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID);
 #else
