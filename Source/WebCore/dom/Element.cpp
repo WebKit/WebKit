@@ -1615,11 +1615,19 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     shadowRoot.setHost(this);
     shadowRoot.setParentTreeScope(&treeScope());
 
-    NodeVector postInsertionNotificationTargets;
-    notifyChildNodeInserted(*this, shadowRoot, postInsertionNotificationTargets);
+    auto shadowRootInsertionResult = shadowRoot.insertedInto(*this);
+    ASSERT_UNUSED(shadowRootInsertionResult, shadowRootInsertionResult == InsertionDone);
+    if (auto* firstChild = shadowRoot.firstChild()) {
+        NodeVector postInsertionNotificationTargets;
+        {
+            NoEventDispatchAssertion assertNoEventDispatch;
+            for (auto* child = firstChild; child; child = child->nextSibling())
+                notifyChildNodeInserted(shadowRoot, *child, postInsertionNotificationTargets);
+        }
 
-    for (auto& target : postInsertionNotificationTargets)
-        target->finishedInsertingSubtree();
+        for (auto& target : postInsertionNotificationTargets)
+            target->finishedInsertingSubtree();
+    }
 
     resetNeedsNodeRenderingTraversalSlowPath();
 
@@ -1646,7 +1654,13 @@ void Element::removeShadowRoot()
     oldRoot->setHost(nullptr);
     oldRoot->setParentTreeScope(&document());
 
-    notifyChildNodeRemoved(*this, *oldRoot);
+    {
+        NoEventDispatchAssertion assertNoEventDispatch;
+        for (auto* child = oldRoot->firstChild(); child; child = child->nextSibling())
+            notifyChildNodeRemoved(*oldRoot, *child);
+    }
+
+    oldRoot->removedFrom(*this);
 }
 
 RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
