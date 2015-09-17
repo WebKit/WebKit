@@ -774,12 +774,12 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     // FIXME: We should be able to include scroll position restoration here,
     // and then can address the FIXME in didFirstVisuallyNonEmptyLayoutForMainFrame.
-    m_snapshotRemovalTracker.start(SnapshotRemovalTracker::VisuallyNonEmptyLayout
-        | SnapshotRemovalTracker::RenderTreeSizeThreshold
+    SnapshotRemovalTracker::Events desiredEvents = SnapshotRemovalTracker::VisuallyNonEmptyLayout
         | SnapshotRemovalTracker::MainFrameLoad
-        | SnapshotRemovalTracker::SubresourceLoads, [this] {
-            this->forceRepaintIfNeeded();
-        });
+        | SnapshotRemovalTracker::SubresourceLoads;
+    if (renderTreeSize)
+        desiredEvents |= SnapshotRemovalTracker::RenderTreeSizeThreshold;
+    m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
 
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
     // we never show the old page content, instead showing the snapshot background color.
