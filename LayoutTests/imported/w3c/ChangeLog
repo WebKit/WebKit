@@ -1,3 +1,15 @@
+2015-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Range.deleteContents cannot delete DocType
+        https://bugs.webkit.org/show_bug.cgi?id=148773
+        <rdar://problem/22571280>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C DOM test now that more checks are passing.
+
+        * web-platform-tests/dom/ranges/Range-deleteContents-expected.txt:
+
 2015-09-16  Chris Dumez  <cdumez@apple.com>
 
         Element's attribute NS API should treat defined undefined namespace as null

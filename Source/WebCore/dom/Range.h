@@ -161,10 +161,10 @@ private:
 
     Node* checkNodeWOffset(Node*, int offset, ExceptionCode&) const;
     void checkNodeBA(Node*, ExceptionCode&) const;
-    void checkDeleteExtract(ExceptionCode&);
     bool containedByReadOnly() const;
 
     enum ActionType { Delete, Extract, Clone };
+    void checkDeleteExtract(ActionType, ExceptionCode&);
     RefPtr<DocumentFragment> processContents(ActionType, ExceptionCode&);
     static RefPtr<Node> processContentsBetweenOffsets(ActionType, PassRefPtr<DocumentFragment>, Node*, unsigned startOffset, unsigned endOffset, ExceptionCode&);
     static void processNodes(ActionType, Vector<RefPtr<Node>>&, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode&);

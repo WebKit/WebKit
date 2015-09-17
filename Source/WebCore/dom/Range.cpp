@@ -489,7 +489,7 @@ bool Range::boundaryPointsValid() const
 
 void Range::deleteContents(ExceptionCode& ec)
 {
-    checkDeleteExtract(ec);
+    checkDeleteExtract(Delete, ec);
     if (ec)
         return;
 
@@ -836,7 +836,7 @@ RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* co
 
 RefPtr<DocumentFragment> Range::extractContents(ExceptionCode& ec)
 {
-    checkDeleteExtract(ec);
+    checkDeleteExtract(Extract, ec);
     if (ec)
         return nullptr;
 
@@ -1334,7 +1334,7 @@ void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
     setStart(refNode->parentNode(), refNode->computeNodeIndex(), ec);
 }
 
-void Range::checkDeleteExtract(ExceptionCode& ec)
+void Range::checkDeleteExtract(ActionType action, ExceptionCode& ec)
 {
     ec = 0;
     if (!commonAncestorContainer())
@@ -1346,7 +1346,8 @@ void Range::checkDeleteExtract(ExceptionCode& ec)
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return;
         }
-        if (n->nodeType() == Node::DOCUMENT_TYPE_NODE) {
+
+        if (action == Extract && n->nodeType() == Node::DOCUMENT_TYPE_NODE) {
             ec = HIERARCHY_REQUEST_ERR;
             return;
         }
