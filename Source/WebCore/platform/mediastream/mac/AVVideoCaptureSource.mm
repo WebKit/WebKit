@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,14 @@
  */
 
 #import "config.h"
+#import "AVVideoCaptureSource.h"
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#import "AVVideoCaptureSource.h"
-
 #import "AVCaptureDeviceManager.h"
 #import "BlockExceptions.h"
+#import "GraphicsContextCG.h"
+#import "IntRect.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "NotImplemented.h"
@@ -48,6 +49,7 @@ typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
 typedef AVCaptureVideoPreviewLayer AVCaptureVideoPreviewLayerType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_FRAMEWORK_OPTIONAL(CoreVideo)
 
 SOFT_LINK_CLASS(AVFoundation, AVCaptureConnection)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
@@ -75,6 +77,17 @@ SOFT_LINK_POINTER(AVFoundation, AVCaptureSessionPresetLow, NSString *)
 #define AVCaptureSessionPreset640x480 getAVCaptureSessionPreset640x480()
 #define AVCaptureSessionPreset352x288 getAVCaptureSessionPreset352x288()
 #define AVCaptureSessionPresetLow getAVCaptureSessionPresetLow()
+
+SOFT_LINK(CoreVideo, CVPixelBufferGetWidth, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(CoreVideo, CVPixelBufferGetHeight, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(CoreVideo, CVPixelBufferGetBaseAddress, void*, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(CoreVideo, CVPixelBufferGetBytesPerRow, size_t, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(CoreVideo, CVPixelBufferGetPixelFormatType, OSType, (CVPixelBufferRef pixelBuffer), (pixelBuffer))
+SOFT_LINK(CoreVideo, CVPixelBufferLockBaseAddress, CVReturn, (CVPixelBufferRef pixelBuffer, CVOptionFlags lockFlags), (pixelBuffer, lockFlags))
+SOFT_LINK(CoreVideo, CVPixelBufferUnlockBaseAddress, CVReturn, (CVPixelBufferRef pixelBuffer, CVOptionFlags lockFlags), (pixelBuffer, lockFlags))
+
+SOFT_LINK_POINTER(CoreVideo, kCVPixelBufferPixelFormatTypeKey, NSString *)
+#define kCVPixelBufferPixelFormatTypeKey getkCVPixelBufferPixelFormatTypeKey()
 
 namespace WebCore {
 
@@ -157,7 +170,6 @@ bool AVVideoCaptureSource::setFrameRateConstraint(float minFrameRate, float maxF
         return false;
     }
 
-NSLog(@"set frame rate to %f", [bestFrameRateRange minFrameRate]);
     LOG(Media, "AVVideoCaptureSource::setFrameRateConstraint(%p) - set frame rate range to %f..%f", this, minFrameRate, maxFrameRate);
     return true;
 }
@@ -209,26 +221,29 @@ void AVVideoCaptureSource::setupCaptureSession()
     ASSERT([session() canAddInput:videoIn.get()]);
     if ([session() canAddInput:videoIn.get()])
         [session() addInput:videoIn.get()];
-    
+
     if (constraints())
         applyConstraints(constraints());
 
     RetainPtr<AVCaptureVideoDataOutputType> videoOutput = adoptNS([allocAVCaptureVideoDataOutputInstance() init]);
+    RetainPtr<NSDictionary> settingsDictionary = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:
+                                                         [NSNumber numberWithInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey
+                                                         , nil]);
+    [videoOutput setVideoSettings:settingsDictionary.get()];
     setVideoSampleBufferDelegate(videoOutput.get());
     ASSERT([session() canAddOutput:videoOutput.get()]);
     if ([session() canAddOutput:videoOutput.get()])
         [session() addOutput:videoOutput.get()];
-    
+
     m_videoConnection = adoptNS([videoOutput.get() connectionWithMediaType:AVMediaTypeVideo]);
-    
     m_videoPreviewLayer = adoptNS([[AVCaptureVideoPreviewLayer alloc] initWithSession:session()]);
 }
 
-void AVVideoCaptureSource::calculateFramerate(CMSampleBufferRef sampleBuffer)
+bool AVVideoCaptureSource::calculateFramerate(CMSampleBufferRef sampleBuffer)
 {
     CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     if (!CMTIME_IS_NUMERIC(sampleTime))
-        return;
+        return false;
 
     Float64 frameTime = CMTimeGetSeconds(sampleTime);
     Float64 oneSecondAgo = frameTime - 1;
@@ -237,25 +252,81 @@ void AVVideoCaptureSource::calculateFramerate(CMSampleBufferRef sampleBuffer)
     
     while (m_videoFrameTimeStamps[0] < oneSecondAgo)
         m_videoFrameTimeStamps.remove(0);
-    
+
+    Float64 frameRate = m_frameRate;
     m_frameRate = (m_frameRate + m_videoFrameTimeStamps.size()) / 2;
+
+    return frameRate != m_frameRate;
 }
-    
-void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)
+
+void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBuffer)
 {
-    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
+    CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer.get());
     if (!formatDescription)
         return;
 
-    CFRetain(formatDescription);
-    m_videoFormatDescription = adoptCF(formatDescription);
-    calculateFramerate(sampleBuffer);
+    bool statesChanged = false;
+
+    statesChanged = calculateFramerate(sampleBuffer.get());
+    m_buffer = sampleBuffer;
+    m_lastImage = nullptr;
 
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
-    m_width = dimensions.width;
-    m_height = dimensions.height;
-    
-    setBuffer(sampleBuffer);
+    if (dimensions.width != m_width || dimensions.height != m_height) {
+        m_width = dimensions.width;
+        m_height = dimensions.height;
+        statesChanged = true;
+    }
+
+    if (statesChanged)
+        this->statesDidChanged();
+}
+
+void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)
+{
+    RetainPtr<CMSampleBufferRef> buffer = sampleBuffer;
+
+    scheduleDeferredTask([this, buffer] {
+        this->processNewFrame(buffer);
+    });
+}
+
+RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameImage()
+{
+    if (m_lastImage)
+        return m_lastImage;
+
+    if (!m_buffer)
+        return nullptr;
+
+    CVPixelBufferRef pixelBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(m_buffer.get()));
+    ASSERT(CVPixelBufferGetPixelFormatType(pixelBuffer) == kCVPixelFormatType_32BGRA);
+
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    void *baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+    size_t width = CVPixelBufferGetWidth(pixelBuffer);
+    size_t height = CVPixelBufferGetHeight(pixelBuffer);
+
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(NULL, baseAddress, bytesPerRow * height, NULL));
+    m_lastImage = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider.get(), NULL, true, kCGRenderingIntentDefault));
+
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+    return m_lastImage;
+}
+
+void AVVideoCaptureSource::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
+{
+    if (context.paintingDisabled() || !currentFrameImage())
+        return;
+
+    GraphicsContextStateSaver stateSaver(context);
+    context.translate(rect.x(), rect.y() + rect.height());
+    context.scale(FloatSize(1, -1));
+    context.setImageInterpolationQuality(InterpolationLow);
+    IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
+    CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), m_lastImage.get());
 }
 
 } // namespace WebCore

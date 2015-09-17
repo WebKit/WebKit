@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,19 +24,20 @@
  */
 
 #import "config.h"
+#import "AVAudioCaptureSource.h"
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#import "AVAudioCaptureSource.h"
-
-#import "CoreMediaSoftLink.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "NotImplemented.h"
 #import "RealtimeMediaSourceStates.h"
 #import "SoftLinking.h"
 #import <AVFoundation/AVFoundation.h>
-#import <objc/runtime.h>
+#import <CoreAudio/CoreAudioTypes.h>
+#import <wtf/HashSet.h>
+
+#import "CoreMediaSoftLink.h"
 
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
@@ -68,6 +69,7 @@ AVAudioCaptureSource::AVAudioCaptureSource(AVCaptureDeviceType* device, const At
 {
     currentStates()->setSourceId(id);
     currentStates()->setSourceType(RealtimeMediaSourceStates::Microphone);
+    m_inputDescription = std::make_unique<AudioStreamBasicDescription>();
 }
     
 AVAudioCaptureSource::~AVAudioCaptureSource()
@@ -77,12 +79,31 @@ AVAudioCaptureSource::~AVAudioCaptureSource()
 RefPtr<RealtimeMediaSourceCapabilities> AVAudioCaptureSource::capabilities() const
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 void AVAudioCaptureSource::updateStates()
 {
     // FIXME: use [AVCaptureAudioPreviewOutput volume] for volume
+}
+
+void AVAudioCaptureSource::addObserver(AVAudioCaptureSource::Observer* observer)
+{
+    {
+        LockHolder lock(m_lock);
+        m_observers.append(observer);
+    }
+
+    if (m_inputDescription->mSampleRate)
+        observer->prepare(m_inputDescription.get());
+}
+
+void AVAudioCaptureSource::removeObserver(AVAudioCaptureSource::Observer* observer)
+{
+    LockHolder lock(m_lock);
+    size_t pos = m_observers.find(observer);
+    if (pos != notFound)
+        m_observers.remove(pos);
 }
 
 void AVAudioCaptureSource::setupCaptureSession()
@@ -100,14 +121,47 @@ void AVAudioCaptureSource::setupCaptureSession()
     m_audioConnection = adoptNS([audioOutput.get() connectionWithMediaType:AVMediaTypeAudio]);
 }
 
+static bool operator==(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
+{
+    return a.mSampleRate == b.mSampleRate
+        && a.mFormatID == b.mFormatID
+        && a.mFormatFlags == b.mFormatFlags
+        && a.mBytesPerPacket == b.mBytesPerPacket
+        && a.mFramesPerPacket == b.mFramesPerPacket
+        && a.mBytesPerFrame == b.mBytesPerFrame
+        && a.mChannelsPerFrame == b.mChannelsPerFrame
+        && a.mBitsPerChannel == b.mBitsPerChannel;
+}
+
+static bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
+{
+    return !(a == b);
+}
+
 void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)
 {
+    Vector<Observer*> observers;
+    {
+        LockHolder lock(m_lock);
+        if (m_observers.isEmpty())
+            return;
+
+        copyToVector(m_observers, observers);
+    }
+
     CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
     if (!formatDescription)
         return;
 
-    CFRetain(formatDescription);
-    m_audioFormatDescription = adoptCF(formatDescription);
+    const AudioStreamBasicDescription* streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
+    if (*m_inputDescription != *streamDescription) {
+        m_inputDescription = std::make_unique<AudioStreamBasicDescription>(*streamDescription);
+        for (auto& observer : observers)
+            observer->prepare(m_inputDescription.get());
+    }
+
+    for (auto& observer : observers)
+        observer->process(formatDescription, sampleBuffer);
 }
 
 } // namespace WebCore

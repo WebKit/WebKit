@@ -168,6 +168,12 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimebaseNotification_Effect
 #define kCMTimebaseNotification_EffectiveRateChanged get_CoreMedia_kCMTimebaseNotification_EffectiveRateChanged()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreMedia, kCMTimebaseNotification_TimeJumped, CFStringRef)
 #define kCMTimebaseNotification_TimeJumped get_CoreMedia_kCMTimebaseNotification_TimeJumped()
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMAudioFormatDescriptionGetStreamBasicDescription, const AudioStreamBasicDescription *, (CMAudioFormatDescriptionRef desc), (desc))
+#define CMAudioFormatDescriptionGetStreamBasicDescription softLink_CoreMedia_CMAudioFormatDescriptionGetStreamBasicDescription
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer, OSStatus, (CMSampleBufferRef sbuf, size_t *bufferListSizeNeededOut, AudioBufferList *bufferListOut, size_t bufferListSize, CFAllocatorRef bbufStructAllocator, CFAllocatorRef bbufMemoryAllocator, uint32_t flags, CMBlockBufferRef *blockBufferOut), (sbuf, bufferListSizeNeededOut, bufferListOut, bufferListSize, bbufStructAllocator, bbufMemoryAllocator, flags, blockBufferOut))
+#define CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer softLink_CoreMedia_CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMSampleBufferGetNumSamples, CMItemCount, (CMSampleBufferRef sbuf), (sbuf))
+#define CMSampleBufferGetNumSamples softLink_CoreMedia_CMSampleBufferGetNumSamples
 
 #endif // PLATFORM(COCOA)
 

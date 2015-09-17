@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,27 +29,44 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "AVMediaCaptureSource.h"
+#include <wtf/Lock.h>
 
+typedef struct AudioStreamBasicDescription AudioStreamBasicDescription;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
-    
+
 class AVAudioCaptureSource : public AVMediaCaptureSource {
 public:
+
+    class Observer {
+    public:
+        virtual ~Observer() { }
+        virtual void prepare(const AudioStreamBasicDescription *) = 0;
+        virtual void unprepare() = 0;
+        virtual void process(CMFormatDescriptionRef, CMSampleBufferRef) = 0;
+    };
+
     static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
-    
+
+    void addObserver(Observer*);
+    void removeObserver(Observer*);
+
 private:
     AVAudioCaptureSource(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
     virtual ~AVAudioCaptureSource();
     
-    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
-    virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
+    void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
     
-    virtual void setupCaptureSession() override;
-    virtual void updateStates() override;
-        
+    void setupCaptureSession() override;
+    void updateStates() override;
+
     RetainPtr<AVCaptureConnection> m_audioConnection;
-    RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription;
+
+    std::unique_ptr<AudioStreamBasicDescription> m_inputDescription;
+    Vector<Observer*> m_observers;
+    Lock m_lock;
 };
 
 } // namespace WebCore

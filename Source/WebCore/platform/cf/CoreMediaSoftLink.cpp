@@ -101,6 +101,9 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMSampleBufferAttachmentKey_E
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMSampleBufferAttachmentKey_ResetDecoderBeforeDecoding, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebCore, CoreMedia, kCMTimebaseNotification_TimeJumped, CFStringRef)
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMAudioFormatDescriptionGetStreamBasicDescription, const AudioStreamBasicDescription *, (CMAudioFormatDescriptionRef desc), (desc))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer, OSStatus, (CMSampleBufferRef sbuf, size_t *bufferListSizeNeededOut, AudioBufferList *bufferListOut, size_t bufferListSize, CFAllocatorRef bbufStructAllocator, CFAllocatorRef bbufMemoryAllocator, uint32_t flags, CMBlockBufferRef *blockBufferOut), (sbuf, bufferListSizeNeededOut, bufferListOut, bufferListSize, bbufStructAllocator, bbufMemoryAllocator, flags, blockBufferOut))
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CoreMedia, CMSampleBufferGetNumSamples, CMItemCount, (CMSampleBufferRef sbuf), (sbuf))
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(IOS)

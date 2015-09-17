@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,11 @@
  */
 
 #import "config.h"
+#import "AVMediaCaptureSource.h"
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
-#import "AVMediaCaptureSource.h"
-
+#import "AudioSourceProvider.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "RealtimeMediaSourceStates.h"
@@ -123,12 +123,13 @@ static dispatch_queue_t globaVideoCaptureSerialQueue()
 
 AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
     : RealtimeMediaSource(id, type, emptyString())
+    , m_weakPtrFactory(this)
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_constraints(constraints)
     , m_device(device)
     , m_isRunning(false)
 {
-    setName([device localizedName]);
+    setName(device.localizedName);
     m_currentStates.setSourceType(type == RealtimeMediaSource::Video ? RealtimeMediaSourceStates::Camera : RealtimeMediaSourceStates::Microphone);
 }
 
@@ -195,6 +196,19 @@ void AVMediaCaptureSource::setAudioSampleBufferDelegate(AVCaptureAudioDataOutput
     [audioOutput setSampleBufferDelegate:m_objcObserver.get() queue:globaAudioCaptureSerialQueue()];
 }
 
+void AVMediaCaptureSource::scheduleDeferredTask(std::function<void ()> function)
+{
+    ASSERT(function);
+
+    auto weakThis = createWeakPtr();
+    callOnMainThread([weakThis, function] {
+        if (!weakThis)
+            return;
+
+        function();
+    });
+}
+
 } // namespace WebCore
 
 @implementation WebCoreAVMediaCaptureSourceObserver
@@ -232,12 +246,7 @@ void AVMediaCaptureSource::setAudioSampleBufferDelegate(AVCaptureAudioDataOutput
     if (!m_callback)
         return;
 
-    CFRetain(sampleBuffer);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (m_callback)
-            m_callback->captureOutputDidOutputSampleBufferFromConnection(captureOutput, sampleBuffer, connection);
-        CFRelease(sampleBuffer);
-    });
+    m_callback->captureOutputDidOutputSampleBufferFromConnection(captureOutput, sampleBuffer, connection);
 }
 
 @end
