@@ -27,6 +27,7 @@ var hasBubbles = typeof bubbleQueueServer != "undefined";
 var BubblesCategory = "bubbles";
 
 var categorizedQueuesByPlatformAndBuildType = {};
+var platformsByFamily = {};
 
 for (var i = 0; i < buildbots.length; ++i) {
     var buildbot = buildbots[i];
@@ -103,27 +104,63 @@ var testNames = {};
 testNames[Buildbot.TestCategory.WebKit2] = "WK2 Tests";
 testNames[Buildbot.TestCategory.WebKit1] = "WK1 Tests";
 
+function parsePlatformFamily(platformName)
+{
+    if (platformName)
+        return platformName.substr(0, platformName.indexOf("-"));
+    return ''
+}
+
+function initPlatformsByFamily()
+{
+    var platforms = Dashboard.sortedPlatforms;
+    for (var i in platforms) {
+        // Make sure the platform will be displayed on the page before considering its platform family.
+        if (!categorizedQueuesByPlatformAndBuildType[platforms[i].name])
+            continue;
+
+        var platformFamily = parsePlatformFamily(platforms[i].name);
+        if (platformsByFamily[platformFamily])
+            platformsByFamily[platformFamily].push(platforms[i].name)
+        else
+            platformsByFamily[platformFamily] = [platforms[i].name]
+    }
+}
+
+function updateToggleButtons()
+{
+    var hiddenPlatformFamilies = settings.getObject("hiddenPlatformFamilies") || [];
+    var hiddenFamilyButtons = {"all": hiddenPlatformFamilies.length > 0};
+    for (var i = 0; i < hiddenPlatformFamilies.length; ++i)
+        hiddenFamilyButtons[hiddenPlatformFamilies[i]] = true;
+
+    var platformFamilyButtons = document.getElementsByClassName("platformFamilyToggleButton");
+    for (var i = 0; i < platformFamilyButtons.length; ++i) {
+        var hiddenPlatformFamily = parsePlatformFamily(platformFamilyButtons[i].id);
+        if (!hiddenFamilyButtons[hiddenPlatformFamily])
+            platformFamilyButtons[i].classList.add("familyShown");
+        else
+            platformFamilyButtons[i].classList.remove("familyShown");
+    }
+}
+
 function updateHiddenPlatforms()
 {
-    var hiddenPlatforms = settings.getObject("hiddenPlatforms");
-    if (!hiddenPlatforms)
-        hiddenPlatforms = [];
-
+    var hiddenPlatformFamilies = settings.getObject("hiddenPlatformFamilies") || [];
     var platformRows = document.querySelectorAll("tr.platform");
     for (var i = 0; i < platformRows.length; ++i)
         platformRows[i].classList.remove("hidden");
 
-    for (var i = 0; i < hiddenPlatforms.length; ++i) {
-        var platformRow = document.querySelector("tr.platform." + hiddenPlatforms[i]);
-        if (platformRow)
-            platformRow.classList.add("hidden");
+    for (var i = 0; i < hiddenPlatformFamilies.length; ++i) {
+        var platformFamily = hiddenPlatformFamilies[i];
+        for (var j = 0; j < platformsByFamily[platformFamily].length; ++j) {
+            var name = platformsByFamily[platformFamily][j];
+            var platformRow = document.querySelector("tr.platform." + name);
+            if (platformRow)
+                platformRow.classList.add("hidden");
+        }
     }
-
-    var unhideButton = document.querySelector("div.cellButton.unhide");
-    if (hiddenPlatforms.length)
-        unhideButton.classList.remove("hidden");
-    else
-        unhideButton.classList.add("hidden");
+    updateToggleButtons();
 }
 
 function applyAccessibilityColorSetting()
@@ -161,12 +198,6 @@ function documentReady()
     row.classList.add("headers");
 
     var header = document.createElement("th"); 
-    var unhideButton = document.createElement("div");
-    unhideButton.addEventListener("click", function () { settings.clearHiddenPlatforms(); });
-    unhideButton.textContent = "Show All Platforms";
-    unhideButton.classList.add("cellButton", "unhide", "hidden");
-
-    header.appendChild(unhideButton);
     row.appendChild(header);
 
     header = document.createElement("th");
@@ -209,16 +240,9 @@ function documentReady()
         ringImage.title = platform.readableName;
         cell.appendChild(ringImage);
 
-        var hideButton = document.createElement("div");
-        hideButton.addEventListener("click", function (platformName) { return function () { settings.toggleHiddenPlatform(platformName); }; }(platform.name) );
-        hideButton.textContent = "hide";
-        hideButton.classList.add("cellButton", "hide");
-        cell.appendChild(hideButton);
-
         row.appendChild(cell);
 
         cell = document.createElement("td");
-
         var view = new BuildbotBuilderQueueView(platformQueues.builders);
         cell.appendChild(view.element);
         row.appendChild(cell);
@@ -283,16 +307,43 @@ function documentReady()
         settingsButton.classList.add("settings");
         document.body.appendChild(settingsButton);
 
+        var settingsWrapper = document.createElement("div");
+        settingsWrapper.classList.add("unhide", "hidden", "settingsWrapper")
+
+        var platformFamilyToggleWrapper = document.createElement("div");
+        platformFamilyToggleWrapper.classList.add("unhide", "hidden", "familyToggleWrapper");
+
+        var unhideAllButton = document.createElement("div");
+        unhideAllButton.addEventListener("click", function () { settings.clearHiddenPlatformFamilies(); });
+        unhideAllButton.classList.add("unhide", "hidden", "platformFamilyToggleButton");
+        unhideAllButton.setAttribute("id", "all-platformFamilyToggleButton");
+        unhideAllButton.textContent = "all";
+        platformFamilyToggleWrapper.appendChild(unhideAllButton);
+
+        initPlatformsByFamily();
+        for (var platformFamily in platformsByFamily) {
+            var platformFamilyToggle = document.createElement("div");
+            platformFamilyToggle.addEventListener("click", function () {
+                settings.toggleHiddenPlatformFamily(this.toString());
+            }.bind(platformFamily));
+            platformFamilyToggle.classList.add("unhide", "hidden", "platformFamilyToggleButton");
+            platformFamilyToggle.setAttribute("id", platformFamily + "-platformFamilyToggleButton");
+            platformFamilyToggle.textContent = platformFamily;
+            platformFamilyToggleWrapper.appendChild(platformFamilyToggle);
+        }
+        settingsWrapper.appendChild(platformFamilyToggleWrapper);
+
         var toggleAccessibilityColorButton = document.createElement("div");
         toggleAccessibilityColorButton.addEventListener("click", function() { toggleAccessibilityColors(); });
-        toggleAccessibilityColorButton.setAttribute("class", "unhide hidden accessibilityButton");
+        toggleAccessibilityColorButton.classList.add("unhide", "hidden", "accessibilityButton");
         toggleAccessibilityColorButton.setAttribute("id", "accessibilityButton");
         toggleAccessibilityColorButton.textContent = "enable accessibility colors";
-        document.body.appendChild(toggleAccessibilityColorButton);
+        settingsWrapper.appendChild(toggleAccessibilityColorButton);
+        document.body.appendChild(settingsWrapper);
         applyAccessibilityColorSetting();
-        
+
         updateHiddenPlatforms();
-        settings.addSettingListener("hiddenPlatforms", updateHiddenPlatforms);
+        settings.addSettingListener("hiddenPlatformFamilies", updateHiddenPlatforms);
     }
 }
 

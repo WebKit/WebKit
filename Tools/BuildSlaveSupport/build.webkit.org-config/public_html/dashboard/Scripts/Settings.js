@@ -84,25 +84,22 @@ Settings.prototype = {
         document.body.classList.toggle("settings-visible");
     },
 
-    toggleHiddenPlatform: function(platform)
+    toggleHiddenPlatformFamily: function(platformFamily)
     {
-        var hiddenPlatforms = this.getObject("hiddenPlatforms");
-        if (!hiddenPlatforms)
-            hiddenPlatforms = [];
-
-        var hiddenPlatformIndex = hiddenPlatforms.indexOf(platform);
+        var hiddenPlatformFamilies = this.getObject("hiddenPlatformFamilies") || [];
+        var hiddenPlatformIndex = hiddenPlatformFamilies.indexOf(platformFamily);
         if (hiddenPlatformIndex > -1)
-            hiddenPlatforms.splice(hiddenPlatformIndex, 1);
+            hiddenPlatformFamilies.splice(hiddenPlatformIndex, 1);
         else
-            hiddenPlatforms.push(platform);
+            hiddenPlatformFamilies.push(platformFamily);
 
-        this.setObject("hiddenPlatforms", hiddenPlatforms);
-        this.fireSettingListener("hiddenPlatforms");
+        this.setObject("hiddenPlatformFamilies", hiddenPlatformFamilies);
+        this.fireSettingListener("hiddenPlatformFamilies");
     },
 
-    clearHiddenPlatforms: function()
+    clearHiddenPlatformFamilies: function()
     {
-        this.setObject("hiddenPlatforms", []);
-        this.fireSettingListener("hiddenPlatforms");
+        this.setObject("hiddenPlatformFamilies", []);
+        this.fireSettingListener("hiddenPlatformFamilies");
     },
 };

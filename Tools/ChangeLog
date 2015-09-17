@@ -1,3 +1,54 @@
+2015-09-17  Dean Johnson  <dean_johnson@apple.com>
+
+        Added toggle options for hiding and showing certain platform families on the dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=148403
+
+        Reviewed by David Kilzer.
+
+        This patch removes "hiddenPlatforms" from use in the code and local storage. We also removed
+        individual hide/show buttons for platforms because we've added toggle options to hide/show entire
+        families. Examples of these are "mac", "ios", and "linux". "Show All Platforms" was also removed
+        in lieu of an "all" button in the toggle menu.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (parsePlatformFamily): Helper function to parse out a platform family.
+        (initPlatformsByFamily): Initializes platformsByFamily, which organizes platforms on the
+        page by platformsByFamily[<family>] = <list of platforms belonging to that family>.
+        (updateToggleButtons): Updates the status of the toggle buttons.
+        (updateHiddenPlatforms): Changed to work with the new implementation of hiding/showing platforms.
+        (documentReady): Added creation of toggle buttons.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js:
+        (unhiddenQueues): Updated to search by platform family instead of the individual platform name.
+        (documentReady): Changed hiddenPlatforms => hiddenPlatformFamilies.
+        (updateHiddenPlatforms): Deleted. After removing the individual hide button code, 
+        this did the exact same thing as the updateHiddenPlatforms in Scripts/Main.js so it was removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/QueueView.js:
+        (QueueView): Updated to use hiddenPlatformFamilies.
+        (QueueView.prototype._updateHiddenState): Updated to use hiddenPlatformFamilies.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Settings.js:
+        (Settings.prototype.toggleHiddenPlatformFamily): Renamed function and some variables.
+        (Settings.prototype.clearHiddenPlatformFamilies): Now uses hiddenPlatformFamilies for events.
+        (Settings.prototype.toggleHiddenPlatform): Deleted.
+        (Settings.prototype.clearHiddenPlatforms): Deleted.
+        (Settings.prototype.toggleShowPlatformFamily): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (div.cellButton, div.accessibilityButton, div.platformFamilyToggleButton):
+        (div.cellButton.unhide, div.accessibilityButton.unhide, div.platformFamilyToggleButton.unhide):
+        (.settings-visible div.settingsWrapper.hide, .settings-visible div.settingsWrapper):
+        (table.queue-grid tr.headers th):
+        (div.settingsWrapper.hide):
+        (div.settingsWrapper):
+        (div.familyToggleWrapper):
+        (div.platformFamilyToggleButton):
+        (div.platformFamilyShowToggleButton:not(:last-child)):
+        (div.familyShown):
+        (div.accessibilityButton):
+        (div.cellButton, div.accessibilityButton): Added platformFamilyToggleButton class.
+        (div.cellButton.unhide, div.accessibilityButton.unhide): Added platformFamilyToggleButton class.
+        (.settings-visible div.accessibilityButton.hide, .settings-visible div.accessibilityButton.unhide): Added
+        platformFamilyToggleButton and settingsWrapper class.
+        (.accessibilityButton): Deleted.
+
 2015-09-17  Tim Horton  <timothy_horton@apple.com>
 
         Add a test ensuring that scrolling in the middle of a page can't start a swipe gesture
