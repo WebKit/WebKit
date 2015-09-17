@@ -1616,7 +1616,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     shadowRoot.setParentTreeScope(&treeScope());
 
     NodeVector postInsertionNotificationTargets;
-    ChildNodeInsertionNotifier(*this).notify(shadowRoot, postInsertionNotificationTargets);
+    notifyChildNodeInserted(*this, shadowRoot, postInsertionNotificationTargets);
 
     for (auto& target : postInsertionNotificationTargets)
         target->finishedInsertingSubtree();
@@ -1646,7 +1646,7 @@ void Element::removeShadowRoot()
     oldRoot->setHost(nullptr);
     oldRoot->setParentTreeScope(&document());
 
-    ChildNodeRemovalNotifier(*this).notify(*oldRoot);
+    notifyChildNodeRemoved(*this, *oldRoot);
 }
 
 RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)

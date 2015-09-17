@@ -328,7 +328,7 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
     ChildListMutationScope(*this).childAdded(child);
 
     NodeVector postInsertionNotificationTargets;
-    ChildNodeInsertionNotifier(*this).notify(child, postInsertionNotificationTargets);
+    notifyChildNodeInserted(*this, child, postInsertionNotificationTargets);
 
     ChildChange change;
     change.type = child.isElementNode() ? ElementInserted : child.isTextNode() ? TextInserted : NonContentsChildChanged;
@@ -344,7 +344,7 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
 
 void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)
 {
-    ChildNodeRemovalNotifier(*this).notify(child);
+    notifyChildNodeRemoved(*this, child);
 
     ChildChange change;
     change.type = is<Element>(child) ? ElementRemoved : is<Text>(child) ? TextRemoved : NonContentsChildChanged;
@@ -636,9 +636,9 @@ void ContainerNode::removeChildren()
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            while (RefPtr<Node> n = m_firstChild) {
-                removeBetween(0, m_firstChild->nextSibling(), *m_firstChild);
-                ChildNodeRemovalNotifier(*this).notify(*n);
+            while (RefPtr<Node> child = m_firstChild) {
+                removeBetween(0, child->nextSibling(), *child);
+                notifyChildNodeRemoved(*this, *child);
             }
         }
 

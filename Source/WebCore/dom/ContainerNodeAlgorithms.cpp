@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2012 Google Inc. All rights reserved.
@@ -29,7 +29,12 @@
 
 namespace WebCore {
 
-void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerNode& node, NodeVector& postInsertionNotificationTargets)
+void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode&, NodeVector& postInsertionNotificationTargets);
+void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node&, NodeVector& postInsertionNotificationTargets);
+void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode&);
+void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node&);
+
+static void notifyDescendantInsertedIntoDocument(ContainerNode& insertionPoint, ContainerNode& node, NodeVector& postInsertionNotificationTargets)
 {
     ChildNodesLazySnapshot snapshot(node);
     while (RefPtr<Node> child = snapshot.nextNode()) {
@@ -37,7 +42,7 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
         // we don't want to tell the rest of our children that they've been
         // inserted into the document because they haven't.
         if (node.inDocument() && child->parentNode() == &node)
-            notifyNodeInsertedIntoDocument(*child, postInsertionNotificationTargets);
+            notifyNodeInsertedIntoDocument(insertionPoint, *child, postInsertionNotificationTargets);
     }
 
     if (!is<Element>(node))
@@ -45,30 +50,69 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         if (node.inDocument() && root->host() == &node)
-            notifyNodeInsertedIntoDocument(*root, postInsertionNotificationTargets);
+            notifyNodeInsertedIntoDocument(insertionPoint, *root, postInsertionNotificationTargets);
     }
 }
 
-void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode& node, NodeVector& postInsertionNotificationTargets)
+static void notifyDescendantInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode& node, NodeVector& postInsertionNotificationTargets)
 {
     for (Node* child = node.firstChild(); child; child = child->nextSibling()) {
         if (is<ContainerNode>(*child))
-            notifyNodeInsertedIntoTree(downcast<ContainerNode>(*child), postInsertionNotificationTargets);
+            notifyNodeInsertedIntoTree(insertionPoint, downcast<ContainerNode>(*child), postInsertionNotificationTargets);
     }
 
     if (ShadowRoot* root = node.shadowRoot())
-        notifyNodeInsertedIntoTree(*root, postInsertionNotificationTargets);
+        notifyNodeInsertedIntoTree(insertionPoint, *root, postInsertionNotificationTargets);
 }
 
-void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode& node)
+void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node& node, NodeVector& postInsertionNotificationTargets)
 {
+    ASSERT(insertionPoint.inDocument());
+    if (node.insertedInto(insertionPoint) == Node::InsertionShouldCallFinishedInsertingSubtree)
+        postInsertionNotificationTargets.append(node);
+    if (is<ContainerNode>(node))
+        notifyDescendantInsertedIntoDocument(insertionPoint, downcast<ContainerNode>(node), postInsertionNotificationTargets);
+}
+
+void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode& node, NodeVector& postInsertionNotificationTargets)
+{
+    NoEventDispatchAssertion assertNoEventDispatch;
+    ASSERT(!insertionPoint.inDocument());
+
+    if (node.insertedInto(insertionPoint) == Node::InsertionShouldCallFinishedInsertingSubtree)
+        postInsertionNotificationTargets.append(node);
+    notifyDescendantInsertedIntoTree(insertionPoint, node, postInsertionNotificationTargets);
+}
+
+void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVector& postInsertionNotificationTargets)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
+
+    InspectorInstrumentation::didInsertDOMNode(node.document(), node);
+
+    Ref<Document> protectDocument(node.document());
+    Ref<Node> protectNode(node);
+
+    if (insertionPoint.inDocument())
+        notifyNodeInsertedIntoDocument(insertionPoint, node, postInsertionNotificationTargets);
+    else if (is<ContainerNode>(node))
+        notifyNodeInsertedIntoTree(insertionPoint, downcast<ContainerNode>(node), postInsertionNotificationTargets);
+}
+
+void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
+{
+    ASSERT(insertionPoint.inDocument());
+    node.removedFrom(insertionPoint);
+
+    if (!is<ContainerNode>(node))
+        return;
     ChildNodesLazySnapshot snapshot(node);
     while (RefPtr<Node> child = snapshot.nextNode()) {
         // If we have been added to the document during this loop, then we
         // don't want to tell the rest of our children that they've been
         // removed from the document because they haven't.
         if (!node.inDocument() && child->parentNode() == &node)
-            notifyNodeRemovedFromDocument(*child.get());
+            notifyNodeRemovedFromDocument(insertionPoint, *child.get());
     }
 
     if (!is<Element>(node))
@@ -79,22 +123,38 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot()) {
         if (!node.inDocument() && root->host() == &node)
-            notifyNodeRemovedFromDocument(*root.get());
+            notifyNodeRemovedFromDocument(insertionPoint, *root.get());
     }
 }
 
-void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode& node)
+void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode& node)
 {
+    NoEventDispatchAssertion assertNoEventDispatch;
+    ASSERT(!insertionPoint.inDocument());
+
+    node.removedFrom(insertionPoint);
+
     for (Node* child = node.firstChild(); child; child = child->nextSibling()) {
         if (is<ContainerNode>(*child))
-            notifyNodeRemovedFromTree(downcast<ContainerNode>(*child));
+            notifyNodeRemovedFromTree(insertionPoint, downcast<ContainerNode>(*child));
     }
 
     if (!is<Element>(node))
         return;
 
     if (RefPtr<ShadowRoot> root = downcast<Element>(node).shadowRoot())
-        notifyNodeRemovedFromTree(*root.get());
+        notifyNodeRemovedFromTree(insertionPoint, *root.get());
+}
+
+void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
+{
+    if (!child.inDocument()) {
+        if (is<ContainerNode>(child))
+            notifyNodeRemovedFromTree(insertionPoint, downcast<ContainerNode>(child));
+        return;
+    }
+    notifyNodeRemovedFromDocument(insertionPoint, child);
+    child.document().notifyRemovePendingSheetIfNeeded();
 }
 
 #ifndef NDEBUG
