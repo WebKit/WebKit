@@ -811,6 +811,8 @@ private:
         double doubleValue;
     };
 
+    enum class FloatingPointPrecision { Single, Double };
+
     Address localAddress(unsigned localIndex) const
     {
         ASSERT(localIndex < m_numberOfLocals);
@@ -848,20 +850,27 @@ private:
     }
 
 #if CPU(X86)
-    void appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    void appendCallSetResult(const FunctionPtr& function, FPRReg result, FloatingPointPrecision precision)
     {
         appendCall(function);
-        m_assembler.fstpl(0, stackPointerRegister);
+        switch (precision) {
+        case FloatingPointPrecision::Single:
+            m_assembler.fstps(0, stackPointerRegister);
+            break;
+        case FloatingPointPrecision::Double:
+            m_assembler.fstpl(0, stackPointerRegister);
+            break;
+        }
         loadDouble(stackPointerRegister, result);
     }
 #elif CPU(ARM) && !CPU(ARM_HARDFP)
-    void appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    void appendCallSetResult(const FunctionPtr& function, FPRReg result, FloatingPointPrecision)
     {
         appendCall(function);
         m_assembler.vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
     }
 #else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS) || CPU(SH4)
-    void appendCallSetResult(const FunctionPtr& function, FPRReg result)
+    void appendCallSetResult(const FunctionPtr& function, FPRReg result, FloatingPointPrecision)
     {
         appendCall(function);
         moveDouble(FPRInfo::returnValueFPR, result);
@@ -878,7 +887,7 @@ private:
     void callOperation(D_JITOperation_EJ operation, GPRReg src, FPRReg dst)
     {
         setupArgumentsWithExecState(src);
-        appendCallSetResult(operation, dst);
+        appendCallSetResult(operation, dst, FloatingPointPrecision::Double);
     }
 #else
     // EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
@@ -898,14 +907,14 @@ private:
     void callOperation(D_JITOperation_EJ operation, GPRReg srcTag, GPRReg srcPayload, FPRReg dst)
     {
         setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG srcPayload, srcTag);
-        appendCallSetResult(operation, dst);
+        appendCallSetResult(operation, dst, FloatingPointPrecision::Double);
     }
 #endif
 
     void callOperation(float JIT_OPERATION (*operation)(float), FPRegisterID src, FPRegisterID dst)
     {
         setupArguments(src);
-        appendCallSetResult(operation, dst);
+        appendCallSetResult(operation, dst, FloatingPointPrecision::Single);
     }
 
     void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)

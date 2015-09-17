@@ -227,6 +227,7 @@ private:
         OP_INT3                         = 0xCC,
         OP_GROUP2_Ev1                   = 0xD1,
         OP_GROUP2_EvCL                  = 0xD3,
+        OP_ESCAPE_D9                    = 0xD9,
         OP_ESCAPE_DD                    = 0xDD,
         OP_CALL_rel32                   = 0xE8,
         OP_JMP_rel32                    = 0xE9,
@@ -323,6 +324,7 @@ private:
         GROUP14_OP_PSLLQ = 6,
         GROUP14_OP_PSRLQ = 2,
 
+        ESCAPE_D9_FSTP_singleReal = 3,
         ESCAPE_DD_FSTP_doubleReal = 3,
     } GroupOpcodeID;
     
@@ -1263,6 +1265,11 @@ public:
     void cdq()
     {
         m_formatter.oneByteOp(OP_CDQ);
+    }
+
+    void fstps(int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp(OP_ESCAPE_D9, ESCAPE_D9_FSTP_singleReal, base, offset);
     }
 
     void fstpl(int offset, RegisterID base)

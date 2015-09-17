@@ -1,5 +1,26 @@
 2015-09-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
+        Calling a float function on x86 in WebAssembly incorrectly returns a double
+        https://bugs.webkit.org/show_bug.cgi?id=149254
+
+        Reviewed by Michael Saboff.
+
+        In WebAssembly on x86 (32-bit), when we call a function that returns a
+        float or a double, we use the FSTP instruction to read the return value
+        from the FPU register stack. The FSTP instruction converts the value to
+        single-precision or double-precision floating-point format, depending on
+        the destination operand. Currently, we always use double as the
+        destination, which is wrong. This patch uses the correct return type.
+        This should fix the test errors in tests/stress/wasm-arithmetic-float32.js
+
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::fstps):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::appendCallSetResult):
+        (JSC::WASMFunctionCompiler::callOperation):
+
+2015-09-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
         Save and restore callee save registers in WebAssembly
         https://bugs.webkit.org/show_bug.cgi?id=149247
 
