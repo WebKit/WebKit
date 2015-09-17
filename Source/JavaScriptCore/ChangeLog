@@ -1,3 +1,19 @@
+2015-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        stress/exit-from-getter.js.ftl-eager occasionally traps in debug
+        https://bugs.webkit.org/show_bug.cgi?id=149096
+
+        Reviewed by Geoffrey Garen.
+
+        JS calls to getters/setters in get/put inline caches need to reset SP after the call, as our
+        calling convention requires.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate): Fix the bug.
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link): Adds some verbiage about why the FTL stack offset logic is correct.
+        * tests/stress/getter-arity.js: Added. Other tests would flaky crash before the patch. This test instacrashes before the patch.
+
 2015-09-17  Saam barati  <sbarati@apple.com>
 
         Interpreter::unwind() shouldn't be responsible for filtering out uncatchable exceptions

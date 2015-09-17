@@ -625,6 +625,11 @@ void AccessCase::generate(AccessGenerationState& state)
 
                 done.link(&jit);
 
+                jit.addPtr(
+                    CCallHelpers::TrustedImm32(
+                        jit.codeBlock()->stackPointerOffset() * sizeof(Register)),
+                    GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+
                 state.callbacks.append(
                     [=, &vm] (LinkBuffer& linkBuffer) {
                         m_rareData->callLinkInfo->setCallLocations(
