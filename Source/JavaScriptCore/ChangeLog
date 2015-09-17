@@ -1,5 +1,27 @@
 2015-09-17  Filip Pizlo  <fpizlo@apple.com>
 
+        0.0 should really be 0.0
+        https://bugs.webkit.org/show_bug.cgi?id=149283
+
+        Reviewed by Mark Lam.
+
+        A while ago (http://trac.webkit.org/changeset/180813) we introduced the idea that if the
+        user wrote a number with a decimal point (like "0.0") then we should treat that number as
+        a double. That's probably a pretty good idea. But, we ended up doing it inconsistently.
+        The DFG would indeed treat such a number as a double by consulting the
+        SourceCodeRepresentation, but the other execution engines would still see Int32:0.
+
+        This patch makes it consistent.
+
+        This is necessary for property type inference to perform well. Otherwise, a store of a
+        constant would change type from the baseline engine to the DFG, which would then cause
+        a storm of property type invalidations and recompilations.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addConstantValue):
+
+2015-09-17  Filip Pizlo  <fpizlo@apple.com>
+
         stress/exit-from-getter.js.ftl-eager occasionally traps in debug
         https://bugs.webkit.org/show_bug.cgi?id=149096
 

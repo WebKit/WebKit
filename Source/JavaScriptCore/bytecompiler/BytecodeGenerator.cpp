@@ -1251,6 +1251,8 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v, SourceCodeRepresentat
 
     int index = m_nextConstantOffset;
 
+    if (sourceCodeRepresentation == SourceCodeRepresentation::Double && v.isInt32())
+        v = jsDoubleNumber(v.asNumber());
     EncodedJSValueWithRepresentation valueMapKey { JSValue::encode(v), sourceCodeRepresentation };
     JSValueMap::AddResult result = m_jsValueMap.add(valueMapKey, m_nextConstantOffset);
     if (result.isNewEntry) {
