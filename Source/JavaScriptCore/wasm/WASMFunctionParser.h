@@ -116,6 +116,7 @@ private:
 
     template <class Context> ContextExpressionList parseCallArguments(Context&, const Vector<WASMType>& arguments);
     template <class Context> ContextExpression parseCallInternal(Context&, WASMExpressionType returnType);
+    template <class Context> ContextExpression parseCallIndirect(Context&, WASMExpressionType returnType);
     template <class Context> ContextExpression parseCallImport(Context&, WASMExpressionType returnType);
 
     JSWASMModule* m_module;

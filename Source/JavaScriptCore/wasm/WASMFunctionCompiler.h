@@ -671,6 +671,21 @@ public:
         return UNUSED;
     }
 
+    int buildCallIndirect(uint32_t functionPointerTableIndex, int, int, const WASMSignature& signature, WASMExpressionType returnType)
+    {
+        boxArgumentsAndAdjustStackPointer(signature.arguments);
+
+        const Vector<JSFunction*>& functions = m_module->functionPointerTables()[functionPointerTableIndex].functions;
+        move(TrustedImmPtr(functions.data()), GPRInfo::regT0);
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT1);
+        m_tempStackTop--;
+        and32(TrustedImm32(functions.size() - 1), GPRInfo::regT1);
+        loadPtr(BaseIndex(GPRInfo::regT0, GPRInfo::regT1, timesPtr()), GPRInfo::regT0);
+
+        callAndUnboxResult(returnType);
+        return UNUSED;
+    }
+
     int buildCallImport(uint32_t functionImportIndex, int, const WASMSignature& signature, WASMExpressionType returnType)
     {
         boxArgumentsAndAdjustStackPointer(signature.arguments);

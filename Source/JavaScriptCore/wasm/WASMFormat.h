@@ -50,6 +50,8 @@
 
 namespace JSC {
 
+class JSFunction;
+
 enum class WASMType : uint8_t {
     I32,
     F32,
@@ -85,7 +87,8 @@ struct WASMFunctionDeclaration {
 
 struct WASMFunctionPointerTable {
     uint32_t signatureIndex;
-    Vector<uint32_t> elements;
+    Vector<uint32_t> functionIndices;
+    Vector<JSFunction*> functions;
 };
 
 } // namespace JSC

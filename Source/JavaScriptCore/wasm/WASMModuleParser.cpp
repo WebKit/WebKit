@@ -271,14 +271,17 @@ void WASMModuleParser::parseFunctionPointerTableSection()
         WASMFunctionPointerTable functionPointerTable;
         READ_COMPACT_UINT32_OR_FAIL(functionPointerTable.signatureIndex, "Cannot read the signature index.");
         FAIL_IF_FALSE(functionPointerTable.signatureIndex < m_module->signatures().size(), "The signature index is incorrect.");
-        uint32_t numberOfElements;
-        READ_COMPACT_UINT32_OR_FAIL(numberOfElements, "Cannot read the number of elements of a function pointer table.");
-        FAIL_IF_FALSE(hasOneBitSet(numberOfElements), "The number of elements must be a power of two.");
-        functionPointerTable.elements.reserveInitialCapacity(numberOfElements);
-        for (uint32_t j = 0; j < numberOfElements; ++j) {
-            uint32_t element;
-            READ_COMPACT_UINT32_OR_FAIL(element, "Cannot read an element of a function pointer table.");
-            functionPointerTable.elements.uncheckedAppend(element);
+        uint32_t numberOfFunctions;
+        READ_COMPACT_UINT32_OR_FAIL(numberOfFunctions, "Cannot read the number of functions of a function pointer table.");
+        FAIL_IF_FALSE(hasOneBitSet(numberOfFunctions), "The number of functions must be a power of two.");
+        functionPointerTable.functionIndices.reserveInitialCapacity(numberOfFunctions);
+        functionPointerTable.functions.reserveInitialCapacity(numberOfFunctions);
+        for (uint32_t j = 0; j < numberOfFunctions; ++j) {
+            uint32_t functionIndex;
+            READ_COMPACT_UINT32_OR_FAIL(functionIndex, "Cannot read a function index of a function pointer table.");
+            FAIL_IF_FALSE(functionIndex < m_module->functionDeclarations().size(), "The function index is incorrect.");
+            FAIL_IF_FALSE(m_module->functionDeclarations()[functionIndex].signatureIndex == functionPointerTable.signatureIndex, "The signature of the function doesn't match that of the function pointer table.");
+            functionPointerTable.functionIndices.uncheckedAppend(functionIndex);
         }
         m_module->functionPointerTables().uncheckedAppend(functionPointerTable);
     }
@@ -289,6 +292,11 @@ void WASMModuleParser::parseFunctionDefinitionSection()
     for (size_t functionIndex = 0; functionIndex < m_module->functionDeclarations().size(); ++functionIndex) {
         parseFunctionDefinition(functionIndex);
         PROPAGATE_ERROR();
+    }
+
+    for (WASMFunctionPointerTable& functionPointerTable : m_module->functionPointerTables()) {
+        for (size_t i = 0; i < functionPointerTable.functionIndices.size(); ++i)
+            functionPointerTable.functions.uncheckedAppend(m_module->functions()[functionPointerTable.functionIndices[i]].get());
     }
 }
 

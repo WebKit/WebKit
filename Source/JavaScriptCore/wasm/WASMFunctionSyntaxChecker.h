@@ -165,6 +165,16 @@ public:
         return UNUSED;
     }
 
+    int buildCallIndirect(uint32_t, int, int, const WASMSignature& signature, WASMExpressionType returnType)
+    {
+        size_t argumentCount = signature.arguments.size();
+        updateTempStackHeightForCall(argumentCount);
+        m_tempStackTop -= argumentCount + 1;
+        if (returnType != WASMExpressionType::Void)
+            m_tempStackTop++;
+        return UNUSED;
+    }
+
     void appendExpressionList(int&, int) { }
 
     void linkTarget(const int&) { }

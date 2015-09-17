@@ -530,6 +530,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseGetGlobalExpressionI32(context);
         case WASMOpExpressionI32::CallInternal:
             return parseCallInternalExpressionI32(context);
+        case WASMOpExpressionI32::CallIndirect:
+            return parseCallIndirect(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallImport:
             return parseCallImport(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::Negate:
@@ -595,7 +597,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::StoreWithOffset16:
         case WASMOpExpressionI32::Store32:
         case WASMOpExpressionI32::StoreWithOffset32:
-        case WASMOpExpressionI32::CallIndirect:
         case WASMOpExpressionI32::Conditional:
         case WASMOpExpressionI32::Comma:
         case WASMOpExpressionI32::FromF32:
@@ -751,6 +752,8 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseGetLocalExpressionF32(context);
         case WASMOpExpressionF32::GetGlobal:
             return parseGetGlobalExpressionF32(context);
+        case WASMOpExpressionF32::CallIndirect:
+            return parseCallIndirect(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::Negate:
         case WASMOpExpressionF32::Abs:
         case WASMOpExpressionF32::Ceil:
@@ -769,7 +772,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::Store:
         case WASMOpExpressionF32::StoreWithOffset:
         case WASMOpExpressionF32::CallInternal:
-        case WASMOpExpressionF32::CallIndirect:
         case WASMOpExpressionF32::Conditional:
         case WASMOpExpressionF32::Comma:
         case WASMOpExpressionF32::FromS32:
@@ -880,6 +882,8 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseGetGlobalExpressionF64(context);
         case WASMOpExpressionF64::CallImport:
             return parseCallImport(context, WASMExpressionType::F64);
+        case WASMOpExpressionF64::CallIndirect:
+            return parseCallIndirect(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::SetLocal:
         case WASMOpExpressionF64::SetGlobal:
         case WASMOpExpressionF64::Load:
@@ -887,7 +891,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::Store:
         case WASMOpExpressionF64::StoreWithOffset:
         case WASMOpExpressionF64::CallInternal:
-        case WASMOpExpressionF64::CallIndirect:
         case WASMOpExpressionF64::Conditional:
         case WASMOpExpressionF64::Comma:
         case WASMOpExpressionF64::FromS32:
@@ -1006,6 +1009,24 @@ ContextExpression WASMFunctionParser::parseCallInternal(Context& context, WASMEx
     ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
     PROPAGATE_ERROR();
     return context.buildCallInternal(functionIndex, argumentList, signature, returnType);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseCallIndirect(Context& context, WASMExpressionType returnType)
+{
+    uint32_t functionPointerTableIndex;
+    READ_COMPACT_UINT32_OR_FAIL(functionPointerTableIndex, "Cannot read the function pointer table index.");
+    FAIL_IF_FALSE(functionPointerTableIndex < m_module->functionPointerTables().size(), "The function pointer table index is incorrect.");
+    const WASMFunctionPointerTable& functionPointerTable = m_module->functionPointerTables()[functionPointerTableIndex];
+    const WASMSignature& signature = m_module->signatures()[functionPointerTable.signatureIndex];
+    FAIL_IF_FALSE(signature.returnType == returnType, "Wrong return type.");
+
+    ContextExpression index = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+
+    ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
+    PROPAGATE_ERROR();
+    return context.buildCallIndirect(functionPointerTableIndex, index, argumentList, signature, returnType);
 }
 
 template <class Context>
