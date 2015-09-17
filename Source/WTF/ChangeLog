@@ -1,3 +1,10 @@
+2015-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert unintended change.
+
+        * benchmarks/LockSpeedTest.cpp:
+        (main):
+
 2015-09-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add ShadowRoot interface and Element.prototype.attachShadow

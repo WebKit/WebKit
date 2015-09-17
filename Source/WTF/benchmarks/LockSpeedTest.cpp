@@ -28,7 +28,6 @@
 
 #include "config.h"
 
-#include <thread>
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Lock.h>
@@ -68,42 +67,15 @@ private:
     Atomic<unsigned> m_lock;
 };
 
-class ByteSpinLock {
-public:
-    ByteSpinLock()
-    {
-        m_lock.store(0, std::memory_order_relaxed);
-    }
-
-    void lock()
-    {
-        while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
-            std::this_thread::yield();
-    }
-
-    void unlock()
-    {
-        m_lock.store(0, std::memory_order_release);
-    }
-
-    bool isLocked() const
-    {
-        return m_lock.load(std::memory_order_acquire);
-    }
-
-private:
-    Atomic<uint8_t> m_lock;
-};
-
 unsigned numThreadGroups;
 unsigned numThreadsPerGroup;
-int workPerCriticalSection;
+unsigned workPerCriticalSection;
 unsigned numNoiseThreads;
 unsigned numIterations;
     
 NO_RETURN void usage()
 {
-    printf("Usage: LockSpeedTest spinlock|bytespinlock|wordlock|lock|mutex|all <num thread groups> <num threads per group> <work per critical section> <num noise threads> <num iterations>\n");
+    printf("Usage: LockSpeedTest spinlock|wordlock|lock|mutex|all <num thread groups> <num threads per group> <work per critical section> <num noise threads> <num iterations>\n");
     exit(1);
 }
 
@@ -138,13 +110,9 @@ void runBenchmark(const char* name)
                 [threadGroupIndex, &locks, &words] () {
                     for (unsigned i = numIterations; i--;) {
                         locks[threadGroupIndex].lock();
-                        if (workPerCriticalSection < 0)
-                            sleep(-workPerCriticalSection);
-                        else {
-                            for (unsigned j = workPerCriticalSection; j--;) {
-                                words[threadGroupIndex]++;
-                                words[threadGroupIndex] *= 1.01;
-                            }
+                        for (unsigned j = workPerCriticalSection; j--;) {
+                            words[threadGroupIndex]++;
+                            words[threadGroupIndex] *= 1.01;
                         }
                         locks[threadGroupIndex].unlock();
                     }
@@ -175,7 +143,7 @@ int main(int argc, char** argv)
     if (argc != 7
         || sscanf(argv[2], "%u", &numThreadGroups) != 1
         || sscanf(argv[3], "%u", &numThreadsPerGroup) != 1
-        || sscanf(argv[4], "%d", &workPerCriticalSection) != 1
+        || sscanf(argv[4], "%u", &workPerCriticalSection) != 1
         || sscanf(argv[5], "%u", &numNoiseThreads) != 1
         || sscanf(argv[6], "%u", &numIterations) != 1)
         usage();
@@ -183,10 +151,6 @@ int main(int argc, char** argv)
     bool didRun = false;
     if (!strcmp(argv[1], "spinlock") || !strcmp(argv[1], "all")) {
         runBenchmark<SpinLock>("SpinLock");
-        didRun = true;
-    }
-    if (!strcmp(argv[1], "bytespinlock") || !strcmp(argv[1], "all")) {
-        runBenchmark<SpinLock>("ByteSpinLock");
         didRun = true;
     }
     if (!strcmp(argv[1], "wordlock") || !strcmp(argv[1], "all")) {
