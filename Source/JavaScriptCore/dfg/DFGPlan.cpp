@@ -626,6 +626,13 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
     if (profiledDFGCodeBlock)
         profiledDFGCodeBlock->visitStrongly(visitor);
 
+    if (inlineCallFrames) {
+        for (auto* inlineCallFrame : *inlineCallFrames) {
+            ASSERT(inlineCallFrame->baselineCodeBlock());
+            inlineCallFrame->baselineCodeBlock()->visitStrongly(visitor);
+        }
+    }
+
     weakReferences.visitChildren(visitor);
     transitions.visitChildren(visitor);
 }

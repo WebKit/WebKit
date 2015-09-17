@@ -1,5 +1,92 @@
 2015-09-16  Geoffrey Garen  <ggaren@apple.com>
 
+        JavaScriptCore should discard baseline code after some time
+        https://bugs.webkit.org/show_bug.cgi?id=149220
+
+        Reviewed by Saam Barati.
+
+        This is a bit more complicated than discarding optimized code because
+        the engine previously assumed that we would never discard baseline code.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Record creation time (and compute time since
+        creation) instead of install time because CodeBlocks can be installed
+        more than once, and we don't want to have to worry about edge cases
+        created by CodeBlocks seeming to get younger.
+
+        (JSC::CodeBlock::visitAggregate): Be explicit about only doing the 
+        weak reference fixpoint for optimized CodeBlocks. We used to avoid the
+        fixpoint for baseline CodeBlocks implicitly, since they would always
+        visit themselves strongly right away. But now baseline CodeBlocks might
+        not visit themselves strongly, since they might choose to jettison due
+        to old age.
+
+        (JSC::CodeBlock::shouldVisitStrongly): Add old age as a reason not to
+        visit ourselves strongly, so that baseline CodeBlocks can jettison due
+        to old age.
+
+        (JSC::CodeBlock::shouldJettisonDueToWeakReference): Be explicit about
+        only jettisoning optimized CodeBlocks due to weak references so that we
+        don't confuse ourselves into thinking that we will jettison a baseline
+        CodeBlock due to weak references.
+
+        (JSC::CodeBlock::shouldJettisonDueToOldAge): Updated to use creation time.
+
+        (JSC::CodeBlock::visitOSRExitTargets): Clarify a comment and add an
+        ASSERT to help record some things I discovered while debugging.
+
+        (JSC::CodeBlock::jettison): Allow a baseline CodeBlock to jettison. Don't
+        assume that we have an alternative or a profiler.
+
+        (JSC::CodeBlock::install): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::releaseAlternative): Deleted.
+        (JSC::CodeBlock::setInstallTime): Deleted.
+        (JSC::CodeBlock::timeSinceInstall): Deleted.
+
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit): Simplified the computation of
+        baseline CodeBlock.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren): Be sure to strongly
+        visit our inline callframes because we assume that an optimized CodeBlock
+        will keep its OSR exit targets alive, but the CodeBlock object won't be
+        able to mark them for itself until compilation has completed (since it
+        won't have a JITCode object yet).
+
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        Updated for interface change.
+
+        * jit/JITCode.h:
+        (JSC::JITCode::timeToLive): Provide a time to live for interpreter and
+        baseline code, so they will jettison when old. Use seconds in our
+        code so that we don't need comments. Make DFG 2X interpreter+baseline,
+        and FTL 2X DFG+interpreter+baseline, also matching the time we allot
+        before throwing away all code.
+
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics): Updated for interface change.
+
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode): Allow our caller to install nullptr,
+        since we need to do this when jettisoning a baseline CodeBlock. Require
+        our caller to specify the details of the installation because we can't
+        rely on a non-null CodeBlock in order to compute them.
+
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::recordParse): Updated for interface change.
+
+        * runtime/Options.h: Renamed the CodeBlock liveness option since it now
+        controls baseline and optimized code.
+
+2015-09-16  Geoffrey Garen  <ggaren@apple.com>
+
         Remove obsolete code for deleting CodeBlocks
         https://bugs.webkit.org/show_bug.cgi?id=149231
 

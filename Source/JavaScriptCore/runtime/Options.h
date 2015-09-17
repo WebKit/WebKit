@@ -118,7 +118,7 @@ typedef const char* optionString;
     v(bool, crashIfCantAllocateJITMemory, false, nullptr) \
     v(unsigned, jitMemoryReservationSize, 0, nullptr) \
     \
-    v(bool, forceDFGCodeBlockLiveness, false, nullptr) \
+    v(bool, forceCodeBlockLiveness, false, nullptr) \
     v(bool, forceICFailure, false, nullptr) \
     \
     v(bool, dumpGeneratedBytecodes, false, nullptr) \

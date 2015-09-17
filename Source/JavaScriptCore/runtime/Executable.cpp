@@ -116,41 +116,18 @@ void ScriptExecutable::destroy(JSCell* cell)
     static_cast<ScriptExecutable*>(cell)->ScriptExecutable::~ScriptExecutable();
 }
 
-void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
+void ScriptExecutable::installCode(CodeBlock* codeBlock)
 {
-    RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
-    RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
-    
-    if (Options::verboseOSR())
-        dataLog("Installing ", *genericCodeBlock, "\n");
-    
-    VM& vm = *genericCodeBlock->vm();
-    
-    if (vm.m_perBytecodeProfiler)
-        vm.m_perBytecodeProfiler->ensureBytecodesFor(genericCodeBlock);
-    
+    installCode(*codeBlock->vm(), codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
+}
+
+void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType codeType, CodeSpecializationKind kind)
+{
     ASSERT(vm.heap.isDeferred());
-    
-    CodeSpecializationKind kind = genericCodeBlock->specializationKind();
     
     RefPtr<CodeBlock> oldCodeBlock;
     
-    switch (kind) {
-    case CodeForCall:
-        m_jitCodeForCall = genericCodeBlock->jitCode();
-        m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-        m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
-        m_numParametersForCall = genericCodeBlock->numParameters();
-        break;
-    case CodeForConstruct:
-        m_jitCodeForConstruct = genericCodeBlock->jitCode();
-        m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
-        m_jitCodeForConstructWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
-        m_numParametersForConstruct = genericCodeBlock->numParameters();
-        break;
-    }
-    
-    switch (genericCodeBlock->codeType()) {
+    switch (codeType) {
     case GlobalCode: {
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         ProgramCodeBlock* codeBlock = static_cast<ProgramCodeBlock*>(genericCodeBlock);
@@ -199,18 +176,42 @@ void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
             break;
         }
         break;
-    } }
+    }
+    }
+
+    switch (kind) {
+    case CodeForCall:
+        m_jitCodeForCall = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
+        m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
+        m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
+        m_numParametersForCall = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
+        break;
+    case CodeForConstruct:
+        m_jitCodeForConstruct = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
+        m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
+        m_jitCodeForConstructWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
+        m_numParametersForConstruct = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
+        break;
+    }
+
+    if (genericCodeBlock) {
+        RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
+        RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
+        
+        if (Options::verboseOSR())
+            dataLog("Installing ", *genericCodeBlock, "\n");
+        
+        if (vm.m_perBytecodeProfiler)
+            vm.m_perBytecodeProfiler->ensureBytecodesFor(genericCodeBlock);
+        
+        if (Debugger* debugger = genericCodeBlock->globalObject()->debugger())
+            debugger->registerCodeBlock(genericCodeBlock);
+    }
 
     if (oldCodeBlock)
         oldCodeBlock->unlinkIncomingCalls();
 
-    Debugger* debugger = genericCodeBlock->globalObject()->debugger();
-    if (debugger)
-        debugger->registerCodeBlock(genericCodeBlock);
-
-    genericCodeBlock->setInstallTime(std::chrono::steady_clock::now());
-
-    Heap::heap(this)->writeBarrier(this);
+    vm.heap.writeBarrier(this);
 }
 
 RefPtr<CodeBlock> ScriptExecutable::newCodeBlockFor(
@@ -367,7 +368,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
     else
         setupJIT(vm, codeBlock.get());
     
-    installCode(codeBlock.get());
+    installCode(*codeBlock->vm(), codeBlock.get(), codeBlock->codeType(), codeBlock->specializationKind());
     return 0;
 }
 

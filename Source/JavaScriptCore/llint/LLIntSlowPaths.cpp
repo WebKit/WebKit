@@ -324,7 +324,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         case CompilationSuccessful:
             if (Options::verboseOSR())
                 dataLogF("    JIT compilation successful.\n");
-            codeBlock->install();
+            codeBlock->ownerScriptExecutable()->installCode(codeBlock);
             codeBlock->jitSoon();
             return true;
         default:

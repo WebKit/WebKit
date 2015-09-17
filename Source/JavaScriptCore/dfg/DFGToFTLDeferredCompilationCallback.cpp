@@ -80,7 +80,7 @@ void ToFTLDeferredCompilationCallback::compilationDidComplete(
     }
     
     if (result == CompilationSuccessful)
-        codeBlock->install();
+        codeBlock->ownerScriptExecutable()->installCode(codeBlock);
     
     m_dfgCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(
         m_dfgCodeBlock.get(), result);

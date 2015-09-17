@@ -62,7 +62,7 @@ void JITToDFGDeferredCompilationCallback::compilationDidComplete(
         dataLog("Optimizing compilation of ", *codeBlock, " result: ", result, "\n");
     
     if (result == CompilationSuccessful)
-        codeBlock->install();
+        codeBlock->ownerScriptExecutable()->installCode(codeBlock);
     
     codeBlock->alternative()->setOptimizationThresholdBasedOnCompilationResult(result);
 

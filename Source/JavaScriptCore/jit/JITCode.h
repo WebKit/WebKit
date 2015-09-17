@@ -125,10 +125,20 @@ public:
     static std::chrono::milliseconds timeToLive(JITType jitType)
     {
         switch (jitType) {
+        case InterpreterThunk:
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(5));
+        case BaselineJIT:
+            // Effectively 10 additional seconds, since BaselineJIT and
+            // InterpreterThunk share a CodeBlock.
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(15));
         case DFGJIT:
-            return std::chrono::milliseconds(10000); // 10s
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(20));
         case FTLJIT:
-            return std::chrono::milliseconds(100000); // 100s
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(60));
         default:
             return std::chrono::milliseconds::max();
         }

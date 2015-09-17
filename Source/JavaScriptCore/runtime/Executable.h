@@ -420,6 +420,7 @@ public:
     }
 
     void installCode(CodeBlock*);
+    void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind);
     RefPtr<CodeBlock> newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, JSObject*& exception);
     PassRefPtr<CodeBlock> newReplacementCodeBlockFor(CodeSpecializationKind);
     

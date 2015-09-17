@@ -42,16 +42,13 @@ void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
     DeferGC deferGC(vm.heap);
     
     for (; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        FunctionExecutable* executable =
-            static_cast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get());
-        CodeBlock* codeBlock = executable->baselineCodeBlockFor(
-            codeOrigin.inlineCallFrame->specializationKind());
-        
+        CodeBlock* codeBlock = codeOrigin.inlineCallFrame->baselineCodeBlock();
         if (codeBlock->jitType() == JSC::JITCode::BaselineJIT)
             continue;
+
         ASSERT(codeBlock->jitType() == JSC::JITCode::InterpreterThunk);
         JIT::compile(&vm, codeBlock, JITCompilationMustSucceed);
-        codeBlock->install();
+        codeBlock->ownerScriptExecutable()->installCode(codeBlock);
     }
 }
 

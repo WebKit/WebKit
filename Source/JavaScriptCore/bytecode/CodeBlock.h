@@ -126,7 +126,6 @@ public:
     static ptrdiff_t offsetOfNumParameters() { return OBJECT_OFFSETOF(CodeBlock, m_numParameters); }
 
     CodeBlock* alternative() { return m_alternative.get(); }
-    PassRefPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
     void setAlternative(PassRefPtr<CodeBlock> alternative) { m_alternative = alternative; }
 
     template <typename Functor> void forEachRelatedCodeBlock(Functor&& functor)
@@ -265,9 +264,6 @@ public:
 
     unsigned instructionCount() const { return m_instructions.size(); }
 
-    // Exactly equivalent to codeBlock->ownerExecutable()->installCode(codeBlock);
-    void install();
-    
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     PassRefPtr<CodeBlock> newReplacement();
     
@@ -834,8 +830,6 @@ public:
     void updateAllArrayPredictions();
     void updateAllPredictions();
 
-    void setInstallTime(std::chrono::steady_clock::time_point installTime) { m_installTime = installTime; }
-
     unsigned frameRegisterCount();
     int stackPointerOffset();
 
@@ -989,10 +983,10 @@ private:
     void stronglyVisitWeakReferences(SlotVisitor&);
     void visitOSRExitTargets(SlotVisitor&);
 
-    std::chrono::milliseconds timeSinceInstall()
+    std::chrono::milliseconds timeSinceCreation()
     {
         return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - m_installTime);
+            std::chrono::steady_clock::now() - m_creationTime);
     }
 
     void createRareDataIfNecessary()
@@ -1077,7 +1071,7 @@ private:
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
 
-    std::chrono::steady_clock::time_point m_installTime;
+    std::chrono::steady_clock::time_point m_creationTime;
 
     mutable CodeBlockHash m_hash;
 
