@@ -158,6 +158,8 @@ struct WKAutoCorrectionData {
     BOOL _usingGestureForSelection;
     BOOL _inspectorNodeSearchEnabled;
     BOOL _didAccessoryTabInitiateFocus;
+
+    std::chrono::steady_clock::time_point _lastPreviewStartTime;
 }
 
 @end

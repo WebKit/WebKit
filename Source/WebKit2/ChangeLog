@@ -1,3 +1,20 @@
+2015-09-17  Beth Dakin  <bdakin@apple.com>
+
+        Heavy taps on links are sometimes interpreted as the preview gesture
+        https://bugs.webkit.org/show_bug.cgi?id=149304
+        -and corresponding-
+        rdar://problem/22689258
+
+        Reviewed by Tim Horton.
+
+        If the preview gesture starts and stop and less than 250 milliseconds have 
+        passed, then call _attemptClickAtLocation to treat it as a normal tap.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _interactionStartedFromPreviewItemController:]):
+        (-[WKContentView _interactionStoppedFromPreviewItemController:]):
+
 2015-09-17  Tim Horton  <timothy_horton@apple.com>
 
         After restoring tabs, swipes back to fast loading pages hang for 3 seconds
