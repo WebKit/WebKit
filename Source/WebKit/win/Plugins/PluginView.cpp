@@ -127,7 +127,9 @@ IntRect PluginView::windowClipRect() const
     
     // Take our element and get the clip rect from the enclosing layer and frame view.
     FrameView* parentView = m_element->document().view();
-    clipRect.intersect(parentView->windowClipRectForFrameOwner(m_element, true));
+    IntRect windowClipRect = parentView->windowClipRectForFrameOwner(m_element, true);
+    windowClipRect.scale(deviceScaleFactor());
+    clipRect.intersect(windowClipRect);
 
     return clipRect;
 }

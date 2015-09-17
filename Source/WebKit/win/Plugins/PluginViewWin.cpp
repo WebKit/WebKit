@@ -366,6 +366,7 @@ void PluginView::updatePluginWidget()
     IntRect oldClipRect = m_clipRect;
 
     m_windowRect = IntRect(frameView.contentsToWindow(frameRect().location()), frameRect().size());
+    m_windowRect.scale(deviceScaleFactor());
     m_clipRect = windowClipRect();
     m_clipRect.move(-m_windowRect.x(), -m_windowRect.y());
 
@@ -712,15 +713,22 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     if (!m_isStarted)
         return;
 
+    float scaleFactor = deviceScaleFactor();
+
     IntPoint p = downcast<FrameView>(*parent()).contentsToWindow(rect.location());
+    p.scale(scaleFactor, scaleFactor);
+
+    IntSize s = rect.size();
+    s.scale(scaleFactor);
+
     m_npWindow.x = p.x();
     m_npWindow.y = p.y();
 
-    m_npWindow.width = rect.width();
-    m_npWindow.height = rect.height();
+    m_npWindow.width = s.width();
+    m_npWindow.height = s.height();
 
-    m_npWindow.clipRect.right = rect.width();
-    m_npWindow.clipRect.bottom = rect.height();
+    m_npWindow.clipRect.right = s.width();
+    m_npWindow.clipRect.bottom = s.height();
     m_npWindow.clipRect.left = 0;
     m_npWindow.clipRect.top = 0;
 
@@ -946,6 +954,25 @@ PassRefPtr<Image> PluginView::snapshot()
 #else
     return 0;
 #endif
+}
+
+float PluginView::deviceScaleFactor() const
+{
+    float scaleFactor = 1.0f;
+
+    if (!parent() || !parent()->isFrameView())
+        return scaleFactor;
+
+    // For windowless plugins, the device scale factor will be applied as for other page elements.
+    if (!m_isWindowed)
+        return scaleFactor;
+
+    FrameView& frameView = downcast<FrameView>(*parent());
+
+    if (frameView.frame().document())
+        scaleFactor = frameView.frame().document()->deviceScaleFactor();
+
+    return scaleFactor;
 }
 
 } // namespace WebCore

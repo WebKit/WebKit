@@ -1,3 +1,21 @@
+2015-09-17  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win][HighDPI] Windowed plugins have incorrect placement.
+        https://bugs.webkit.org/show_bug.cgi?id=149090
+
+        Reviewed by Alex Christensen.
+
+        We have to scale plugin dimensions with device scale factor.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::windowClipRect):
+        * Plugins/PluginView.h:
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::snapshot):
+        (WebCore::PluginView::deviceScaleFactor):
+
 2015-09-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Provide a means for viewing the layer tree

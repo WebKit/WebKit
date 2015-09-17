@@ -294,6 +294,8 @@ namespace WebCore {
         void paintIntoTransformedContext(HDC);
         PassRefPtr<Image> snapshot();
 
+        float deviceScaleFactor() const;
+
         int m_mode;
         int m_paramCount;
         char** m_paramNames;
