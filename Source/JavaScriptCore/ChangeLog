@@ -1,3 +1,20 @@
+2015-09-16  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Fix 32-bit build issues in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149240
+
+        Reviewed by Geoffrey Garen.
+
+        Fix the syntax error and replace the instructions that are not available on
+        64-bit platforms.
+
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::buildReturn):
+        (JSC::WASMFunctionCompiler::callAndUnboxResult):
+        (JSC::WASMFunctionCompiler::loadValueAndConvertToDouble):
+
 2015-09-16  Geoffrey Garen  <ggaren@apple.com>
 
         JavaScriptCore should discard baseline code after some time

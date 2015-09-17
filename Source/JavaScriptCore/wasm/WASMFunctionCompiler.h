@@ -135,8 +135,15 @@ public:
             store32(TrustedImm32(0), localAddress(localIndex++));
         for (uint32_t i = 0; i < numberOfF32LocalVariables; ++i)
             store32(TrustedImm32(0), localAddress(localIndex++));
-        for (uint32_t i = 0; i < numberOfF64LocalVariables; ++i)
+        for (uint32_t i = 0; i < numberOfF64LocalVariables; ++i) {
+#if USE(JSVALUE64)
             store64(TrustedImm64(0), localAddress(localIndex++));
+#else
+            store32(TrustedImm32(0), localAddress(localIndex));
+            store32(TrustedImm32(0), localAddress(localIndex).withOffset(4));
+            localIndex++;
+#endif
+        }
 
         m_codeBlock->setNumParameters(1 + arguments.size());
     }
@@ -146,7 +153,12 @@ public:
         ASSERT(!m_tempStackTop);
 
         // FIXME: Remove these if the last statement is a return statement.
-        move(TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
+#if USE(JSVALUE64)
+        JSValueRegs returnValueRegs(GPRInfo::returnValueGPR);
+#else
+        JSValueRegs returnValueRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+#endif
+        moveTrustedValue(jsUndefined(), returnValueRegs);
         emitFunctionEpilogue();
         ret();
 
@@ -244,6 +256,11 @@ public:
 
     void buildReturn(int, WASMExpressionType returnType)
     {
+#if USE(JSVALUE64)
+        JSValueRegs returnValueRegs(GPRInfo::returnValueGPR);
+#else
+        JSValueRegs returnValueRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+#endif
         switch (returnType) {
         case WASMExpressionType::I32:
             load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::returnValueGPR);
@@ -267,7 +284,7 @@ public:
             m_tempStackTop--;
             break;
         case WASMExpressionType::Void:
-            move(TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
+            moveTrustedValue(jsUndefined(), returnValueRegs);
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -839,6 +856,14 @@ private:
         appendCallSetResult(operation, dst);
     }
 #else
+    // EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
+    // To avoid assemblies from using wrong registers, let's occupy r1 or r3 with a dummy argument when necessary.
+#if (COMPILER_SUPPORTS(EABI) && CPU(ARM)) || CPU(MIPS)
+#define EABI_32BIT_DUMMY_ARG      TrustedImm32(0),
+#else
+#define EABI_32BIT_DUMMY_ARG
+#endif
+
     void callOperation(Z_JITOperation_EJ operation, GPRReg srcTag, GPRReg srcPayload, GPRReg dst)
     {
         setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG srcPayload, srcTag);
@@ -906,8 +931,8 @@ private:
 #if USE(JSVALUE64)
         store64(GPRInfo::regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 #else
-        store32(regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
-        store32(TrustedImm32(CellTag), Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + TagOffset - sizeof(CallerFrameAndPC)));
+        store32(GPRInfo::regT0, Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
+        store32(TrustedImm32(JSValue::CellTag), Address(stackPointerRegister, JSStack::Callee * static_cast<int>(sizeof(Register)) + TagOffset - sizeof(CallerFrameAndPC)));
 #endif
 
         DataLabelPtr addressOfLinkedFunctionCheck;
@@ -999,7 +1024,7 @@ private:
         end.append(jump());
 
         checkJSNumber.link(this);
-        unboxDouble(tempRegs.tagGPR(), tempRegs.payloadGPR(), dst, fpScratch)
+        unboxDouble(tempRegs.tagGPR(), tempRegs.payloadGPR(), dst, fpScratch);
         end.link(this);
     }
 #endif
