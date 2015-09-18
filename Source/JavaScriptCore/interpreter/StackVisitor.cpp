@@ -71,8 +71,10 @@ void StackVisitor::gotoNextFrame()
 
 CodeBlock* StackVisitor::unwindToMachineCodeBlockFrame()
 {
+#if ENABLE(DFG_JIT)
     while (m_frame.isInlinedFrame())
         gotoNextFrame();
+#endif // ENABLE(DFG_JIT)
     CodeBlock* result = m_frame.codeBlock();
     return result;
 }

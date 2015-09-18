@@ -1,3 +1,10 @@
+2015-09-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CLoop build fix after r189938.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::unwindToMachineCodeBlockFrame):
+
 2015-09-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Convert return values from JavaScript functions to the expected types in WebAssembly
