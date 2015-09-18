@@ -391,7 +391,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentFragment.idl
     dom/DocumentType.idl
     dom/Element.idl
-    dom/Entity.idl
     dom/EntityReference.idl
     dom/ErrorEvent.idl
     dom/Event.idl
