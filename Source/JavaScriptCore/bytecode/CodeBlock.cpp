@@ -2857,7 +2857,11 @@ bool CodeBlock::hasOptimizedReplacement()
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler requiredHandler)
 {
     RELEASE_ASSERT(bytecodeOffset < instructions().size());
+    return handlerForIndex(bytecodeOffset, requiredHandler);
+}
 
+HandlerInfo* CodeBlock::handlerForIndex(unsigned index, RequiredHandler requiredHandler)
+{
     if (!m_rareData)
         return 0;
     
@@ -2869,7 +2873,8 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset, Requir
 
         // Handlers are ordered innermost first, so the first handler we encounter
         // that contains the source address is the correct handler to use.
-        if (handler.start <= bytecodeOffset && handler.end > bytecodeOffset)
+        // This index used is either the BytecodeOffset or a CallSiteIndex.
+        if (handler.start <= index && handler.end > index)
             return &handler;
     }
 

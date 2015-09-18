@@ -875,6 +875,7 @@ public:
     PlanStage m_planStage { PlanStage::Initial };
     RefCountState m_refCountState;
     bool m_hasDebuggerEnabled;
+    bool m_hasExceptionHandlers { false };
 private:
     
     void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);

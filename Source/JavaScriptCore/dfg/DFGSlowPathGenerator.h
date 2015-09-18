@@ -40,6 +40,8 @@ class SlowPathGenerator {
 public:
     SlowPathGenerator(SpeculativeJIT* jit)
         : m_currentNode(jit->m_currentNode)
+        , m_streamIndex(jit->m_stream->size())
+        , m_origin(jit->m_origin) 
     {
     }
     virtual ~SlowPathGenerator() { }
@@ -47,7 +49,10 @@ public:
     {
         m_label = jit->m_jit.label();
         jit->m_currentNode = m_currentNode;
+        jit->m_outOfLineStreamIndex = m_streamIndex;
+        jit->m_origin = m_origin;
         generateInternal(jit);
+        jit->m_outOfLineStreamIndex = UINT_MAX;
         if (!ASSERT_DISABLED)
             jit->m_jit.abortWithReason(DFGSlowPathGeneratorFellThrough);
     }
@@ -61,6 +66,8 @@ protected:
     virtual void generateInternal(SpeculativeJIT*) = 0;
     MacroAssembler::Label m_label;
     Node* m_currentNode;
+    unsigned m_streamIndex;
+    NodeOrigin m_origin;
 };
 
 template<typename JumpType>

@@ -245,7 +245,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             break;
         }
     }
-    
+
     // Need to ensure that the stack pointer accounts for the worst-case stack usage at exit. This
     // could toast some stack that the DFG used. We need to do it before storing to stack offsets
     // used by baseline.
@@ -260,6 +260,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 
     // The tag registers are needed to materialize recoveries below.
     m_jit.emitMaterializeTagCheckRegisters();
+
+    if (exit.m_isExceptionHandler)
+        m_jit.copyCalleeSavesToVMCalleeSavesBuffer();
 
     // Do all data format conversions and store the results into the stack.
     
@@ -384,7 +387,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     reifyInlinedCallFrames(m_jit, exit);
 
     // And finish.
-    adjustAndJumpToTarget(m_jit, exit);
+    adjustAndJumpToTarget(m_jit, exit, exit.m_isExceptionHandler);
 }
 
 } } // namespace JSC::DFG

@@ -614,12 +614,19 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor)
     {
+        visitor.unwindToMachineCodeBlockFrame();
+
         CodeBlock* codeBlock = visitor->codeBlock();
         if (!codeBlock)
             return StackVisitor::Continue;
 
-        unsigned bytecodeOffset = visitor->bytecodeOffset();
-        m_handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset, CodeBlock::RequiredHandler::CatchHandler);
+        unsigned exceptionHandlerIndex;
+        if (codeBlock->jitType() != JITCode::DFGJIT)
+            exceptionHandlerIndex = visitor->callFrame()->bytecodeOffset();
+        else
+            exceptionHandlerIndex = visitor->callFrame()->callSiteIndex().bits();
+
+        m_handler = codeBlock->handlerForIndex(exceptionHandlerIndex, CodeBlock::RequiredHandler::CatchHandler);
         if (m_handler)
             return StackVisitor::Done;
 
@@ -642,15 +649,20 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor)
     {
+        visitor.unwindToMachineCodeBlockFrame();
         VM& vm = m_callFrame->vm();
         m_callFrame = visitor->callFrame();
         m_codeBlock = visitor->codeBlock();
-        unsigned bytecodeOffset = visitor->bytecodeOffset();
 
+        unsigned exceptionHandlerIndex;
+        if (m_codeBlock->jitType() != JITCode::DFGJIT)
+            exceptionHandlerIndex = m_callFrame->bytecodeOffset();
+        else
+            exceptionHandlerIndex = m_callFrame->callSiteIndex().bits();
         m_handler = nullptr;
         if (!m_isTermination) {
             if (m_codeBlock && !isWebAssemblyExecutable(m_codeBlock->ownerExecutable()))
-                m_handler = m_codeBlock->handlerForBytecodeOffset(bytecodeOffset);
+                m_handler = m_codeBlock->handlerForIndex(exceptionHandlerIndex);
         }
 
         if (m_handler)

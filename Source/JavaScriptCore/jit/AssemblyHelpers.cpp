@@ -273,6 +273,20 @@ AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(ExceptionCheckKind kin
     return realJump.m_jump;
 }
 
+AssemblyHelpers::Jump AssemblyHelpers::emitNonPatchableExceptionCheck()
+{
+    callExceptionFuzz();
+
+    Jump result;
+#if USE(JSVALUE64)
+    result = branchTest64(NonZero, AbsoluteAddress(vm()->addressOfException()));
+#elif USE(JSVALUE32_64)
+    result = branch32(NotEqual, AbsoluteAddress(vm()->addressOfException()), TrustedImm32(0));
+#endif
+    
+    return result;
+}
+
 void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, TrustedImmPtr structure, RegisterID dest)
 {
     const Structure* structurePtr = static_cast<const Structure*>(structure.m_value);

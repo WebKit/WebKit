@@ -69,6 +69,14 @@ void StackVisitor::gotoNextFrame()
     readFrame(m_frame.callerFrame());
 }
 
+void StackVisitor::unwindToMachineCodeBlockFrame()
+{
+#if ENABLE(DFG_JIT)
+    while (m_frame.isInlinedFrame())
+        gotoNextFrame();
+#endif
+}
+
 void StackVisitor::readFrame(CallFrame* callFrame)
 {
     if (!callFrame) {

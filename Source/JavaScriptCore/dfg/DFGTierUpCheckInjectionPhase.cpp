@@ -52,6 +52,9 @@ public:
         
         if (m_graph.m_profiledBlock->m_didFailFTLCompilation)
             return false;
+
+        if (m_graph.m_hasExceptionHandlers)
+            return false;
         
 #if ENABLE(FTL_JIT)
         FTL::CapabilityLevel level = FTL::canCompile(m_graph);

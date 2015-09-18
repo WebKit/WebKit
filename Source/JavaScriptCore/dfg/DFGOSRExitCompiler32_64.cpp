@@ -248,6 +248,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     m_jit.emitRestoreCalleeSaves();
     m_jit.emitSaveCalleeSavesFor(m_jit.baselineCodeBlock());
 
+    if (exit.m_isExceptionHandler)
+        m_jit.copyCalleeSavesToVMCalleeSavesBuffer();
+
     // Do all data format conversions and store the results into the stack.
     
     for (size_t index = 0; index < operands.size(); ++index) {
@@ -394,7 +397,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     reifyInlinedCallFrames(m_jit, exit);
     
     // And finish.
-    adjustAndJumpToTarget(m_jit, exit);
+    adjustAndJumpToTarget(m_jit, exit, exit.m_isExceptionHandler);
 }
 
 } } // namespace JSC::DFG

@@ -30,6 +30,7 @@
 
 #include "AssemblyHelpers.h"
 #include "DFGGraph.h"
+#include "DFGMayExit.h"
 #include "DFGSpeculativeJIT.h"
 #include "JSCInlines.h"
 
@@ -42,8 +43,15 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     , m_patchableCodeOffset(0)
     , m_recoveryIndex(recoveryIndex)
     , m_streamIndex(streamIndex)
+    , m_willArriveAtOSRExitFromGenericUnwind(false)
+    , m_isExceptionHandler(false)
 {
-    DFG_ASSERT(jit->m_jit.graph(), jit->m_currentNode, jit->m_origin.exitOK);
+    bool canExit = jit->m_origin.exitOK;
+    if (!canExit && jit->m_currentNode) {
+        ExitMode exitMode = mayExit(jit->m_jit.graph(), jit->m_currentNode);
+        canExit = exitMode == ExitMode::Exits || exitMode == ExitMode::ExitsForExceptions;
+    }
+    DFG_ASSERT(jit->m_jit.graph(), jit->m_currentNode, canExit);
 }
 
 void OSRExit::setPatchableCodeOffset(MacroAssembler::PatchableJump check)

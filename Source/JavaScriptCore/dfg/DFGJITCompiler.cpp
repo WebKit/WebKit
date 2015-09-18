@@ -85,6 +85,15 @@ void JITCompiler::linkOSRExits()
             failureJumps.link(this);
         else
             info.m_replacementDestination = label();
+
+        if (exit.m_willArriveAtOSRExitFromGenericUnwind) {
+            // We are acting as a defacto op_catch because we arrive here from genericUnwind().
+            // So, we must restore our call frame and stack pointer.
+            restoreCalleeSavesFromVMCalleeSavesBuffer();
+            loadPtr(vm()->addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
+            addPtr(TrustedImm32(graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
+        }
+
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &vm()->osrExitIndex);
         exit.setPatchableCodeOffset(patchableJump());
@@ -283,9 +292,27 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         }
     } else
         ASSERT(!m_exitSiteLabels.size());
-    
+
     m_jitCode->common.compilation = m_graph.compilation();
     
+    // Link new DFG exception handlers and remove baseline JIT handlers.
+    m_codeBlock->clearExceptionHandlers();
+    for (unsigned  i = 0; i < m_exceptionHandlerOSRExitCallSites.size(); i++) {
+        OSRExitCompilationInfo& info = m_exceptionHandlerOSRExitCallSites[i].exitInfo;
+        if (info.m_replacementDestination.isSet()) {
+            // If this is is *not* set, it means that we already jumped to the OSR exit in pure generated control flow.
+            // i.e, we explicitly emitted an exceptionCheck that we know will be caught in this machine frame.
+            // If this *is set*, it means we will be landing at this code location from genericUnwind from an
+            // exception thrown in a child call frame.
+            CodeLocationLabel catchLabel = linkBuffer.locationOf(info.m_replacementDestination);
+            HandlerInfo newExceptionHandler = m_exceptionHandlerOSRExitCallSites[i].baselineExceptionHandler;
+            CallSiteIndex callSite = m_exceptionHandlerOSRExitCallSites[i].callSiteIndex;
+            newExceptionHandler.start = callSite.bits();
+            newExceptionHandler.end = callSite.bits() + 1;
+            newExceptionHandler.nativeCode = catchLabel;
+            m_codeBlock->appendExceptionHandler(newExceptionHandler);
+        }
+    }
 }
 
 void JITCompiler::compile()
@@ -337,7 +364,7 @@ void JITCompiler::compile()
     
     link(*linkBuffer);
     m_speculative->linkOSREntries(*linkBuffer);
-    
+
     m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
@@ -520,6 +547,84 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
     }
         
     entry->m_reshufflings.shrinkToFit();
+}
+
+void JITCompiler::appendExceptionHandlingOSRExit(unsigned eventStreamIndex, CodeOrigin opCatchOrigin, HandlerInfo* exceptionHandler, CallSiteIndex callSite, MacroAssembler::JumpList jumpsToFail)
+{
+    OSRExit exit(Uncountable, JSValueRegs(), graph().methodOfGettingAValueProfileFor(nullptr), m_speculative.get(), eventStreamIndex);
+    exit.m_willArriveAtOSRExitFromGenericUnwind = jumpsToFail.empty(); // If jumps are empty, we're going to jump here from genericUnwind from a child call frame.
+    exit.m_isExceptionHandler = true;
+    exit.m_codeOrigin = opCatchOrigin;
+    OSRExitCompilationInfo& exitInfo = appendExitInfo(jumpsToFail);
+    jitCode()->appendOSRExit(exit);
+    m_exceptionHandlerOSRExitCallSites.append(ExceptionHandlingOSRExitInfo { exitInfo, *exceptionHandler, callSite });
+}
+
+bool JITCompiler::willCatchExceptionInMachineFrame(CodeOrigin codeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut)
+{
+    unsigned bytecodeIndexToCheck = codeOrigin.bytecodeIndex;
+    while (1) {
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+        CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
+        if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
+            opCatchOriginOut = CodeOrigin(handler->target, inlineCallFrame);
+            catchHandlerOut = handler;
+            return true;
+        }
+
+        if (!inlineCallFrame)
+            return false;
+
+        bytecodeIndexToCheck = inlineCallFrame->caller.bytecodeIndex;
+        codeOrigin = codeOrigin.inlineCallFrame->caller;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void JITCompiler::exceptionCheck()
+{
+    // It's important that we use origin.forExit here. Consider if we hoist string
+    // addition outside a loop, and that we exit at the point of that concatenation
+    // from an out of memory exception.
+    // If the original loop had a try/catch around string concatenation, if we "catch"
+    // that exception inside the loop, then the loops induction variable will be undefined 
+    // in the OSR exit value recovery. It's more defensible for the string concatenation, 
+    // then, to not be caught by the for loops' try/catch.
+    // Here is the program I'm speaking about:
+    //
+    // >>>> lets presume "c = a + b" gets hoisted here.
+    // for (var i = 0; i < length; i++) {
+    //     try {
+    //         c = a + b
+    //     } catch(e) { 
+    //         If we threw an out of memory error, and we cought the exception
+    //         right here, then "i" would almost certainly be undefined, which
+    //         would make no sense.
+    //         ... 
+    //     }
+    // }
+    CodeOrigin opCatchOrigin;
+    HandlerInfo* exceptionHandler;
+    bool willCatchException = willCatchExceptionInMachineFrame(m_speculative->m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler); 
+    if (willCatchException) {
+        unsigned streamIndex = m_speculative->m_outOfLineStreamIndex != UINT_MAX ? m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream->size();
+        MacroAssembler::Jump hadException = emitNonPatchableExceptionCheck();
+        // We assume here that this is called after callOpeartion()/appendCall() is called.
+        appendExceptionHandlingOSRExit(streamIndex, opCatchOrigin, exceptionHandler, m_jitCode->common.lastCallSite(), hadException);
+    } else
+        m_exceptionChecks.append(emitExceptionCheck());
+}
+
+CallSiteIndex JITCompiler::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex)
+{
+    CodeOrigin opCatchOrigin;
+    HandlerInfo* exceptionHandler;
+    bool willCatchException = willCatchExceptionInMachineFrame(callSiteCodeOrigin, opCatchOrigin, exceptionHandler);
+    CallSiteIndex callSite = addCallSite(callSiteCodeOrigin);
+    if (willCatchException)
+        appendExceptionHandlingOSRExit(eventStreamIndex, opCatchOrigin, exceptionHandler, callSite);
+    return callSite;
 }
 
 } } // namespace JSC::DFG

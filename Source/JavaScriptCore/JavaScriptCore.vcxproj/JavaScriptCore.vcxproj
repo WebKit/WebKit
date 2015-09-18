@@ -421,6 +421,7 @@
     <ClCompile Include="..\dfg\DFGFixupPhase.cpp" />
     <ClCompile Include="..\dfg\DFGFlushedAt.cpp" />
     <ClCompile Include="..\dfg\DFGFlushFormat.cpp" />
+    <ClCompile Include="..\dfg\DFGLiveCatchVariablePreservationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGFrozenValue.cpp" />
     <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp" />
     <ClCompile Include="..\dfg\DFGGraph.cpp" />
@@ -1149,6 +1150,7 @@
     <ClInclude Include="..\dfg\DFGFixupPhase.h" />
     <ClInclude Include="..\dfg\DFGFlushedAt.h" />
     <ClInclude Include="..\dfg\DFGFlushFormat.h" />
+    <ClInclude Include="..\dfg\DFGLiveCatchVariablePreservationPhase.h" />
     <ClInclude Include="..\dfg\DFGForAllKills.h" />
     <ClInclude Include="..\dfg\DFGFPRInfo.h" />
     <ClInclude Include="..\dfg\DFGFrozenValue.h" />

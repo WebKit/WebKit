@@ -153,8 +153,10 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, m_jit.addCallSite(codeOrigin), usedRegisters(), JSValueRegs(baseGPR),
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters(), JSValueRegs(baseGPR),
         JSValueRegs(resultGPR), spillMode);
     gen.generateFastPath(m_jit);
     
@@ -173,8 +175,10 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+
     JITPutByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, m_jit.addCallSite(codeOrigin), usedRegisters(), JSValueRegs(baseGPR),
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters(), JSValueRegs(baseGPR),
         JSValueRegs(valueGPR), scratchGPR, spillMode, m_jit.ecmaModeFor(codeOrigin), putKind);
 
     gen.generateFastPath(m_jit);
@@ -752,7 +756,8 @@ void SpeculativeJIT::emitCall(Node* node)
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::Jump slowPath;
 
-    m_jit.emitStoreCodeOrigin(node->origin.semantic);
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(node->origin.semantic, m_stream->size());
+    m_jit.emitStoreCallSiteIndex(callSite);
     
     CallLinkInfo* callLinkInfo = m_jit.codeBlock()->addCallLinkInfo();
     

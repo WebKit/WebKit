@@ -488,7 +488,7 @@ static void compileStub(
     
     handleExitCounts(jit, exit);
     reifyInlinedCallFrames(jit, exit);
-    adjustAndJumpToTarget(jit, exit);
+    adjustAndJumpToTarget(jit, exit, false);
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(

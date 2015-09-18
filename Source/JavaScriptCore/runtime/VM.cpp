@@ -282,6 +282,8 @@ VM::VM(VMType vmType, HeapType heapType)
         m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());
     }
 
+    callFrameForCatch = nullptr;
+
 #if ENABLE(DFG_JIT)
     if (canUseJIT())
         dfgState = std::make_unique<DFG::LongLivedState>();

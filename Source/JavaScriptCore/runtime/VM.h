@@ -407,6 +407,8 @@ public:
     void clearException() { m_exception = nullptr; }
     void clearLastException() { m_lastException = nullptr; }
 
+    ExecState** addressOfCallFrameForCatch() { return &callFrameForCatch; }
+
     Exception* exception() const { return m_exception; }
     JSCell** addressOfException() { return reinterpret_cast<JSCell**>(&m_exception); }
 
