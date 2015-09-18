@@ -1,5 +1,33 @@
 2015-09-17  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] WTR fails to set the key window in the UIKit sense
+        https://bugs.webkit.org/show_bug.cgi?id=149325
+
+        Reviewed by Tim Horton.
+
+        -[WebKitTestRunnerWindow isKeyWindow] just returned _platformWebView->windowIsKey().
+        This causes UIKit to bypass code that actually sets the key window, resulting in
+        [UIAppliation sharedApplication].keyWindow always being nil.
+
+        Fix by PlatformWebView::setWindowIsKey() actually call -makeKeyWindow, and having
+        -[WebKitTestRunnerWindow isKeyWindow] call super.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::setWindowIsKey): Deleted.
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::setWindowIsKey):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::setWindowIsKey):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (-[WebKitTestRunnerWindow isKeyWindow]):
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::setWindowIsKey):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::setWindowIsKey):
+
+2015-09-17  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] When loading viewport tests, use the normal web page viewport configuration
         https://bugs.webkit.org/show_bug.cgi?id=149321
 

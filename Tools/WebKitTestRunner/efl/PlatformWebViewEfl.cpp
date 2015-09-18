@@ -82,6 +82,11 @@ PlatformWebView::~PlatformWebView()
     ecore_evas_free(m_window);
 }
 
+void PlatformWebView::setWindowIsKey(bool isKey)
+{
+    m_windowIsKey = isKey;
+}
+
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
     // FIXME: Don't we need to resize the window too?

@@ -58,6 +58,11 @@ PlatformWebView::~PlatformWebView()
     gtk_widget_destroy(m_window);
 }
 
+void PlatformWebView::setWindowIsKey(bool isKey)
+{
+    m_windowIsKey = isKey;
+}
+
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
     WKRect frame = windowFrame();

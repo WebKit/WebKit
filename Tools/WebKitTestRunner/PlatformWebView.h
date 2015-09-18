@@ -77,7 +77,7 @@ public:
     void addChromeInputField();
     void removeChromeInputField();
     void makeWebViewFirstResponder();
-    void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
+    void setWindowIsKey(bool);
     bool windowIsKey() const { return m_windowIsKey; }
 
     bool viewSupportsOptions(const TestOptions&) const;
