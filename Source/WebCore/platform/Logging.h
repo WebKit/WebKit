@@ -69,6 +69,7 @@ namespace WebCore {
     M(RemoteInspector) \
     M(ResourceLoading) \
     M(SQLDatabase) \
+    M(SVG) \
     M(Services) \
     M(SpellingAndGrammar) \
     M(StorageAPI) \
