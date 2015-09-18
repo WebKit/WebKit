@@ -58,7 +58,10 @@ private:
 class UserMediaClientMock final : public UserMediaClient, public TimerEventBasedMock {
 public:
     public:
-    virtual void pageDestroyed() override { }
+    virtual void pageDestroyed() override
+    {
+        delete this;
+    }
 
     virtual void requestPermission(Ref<UserMediaRequest>&& request) override
     {
