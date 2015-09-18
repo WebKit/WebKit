@@ -75,8 +75,6 @@ all : \
 #
 
 # builtin functions
-.PHONY: JSCBuiltins
-
 PYTHON = python
 PERL = perl
 
@@ -87,11 +85,32 @@ else
 endif
 # --------
 
+.PHONY: JSCBuiltins
 JSCBuiltins: $(JavaScriptCore)/generate-js-builtins JSCBuiltins.h JSCBuiltins.cpp
-JSCBuiltins.h: $(JavaScriptCore)/generate-js-builtins $(JavaScriptCore)/builtins
+JSCBuiltins.h: $(JavaScriptCore)/generate-js-builtins $(JavaScriptCore)/builtins JSCBuiltinsSources
 	$(PYTHON) $(JavaScriptCore)/generate-js-builtins --input-directory $(JavaScriptCore)/builtins --output $@
-																				 
+
 JSCBuiltins.cpp: JSCBuiltins.h
+
+.PHONY: JSCBuiltinsSources
+JSCBuiltinsSources: \
+    $(JavaScriptCore)/builtins/ArrayConstructor.js \
+    $(JavaScriptCore)/builtins/ArrayIterator.prototype.js \
+    $(JavaScriptCore)/builtins/Array.prototype.js \
+    $(JavaScriptCore)/builtins/Function.prototype.js \
+    $(JavaScriptCore)/builtins/GlobalObject.js \
+    $(JavaScriptCore)/builtins/InspectorInstrumentationObject.js \
+    $(JavaScriptCore)/builtins/InternalPromiseConstructor.js \
+    $(JavaScriptCore)/builtins/Iterator.prototype.js \
+    $(JavaScriptCore)/builtins/ModuleLoaderObject.js \
+    $(JavaScriptCore)/builtins/ObjectConstructor.js \
+    $(JavaScriptCore)/builtins/Operations.Promise.js \
+    $(JavaScriptCore)/builtins/PromiseConstructor.js \
+    $(JavaScriptCore)/builtins/Promise.prototype.js \
+    $(JavaScriptCore)/builtins/ReflectObject.js \
+    $(JavaScriptCore)/builtins/StringConstructor.js \
+    $(JavaScriptCore)/builtins/StringIterator.prototype.js \
+#
 
 # lookup tables for classes
 

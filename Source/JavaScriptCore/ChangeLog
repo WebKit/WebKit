@@ -1,3 +1,17 @@
+2015-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Explicitly specify builtin JS files dependency
+        https://bugs.webkit.org/show_bug.cgi?id=149323
+
+        Reviewed by Alex Christensen.
+
+        JSCBuiltins.{h,cpp} in CMakeLists.txt and DerivedSources.make just depend on the builtins directory.
+        As a result, even if we modify builtins/*.js code, regenerating JSCBuiltins.{h,cpp} does not occur.
+        As the same to the cpp sources, let's list up the JS files explicitly.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+
 2015-09-18  Michael Saboff  <msaboff@apple.com>
 
         Remove register preservation and restoration stub code

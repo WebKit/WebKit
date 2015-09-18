@@ -1061,10 +1061,29 @@ add_custom_command(
     VERBATIM)
 
 # JSCBuiltins
+set(JavaScriptCore_BUILTINS_SOURCES
+    ${JAVASCRIPTCORE_DIR}/builtins/ArrayConstructor.js
+    ${JAVASCRIPTCORE_DIR}/builtins/ArrayIterator.prototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/Array.prototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/Function.prototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/GlobalObject.js
+    ${JAVASCRIPTCORE_DIR}/builtins/InspectorInstrumentationObject.js
+    ${JAVASCRIPTCORE_DIR}/builtins/InternalPromiseConstructor.js
+    ${JAVASCRIPTCORE_DIR}/builtins/Iterator.prototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/ModuleLoaderObject.js
+    ${JAVASCRIPTCORE_DIR}/builtins/ObjectConstructor.js
+    ${JAVASCRIPTCORE_DIR}/builtins/Operations.Promise.js
+    ${JAVASCRIPTCORE_DIR}/builtins/PromiseConstructor.js
+    ${JAVASCRIPTCORE_DIR}/builtins/Promise.prototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
+    ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
+    ${JAVASCRIPTCORE_DIR}/builtins/StringIterator.prototype.js
+)
+
 add_custom_command(
    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins
-   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/builtins
+   DEPENDS ${JavaScriptCore_BUILTINS_SOURCES}
    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins --input-directory ${CMAKE_CURRENT_SOURCE_DIR}/builtins --output ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp
    VERBATIM)
 
