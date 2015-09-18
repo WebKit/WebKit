@@ -52,7 +52,6 @@ public:
     void add(const AtomicString&, ExceptionCode&);
     void remove(const Vector<String>&, ExceptionCode&);
     void remove(const AtomicString&, ExceptionCode&);
-    bool toggle(const AtomicString&, ExceptionCode&);
     bool toggle(const AtomicString&, Optional<bool> force, ExceptionCode&);
 
     const AtomicString& toString() const { return value(); }
@@ -84,11 +83,6 @@ inline unsigned DOMTokenList::length() const
 inline const AtomicString& DOMTokenList::item(unsigned index) const
 {
     return index < m_tokens.size() ? m_tokens[index] : nullAtom;
-}
-
-inline bool DOMTokenList::toggle(const AtomicString& token, ExceptionCode& ec)
-{
-    return toggle(token, Nullopt, ec);
 }
 
 } // namespace WebCore

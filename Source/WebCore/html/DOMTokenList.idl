@@ -31,7 +31,7 @@
     [RaisesException] boolean contains(DOMString token);
     [RaisesException] void add(DOMString... tokens);
     [RaisesException] void remove(DOMString... tokens);
-    [RaisesException] boolean toggle(DOMString token, optional boolean force);
+    [RaisesException, Custom] boolean toggle(DOMString token, optional boolean force);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [NotEnumerable] DOMString toString();

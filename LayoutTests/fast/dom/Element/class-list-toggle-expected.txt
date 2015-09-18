@@ -1,0 +1,53 @@
+Tests the behavior of DOMTokenList.toggle()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Not enough parameters
+PASS div.classList.toggle() threw exception TypeError: Not enough arguments.
+
+* Token is an empty string
+PASS div.classList.toggle('') threw exception Error: SyntaxError: DOM Exception 12.
+
+Token contains an ASCII white space
+PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS div.classList.toggle(stringWithSpace) threw exception Error: InvalidCharacterError: DOM Exception 5.
+
+* 'force' parameter omitted, token does not exist
+div.classList.toggle('a')
+PASS div.classList[0] is "a"
+
+* 'force' parameter omitted, token exists
+div.classList.toggle('a')
+PASS div.classList.length is 0
+
+* 'force' parameter is undefined, token does not exist
+div.classList.toggle('a', undefined)
+PASS div.classList[0] is "a"
+
+* 'force' parameter is undefined, token exists
+div.classList.toggle('a', undefined)
+PASS div.classList.length is 0
+
+* 'force' parameter is false, token does not exist
+div.classList.toggle('a', false)
+PASS div.classList.length is 0
+
+* 'force' parameter is true, token does not exist
+div.classList.toggle('a', true)
+PASS div.classList[0] is "a"
+
+* 'force' parameter is true, token exists
+div.classList.toggle('a', true)
+PASS div.classList[0] is "a"
+
+* 'force' parameter is false, token exists
+div.classList.toggle('a', false)
+PASS div.classList.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -4314,6 +4314,9 @@
     <ClCompile Include="..\bindings\js\JSDOMStringMapCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSDOMTokenListCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSErrorHandler.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
