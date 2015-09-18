@@ -1,3 +1,13 @@
+2015-09-18  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Fix build with --no-indexed-database after r189831
+        https://bugs.webkit.org/show_bug.cgi?id=149342
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebProcess/Databases/WebDatabaseProvider.h:
+        Add ENABLE(INDEXED_DATABASE) guard around supportsModernIDB().
+
 2015-09-17  Beth Dakin  <bdakin@apple.com>
 
         Heavy taps on links are sometimes interpreted as the preview gesture
