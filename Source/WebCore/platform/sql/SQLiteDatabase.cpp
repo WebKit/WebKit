@@ -67,7 +67,7 @@ SQLiteDatabase::SQLiteDatabase()
         // std::call_once is used to stay on the safe side. See bug #143245.
         int ret = sqlite3_initialize();
         if (ret != SQLITE_OK) {
-#if SQLITE_VERSION_NUMBER >= 3007015
+#if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || (!defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && SQLITE_VERSION_NUMBER >= 3007015)
             WTFLogAlways("Failed to initialize SQLite: %s", sqlite3_errstr(ret));
 #else
             WTFLogAlways("Failed to initialize SQLite");
@@ -375,12 +375,8 @@ const char* SQLiteDatabase::lastErrorMsg()
 #ifndef NDEBUG
 void SQLiteDatabase::disableThreadingChecks()
 {
-    // This doesn't guarantee that SQList was compiled with -DTHREADSAFE, or that you haven't turned off the mutexes.
-#if SQLITE_VERSION_NUMBER >= 3003001
+    // Note that SQLite could be compiled with -DTHREADSAFE, or you may have turned off the mutexes.
     m_sharable = true;
-#else
-    ASSERT(0); // Your SQLite doesn't support sharing handles across threads.
-#endif
 }
 #endif
 
@@ -444,7 +440,6 @@ int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const cha
             return auth->allowAlterTable(parameter1, parameter2);
         case SQLITE_REINDEX:
             return auth->allowReindex(parameter1);
-#if SQLITE_VERSION_NUMBER >= 3003013 
         case SQLITE_ANALYZE:
             return auth->allowAnalyze(parameter1);
         case SQLITE_CREATE_VTABLE:
@@ -453,7 +448,6 @@ int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const cha
             return auth->dropVTable(parameter1, parameter2);
         case SQLITE_FUNCTION:
             return auth->allowFunction(parameter2);
-#endif
         default:
             ASSERT_NOT_REACHED();
             return SQLAuthDeny;
