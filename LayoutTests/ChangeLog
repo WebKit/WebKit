@@ -1,3 +1,17 @@
+2015-09-17  Dean Jackson  <dino@apple.com>
+
+        Cyclic resources were not detected if the reference had deep containers
+        https://bugs.webkit.org/show_bug.cgi?id=149182
+
+        Reviewed by John Honeycutt.
+
+        This test was ported from Blink. I believe it originally
+        came from:
+        https://code.google.com/p/chromium/issues/detail?id=351713
+
+        * svg/custom/pattern-content-cycle-w-resourceless-container-expected.txt: Added.
+        * svg/custom/pattern-content-cycle-w-resourceless-container.html: Added.
+
 2015-09-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add HTMLSlotElement and NonDocumentTypeChildNode.assignedSlot
