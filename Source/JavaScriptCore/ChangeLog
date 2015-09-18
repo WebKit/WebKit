@@ -1,3 +1,44 @@
+2015-09-17  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Convert return values from JavaScript functions to the expected types in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149200
+
+        Reviewed by Mark Lam.
+
+        When a WebAssembly function calls a JavaScript function, there is no
+        guarantee that the JavaScript function will always return values of the
+        type we expect. This patch converts the return values to the expected
+        types.
+
+        (The reverse is also true: When a WebAssembly function is called from a
+        JavaScript function, there is no guarantee that the arguments to the
+        WebAssembly function will always be of the types we expect. We have
+        fixed this in Bug 149033.)
+
+        We don't need to type check the return values if the callee is a
+        WebAssembly function. We don't need to type check the arguments if the
+        caller is a WebAssembly function. This optimization will be
+        implemented in the future. See https://bugs.webkit.org/show_bug.cgi?id=149310
+
+        * tests/stress/wasm-type-conversion.js:
+        * tests/stress/wasm/type-conversion.wasm:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::buildReturn):
+        (JSC::WASMFunctionCompiler::boxArgumentsAndAdjustStackPointer):
+        (JSC::WASMFunctionCompiler::callAndUnboxResult):
+        (JSC::WASMFunctionCompiler::convertValueToInt32):
+        (JSC::WASMFunctionCompiler::convertValueToDouble):
+        (JSC::WASMFunctionCompiler::convertDoubleToValue):
+        (JSC::WASMFunctionCompiler::loadValueAndConvertToInt32): Deleted.
+        (JSC::WASMFunctionCompiler::loadValueAndConvertToDouble): Deleted.
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseCallInternalExpressionI32): Deleted.
+        * wasm/WASMFunctionParser.h:
+
 2015-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add more fine-grained APIs and additional hooks to control module loader from WebCore

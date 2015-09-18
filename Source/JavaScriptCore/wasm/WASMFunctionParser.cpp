@@ -529,7 +529,7 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::GetGlobal:
             return parseGetGlobalExpressionI32(context);
         case WASMOpExpressionI32::CallInternal:
-            return parseCallInternalExpressionI32(context);
+            return parseCallInternal(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallIndirect:
             return parseCallIndirect(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallImport:
@@ -681,12 +681,6 @@ ContextExpression WASMFunctionParser::parseGetGlobalExpressionI32(Context& conte
 }
 
 template <class Context>
-ContextExpression WASMFunctionParser::parseCallInternalExpressionI32(Context& context)
-{
-    return parseCallInternal(context, WASMExpressionType::I32);
-}
-
-template <class Context>
 ContextExpression WASMFunctionParser::parseUnaryExpressionI32(Context& context, WASMOpExpressionI32 op)
 {
     ContextExpression expression = parseExpressionI32(context);
@@ -752,6 +746,8 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseGetLocalExpressionF32(context);
         case WASMOpExpressionF32::GetGlobal:
             return parseGetGlobalExpressionF32(context);
+        case WASMOpExpressionF32::CallInternal:
+            return parseCallInternal(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::CallIndirect:
             return parseCallIndirect(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::Negate:
@@ -771,7 +767,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::LoadWithOffset:
         case WASMOpExpressionF32::Store:
         case WASMOpExpressionF32::StoreWithOffset:
-        case WASMOpExpressionF32::CallInternal:
         case WASMOpExpressionF32::Conditional:
         case WASMOpExpressionF32::Comma:
         case WASMOpExpressionF32::FromS32:
@@ -880,6 +875,8 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseGetLocalExpressionF64(context);
         case WASMOpExpressionF64::GetGlobal:
             return parseGetGlobalExpressionF64(context);
+        case WASMOpExpressionF64::CallInternal:
+            return parseCallInternal(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::CallImport:
             return parseCallImport(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::CallIndirect:
@@ -890,7 +887,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::LoadWithOffset:
         case WASMOpExpressionF64::Store:
         case WASMOpExpressionF64::StoreWithOffset:
-        case WASMOpExpressionF64::CallInternal:
         case WASMOpExpressionF64::Conditional:
         case WASMOpExpressionF64::Comma:
         case WASMOpExpressionF64::FromS32:

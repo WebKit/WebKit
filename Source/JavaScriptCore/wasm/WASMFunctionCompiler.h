@@ -112,22 +112,26 @@ public:
 
         unsigned localIndex = 0;
         for (size_t i = 0; i < arguments.size(); ++i) {
+            // FIXME: No need to do type conversion if the caller is a WebAssembly function.
+            // https://bugs.webkit.org/show_bug.cgi?id=149310
             Address address(GPRInfo::callFrameRegister, CallFrame::argumentOffset(i) * sizeof(Register));
+#if USE(JSVALUE64)
+            JSValueRegs valueRegs(GPRInfo::regT0);
+#else
+            JSValueRegs valueRegs(GPRInfo::regT1, GPRInfo::regT0);
+#endif
+            loadValue(address, valueRegs);
             switch (arguments[i]) {
             case WASMType::I32:
-#if USE(JSVALUE64)
-                loadValueAndConvertToInt32(address, GPRInfo::regT0);
-#else
-                loadValueAndConvertToInt32(address, GPRInfo::regT0, GPRInfo::regT1);
-#endif
+                convertValueToInt32(valueRegs, GPRInfo::regT0);
                 store32(GPRInfo::regT0, localAddress(localIndex++));
                 break;
             case WASMType::F32:
             case WASMType::F64:
 #if USE(JSVALUE64)
-                loadValueAndConvertToDouble(address, FPRInfo::fpRegT0, GPRInfo::regT0, GPRInfo::regT1);
+                convertValueToDouble(valueRegs, FPRInfo::fpRegT0, GPRInfo::regT1);
 #else
-                loadValueAndConvertToDouble(address, FPRInfo::fpRegT0, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2, FPRInfo::fpRegT1);
+                convertValueToDouble(valueRegs, FPRInfo::fpRegT0, GPRInfo::regT2, FPRInfo::fpRegT1);
 #endif
                 if (arguments[i] == WASMType::F32)
                     convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
@@ -285,11 +289,7 @@ public:
             loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
             if (returnType == WASMExpressionType::F32)
                 convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
-#if USE(JSVALUE64)
-            boxDouble(FPRInfo::fpRegT0, GPRInfo::returnValueGPR);
-#else
-            boxDouble(FPRInfo::fpRegT0, GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
-#endif
+            convertDoubleToValue(FPRInfo::fpRegT0, returnValueRegs);
             m_tempStackTop--;
             break;
         case WASMExpressionType::Void:
@@ -938,6 +938,11 @@ private:
 
         for (size_t i = 0; i < argumentCount; ++i) {
             Address address(GPRInfo::callFrameRegister, (stackOffset + CallFrame::argumentOffset(i)) * sizeof(Register));
+#if USE(JSVALUE64)
+            JSValueRegs valueRegs(GPRInfo::regT0);
+#else
+            JSValueRegs valueRegs(GPRInfo::regT1, GPRInfo::regT0);
+#endif
             switch (arguments[i]) {
             case WASMType::I32:
                 load32(temporaryAddress(m_tempStackTop - argumentCount + i), GPRInfo::regT0);
@@ -948,6 +953,14 @@ private:
                 store32(GPRInfo::regT0, address.withOffset(PayloadOffset));
                 store32(TrustedImm32(JSValue::Int32Tag), address.withOffset(TagOffset));
 #endif
+                break;
+            case WASMType::F32:
+            case WASMType::F64:
+                loadDouble(temporaryAddress(m_tempStackTop - argumentCount + i), FPRInfo::fpRegT0);
+                if (arguments[i] == WASMType::F32)
+                    convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+                convertDoubleToValue(FPRInfo::fpRegT0, valueRegs);
+                storeValue(valueRegs, address);
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -988,9 +1001,28 @@ private:
         addPtr(TrustedImm32(-m_calleeSaveSpace - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), m_stackHeight) * sizeof(StackSlot) - maxFrameExtentForSlowPathCall), GPRInfo::callFrameRegister, stackPointerRegister);
         checkStackPointerAlignment();
 
+        // FIXME: No need to do type conversion if the callee is a WebAssembly function.
+        // https://bugs.webkit.org/show_bug.cgi?id=149310
+#if USE(JSVALUE64)
+        JSValueRegs valueRegs(GPRInfo::returnValueGPR);
+#else
+        JSValueRegs valueRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+#endif
         switch (returnType) {
         case WASMExpressionType::I32:
-            store32(GPRInfo::returnValueGPR, temporaryAddress(m_tempStackTop++));
+            convertValueToInt32(valueRegs, GPRInfo::regT0);
+            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop++));
+            break;
+        case WASMExpressionType::F32:
+        case WASMExpressionType::F64:
+#if USE(JSVALUE64)
+            convertValueToDouble(valueRegs, FPRInfo::fpRegT0, GPRInfo::nonPreservedNonReturnGPR);
+#else
+            convertValueToDouble(valueRegs, FPRInfo::fpRegT0, GPRInfo::nonPreservedNonReturnGPR, FPRInfo::fpRegT1);
+#endif
+            if (returnType == WASMExpressionType::F32)
+                convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop++));
             break;
         case WASMExpressionType::Void:
             break;
@@ -1000,68 +1032,71 @@ private:
     }
 
 #if USE(JSVALUE64)
-    void loadValueAndConvertToInt32(Address address, GPRReg dst)
+    void convertValueToInt32(JSValueRegs valueRegs, GPRReg dst)
     {
-        JSValueRegs tempRegs(dst);
-        loadValue(address, tempRegs);
-        Jump checkJSInt32 = branchIfInt32(tempRegs);
+        Jump checkJSInt32 = branchIfInt32(valueRegs);
 
-        callOperation(operationConvertJSValueToInt32, dst, dst);
+        callOperation(operationConvertJSValueToInt32, valueRegs.gpr(), valueRegs.gpr());
 
         checkJSInt32.link(this);
+        move(valueRegs.gpr(), dst);
     }
 
-    void loadValueAndConvertToDouble(Address address, FPRReg dst, GPRReg scratch1, GPRReg scratch2)
+    void convertValueToDouble(JSValueRegs valueRegs, FPRReg dst, GPRReg scratch)
     {
-        JSValueRegs tempRegs(scratch1);
-        loadValue(address, tempRegs);
-        Jump checkJSInt32 = branchIfInt32(tempRegs);
-        Jump checkJSNumber = branchIfNumber(tempRegs, scratch2);
+        Jump checkJSInt32 = branchIfInt32(valueRegs);
+        Jump checkJSNumber = branchIfNumber(valueRegs, scratch);
         JumpList end;
 
-        callOperation(operationConvertJSValueToDouble, tempRegs.gpr(), dst);
+        callOperation(operationConvertJSValueToDouble, valueRegs.gpr(), dst);
         end.append(jump());
 
         checkJSInt32.link(this);
-        convertInt32ToDouble(tempRegs.gpr(), dst);
+        convertInt32ToDouble(valueRegs.gpr(), dst);
         end.append(jump());
 
         checkJSNumber.link(this);
-        unboxDoubleWithoutAssertions(tempRegs.gpr(), dst);
+        unboxDoubleWithoutAssertions(valueRegs.gpr(), dst);
         end.link(this);
     }
 #else
-    void loadValueAndConvertToInt32(Address address, GPRReg dst, GPRReg scratch)
+    void convertValueToInt32(JSValueRegs valueRegs, GPRReg dst)
     {
-        JSValueRegs tempRegs(scratch, dst);
-        loadValue(address, tempRegs);
-        Jump checkJSInt32 = branchIfInt32(tempRegs);
+        Jump checkJSInt32 = branchIfInt32(valueRegs);
 
-        callOperation(operationConvertJSValueToInt32, tempRegs.tagGPR(), tempRegs.payloadGPR(), dst);
+        callOperation(operationConvertJSValueToInt32, valueRegs.tagGPR(), valueRegs.payloadGPR(), valueRegs.payloadGPR());
 
         checkJSInt32.link(this);
+        move(valueRegs.payloadGPR(), dst);
     }
 
-    void loadValueAndConvertToDouble(Address address, FPRReg dst, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, FPRReg fpScratch)
+    void convertValueToDouble(JSValueRegs valueRegs, FPRReg dst, GPRReg scratch, FPRReg fpScratch)
     {
-        JSValueRegs tempRegs(scratch2, scratch1);
-        loadValue(address, tempRegs);
-        Jump checkJSInt32 = branchIfInt32(tempRegs);
-        Jump checkJSNumber = branchIfNumber(tempRegs, scratch3);
+        Jump checkJSInt32 = branchIfInt32(valueRegs);
+        Jump checkJSNumber = branchIfNumber(valueRegs, scratch);
         JumpList end;
 
-        callOperation(operationConvertJSValueToDouble, tempRegs.tagGPR(), tempRegs.payloadGPR(), dst);
+        callOperation(operationConvertJSValueToDouble, valueRegs.tagGPR(), valueRegs.payloadGPR(), dst);
         end.append(jump());
 
         checkJSInt32.link(this);
-        convertInt32ToDouble(tempRegs.payloadGPR(), dst);
+        convertInt32ToDouble(valueRegs.payloadGPR(), dst);
         end.append(jump());
 
         checkJSNumber.link(this);
-        unboxDouble(tempRegs.tagGPR(), tempRegs.payloadGPR(), dst, fpScratch);
+        unboxDouble(valueRegs.tagGPR(), valueRegs.payloadGPR(), dst, fpScratch);
         end.link(this);
     }
 #endif
+
+    void convertDoubleToValue(FPRReg fpr, JSValueRegs valueRegs)
+    {
+#if USE(JSVALUE64)
+        boxDouble(fpr, valueRegs.gpr());
+#else
+        boxDouble(fpr, valueRegs.tagGPR(), valueRegs.payloadGPR());
+#endif
+    }
 
     JSWASMModule* m_module;
     unsigned m_stackHeight;
