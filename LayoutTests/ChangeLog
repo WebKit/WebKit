@@ -1,3 +1,10 @@
+2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        line-break-language-sensitive tests should be marked as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=149349
+
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Finish implementing MediaDevices.enumerateDevices
