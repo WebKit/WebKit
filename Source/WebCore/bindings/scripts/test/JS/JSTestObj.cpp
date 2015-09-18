@@ -109,9 +109,11 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionC
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullString(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(JSC::ExecState*);
@@ -620,9 +622,11 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "withScriptExecutionContextAndScriptStateWithSpaces", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces), (intptr_t) (0) } },
     { "withScriptArgumentsAndCallStack", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack), (intptr_t) (0) } },
     { "methodWithOptionalArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArg), (intptr_t) (0) } },
+    { "methodWithOptionalArgAndDefaultValue", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue), (intptr_t) (0) } },
     { "methodWithNonOptionalArgAndOptionalArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg), (intptr_t) (1) } },
     { "methodWithNonOptionalArgAndTwoOptionalArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs), (intptr_t) (1) } },
     { "methodWithOptionalString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalString), (intptr_t) (0) } },
+    { "methodWithOptionalStringAndDefaultValue", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue), (intptr_t) (0) } },
     { "methodWithOptionalStringIsUndefined", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined), (intptr_t) (0) } },
     { "methodWithOptionalStringIsNullString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullString), (intptr_t) (0) } },
     { "methodWithCallbackArg", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t) (1) } },
@@ -3529,6 +3533,28 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithOptionalArgAndDefaultValue");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+
+    size_t argsCount = exec->argumentCount();
+    if (argsCount <= 0) {
+        impl.methodWithOptionalArgAndDefaultValue();
+        return JSValue::encode(jsUndefined());
+    }
+
+    int opt = exec->argument(0).isUndefined() ? 666 : toInt32(exec, exec->uncheckedArgument(0), NormalConversion);
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalArgAndDefaultValue(opt);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
@@ -3610,6 +3636,28 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
     impl.methodWithOptionalString(str);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "methodWithOptionalStringAndDefaultValue");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+
+    size_t argsCount = exec->argumentCount();
+    if (argsCount <= 0) {
+        impl.methodWithOptionalStringAndDefaultValue();
+        return JSValue::encode(jsUndefined());
+    }
+
+    String str = exec->argument(0).isUndefined() ? "foo" : exec->uncheckedArgument(0).toString(exec)->value(exec);
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.methodWithOptionalStringAndDefaultValue(str);
     return JSValue::encode(jsUndefined());
 }
 

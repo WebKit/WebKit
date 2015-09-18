@@ -1283,6 +1283,14 @@ void webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong 
     item->methodWithOptionalArg(opt);
 }
 
+void webkit_dom_test_obj_method_with_optional_arg_and_default_value(WebKitDOMTestObj* self, glong opt)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->methodWithOptionalArgAndDefaultValue(opt);
+}
+
 void webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg(WebKitDOMTestObj* self, glong nonOpt, glong opt)
 {
     WebCore::JSMainThreadNullState state;
@@ -1307,6 +1315,16 @@ void webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, con
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStr = WTF::String::fromUTF8(str);
     item->methodWithOptionalString(convertedStr);
+}
+
+void webkit_dom_test_obj_method_with_optional_string_and_default_value(WebKitDOMTestObj* self, const gchar* str)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(str);
+    WebCore::TestObj* item = WebKit::core(self);
+    WTF::String convertedStr = WTF::String::fromUTF8(str);
+    item->methodWithOptionalStringAndDefaultValue(convertedStr);
 }
 
 void webkit_dom_test_obj_method_with_optional_string_is_undefined(WebKitDOMTestObj* self, const gchar* str)

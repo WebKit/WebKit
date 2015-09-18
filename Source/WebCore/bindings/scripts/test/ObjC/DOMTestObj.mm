@@ -1007,6 +1007,12 @@
     IMPL->methodWithOptionalArg(opt);
 }
 
+- (void)methodWithOptionalArgAndDefaultValue:(int)opt
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalArgAndDefaultValue(opt);
+}
+
 - (void)methodWithNonOptionalArgAndOptionalArg:(int)nonOpt opt:(int)opt
 {
     WebCore::JSMainThreadNullState state;
@@ -1023,6 +1029,12 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->methodWithOptionalString(str);
+}
+
+- (void)methodWithOptionalStringAndDefaultValue:(NSString *)str
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalStringAndDefaultValue(str);
 }
 
 - (void)methodWithOptionalStringIsUndefined:(NSString *)str

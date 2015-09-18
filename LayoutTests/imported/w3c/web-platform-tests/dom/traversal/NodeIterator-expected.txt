@@ -2,7 +2,7 @@
 PASS detach() should be a no-op 
 PASS createNodeIterator() parameter defaults 
 PASS createNodeIterator() with null as arguments 
-FAIL createNodeIterator() with undefined as arguments assert_equals: whatToShow expected 4294967295 but got 0
+PASS createNodeIterator() with undefined as arguments 
 PASS Propagate exception from filter function 
 PASS document.createNodeIterator(paras[0], 0, null) 
 PASS document.createNodeIterator(paras[0], 0, (function(node) { return true })) 

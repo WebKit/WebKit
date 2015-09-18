@@ -1,3 +1,17 @@
+2015-09-17  Chris Dumez  <cdumez@apple.com>
+
+        [WebIDL] Add support for default parameter values
+        https://bugs.webkit.org/show_bug.cgi?id=149263
+        <rdar://problem/22545600>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several NodeIterator / TreeWalker tests now that more checks
+        are passing.
+
+        * fast/dom/createNodeIterator-parameters-expected.txt:
+        * fast/dom/createTreeWalker-parameters-expected.txt:
+
 2015-09-17  Saam barati  <sbarati@apple.com>
 
         add a regress test for richards with try/catch.

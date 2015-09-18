@@ -384,6 +384,16 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_arg(WebKitDOMTestObj* self, glong opt);
 
 /**
+ * webkit_dom_test_obj_method_with_optional_arg_and_default_value:
+ * @self: A #WebKitDOMTestObj
+ * @opt: A #glong
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_arg_and_default_value(WebKitDOMTestObj* self, glong opt);
+
+/**
  * webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg:
  * @self: A #WebKitDOMTestObj
  * @nonOpt: A #glong
@@ -415,6 +425,16 @@ webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args(WebKitDOM
 **/
 WEBKIT_API void
 webkit_dom_test_obj_method_with_optional_string(WebKitDOMTestObj* self, const gchar* str);
+
+/**
+ * webkit_dom_test_obj_method_with_optional_string_and_default_value:
+ * @self: A #WebKitDOMTestObj
+ * @str: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_optional_string_and_default_value(WebKitDOMTestObj* self, const gchar* str);
 
 /**
  * webkit_dom_test_obj_method_with_optional_string_is_undefined:

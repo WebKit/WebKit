@@ -27,7 +27,7 @@ Passing undefined for optional parameters
 walker = document.createTreeWalker(document, undefined, undefined)
 PASS walker.root is document
 PASS walker.currentNode is document
-FAIL walker.whatToShow should be 4294967295. Was 0.
+PASS walker.whatToShow is 0xFFFFFFFF
 PASS walker.filter is null
 PASS successfullyParsed is true
 

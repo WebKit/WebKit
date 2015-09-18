@@ -3404,6 +3404,9 @@ sub GenerateParametersCheck
                 if ($optional && $defaultAttribute && $defaultAttribute eq "NullString") {
                     $outer = "exec->argument($argsIndex).isUndefined() ? String() : ";
                     $inner = "exec->uncheckedArgument($argsIndex)";
+                } elsif ($optional && $parameter->default) {
+                    $outer = "exec->argument($argsIndex).isUndefined() ? " . $parameter->default  . " : ";
+                    $inner = "exec->uncheckedArgument($argsIndex)";
                 } else {
                     $outer = "";
                     $inner = "exec->argument($argsIndex)";

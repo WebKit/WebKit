@@ -29,7 +29,7 @@ Passing undefined for optional parameters
 iterator = document.createNodeIterator(document, undefined, undefined)
 PASS iterator.root is document
 PASS iterator.referenceNode is document
-FAIL iterator.whatToShow should be 4294967295. Was 0.
+PASS iterator.whatToShow is 0xFFFFFFFF
 PASS iterator.filter is null
 PASS iterator.pointerBeforeReferenceNode is true
 PASS successfullyParsed is true

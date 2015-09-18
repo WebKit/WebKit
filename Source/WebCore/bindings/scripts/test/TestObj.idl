@@ -140,11 +140,13 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [CallWith=  ScriptExecutionContext  &  ScriptState  ] attribute TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
     [CallWith=ScriptArguments&CallStack] attribute TestObj withScriptArgumentsAndCallStackAttribute;
 
-    // 'Optional' extended attribute
+    // Optional parameters.
     void    methodWithOptionalArg(optional long opt);
+    void    methodWithOptionalArgAndDefaultValue(optional long opt = 666);
     void    methodWithNonOptionalArgAndOptionalArg(long nonOpt, optional long opt);
     void    methodWithNonOptionalArgAndTwoOptionalArgs(long nonOpt, optional long opt1, optional long opt2);
     void    methodWithOptionalString(optional DOMString str);
+    void    methodWithOptionalStringAndDefaultValue(optional DOMString str = "foo");
     void    methodWithOptionalStringIsUndefined([Default=Undefined] optional DOMString str);
     void    methodWithOptionalStringIsNullString([Default=NullString] optional DOMString str);
 
