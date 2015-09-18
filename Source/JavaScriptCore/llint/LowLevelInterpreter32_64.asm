@@ -304,7 +304,6 @@ _handleUncaughtException:
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
-    storep 0, VM::callFrameForCatch[t3]
 
     loadp CallerFrame[cfr], cfr
 
@@ -1838,7 +1837,6 @@ _llint_op_catch:
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     restoreCalleeSavesFromVMCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
-    storep 0, VM::callFrameForCatch[t3]
     restoreStackPointerAfterCall()
 
     loadi VM::targetInterpreterPCForThrow[t3], PC

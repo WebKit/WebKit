@@ -1242,9 +1242,6 @@
     <ClCompile Include="..\dfg\DFGFlushFormat.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGLiveCatchVariablePreservationPhase.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -3707,9 +3704,6 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGFlushFormat.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dfg\DFGLiveCatchVariablePreservationPhase.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGFPRInfo.h">

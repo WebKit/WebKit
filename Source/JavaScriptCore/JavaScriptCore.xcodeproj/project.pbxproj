@@ -1033,8 +1033,6 @@
 		7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 796465681B952FF0003059EE /* GetPutInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		797E07A91B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */; };
 		797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		79C4B15D1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */; };
-		79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79F8FC1E1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */; };
@@ -2868,8 +2866,6 @@
 		796465681B952FF0003059EE /* GetPutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPutInfo.h; sourceTree = "<group>"; };
 		797E07A71B8FCFB9008400BA /* JSGlobalLexicalEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalLexicalEnvironment.cpp; sourceTree = "<group>"; };
 		797E07A81B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalLexicalEnvironment.h; sourceTree = "<group>"; };
-		79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLiveCatchVariablePreservationPhase.cpp; path = dfg/DFGLiveCatchVariablePreservationPhase.cpp; sourceTree = "<group>"; };
-		79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLiveCatchVariablePreservationPhase.h; path = dfg/DFGLiveCatchVariablePreservationPhase.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
 		79F8FC1C1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGMaximalFlushInsertionPhase.cpp; path = dfg/DFGMaximalFlushInsertionPhase.cpp; sourceTree = "<group>"; };
@@ -5233,8 +5229,6 @@
 				0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */,
 				A7D89CE817A0B8CC00773AD8 /* DFGFlushFormat.cpp */,
 				A7D89CE917A0B8CC00773AD8 /* DFGFlushFormat.h */,
-				79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */,
-				79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */,
 				0F2DD8101AB3D8BE00BBB8E8 /* DFGForAllKills.h */,
 				0F69CC86193AC60A0045759E /* DFGFrozenValue.cpp */,
 				0F69CC87193AC60A0045759E /* DFGFrozenValue.h */,
@@ -5930,7 +5924,6 @@
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
-				79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */,
 				79F8FC1F1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h in Headers */,
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
 				7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */,
@@ -8007,7 +8000,6 @@
 				A1587D711B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp in Sources */,
 				0F2B670A17B6B5AB00A7AE3F /* TypedArrayType.cpp in Sources */,
 				52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */,
-				79C4B15D1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
 				0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */,

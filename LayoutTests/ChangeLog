@@ -1,3 +1,23 @@
+2015-09-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r189938, r189952, and r189956.
+        https://bugs.webkit.org/show_bug.cgi?id=149329
+
+        Broke Web Workers (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Implement try/catch in the DFG."
+        https://bugs.webkit.org/show_bug.cgi?id=147374
+        http://trac.webkit.org/changeset/189938
+
+        "CLoop build fix after r189938."
+        http://trac.webkit.org/changeset/189952
+
+        "add a regress test for richards with try/catch."
+        https://bugs.webkit.org/show_bug.cgi?id=149301
+        http://trac.webkit.org/changeset/189956
+
 2015-09-17  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Add support for default parameter values

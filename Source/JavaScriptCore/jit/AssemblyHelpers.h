@@ -1021,7 +1021,6 @@ public:
     enum ExceptionJumpWidth { NormalJumpWidth, FarJumpWidth };
     Jump emitExceptionCheck(
         ExceptionCheckKind = NormalExceptionCheck, ExceptionJumpWidth = NormalJumpWidth);
-    Jump emitNonPatchableExceptionCheck();
 
 #if ENABLE(SAMPLING_COUNTERS)
     static void emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, int32_t increment = 1)

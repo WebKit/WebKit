@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 
 void handleExitCounts(CCallHelpers&, const OSRExitBase&);
 void reifyInlinedCallFrames(CCallHelpers&, const OSRExitBase&);
-void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&, bool isExitingToOpCatch);
+void adjustAndJumpToTarget(CCallHelpers&, const OSRExitBase&);
 
 } } // namespace JSC::DFG
 

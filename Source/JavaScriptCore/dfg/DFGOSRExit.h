@@ -93,16 +93,13 @@ struct OSRExit : public OSRExitBase {
     unsigned m_patchableCodeOffset;
     
     unsigned m_recoveryIndex;
-
+    
     void setPatchableCodeOffset(MacroAssembler::PatchableJump);
     MacroAssembler::Jump getPatchableCodeOffsetAsJump() const;
     CodeLocationJump codeLocationForRepatch(CodeBlock*) const;
     void correctJump(LinkBuffer&);
 
     unsigned m_streamIndex;
-
-    bool m_willArriveAtOSRExitFromGenericUnwind : 1;
-    bool m_isExceptionHandler : 1;
     
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {

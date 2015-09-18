@@ -182,9 +182,8 @@ void SpeculativeJIT::cachedGetById(
         basePayloadGPR = resultPayloadGPR;
     }
     
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters(),
+        m_jit.codeBlock(), codeOrigin, m_jit.addCallSite(codeOrigin), usedRegisters(),
         JSValueRegs(baseTagGPROrNone, basePayloadGPR),
         JSValueRegs(resultTagGPR, resultPayloadGPR), spillMode);
     
@@ -215,9 +214,8 @@ void SpeculativeJIT::cachedGetById(
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITPutByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters(),
+        m_jit.codeBlock(), codeOrigin, m_jit.addCallSite(codeOrigin), usedRegisters(),
         JSValueRegs::payloadOnly(basePayloadGPR), JSValueRegs(valueTagGPR, valuePayloadGPR),
         scratchGPR, spillMode, m_jit.ecmaModeFor(codeOrigin), putKind);
     
@@ -786,8 +784,7 @@ void SpeculativeJIT::emitCall(Node* node)
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::JumpList slowPath;
 
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(node->origin.semantic, m_stream->size());
-    m_jit.emitStoreCallSiteIndex(callSite);
+    m_jit.emitStoreCodeOrigin(node->origin.semantic);
     
     CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo();
 

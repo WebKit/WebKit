@@ -80,7 +80,6 @@ public:
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     CallSiteIndex addCodeOrigin(CodeOrigin);
-    CallSiteIndex lastCallSite() const;
     
     void shrinkToFit();
     

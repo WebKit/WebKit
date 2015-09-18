@@ -185,7 +185,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGFixupPhase.cpp
     dfg/DFGFlushFormat.cpp
     dfg/DFGFlushedAt.cpp
-    dfg/DFGLiveCatchVariablePreservationPhase.cpp
     dfg/DFGFrozenValue.cpp
     dfg/DFGFunctionWhitelist.cpp
     dfg/DFGGraph.cpp

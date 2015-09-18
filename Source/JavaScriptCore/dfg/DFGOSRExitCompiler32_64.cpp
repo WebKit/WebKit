@@ -394,7 +394,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     reifyInlinedCallFrames(m_jit, exit);
     
     // And finish.
-    adjustAndJumpToTarget(m_jit, exit, exit.m_isExceptionHandler);
+    adjustAndJumpToTarget(m_jit, exit);
 }
 
 } } // namespace JSC::DFG
