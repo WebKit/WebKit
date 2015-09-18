@@ -1,3 +1,10 @@
+2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Adds more flaky tests to TestExpecations for iOS and WK2
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2015-09-18  Saam barati  <sbarati@apple.com>
 
         add a regress test for richards with try/catch.

@@ -2834,3 +2834,10 @@ css3/line-break-language-sensitive/line-break-normal-sound-marks.html [ ImageOnl
 
 # Enable "aria-current" test for iOS
 webkit.org/b/149297 accessibility/aria-current.html [ Pass ]
+
+# More flaky tests (Sept 18, 2015)
+
+fast/forms/select-element-focus-ring.html [ Failure Pass ]
+animations/keyframe-multiple-timing-functions-transform.html [ Failure Pass ]
+streams/reference-implementation/readable-stream-cancel.html [ Failure Pass ]
+compositing/visible-rect/coverage-scrolling.html [ Failure Pass ]
