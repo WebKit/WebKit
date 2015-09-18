@@ -101,8 +101,10 @@ RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight fontW
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     RetainPtr<CFStringRef> localeString;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     if (!locale.isNull())
         localeString = locale.string().createCFString();
+#endif
     RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(font, characters, length, localeString.get(), nullptr));
 #else
     RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, nullptr));
