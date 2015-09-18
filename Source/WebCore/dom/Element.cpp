@@ -1236,6 +1236,14 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
             elementData()->setHasNameAttribute(!newValue.isNull());
         else if (name == HTMLNames::pseudoAttr)
             shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
+#if ENABLE(SHADOW_DOM)
+        else if (name == HTMLNames::slotAttr) {
+            if (auto* parent = parentElement()) {
+                if (auto* shadowRoot = parent->shadowRoot())
+                    shadowRoot->invalidateSlotAssignments();
+            }
+        }
+#endif
     }
 
     parseAttribute(name, newValue);
@@ -1851,6 +1859,9 @@ void Element::childrenChanged(const ChildChange& change)
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
         if (auto* distributor = shadowRoot->distributor())
             distributor->invalidateDistribution(this);
+#if ENABLE(SHADOW_DOM)
+        shadowRoot->invalidateSlotAssignments();
+#endif
     }
 }
 

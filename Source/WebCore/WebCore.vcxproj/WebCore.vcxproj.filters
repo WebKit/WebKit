@@ -3882,6 +3882,9 @@
     <ClCompile Include="..\html\HTMLSelectElementWin.cpp">
       <Filter>html</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\HTMLSlotElementWin.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\HTMLSourceElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -5480,6 +5483,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLSelectElement.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLSlotElement.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLSourceElement.cpp">
@@ -11042,6 +11048,9 @@
     <ClInclude Include="..\html\HTMLSelectElement.h">
       <Filter>html</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\HTMLSlotElement.h">
+      <Filter>html</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\HTMLSourceElement.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -12866,6 +12875,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLSelectElement.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLSlotElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSHTMLSourceElement.h">

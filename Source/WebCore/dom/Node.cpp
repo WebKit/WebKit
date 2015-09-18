@@ -45,6 +45,7 @@
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
+#include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InsertionPoint.h"
 #include "InspectorController.h"
@@ -1070,6 +1071,21 @@ ShadowRoot* Node::containingShadowRoot() const
     ContainerNode& root = treeScope().rootNode();
     return is<ShadowRoot>(root) ? downcast<ShadowRoot>(&root) : nullptr;
 }
+
+#if ENABLE(SHADOW_DOM)
+HTMLSlotElement* Node::assignedSlot() const
+{
+    auto* parent = parentElement();
+    if (!parent)
+        return nullptr;
+
+    auto* shadowRoot = parent->shadowRoot();
+    if (!shadowRoot || shadowRoot->type() != ShadowRoot::Type::Open)
+        return nullptr;
+
+    return shadowRoot->findAssignedSlot(*this);
+}
+#endif
 
 bool Node::isInUserAgentShadowTree() const
 {

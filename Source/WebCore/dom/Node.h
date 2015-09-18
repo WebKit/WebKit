@@ -54,6 +54,7 @@ class FloatPoint;
 class Frame;
 class HTMLInputElement;
 class HTMLQualifiedName;
+class HTMLSlotElement;
 class IntRect;
 class KeyboardEvent;
 class MathMLQualifiedName;
@@ -286,6 +287,10 @@ public:
     WEBCORE_EXPORT Node* deprecatedShadowAncestorNode() const;
     ShadowRoot* containingShadowRoot() const;
     ShadowRoot* shadowRoot() const;
+
+#if ENABLE(SHADOW_DOM)
+    HTMLSlotElement* assignedSlot() const;
+#endif
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();

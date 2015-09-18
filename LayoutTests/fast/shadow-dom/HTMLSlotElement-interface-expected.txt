@@ -1,0 +1,7 @@
+
+PASS HTMLSlotElement must be defined on window 
+PASS "name" attribute on HTMLSlotElement must reflect "name" attribute 
+PASS getDistributedNodes method on HTMLSlotElement must return the list of distributed nodes 
+PASS getDistributedNodes must update when slot and name attributes are modified 
+PASS getDistributedNodes must update when slot elements are inserted or removed 
+

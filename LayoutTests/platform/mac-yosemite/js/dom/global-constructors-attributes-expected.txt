@@ -668,6 +668,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLSelectElement').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLSelectElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLSelectElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLSelectElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLSlotElement').value is HTMLSlotElement
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLSlotElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLSlotElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLSlotElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLSlotElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLSourceElement').value is HTMLSourceElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLSourceElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLSourceElement').hasOwnProperty('set') is false

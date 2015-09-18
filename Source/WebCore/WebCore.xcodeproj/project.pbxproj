@@ -3848,7 +3848,13 @@
 		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; };
 		9B417065125662B3006B28FC /* ApplyBlockElementCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */; };
 		9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B532EA31BA928570038A827 /* SlotAssignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B532EA11BA928570038A827 /* SlotAssignment.cpp */; };
+		9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B532EA21BA928570038A827 /* SlotAssignment.h */; };
 		9B55EEE91B3E8898005342BC /* EditorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B55EEE81B3E8898005342BC /* EditorCocoa.mm */; };
+		9B69D3B41B98FFE900E3512B /* HTMLSlotElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */; };
+		9B69D3B51B98FFE900E3512B /* HTMLSlotElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */; };
+		9B69D3B81B99100700E3512B /* JSHTMLSlotElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B69D3B61B99100700E3512B /* JSHTMLSlotElement.cpp */; };
+		9B69D3B91B99100700E3512B /* JSHTMLSlotElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B69D3B71B99100700E3512B /* JSHTMLSlotElement.h */; };
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11249,8 +11255,15 @@
 		9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyBlockElementCommand.h; sourceTree = "<group>"; };
 		9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyBlockElementCommand.cpp; sourceTree = "<group>"; };
 		9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormNamedItem.h; sourceTree = "<group>"; };
+		9B532EA11BA928570038A827 /* SlotAssignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlotAssignment.cpp; sourceTree = "<group>"; };
+		9B532EA21BA928570038A827 /* SlotAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotAssignment.h; sourceTree = "<group>"; };
 		9B55EEE81B3E8898005342BC /* EditorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorCocoa.mm; sourceTree = "<group>"; };
 		9B55EEEA1B3F3FEF005342BC /* EditorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditorCocoa.h; sourceTree = "<group>"; };
+		9B69D3B11B98FF0A00E3512B /* HTMLSlotElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSlotElement.idl; sourceTree = "<group>"; };
+		9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSlotElement.cpp; sourceTree = "<group>"; };
+		9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSlotElement.h; sourceTree = "<group>"; };
+		9B69D3B61B99100700E3512B /* JSHTMLSlotElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSlotElement.cpp; sourceTree = "<group>"; };
+		9B69D3B71B99100700E3512B /* JSHTMLSlotElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLSlotElement.h; sourceTree = "<group>"; };
 		9B6BC9601B975966005AE1F0 /* JSShadowRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSShadowRoot.cpp; sourceTree = "<group>"; };
 		9B6BC9611B975966005AE1F0 /* JSShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRoot.h; sourceTree = "<group>"; };
 		9B6C41521344949000085B62 /* StringWithDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringWithDirection.h; sourceTree = "<group>"; };
@@ -18541,6 +18554,9 @@
 				A81369BD097374F500D74463 /* HTMLSelectElement.cpp */,
 				A81369BC097374F500D74463 /* HTMLSelectElement.h */,
 				855542990AA4938800BA89F2 /* HTMLSelectElement.idl */,
+				9B69D3B11B98FF0A00E3512B /* HTMLSlotElement.idl */,
+				9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */,
+				9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */,
 				E44613950CD6331000FADA75 /* HTMLSourceElement.cpp */,
 				E44613960CD6331000FADA75 /* HTMLSourceElement.h */,
 				E44613970CD6331000FADA75 /* HTMLSourceElement.idl */,
@@ -19305,6 +19321,8 @@
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
+				9B69D3B61B99100700E3512B /* JSHTMLSlotElement.cpp */,
+				9B69D3B71B99100700E3512B /* JSHTMLSlotElement.h */,
 				31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */,
 				31A795C51888BAD100382F90 /* JSANGLEInstancedArrays.h */,
 				BE8EF03E171C8FF9009B48C3 /* JSAudioTrack.cpp */,
@@ -23577,6 +23595,8 @@
 				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
 				9B19B67E1B964E5200348745 /* ShadowRoot.idl */,
 				31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */,
+				9B532EA11BA928570038A827 /* SlotAssignment.cpp */,
+				9B532EA21BA928570038A827 /* SlotAssignment.h */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
 				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
@@ -26463,6 +26483,7 @@
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 				5A574F29131DB96D00471B88 /* QuotesData.h in Headers */,
 				B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */,
+				9B69D3B51B98FFE900E3512B /* HTMLSlotElement.h in Headers */,
 				F55B3DCC1251F12D003EF269 /* RadioInputType.h in Headers */,
 				B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */,
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
@@ -27361,6 +27382,7 @@
 				078E093017D14D1C00420AA1 /* UserMediaRequest.h in Headers */,
 				7C3B79721908757B00B47A2D /* UserMessageHandler.h in Headers */,
 				7CE68345192143A800F4D928 /* UserMessageHandlerDescriptor.h in Headers */,
+				9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */,
 				7CE683471921821500F4D928 /* UserMessageHandlerDescriptorTypes.h in Headers */,
 				7C73FB08191EF417007DE061 /* UserMessageHandlersNamespace.h in Headers */,
 				BCA2B061105047600043BD1C /* UserScript.h in Headers */,
@@ -27533,6 +27555,7 @@
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
+				9B69D3B91B99100700E3512B /* JSHTMLSlotElement.h in Headers */,
 				CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */,
 				A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */,
 				F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */,
@@ -28088,6 +28111,7 @@
 				E1A8E56617552B2A007488E7 /* CFURLExtras.cpp in Sources */,
 				97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */,
 				FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */,
+				9B532EA31BA928570038A827 /* SlotAssignment.cpp in Sources */,
 				FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
 				9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */,
@@ -28723,6 +28747,7 @@
 				FBC220DF1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp in Sources */,
 				96ABA42314BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp in Sources */,
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
+				9B69D3B81B99100700E3512B /* JSHTMLSlotElement.cpp in Sources */,
 				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
 				0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */,
 				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
@@ -28855,6 +28880,7 @@
 				D66817FA166FE6D700FA07B4 /* HTMLTemplateElement.cpp in Sources */,
 				A81369D7097374F600D74463 /* HTMLTextAreaElement.cpp in Sources */,
 				9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */,
+				9B69D3B41B98FFE900E3512B /* HTMLSlotElement.cpp in Sources */,
 				A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */,
 				977B3877122883E900B81FF8 /* HTMLTokenizer.cpp in Sources */,
 				0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */,

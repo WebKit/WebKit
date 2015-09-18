@@ -31,6 +31,7 @@
 #include "InsertionPoint.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SlotAssignment.h"
 #include "StyleResolver.h"
 #include "markup.h"
 
@@ -39,6 +40,9 @@ namespace WebCore {
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
     void* host;
+#if ENABLE(SHADOW_DOM)
+    void* slotAssignment;
+#endif
 };
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
@@ -127,5 +131,42 @@ void ShadowRoot::removeAllEventListeners()
     for (Node* node = firstChild(); node; node = NodeTraversal::next(*node))
         node->removeAllEventListeners();
 }
+
+#if ENABLE(SHADOW_DOM)
+
+HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
+{
+    if (!m_slotAssignments)
+        return nullptr;
+    return m_slotAssignments->findAssignedSlot(node, *this);
+}
+
+void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
+{
+    if (!m_slotAssignments)
+        m_slotAssignments = std::make_unique<SlotAssignment>();
+
+    return m_slotAssignments->addSlotElementByName(name, slot);
+}
+
+void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
+{
+    return m_slotAssignments->removeSlotElementByName(name, slot);
+}
+
+void ShadowRoot::invalidateSlotAssignments()
+{
+    if (m_slotAssignments)
+        m_slotAssignments->invalidate();
+}
+
+const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
+{
+    if (!m_slotAssignments)
+        return nullptr;
+    return m_slotAssignments->assignedNodesForSlot(slot, *this);
+}
+
+#endif
 
 }

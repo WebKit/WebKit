@@ -111,6 +111,7 @@ samp interfaceName=HTMLElement
 script constructorNeedsCreatedByParser
 section interfaceName=HTMLElement
 select constructorNeedsFormElement
+slot conditional=SHADOW_DOM
 small interfaceName=HTMLElement
 source wrapperOnlyIfMediaIsAvailable, conditional=VIDEO
 span

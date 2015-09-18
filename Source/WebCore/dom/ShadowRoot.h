@@ -37,6 +37,8 @@
 namespace WebCore {
 
 class ContentDistributor;
+class HTMLSlotElement;
+class SlotAssignment;
 
 class ShadowRoot : public DocumentFragment, public TreeScope {
 public:
@@ -72,6 +74,17 @@ public:
 
     virtual ContentDistributor* distributor() { return nullptr; }
 
+#if ENABLE(SHADOW_DOM)
+    HTMLSlotElement* findAssignedSlot(const Node&);
+
+    void addSlotElementByName(const AtomicString&, HTMLSlotElement&);
+    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&);
+
+    void invalidateSlotAssignments();
+
+    const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
+#endif
+
 protected:
     ShadowRoot(Document&, Type);
 
@@ -87,6 +100,10 @@ private:
     Type m_type;
 
     Element* m_host;
+
+#if ENABLE(SHADOW_DOM)
+    std::unique_ptr<SlotAssignment> m_slotAssignments;
+#endif
 };
 
 inline Element* ShadowRoot::activeElement() const

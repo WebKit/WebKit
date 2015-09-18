@@ -232,6 +232,7 @@
 #include "JSHTMLQuoteElement.cpp"
 #include "JSHTMLScriptElement.cpp"
 #include "JSHTMLSelectElement.cpp"
+#include "JSHTMLSlotElement.cpp"
 #include "JSHTMLSourceElement.cpp"
 #include "JSHTMLSpanElement.cpp"
 #include "JSHTMLStyleElement.cpp"

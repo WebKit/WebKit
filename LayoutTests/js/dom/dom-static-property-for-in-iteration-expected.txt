@@ -67,8 +67,10 @@ PASS a["dataset"] is [object DOMStringMap]
 PASS a["uiactions"] is 
 PASS a["webkitRegionOverset"] is undefined
 PASS a["shadowRoot"] is null
+PASS a["slot"] is 
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]
+PASS a["assignedSlot"] is null
 PASS a["children"] is [object HTMLCollection]
 PASS a["firstElementChild"] is null
 PASS a["lastElementChild"] is null

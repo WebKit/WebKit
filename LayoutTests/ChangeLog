@@ -1,3 +1,26 @@
+2015-09-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add HTMLSlotElement and NonDocumentTypeChildNode.assignedSlot
+        https://bugs.webkit.org/show_bug.cgi?id=149241
+
+        Reviewed by Antti Koivisto.
+
+        Added new conformance tests and rebaselined tests as needed.
+
+        In particular, inspector/model/remote-object.html was rebaselined since "assignedSlot" now appears as one of the first five
+        properties on Comment node that this test outputs.
+
+        * fast/shadow-dom/HTMLSlotElement-interface-expected.txt: Added.
+        * fast/shadow-dom/HTMLSlotElement-interface.html: Added.
+        * fast/shadow-dom/NonDocumentTypeChildNode-interface-assignedSlot-expected.txt: Added.
+        * fast/shadow-dom/NonDocumentTypeChildNode-interface-assignedSlot.html: Added.
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/inspector/model: Added.
+        * platform/mac/inspector/model/remote-object-expected.txt: Copied from LayoutTests/inspector/model/remote-object-expected.txt.
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2015-09-17  Zalan Bujtas  <zalan@apple.com>
 
         CSS WG multicol-1 tests failures with 1px differences due to baseline difference.

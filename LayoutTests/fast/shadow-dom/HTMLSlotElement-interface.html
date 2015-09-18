@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shadow DOM: HTMLSlotElement interface</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="HTMLSlotElement must exist on window with name attribute and getDistributedNodes() method">
+<link rel="help" href="https://w3c.github.io/webcomponents/spec/shadow/#the-slot-element">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<link rel='stylesheet' href='../../resources/testharness.css'>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+test(function () {
+    assert_true('HTMLSlotElement' in window, 'HTMLSlotElement must be defined on window');
+    assert_equals(HTMLSlotElement.prototype.__proto__, HTMLElement.prototype, 'HTMLSlotElement should inherit from HTMLElement');
+    assert_true(document.createElement('slot') instanceof HTMLSlotElement, 'slot element should be an instance of HTMLSlotElement');
+    assert_true(document.createElement('slot') instanceof HTMLElement, 'slot element should be an instance of HTMLElement');
+}, 'HTMLSlotElement must be defined on window');
+
+test(function () {
+    assert_true('name' in HTMLSlotElement.prototype, '"name" attribute must be defined on HTMLSlotElement.prototype');
+
+    var slotElement = document.createElement('slot');
+    assert_equals(slotElement.name, '', '"name" attribute must return the empty string when "name" content attribute is not set');
+
+    slotElement.setAttribute('name', 'foo');
+    assert_equals(slotElement.name, 'foo', '"name" attribute must return the value of the "name" content attribute');
+
+    slotElement.name = 'bar';
+    assert_equals(slotElement.name, 'bar', '"name" attribute must return the assigned value');
+    assert_equals(slotElement.getAttribute('name'), 'bar', '"name" attribute must update the "name" content attribute');
+}, '"name" attribute on HTMLSlotElement must reflect "name" attribute');
+
+test(function () {
+    assert_true('getDistributedNodes' in HTMLSlotElement.prototype, '"getDistributedNodes" method must be defined on HTMLSlotElement.prototype');
+
+    var shadowHost = document.createElement('div');
+    var child = document.createElement('p');
+
+    var shadowRoot = shadowHost.attachShadow({mode: 'open'});
+    var slotElement = document.createElement('slot');
+    shadowRoot.appendChild(slotElement);
+
+    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must return an empty array when there are no nodes in the shadow tree');
+
+    shadowHost.appendChild(child);
+    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes on a default slot must return an element without slot element');
+
+    child.setAttribute('slot', 'foo');
+    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes on a default slot must not return an element with non-empty slot attribute');
+
+    child.setAttribute('slot', '');
+    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes on a default slot must return an element with empty slot attribute');
+
+    slotElement.setAttribute('name', 'bar');
+    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes on a named slot must not return an element with empty slot attribute');
+
+    slotElement.setAttribute('name', '');
+    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes on an empty name slot must return an element with empty slot attribute');
+
+}, 'getDistributedNodes method on HTMLSlotElement must return the list of distributed nodes');
+
+test(function () {
+    var shadowHost = document.createElement('div');
+    var p = document.createElement('p');
+    var b = document.createElement('b');
+    shadowHost.appendChild(p);
+    shadowHost.appendChild(b);
+
+    var shadowRoot = shadowHost.attachShadow({mode: 'open'});
+    var slotElement = document.createElement('slot');
+    shadowRoot.appendChild(slotElement);
+
+    assert_array_equals(slotElement.getDistributedNodes(), [p, b], 'getDistributedNodes must return the distributed nodes');
+
+    slotElement.name = 'foo';
+    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must be empty when there are no matching elements for the slot name');
+
+    b.slot = 'foo';
+    assert_array_equals(slotElement.getDistributedNodes(), [b], 'getDistributedNodes must return the nodes with the matching slot name');
+
+    p.slot = 'foo';
+    assert_array_equals(slotElement.getDistributedNodes(), [p, b], 'getDistributedNodes must return the nodes with the matching slot name in the tree order');
+
+    slotElement.name = null;
+    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must be empty for a default slot when all elements have "slot" attributes specified');
+
+}, 'getDistributedNodes must update when slot and name attributes are modified');
+
+test(function () {
+    var shadowHost = document.createElement('div');
+    var p = document.createElement('p');
+    var text = document.createTextNode('');
+    var b = document.createElement('b');
+    shadowHost.appendChild(p);
+    shadowHost.appendChild(text);
+    shadowHost.appendChild(b);
+
+    var shadowRoot = shadowHost.attachShadow({mode: 'open'});
+
+    var firstSlotElement = document.createElement('slot');
+    shadowRoot.appendChild(firstSlotElement);
+
+    var secondSlotElement = document.createElement('slot');
+    shadowRoot.appendChild(secondSlotElement);
+
+    assert_array_equals(firstSlotElement.getDistributedNodes(), [p, text, b],
+        'getDistributedNodes on a default slot must return the elements without slot attributes and text nodes');
+    assert_array_equals(secondSlotElement.getDistributedNodes(), [],
+        'getDistributedNodes on the second unnamed slot element must return an empty array');
+
+    shadowRoot.removeChild(firstSlotElement);
+    assert_array_equals(firstSlotElement.getDistributedNodes(), [],
+        'getDistributedNodes on a detached formerly-default slot must return an empty array');
+    assert_array_equals(secondSlotElement.getDistributedNodes(), [p, text, b],
+        'getDistributedNodes on the second unnamed slot element after removing the first must return the elements without slot attributes and text nodes');
+
+    shadowRoot.removeChild(secondSlotElement);
+    shadowRoot.appendChild(secondSlotElement);
+    assert_array_equals(firstSlotElement.getDistributedNodes(), [],
+        'Removing and re-inserting a default slot must not change the result of getDistributedNodes on a detached slot');
+    assert_array_equals(secondSlotElement.getDistributedNodes(), [p, text, b],
+        'Removing and re-inserting a default slot must not change the result of getDistributedNodes');
+
+    shadowRoot.insertBefore(firstSlotElement, secondSlotElement);
+    assert_array_equals(firstSlotElement.getDistributedNodes(), [p, text, b],
+        'getDistributedNodes on a newly inserted unnamed slot element must return the elements without slot attributes and text nodes');
+    assert_array_equals(secondSlotElement.getDistributedNodes(), [],
+        'getDistributedNodes on formerly-first but now second unnamed slot element must return an empty array');
+
+}, 'getDistributedNodes must update when slot elements are inserted or removed');
+
+</script>
+</body>
+</html>
