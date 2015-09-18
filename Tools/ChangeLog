@@ -1,3 +1,17 @@
+2015-09-18  Daniel Bates  <dabates@apple.com>
+
+        isGitSVNDirectory() returns true when Git is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=149351
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issue where VCSUtils::isGitSVNDirectory() returns true for any arbitrary directory if
+        Git is not installed on the machine.
+
+        * Scripts/VCSUtils.pm:
+        (isGitSVNDirectory): Ensure that `git config --get svn-remote.svn.fetch 2>& 1` exits with
+        status code 0 (success).
+
 2015-09-18  Alex Christensen  <achristensen@webkit.org>
 
         Prevent build-webkit from building four times on Windows 

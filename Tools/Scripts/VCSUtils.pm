@@ -236,7 +236,7 @@ sub isGitSVNDirectory($)
     # if you're in a git-svn checkout. The best suggestions seen so far
     # all use something like the following:
     my $output = `git config --get svn-remote.svn.fetch 2>& 1`;
-    $isGitSVN = $output ne '';
+    $isGitSVN = exitStatus($?) == 0 && $output ne "";
     chdir($savedWorkingDirectory);
     return $isGitSVN;
 }
