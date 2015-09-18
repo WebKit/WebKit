@@ -79,14 +79,17 @@ private:
     AtomicString m_deviceId;
 };
 
+typedef Vector<RefPtr<TrackSourceInfo>> TrackSourceInfoVector;
+
 class MediaStreamTrackSourcesRequestClient : public RefCounted<MediaStreamTrackSourcesRequestClient> {
 public:
     virtual ~MediaStreamTrackSourcesRequestClient() { }
 
     virtual const String& requestOrigin() const = 0;
-    virtual void didCompleteRequest(const Vector<RefPtr<TrackSourceInfo>>&) = 0;
+    virtual void didCompleteRequest(const TrackSourceInfoVector&) = 0;
 
 };
+
 
 } // namespace WebCore
 

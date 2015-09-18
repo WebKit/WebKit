@@ -35,6 +35,7 @@
 
 #include "Dictionary.h"
 #include "Document.h"
+#include "MediaDevicesRequest.h"
 #include "MediaStream.h"
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
@@ -65,9 +66,11 @@ void MediaDevices::getUserMedia(const Dictionary& options, Promise&& promise, Ex
     UserMediaRequest::start(document(), options, WTF::move(promise), ec);
 }
 
-void MediaDevices::enumerateDevices(EnumerateDevicePromise&& promise, ExceptionCode& ec) const
+void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise, ExceptionCode& ec) const
 {
-    UserMediaRequest::enumerateDevices(document(), WTF::move(promise), ec);
+    RefPtr<MediaDevicesRequest> request = MediaDevicesRequest::create(document(), WTF::move(promise), ec);
+    if (request)
+        request->start();
 }
 
 } // namespace WebCore

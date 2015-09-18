@@ -59,7 +59,6 @@ typedef int ExceptionCode;
 class UserMediaRequest : public MediaStreamCreationClient, public ContextDestructionObserver {
 public:
     static void start(Document*, const Dictionary&, MediaDevices::Promise&&, ExceptionCode&);
-    static void enumerateDevices(Document*, MediaDevices::EnumerateDevicePromise&&, ExceptionCode&);
 
     ~UserMediaRequest();
 

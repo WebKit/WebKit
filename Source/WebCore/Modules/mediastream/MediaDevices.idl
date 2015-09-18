@@ -33,4 +33,5 @@
     Conditional=MEDIA_STREAM
 ] interface MediaDevices {
     [RaisesException] Promise getUserMedia(Dictionary options);
+    [RaisesException] Promise enumerateDevices();
 };

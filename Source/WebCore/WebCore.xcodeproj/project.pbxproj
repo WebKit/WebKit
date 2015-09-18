@@ -164,6 +164,8 @@
 		073794FC19F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F619F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h */; };
 		073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */; };
 		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
+		07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */; };
+		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; };
 		073AB4B317F8BACA006E0D6F /* AllVideoCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 073AB4B017F8BACA006E0D6F /* AllVideoCapabilities.h */; };
 		073AB4B717F92ECF006E0D6F /* JSCapabilityRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073AB4B517F92ECF006E0D6F /* JSCapabilityRange.cpp */; };
 		073AB4B817F92ECF006E0D6F /* JSCapabilityRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 073AB4B617F92ECF006E0D6F /* JSCapabilityRange.h */; };
@@ -643,9 +645,7 @@
 		150524F51B712FF900696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */; };
 		150524F61B712FFC00696AA9 /* MediaStreamPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */; };
 		150524F71B712FFF00696AA9 /* MediaStreamPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */; };
-		15145B901B3A1CE000662BF7 /* MediaDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */; };
-		152A29B41B4EF5B700B52AE0 /* MediaDevicesPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152A29B21B4EF59600B52AE0 /* MediaDevicesPrivate.cpp */; };
-		152A29B51B4EF5BA00B52AE0 /* MediaDevicesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 152A29B31B4EF59600B52AE0 /* MediaDevicesPrivate.h */; };
+		15145B901B3A1CE000662BF7 /* MediaDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		15739BBA1B42012A00D258C1 /* JSMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15739BB81B42012200D258C1 /* JSMediaDevices.cpp */; };
 		15739BBB1B42012D00D258C1 /* JSMediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 15739BB91B42012200D258C1 /* JSMediaDevices.h */; };
 		159741DA1B7D13F900201C92 /* JSMediaDeviceInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 157CC2611B7C1CA400D8D075 /* JSMediaDeviceInfo.cpp */; };
@@ -7367,6 +7367,8 @@
 		073794F619F5864E00E5A045 /* RTCDTMFSenderHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderHandlerMock.h; sourceTree = "<group>"; };
 		073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNotifiersMock.cpp; sourceTree = "<group>"; };
 		073794F819F5864E00E5A045 /* RTCNotifiersMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNotifiersMock.h; sourceTree = "<group>"; };
+		07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesRequest.cpp; sourceTree = "<group>"; };
+		07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesRequest.h; sourceTree = "<group>"; };
 		073AB4B017F8BACA006E0D6F /* AllVideoCapabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllVideoCapabilities.h; sourceTree = "<group>"; };
 		073AB4B517F92ECF006E0D6F /* JSCapabilityRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCapabilityRange.cpp; sourceTree = "<group>"; };
 		073AB4B617F92ECF006E0D6F /* JSCapabilityRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCapabilityRange.h; sourceTree = "<group>"; };
@@ -7824,8 +7826,6 @@
 		150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaStreamPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaDeviceInfo.h; sourceTree = "<group>"; };
 		15145B911B3A1D4C00662BF7 /* MediaDeviceInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaDeviceInfo.idl; sourceTree = "<group>"; };
-		152A29B21B4EF59600B52AE0 /* MediaDevicesPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesPrivate.cpp; sourceTree = "<group>"; };
-		152A29B31B4EF59600B52AE0 /* MediaDevicesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesPrivate.h; sourceTree = "<group>"; };
 		15739BB81B42012200D258C1 /* JSMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaDevices.cpp; sourceTree = "<group>"; };
 		15739BB91B42012200D258C1 /* JSMediaDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaDevices.h; sourceTree = "<group>"; };
 		157CC2611B7C1CA400D8D075 /* JSMediaDeviceInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaDeviceInfo.cpp; sourceTree = "<group>"; };
@@ -14830,6 +14830,8 @@
 				0779BF0C18453168000B6AE7 /* HTMLMediaElementMediaStream.idl */,
 				07221B4A17CEC32700848E51 /* MediaConstraintsImpl.cpp */,
 				07221B4B17CEC32700848E51 /* MediaConstraintsImpl.h */,
+				07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */,
+				07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */,
 				159AE82A1B3A402F0037478B /* MediaDeviceInfo.cpp */,
 				15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */,
 				15145B911B3A1D4C00662BF7 /* MediaDeviceInfo.idl */,
@@ -14945,8 +14947,6 @@
 			children = (
 				0729B14D17CFCCA0004F1D60 /* mac */,
 				07221B9917CF0AD400848E51 /* MediaConstraints.h */,
-				152A29B21B4EF59600B52AE0 /* MediaDevicesPrivate.cpp */,
-				152A29B31B4EF59600B52AE0 /* MediaDevicesPrivate.h */,
 				070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */,
 				07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */,
 				0711588F17DF633700EDFE2B /* MediaStreamPrivate.cpp */,
@@ -24356,6 +24356,7 @@
 				26F0C89C1A2EC110002794F8 /* ContentExtensionRule.h in Headers */,
 				26F0C8A01A2EC3BE002794F8 /* ContentExtensionsBackend.h in Headers */,
 				262391361A648CEE007251A3 /* ContentExtensionsDebugging.h in Headers */,
+				07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */,
 				51FB67DC1AE6B82F00D06C5A /* ContentExtensionStyleSheet.h in Headers */,
 				A149786F1ABAF33800CEF7E4 /* ContentFilter.h in Headers */,
 				A14090FD1AA51E480091191A /* ContentFilterUnblockHandler.h in Headers */,
@@ -24454,7 +24455,6 @@
 				409EBDB116B7EE7100CBA3FC /* CSSFontFaceLoadEvent.h in Headers */,
 				A80E6CFD0A1989CA007FB8C5 /* CSSFontFaceRule.h in Headers */,
 				BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */,
-				152A29B51B4EF5BA00B52AE0 /* MediaDevicesPrivate.h in Headers */,
 				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
 				83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */,
 				4A6E9FC413C17D1D0046A7F8 /* CSSFontFeatureValue.h in Headers */,
@@ -28250,6 +28250,7 @@
 				9393E5FF151A99F200066F06 /* CSSImageSetValue.cpp in Sources */,
 				A80E6CFE0A1989CA007FB8C5 /* CSSImageValue.cpp in Sources */,
 				A80E6CEB0A1989CA007FB8C5 /* CSSImportRule.cpp in Sources */,
+				07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */,
 				A80E6CF00A1989CA007FB8C5 /* CSSInheritedValue.cpp in Sources */,
 				A80E6D020A1989CA007FB8C5 /* CSSInitialValue.cpp in Sources */,
 				31288E720E3005D6003619AE /* CSSKeyframeRule.cpp in Sources */,
@@ -29444,7 +29445,6 @@
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,
 				A84EBD840CB8C97700079609 /* JSStyleSheetList.cpp in Sources */,
-				152A29B41B4EF5B700B52AE0 /* MediaDevicesPrivate.cpp in Sources */,
 				A84EBD780CB8C89200079609 /* JSStyleSheetListCustom.cpp in Sources */,
 				E1FF8F64180745D800132674 /* JSSubtleCrypto.cpp in Sources */,
 				E1FF8F681807460800132674 /* JSSubtleCryptoCustom.cpp in Sources */,

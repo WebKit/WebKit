@@ -912,6 +912,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaConstraintsImpl.cpp
     Modules/mediastream/MediaDeviceInfo.cpp
     Modules/mediastream/MediaDevices.cpp
+    Modules/mediastream/MediaDevicesRequest.cpp
     Modules/mediastream/MediaSourceStates.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamCapabilities.cpp
@@ -2256,7 +2257,6 @@ set(WebCore_SOURCES
     platform/graphics/transforms/TransformationMatrix.cpp
     platform/graphics/transforms/TranslateTransformOperation.cpp
 
-    platform/mediastream/MediaDevicesPrivate.cpp
     platform/mediastream/MediaStreamPrivate.cpp
     platform/mediastream/MediaStreamTrackPrivate.cpp
     platform/mediastream/RTCIceCandidateDescriptor.cpp

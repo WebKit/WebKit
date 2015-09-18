@@ -1,3 +1,14 @@
+2015-09-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Finish implementing MediaDevices.enumerateDevices
+        https://bugs.webkit.org/show_bug.cgi?id=149322
+        <rdar://problem/22750866>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/mediastream/MediaDevices-enumerateDevices-expected.txt: Added.
+        * fast/mediastream/MediaDevices-enumerateDevices.html: Added.
+
 2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Updates to include change to iOS test expectations after bug 149187

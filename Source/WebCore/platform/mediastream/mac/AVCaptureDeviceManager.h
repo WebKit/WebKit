@@ -47,8 +47,8 @@ public:
     static AVCaptureDeviceManager& singleton();
     static bool isAvailable();
 
-    Vector<RefPtr<TrackSourceInfo>> getSourcesInfo(const String&);
-    bool verifyConstraintsForMediaType(RealtimeMediaSource::Type, MediaConstraints*, String&);
+    TrackSourceInfoVector getSourcesInfo(const String&);
+    bool verifyConstraintsForMediaType(AVCaptureSession *, RealtimeMediaSource::Type, MediaConstraints*, String&);
     Vector<RefPtr<RealtimeMediaSource>> bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
     RefPtr<RealtimeMediaSource> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*);
 

@@ -198,7 +198,7 @@ void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCrea
 bool MockRealtimeMediaSourceCenter::getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient> prpClient)
 {
     RefPtr<MediaStreamTrackSourcesRequestClient> requestClient = prpClient;
-    Vector<RefPtr<TrackSourceInfo>> sources;
+    TrackSourceInfoVector sources;
 
     MockSourceMap& map = mockSourceMap();
     MockSourceMap::iterator end = map.end();

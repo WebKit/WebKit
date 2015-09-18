@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@
 #include "JSMediaStream.h"
 #include "JSNavigatorUserMediaError.h"
 #include "MediaConstraintsImpl.h"
-#include "MediaDevicesPrivate.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "NavigatorUserMediaErrorCallback.h"
@@ -70,13 +69,6 @@ static RefPtr<MediaConstraints> parseOptions(const Dictionary& options, const St
     return MediaConstraintsImpl::create();
 }
 
-void UserMediaRequest::enumerateDevices(Document* document, MediaDevices::EnumerateDevicePromise&& promise, ExceptionCode&)
-{
-    RefPtr<MediaDevicesPrivate> deviceClient = MediaDevicesPrivate::create();
-    RealtimeMediaSourceCenter::singleton().getMediaStreamTrackSources(deviceClient);
-    promise.resolve(deviceClient->availableMediaDevices(*document));
-}
-    
 void UserMediaRequest::start(Document* document, const Dictionary& options, MediaDevices::Promise&& promise, ExceptionCode& ec)
 {
     if (!options.isObject()) {

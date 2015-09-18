@@ -343,7 +343,7 @@ Vector<RefPtr<TrackSourceInfo>> AVCaptureDeviceManager::getSourcesInfo(const Str
     return sourcesInfo;
 }
 
-bool AVCaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::Type type, MediaConstraints* constraints, String& invalidConstraint)
+bool AVCaptureDeviceManager::verifyConstraintsForMediaType(AVCaptureSessionType *session, RealtimeMediaSource::Type type, MediaConstraints* constraints, String& invalidConstraint)
 {
     if (!isAvailable())
         return false;
@@ -355,11 +355,10 @@ bool AVCaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::
     constraints->getMandatoryConstraints(mandatoryConstraints);
     if (mandatoryConstraints.size()) {
 
-        // FIXME: this method should take an AVCaptureDevice and use its AVCaptureSession instead of creating a new one.
-        RetainPtr<AVCaptureSessionType> session = adoptNS([allocAVCaptureSessionInstance() init]);
+        RetainPtr<AVCaptureSessionType> captureSession = session ? session : adoptNS([allocAVCaptureSessionInstance() init]);
         for (size_t i = 0; i < mandatoryConstraints.size(); ++i) {
             const MediaConstraint& constraint = mandatoryConstraints[i];
-            if (!sessionSupportsConstraint(session.get(), type, constraint.m_name, constraint.m_value)) {
+            if (!sessionSupportsConstraint(captureSession.get(), type, constraint.m_name, constraint.m_value)) {
                 invalidConstraint = constraint.m_name;
                 return false;
             }
@@ -425,21 +424,29 @@ RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(const String& 
 
         if (captureDevice.m_captureDeviceID != deviceUID)
             continue;
+
         if (constraints) {
             String invalidConstraints;
-            AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(type, constraints, invalidConstraints);
+            AVCaptureSessionType *session = nil;
+
+            if (type == RealtimeMediaSource::Video && captureDevice.m_videoAVMediaCaptureSource)
+                captureDevice.m_videoAVMediaCaptureSource->session();
+            else if (type == RealtimeMediaSource::Audio && captureDevice.m_audioAVMediaCaptureSource)
+                captureDevice.m_audioAVMediaCaptureSource->session();
+            AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(session, type, constraints, invalidConstraints);
+
             if (!invalidConstraints.isEmpty())
                 continue;
         }
         
         AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:captureDevice.m_captureDeviceID];
         ASSERT(device);
-        if (type == RealtimeMediaSource::Type::Audio && !captureDevice.m_audioSourceId.isEmpty()) {
+        if (type == RealtimeMediaSource::Audio && !captureDevice.m_audioSourceId.isEmpty()) {
             if (!captureDevice.m_audioAVMediaCaptureSource)
                 captureDevice.m_audioAVMediaCaptureSource = AVAudioCaptureSource::create(device, captureDevice.m_audioSourceId, constraints);
             return captureDevice.m_audioAVMediaCaptureSource;
         }
-        if (type == RealtimeMediaSource::Type::Video && !captureDevice.m_videoSourceId.isEmpty()) {
+        if (type == RealtimeMediaSource::Video && !captureDevice.m_videoSourceId.isEmpty()) {
             if (!captureDevice.m_videoAVMediaCaptureSource)
                 captureDevice.m_videoAVMediaCaptureSource = AVVideoCaptureSource::create(device, captureDevice.m_videoSourceId, constraints);
             return captureDevice.m_videoAVMediaCaptureSource;

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            var captureDevices;
+            var captureDevice;
+
+            description("Tests MediaDevices.enumerateDevices()");
+            window.jsTestIsAsync = true;
+
+            shouldBeType("navigator.mediaDevices", "Object");
+            shouldBeType("navigator.mediaDevices.enumerateDevices", "Function");
+            debug("");
+
+            navigator.mediaDevices.enumerateDevices()
+                .then(function(devices) {
+                    captureDevices = devices;
+                    shouldBeNonZero("captureDevices.length");
+                    debug("");
+                    devices.forEach(function(device) {
+                        captureDevice = device;
+                        shouldBeNonNull("captureDevice.kind");
+                        shouldBeNonNull("captureDevice.deviceId");
+                        shouldBeNonNull("captureDevice.label");
+                        shouldBeNonNull("captureDevice.groupId");
+                        debug("");
+                    });
+
+                    finishJSTest();
+                })
+                .catch(function(err) {
+                    testFailed(err.name + ": " + err.message);
+                });
+
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
