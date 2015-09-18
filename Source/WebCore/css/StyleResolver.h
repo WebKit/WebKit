@@ -578,7 +578,7 @@ public:
     {
         if (m_pushedStyleResolver)
             return;
-        m_pushedStyleResolver = &m_parent->document().ensureStyleResolver();
+        m_pushedStyleResolver = &m_parent->styleResolver();
         m_pushedStyleResolver->pushParentElement(m_parent);
     }
     ~StyleResolverParentPusher()
@@ -587,9 +587,7 @@ public:
             return;
         // This tells us that our pushed style selector is in a bad state,
         // so we should just bail out in that scenario.
-        ASSERT(m_pushedStyleResolver == &m_parent->document().ensureStyleResolver());
-        if (m_pushedStyleResolver != &m_parent->document().ensureStyleResolver())
-            return;
+        ASSERT(m_pushedStyleResolver == &m_parent->styleResolver());
         m_pushedStyleResolver->popParentElement(m_parent);
     }
     

@@ -1537,13 +1537,15 @@ PassRefPtr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoStyleR
     if (isAnonymous())
         return nullptr;
 
+    auto& styleResolver = element()->styleResolver();
+
     if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
-        RefPtr<RenderStyle> result = document().ensureStyleResolver().styleForElement(element(), parentStyle, DisallowStyleSharing);
+        RefPtr<RenderStyle> result = styleResolver.styleForElement(element(), parentStyle, DisallowStyleSharing);
         result->setStyleType(FIRST_LINE_INHERITED);
         return result.release();
     }
 
-    return document().ensureStyleResolver().pseudoStyleForElement(element(), pseudoStyleRequest, parentStyle);
+    return styleResolver.pseudoStyleForElement(element(), pseudoStyleRequest, parentStyle);
 }
 
 RenderBlock* RenderElement::containingBlockForFixedPosition() const

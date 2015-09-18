@@ -39,6 +39,7 @@ namespace WebCore {
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
+    void* styleResolver;
     void* host;
 #if ENABLE(SHADOW_DOM)
     void* slotAssignment;
@@ -68,6 +69,14 @@ ShadowRoot::~ShadowRoot()
     // runs so we don't go through TreeScopeAdopter for each child with a
     // destructed tree scope in each descendant.
     removeDetachedChildren();
+}
+
+StyleResolver& ShadowRoot::styleResolver()
+{
+    if (m_styleResolver)
+        return *m_styleResolver;
+
+    return document().ensureStyleResolver();
 }
 
 PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)

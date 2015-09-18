@@ -342,7 +342,7 @@ void RenderNamedFlowFragment::checkRegionStyle()
 
     // FIXME: Region styling doesn't work for pseudo elements.
     if (!isPseudoElement())
-        customRegionStyle = view().document().ensureStyleResolver().checkRegionStyle(generatingElement());
+        customRegionStyle = generatingElement()->styleResolver().checkRegionStyle(generatingElement());
     setHasCustomRegionStyle(customRegionStyle);
     downcast<RenderNamedFlowThread>(*m_flowThread).checkRegionsWithStyling();
 }
@@ -352,7 +352,7 @@ PassRefPtr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElem
     ASSERT(!renderer.isAnonymous());
 
     // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
-    RefPtr<RenderStyle> renderObjectRegionStyle = renderer.view().document().ensureStyleResolver().styleForElement(renderer.element(), &parentStyle, DisallowStyleSharing, MatchAllRules, this);
+    RefPtr<RenderStyle> renderObjectRegionStyle = renderer.element()->styleResolver().styleForElement(renderer.element(), &parentStyle, DisallowStyleSharing, MatchAllRules, this);
 
     return renderObjectRegionStyle.release();
 }

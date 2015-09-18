@@ -55,6 +55,8 @@ public:
 
     virtual ~ShadowRoot();
 
+    StyleResolver& styleResolver();
+
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
@@ -98,6 +100,8 @@ private:
 
     bool m_resetStyleInheritance : 1;
     Type m_type;
+
+    std::unique_ptr<StyleResolver> m_styleResolver;
 
     Element* m_host;
 

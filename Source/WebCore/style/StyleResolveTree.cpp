@@ -141,7 +141,7 @@ static Ref<RenderStyle> styleForElement(Element& element, RenderStyle& inherited
         if (RefPtr<RenderStyle> style = element.customStyleForRenderer(inheritedStyle))
             return style.releaseNonNull();
     }
-    return element.document().ensureStyleResolver().styleForElement(&element, &inheritedStyle);
+    return element.resolveStyle(&inheritedStyle);
 }
 
 #if ENABLE(CSS_REGIONS)

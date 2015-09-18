@@ -487,6 +487,9 @@ public:
 
     WEBCORE_EXPORT URL absoluteLinkURL() const;
 
+    StyleResolver& styleResolver();
+    Ref<RenderStyle> resolveStyle(RenderStyle* parentStyle);
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
