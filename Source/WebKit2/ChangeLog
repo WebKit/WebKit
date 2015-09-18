@@ -1,3 +1,45 @@
+2015-09-17  Brian Burg  <bburg@apple.com>
+
+        ASSERT(!m_frontendRouter->hasLocalFrontend()) when running Web Inspector tests
+        https://bugs.webkit.org/show_bug.cgi?id=149006
+        <rdar://problem/22654257>
+        <rdar://problem/22631369>
+
+        Reviewed by Joseph Pecoraro.
+
+        Stop using InspectorController to close the frontend page. Go through
+        the FrontendClient instead. Reduce redundant code paths.
+
+        This change seems to fix some recent crashes that were seen when
+        closing Safari with Web Inspector open. These were caused by the frontend
+        channel not being disconnected at the right time.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::inspectedPageDestroyed):
+        (WebKit::WebInspectorClient::closeLocalFrontend): Deleted.
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::close):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+
+            Save a pointer to the frontend's InspectorController since we may
+            need to use it while the page is being destructed and its getter
+            is no longer accessible.
+
+        (WebKit::WebInspectorUI::closeWindow):
+
+            Explicitly remove the frontend client when closing the frontend.
+
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::inspector):
+
+            Allow clients to specify whether an inspector should be eagerly created.
+            Without this, we may accidentally create an instance during teardown.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2015-09-18  Emanuele Aina  <emanuele.aina@collabora.com>
 
         Fix build with --no-indexed-database after r189831

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)inspectedWebViewClosed
 {
+    [self close:nil];
     _inspectedWebView = nil;
 }
 
@@ -157,8 +158,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)close:(id)sender 
 {
-    if (Page* inspectedPage = core(_inspectedWebView))
-        inspectedPage->inspectorController().close();
+    [_frontend close];
 }
 
 - (void)attach:(id)sender

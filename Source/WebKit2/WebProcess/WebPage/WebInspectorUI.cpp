@@ -70,7 +70,8 @@ void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdenti
     m_frontendAPIDispatcher.reset();
     m_underTest = underTest;
 
-    m_page.corePage()->inspectorController().setInspectorFrontendClient(this);
+    m_frontendController = &m_page.corePage()->inspectorController();
+    m_frontendController->setInspectorFrontendClient(this);
 
     m_backendConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
     m_backendConnection->open();
@@ -116,6 +117,10 @@ void WebInspectorUI::closeWindow()
     if (m_backendConnection)
         m_backendConnection->invalidate();
     m_backendConnection = nullptr;
+
+    if (m_frontendController)
+        m_frontendController->setInspectorFrontendClient(nullptr);
+    m_frontendController = nullptr;
 
     m_inspectedPageIdentifier = 0;
     m_underTest = false;

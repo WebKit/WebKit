@@ -236,7 +236,9 @@ public:
     void didFlushLayerTreeAtTime(std::chrono::milliseconds);
 #endif
 
-    WebInspector* inspector();
+    enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
+
+    WebInspector* inspector(LazyCreationPolicy = LazyCreationPolicy::CreateIfNeeded);
     WebInspectorUI* inspectorUI();
     bool isInspectorPage() { return !!m_inspectorUI; }
 

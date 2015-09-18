@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
- * Copyright (C) 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2012, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -596,7 +596,6 @@ public:
     virtual void inspectedPageDestroyed() override { }
     
     virtual Inspector::FrontendChannel* openLocalFrontend(InspectorController*) override { return 0; }
-    virtual void closeLocalFrontend() override { }
     virtual void bringFrontendToFront() override { }
 
     virtual void highlight() override { }

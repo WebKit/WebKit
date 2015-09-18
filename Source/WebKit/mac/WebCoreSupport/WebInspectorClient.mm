@@ -102,7 +102,6 @@ WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
 
 void WebInspectorClient::inspectedPageDestroyed()
 {
-    closeLocalFrontend();
     delete this;
 }
 
@@ -120,12 +119,6 @@ FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* insp
     m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
 
     return this;
-}
-
-void WebInspectorClient::closeLocalFrontend()
-{
-    if (m_frontendClient)
-        m_frontendClient->disconnectFromBackend();
 }
 
 void WebInspectorClient::bringFrontendToFront()
@@ -252,11 +245,6 @@ void WebInspectorFrontendClient::bringToFront()
 }
 
 void WebInspectorFrontendClient::closeWindow()
-{
-    [m_frontendWindowController.get() destroyInspectorView];
-}
-
-void WebInspectorFrontendClient::disconnectFromBackend()
 {
     [m_frontendWindowController.get() destroyInspectorView];
 }
@@ -681,6 +669,11 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 {
     RetainPtr<WebInspectorWindowController> protect(self);
 
+    if (Page* frontendPage = _frontendClient->frontendPage())
+        frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
+    if (Page* inspectedPage = [_inspectedWebView.get() page])
+        inspectedPage->inspectorController().disconnectFrontend(_inspectorClient);
+
     [[_inspectedWebView.get() inspector] releaseFrontend];
     _inspectorClient->releaseFrontend();
 
@@ -692,11 +685,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         [self close];
 
     _visible = NO;
-
-    if (Page* inspectedPage = [_inspectedWebView.get() page]) {
-        inspectedPage->inspectorController().setInspectorFrontendClient(nullptr);
-        inspectedPage->inspectorController().disconnectFrontend(_inspectorClient);
-    }
 
     [_frontendWebView close];
 }

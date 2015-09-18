@@ -208,50 +208,75 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class InspectorFrontendClientDummy : public InspectorFrontendClientLocal {
+class InspectorStubFrontend : public InspectorFrontendClientLocal, public FrontendChannel {
 public:
-    InspectorFrontendClientDummy(InspectorController*, Page*);
-    virtual ~InspectorFrontendClientDummy() { }
+    InspectorStubFrontend(Page* inspectedPage, RefPtr<DOMWindow>&& frontendWindow);
+    virtual ~InspectorStubFrontend();
+
+    // InspectorFrontendClient API
     virtual void attachWindow(DockSide) override { }
     virtual void detachWindow() override { }
-
-    virtual String localizedStringsURL() override { return String(); }
-
+    virtual void closeWindow() override;
     virtual void bringToFront() override { }
-    virtual void closeWindow() override { }
-
+    virtual String localizedStringsURL() override { return String(); }
     virtual void inspectedURLChanged(const String&) override { }
-
 protected:
     virtual void setAttachedWindowHeight(unsigned) override { }
     virtual void setAttachedWindowWidth(unsigned) override { }
     virtual void setToolbarHeight(unsigned) override { }
-};
 
-InspectorFrontendClientDummy::InspectorFrontendClientDummy(InspectorController* controller, Page* page)
-    : InspectorFrontendClientLocal(controller, page, std::make_unique<InspectorFrontendClientLocal::Settings>())
-{
-}
-
-class InspectorFrontendChannelDummy : public FrontendChannel {
 public:
-    explicit InspectorFrontendChannelDummy(Page*);
-    virtual ~InspectorFrontendChannelDummy() { }
+    // Inspector::FrontendChannel API
     virtual bool sendMessageToFrontend(const String& message) override;
     virtual ConnectionType connectionType() const override { return ConnectionType::Local; }
 
 private:
-    Page* m_frontendPage;
+    Page* frontendPage() const
+    {
+        if (!m_frontendWindow || !m_frontendWindow->document())
+            return nullptr;
+
+        return m_frontendWindow->document()->page();
+    }
+
+    RefPtr<DOMWindow> m_frontendWindow;
+    InspectorController& m_frontendController;
 };
 
-InspectorFrontendChannelDummy::InspectorFrontendChannelDummy(Page* page)
-    : m_frontendPage(page)
+InspectorStubFrontend::InspectorStubFrontend(Page* inspectedPage, RefPtr<DOMWindow>&& frontendWindow)
+    : InspectorFrontendClientLocal(&inspectedPage->inspectorController(), frontendWindow->document()->page(), std::make_unique<InspectorFrontendClientLocal::Settings>())
+    , m_frontendWindow(frontendWindow.copyRef())
+    , m_frontendController(frontendPage()->inspectorController())
 {
+    ASSERT_ARG(inspectedPage, inspectedPage);
+    ASSERT_ARG(frontendWindow, frontendWindow);
+
+    m_frontendController.setInspectorFrontendClient(this);
+    inspectedPage->inspectorController().connectFrontend(this);
 }
 
-bool InspectorFrontendChannelDummy::sendMessageToFrontend(const String& message)
+InspectorStubFrontend::~InspectorStubFrontend()
 {
-    return InspectorClient::doDispatchMessageOnFrontendPage(m_frontendPage, message);
+    closeWindow();
+}
+
+void InspectorStubFrontend::closeWindow()
+{
+    if (!m_frontendWindow)
+        return;
+
+    m_frontendController.setInspectorFrontendClient(nullptr);
+    inspectedPage()->inspectorController().disconnectFrontend(this);
+
+    m_frontendWindow->close(m_frontendWindow->scriptExecutionContext());
+    m_frontendWindow = nullptr;
+}
+
+bool InspectorStubFrontend::sendMessageToFrontend(const String& message)
+{
+    ASSERT_ARG(message, !message.isEmpty());
+
+    return InspectorClient::doDispatchMessageOnFrontendPage(frontendPage(), message);
 }
 
 static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
@@ -1724,46 +1749,19 @@ Vector<String> Internals::consoleMessageArgumentCounts() const
     return result;
 }
 
-PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
+RefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
 {
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
+    Page* inspectedPage = contextDocument()->frame()->page();
+    RefPtr<DOMWindow> window = inspectedPage->mainFrame().document()->domWindow();
+    RefPtr<DOMWindow> frontendWindow = window->open(url, "", "", *window, *window);
+    m_inspectorFrontend = std::make_unique<InspectorStubFrontend>(inspectedPage, frontendWindow.copyRef());
 
-    DOMWindow* window = page->mainFrame().document()->domWindow();
-    ASSERT(window);
-
-    m_frontendWindow = window->open(url, "", "", *window, *window);
-    ASSERT(m_frontendWindow);
-
-    Page* frontendPage = m_frontendWindow->document()->page();
-    ASSERT(frontendPage);
-
-    m_frontendClient = std::make_unique<InspectorFrontendClientDummy>(&page->inspectorController(), frontendPage);
-    frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
-
-    m_frontendChannel = std::make_unique<InspectorFrontendChannelDummy>(frontendPage);
-    page->inspectorController().connectFrontend(m_frontendChannel.get());
-
-    return m_frontendWindow;
+    return WTF::move(frontendWindow);
 }
 
 void Internals::closeDummyInspectorFrontend()
 {
-    Page* page = contextDocument()->frame()->page();
-    ASSERT(page);
-    ASSERT(m_frontendWindow);
-
-    Page* frontendPage = m_frontendWindow->document()->page();
-    ASSERT(frontendPage);
-
-    frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
-    m_frontendClient = nullptr;
-
-    page->inspectorController().disconnectFrontend(m_frontendChannel.get());
-    m_frontendChannel = nullptr;
-
-    m_frontendWindow->close(m_frontendWindow->scriptExecutionContext());
-    m_frontendWindow = nullptr;
+    m_inspectorFrontend = nullptr;
 }
 
 void Internals::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)

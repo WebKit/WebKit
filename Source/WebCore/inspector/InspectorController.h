@@ -88,7 +88,6 @@ public:
     Page& inspectedPage() const;
 
     WEBCORE_EXPORT void show();
-    WEBCORE_EXPORT void close();
 
     WEBCORE_EXPORT void setInspectorFrontendClient(InspectorFrontendClient*);
     bool hasInspectorFrontendClient() const;

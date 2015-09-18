@@ -31,6 +31,10 @@
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorFrontendHost.h>
 
+namespace WebCore {
+class InspectorController;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -108,6 +112,10 @@ private:
     WebInspectorFrontendAPIDispatcher m_frontendAPIDispatcher;
     RefPtr<WebCore::InspectorFrontendHost> m_frontendHost;
     RefPtr<IPC::Connection> m_backendConnection;
+
+    // Keep a pointer to the frontend's inspector controller rather than going through
+    // corePage(), since we may need it after the frontend's page has started destruction.
+    WebCore::InspectorController* m_frontendController { nullptr };
 
     uint64_t m_inspectedPageIdentifier { 0 };
     bool m_underTest { false };

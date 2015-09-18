@@ -1,3 +1,14 @@
+2015-09-17  Brian Burg  <bburg@apple.com>
+
+        ASSERT(!m_frontendRouter->hasLocalFrontend()) when running Web Inspector tests
+        https://bugs.webkit.org/show_bug.cgi?id=149006
+
+        Reviewed by Joseph Pecoraro.
+
+        Prior to disconnecting, we need to know how many frontends remain connected.
+
+        * inspector/InspectorFrontendRouter.h: Add frontendCount().
+
 2015-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Explicitly specify builtin JS files dependency

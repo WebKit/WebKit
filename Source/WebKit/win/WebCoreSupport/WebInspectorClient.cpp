@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2010, 2014, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,6 @@ WebInspectorClient::~WebInspectorClient()
 
 void WebInspectorClient::inspectedPageDestroyed()
 {
-    closeLocalFrontend();
     delete this;
 }
 
@@ -169,12 +168,6 @@ Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorContr
     m_frontendPage->inspectorController().setInspectorFrontendClient(m_frontendClient.get());
     m_frontendHandle = frontendHwnd;
     return this;
-}
-
-void WebInspectorClient::closeLocalFrontend()
-{
-    if (m_frontendClient)
-        m_frontendClient->destroyInspectorView();
 }
 
 void WebInspectorClient::bringFrontendToFront()
@@ -423,16 +416,19 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
 
 void WebInspectorFrontendClient::destroyInspectorView()
 {
-    m_inspectorClient->releaseFrontend();
-
     if (m_destroyingInspectorView)
         return;
     m_destroyingInspectorView = true;
 
+    if (Page* frontendPage = this->frontendPage())
+        frontendPage->inspectorController().setInspectorFrontendClient(nullptr);
+    if (Page* inspectedPage = m_inspectedWebView->page())
+        inspectedPage->inspectorController().disconnectFrontend(m_inspectorClient);
+
+    m_inspectorClient->releaseFrontend();
+
     closeWindowWithoutNotifications();
 
-    m_inspectedWebView->page()->inspectorController().setInspectorFrontendClient(nullptr);
-    m_inspectedWebView->page()->inspectorController().disconnectFrontend(m_inspectorClient);
     m_inspectorClient->updateHighlight();
 
     ::DestroyWindow(m_frontendHwnd);
@@ -466,7 +462,7 @@ LRESULT WebInspectorFrontendClient::onSize(WPARAM, LPARAM)
 LRESULT WebInspectorFrontendClient::onClose(WPARAM, LPARAM)
 {
     ::ShowWindow(m_frontendHwnd, SW_HIDE);
-    m_inspectedWebView->page()->inspectorController().close();
+    closeWindow();
 
     return 0;
 }

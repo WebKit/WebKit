@@ -1,3 +1,14 @@
+2015-09-17  Brian Burg  <bburg@apple.com>
+
+        ASSERT(!m_frontendRouter->hasLocalFrontend()) when running Web Inspector tests
+        https://bugs.webkit.org/show_bug.cgi?id=149006
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::closeLocalFrontend): Deleted.
+        (WebInspectorFrontendClient::disconnectFromBackend): Deleted.
+
 2015-09-12  Brian Burg  <bburg@apple.com>
 
         Web Inspector: disambiguate inspected/frontend controllers and pages in backend code

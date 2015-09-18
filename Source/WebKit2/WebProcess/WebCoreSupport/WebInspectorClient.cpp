@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +78,9 @@ WebInspectorClient::~WebInspectorClient()
 
 void WebInspectorClient::inspectedPageDestroyed()
 {
-    closeLocalFrontend();
+    if (WebInspector* inspector = m_page->inspector(WebPage::LazyCreationPolicy::UseExistingOnly))
+        inspector->close();
+
     delete this;
 }
 
@@ -87,14 +89,6 @@ Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorContr
     m_page->inspector()->openFrontendConnection(controller->isUnderTest());
 
     return m_page->inspector();
-}
-
-void WebInspectorClient::closeLocalFrontend()
-{
-    if (m_page->inspector()) {
-        m_page->corePage()->inspectorController().disconnectFrontend(m_page->inspector());
-        m_page->inspector()->closeFrontendConnection();
-    }
 }
 
 void WebInspectorClient::bringFrontendToFront()

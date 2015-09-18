@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,8 +53,7 @@ class Element;
 class File;
 class Frame;
 class HTMLMediaElement;
-class InspectorFrontendChannelDummy;
-class InspectorFrontendClientDummy;
+class InspectorStubFrontend;
 class InternalSettings;
 class MallocStatistics;
 class MediaSession;
@@ -265,7 +264,7 @@ public:
     unsigned numberOfLiveDocuments() const;
 
     Vector<String> consoleMessageArgumentCounts() const;
-    PassRefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
+    RefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();
     void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
     void setInspectorIsUnderTest(bool isUnderTest, ExceptionCode&);
@@ -445,9 +444,7 @@ private:
 
     RenderedDocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
 
-    RefPtr<DOMWindow> m_frontendWindow;
-    std::unique_ptr<InspectorFrontendClientDummy> m_frontendClient;
-    std::unique_ptr<InspectorFrontendChannelDummy> m_frontendChannel;
+    std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
 };
 
 } // namespace WebCore

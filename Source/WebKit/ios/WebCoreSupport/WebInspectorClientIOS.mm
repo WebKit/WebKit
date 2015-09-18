@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2008, 2010, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,9 +42,9 @@
 
 using namespace WebCore;
 
-WebInspectorClient::WebInspectorClient(WebView* inpectedWebView)
-    : m_inspectedWebView(inpectedWebView)
-    , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:inpectedWebView]))
+WebInspectorClient::WebInspectorClient(WebView* inspectedWebView)
+    : m_inspectedWebView(inspectedWebView)
+    , m_highlighter(adoptNS([[WebNodeHighlighter alloc] initWithInspectedWebView:inspectedWebView]))
 {
 }
 
@@ -61,11 +61,6 @@ Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorContr
 }
 
 void WebInspectorClient::bringFrontendToFront()
-{
-    // iOS does not have a local inspector, nothing to do here.
-}
-
-void WebInspectorClient::closeLocalFrontend()
 {
     // iOS does not have a local inspector, nothing to do here.
 }
@@ -129,7 +124,6 @@ void WebInspectorFrontendClient::frontendLoaded() { }
 String WebInspectorFrontendClient::localizedStringsURL() { return String(); }
 void WebInspectorFrontendClient::bringToFront() { }
 void WebInspectorFrontendClient::closeWindow() { }
-void WebInspectorFrontendClient::disconnectFromBackend() { }
 void WebInspectorFrontendClient::attachWindow(DockSide) { }
 void WebInspectorFrontendClient::detachWindow() { }
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned) { }

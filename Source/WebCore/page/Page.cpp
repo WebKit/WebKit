@@ -253,6 +253,8 @@ Page::~Page()
     
     m_settings->pageDestroyed();
 
+    m_inspectorController->inspectedPageDestroyed();
+
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->willDetachPage();
         frame->detachFromPage();
@@ -263,8 +265,6 @@ Page::~Page()
         m_plugInClient->pageDestroyed();
     if (m_alternativeTextClient)
         m_alternativeTextClient->pageDestroyed();
-
-    m_inspectorController->inspectedPageDestroyed();
 
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();

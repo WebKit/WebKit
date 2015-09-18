@@ -196,11 +196,17 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
-    disconnectAllFrontends();
-
     m_injectedScriptManager->disconnect();
-    m_inspectorClient->inspectedPageDestroyed();
-    m_inspectorClient = nullptr;
+
+    // If the local frontend page was destroyed, close the window.
+    if (m_inspectorFrontendClient)
+        m_inspectorFrontendClient->closeWindow();
+
+    // The frontend should call setInspectorFrontendClient(nullptr) under closeWindow().
+    ASSERT(!m_inspectorFrontendClient);
+
+    // Clean up resources and disconnect local and remote frontends.
+    disconnectAllFrontends();
 }
 
 void InspectorController::setInspectorFrontendClient(InspectorFrontendClient* inspectorFrontendClient)
@@ -262,9 +268,6 @@ void InspectorController::connectFrontend(Inspector::FrontendChannel* frontendCh
 
 void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
 {
-    // The local frontend client should be disconnected first so it stops sending messages.
-    ASSERT(!m_frontendRouter->hasLocalFrontend() || !m_inspectorFrontendClient);
-
     m_frontendRouter->disconnectFrontend(frontendChannel);
     m_isAutomaticInspection = false;
 
@@ -272,9 +275,13 @@ void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
 
     bool disconnectedLastFrontend = !m_frontendRouter->hasFrontends();
     if (disconnectedLastFrontend) {
-        // Release overlay page resources.
-        m_overlay->freePage();
+        // Notify agents first.
         m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+
+        // Destroy the inspector overlay's page.
+        m_overlay->freePage();
+
+        // Unplug all instrumentations since they aren't needed now.
         InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     }
 
@@ -286,22 +293,29 @@ void InspectorController::disconnectFrontend(FrontendChannel* frontendChannel)
 
 void InspectorController::disconnectAllFrontends()
 {
-    // The local frontend client should be disconnected first so it stops sending messages.
-    ASSERT(!m_frontendRouter->hasLocalFrontend() || !m_inspectorFrontendClient);
+    // The local frontend client should be disconnected already.
+    ASSERT(!m_inspectorFrontendClient);
 
+    for (unsigned i = 0; i < m_frontendRouter->frontendCount(); ++i)
+        InspectorInstrumentation::frontendDeleted();
+
+    // Unplug all instrumentations to prevent further agent callbacks.
+    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+
+    // Notify agents first, since they may need to use InspectorClient.
     m_agents.willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
+    // Destroy the inspector overlay's page.
+    m_overlay->freePage();
+
+    // Disconnect local WK2 frontend and destroy the client.
+    m_inspectorClient->inspectedPageDestroyed();
+    m_inspectorClient = nullptr;
+
+    // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();
     m_isAutomaticInspection = false;
 
-    // Release overlay page resources.
-    m_overlay->freePage();
-
-    while (InspectorInstrumentation::hasFrontends())
-        InspectorInstrumentation::frontendDeleted();
-
-    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
-    
 #if ENABLE(REMOTE_INSPECTOR)
     m_page.remoteInspectorInformationDidChange();
 #endif
@@ -311,9 +325,6 @@ void InspectorController::show()
 {
     ASSERT(!m_frontendRouter->hasRemoteFrontend());
 
-    // The local frontend client should be disconnected if there's no local frontend.
-    ASSERT(m_frontendRouter->hasLocalFrontend() || !m_inspectorFrontendClient);
-
     if (!enabled())
         return;
 
@@ -321,14 +332,6 @@ void InspectorController::show()
         m_inspectorClient->bringFrontendToFront();
     else if (Inspector::FrontendChannel* frontendChannel = m_inspectorClient->openLocalFrontend(this))
         connectFrontend(frontendChannel);
-}
-
-void InspectorController::close()
-{
-    if (m_frontendRouter->hasLocalFrontend())
-        m_inspectorClient->closeLocalFrontend();
-
-    ASSERT(!m_frontendRouter->hasLocalFrontend());
 }
 
 void InspectorController::setProcessId(long processId)

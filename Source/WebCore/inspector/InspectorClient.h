@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc.  All rights reserved.
  * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,6 @@ public:
     virtual void inspectedPageDestroyed() = 0;
 
     virtual Inspector::FrontendChannel* openLocalFrontend(InspectorController*) = 0;
-    virtual void closeLocalFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
     virtual void didResizeMainFrame(Frame*) { }
 

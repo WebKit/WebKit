@@ -2942,11 +2942,11 @@ void WebPage::didFlushLayerTreeAtTime(std::chrono::milliseconds timestamp)
 }
 #endif
 
-WebInspector* WebPage::inspector()
+WebInspector* WebPage::inspector(LazyCreationPolicy behavior)
 {
     if (m_isClosed)
         return nullptr;
-    if (!m_inspector)
+    if (!m_inspector && behavior == LazyCreationPolicy::CreateIfNeeded)
         m_inspector = WebInspector::create(this);
     return m_inspector.get();
 }

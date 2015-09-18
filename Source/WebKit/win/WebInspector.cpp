@@ -127,9 +127,8 @@ HRESULT WebInspector::unused1()
 
 HRESULT WebInspector::close()
 {
-    if (m_inspectedWebView)
-        if (Page* page = m_inspectedWebView->page())
-            page->inspectorController().close();
+    if (frontendClient())
+        frontendClient()->closeWindow();
 
     return S_OK;
 }

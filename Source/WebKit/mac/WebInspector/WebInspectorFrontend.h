@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ class WebInspectorFrontendClient;
 - (id)initWithFrontendClient:(WebInspectorFrontendClient *)frontendClient;
 - (void)attach;
 - (void)detach;
+- (void)close;
 
 - (BOOL)isDebuggingEnabled;
 - (void)setDebuggingEnabled:(BOOL)enabled;

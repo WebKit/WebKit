@@ -41,6 +41,8 @@ public:
     bool hasLocalFrontend() const;
     bool hasRemoteFrontend() const;
 
+    unsigned frontendCount() const { return m_connections.size(); }
+
     void connectFrontend(FrontendChannel*);
     void disconnectFrontend(FrontendChannel*);
     void disconnectAllFrontends();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,7 +126,12 @@ void WebInspector::close()
     if (!m_page->corePage())
         return;
 
-    m_page->corePage()->inspectorController().close();
+    // Close could be called multiple times during teardown.
+    if (!m_frontendConnection)
+        return;
+
+    m_page->corePage()->inspectorController().disconnectFrontend(this);
+    closeFrontendConnection();
 }
 
 void WebInspector::openInNewTab(const String& urlString)
