@@ -142,7 +142,9 @@ TestController::TestController(int argc, const char* argv[])
 
 TestController::~TestController()
 {
-    WKIconDatabaseClose(WKContextGetIconDatabase(m_context.get()));
+    // The context will be null if WebKitTestRunner was in server mode, but ran no tests.
+    if (m_context)
+        WKIconDatabaseClose(WKContextGetIconDatabase(m_context.get()));
 
     platformDestroy();
 }

@@ -1,3 +1,15 @@
+2015-09-18  Alexey Proskuryakov  <ap@apple.com>
+
+        iOS WebKitTestRunner frequently crashes in WKContextGetIconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=149352
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::~TestController):
+        m_context can be null. This may indicate a bug in webkitpy too, but
+        WebKitTestRunner should handle this situation nicely, there is nothing intrinsically
+        wrong with opening and immediately closing it.
+
 2015-09-18  Daniel Bates  <dabates@apple.com>
 
         isGitSVNDirectory() returns true when Git is not installed
