@@ -3,7 +3,7 @@
         Multi-hop reference cycles not detected.
         https://bugs.webkit.org/show_bug.cgi?id=149181
 
-        Reviewed by John Honeycutt.
+        Reviewed by Jon Honeycutt.
 
         Test comes from:
         https://chromium.googlesource.com/chromium/blink/+/master/LayoutTests/svg/custom/pattern-3-step-cycle.html
@@ -16,7 +16,7 @@
         Cyclic resources were not detected if the reference had deep containers
         https://bugs.webkit.org/show_bug.cgi?id=149182
 
-        Reviewed by John Honeycutt.
+        Reviewed by Jon Honeycutt.
 
         This test was ported from Blink. I believe it originally
         came from:
