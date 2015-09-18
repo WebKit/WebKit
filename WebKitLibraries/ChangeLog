@@ -1,3 +1,14 @@
+2015-09-18  Alex Christensen  <achristensen@webkit.org>
+
+        Remove last required use of WEBKIT_LIBRARIES environment variable on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=149355
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/scripts/auto-version.pl:
+        Use the directory of $0 (the currently executed perl script) to find the perl script instead of an environment variable.
+        This makes it possible to build WebKit on Windows without environment variables.
+
 2015-09-14  Chris Dumez  <cdumez@apple.com>
 
         Disable PICTURE_SIZES on AppleWin

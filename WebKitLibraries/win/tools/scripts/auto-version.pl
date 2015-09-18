@@ -3,6 +3,8 @@
 use strict;
 use File::Path qw(make_path);
 use File::Spec;
+use File::Basename;
+use Cwd 'abs_path';
 use Win32;
 
 # Copyright (C) 2007, 2009, 2014 Apple Inc.  All rights reserved.
@@ -32,22 +34,19 @@ sub splitVersion($);
 
 die "You must supply an output path as the argument.\n" if ($#ARGV < 0);
 
-my $WEBKIT_LIBRARIES = $ENV{'WEBKIT_LIBRARIES'};
+my $thisDirectory = dirname(abs_path($0));
 
-my ($COPYRIGHT_END_YEAR, $FALLBACK_VERSION);
-if (defined $WEBKIT_LIBRARIES) {
-    my $FALLBACK_VERSION_PATH = File::Spec->catfile($WEBKIT_LIBRARIES, 'tools', 'scripts', 'VERSION');
-    open(FALLBACK_VERSION_FILE, '<', $FALLBACK_VERSION_PATH) or die "Unable to open $FALLBACK_VERSION_PATH: $!";
-    $FALLBACK_VERSION = <FALLBACK_VERSION_FILE>;
-    close FALLBACK_VERSION_FILE;
-    chomp($FALLBACK_VERSION);
+my $FALLBACK_VERSION_PATH = File::Spec->catfile($thisDirectory, 'VERSION');
+open(FALLBACK_VERSION_FILE, '<', $FALLBACK_VERSION_PATH) or die "Unable to open $FALLBACK_VERSION_PATH: $!";
+my $FALLBACK_VERSION = <FALLBACK_VERSION_FILE>;
+close FALLBACK_VERSION_FILE;
+chomp($FALLBACK_VERSION);
 
-    my $COPYRIGHT_END_YEAR_PATH = File::Spec->catfile($WEBKIT_LIBRARIES, 'tools', 'scripts', 'COPYRIGHT-END-YEAR');
-    open(COPYRIGHT_END_YEAR_FILE, '<', $COPYRIGHT_END_YEAR_PATH) or die "Unable to open $COPYRIGHT_END_YEAR_PATH: $!";
-    $COPYRIGHT_END_YEAR = <COPYRIGHT_END_YEAR_FILE>;
-    close COPYRIGHT_END_YEAR_FILE;
-    chomp($COPYRIGHT_END_YEAR);
-}
+my $COPYRIGHT_END_YEAR_PATH = File::Spec->catfile($thisDirectory, 'COPYRIGHT-END-YEAR');
+open(COPYRIGHT_END_YEAR_FILE, '<', $COPYRIGHT_END_YEAR_PATH) or die "Unable to open $COPYRIGHT_END_YEAR_PATH: $!";
+my $COPYRIGHT_END_YEAR = <COPYRIGHT_END_YEAR_FILE>;
+close COPYRIGHT_END_YEAR_FILE;
+chomp($COPYRIGHT_END_YEAR);
 
 # Make sure we don't have any leading or trailing quote
 $ARGV[0] =~ s/^\"//;
