@@ -1,3 +1,16 @@
+2015-09-17  Zalan Bujtas  <zalan@apple.com>
+
+        CSS WG multicol-1 tests failures with 1px differences due to baseline difference.
+        https://bugs.webkit.org/show_bug.cgi?id=149245
+
+        Reviewed by Ryosuke Niwa.
+
+        Turn off font-aliasing for multicol tests where the reference tests' inline content
+        end up on a different baseline (fractional difference). (It's not considered a bug, they don't
+        necessarily match.)
+
+        * TestExpectations:
+
 2015-09-17  Saam barati  <sbarati@apple.com>
 
         Implement try/catch in the DFG.
