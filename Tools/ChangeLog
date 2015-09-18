@@ -1,5 +1,33 @@
 2015-09-17  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS WK2] When loading viewport tests, use the normal web page viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=149321
+
+        Reviewed by Tim Horton.
+        
+        InjectedBundlePage::platformDidStartProvisionalLoadForFrame() unconditionally 
+        enabled the "testing" viewport configuration, which disables page scaling.
+        
+        If we're running viewport tests, we want the normal web page configuration.
+        Do that by passing a flag in the dictionary sent to InjectedBundle::beginTesting(),
+        based on whether the test is in a "viewport" directory.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm:
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame): Deleted.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::shouldLogFrameLoadDelegates):
+        (WTR::TestInvocation::shouldLogHistoryClientCallbacks):
+        (WTR::TestInvocation::shouldMakeViewportFlexible):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+        (WTR::shouldMakeViewportFlexible): Deleted.
+
+2015-09-17  Simon Fraser  <simon.fraser@apple.com>
+
         Give iOS WebKitTestRunner a launch storyboard
         https://bugs.webkit.org/show_bug.cgi?id=149314
 

@@ -283,6 +283,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     WKBundlePageRemoveAllUserContent(page()->page());
 
+#if PLATFORM(IOS)
+    WKBundlePageSetUseTestingViewportConfiguration(page()->page(), !booleanForKey(settings, "UseFlexibleViewport"));
+#endif
+
     m_testRunner->setShouldDumpFrameLoadCallbacks(booleanForKey(settings, "DumpFrameLoadDelegates"));
     m_testRunner->setUserStyleSheetEnabled(false);
     m_testRunner->setXSSAuditorEnabled(false);

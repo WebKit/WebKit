@@ -132,14 +132,19 @@ void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
     m_expectedPixelHash = expectedPixelHash;
 }
 
-bool TestInvocation::shouldLogFrameLoadDelegates()
+bool TestInvocation::shouldLogFrameLoadDelegates() const
 {
     return urlContains("loading/");
 }
 
-bool TestInvocation::shouldLogHistoryClientCallbacks()
+bool TestInvocation::shouldLogHistoryClientCallbacks() const
 {
     return urlContains("globalhistory/");
+}
+
+bool TestInvocation::shouldMakeViewportFlexible() const
+{
+    return urlContains("viewport/");
 }
 
 void TestInvocation::invoke()
@@ -162,6 +167,10 @@ void TestInvocation::invoke()
     WKRetainPtr<WKStringRef> dumpFrameLoadDelegatesKey = adoptWK(WKStringCreateWithUTF8CString("DumpFrameLoadDelegates"));
     WKRetainPtr<WKBooleanRef> dumpFrameLoadDelegatesValue = adoptWK(WKBooleanCreate(shouldLogFrameLoadDelegates()));
     WKDictionarySetItem(beginTestMessageBody.get(), dumpFrameLoadDelegatesKey.get(), dumpFrameLoadDelegatesValue.get());
+
+    WKRetainPtr<WKStringRef> useFlexibleViewportKey = adoptWK(WKStringCreateWithUTF8CString("UseFlexibleViewport"));
+    WKRetainPtr<WKBooleanRef> useFlexibleViewportValue = adoptWK(WKBooleanCreate(shouldMakeViewportFlexible()));
+    WKDictionarySetItem(beginTestMessageBody.get(), useFlexibleViewportKey.get(), useFlexibleViewportValue.get());
 
     WKRetainPtr<WKStringRef> dumpPixelsKey = adoptWK(WKStringCreateWithUTF8CString("DumpPixels"));
     WKRetainPtr<WKBooleanRef> dumpPixelsValue = adoptWK(WKBooleanCreate(m_dumpPixels));

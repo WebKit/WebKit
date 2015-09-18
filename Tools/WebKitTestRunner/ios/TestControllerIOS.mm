@@ -74,11 +74,6 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
-static bool shouldMakeViewportFlexible(const TestInvocation& test)
-{
-    return test.urlContains("viewport/");
-}
-
 void TestController::platformResetPreferencesToConsistentValues()
 {
     WKPreferencesRef preferences = platformPreferences();
@@ -93,12 +88,13 @@ void TestController::platformResetStateToConsistentValues()
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
-    if (shouldMakeViewportFlexible(test)) {
+    if (test.shouldMakeViewportFlexible()) {
         const unsigned phoneViewHeight = 480;
         const unsigned phoneViewWidth = 320;
 
         mainWebView()->resizeTo(phoneViewWidth, phoneViewHeight);
-        // FIXME: more viewport config to do here.
+        // We also pass data to InjectedBundle::beginTesting() to have it call
+        // WKBundlePageSetUseTestingViewportConfiguration(false).
     }
 }
 
