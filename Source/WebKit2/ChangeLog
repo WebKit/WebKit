@@ -1,3 +1,14 @@
+2015-09-18  Beth Dakin  <bdakin@apple.com>
+
+        Snapshots broken on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=149354
+
+        Reviewed by Tim Horton.
+
+        We need to send the IOSurface to ViewSnapshot::create() for this to work.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+
 2015-09-18  Chris Dumez  <cdumez@apple.com>
 
         Drop support for Entity Node type

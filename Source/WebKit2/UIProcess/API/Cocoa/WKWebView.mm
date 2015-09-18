@@ -1112,7 +1112,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceDeviceRGB);
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
 
-    return WebKit::ViewSnapshot::create(nullptr);
+    return WebKit::ViewSnapshot::create(WTF::move(surface));
 #else
     uint32_t slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
 
