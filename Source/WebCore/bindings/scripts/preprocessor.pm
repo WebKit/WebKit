@@ -77,7 +77,8 @@ sub applyPreprocessor
     my $pid = 0;
     if ($Config{osname} eq "cygwin") {
         $preprocessor =~ /"(.*)"/;
-        chomp(my $preprocessorExecutable = `cygpath -u '$1'`);
+        my $preprocessorExecutable = $preprocessor;
+        chomp($preprocessorExecutable = `cygpath -u '$1'`) unless (not defined $1);
         chomp($fileName = `cygpath -w '$fileName'`);
             
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
