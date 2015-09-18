@@ -35,7 +35,7 @@ PASS PageTransitionEvent.length is 1
 FAIL PeerConnection.length should be 2. Threw exception ReferenceError: Can't find variable: PeerConnection
 PASS PopStateEvent.length is 1
 PASS ProgressEvent.length is 1
-FAIL ShadowRoot.length should be 1. Threw exception ReferenceError: Can't find variable: ShadowRoot
+FAIL ShadowRoot.length should be 1. Was 0.
 PASS StorageEvent.length is 1
 PASS TextTrackCue.length is 3
 PASS TrackEvent.length is 1

@@ -1,3 +1,9 @@
+2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Updates to include change to iOS test expectations after bug 149187
+
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt:
+
 2015-09-18  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r182449, Mavericks ONLY): Pages re-open empty after swiping back and scrolling on them
