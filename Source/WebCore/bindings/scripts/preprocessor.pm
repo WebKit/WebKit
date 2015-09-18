@@ -76,18 +76,22 @@ sub applyPreprocessor
 
     my $pid = 0;
     if ($Config{osname} eq "cygwin") {
-        $preprocessor =~ /"(.*)"/;
-        my $preprocessorExecutable = $preprocessor;
-        chomp($preprocessorExecutable = `cygpath -u '$1'`) unless (not defined $1);
-        chomp($fileName = `cygpath -w '$fileName'`);
-            
+        my @preprocessorAndFlags;
+        if ($preprocessor eq "/usr/bin/gcc") {
+            @preprocessorAndFlags = split(' ', $preprocessor);
+        } else {        
+            $preprocessor =~ /"(.*)"/;
+            chomp(my $preprocessor = `cygpath -u '$1'`) if (defined $1);
+            chomp($fileName = `cygpath -w '$fileName'`);
+            @preprocessorAndFlags = ($preprocessor, "/nologo", "/EP");
+        }
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
         for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
             eval {
                 # Suppress STDERR so that if we're using cl.exe, the output
                 # name isn't needlessly echoed.
                 use Symbol 'gensym'; my $err = gensym;
-                $pid = open3(\*PP_IN, \*PP_OUT, $err, $preprocessorExecutable, "/nologo", "/EP", @args, @macros, $fileName);
+                $pid = open3(\*PP_IN, \*PP_OUT, $err, @preprocessorAndFlags, @args, @macros, $fileName);
                 1;
             } or do {
                 sleep 1;
