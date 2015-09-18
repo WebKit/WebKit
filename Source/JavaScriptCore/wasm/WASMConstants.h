@@ -284,6 +284,13 @@ enum class WASMExportFormat : uint8_t {
     NumberOfExportFormats
 };
 
+enum class WASMTypeConversion {
+    ConvertSigned,
+    ConvertUnsigned,
+    Promote,
+    Demote,
+};
+
 static const uint8_t hasImmediateInOpFlag = 0x80;
 
 static const unsigned opWithImmediateBits = 2;

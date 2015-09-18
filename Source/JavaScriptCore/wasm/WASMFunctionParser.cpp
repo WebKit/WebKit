@@ -534,6 +534,10 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseCallIndirect(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallImport:
             return parseCallImport(context, WASMExpressionType::I32);
+        case WASMOpExpressionI32::FromF32:
+            return parseConvertType(context, WASMExpressionType::F32, WASMExpressionType::I32, WASMTypeConversion::ConvertSigned);
+        case WASMOpExpressionI32::FromF64:
+            return parseConvertType(context, WASMExpressionType::F64, WASMExpressionType::I32, WASMTypeConversion::ConvertSigned);
         case WASMOpExpressionI32::Negate:
         case WASMOpExpressionI32::BitNot:
         case WASMOpExpressionI32::CountLeadingZeros:
@@ -599,8 +603,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::StoreWithOffset32:
         case WASMOpExpressionI32::Conditional:
         case WASMOpExpressionI32::Comma:
-        case WASMOpExpressionI32::FromF32:
-        case WASMOpExpressionI32::FromF64:
         case WASMOpExpressionI32::SMin:
         case WASMOpExpressionI32::UMin:
         case WASMOpExpressionI32::SMax:
@@ -750,6 +752,12 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseCallInternal(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::CallIndirect:
             return parseCallIndirect(context, WASMExpressionType::F32);
+        case WASMOpExpressionF32::FromS32:
+            return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F32, WASMTypeConversion::ConvertSigned);
+        case WASMOpExpressionF32::FromU32:
+            return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F32, WASMTypeConversion::ConvertUnsigned);
+        case WASMOpExpressionF32::FromF64:
+            return parseConvertType(context, WASMExpressionType::F64, WASMExpressionType::F32, WASMTypeConversion::Demote);
         case WASMOpExpressionF32::Negate:
         case WASMOpExpressionF32::Abs:
         case WASMOpExpressionF32::Ceil:
@@ -769,9 +777,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::StoreWithOffset:
         case WASMOpExpressionF32::Conditional:
         case WASMOpExpressionF32::Comma:
-        case WASMOpExpressionF32::FromS32:
-        case WASMOpExpressionF32::FromU32:
-        case WASMOpExpressionF32::FromF64:
             // FIXME: Implement these instructions.
             FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
@@ -881,6 +886,12 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseCallImport(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::CallIndirect:
             return parseCallIndirect(context, WASMExpressionType::F64);
+        case WASMOpExpressionF64::FromS32:
+            return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F64, WASMTypeConversion::ConvertSigned);
+        case WASMOpExpressionF64::FromU32:
+            return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F64, WASMTypeConversion::ConvertUnsigned);
+        case WASMOpExpressionF64::FromF32:
+            return parseConvertType(context, WASMExpressionType::F32, WASMExpressionType::F64, WASMTypeConversion::Promote);
         case WASMOpExpressionF64::SetLocal:
         case WASMOpExpressionF64::SetGlobal:
         case WASMOpExpressionF64::Load:
@@ -889,9 +900,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::StoreWithOffset:
         case WASMOpExpressionF64::Conditional:
         case WASMOpExpressionF64::Comma:
-        case WASMOpExpressionF64::FromS32:
-        case WASMOpExpressionF64::FromU32:
-        case WASMOpExpressionF64::FromF32:
         case WASMOpExpressionF64::Negate:
         case WASMOpExpressionF64::Add:
         case WASMOpExpressionF64::Sub:
@@ -1038,6 +1046,15 @@ ContextExpression WASMFunctionParser::parseCallImport(Context& context, WASMExpr
     ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
     PROPAGATE_ERROR();
     return context.buildCallImport(functionImportSignature.functionImportIndex, argumentList, signature, returnType);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseConvertType(Context& context, WASMExpressionType fromType, WASMExpressionType toType, WASMTypeConversion conversion)
+{
+    ContextExpression expression = parseExpression(context, fromType);
+    PROPAGATE_ERROR();
+
+    return context.buildConvertType(expression, fromType, toType, conversion);
 }
 
 } // namespace JSC

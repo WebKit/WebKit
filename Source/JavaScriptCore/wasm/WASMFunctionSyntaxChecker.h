@@ -101,6 +101,11 @@ public:
         return UNUSED;
     }
 
+    int buildConvertType(int, WASMExpressionType, WASMExpressionType, WASMTypeConversion)
+    {
+        return UNUSED;
+    }
+
     int buildUnaryI32(int, WASMOpExpressionI32)
     {
         return UNUSED;

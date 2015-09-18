@@ -1,3 +1,33 @@
+2015-09-18  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement type conversion instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149340
+
+        Reviewed by Mark Lam.
+
+        This patch implements some type conversion instructions in WebAssembly.
+        The WebAssembly spec has a lot more type conversion instructions than
+        what are available in asm.js.[1] We only implement the ones that are in
+        asm.js for now because we can only test those.
+
+        [1]: https://github.com/WebAssembly/design/blob/master/AstSemantics.md
+
+        * tests/stress/wasm-type-conversion.js:
+        * tests/stress/wasm/type-conversion.wasm:
+        * wasm/WASMConstants.h:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::operationConvertUnsignedInt32ToDouble):
+        (JSC::WASMFunctionCompiler::buildConvertType):
+        (JSC::WASMFunctionCompiler::callOperation):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseConvertType):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildConvertType):
+
 2015-09-18  Alex Christensen  <achristensen@webkit.org>
 
         Fix tests on Windows after switching to CMake.

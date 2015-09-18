@@ -17,6 +17,46 @@ function asmModule(global, imports, buffer) {
     var getString = imports.getString;
     var getBoolean = imports.getBoolean;
 
+    function convertIntToFloat(x) {
+        x = x | 0;
+        return fround(x | 0);
+    }
+
+    function convertUnsignedIntToFloat(x) {
+        x = x | 0;
+        return fround(x >>> 0);
+    }
+
+    function convertIntToDouble(x) {
+        x = x | 0;
+        return +(x | 0);
+    }
+
+    function convertUnsignedIntToDouble(x) {
+        x = x | 0;
+        return +(x >>> 0);
+    }
+
+    function convertFloatToInt(x) {
+        x = fround(x);
+        return ~~x;
+    }
+
+    function convertFloatToDouble(x) {
+        x = fround(x);
+        return +x;
+    }
+
+    function convertDoubleToInt(x) {
+        x = +x;
+        return ~~x;
+    }
+
+    function convertDoubleToFloat(x) {
+        x = +x;
+        return fround(x);
+    }
+
     function takeAndReturnInt32(x) {
         x = x | 0;
         return x | 0;
@@ -65,6 +105,15 @@ function asmModule(global, imports, buffer) {
     }
 
     return {
+        convertIntToFloat: convertIntToFloat,
+        convertUnsignedIntToFloat: convertUnsignedIntToFloat,
+        convertIntToDouble: convertIntToDouble,
+        convertUnsignedIntToDouble: convertUnsignedIntToDouble,
+        convertFloatToInt: convertFloatToInt,
+        convertFloatToDouble: convertFloatToDouble,
+        convertDoubleToInt: convertDoubleToInt,
+        convertDoubleToFloat: convertDoubleToFloat,
+
         takeAndReturnInt32: takeAndReturnInt32,
         takeAndReturnFloat: takeAndReturnFloat,
         takeAndReturnDouble: takeAndReturnDouble,
@@ -88,6 +137,15 @@ var imports = {
     getBoolean: () => true,
 };
 var module = loadWebAssembly("wasm/type-conversion.wasm", imports);
+
+shouldBe(module.convertIntToFloat(-1), -1);
+shouldBe(module.convertUnsignedIntToFloat(-1), 4294967296);
+shouldBe(module.convertIntToDouble(-1), -1);
+shouldBe(module.convertUnsignedIntToDouble(-1), 4294967295);
+shouldBe(module.convertFloatToInt(4.2), 4);
+shouldBe(module.convertFloatToDouble(4.2), 4.199999809265137);
+shouldBe(module.convertDoubleToInt(4.2), 4);
+shouldBe(module.convertDoubleToFloat(4.2), 4.199999809265137);
 
 var two = {
     valueOf() { return 2; }

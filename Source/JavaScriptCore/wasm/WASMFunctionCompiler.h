@@ -71,6 +71,13 @@ static uint32_t JIT_OPERATION operationUnsignedMod(uint32_t left, uint32_t right
 }
 #endif
 
+#if !USE(JSVALUE64)
+static double JIT_OPERATION operationConvertUnsignedInt32ToDouble(uint32_t value)
+{
+    return static_cast<double>(value);
+}
+#endif
+
 class WASMFunctionCompiler : private CCallHelpers {
 public:
     typedef int Expression;
@@ -361,6 +368,67 @@ public:
         case WASMType::F64:
             loadDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
             storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop++));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        return UNUSED;
+    }
+
+    int buildConvertType(int, WASMExpressionType fromType, WASMExpressionType toType, WASMTypeConversion conversion)
+    {
+        switch (fromType) {
+        case WASMExpressionType::I32:
+            load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
+            ASSERT(toType == WASMExpressionType::F32 || toType == WASMExpressionType::F64);
+            if (conversion == WASMTypeConversion::ConvertSigned)
+                convertInt32ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
+            else {
+                ASSERT(conversion == WASMTypeConversion::ConvertUnsigned);
+#if USE(JSVALUE64)
+                convertInt64ToDouble(GPRInfo::regT0, FPRInfo::fpRegT0);
+#else
+                callOperation(operationConvertUnsignedInt32ToDouble, GPRInfo::regT0, FPRInfo::fpRegT0);
+#endif
+            }
+            if (toType == WASMExpressionType::F32)
+                convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+            break;
+        case WASMExpressionType::F32:
+            loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+            switch (toType) {
+            case WASMExpressionType::I32:
+                ASSERT(conversion == WASMTypeConversion::ConvertSigned);
+                convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+                truncateDoubleToInt32(FPRInfo::fpRegT0, GPRInfo::regT0);
+                store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+                break;
+            case WASMExpressionType::F64:
+                ASSERT(conversion == WASMTypeConversion::Promote);
+                convertFloatToDouble(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+                storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            break;
+        case WASMExpressionType::F64:
+            loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+            switch (toType) {
+            case WASMExpressionType::I32:
+                ASSERT(conversion == WASMTypeConversion::ConvertSigned);
+                truncateDoubleToInt32(FPRInfo::fpRegT0, GPRInfo::regT0);
+                store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+                break;
+            case WASMExpressionType::F32:
+                ASSERT(conversion == WASMTypeConversion::Demote);
+                convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+                storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -927,6 +995,12 @@ private:
     {
         setupArguments(src1, src2);
         appendCallSetResult(operation, dst);
+    }
+
+    void callOperation(double JIT_OPERATION (*operation)(uint32_t), GPRReg src, FPRegisterID dst)
+    {
+        setupArguments(src);
+        appendCallSetResult(operation, dst, FloatingPointPrecision::Double);
     }
 
     void boxArgumentsAndAdjustStackPointer(const Vector<WASMType>& arguments)
