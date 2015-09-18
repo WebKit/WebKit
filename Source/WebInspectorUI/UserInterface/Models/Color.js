@@ -38,9 +38,7 @@ WebInspector.Color = class Color
         else
             this._rgba = components;
 
-        this.valid = !components.some(function(component) {
-            return isNaN(component);
-        });
+        this.valid = !components.some(isNaN);
     }
 
     // Static

@@ -47,7 +47,7 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         // FIXME: Get a request from request ID.
 
         if (parameters)
-            parameters = parameters.map(function(x) { return WebInspector.RemoteObject.fromPayload(x); });
+            parameters = parameters.map(WebInspector.RemoteObject.fromPayload);
 
         var message = new WebInspector.ConsoleMessage(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
         this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message});

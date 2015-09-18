@@ -620,16 +620,12 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 
     get markers()
     {
-        return this._codeMirror.getAllMarks().map(function(codeMirrorTextMarker) {
-            return WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker);
-        });
+        return this._codeMirror.getAllMarks().map(WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker);
     }
 
     markersAtPosition(position)
     {
-        return this._codeMirror.findMarksAt(position).map(function(codeMirrorTextMarker) {
-            return WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker(codeMirrorTextMarker);
-        });
+        return this._codeMirror.findMarksAt(position).map(WebInspector.TextMarker.textMarkerForCodeMirrorTextMarker);
     }
 
     createColorMarkers(range)

@@ -1,5 +1,29 @@
 2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Simplify some functional callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=149333
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype.messageWasAdded):
+        * UserInterface/Models/Color.js:
+        (WebInspector.Color):
+        * UserInterface/Models/Geometry.js:
+        (WebInspector.CubicBezier.fromCoordinates):
+        * UserInterface/Models/ObjectPreview.js:
+        (WebInspector.ObjectPreview.fromPayload):
+        * UserInterface/Models/TypeDescription.js:
+        (WebInspector.TypeDescription.fromPayload):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getCollectionEntries):
+        (WebInspector.RemoteObject.prototype.getCollectionEntries.): Deleted.
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.get markers):
+        (WebInspector.TextEditor.prototype.markersAtPosition):
+
+2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unused canClearBrowserCookies / canClearBrowserCache protocol methods
         https://bugs.webkit.org/show_bug.cgi?id=149307
 
