@@ -59,11 +59,6 @@ public:
     virtual void showInspectorIndication() { }
     virtual void hideInspectorIndication() { }
 
-    virtual bool canClearBrowserCache() { return false; }
-    virtual void clearBrowserCache() { }
-    virtual bool canClearBrowserCookies() { return false; }
-    virtual void clearBrowserCookies() { }
-
     virtual bool overridesShowPaintRects() const { return false; }
     virtual void setShowPaintRects(bool) { }
     virtual void showPaintRect(const FloatRect&) { }

@@ -52,7 +52,6 @@ namespace WebCore {
 class Event;
 class FloatQuad;
 class Frame;
-class InspectorClient;
 class InspectorPageAgent;
 class IntRect;
 class URL;
@@ -117,7 +116,7 @@ class InspectorTimelineAgent final
 public:
     enum InspectorType { PageInspector, WorkerInspector };
 
-    InspectorTimelineAgent(WebAgentContext&, InspectorPageAgent*, InspectorType, InspectorClient*);
+    InspectorTimelineAgent(WebAgentContext&, InspectorPageAgent*, InspectorType);
     virtual ~InspectorTimelineAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -238,7 +237,6 @@ private:
     InspectorPageAgent* m_pageAgent;
 
     PageScriptDebugServer* m_scriptDebugServer { nullptr };
-    InspectorClient* m_client { nullptr };
 
     Vector<TimelineRecordEntry> m_recordStack;
     int m_id { 1 };

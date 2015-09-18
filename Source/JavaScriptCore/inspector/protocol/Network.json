@@ -151,28 +151,6 @@
             ]
         },
         {
-            "name": "canClearBrowserCache",
-            "description": "Tells whether clearing browser cache is supported.",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if browser cache can be cleared." }
-            ]
-        },
-        {
-            "name": "clearBrowserCache",
-            "description": "Clears browser cache."
-        },
-        {
-            "name": "canClearBrowserCookies",
-            "description": "Tells whether clearing browser cookies is supported.",
-            "returns": [
-                { "name": "result", "type": "boolean", "description": "True if browser cookies can be cleared." }
-            ]
-        },
-        {
-            "name": "clearBrowserCookies",
-            "description": "Clears browser cookies."
-        },
-        {
             "name": "setCacheDisabled",
             "parameters": [
                 { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }

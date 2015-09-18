@@ -149,11 +149,11 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(WTF::move(domStorageAgentPtr));
 
-    auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(pageContext, pageAgent, InspectorTimelineAgent::PageInspector, inspectorClient);
+    auto timelineAgentPtr = std::make_unique<InspectorTimelineAgent>(pageContext, pageAgent, InspectorTimelineAgent::PageInspector);
     m_timelineAgent = timelineAgentPtr.get();
     m_agents.append(WTF::move(timelineAgentPtr));
 
-    auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(pageContext, pageAgent, inspectorClient);
+    auto resourceAgentPtr = std::make_unique<InspectorResourceAgent>(pageContext, pageAgent);
     m_resourceAgent = resourceAgentPtr.get();
     m_agents.append(WTF::move(resourceAgentPtr));
 

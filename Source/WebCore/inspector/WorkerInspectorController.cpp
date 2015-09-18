@@ -33,7 +33,6 @@
 #include "WorkerInspectorController.h"
 
 #include "CommandLineAPIHost.h"
-#include "InspectorClient.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
@@ -114,7 +113,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
     m_agents.append(WTF::move(debuggerAgent));
 
-    m_agents.append(std::make_unique<InspectorTimelineAgent>(workerContext, nullptr, InspectorTimelineAgent::WorkerInspector, nullptr));
+    m_agents.append(std::make_unique<InspectorTimelineAgent>(workerContext, nullptr, InspectorTimelineAgent::WorkerInspector));
     m_agents.append(WTF::move(consoleAgent));
 
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {

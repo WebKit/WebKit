@@ -53,7 +53,6 @@ class DocumentLoader;
 class FormData;
 class Frame;
 class HTTPHeaderMap;
-class InspectorClient;
 class InspectorPageAgent;
 class NetworkResourcesData;
 class Page;
@@ -75,7 +74,7 @@ typedef String ErrorString;
 class InspectorResourceAgent final : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorResourceAgent(WebAgentContext&, InspectorPageAgent*, InspectorClient*);
+    InspectorResourceAgent(WebAgentContext&, InspectorPageAgent*);
     virtual ~InspectorResourceAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -119,10 +118,6 @@ public:
     virtual void disable(ErrorString&) override;
     virtual void setExtraHTTPHeaders(ErrorString&, const Inspector::InspectorObject& headers) override;
     virtual void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
-    virtual void canClearBrowserCache(ErrorString&, bool*) override;
-    virtual void clearBrowserCache(ErrorString&) override;
-    virtual void canClearBrowserCookies(ErrorString&, bool*) override;
-    virtual void clearBrowserCookies(ErrorString&) override;
     virtual void setCacheDisabled(ErrorString&, bool cacheDisabled) override;
     virtual void loadResource(ErrorString&, const String& frameId, const String& url, Ref<LoadResourceCallback>&&) override;
 
@@ -134,8 +129,6 @@ private:
     std::unique_ptr<Inspector::NetworkFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
     InspectorPageAgent* m_pageAgent { nullptr };
-
-    InspectorClient* m_client { nullptr };
 
     std::unique_ptr<NetworkResourcesData> m_resourcesData;
     bool m_enabled { false };

@@ -44,7 +44,6 @@
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
 #include "IconController.h"
-#include "InspectorClient.h"
 #include "InspectorPageAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
@@ -162,12 +161,11 @@ private:
 
 } // namespace
 
-InspectorResourceAgent::InspectorResourceAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorClient* client)
+InspectorResourceAgent::InspectorResourceAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
     : InspectorAgentBase(ASCIILiteral("Network"), context)
     , m_frontendDispatcher(std::make_unique<Inspector::NetworkFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::NetworkBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
-    , m_client(client)
     , m_resourcesData(std::make_unique<NetworkResourcesData>())
 {
 }
@@ -651,26 +649,6 @@ void InspectorResourceAgent::getResponseBody(ErrorString& errorString, const Str
     }
 
     errorString = ASCIILiteral("No data found for resource with given identifier");
-}
-
-void InspectorResourceAgent::canClearBrowserCache(ErrorString&, bool* result)
-{
-    *result = m_client->canClearBrowserCache();
-}
-
-void InspectorResourceAgent::clearBrowserCache(ErrorString&)
-{
-    m_client->clearBrowserCache();
-}
-
-void InspectorResourceAgent::canClearBrowserCookies(ErrorString&, bool* result)
-{
-    *result = m_client->canClearBrowserCookies();
-}
-
-void InspectorResourceAgent::clearBrowserCookies(ErrorString&)
-{
-    m_client->clearBrowserCookies();
 }
 
 void InspectorResourceAgent::setCacheDisabled(ErrorString&, bool cacheDisabled)

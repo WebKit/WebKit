@@ -36,7 +36,6 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "InspectorClient.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -722,12 +721,11 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorType type, InspectorClient* client)
+InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorType type)
     : InspectorAgentBase(ASCIILiteral("Timeline"), context)
     , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
     , m_pageAgent(pageAgent)
-    , m_client(client)
     , m_inspectorType(type)
 {
 }

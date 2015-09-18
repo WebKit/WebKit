@@ -1,5 +1,21 @@
 2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused canClearBrowserCookies / canClearBrowserCache protocol methods
+        https://bugs.webkit.org/show_bug.cgi?id=149307
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+        Retroactively remove the protocol methods as they were unused
+        in these earlier versions as well.
+
+2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION: Web Inspector: Double clicking on an attribute second time doesn't work
         https://bugs.webkit.org/show_bug.cgi?id=149259
 
