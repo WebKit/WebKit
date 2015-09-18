@@ -33,8 +33,6 @@ PASS: canGet('DocumentType') should be 'true' and is.
 PASS: canSet('DocumentType') should be 'true' and is.
 PASS: canGet('Element') should be 'true' and is.
 PASS: canSet('Element') should be 'true' and is.
-PASS: canGet('Entity') should be 'true' and is.
-PASS: canSet('Entity') should be 'true' and is.
 PASS: canGet('EntityReference') should be 'true' and is.
 PASS: canSet('EntityReference') should be 'true' and is.
 PASS: canGet('EvalError') should be 'true' and is.

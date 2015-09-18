@@ -573,7 +573,6 @@ static inline unsigned lengthOfContentsInNode(Node* node)
     case Node::ELEMENT_NODE:
     case Node::ATTRIBUTE_NODE:
     case Node::ENTITY_REFERENCE_NODE:
-    case Node::ENTITY_NODE:
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
@@ -735,7 +734,6 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
     case Node::ELEMENT_NODE:
     case Node::ATTRIBUTE_NODE:
     case Node::ENTITY_REFERENCE_NODE:
-    case Node::ENTITY_NODE:
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
@@ -913,7 +911,6 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
     // INVALID_NODE_TYPE_ERR: Raised if newNode is an Attr, Entity, ShadowRoot or Document node.
     switch (newNodeType) {
     case Node::ATTRIBUTE_NODE:
-    case Node::ENTITY_NODE:
     case Node::DOCUMENT_NODE:
         ec = INVALID_NODE_TYPE_ERR;
         return;
@@ -1012,7 +1009,6 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
 {
     switch (n->nodeType()) {
         case Node::DOCUMENT_TYPE_NODE:
-        case Node::ENTITY_NODE:
             ec = INVALID_NODE_TYPE_ERR;
             return nullptr;
         case Node::CDATA_SECTION_NODE:
@@ -1050,7 +1046,6 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::ATTRIBUTE_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
-        case Node::ENTITY_NODE:
             ec = INVALID_NODE_TYPE_ERR;
             return;
         case Node::CDATA_SECTION_NODE:
@@ -1077,7 +1072,6 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::COMMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
         case Node::ELEMENT_NODE:
-        case Node::ENTITY_NODE:
         case Node::ENTITY_REFERENCE_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
@@ -1161,7 +1155,6 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
             case Node::XPATH_NAMESPACE_NODE:
                 break;
             case Node::DOCUMENT_TYPE_NODE:
-            case Node::ENTITY_NODE:
                 ec = INVALID_NODE_TYPE_ERR;
                 return;
         }
@@ -1180,7 +1173,6 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
         case Node::ATTRIBUTE_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
-        case Node::ENTITY_NODE:
             ec = INVALID_NODE_TYPE_ERR;
             return;
     }
@@ -1218,7 +1210,6 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
             case Node::XPATH_NAMESPACE_NODE:
                 break;
             case Node::DOCUMENT_TYPE_NODE:
-            case Node::ENTITY_NODE:
                 ec = INVALID_NODE_TYPE_ERR;
                 return;
         }
@@ -1247,7 +1238,6 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
-        case Node::ENTITY_NODE:
             ec = INVALID_NODE_TYPE_ERR;
             return;
         case Node::CDATA_SECTION_NODE:

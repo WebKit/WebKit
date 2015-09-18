@@ -8,7 +8,7 @@ PASS Historical DOM features must be removed: DOMImplementationSource
 PASS Historical DOM features must be removed: DOMLocator 
 PASS Historical DOM features must be removed: DOMObject 
 PASS Historical DOM features must be removed: DOMUserData 
-FAIL Historical DOM features must be removed: Entity assert_equals: expected (undefined) undefined but got (object) object "[object EntityConstructor]"
+PASS Historical DOM features must be removed: Entity 
 FAIL Historical DOM features must be removed: EntityReference assert_equals: expected (undefined) undefined but got (object) object "[object EntityReferenceConstructor]"
 FAIL Historical DOM features must be removed: EventException assert_equals: expected (undefined) undefined but got (object) object "[object EventExceptionConstructor]"
 PASS Historical DOM features must be removed: NameList 

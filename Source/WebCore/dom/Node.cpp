@@ -1271,7 +1271,6 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
             if (Element* documentElement = downcast<Document>(*this).documentElement())
                 return documentElement->isDefaultNamespace(namespaceURI);
             return false;
-        case ENTITY_NODE:
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
             return false;
@@ -1303,7 +1302,6 @@ String Node::lookupPrefix(const AtomicString &namespaceURI) const
             if (Element* documentElement = downcast<Document>(*this).documentElement())
                 return documentElement->lookupPrefix(namespaceURI);
             return String();
-        case ENTITY_NODE:
         case DOCUMENT_FRAGMENT_NODE:
         case DOCUMENT_TYPE_NODE:
             return String();
@@ -1360,7 +1358,6 @@ String Node::lookupNamespaceURI(const String &prefix) const
             if (Element* documentElement = downcast<Document>(*this).documentElement())
                 return documentElement->lookupNamespaceURI(prefix);
             return String();
-        case ENTITY_NODE:
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
             return String();
@@ -1425,7 +1422,6 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
         }
         FALLTHROUGH;
     case Node::ATTRIBUTE_NODE:
-    case Node::ENTITY_NODE:
     case Node::ENTITY_REFERENCE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
         isNullString = false;
@@ -1462,7 +1458,6 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
             return;
         case ELEMENT_NODE:
         case ATTRIBUTE_NODE:
-        case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
         case DOCUMENT_FRAGMENT_NODE: {
             Ref<ContainerNode> container(downcast<ContainerNode>(*this));

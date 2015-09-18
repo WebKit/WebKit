@@ -573,7 +573,6 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node& nod
         appendCDATASection(result, downcast<CDATASection>(node).data());
         break;
     case Node::ATTRIBUTE_NODE:
-    case Node::ENTITY_NODE:
     case Node::ENTITY_REFERENCE_NODE:
     case Node::XPATH_NAMESPACE_NODE:
         ASSERT_NOT_REACHED();

@@ -2362,8 +2362,6 @@
 		65DF320409D1CC60000BE325 /* JSText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31F009D1CC60000BE325 /* JSText.h */; };
 		65DF320509D1CC60000BE325 /* JSWheelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */; };
 		65DF320609D1CC60000BE325 /* JSWheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF31F209D1CC60000BE325 /* JSWheelEvent.h */; };
-		65DF322F09D1DDBC000BE325 /* JSEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF322D09D1DDBC000BE325 /* JSEntity.cpp */; };
-		65DF323009D1DDBC000BE325 /* JSEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF322E09D1DDBC000BE325 /* JSEntity.h */; };
 		65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */; };
 		65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323409D1DE65000BE325 /* JSCanvasGradient.h */; };
 		65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */; };
@@ -9718,8 +9716,6 @@
 		65DF31F009D1CC60000BE325 /* JSText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSText.h; sourceTree = "<group>"; };
 		65DF31F109D1CC60000BE325 /* JSWheelEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWheelEvent.cpp; sourceTree = "<group>"; };
 		65DF31F209D1CC60000BE325 /* JSWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWheelEvent.h; sourceTree = "<group>"; };
-		65DF322D09D1DDBC000BE325 /* JSEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEntity.cpp; sourceTree = "<group>"; };
-		65DF322E09D1DDBC000BE325 /* JSEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEntity.h; sourceTree = "<group>"; };
 		65DF323309D1DE65000BE325 /* JSCanvasGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasGradient.cpp; sourceTree = "<group>"; };
 		65DF323409D1DE65000BE325 /* JSCanvasGradient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasGradient.h; sourceTree = "<group>"; };
 		65DF323509D1DE65000BE325 /* JSCanvasPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasPattern.cpp; sourceTree = "<group>"; };
@@ -20051,8 +20047,6 @@
 				BC64649611D82349006455B0 /* JSDOMStringMap.h */,
 				65DF31E509D1CC60000BE325 /* JSElement.cpp */,
 				65DF31E609D1CC60000BE325 /* JSElement.h */,
-				65DF322D09D1DDBC000BE325 /* JSEntity.cpp */,
-				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
 				93F9B7720BA5FDDC00854064 /* JSEntityReference.cpp */,
 				93F9B7730BA5FDDC00854064 /* JSEntityReference.h */,
 				FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */,
@@ -25585,7 +25579,6 @@
 				FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */,
 				65DF31FA09D1CC60000BE325 /* JSElement.h in Headers */,
 				ADEC78F818EE5308001315C2 /* JSElementCustom.h in Headers */,
-				65DF323009D1DDBC000BE325 /* JSEntity.h in Headers */,
 				93F9B7750BA5FDDD00854064 /* JSEntityReference.h in Headers */,
 				2ECF7ADD10162B3800427DE7 /* JSErrorEvent.h in Headers */,
 				F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */,
@@ -29146,7 +29139,6 @@
 				FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */,
 				65DF31F909D1CC60000BE325 /* JSElement.cpp in Sources */,
 				BC2ED5550C6B9BD300920BFF /* JSElementCustom.cpp in Sources */,
-				65DF322F09D1DDBC000BE325 /* JSEntity.cpp in Sources */,
 				93F9B7740BA5FDDC00854064 /* JSEntityReference.cpp in Sources */,
 				2ECF7ADC10162B3800427DE7 /* JSErrorEvent.cpp in Sources */,
 				F3D461481161D53200CA0D09 /* JSErrorHandler.cpp in Sources */,

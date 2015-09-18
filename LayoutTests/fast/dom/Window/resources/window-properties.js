@@ -56,7 +56,6 @@ var propertyInfo = [
     ["DocumentFragment", "object"],
     ["DocumentType", "object"],
     ["Element", "object"],
-    ["Entity", "object"],
     ["EntityReference", "object"],
     ["Event", "object"],
     ["EventException", "object"],

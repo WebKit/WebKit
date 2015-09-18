@@ -1,5 +1,24 @@
 2015-09-18  Chris Dumez  <cdumez@apple.com>
 
+        Drop support for Entity Node type
+        https://bugs.webkit.org/show_bug.cgi?id=149239
+
+        Reviewed by Darin Adler.
+
+        Rebaseline / update layout tests now that we no longer expose the
+        Entity type to the Web.
+
+        * fast/dom/Window/get-set-properties-expected.txt:
+        * fast/dom/Window/get-set-properties.html:
+        * fast/dom/Window/resources/window-properties.js:
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+
+2015-09-18  Chris Dumez  <cdumez@apple.com>
+
         classList.toggle(name, force) treats undefined `force` argument as false
         https://bugs.webkit.org/show_bug.cgi?id=148582
         <rdar://problem/22545600>

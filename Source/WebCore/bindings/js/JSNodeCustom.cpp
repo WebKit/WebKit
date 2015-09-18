@@ -51,7 +51,6 @@
 #include "JSDocument.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
-#include "JSEntity.h"
 #include "JSEntityReference.h"
 #include "JSEventListener.h"
 #include "JSHTMLElement.h"
@@ -189,9 +188,6 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             break;
         case Node::CDATA_SECTION_NODE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, CDATASection, node);
-            break;
-        case Node::ENTITY_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, Entity, node);
             break;
         case Node::PROCESSING_INSTRUCTION_NODE:
             wrapper = CREATE_DOM_WRAPPER(globalObject, ProcessingInstruction, node);

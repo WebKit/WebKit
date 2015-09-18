@@ -149,7 +149,6 @@
 #include "JSDOMWindow.cpp"
 #include "JSDOMWindowCSS.cpp"
 #include "JSElement.cpp"
-#include "JSEntity.cpp"
 #include "JSEntityReference.cpp"
 #include "JSErrorEvent.cpp"
 #include "JSEvent.cpp"

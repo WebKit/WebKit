@@ -313,8 +313,6 @@ Class kitClass(WebCore::Node* impl)
             return [DOMCDATASection class];
         case WebCore::Node::ENTITY_REFERENCE_NODE:
             return [DOMEntityReference class];
-        case WebCore::Node::ENTITY_NODE:
-            return [DOMEntity class];
         case WebCore::Node::PROCESSING_INSTRUCTION_NODE:
             return [DOMProcessingInstruction class];
         case WebCore::Node::COMMENT_NODE:
