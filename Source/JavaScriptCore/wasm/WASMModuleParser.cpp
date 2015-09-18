@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "JSWASMModule.h"
 #include "StrongInlines.h"
@@ -49,18 +50,18 @@
 
 namespace JSC {
 
-WASMModuleParser::WASMModuleParser(VM& vm, JSGlobalObject* globalObject, const SourceCode& source, JSObject* imports)
+WASMModuleParser::WASMModuleParser(VM& vm, JSGlobalObject* globalObject, const SourceCode& source, JSObject* imports, JSArrayBuffer* arrayBuffer)
     : m_vm(vm)
     , m_globalObject(vm, globalObject)
     , m_source(source)
     , m_imports(vm, imports)
     , m_reader(static_cast<WebAssemblySourceProvider*>(source.provider())->data())
+    , m_module(vm, JSWASMModule::create(vm, globalObject->wasmModuleStructure(), arrayBuffer))
 {
 }
 
 JSWASMModule* WASMModuleParser::parse(ExecState* exec, String& errorMessage)
 {
-    m_module.set(m_vm, JSWASMModule::create(m_vm, m_globalObject->wasmModuleStructure()));
     parseModule(exec);
     if (!m_errorMessage.isNull()) {
         errorMessage = m_errorMessage;
@@ -93,6 +94,9 @@ void WASMModuleParser::parseModule(ExecState* exec)
     parseFunctionDefinitionSection();
     PROPAGATE_ERROR();
     parseExportSection();
+    PROPAGATE_ERROR();
+
+    FAIL_IF_FALSE(!m_module->arrayBuffer() || m_module->arrayBuffer()->impl()->byteLength() < (1u << 31), "The ArrayBuffer's length must be less than 2^31.");
 }
 
 void WASMModuleParser::parseConstantPoolSection()
@@ -362,9 +366,9 @@ void WASMModuleParser::getImportedValue(ExecState* exec, const String& importNam
     value = slot.getValue(exec, identifier);
 }
 
-JSWASMModule* parseWebAssembly(ExecState* exec, const SourceCode& source, JSObject* imports, String& errorMessage)
+JSWASMModule* parseWebAssembly(ExecState* exec, const SourceCode& source, JSObject* imports, JSArrayBuffer* arrayBuffer, String& errorMessage)
 {
-    WASMModuleParser moduleParser(exec->vm(), exec->lexicalGlobalObject(), source, imports);
+    WASMModuleParser moduleParser(exec->vm(), exec->lexicalGlobalObject(), source, imports, arrayBuffer);
     return moduleParser.parse(exec, errorMessage);
 }
 

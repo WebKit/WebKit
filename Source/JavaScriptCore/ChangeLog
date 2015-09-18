@@ -1,5 +1,78 @@
 2015-09-18  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
+        Implement linear memory instructions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149326
+
+        Reviewed by Geoffrey Garen.
+
+        This patch implements linear memory instructions in WebAssembly.[1] To
+        use the linear memory, an ArrayBuffer must be passed to loadWebAssembly().
+
+        Notes:
+        - We limit the ArrayBuffer's byte length to 2^31 - 1. This enables us to
+          use only one comparison (unsigned greater than) to check for
+          out-of-bounds access.
+        - There is no consensus yet on what should happen when an out-of-bounds
+          access occurs.[2] For now, we throw an error when that happens.
+        - In asm.js, a heap access looks like this: int32Array[i >> 2]. Note
+          that ">> 2" is part of the syntax and is required. pack-asmjs will
+          produce bytecodes that look something like "LoadI32, i" (not
+          "LoadI32, ShiftRightI32, i, 2"). The requirement of the shift operator
+          prevents unaligned accesses in asm.js. (There is a proposal to support
+          unaligned accesses in the future version of asm.js using DataView.[3])
+          The WebAssembly spec allows unaligned accesses.[4] But since we use
+          asm.js for testing, we follow asm.js's behaviors for now.
+
+        [1]: https://github.com/WebAssembly/design/blob/master/AstSemantics.md#linear-memory
+        [2]: https://github.com/WebAssembly/design/blob/master/AstSemantics.md#out-of-bounds
+        [3]: https://wiki.mozilla.org/Javascript:SpiderMonkey:OdinMonkey#Possible_asm.js_extensions_that_don.27t_require_new_JS_features
+        [4]: https://github.com/WebAssembly/design/blob/master/AstSemantics.md#alignment
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionLoadWebAssembly):
+        * tests/stress/wasm-linear-memory.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        * tests/stress/wasm/linear-memory.wasm: Added.
+        * wasm/JSWASMModule.cpp:
+        (JSC::JSWASMModule::JSWASMModule):
+        (JSC::JSWASMModule::visitChildren):
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::create):
+        (JSC::JSWASMModule::arrayBuffer):
+        (JSC::JSWASMModule::JSWASMModule): Deleted.
+        * wasm/WASMConstants.h:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::sizeOfMemoryType):
+        (JSC::WASMFunctionCompiler::MemoryAddress::MemoryAddress):
+        (JSC::WASMFunctionCompiler::endFunction):
+        (JSC::WASMFunctionCompiler::buildLoad):
+        (JSC::WASMFunctionCompiler::buildStore):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseStatement):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseMemoryAddress):
+        (JSC::WASMFunctionParser::parseLoad):
+        (JSC::WASMFunctionParser::parseStore):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::MemoryAddress::MemoryAddress):
+        (JSC::WASMFunctionSyntaxChecker::buildLoad):
+        (JSC::WASMFunctionSyntaxChecker::buildStore):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASMModuleParser::WASMModuleParser):
+        (JSC::WASMModuleParser::parseModule):
+        (JSC::parseWebAssembly):
+        (JSC::WASMModuleParser::parse): Deleted.
+        * wasm/WASMModuleParser.h:
+
+2015-09-18  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
         Implement type conversion instructions in WebAssembly
         https://bugs.webkit.org/show_bug.cgi?id=149340
 

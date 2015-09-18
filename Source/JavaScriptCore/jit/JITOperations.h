@@ -251,6 +251,7 @@ void JIT_OPERATION operationVMHandleException(ExecState*) WTF_INTERNAL;
 void JIT_OPERATION operationThrowStackOverflowError(ExecState*, CodeBlock*) WTF_INTERNAL;
 #if ENABLE(WEBASSEMBLY)
 void JIT_OPERATION operationThrowDivideError(ExecState*) WTF_INTERNAL;
+void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState*) WTF_INTERNAL;
 #endif
 int32_t JIT_OPERATION operationCallArityCheck(ExecState*) WTF_INTERNAL;
 int32_t JIT_OPERATION operationConstructArityCheck(ExecState*) WTF_INTERNAL;

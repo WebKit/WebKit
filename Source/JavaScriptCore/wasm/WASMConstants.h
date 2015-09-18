@@ -291,6 +291,17 @@ enum class WASMTypeConversion {
     Demote,
 };
 
+enum class WASMMemoryType {
+    I8,
+    I16,
+    I32,
+    F32,
+    F64
+};
+
+enum class MemoryAccessOffsetMode { NoOffset, WithOffset };
+enum class MemoryAccessConversion { NoConversion, SignExtend, ZeroExtend };
+
 static const uint8_t hasImmediateInOpFlag = 0x80;
 
 static const unsigned opWithImmediateBits = 2;

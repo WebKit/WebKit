@@ -105,6 +105,17 @@ void JIT_OPERATION operationThrowDivideError(ExecState* exec)
     ErrorHandlingScope errorScope(*vm);
     vm->throwException(callerFrame, createError(callerFrame, ASCIILiteral("Division by zero or division overflow.")));
 }
+
+void JIT_OPERATION operationThrowOutOfBoundsAccessError(ExecState* exec)
+{
+    VM* vm = &exec->vm();
+    VMEntryFrame* vmEntryFrame = vm->topVMEntryFrame;
+    CallFrame* callerFrame = exec->callerFrame(vmEntryFrame);
+
+    NativeCallFrameTracerWithRestore tracer(vm, vmEntryFrame, callerFrame);
+    ErrorHandlingScope errorScope(*vm);
+    vm->throwException(callerFrame, createError(callerFrame, ASCIILiteral("Out-of-bounds access.")));
+}
 #endif
 
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)

@@ -677,7 +677,7 @@ protected:
         addFunction(vm, "drainMicrotasks", functionDrainMicrotasks, 0);
 
 #if ENABLE(WEBASSEMBLY)
-        addFunction(vm, "loadWebAssembly", functionLoadWebAssembly, 2);
+        addFunction(vm, "loadWebAssembly", functionLoadWebAssembly, 3);
 #endif
         addFunction(vm, "loadModule", functionLoadModule, 1);
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
@@ -1450,9 +1450,10 @@ EncodedJSValue JSC_HOST_CALL functionLoadWebAssembly(ExecState* exec)
     RefPtr<WebAssemblySourceProvider> sourceProvider = WebAssemblySourceProvider::create(reinterpret_cast<Vector<uint8_t>&>(buffer), fileName);
     SourceCode source(sourceProvider);
     JSObject* imports = exec->argument(1).getObject();
+    JSArrayBuffer* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(2));
 
     String errorMessage;
-    JSWASMModule* module = parseWebAssembly(exec, source, imports, errorMessage);
+    JSWASMModule* module = parseWebAssembly(exec, source, imports, arrayBuffer, errorMessage);
     if (!module)
         return JSValue::encode(exec->vm().throwException(exec, createSyntaxError(exec, errorMessage)));
     return JSValue::encode(module);

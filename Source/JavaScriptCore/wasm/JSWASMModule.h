@@ -56,9 +56,9 @@ public:
         double doubleValue;
     };
 
-    static JSWASMModule* create(VM& vm, Structure* structure)
+    static JSWASMModule* create(VM& vm, Structure* structure, JSArrayBuffer* arrayBuffer)
     {
-        JSWASMModule* module = new (NotNull, allocateCell<JSWASMModule>(vm.heap)) JSWASMModule(vm, structure);
+        JSWASMModule* module = new (NotNull, allocateCell<JSWASMModule>(vm.heap)) JSWASMModule(vm, structure, arrayBuffer);
         module->finishCreation(vm);
         return module;
     }
@@ -83,6 +83,7 @@ public:
     Vector<WASMFunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
     Vector<WASMFunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
 
+    const JSArrayBuffer* arrayBuffer() const { return m_arrayBuffer.get(); }
     Vector<WriteBarrier<JSFunction>>& functions() { return m_functions; }
     Vector<unsigned>& functionStartOffsetsInSource() { return m_functionStartOffsetsInSource; }
     Vector<unsigned>& functionStackHeights() { return m_functionStackHeights; }
@@ -90,10 +91,7 @@ public:
     Vector<WriteBarrier<JSFunction>>& importedFunctions() { return m_importedFunctions; }
 
 private:
-    JSWASMModule(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-    }
+    JSWASMModule(VM&, Structure*, JSArrayBuffer*);
 
     Vector<uint32_t> m_i32Constants;
     Vector<float> m_f32Constants;
@@ -105,6 +103,7 @@ private:
     Vector<WASMFunctionDeclaration> m_functionDeclarations;
     Vector<WASMFunctionPointerTable> m_functionPointerTables;
 
+    WriteBarrier<JSArrayBuffer> m_arrayBuffer;
     Vector<WriteBarrier<JSFunction>> m_functions;
     Vector<unsigned> m_functionStartOffsetsInSource;
     Vector<unsigned> m_functionStackHeights;

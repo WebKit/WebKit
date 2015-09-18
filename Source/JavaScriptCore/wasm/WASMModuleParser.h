@@ -35,6 +35,7 @@
 namespace JSC {
 
 class ExecState;
+class JSArrayBuffer;
 class JSGlobalObject;
 class JSWASMModule;
 class SourceCode;
@@ -42,7 +43,7 @@ class VM;
 
 class WASMModuleParser {
 public:
-    WASMModuleParser(VM&, JSGlobalObject*, const SourceCode&, JSObject* imports);
+    WASMModuleParser(VM&, JSGlobalObject*, const SourceCode&, JSObject* imports, JSArrayBuffer*);
     JSWASMModule* parse(ExecState*, String& errorMessage);
 
 private:
@@ -67,7 +68,7 @@ private:
     String m_errorMessage;
 };
 
-JS_EXPORT_PRIVATE JSWASMModule* parseWebAssembly(ExecState*, const SourceCode&, JSObject* imports, String& errorMessage);
+JS_EXPORT_PRIVATE JSWASMModule* parseWebAssembly(ExecState*, const SourceCode&, JSObject* imports, JSArrayBuffer*, String& errorMessage);
 
 } // namespace JSC
 

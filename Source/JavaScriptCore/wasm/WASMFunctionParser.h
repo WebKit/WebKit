@@ -34,6 +34,7 @@
 #define ContextExpression typename Context::Expression
 #define ContextStatement typename Context::Statement
 #define ContextExpressionList typename Context::ExpressionList
+#define ContextMemoryAddress typename Context::MemoryAddress
 #define ContextJumpTarget typename Context::JumpTarget
 
 namespace JSC {
@@ -112,6 +113,10 @@ private:
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&);
     template <class Context> ContextExpression parseGetGlobalExpressionF64(Context&);
+
+    template <class Context> ContextMemoryAddress parseMemoryAddress(Context&, MemoryAccessOffsetMode);
+    template <class Context> ContextExpression parseLoad(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode, MemoryAccessConversion = MemoryAccessConversion::NoConversion);
+    template <class Context> ContextExpression parseStore(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode);
 
     template <class Context> ContextExpressionList parseCallArguments(Context&, const Vector<WASMType>& arguments);
     template <class Context> ContextExpression parseCallInternal(Context&, WASMExpressionType returnType);

@@ -32,6 +32,7 @@
 #include "CCallHelpers.h"
 #include "JIT.h"
 #include "JITOperations.h"
+#include "JSArrayBuffer.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 
@@ -78,11 +79,36 @@ static double JIT_OPERATION operationConvertUnsignedInt32ToDouble(uint32_t value
 }
 #endif
 
+static size_t sizeOfMemoryType(WASMMemoryType memoryType)
+{
+    switch (memoryType) {
+    case WASMMemoryType::I8:
+        return 1;
+    case WASMMemoryType::I16:
+        return 2;
+    case WASMMemoryType::I32:
+    case WASMMemoryType::F32:
+        return 4;
+    case WASMMemoryType::F64:
+        return 8;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 class WASMFunctionCompiler : private CCallHelpers {
 public:
     typedef int Expression;
     typedef int Statement;
     typedef int ExpressionList;
+    struct MemoryAddress {
+        MemoryAddress(void*) { }
+        MemoryAddress(int, uint32_t offset)
+            : offset(offset)
+        {
+        }
+        uint32_t offset;
+    };
     struct JumpTarget {
         Label label;
         JumpList jumpList;
@@ -197,6 +223,13 @@ public:
 
             setupArgumentsExecState();
             appendCallWithExceptionCheck(operationThrowDivideError);
+        }
+
+        if (!m_outOfBoundsErrorJumpList.empty()) {
+            m_outOfBoundsErrorJumpList.link(this);
+
+            setupArgumentsExecState();
+            appendCallWithExceptionCheck(operationThrowOutOfBoundsAccessError);
         }
 
         if (!m_exceptionChecks.empty()) {
@@ -433,6 +466,117 @@ public:
         default:
             ASSERT_NOT_REACHED();
         }
+        return UNUSED;
+    }
+
+    int buildLoad(const MemoryAddress& memoryAddress, WASMExpressionType expressionType, WASMMemoryType memoryType, MemoryAccessConversion conversion)
+    {
+        const ArrayBuffer* arrayBuffer = m_module->arrayBuffer()->impl();
+        move(TrustedImmPtr(arrayBuffer->data()), GPRInfo::regT0);
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT1);
+        if (memoryAddress.offset)
+            add32(TrustedImm32(memoryAddress.offset), GPRInfo::regT1, GPRInfo::regT1);
+        and32(TrustedImm32(~(sizeOfMemoryType(memoryType) - 1)), GPRInfo::regT1);
+
+        ASSERT(arrayBuffer->byteLength() < (unsigned)(1 << 31));
+        if (arrayBuffer->byteLength() >= sizeOfMemoryType(memoryType))
+            m_outOfBoundsErrorJumpList.append(branch32(Above, GPRInfo::regT1, TrustedImm32(arrayBuffer->byteLength() - sizeOfMemoryType(memoryType))));
+        else
+            m_outOfBoundsErrorJumpList.append(jump());
+
+        BaseIndex address = BaseIndex(GPRInfo::regT0, GPRInfo::regT1, TimesOne);
+
+        switch (expressionType) {
+        case WASMExpressionType::I32:
+            switch (memoryType) {
+            case WASMMemoryType::I8:
+                if (conversion == MemoryAccessConversion::SignExtend)
+                    load8SignedExtendTo32(address, GPRInfo::regT0);
+                else {
+                    ASSERT(conversion == MemoryAccessConversion::ZeroExtend);
+                    load8(address, GPRInfo::regT0);
+                }
+                break;
+            case WASMMemoryType::I16:
+                if (conversion == MemoryAccessConversion::SignExtend)
+                    load16SignedExtendTo32(address, GPRInfo::regT0);
+                else {
+                    ASSERT(conversion == MemoryAccessConversion::ZeroExtend);
+                    load16(address, GPRInfo::regT0);
+                }
+                break;
+            case WASMMemoryType::I32:
+                load32(address, GPRInfo::regT0);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+            break;
+        case WASMExpressionType::F32:
+            ASSERT(memoryType == WASMMemoryType::F32 && conversion == MemoryAccessConversion::NoConversion);
+            load32(address, GPRInfo::regT0);
+            store32(GPRInfo::regT0, temporaryAddress(m_tempStackTop - 1));
+            break;
+        case WASMExpressionType::F64:
+            ASSERT(memoryType == WASMMemoryType::F64 && conversion == MemoryAccessConversion::NoConversion);
+            loadDouble(address, FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        return UNUSED;
+    }
+
+    int buildStore(const MemoryAddress& memoryAddress, WASMExpressionType expressionType, WASMMemoryType memoryType, int)
+    {
+        const ArrayBuffer* arrayBuffer = m_module->arrayBuffer()->impl();
+        move(TrustedImmPtr(arrayBuffer->data()), GPRInfo::regT0);
+        load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT1);
+        if (memoryAddress.offset)
+            add32(TrustedImm32(memoryAddress.offset), GPRInfo::regT1, GPRInfo::regT1);
+        and32(TrustedImm32(~(sizeOfMemoryType(memoryType) - 1)), GPRInfo::regT1);
+
+        ASSERT(arrayBuffer->byteLength() < (1u << 31));
+        if (arrayBuffer->byteLength() >= sizeOfMemoryType(memoryType))
+            m_outOfBoundsErrorJumpList.append(branch32(Above, GPRInfo::regT1, TrustedImm32(arrayBuffer->byteLength() - sizeOfMemoryType(memoryType))));
+        else
+            m_outOfBoundsErrorJumpList.append(jump());
+
+        BaseIndex address = BaseIndex(GPRInfo::regT0, GPRInfo::regT1, TimesOne);
+
+        switch (expressionType) {
+        case WASMExpressionType::I32:
+            load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT2);
+            switch (memoryType) {
+            case WASMMemoryType::I8:
+                store8(GPRInfo::regT2, address);
+                break;
+            case WASMMemoryType::I16:
+                store16(GPRInfo::regT2, address);
+                break;
+            case WASMMemoryType::I32:
+                store32(GPRInfo::regT2, address);
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+            break;
+        case WASMExpressionType::F32:
+            ASSERT(memoryType == WASMMemoryType::F32);
+            load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT2);
+            store32(GPRInfo::regT2, address);
+            break;
+        case WASMExpressionType::F64:
+            ASSERT(memoryType == WASMMemoryType::F64);
+            loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
+            storeDouble(FPRInfo::fpRegT0, address);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        m_tempStackTop -= 2;
         return UNUSED;
     }
 
@@ -1186,6 +1330,7 @@ private:
     Label m_beginLabel;
     Jump m_stackOverflow;
     JumpList m_divideErrorJumpList;
+    JumpList m_outOfBoundsErrorJumpList;
     JumpList m_exceptionChecks;
 
     Vector<std::pair<Call, void*>> m_calls;

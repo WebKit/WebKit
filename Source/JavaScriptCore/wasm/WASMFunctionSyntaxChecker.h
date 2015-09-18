@@ -37,6 +37,10 @@ public:
     typedef int Expression;
     typedef int Statement;
     typedef int ExpressionList;
+    struct MemoryAddress {
+        MemoryAddress(void*) { }
+        MemoryAddress(int, uint32_t) { }
+    };
     typedef int JumpTarget;
     enum class JumpCondition { Zero, NonZero };
 
@@ -103,6 +107,17 @@ public:
 
     int buildConvertType(int, WASMExpressionType, WASMExpressionType, WASMTypeConversion)
     {
+        return UNUSED;
+    }
+
+    int buildLoad(const MemoryAddress&, WASMExpressionType, WASMMemoryType, MemoryAccessConversion)
+    {
+        return UNUSED;
+    }
+
+    int buildStore(const MemoryAddress&, WASMExpressionType, WASMMemoryType, int)
+    {
+        m_tempStackTop -= 2;
         return UNUSED;
     }
 
