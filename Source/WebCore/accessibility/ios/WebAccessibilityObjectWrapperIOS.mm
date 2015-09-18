@@ -2411,6 +2411,30 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->invalidStatus();
 }
 
+- (NSString *)accessibilityARIACurrentStatus
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    switch (m_object->ariaCurrentState()) {
+    case ARIACurrentFalse:
+        return @"false";
+    case ARIACurrentPage:
+        return @"page";
+    case ARIACurrentStep:
+        return @"step";
+    case ARIACurrentLocation:
+        return @"location";
+    case ARIACurrentTime:
+        return @"time";
+    case ARIACurrentDate:
+        return @"date";
+    default:
+    case ARIACurrentTrue:
+        return @"true";
+    }
+}
+
 - (WebAccessibilityObjectWrapper *)accessibilityMathRootIndexObject
 {
     if (![self _prepareAccessibilityCall])

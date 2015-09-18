@@ -83,6 +83,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (void)_accessibilitySetValue:(NSString *)value;
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
+- (NSString *)accessibilityARIACurrentStatus;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -408,6 +409,9 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
     if (JSStringIsEqualToUTF8CString(attribute, "AXPlaceholderValue"))
         return [[m_element accessibilityPlaceholderValue] createJSStringRef];
+    
+    if (JSStringIsEqualToUTF8CString(attribute, "AXARIACurrent"))
+        return [[m_element accessibilityARIACurrentStatus] createJSStringRef];
     
     return JSStringCreateWithCharacters(0, 0);
 }

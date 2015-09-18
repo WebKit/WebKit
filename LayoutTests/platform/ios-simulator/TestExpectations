@@ -2831,3 +2831,6 @@ css3/line-break-language-sensitive/line-break-loose-centered.html [ ImageOnlyFai
 css3/line-break-language-sensitive/line-break-loose-postfixes.html [ ImageOnlyFailure Pass ]
 css3/line-break-language-sensitive/line-break-loose-sound-marks.html [ ImageOnlyFailure Pass ]
 css3/line-break-language-sensitive/line-break-normal-sound-marks.html [ ImageOnlyFailure Pass ]
+
+# Enable "aria-current" test for iOS
+webkit.org/b/149297 accessibility/aria-current.html [ Pass ]

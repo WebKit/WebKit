@@ -1,3 +1,12 @@
+2015-09-18  Nan Wang  <n_wang@apple.com>
+
+        AX: Implement ARIA 1.1 @aria-current on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=149297
+
+        Reviewed by Chris Fleizach.
+
+        * platform/ios-simulator/TestExpectations:
+
 2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
 
         REGRESSION: http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.html is flaky
