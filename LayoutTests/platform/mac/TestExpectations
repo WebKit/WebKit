@@ -263,6 +263,11 @@ css3/font-feature-settings-rendering.html
 
 webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-rendering-2.html
 
+# This feature is disabled on Mavericks.
+[ Mavericks ] http/tests/navigation/page-cache-pending-image-load.html [ Skip ]
+[ Mavericks ] http/tests/navigation/page-cache-pending-image-load-cache-partition.html [ Skip ]
+[ Mavericks ] http/tests/navigation/page-cache-xhr.html [ Skip ]
+
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
 # Skip because this platform does not support a paging mouse wheel event

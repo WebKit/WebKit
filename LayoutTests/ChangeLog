@@ -1,3 +1,16 @@
+2015-09-18  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r182449, Mavericks ONLY): Pages re-open empty after swiping back and scrolling on them
+        https://bugs.webkit.org/show_bug.cgi?id=149317
+        <rdar://problem/22521514>
+
+        Reviewed by Tim Horton.
+
+        Skip a couple of PageCache layout tests on Mavericks now that a PageCache
+        optimization has been disabled.
+
+        * platform/mac/TestExpectations:
+
 2015-09-18  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed iOS gardening.
