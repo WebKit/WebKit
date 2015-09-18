@@ -1,3 +1,18 @@
+2015-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Give iOS WebKitTestRunner a launch storyboard
+        https://bugs.webkit.org/show_bug.cgi?id=149314
+
+        Reviewed by Dan Bates.
+        
+        Add a launch storyboard to iOS WebKitTestRunner so that Springboard recognizes
+        that it's been built for specific device configurations, and puts the window
+        at the top of the screen. This simplifies coordinate conversions in a future patch.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist:
+        * WebKitTestRunner/ios/Launch.storyboard: Added.
+
 2015-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update licence in r189890

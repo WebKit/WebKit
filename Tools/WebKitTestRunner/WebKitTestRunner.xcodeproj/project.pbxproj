@@ -34,6 +34,7 @@
 
 /* Begin PBXBuildFile section */
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
+		0F831AEA1BAB84F400F96CD8 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F831AE91BAB84F400F96CD8 /* Launch.storyboard */; settings = {ASSET_TAGS = (); }; };
 		0FEB90A01905A834000FDBF3 /* InjectedBundlePageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */; };
 		0FEB90A51905C016000FDBF3 /* CrashReporterInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
@@ -161,6 +162,7 @@
 /* Begin PBXFileReference section */
 		0F2109C7189C650D00F879A3 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		0F5169CA1445222D00E0A9D7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F831AE91BAB84F400F96CD8 /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundlePageCocoa.mm; sourceTree = "<group>"; };
 		0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrashReporterInfo.h; path = cocoa/CrashReporterInfo.h; sourceTree = "<group>"; };
 		0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CrashReporterInfo.mm; path = cocoa/CrashReporterInfo.mm; sourceTree = "<group>"; };
@@ -489,6 +491,7 @@
 		2EE52D121890A9FB0010ED21 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				0F831AE91BAB84F400F96CD8 /* Launch.storyboard */,
 				2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
@@ -800,6 +803,7 @@
 			files = (
 				2E34C90018B68808000067BB /* WebKitTestRunnerInjectedBundle.bundle in Resources */,
 				2EE52CED1890A9A80010ED21 /* InfoPlist.strings in Resources */,
+				0F831AEA1BAB84F400F96CD8 /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
