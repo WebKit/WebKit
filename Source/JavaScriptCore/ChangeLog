@@ -1,3 +1,138 @@
+2015-09-18  Basile Clement  <basile_clement@apple.com>
+
+        [ES6] Tail call fast path should efficiently reuse the frame's stack space
+        https://bugs.webkit.org/show_bug.cgi?id=148662
+
+        Reviewed by Geoffrey Garen.
+
+        This introduces a new class (CallFrameShuffler) that is responsible for
+        efficiently building the new frames when performing a tail call. In
+        order for Repatch to know about the position of arguments on the
+        stack/registers (e.g. for polymorphic call inline caches), we store a
+        CallFrameShuffleData in the CallLinkInfo. Otherwise, the JIT and DFG
+        compiler are now using CallFrameShuffler instead of
+        CCallHelpers::prepareForTailCallSlow() to build the frame for a tail
+        call.
+
+        When taking a slow path, we still build the frame as if doing a regular
+        call, because we could throw an exception and need the caller's frame
+        at that point. This means that for virtual calls, we don't benefit from
+        the efficient frame move for now.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::firstRegister):
+        (JSC::ARMv7Assembler::lastRegister):
+        (JSC::ARMv7Assembler::firstFPRegister):
+        (JSC::ARMv7Assembler::lastFPRegister):
+        * assembler/AbortReason.h:
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setFrameShuffleData):
+        (JSC::CallLinkInfo::frameShuffleData):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::inRegister):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::recovery):
+        * jit/CachedRecovery.cpp: Added.
+        (JSC::CachedRecovery::loadsIntoFPR):
+        (JSC::CachedRecovery::loadsIntoGPR):
+        * jit/CachedRecovery.h: Added.
+        (JSC::CachedRecovery::CachedRecovery):
+        (JSC::CachedRecovery::targets):
+        (JSC::CachedRecovery::addTarget):
+        (JSC::CachedRecovery::removeTarget):
+        (JSC::CachedRecovery::clearTargets):
+        (JSC::CachedRecovery::setWantedJSValueRegs):
+        (JSC::CachedRecovery::setWantedFPR):
+        (JSC::CachedRecovery::boxingRequiresGPR):
+        (JSC::CachedRecovery::boxingRequiresFPR):
+        (JSC::CachedRecovery::recovery):
+        (JSC::CachedRecovery::setRecovery):
+        (JSC::CachedRecovery::wantedJSValueRegs):
+        (JSC::CachedRecovery::wantedFPR):
+        * jit/CallFrameShuffleData.cpp: Added.
+        (JSC::CallFrameShuffleData::setupCalleeSaveRegisters):
+        * jit/CallFrameShuffleData.h: Added.
+        * jit/CallFrameShuffler.cpp: Added.
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::dump):
+        (JSC::CallFrameShuffler::getCachedRecovery):
+        (JSC::CallFrameShuffler::setCachedRecovery):
+        (JSC::CallFrameShuffler::spill):
+        (JSC::CallFrameShuffler::emitDeltaCheck):
+        (JSC::CallFrameShuffler::prepareForSlowPath):
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        (JSC::CallFrameShuffler::tryWrites):
+        (JSC::CallFrameShuffler::performSafeWrites):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/CallFrameShuffler.h: Added.
+        (JSC::CallFrameShuffler::lockGPR):
+        (JSC::CallFrameShuffler::acquireGPR):
+        (JSC::CallFrameShuffler::releaseGPR):
+        (JSC::CallFrameShuffler::snapshot):
+        (JSC::CallFrameShuffler::setCalleeJSValueRegs):
+        (JSC::CallFrameShuffler::assumeCalleeIsCell):
+        (JSC::CallFrameShuffler::canBox):
+        (JSC::CallFrameShuffler::ensureBox):
+        (JSC::CallFrameShuffler::ensureLoad):
+        (JSC::CallFrameShuffler::canLoadAndBox):
+        (JSC::CallFrameShuffler::updateRecovery):
+        (JSC::CallFrameShuffler::clearCachedRecovery):
+        (JSC::CallFrameShuffler::addCachedRecovery):
+        (JSC::CallFrameShuffler::numLocals):
+        (JSC::CallFrameShuffler::getOld):
+        (JSC::CallFrameShuffler::setOld):
+        (JSC::CallFrameShuffler::firstOld):
+        (JSC::CallFrameShuffler::lastOld):
+        (JSC::CallFrameShuffler::isValidOld):
+        (JSC::CallFrameShuffler::argCount):
+        (JSC::CallFrameShuffler::getNew):
+        (JSC::CallFrameShuffler::setNew):
+        (JSC::CallFrameShuffler::addNew):
+        (JSC::CallFrameShuffler::firstNew):
+        (JSC::CallFrameShuffler::lastNew):
+        (JSC::CallFrameShuffler::isValidNew):
+        (JSC::CallFrameShuffler::newAsOld):
+        (JSC::CallFrameShuffler::getFreeRegister):
+        (JSC::CallFrameShuffler::getFreeGPR):
+        (JSC::CallFrameShuffler::getFreeFPR):
+        (JSC::CallFrameShuffler::hasFreeRegister):
+        (JSC::CallFrameShuffler::ensureRegister):
+        (JSC::CallFrameShuffler::ensureGPR):
+        (JSC::CallFrameShuffler::ensureFPR):
+        (JSC::CallFrameShuffler::addressForOld):
+        (JSC::CallFrameShuffler::isUndecided):
+        (JSC::CallFrameShuffler::isSlowPath):
+        (JSC::CallFrameShuffler::addressForNew):
+        (JSC::CallFrameShuffler::dangerFrontier):
+        (JSC::CallFrameShuffler::isDangerNew):
+        (JSC::CallFrameShuffler::updateDangerFrontier):
+        (JSC::CallFrameShuffler::hasOnlySafeWrites):
+        * jit/CallFrameShuffler32_64.cpp: Added.
+        (JSC::CallFrameShuffler::emitStore):
+        (JSC::CallFrameShuffler::emitBox):
+        (JSC::CallFrameShuffler::emitLoad):
+        (JSC::CallFrameShuffler::canLoad):
+        (JSC::CallFrameShuffler::emitDisplace):
+        * jit/CallFrameShuffler64.cpp: Added.
+        (JSC::CallFrameShuffler::emitStore):
+        (JSC::CallFrameShuffler::emitBox):
+        (JSC::CallFrameShuffler::emitLoad):
+        (JSC::CallFrameShuffler::canLoad):
+        (JSC::CallFrameShuffler::emitDisplace):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/RegisterMap.cpp:
+        (JSC::RegisterMap::RegisterMap):
+        (JSC::GPRMap::GPRMap):
+        (JSC::FPRMap::FPRMap):
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
 2015-09-18  Saam barati  <sbarati@apple.com>
 
         Implement try/catch in the DFG.

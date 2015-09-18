@@ -361,6 +361,11 @@ set(JavaScriptCore_SOURCES
 
     jit/AssemblyHelpers.cpp
     jit/BinarySwitch.cpp
+    jit/CachedRecovery.cpp
+    jit/CallFrameShuffleData.cpp
+    jit/CallFrameShuffler.cpp
+    jit/CallFrameShuffler32_64.cpp
+    jit/CallFrameShuffler64.cpp
     jit/ExecutableAllocationFuzz.cpp
     jit/ExecutableAllocator.cpp
     jit/ExecutableAllocatorFixedVMPool.cpp

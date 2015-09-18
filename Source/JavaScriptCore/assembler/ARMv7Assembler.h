@@ -453,11 +453,11 @@ public:
     typedef ARMRegisters::FPQuadRegisterID FPQuadRegisterID;
     typedef FPDoubleRegisterID FPRegisterID;
     
-    static RegisterID firstRegister() { return ARMRegisters::r0; }
-    static RegisterID lastRegister() { return ARMRegisters::r13; }
-    
-    static FPRegisterID firstFPRegister() { return ARMRegisters::d0; }
-    static FPRegisterID lastFPRegister() { return ARMRegisters::d31; }
+    static constexpr RegisterID firstRegister() { return ARMRegisters::r0; }
+    static constexpr RegisterID lastRegister() { return ARMRegisters::r13; }
+
+    static constexpr FPRegisterID firstFPRegister() { return ARMRegisters::d0; }
+    static constexpr FPRegisterID lastFPRegister() { return ARMRegisters::d31; }
 
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)

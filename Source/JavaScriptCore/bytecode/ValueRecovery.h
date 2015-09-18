@@ -31,6 +31,7 @@
 #if ENABLE(JIT)
 #include "GPRInfo.h"
 #include "FPRInfo.h"
+#include "Reg.h"
 #endif
 #include "JSCJSValue.h"
 #include "MacroAssembler.h"
@@ -83,6 +84,18 @@ public:
     
     bool isSet() const { return m_technique != DontKnow; }
     bool operator!() const { return !isSet(); }
+
+#if ENABLE(JIT)
+    static ValueRecovery inRegister(Reg reg, DataFormat dataFormat)
+    {
+        if (reg.isGPR())
+            return inGPR(reg.gpr(), dataFormat);
+
+        ASSERT(reg.isFPR());
+        return inFPR(reg.fpr(), dataFormat);
+    }
+#endif
+
     explicit operator bool() const { return isSet(); }
     
     static ValueRecovery inGPR(MacroAssembler::RegisterID gpr, DataFormat dataFormat)
@@ -299,6 +312,12 @@ public:
     bool isInJSValueRegs() const
     {
         return m_technique == InPair;
+    }
+
+    JSValueRegs jsValueRegs() const
+    {
+        ASSERT(isInJSValueRegs());
+        return JSValueRegs(tagGPR(), payloadGPR());
     }
 #else
     bool isInJSValueRegs() const

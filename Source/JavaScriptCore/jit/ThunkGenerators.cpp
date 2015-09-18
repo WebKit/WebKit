@@ -155,6 +155,10 @@ MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM* vm)
     return FINALIZE_CODE(patchBuffer, ("Link polymorphic call slow path thunk"));
 }
 
+// FIXME: We should distinguish between a megamorphic virtual call vs. a slow
+// path virtual call so that we can enable fast tail calls for megamorphic
+// virtual calls by using the shuffler.
+// https://bugs.webkit.org/show_bug.cgi?id=148831
 MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
 {
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).

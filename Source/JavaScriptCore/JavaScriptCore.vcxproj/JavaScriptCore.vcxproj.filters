@@ -396,6 +396,21 @@
     <ClCompile Include="..\jit\HostCallReturnValue.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\CachedRecovery.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\CallFrameShuffleData.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\CallFrameShuffler.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\CallFrameShuffler32_64.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jit\CallFrameShuffler64.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JIT.cpp">
       <Filter>jit</Filter>
     </ClCompile>

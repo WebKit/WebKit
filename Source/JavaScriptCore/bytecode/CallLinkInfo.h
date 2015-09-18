@@ -26,6 +26,7 @@
 #ifndef CallLinkInfo_h
 #define CallLinkInfo_h
 
+#include "CallFrameShuffleData.h"
 #include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
@@ -331,6 +332,16 @@ public:
 
     void visitWeak(VM&);
 
+    void setFrameShuffleData(const CallFrameShuffleData& shuffleData)
+    {
+        m_frameShuffleData = std::make_unique<CallFrameShuffleData>(shuffleData);
+    }
+
+    const CallFrameShuffleData* frameShuffleData()
+    {
+        return m_frameShuffleData.get();
+    }
+
 private:
     CodeLocationNearCall m_callReturnLocation;
     CodeLocationDataLabelPtr m_hotPathBegin;
@@ -339,6 +350,7 @@ private:
     WriteBarrier<JSFunction> m_lastSeenCallee;
     RefPtr<PolymorphicCallStubRoutine> m_stub;
     RefPtr<JITStubRoutine> m_slowStub;
+    std::unique_ptr<CallFrameShuffleData> m_frameShuffleData;
     bool m_hasSeenShouldRepatch : 1;
     bool m_hasSeenClosure : 1;
     bool m_clearedByGC : 1;

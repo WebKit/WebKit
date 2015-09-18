@@ -965,12 +965,18 @@
 		5DBB151B131D0B310056AD36 /* testapi.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 14D857740A4696C80032146C /* testapi.js */; };
 		5DBB1525131D0BD70056AD36 /* minidom.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 1412110D0A48788700480255 /* minidom.js */; };
 		5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */ = {isa = PBXBuildFile; fileRef = F692A8540255597D01FF60F7 /* create_hash_table */; settings = {ATTRIBUTES = (); }; };
-		623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 623A37EB1B87A7BD00754209 /* RegisterMap.h */; };
+		623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 623A37EB1B87A7BD00754209 /* RegisterMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		627673231B680C1E00FD9F2E /* CallMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627673211B680C1E00FD9F2E /* CallMode.cpp */; };
 		627673241B680C1E00FD9F2E /* CallMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 627673221B680C1E00FD9F2E /* CallMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62D2D38F1ADF103F000206C1 /* FunctionRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */; };
 		62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D2D38E1ADF103F000206C1 /* FunctionRareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		62D755D41B84FB3D001801FA /* CallFrameShuffler64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D755D31B84FB39001801FA /* CallFrameShuffler64.cpp */; };
+		62D755D51B84FB40001801FA /* CallFrameShuffler32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D755D21B84FB39001801FA /* CallFrameShuffler32_64.cpp */; };
+		62D755D61B84FB46001801FA /* CallFrameShuffler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D755D01B84FB39001801FA /* CallFrameShuffler.cpp */; };
+		62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D755D11B84FB39001801FA /* CallFrameShuffler.h */; };
 		62E3D5F01B8D0B7300B868BB /* DataFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62E3D5EF1B8D0B7300B868BB /* DataFormat.cpp */; };
+		62EC9BB61B7EB07C00303AD1 /* CallFrameShuffleData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62EC9BB41B7EB07C00303AD1 /* CallFrameShuffleData.cpp */; };
+		62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */ = {isa = PBXBuildFile; fileRef = 62EC9BB51B7EB07C00303AD1 /* CallFrameShuffleData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62F2AA371B0BEDE300610C7A /* DFGLazyNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62A9A29E1B0BED4800BD54CA /* DFGLazyNode.cpp */; };
 		62F2AA381B0BEDE300610C7A /* DFGLazyNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 62A9A29F1B0BED4800BD54CA /* DFGLazyNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6507D2970E871E4A00D7D896 /* JSTypeInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -990,6 +996,8 @@
 		657CF45819BF6662004ACBF2 /* JSCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 657CF45619BF6662004ACBF2 /* JSCallee.cpp */; };
 		657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 657CF45719BF6662004ACBF2 /* JSCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 658D3A5519638268003C45D6 /* VMEntryRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B8392C1BACA92A0044E824 /* CachedRecovery.h */; };
+		65B8392F1BACAD6A0044E824 /* CachedRecovery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B8392D1BACA9D30044E824 /* CachedRecovery.cpp */; };
 		65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */; };
 		65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */; };
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
@@ -2776,7 +2784,13 @@
 		62A9A29F1B0BED4800BD54CA /* DFGLazyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLazyNode.h; path = dfg/DFGLazyNode.h; sourceTree = "<group>"; };
 		62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionRareData.cpp; sourceTree = "<group>"; };
 		62D2D38E1ADF103F000206C1 /* FunctionRareData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionRareData.h; sourceTree = "<group>"; };
+		62D755D01B84FB39001801FA /* CallFrameShuffler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallFrameShuffler.cpp; sourceTree = "<group>"; };
+		62D755D11B84FB39001801FA /* CallFrameShuffler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameShuffler.h; sourceTree = "<group>"; };
+		62D755D21B84FB39001801FA /* CallFrameShuffler32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallFrameShuffler32_64.cpp; sourceTree = "<group>"; };
+		62D755D31B84FB39001801FA /* CallFrameShuffler64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallFrameShuffler64.cpp; sourceTree = "<group>"; };
 		62E3D5EF1B8D0B7300B868BB /* DataFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataFormat.cpp; sourceTree = "<group>"; };
+		62EC9BB41B7EB07C00303AD1 /* CallFrameShuffleData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallFrameShuffleData.cpp; sourceTree = "<group>"; };
+		62EC9BB51B7EB07C00303AD1 /* CallFrameShuffleData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameShuffleData.h; sourceTree = "<group>"; };
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
 		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
 		6511230514046A4C002B101D /* testRegExp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testRegExp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2811,6 +2825,8 @@
 		658D3A5519638268003C45D6 /* VMEntryRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VMEntryRecord.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitCompilationInfo.h; path = dfg/DFGOSRExitCompilationInfo.h; sourceTree = "<group>"; };
 		65987F2F16828A7E003C2F8D /* UnusedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedPointer.h; sourceTree = "<group>"; };
+		65B8392C1BACA92A0044E824 /* CachedRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRecovery.h; sourceTree = "<group>"; };
+		65B8392D1BACA9D30044E824 /* CachedRecovery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRecovery.cpp; sourceTree = "<group>"; };
 		65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ARMv7Disassembler.cpp; path = disassembler/ARMv7Disassembler.cpp; sourceTree = "<group>"; };
 		65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ARMv7DOpcode.cpp; sourceTree = "<group>"; };
 		65C0285B1717966800351E35 /* ARMv7DOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7DOpcode.h; sourceTree = "<group>"; };
@@ -4096,6 +4112,14 @@
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
 				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
 				0F64B2701A784BAF006E4E66 /* BinarySwitch.h */,
+				65B8392C1BACA92A0044E824 /* CachedRecovery.h */,
+				65B8392D1BACA9D30044E824 /* CachedRecovery.cpp */,
+				62EC9BB41B7EB07C00303AD1 /* CallFrameShuffleData.cpp */,
+				62EC9BB51B7EB07C00303AD1 /* CallFrameShuffleData.h */,
+				62D755D01B84FB39001801FA /* CallFrameShuffler.cpp */,
+				62D755D11B84FB39001801FA /* CallFrameShuffler.h */,
+				62D755D21B84FB39001801FA /* CallFrameShuffler32_64.cpp */,
+				62D755D31B84FB39001801FA /* CallFrameShuffler64.cpp */,
 				0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */,
 				0FD82E37141AB14200179C94 /* CompactJITCodeMap.h */,
 				0FF054F71AC35B4400E5BE57 /* ExecutableAllocationFuzz.cpp */,
@@ -5928,6 +5952,7 @@
 				797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */,
 				0FE050281AA9095600D33B33 /* ScopedArguments.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
+				623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */,
 				FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */,
 				FE5068651AE246390009DAB7 /* DeferredSourceDump.h in Headers */,
 				C442CB251A6CDB8C005D3D7C /* JSInputs.json in Headers */,
@@ -5963,6 +5988,7 @@
 				C4F4B6F41A05C944005CAB76 /* cpp_generator.py in Headers */,
 				A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */,
 				A5840E27187C981E00843B10 /* cssmin.py in Headers */,
+				62D755D71B84FB4A001801FA /* CallFrameShuffler.h in Headers */,
 				A5EA710419F6DE720098F5EC /* generate_objc_backend_dispatcher_implementation.py in Headers */,
 				C4703CD5192844CC0013FBEA /* generator_templates.py in Headers */,
 				A5EA710519F6DE740098F5EC /* generate_objc_configuration_header.py in Headers */,
@@ -6123,6 +6149,7 @@
 				0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */,
 				A77A424017A0BBFD00A8DB81 /* DFGClobberize.h in Headers */,
 				A77A424217A0BBFD00A8DB81 /* DFGClobberSet.h in Headers */,
+				62EC9BB71B7EB07C00303AD1 /* CallFrameShuffleData.h in Headers */,
 				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
 				0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */,
 				0F38B01817CFE75500B144D3 /* DFGCompilationKey.h in Headers */,
@@ -6444,7 +6471,6 @@
 				FEF68361174343CC00A32E25 /* JITStubsX86.h in Headers */,
 				FEF68360174343CC00A32E25 /* JITStubsX86_64.h in Headers */,
 				ADDB1F6318D77DBE009B58A8 /* OpaqueRootSet.h in Headers */,
-				623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */,
 				A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
 				0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */,
@@ -6761,6 +6787,7 @@
 				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
 				0FE254F71ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.h in Headers */,
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
+				65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */,
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
 				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
@@ -7393,6 +7420,7 @@
 				0F12DE0F1979D5FD0006FF4E /* ExceptionFuzz.cpp in Sources */,
 				147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */,
 				A7BDAEC817F4EA1400F6140C /* ArrayIteratorPrototype.cpp in Sources */,
+				65B8392F1BACAD6A0044E824 /* CachedRecovery.cpp in Sources */,
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
 				0F24E54017EA9F5900ABB217 /* AssemblyHelpers.cpp in Sources */,
@@ -7473,6 +7501,7 @@
 				0FF0F19D16B72A08005DF95B /* DFGCommon.cpp in Sources */,
 				0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */,
 				0F38B01717CFE75500B144D3 /* DFGCompilationKey.cpp in Sources */,
+				62EC9BB61B7EB07C00303AD1 /* CallFrameShuffleData.cpp in Sources */,
 				0F38B01917CFE75500B144D3 /* DFGCompilationMode.cpp in Sources */,
 				A1B9E23B1B4E0D6700BC7FED /* IntlCollatorConstructor.cpp in Sources */,
 				0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */,
@@ -7528,6 +7557,7 @@
 				0FF0F19C16B72A03005DF95B /* DFGNode.cpp in Sources */,
 				0FA581BA150E952C00B9A2D9 /* DFGNodeFlags.cpp in Sources */,
 				86EC9DCF1328DF82002B2AD7 /* DFGOperations.cpp in Sources */,
+				62D755D61B84FB46001801FA /* CallFrameShuffler.cpp in Sources */,
 				A7D89CFD17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.cpp in Sources */,
 				0FD82E56141DAF0800179C94 /* DFGOSREntry.cpp in Sources */,
 				0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */,
@@ -7658,6 +7688,7 @@
 				7B0247561B8682E100542440 /* WASMFunctionParser.cpp in Sources */,
 				0FF0F19F16B72A17005DF95B /* FunctionExecutableDump.cpp in Sources */,
 				52B310FD1974AE870080857C /* FunctionHasExecutedCache.cpp in Sources */,
+				62D755D51B84FB40001801FA /* CallFrameShuffler32_64.cpp in Sources */,
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
 				0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
@@ -7781,6 +7812,7 @@
 				A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */,
 				147F39D4107EC37600427A48 /* JSObject.cpp in Sources */,
 				1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */,
+				62D755D41B84FB3D001801FA /* CallFrameShuffler64.cpp in Sources */,
 				A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */,
 				0FFB6C381AF48DDC00DB1BF7 /* TypeofType.cpp in Sources */,
 				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,

@@ -29,6 +29,7 @@
 #if USE(JSVALUE64)
 #include "JIT.h"
 
+#include "CallFrameShuffler.h"
 #include "CodeBlock.h"
 #include "JITInlines.h"
 #include "JSArray.h"
@@ -180,9 +181,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         return;
     }
 
-    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs)
-        emitRestoreCalleeSaves();
-
     DataLabelPtr addressOfLinkedFunctionCheck;
     Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
     addSlowCase(slowCase);
@@ -193,7 +191,28 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
 
-    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
+    if (opcodeID == op_tail_call) {
+        CallFrameShuffleData shuffleData;
+        shuffleData.numLocals =
+            instruction[4].u.operand - sizeof(CallerFrameAndPC) / sizeof(Register);
+        shuffleData.args.resize(instruction[3].u.operand);
+        for (int i = 0; i < instruction[3].u.operand; ++i) {
+            shuffleData.args[i] =
+                ValueRecovery::displacedInJSStack(
+                    virtualRegisterForArgument(i) - instruction[4].u.operand,
+                    DataFormatJS);
+        }
+        shuffleData.callee =
+            ValueRecovery::inGPR(regT0, DataFormatJS);
+        shuffleData.setupCalleeSaveRegisters(m_codeBlock);
+        info->setFrameShuffleData(shuffleData);
+        CallFrameShuffler(*this, shuffleData).prepareForTailCall();
+        m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedTailCall();
+        return;
+    }
+
+    if (opcodeID == op_tail_call_varargs) {
+        emitRestoreCalleeSaves();
         prepareForTailCallSlow();
         m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedTailCall();
         return;
@@ -217,6 +236,9 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     }
 
     linkSlowCase(iter);
+
+    if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs)
+        emitRestoreCalleeSaves();
 
     move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
 

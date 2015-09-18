@@ -69,7 +69,7 @@ public:
     }
 
 private:
-    std::array<T, MacroAssembler::totalNumberOfRegisters()> m_map { };
+    std::array<T, MacroAssembler::totalNumberOfRegisters()> m_map { { } };
 };
 
 template<typename T>
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    std::array<T, MacroAssembler::numberOfRegisters()> m_map { };
+    std::array<T, MacroAssembler::numberOfRegisters()> m_map { { } };
 };
 
 template<typename T>
@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    std::array<T, MacroAssembler::numberOfFPRegisters()> m_map { };
+    std::array<T, MacroAssembler::numberOfFPRegisters()> m_map { { } };
 };
 
 } // namespace JSC

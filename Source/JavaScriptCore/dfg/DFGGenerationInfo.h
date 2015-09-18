@@ -378,6 +378,29 @@ public:
         return m_useCount;
     }
 
+    ValueRecovery recovery(VirtualRegister spillSlot) const
+    {
+        if (m_isConstant)
+            return ValueRecovery::constant(m_node->constant()->value());
+
+        if (m_registerFormat == DataFormatDouble)
+            return ValueRecovery::inFPR(u.fpr, DataFormatDouble);
+
+#if USE(JSVALUE32_64)
+        if (m_registerFormat & DataFormatJS) {
+            if (m_registerFormat == DataFormatJS)
+                return ValueRecovery::inPair(u.v.tagGPR, u.v.payloadGPR);
+            return ValueRecovery::inGPR(u.v.payloadGPR, static_cast<DataFormat>(m_registerFormat & ~DataFormatJS));
+        }
+#endif
+        if (m_registerFormat)
+            return ValueRecovery::inGPR(u.gpr, m_registerFormat);
+
+        ASSERT(m_spillFormat);
+
+        return ValueRecovery::displacedInJSStack(spillSlot, m_spillFormat);
+    }
+
 private:
     void appendBirth(VariableEventStream& stream)
     {
