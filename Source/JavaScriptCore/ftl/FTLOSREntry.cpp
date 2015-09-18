@@ -100,9 +100,7 @@ void* prepareOSREntry(
     
     exec->setCodeBlock(entryCodeBlock);
     
-    void* result = entryCode->addressForCall(
-        vm, executable, ArityCheckNotRequired,
-        RegisterPreservationNotRequired).executableAddress();
+    void* result = entryCode->addressForCall(ArityCheckNotRequired).executableAddress();
     if (Options::verboseOSR())
         dataLog("    Entry will succeed, going to address", RawPointer(result), "\n");
     

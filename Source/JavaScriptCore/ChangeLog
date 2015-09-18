@@ -1,3 +1,65 @@
+2015-09-18  Michael Saboff  <msaboff@apple.com>
+
+        Remove register preservation and restoration stub code
+        https://bugs.webkit.org/show_bug.cgi?id=149335
+
+        Reviewed by Mark Lam.
+
+        Delete the register preservation and restoration thunks and related plumbing.
+
+        Much of this change is removing the unneeded RegisterPreservationMode parameter
+        from various functions.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::isVarargsCallType):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::isVarargs):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::CallLinkInfo::setUpCallFromFTL):
+        (JSC::CallLinkInfo::registerPreservationMode): Deleted.
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::initializeAddressForCall):
+        (JSC::FTL::JITCode::addressForCall):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        (JSC::DirectJITCode::initializeCodeRef):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::NativeJITCode::initializeCodeRef):
+        (JSC::NativeJITCode::addressForCall):
+        (JSC::DirectJITCode::ensureWrappers): Deleted.
+        * jit/JITCode.h:
+        (JSC::JITCode::jitTypeFor):
+        (JSC::JITCode::executableAddress):
+        * jit/JITOperations.cpp:
+        * jit/RegisterPreservationWrapperGenerator.cpp: Removed.
+        * jit/RegisterPreservationWrapperGenerator.h: Removed.
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        * jit/ThunkGenerators.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::setUpCall):
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        (JSC::WebAssemblyExecutable::prepareForExecution):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::generatedJITCodeFor):
+        (JSC::ExecutableBase::entrypointFor):
+        (JSC::ExecutableBase::offsetOfJITCodeWithArityCheckFor):
+        * runtime/RegisterPreservationMode.h: Removed.
+
 2015-09-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused canClearBrowserCookies / canClearBrowserCache protocol methods

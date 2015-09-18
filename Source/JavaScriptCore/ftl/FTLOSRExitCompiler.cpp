@@ -40,7 +40,6 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "OperandsInlines.h"
 #include "JSCInlines.h"
-#include "RegisterPreservationWrapperGenerator.h"
 
 namespace JSC { namespace FTL {
 
@@ -379,9 +378,6 @@ static void compileStub(
     // old frame, and finally we save the various callee-save registers into where the
     // restoration thunk would restore them from.
     
-    ptrdiff_t offset = registerPreservationOffset();
-    RegisterSet toSave = registersToPreserve();
-    
     // Before we start messing with the frame, we need to set aside any registers that the
     // FTL code was preserving.
     for (unsigned i = codeBlock->calleeSaveRegisters()->size(); i--;) {
@@ -397,26 +393,16 @@ static void compileStub(
     // Let's say that the FTL function had failed its arity check. In that case, the stack will
     // contain some extra stuff.
     //
-    // First we compute the padded stack space:
+    // We compute the padded stack space:
     //
     //     paddedStackSpace = roundUp(codeBlock->numParameters - regT2 + 1)
     //
-    // The stack will have regT2 + CallFrameHeaderSize stuff, but above it there will be
-    // paddedStackSpace gunk used by the arity check fail restoration thunk. When that happens
-    // we want to make the stack look like this, from higher addresses down:
+    // The stack will have regT2 + CallFrameHeaderSize stuff.
+    // We want to make the stack look like this, from higher addresses down:
     //
-    //     - register preservation return PC
-    //     - preserved registers
-    //     - arity check fail return PC
     //     - argument padding
     //     - actual arguments
     //     - call frame header
-    //
-    // So that the actual call frame header appears to return to the arity check fail return
-    // PC, and that then returns to the register preservation thunk. The arity check thunk that
-    // we return to will have the padding size encoded into it. It will then know to return
-    // into the register preservation thunk, which uses the argument count to figure out where
-    // registers are preserved.
 
     // This code assumes that we're dealing with FunctionCode.
     RELEASE_ASSERT(codeBlock->codeType() == FunctionCode);
@@ -436,7 +422,6 @@ static void compileStub(
 
     // First set up SP so that our data doesn't get clobbered by signals.
     unsigned conservativeStackDelta =
-        registerPreservationOffset() +
         (exit.m_values.numberOfLocals() + baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters()) * sizeof(Register) +
         maxFrameExtentForSlowPathCall;
     conservativeStackDelta = WTF::roundUpToMultipleOf(
@@ -445,25 +430,12 @@ static void compileStub(
         MacroAssembler::TrustedImm32(-conservativeStackDelta),
         MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     jit.checkStackPointerAlignment();
-    
-    jit.subPtr(
-        MacroAssembler::TrustedImm32(registerPreservationOffset()),
-        MacroAssembler::framePointerRegister);
-    
-    // Copy the old frame data into its new location.
-    jit.add32(MacroAssembler::TrustedImm32(JSStack::CallFrameHeaderSize), GPRInfo::regT2);
-    jit.move(MacroAssembler::framePointerRegister, GPRInfo::regT1);
-    MacroAssembler::Label loop = jit.label();
-    jit.sub32(MacroAssembler::TrustedImm32(1), GPRInfo::regT2);
-    jit.load64(MacroAssembler::Address(GPRInfo::regT1, offset), GPRInfo::regT0);
-    jit.store64(GPRInfo::regT0, GPRInfo::regT1);
-    jit.addPtr(MacroAssembler::TrustedImm32(sizeof(Register)), GPRInfo::regT1);
-    jit.branchTest32(MacroAssembler::NonZero, GPRInfo::regT2).linkTo(loop, &jit);
 
+    RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
     RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!toSave.get(reg) || !reg.isGPR())
+        if (!allFTLCalleeSaves.get(reg) || !reg.isGPR())
             continue;
         unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
         RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);

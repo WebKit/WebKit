@@ -58,7 +58,7 @@ public:
     JITCode();
     ~JITCode();
     
-    CodePtr addressForCall(VM&, ExecutableBase*, ArityCheckMode, RegisterPreservationMode) override;
+    CodePtr addressForCall(ArityCheckMode) override;
     void* executableAddressAtOffset(size_t offset) override;
     void* dataAddressAtOffset(size_t offset) override;
     unsigned offsetOf(void* pointerIntoCode) override;

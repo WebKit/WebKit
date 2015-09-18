@@ -387,7 +387,6 @@ set(JavaScriptCore_SOURCES
     jit/Reg.cpp
     jit/RegisterAtOffset.cpp
     jit/RegisterAtOffsetList.cpp
-    jit/RegisterPreservationWrapperGenerator.cpp
     jit/RegisterSet.cpp
     jit/Repatch.cpp
     jit/ScratchRegisterAllocator.cpp

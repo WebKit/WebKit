@@ -649,7 +649,6 @@
     <ClCompile Include="..\jit\Reg.cpp" />
     <ClCompile Include="..\jit\RegisterAtOffset.cpp" />
     <ClCompile Include="..\jit\RegisterAtOffsetList.cpp" />
-    <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp" />
     <ClCompile Include="..\jit\RegisterSet.cpp" />
     <ClCompile Include="..\jit\Repatch.cpp" />
     <ClCompile Include="..\jit\ScratchRegisterAllocator.cpp" />
@@ -1451,7 +1450,6 @@
     <ClInclude Include="..\jit\RegisterAtOffset.h" />
     <ClInclude Include="..\jit\RegisterAtOffsetList.h" />
     <ClInclude Include="..\jit\RegisterMap.h" />
-    <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />
     <ClInclude Include="..\jit\RegisterSet.h" />
     <ClInclude Include="..\jit\Repatch.h" />
     <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />

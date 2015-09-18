@@ -57,8 +57,6 @@ void ExecutableBase::clearCode()
     m_jitCodeForConstruct = nullptr;
     m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
     m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
-    m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
-    m_jitCodeForConstructWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
 #endif
     m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
     m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
@@ -183,13 +181,11 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     case CodeForCall:
         m_jitCodeForCall = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
         m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-        m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
         m_numParametersForCall = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
         break;
     case CodeForConstruct:
         m_jitCodeForConstruct = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
         m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
-        m_jitCodeForConstructWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
         m_numParametersForConstruct = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
         break;
     }
@@ -745,7 +741,6 @@ void WebAssemblyExecutable::prepareForExecution(ExecState* exec)
 
     m_jitCodeForCall = codeBlock->jitCode();
     m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-    m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
     m_numParametersForCall = codeBlock->numParameters();
 
     m_codeBlockForCall = codeBlock;

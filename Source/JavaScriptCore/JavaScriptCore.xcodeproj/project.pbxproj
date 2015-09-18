@@ -378,9 +378,6 @@
 		0F6B1CB5185FC9E900845D97 /* FTLJSCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CB3185FC9E900845D97 /* FTLJSCall.cpp */; };
 		0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB4185FC9E900845D97 /* FTLJSCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB71861244C00845D97 /* ArityCheckMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F6B1CBA1861244C00845D97 /* RegisterPreservationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB81861244C00845D97 /* RegisterPreservationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F6B1CBD1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */; };
-		0F6B1CBE1861246A00845D97 /* RegisterPreservationWrapperGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B1CC51862C47800845D97 /* FTLUnwindInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */; };
 		0F6B1CC61862C47800845D97 /* FTLUnwindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6C73501AC9F99F00BE1682 /* VariableWriteFireDetail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6C734E1AC9F99F00BE1682 /* VariableWriteFireDetail.cpp */; };
@@ -2209,9 +2206,6 @@
 		0F6B1CB3185FC9E900845D97 /* FTLJSCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSCall.cpp; path = ftl/FTLJSCall.cpp; sourceTree = "<group>"; };
 		0F6B1CB4185FC9E900845D97 /* FTLJSCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSCall.h; path = ftl/FTLJSCall.h; sourceTree = "<group>"; };
 		0F6B1CB71861244C00845D97 /* ArityCheckMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArityCheckMode.h; sourceTree = "<group>"; };
-		0F6B1CB81861244C00845D97 /* RegisterPreservationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterPreservationMode.h; sourceTree = "<group>"; };
-		0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterPreservationWrapperGenerator.cpp; sourceTree = "<group>"; };
-		0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterPreservationWrapperGenerator.h; sourceTree = "<group>"; };
 		0F6B1CC11862C47800845D97 /* FTLUnwindInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLUnwindInfo.cpp; path = ftl/FTLUnwindInfo.cpp; sourceTree = "<group>"; };
 		0F6B1CC21862C47800845D97 /* FTLUnwindInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLUnwindInfo.h; path = ftl/FTLUnwindInfo.h; sourceTree = "<group>"; };
 		0F6C734E1AC9F99F00BE1682 /* VariableWriteFireDetail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableWriteFireDetail.cpp; sourceTree = "<group>"; };
@@ -4157,8 +4151,6 @@
 				6540C79C1B82D99D000F6B79 /* RegisterAtOffsetList.cpp */,
 				6540C79D1B82D99D000F6B79 /* RegisterAtOffsetList.h */,
 				623A37EB1B87A7BD00754209 /* RegisterMap.h */,
-				0F6B1CBB1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp */,
-				0F6B1CBC1861246A00845D97 /* RegisterPreservationWrapperGenerator.h */,
 				0FC3141418146D7000033232 /* RegisterSet.cpp */,
 				0FC314101814559100033232 /* RegisterSet.h */,
 				0F24E54917EE274900ABB217 /* Repatch.cpp */,
@@ -4949,7 +4941,6 @@
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
-				0F6B1CB81861244C00845D97 /* RegisterPreservationMode.h */,
 				0FB7F39115ED8E3800F167B2 /* Reject.h */,
 				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
 				527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */,
@@ -6745,8 +6736,6 @@
 				BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */,
 				BC18C45D0E16F5CD00B34460 /* Register.h in Headers */,
 				969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */,
-				0F6B1CBA1861244C00845D97 /* RegisterPreservationMode.h in Headers */,
-				0F6B1CBE1861246A00845D97 /* RegisterPreservationWrapperGenerator.h in Headers */,
 				0FC314121814559100033232 /* RegisterSet.h in Headers */,
 				0F50AF3C193E8B3900674EE8 /* DFGStructureClobberState.h in Headers */,
 				A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */,
@@ -7926,7 +7915,6 @@
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
 				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
-				0F6B1CBD1861246A00845D97 /* RegisterPreservationWrapperGenerator.cpp in Sources */,
 				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,
 				A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */,
 				E33F50781B84225700413856 /* JSInternalPromiseConstructor.cpp in Sources */,

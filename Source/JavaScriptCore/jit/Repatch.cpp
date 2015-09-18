@@ -795,8 +795,7 @@ void linkPolymorphicCall(
         
         ASSERT(variant.executable()->hasJITCodeForCall());
         MacroAssemblerCodePtr codePtr =
-            variant.executable()->generatedJITCodeForCall()->addressForCall(
-                *vm, variant.executable(), ArityCheckNotRequired, callLinkInfo.registerPreservationMode());
+            variant.executable()->generatedJITCodeForCall()->addressForCall(ArityCheckNotRequired);
         
         if (fastCounts) {
             stubJit.add32(

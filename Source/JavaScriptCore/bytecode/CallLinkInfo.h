@@ -73,8 +73,7 @@ public:
     }
 
     CallLinkInfo()
-        : m_registerPreservationMode(static_cast<unsigned>(RegisterPreservationNotRequired))
-        , m_hasSeenShouldRepatch(false)
+        : m_hasSeenShouldRepatch(false)
         , m_hasSeenClosure(false)
         , m_clearedByGC(false)
         , m_allowStubs(true)
@@ -135,11 +134,6 @@ public:
         return isVarargsCallType(static_cast<CallType>(m_callType));
     }
 
-    RegisterPreservationMode registerPreservationMode() const
-    {
-        return static_cast<RegisterPreservationMode>(m_registerPreservationMode);
-    }
-
     bool isLinked() { return m_stub || m_callee; }
     void unlink(VM&);
 
@@ -169,7 +163,6 @@ public:
         CodeLocationNearCall callReturnLocation, CodeLocationDataLabelPtr hotPathBegin,
         CodeLocationNearCall hotPathOther, unsigned calleeGPR)
     {
-        m_registerPreservationMode = static_cast<unsigned>(RegisterPreservationNotRequired);
         m_callType = callType;
         m_codeOrigin = codeOrigin;
         m_callReturnLocation = callReturnLocation;
@@ -346,7 +339,6 @@ private:
     WriteBarrier<JSFunction> m_lastSeenCallee;
     RefPtr<PolymorphicCallStubRoutine> m_stub;
     RefPtr<JITStubRoutine> m_slowStub;
-    unsigned m_registerPreservationMode : 1; // Real type is RegisterPreservationMode
     bool m_hasSeenShouldRepatch : 1;
     bool m_hasSeenClosure : 1;
     bool m_clearedByGC : 1;

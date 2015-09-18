@@ -357,9 +357,7 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
     if (kind == Prologue)
         LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), 0);
     ASSERT(kind == ArityCheck);
-    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(
-        *codeBlock->vm(), codeBlock->ownerExecutable(), MustCheckArity,
-        RegisterPreservationNotRequired).executableAddress(), 0);
+    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(MustCheckArity).executableAddress(), 0);
 }
 #else // ENABLE(JIT)
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char*, EntryKind)
@@ -1142,7 +1140,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
 #endif
 
     if (executable->isHostFunction()) {
-        codePtr = executable->entrypointFor(vm, kind, MustCheckArity, RegisterPreservationNotRequired);
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
     } else if (!isWebAssemblyExecutable) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1159,7 +1157,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             arity = MustCheckArity;
         else
             arity = ArityCheckNotRequired;
-        codePtr = functionExecutable->entrypointFor(vm, kind, arity, RegisterPreservationNotRequired);
+        codePtr = functionExecutable->entrypointFor(kind, arity);
     } else {
 #if ENABLE(WEBASSEMBLY)
         WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
@@ -1171,7 +1169,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             arity = MustCheckArity;
         else
             arity = ArityCheckNotRequired;
-        codePtr = webAssemblyExecutable->entrypointFor(vm, kind, arity, RegisterPreservationNotRequired);
+        codePtr = webAssemblyExecutable->entrypointFor(kind, arity);
 #endif
     }
     

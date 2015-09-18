@@ -202,7 +202,7 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     jit.loadPtr(
         CCallHelpers::Address(
             GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(
-                callLinkInfo.specializationKind(), callLinkInfo.registerPreservationMode())),
+                callLinkInfo.specializationKind())),
         GPRInfo::regT4);
     slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
     

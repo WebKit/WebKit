@@ -27,7 +27,6 @@
 #define ThunkGenerators_h
 
 #include "CodeSpecializationKind.h"
-#include "RegisterPreservationMode.h"
 #include "ThunkGenerator.h"
 
 #if ENABLE(JIT)
@@ -38,7 +37,7 @@ class CCallHelpers;
 
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 
-MacroAssemblerCodeRef linkCallThunk(VM*, CallLinkInfo&, CodeSpecializationKind, RegisterPreservationMode);
+MacroAssemblerCodeRef linkCallThunk(VM*, CallLinkInfo&, CodeSpecializationKind);
 MacroAssemblerCodeRef linkCallThunkGenerator(VM*);
 MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM*);
 

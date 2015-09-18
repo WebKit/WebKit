@@ -1497,9 +1497,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorProtocolObjects.cpp">
       <Filter>Derived Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.cpp">
       <Filter>Derived Sources</Filter>
     </ClCompile>
@@ -4040,9 +4037,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
-    <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h">
-      <Filter>jit</Filter>
-    </ClInclude>
     <ClInclude Include="..\ftl\FTLAbbreviatedTypes.h">
       <Filter>ftl</Filter>
     </ClInclude>
