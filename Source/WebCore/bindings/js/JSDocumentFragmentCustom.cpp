@@ -28,6 +28,7 @@
 
 #include "ExceptionCode.h"
 #include "JSNodeOrString.h"
+#include "JSShadowRoot.h"
 
 using namespace JSC;
 
@@ -49,6 +50,31 @@ JSValue JSDocumentFragment::append(ExecState* state)
     setDOMException(state, ec);
 
     return jsUndefined();
+}
+
+static inline JSValue createNewDocumentFragmentWrapper(JSDOMGlobalObject& globalObject, DocumentFragment& impl)
+{
+#if ENABLE(SHADOW_DOM)
+    if (impl.isShadowRoot())
+        return createNewWrapper<JSShadowRoot>(&globalObject, &static_cast<ShadowRoot&>(impl));
+#endif
+    return createNewWrapper<JSDocumentFragment>(&globalObject, &impl);
+}
+
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment* impl)
+{
+    return impl ? createNewDocumentFragmentWrapper(*globalObject, *impl) : jsNull();
+}
+
+JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, DocumentFragment* impl)
+{
+    if (!impl)
+        return jsNull();
+
+    if (JSValue result = getExistingWrapper<JSDocumentFragment>(globalObject, impl))
+        return result;
+
+    return createNewDocumentFragmentWrapper(*globalObject, *impl);
 }
 
 } // namespace WebCore
