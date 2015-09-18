@@ -1,3 +1,14 @@
+2015-09-18  Andy Estes  <aestes@apple.com>
+
+        [iOS] did{Start,Finish}LoadForQuickLookDocumentInMainFrame is never called on WKNavigationDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=149360
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame): Called on m_navigationDelegate if non-null.
+        (WebKit::WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame): Ditto.
+
 2015-09-18  Beth Dakin  <bdakin@apple.com>
 
         Snapshots broken on iOS

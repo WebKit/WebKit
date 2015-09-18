@@ -1,3 +1,20 @@
+2015-09-18  Andy Estes  <aestes@apple.com>
+
+        [iOS] did{Start,Finish}LoadForQuickLookDocumentInMainFrame is never called on WKNavigationDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=149360
+
+        Reviewed by Tim Horton.
+
+        Added an API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/QuickLook.mm: Added.
+        (-[QuickLookNavigationDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]):
+        (-[QuickLookNavigationDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]):
+        (-[QuickLookNavigationDelegate webView:didFinishNavigation:]):
+        (TEST):
+        * TestWebKitAPI/ios/pages.pages: Added.
+
 2015-09-18  Nan Wang  <n_wang@apple.com>
 
         AX: Implement ARIA 1.1 @aria-current on iOS

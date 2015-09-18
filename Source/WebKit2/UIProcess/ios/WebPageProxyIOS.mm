@@ -51,6 +51,7 @@
 
 #if USE(QUICK_LOOK)
 #import "APILoaderClient.h"
+#import "APINavigationClient.h"
 #import <wtf/text/WTFString.h>
 #endif
 
@@ -951,12 +952,18 @@ void WebPageProxy::didStartLoadForQuickLookDocumentInMainFrame(const String& fil
 {
     // Ensure that fileName isn't really a path name
     static_assert(notFound + 1 == 0, "The following line assumes WTF::notFound equals -1");
-    m_loaderClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
+    if (m_navigationClient)
+        m_navigationClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
+    else
+        m_loaderClient->didStartLoadForQuickLookDocumentInMainFrame(fileName.substring(fileName.reverseFind('/') + 1), uti);
 }
 
 void WebPageProxy::didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData& data)
 {
-    m_loaderClient->didFinishLoadForQuickLookDocumentInMainFrame(data);
+    if (m_navigationClient)
+        m_navigationClient->didFinishLoadForQuickLookDocumentInMainFrame(data);
+    else
+        m_loaderClient->didFinishLoadForQuickLookDocumentInMainFrame(data);
 }
 #endif
 
