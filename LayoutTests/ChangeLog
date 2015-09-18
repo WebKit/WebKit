@@ -1,5 +1,12 @@
 2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
 
+        REGRESSION: http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=132388
+
+        * TestExpectations:
+
+2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
+
         line-break-language-sensitive tests should be marked as flaky
         https://bugs.webkit.org/show_bug.cgi?id=149349
 
