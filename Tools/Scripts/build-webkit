@@ -241,34 +241,19 @@ if (isCMakeBuild()) {
     buildCMakeProjectOrExit($clean, cmakeBasedPortName(), $prefixPath, $makeArgs, (cmakeBasedPortArguments(), @featureArgs), $cmakeArgs);
 }
 
-# Build, and abort if the build fails.
-for my $dir (@projects) {
-    chdir $dir or die;
-    $result = 0;
-
-    my $project = basename($dir);
-    my $baseProductDir = baseProductDir();
-    if (isAppleMacWebKit()) {
-        my @local_options = @options;
-        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
-        push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
-        my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
-        $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
-    } elsif (isAppleWinWebKit() || isWinCairo()) {
-        chdirWebKit();
-        if (exitStatus(generateBuildSystemFromCMakeProject(isWinCairo() ? "WinCairo" : "AppleWin"))) {
-            die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
-        }
-        if (canUseNinja()) {
-            chdir "WebKitBuild/" . configuration();
-            $result = system("ninja");
-        } else {
-            $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
-        }
-    }
-    # Various build* calls above may change the CWD.
+my $baseProductDir = baseProductDir();
+if (isAppleWinWebKit() || isWinCairo()) {
     chdirWebKit();
-
+    if (exitStatus(generateBuildSystemFromCMakeProject(isWinCairo() ? "WinCairo" : "AppleWin"))) {
+        die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
+    }
+    chdirWebKit();
+    if (canUseNinja()) {
+        chdir "WebKitBuild/" . configuration();
+        $result = system("ninja");
+    } else {
+        $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
+    }
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
         if (isAppleWinWebKit() || isWinCairo()) {
@@ -277,6 +262,27 @@ for my $dir (@projects) {
             print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";
         }
         exit exitStatus($result);
+    }
+} elsif (isAppleMacWebKit()) {
+    # Build, and abort if the build fails.
+    for my $dir (@projects) {
+        chdir $dir or die;
+        $result = 0;
+
+        my $project = basename($dir);
+        
+        my @local_options = @options;
+        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
+        push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
+        my $projectPath = $project =~ /gtest/ ? "xcode/gtest" : $project;
+        $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
+
+        # Various build* calls above may change the CWD.
+        chdirWebKit();
+
+        if (exitStatus($result)) {
+            exit exitStatus($result);
+        }
     }
 }
 

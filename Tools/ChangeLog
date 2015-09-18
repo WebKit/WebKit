@@ -1,3 +1,19 @@
+2015-09-18  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent build-webkit from building four times on Windows 
+        https://bugs.webkit.org/show_bug.cgi?id=149336
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/build-webkit:
+        Move the Windows code out of the for loop iterating over each subdirectory to be build.
+        They're built all at once.
+        * Scripts/webkitdirs.pm:
+        (buildVisualStudioProject):
+        (cmakeGeneratedBuildfile):
+        Don't generate the Visual Studio solution if it already exists.
+        It will run CMake again if necessary.
+
 2015-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] WTR fails to set the key window in the UIKit sense

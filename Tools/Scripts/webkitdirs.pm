@@ -1678,7 +1678,6 @@ sub buildVisualStudioProject
     my $warningLogging = "/flp1:LogFile=" . $warningLogFile . ";WarningsOnly";
 
     my @command = ($vcBuildPath, "/verbosity:minimal", $project, $action, $config, $platform, "/fl", $errorLogging, "/fl1", $warningLogging);
-
     print join(" ", @command), "\n";
     return system @command;
 }
@@ -1812,6 +1811,8 @@ sub cmakeGeneratedBuildfile(@)
     my ($willUseNinja) = @_;
     if ($willUseNinja) {
         return File::Spec->catfile(baseProductDir(), configuration(), "build.ninja")
+    } elsif (isWindows() || isCygwin()) {
+        return File::Spec->catfile(baseProductDir(), configuration(), "WebKit.sln")
     } else {
         return File::Spec->catfile(baseProductDir(), configuration(), "Makefile")
     }
