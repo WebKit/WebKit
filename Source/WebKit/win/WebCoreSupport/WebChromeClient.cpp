@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -849,4 +849,9 @@ void WebChromeClient::AXFinishFrameLoad()
     m_webView->accessibilityDelegate(&delegate);
     if (delegate)
         delegate->fireFrameLoadFinishedEvents();
+}
+
+bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView* frameView) const
+{
+    return frameView && frameView->frame().isMainFrame();
 }

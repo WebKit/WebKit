@@ -82,7 +82,7 @@ void WebTiledBackingLayerWin::displayCallback(CACFLayerRef caLayer, CGContextRef
 
     CGRect layerBounds = owner()->bounds();
     PlatformCALayer::LayerType layerType = owner()->layerType();
-    ASSERT(layerType == PlatformCALayer::LayerTypeTiledBackingLayer);
+    ASSERT(layerType == PlatformCALayer::LayerTypeTiledBackingLayer || layerType == PlatformCALayer::LayerTypePageTiledBackingLayer);
 
     PlatformCALayerClient* client = owner()->owner();
     GraphicsLayer::CompositingCoordinatesOrientation orientation = client->platformCALayerContentsOrientation();

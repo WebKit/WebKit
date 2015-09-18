@@ -1,3 +1,18 @@
+2015-09-18  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use tiled drawing for main background layer
+        https://bugs.webkit.org/show_bug.cgi?id=149347
+        <rdar://problem/22759632>
+
+        Reviewed by Alex Christensen.
+
+        Instruct WebCore to use tiled drawing for the root layer
+        of the display.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::shouldUseTiledBackingForFrameView): Added.
+        * WebCoreSupport/WebChromeClient.h:
+
 2015-09-17  Brian Burg  <bburg@apple.com>
 
         ASSERT(!m_frontendRouter->hasLocalFrontend()) when running Web Inspector tests

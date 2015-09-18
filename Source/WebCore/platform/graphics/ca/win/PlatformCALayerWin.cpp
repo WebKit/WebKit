@@ -29,6 +29,7 @@
 
 #include "AbstractCACFLayerTreeHost.h"
 #include "FontCascade.h"
+#include "GDIUtilities.h"
 #include "GraphicsContext.h"
 #include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"
@@ -46,7 +47,7 @@ using namespace WebCore;
 
 PassRefPtr<PlatformCALayer> PlatformCALayerWin::create(LayerType layerType, PlatformCALayerClient* owner)
 {
-    return adoptRef(new PlatformCALayerWin(layerType, 0, owner));
+    return adoptRef(new PlatformCALayerWin(layerType, nullptr, owner));
 }
 
 PassRefPtr<PlatformCALayer> PlatformCALayerWin::create(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
@@ -65,7 +66,7 @@ static CFStringRef toCACFFilterType(PlatformCALayer::FilterType type)
     case PlatformCALayer::Linear: return kCACFFilterLinear;
     case PlatformCALayer::Nearest: return kCACFFilterNearest;
     case PlatformCALayer::Trilinear: return kCACFFilterTrilinear;
-    default: return 0;
+    default: return nullptr;
     }
 }
 
@@ -74,7 +75,7 @@ static AbstractCACFLayerTreeHost* layerTreeHostForLayer(const PlatformCALayer* l
     // We need the AbstractCACFLayerTreeHost associated with this layer, which is stored in the UserData of the CACFContext
     void* userData = wkCACFLayerGetContextUserData(layer->platformLayer());
     if (!userData)
-        return 0;
+        return nullptr;
 
     return static_cast<AbstractCACFLayerTreeHost*>(userData);
 }
@@ -92,10 +93,10 @@ static PlatformCALayerWinInternal* intern(void* layer)
 PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
 {
     if (!platformLayer)
-        return 0;
+        return nullptr;
     
     PlatformCALayerWinInternal* layerIntern = intern(platformLayer);
-    return layerIntern ? layerIntern->owner() : 0;
+    return layerIntern ? layerIntern->owner() : nullptr;
 }
 
 PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(CGContextRef, PlatformCALayer*)
@@ -141,7 +142,7 @@ PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer
     m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
 
 #if HAVE(CACFLAYER_SETCONTENTSSCALE)
-    CACFLayerSetContentsScale(m_layer.get(), owner ? owner->platformCALayerDeviceScaleFactor() : 1.0f);
+    CACFLayerSetContentsScale(m_layer.get(), owner ? owner->platformCALayerDeviceScaleFactor() : deviceScaleFactorForWindow(nullptr));
 #endif
 
     // Create the PlatformCALayerWinInternal object and point to it in the userdata.
@@ -354,7 +355,7 @@ PassRefPtr<PlatformCAAnimation> PlatformCALayerWin::animationForKey(const String
 {
     HashMap<String, RefPtr<PlatformCAAnimation> >::iterator it = m_animations.find(key);
     if (it == m_animations.end())
-        return 0;
+        return nullptr;
 
     return it->value;
 }

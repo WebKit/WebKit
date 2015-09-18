@@ -3248,7 +3248,11 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
 {
     if (isPageTiledBackingLayer()) {
         color = Color(0, 0, 128, 128); // tile cache layer: dark blue
+#if OS(WINDOWS)
+        width = 1.0;
+#else
         width = 0.5;
+#endif
         return;
     }
 
