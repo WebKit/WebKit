@@ -157,16 +157,16 @@
     {
         "name": "Web Components",
         "status": {
-            "status": "No active development"
+            "status": "Partial Support"
         },
         "url": "http://www.w3.org/wiki/WebComponents/",
-        "keywords": ["web components", "shadow dom", "html imports", "custom element", "template element"],
+        "keywords": ["web components", "shadow dom", "html imports", "custom elements", "template element"],
         "category": "webapps",
         "description": "A collection of technologies to improve modularization of DOM subtrees.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Ryosuke Niwa",
+            "twitter": "@RyosukeNiwa",
+            "email": "rniwa@webkit.org"
         }
     },
     {
@@ -458,15 +458,16 @@
     {
         "name": "Shadow DOM",
         "status": {
-            "status": "No active development"
+            "status": "In Development"
         },
         "url": "http://w3c.github.io/webcomponents/spec/shadow/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=148695",
         "specification": "Web Components",
-        "description": "Functional encapsulation of HTML, CSS and JavaScript for Web Components.",
+        "description": "Functional encapsulation of HTML and CSS for Web Components.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Ryosuke Niwa",
+            "twitter": "@RyosukeNiwa",
+            "email": "rniwa@webkit.org"
         }
     },
     {
