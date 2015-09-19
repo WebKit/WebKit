@@ -2567,6 +2567,15 @@ void Document::setBodyOrFrameset(PassRefPtr<HTMLElement> prpNewBody, ExceptionCo
         documentElement()->appendChild(newBody.releaseNonNull(), ec);
 }
 
+Location* Document::location() const
+{
+    auto* window = domWindow();
+    if (!window)
+        return nullptr;
+
+    return window->location();
+}
+
 HTMLHeadElement* Document::head()
 {
     if (auto element = documentElement())

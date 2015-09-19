@@ -744,7 +744,7 @@ Performance* DOMWindow::performance() const
 Location* DOMWindow::location() const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
     if (!m_location)
         m_location = Location::create(m_frame);
     return m_location.get();

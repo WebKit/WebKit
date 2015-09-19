@@ -123,6 +123,7 @@ class LayoutRect;
 class LiveNodeList;
 class JSNode;
 class Locale;
+class Location;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
 class MediaPlaybackTargetClient;
@@ -900,6 +901,8 @@ public:
     HTMLBodyElement* body() const;
     WEBCORE_EXPORT HTMLElement* bodyOrFrameset() const;
     void setBodyOrFrameset(PassRefPtr<HTMLElement>, ExceptionCode&);
+
+    Location* location() const;
 
     WEBCORE_EXPORT HTMLHeadElement* head();
 

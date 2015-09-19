@@ -50,21 +50,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSDocument::location(ExecState* exec) const
-{
-    RefPtr<Frame> frame = impl().frame();
-    if (!frame)
-        return jsNull();
-
-    RefPtr<Location> location = frame->document()->domWindow()->location();
-    if (JSObject* wrapper = getCachedWrapper(globalObject()->world(), location.get()))
-        return wrapper;
-
-    JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec->vm(), globalObject()), globalObject(), *location);
-    cacheWrapper(globalObject()->world(), location.get(), jsLocation);
-    return jsLocation;
-}
-
 void JSDocument::setLocation(ExecState* exec, JSValue value)
 {
     String locationString = value.toString(exec)->value(exec);
