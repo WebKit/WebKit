@@ -1,3 +1,19 @@
+2015-09-19  Saam barati  <sbarati@apple.com>
+
+        VariableEnvironmentNode should inherit from ParserArenaDeletable because VariableEnvironment's must have their destructors run
+        https://bugs.webkit.org/show_bug.cgi?id=149359
+
+        Reviewed by Andreas Kling.
+
+        VariableEnvironment must have its destructor run.
+        Therefore, VariableEnvironmentNode should inherit from ParserArenaDeletable.
+        Also, anything that inherits from VariableEnvironmentNode must use
+        ParserArenaDeletable's operator new. Also, any other nodes that own
+        a VariableEnvironment must also have their destructors run.
+
+        * parser/Nodes.h:
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+
 2015-09-18  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Remove duplicate code in the WebAssembly parser

@@ -2850,13 +2850,13 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             tryData = generator.pushTry(here.get());
         }
 
-        generator.emitPushCatchScope(m_thrownValueIdent, thrownValueRegister.get(), m_catchEnvironment);
+        generator.emitPushCatchScope(m_thrownValueIdent, thrownValueRegister.get(), m_lexicalVariables);
         generator.emitProfileControlFlow(m_tryBlock->endOffset() + 1);
         if (m_finallyBlock)
             generator.emitNode(dst, m_catchBlock);
         else
             generator.emitNodeInTailPosition(dst, m_catchBlock);
-        generator.emitPopCatchScope(m_catchEnvironment);
+        generator.emitPopCatchScope(m_lexicalVariables);
         generator.emitLabel(catchEndLabel.get());
     }
 

@@ -878,12 +878,12 @@ namespace JSC {
 
     inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier& thrownValueIdent, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock)
         : StatementNode(location)
+        , VariableEnvironmentNode(catchEnvironment)
         , m_tryBlock(tryBlock)
         , m_thrownValueIdent(thrownValueIdent)
         , m_catchBlock(catchBlock)
         , m_finallyBlock(finallyBlock)
     {
-        m_catchEnvironment.swap(catchEnvironment);
     }
 
     inline FunctionParameters::FunctionParameters()
