@@ -91,6 +91,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (strong) DOMTestObj *strictTypeCheckingAttribute;
 @property int customAttr;
 @property int withScriptStateAttribute;
+@property int withCallWithAndSetterCallWithAttribute;
 @property (strong) DOMTestObj *withScriptExecutionContextAttribute;
 @property (strong) DOMTestObj *withScriptStateAttributeRaises;
 @property (strong) DOMTestObj *withScriptExecutionContextAttributeRaises;

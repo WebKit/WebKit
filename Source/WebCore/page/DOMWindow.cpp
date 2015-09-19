@@ -1965,7 +1965,7 @@ void DOMWindow::finishedLoading()
     }
 }
 
-void DOMWindow::setLocation(const String& urlString, DOMWindow& activeWindow, DOMWindow& firstWindow, SetLocationLocking locking)
+void DOMWindow::setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& urlString, SetLocationLocking locking)
 {
     if (!isCurrentlyDisplayedInFrame())
         return;

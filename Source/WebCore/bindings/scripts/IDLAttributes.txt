@@ -24,7 +24,7 @@ CPPPureInterface
 CachedAttribute
 CallbackNeedsOperatorEqual
 Callback=FunctionOnly
-CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
+CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 CheckSecurity
 CheckSecurityForNode
 Clamp
@@ -109,6 +109,7 @@ ReplaceableConstructor
 ReportExtraMemoryCost
 RequiresExistingAtomicString
 SetterRaisesException
+SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 SkipVTableValidation
 StrictTypeChecking
 SuppressToJSObject

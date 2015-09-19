@@ -1213,6 +1213,27 @@ WEBKIT_API void
 webkit_dom_test_obj_set_with_script_state_attribute(WebKitDOMTestObj* self, glong value);
 
 /**
+ * webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: A #glong
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API glong
+webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #glong
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self, glong value);
+
+/**
  * webkit_dom_test_obj_get_with_script_execution_context_attribute:
  * @self: A #WebKitDOMTestObj
  *

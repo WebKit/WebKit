@@ -462,6 +462,18 @@
     IMPL->setWithScriptStateAttribute(newWithScriptStateAttribute);
 }
 
+- (int)withCallWithAndSetterCallWithAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->withCallWithAndSetterCallWithAttribute();
+}
+
+- (void)setWithCallWithAndSetterCallWithAttribute:(int)newWithCallWithAndSetterCallWithAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setWithCallWithAndSetterCallWithAttribute(newWithCallWithAndSetterCallWithAttribute);
+}
+
 - (DOMTestObj *)withScriptExecutionContextAttribute
 {
     WebCore::JSMainThreadNullState state;

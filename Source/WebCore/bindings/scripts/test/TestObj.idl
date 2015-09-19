@@ -132,6 +132,7 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [CallWith=ScriptArguments&CallStack] void withScriptArgumentsAndCallStack();
 
     [CallWith=ScriptState] attribute long withScriptStateAttribute;
+    [CallWith=ScriptState, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
     [CallWith=ScriptState, GetterRaisesException] attribute TestObj withScriptStateAttributeRaises;
     [CallWith=ScriptExecutionContext, GetterRaisesException] attribute TestObj withScriptExecutionContextAttributeRaises;

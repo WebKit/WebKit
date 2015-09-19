@@ -488,7 +488,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
         return;
 
     if (Location* location = impl().location())
-        location->setHref(locationString, activeDOMWindow(exec), firstDOMWindow(exec));
+        location->setHref(activeDOMWindow(exec), firstDOMWindow(exec), locationString);
 }
 
 JSValue JSDOMWindow::event(ExecState* exec) const

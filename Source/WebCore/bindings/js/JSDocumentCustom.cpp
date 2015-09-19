@@ -50,6 +50,7 @@ using namespace JSC;
 
 namespace WebCore {
 
+// FIXME: Require support for [PutForward=XXX] Web IDL extended attribute.
 void JSDocument::setLocation(ExecState* exec, JSValue value)
 {
     String locationString = value.toString(exec)->value(exec);
@@ -61,7 +62,7 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
         return;
 
     if (RefPtr<Location> location = frame->document()->domWindow()->location())
-        location->setHref(locationString, activeDOMWindow(exec), firstDOMWindow(exec));
+        location->setHref(activeDOMWindow(exec), firstDOMWindow(exec), locationString);
 }
 
 static inline JSValue createNewDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObject, Document& document)

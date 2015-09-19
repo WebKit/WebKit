@@ -107,6 +107,7 @@ enum {
     PROP_STRING_ATTR_WITH_SETTER_EXCEPTION,
     PROP_STRICT_TYPE_CHECKING_ATTRIBUTE,
     PROP_WITH_SCRIPT_STATE_ATTRIBUTE,
+    PROP_WITH_CALL_WITH_AND_SETTER_CALL_WITH_ATTRIBUTE,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE,
     PROP_WITH_SCRIPT_STATE_ATTRIBUTE_RAISES,
     PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE_RAISES,
@@ -219,6 +220,9 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
         break;
     case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
         webkit_dom_test_obj_set_with_script_state_attribute(self, g_value_get_long(value));
+        break;
+    case PROP_WITH_CALL_WITH_AND_SETTER_CALL_WITH_ATTRIBUTE:
+        webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute(self, g_value_get_long(value));
         break;
     case PROP_CONDITIONAL_ATTR1:
         webkit_dom_test_obj_set_conditional_attr1(self, g_value_get_long(value));
@@ -341,6 +345,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_WITH_SCRIPT_STATE_ATTRIBUTE:
         g_value_set_long(value, webkit_dom_test_obj_get_with_script_state_attribute(self));
+        break;
+    case PROP_WITH_CALL_WITH_AND_SETTER_CALL_WITH_ATTRIBUTE:
+        g_value_set_long(value, webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute(self));
         break;
     case PROP_WITH_SCRIPT_EXECUTION_CONTEXT_ATTRIBUTE:
         g_value_set_object(value, webkit_dom_test_obj_get_with_script_execution_context_attribute(self));
@@ -736,6 +743,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "with-script-state-attribute",
             "TestObj:with-script-state-attribute",
             "read-write glong TestObj:with-script-state-attribute",
+            G_MINLONG, G_MAXLONG, 0,
+            WEBKIT_PARAM_READWRITE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_WITH_CALL_WITH_AND_SETTER_CALL_WITH_ATTRIBUTE,
+        g_param_spec_long(
+            "with-call-with-and-setter-call-with-attribute",
+            "TestObj:with-call-with-and-setter-call-with-attribute",
+            "read-write glong TestObj:with-call-with-and-setter-call-with-attribute",
             G_MINLONG, G_MAXLONG, 0,
             WEBKIT_PARAM_READWRITE));
 
@@ -2043,6 +2060,23 @@ void webkit_dom_test_obj_set_with_script_state_attribute(WebKitDOMTestObj* self,
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     WebCore::TestObj* item = WebKit::core(self);
     item->setWithScriptStateAttribute(value);
+}
+
+glong webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    glong result = item->withCallWithAndSetterCallWithAttribute();
+    return result;
+}
+
+void webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self, glong value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setWithCallWithAndSetterCallWithAttribute(value);
 }
 
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_attribute(WebKitDOMTestObj* self)

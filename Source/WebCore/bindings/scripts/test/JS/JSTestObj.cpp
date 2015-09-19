@@ -238,6 +238,8 @@ JSC::EncodedJSValue jsTestObjOnfoo(JSC::ExecState*, JSC::JSObject*, JSC::Encoded
 void setJSTestObjOnfoo(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjWithScriptStateAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -531,6 +533,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "strictTypeCheckingAttribute", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStrictTypeCheckingAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStrictTypeCheckingAttribute) } },
     { "onfoo", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjOnfoo), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjOnfoo) } },
     { "withScriptStateAttribute", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptStateAttribute) } },
+    { "withCallWithAndSetterCallWithAttribute", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithCallWithAndSetterCallWithAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithCallWithAndSetterCallWithAttribute) } },
     { "withScriptExecutionContextAttribute", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAttribute) } },
     { "withScriptStateAttributeRaises", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttributeRaises), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptStateAttributeRaises) } },
     { "withScriptExecutionContextAttributeRaises", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttributeRaises), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAttributeRaises) } },
@@ -1323,6 +1326,23 @@ EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* exec, JSObject* slot
     }
     auto& impl = castedThis->impl();
     JSValue result = jsNumber(impl.withScriptStateAttribute(exec));
+    return JSValue::encode(result);
+}
+
+
+EncodedJSValue jsTestObjWithCallWithAndSetterCallWithAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestObj", "withCallWithAndSetterCallWithAttribute");
+        return throwGetterTypeError(*exec, "TestObj", "withCallWithAndSetterCallWithAttribute");
+    }
+    auto& impl = castedThis->impl();
+    JSValue result = jsNumber(impl.withCallWithAndSetterCallWithAttribute(exec));
     return JSValue::encode(result);
 }
 
@@ -2547,6 +2567,26 @@ void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* baseObject,
     if (UNLIKELY(exec->hadException()))
         return;
     impl.setWithScriptStateAttribute(exec, nativeValue);
+}
+
+
+void setJSTestObjWithCallWithAndSetterCallWithAttribute(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "withCallWithAndSetterCallWithAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "withCallWithAndSetterCallWithAttribute");
+        return;
+    }
+    auto& impl = castedThis->impl();
+    int nativeValue = toInt32(exec, value, NormalConversion);
+    if (UNLIKELY(exec->hadException()))
+        return;
+    impl.setWithCallWithAndSetterCallWithAttribute(exec, activeDOMWindow(exec), firstDOMWindow(exec), nativeValue);
 }
 
 

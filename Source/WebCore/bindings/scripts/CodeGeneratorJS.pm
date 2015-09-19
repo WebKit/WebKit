@@ -2733,6 +2733,7 @@ sub GenerateImplementation
                         $functionName = "impl.${functionName}";
                     }
 
+                    unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"SetterCallWith"}, \@implContent, ""));
                     unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, ""));
 
                     push(@arguments, "ec") if $setterRaisesException;
@@ -3176,9 +3177,7 @@ sub GenerateCallWith
     my $function = shift;
 
     my @callWithArgs;
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
-        push(@callWithArgs, "exec");
-    }
+    push(@callWithArgs, "exec") if $codeGenerator->ExtendedAttributeContains($callWith, "ScriptState");
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, "    auto* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();\n");
         push(@$outputArray, "    if (!scriptContext)\n");
@@ -3191,6 +3190,9 @@ sub GenerateCallWith
         $implIncludes{"<inspector/ScriptCallStackFactory.h>"} = 1;
         push(@callWithArgs, "scriptArguments.release()");
     }
+    push(@callWithArgs, "activeDOMWindow(exec)") if $codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow");
+    push(@callWithArgs, "firstDOMWindow(exec)") if $codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow");
+
     return @callWithArgs;
 }
 

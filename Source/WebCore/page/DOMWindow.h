@@ -152,7 +152,7 @@ namespace WebCore {
         Navigator* clientInformation() const { return navigator(); }
 
         Location* location() const;
-        void setLocation(const String& location, DOMWindow& activeWindow, DOMWindow& firstWindow,
+        void setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& location,
             SetLocationLocking = LockHistoryBasedOnGestureState);
 
         DOMSelection* getSelection();

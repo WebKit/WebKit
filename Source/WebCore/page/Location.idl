@@ -37,20 +37,20 @@
     JSCustomDefineOwnPropertyOnPrototype,
     Unforgeable
 ] interface Location {
-    [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString href;
 
-    [Custom, ForwardDeclareInHeader] void assign([Default=Undefined] optional DOMString url);
-    [Custom, ForwardDeclareInHeader] void replace([Default=Undefined] optional DOMString url);
-    [Custom, ForwardDeclareInHeader] void reload();
+    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void assign([Default=Undefined] optional DOMString url);
+    [CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace([Default=Undefined] optional DOMString url);
+    [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes
-    [CustomSetter] attribute DOMString protocol;
-    [CustomSetter] attribute DOMString host;
-    [CustomSetter] attribute DOMString hostname;
-    [CustomSetter] attribute DOMString port;
-    [CustomSetter] attribute DOMString pathname;
-    [CustomSetter] attribute DOMString search;
-    [CustomSetter] attribute DOMString hash;
+    [SetterCallWith=ActiveWindow&FirstWindow, SetterRaisesException] attribute DOMString protocol;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString host;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString hostname;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString port;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString pathname;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString search;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute DOMString hash;
 
     readonly attribute DOMString origin;
 
