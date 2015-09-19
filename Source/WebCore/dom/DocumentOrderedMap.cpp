@@ -51,13 +51,20 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
     UNUSED_PARAM(treeScope);
     ASSERT_WITH_SECURITY_IMPLICATION(element.isInTreeScope());
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope.rootNode().containsIncludingShadowDOM(&element));
+
     if (!element.isInTreeScope())
         return;
     Map::AddResult addResult = m_map.add(&key, MapEntry(&element));
+    MapEntry& entry = addResult.iterator->value;
+
+#ifndef NDEBUG
+    ASSERT_WITH_SECURITY_IMPLICATION(!entry.registeredElements.contains(&element));
+    entry.registeredElements.add(&element);
+#endif
+
     if (addResult.isNewEntry)
         return;
 
-    MapEntry& entry = addResult.iterator->value;
     ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
     entry.element = nullptr;
     entry.count++;
@@ -68,11 +75,13 @@ void DocumentOrderedMap::remove(const AtomicStringImpl& key, Element& element)
 {
     m_map.checkConsistency();
     auto it = m_map.find(&key);
+
     ASSERT_WITH_SECURITY_IMPLICATION(it != m_map.end());
     if (it == m_map.end())
         return;
-    MapEntry& entry = it->value;
 
+    MapEntry& entry = it->value;
+    ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.remove(&element));
     ASSERT_WITH_SECURITY_IMPLICATION(entry.count);
     if (entry.count == 1) {
         ASSERT_WITH_SECURITY_IMPLICATION(!entry.element || entry.element == &element);
@@ -99,6 +108,7 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
     if (entry.element) {
         ASSERT_WITH_SECURITY_IMPLICATION(entry.element->isInTreeScope());
         ASSERT_WITH_SECURITY_IMPLICATION(&entry.element->treeScope() == &scope);
+        ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(entry.element));
         return entry.element;
     }
 
@@ -109,6 +119,7 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
         entry.element = &element;
         ASSERT_WITH_SECURITY_IMPLICATION(element.isInTreeScope());
         ASSERT_WITH_SECURITY_IMPLICATION(&element.treeScope() == &scope);
+        ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(entry.element));
         return &element;
     }
     ASSERT_NOT_REACHED();
