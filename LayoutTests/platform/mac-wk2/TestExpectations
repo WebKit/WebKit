@@ -239,7 +239,7 @@ webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initializa
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
 webkit.org/b/125996 accessibility/mac/search-when-element-starts-in-table.html [ Failure ]
 
-webkit.org/b/134550 [ Mavericks Yosemite ] http/tests/cache/iframe-304-crash.html [ Pass Failure ]
+webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Pass Failure ]
 
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
