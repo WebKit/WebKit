@@ -1521,6 +1521,9 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode& insertio
     if (!insertionPoint.isInTreeScope())
         return InsertionDone;
 
+    // This function could be called when this element's shadow root's host or its ancestor is inserted.
+    // This element is new to the shadow tree (and its tree scope) only if the parent into which this element
+    // or its ancestor is inserted belongs to the same tree scope as this element's.
     TreeScope* newScope = &insertionPoint.treeScope();
     HTMLDocument* newDocument = !wasInDocument && inDocument() && is<HTMLDocument>(newScope->documentScope()) ? &downcast<HTMLDocument>(newScope->documentScope()) : nullptr;
     if (newScope != &treeScope())
@@ -1566,6 +1569,9 @@ void Element::removedFrom(ContainerNode& insertionPoint)
     if (insertionPoint.isInTreeScope()) {
         TreeScope* oldScope = &insertionPoint.treeScope();
         HTMLDocument* oldDocument = inDocument() && is<HTMLDocument>(oldScope->documentScope()) ? &downcast<HTMLDocument>(oldScope->documentScope()) : nullptr;
+
+        // ContainerNode::removeBetween always sets the removed chid's tree scope to Document's but InTreeScope flag is unset in Node::removedFrom.
+        // So this element has been removed from the old tree scope only if InTreeScope flag is set and this element's tree scope is Document's.
         if (!isInTreeScope() || &treeScope() != &document())
             oldScope = nullptr;
 
@@ -1636,19 +1642,10 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     shadowRoot.setHost(this);
     shadowRoot.setParentTreeScope(&treeScope());
 
-    auto shadowRootInsertionResult = shadowRoot.insertedInto(*this);
-    ASSERT_UNUSED(shadowRootInsertionResult, shadowRootInsertionResult == InsertionDone);
-    if (auto* firstChild = shadowRoot.firstChild()) {
-        NodeVector postInsertionNotificationTargets;
-        {
-            NoEventDispatchAssertion assertNoEventDispatch;
-            for (auto* child = firstChild; child; child = child->nextSibling())
-                notifyChildNodeInserted(shadowRoot, *child, postInsertionNotificationTargets);
-        }
-
-        for (auto& target : postInsertionNotificationTargets)
-            target->finishedInsertingSubtree();
-    }
+    NodeVector postInsertionNotificationTargets;
+    notifyChildNodeInserted(*this, shadowRoot, postInsertionNotificationTargets);
+    for (auto& target : postInsertionNotificationTargets)
+        target->finishedInsertingSubtree();
 
     resetNeedsNodeRenderingTraversalSlowPath();
 
@@ -1675,13 +1672,7 @@ void Element::removeShadowRoot()
     oldRoot->setHost(nullptr);
     oldRoot->setParentTreeScope(&document());
 
-    {
-        NoEventDispatchAssertion assertNoEventDispatch;
-        for (auto* child = oldRoot->firstChild(); child; child = child->nextSibling())
-            notifyChildNodeRemoved(*oldRoot, *child);
-    }
-
-    oldRoot->removedFrom(*this);
+    notifyChildNodeRemoved(*this, *oldRoot);
 }
 
 RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)

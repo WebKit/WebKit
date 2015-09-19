@@ -1,3 +1,14 @@
+2015-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Inserting or removing slot elements can cause a crash
+        https://bugs.webkit.org/show_bug.cgi?id=149365
+
+        Reviewed by Antti Koivisto.
+
+        Added regression tests.
+
+        * fast/shadow-dom/slot-removal-crash.html: Added.
+
 2015-09-18  Antti Koivisto  <antti@apple.com>
 
         Don't create renderers for children of shadow host

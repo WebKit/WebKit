@@ -49,18 +49,25 @@ HTMLSlotElement::InsertionNotificationRequest HTMLSlotElement::insertedInto(Cont
     auto insertionResult = HTMLElement::insertedInto(insertionPoint);
     ASSERT_UNUSED(insertionResult, insertionResult == InsertionDone);
 
-    if (auto shadowRoot = containingShadowRoot())
-        shadowRoot->addSlotElementByName(fastGetAttribute(nameAttr), *this);
+    // This function could be called when this element's shadow root's host or its ancestor is inserted.
+    // This element is new to the shadow tree (and its tree scope) only if the parent into which this element
+    // or its ancestor is inserted belongs to the same tree scope as this element's.
+    if (insertionPoint.isInShadowTree() && isInShadowTree() && &insertionPoint.treeScope() == &treeScope()) {
+        if (auto shadowRoot = containingShadowRoot())
+            shadowRoot->addSlotElementByName(fastGetAttribute(nameAttr), *this);
+    }
 
     return InsertionDone;
 }
 
 void HTMLSlotElement::removedFrom(ContainerNode& insertionPoint)
 {
-    // Can't call containingShadowRoot() here since this node has already been disconnected from the parent.
-    if (isInShadowTree()) {
-        auto& oldShadowRoot = downcast<ShadowRoot>(insertionPoint.treeScope().rootNode());
-        oldShadowRoot.removeSlotElementByName(fastGetAttribute(nameAttr), *this);
+    // ContainerNode::removeBetween always sets the removed chid's tree scope to Document's but InShadowRoot flag is unset in Node::removedFrom.
+    // So if InShadowRoot flag is set but this element's tree scope is Document's, this element has just been removed from a shadow root.
+    if (insertionPoint.isInShadowTree() && isInShadowTree() && &treeScope() == &document()) {
+        auto* oldShadowRoot = insertionPoint.containingShadowRoot();
+        ASSERT(oldShadowRoot);
+        oldShadowRoot->removeSlotElementByName(fastGetAttribute(nameAttr), *this);
     }
 
     HTMLElement::removedFrom(insertionPoint);
@@ -70,7 +77,7 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomicSt
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
-    if (name == nameAttr) {
+    if (isInShadowTree() && name == nameAttr) {
         if (auto* shadowRoot = containingShadowRoot()) {
             shadowRoot->removeSlotElementByName(oldValue, *this);
             shadowRoot->addSlotElementByName(newValue, *this);
