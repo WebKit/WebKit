@@ -154,9 +154,16 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
     CGContextRestoreGState(context);
 }
 
-void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects, SnapshotResultType snapshotType)
+void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects)
 {
-    RetainPtr<CGContextRef> context = adoptCF(createCGContextFromImage(image, snapshotType == SnapshotResultType::WebView ? DontFlipGraphicsContext : FlipGraphicsContext));
+    PlatformWebView* webView = TestController::singleton().mainWebView();
+    WKRetainPtr<WKImageRef> windowSnapshot = webView->windowSnapshotImage();
+
+    RetainPtr<CGContextRef> context;
+    if (windowSnapshot)
+        context = adoptCF(createCGContextFromImage(windowSnapshot.get(), DontFlipGraphicsContext));
+    else
+        context = adoptCF(createCGContextFromImage(image));
 
     // A non-null repaintRects array means we're doing a repaint test.
     if (repaintRects)

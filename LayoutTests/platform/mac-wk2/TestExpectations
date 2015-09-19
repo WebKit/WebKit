@@ -196,6 +196,10 @@ webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure 
 
 webkit.org/b/105960 plugins/navigator-plugins.html [ Failure ]
 
+webkit.org/b/108507 printing/quirks-percentage-height-body.html [ Skip ]
+webkit.org/b/108507 printing/quirks-percentage-height.html [ Skip ]
+webkit.org/b/108507 printing/standards-percentage-heights.html [ Skip ]
+
 webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
 # Flaky everywhere.

@@ -65,8 +65,7 @@ public:
 private:
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
-    enum class SnapshotResultType { WebView, WebContents };
-    void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects, SnapshotResultType);
+    void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
     void dumpAudio(WKDataRef);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
 

@@ -951,8 +951,6 @@ inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
         snapshotOptions |= SnapshotOptionsForceBlackText;
     if (wkSnapshotOptions & kWKSnapshotOptionsForceWhiteText)
         snapshotOptions |= SnapshotOptionsForceWhiteText;
-    if (wkSnapshotOptions & kWKSnapshotOptionsPrinting)
-        snapshotOptions |= SnapshotOptionsPrinting;
 
     return snapshotOptions;
 }

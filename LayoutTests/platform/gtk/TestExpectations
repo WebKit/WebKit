@@ -2406,6 +2406,10 @@ webkit.org/b/143871 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
 
 webkit.org/b/143924 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
+webkit.org/b/144494 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
+webkit.org/b/144494 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
+webkit.org/b/144494 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
+
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
 webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
