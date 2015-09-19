@@ -1,3 +1,35 @@
+2015-09-18  Saam barati  <sbarati@apple.com>
+
+        Refactor common code between GetCatchHandlerFunctor and UnwindFunctor
+        https://bugs.webkit.org/show_bug.cgi?id=149276
+
+        Reviewed by Mark Lam.
+
+        There is currently code copy-pasted between these
+        two functors. Lets not do that. It's better to write
+        a function, even if the function is small.
+
+        I also did a bit of renaming to make the intent of the
+        unwindCallFrame function clear. The name of the function
+        didn't really indicate what it did. It decided if it was
+        okay to unwind further, and it also notified the debugger.
+        I've renamed the function to notifyDebuggerOfUnwinding.
+        And I've inlined the logic of deciding if it's okay
+        to unwind further into UnwindFunctor itself.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::isOpcode):
+        (JSC::getStackFrameCodeType):
+        (JSC::Interpreter::stackTraceAsString):
+        (JSC::findExceptionHandler):
+        (JSC::GetCatchHandlerFunctor::GetCatchHandlerFunctor):
+        (JSC::GetCatchHandlerFunctor::operator()):
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::UnwindFunctor::UnwindFunctor):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        (JSC::unwindCallFrame): Deleted.
+
 2015-09-18  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the arithmetic instructions for doubles in WebAssembly
