@@ -1,3 +1,9 @@
+2015-09-19  Dan Bernstein  <mitz@apple.com>
+
+        Attempted build fix.
+
+        * mac/postprocess-framework-headers.sh: Fixed an overzealous regular expression.
+
 2015-09-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r189908.
