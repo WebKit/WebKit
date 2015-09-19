@@ -275,7 +275,7 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     switch (m_type) {
     case AnimatedColor:
         ASSERT(m_data.color);
-        *m_data.color = value.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(value);
+        *m_data.color = SVGColor::colorFromRGBColorString(value);
         break;
     case AnimatedLength: {
         ASSERT(m_data.length);

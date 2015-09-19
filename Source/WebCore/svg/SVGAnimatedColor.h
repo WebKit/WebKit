@@ -24,23 +24,22 @@
 
 namespace WebCore {
 
-class SVGAnimationElement;
-
 class SVGAnimatedColorAnimator final : public SVGAnimatedTypeAnimator {
 public:
-    SVGAnimatedColorAnimator(SVGAnimationElement*, SVGElement*);
+    SVGAnimatedColorAnimator(SVGAnimationElement&, SVGElement&);
 
-    virtual std::unique_ptr<SVGAnimatedType> constructFromString(const String&) override;
-    virtual std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) override { return nullptr; }
-    virtual void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) override { }
-    virtual void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) override { }
-    virtual void animValWillChange(const SVGElementAnimatedPropertyList&) override { }
-    virtual void animValDidChange(const SVGElementAnimatedPropertyList&) override { }
-
-    virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) override;
-    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) override;
-    virtual float calculateDistance(const String& fromString, const String& toString) override;
+private:
+    std::unique_ptr<SVGAnimatedType> constructFromString(const String&) override;
+    std::unique_ptr<SVGAnimatedType> startAnimValAnimation(const SVGElementAnimatedPropertyList&) override { return nullptr; }
+    void stopAnimValAnimation(const SVGElementAnimatedPropertyList&) override { }
+    void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGAnimatedType*) override { }
+    void animValWillChange(const SVGElementAnimatedPropertyList&) override { }
+    void animValDidChange(const SVGElementAnimatedPropertyList&) override { }
+    void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) override;
+    void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) override;
+    float calculateDistance(const String& fromString, const String& toString) override;
 };
+
 } // namespace WebCore
 
 #endif

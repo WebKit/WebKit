@@ -2593,7 +2593,6 @@ set(WebCore_SOURCES
     style/StyleResolveForDocument.cpp
     style/StyleResolveTree.cpp
 
-    svg/ColorDistance.cpp
     svg/SVGAElement.cpp
     svg/SVGAltGlyphDefElement.cpp
     svg/SVGAltGlyphElement.cpp

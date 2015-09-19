@@ -55,7 +55,7 @@ public:
         case AnimatedBoolean:
             return std::make_unique<SVGAnimatedBooleanAnimator>(animationElement, contextElement);
         case AnimatedColor:
-            return std::make_unique<SVGAnimatedColorAnimator>(animationElement, contextElement);
+            return std::make_unique<SVGAnimatedColorAnimator>(*animationElement, *contextElement);
         case AnimatedEnumeration:
             return std::make_unique<SVGAnimatedEnumerationAnimator>(animationElement, contextElement);
         case AnimatedInteger:

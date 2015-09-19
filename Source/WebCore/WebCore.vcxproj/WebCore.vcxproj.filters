@@ -14578,9 +14578,6 @@
     <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h">
       <Filter>platform\graphics\opentype</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\ColorDistance.h">
-      <Filter>svg</Filter>
-    </ClInclude>
     <ClInclude Include="..\svg\SVGAElement.h">
       <Filter>svg</Filter>
     </ClInclude>

@@ -4555,8 +4555,6 @@
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
 		B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B20111060AB7740500DB0E68 /* JSSVGAElement.h */; };
-		B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */; };
-		B22279630D00BF220071B782 /* ColorDistance.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277CC0D00BF1F0071B782 /* ColorDistance.h */; };
 		B22279640D00BF220071B782 /* GradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277CD0D00BF1F0071B782 /* GradientAttributes.h */; };
 		B22279650D00BF220071B782 /* LinearGradientAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */; };
 		B22279710D00BF220071B782 /* PatternAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = B22277DB0D00BF1F0071B782 /* PatternAttributes.h */; };
@@ -12028,8 +12026,6 @@
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
 		B20111060AB7740500DB0E68 /* JSSVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAElement.h; sourceTree = "<group>"; };
-		B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
-		B22277CC0D00BF1F0071B782 /* ColorDistance.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ColorDistance.h; sourceTree = "<group>"; };
 		B22277CD0D00BF1F0071B782 /* GradientAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GradientAttributes.h; sourceTree = "<group>"; };
 		B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LinearGradientAttributes.h; sourceTree = "<group>"; };
 		B22277DB0D00BF1F0071B782 /* PatternAttributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PatternAttributes.h; sourceTree = "<group>"; };
@@ -20474,8 +20470,6 @@
 				E46E97860DAAD61B0071E894 /* animation */,
 				B25598860D00D8B800BB825C /* graphics */,
 				081CDFBD126ECFE800D215CA /* properties */,
-				B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */,
-				B22277CC0D00BF1F0071B782 /* ColorDistance.h */,
 				B22277CD0D00BF1F0071B782 /* GradientAttributes.h */,
 				B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */,
 				B22277DB0D00BF1F0071B782 /* PatternAttributes.h */,
@@ -24326,7 +24320,6 @@
 				B27535670B053814002CE64F /* Color.h in Headers */,
 				C330A22313EC196B0000B45B /* ColorChooser.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
-				B22279630D00BF220071B782 /* ColorDistance.h in Headers */,
 				F55B3DB41251F12D003EF269 /* ColorInputType.h in Headers */,
 				EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
@@ -28128,7 +28121,6 @@
 				B27535660B053814002CE64F /* Color.cpp in Sources */,
 				0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */,
 				1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */,
-				B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */,
 				BC29935D17A1DD5800BCE880 /* ColorInputType.cpp in Sources */,
 				B27535770B053814002CE64F /* ColorMac.mm in Sources */,
 				26E944D81AC4B2DD007B85B5 /* CombinedURLFilters.cpp in Sources */,
