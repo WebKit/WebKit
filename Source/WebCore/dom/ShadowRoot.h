@@ -98,7 +98,7 @@ private:
 
     virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
-    bool m_resetStyleInheritance : 1;
+    bool m_resetStyleInheritance;
     Type m_type;
 
     std::unique_ptr<StyleResolver> m_styleResolver;

@@ -1,3 +1,13 @@
+2015-09-18  Antti Koivisto  <antti@apple.com>
+
+        Don't create renderers for children of shadow host
+        https://bugs.webkit.org/show_bug.cgi?id=149363
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/css-scoping-shadow-root-hides-children-expected.html: Added.
+        * fast/shadow-dom/css-scoping-shadow-root-hides-children.html: Added.
+
 2015-09-18  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Adds more flaky tests to TestExpecations for iOS and WK2
