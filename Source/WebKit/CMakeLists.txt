@@ -31,6 +31,7 @@ include_directories(SYSTEM ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
 if (MSVC)
     ADD_PRECOMPILED_HEADER("WebKitPrefix.h" "win/WebKitPrefix.cpp" WebKit_SOURCES)
+    list(APPEND WebKit_SOURCES win/WebKit.resources/WebKit.rc)
 endif ()
 
 add_library(WebKit ${WebKit_LIBRARY_TYPE} ${WebKit_SOURCES})
