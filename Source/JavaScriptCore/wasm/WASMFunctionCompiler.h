@@ -649,6 +649,73 @@ public:
         return UNUSED;
     }
 
+    int buildUnaryF64(int, WASMOpExpressionF64 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        switch (op) {
+        case WASMOpExpressionF64::Negate:
+            negateDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Abs:
+            absDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Sqrt:
+            sqrtDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Ceil:
+        case WASMOpExpressionF64::Floor:
+        case WASMOpExpressionF64::Cos:
+        case WASMOpExpressionF64::Sin:
+        case WASMOpExpressionF64::Tan:
+        case WASMOpExpressionF64::ACos:
+        case WASMOpExpressionF64::ASin:
+        case WASMOpExpressionF64::ATan:
+        case WASMOpExpressionF64::Exp:
+        case WASMOpExpressionF64::Ln:
+            D_JITOperation_D operation;
+            switch (op) {
+            case WASMOpExpressionF64::Ceil:
+                operation = ceil;
+                break;
+            case WASMOpExpressionF64::Floor:
+                operation = floor;
+                break;
+            case WASMOpExpressionF64::Cos:
+                operation = cos;
+                break;
+            case WASMOpExpressionF64::Sin:
+                operation = sin;
+                break;
+            case WASMOpExpressionF64::Tan:
+                operation = tan;
+                break;
+            case WASMOpExpressionF64::ACos:
+                operation = acos;
+                break;
+            case WASMOpExpressionF64::ASin:
+                operation = asin;
+                break;
+            case WASMOpExpressionF64::ATan:
+                operation = atan;
+                break;
+            case WASMOpExpressionF64::Exp:
+                operation = exp;
+                break;
+            case WASMOpExpressionF64::Ln:
+                operation = log;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            callOperation(operation, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+        storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
     int buildBinaryI32(int, int, WASMOpExpressionI32 op)
     {
         load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT0);
@@ -756,6 +823,50 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
         convertDoubleToFloat(FPRInfo::fpRegT0, FPRInfo::fpRegT0);
+        m_tempStackTop--;
+        storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
+        return UNUSED;
+    }
+
+    int buildBinaryF64(int, int, WASMOpExpressionF64 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 2), FPRInfo::fpRegT0);
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        switch (op) {
+        case WASMOpExpressionF64::Add:
+            addDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Sub:
+            subDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Mul:
+            mulDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Div:
+            divDouble(FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        case WASMOpExpressionF64::Mod:
+        case WASMOpExpressionF64::ATan2:
+        case WASMOpExpressionF64::Pow:
+            D_JITOperation_DD operation;
+            switch (op) {
+            case WASMOpExpressionF64::Mod:
+                operation = fmod;
+                break;
+            case WASMOpExpressionF64::ATan2:
+                operation = atan2;
+                break;
+            case WASMOpExpressionF64::Pow:
+                operation = pow;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            callOperation(operation, FPRInfo::fpRegT0, FPRInfo::fpRegT1, FPRInfo::fpRegT0);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
         m_tempStackTop--;
         storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop - 1));
         return UNUSED;
@@ -1129,6 +1240,12 @@ private:
         appendCallSetResult(operation, dst, FloatingPointPrecision::Single);
     }
 
+    void callOperation(D_JITOperation_D operation, FPRegisterID src, FPRegisterID dst)
+    {
+        setupArguments(src);
+        appendCallSetResult(operation, dst, FloatingPointPrecision::Double);
+    }
+
     void callOperation(int32_t JIT_OPERATION (*operation)(int32_t, int32_t), GPRReg src1, GPRReg src2, GPRReg dst)
     {
         setupArguments(src1, src2);
@@ -1139,6 +1256,12 @@ private:
     {
         setupArguments(src1, src2);
         appendCallSetResult(operation, dst);
+    }
+
+    void callOperation(D_JITOperation_DD operation, FPRegisterID src1, FPRegisterID src2, FPRegisterID dst)
+    {
+        setupArguments(src1, src2);
+        appendCallSetResult(operation, dst, FloatingPointPrecision::Double);
     }
 
     void callOperation(double JIT_OPERATION (*operation)(uint32_t), GPRReg src, FPRegisterID dst)

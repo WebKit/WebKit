@@ -928,20 +928,7 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F64, WASMTypeConversion::ConvertUnsigned);
         case WASMOpExpressionF64::FromF32:
             return parseConvertType(context, WASMExpressionType::F32, WASMExpressionType::F64, WASMTypeConversion::Promote);
-        case WASMOpExpressionF64::SetLocal:
-        case WASMOpExpressionF64::SetGlobal:
-        case WASMOpExpressionF64::Store:
-        case WASMOpExpressionF64::StoreWithOffset:
-        case WASMOpExpressionF64::Conditional:
-        case WASMOpExpressionF64::Comma:
         case WASMOpExpressionF64::Negate:
-        case WASMOpExpressionF64::Add:
-        case WASMOpExpressionF64::Sub:
-        case WASMOpExpressionF64::Mul:
-        case WASMOpExpressionF64::Div:
-        case WASMOpExpressionF64::Mod:
-        case WASMOpExpressionF64::Min:
-        case WASMOpExpressionF64::Max:
         case WASMOpExpressionF64::Abs:
         case WASMOpExpressionF64::Ceil:
         case WASMOpExpressionF64::Floor:
@@ -952,10 +939,25 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::ACos:
         case WASMOpExpressionF64::ASin:
         case WASMOpExpressionF64::ATan:
-        case WASMOpExpressionF64::ATan2:
         case WASMOpExpressionF64::Exp:
         case WASMOpExpressionF64::Ln:
+            return parseUnaryExpressionF64(context, op);
+        case WASMOpExpressionF64::Add:
+        case WASMOpExpressionF64::Sub:
+        case WASMOpExpressionF64::Mul:
+        case WASMOpExpressionF64::Div:
+        case WASMOpExpressionF64::Mod:
+        case WASMOpExpressionF64::ATan2:
         case WASMOpExpressionF64::Pow:
+            return parseBinaryExpressionF64(context, op);
+        case WASMOpExpressionF64::SetLocal:
+        case WASMOpExpressionF64::SetGlobal:
+        case WASMOpExpressionF64::Store:
+        case WASMOpExpressionF64::StoreWithOffset:
+        case WASMOpExpressionF64::Conditional:
+        case WASMOpExpressionF64::Comma:
+        case WASMOpExpressionF64::Min:
+        case WASMOpExpressionF64::Max:
             // FIXME: Implement these instructions.
             FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
@@ -1021,6 +1023,24 @@ ContextExpression WASMFunctionParser::parseGetGlobalExpressionF64(Context& conte
     FAIL_IF_FALSE(globalIndex < m_module->globalVariableTypes().size(), "The global index is incorrect.");
     FAIL_IF_FALSE(m_module->globalVariableTypes()[globalIndex] == WASMType::F64, "Expected a global variable of type float64.");
     return context.buildGetGlobal(globalIndex, WASMType::F64);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseUnaryExpressionF64(Context& context, WASMOpExpressionF64 op)
+{
+    ContextExpression expression = parseExpressionF64(context);
+    PROPAGATE_ERROR();
+    return context.buildUnaryF64(expression, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseBinaryExpressionF64(Context& context, WASMOpExpressionF64 op)
+{
+    ContextExpression left = parseExpressionF64(context);
+    PROPAGATE_ERROR();
+    ContextExpression right = parseExpressionF64(context);
+    PROPAGATE_ERROR();
+    return context.buildBinaryF64(left, right, op);
 }
 
 template <class Context>

@@ -113,6 +113,8 @@ private:
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpressionF64(Context&);
     template <class Context> ContextExpression parseGetGlobalExpressionF64(Context&);
+    template <class Context> ContextExpression parseUnaryExpressionF64(Context&, WASMOpExpressionF64);
+    template <class Context> ContextExpression parseBinaryExpressionF64(Context&, WASMOpExpressionF64);
 
     template <class Context> ContextMemoryAddress parseMemoryAddress(Context&, MemoryAccessOffsetMode);
     template <class Context> ContextExpression parseLoad(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode, MemoryAccessConversion = MemoryAccessConversion::NoConversion);
