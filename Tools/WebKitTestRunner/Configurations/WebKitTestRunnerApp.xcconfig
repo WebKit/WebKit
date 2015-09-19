@@ -30,3 +30,4 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 OTHER_LDFLAGS = $(inherited) -l$(WEBKIT_SYSTEM_INTERFACE_LIBRARY) -lWebKitTestRunner -framework JavaScriptCore -framework CoreGraphics -framework ImageIO -framework UIKit -framework WebKit -framework Foundation;
 SKIP_INSTALL[sdk=macosx*] = YES;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = ios/* AppDelegate.m;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletv*] = ios/Launch.storyboard;
