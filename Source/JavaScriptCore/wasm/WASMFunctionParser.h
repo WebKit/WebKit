@@ -87,9 +87,6 @@ private:
     template <class Context> ContextExpression parseConstantPoolIndexExpressionI32(Context&);
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&, uint32_t immediate);
     template <class Context> ContextExpression parseImmediateExpressionI32(Context&);
-    template <class Context> ContextExpression parseGetLocalExpressionI32(Context&, uint32_t localIndex);
-    template <class Context> ContextExpression parseGetLocalExpressionI32(Context&);
-    template <class Context> ContextExpression parseGetGlobalExpressionI32(Context&);
     template <class Context> ContextExpression parseUnaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseBinaryExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
@@ -100,9 +97,6 @@ private:
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF32(Context&, uint32_t constantIndex);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF32(Context&);
     template <class Context> ContextExpression parseImmediateExpressionF32(Context&);
-    template <class Context> ContextExpression parseGetLocalExpressionF32(Context&, uint32_t localIndex);
-    template <class Context> ContextExpression parseGetLocalExpressionF32(Context&);
-    template <class Context> ContextExpression parseGetGlobalExpressionF32(Context&);
     template <class Context> ContextExpression parseUnaryExpressionF32(Context&, WASMOpExpressionF32);
     template <class Context> ContextExpression parseBinaryExpressionF32(Context&, WASMOpExpressionF32);
 
@@ -110,16 +104,15 @@ private:
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&, uint32_t constantIndex);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF64(Context&);
     template <class Context> ContextExpression parseImmediateExpressionF64(Context&);
-    template <class Context> ContextExpression parseGetLocalExpressionF64(Context&, uint32_t localIndex);
-    template <class Context> ContextExpression parseGetLocalExpressionF64(Context&);
-    template <class Context> ContextExpression parseGetGlobalExpressionF64(Context&);
     template <class Context> ContextExpression parseUnaryExpressionF64(Context&, WASMOpExpressionF64);
     template <class Context> ContextExpression parseBinaryExpressionF64(Context&, WASMOpExpressionF64);
 
+    template <class Context> ContextExpression parseGetLocalExpression(Context&, WASMType, uint32_t localIndex);
+    template <class Context> ContextExpression parseGetLocalExpression(Context&, WASMType);
+    template <class Context> ContextExpression parseGetGlobalExpression(Context&, WASMType);
     template <class Context> ContextMemoryAddress parseMemoryAddress(Context&, MemoryAccessOffsetMode);
     template <class Context> ContextExpression parseLoad(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode, MemoryAccessConversion = MemoryAccessConversion::NoConversion);
     template <class Context> ContextExpression parseStore(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode);
-
     template <class Context> ContextExpressionList parseCallArguments(Context&, const Vector<WASMType>& arguments);
     template <class Context> ContextExpression parseCallInternal(Context&, WASMExpressionType returnType);
     template <class Context> ContextExpression parseCallIndirect(Context&, WASMExpressionType returnType);

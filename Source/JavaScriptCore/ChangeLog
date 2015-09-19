@@ -1,3 +1,30 @@
+2015-09-18  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Remove duplicate code in the WebAssembly parser
+        https://bugs.webkit.org/show_bug.cgi?id=149361
+
+        Reviewed by Saam Barati.
+
+        Refactor the methods for parsing GetLocal and GetGlobal in WebAssembly
+        to remove duplicate code.
+
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::nameOfType):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseUnaryExpressionF64):
+        (JSC::WASMFunctionParser::parseBinaryExpressionF64):
+        (JSC::WASMFunctionParser::parseGetLocalExpression):
+        (JSC::WASMFunctionParser::parseGetGlobalExpression):
+        (JSC::WASMFunctionParser::parseGetLocalExpressionI32): Deleted.
+        (JSC::WASMFunctionParser::parseGetGlobalExpressionI32): Deleted.
+        (JSC::WASMFunctionParser::parseGetLocalExpressionF32): Deleted.
+        (JSC::WASMFunctionParser::parseGetGlobalExpressionF32): Deleted.
+        (JSC::WASMFunctionParser::parseGetLocalExpressionF64): Deleted.
+        (JSC::WASMFunctionParser::parseGetGlobalExpressionF64): Deleted.
+        * wasm/WASMFunctionParser.h:
+
 2015-09-18  Saam barati  <sbarati@apple.com>
 
         Refactor common code between GetCatchHandlerFunctor and UnwindFunctor
