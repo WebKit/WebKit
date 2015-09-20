@@ -50,7 +50,7 @@ CapabilityRange::CapabilityRange(const RealtimeMediaSourceCapabilityRange& range
 {
 }
 
-static Deprecated::ScriptValue scriptValue(ExecState* exec, const RealtimeMediaSourceCapabilityRange::ValueUnion& value, RealtimeMediaSourceCapabilityRange::Type type)
+static Deprecated::ScriptValue scriptValue(ExecState& state, const RealtimeMediaSourceCapabilityRange::ValueUnion& value, RealtimeMediaSourceCapabilityRange::Type type)
 {
     // NOTE: the spec says:
     //      ... an implementation should make a reasonable attempt to translate and scale the hardware's setting
@@ -63,28 +63,28 @@ static Deprecated::ScriptValue scriptValue(ExecState* exec, const RealtimeMediaS
     
     switch (type) {
     case RealtimeMediaSourceCapabilityRange::Float:
-        return Deprecated::ScriptValue(exec->vm(), JSValue(value.asFloat));
+        return Deprecated::ScriptValue(state.vm(), JSValue(value.asFloat));
         break;
     case RealtimeMediaSourceCapabilityRange::ULong:
-        return Deprecated::ScriptValue(exec->vm(), JSValue(value.asULong));
+        return Deprecated::ScriptValue(state.vm(), JSValue(value.asULong));
         break;
     case RealtimeMediaSourceCapabilityRange::Undefined:
-        return Deprecated::ScriptValue(exec->vm(), jsUndefined());
+        return Deprecated::ScriptValue(state.vm(), jsUndefined());
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return Deprecated::ScriptValue(exec->vm(), jsUndefined());
+    return Deprecated::ScriptValue(state.vm(), jsUndefined());
 }
 
-Deprecated::ScriptValue CapabilityRange::min(ExecState* exec) const
+Deprecated::ScriptValue CapabilityRange::min(ExecState& state) const
 {
-    return scriptValue(exec, m_rangeInfo.min(), m_rangeInfo.type());
+    return scriptValue(state, m_rangeInfo.min(), m_rangeInfo.type());
 }
 
-Deprecated::ScriptValue CapabilityRange::max(ExecState* exec) const
+Deprecated::ScriptValue CapabilityRange::max(ExecState& state) const
 {
-    return scriptValue(exec, m_rangeInfo.max(), m_rangeInfo.type());
+    return scriptValue(state, m_rangeInfo.max(), m_rangeInfo.type());
 }
 
 } // namespace WebCore

@@ -60,7 +60,7 @@ private:
 };
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestCallback*);
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCallback& impl) { return toJS(exec, globalObject, &impl); }
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestCallback& impl) { return toJS(state, globalObject, &impl); }
 
 } // namespace WebCore
 

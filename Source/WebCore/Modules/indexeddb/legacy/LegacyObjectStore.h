@@ -68,8 +68,8 @@ public:
     PassRefPtr<IDBTransaction> transaction() const { return m_transaction; }
     bool autoIncrement() const { return m_metadata.autoIncrement; }
 
-    PassRefPtr<IDBRequest> add(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
@@ -79,10 +79,10 @@ public:
 
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);
     PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
-    PassRefPtr<IDBRequest> add(JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<LegacyAny>, JSC::ExecState*, Deprecated::ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
-    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<LegacyAny> source, JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<LegacyAny>, JSC::ExecState&, Deprecated::ScriptValue&, PassRefPtr<IDBKey>, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBDatabaseBackend::PutMode, PassRefPtr<LegacyAny> source, JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&);
 
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&);

@@ -143,29 +143,29 @@ JSattribute::~JSattribute()
     releaseImpl();
 }
 
-EncodedJSValue jsattributeReadonly(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsattributeReadonly(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSattribute* castedThis = jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSattributePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "attribute", "readonly");
-        return throwGetterTypeError(*exec, "attribute", "readonly");
+            return reportDeprecatedGetterError(*state, "attribute", "readonly");
+        return throwGetterTypeError(*state, "attribute", "readonly");
     }
     auto& impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl.readonly());
+    JSValue result = jsStringWithCache(state, impl.readonly());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsattributeConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsattributeConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSattributePrototype* domObject = jsDynamicCast<JSattributePrototype*>(baseValue);
     if (!domObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(JSattribute::getConstructor(exec->vm(), domObject->globalObject()));
+        return throwVMTypeError(state);
+    return JSValue::encode(JSattribute::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 JSValue JSattribute::getConstructor(VM& vm, JSGlobalObject* globalObject)

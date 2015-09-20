@@ -43,8 +43,8 @@ public:
 
     static Ref<CapabilityRange> create(const RealtimeMediaSourceCapabilityRange&);
 
-    Deprecated::ScriptValue min(JSC::ExecState*) const;
-    Deprecated::ScriptValue max(JSC::ExecState*) const;
+    Deprecated::ScriptValue min(JSC::ExecState&) const;
+    Deprecated::ScriptValue max(JSC::ExecState&) const;
     bool supported() const { return m_rangeInfo.supported(); }
 
 private:

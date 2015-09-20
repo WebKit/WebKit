@@ -162,43 +162,43 @@ JSTestOverrideBuiltins::~JSTestOverrideBuiltins()
     releaseImpl();
 }
 
-bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (thisObject->classInfo() == info()) {
         JSValue value;
-        if (thisObject->nameGetter(exec, propertyName, value)) {
+        if (thisObject->nameGetter(state, propertyName, value)) {
             slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
             return true;
         }
     }
-    if (getStaticValueSlot<JSTestOverrideBuiltins, Base>(exec, JSTestOverrideBuiltinsTable, thisObject, propertyName, slot))
+    if (getStaticValueSlot<JSTestOverrideBuiltins, Base>(state, JSTestOverrideBuiltinsTable, thisObject, propertyName, slot))
         return true;
     return false;
 }
 
-bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
+bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, unsigned index, PropertySlot& slot)
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Identifier propertyName = Identifier::from(exec, index);
+    Identifier propertyName = Identifier::from(state, index);
     if (thisObject->classInfo() == info()) {
         JSValue value;
-        if (thisObject->nameGetter(exec, propertyName, value)) {
+        if (thisObject->nameGetter(state, propertyName, value)) {
             slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
             return true;
         }
     }
-    return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
+    return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
 }
 
-EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* state, JSObject*, EncodedJSValue thisValue, PropertyName)
 {
     JSTestOverrideBuiltins* domObject = jsDynamicCast<JSTestOverrideBuiltins*>(JSValue::decode(thisValue));
     if (!domObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(JSTestOverrideBuiltins::getConstructor(exec->vm(), domObject->globalObject()));
+        return throwVMTypeError(state);
+    return JSValue::encode(JSTestOverrideBuiltins::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, JSGlobalObject* globalObject)
@@ -206,18 +206,18 @@ JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, JSGlobalObject* globalObj
     return getDOMConstructor<JSTestOverrideBuiltinsConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
 {
-    JSValue thisValue = exec->thisValue();
+    JSValue thisValue = state->thisValue();
     JSTestOverrideBuiltins* castedThis = jsDynamicCast<JSTestOverrideBuiltins*>(thisValue);
     if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*exec, "TestOverrideBuiltins", "namedItem");
+        return throwThisTypeError(*state, "TestOverrideBuiltins", "namedItem");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestOverrideBuiltins::info());
     auto& impl = castedThis->impl();
-    String name = exec->argument(0).toString(exec)->value(exec);
-    if (UNLIKELY(exec->hadException()))
+    String name = state->argument(0).toString(state)->value(state);
+    if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.namedItem(name)));
+    JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.namedItem(name)));
     return JSValue::encode(result);
 }
 

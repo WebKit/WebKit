@@ -96,7 +96,7 @@ IDBAny* LegacyCursor::source() const
     return m_source.get();
 }
 
-PassRefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState* state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyCursor::update");
 

@@ -88,30 +88,30 @@ protected:
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
-EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* state)
 {
-    auto* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(exec->callee());
+    auto* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(state->callee());
 
-    ScriptExecutionContext* executionContext = jsConstructor->scriptExecutionContext();
-    if (!executionContext)
-        return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
+    ScriptExecutionContext* stateutionContext = jsConstructor->scriptExecutionContext();
+    if (!stateutionContext)
+        return throwVMError(state, createReferenceError(state, "Constructor associated stateution context is unavailable"));
 
-    if (UNLIKELY(exec->argumentCount() < 1))
-        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
 
-    AtomicString eventType = exec->argument(0).toString(exec)->toAtomicString(exec);
-    if (UNLIKELY(exec->hadException()))
+    AtomicString eventType = state->argument(0).toString(state)->toAtomicString(state);
+    if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
 
     TestEventConstructorInit eventInit;
 
-    JSValue initializerValue = exec->argument(1);
+    JSValue initializerValue = state->argument(1);
     if (!initializerValue.isUndefinedOrNull()) {
         // Given the above test, this will always yield an object.
-        JSObject* initializerObject = initializerValue.toObject(exec);
+        JSObject* initializerObject = initializerValue.toObject(state);
 
         // Create the dictionary wrapper from the initializer object.
-        JSDictionary dictionary(exec, initializerObject);
+        JSDictionary dictionary(state, initializerObject);
 
         // Attempt to fill in the EventInit.
         if (!fillTestEventConstructorInit(eventInit, dictionary))
@@ -119,7 +119,7 @@ EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestE
     }
 
     RefPtr<TestEventConstructor> event = TestEventConstructor::create(eventType, eventInit);
-    return JSValue::encode(toJS(exec, jsConstructor->globalObject(), event.get()));
+    return JSValue::encode(toJS(state, jsConstructor->globalObject(), event.get()));
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)
@@ -197,46 +197,46 @@ JSTestEventConstructor::~JSTestEventConstructor()
     releaseImpl();
 }
 
-EncodedJSValue jsTestEventConstructorAttr1(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestEventConstructor", "attr1");
-        return throwGetterTypeError(*exec, "TestEventConstructor", "attr1");
+            return reportDeprecatedGetterError(*state, "TestEventConstructor", "attr1");
+        return throwGetterTypeError(*state, "TestEventConstructor", "attr1");
     }
     auto& impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl.attr1());
+    JSValue result = jsStringWithCache(state, impl.attr1());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestEventConstructorAttr2(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestEventConstructor* castedThis = jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestEventConstructorPrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestEventConstructor", "attr2");
-        return throwGetterTypeError(*exec, "TestEventConstructor", "attr2");
+            return reportDeprecatedGetterError(*state, "TestEventConstructor", "attr2");
+        return throwGetterTypeError(*state, "TestEventConstructor", "attr2");
     }
     auto& impl = castedThis->impl();
-    JSValue result = jsStringWithCache(exec, impl.attr2());
+    JSValue result = jsStringWithCache(state, impl.attr2());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestEventConstructorConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestEventConstructorConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSTestEventConstructorPrototype* domObject = jsDynamicCast<JSTestEventConstructorPrototype*>(baseValue);
     if (!domObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(JSTestEventConstructor::getConstructor(exec->vm(), domObject->globalObject()));
+        return throwVMTypeError(state);
+    return JSValue::encode(JSTestEventConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 JSValue JSTestEventConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)

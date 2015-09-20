@@ -48,9 +48,9 @@ public:
 
     ReadableJSStream& stream() { return m_stream; }
 
-    void error(JSC::ExecState* state, JSC::JSValue value, ExceptionCode& ec) { m_stream.error(*state, value, ec); }
+    void error(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec) { m_stream.error(state, value, ec); }
 
-    void enqueue(JSC::ExecState* state, JSC::JSValue value) { m_stream.enqueue(*state, value); }
+    void enqueue(JSC::ExecState& state, JSC::JSValue value) { m_stream.enqueue(state, value); }
 
     void ref() { m_stream.ref(); }
     void deref() { m_stream.deref(); }

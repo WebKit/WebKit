@@ -126,13 +126,13 @@ bool JSTestCallback::callbackWithNoParam()
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
+    ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
 
     NakedPtr<Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithNoParam"), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithNoParam"), returnedException);
     if (returnedException)
-        reportException(exec, returnedException);
+        reportException(state, returnedException);
     return !returnedException;
 }
 
@@ -145,14 +145,14 @@ bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
+    ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(arrayParam)));
+    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(arrayParam)));
 
     NakedPtr<Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithArrayParam"), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithArrayParam"), returnedException);
     if (returnedException)
-        reportException(exec, returnedException);
+        reportException(state, returnedException);
     return !returnedException;
 }
 
@@ -165,15 +165,15 @@ bool JSTestCallback::callbackWithSerializedScriptValueParam(PassRefPtr<Serialize
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
+    ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(srzParam ? srzParam->deserialize(exec, castedThis->globalObject(), 0) : jsNull());
-    args.append(jsStringWithCache(exec, strArg));
+    args.append(srzParam ? srzParam->deserialize(state, castedThis->globalObject(), 0) : jsNull());
+    args.append(jsStringWithCache(state, strArg));
 
     NakedPtr<Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithSerializedScriptValueParam"), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithSerializedScriptValueParam"), returnedException);
     if (returnedException)
-        reportException(exec, returnedException);
+        reportException(state, returnedException);
     return !returnedException;
 }
 
@@ -186,14 +186,14 @@ bool JSTestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
+    ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(listParam)));
+    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(listParam)));
 
     NakedPtr<Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithStringList"), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithStringList"), returnedException);
     if (returnedException)
-        reportException(exec, returnedException);
+        reportException(state, returnedException);
     return !returnedException;
 }
 
@@ -206,14 +206,14 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
+    ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(jsBoolean(boolParam));
 
     NakedPtr<Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackWithBoolean"), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithBoolean"), returnedException);
     if (returnedException)
-        reportException(exec, returnedException);
+        reportException(state, returnedException);
     return !returnedException;
 }
 
@@ -226,15 +226,15 @@ bool JSTestCallback::callbackRequiresThisToPass(int longParam, TestNode* testNod
 
     JSLockHolder lock(m_data->globalObject()->vm());
 
-    ExecState* exec = m_data->globalObject()->globalExec();
+    ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(jsNumber(longParam));
-    args.append(toJS(exec, m_data->globalObject(), WTF::getPtr(testNodeParam)));
+    args.append(toJS(state, m_data->globalObject(), WTF::getPtr(testNodeParam)));
 
     NakedPtr<Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(exec, "callbackRequiresThisToPass"), returnedException);
+    m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackRequiresThisToPass"), returnedException);
     if (returnedException)
-        reportException(exec, returnedException);
+        reportException(state, returnedException);
     return !returnedException;
 }
 

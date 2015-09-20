@@ -139,12 +139,12 @@ JSreadonly::~JSreadonly()
     releaseImpl();
 }
 
-EncodedJSValue jsreadonlyConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsreadonlyConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSreadonlyPrototype* domObject = jsDynamicCast<JSreadonlyPrototype*>(baseValue);
     if (!domObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(JSreadonly::getConstructor(exec->vm(), domObject->globalObject()));
+        return throwVMTypeError(state);
+    return JSValue::encode(JSreadonly::getConstructor(state->vm(), domObject->globalObject()));
 }
 
 JSValue JSreadonly::getConstructor(VM& vm, JSGlobalObject* globalObject)

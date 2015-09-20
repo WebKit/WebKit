@@ -96,39 +96,39 @@ PassRefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, c
     return get(context, keyRange.release(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState* state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
     return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState* state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
     return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState* state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
     return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState* state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
     return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<LegacyAny> source, JSC::ExecState* state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
 {
-    ScriptExecutionContext* context = scriptExecutionContextFromExecState(state);
+    ScriptExecutionContext* context = scriptExecutionContextFromExecState(&state);
     DOMRequestState requestState(context);
     RefPtr<IDBKey> key = scriptValueToIDBKey(&requestState, keyValue);
     return put(putMode, source, state, value, key.release(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<LegacyAny> source, JSC::ExecState* state, Deprecated::ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
+PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
 {
     RefPtr<IDBKey> key = prpKey;
     if (m_deleted) {
@@ -144,8 +144,8 @@ PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMod
         return nullptr;
     }
 
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(state, value.jsValue(), nullptr, nullptr);
-    if (state->hadException())
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value.jsValue(), nullptr, nullptr);
+    if (state.hadException())
         return nullptr;
 
     if (serializedValue->hasBlobURLs()) {
@@ -158,7 +158,7 @@ PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMod
     const bool usesInLineKeys = !keyPath.isNull();
     const bool hasKeyGenerator = autoIncrement();
 
-    ScriptExecutionContext* context = scriptExecutionContextFromExecState(state);
+    ScriptExecutionContext* context = scriptExecutionContextFromExecState(&state);
     DOMRequestState requestState(context);
 
     if (putMode != IDBDatabaseBackend::CursorUpdate && usesInLineKeys && key) {

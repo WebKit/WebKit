@@ -68,8 +68,8 @@ public:
     virtual PassRefPtr<IDBTransaction> transaction() const = 0;
     virtual bool autoIncrement() const = 0;
 
-    virtual PassRefPtr<IDBRequest> add(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> put(JSC::ExecState*, Deprecated::ScriptValue&, ExceptionCode&) = 0;
+    virtual PassRefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
+    virtual PassRefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
@@ -78,8 +78,8 @@ public:
 
     virtual PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> add(JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> put(JSC::ExecState*, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual PassRefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual PassRefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) = 0;

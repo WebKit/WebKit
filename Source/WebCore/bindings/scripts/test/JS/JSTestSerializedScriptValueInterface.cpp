@@ -158,140 +158,140 @@ JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface()
     releaseImpl();
 }
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestSerializedScriptValueInterface", "value");
-        return throwGetterTypeError(*exec, "TestSerializedScriptValueInterface", "value");
+            return reportDeprecatedGetterError(*state, "TestSerializedScriptValueInterface", "value");
+        return throwGetterTypeError(*state, "TestSerializedScriptValueInterface", "value");
     }
     auto& impl = castedThis->impl();
-    JSValue result = impl.value() ? impl.value()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
+    JSValue result = impl.value() ? impl.value()->deserialize(state, castedThis->globalObject(), 0) : jsNull();
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestSerializedScriptValueInterface", "readonlyValue");
-        return throwGetterTypeError(*exec, "TestSerializedScriptValueInterface", "readonlyValue");
+            return reportDeprecatedGetterError(*state, "TestSerializedScriptValueInterface", "readonlyValue");
+        return throwGetterTypeError(*state, "TestSerializedScriptValueInterface", "readonlyValue");
     }
     auto& impl = castedThis->impl();
-    JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
+    JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(state, castedThis->globalObject(), 0) : jsNull();
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
-        return throwGetterTypeError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
+            return reportDeprecatedGetterError(*state, "TestSerializedScriptValueInterface", "cachedValue");
+        return throwGetterTypeError(*state, "TestSerializedScriptValueInterface", "cachedValue");
     }
     if (JSValue cachedValue = castedThis->m_cachedValue.get())
         return JSValue::encode(cachedValue);
     auto& impl = castedThis->impl();
-    JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
-    castedThis->m_cachedValue.set(exec->vm(), castedThis, result);
+    JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(state, castedThis->globalObject(), 0) : jsNull();
+    castedThis->m_cachedValue.set(state->vm(), castedThis, result);
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestSerializedScriptValueInterface", "ports");
-        return throwGetterTypeError(*exec, "TestSerializedScriptValueInterface", "ports");
+            return reportDeprecatedGetterError(*state, "TestSerializedScriptValueInterface", "ports");
+        return throwGetterTypeError(*state, "TestSerializedScriptValueInterface", "ports");
     }
     auto& impl = castedThis->impl();
-    JSValue result = jsArray(exec, castedThis->globalObject(), impl.ports());
+    JSValue result = jsArray(state, castedThis->globalObject(), impl.ports());
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
 {
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(slotBase))
-            return reportDeprecatedGetterError(*exec, "TestSerializedScriptValueInterface", "cachedReadonlyValue");
-        return throwGetterTypeError(*exec, "TestSerializedScriptValueInterface", "cachedReadonlyValue");
+            return reportDeprecatedGetterError(*state, "TestSerializedScriptValueInterface", "cachedReadonlyValue");
+        return throwGetterTypeError(*state, "TestSerializedScriptValueInterface", "cachedReadonlyValue");
     }
     if (JSValue cachedValue = castedThis->m_cachedReadonlyValue.get())
         return JSValue::encode(cachedValue);
     auto& impl = castedThis->impl();
-    JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(exec, castedThis->globalObject(), 0) : jsNull();
-    castedThis->m_cachedReadonlyValue.set(exec->vm(), castedThis, result);
+    JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(state, castedThis->globalObject(), 0) : jsNull();
+    castedThis->m_cachedReadonlyValue.set(state->vm(), castedThis, result);
     return JSValue::encode(result);
 }
 
 
-EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
+EncodedJSValue jsTestSerializedScriptValueInterfaceConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSTestSerializedScriptValueInterfacePrototype* domObject = jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(baseValue);
     if (!domObject)
-        return throwVMTypeError(exec);
-    return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(exec->vm(), domObject->globalObject()));
+        return throwVMTypeError(state);
+    return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(state->vm(), domObject->globalObject()));
 }
 
-void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+void setJSTestSerializedScriptValueInterfaceValue(ExecState* state, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue)))
-            reportDeprecatedSetterError(*exec, "TestSerializedScriptValueInterface", "value");
+            reportDeprecatedSetterError(*state, "TestSerializedScriptValueInterface", "value");
         else
-            throwSetterTypeError(*exec, "TestSerializedScriptValueInterface", "value");
+            throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "value");
         return;
     }
     auto& impl = castedThis->impl();
-    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(exec, value, 0, 0);
-    if (UNLIKELY(exec->hadException()))
+    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    if (UNLIKELY(state->hadException()))
         return;
     impl.setValue(nativeValue);
 }
 
 
-void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(baseObject);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
     if (UNLIKELY(!castedThis)) {
         if (jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue)))
-            reportDeprecatedSetterError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
+            reportDeprecatedSetterError(*state, "TestSerializedScriptValueInterface", "cachedValue");
         else
-            throwSetterTypeError(*exec, "TestSerializedScriptValueInterface", "cachedValue");
+            throwSetterTypeError(*state, "TestSerializedScriptValueInterface", "cachedValue");
         return;
     }
     auto& impl = castedThis->impl();
-    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(exec, value, 0, 0);
-    if (UNLIKELY(exec->hadException()))
+    RefPtr<SerializedScriptValue> nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    if (UNLIKELY(state->hadException()))
         return;
     impl.setCachedValue(nativeValue);
 }
