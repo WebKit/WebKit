@@ -65,7 +65,6 @@ public:
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
-    void setSizes(const String&);
     DOMSettableTokenList& sizes() { return m_sizes.get(); }
 
     void dispatchPendingEvent(LinkEventSender*);

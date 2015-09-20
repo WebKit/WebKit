@@ -123,6 +123,7 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property int nullableStringValue;
 @property (readonly, copy) NSString *attribute;
 @property (readonly, strong) DOMTestNode *putForwardsAttribute;
+@property (readonly, strong) DOMTestNode *putForwardsNullableAttribute;
 
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;

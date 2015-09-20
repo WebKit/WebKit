@@ -1,3 +1,16 @@
+2015-09-19  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of custom bindings for HTMLLinkElement.sizes setter
+        https://bugs.webkit.org/show_bug.cgi?id=149382
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        Rebaseline test. Our bindings generator does not move attributes that have
+        a custom setter from the instance to the prototype. Now that the 'sizes'
+        attribute no longer has a custom setter, it has moved to the prototype,
+        where it is expected to be.
+
 2015-09-18  Chris Dumez  <cdumez@apple.com>
 
         Drop support for Entity Node type

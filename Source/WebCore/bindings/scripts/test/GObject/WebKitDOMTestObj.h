@@ -1714,6 +1714,17 @@ webkit_dom_test_obj_get_attribute(WebKitDOMTestObj* self);
 WEBKIT_API WebKitDOMTestNode*
 webkit_dom_test_obj_get_put_forwards_attribute(WebKitDOMTestObj* self);
 
+/**
+ * webkit_dom_test_obj_get_put_forwards_nullable_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none): A #WebKitDOMTestNode
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API WebKitDOMTestNode*
+webkit_dom_test_obj_get_put_forwards_nullable_attribute(WebKitDOMTestObj* self);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

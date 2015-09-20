@@ -159,7 +159,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         return;
     }
     if (name == sizesAttr) {
-        setSizes(value);
+        m_sizes->setValue(value);
         process();
         return;
     }
@@ -528,11 +528,6 @@ void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType noti
         notification == RemovePendingSheetNotifyImmediately
         ? DocumentStyleSheetCollection::RemovePendingSheetNotifyImmediately
         : DocumentStyleSheetCollection::RemovePendingSheetNotifyLater);
-}
-
-void HTMLLinkElement::setSizes(const String& value)
-{
-    m_sizes->setValue(value);
 }
 
 } // namespace WebCore

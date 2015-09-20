@@ -2226,7 +2226,8 @@ sub GenerateImplementation
         foreach my $attribute (@{$interface->attributes}) {
             my $name = $attribute->signature->name;
             my $type = $attribute->signature->type;
-            my $isNullable = $attribute->signature->isNullable;
+            # Nullable wrapper types do not need any special handling as the implementation can return a null pointer.
+            my $isNullable = $attribute->signature->isNullable && !$codeGenerator->IsWrapperType($type);
             $codeGenerator->AssertNotSequenceType($type);
             my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $attribute);
             my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
@@ -2651,10 +2652,16 @@ sub GenerateImplementation
                     my $putForwards = $attribute->signature->extendedAttributes->{"PutForwards"};
                     if ($putForwards) {
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
-                        push(@implContent, "    auto* forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
-                        push(@implContent, "    if (!forwardedImpl)\n");
-                        push(@implContent, "        return;\n");
-                        push(@implContent, "    auto& impl = *forwardedImpl;\n");
+                        if ($attribute->signature->isNullable) {
+                            push(@implContent, "    auto* forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
+                            push(@implContent, "    if (!forwardedImpl)\n");
+                            push(@implContent, "        return;\n");
+                            push(@implContent, "    auto& impl = *forwardedImpl;\n");
+                        } else {
+                            # Attribute is not nullable, the implementation is expected to return a reference.
+                            my $attributeType = $attribute->signature->type;
+                            push(@implContent, "    ${attributeType}& impl = castedThis->impl().${implGetterFunctionName}();\n");
+                        }
                         $attribute = $codeGenerator->GetAttributeFromInterface($interface, $attribute->signature->type, $putForwards);
                     } else {
                         push(@implContent, "    auto& impl = castedThis->impl();\n");

@@ -836,6 +836,12 @@
     return kit(WTF::getPtr(IMPL->putForwardsAttribute()));
 }
 
+- (DOMTestNode *)putForwardsNullableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->putForwardsNullableAttribute(isNull)));
+}
+
 - (void)voidMethod
 {
     WebCore::JSMainThreadNullState state;

@@ -26,7 +26,11 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect] attribute DOMString marginHeight;
     [Reflect] attribute DOMString marginWidth;
     [Reflect] attribute DOMString name;
+
+    // FIXME: This is supposed to be:
+    // [PutForwards=value] readonly attribute DOMSettableTokenList sandbox;
     [Reflect] attribute DOMString sandbox;
+
     [Reflect] attribute DOMString scrolling;
     [Reflect, URL] attribute DOMString src;
     [Reflect] attribute DOMString srcdoc;

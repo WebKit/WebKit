@@ -136,6 +136,7 @@ enum {
     PROP_NULLABLE_STRING_VALUE,
     PROP_ATTRIBUTE,
     PROP_PUT_FORWARDS_ATTRIBUTE,
+    PROP_PUT_FORWARDS_NULLABLE_ATTRIBUTE,
 };
 
 static void webkit_dom_test_obj_finalize(GObject* object)
@@ -433,6 +434,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_PUT_FORWARDS_ATTRIBUTE:
         g_value_set_object(value, webkit_dom_test_obj_get_put_forwards_attribute(self));
+        break;
+    case PROP_PUT_FORWARDS_NULLABLE_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_put_forwards_nullable_attribute(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -1037,6 +1041,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "put-forwards-attribute",
             "TestObj:put-forwards-attribute",
             "read-only WebKitDOMTestNode* TestObj:put-forwards-attribute",
+            WEBKIT_DOM_TYPE_TEST_NODE,
+            WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_PUT_FORWARDS_NULLABLE_ATTRIBUTE,
+        g_param_spec_object(
+            "put-forwards-nullable-attribute",
+            "TestObj:put-forwards-nullable-attribute",
+            "read-only WebKitDOMTestNode* TestObj:put-forwards-nullable-attribute",
             WEBKIT_DOM_TYPE_TEST_NODE,
             WEBKIT_PARAM_READABLE));
 
@@ -2575,6 +2589,16 @@ WebKitDOMTestNode* webkit_dom_test_obj_get_put_forwards_attribute(WebKitDOMTestO
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::TestNode> gobjectResult = WTF::getPtr(item->putForwardsAttribute());
+    return WebKit::kit(gobjectResult.get());
+}
+
+WebKitDOMTestNode* webkit_dom_test_obj_get_put_forwards_nullable_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    RefPtr<WebCore::TestNode> gobjectResult = WTF::getPtr(item->putForwardsNullableAttribute(isNull));
     return WebKit::kit(gobjectResult.get());
 }
 
