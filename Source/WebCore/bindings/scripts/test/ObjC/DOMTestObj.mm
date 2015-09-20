@@ -830,6 +830,12 @@
     return IMPL->attribute();
 }
 
+- (DOMTestNode *)putForwardsAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->putForwardsAttribute()));
+}
+
 - (void)voidMethod
 {
     WebCore::JSMainThreadNullState state;

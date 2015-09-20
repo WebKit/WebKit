@@ -47,6 +47,27 @@ struct _WebKitDOMTestNodeClass {
 WEBKIT_API GType
 webkit_dom_test_node_get_type(void);
 
+/**
+ * webkit_dom_test_node_get_name:
+ * @self: A #WebKitDOMTestNode
+ *
+ * Returns: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gchar*
+webkit_dom_test_node_get_name(WebKitDOMTestNode* self);
+
+/**
+ * webkit_dom_test_node_set_name:
+ * @self: A #WebKitDOMTestNode
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_node_set_name(WebKitDOMTestNode* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

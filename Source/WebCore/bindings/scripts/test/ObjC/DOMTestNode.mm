@@ -35,12 +35,25 @@
 #import "JSMainThreadExecState.h"
 #import "TestNode.h"
 #import "ThreadCheck.h"
+#import "URL.h"
 #import "WebScriptObjectPrivate.h"
 #import <wtf/GetPtr.h>
 
 #define IMPL static_cast<WebCore::TestNode*>(reinterpret_cast<WebCore::Node*>(_internal))
 
 @implementation DOMTestNode
+
+- (NSString *)name
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->name();
+}
+
+- (void)setName:(NSString *)newName
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setName(newName);
+}
 
 @end
 

@@ -49,6 +49,7 @@
 #include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
+#include "TestNode.h"
 #include "TestObj.h"
 #include "URL.h"
 #include "bool.h"
@@ -309,6 +310,8 @@ void setJSTestObjNullableStringValue(JSC::ExecState*, JSC::JSObject*, JSC::Encod
 JSC::EncodedJSValue jsTestObjAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 void setJSTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjPutForwardsAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestObjPutForwardsAttribute(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestObjPrototype : public JSC::JSNonFinalObject {
@@ -576,6 +579,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "nullableStringValue", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableStringValue) } },
     { "attribute", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "attributeWithReservedEnumType", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) } },
+    { "putForwardsAttribute", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsAttribute) } },
 #if ENABLE(Condition1)
     { "CONDITIONAL_CONST", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(0) } },
 #else
@@ -1942,6 +1946,23 @@ EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject*
 }
 
 
+EncodedJSValue jsTestObjPutForwardsAttribute(ExecState* exec, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(exec);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        if (jsDynamicCast<JSTestObjPrototype*>(slotBase))
+            return reportDeprecatedGetterError(*exec, "TestObj", "putForwardsAttribute");
+        return throwGetterTypeError(*exec, "TestObj", "putForwardsAttribute");
+    }
+    auto& impl = castedThis->impl();
+    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl.putForwardsAttribute()));
+    return JSValue::encode(result);
+}
+
+
 EncodedJSValue jsTestObjConstructor(ExecState* exec, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSTestObjPrototype* domObject = jsDynamicCast<JSTestObjPrototype*>(baseValue);
@@ -3057,6 +3078,29 @@ void setJSTestObjAttributeWithReservedEnumType(ExecState* exec, JSObject* baseOb
 }
 
 
+void setJSTestObjPutForwardsAttribute(ExecState* exec, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+    if (UNLIKELY(!castedThis)) {
+        if (jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue)))
+            reportDeprecatedSetterError(*exec, "TestObj", "putForwardsAttribute");
+        else
+            throwSetterTypeError(*exec, "TestObj", "putForwardsAttribute");
+        return;
+    }
+    auto* forwardedImpl = castedThis->impl().putForwardsAttribute();
+    if (!forwardedImpl)
+        return;
+    auto& impl = *forwardedImpl;
+    String nativeValue = value.toString(exec)->value(exec);
+    if (UNLIKELY(exec->hadException()))
+        return;
+    impl.setName(nativeValue);
+}
+
+
 JSValue JSTestObj::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestObjConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
@@ -3309,7 +3353,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg
 
     String enumArg;
     if (exec->argument(0).isUndefined())
-        enumArg = String(ASCIILiteral("EnumValue1"));
+        enumArg = ASCIILiteral("EnumValue1");
     else {
         enumArg = exec->uncheckedArgument(0).toString(exec)->value(exec);
         if (UNLIKELY(exec->hadException()))

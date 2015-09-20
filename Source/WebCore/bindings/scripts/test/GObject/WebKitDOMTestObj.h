@@ -1703,6 +1703,17 @@ webkit_dom_test_obj_set_nullable_string_value(WebKitDOMTestObj* self, glong valu
 WEBKIT_API gchar*
 webkit_dom_test_obj_get_attribute(WebKitDOMTestObj* self);
 
+/**
+ * webkit_dom_test_obj_get_put_forwards_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none): A #WebKitDOMTestNode
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API WebKitDOMTestNode*
+webkit_dom_test_obj_get_put_forwards_attribute(WebKitDOMTestObj* self);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

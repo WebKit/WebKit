@@ -336,7 +336,7 @@ sub IsScriptProfileType
 sub IsReadonly
 {
     my $attribute = shift;
-    return $attribute->isReadOnly && !$attribute->signature->extendedAttributes->{"Replaceable"};
+    return $attribute->isReadOnly && !$attribute->signature->extendedAttributes->{"Replaceable"} && !$attribute->signature->extendedAttributes->{"PutForwards"};
 }
 
 sub AddTypedefForScriptProfileType
@@ -2648,7 +2648,17 @@ sub GenerateImplementation
                 push(@implContent, "    castedThis->putDirect(exec->vm(), Identifier::fromString(exec, \"$name\"), value);\n");
             } else {
                 if (!$attribute->isStatic) {
-                    push(@implContent, "    auto& impl = castedThis->impl();\n");
+                    my $putForwards = $attribute->signature->extendedAttributes->{"PutForwards"};
+                    if ($putForwards) {
+                        my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
+                        push(@implContent, "    auto* forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
+                        push(@implContent, "    if (!forwardedImpl)\n");
+                        push(@implContent, "        return;\n");
+                        push(@implContent, "    auto& impl = *forwardedImpl;\n");
+                        $attribute = $codeGenerator->GetAttributeFromInterface($interface, $attribute->signature->type, $putForwards);
+                    } else {
+                        push(@implContent, "    auto& impl = castedThis->impl();\n");
+                    }
                 }
                 push(@implContent, "    ExceptionCode ec = 0;\n") if $setterRaisesException;
 

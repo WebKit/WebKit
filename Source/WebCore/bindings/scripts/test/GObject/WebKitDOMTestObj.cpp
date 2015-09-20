@@ -135,6 +135,7 @@ enum {
     PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE,
     PROP_NULLABLE_STRING_VALUE,
     PROP_ATTRIBUTE,
+    PROP_PUT_FORWARDS_ATTRIBUTE,
 };
 
 static void webkit_dom_test_obj_finalize(GObject* object)
@@ -429,6 +430,9 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
         break;
     case PROP_ATTRIBUTE:
         g_value_take_string(value, webkit_dom_test_obj_get_attribute(self));
+        break;
+    case PROP_PUT_FORWARDS_ATTRIBUTE:
+        g_value_set_object(value, webkit_dom_test_obj_get_put_forwards_attribute(self));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
@@ -1024,6 +1028,16 @@ static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
             "TestObj:attribute",
             "read-only gchar* TestObj:attribute",
             "",
+            WEBKIT_PARAM_READABLE));
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_PUT_FORWARDS_ATTRIBUTE,
+        g_param_spec_object(
+            "put-forwards-attribute",
+            "TestObj:put-forwards-attribute",
+            "read-only WebKitDOMTestNode* TestObj:put-forwards-attribute",
+            WEBKIT_DOM_TYPE_TEST_NODE,
             WEBKIT_PARAM_READABLE));
 
 }
@@ -2553,5 +2567,14 @@ gchar* webkit_dom_test_obj_get_attribute(WebKitDOMTestObj* self)
     WebCore::TestObj* item = WebKit::core(self);
     gchar* result = convertToUTF8String(item->attribute());
     return result;
+}
+
+WebKitDOMTestNode* webkit_dom_test_obj_get_put_forwards_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    RefPtr<WebCore::TestNode> gobjectResult = WTF::getPtr(item->putForwardsAttribute());
+    return WebKit::kit(gobjectResult.get());
 }
 

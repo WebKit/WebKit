@@ -299,6 +299,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     Promise testPromiseFunctionWithFloatArgument(float a);
     [RaisesException] Promise testPromiseFunctionWithException();
     Promise testPromiseFunctionWithOptionalIntArgument(optional long a);
+
+    // PutForwards
+    [PutForwards=name] readonly attribute TestNode putForwardsAttribute;
 };
 
 // The following comment should not generate any code.

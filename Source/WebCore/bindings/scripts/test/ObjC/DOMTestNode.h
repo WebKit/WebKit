@@ -26,6 +26,9 @@
 
 #import <WebCore/DOMNode.h>
 
+@class NSString;
+
 WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestNode : DOMNode
+@property (copy) NSString *name;
 @end

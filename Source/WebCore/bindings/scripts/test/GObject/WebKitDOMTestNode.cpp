@@ -92,13 +92,78 @@ static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestNode, webkit_dom_test_node, WEBKIT_DOM_TYPE_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_DOM_TYPE_EVENT_TARGET, webkit_dom_event_target_init))
 
+enum {
+    PROP_0,
+    PROP_NAME,
+};
+
+static void webkit_dom_test_node_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
+{
+    WebKitDOMTestNode* self = WEBKIT_DOM_TEST_NODE(object);
+
+    switch (propertyId) {
+    case PROP_NAME:
+        webkit_dom_test_node_set_name(self, g_value_get_string(value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
+        break;
+    }
+}
+
+static void webkit_dom_test_node_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
+{
+    WebKitDOMTestNode* self = WEBKIT_DOM_TEST_NODE(object);
+
+    switch (propertyId) {
+    case PROP_NAME:
+        g_value_take_string(value, webkit_dom_test_node_get_name(self));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
+        break;
+    }
+}
+
 static void webkit_dom_test_node_class_init(WebKitDOMTestNodeClass* requestClass)
 {
-    UNUSED_PARAM(requestClass);
+    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
+    gobjectClass->set_property = webkit_dom_test_node_set_property;
+    gobjectClass->get_property = webkit_dom_test_node_get_property;
+
+    g_object_class_install_property(
+        gobjectClass,
+        PROP_NAME,
+        g_param_spec_string(
+            "name",
+            "TestNode:name",
+            "read-write gchar* TestNode:name",
+            "",
+            WEBKIT_PARAM_READWRITE));
+
 }
 
 static void webkit_dom_test_node_init(WebKitDOMTestNode* request)
 {
     UNUSED_PARAM(request);
+}
+
+gchar* webkit_dom_test_node_get_name(WebKitDOMTestNode* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_NODE(self), 0);
+    WebCore::TestNode* item = WebKit::core(self);
+    gchar* result = convertToUTF8String(item->name());
+    return result;
+}
+
+void webkit_dom_test_node_set_name(WebKitDOMTestNode* self, const gchar* value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_NODE(self));
+    g_return_if_fail(value);
+    WebCore::TestNode* item = WebKit::core(self);
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setName(convertedValue);
 }
 

@@ -170,7 +170,7 @@
     NodeList getElementsByName([Default=Undefined,AtomicString] optional DOMString elementName);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [CustomSetter, Unforgeable] attribute Location location;
+    [PutForwards=href, Unforgeable] readonly attribute Location location;
 #endif
 
     // IE extensions

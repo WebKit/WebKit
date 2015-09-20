@@ -234,6 +234,20 @@ sub IDLFileForInterface
     return $idlFiles->{$interfaceName};
 }
 
+sub GetAttributeFromInterface()
+{
+    my $object = shift;
+    my $outerInterface = shift;
+    my $interfaceName = shift;
+    my $attributeName = shift;
+
+    my $interface = $object->ParseInterface($outerInterface, $interfaceName);
+    for my $attribute (@{$interface->attributes}) {
+        return $attribute if $attribute->signature->name eq $attributeName;
+    }
+    die("Could not find attribute '$attributeName' on interface '$interfaceName'.");
+}
+
 sub ParseInterface
 {
     my $object = shift;

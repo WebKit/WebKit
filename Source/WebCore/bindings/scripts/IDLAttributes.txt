@@ -102,6 +102,7 @@ ObjCProtocol
 ObjCUseDefaultView
 OverrideBuiltins
 PassContext
+PutForwards=*
 RaisesException
 Reflect=*
 Replaceable
