@@ -14,14 +14,12 @@
     description("This tests that when enable enhanced accessibility is true and no other accessibility API is called, the load notification will successfully fire.");
 
     function notifyCallback(element, notification) {
-        if (notification == "AXLoadComplete") {
-            accessibilityController.removeNotificationListener();
-            window.testRunner.notifyDone();
-        }
+        if (notification == "AXLoadComplete")
+            finishJSTest();
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
+        jsTestIsAsync = true;
         accessibilityController.enableEnhancedAccessibility(true);
         var addedNotification = accessibilityController.addNotificationListener(notifyCallback);
         shouldBe("addedNotification", "true");

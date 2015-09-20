@@ -126,15 +126,16 @@ bool AccessibilityController::addNotificationListener(JSObjectRef functionCallba
     // Other platforms may be different.
     if (m_globalNotificationHandler)
         return false;
-    m_globalNotificationHandler = [[AccessibilityNotificationHandler alloc] init];
-    [m_globalNotificationHandler.get() setCallback:functionCallback];
-    [m_globalNotificationHandler.get() startObserving];
+    m_globalNotificationHandler = adoptNS([[AccessibilityNotificationHandler alloc] init]);
+    [m_globalNotificationHandler setCallback:functionCallback];
+    [m_globalNotificationHandler startObserving];
     
     return true;
 }
 
 void AccessibilityController::platformResetToConsistentState()
 {
+    [m_globalNotificationHandler stopObserving];
     m_globalNotificationHandler.clear();
 }
 

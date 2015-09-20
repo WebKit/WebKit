@@ -1,3 +1,21 @@
+2015-09-20  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac, iOS] AccessibilityController doesn't uninstall global notification handler
+        https://bugs.webkit.org/show_bug.cgi?id=149384
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::addNotificationListener): Fixed a leak, and cleaned up the code.
+        (AccessibilityController::platformResetToConsistentState): Actually remove the handler,
+        regardless of whether someone else holds a reference (we also call -stopListening in
+        -dealloc).
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::platformResetToConsistentState):
+        (AccessibilityController::addNotificationListener):
+        Ditto.
+
 2015-09-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove XHR_TIMEOUT compilation guard
