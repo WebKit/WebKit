@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,16 +63,19 @@
 
 #if PLATFORM(COCOA)
 #include "MediaPlayerPrivateQTKit.h"
+
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
-#if ENABLE(MEDIA_SOURCE)
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 #include "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #endif
-#endif
-#elif PLATFORM(WIN) && !USE(GSTREAMER)
-#if USE(AVFOUNDATION)
+
+#endif // PLATFORM(COCOA)
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION) && !USE(GSTREAMER)
 #include "MediaPlayerPrivateAVFoundationCF.h"
-#endif // USE(AVFOUNDATION)
 #endif
 
 namespace WebCore {
@@ -178,16 +181,20 @@ static void buildMediaEnginesVector()
 {
 #if USE(AVFOUNDATION)
     if (Settings::isAVFoundationEnabled()) {
+
 #if PLATFORM(COCOA)
         MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
         MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
 #endif
-#elif PLATFORM(WIN)
+
+#if PLATFORM(WIN)
         MediaPlayerPrivateAVFoundationCF::registerMediaEngine(addMediaEngine);
 #endif
     }
-#endif
+#endif // USE(AVFOUNDATION)
 
 #if PLATFORM(MAC)
     if (Settings::isQTKitEnabled())
@@ -238,7 +245,7 @@ static const AtomicString& codecs()
 
 static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters& parameters, const MediaPlayerFactory* current = nullptr)
 {
-    if (parameters.type.isEmpty())
+    if (parameters.type.isEmpty() && !parameters.isMediaSource && !parameters.isMediaStream)
         return nullptr;
 
     // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream"
@@ -307,6 +314,8 @@ MediaPlayer::~MediaPlayer()
 
 bool MediaPlayer::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
+    ASSERT(!m_reloadTimer.isActive());
+
     m_contentMIMEType = contentType.type().lower();
     m_contentTypeCodecs = contentType.parameter(codecs());
     m_url = url;
@@ -345,7 +354,9 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 #if ENABLE(MEDIA_SOURCE)
 bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSourcePrivateClient* mediaSource)
 {
+    ASSERT(!m_reloadTimer.isActive());
     ASSERT(mediaSource);
+
     m_mediaSource = mediaSource;
     m_contentMIMEType = contentType.type().lower();
     m_contentTypeCodecs = contentType.parameter(codecs());
@@ -360,7 +371,9 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSour
 #if ENABLE(MEDIA_STREAM)
 bool MediaPlayer::load(MediaStreamPrivate* mediaStream)
 {
+    ASSERT(!m_reloadTimer.isActive());
     ASSERT(mediaStream);
+
     m_mediaStream = mediaStream;
     m_keySystem = "";
     m_contentMIMEType = "";
@@ -391,9 +404,21 @@ const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFact
 
 void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 {
+#if ENABLE(MEDIA_SOURCE) 
+#define MEDIASOURCE m_mediaSource
+#else
+#define MEDIASOURCE 0
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#define MEDIASTREAM m_mediaStream
+#else
+#define MEDIASTREAM 0
+#endif
+
     const MediaPlayerFactory* engine = nullptr;
 
-    if (!m_contentMIMEType.isEmpty())
+    if (!m_contentMIMEType.isEmpty() || MEDIASTREAM || MEDIASOURCE)
         engine = nextBestMediaEngine(current);
 
     // If no MIME type is specified or the type was inferred from the file extension, just use the next engine.

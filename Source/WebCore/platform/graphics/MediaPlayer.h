@@ -103,28 +103,15 @@ struct PlatformMedia {
 };
 
 struct MediaEngineSupportParameters {
+
+    MediaEngineSupportParameters() { }
+
     String type;
     String codecs;
     URL url;
-#if ENABLE(ENCRYPTED_MEDIA)
     String keySystem;
-#endif
-#if ENABLE(MEDIA_SOURCE)
-    bool isMediaSource;
-#endif
-#if ENABLE(MEDIA_STREAM)
-    bool isMediaStream;
-#endif
-
-    MediaEngineSupportParameters()
-#if ENABLE(MEDIA_SOURCE)
-        : isMediaSource(false)
-#endif
-    {
-#if ENABLE(MEDIA_STREAM)
-        isMediaStream = false;
-#endif
-    }
+    bool isMediaSource { false };
+    bool isMediaStream { false };
 };
 
 extern const PlatformMedia NoPlatformMedia;

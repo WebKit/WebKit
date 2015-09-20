@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2012, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,9 +35,26 @@
 #include "MediaStreamRegistry.h"
 #include "MediaStreamTrackEvent.h"
 #include "RealtimeMediaSource.h"
+#include "URL.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+static URLRegistry* s_registry;
+
+void MediaStream::setRegistry(URLRegistry& registry)
+{
+    ASSERT(!s_registry);
+    s_registry = &registry;
+}
+
+MediaStream* MediaStream::lookUp(const URL& url)
+{
+    if (!s_registry)
+        return nullptr;
+
+    return static_cast<MediaStream*>(s_registry->lookup(url.string()));
+}
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {

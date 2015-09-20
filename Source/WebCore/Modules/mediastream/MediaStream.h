@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,9 @@ public:
         virtual ~Observer() { }
         virtual void didAddOrRemoveTrack() = 0;
     };
+
+    static void setRegistry(URLRegistry&);
+    static MediaStream* lookUp(const URL&);
 
     static Ref<MediaStream> create(ScriptExecutionContext&);
     static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream*);

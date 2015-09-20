@@ -240,7 +240,8 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
     if (parameters.isMediaStream)
         return MediaPlayer::IsNotSupported;
 #endif
-    if (!mimeTypeCache().contains(parameters.type))
+
+    if (parameters.type.isEmpty() || !mimeTypeCache().contains(parameters.type))
         return MediaPlayer::IsNotSupported;
 
     // The spec says:
