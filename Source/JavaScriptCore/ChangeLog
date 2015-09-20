@@ -1,3 +1,14 @@
+2015-09-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Unreviewed, should check the result of fread
+        https://bugs.webkit.org/show_bug.cgi?id=148917
+
+        Suppress the build warning on GTK with GCC.
+
+        * jsc.cpp:
+        (fillBufferWithContentsOfFile):
+        (fetchModuleFromLocalFileSystem):
+
 2015-09-19  Saam barati  <sbarati@apple.com>
 
         VariableEnvironmentNode should inherit from ParserArenaDeletable because VariableEnvironment's must have their destructors run

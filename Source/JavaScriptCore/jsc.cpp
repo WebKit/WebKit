@@ -879,13 +879,14 @@ static void convertShebangToJSComment(Vector<char>& buffer)
     }
 }
 
-static void fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
+static bool fillBufferWithContentsOfFile(FILE* file, Vector<char>& buffer)
 {
     fseek(file, 0, SEEK_END);
     size_t bufferCapacity = ftell(file);
     fseek(file, 0, SEEK_SET);
     buffer.resize(bufferCapacity);
-    fread(buffer.data(), 1, bufferCapacity, file);
+    size_t readSize = fread(buffer.data(), 1, buffer.size(), file);
+    return readSize == buffer.size();
 }
 
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
@@ -896,10 +897,10 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
         return false;
     }
 
-    fillBufferWithContentsOfFile(f, buffer);
+    bool result = fillBufferWithContentsOfFile(f, buffer);
     fclose(f);
 
-    return true;
+    return result;
 }
 
 static bool fetchScriptFromLocalFileSystem(const String& fileName, Vector<char>& buffer)
@@ -928,11 +929,12 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector<char>&
         return false;
     }
 
-    fillBufferWithContentsOfFile(f, buffer);
-    convertShebangToJSComment(buffer);
+    bool result = fillBufferWithContentsOfFile(f, buffer);
+    if (result)
+        convertShebangToJSComment(buffer);
     fclose(f);
 
-    return true;
+    return result;
 }
 
 JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSValue key)
