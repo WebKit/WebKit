@@ -39,17 +39,15 @@ text
     var req = 0;
     if (window.accessibilityController) {  
         window.jsTestIsAsync = true;
-        document.getElementById("body").focus();
-        body = accessibilityController.focusedElement;
 
         // Access the text area so that an accessibility element is created (so that it will send out notifications).        
-        body.childAtIndex(0).childAtIndex(0);
+        accessibilityController.accessibleElementById("textarea");
 
         document.getElementById("textarea").focus();
 
         req = new XMLHttpRequest;
         req.onreadystatechange = processStateChange;
-        req.open("get", "../../../http/tests/xmlhttprequest/methods.cgi", true);
+        req.open("get", "../../http/tests/xmlhttprequest/methods.cgi", true);
         // Sending this after a timeout makes is so that the layout does not happen until the value change is sent.
         setTimeout("req.send('')", 1);
     } else

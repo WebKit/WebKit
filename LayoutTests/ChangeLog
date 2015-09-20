@@ -1,3 +1,13 @@
+2015-09-20 Chris Fleizach <cfleizach@apple.com>
+
+        Fix a relative path in accessibility/mac/removing-textarea-after-edit-crash.html
+        after moving the test.
+        https://bugs.webkit.org/show_bug.cgi?id=149217
+
+        Reviewed by Alexey Proskuryakov.
+
+        * accessibility/mac/removing-textarea-after-edit-crash.html:
+
 2015-09-20  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac, iOS] AccessibilityController doesn't uninstall global notification handler
