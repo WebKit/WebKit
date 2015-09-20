@@ -3359,26 +3359,46 @@ sub GenerateParametersCheck
         } elsif ($codeGenerator->IsEnumType($argType)) {
             $implIncludes{"<runtime/Error.h>"} = 1;
 
-            my $argValue = "exec->argument($argsIndex)";
-            push(@$outputArray, "    // Keep pointer to the JSString in a local so we don't need to ref the String.\n");
-            push(@$outputArray, "    auto* ${name}String = ${argValue}.toString(exec);\n");
-            push(@$outputArray, "    if (UNLIKELY(exec->hadException()))\n");
-            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
-            push(@$outputArray, "    auto& $name = ${name}String->value(exec);\n");
+            my $exceptionCheck = sub {
+                my $indent = shift;
+                push(@$outputArray, $indent . "    if (UNLIKELY(exec->hadException()))\n");
+                push(@$outputArray, $indent . "        return JSValue::encode(jsUndefined());\n");
+            };
 
-            my @enumValues = $codeGenerator->ValidEnumValues($argType);
-            my @enumChecks = ();
-            my $enums = 0;
-            foreach my $enumValue (@enumValues) {
-                push(@enumChecks, "${name} != \"$enumValue\"");
-                if (!$enums) {
-                    $enums = "\\\"$enumValue\\\"";
-                } else {
-                    $enums = $enums . ", \\\"" . $enumValue . "\\\"";
+            my $enumValueCheck = sub {
+                my $indent = shift;
+                my @enumValues = $codeGenerator->ValidEnumValues($argType);
+                my @enumChecks = ();
+                my $enums = 0;
+                foreach my $enumValue (@enumValues) {
+                    push(@enumChecks, "${name} != \"$enumValue\"");
+                    if (!$enums) {
+                        $enums = "\\\"$enumValue\\\"";
+                    } else {
+                        $enums = $enums . ", \\\"" . $enumValue . "\\\"";
+                    }
                 }
+                push(@$outputArray, $indent . "    if (" . join(" && ", @enumChecks) . ")\n");
+                push(@$outputArray, $indent . "        return throwArgumentMustBeEnumError(*exec, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$enums\");\n");
+            };
+
+            my $argValue = "exec->argument($argsIndex)";
+            if ($parameter->isOptional && $parameter->default) {
+                push(@$outputArray, "    String $name;\n");
+                push(@$outputArray, "    if (${argValue}.isUndefined())\n");
+                push(@$outputArray, "        $name = ASCIILiteral(" . $parameter->default . ");\n");
+                push(@$outputArray, "    else {\n");
+                push(@$outputArray, "        $name = exec->uncheckedArgument($argsIndex).toString(exec)->value(exec);\n");
+                &$exceptionCheck("    ");
+                &$enumValueCheck("    ");
+                push(@$outputArray, "    }\n");
+            } else {
+                push(@$outputArray, "    // Keep pointer to the JSString in a local so we don't need to ref the String.\n");
+                push(@$outputArray, "    auto* ${name}String = ${argValue}.toString(exec);\n");
+                push(@$outputArray, "    auto& $name = ${name}String->value(exec);\n");
+                &$exceptionCheck("");
+                &$enumValueCheck("");
             }
-            push (@$outputArray, "    if (" . join(" && ", @enumChecks) . ")\n");
-            push (@$outputArray, "        return throwArgumentMustBeEnumError(*exec, $argsIndex, \"$name\", \"$interfaceName\", $quotedFunctionName, \"$enums\");\n");
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError

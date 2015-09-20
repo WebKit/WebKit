@@ -80,18 +80,18 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
         unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
     [RaisesException] void ellipse(unrestricted float x, unrestricted float y, unrestricted float radiusX, unrestricted float radiusY, unrestricted float rotation, unrestricted float startAngle, unrestricted float endAngle, [Default=Undefined] optional boolean anticlockwise);
 
-    void fill(DOMPath path, optional CanvasWindingRule winding);
+    void fill(DOMPath path, optional CanvasWindingRule winding = "nonzero");
     void stroke(DOMPath path);
-    void clip(DOMPath path, optional CanvasWindingRule winding);
+    void clip(DOMPath path, optional CanvasWindingRule winding = "nonzero");
 
-    void fill(optional CanvasWindingRule winding);
+    void fill(optional CanvasWindingRule winding = "nonzero");
     void stroke();
-    void clip(optional CanvasWindingRule winding);
+    void clip(optional CanvasWindingRule winding = "nonzero");
 
-    boolean isPointInPath(DOMPath path, unrestricted float x, unrestricted float y, optional CanvasWindingRule winding);
+    boolean isPointInPath(DOMPath path, unrestricted float x, unrestricted float y, optional CanvasWindingRule winding = "nonzero");
     boolean isPointInStroke(DOMPath path, unrestricted float x, unrestricted float y);
 
-    boolean isPointInPath(unrestricted float x, unrestricted float y, optional CanvasWindingRule winding);
+    boolean isPointInPath(unrestricted float x, unrestricted float y, optional CanvasWindingRule winding = "nonzero");
     boolean isPointInStroke(unrestricted float x, unrestricted float y);
 
     // text

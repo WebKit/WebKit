@@ -112,7 +112,7 @@ shouldBe('areaColor(imageData.data, {r:0,g:0,b:0,a:0})', 'true');
 shouldThrow("ctx.clip(0)");
 shouldThrow("ctx.clip(null)");
 shouldThrow("ctx.clip('path2d')");
-shouldThrow("ctx.clip(undefined)");
+shouldNotThrow("ctx.clip(undefined)");
 shouldThrow("ctx.clip(Number.MAX_VALUE)");
 shouldThrow("ctx.clip(function() {})");
 shouldThrow("ctx.clip(false)");

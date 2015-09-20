@@ -896,6 +896,12 @@
     IMPL->methodWithEnumArg(core(enumArg));
 }
 
+- (void)methodWithOptionalEnumArgAndDefaultValue:(DOMTestEnumType *)enumArg
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->methodWithOptionalEnumArgAndDefaultValue(core(enumArg));
+}
+
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;

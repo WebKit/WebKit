@@ -65,8 +65,8 @@ interface HTMLInputElement : HTMLElement {
     [SetterRaisesException] attribute Date valueAsDate;
     [SetterRaisesException] attribute unrestricted double valueAsNumber;
 
-    [RaisesException] void stepUp(optional long n);
-    [RaisesException] void stepDown(optional long n);
+    [RaisesException] void stepUp(optional long n = 1);
+    [RaisesException] void stepDown(optional long n = 1);
 
     attribute unsigned long width;
     readonly attribute boolean willValidate;

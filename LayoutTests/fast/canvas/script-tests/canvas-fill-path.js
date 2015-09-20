@@ -94,7 +94,7 @@ shouldBe('areaColor(imageData.data, {r:0,g:0,b:0,a:0})', 'true');
 shouldThrow("ctx.fill(0)");
 shouldThrow("ctx.fill(null)");
 shouldThrow("ctx.fill('path2d')");
-shouldThrow("ctx.fill(undefined)");
+shouldNotThrow("ctx.fill(undefined)");
 shouldThrow("ctx.fill(Number.MAX_VALUE)");
 shouldThrow("ctx.fill(function() {})");
 shouldThrow("ctx.fill(false)");

@@ -26,7 +26,7 @@ PASS areaColor(imageData.data, {r:0,g:0,b:0,a:0}) is true
 PASS ctx.fill(0) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS ctx.fill(null) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS ctx.fill('path2d') threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
-PASS ctx.fill(undefined) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
+PASS ctx.fill(undefined) did not throw exception.
 PASS ctx.fill(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS ctx.fill(function() {}) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
 PASS ctx.fill(false) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
@@ -34,7 +34,7 @@ PASS ctx.fill(new Date()) threw exception TypeError: Argument 1 ('winding') to C
 PASS ctx.fill(0, 'nonzero') threw exception TypeError: Type error.
 PASS ctx.fill(null, 'nonzero') threw exception TypeError: Type error.
 PASS ctx.fill('path2d', 'nonzero') threw exception TypeError: Type error.
-PASS ctx.fill(undefined) threw exception TypeError: Argument 1 ('winding') to CanvasRenderingContext2D.fill must be one of: "nonzero", "evenodd".
+FAIL ctx.fill(undefined) should throw an exception. Was undefined.
 PASS ctx.fill(Number.MAX_VALUE, 'nonzero') threw exception TypeError: Type error.
 PASS ctx.fill(function() {}, 'nonzero') threw exception TypeError: Type error.
 PASS ctx.fill(false, 'nonzero') threw exception TypeError: Type error.

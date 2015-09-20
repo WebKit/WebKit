@@ -1152,6 +1152,16 @@ void webkit_dom_test_obj_method_with_enum_arg(WebKitDOMTestObj* self, WebKitDOMT
     item->methodWithEnumArg(convertedEnumArg);
 }
 
+void webkit_dom_test_obj_method_with_optional_enum_arg_and_default_value(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_ENUM_TYPE(enumArg));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestEnumType* convertedEnumArg = WebKit::core(enumArg);
+    item->methodWithOptionalEnumArgAndDefaultValue(convertedEnumArg);
+}
+
 WebKitDOMTestObj* webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error)
 {
     WebCore::JSMainThreadNullState state;
