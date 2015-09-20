@@ -3110,7 +3110,8 @@ void setJSTestObjPutForwardsAttribute(ExecState* state, JSObject* baseObject, En
             throwSetterTypeError(*state, "TestObj", "putForwardsAttribute");
         return;
     }
-    TestNode& impl = castedThis->impl().putForwardsAttribute();
+    Ref<TestNode> forwardedImpl = castedThis->impl().putForwardsAttribute();
+    auto& impl = forwardedImpl.get();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return;
@@ -3130,7 +3131,7 @@ void setJSTestObjPutForwardsNullableAttribute(ExecState* state, JSObject* baseOb
             throwSetterTypeError(*state, "TestObj", "putForwardsNullableAttribute");
         return;
     }
-    auto* forwardedImpl = castedThis->impl().putForwardsNullableAttribute();
+    RefPtr<TestNode> forwardedImpl = castedThis->impl().putForwardsNullableAttribute();
     if (!forwardedImpl)
         return;
     auto& impl = *forwardedImpl;

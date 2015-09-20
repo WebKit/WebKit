@@ -2652,15 +2652,16 @@ sub GenerateImplementation
                     my $putForwards = $attribute->signature->extendedAttributes->{"PutForwards"};
                     if ($putForwards) {
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
+                        my $attributeType = $attribute->signature->type;
                         if ($attribute->signature->isNullable) {
-                            push(@implContent, "    auto* forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
+                            push(@implContent, "    RefPtr<${attributeType}> forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
                             push(@implContent, "        return;\n");
                             push(@implContent, "    auto& impl = *forwardedImpl;\n");
                         } else {
                             # Attribute is not nullable, the implementation is expected to return a reference.
-                            my $attributeType = $attribute->signature->type;
-                            push(@implContent, "    ${attributeType}& impl = castedThis->impl().${implGetterFunctionName}();\n");
+                            push(@implContent, "    Ref<${attributeType}> forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
+                            push(@implContent, "    auto& impl = forwardedImpl.get();\n");
                         }
                         $attribute = $codeGenerator->GetAttributeFromInterface($interface, $attribute->signature->type, $putForwards);
                     } else {
