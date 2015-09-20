@@ -76,9 +76,7 @@ public:
     };
     static const ResponseTypeCode FirstBinaryResponseType = ResponseTypeBlob;
 
-#if ENABLE(XHR_TIMEOUT)
-    virtual void didTimeout();
-#endif
+    virtual void didReachTimeout();
 
     virtual EventTargetInterface eventTargetInterface() const override { return XMLHttpRequestEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
@@ -113,10 +111,8 @@ public:
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
     Blob* responseBlob();
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
-#if ENABLE(XHR_TIMEOUT)
     unsigned timeout() const { return m_timeoutMilliseconds; }
     void setTimeout(unsigned timeout, ExceptionCode&);
-#endif
 
     bool responseCacheIsValid() const { return m_responseCacheIsValid; }
     void didCacheResponseJSON();
@@ -257,11 +253,9 @@ private:
     Timer m_resumeTimer;
     bool m_dispatchErrorOnResuming;
 
-#if ENABLE(XHR_TIMEOUT)
     unsigned m_timeoutMilliseconds { 0 };
     std::chrono::steady_clock::time_point m_sendingTime;
     Timer m_timeoutTimer;
-#endif
 };
 
 } // namespace WebCore

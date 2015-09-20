@@ -803,10 +803,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WILL_REVEAL_EDGE_EVENTS 1
 #endif
 
-#if !defined(ENABLE_XHR_TIMEOUT)
-#define ENABLE_XHR_TIMEOUT 0
-#endif
-
 #if !defined(ENABLE_XSLT)
 #define ENABLE_XSLT 1
 #endif

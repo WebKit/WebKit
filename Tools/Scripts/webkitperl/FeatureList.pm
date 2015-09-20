@@ -148,7 +148,6 @@ my (
     $webReplaySupport,
     $webSocketsSupport,
     $webTimingSupport,
-    $xhrTimeoutSupport,
     $xsltSupport,
     $ftlJITSupport,
 );
@@ -450,9 +449,6 @@ my @features = (
 
     { option => "web-timing", desc => "Toggle Web Timing support",
       define => "ENABLE_WEB_TIMING", default => (isGtk() || isEfl()), value => \$webTimingSupport },
-
-    { option => "xhr-timeout", desc => "Toggle XHR Timeout support",
-      define => "ENABLE_XHR_TIMEOUT", default => (isEfl() || isGtk() || isAppleMacWebKit()), value => \$xhrTimeoutSupport },
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },

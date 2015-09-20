@@ -50,7 +50,7 @@ enum XMLHttpRequestResponseType {
     attribute EventHandler onloadend;
     attribute EventHandler onloadstart;
     attribute EventHandler onprogress;
-    [Conditional=XHR_TIMEOUT] attribute EventHandler ontimeout;
+    attribute EventHandler ontimeout;
 
     attribute EventHandler onreadystatechange;
 
@@ -61,7 +61,7 @@ enum XMLHttpRequestResponseType {
     const unsigned short LOADING = 3;
     const unsigned short DONE = 4;
 
-    [Conditional=XHR_TIMEOUT, SetterRaisesException] attribute unsigned long timeout;
+    [SetterRaisesException] attribute unsigned long timeout;
     readonly attribute unsigned short readyState;
 
     [SetterRaisesException] attribute boolean withCredentials;
