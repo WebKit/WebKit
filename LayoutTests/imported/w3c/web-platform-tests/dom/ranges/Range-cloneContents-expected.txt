@@ -74,10 +74,8 @@ PASS Returned fragment for range 22 [testDiv, 2, paras[4], 1]
 PASS Resulting DOM for range 23 [document, 0, document, 1] 
 PASS Resulting cursor position for range 23 [document, 0, document, 1] 
 PASS Returned fragment for range 23 [document, 0, document, 1] 
-FAIL Resulting DOM for range 24 [document, 0, document, 2] assert_throws: function "function () {
-        actualRange.cloneContents();
-      }" did not throw
-FAIL Resulting cursor position for range 24 [document, 0, document, 2] undefined is not an object (evaluating 'actualRoots')
+PASS Resulting DOM for range 24 [document, 0, document, 2] 
+PASS Resulting cursor position for range 24 [document, 0, document, 2] 
 PASS Returned fragment for range 24 [document, 0, document, 2] 
 PASS Resulting DOM for range 25 [comment, 2, comment, 3] 
 PASS Resulting cursor position for range 25 [comment, 2, comment, 3] 

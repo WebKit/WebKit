@@ -489,7 +489,7 @@ bool Range::boundaryPointsValid() const
 
 void Range::deleteContents(ExceptionCode& ec)
 {
-    checkDeleteExtract(Delete, ec);
+    checkDeleteExtract(ec);
     if (ec)
         return;
 
@@ -693,7 +693,7 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
     ASSERT(startOffset <= endOffset);
 
     // This switch statement must be consistent with that of lengthOfContentsInNode.
-    RefPtr<Node> result;   
+    RefPtr<Node> result;
     switch (container->nodeType()) {
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
@@ -750,8 +750,13 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         Vector<RefPtr<Node>> nodes;
         for (unsigned i = startOffset; n && i; i--)
             n = n->nextSibling();
-        for (unsigned i = startOffset; n && i < endOffset; i++, n = n->nextSibling())
+        for (unsigned i = startOffset; n && i < endOffset; i++, n = n->nextSibling()) {
+            if (action != Delete && n->isDocumentTypeNode()) {
+                ec = HIERARCHY_REQUEST_ERR;
+                return nullptr;
+            }
             nodes.append(n);
+        }
 
         processNodes(action, nodes, container, result, ec);
         break;
@@ -834,7 +839,7 @@ RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* co
 
 RefPtr<DocumentFragment> Range::extractContents(ExceptionCode& ec)
 {
-    checkDeleteExtract(Extract, ec);
+    checkDeleteExtract(ec);
     if (ec)
         return nullptr;
 
@@ -1324,7 +1329,7 @@ void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
     setStart(refNode->parentNode(), refNode->computeNodeIndex(), ec);
 }
 
-void Range::checkDeleteExtract(ActionType action, ExceptionCode& ec)
+void Range::checkDeleteExtract(ExceptionCode& ec)
 {
     ec = 0;
     if (!commonAncestorContainer())
@@ -1334,11 +1339,6 @@ void Range::checkDeleteExtract(ActionType action, ExceptionCode& ec)
     for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(*n)) {
         if (n->isReadOnlyNode()) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
-            return;
-        }
-
-        if (action == Extract && n->nodeType() == Node::DOCUMENT_TYPE_NODE) {
-            ec = HIERARCHY_REQUEST_ERR;
             return;
         }
     }
