@@ -269,26 +269,27 @@ public:
         m_codeBlock->capabilityLevel();
     }
 
-    void buildSetLocal(uint32_t localIndex, int, WASMType type)
+    int buildSetLocal(WASMOpKind opKind, uint32_t localIndex, int, WASMType type)
     {
         switch (type) {
         case WASMType::I32:
         case WASMType::F32:
             load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT0);
-            m_tempStackTop--;
             store32(GPRInfo::regT0, localAddress(localIndex));
             break;
         case WASMType::F64:
             loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT0);
-            m_tempStackTop--;
             storeDouble(FPRInfo::fpRegT0, localAddress(localIndex));
             break;
         default:
             ASSERT_NOT_REACHED();
         }
+        if (opKind == WASMOpKind::Statement)
+            m_tempStackTop--;
+        return UNUSED;
     }
 
-    void buildSetGlobal(uint32_t globalIndex, int, WASMType type)
+    int buildSetGlobal(WASMOpKind opKind, uint32_t globalIndex, int, WASMType type)
     {
         move(TrustedImmPtr(&m_module->globalVariables()[globalIndex]), GPRInfo::regT0);
         switch (type) {
@@ -304,7 +305,9 @@ public:
         default:
             ASSERT_NOT_REACHED();
         }
-        m_tempStackTop--;
+        if (opKind == WASMOpKind::Statement)
+            m_tempStackTop--;
+        return UNUSED;
     }
 
     void buildReturn(int, WASMExpressionType returnType)

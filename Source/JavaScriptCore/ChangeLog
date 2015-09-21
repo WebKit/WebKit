@@ -1,3 +1,41 @@
+2015-09-20  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement SetLocal and SetGlobal expressions in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149383
+
+        Reviewed by Saam Barati.
+
+        SetLocal and SetGlobal in WebAssembly can be both statements and
+        expressions. We have implemented the statement version. This patch
+        implements the expression version.
+
+        SetLocal and SetGlobal expressions return the assigned value.
+        Since SetLocal and SetGlobal use only one operand, which is the assigned
+        value, we can simply implement them by not removing the value from the
+        top of the stack.
+
+        * tests/stress/wasm-globals.js:
+        * tests/stress/wasm-locals.js:
+        * tests/stress/wasm/globals.wasm:
+        * tests/stress/wasm/locals.wasm:
+        * wasm/WASMConstants.h:
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::buildSetLocal):
+        (JSC::WASMFunctionCompiler::buildSetGlobal):
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseStatement):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseSetLocal):
+        (JSC::WASMFunctionParser::parseSetGlobal):
+        (JSC::WASMFunctionParser::parseSetLocalStatement): Deleted.
+        (JSC::WASMFunctionParser::parseSetGlobalStatement): Deleted.
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMFunctionSyntaxChecker.h:
+        (JSC::WASMFunctionSyntaxChecker::buildSetLocal):
+        (JSC::WASMFunctionSyntaxChecker::buildSetGlobal):
+
 2015-09-19 Aleksandr Skachkov    <gskachkov@gmail.com>
 
         [ES6] Added controlFlowProfiler test for arrow function

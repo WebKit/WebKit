@@ -49,6 +49,11 @@ namespace JSC {
 
 static const uint32_t wasmMagicNumber = 0x6d736177;
 
+enum class WASMOpKind {
+    Statement,
+    Expression
+};
+
 enum class WASMOpStatement : uint8_t {
     SetLocal,
     SetGlobal,

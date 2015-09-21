@@ -58,6 +58,21 @@ function asmModule(global, imports, buffer) {
         z = newZ;
     }
 
+    function setXExpression(newX) {
+        newX = newX | 0;
+        return (x = newX) | 0;
+    }
+
+    function setYExpression(newY) {
+        newY = fround(newY);
+        return y = newY;
+    }
+
+    function setZExpression(newZ) {
+        newZ = +newZ;
+        return z = newZ;
+    }
+
     return {
         getA: getA,
         getB: getB,
@@ -68,6 +83,9 @@ function asmModule(global, imports, buffer) {
         setX: setX,
         setY: setY,
         setZ: setZ,
+        setXExpression: setXExpression,
+        setYExpression: setYExpression,
+        setZExpression: setZExpression,
     };
 }
 */
@@ -104,3 +122,10 @@ module.setZ(0.1);
 shouldBe(module.getX(), 1);
 shouldBe(module.getY(), 0.10000000149011612);
 shouldBe(module.getZ(), 0.1);
+
+shouldBe(module.setXExpression(2), 2);
+shouldBe(module.getX(), 2);
+shouldBe(module.setYExpression(0.2), 0.20000000298023224);
+shouldBe(module.getY(), 0.20000000298023224);
+shouldBe(module.setZExpression(0.2), 0.2);
+shouldBe(module.getZ(), 0.2);

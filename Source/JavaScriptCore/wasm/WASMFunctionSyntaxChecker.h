@@ -54,14 +54,18 @@ public:
         ASSERT(!m_tempStackTop);
     }
 
-    void buildSetLocal(uint32_t, int, WASMType)
+    int buildSetLocal(WASMOpKind opKind, uint32_t, int, WASMType)
     {
-        m_tempStackTop--;
+        if (opKind == WASMOpKind::Statement)
+            m_tempStackTop--;
+        return UNUSED;
     }
 
-    void buildSetGlobal(uint32_t, int, WASMType)
+    int buildSetGlobal(WASMOpKind opKind, uint32_t, int, WASMType)
     {
-        m_tempStackTop--;
+        if (opKind == WASMOpKind::Statement)
+            m_tempStackTop--;
+        return UNUSED;
     }
 
     void buildReturn(int, WASMExpressionType returnType)

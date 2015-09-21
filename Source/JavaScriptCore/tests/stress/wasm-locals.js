@@ -24,9 +24,30 @@ function asmModule(global, env, buffer) {
         return (x + 1) | 0;
     }
 
+    function testSetLocalExpression1() {
+        var x = 0;
+        return (x = 2);
+    }
+
+    function testSetLocalExpression2() {
+        var x = 0;
+        x = 1;
+        return (x + (((x = 3) + x) | 0)) | 0;
+    }
+
+    function testSetLocalExpression3() {
+        var x = 0;
+        x = 1;
+        return (x + (((x = ((x + 1) | 0)) + x) | 0)) | 0;
+    }
+
     return {
         sum: sum,
         add1: add1,
+
+        testSetLocalExpression1: testSetLocalExpression1,
+        testSetLocalExpression2: testSetLocalExpression2,
+        testSetLocalExpression3: testSetLocalExpression3,
     };
 }
 */
@@ -34,5 +55,8 @@ function asmModule(global, env, buffer) {
 var module = loadWebAssembly("wasm/locals.wasm");
 
 shouldBe(module.sum(12, 30), 42);
-
 shouldBe(module.add1(42), 43);
+
+shouldBe(module.testSetLocalExpression1(), 2);
+shouldBe(module.testSetLocalExpression2(), 7);
+shouldBe(module.testSetLocalExpression3(), 5);

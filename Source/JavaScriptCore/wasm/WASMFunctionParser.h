@@ -63,10 +63,6 @@ private:
     bool parseLocalVariables();
 
     template <class Context> ContextStatement parseStatement(Context&);
-    template <class Context> ContextStatement parseSetLocalStatement(Context&, uint32_t localIndex);
-    template <class Context> ContextStatement parseSetLocalStatement(Context&);
-    template <class Context> ContextStatement parseSetGlobalStatement(Context&, uint32_t globalIndex);
-    template <class Context> ContextStatement parseSetGlobalStatement(Context&);
     template <class Context> ContextStatement parseReturnStatement(Context&);
     template <class Context> ContextStatement parseBlockStatement(Context&);
     template <class Context> ContextStatement parseIfStatement(Context&);
@@ -110,6 +106,10 @@ private:
     template <class Context> ContextExpression parseGetLocalExpression(Context&, WASMType, uint32_t localIndex);
     template <class Context> ContextExpression parseGetLocalExpression(Context&, WASMType);
     template <class Context> ContextExpression parseGetGlobalExpression(Context&, WASMType);
+    template <class Context> ContextExpression parseSetLocal(Context&, WASMOpKind, WASMExpressionType, uint32_t localIndex);
+    template <class Context> ContextExpression parseSetLocal(Context&, WASMOpKind, WASMExpressionType);
+    template <class Context> ContextExpression parseSetGlobal(Context&, WASMOpKind, WASMExpressionType, uint32_t globalIndex);
+    template <class Context> ContextExpression parseSetGlobal(Context&, WASMOpKind, WASMExpressionType);
     template <class Context> ContextMemoryAddress parseMemoryAddress(Context&, MemoryAccessOffsetMode);
     template <class Context> ContextExpression parseLoad(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode, MemoryAccessConversion = MemoryAccessConversion::NoConversion);
     template <class Context> ContextExpression parseStore(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode);
