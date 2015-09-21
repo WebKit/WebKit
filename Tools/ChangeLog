@@ -1,3 +1,17 @@
+2015-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Use command-line argument to launch in regular or High DPI mode.
+        https://bugs.webkit.org/show_bug.cgi?id=149417
+
+        Reviewed by Dean Jackson.
+
+        * MiniBrowser/win/Common.cpp:
+        (parseCommandLine): Ignore the '--highDPI' argument. It's used at the
+        very start of execution, before the MiniBrowser.dll is loaded.
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (shouldUseHighDPI): Check for '--highDPI', and use this mode if
+        present. On WinCairo, always use High DPI.
+
 2015-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         32-bit Mac build fix attempt after r190065.

@@ -178,6 +178,22 @@ static wstring getLastErrorString(HRESULT hr)
     return errorMessage;
 }
 
+static bool shouldUseHighDPI()
+{
+#ifdef WIN_CAIRO
+    return true;
+#else
+    int argc = 0;
+    WCHAR** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    for (int i = 1; i < argc; ++i) {
+        if (!wcsicmp(argv[i], L"--highDPI"))
+            return true;
+    }
+
+    return false;
+#endif
+}
+
 #if USE_CONSOLE_ENTRY_POINT
 int main(int argc, const char* argv[])
 #else
@@ -193,8 +209,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     _set_FMA3_enable(0);
 #endif
 
-    BOOL didIt = SetProcessDPIAware();
-    _ASSERT(didIt);
+    if (shouldUseHighDPI()) {
+        BOOL didIt = SetProcessDPIAware();
+        _ASSERT(didIt);
+    }
 
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);

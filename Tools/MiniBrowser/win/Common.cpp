@@ -848,10 +848,12 @@ static void parseCommandLine(bool& usesLayeredWebView, bool& useFullDesktop, boo
             usesLayeredWebView = true;
         else if (!wcsicmp(argv[i], L"--desktop"))
             useFullDesktop = true;
-        else if (!requestedURL)
-            requestedURL = argv[i];
         else if (!wcsicmp(argv[i], L"--performance"))
             pageLoadTesting = true;
+        else if (!wcsicmp(argv[i], L"--highDPI"))
+            continue; // ignore
+        else if (!requestedURL)
+            requestedURL = argv[i];
     }
 }
 
