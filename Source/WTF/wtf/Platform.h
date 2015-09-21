@@ -518,9 +518,6 @@
 
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #define HAVE_AVKIT 1
-#endif
-
-#if !PLATFORM(WATCHOS)
 #define HAVE_PARENTAL_CONTROLS 1
 #endif
 
