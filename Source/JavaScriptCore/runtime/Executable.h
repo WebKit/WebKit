@@ -31,7 +31,6 @@
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
 #include "CompilationResult.h"
-#include "DFGPlan.h"
 #include "ExecutableInfo.h"
 #include "HandlerInfo.h"
 #include "InferredValue.h"

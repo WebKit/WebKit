@@ -43,7 +43,6 @@
 #include "CodeType.h"
 #include "CompactJITCodeMap.h"
 #include "DFGCommon.h"
-#include "DFGCommonData.h"
 #include "DFGExitProfile.h"
 #include "DeferredCompilationCallback.h"
 #include "EvalCodeCache.h"
@@ -494,10 +493,7 @@ public:
     bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
 
 #if ENABLE(DFG_JIT)
-    Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins()
-    {
-        return m_jitCode->dfgCommon()->codeOrigins;
-    }
+    Vector<CodeOrigin, 0, UnsafeVectorOverflow>& codeOrigins();
     
     // Having code origins implies that there has been some inlining.
     bool hasCodeOrigins()
@@ -545,22 +541,8 @@ public:
     // Constant Pool
 #if ENABLE(DFG_JIT)
     size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers() + numberOfDFGIdentifiers(); }
-    size_t numberOfDFGIdentifiers() const
-    {
-        if (!JITCode::isOptimizingJIT(jitType()))
-            return 0;
-
-        return m_jitCode->dfgCommon()->dfgIdentifiers.size();
-    }
-
-    const Identifier& identifier(int index) const
-    {
-        size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
-        if (static_cast<unsigned>(index) < unlinkedIdentifiers)
-            return m_unlinkedCode->identifier(index);
-        ASSERT(JITCode::isOptimizingJIT(jitType()));
-        return m_jitCode->dfgCommon()->dfgIdentifiers[index - unlinkedIdentifiers];
-    }
+    size_t numberOfDFGIdentifiers() const;
+    const Identifier& identifier(int index) const;
 #else
     size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers(); }
     const Identifier& identifier(int index) const { return m_unlinkedCode->identifier(index); }

@@ -3602,6 +3602,30 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
     return addArrayProfile(bytecodeOffset);
 }
 
+#if ENABLE(DFG_JIT)
+Vector<CodeOrigin, 0, UnsafeVectorOverflow>& CodeBlock::codeOrigins()
+{
+    return m_jitCode->dfgCommon()->codeOrigins;
+}
+
+size_t CodeBlock::numberOfDFGIdentifiers() const
+{
+    if (!JITCode::isOptimizingJIT(jitType()))
+        return 0;
+    
+    return m_jitCode->dfgCommon()->dfgIdentifiers.size();
+}
+
+const Identifier& CodeBlock::identifier(int index) const
+{
+    size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
+    if (static_cast<unsigned>(index) < unlinkedIdentifiers)
+        return m_unlinkedCode->identifier(index);
+    ASSERT(JITCode::isOptimizingJIT(jitType()));
+    return m_jitCode->dfgCommon()->dfgIdentifiers[index - unlinkedIdentifiers];
+}
+#endif // ENABLE(DFG_JIT)
+
 void CodeBlock::updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
     ConcurrentJITLocker locker(m_lock);

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CallLinkInfo.h"
 
+#include "CallFrameShuffleData.h"
 #include "DFGOperations.h"
 #include "DFGThunks.h"
 #include "JSCInlines.h"
@@ -35,6 +36,25 @@
 
 #if ENABLE(JIT)
 namespace JSC {
+
+CallLinkInfo::CallLinkInfo()
+    : m_hasSeenShouldRepatch(false)
+    , m_hasSeenClosure(false)
+    , m_clearedByGC(false)
+    , m_allowStubs(true)
+    , m_callType(None)
+    , m_maxNumArguments(0)
+    , m_slowPathCount(0)
+{
+}
+
+CallLinkInfo::~CallLinkInfo()
+{
+    clearStub();
+    
+    if (isOnList())
+        remove();
+}
 
 void CallLinkInfo::clearStub()
 {
@@ -98,6 +118,11 @@ void CallLinkInfo::visitWeak(VM& vm)
         handleSpecificCallee(lastSeenCallee());
         clearLastSeenCallee();
     }
+}
+
+void CallLinkInfo::setFrameShuffleData(const CallFrameShuffleData& shuffleData)
+{
+    m_frameShuffleData = std::make_unique<CallFrameShuffleData>(shuffleData);
 }
 
 } // namespace JSC

@@ -26,7 +26,6 @@
 #ifndef CallLinkInfo_h
 #define CallLinkInfo_h
 
-#include "CallFrameShuffleData.h"
 #include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
@@ -40,6 +39,8 @@
 namespace JSC {
 
 #if ENABLE(JIT)
+
+struct CallFrameShuffleData;
 
 class CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
 public:
@@ -73,24 +74,9 @@ public:
         }
     }
 
-    CallLinkInfo()
-        : m_hasSeenShouldRepatch(false)
-        , m_hasSeenClosure(false)
-        , m_clearedByGC(false)
-        , m_allowStubs(true)
-        , m_callType(None)
-        , m_maxNumArguments(0)
-        , m_slowPathCount(0)
-    {
-    }
+    CallLinkInfo();
         
-    ~CallLinkInfo()
-    {
-        clearStub();
-
-        if (isOnList())
-            remove();
-    }
+    ~CallLinkInfo();
     
     static CodeSpecializationKind specializationKindFor(CallType callType)
     {
@@ -332,10 +318,7 @@ public:
 
     void visitWeak(VM&);
 
-    void setFrameShuffleData(const CallFrameShuffleData& shuffleData)
-    {
-        m_frameShuffleData = std::make_unique<CallFrameShuffleData>(shuffleData);
-    }
+    void setFrameShuffleData(const CallFrameShuffleData&);
 
     const CallFrameShuffleData* frameShuffleData()
     {

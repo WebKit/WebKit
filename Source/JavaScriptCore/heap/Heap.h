@@ -283,6 +283,8 @@ private:
     void flushOldStructureIDTables();
     void flushWriteBarrierBuffer();
     void stopAllocation();
+    
+    void completeAllDFGPlans();
 
     void markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
     void gatherStackRoots(ConservativeRoots&, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);

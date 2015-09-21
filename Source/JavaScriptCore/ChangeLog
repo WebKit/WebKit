@@ -1,3 +1,65 @@
+2015-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        WebCore shouldn't have to include DFG headers
+        https://bugs.webkit.org/show_bug.cgi?id=149337
+
+        Reviewed by Michael Saboff.
+
+        This does some simple rewiring and outlining of CodeBlock/Heap functionality so that
+        those headers don't have to include DFG headers. As a result, WebCore no longer includes
+        DFG headers, except for two fairly innocent ones (DFGCommon.h and DFGCompilationMode.h).
+        This also changes the Xcode project file so that all but those two headers are Project
+        rather than Private. So, if WebCore accidentally includes any of them, we'll get a build
+        error.
+
+        The main group of headers that this prevents WebCore from including are the DFGDesired*.h
+        files and whatever those include. Those headers used to be fairly simple, but now they
+        are growing in complexity (especially with things like http://webkit.org/b/148610). So,
+        it makes sense to make sure they don't leak out of JSC.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::~CallLinkInfo):
+        (JSC::CallLinkInfo::clearStub):
+        (JSC::CallLinkInfo::visitWeak):
+        (JSC::CallLinkInfo::setFrameShuffleData):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::isVarargsCallType):
+        (JSC::CallLinkInfo::specializationKindFor):
+        (JSC::CallLinkInfo::frameShuffleData):
+        (JSC::CallLinkInfo::CallLinkInfo): Deleted.
+        (JSC::CallLinkInfo::~CallLinkInfo): Deleted.
+        (JSC::CallLinkInfo::setFrameShuffleData): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getOrAddArrayProfile):
+        (JSC::CodeBlock::codeOrigins):
+        (JSC::CodeBlock::numberOfDFGIdentifiers):
+        (JSC::CodeBlock::identifier):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasExpressionInfo):
+        (JSC::CodeBlock::hasCodeOrigins):
+        (JSC::CodeBlock::numberOfIdentifiers):
+        (JSC::CodeBlock::identifier):
+        (JSC::CodeBlock::codeOrigins): Deleted.
+        (JSC::CodeBlock::numberOfDFGIdentifiers): Deleted.
+        * bytecode/CodeOrigin.h:
+        * dfg/DFGDesiredIdentifiers.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::didFinishIterating):
+        (JSC::Heap::completeAllDFGPlans):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::deleteAllCodeBlocks):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::deprecatedReportExtraMemory):
+        (JSC::Heap::forEachCodeBlock):
+        (JSC::Heap::forEachProtectedCell):
+        * runtime/Executable.h:
+        * runtime/JSCInlines.h:
+        (JSC::Heap::forEachCodeBlock): Deleted.
+
 2015-09-21 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         Web Inspector: arrow function names are never inferred, call frames are labeled (anonymous function)

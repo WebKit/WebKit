@@ -188,6 +188,14 @@ inline void Heap::deprecatedReportExtraMemory(size_t size)
         deprecatedReportExtraMemorySlowCase(size);
 }
 
+template<typename Functor> inline void Heap::forEachCodeBlock(Functor& functor)
+{
+    // We don't know the full set of CodeBlocks until compilation has terminated.
+    completeAllDFGPlans();
+
+    return m_codeBlocks.iterate<Functor>(functor);
+}
+
 template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
 {
     for (auto& pair : m_protectedValues)

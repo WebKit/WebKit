@@ -509,6 +509,13 @@ void Heap::didFinishIterating()
     m_objectSpace.didFinishIterating();
 }
 
+void Heap::completeAllDFGPlans()
+{
+#if ENABLE(DFG_JIT)
+    DFG::completeAllPlansForVM(*m_vm);
+#endif
+}
+
 void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)
 {
     SamplingRegion samplingRegion("Garbage Collection: Marking");
@@ -895,9 +902,7 @@ void Heap::deleteAllCodeBlocks()
     // we'll end up returning to deleted code.
     RELEASE_ASSERT(!m_vm->entryScope);
 
-#if ENABLE(DFG_JIT)
-    DFG::completeAllPlansForVM(*m_vm);
-#endif
+    completeAllDFGPlans();
 
     for (ExecutableBase* current : m_executables) {
         if (!current->isFunctionExecutable())
