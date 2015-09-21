@@ -53,6 +53,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
+#if PLATFORM(X11)
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -535,7 +539,7 @@ void WebEditorClient::setInputMethodState(bool enabled)
 bool WebEditorClient::supportsGlobalSelection()
 {
 #if PLATFORM(GTK) && PLATFORM(X11)
-    return true;
+    return PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11;
 #else
     // FIXME: Return true on other X11 platforms when they support global selection.
     return false;
