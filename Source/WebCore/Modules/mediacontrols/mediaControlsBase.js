@@ -1023,7 +1023,9 @@ Controller.prototype = {
 
     controlsAreHidden: function()
     {
-        return !this.controls.panel.classList.contains(this.ClassNames.show) || this.controls.panel.classList.contains(this.ClassNames.hidden);
+        var panel = this.controls.panel;
+        return (!panel.classList.contains(this.ClassNames.show) || panel.classList.contains(this.ClassNames.hidden))
+            && (panel.parentElement.querySelector(':hover') !== panel);
     },
 
     removeControls: function()
