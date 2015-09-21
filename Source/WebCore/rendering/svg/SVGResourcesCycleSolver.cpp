@@ -54,7 +54,7 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
         HashSet<RenderSVGResourceContainer*> resourceSet;
         resources->buildSetOfResources(resourceSet);
 
-        // Walk all resources and check wheter they reference any resource contained in the resources set.
+        // Walk all resources and check whether they reference any resource contained in the resources set.
         for (auto* resource : resourceSet) {
             if (m_allResources.contains(resource))
                 return true;
@@ -65,18 +65,16 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
     // <marker id="a"> <path marker-start="url(#b)"/> ...
     // <marker id="b"> <path marker-start="url(#a)"/> ...
     for (auto& child : childrenOfType<RenderElement>(renderer)) {
-        auto* childResources = SVGResourcesCache::cachedResourcesForRenderer(child);
-        if (!childResources)
-            continue;
-        
-        // A child of the given 'resource' contains resources. 
-        HashSet<RenderSVGResourceContainer*> childResourceSet;
-        childResources->buildSetOfResources(childResourceSet);
+        if (auto* childResources = SVGResourcesCache::cachedResourcesForRenderer(child)) {
+            // A child of the given 'resource' contains resources.
+            HashSet<RenderSVGResourceContainer*> childResourceSet;
+            childResources->buildSetOfResources(childResourceSet);
 
-        // Walk all child resources and check wheter they reference any resource contained in the resources set.
-        for (auto* resource : childResourceSet) {
-            if (m_allResources.contains(resource))
-                return true;
+            // Walk all child resources and check whether they reference any resource contained in the resources set.
+            for (auto* resource : childResourceSet) {
+                if (m_allResources.contains(resource))
+                    return true;
+            }
         }
 
         // Walk children recursively, stop immediately if we found a cycle
@@ -107,15 +105,15 @@ void SVGResourcesCycleSolver::resolveCycles()
         ancestorResources.add(&resource);
 
 #if DEBUG_CYCLE_DETECTION > 0
-    fprintf(stderr, "\nDetecting wheter any resources references any of following objects:\n");
+    fprintf(stderr, "\nDetecting whether any resources references any of following objects:\n");
     {
         fprintf(stderr, "Local resources:\n");
-        for (auto* resource : localResources)
-            fprintf(stderr, "|> %s: object=%p (node=%p)\n", resource->renderName(), resource, resource->node());
+        for (RenderObject* resource : localResources)
+            fprintf(stderr, "|> %s : %p (node %p)\n", resource->renderName(), resource, resource->node());
 
         fprintf(stderr, "Parent resources:\n");
-        for (auto* resource : ancestorResources)
-            fprintf(stderr, "|> %s: object=%p (node=%p)\n", resource->renderName(), resource, resource->node());
+        for (RenderObject* resource : ancestorResources)
+            fprintf(stderr, "|> %s : %p (node %p)\n", resource->renderName(), resource, resource->node());
     }
 #endif
 
@@ -131,7 +129,7 @@ void SVGResourcesCycleSolver::resolveCycles()
     ASSERT(!m_allResources.isEmpty());
 
     // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
-    // references us (or wheter any of its kids references us) -> that's a cycle, we need to find and break it.
+    // references us (or whether any of its kids references us) -> that's a cycle, we need to find and break it.
     for (auto* resource : localResources) {
         if (ancestorResources.contains(resource) || resourceContainsCycles(*resource))
             breakCycle(*resource);
@@ -139,7 +137,7 @@ void SVGResourcesCycleSolver::resolveCycles()
 
 #if DEBUG_CYCLE_DETECTION > 0
     fprintf(stderr, "\nAfter cycle detection:\n");
-    m_resources.dump(m_renderer);
+    m_resources.dump(&m_renderer);
 #endif
 
     m_allResources.clear();
