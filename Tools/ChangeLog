@@ -1,3 +1,19 @@
+2015-09-21  Alexey Proskuryakov  <ap@apple.com>
+
+        [OS X] Update for Xcode 7.0 on Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=149389
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.h:
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.h:
+        Removed unneeded declarations - conforming to a protocol is sufficient.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm:
+        Changed the definitions to be compiled whenever the SDK requires it (so we will have
+        dead code compiled in when building for 10.10 with 10.11 SDK, somewhat unfortunately).
+
 2015-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add the ability for tests to run script in the UI process in WebKitTestRunner
