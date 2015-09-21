@@ -348,7 +348,12 @@ class TestRunner:
         timeout = self._options.timeout
         if subtest in TestRunner.SLOW:
             timeout *= 5
-        return self._run_test_command(test_command, timeout)
+
+        status = self._run_test_command(test_command, timeout)
+        if status == -SIGSEGV:
+            sys.stdout.write("**CRASH** %s\n" % subtest)
+            sys.stdout.flush()
+        return status
 
     def _run_google_test_suite(self, test_program):
         retcode = 0

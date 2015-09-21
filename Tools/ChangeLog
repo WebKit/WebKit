@@ -1,3 +1,20 @@
+2015-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] run-gtk-tests doesn't provide feedback about crashing google tests
+        https://bugs.webkit.org/show_bug.cgi?id=149252
+
+        Reviewed by Darin Adler.
+
+        In case of glib tests the test runner notifies about tests
+        crashing, but for google tests we don't get any feedback, which
+        means that in case of a test crashing we get a list of **PASS**
+        messages and at the summary we are notified that the test suite
+        has failed, but it's impossible to know which test cases have failed.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_google_test): Add a **CRASH** message if test
+        case crashed.
+
 2015-09-20  Alexey Proskuryakov  <ap@apple.com>
 
         WebKitTestRunner can leak user content script results between tests
