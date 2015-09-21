@@ -56,10 +56,8 @@ RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 {
 }
 
-void RealtimeMediaSourceCenterMac::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
+void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreationClient* client, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints)
 {
-    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
-    
     ASSERT(client);
 
     if (audioConstraints) {
@@ -123,6 +121,26 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
         videoSources.append(videoSource.release());
     }
     
+    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
+}
+
+void RealtimeMediaSourceCenterMac::createMediaStream(MediaStreamCreationClient* client, const String& audioDeviceID, const String& videoDeviceID)
+{
+    ASSERT(client);
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+
+    if (!audioDeviceID.isEmpty()) {
+        RefPtr<RealtimeMediaSource> audioSource = AVCaptureDeviceManager::singleton().sourceWithUID(audioDeviceID, RealtimeMediaSource::Audio, nullptr);
+        if (audioSource)
+            audioSources.append(audioSource.release());
+    }
+    if (!videoDeviceID.isEmpty()) {
+        RefPtr<RealtimeMediaSource> videoSource = AVCaptureDeviceManager::singleton().sourceWithUID(videoDeviceID, RealtimeMediaSource::Video, nullptr);
+        if (videoSource)
+            videoSources.append(videoSource.release());
+    }
+
     client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
 }
 

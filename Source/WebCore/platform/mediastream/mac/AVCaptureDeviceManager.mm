@@ -333,9 +333,9 @@ Vector<RefPtr<TrackSourceInfo>> AVCaptureDeviceManager::getSourcesInfo(const Str
             continue;
 
         if (!captureDevice.m_videoSourceId.isEmpty())
-            sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_videoSourceId, TrackSourceInfo::Video, captureDevice.m_localizedName, captureDevice.m_groupID, captureDevice.m_captureDeviceID));
+            sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_videoSourceId, TrackSourceInfo::Video, captureDevice.m_localizedName, captureDevice.m_groupID));
         if (!captureDevice.m_audioSourceId.isEmpty())
-            sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_audioSourceId, TrackSourceInfo::Audio, captureDevice.m_localizedName, captureDevice.m_groupID, captureDevice.m_captureDeviceID));
+            sourcesInfo.append(TrackSourceInfo::create(captureDevice.m_audioSourceId, TrackSourceInfo::Audio, captureDevice.m_localizedName, captureDevice.m_groupID));
     }
 
     LOG(Media, "AVCaptureDeviceManager::getSourcesInfo(%p), found %d active devices", this, sourcesInfo.size());

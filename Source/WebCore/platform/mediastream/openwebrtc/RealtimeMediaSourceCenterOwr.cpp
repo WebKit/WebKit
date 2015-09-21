@@ -78,17 +78,13 @@ RealtimeMediaSourceCenterOwr::~RealtimeMediaSourceCenterOwr()
 {
 }
 
-void RealtimeMediaSourceCenterOwr::validateRequestConstraints(PassRefPtr<MediaStreamCreationClient> prpClient, PassRefPtr<MediaConstraints> prpAudioConstraints, PassRefPtr<MediaConstraints> prpVideoConstraints)
+void RealtimeMediaSourceCenterOwr::validateRequestConstraints(MediaStreamCreationClient* client, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints)
 {
-    m_client = prpClient;
-    ASSERT(m_client);
+    m_client = client;
 
     // FIXME: Actually do constraints validation. The MediaConstraints
     // need to comply with the available audio/video device(s)
     // capabilities. See bug #123345.
-    RefPtr<MediaConstraints> audioConstraints = prpAudioConstraints;
-    RefPtr<MediaConstraints> videoConstraints = prpVideoConstraints;
-
     int types = OWR_MEDIA_TYPE_UNKNOWN;
     if (audioConstraints)
         types |= OWR_MEDIA_TYPE_AUDIO;
@@ -126,6 +122,32 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreat
         if (videoSource) {
             videoSource->reset();
             videoSources.append(videoSource.release());
+        }
+    }
+
+    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
+}
+
+void RealtimeMediaSourceCenterOwr::createMediaStream(MediaStreamCreationClient* client, const String& audioDeviceID, const String& videoDeviceID)
+{
+    ASSERT(client);
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+
+    if (!audioDeviceID.isEmpty()) {
+        RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(audioDeviceID);
+        if (sourceIterator != m_sourceMap.end()) {
+            RefPtr<RealtimeMediaSource> source = sourceIterator->value;
+            if (source->type() == RealtimeMediaSource::Audio)
+                audioSources.append(source.release());
+        }
+    }
+    if (!videoDeviceID.isEmpty()) {
+        RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(videoDeviceID);
+        if (sourceIterator != m_sourceMap.end()) {
+            RefPtr<RealtimeMediaSource> source = sourceIterator->value;
+            if (source->type() == RealtimeMediaSource::Video)
+                audioSources.append(source.release());
         }
     }
 

@@ -53,7 +53,9 @@ public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
     static void setSharedStreamCenter(RealtimeMediaSourceCenter*);
 
-    virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
+    virtual void validateRequestConstraints(MediaStreamCreationClient*, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints) = 0;
+
+    virtual void createMediaStream(MediaStreamCreationClient*, const String& audioDeviceID, const String& videoDeviceID) = 0;
 
     virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;
 

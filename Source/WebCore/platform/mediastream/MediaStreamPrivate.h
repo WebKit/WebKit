@@ -51,18 +51,16 @@ public:
     virtual ~MediaStreamPrivateClient() { }
 
     virtual void activeStatusChanged() = 0;
-    virtual void didAddTrackToPrivate(MediaStreamTrackPrivate&) = 0;
-    virtual void didRemoveTrackFromPrivate(MediaStreamTrackPrivate&) = 0;
+    virtual void didAddTrack(MediaStreamTrackPrivate&) = 0;
+    virtual void didRemoveTrack(MediaStreamTrackPrivate&) = 0;
 };
 
-class MediaStreamPrivate : public RefCounted<MediaStreamPrivate> {
+class MediaStreamPrivate : public MediaStreamTrackPrivate::Observer, public RefCounted<MediaStreamPrivate> {
 public:
     static RefPtr<MediaStreamPrivate> create(const Vector<RefPtr<RealtimeMediaSource>>& audioSources, const Vector<RefPtr<RealtimeMediaSource>>& videoSources);
-    static RefPtr<MediaStreamPrivate> create(const Vector<RefPtr<MediaStreamTrackPrivate>>&);
-    static RefPtr<MediaStreamPrivate> create();
+    static RefPtr<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector&);
 
-    MediaStreamPrivate() { }
-    virtual ~MediaStreamPrivate() { }
+    virtual ~MediaStreamPrivate();
 
     enum class NotifyClientOption { Notify, DontNotify };
 
@@ -71,20 +69,27 @@ public:
 
     String id() const { return m_id; }
 
-    Vector<RefPtr<MediaStreamTrackPrivate>> tracks() const;
+    MediaStreamTrackPrivateVector tracks() const;
 
     bool active() const { return m_isActive; }
     void updateActiveState(NotifyClientOption);
 
-    void addTrack(RefPtr<MediaStreamTrackPrivate>&&, NotifyClientOption);
-    void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption);
+    void addTrack(RefPtr<MediaStreamTrackPrivate>&&, NotifyClientOption = NotifyClientOption::Notify);
+    void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption = NotifyClientOption::Notify);
+
+protected:
+    explicit MediaStreamPrivate(MediaStreamPrivateClient&);
 
 private:
-    MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>&);
+    MediaStreamPrivate(const String&, const MediaStreamTrackPrivateVector&);
 
-    MediaStreamPrivateClient* m_client;
+    void trackEnded(MediaStreamTrackPrivate&) override { }
+    void trackMutedChanged(MediaStreamTrackPrivate&) override { }
+    void trackStatesChanged(MediaStreamTrackPrivate&) override { }
+
+    MediaStreamPrivateClient* m_client { nullptr };
     String m_id;
-    bool m_isActive;
+    bool m_isActive { false };
 
     HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;
 };

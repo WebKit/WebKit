@@ -124,21 +124,22 @@ void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& ty
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    // This engine does not support non-media-stream sources.
     if (parameters.isMediaStream)
         return MediaPlayer::IsSupported;
+
     return MediaPlayer::IsNotSupported;
 }
 
 #pragma mark -
 #pragma mark MediaPlayerPrivateInterface Overrides
 
-void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& client)
+void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 {
-    m_MediaStreamPrivate = MediaStreamPrivateAVFObjC::create(*this, *client.client());
-    for (auto track : client.tracks()) {
-        m_MediaStreamPrivate->addTrack(WTF::move(track), MediaStreamPrivate::NotifyClientOption::DontNotify);
-        m_MediaStreamPrivate->client()->didAddTrackToPrivate(*track);
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::load(%p)", this);
+
+    m_MediaStreamPrivate = MediaStreamPrivateAVFObjC::create(*this, stream);
+    for (auto track : stream.tracks()) {
+        m_MediaStreamPrivate->addTrack(WTF::move(track));
         if (!track->ended()) {
             track->source()->startProducingData();
             track->setEnabled(true);

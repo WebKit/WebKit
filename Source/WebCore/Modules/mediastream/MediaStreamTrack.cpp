@@ -59,12 +59,12 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, MediaStreamT
 {
     suspendIfNeeded();
 
-    m_private->setClient(this);
+    m_private->addObserver(*this);
 }
 
 MediaStreamTrack::~MediaStreamTrack()
 {
-    m_private->setClient(nullptr);
+    m_private->removeObserver(*this);
 }
 
 const AtomicString& MediaStreamTrack::kind() const
@@ -190,7 +190,7 @@ void MediaStreamTrack::removeObserver(MediaStreamTrack::Observer* observer)
         m_observers.remove(pos);
 }
 
-void MediaStreamTrack::trackEnded()
+void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 
@@ -200,11 +200,16 @@ void MediaStreamTrack::trackEnded()
     configureTrackRendering();
 }
     
-void MediaStreamTrack::trackMutedChanged()
+void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 {
     AtomicString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;
     dispatchEvent(Event::create(eventType, false, false));
 
+    configureTrackRendering();
+}
+
+void MediaStreamTrack::trackStatesChanged(MediaStreamTrackPrivate&)
+{
     configureTrackRendering();
 }
 

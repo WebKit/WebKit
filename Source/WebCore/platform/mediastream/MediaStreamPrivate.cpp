@@ -44,7 +44,7 @@ namespace WebCore {
 
 RefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<RealtimeMediaSource>>& audioSources, const Vector<RefPtr<RealtimeMediaSource>>& videoSources)
 {
-    Vector<RefPtr<MediaStreamTrackPrivate>> tracks;
+    MediaStreamTrackPrivateVector tracks;
     tracks.reserveCapacity(audioSources.size() + videoSources.size());
 
     for (auto source : audioSources)
@@ -56,22 +56,15 @@ RefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<Realti
     return MediaStreamPrivate::create(tracks);
 }
 
-RefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<RefPtr<MediaStreamTrackPrivate>>& tracks)
+RefPtr<MediaStreamPrivate> MediaStreamPrivate::create(const MediaStreamTrackPrivateVector& tracks)
 {
     return adoptRef(new MediaStreamPrivate(createCanonicalUUIDString(), tracks));
 }
 
-RefPtr<MediaStreamPrivate> MediaStreamPrivate::create()
+MediaStreamPrivate::MediaStreamPrivate(const String& id, const MediaStreamTrackPrivateVector& tracks)
+    : m_id(id)
 {
-    return MediaStreamPrivate::create(Vector<RefPtr<MediaStreamTrackPrivate>>());
-}
-
-MediaStreamPrivate::MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>& tracks)
-    : m_client(0)
-    , m_id(id)
-    , m_isActive(false)
-{
-    ASSERT(m_id.length());
+    ASSERT(!m_id.isEmpty());
 
     for (auto& track : tracks)
         m_trackSet.add(track->id(), track);
@@ -79,9 +72,20 @@ MediaStreamPrivate::MediaStreamPrivate(const String& id, const Vector<RefPtr<Med
     updateActiveState(NotifyClientOption::DontNotify);
 }
 
-Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamPrivate::tracks() const
+MediaStreamPrivate::MediaStreamPrivate(MediaStreamPrivateClient& client)
+    : m_client(&client)
 {
-    Vector<RefPtr<MediaStreamTrackPrivate>> tracks;
+}
+
+MediaStreamPrivate::~MediaStreamPrivate()
+{
+    m_client = nullptr;
+    m_isActive = false;
+}
+
+MediaStreamTrackPrivateVector MediaStreamPrivate::tracks() const
+{
+    MediaStreamTrackPrivateVector tracks;
     tracks.reserveCapacity(m_trackSet.size());
     copyValuesToVector(m_trackSet, tracks);
 
@@ -112,12 +116,13 @@ void MediaStreamPrivate::addTrack(RefPtr<MediaStreamTrackPrivate>&& track, Notif
     if (m_trackSet.contains(track->id()))
         return;
 
+    track->addObserver(*this);
     m_trackSet.add(track->id(), track);
 
     if (m_client && notifyClientOption == NotifyClientOption::Notify)
-        m_client->didAddTrackToPrivate(*track.get());
+        m_client->didAddTrack(*track.get());
 
-    updateActiveState(NotifyClientOption::Notify);
+    updateActiveState(notifyClientOption);
 }
 
 void MediaStreamPrivate::removeTrack(MediaStreamTrackPrivate& track, NotifyClientOption notifyClientOption)
@@ -125,8 +130,10 @@ void MediaStreamPrivate::removeTrack(MediaStreamTrackPrivate& track, NotifyClien
     if (!m_trackSet.remove(track.id()))
         return;
 
+    track.removeObserver(*this);
+
     if (m_client && notifyClientOption == NotifyClientOption::Notify)
-        m_client->didRemoveTrackFromPrivate(track);
+        m_client->didRemoveTrack(track);
 
     updateActiveState(NotifyClientOption::Notify);
 }

@@ -35,19 +35,21 @@
 
 namespace WebCore {
 
+class AudioSourceProvider;
 class MediaSourceStates;
 class RealtimeMediaSourceCapabilities;
 
-class MediaStreamTrackPrivateClient {
-public:
-    virtual ~MediaStreamTrackPrivateClient() { }
-
-    virtual void trackEnded() = 0;
-    virtual void trackMutedChanged() = 0;
-};
-
 class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, public RealtimeMediaSource::Observer {
 public:
+    class Observer {
+    public:
+        virtual ~Observer() { }
+
+        virtual void trackEnded(MediaStreamTrackPrivate&) = 0;
+        virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
+        virtual void trackStatesChanged(MediaStreamTrackPrivate&) = 0;
+    };
+    
     static RefPtr<MediaStreamTrackPrivate> create(RefPtr<RealtimeMediaSource>&&);
     static RefPtr<MediaStreamTrackPrivate> create(RefPtr<RealtimeMediaSource>&&, const String& id);
 
@@ -58,7 +60,11 @@ public:
 
     bool ended() const { return m_isEnded; }
 
+    void startProducingData() { m_source->startProducingData(); }
+    void stopProducingData() { m_source->stopProducingData(); }
+
     bool muted() const;
+    void setMuted(bool muted) const { m_source->setMuted(muted); }
 
     bool readonly() const;
     bool remote() const;
@@ -73,7 +79,8 @@ public:
 
     void endTrack();
 
-    void setClient(MediaStreamTrackPrivateClient* client) { m_client = client; }
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
 
     const RealtimeMediaSourceStates& states() const;
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() const;
@@ -81,27 +88,26 @@ public:
     RefPtr<MediaConstraints> constraints() const;
     void applyConstraints(const MediaConstraints&);
 
-    void configureTrackRendering();
-
 private:
     explicit MediaStreamTrackPrivate(const MediaStreamTrackPrivate&);
     MediaStreamTrackPrivate(RefPtr<RealtimeMediaSource>&&, const String& id);
 
-    MediaStreamTrackPrivateClient* client() const { return m_client; }
-
     // RealtimeMediaSourceObserver
-    virtual void sourceStopped() override final;
-    virtual void sourceMutedChanged() override final;
-    virtual bool preventSourceFromStopping() override final;
-    
+    void sourceStopped() override final;
+    void sourceMutedChanged() override final;
+    void sourceStatesChanged() override final;
+    bool preventSourceFromStopping() override final;
+
+    Vector<Observer*> m_observers;
     RefPtr<RealtimeMediaSource> m_source;
-    MediaStreamTrackPrivateClient* m_client;
     RefPtr<MediaConstraints> m_constraints;
 
     String m_id;
     bool m_isEnabled;
     bool m_isEnded;
 };
+
+typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
 
 } // namespace WebCore
 

@@ -58,7 +58,7 @@ MediaStream* MediaStream::lookUp(const URL& url)
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
-    return MediaStream::create(context, MediaStreamPrivate::create());
+    return MediaStream::create(context);
 }
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, MediaStream* stream)
@@ -68,7 +68,7 @@ Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, MediaStrea
     return adoptRef(*new MediaStream(context, stream->getTracks()));
 }
 
-Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, const Vector<RefPtr<MediaStreamTrack>>& tracks)
+Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
 {
     return adoptRef(*new MediaStream(context, tracks));
 }
@@ -78,13 +78,13 @@ Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, RefPtr<Med
     return adoptRef(*new MediaStream(context, WTF::move(streamPrivate)));
 }
 
-MediaStream::MediaStream(ScriptExecutionContext& context, const Vector<RefPtr<MediaStreamTrack>>& tracks)
+MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrackVector& tracks)
     : ContextDestructionObserver(&context)
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
 {
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
-    Vector<RefPtr<MediaStreamTrackPrivate>> trackPrivates;
+    MediaStreamTrackPrivateVector trackPrivates;
     trackPrivates.reserveCapacity(tracks.size());
 
     for (auto& track : tracks) {
@@ -121,7 +121,7 @@ MediaStream::~MediaStream()
 
 RefPtr<MediaStream> MediaStream::clone()
 {
-    Vector<RefPtr<MediaStreamTrack>> clonedTracks;
+    MediaStreamTrackVector clonedTracks;
     clonedTracks.reserveCapacity(m_trackSet.size());
 
     for (auto& track : m_trackSet.values())
@@ -157,19 +157,19 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
     return nullptr;
 }
 
-Vector<RefPtr<MediaStreamTrack>> MediaStream::getAudioTracks()
+MediaStreamTrackVector MediaStream::getAudioTracks() const
 {
     return trackVectorForType(RealtimeMediaSource::Audio);
 }
 
-Vector<RefPtr<MediaStreamTrack>> MediaStream::getVideoTracks()
+MediaStreamTrackVector MediaStream::getVideoTracks() const
 {
     return trackVectorForType(RealtimeMediaSource::Video);
 }
 
-Vector<RefPtr<MediaStreamTrack>> MediaStream::getTracks() const
+MediaStreamTrackVector MediaStream::getTracks() const
 {
-    Vector<RefPtr<MediaStreamTrack>> tracks;
+    MediaStreamTrackVector tracks;
     tracks.reserveCapacity(m_trackSet.size());
     copyValuesToVector(m_trackSet, tracks);
 
@@ -193,7 +193,7 @@ void MediaStream::activeStatusChanged()
     scheduleActiveStateChange();
 }
 
-void MediaStream::didAddTrackToPrivate(MediaStreamTrackPrivate& trackPrivate)
+void MediaStream::didAddTrack(MediaStreamTrackPrivate& trackPrivate)
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     if (!context)
@@ -202,7 +202,7 @@ void MediaStream::didAddTrackToPrivate(MediaStreamTrackPrivate& trackPrivate)
     internalAddTrack(MediaStreamTrack::create(*context, trackPrivate), StreamModifier::Platform);
 }
 
-void MediaStream::didRemoveTrackFromPrivate(MediaStreamTrackPrivate& trackPrivate)
+void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
     RefPtr<MediaStreamTrack> track = getTrackById(trackPrivate.id());
     internalRemoveTrack(WTF::move(track), StreamModifier::Platform);
@@ -266,9 +266,9 @@ URLRegistry& MediaStream::registry() const
     return MediaStreamRegistry::registry();
 }
 
-Vector<RefPtr<MediaStreamTrack>> MediaStream::trackVectorForType(RealtimeMediaSource::Type filterType) const
+MediaStreamTrackVector MediaStream::trackVectorForType(RealtimeMediaSource::Type filterType) const
 {
-    Vector<RefPtr<MediaStreamTrack>> tracks;
+    MediaStreamTrackVector tracks;
     for (auto& track : m_trackSet.values()) {
         if (track->source()->type() == filterType)
             tracks.append(track);

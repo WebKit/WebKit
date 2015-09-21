@@ -44,7 +44,6 @@
 
 namespace WebCore {
 
-class AudioBus;
 class MediaConstraints;
 class MediaStreamPrivate;
 class RealtimeMediaSourceStates;
@@ -58,6 +57,7 @@ public:
         // Source state changes.
         virtual void sourceStopped() = 0;
         virtual void sourceMutedChanged() = 0;
+        virtual void sourceStatesChanged() = 0;
 
         // Observer state queries.
         virtual bool preventSourceFromStopping() = 0;
@@ -68,6 +68,9 @@ public:
     bool isAudioStreamSource() const { return type() == Audio; }
 
     const String& id() const { return m_id; }
+
+    const String& persistentId() const { return m_persistentId; }
+    virtual void setPersistentId(const String& persistentId) { m_persistentId = persistentId; }
 
     enum Type { None, Audio, Video };
     Type type() const { return m_type; }
@@ -80,6 +83,7 @@ public:
 
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
     virtual const RealtimeMediaSourceStates& states() = 0;
+    void statesDidChanged();
     
     bool stopped() const { return m_stopped; }
 
@@ -108,6 +112,7 @@ protected:
 
 private:
     String m_id;
+    String m_persistentId;
     Type m_type;
     String m_name;
     bool m_stopped;

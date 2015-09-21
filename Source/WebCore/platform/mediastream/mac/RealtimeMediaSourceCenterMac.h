@@ -45,9 +45,10 @@ public:
     RealtimeMediaSourceCenterMac();
     ~RealtimeMediaSourceCenterMac();
 
-    void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) override;
+    void validateRequestConstraints(MediaStreamCreationClient*, RefPtr<MediaConstraints>& audioConstraints, RefPtr<MediaConstraints>& videoConstraints) override;
     void createMediaStream(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) override;
-    virtual bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
+    void createMediaStream(MediaStreamCreationClient*, const String& audioDeviceID, const String& videoDeviceID) override;
+    bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
     RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
 };
 

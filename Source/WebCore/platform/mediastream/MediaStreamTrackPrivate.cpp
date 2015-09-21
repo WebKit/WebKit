@@ -25,11 +25,11 @@
  */
 
 #include "config.h"
+#include "MediaStreamTrackPrivate.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "MediaStreamTrackPrivate.h"
-
+#include "AudioSourceProvider.h"
 #include "MediaSourceStates.h"
 #include "MediaStreamCapabilities.h"
 #include "UUID.h"
@@ -50,7 +50,6 @@ RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(RefPtr<RealtimeM
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& other)
     : RefCounted()
     , m_source(other.source())
-    , m_client(nullptr)
     , m_id(createCanonicalUUIDString())
     , m_isEnabled(other.enabled())
     , m_isEnded(other.ended())
@@ -61,7 +60,6 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(RefPtr<RealtimeMediaSource>&& source, const String& id)
     : RefCounted()
     , m_source(source)
-    , m_client(nullptr)
     , m_id(id)
     , m_isEnabled(true)
     , m_isEnded(false)
@@ -72,6 +70,18 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(RefPtr<RealtimeMediaSource>&& s
 MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 {
     m_source->removeObserver(this);
+}
+
+void MediaStreamTrackPrivate::addObserver(MediaStreamTrackPrivate::Observer& observer)
+{
+    m_observers.append(&observer);
+}
+
+void MediaStreamTrackPrivate::removeObserver(MediaStreamTrackPrivate::Observer& observer)
+{
+    size_t pos = m_observers.find(&observer);
+    if (pos != notFound)
+        m_observers.remove(pos);
 }
 
 const String& MediaStreamTrackPrivate::label() const
@@ -102,7 +112,7 @@ void MediaStreamTrackPrivate::setEnabled(bool enabled)
 
 void MediaStreamTrackPrivate::endTrack()
 {
-    if (ended())
+    if (m_isEnded)
         return;
 
     m_isEnded = true;
@@ -142,19 +152,25 @@ void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints&)
 
 void MediaStreamTrackPrivate::sourceStopped()
 {
-    if (ended())
+    if (m_isEnded)
         return;
 
     m_isEnded = true;
 
-    if (m_client)
-        m_client->trackEnded();
+    for (auto& observer : m_observers)
+        observer->trackEnded(*this);
 }
 
 void MediaStreamTrackPrivate::sourceMutedChanged()
 {
-    if (m_client)
-        m_client->trackMutedChanged();
+    for (auto& observer : m_observers)
+        observer->trackMutedChanged(*this);
+}
+
+void MediaStreamTrackPrivate::sourceStatesChanged()
+{
+    for (auto& observer : m_observers)
+        observer->trackStatesChanged(*this);
 }
 
 bool MediaStreamTrackPrivate::preventSourceFromStopping()
