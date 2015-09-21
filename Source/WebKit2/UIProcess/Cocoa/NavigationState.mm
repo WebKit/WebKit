@@ -583,7 +583,7 @@ void NavigationState::NavigationClient::didSameDocumentNavigation(WebPageProxy&,
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigation:wkNavigation didSameDocumentNavigation:toWKSameDocumentNavigationType(navigationType)];
 }
 
-void NavigationState::NavigationClient::renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones layoutMilestones, API::Object*)
+void NavigationState::NavigationClient::renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones layoutMilestones)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewRenderingProgressDidChange)
         return;

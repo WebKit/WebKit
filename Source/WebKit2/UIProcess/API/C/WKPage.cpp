@@ -1013,12 +1013,12 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didFirstVisuallyNonEmptyLayoutForFrame(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual void didLayout(WebPageProxy& page, LayoutMilestones milestones, API::Object* userData) override
+        virtual void didLayout(WebPageProxy& page, LayoutMilestones milestones) override
         {
             if (!m_client.didLayout)
                 return;
 
-            m_client.didLayout(toAPI(&page), toWKLayoutMilestones(milestones), toAPI(userData), m_client.base.clientInfo);
+            m_client.didLayout(toAPI(&page), toWKLayoutMilestones(milestones), nullptr, m_client.base.clientInfo);
         }
 
         virtual void didRemoveFrameFromHierarchy(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
@@ -2068,11 +2068,11 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didSameDocumentNavigation(toAPI(&page), toAPI(navigation), toAPI(navigationType), toAPI(userData), m_client.base.clientInfo);
         }
         
-        virtual void renderingProgressDidChange(WebPageProxy& page, WebCore::LayoutMilestones milestones, API::Object* userData) override
+        virtual void renderingProgressDidChange(WebPageProxy& page, WebCore::LayoutMilestones milestones) override
         {
             if (!m_client.renderingProgressDidChange)
                 return;
-            m_client.renderingProgressDidChange(toAPI(&page), pageRenderingProgressEvents(milestones), toAPI(userData), m_client.base.clientInfo);
+            m_client.renderingProgressDidChange(toAPI(&page), pageRenderingProgressEvents(milestones), nullptr, m_client.base.clientInfo);
         }
         
         virtual bool canAuthenticateAgainstProtectionSpace(WebPageProxy& page, WebProtectionSpace* protectionSpace) override

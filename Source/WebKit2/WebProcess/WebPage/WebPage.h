@@ -919,6 +919,8 @@ public:
     void addUserStyleSheet(const String& source, WebCore::UserContentInjectedFrames);
     void removeAllUserContent();
 
+    void dispatchDidLayout(WebCore::LayoutMilestones);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

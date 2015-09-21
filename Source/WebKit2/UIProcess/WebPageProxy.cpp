@@ -3168,23 +3168,17 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, cons
 
 void WebPageProxy::didLayoutForCustomContentProvider()
 {
-    PageClientProtector protector(m_pageClient);
-
-    LayoutMilestones milestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout | DidHitRelevantRepaintedObjectsAreaThreshold;
-    if (m_navigationClient)
-        m_navigationClient->renderingProgressDidChange(*this, milestones, nullptr);
-    else
-        m_loaderClient->didLayout(*this, milestones, nullptr);
+    didLayout(DidFirstLayout | DidFirstVisuallyNonEmptyLayout | DidHitRelevantRepaintedObjectsAreaThreshold);
 }
 
-void WebPageProxy::didLayout(uint32_t layoutMilestones, const UserData& userData)
+void WebPageProxy::didLayout(uint32_t layoutMilestones)
 {
     PageClientProtector protector(m_pageClient);
 
     if (m_navigationClient)
-        m_navigationClient->renderingProgressDidChange(*this, static_cast<LayoutMilestones>(layoutMilestones), m_process->transformHandlesToObjects(userData.object()).get());
+        m_navigationClient->renderingProgressDidChange(*this, static_cast<LayoutMilestones>(layoutMilestones));
     else
-        m_loaderClient->didLayout(*this, static_cast<LayoutMilestones>(layoutMilestones), m_process->transformHandlesToObjects(userData.object()).get());
+        m_loaderClient->didLayout(*this, static_cast<LayoutMilestones>(layoutMilestones));
 }
 
 void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, const UserData& userData)

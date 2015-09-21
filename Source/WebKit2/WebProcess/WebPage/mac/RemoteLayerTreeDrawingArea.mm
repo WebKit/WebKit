@@ -383,6 +383,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
 
+    layerTransaction.setNewlyReachedLayoutMilestones(m_pendingNewlyReachedLayoutMilestones);
+    m_pendingNewlyReachedLayoutMilestones = 0;
+
     RemoteScrollingCoordinatorTransaction scrollingTransaction;
 #if ENABLE(ASYNC_SCROLLING)
     if (m_webPage.scrollingCoordinator())
@@ -502,6 +505,12 @@ void RemoteLayerTreeDrawingArea::addTransactionCallbackID(uint64_t callbackID)
 {
     m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
     scheduleCompositingLayerFlush();
+}
+
+bool RemoteLayerTreeDrawingArea::dispatchDidLayout(WebCore::LayoutMilestones layoutMilestones)
+{
+    m_pendingNewlyReachedLayoutMilestones |= layoutMilestones;
+    return true;
 }
 
 } // namespace WebKit

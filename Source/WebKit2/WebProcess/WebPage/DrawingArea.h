@@ -32,6 +32,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayerFlushThrottleState.h>
+#include <WebCore/LayoutMilestones.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ViewState.h>
 #include <functional>
@@ -128,6 +129,8 @@ public:
     virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) { }
 
     virtual void setShouldScaleViewToFitDocument(bool) { }
+
+    virtual bool dispatchDidLayout(WebCore::LayoutMilestones) { return false; }
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.

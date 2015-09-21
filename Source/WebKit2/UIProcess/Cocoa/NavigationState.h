@@ -96,7 +96,7 @@ private:
         virtual void didFailNavigationWithError(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         virtual void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
 
-        virtual void renderingProgressDidChange(WebPageProxy&, WebCore::LayoutMilestones, API::Object*) override;
+        virtual void renderingProgressDidChange(WebPageProxy&, WebCore::LayoutMilestones) override;
 
         virtual bool canAuthenticateAgainstProtectionSpace(WebPageProxy&, WebProtectionSpace*) override;
         virtual void didReceiveAuthenticationChallenge(WebPageProxy&, AuthenticationChallengeProxy*) override;

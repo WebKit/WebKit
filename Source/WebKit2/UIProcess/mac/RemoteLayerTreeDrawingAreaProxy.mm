@@ -238,6 +238,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 #else
     didRefreshDisplay(monotonicallyIncreasingTime());
 #endif
+
+    if (auto milestones = layerTreeTransaction.newlyReachedLayoutMilestones())
+        m_webPageProxy.didLayout(milestones);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(uint64_t layerID, const String& key, double startTime)

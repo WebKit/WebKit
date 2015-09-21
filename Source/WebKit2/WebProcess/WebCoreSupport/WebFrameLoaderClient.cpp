@@ -604,8 +604,7 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
     }
 
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
-    webPage->injectedBundleLoaderClient().didLayout(webPage, milestones, userData);
-    webPage->send(Messages::WebPageProxy::DidLayout(milestones, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->dispatchDidLayout(milestones);
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
         if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {

@@ -32,6 +32,7 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/LayoutMilestones.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/HashMap.h>
@@ -231,7 +232,10 @@ public:
 
     typedef uint64_t TransactionCallbackID;
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
-    void setCallbackIDs(Vector<TransactionCallbackID> callbackIDs) { m_callbackIDs = WTF::move(callbackIDs); }
+    void setCallbackIDs(Vector<TransactionCallbackID>&& callbackIDs) { m_callbackIDs = WTF::move(callbackIDs); }
+
+    WebCore::LayoutMilestones newlyReachedLayoutMilestones() const { return m_newlyReachedLayoutMilestones; }
+    void setNewlyReachedLayoutMilestones(WebCore::LayoutMilestones milestones) { m_newlyReachedLayoutMilestones = milestones; }
     
 private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
@@ -251,13 +255,14 @@ private:
     WebCore::IntPoint m_scrollPosition;
 #endif
     WebCore::Color m_pageExtendedBackgroundColor;
-    double m_pageScaleFactor;
-    double m_minimumScaleFactor;
-    double m_maximumScaleFactor;
-    uint64_t m_renderTreeSize;
-    uint64_t m_transactionID;
-    bool m_scaleWasSetByUIProcess;
-    bool m_allowsUserScaling;
+    double m_pageScaleFactor { 1 };
+    double m_minimumScaleFactor { 1 };
+    double m_maximumScaleFactor { 1 };
+    uint64_t m_renderTreeSize { 0 };
+    uint64_t m_transactionID { 0 };
+    WebCore::LayoutMilestones m_newlyReachedLayoutMilestones { 0 };
+    bool m_scaleWasSetByUIProcess { false };
+    bool m_allowsUserScaling { false };
 };
 
 } // namespace WebKit

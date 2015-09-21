@@ -76,7 +76,7 @@ public:
     virtual void didRunInsecureContentForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
     virtual void didDetectXSSForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
 
-    virtual void didLayout(WebKit::WebPageProxy&, WebCore::LayoutMilestones, API::Object*) { }
+    virtual void didLayout(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
     
     virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebProtectionSpace*) { return false; }
     virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::AuthenticationChallengeProxy*) { }

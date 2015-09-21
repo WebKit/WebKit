@@ -76,7 +76,7 @@ public:
     virtual void didFailNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) { }
     virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, API::Navigation*, WebKit::SameDocumentNavigationType, API::Object*) { }
 
-    virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones, API::Object*) { }
+    virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
 
     virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebPageProxy&, WebKit::WebProtectionSpace*) { return false; }
     virtual void didReceiveAuthenticationChallenge(WebKit::WebPageProxy&, WebKit::AuthenticationChallengeProxy*) { }

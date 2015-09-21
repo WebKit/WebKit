@@ -1,3 +1,80 @@
+2015-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        Layout milestones aren't synchronized with UI-side compositing transactions
+        https://bugs.webkit.org/show_bug.cgi?id=149362
+
+        Reviewed by Anders Carlsson.
+        
+        Because layout milestones are primarily used to synchronize things with
+        the displayed layout/rendering of the page, they should fire at the same
+        time as the contents of the view change.
+
+        However, with UI-side compositing, the layer tree transaction will
+        most likely come in *after* the layout milestones associated with its
+        contents fire, breaking this synchronization.
+
+        Instead, put the layout milestones inside the transaction and fire them
+        immediately after it is committed in the UI process.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::setCallbackIDs):
+        (WebKit::RemoteLayerTreeTransaction::newlyReachedLayoutMilestones):
+        (WebKit::RemoteLayerTreeTransaction::setNewlyReachedLayoutMilestones):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::RemoteLayerTreeTransaction):
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        Add LayoutMilestones to the transaction.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didLayout):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::renderingProgressDidChange):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::renderingProgressDidChange):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+        Remove the UserData parameter from didLayout/renderingProgressDidChange,
+        except for at the API level where we'll always pass null.
+        Nobody uses UserData on didLayout, and we'll assert if any client sets it
+        (and it won't get passed through to the UI process).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didLayoutForCustomContentProvider):
+        Just call didLayout with the relevant milestones instead of reimplementing it.
+
+        (WebKit::WebPageProxy::didLayout):
+        * UIProcess/WebPageProxy.h:
+        Make didLayout public.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        Let WebPage handle dispatching didLayout.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+        Let the DrawingArea handle dispatching didLayout.
+        If it doesn't want to handle it, we'll just do the normal thing
+        and dispatch an async message.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        If we reach a new layout milestone, dispatch didLayout client/delegate callbacks.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::dispatchDidLayout):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::dispatchDidLayout):
+        Queue up milestones as we reach them, and send them in the transaction.
+
 2015-09-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove XHR_TIMEOUT compilation guard
