@@ -61,7 +61,7 @@ static String nameOfType(WASMType type)
     case WASMType::F64:
         return "float64";
     default:
-        ASSERT_NOT_REACHED();
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

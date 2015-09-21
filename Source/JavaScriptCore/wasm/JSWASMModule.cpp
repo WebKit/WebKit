@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSArrayBuffer.h"
+#include "JSCellInlines.h"
 #include "JSFunction.h"
 #include "SlotVisitorInlines.h"
 
