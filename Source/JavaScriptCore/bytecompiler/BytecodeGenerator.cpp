@@ -2503,6 +2503,7 @@ RegisterID* BytecodeGenerator::emitNewArrowFunctionExpression(RegisterID* dst, A
 RegisterID* BytecodeGenerator::emitNewDefaultConstructor(RegisterID* dst, ConstructorKind constructorKind, const Identifier& name)
 {
     UnlinkedFunctionExecutable* executable = m_vm->builtinExecutables()->createDefaultConstructor(constructorKind, name);
+    executable->setInvalidTypeProfilingOffsets();
 
     unsigned index = m_codeBlock->addFunctionExpr(executable);
 
