@@ -17,9 +17,13 @@ list(APPEND WebCore_SOURCES
 
     loader/cf/ResourceLoaderCFNet.cpp
 
+    page/CaptionUserPreferencesMediaAF.cpp
+
     page/win/FrameCGWin.cpp
 
     platform/cf/CFURLExtras.cpp
+    platform/cf/CoreMediaSoftLink.cpp
+    platform/cf/MediaAccessibilitySoftLink.cpp
     platform/cf/URLCF.cpp
 
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp

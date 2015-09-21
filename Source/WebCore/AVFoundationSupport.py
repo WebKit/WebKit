@@ -31,11 +31,11 @@ import sys
 import os
 
 def lookFor(relativePath):
-    return os.path.isfile(os.environ['WEBKIT_LIBRARIES'] + relativePath)
+    return os.path.isfile(sys.argv[1] + relativePath)
 
 
 def fileContains(relativePath, regexp):
-    with open(os.environ['WEBKIT_LIBRARIES'] + relativePath) as file:
+    with open(sys.argv[1] + relativePath) as file:
         for line in file:
             if regexp.search(line):
                 return True

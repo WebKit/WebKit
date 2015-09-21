@@ -248,12 +248,10 @@ else ()
     include(PlatformAppleWin.cmake)
 endif ()
 
-# FIXME: This should test if AVF headers are available.
-# https://bugs.webkit.org/show_bug.cgi?id=135861
 add_custom_command(
     OUTPUT "${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreHeaderDetection.h"
     WORKING_DIRECTORY "${DERIVED_SOURCES_WEBCORE_DIR}"
-    COMMAND echo /* Identifying AVFoundation Support */ > WebCoreHeaderDetection.h
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/AVFoundationSupport.py ${WEBKIT_LIBRARIES_DIR} > WebCoreHeaderDetection.h
     VERBATIM)
 
 make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj)
@@ -262,6 +260,12 @@ file(COPY
     "${WEBCORE_DIR}/English.lproj/mediaControlsLocalizedStrings.js"
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/en.lproj
+)
+file(COPY
+    "${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.css"
+    "${WEBCORE_DIR}/Modules/mediacontrols/mediaControlsApple.js"
+    DESTINATION
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources
 )
 if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/cacert.pem)
     make_directory(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/certificates)
