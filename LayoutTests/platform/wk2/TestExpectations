@@ -722,6 +722,8 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 fast/images/animated-gif-no-layout.html [ Pass ]
 fast/images/gif-loop-count.html [ Pass ]
 
+http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

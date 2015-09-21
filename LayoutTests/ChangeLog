@@ -1,3 +1,18 @@
+2015-09-20  Andy Estes  <aestes@apple.com>
+
+        http/tests/contentfiltering/load-substitute-data-from-appcache.html crashes sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=148890
+
+        Reviewed by Alexey Proskuryakov.
+
+        Added a test to verify my theory that load-substitute-data-from-appcache.html will crash even with Content Filtering disabled.
+
+        * TestExpectations: Skipped the new test since it only works in WebKit2.
+        * http/tests/appcache/decide-navigation-policy-after-delay-expected.txt: Added.
+        * http/tests/appcache/decide-navigation-policy-after-delay.html: Added.
+        * http/tests/appcache/resources/decide-navigation-policy-after-delay-frame.html: Added.
+        * platform/wk2/TestExpectations: Enabled the test in WebKit2.
+
 2015-09-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline W3C HTML DOM test on iOS after r190030.
