@@ -15,10 +15,10 @@ PASS attributes Element.classList.add: single token addition mutation
 PASS attributes Element.classList.add: multiple tokens addition mutation 
 PASS attributes Element.classList.add: syntax err/no mutation 
 PASS attributes Element.classList.add: invalid character/no mutation 
-FAIL attributes Element.classList.add: same value mutation assert_equals: mutation records must match expected 2 but got 1
+PASS attributes Element.classList.add: same value mutation 
 PASS attributes Element.classList.remove: single token removal mutation 
 PASS attributes Element.classList.remove: multiple tokens removal mutation 
-FAIL attributes Element.classList.remove: missing token removal mutation assert_equals: mutation records must match expected 2 but got 1
+PASS attributes Element.classList.remove: missing token removal mutation 
 PASS attributes Element.classList.toggle: token removal mutation 
 PASS attributes Element.classList.toggle: token addition mutation 
 PASS attributes Element.classList.toggle: forced token removal mutation 

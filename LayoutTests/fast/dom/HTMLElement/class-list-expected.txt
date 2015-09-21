@@ -11,7 +11,7 @@ PASS element.classList.length is 1
 PASS element.classList.length is 2
 PASS element.className is "x"
 PASS element.className is "x"
-PASS element.className is "x  x"
+PASS element.className is "x"
 PASS element.className is "y x"
 PASS element.className is ""
 PASS element.className is ""

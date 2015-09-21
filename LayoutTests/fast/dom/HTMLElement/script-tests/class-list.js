@@ -50,7 +50,7 @@ shouldBeEqualToString('element.className', 'x');
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/007.htm
 createElement('x  x');
 element.classList.add('x');
-shouldBeEqualToString('element.className', 'x  x');
+shouldBeEqualToString('element.className', 'x');
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/008.htm
 createElement('y');

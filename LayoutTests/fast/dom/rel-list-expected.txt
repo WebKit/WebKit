@@ -30,7 +30,7 @@ PASS element.relList.length is 1
 PASS element.relList.length is 2
 PASS element.rel is "x"
 PASS element.rel is "x"
-PASS element.rel is "x  x"
+PASS element.rel is "x"
 PASS element.rel is "y x"
 PASS element.rel is ""
 PASS element.rel is ""
@@ -153,7 +153,7 @@ PASS element.relList.length is 1
 PASS element.relList.length is 2
 PASS element.rel is "x"
 PASS element.rel is "x"
-PASS element.rel is "x  x"
+PASS element.rel is "x"
 PASS element.rel is "y x"
 PASS element.rel is ""
 PASS element.rel is ""
@@ -276,7 +276,7 @@ PASS element.relList.length is 1
 PASS element.relList.length is 2
 PASS element.rel is "x"
 PASS element.rel is "x"
-PASS element.rel is "x  x"
+PASS element.rel is "x"
 PASS element.rel is "y x"
 PASS element.rel is ""
 PASS element.rel is ""

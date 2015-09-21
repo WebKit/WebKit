@@ -83,10 +83,9 @@ inline void DOMTokenList::addInternal(const String* tokens, size_t length, Excep
             uniqueTokens.uncheckedAppend(tokens[i]);
     }
 
-    if (uniqueTokens.isEmpty())
-        return;
+    if (!uniqueTokens.isEmpty())
+        m_tokens.appendVector(uniqueTokens);
 
-    m_tokens.appendVector(uniqueTokens);
     updateAfterTokenChange();
 }
 
@@ -105,14 +104,10 @@ inline void DOMTokenList::removeInternal(const String* tokens, size_t length, Ex
     if (!validateTokens(tokens, length, ec))
         return;
 
-    bool didRemoveTokens = false;
-    for (size_t i = 0; i < length; ++i) {
-        if (m_tokens.removeFirst(tokens[i]))
-            didRemoveTokens = true;
-    }
+    for (size_t i = 0; i < length; ++i)
+        m_tokens.removeFirst(tokens[i]);
 
-    if (didRemoveTokens)
-        updateAfterTokenChange();
+    updateAfterTokenChange();
 }
 
 void DOMTokenList::remove(const Vector<String>& tokens, ExceptionCode& ec)
