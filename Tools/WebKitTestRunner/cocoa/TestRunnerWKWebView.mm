@@ -30,13 +30,13 @@
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS)
 @interface WKWebView ()
 
-#if PLATFORM(IOS)
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale;
-#endif
 
 @end
+#endif
 
 #if WK_API_ENABLED
 
