@@ -1,5 +1,18 @@
 2015-09-21  Chris Dumez  <cdumez@apple.com>
 
+        [JS Bindings] prototype.constructor should be writable
+        https://bugs.webkit.org/show_bug.cgi?id=149412
+        <rdar://problem/22545096>
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline W3C DOM / HTML tests now that more checks are passing.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2015-09-21  Chris Dumez  <cdumez@apple.com>
+
         DOMTokenList.add() / remove() should run the update steps even if tokens were not modified
         https://bugs.webkit.org/show_bug.cgi?id=148780
         <rdar://problem/22571794>

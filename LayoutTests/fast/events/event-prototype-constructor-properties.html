@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Checks the properties of Event.prototype.constructor");
+
+var properties = Object.getOwnPropertyDescriptor(Event.prototype, "constructor");
+shouldBeTrue("properties.writable");
+shouldBeFalse("properties.enumerable");
+shouldBeTrue("properties.configurable");
+
+evalAndLog("Object.defineProperty(Event.prototype, 'constructor', { value: 'test' })");
+shouldBeEqualToString("Event.prototype.constructor", "test");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Checks the properties of Event.prototype.constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS properties.writable is true
+PASS properties.enumerable is false
+PASS properties.configurable is true
+Object.defineProperty(Event.prototype, 'constructor', { value: 'test' })
+PASS Event.prototype.constructor is "test"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
