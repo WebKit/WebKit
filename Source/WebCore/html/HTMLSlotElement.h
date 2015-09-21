@@ -36,6 +36,8 @@ class HTMLSlotElement final : public HTMLElement {
 public:
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
+    const Vector<Node*>* assignedNodes() const;
+
     Vector<RefPtr<Node>> getDistributedNodes() const;
 
 private:

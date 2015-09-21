@@ -32,6 +32,7 @@
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "FlowThreadController.h"
+#include "HTMLSlotElement.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
@@ -468,11 +469,33 @@ static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId 
     attachRenderTree(pseudoElement.get(), *current.renderStyle(), renderTreePosition, nullptr);
 }
 
+#if ENABLE(SHADOW_DOM)
+static void attachSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition)
+{
+    if (auto* assignedNodes = slot.assignedNodes()) {
+        for (auto* child : *assignedNodes) {
+            if (is<Text>(*child))
+                attachTextRenderer(downcast<Text>(*child), renderTreePosition);
+            else if (is<Element>(*child))
+                attachRenderTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, nullptr);
+        }
+    }
+    slot.clearNeedsStyleRecalc();
+    slot.clearChildNeedsStyleRecalc();
+}
+#endif
+
 static void attachRenderTree(Element& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, PassRefPtr<RenderStyle> resolvedStyle)
 {
     PostResolutionCallbackDisabler callbackDisabler(current.document());
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
+#if ENABLE(SHADOW_DOM)
+    if (is<HTMLSlotElement>(current)) {
+        attachSlotAssignees(downcast<HTMLSlotElement>(current), inheritedStyle, renderTreePosition);
+        return;
+    }
+#endif
     if (is<InsertionPoint>(current)) {
         attachDistributedChildren(downcast<InsertionPoint>(current), inheritedStyle, renderTreePosition);
         current.clearNeedsStyleRecalc();
@@ -532,15 +555,10 @@ static void detachDistributedChildren(InsertionPoint& insertionPoint)
 
 static void detachChildren(ContainerNode& current, DetachType detachType)
 {
-    if (is<InsertionPoint>(current))
-        detachDistributedChildren(downcast<InsertionPoint>(current));
-
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
-        if (is<Text>(*child)) {
-            Style::detachTextRenderer(downcast<Text>(*child));
-            continue;
-        }
-        if (is<Element>(*child))
+        if (is<Text>(*child))
+            detachTextRenderer(downcast<Text>(*child));
+        else if (is<Element>(*child))
             detachRenderTree(downcast<Element>(*child), detachType);
     }
     current.clearChildNeedsStyleRecalc();
@@ -550,6 +568,23 @@ static void detachShadowRoot(ShadowRoot& shadowRoot, DetachType detachType)
 {
     detachChildren(shadowRoot, detachType);
 }
+
+#if ENABLE(SHADOW_DOM)
+static void detachSlotAssignees(HTMLSlotElement& slot, DetachType detachType)
+{
+    ASSERT(!slot.renderer());
+    if (auto* assignedNodes = slot.assignedNodes()) {
+        for (auto* child : *assignedNodes) {
+            if (is<Text>(*child))
+                detachTextRenderer(downcast<Text>(*child));
+            else if (is<Element>(*child))
+                detachRenderTree(downcast<Element>(*child), detachType);
+        }
+    }
+    slot.clearNeedsStyleRecalc();
+    slot.clearChildNeedsStyleRecalc();
+}
+#endif
 
 static void detachRenderTree(Element& current, DetachType detachType)
 {
@@ -565,7 +600,13 @@ static void detachRenderTree(Element& current, DetachType detachType)
     if (detachType != ReattachDetach)
         current.clearHoverAndActiveStatusBeforeDetachingRenderer();
 
-    if (ShadowRoot* shadowRoot = current.shadowRoot())
+    if (is<InsertionPoint>(current))
+        detachDistributedChildren(downcast<InsertionPoint>(current));
+#if ENABLE(SHADOW_DOM)
+    else if (is<HTMLSlotElement>(current))
+        detachSlotAssignees(downcast<HTMLSlotElement>(current), detachType);
+#endif
+    else if (ShadowRoot* shadowRoot = current.shadowRoot())
         detachShadowRoot(*shadowRoot, detachType);
 
     detachChildren(current, detachType);
@@ -798,10 +839,32 @@ static void resolveChildren(Element& current, RenderStyle& inheritedStyle, Chang
     }
 }
 
+#if ENABLE(SHADOW_DOM)
+static void resolveSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
+{
+    if (auto* assignedNodes = slot.assignedNodes()) {
+        for (auto* child : *assignedNodes) {
+            if (is<Text>(*child))
+                resolveTextNode(downcast<Text>(*child), renderTreePosition);
+            else if (is<Element>(*child))
+                resolveTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, change);
+        }
+    }
+    slot.clearNeedsStyleRecalc();
+    slot.clearChildNeedsStyleRecalc();
+}
+#endif
+
 void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, Change change)
 {
     ASSERT(change != Detach);
 
+#if ENABLE(SHADOW_DOM)
+    if (is<HTMLSlotElement>(current)) {
+        resolveSlotAssignees(downcast<HTMLSlotElement>(current), inheritedStyle, renderTreePosition, change);
+        return;
+    }
+#endif
     if (is<InsertionPoint>(current)) {
         current.clearNeedsStyleRecalc();
         current.clearChildNeedsStyleRecalc();
