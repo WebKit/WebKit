@@ -623,6 +623,18 @@ animations/trigger-container-scroll-boundaries.html [ Skip ]
 # TODO aria-current is not supported
 webkit.org/b/149018 accessibility/aria-current.html [ Skip ]
 
+# TODO webkit-font-smoothing is not supported.
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-001.html [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-002.html [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-003.html [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-004.html [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-rule-002.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-rule-px-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-rule-stacking-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-shorthand-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-block-sibling-003.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################
