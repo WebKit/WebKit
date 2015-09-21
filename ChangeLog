@@ -1,3 +1,11 @@
+2015-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Disable PICTURE_SIZES in Windows CMake build like r189745.
+        https://bugs.webkit.org/show_bug.cgi?id=149125
+
+        * Source/cmake/OptionsWin.cmake:
+        Do the same thing as r189745.
+
 2015-09-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Removing XHR_TIMEOUT guard
