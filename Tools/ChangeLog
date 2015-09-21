@@ -1,5 +1,20 @@
 2015-09-20  Alexey Proskuryakov  <ap@apple.com>
 
+        WebKitTestRunner can leak user content script results between tests
+        https://bugs.webkit.org/show_bug.cgi?id=149391
+
+        Reviewed by Sam Weinig.
+
+        Move WKBundlePageRemoveAllUserContent call so that it's executed before loading
+        about:blank, and thus about:blank doesn't have unintended side effects.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+
+2015-09-20  Alexey Proskuryakov  <ap@apple.com>
+
         [Mac, iOS] AccessibilityController doesn't uninstall global notification handler
         https://bugs.webkit.org/show_bug.cgi?id=149384
 
