@@ -285,7 +285,7 @@ sub SkipFunction {
     my $functionReturnType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $isCustomFunction = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"CustomBinding"};
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
-    my $isUnsupportedCallWith = $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments") || $codeGenerator->ExtendedAttributeContains($callWith, "CallStack");
+    my $isUnsupportedCallWith = $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments") || $codeGenerator->ExtendedAttributeContains($callWith, "CallStack") || $codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow") || $codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow");
 
     # Static methods are unsupported
     return 1 if $function->isStatic;
@@ -1448,7 +1448,9 @@ sub GenerateFunctions {
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
         my $custom = $attribute->signature->extendedAttributes->{"CustomSetter"};
-        if ($attribute->isReadOnly || $attribute->signature->extendedAttributes->{"Replaceable"} || $custom) {
+        if ($attribute->isReadOnly || $attribute->signature->extendedAttributes->{"Replaceable"}
+            || $attribute->signature->extendedAttributes->{"CallWith"}
+            || $attribute->signature->extendedAttributes->{"SetterCallWith"} || $custom) {
             next TOP;
         }
         

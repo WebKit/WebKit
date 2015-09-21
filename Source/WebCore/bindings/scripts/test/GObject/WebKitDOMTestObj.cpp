@@ -2092,14 +2092,6 @@ glong webkit_dom_test_obj_get_with_script_state_attribute(WebKitDOMTestObj* self
     return result;
 }
 
-void webkit_dom_test_obj_set_with_script_state_attribute(WebKitDOMTestObj* self, glong value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    WebCore::TestObj* item = WebKit::core(self);
-    item->setWithScriptStateAttribute(value);
-}
-
 glong webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -2109,14 +2101,6 @@ glong webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute(WebK
     return result;
 }
 
-void webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self, glong value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    WebCore::TestObj* item = WebKit::core(self);
-    item->setWithCallWithAndSetterCallWithAttribute(value);
-}
-
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_attribute(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -2124,16 +2108,6 @@ WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_attribut
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptExecutionContextAttribute());
     return WebKit::kit(gobjectResult.get());
-}
-
-void webkit_dom_test_obj_set_with_script_execution_context_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setWithScriptExecutionContextAttribute(convertedValue);
 }
 
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_state_attribute_raises(WebKitDOMTestObj* self, GError** error)
@@ -2151,16 +2125,6 @@ WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_state_attribute_raises(Web
     return WebKit::kit(gobjectResult.get());
 }
 
-void webkit_dom_test_obj_set_with_script_state_attribute_raises(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setWithScriptStateAttributeRaises(convertedValue);
-}
-
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_attribute_raises(WebKitDOMTestObj* self, GError** error)
 {
     WebCore::JSMainThreadNullState state;
@@ -2176,16 +2140,6 @@ WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_attribut
     return WebKit::kit(gobjectResult.get());
 }
 
-void webkit_dom_test_obj_set_with_script_execution_context_attribute_raises(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setWithScriptExecutionContextAttributeRaises(convertedValue);
-}
-
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -2193,16 +2147,6 @@ WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_and_scri
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptExecutionContextAndScriptStateAttribute());
     return WebKit::kit(gobjectResult.get());
-}
-
-void webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setWithScriptExecutionContextAndScriptStateAttribute(convertedValue);
 }
 
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute_raises(WebKitDOMTestObj* self, GError** error)
@@ -2220,16 +2164,6 @@ WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_and_scri
     return WebKit::kit(gobjectResult.get());
 }
 
-void webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute_raises(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setWithScriptExecutionContextAndScriptStateAttributeRaises(convertedValue);
-}
-
 WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_and_script_state_with_spaces_attribute(WebKitDOMTestObj* self)
 {
     WebCore::JSMainThreadNullState state;
@@ -2237,16 +2171,6 @@ WebKitDOMTestObj* webkit_dom_test_obj_get_with_script_execution_context_and_scri
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptExecutionContextAndScriptStateWithSpacesAttribute());
     return WebKit::kit(gobjectResult.get());
-}
-
-void webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spaces_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(value));
-    WebCore::TestObj* item = WebKit::core(self);
-    WebCore::TestObj* convertedValue = WebKit::core(value);
-    item->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(convertedValue);
 }
 
 glong webkit_dom_test_obj_get_conditional_attr1(WebKitDOMTestObj* self)

@@ -1213,16 +1213,6 @@ WEBKIT_API glong
 webkit_dom_test_obj_get_with_script_state_attribute(WebKitDOMTestObj* self);
 
 /**
- * webkit_dom_test_obj_set_with_script_state_attribute:
- * @self: A #WebKitDOMTestObj
- * @value: A #glong
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_state_attribute(WebKitDOMTestObj* self, glong value);
-
-/**
  * webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute:
  * @self: A #WebKitDOMTestObj
  *
@@ -1234,16 +1224,6 @@ WEBKIT_API glong
 webkit_dom_test_obj_get_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self);
 
 /**
- * webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute:
- * @self: A #WebKitDOMTestObj
- * @value: A #glong
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute(WebKitDOMTestObj* self, glong value);
-
-/**
  * webkit_dom_test_obj_get_with_script_execution_context_attribute:
  * @self: A #WebKitDOMTestObj
  *
@@ -1253,16 +1233,6 @@ webkit_dom_test_obj_set_with_call_with_and_setter_call_with_attribute(WebKitDOMT
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_with_script_execution_context_attribute(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_set_with_script_execution_context_attribute:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_execution_context_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
  * webkit_dom_test_obj_get_with_script_state_attribute_raises:
@@ -1277,16 +1247,6 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_with_script_state_attribute_raises(WebKitDOMTestObj* self, GError** error);
 
 /**
- * webkit_dom_test_obj_set_with_script_state_attribute_raises:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_state_attribute_raises(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
-
-/**
  * webkit_dom_test_obj_get_with_script_execution_context_attribute_raises:
  * @self: A #WebKitDOMTestObj
  * @error: #GError
@@ -1299,16 +1259,6 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_with_script_execution_context_attribute_raises(WebKitDOMTestObj* self, GError** error);
 
 /**
- * webkit_dom_test_obj_set_with_script_execution_context_attribute_raises:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_execution_context_attribute_raises(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
-
-/**
  * webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute:
  * @self: A #WebKitDOMTestObj
  *
@@ -1318,16 +1268,6 @@ webkit_dom_test_obj_set_with_script_execution_context_attribute_raises(WebKitDOM
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
  * webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute_raises:
@@ -1342,16 +1282,6 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute_raises(WebKitDOMTestObj* self, GError** error);
 
 /**
- * webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute_raises:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute_raises(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
-
-/**
  * webkit_dom_test_obj_get_with_script_execution_context_and_script_state_with_spaces_attribute:
  * @self: A #WebKitDOMTestObj
  *
@@ -1361,16 +1291,6 @@ webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_get_with_script_execution_context_and_script_state_with_spaces_attribute(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spaces_attribute:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spaces_attribute(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
  * webkit_dom_test_obj_get_conditional_attr1:
