@@ -513,7 +513,8 @@ enum {
     DidBeginSwipeCallbackID,
     WillEndSwipeCallbackID,
     DidEndSwipeCallbackID,
-    DidRemoveSwipeSnapshotCallbackID
+    DidRemoveSwipeSnapshotCallbackID,
+    FirstUIScriptCallbackID = 100
 };
 
 static void cacheTestRunnerCallback(unsigned index, JSValueRef callback)
@@ -532,14 +533,14 @@ static void cacheTestRunnerCallback(unsigned index, JSValueRef callback)
     callbackMap().add(index, callback);
 }
 
-static void callTestRunnerCallback(unsigned index)
+static void callTestRunnerCallback(unsigned index, size_t argumentCount = 0, const JSValueRef arguments[] = nullptr)
 {
     if (!callbackMap().contains(index))
         return;
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSObjectRef callback = JSValueToObject(context, callbackMap().take(index), 0);
-    JSObjectCallAsFunction(context, callback, JSContextGetGlobalObject(context), 0, 0, 0);
+    JSObjectCallAsFunction(context, callback, JSContextGetGlobalObject(context), argumentCount, arguments, 0);
     JSValueUnprotect(context, callback);
 }
 
@@ -886,6 +887,42 @@ void TestRunner::setNavigationGesturesEnabled(bool value)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetNavigationGesturesEnabled"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
+}
+
+static unsigned nextUIScriptCallbackID()
+{
+    static unsigned callbackID = FirstUIScriptCallbackID;
+    return callbackID++;
+}
+
+void TestRunner::runUIScript(JSStringRef script, JSValueRef callback)
+{
+    unsigned callbackID = nextUIScriptCallbackID();
+    cacheTestRunnerCallback(callbackID, callback);
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("RunUIProcessScript"));
+
+    WKRetainPtr<WKMutableDictionaryRef> testDictionary(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> scriptKey(AdoptWK, WKStringCreateWithUTF8CString("Script"));
+    WKRetainPtr<WKStringRef> scriptValue(AdoptWK, WKStringCreateWithJSString(script));
+
+    WKRetainPtr<WKStringRef> callbackIDKey(AdoptWK, WKStringCreateWithUTF8CString("CallbackID"));
+    WKRetainPtr<WKUInt64Ref> callbackIDValue = adoptWK(WKUInt64Create(callbackID));
+
+    WKDictionarySetItem(testDictionary.get(), scriptKey.get(), scriptValue.get());
+    WKDictionarySetItem(testDictionary.get(), callbackIDKey.get(), callbackIDValue.get());
+
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), testDictionary.get());
+}
+
+void TestRunner::runUIScriptCallback(unsigned callbackID, JSStringRef result)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    JSValueRef resultValue = JSValueMakeString(context, result);
+    callTestRunnerCallback(callbackID, 1, &resultValue);
 }
 
 void TestRunner::installDidBeginSwipeCallback(JSValueRef callback)

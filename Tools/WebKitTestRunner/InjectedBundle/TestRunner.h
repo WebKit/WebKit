@@ -287,6 +287,9 @@ public:
     void setShouldDecideNavigationPolicyAfterDelay(bool);
     void setNavigationGesturesEnabled(bool);
 
+    void runUIScript(JSStringRef script, JSValueRef callback);
+    void runUIScriptCallback(unsigned callbackID, JSStringRef result);
+
     void installDidBeginSwipeCallback(JSValueRef);
     void installWillEndSwipeCallback(JSValueRef);
     void installDidEndSwipeCallback(JSValueRef);

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(MAC)
+
 @interface WebKitTestRunnerDraggingInfo : NSObject <NSDraggingInfo> {
 @private
     NSSize _offset;
@@ -50,3 +52,5 @@
 - (void)resetSpringLoading;
 #endif
 @end
+
+#endif // PLATFORM(MAC)

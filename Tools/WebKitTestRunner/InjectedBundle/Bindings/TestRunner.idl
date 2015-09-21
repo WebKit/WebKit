@@ -213,5 +213,8 @@ interface TestRunner {
     void installWillEndSwipeCallback(object callback);
     void installDidEndSwipeCallback(object callback);
     void installDidRemoveSwipeSnapshotCallback(object callback);
+
+    // UI Process Testing
+    void runUIScript(DOMString script, object callback);
 };
 

@@ -29,6 +29,7 @@
 #import "CrashReporterInfo.h"
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
+#import "TestRunnerWKWebView.h"
 #import <Foundation/Foundation.h>
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKPreferencesRefPrivate.h>

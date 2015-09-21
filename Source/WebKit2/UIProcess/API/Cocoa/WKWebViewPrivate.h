@@ -125,7 +125,12 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 // The viewport meta tag width is negative if the value is not defined.
 @property (nonatomic, readonly) CGFloat _viewportMetaTagWidth;
 
+@property (nonatomic, readonly) CGRect _contentVisibleRect;
+
 @property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
+
+- (CGPoint)_convertPointFromContentsToView:(CGPoint)point;
+- (CGPoint)_convertPointFromViewToContents:(CGPoint)point;
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;

@@ -1,3 +1,98 @@
+2015-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add the ability for tests to run script in the UI process in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=149356
+
+        Reviewed by Tim Horton.
+
+        This change adds testRunner.runUIScript(script, callback), which allows a test
+        to execute script in a JSContext which runs in the UI process. That context
+        has bindings exposed through the UIScriptController interface; currently one test
+        function, and some iOS-specific functions are included. UIScriptController can be
+        async with a callback, and runUIScript() itself is asynchronous. When the UI 
+        script is complete, it calls uiController.uiScriptComplete(result), where 'result'
+        is a string passed back to the web process, and given to the runUIScript()
+        callback function.
+        
+        Thanks to Gyuyoung Kim for help with the Gtk/Efl build.
+
+        * WebKitTestRunner/DerivedSources.make: Build UIScriptController.idl.
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl: Add runUIScript().
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage): When the UI-side script is
+        complete, call back into TestRunner.
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::nextUIScriptCallbackID):
+        (WTR::TestRunner::runUIScript): Post a message to the injected bundle to run the UI script.
+        (WTR::TestRunner::runUIScriptCallback): When the UI script is done, execute its callback function.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::testOptionsForTest): Support "useFlexibleViewport" as a test argument.
+        (WTR::shouldUseFixedLayout): Deleted. Moved to a TestInvocation function.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::shouldUseFixedLayout):
+        (WTR::TestInvocation::shouldUseThreadedScrolling):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::runUISideScript): Run the UI-side script!
+        (WTR::TestInvocation::uiScriptDidComplete): Send a message back to the injected bundle.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h: Copied from Tools/WebKitTestRunner/TestOptions.h.
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm: Added.
+        (-[TestRunnerWKWebView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        (-[TestRunnerWKWebView zoomToScale:animated:completionHandler:]):
+        (-[TestRunnerWKWebView scrollViewDidEndZooming:withView:atScale:]):
+        (-[TestRunnerWKWebView onDidEndZooming:]): Allow a test to hook into the end of zooming.
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::PlatformWebView): Make a TestRunnerWKWebView on iOS.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm: Added.
+        (WTR::UIScriptController::doAsyncTask):
+        (WTR::UIScriptController::zoomToScale):
+        (WTR::UIScriptController::zoomScale):
+        (WTR::UIScriptController::minimumZoomScale):
+        (WTR::UIScriptController::maximumZoomScale):
+        (WTR::UIScriptController::contentVisibleRect):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[TestRunnerWKWebView dragImage:at:offset:event:pasteboard:source:slideBack:]): Deleted.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest):
+        (WTR::shouldUseThreadedScrolling): Deleted. Moved to TestInvocation.
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.h:
+        * WebKitTestRunner/uiscriptcontext/UIScriptContext.cpp: Added. Owns the JS context in the UI process.
+        (UIScriptContext::UIScriptContext):
+        (UIScriptContext::~UIScriptContext):
+        (UIScriptContext::runUIScript): Entrypoint to running the UI script. If the script didn't do anything
+        asynchronous, call the callback.
+        (UIScriptContext::nextTaskCallbackID):
+        (UIScriptContext::prepareForAsyncTask): Do setup for one async task (i.e. a UIScriptController function
+        that has a callback). Has to store the callbackID of the script, so code called from the completion
+        callback knows which UI script invoked it.
+        (UIScriptContext::asyncTaskComplete): Called when one task is finished.
+        (UIScriptContext::uiScriptComplete):
+        (UIScriptContext::objectFromRect): Make a JS object from a rect.
+        * WebKitTestRunner/uiscriptcontext/UIScriptContext.h: Copied from Tools/WebKitTestRunner/TestOptions.h.
+        (WTR::UIScriptContext::hasOutstandingAsyncTasks):
+        * WebKitTestRunner/uiscriptcontext/UIScriptController.cpp: Copied from Tools/WebKitTestRunner/TestOptions.h.
+        (WTR::UIScriptController::UIScriptController):
+        (WTR::UIScriptController::makeWindowObject):
+        (WTR::UIScriptController::wrapperClass):
+        (WTR::UIScriptController::doAsyncTask):
+        (WTR::UIScriptController::zoomToScale):
+        (WTR::UIScriptController::zoomScale):
+        (WTR::UIScriptController::minimumZoomScale):
+        (WTR::UIScriptController::maximumZoomScale):
+        (WTR::UIScriptController::contentVisibleRect):
+        (WTR::UIScriptController::uiScriptComplete):
+        * WebKitTestRunner/uiscriptcontext/UIScriptController.h: Copied from Tools/WebKitTestRunner/TestOptions.h.
+        (WTR::UIScriptController::create):
+        * WebKitTestRunner/uiscriptcontext/bindings/UIScriptController.idl: Copied from Tools/WebKitTestRunner/TestOptions.h.
+
 2015-09-21  Tim Horton  <timothy_horton@apple.com>
 
         Turn on threaded scrolling by default in the tests

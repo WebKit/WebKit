@@ -23,10 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformWebView.h"
-#include "TestController.h"
+#import "config.h"
+#import "PlatformWebView.h"
 
+#import "TestController.h"
+#import "TestRunnerWKWebView.h"
 #import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfiguration.h>
@@ -106,7 +107,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     , m_options(options)
 {
     CGRect rect = CGRectMake(0, 0, TestController::viewWidth, TestController::viewHeight);
-    m_view = [[WKWebView alloc] initWithFrame:rect configuration:configuration];
+    m_view = [[TestRunnerWKWebView alloc] initWithFrame:rect configuration:configuration];
 
     m_window = [[WebKitTestRunnerWindow alloc] initWithFrame:rect];
     m_window.platformWebView = this;

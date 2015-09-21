@@ -23,9 +23,10 @@
 
 VPATH = \
     $(WebKitTestRunner)/InjectedBundle/Bindings \
+    $(WebKitTestRunner)/UIScriptContext/Bindings \
 #
 
-INTERFACES = \
+INJECTED_BUNDLE_INTERFACES = \
     AccessibilityController \
     AccessibilityTextMarker \
     AccessibilityTextMarkerRange \
@@ -34,6 +35,10 @@ INTERFACES = \
     GCController \
     TestRunner \
     TextInputController \
+#
+
+UICONTEXT_INTERFACES = \
+    UIScriptController \
 #
 
 SCRIPTS = \
@@ -47,9 +52,11 @@ SCRIPTS = \
 
 JS%.h JS%.cpp : %.idl $(SCRIPTS)
 	@echo Generating bindings for $*...
-	@perl -I $(WebCoreScripts) -I $(WebKitTestRunner)/InjectedBundle/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include InjectedBundle/Bindings --outputDir . --generator TestRunner $<
+	@perl -I $(WebCoreScripts) -I $(WebKitTestRunner)/InjectedBundle/Bindings -I $(WebKitTestRunner)/UIScriptContext/Bindings $(WebCoreScripts)/generate-bindings.pl --defines "" --include InjectedBundle/Bindings --include UIScriptContext/Bindings --outputDir . --generator TestRunner $<
 
 all : \
-    $(INTERFACES:%=JS%.h) \
-    $(INTERFACES:%=JS%.cpp) \
+    $(INJECTED_BUNDLE_INTERFACES:%=JS%.h) \
+    $(INJECTED_BUNDLE_INTERFACES:%=JS%.cpp) \
+    $(UICONTEXT_INTERFACES:%=JS%.h) \
+    $(UICONTEXT_INTERFACES:%=JS%.cpp) \
 #

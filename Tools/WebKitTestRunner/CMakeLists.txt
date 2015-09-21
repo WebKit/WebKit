@@ -1,7 +1,9 @@
 set(WEBKIT_TESTRUNNER_DIR "${TOOLS_DIR}/WebKitTestRunner")
 set(WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR "${TOOLS_DIR}/WebKitTestRunner/InjectedBundle")
+set(WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR "${TOOLS_DIR}/WebKitTestRunner/UIScriptContext")
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/InjectedBundle)
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/UIScriptContext)
 
 set(WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/CyclicRedundancyCheck.cpp
@@ -12,6 +14,10 @@ set(WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/TestInvocation.cpp
     ${WEBKIT_TESTRUNNER_DIR}/WebNotificationProvider.cpp
     ${WEBKIT_TESTRUNNER_DIR}/WorkQueueManager.cpp
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptController.cpp
+
+    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/JSWrapper.cpp
 )
 
 set(WebKitTestRunner_LIBRARIES
@@ -26,6 +32,8 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/Bindings
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/atk
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}
+    ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings
     ${JAVASCRIPTCORE_DIR}
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
@@ -47,6 +55,7 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
     ${WTF_DIR}
     ${DERIVED_SOURCES_DIR}/InjectedBundle
+    ${DERIVED_SOURCES_DIR}/UIScriptContext
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
 )
@@ -82,8 +91,8 @@ set(WebKitTestRunnerInjectedBundle_IDL_FILES
     "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings/TextInputController.idl"
 )
 
-set(WebKitTestRunnerInjectedBundle_LIBRARIES
-    ${WebKitTestRunner_LIBRARIES}
+set(WebKitTestRunner_IDL_FILES
+    "${WEBKIT_TESTRUNNER_DIR}/UIScriptContext/Bindings/UIScriptController.idl"
 )
 
 GENERATE_BINDINGS(WebKitTestRunnerInjectedBundle_SOURCES
@@ -94,13 +103,21 @@ GENERATE_BINDINGS(WebKitTestRunnerInjectedBundle_SOURCES
     ${DERIVED_SOURCES_DIR}/InjectedBundle JS TestRunner cpp
     ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
+GENERATE_BINDINGS(WebKitTestRunner_SOURCES
+    "${WebKitTestRunner_IDL_FILES}"
+    "${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings"
+    "--include=${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings"
+    "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+    ${DERIVED_SOURCES_DIR}/UIScriptContext JS TestRunner cpp
+    ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 include_directories(${WebKitTestRunner_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES})
 
 add_library(TestRunnerInjectedBundle SHARED ${WebKitTestRunnerInjectedBundle_SOURCES})
-target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunnerInjectedBundle_LIBRARIES})
+target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunner_LIBRARIES})
 
 add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})

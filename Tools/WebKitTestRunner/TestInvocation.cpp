@@ -30,6 +30,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include "UIScriptController.h"
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKCookieManager.h>
 #include <WebKit/WKData.h>
@@ -52,6 +53,7 @@
 
 #include <unistd.h> // For getcwd.
 
+using namespace JSC;
 using namespace WebKit;
 using namespace std;
 
@@ -145,6 +147,16 @@ bool TestInvocation::shouldLogHistoryClientCallbacks() const
 bool TestInvocation::shouldMakeViewportFlexible() const
 {
     return urlContains("viewport/");
+}
+
+bool TestInvocation::shouldUseFixedLayout() const
+{
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    if (urlContains("device-adapt/") || urlContains("device-adapt\\"))
+        return true;
+#endif
+
+    return false;
 }
 
 void TestInvocation::invoke()
@@ -651,6 +663,18 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScript")) {
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> scriptKey(AdoptWK, WKStringCreateWithUTF8CString("Script"));
+        WKRetainPtr<WKStringRef> callbackIDKey(AdoptWK, WKStringCreateWithUTF8CString("CallbackID"));
+
+        unsigned callbackID = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, callbackIDKey.get())));
+        WKStringRef scriptString = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, scriptKey.get()));
+
+        runUISideScript(scriptString, callbackID);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -660,7 +684,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef isKeyValue = static_cast<WKBooleanRef>(messageBody);
         TestController::singleton().mainWebView()->setWindowIsKey(WKBooleanGetValue(isKeyValue));
-        return 0;
+        return nullptr;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsGeolocationClientActive")) {
@@ -689,11 +713,34 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKHTTPCookieAcceptPolicy policy = WKBooleanGetValue(accept) ? kWKHTTPCookieAcceptPolicyAlways : kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
         // FIXME: This updates the policy in WebProcess and in NetworkProcess asynchronously, which might break some tests' expectations.
         WKCookieManagerSetHTTPCookieAcceptPolicy(WKContextGetCookieManager(TestController::singleton().context()), policy);
-        return 0;
+        return nullptr;
     }
 
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
+}
+
+void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallbackID)
+{
+    if (!m_UIScriptContext)
+        m_UIScriptContext = std::make_unique<UIScriptContext>(*this);
+    
+    m_UIScriptContext->runUIScript(script, scriptCallbackID);
+}
+
+void TestInvocation::uiScriptDidComplete(WKStringRef result, unsigned scriptCallbackID)
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallUISideScriptCallback"));
+
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+    WKRetainPtr<WKStringRef> resultKey(AdoptWK, WKStringCreateWithUTF8CString("Result"));
+    WKRetainPtr<WKStringRef> callbackIDKey(AdoptWK, WKStringCreateWithUTF8CString("CallbackID"));
+    WKRetainPtr<WKUInt64Ref> callbackIDValue = adoptWK(WKUInt64Create(scriptCallbackID));
+
+    WKDictionarySetItem(messageBody.get(), resultKey.get(), result);
+    WKDictionarySetItem(messageBody.get(), callbackIDKey.get(), callbackIDValue.get());
+
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());
 }
 
 void TestInvocation::outputText(const WTF::String& text)

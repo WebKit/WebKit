@@ -29,6 +29,7 @@
 #import "PlatformWebView.h"
 #import "PoseAsClass.h"
 #import "TestInvocation.h"
+#import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKPageGroup.h>

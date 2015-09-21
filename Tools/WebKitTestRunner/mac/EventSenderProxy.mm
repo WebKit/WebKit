@@ -30,6 +30,7 @@
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestController.h"
+#import "TestRunnerWKWebView.h"
 #import <Carbon/Carbon.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>

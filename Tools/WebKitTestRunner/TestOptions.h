@@ -35,7 +35,7 @@ struct TestOptions {
     bool useThreadedScrolling { false };
     bool useRemoteLayerTree { false };
     bool shouldShowWebView { false };
-
+    bool useFlexibleViewport { false };
     bool useFixedLayout { false };
     Vector<String> overrideLanguages;
 };

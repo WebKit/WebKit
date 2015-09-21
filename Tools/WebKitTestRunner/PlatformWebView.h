@@ -33,12 +33,12 @@
 #include <WebKit/WKFoundation.h>
 OBJC_CLASS NSView;
 OBJC_CLASS UIView;
-OBJC_CLASS WKWebView;
+OBJC_CLASS TestRunnerWKWebView;
 OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS WebKitTestRunnerWindow;
 
 #if WK_API_ENABLED
-typedef WKWebView *PlatformWKView;
+typedef TestRunnerWKWebView *PlatformWKView;
 #else
 typedef NSView *PlatformWKView;
 #endif

@@ -807,16 +807,6 @@ const char* TestController::networkProcessName()
 #endif
 }
 
-static bool shouldUseFixedLayout(const TestInvocation& test)
-{
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (test.urlContains("device-adapt/") || test.urlContains("device-adapt\\"))
-        return true;
-#endif
-
-    return false;
-}
-
 static std::string testPath(const WKURLRef url)
 {
     auto scheme = adoptWK(WKURLCopyScheme(url));
@@ -878,6 +868,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const Test
             String(value.c_str()).split(",", false, testOptions.overrideLanguages);
         if (key == "useThreadedScrolling")
             testOptions.useThreadedScrolling = parseBooleanTestHeaderValue(value);
+        if (key == "useFlexibleViewport")
+            testOptions.useFlexibleViewport = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }
@@ -888,7 +880,8 @@ TestOptions TestController::testOptionsForTest(const TestInvocation& test) const
 
     options.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
     options.shouldShowWebView = m_shouldShowWebView;
-    options.useFixedLayout = shouldUseFixedLayout(test);
+    options.useFixedLayout = test.shouldUseFixedLayout();
+    options.useFlexibleViewport = test.shouldMakeViewportFlexible();
 
     updatePlatformSpecificTestOptionsForTest(options, test);
 
