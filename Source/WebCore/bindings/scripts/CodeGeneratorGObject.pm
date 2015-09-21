@@ -480,6 +480,8 @@ sub IsPropertyWriteable {
         return 0;
     }
 
+    return 0 if $property->signature->extendedAttributes->{"CallWith"} || $property->signature->extendedAttributes->{"SetterCallWith"};
+
     return 1;
 }
 
