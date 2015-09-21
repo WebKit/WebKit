@@ -1,4 +1,14 @@
 =================
+WebKitGTK+ 2.10.0
+=================
+
+What's new in WebKitGTK+ 2.10.0?
+
+  - Disable ACCELERATED_2D_CANVAS by default.
+  - Fix a crash in debug build due to an invalid assert.
+  - Do not try to use the primary clipboard in Wayland.
+
+=================
 WebKitGTK+ 2.9.92
 =================
 

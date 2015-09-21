@@ -1,3 +1,9 @@
+2015-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.0 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-08-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Disable ACCELERATED_2D_CANVAS by default
