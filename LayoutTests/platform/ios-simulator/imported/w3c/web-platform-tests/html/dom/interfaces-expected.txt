@@ -164,6 +164,7 @@ CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'relList' on a 
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'media' on a non-HTMLLinkElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'hreflang' on a non-HTMLLinkElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'type' on a non-HTMLLinkElement object.
+CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'sizes' on a non-HTMLLinkElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'charset' on a non-HTMLLinkElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'rev' on a non-HTMLLinkElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'target' on a non-HTMLLinkElement object.
@@ -2341,7 +2342,9 @@ FAIL HTMLLinkElement interface: attribute hreflang assert_throws: getting proper
 FAIL HTMLLinkElement interface: attribute type assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-FAIL HTMLLinkElement interface: attribute sizes assert_true: The prototype object must have a property "sizes" expected true got false
+FAIL HTMLLinkElement interface: attribute sizes assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
 FAIL HTMLLinkElement interface: attribute charset assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2360,7 +2363,7 @@ PASS HTMLLinkElement interface: document.createElement("link") must inherit prop
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "media" with the proper type (4) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "hreflang" with the proper type (5) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "type" with the proper type (6) 
-FAIL HTMLLinkElement interface: document.createElement("link") must inherit property "sizes" with the proper type (7) assert_inherits: property "sizes" found on object expected in prototype chain
+PASS HTMLLinkElement interface: document.createElement("link") must inherit property "sizes" with the proper type (7) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "charset" with the proper type (8) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "rev" with the proper type (9) 
 PASS HTMLLinkElement interface: document.createElement("link") must inherit property "target" with the proper type (10) 

@@ -1,3 +1,9 @@
+2015-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline W3C HTML DOM test on iOS after r190030.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+
 2015-09-20 Chris Fleizach <cfleizach@apple.com>
 
         Fix a relative path in accessibility/mac/removing-textarea-after-edit-crash.html
