@@ -1,3 +1,15 @@
+2015-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        Turn on threaded scrolling by default in the tests
+        https://bugs.webkit.org/show_bug.cgi?id=149377
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest):
+        (WTR::shouldUseThreadedScrolling): Deleted.
+        Turn on threaded scrolling by default.
+
 2015-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] run-gtk-tests doesn't provide feedback about crashing google tests
