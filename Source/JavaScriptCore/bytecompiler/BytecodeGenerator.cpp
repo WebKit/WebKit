@@ -2114,7 +2114,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
     instructions().append(0); // offset
     instructions().append(0); // new structure
     instructions().append(0); // structure chain
-    instructions().append(PutByIdNone); // is not direct
+    instructions().append(static_cast<int>(PutByIdNone)); // is not direct
 
     return value;
 }
@@ -2136,7 +2136,7 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
     instructions().append(0); // offset
     instructions().append(0); // new structure
     instructions().append(0); // structure chain (unused if direct)
-    instructions().append((putType == PropertyNode::KnownDirect || property != m_vm->propertyNames->underscoreProto) ? PutByIdIsDirect : PutByIdNone);
+    instructions().append(static_cast<int>((putType == PropertyNode::KnownDirect || property != m_vm->propertyNames->underscoreProto) ? PutByIdIsDirect : PutByIdNone));
     return value;
 }
 

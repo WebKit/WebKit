@@ -378,7 +378,8 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             ptrdiff_t offsetToPatchedStorage = offsetRelativeToPatchedStorage(slot.cachedOffset());
             if (stubInfo.cacheType == CacheType::Unset
                 && MacroAssembler::isPtrAlignedAddressOffset(offsetToPatchedStorage)
-                && !structure->needImpurePropertyWatchpoint()) {
+                && !structure->needImpurePropertyWatchpoint()
+                && !structure->inferredTypeFor(ident.impl())) {
 
                 repatchByIdSelfAccess(
                     codeBlock, stubInfo, structure, slot.cachedOffset(),

@@ -555,37 +555,48 @@ public:
 #endif
     }
 
-    Jump branchIfNotCell(GPRReg reg)
+    enum TagRegistersMode {
+        DoNotHaveTagRegisters,
+        HaveTagRegisters
+    };
+
+    Jump branchIfNotCell(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        return branchTest64(MacroAssembler::NonZero, reg, GPRInfo::tagMaskRegister);
+        if (mode == HaveTagRegisters)
+            return branchTest64(NonZero, reg, GPRInfo::tagMaskRegister);
+        return branchTest64(NonZero, reg, TrustedImm64(TagMask));
 #else
+        UNUSED_PARAM(mode);
         return branch32(MacroAssembler::NotEqual, reg, TrustedImm32(JSValue::CellTag));
 #endif
     }
-    Jump branchIfNotCell(JSValueRegs regs)
+    Jump branchIfNotCell(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        return branchIfNotCell(regs.gpr());
+        return branchIfNotCell(regs.gpr(), mode);
 #else
-        return branchIfNotCell(regs.tagGPR());
+        return branchIfNotCell(regs.tagGPR(), mode);
 #endif
     }
     
-    Jump branchIfCell(GPRReg reg)
+    Jump branchIfCell(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        return branchTest64(MacroAssembler::Zero, reg, GPRInfo::tagMaskRegister);
+        if (mode == HaveTagRegisters)
+            return branchTest64(Zero, reg, GPRInfo::tagMaskRegister);
+        return branchTest64(Zero, reg, TrustedImm64(TagMask));
 #else
+        UNUSED_PARAM(mode);
         return branch32(MacroAssembler::Equal, reg, TrustedImm32(JSValue::CellTag));
 #endif
     }
-    Jump branchIfCell(JSValueRegs regs)
+    Jump branchIfCell(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        return branchIfCell(regs.gpr());
+        return branchIfCell(regs.gpr(), mode);
 #else
-        return branchIfCell(regs.tagGPR());
+        return branchIfCell(regs.tagGPR(), mode);
 #endif
     }
     
@@ -613,43 +624,55 @@ public:
 #endif
     }
     
-    Jump branchIfInt32(JSValueRegs regs)
+    Jump branchIfInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        return branch64(AboveOrEqual, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        if (mode == HaveTagRegisters)
+            return branch64(AboveOrEqual, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        return branch64(AboveOrEqual, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
+        UNUSED_PARAM(mode);
         return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
 #endif
     }
     
-    Jump branchIfNotInt32(JSValueRegs regs)
+    Jump branchIfNotInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        return branch64(Below, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        if (mode == HaveTagRegisters)
+            return branch64(Below, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        return branch64(Below, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
+        UNUSED_PARAM(mode);
         return branch32(NotEqual, regs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
 #endif
     }
 
     // Note that the tempGPR is not used in 64-bit mode.
-    Jump branchIfNumber(JSValueRegs regs, GPRReg tempGPR)
+    Jump branchIfNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         UNUSED_PARAM(tempGPR);
-        return branchTest64(NonZero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        if (mode == HaveTagRegisters)
+            return branchTest64(NonZero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        return branchTest64(NonZero, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
+        UNUSED_PARAM(mode);
         add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
         return branch32(Below, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
 #endif
     }
     
     // Note that the tempGPR is not used in 64-bit mode.
-    Jump branchIfNotNumber(JSValueRegs regs, GPRReg tempGPR)
+    Jump branchIfNotNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         UNUSED_PARAM(tempGPR);
-        return branchTest64(Zero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        if (mode == HaveTagRegisters)
+            return branchTest64(Zero, regs.gpr(), GPRInfo::tagTypeNumberRegister);
+        return branchTest64(Zero, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
+        UNUSED_PARAM(mode);
         add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
         return branch32(AboveOrEqual, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
 #endif
@@ -718,6 +741,9 @@ public:
         return branch32(Equal, regs.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
 #endif
     }
+
+    JumpList branchIfNotType(
+        JSValueRegs, GPRReg tempGPR, const InferredType::Descriptor&, TagRegistersMode);
 
     template<typename T>
     Jump branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)

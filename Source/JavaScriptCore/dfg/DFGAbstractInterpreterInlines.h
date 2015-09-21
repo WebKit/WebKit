@@ -1829,10 +1829,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         
         AbstractValue& value = forNode(node->child1());
-        if (!value.m_structure.isTop() && !value.m_structure.isClobbered()
+        if (value.m_structure.isFinite()
             && (node->child1().useKind() == CellUse || !(value.m_type & ~SpecCell))) {
-            GetByIdStatus status = GetByIdStatus::computeFor(
-                value.m_structure.set(), m_graph.identifiers()[node->identifierNumber()]);
+            UniquedStringImpl* uid = m_graph.identifiers()[node->identifierNumber()];
+            GetByIdStatus status = GetByIdStatus::computeFor(value.m_structure.set(), uid);
             if (status.isSimple()) {
                 // Figure out what the result is going to be - is it TOP, a constant, or maybe
                 // something more subtle?
@@ -1841,22 +1841,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     // This thing won't give us a variant that involves prototypes. If it did, we'd
                     // have more work to do here.
                     DFG_ASSERT(m_graph, node, status[i].conditionSet().isEmpty());
-                    
-                    JSValue constantResult =
-                        m_graph.tryGetConstantProperty(value, status[i].offset());
-                    if (!constantResult) {
-                        result.makeHeapTop();
-                        break;
-                    }
-                    
-                    AbstractValue thisResult;
-                    thisResult.set(
-                        m_graph, *m_graph.freeze(constantResult),
-                        m_state.structureClobberState());
-                    result.merge(thisResult);
+
+                    result.merge(
+                        m_graph.inferredValueForProperty(
+                            value, uid, status[i].offset(), m_state.structureClobberState()));
                 }
-                if (status.numVariants() == 1 || isFTL(m_graph.m_plan.mode))
-                    m_state.setFoundConstants(true);
+                m_state.setFoundConstants(true);
                 forNode(node) = result;
                 break;
             }
@@ -1880,7 +1870,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case CheckStructure: {
         AbstractValue& value = forNode(node->child1());
-        ASSERT(!(value.m_type & ~SpecCell)); // Edge filtering should have already ensured this.
 
         StructureSet& set = node->structureSet();
         
@@ -1888,12 +1877,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // that includes the set we're testing. In that case we could make the structure check
         // more efficient. We currently don't.
         
-        if (value.m_structure.isSubsetOf(set)) {
+        if (value.m_structure.isSubsetOf(set))
             m_state.setFoundConstants(true);
+
+        SpeculatedType admittedTypes = SpecNone;
+        switch (node->child1().useKind()) {
+        case CellUse:
+        case KnownCellUse:
+            admittedTypes = SpecNone;
+            break;
+        case CellOrOtherUse:
+            admittedTypes = SpecOther;
+            break;
+        default:
+            DFG_CRASH(m_graph, node, "Bad use kind");
             break;
         }
-
-        filter(value, set);
+        
+        filter(value, set, admittedTypes);
         break;
     }
         
@@ -2084,13 +2085,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetByOffset: {
         StorageAccessData& data = node->storageAccessData();
-        JSValue result = m_graph.tryGetConstantProperty(forNode(node->child2()), data.offset);
-        if (result) {
-            setConstant(node, *m_graph.freeze(result));
-            break;
-        }
-        
-        forNode(node).makeHeapTop();
+        UniquedStringImpl* uid = m_graph.identifiers()[data.identifierNumber];
+
+        // FIXME: The part of this that handles inferred property types relies on AI knowing the structure
+        // right now. That's probably not optimal. In some cases, we may perform an optimization (usually
+        // by something other than AI, maybe by CSE for example) that obscures AI's view of the structure
+        // at the point where GetByOffset runs. Currently, when that happens, we'll have to rely entirely
+        // on the type that ByteCodeParser was able to prove.
+        AbstractValue value = m_graph.inferredValueForProperty(
+            forNode(node->child2()), uid, data.offset, m_state.structureClobberState());
+
+        // It's possible that the type that ByteCodeParser came up with is better.
+        AbstractValue typeFromParsing;
+        typeFromParsing.set(m_graph, data.inferredType, m_state.structureClobberState());
+        value.filter(typeFromParsing);
+
+        // If we decide that there does not exist any value that this can return, then it's probably
+        // because the compilation was already invalidated.
+        if (value.isClear())
+            m_state.setIsValid(false);
+
+        forNode(node) = value;
+        if (value.m_value)
+            m_state.setFoundConstants(true);
         break;
     }
         
@@ -2120,6 +2137,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // because of the effect on compile times, but this node is FTL-only.
         m_state.setFoundConstants(true);
         
+        UniquedStringImpl* uid = m_graph.identifiers()[node->multiGetByOffsetData().identifierNumber];
+
         AbstractValue base = forNode(node->child1());
         StructureSet baseSet;
         AbstractValue result;
@@ -2129,18 +2148,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (set.isEmpty())
                 continue;
             baseSet.merge(set);
-            
-            if (getCase.method().kind() != GetByOffsetMethod::Constant) {
-                result.makeHeapTop();
-                continue;
+
+            switch (getCase.method().kind()) {
+            case GetByOffsetMethod::Constant: {
+                AbstractValue thisResult;
+                thisResult.set(
+                    m_graph,
+                    *getCase.method().constant(),
+                    m_state.structureClobberState());
+                result.merge(thisResult);
+                break;
             }
-            
-            AbstractValue thisResult;
-            thisResult.set(
-                m_graph,
-                *getCase.method().constant(),
-                m_state.structureClobberState());
-            result.merge(thisResult);
+
+            case GetByOffsetMethod::Load: {
+                result.merge(
+                    m_graph.inferredValueForProperty(
+                        set, uid, m_state.structureClobberState()));
+                break;
+            }
+
+            default: {
+                result.makeHeapTop();
+                break;
+            } }
         }
         
         if (forNode(node->child1()).changeStructure(m_graph, baseSet) == Contradiction)
@@ -2163,6 +2193,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         m_state.setFoundConstants(true);
         
         AbstractValue base = forNode(node->child1());
+        AbstractValue originalValue = forNode(node->child2());
+        AbstractValue resultingValue;
         
         for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
             const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
@@ -2170,6 +2202,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             thisSet.filter(base);
             if (thisSet.isEmpty())
                 continue;
+
+            AbstractValue thisValue = originalValue;
+            thisValue.filter(m_graph, variant.requiredType());
+            resultingValue.merge(thisValue);
+            
             if (variant.kind() == PutByIdVariant::Transition) {
                 if (thisSet.onlyStructure() != variant.newStructure()) {
                     transitions.append(
@@ -2184,6 +2221,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
         observeTransitions(clobberLimit, transitions);
         if (forNode(node->child1()).changeStructure(m_graph, newSet) == Contradiction)
+            m_state.setIsValid(false);
+        forNode(node->child2()) = resultingValue;
+        if (!!originalValue && !resultingValue)
             m_state.setIsValid(false);
         break;
     }
@@ -2264,13 +2304,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PutByIdFlush:
     case PutByIdDirect: {
         AbstractValue& value = forNode(node->child1());
-        if (!value.m_structure.isTop() && !value.m_structure.isClobbered()) {
+        if (value.m_structure.isFinite()) {
             PutByIdStatus status = PutByIdStatus::computeFor(
                 m_graph.globalObjectFor(node->origin.semantic),
                 value.m_structure.set(),
                 m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
-            
+
             if (status.isSimple()) {
                 StructureSet newSet;
                 TransitionVector transitions;
@@ -2615,9 +2655,9 @@ void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 
 template<typename AbstractStateType>
 FiltrationResult AbstractInterpreter<AbstractStateType>::filter(
-    AbstractValue& value, const StructureSet& set)
+    AbstractValue& value, const StructureSet& set, SpeculatedType admittedTypes)
 {
-    if (value.filter(m_graph, set) == FiltrationOK)
+    if (value.filter(m_graph, set, admittedTypes) == FiltrationOK)
         return FiltrationOK;
     m_state.setIsValid(false);
     return Contradiction;

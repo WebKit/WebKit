@@ -605,6 +605,12 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchTest64(ResultCondition cond, RegisterID reg, TrustedImm64 mask)
+    {
+        move(mask, scratchRegister);
+        return branchTest64(cond, reg, scratchRegister);
+    }
+
     void test64(ResultCondition cond, RegisterID reg, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)

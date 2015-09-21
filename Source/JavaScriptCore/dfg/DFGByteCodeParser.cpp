@@ -206,9 +206,8 @@ private:
     bool handleTypedArrayConstructor(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, const ChecksFunctor& insertChecks);
-    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
-    Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
-    Node* handleGetByOffset(SpeculatedType, Node* base, UniquedStringImpl*, PropertyOffset, NodeType = GetByOffset);
+    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, const InferredType::Descriptor&, Node* value);
+    Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, const InferredType::Descriptor&, NodeType = GetByOffset);
 
     // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
     // check the validity of the condition, but it may return a null one if it encounters a contradiction.
@@ -2306,7 +2305,9 @@ bool ByteCodeParser::handleConstantInternalFunction(
     return false;
 }
 
-Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, unsigned identifierNumber, PropertyOffset offset, NodeType op)
+Node* ByteCodeParser::handleGetByOffset(
+    SpeculatedType prediction, Node* base, unsigned identifierNumber, PropertyOffset offset,
+    const InferredType::Descriptor& inferredType, NodeType op)
 {
     Node* propertyStorage;
     if (isInlineOffset(offset))
@@ -2317,13 +2318,17 @@ Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, u
     StorageAccessData* data = m_graph.m_storageAccessData.add();
     data->offset = offset;
     data->identifierNumber = identifierNumber;
+    data->inferredType = inferredType;
+    m_graph.registerInferredType(inferredType);
     
     Node* getByOffset = addToGraph(op, OpInfo(data), OpInfo(prediction), propertyStorage, base);
 
     return getByOffset;
 }
 
-Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, PropertyOffset offset, Node* value)
+Node* ByteCodeParser::handlePutByOffset(
+    Node* base, unsigned identifier, PropertyOffset offset, const InferredType::Descriptor& inferredType,
+    Node* value)
 {
     Node* propertyStorage;
     if (isInlineOffset(offset))
@@ -2334,6 +2339,8 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
     StorageAccessData* data = m_graph.m_storageAccessData.add();
     data->offset = offset;
     data->identifierNumber = identifier;
+    data->inferredType = inferredType;
+    m_graph.registerInferredType(inferredType);
     
     Node* result = addToGraph(PutByOffset, OpInfo(data), propertyStorage, base, value);
     
@@ -2448,7 +2455,8 @@ Node* ByteCodeParser::load(
         return addToGraph(JSConstant, OpInfo(method.constant()));
     case GetByOffsetMethod::LoadFromPrototype: {
         Node* baseNode = addToGraph(JSConstant, OpInfo(method.prototype()));
-        return handleGetByOffset(prediction, baseNode, identifierNumber, method.offset(), op);
+        return handleGetByOffset(
+            prediction, baseNode, identifierNumber, method.offset(), InferredType::Top, op);
     }
     case GetByOffsetMethod::Load:
         // Will never see this from planLoad().
@@ -2554,13 +2562,13 @@ Node* ByteCodeParser::load(
     
     bool needStructureCheck = true;
     
+    UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+    
     if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>()) {
         // Try to optimize away the structure check. Note that it's not worth doing anything about this
         // if the base's structure is watched.
         Structure* structure = base->constant()->structure();
         if (!structure->dfgShouldWatch()) {
-            UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-            
             if (!variant.conditionSet().isEmpty()) {
                 // This means that we're loading from a prototype. We expect the base not to have the
                 // property. We can only use ObjectPropertyCondition if all of the structures in the
@@ -2625,9 +2633,18 @@ Node* ByteCodeParser::load(
             if (constant)
                 return weakJSConstant(constant);
         }
+
+        InferredType::Descriptor inferredType;
+        if (needStructureCheck) {
+            for (Structure* structure : variant.structureSet()) {
+                InferredType::Descriptor thisType = m_graph.inferredTypeForProperty(structure, uid);
+                inferredType.merge(thisType);
+            }
+        } else
+            inferredType = InferredType::Top;
         
         loadedValue = handleGetByOffset(
-            loadPrediction, base, identifierNumber, variant.offset(), loadOp);
+            loadPrediction, base, identifierNumber, variant.offset(), inferredType, loadOp);
     }
 
     return loadedValue;
@@ -2638,7 +2655,7 @@ Node* ByteCodeParser::store(Node* base, unsigned identifier, const PutByIdVarian
     RELEASE_ASSERT(variant.kind() == PutByIdVariant::Replace);
 
     checkPresenceLike(base, m_graph.identifiers()[identifier], variant.offset(), variant.structure());
-    return handlePutByOffset(base, identifier, variant.offset(), value);
+    return handlePutByOffset(base, identifier, variant.offset(), variant.requiredType(), value);
 }
 
 void ByteCodeParser::handleGetById(
@@ -2797,6 +2814,9 @@ void ByteCodeParser::handlePutById(
         
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedPutById();
+
+        for (const PutByIdVariant& variant : putByIdStatus.variants())
+            m_graph.registerInferredType(variant.requiredType());
         
         MultiPutByOffsetData* data = m_graph.m_multiPutByOffsetData.add();
         data->variants = putByIdStatus.variants();
@@ -2853,6 +2873,8 @@ void ByteCodeParser::handlePutById(
         StorageAccessData* data = m_graph.m_storageAccessData.add();
         data->offset = variant.offset();
         data->identifierNumber = identifierNumber;
+        data->inferredType = variant.requiredType();
+        m_graph.registerInferredType(data->inferredType);
         
         addToGraph(
             PutByOffset,

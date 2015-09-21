@@ -631,6 +631,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         pc[5].u.pointer = nullptr; // offset
         pc[6].u.pointer = nullptr; // new structure
         pc[7].u.pointer = nullptr; // structure chain
+        pc[8].u.putByIdFlags =
+            static_cast<PutByIdFlags>(pc[8].u.putByIdFlags & PutByIdPersistentFlagsMask);
         
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();
@@ -658,12 +660,18 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                             pc[7].u.structureChain.set(
                                 vm, codeBlock->ownerExecutable(), chain);
                         }
+                        pc[8].u.putByIdFlags = static_cast<PutByIdFlags>(
+                            pc[8].u.putByIdFlags |
+                            structure->inferredTypeDescriptorFor(ident.impl()).putByIdFlags());
                     }
                 }
             } else {
                 structure->didCachePropertyReplacement(vm, slot.cachedOffset());
                 pc[4].u.structureID = structure->id();
                 pc[5].u.operand = slot.cachedOffset();
+                pc[8].u.putByIdFlags = static_cast<PutByIdFlags>(
+                    pc[8].u.putByIdFlags |
+                    structure->inferredTypeDescriptorFor(ident.impl()).putByIdFlags());
             }
         }
     }

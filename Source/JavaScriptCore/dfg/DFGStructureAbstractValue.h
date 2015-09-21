@@ -192,7 +192,7 @@ public:
     }
     
     Structure* operator[](size_t i) const { return at(i); }
-    
+
     // In most cases, what you really want to do is verify whether the set is top or clobbered, and
     // if not, enumerate the set of structures. Use this only in cases where the singleton case is
     // meaningfully special, like for transitions.
@@ -201,6 +201,13 @@ public:
         if (isInfinite())
             return nullptr;
         return m_set.onlyStructure();
+    }
+
+    template<typename Functor>
+    void forEach(const Functor& functor) const
+    {
+        ASSERT(!isTop());
+        m_set.forEach(functor);
     }
     
     void dumpInContext(PrintStream&, DumpContext*) const;

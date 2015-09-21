@@ -350,11 +350,15 @@ void Structure::materializePropertyMap(VM& vm)
     else
         propertyTable().set(vm, this, table);
 
+    InferredTypeTable* typeTable = m_inferredTypeTable.get();
+
     for (size_t i = structures.size(); i--;) {
         structure = structures[i];
         if (!structure->m_nameInPrevious)
             continue;
         PropertyMapEntry entry(structure->m_nameInPrevious.get(), structure->m_offset, structure->attributesInPrevious());
+        if (typeTable && typeTable->get(structure->m_nameInPrevious.get()))
+            entry.hasInferredType = true;
         propertyTable()->add(entry, m_offset, PropertyTable::PropertyOffsetMustNotChange);
     }
     
@@ -464,6 +468,7 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     transition->setAttributesInPrevious(attributes);
     transition->propertyTable().set(vm, transition, structure->takePropertyTableOrCloneIfPinned(vm));
     transition->m_offset = structure->m_offset;
+    transition->m_inferredTypeTable.setMayBeNull(vm, transition, structure->m_inferredTypeTable.get());
 
     offset = transition->add(vm, propertyName, attributes);
 
@@ -479,6 +484,24 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
 
 Structure* Structure::removePropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, PropertyOffset& offset)
 {
+    // NOTE: There are some good reasons why this goes directly to uncacheable dictionary rather than
+    // caching the removal. We can fix all of these things, but we must remember to do so, if we ever try
+    // to optimize this case.
+    //
+    // - Cached transitions usually steal the property table, and assume that this is possible because they
+    //   can just rebuild the table by looking at past transitions. That code assumes that the table only
+    //   grew and never shrank. To support removals, we'd have to change the property table materialization
+    //   code to handle deletions. Also, we have logic to get the list of properties on a structure that
+    //   lacks a property table by just looking back through the set of transitions since the last
+    //   structure that had a pinned table. That logic would also have to be changed to handle cached
+    //   removals.
+    //
+    // - InferredTypeTable assumes that removal has never happened. This is important since if we could
+    //   remove a property and then re-add it later, then the "absence means top" optimization wouldn't
+    //   work anymore, unless removal also either poisoned type inference (by doing something equivalent to
+    //   hasBeenDictionary) or by strongly marking the entry as Top by ensuring that it is not absent, but
+    //   instead, has a null entry.
+    
     ASSERT(!structure->isUncacheableDictionary());
 
     Structure* transition = toUncacheableDictionaryTransition(vm, structure);
@@ -841,6 +864,43 @@ void Structure::startWatchingInternalProperties(VM& vm)
     setDidWatchInternalProperties(true);
 }
 
+void Structure::willStoreValueSlow(
+    VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize,
+    InferredTypeTable::StoredPropertyAge age)
+{
+    ASSERT(!isCompilationThread());
+    ASSERT(structure()->classInfo() == info());
+    ASSERT(!hasBeenDictionary());
+
+    // Create the inferred type table before doing anything else, so that we don't GC after we have already
+    // grabbed a pointer into the property map.
+    InferredTypeTable* table = m_inferredTypeTable.get();
+    if (!table) {
+        table = InferredTypeTable::create(vm);
+        WTF::storeStoreFence();
+        m_inferredTypeTable.set(vm, this, table);
+    }
+
+    // This only works if we've got a property table.
+    PropertyTable* propertyTable;
+    materializePropertyMapIfNecessary(vm, propertyTable);
+
+    // We must be calling this after having created the given property or confirmed that it was present
+    // already, so we must have a property table now.
+    ASSERT(propertyTable);
+
+    // ... and the property must be present.
+    PropertyMapEntry* entry = propertyTable->get(propertyName.uid());
+    ASSERT(entry);
+
+    if (shouldOptimize)
+        entry->hasInferredType = table->willStoreValue(vm, propertyName, value, age);
+    else {
+        table->makeTop(vm, propertyName, age);
+        entry->hasInferredType = false;
+    }
+}
+
 #if DUMP_PROPERTYMAP_STATS
 
 PropertyMapHashTableStats* propertyMapHashTableStats = 0;
@@ -1058,6 +1118,8 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(&thisObject->m_propertyTableUnsafe);
     } else if (thisObject->m_propertyTableUnsafe)
         thisObject->m_propertyTableUnsafe.clear();
+
+    visitor.append(&thisObject->m_inferredTypeTable);
 }
 
 bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)

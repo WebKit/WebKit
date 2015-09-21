@@ -263,6 +263,9 @@ public:
                     VALIDATE((node), !!node->child1());
                     VALIDATE((node), !!node->child2());
                     break;
+                case CheckStructure:
+                    VALIDATE((node), !!node->child1());
+                    break;
                 case PutStructure:
                     VALIDATE((node), !node->transition()->previous->dfgShouldWatch());
                     break;

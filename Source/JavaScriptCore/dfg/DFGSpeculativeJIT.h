@@ -2215,6 +2215,8 @@ public:
     void compileIsObjectOrNull(Node*);
     void compileIsFunction(Node*);
     void compileTypeOf(Node*);
+    void compileCheckStructure(Node*, GPRReg cellGPR, GPRReg tempGPR);
+    void compileCheckStructure(Node*);
     
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);
@@ -2374,6 +2376,7 @@ public:
     void speculateDoubleRepReal(Edge);
     void speculateBoolean(Edge);
     void speculateCell(Edge);
+    void speculateCellOrOther(Edge);
     void speculateObject(Edge);
     void speculateFunction(Edge);
     void speculateFinalObject(Edge);

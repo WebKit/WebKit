@@ -116,9 +116,9 @@ public:
     void dump(PrintStream& out);
     
     template<typename T>
-    FiltrationResult filter(T node, const StructureSet& set)
+    FiltrationResult filter(T node, const StructureSet& set, SpeculatedType admittedTypes = SpecNone)
     {
-        return filter(forNode(node), set);
+        return filter(forNode(node), set, admittedTypes);
     }
     
     template<typename T>
@@ -139,7 +139,7 @@ public:
         return filterByValue(forNode(node), value);
     }
     
-    FiltrationResult filter(AbstractValue&, const StructureSet&);
+    FiltrationResult filter(AbstractValue&, const StructureSet&, SpeculatedType admittedTypes = SpecNone);
     FiltrationResult filterArrayModes(AbstractValue&, ArrayModes);
     FiltrationResult filter(AbstractValue&, SpeculatedType);
     FiltrationResult filterByValue(AbstractValue&, FrozenValue);

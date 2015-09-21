@@ -1,5 +1,335 @@
 2015-09-21  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC should infer property types
+        https://bugs.webkit.org/show_bug.cgi?id=148610
+
+        Reviewed by Geoffrey Garen.
+
+        This change brings recursive type inference to JavaScript object properties in JSC. We check that a
+        value being stored into a property obeys a property's type before we do the store. If it doesn't,
+        we broaden the property's type to include the new value. If optimized code was relying on the old
+        type, we deoptimize that code.
+
+        The type system that this supports includes important primitive types like Int32 and Boolean. But
+        it goes further and also includes a type kind called ObjectWithStructure, which means that we
+        expect the property to always point to objects with a particular structure. This only works for
+        leaf structures (i.e. structures that have a valid transition watchpoint set). Invalidation of the
+        transition set causes the property type to become Object (meaning an object with any structure).
+        This capability gives us recursive type inference. It's possible for an expression like "o.f.g.h"
+        to execute without any type checks if .f and .g are both ObjectWithStructure.
+
+        The type inference of a property is tracked by an InferredType instance, which is a JSCell. This
+        means that it manages its own memory. That's convenient. For example, when the DFG is interested in
+        one of these, it can just list the InferredType as a weak reference in addition to setting a
+        watchpoint. This ensures that even if the InferredType is dropped by the owning structure, the DFG
+        won't read a dangling pointer. A mapping from property name to InferredType is implemented by
+        InferredTypeTable, which is also a JSCell. Each Structure may point to some InferredTypeTable.
+
+        This feature causes programs to be happier (run faster without otherwise doing bad things like
+        using lots of memory) when four conditions hold:
+
+        1) A property converges to one of the types that we support.
+        2) The property is loaded from more frequently than it is stored to.
+        3) The stores are all cached, so that we statically emit a type check.
+        4) We don't allocate a lot of meta-data for the property's type.
+
+        We maximize the likelihood of (1) by having a rich type system. But having a rich type system means
+        that a reflective put to a property has to have a large switch over the inferred type to decide how
+        to do the type check. That's why we need (3). We ensure (3) by having every reflective property
+        store (i.e. putDirectInternal in any context that isn't PutById) force the inferred type to become
+        Top. We don't really worry about ensuring (2); this is statistically true for most programs
+        already.
+
+        Probably the most subtle trickery goes into (4). Logically we'd like to say that each
+        (Structure, Property) maps to its own InferredType. If structure S1 has a transition edge to S2,
+        then we could ensure that the InferredType I1 where (S1, Property)->I1 has a data flow constraint
+        to I2 where (S2, Property)->I2. That would work, but it would involve a lot of memory. And when I1
+        gets invalidated in some way, it would have to tell I2 about it, and then I2 might tell other
+        InferredType objects downstream. That's madness. So, the first major compromise that we make here
+        is to say that if some property has some InferredType at some Structure, then anytime we
+        transition from that Structure, the new Structure shares the same InferredType for that property.
+        This unifies the type of the property over the entire transition tree starting at the Structure at
+        which the property was added. But this would still mean that each Structure would have its own
+        InferredTypeTable. We don't want that because experience with PropertyTable shows that this can be
+        a major memory hog. So, we don't create an InferredTypeTable until someone adds a property that is
+        subject to type inference (i.e. it was added non-reflectively), and we share that InferredTypeTable
+        with the entire structure transition tree rooted at the Structure that had the first inferred
+        property. We also drop the InferredTypeTable anytime that we do a dictionary transition, and we
+        don't allow further property type inference if a structure had ever been a dictionary.
+
+        This is a 3% speed-up on Octane and a 12% speed-up on Kraken on my setup. It's not a significant
+        slow-down on any benchmark I ran.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchTest64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchTest64):
+        (JSC::MacroAssemblerX86_64::test64):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        * bytecode/PutByIdFlags.cpp:
+        (WTF::printInternal):
+        * bytecode/PutByIdFlags.h:
+        (JSC::encodeStructureID):
+        (JSC::decodeStructureID):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::operator=):
+        (JSC::PutByIdVariant::replace):
+        (JSC::PutByIdVariant::transition):
+        (JSC::PutByIdVariant::setter):
+        (JSC::PutByIdVariant::attemptToMerge):
+        (JSC::PutByIdVariant::dumpInContext):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::newStructure):
+        (JSC::PutByIdVariant::requiredType):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedInstruction::UnlinkedInstruction):
+        * bytecode/Watchpoint.h:
+        (JSC::InlineWatchpointSet::touch):
+        (JSC::InlineWatchpointSet::isBeingWatched):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addConstantValue):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filter):
+        (JSC::DFG::AbstractInterpreter::filterByValue):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filter):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setType):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        (JSC::DFG::AbstractValue::mergeOSREntryValue):
+        (JSC::DFG::AbstractValue::isType):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::filterValueByType):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::setType):
+        (JSC::DFG::AbstractValue::isType):
+        (JSC::DFG::AbstractValue::validate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (JSC::DFG::ByteCodeParser::handlePutByOffset):
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::store):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        (JSC::DFG::ConstantFoldingPhase::addBaseCheck):
+        * dfg/DFGDesiredInferredType.h: Added.
+        (JSC::DFG::DesiredInferredType::DesiredInferredType):
+        (JSC::DFG::DesiredInferredType::operator bool):
+        (JSC::DFG::DesiredInferredType::object):
+        (JSC::DFG::DesiredInferredType::expected):
+        (JSC::DFG::DesiredInferredType::isStillValid):
+        (JSC::DFG::DesiredInferredType::add):
+        (JSC::DFG::DesiredInferredType::operator==):
+        (JSC::DFG::DesiredInferredType::operator!=):
+        (JSC::DFG::DesiredInferredType::isHashTableDeletedValue):
+        (JSC::DFG::DesiredInferredType::hash):
+        (JSC::DFG::DesiredInferredType::dumpInContext):
+        (JSC::DFG::DesiredInferredType::dump):
+        (JSC::DFG::DesiredInferredTypeHash::hash):
+        (JSC::DFG::DesiredInferredTypeHash::equal):
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::add):
+        (JSC::DFG::InferredTypeAdaptor::add):
+        (JSC::DFG::DesiredWatchpoints::DesiredWatchpoints):
+        (JSC::DFG::DesiredWatchpoints::~DesiredWatchpoints):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::consider):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValid):
+        (JSC::DFG::DesiredWatchpoints::dumpInContext):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::dumpInContext):
+        (JSC::DFG::InferredTypeAdaptor::hasBeenInvalidated):
+        (JSC::DFG::InferredTypeAdaptor::dumpInContext):
+        (JSC::DFG::DesiredWatchpoints::isWatched):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::isSafeToLoad):
+        (JSC::DFG::Graph::inferredTypeFor):
+        (JSC::DFG::Graph::livenessFor):
+        (JSC::DFG::Graph::tryGetConstantProperty):
+        (JSC::DFG::Graph::inferredValueForProperty):
+        (JSC::DFG::Graph::tryGetConstantClosureVar):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::registerInferredType):
+        (JSC::DFG::Graph::inferredTypeForProperty):
+        * dfg/DFGInferredTypeCheck.cpp: Added.
+        (JSC::DFG::insertInferredTypeCheck):
+        * dfg/DFGInferredTypeCheck.h: Added.
+        * dfg/DFGNode.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPropertyTypeKey.h: Added.
+        (JSC::DFG::PropertyTypeKey::PropertyTypeKey):
+        (JSC::DFG::PropertyTypeKey::operator bool):
+        (JSC::DFG::PropertyTypeKey::structure):
+        (JSC::DFG::PropertyTypeKey::uid):
+        (JSC::DFG::PropertyTypeKey::operator==):
+        (JSC::DFG::PropertyTypeKey::operator!=):
+        (JSC::DFG::PropertyTypeKey::hash):
+        (JSC::DFG::PropertyTypeKey::isHashTableDeletedValue):
+        (JSC::DFG::PropertyTypeKey::dumpInContext):
+        (JSC::DFG::PropertyTypeKey::dump):
+        (JSC::DFG::PropertyTypeKey::deletedUID):
+        (JSC::DFG::PropertyTypeKeyHash::hash):
+        (JSC::DFG::PropertyTypeKeyHash::equal):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTypeOf):
+        (JSC::DFG::SpeculativeJIT::compileCheckStructure):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::speculateCell):
+        (JSC::DFG::SpeculativeJIT::speculateCellOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::at):
+        (JSC::DFG::StructureAbstractValue::operator[]):
+        (JSC::DFG::StructureAbstractValue::onlyStructure):
+        (JSC::DFG::StructureAbstractValue::forEach):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckStructure):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckCell):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToLLVM::numberOrNotCellToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::checkInferredType):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadProperty):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateCell):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateCellOrOther):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculateMachineInt):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::decodedCodeMapFor):
+        (JSC::AssemblyHelpers::branchIfNotType):
+        (JSC::AssemblyHelpers::purifyNaN):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfEqual):
+        (JSC::AssemblyHelpers::branchIfNotCell):
+        (JSC::AssemblyHelpers::branchIfCell):
+        (JSC::AssemblyHelpers::branchIfNotOther):
+        (JSC::AssemblyHelpers::branchIfInt32):
+        (JSC::AssemblyHelpers::branchIfNotInt32):
+        (JSC::AssemblyHelpers::branchIfNumber):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        (JSC::AssemblyHelpers::branchIfEmpty):
+        (JSC::AssemblyHelpers::branchStructure):
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/InferredType.cpp: Added.
+        (JSC::InferredType::create):
+        (JSC::InferredType::destroy):
+        (JSC::InferredType::createStructure):
+        (JSC::InferredType::visitChildren):
+        (JSC::InferredType::kindForFlags):
+        (JSC::InferredType::Descriptor::forValue):
+        (JSC::InferredType::Descriptor::forFlags):
+        (JSC::InferredType::Descriptor::putByIdFlags):
+        (JSC::InferredType::Descriptor::merge):
+        (JSC::InferredType::Descriptor::removeStructure):
+        (JSC::InferredType::Descriptor::subsumes):
+        (JSC::InferredType::Descriptor::dumpInContext):
+        (JSC::InferredType::Descriptor::dump):
+        (JSC::InferredType::InferredType):
+        (JSC::InferredType::~InferredType):
+        (JSC::InferredType::canWatch):
+        (JSC::InferredType::addWatchpoint):
+        (JSC::InferredType::dump):
+        (JSC::InferredType::willStoreValueSlow):
+        (JSC::InferredType::makeTopSlow):
+        (JSC::InferredType::set):
+        (JSC::InferredType::removeStructure):
+        (JSC::InferredType::InferredStructureWatchpoint::fireInternal):
+        (JSC::InferredType::InferredStructureFinalizer::finalizeUnconditionally):
+        (JSC::InferredType::InferredStructure::InferredStructure):
+        (WTF::printInternal):
+        * runtime/InferredType.h: Added.
+        * runtime/InferredTypeTable.cpp: Added.
+        (JSC::InferredTypeTable::create):
+        (JSC::InferredTypeTable::destroy):
+        (JSC::InferredTypeTable::createStructure):
+        (JSC::InferredTypeTable::visitChildren):
+        (JSC::InferredTypeTable::get):
+        (JSC::InferredTypeTable::willStoreValue):
+        (JSC::InferredTypeTable::makeTop):
+        (JSC::InferredTypeTable::InferredTypeTable):
+        (JSC::InferredTypeTable::~InferredTypeTable):
+        * runtime/InferredTypeTable.h: Added.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::startWatchingInternalProperties):
+        (JSC::Structure::willStoreValueSlow):
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::prototypeChainMayInterceptStoreTo):
+        * runtime/Structure.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tests/stress/prop-type-boolean-then-string.js: Added.
+        * tests/stress/prop-type-int32-then-string.js: Added.
+        * tests/stress/prop-type-number-then-string.js: Added.
+        * tests/stress/prop-type-object-or-other-then-string.js: Added.
+        * tests/stress/prop-type-object-then-string.js: Added.
+        * tests/stress/prop-type-other-then-string.js: Added.
+        * tests/stress/prop-type-string-then-object.js: Added.
+        * tests/stress/prop-type-struct-or-other-then-string.js: Added.
+        * tests/stress/prop-type-struct-then-object.js: Added.
+        * tests/stress/prop-type-struct-then-object-opt.js: Added.
+        * tests/stress/prop-type-struct-then-object-opt-fold.js: Added.
+        * tests/stress/prop-type-struct-then-object-opt-multi.js: Added.
+
+2015-09-21  Filip Pizlo  <fpizlo@apple.com>
+
         WebCore shouldn't have to include DFG headers
         https://bugs.webkit.org/show_bug.cgi?id=149337
 

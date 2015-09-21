@@ -2135,14 +2135,20 @@ private:
                 for (Structure* structure : structures) {
                     PropertyOffset offset = structure->getConcurrently(uid);
                     if (offset != currentOffset) {
+                        // Because our analysis treats MultiPutByOffset like an escape, we only have to
+                        // deal with storing results that would have been previously stored by PutByOffset
+                        // nodes. Those nodes were guarded by the appropriate type checks. This means that
+                        // at this point, we can simply trust that the incoming value has the right type
+                        // for whatever structure we are using.
                         data->variants.append(
-                            PutByIdVariant::replace(currentSet, currentOffset));
+                            PutByIdVariant::replace(currentSet, currentOffset, InferredType::Top));
                         currentOffset = offset;
                         currentSet.clear();
                     }
                     currentSet.add(structure);
                 }
-                data->variants.append(PutByIdVariant::replace(currentSet, currentOffset));
+                data->variants.append(
+                    PutByIdVariant::replace(currentSet, currentOffset, InferredType::Top));
             }
 
             return m_graph.addNode(

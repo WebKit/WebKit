@@ -192,6 +192,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGGraphSafepoint.cpp
     dfg/DFGHeapLocation.cpp
     dfg/DFGInPlaceAbstractState.cpp
+    dfg/DFGInferredTypeCheck.cpp
     dfg/DFGInsertionSet.cpp
     dfg/DFGIntegerCheckCombiningPhase.cpp
     dfg/DFGIntegerRangeOptimizationPhase.cpp
@@ -500,6 +501,8 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/GetterSetter.cpp
     runtime/Identifier.cpp
     runtime/IndexingType.cpp
+    runtime/InferredType.cpp
+    runtime/InferredTypeTable.cpp
     runtime/InferredValue.cpp
     runtime/InitializeThreading.cpp
     runtime/InspectorInstrumentationObject.cpp

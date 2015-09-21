@@ -1,3 +1,15 @@
+2015-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should infer property types
+        https://bugs.webkit.org/show_bug.cgi?id=148610
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/HashTable.h:
+        (WTF::HashTableAddResult::HashTableAddResult): Make it possible to say "HashMap::AddResult result" without assigning anything to it yet.
+        * wtf/PrintStream.h:
+        (WTF::printInternal): Beef up printing of some common WTF types, in particular RefPtr<UniquedStringImpl>.
+
 2015-09-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove XHR_TIMEOUT compilation guard

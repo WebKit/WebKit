@@ -5254,6 +5254,81 @@ void SpeculativeJIT::compileTypeOf(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileCheckStructure(Node* node, GPRReg cellGPR, GPRReg tempGPR)
+{
+    ASSERT(node->structureSet().size());
+    
+    if (node->structureSet().size() == 1) {
+        speculationCheck(
+            BadCache, JSValueSource::unboxedCell(cellGPR), 0,
+            m_jit.branchWeakStructure(
+                JITCompiler::NotEqual,
+                JITCompiler::Address(cellGPR, JSCell::structureIDOffset()),
+                node->structureSet()[0]));
+    } else {
+        std::unique_ptr<GPRTemporary> structure;
+        GPRReg structureGPR;
+        
+        if (tempGPR == InvalidGPRReg) {
+            structure = std::make_unique<GPRTemporary>(this);
+            structureGPR = structure->gpr();
+        } else
+            structureGPR = tempGPR;
+        
+        m_jit.load32(JITCompiler::Address(cellGPR, JSCell::structureIDOffset()), structureGPR);
+        
+        JITCompiler::JumpList done;
+        
+        for (size_t i = 0; i < node->structureSet().size() - 1; ++i) {
+            done.append(
+                m_jit.branchWeakStructure(JITCompiler::Equal, structureGPR, node->structureSet()[i]));
+        }
+        
+        speculationCheck(
+            BadCache, JSValueSource::unboxedCell(cellGPR), 0,
+            m_jit.branchWeakStructure(
+                JITCompiler::NotEqual, structureGPR, node->structureSet().last()));
+        
+        done.link(&m_jit);
+    }
+}
+
+void SpeculativeJIT::compileCheckStructure(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case CellUse:
+    case KnownCellUse: {
+        SpeculateCellOperand cell(this, node->child1());
+        compileCheckStructure(node, cell.gpr(), InvalidGPRReg);
+        noResult(node);
+        return;
+    }
+
+    case CellOrOtherUse: {
+        JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
+        GPRTemporary temp(this);
+
+        JSValueRegs valueRegs = value.jsValueRegs();
+        GPRReg tempGPR = temp.gpr();
+
+        JITCompiler::Jump cell = m_jit.branchIfCell(valueRegs);
+        DFG_TYPE_CHECK(
+            valueRegs, node->child1(), SpecCell | SpecOther,
+            m_jit.branchIfNotOther(valueRegs, tempGPR));
+        JITCompiler::Jump done = m_jit.jump();
+        cell.link(&m_jit);
+        compileCheckStructure(node, valueRegs.payloadGPR(), tempGPR);
+        done.link(&m_jit);
+        noResult(node);
+        return;
+    }
+
+    default:
+        DFG_CRASH(m_jit.graph(), node, "Bad use kind");
+        return;
+    }
+}
+
 void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 {
     if (node->transition()->previous->couldHaveIndexingHeader()) {
@@ -5658,6 +5733,22 @@ void SpeculativeJIT::speculateCell(Edge edge)
     (SpeculateCellOperand(this, edge)).gpr();
 }
 
+void SpeculativeJIT::speculateCellOrOther(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecCell | SpecOther))
+        return;
+    
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    GPRReg tempGPR = temp.gpr();
+
+    MacroAssembler::Jump ok = m_jit.branchIfCell(operand.jsValueRegs());
+    DFG_TYPE_CHECK(
+        operand.jsValueRegs(), edge, SpecCell | SpecOther,
+        m_jit.branchIfNotOther(operand.jsValueRegs(), tempGPR));
+    ok.link(&m_jit);
+}
+
 void SpeculativeJIT::speculateObject(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject))
@@ -5937,6 +6028,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case CellUse:
         speculateCell(edge);
+        break;
+    case CellOrOtherUse:
+        speculateCellOrOther(edge);
         break;
     case ObjectUse:
         speculateObject(edge);

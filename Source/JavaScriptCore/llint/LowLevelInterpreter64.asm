@@ -1266,14 +1266,88 @@ _llint_op_put_by_id:
     writeBarrierOnOperands(1, 3)
     loadisFromInstruction(1, t3)
     loadConstantOrVariableCell(t3, t0, .opPutByIdSlow)
-    loadi JSCell::m_structureID[t0], t2
-    loadisFromInstruction(4, t1)
-    bineq t2, t1, .opPutByIdSlow
+    loadisFromInstruction(4, t2)
+    bineq t2, JSCell::m_structureID[t0], .opPutByIdSlow
 
     # At this point, we have:
-    # t1, t2 -> current structure ID
+    # t2 -> current structure ID
     # t0 -> object base
 
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t3)
+
+    loadpFromInstruction(8, t1)
+
+    # At this point, we have:
+    # t0 -> object base
+    # t1 -> put by id flags
+    # t2 -> current structure ID
+    # t3 -> value to put
+
+    btpnz t1, PutByIdPrimaryTypeMask, .opPutByIdTypeCheckObjectWithStructureOrOther
+
+    # We have one of the non-structure type checks. Find out which one.
+    andp PutByIdSecondaryTypeMask, t1
+    bplt t1, PutByIdSecondaryTypeString, .opPutByIdTypeCheckLessThanString
+
+    # We are one of the following: String, Object, ObjectOrOther, Top
+    bplt t1, PutByIdSecondaryTypeObjectOrOther, .opPutByIdTypeCheckLessThanObjectOrOther
+
+    # We are either ObjectOrOther or Top.
+    bpeq t1, PutByIdSecondaryTypeTop, .opPutByIdDoneCheckingTypes
+
+    # Check if we are ObjectOrOther.
+    btqz t3, tagMask, .opPutByIdTypeCheckObject
+.opPutByIdTypeCheckOther:
+    andq ~TagBitUndefined, t3
+    bqeq t3, ValueNull, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckLessThanObjectOrOther:
+    # We are either String or Object.
+    btqnz t3, tagMask, .opPutByIdSlow
+    bpeq t1, PutByIdSecondaryTypeObject, .opPutByIdTypeCheckObject
+    bbeq JSCell::m_type[t3], StringType, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+.opPutByIdTypeCheckObject:
+    bbaeq JSCell::m_type[t3], ObjectType, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckLessThanString:
+    # We are one of the following: Bottom, Boolean, Other, Int32, Number
+    bplt t1, PutByIdSecondaryTypeInt32, .opPutByIdTypeCheckLessThanInt32
+
+    # We are either Int32 or Number.
+    bpeq t1, PutByIdSecondaryTypeNumber, .opPutByIdTypeCheckNumber
+
+    bqaeq t3, tagTypeNumber, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckNumber:
+    btqnz t3, tagTypeNumber, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckLessThanInt32:
+    # We are one of the following: Bottom, Boolean, Other.
+    bpneq t1, PutByIdSecondaryTypeBoolean, .opPutByIdTypeCheckBottomOrOther
+    xorq ValueFalse, t3
+    btqz t3, ~1, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckBottomOrOther:
+    bpeq t1, PutByIdSecondaryTypeOther, .opPutByIdTypeCheckOther
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckObjectWithStructureOrOther:
+    btqz t3, tagMask, .opPutByIdTypeCheckObjectWithStructure
+    btpnz t1, PutByIdPrimaryTypeObjectWithStructureOrOther, .opPutByIdTypeCheckOther
+    jmp .opPutByIdSlow
+
+.opPutByIdTypeCheckObjectWithStructure:
+    urshiftp 3, t1
+    bineq t1, JSCell::m_structureID[t3], .opPutByIdSlow
+
+.opPutByIdDoneCheckingTypes:
     loadisFromInstruction(6, t1)
     
     btiz t1, .opPutByIdNotTransition

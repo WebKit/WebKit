@@ -691,6 +691,15 @@ void AccessCase::generate(AccessGenerationState& state)
     }
 
     case Replace: {
+        if (InferredType* type = structure()->inferredTypeFor(ident.impl())) {
+            if (verbose)
+                dataLog("Have type: ", type->descriptor(), "\n");
+            state.failAndRepatch.append(
+                jit.branchIfNotType(
+                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::DoNotHaveTagRegisters));
+        } else if (verbose)
+            dataLog("Don't have type.\n");
+        
         if (isInlineOffset(m_offset)) {
             jit.storeValue(
                 valueRegs,
@@ -714,6 +723,15 @@ void AccessCase::generate(AccessGenerationState& state)
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !structure()->outOfLineCapacity() || structure()->outOfLineCapacity() == newStructure()->outOfLineCapacity());
         RELEASE_ASSERT(!structure()->couldHaveIndexingHeader());
 
+        if (InferredType* type = newStructure()->inferredTypeFor(ident.impl())) {
+            if (verbose)
+                dataLog("Have type: ", type->descriptor(), "\n");
+            state.failAndRepatch.append(
+                jit.branchIfNotType(
+                    valueRegs, scratchGPR, type->descriptor(), CCallHelpers::DoNotHaveTagRegisters));
+        } else if (verbose)
+            dataLog("Don't have type.\n");
+        
         CCallHelpers::JumpList slowPath;
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);

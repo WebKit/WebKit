@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,18 +75,18 @@ inline Structure* Structure::storedPrototypeStructure() const
 
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
-    ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfo() == info());
-    PropertyTable* propertyTable;
-    materializePropertyMapIfNecessary(vm, propertyTable);
-    if (!propertyTable)
-        return invalidOffset;
-
-    PropertyMapEntry* entry = propertyTable->get(propertyName.uid());
-    return entry ? entry->offset : invalidOffset;
+    unsigned attributes;
+    bool hasInferredType;
+    return get(vm, propertyName, attributes, hasInferredType);
 }
     
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes)
+{
+    bool hasInferredType;
+    return get(vm, propertyName, attributes, hasInferredType);
+}
+
+ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, bool& hasInferredType)
 {
     ASSERT(!isCompilationThread());
     ASSERT(structure()->classInfo() == info());
@@ -101,6 +101,7 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
         return invalidOffset;
 
     attributes = entry->attributes;
+    hasInferredType = entry->hasInferredType;
     return entry->offset;
 }
 

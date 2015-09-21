@@ -3901,36 +3901,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case CheckStructure: {
-        SpeculateCellOperand base(this, node->child1());
-        
-        ASSERT(node->structureSet().size());
-        
-        if (node->structureSet().size() == 1) {
-            speculationCheck(
-                BadCache, JSValueSource::unboxedCell(base.gpr()), 0,
-                m_jit.branchWeakPtr(
-                    JITCompiler::NotEqual,
-                    JITCompiler::Address(base.gpr(), JSCell::structureIDOffset()),
-                    node->structureSet()[0]));
-        } else {
-            GPRTemporary structure(this);
-            
-            m_jit.loadPtr(JITCompiler::Address(base.gpr(), JSCell::structureIDOffset()), structure.gpr());
-            
-            JITCompiler::JumpList done;
-            
-            for (size_t i = 0; i < node->structureSet().size() - 1; ++i)
-                done.append(m_jit.branchWeakPtr(JITCompiler::Equal, structure.gpr(), node->structureSet()[i]));
-            
-            speculationCheck(
-                BadCache, JSValueSource::unboxedCell(base.gpr()), 0,
-                m_jit.branchWeakPtr(
-                    JITCompiler::NotEqual, structure.gpr(), node->structureSet().last()));
-            
-            done.link(&m_jit);
-        }
-        
-        noResult(node);
+        compileCheckStructure(node);
         break;
     }
         

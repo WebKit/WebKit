@@ -3916,38 +3916,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case CheckStructure: {
-        SpeculateCellOperand base(this, node->child1());
-        
-        ASSERT(node->structureSet().size());
-        
-        ExitKind exitKind;
-        if (node->child1()->hasConstant())
-            exitKind = BadConstantCache;
-        else
-            exitKind = BadCache;
-        
-        if (node->structureSet().size() == 1) {
-            speculationCheck(
-                exitKind, JSValueSource::unboxedCell(base.gpr()), 0,
-                m_jit.branchWeakStructure(
-                    JITCompiler::NotEqual,
-                    JITCompiler::Address(base.gpr(), JSCell::structureIDOffset()),
-                    node->structureSet()[0]));
-        } else {
-            JITCompiler::JumpList done;
-            
-            for (size_t i = 0; i < node->structureSet().size() - 1; ++i)
-                done.append(m_jit.branchWeakStructure(JITCompiler::Equal, MacroAssembler::Address(base.gpr(), JSCell::structureIDOffset()), node->structureSet()[i]));
-            
-            speculationCheck(
-                exitKind, JSValueSource::unboxedCell(base.gpr()), 0,
-                m_jit.branchWeakStructure(
-                    JITCompiler::NotEqual, MacroAssembler::Address(base.gpr(), JSCell::structureIDOffset()), node->structureSet().last()));
-            
-            done.link(&m_jit);
-        }
-        
-        noResult(node);
+        compileCheckStructure(node);
         break;
     }
         

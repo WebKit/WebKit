@@ -261,12 +261,16 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         StorageAccessData& storageAccessData = node->storageAccessData();
         out.print(comma, "id", storageAccessData.identifierNumber, "{", identifiers()[storageAccessData.identifierNumber], "}");
         out.print(", ", static_cast<ptrdiff_t>(storageAccessData.offset));
+        out.print(", inferredType = ", inContext(storageAccessData.inferredType, context));
     }
     if (node->hasMultiGetByOffsetData()) {
         MultiGetByOffsetData& data = node->multiGetByOffsetData();
         out.print(comma, "id", data.identifierNumber, "{", identifiers()[data.identifierNumber], "}");
-        for (unsigned i = 0; i < data.cases.size(); ++i)
+        for (unsigned i = 0; i < data.cases.size(); ++i) {
             out.print(comma, inContext(data.cases[i], context));
+            if (data.cases[i].method().kind() == GetByOffsetMethod::Load)
+                out.print(" (inferred value = ", inContext(inferredValueForProperty(data.cases[i].set(), identifiers()[data.identifierNumber]), context), ")");
+        }
     }
     if (node->hasMultiPutByOffsetData()) {
         MultiPutByOffsetData& data = node->multiPutByOffsetData();
@@ -887,6 +891,38 @@ bool Graph::isSafeToLoad(JSObject* base, PropertyOffset offset)
     return m_safeToLoad.contains(std::make_pair(base, offset));
 }
 
+InferredType::Descriptor Graph::inferredTypeFor(const PropertyTypeKey& key)
+{
+    assertIsRegistered(key.structure());
+    
+    auto iter = m_inferredTypes.find(key);
+    if (iter != m_inferredTypes.end())
+        return iter->value;
+
+    InferredType* typeObject = key.structure()->inferredTypeFor(key.uid());
+    if (!typeObject) {
+        m_inferredTypes.add(key, InferredType::Top);
+        return InferredType::Top;
+    }
+
+    InferredType::Descriptor typeDescriptor = typeObject->descriptor();
+    if (typeDescriptor.kind() == InferredType::Top) {
+        m_inferredTypes.add(key, InferredType::Top);
+        return InferredType::Top;
+    }
+    
+    m_inferredTypes.add(key, typeDescriptor);
+
+    m_plan.weakReferences.addLazily(typeObject);
+    registerInferredType(typeDescriptor);
+
+    // Note that we may already be watching this desired inferred type, because multiple structures may
+    // point to the same InferredType instance.
+    m_plan.watchpoints.addLazily(DesiredInferredType(typeObject, typeDescriptor));
+
+    return typeDescriptor;
+}
+
 FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
 {
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>>::iterator iter = m_bytecodeLiveness.find(codeBlock);
@@ -1061,7 +1097,7 @@ JSValue Graph::tryGetConstantProperty(JSValue base, Structure* structure, Proper
 JSValue Graph::tryGetConstantProperty(
     JSValue base, const StructureAbstractValue& structure, PropertyOffset offset)
 {
-    if (structure.isTop() || structure.isClobbered()) {
+    if (structure.isInfinite()) {
         // FIXME: If we just converted the offset to a uid, we could do ObjectPropertyCondition
         // watching to constant-fold the property.
         // https://bugs.webkit.org/show_bug.cgi?id=147271
@@ -1074,6 +1110,37 @@ JSValue Graph::tryGetConstantProperty(
 JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset offset)
 {
     return tryGetConstantProperty(base.m_value, base.m_structure, offset);
+}
+
+AbstractValue Graph::inferredValueForProperty(
+    const StructureSet& base, UniquedStringImpl* uid, StructureClobberState clobberState)
+{
+    AbstractValue result;
+    base.forEach(
+        [&] (Structure* structure) {
+            AbstractValue value;
+            value.set(*this, inferredTypeForProperty(structure, uid));
+            result.merge(value);
+        });
+    if (clobberState == StructuresAreClobbered)
+        result.clobberStructures();
+    return result;
+}
+
+AbstractValue Graph::inferredValueForProperty(
+    const AbstractValue& base, UniquedStringImpl* uid, PropertyOffset offset,
+    StructureClobberState clobberState)
+{
+    if (JSValue value = tryGetConstantProperty(base, offset)) {
+        AbstractValue result;
+        result.set(*this, *freeze(value), clobberState);
+        return result;
+    }
+
+    if (base.m_structure.isFinite())
+        return inferredValueForProperty(base.m_structure.set(), uid, clobberState);
+
+    return AbstractValue::heapTop();
 }
 
 JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)

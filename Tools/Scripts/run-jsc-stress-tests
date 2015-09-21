@@ -699,6 +699,10 @@ def runWithRAMSize(size)
     run("ram-size-#{size}", "--forceRAMSize=#{size}")
 end
 
+def runNoJIT
+    run("no-jit", "--useJIT=false")
+end
+
 def runNoLLInt
     if $jitTests
         run("no-llint", "--useLLInt=false")

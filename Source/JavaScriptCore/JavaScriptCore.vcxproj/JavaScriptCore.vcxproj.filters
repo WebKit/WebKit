@@ -1269,6 +1269,9 @@
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
+    <ClCompile Include="..\dfg\DFGInferredTypeCheck.cpp">
+      <Filter>dfg</Filter>
+    </ClCompile>
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1866,6 +1869,8 @@
     <ClCompile Include="..\runtime\DirectArguments.cpp" />
     <ClCompile Include="..\runtime\DirectArgumentsOffset.cpp" />
     <ClCompile Include="..\runtime\InferredValue.cpp" />
+    <ClCompile Include="..\runtime\InferredType.cpp" />
+    <ClCompile Include="..\runtime\InferredTypeTable.cpp" />
     <ClCompile Include="..\runtime\ScopeOffset.cpp" />
     <ClCompile Include="..\runtime\ScopedArguments.cpp" />
     <ClCompile Include="..\runtime\ScopedArgumentsTable.cpp" />
@@ -3676,6 +3681,9 @@
     <ClInclude Include="..\dfg\DFGDesiredIdentifiers.h">
       <Filter>dfg</Filter>
     </ClInclude>
+    <ClInclude Include="..\dfg\DFGDesiredInferredType.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
     <ClInclude Include="..\dfg\DFGDesiredTransitions.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3740,6 +3748,9 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dfg\DFGInferredTypeCheck.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h">
@@ -4424,6 +4435,9 @@
     <ClInclude Include="..\dfg\DFGPromotedHeapLocation.h">
       <Filter>dfg</Filter>
     </ClInclude>
+    <ClInclude Include="..\dfg\DFGPropertyTypeKey.h">
+      <Filter>dfg</Filter>
+    </ClInclude>
     <ClInclude Include="..\ftl\FTLExitPropertyValue.h">
       <Filter>ftl</Filter>
     </ClInclude>
@@ -4467,6 +4481,8 @@
     <ClInclude Include="..\runtime\GenericArgumentsInlines.h" />
     <ClInclude Include="..\runtime\GenericOffset.h" />
     <ClInclude Include="..\runtime\InferredValue.h" />
+    <ClInclude Include="..\runtime\InferredType.h" />
+    <ClInclude Include="..\runtime\InferredTypeTable.h" />
     <ClInclude Include="..\runtime\ScopeOffset.h" />
     <ClInclude Include="..\runtime\ScopedArguments.h" />
     <ClInclude Include="..\runtime\ScopedArgumentsTable.h" />

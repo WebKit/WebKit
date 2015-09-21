@@ -45,6 +45,7 @@ PutByIdVariant& PutByIdVariant::operator=(const PutByIdVariant& other)
     m_newStructure = other.m_newStructure;
     m_conditionSet = other.m_conditionSet;
     m_offset = other.m_offset;
+    m_requiredType = other.m_requiredType;
     if (other.m_callLinkStatus)
         m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
     else
@@ -52,18 +53,21 @@ PutByIdVariant& PutByIdVariant::operator=(const PutByIdVariant& other)
     return *this;
 }
 
-PutByIdVariant PutByIdVariant::replace(const StructureSet& structure, PropertyOffset offset)
+PutByIdVariant PutByIdVariant::replace(
+    const StructureSet& structure, PropertyOffset offset, const InferredType::Descriptor& requiredType)
 {
     PutByIdVariant result;
     result.m_kind = Replace;
     result.m_oldStructure = structure;
     result.m_offset = offset;
+    result.m_requiredType = requiredType;
     return result;
 }
 
 PutByIdVariant PutByIdVariant::transition(
     const StructureSet& oldStructure, Structure* newStructure,
-    const ObjectPropertyConditionSet& conditionSet, PropertyOffset offset)
+    const ObjectPropertyConditionSet& conditionSet, PropertyOffset offset,
+    const InferredType::Descriptor& requiredType)
 {
     PutByIdVariant result;
     result.m_kind = Transition;
@@ -71,6 +75,7 @@ PutByIdVariant PutByIdVariant::transition(
     result.m_newStructure = newStructure;
     result.m_conditionSet = conditionSet;
     result.m_offset = offset;
+    result.m_requiredType = requiredType;
     return result;
 }
 
@@ -85,6 +90,7 @@ PutByIdVariant PutByIdVariant::setter(
     result.m_conditionSet = conditionSet;
     result.m_offset = offset;
     result.m_callLinkStatus = WTF::move(callLinkStatus);
+    result.m_requiredType = InferredType::Top;
     return result;
 }
 
@@ -134,9 +140,12 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
 {
     if (m_offset != other.m_offset)
         return false;
+
+    if (m_requiredType != other.m_requiredType)
+        return false;
     
     switch (m_kind) {
-    case Replace:
+    case Replace: {
         switch (other.m_kind) {
         case Replace: {
             ASSERT(m_conditionSet.isEmpty());
@@ -158,6 +167,7 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
         default:
             return false;
         }
+    }
         
     case Transition:
         switch (other.m_kind) {
@@ -210,14 +220,16 @@ void PutByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         
     case Replace:
         out.print(
-            "<Replace: ", inContext(structure(), context), ", offset = ", offset(), ">");
+            "<Replace: ", inContext(structure(), context), ", offset = ", offset(), ", ",
+            inContext(requiredType(), context), ">");
         return;
         
     case Transition:
         out.print(
             "<Transition: ", inContext(oldStructure(), context), " -> ",
             pointerDumpInContext(newStructure(), context), ", [",
-            inContext(m_conditionSet, context), "], offset = ", offset(), ">");
+            inContext(m_conditionSet, context), "], offset = ", offset(), ", ",
+            inContext(requiredType(), context), ">");
         return;
         
     case Setter:

@@ -286,6 +286,7 @@ namespace WTF {
     };
 
     template<typename IteratorType> struct HashTableAddResult {
+        HashTableAddResult() : isNewEntry(false) { }
         HashTableAddResult(IteratorType iter, bool isNewEntry) : iterator(iter), isNewEntry(isNewEntry) { }
         IteratorType iterator;
         bool isNewEntry;

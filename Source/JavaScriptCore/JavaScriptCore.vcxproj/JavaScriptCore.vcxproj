@@ -428,6 +428,7 @@
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
+    <ClCompile Include="..\dfg\DFGInferredTypeCheck.cpp" />
     <ClCompile Include="..\dfg\DFGInsertionSet.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerRangeOptimizationPhase.cpp" />
@@ -750,6 +751,8 @@
     <ClCompile Include="..\runtime\Identifier.cpp" />
     <ClCompile Include="..\runtime\IndexingType.cpp" />
     <ClCompile Include="..\runtime\InferredValue.cpp" />
+    <ClCompile Include="..\runtime\InferredType.cpp" />
+    <ClCompile Include="..\runtime\InferredTypeTable.cpp" />
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
     <ClCompile Include="..\runtime\InspectorInstrumentationObject.cpp" />
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
@@ -1137,6 +1140,7 @@
     <ClInclude Include="..\dfg\DFGCSEPhase.h" />
     <ClInclude Include="..\dfg\DFGDCEPhase.h" />
     <ClInclude Include="..\dfg\DFGDesiredIdentifiers.h" />
+    <ClInclude Include="..\dfg\DFGDesiredInferredType.h" />
     <ClInclude Include="..\dfg\DFGDesiredTransitions.h" />
     <ClInclude Include="..\dfg\DFGDesiredWatchpoints.h" />
     <ClInclude Include="..\dfg\DFGDesiredWeakReferences.h" />
@@ -1166,6 +1170,7 @@
     <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
     <ClInclude Include="..\dfg\DFGHeapLocation.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
+    <ClInclude Include="..\dfg\DFGInferredTypeCheck.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
     <ClInclude Include="..\dfg\DFGIntegerRangeOptimizationPhase.h" />
@@ -1217,6 +1222,7 @@
     <ClInclude Include="..\dfg\DFGPredictionInjectionPhase.h" />
     <ClInclude Include="..\dfg\DFGPredictionPropagationPhase.h" />
     <ClInclude Include="..\dfg\DFGPromotedHeapLocation.h" />
+    <ClInclude Include="..\dfg\DFGPropertyTypeKey.h" />
     <ClInclude Include="..\dfg\DFGPureValue.h" />
     <ClInclude Include="..\dfg\DFGPutStackSinkingPhase.h" />
     <ClInclude Include="..\dfg\DFGRegisterBank.h" />
@@ -1591,6 +1597,8 @@
     <ClInclude Include="..\runtime\IndexingHeaderInlines.h" />
     <ClInclude Include="..\runtime\IndexingType.h" />
     <ClInclude Include="..\runtime\InferredValue.h" />
+    <ClInclude Include="..\runtime\InferredType.h" />
+    <ClInclude Include="..\runtime\InferredTypeTable.h" />
     <ClInclude Include="..\runtime\InitializeThreading.h" />
     <ClInclude Include="..\runtime\Int16Array.h" />
     <ClInclude Include="..\runtime\Int32Array.h" />

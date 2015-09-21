@@ -36,7 +36,6 @@
 #include "JSCell.h"
 #include "JSString.h"
 #include "ParserModes.h"
-#include "PutByIdFlags.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "UnlinkedFunctionExecutable.h"
@@ -98,12 +97,10 @@ struct UnlinkedInstruction {
     UnlinkedInstruction() { u.operand = 0; }
     UnlinkedInstruction(OpcodeID opcode) { u.opcode = opcode; }
     UnlinkedInstruction(int operand) { u.operand = operand; }
-    UnlinkedInstruction(PutByIdFlags flags) { u.putByIdFlags = flags; }
     union {
         OpcodeID opcode;
         int32_t operand;
         unsigned index;
-        PutByIdFlags putByIdFlags;
     } u;
 };
 

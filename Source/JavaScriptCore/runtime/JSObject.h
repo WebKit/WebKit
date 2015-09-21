@@ -1189,6 +1189,8 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
 
     Structure* structure = this->structure(vm);
     if (structure->isDictionary()) {
+        ASSERT(!structure->hasInferredTypes());
+        
         unsigned currentAttributes;
         PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
         if (offset != invalidOffset) {
@@ -1227,29 +1229,40 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
 
     PropertyOffset offset;
     size_t currentCapacity = this->structure()->outOfLineCapacity();
-    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, offset)) {
+    Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(
+        structure, propertyName, attributes, offset);
+    if (newStructure) {
+        newStructure->willStoreValueForTransition(
+            vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
+        
         DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = butterfly();
-        if (currentCapacity != structure->outOfLineCapacity()) {
-            ASSERT(structure != this->structure());
-            newButterfly = growOutOfLineStorage(vm, currentCapacity, structure->outOfLineCapacity());
+        if (currentCapacity != newStructure->outOfLineCapacity()) {
+            ASSERT(newStructure != this->structure());
+            newButterfly = growOutOfLineStorage(vm, currentCapacity, newStructure->outOfLineCapacity());
         }
 
         validateOffset(offset);
-        ASSERT(structure->isValidOffset(offset));
-        setStructureAndButterfly(vm, structure, newButterfly);
+        ASSERT(newStructure->isValidOffset(offset));
+        setStructureAndButterfly(vm, newStructure, newButterfly);
         putDirect(vm, offset, value);
         slot.setNewProperty(this, offset);
         return true;
     }
 
     unsigned currentAttributes;
-    offset = structure->get(vm, propertyName, currentAttributes);
+    bool hasInferredType;
+    offset = structure->get(vm, propertyName, currentAttributes, hasInferredType);
     if (offset != invalidOffset) {
         if ((mode == PutModePut) && currentAttributes & ReadOnly)
             return false;
 
         structure->didReplaceProperty(offset);
+        if (UNLIKELY(hasInferredType)) {
+            structure->willStoreValueForReplace(
+                vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
+        }
+
         slot.setExistingProperty(this, offset);
         putDirect(vm, offset, value);
 
@@ -1268,16 +1281,19 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     // we want.
     DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
     
-    structure = Structure::addPropertyTransition(vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
+    newStructure = Structure::addPropertyTransition(
+        vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
+    newStructure->willStoreValueForTransition(
+        vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
     
     validateOffset(offset);
-    ASSERT(structure->isValidOffset(offset));
-    setStructureAndReallocateStorageIfNecessary(vm, structure);
+    ASSERT(newStructure->isValidOffset(offset));
+    setStructureAndReallocateStorageIfNecessary(vm, newStructure);
 
     putDirect(vm, offset, value);
     slot.setNewProperty(this, offset);
     if (attributes & ReadOnly)
-        structure->setContainsReadOnlyProperties();
+        newStructure->setContainsReadOnlyProperties();
     return true;
 }
 
@@ -1335,8 +1351,11 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     Butterfly* newButterfly = m_butterfly.get();
     if (structure()->putWillGrowOutOfLineStorage())
         newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
-    PropertyOffset offset = structure()->addPropertyWithoutTransition(vm, propertyName, attributes);
-    setStructureAndButterfly(vm, structure(), newButterfly);
+    Structure* structure = this->structure();
+    PropertyOffset offset = structure->addPropertyWithoutTransition(vm, propertyName, attributes);
+    bool shouldOptimize = false;
+    structure->willStoreValueForTransition(vm, propertyName, value, shouldOptimize);
+    setStructureAndButterfly(vm, structure, newButterfly);
     putDirect(vm, offset, value);
 }
 

@@ -51,6 +51,7 @@ enum UseKind {
     KnownBooleanUse,
     CellUse,
     KnownCellUse,
+    CellOrOtherUse,
     ObjectUse,
     FunctionUse,
     FinalObjectUse,
@@ -108,6 +109,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case CellUse:
     case KnownCellUse:
         return SpecCell;
+    case CellOrOtherUse:
+        return SpecCell | SpecOther;
     case ObjectUse:
         return SpecObject;
     case FunctionUse:

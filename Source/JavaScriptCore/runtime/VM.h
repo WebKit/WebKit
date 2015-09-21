@@ -302,6 +302,8 @@ public:
     Strong<Structure> propertyTableStructure;
     Strong<Structure> weakMapDataStructure;
     Strong<Structure> inferredValueStructure;
+    Strong<Structure> inferredTypeStructure;
+    Strong<Structure> inferredTypeTableStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
     Strong<Structure> promiseDeferredStructure;

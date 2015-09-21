@@ -336,7 +336,39 @@ public:
     {
         touch(StringFireDetail(reason));
     }
-    
+
+    // Note that for any watchpoint that is visible from the DFG, it would be incorrect to write code like:
+    //
+    // if (w.isBeingWatched())
+    //     w.fireAll()
+    //
+    // Concurrently to this, the DFG could do:
+    //
+    // if (w.isStillValid())
+    //     perform optimizations;
+    // if (!w.isStillValid())
+    //     retry compilation;
+    //
+    // Note that the DFG algorithm is widespread, and sound, because fireAll() and invalidate() will leave
+    // the watchpoint in a !isStillValid() state. Hence, if fireAll() or invalidate() interleaved between
+    // the first isStillValid() check and the second one, then it would simply cause the DFG to retry
+    // compilation later.
+    //
+    // But, if you change some piece of state that the DFG might optimize for, but invalidate the
+    // watchpoint by doing:
+    //
+    // if (w.isBeingWatched())
+    //     w.fireAll()
+    //
+    // then the DFG would never know that you invalidated state between the two checks.
+    //
+    // There are two ways to work around this:
+    //
+    // - Call fireAll() without a isBeingWatched() check. Then, the DFG will know that the watchpoint has
+    //   been invalidated when it does its second check.
+    //
+    // - Do not expose the watchpoint set to the DFG directly, and have your own way of validating whether
+    //   the assumptions that the DFG thread used are still valid when the DFG code is installed.
     bool isBeingWatched() const
     {
         if (isFat())

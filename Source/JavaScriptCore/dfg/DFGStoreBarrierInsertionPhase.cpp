@@ -314,7 +314,7 @@ private:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
                 // These allocate but then run their own barrier.
-                insertBarrierWithInvalidExit(m_nodeIndex + 1, Edge(m_node->child1().node(), KnownCellUse));
+                insertBarrier(m_nodeIndex + 1, Edge(m_node->child1().node(), KnownCellUse));
                 m_node->setEpoch(Epoch());
                 break;
                 
@@ -479,11 +479,6 @@ private:
         if (verbose)
             dataLog("            Inserting barrier.\n");
         insertBarrier(m_nodeIndex, base);
-    }
-
-    void insertBarrierWithInvalidExit(unsigned nodeIndex, Edge base)
-    {
-        insertBarrier(nodeIndex, base, false);
     }
 
     void insertBarrier(unsigned nodeIndex, Edge base, bool exitOK = true)

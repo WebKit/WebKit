@@ -204,6 +204,22 @@ else
     const LowestTag = DeletedValueTag
 end
 
+# NOTE: The values below must be in sync with what is in PutByIdFlags.h.
+const PutByIdPrimaryTypeMask = 0x6
+const PutByIdPrimaryTypeSecondary = 0x0
+const PutByIdPrimaryTypeObjectWithStructure = 0x2
+const PutByIdPrimaryTypeObjectWithStructureOrOther = 0x4
+const PutByIdSecondaryTypeMask = -0x8
+const PutByIdSecondaryTypeBottom = 0x0
+const PutByIdSecondaryTypeBoolean = 0x8
+const PutByIdSecondaryTypeOther = 0x10
+const PutByIdSecondaryTypeInt32 = 0x18
+const PutByIdSecondaryTypeNumber = 0x20
+const PutByIdSecondaryTypeString = 0x28
+const PutByIdSecondaryTypeObject = 0x30
+const PutByIdSecondaryTypeObjectOrOther = 0x38
+const PutByIdSecondaryTypeTop = 0x40
+
 const CallOpCodeSize = 9
 
 if X86_64 or ARM64 or C_LOOP

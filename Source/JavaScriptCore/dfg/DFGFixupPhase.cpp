@@ -30,6 +30,7 @@
 
 #include "ArrayPrototype.h"
 #include "DFGGraph.h"
+#include "DFGInferredTypeCheck.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "DFGPredictionPropagationPhase.h"
@@ -1092,6 +1093,9 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
+            insertInferredTypeCheck(
+                m_insertionSet, m_indexInBlock, node->origin, node->child3().node(),
+                node->storageAccessData().inferredType);
             speculateForBarrier(node->child3());
             break;
         }

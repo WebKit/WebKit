@@ -33,6 +33,7 @@
 #include "DFGBasicBlock.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
+#include "DFGInferredTypeCheck.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "GetByIdStatus.h"
@@ -373,7 +374,8 @@ private:
                         && variant.oldStructure().onlyStructure() == variant.newStructure()) {
                         variant = PutByIdVariant::replace(
                             variant.oldStructure(),
-                            variant.offset());
+                            variant.offset(),
+                            variant.requiredType());
                         changed = true;
                     }
                 }
@@ -448,6 +450,7 @@ private:
                 ASSERT(childEdge.useKind() == CellUse);
                 
                 AbstractValue baseValue = m_state.forNode(child);
+                AbstractValue valueValue = m_state.forNode(node->child2());
 
                 m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
@@ -463,7 +466,7 @@ private:
                 
                 if (!status.isSimple())
                     break;
-                
+
                 ASSERT(status.numVariants());
                 
                 if (status.numVariants() > 1 && !isFTL(m_graph.m_plan.mode))
@@ -640,7 +643,9 @@ private:
         emitGetByOffset(indexInBlock, node, childEdge, identifierNumber, variant.offset());
     }
     
-    void emitGetByOffset(unsigned indexInBlock, Node* node, Edge childEdge, unsigned identifierNumber, PropertyOffset offset)
+    void emitGetByOffset(
+        unsigned indexInBlock, Node* node, Edge childEdge, unsigned identifierNumber,
+        PropertyOffset offset, const InferredType::Descriptor& inferredType = InferredType::Top)
     {
         childEdge.setUseKind(KnownCellUse);
         
@@ -656,6 +661,7 @@ private:
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = offset;
         data.identifierNumber = identifierNumber;
+        data.inferredType = inferredType;
         
         node->convertToGetByOffset(data, propertyStorage);
     }
@@ -664,8 +670,10 @@ private:
     {
         NodeOrigin origin = node->origin;
         Edge childEdge = node->child1();
-        
+
         addBaseCheck(indexInBlock, node, baseValue, variant.oldStructure());
+        insertInferredTypeCheck(
+            m_insertionSet, indexInBlock, origin, node->child2().node(), variant.requiredType());
 
         node->child1().setUseKind(KnownCellUse);
         childEdge.setUseKind(KnownCellUse);
@@ -730,6 +738,7 @@ private:
             // Arises when we prune MultiGetByOffset. We could have a
             // MultiGetByOffset with a single variant that checks for structure S,
             // and the input has structures S and T, for example.
+            ASSERT(node->child1());
             m_insertionSet.insertNode(
                 indexInBlock, SpecNone, CheckStructure, node->origin,
                 OpInfo(m_graph.addStructureSet(set)), node->child1());
