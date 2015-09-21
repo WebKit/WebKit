@@ -1,3 +1,15 @@
+2015-09-21 Aleksandr Skachkov   <gskachkov@gmail.com>
+
+        Web Inspector: arrow function names are never inferred, call frames are labeled (anonymous function)
+        https://bugs.webkit.org/show_bug.cgi?id=148318
+
+        Reviewed by Saam Barati.
+
+        Tiny change to support of the inferred name in arrow function
+ 
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createAssignResolve):
+
 2015-09-19 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         New tests introduced in r188545 fail on 32 bit ARM
