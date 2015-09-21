@@ -1631,10 +1631,10 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(cell));
         return appendCallSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EJscCJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, JSCell* cell, GPRReg arg2)
+    JITCompiler::Call callOperation(J_JITOperation_EJscCJ operation, GPRReg result, GPRReg arg1, JSCell* cell, GPRReg arg2Tag, GPRReg arg2Payload)
     {
-        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(cell), arg2);
-        return appendCallSetResult(operation, resultPayload, resultTag);
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(cell), EABI_32BIT_DUMMY_ARG arg2Payload, arg2Tag);
+        return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_JITOperation_ESsiCI operation, GPRReg resultTag, GPRReg resultPayload, StructureStubInfo* stubInfo, GPRReg arg1, const UniquedStringImpl* uid)
     {

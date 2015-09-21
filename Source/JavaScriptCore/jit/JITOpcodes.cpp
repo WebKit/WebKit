@@ -995,8 +995,10 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
     store64(TrustedImm64(JSValue::encode(jsUndefined())), Address(callFrameRegister, sizeof(Register) * dst));
 #else
     emitLoadPayload(currentInstruction[2].u.operand, regT0);
-    if (isArrowFunction)
-        emitLoadPayload(currentInstruction[4].u.operand, regT1);
+    if (isArrowFunction) {
+        int value = currentInstruction[4].u.operand;
+        emitLoad(value, regT3, regT2);
+    }
     notUndefinedScope = branch32(NotEqual, tagFor(currentInstruction[2].u.operand), TrustedImm32(JSValue::UndefinedTag));
     emitStore(dst, jsUndefined());
 #endif
@@ -1005,7 +1007,11 @@ void JIT::emitNewFuncExprCommon(Instruction* currentInstruction)
         
     FunctionExecutable* function = m_codeBlock->functionExpr(currentInstruction[3].u.operand);
     if (isArrowFunction)
+#if USE(JSVALUE64)
         callOperation(operationNewArrowFunction, dst, regT0, function, regT1);
+#else 
+        callOperation(operationNewArrowFunction, dst, regT0, function, regT3, regT2);
+#endif
     else
         callOperation(operationNewFunction, dst, regT0, function);
     done.link(this);

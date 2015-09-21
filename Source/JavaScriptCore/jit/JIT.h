@@ -822,6 +822,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_EJZ, RegisterID, RegisterID, int32_t);
         MacroAssembler::Call callOperation(V_JITOperation_EJZJ, RegisterID, RegisterID, int32_t, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EZJ, int32_t, RegisterID, RegisterID);
+        MacroAssembler::Call callOperation(J_JITOperation_EJscCJ, int, GPRReg, JSCell*, GPRReg, GPRReg);
 #endif
 
         Jump checkStructure(RegisterID reg, Structure* structure);
