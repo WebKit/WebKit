@@ -40,9 +40,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSC::JSValue JSWorker::postMessage(JSC::ExecState* exec)
+JSC::JSValue JSWorker::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(exec, &impl());
+    return handlePostMessage(state, &impl());
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState* exec)

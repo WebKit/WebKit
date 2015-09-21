@@ -36,7 +36,7 @@ using namespace JSC;
 
 namespace WebCore {
     
-JSValue JSCustomEvent::detail(ExecState* exec) const
+JSValue JSCustomEvent::detail(ExecState& state) const
 {
     CustomEvent& event = impl();
     
@@ -45,15 +45,15 @@ JSValue JSCustomEvent::detail(ExecState* exec) const
 
     JSValue detail = event.detail().jsValue();
     
-    if (detail.isObject() && &worldForDOMObject(detail.getObject()) != &currentWorld(exec)) {
+    if (detail.isObject() && &worldForDOMObject(detail.getObject()) != &currentWorld(&state)) {
         // We need to make sure CustomEvents do not leak their detail property across isolated DOM worlds.
         // Ideally, we would check that the worlds have different privileges but that's not possible yet.
-        RefPtr<SerializedScriptValue> serializedDetail = event.trySerializeDetail(exec);
+        RefPtr<SerializedScriptValue> serializedDetail = event.trySerializeDetail(&state);
         
         if (!serializedDetail)
             return jsNull();
         
-        return serializedDetail->deserialize(exec, globalObject(), nullptr);
+        return serializedDetail->deserialize(&state, globalObject(), nullptr);
     }
     
     return detail;

@@ -176,7 +176,7 @@ void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Storage>& resu
 void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)
 {
     ArrayBufferArray arrayBuffers;
-    fillMessagePortArray(exec, value, result, arrayBuffers);
+    fillMessagePortArray(*exec, value, result, arrayBuffers);
 }
 
 #if ENABLE(VIDEO_TRACK)

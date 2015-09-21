@@ -55,23 +55,23 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSCommandLineAPIHost::inspectedObject(ExecState* exec)
+JSValue JSCommandLineAPIHost::inspectedObject(ExecState& state)
 {
     CommandLineAPIHost::InspectableObject* object = impl().inspectedObject();
     if (!object)
         return jsUndefined();
 
-    JSLockHolder lock(exec);
-    Deprecated::ScriptValue scriptValue = object->get(exec);
+    JSLockHolder lock(&state);
+    Deprecated::ScriptValue scriptValue = object->get(&state);
     if (scriptValue.hasNoValue())
         return jsUndefined();
 
     return scriptValue.jsValue();
 }
 
-static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, const EventListenerInfo& listenerInfo)
+static JSArray* getJSListenerFunctions(ExecState& state, Document* document, const EventListenerInfo& listenerInfo)
 {
-    JSArray* result = constructEmptyArray(exec, nullptr);
+    JSArray* result = constructEmptyArray(&state, nullptr);
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
         const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());
@@ -81,27 +81,27 @@ static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, cons
         }
 
         // Hide listeners from other contexts.
-        if (&jsListener->isolatedWorld() != &currentWorld(exec))
+        if (&jsListener->isolatedWorld() != &currentWorld(&state))
             continue;
 
         JSObject* function = jsListener->jsFunction(document);
         if (!function)
             continue;
 
-        JSObject* listenerEntry = constructEmptyObject(exec);
-        listenerEntry->putDirect(exec->vm(), Identifier::fromString(exec, "listener"), function);
-        listenerEntry->putDirect(exec->vm(), Identifier::fromString(exec, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
-        result->putDirectIndex(exec, outputIndex++, JSValue(listenerEntry));
+        JSObject* listenerEntry = constructEmptyObject(&state);
+        listenerEntry->putDirect(state.vm(), Identifier::fromString(&state, "listener"), function);
+        listenerEntry->putDirect(state.vm(), Identifier::fromString(&state, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
+        result->putDirectIndex(&state, outputIndex++, JSValue(listenerEntry));
     }
     return result;
 }
 
-JSValue JSCommandLineAPIHost::getEventListeners(ExecState* exec)
+JSValue JSCommandLineAPIHost::getEventListeners(ExecState& state)
 {
-    if (exec->argumentCount() < 1)
+    if (state.argumentCount() < 1)
         return jsUndefined();
 
-    JSValue value = exec->uncheckedArgument(0);
+    JSValue value = state.uncheckedArgument(0);
     if (!value.isObject() || value.isNull())
         return jsUndefined();
 
@@ -112,49 +112,49 @@ JSValue JSCommandLineAPIHost::getEventListeners(ExecState* exec)
     Vector<EventListenerInfo> listenersArray;
     impl().getEventListenersImpl(node, listenersArray);
 
-    JSObject* result = constructEmptyObject(exec);
+    JSObject* result = constructEmptyObject(&state);
     for (size_t i = 0; i < listenersArray.size(); ++i) {
-        JSArray* listeners = getJSListenerFunctions(exec, &node->document(), listenersArray[i]);
+        JSArray* listeners = getJSListenerFunctions(state, &node->document(), listenersArray[i]);
         if (!listeners->length())
             continue;
         AtomicString eventType = listenersArray[i].eventType;
-        result->putDirect(exec->vm(), Identifier::fromString(exec, eventType.impl()), JSValue(listeners));
+        result->putDirect(state.vm(), Identifier::fromString(&state, eventType.impl()), JSValue(listeners));
     }
 
     return result;
 }
 
-JSValue JSCommandLineAPIHost::inspect(ExecState* exec)
+JSValue JSCommandLineAPIHost::inspect(ExecState& state)
 {
-    if (exec->argumentCount() >= 2) {
-        Deprecated::ScriptValue object(exec->vm(), exec->uncheckedArgument(0));
-        Deprecated::ScriptValue hints(exec->vm(), exec->uncheckedArgument(1));
-        impl().inspectImpl(object.toInspectorValue(exec), hints.toInspectorValue(exec));
+    if (state.argumentCount() >= 2) {
+        Deprecated::ScriptValue object(state.vm(), state.uncheckedArgument(0));
+        Deprecated::ScriptValue hints(state.vm(), state.uncheckedArgument(1));
+        impl().inspectImpl(object.toInspectorValue(&state), hints.toInspectorValue(&state));
     }
 
     return jsUndefined();
 }
 
-JSValue JSCommandLineAPIHost::databaseId(ExecState* exec)
+JSValue JSCommandLineAPIHost::databaseId(ExecState& state)
 {
-    if (exec->argumentCount() < 1)
+    if (state.argumentCount() < 1)
         return jsUndefined();
 
-    Database* database = JSDatabase::toWrapped(exec->uncheckedArgument(0));
+    Database* database = JSDatabase::toWrapped(state.uncheckedArgument(0));
     if (database)
-        return jsStringWithCache(exec, impl().databaseIdImpl(database));
+        return jsStringWithCache(&state, impl().databaseIdImpl(database));
 
     return jsUndefined();
 }
 
-JSValue JSCommandLineAPIHost::storageId(ExecState* exec)
+JSValue JSCommandLineAPIHost::storageId(ExecState& state)
 {
-    if (exec->argumentCount() < 1)
+    if (state.argumentCount() < 1)
         return jsUndefined();
 
-    Storage* storage = JSStorage::toWrapped(exec->uncheckedArgument(0));
+    Storage* storage = JSStorage::toWrapped(state.uncheckedArgument(0));
     if (storage)
-        return jsStringWithCache(exec, impl().storageIdImpl(storage));
+        return jsStringWithCache(&state, impl().storageIdImpl(storage));
 
     return jsUndefined();
 }

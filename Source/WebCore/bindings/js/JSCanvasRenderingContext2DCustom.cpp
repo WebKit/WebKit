@@ -59,37 +59,37 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
     return CanvasStyle();
 }
 
-JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState* exec) const
+JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState& state) const
 {
-    return toJS(exec, globalObject(), impl().strokeStyle());
+    return toJS(&state, globalObject(), impl().strokeStyle());
 }
 
-void JSCanvasRenderingContext2D::setStrokeStyle(ExecState* exec, JSValue value)
-{
-    CanvasRenderingContext2D& context = impl();
-    if (value.isString()) {
-        context.setStrokeColor(asString(value)->value(exec));
-        return;
-    }
-    context.setStrokeStyle(toHTMLCanvasStyle(exec, value));
-}
-
-JSValue JSCanvasRenderingContext2D::fillStyle(ExecState* exec) const
-{
-    return toJS(exec, globalObject(), impl().fillStyle());
-}
-
-void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
+void JSCanvasRenderingContext2D::setStrokeStyle(ExecState& state, JSValue value)
 {
     CanvasRenderingContext2D& context = impl();
     if (value.isString()) {
-        context.setFillColor(asString(value)->value(exec));
+        context.setStrokeColor(asString(value)->value(&state));
         return;
     }
-    context.setFillStyle(toHTMLCanvasStyle(exec, value));
+    context.setStrokeStyle(toHTMLCanvasStyle(&state, value));
 }
 
-JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
+JSValue JSCanvasRenderingContext2D::fillStyle(ExecState& state) const
+{
+    return toJS(&state, globalObject(), impl().fillStyle());
+}
+
+void JSCanvasRenderingContext2D::setFillStyle(ExecState& state, JSValue value)
+{
+    CanvasRenderingContext2D& context = impl();
+    if (value.isString()) {
+        context.setFillColor(asString(value)->value(&state));
+        return;
+    }
+    context.setFillStyle(toHTMLCanvasStyle(&state, value));
+}
+
+JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState& state) const
 {
     const Vector<float>& dash = impl().getLineDash();
 
@@ -97,10 +97,10 @@ JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
     Vector<float>::const_iterator end = dash.end();
     for (Vector<float>::const_iterator it = dash.begin(); it != end; ++it)
         list.append(JSValue(*it));
-    return constructArray(exec, 0, globalObject(), list);
+    return constructArray(&state, 0, globalObject(), list);
 }
 
-void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue value)
+void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState& state, JSValue value)
 {
     if (!isJSArray(value))
         return;
@@ -108,7 +108,7 @@ void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue valu
     Vector<float> dash;
     JSArray* valueArray = asArray(value);
     for (unsigned i = 0; i < valueArray->length(); ++i) {
-        float elem = valueArray->getIndex(exec, i).toFloat(exec);
+        float elem = valueArray->getIndex(&state, i).toFloat(&state);
         if (elem <= 0 || !std::isfinite(elem))
             return;
 

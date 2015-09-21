@@ -96,21 +96,21 @@ static RefPtr<PositionOptions> createPositionOptions(ExecState* exec, JSValue va
     return options;
 }
 
-JSValue JSGeolocation::getCurrentPosition(ExecState* exec)
+JSValue JSGeolocation::getCurrentPosition(ExecState& state)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(exec, globalObject(), exec->argument(0));
-    if (exec->hadException())
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
+    if (state.hadException())
         return jsUndefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(exec, globalObject(), exec->argument(1), CallbackAllowUndefined | CallbackAllowNull);
-    if (exec->hadException())
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
+    if (state.hadException())
         return jsUndefined();
 
-    RefPtr<PositionOptions> positionOptions = createPositionOptions(exec, exec->argument(2));
-    if (exec->hadException())
+    RefPtr<PositionOptions> positionOptions = createPositionOptions(&state, state.argument(2));
+    if (state.hadException())
         return jsUndefined();
     ASSERT(positionOptions);
 
@@ -118,21 +118,21 @@ JSValue JSGeolocation::getCurrentPosition(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSGeolocation::watchPosition(ExecState* exec)
+JSValue JSGeolocation::watchPosition(ExecState& state)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(exec, globalObject(), exec->argument(0));
-    if (exec->hadException())
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(&state, globalObject(), state.argument(0));
+    if (state.hadException())
         return jsUndefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(exec, globalObject(), exec->argument(1), CallbackAllowUndefined | CallbackAllowNull);
-    if (exec->hadException())
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(&state, globalObject(), state.argument(1), CallbackAllowUndefined | CallbackAllowNull);
+    if (state.hadException())
         return jsUndefined();
 
-    RefPtr<PositionOptions> positionOptions = createPositionOptions(exec, exec->argument(2));
-    if (exec->hadException())
+    RefPtr<PositionOptions> positionOptions = createPositionOptions(&state, state.argument(2));
+    if (state.hadException())
         return jsUndefined();
     ASSERT(positionOptions);
 

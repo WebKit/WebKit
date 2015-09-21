@@ -100,33 +100,33 @@ JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Docu
     return document ? createNewDocumentWrapper(*state, *globalObject, *document) : jsNull();
 }
 
-JSValue JSDocument::prepend(ExecState* state)
+JSValue JSDocument::prepend(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().prepend(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().prepend(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSDocument::append(ExecState* state)
+JSValue JSDocument::append(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().append(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().append(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
 #if ENABLE(TOUCH_EVENTS)
-JSValue JSDocument::createTouchList(ExecState* exec)
+JSValue JSDocument::createTouchList(ExecState& state)
 {
     RefPtr<TouchList> touchList = TouchList::create();
 
-    for (size_t i = 0; i < exec->argumentCount(); i++)
-        touchList->append(JSTouch::toWrapped(exec->argument(i)));
+    for (size_t i = 0; i < state.argumentCount(); i++)
+        touchList->append(JSTouch::toWrapped(state.argument(i)));
 
-    return toJS(exec, globalObject(), touchList.release());
+    return toJS(&state, globalObject(), touchList.release());
 }
 #endif
 

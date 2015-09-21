@@ -60,24 +60,24 @@ public:
 
     // Custom attributes
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue implementsStr3(JSC::ExecState*) const;
+    JSC::JSValue implementsStr3(JSC::ExecState&) const;
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    void setImplementsStr3(JSC::ExecState*, JSC::JSValue);
+    void setImplementsStr3(JSC::ExecState&, JSC::JSValue);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    JSC::JSValue supplementalStr3(JSC::ExecState*) const;
+    JSC::JSValue supplementalStr3(JSC::ExecState&) const;
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    void setSupplementalStr3(JSC::ExecState*, JSC::JSValue);
+    void setSupplementalStr3(JSC::ExecState&, JSC::JSValue);
 #endif
 
     // Custom functions
 #if ENABLE(Condition22) || ENABLE(Condition23)
-    JSC::JSValue implementsMethod3(JSC::ExecState*);
+    JSC::JSValue implementsMethod3(JSC::ExecState&);
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    JSC::JSValue supplementalMethod3(JSC::ExecState*);
+    JSC::JSValue supplementalMethod3(JSC::ExecState&);
 #endif
     TestInterface& impl() const { return *m_impl; }
     void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }

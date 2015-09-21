@@ -34,20 +34,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSDocumentFragment::prepend(ExecState* state)
+JSValue JSDocumentFragment::prepend(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().prepend(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().prepend(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSDocumentFragment::append(ExecState* state)
+JSValue JSDocumentFragment::append(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().append(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().append(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }

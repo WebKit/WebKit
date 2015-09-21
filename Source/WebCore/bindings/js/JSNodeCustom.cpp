@@ -113,43 +113,43 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisit
     return isReachableFromDOM(jsNode.impl(), visitor);
 }
 
-JSValue JSNode::insertBefore(ExecState* exec)
+JSValue JSNode::insertBefore(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().insertBefore(JSNode::toWrapped(exec->argument(0)), JSNode::toWrapped(exec->argument(1)), ec);
-    setDOMException(exec, ec);
+    bool ok = impl().insertBefore(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
+    setDOMException(&state, ec);
     if (ok)
-        return exec->argument(0);
+        return state.argument(0);
     return jsNull();
 }
 
-JSValue JSNode::replaceChild(ExecState* exec)
+JSValue JSNode::replaceChild(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().replaceChild(JSNode::toWrapped(exec->argument(0)), JSNode::toWrapped(exec->argument(1)), ec);
-    setDOMException(exec, ec);
+    bool ok = impl().replaceChild(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
+    setDOMException(&state, ec);
     if (ok)
-        return exec->argument(1);
+        return state.argument(1);
     return jsNull();
 }
 
-JSValue JSNode::removeChild(ExecState* exec)
+JSValue JSNode::removeChild(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().removeChild(JSNode::toWrapped(exec->argument(0)), ec);
-    setDOMException(exec, ec);
+    bool ok = impl().removeChild(JSNode::toWrapped(state.argument(0)), ec);
+    setDOMException(&state, ec);
     if (ok)
-        return exec->argument(0);
+        return state.argument(0);
     return jsNull();
 }
 
-JSValue JSNode::appendChild(ExecState* exec)
+JSValue JSNode::appendChild(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().appendChild(JSNode::toWrapped(exec->argument(0)), ec);
-    setDOMException(exec, ec);
+    bool ok = impl().appendChild(JSNode::toWrapped(state.argument(0)), ec);
+    setDOMException(&state, ec);
     if (ok)
-        return exec->argument(0);
+        return state.argument(0);
     return jsNull();
 }
 

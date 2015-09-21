@@ -33,29 +33,29 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSDocumentType::before(ExecState* state)
+JSValue JSDocumentType::before(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().before(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().before(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSDocumentType::after(ExecState* state)
+JSValue JSDocumentType::after(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().after(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().after(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSDocumentType::replaceWith(ExecState* state)
+JSValue JSDocumentType::replaceWith(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().replaceWith(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().replaceWith(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }

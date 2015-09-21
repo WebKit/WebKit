@@ -55,18 +55,18 @@ EncodedJSValue JSC_HOST_CALL constructJSDOMFormData(ExecState* exec)
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), domFormData.get())));
 }
 
-JSValue JSDOMFormData::append(ExecState* exec)
+JSValue JSDOMFormData::append(ExecState& state)
 {
-    if (exec->argumentCount() >= 2) {
-        String name = exec->argument(0).toString(exec)->value(exec);
-        JSValue value = exec->argument(1);
+    if (state.argumentCount() >= 2) {
+        String name = state.argument(0).toString(&state)->value(&state);
+        JSValue value = state.argument(1);
         if (value.inherits(JSBlob::info())) {
             String filename;
-            if (exec->argumentCount() >= 3 && !exec->argument(2).isUndefinedOrNull())
-                filename = exec->argument(2).toString(exec)->value(exec);
+            if (state.argumentCount() >= 3 && !state.argument(2).isUndefinedOrNull())
+                filename = state.argument(2).toString(&state)->value(&state);
             impl().append(name, JSBlob::toWrapped(value), filename);
         } else
-            impl().append(name, value.toString(exec)->value(exec));
+            impl().append(name, value.toString(&state)->value(&state));
     }
 
     return jsUndefined();

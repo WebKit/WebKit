@@ -43,9 +43,9 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSHTMLTemplateElement::content(ExecState* exec) const
+JSValue JSHTMLTemplateElement::content(ExecState& state) const
 {
-    JSLockHolder lock(exec);
+    JSLockHolder lock(&state);
 
     DocumentFragment* content = impl().content();
 

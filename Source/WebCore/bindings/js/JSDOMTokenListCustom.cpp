@@ -34,23 +34,23 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSDOMTokenList::toggle(ExecState* state)
+JSValue JSDOMTokenList::toggle(ExecState& state)
 {
-    if (UNLIKELY(state->argumentCount() < 1))
-        return state->vm().throwException(state, createNotEnoughArgumentsError(state));
+    if (UNLIKELY(state.argumentCount() < 1))
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
 
     ExceptionCode ec = 0;
-    String token = state->argument(0).toString(state)->value(state);
-    if (UNLIKELY(state->hadException()))
+    String token = state.argument(0).toString(&state)->value(&state);
+    if (UNLIKELY(state.hadException()))
         return jsUndefined();
 
     // toggle() needs to be able to distinguish undefined/missing from the false value for the 'force' parameter.
-    Optional<bool> force = state->argument(1).isUndefined() ? Nullopt : Optional<bool>(state->uncheckedArgument(1).toBoolean(state));
-    if (UNLIKELY(state->hadException()))
+    Optional<bool> force = state.argument(1).isUndefined() ? Nullopt : Optional<bool>(state.uncheckedArgument(1).toBoolean(&state));
+    if (UNLIKELY(state.hadException()))
         return jsUndefined();
     JSValue result = jsBoolean(impl().toggle(token, force, ec));
 
-    setDOMException(state, ec);
+    setDOMException(&state, ec);
     return result;
 }
 

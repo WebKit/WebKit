@@ -36,13 +36,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSTrackEvent::track(ExecState* exec) const
+JSValue JSTrackEvent::track(ExecState& state) const
 {
     TrackBase* track = impl().track();
     if (!track)
         return jsNull();
 
-    return toJS(exec, globalObject(), track);
+    return toJS(&state, globalObject(), track);
 }
 
 } // namespace WebCore

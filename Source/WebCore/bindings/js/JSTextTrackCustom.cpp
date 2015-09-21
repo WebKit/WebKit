@@ -41,28 +41,28 @@ void JSTextTrack::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&impl()));
 }
 
-void JSTextTrack::setKind(ExecState* exec, JSValue value)
+void JSTextTrack::setKind(ExecState& state, JSValue value)
 {
 #if ENABLE(MEDIA_SOURCE)
-    auto& string = value.toString(exec)->value(exec);
-    if (exec->hadException())
+    auto& string = value.toString(&state)->value(&state);
+    if (state.hadException())
         return;
     impl().setKind(string);
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(value);
 #endif
 }
 
-void JSTextTrack::setLanguage(ExecState* exec, JSValue value)
+void JSTextTrack::setLanguage(ExecState& state, JSValue value)
 {
 #if ENABLE(MEDIA_SOURCE)
-    auto& string = value.toString(exec)->value(exec);
-    if (exec->hadException())
+    auto& string = value.toString(&state)->value(&state);
+    if (state.hadException())
         return;
     impl().setLanguage(string);
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
     UNUSED_PARAM(value);
 #endif
 }

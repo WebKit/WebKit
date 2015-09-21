@@ -67,47 +67,47 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Element* e
     return wrapper;    
 }
 
-JSValue JSElement::before(ExecState* state)
+JSValue JSElement::before(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().before(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().before(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSElement::after(ExecState* state)
+JSValue JSElement::after(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().after(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().after(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSElement::replaceWith(ExecState* state)
+JSValue JSElement::replaceWith(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().replaceWith(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().replaceWith(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSElement::prepend(ExecState* state)
+JSValue JSElement::prepend(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().prepend(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().prepend(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }
 
-JSValue JSElement::append(ExecState* state)
+JSValue JSElement::append(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().append(toNodeOrStringVector(*state), ec);
-    setDOMException(state, ec);
+    impl().append(toNodeOrStringVector(state), ec);
+    setDOMException(&state, ec);
 
     return jsUndefined();
 }

@@ -91,16 +91,16 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
 }
 #endif
 
-JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
+JSValue JSInspectorFrontendHost::showContextMenu(ExecState& state)
 {
 #if ENABLE(CONTEXT_MENUS)
-    if (exec->argumentCount() < 2)
+    if (state.argumentCount() < 2)
         return jsUndefined();
-    Event* event = JSEvent::toWrapped(exec->argument(0));
+    Event* event = JSEvent::toWrapped(state.argument(0));
 
-    JSArray* array = asArray(exec->argument(1));
+    JSArray* array = asArray(state.argument(1));
     ContextMenu menu;
-    populateContextMenuItems(exec, array, menu);
+    populateContextMenuItems(&state, array, menu);
 
 #if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
     Vector<ContextMenuItem> items = contextMenuItemVector(menu.platformDescription());
@@ -109,7 +109,7 @@ JSValue JSInspectorFrontendHost::showContextMenu(ExecState* exec)
 #endif
     impl().showContextMenu(event, items);
 #else
-    UNUSED_PARAM(exec);
+    UNUSED_PARAM(state);
 #endif
     return jsUndefined();
 }

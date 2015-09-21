@@ -42,41 +42,41 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
+JSValue JSNavigator::webkitGetUserMedia(ExecState& state)
 {
-    if (exec->argumentCount() < 3) {
-        throwVMError(exec, createNotEnoughArgumentsError(exec));
+    if (state.argumentCount() < 3) {
+        throwVMError(&state, createNotEnoughArgumentsError(&state));
         return jsUndefined();
     }
 
-    Dictionary options(exec, exec->argument(0));
-    if (exec->hadException())
+    Dictionary options(&state, state.argument(0));
+    if (state.hadException())
         return jsUndefined();
 
     if (!options.isObject()) {
-        throwVMError(exec, createTypeError(exec, "First argument of webkitGetUserMedia must be a valid Dictionary"));
+        throwVMError(&state, createTypeError(&state, "First argument of webkitGetUserMedia must be a valid Dictionary"));
         return jsUndefined();
     }
 
-    if (!exec->argument(1).isFunction()) {
-        throwVMTypeError(exec, "Argument 2 ('successCallback') to Navigator.webkitGetUserMedia must be a function");
+    if (!state.argument(1).isFunction()) {
+        throwVMTypeError(&state, "Argument 2 ('successCallback') to Navigator.webkitGetUserMedia must be a function");
         return jsUndefined();
     }
 
-    if (!exec->argument(2).isFunction()) {
-        throwVMTypeError(exec, "Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function");
+    if (!state.argument(2).isFunction()) {
+        throwVMTypeError(&state, "Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function");
         return jsUndefined();
     }
 
     if (!impl().frame()) {
-        setDOMException(exec, NOT_SUPPORTED_ERR);
+        setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
 
     // We do not need to protect the context (i.e. document) here as UserMediaRequest is observing context destruction and will check validity before resolving/rejecting promise.
     Document* document = impl().frame()->document();
 
-    RefPtr<NavigatorUserMediaSuccessCallback> successCallback = JSNavigatorUserMediaSuccessCallback::create(asObject(exec->uncheckedArgument(1)), globalObject());
+    RefPtr<NavigatorUserMediaSuccessCallback> successCallback = JSNavigatorUserMediaSuccessCallback::create(asObject(state.uncheckedArgument(1)), globalObject());
     auto resolveCallback = [successCallback, document](const RefPtr<MediaStream>& stream) mutable {
         RefPtr<MediaStream> protectedStream = stream;
         document->postTask([successCallback, protectedStream](ScriptExecutionContext&) {
@@ -84,7 +84,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
         });
     };
 
-    RefPtr<NavigatorUserMediaErrorCallback> errorCallback = JSNavigatorUserMediaErrorCallback::create(asObject(exec->uncheckedArgument(2)), globalObject());
+    RefPtr<NavigatorUserMediaErrorCallback> errorCallback = JSNavigatorUserMediaErrorCallback::create(asObject(state.uncheckedArgument(2)), globalObject());
     auto rejectCallback = [errorCallback, document](const RefPtr<NavigatorUserMediaError>& error) mutable {
         RefPtr<NavigatorUserMediaError> protectedError = error;
         document->postTask([errorCallback, protectedError](ScriptExecutionContext&) {
@@ -94,7 +94,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
 
     ExceptionCode ec = 0;
     UserMediaRequest::start(document, options, MediaDevices::Promise(WTF::move(resolveCallback), WTF::move(rejectCallback)), ec);
-    setDOMException(exec, ec);
+    setDOMException(&state, ec);
     return jsUndefined();
 }
 

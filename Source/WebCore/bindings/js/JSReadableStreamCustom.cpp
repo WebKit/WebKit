@@ -47,16 +47,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSReadableStream::pipeTo(ExecState* exec)
+JSValue JSReadableStream::pipeTo(ExecState& state)
 {
-    JSValue error = createError(exec, ASCIILiteral("pipeTo is not implemented"));
-    return exec->vm().throwException(exec, error);
+    JSValue error = createError(&state, ASCIILiteral("pipeTo is not implemented"));
+    return state.vm().throwException(&state, error);
 }
 
-JSValue JSReadableStream::pipeThrough(ExecState* exec)
+JSValue JSReadableStream::pipeThrough(ExecState& state)
 {
-    JSValue error = createError(exec, ASCIILiteral("pipeThrough is not implemented"));
-    return exec->vm().throwException(exec, error);
+    JSValue error = createError(&state, ASCIILiteral("pipeThrough is not implemented"));
+    return state.vm().throwException(&state, error);
 }
 
 } // namespace WebCore

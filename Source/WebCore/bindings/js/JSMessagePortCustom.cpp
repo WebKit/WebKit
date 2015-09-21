@@ -52,12 +52,12 @@ void JSMessagePort::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(port);
 }
 
-JSC::JSValue JSMessagePort::postMessage(JSC::ExecState* exec)
+JSC::JSValue JSMessagePort::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(exec, &impl());
+    return handlePostMessage(state, &impl());
 }
 
-void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortArray& portArray, ArrayBufferArray& arrayBuffers)
+void fillMessagePortArray(JSC::ExecState& state, JSC::JSValue value, MessagePortArray& portArray, ArrayBufferArray& arrayBuffers)
 {
     // Convert from the passed-in JS array-like object to a MessagePortArray.
     // Also validates the elements per sections 4.1.13 and 4.1.15 of the WebIDL spec and section 8.3.3 of the HTML5 spec.
@@ -69,17 +69,17 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
 
     // Validation of sequence types, per WebIDL spec 4.1.13.
     unsigned length = 0;
-    JSObject* object = toJSSequence(exec, value, length);
-    if (exec->hadException())
+    JSObject* object = toJSSequence(&state, value, length);
+    if (state.hadException())
         return;
 
     for (unsigned i = 0 ; i < length; ++i) {
-        JSValue value = object->get(exec, i);
-        if (exec->hadException())
+        JSValue value = object->get(&state, i);
+        if (state.hadException())
             return;
         // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (value.isUndefinedOrNull()) {
-            setDOMException(exec, INVALID_STATE_ERR);
+            setDOMException(&state, INVALID_STATE_ERR);
             return;
         }
 
@@ -88,7 +88,7 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
         if (port) {
             // Check for duplicate ports.
             if (portArray.contains(port)) {
-                setDOMException(exec, INVALID_STATE_ERR);
+                setDOMException(&state, INVALID_STATE_ERR);
                 return;
             }
             portArray.append(port.release());
@@ -97,7 +97,7 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
             if (arrayBuffer)
                 arrayBuffers.append(arrayBuffer);
             else {
-                throwTypeError(exec);
+                throwTypeError(&state);
                 return;
             }
         }

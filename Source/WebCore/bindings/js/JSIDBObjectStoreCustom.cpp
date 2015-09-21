@@ -43,42 +43,42 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSIDBObjectStore::createIndex(ExecState* exec)
+JSValue JSIDBObjectStore::createIndex(ExecState& state)
 {
-    ScriptExecutionContext* context = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    ScriptExecutionContext* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
-        return exec->vm().throwException(exec, createReferenceError(exec, "IDBObjectStore script execution context is unavailable"));
+        return state.vm().throwException(&state, createReferenceError(&state, "IDBObjectStore script &stateution context is unavailable"));
 
-    if (exec->argumentCount() < 2)
-        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
+    if (state.argumentCount() < 2)
+        return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
 
-    String name = exec->argument(0).toString(exec)->value(exec);
-    if (exec->hadException())
+    String name = state.argument(0).toString(&state)->value(&state);
+    if (state.hadException())
         return jsUndefined();
 
-    IDBKeyPath keyPath = idbKeyPathFromValue(exec, exec->argument(1));
-    if (exec->hadException())
+    IDBKeyPath keyPath = idbKeyPathFromValue(&state, state.argument(1));
+    if (state.hadException())
         return jsUndefined();
 
-    JSValue optionsValue = exec->argument(2);
+    JSValue optionsValue = state.argument(2);
     if (!optionsValue.isUndefinedOrNull() && !optionsValue.isObject())
-        return throwTypeError(exec, "Not an object.");
+        return throwTypeError(&state, "Not an object.");
 
     bool unique = false;
     bool multiEntry = false;
     if (!optionsValue.isUndefinedOrNull()) {
-        unique = optionsValue.get(exec, Identifier::fromString(exec, "unique")).toBoolean(exec);
-        if (exec->hadException())
+        unique = optionsValue.get(&state, Identifier::fromString(&state, "unique")).toBoolean(&state);
+        if (state.hadException())
             return jsUndefined();
 
-        multiEntry = optionsValue.get(exec, Identifier::fromString(exec, "multiEntry")).toBoolean(exec);
-        if (exec->hadException())
+        multiEntry = optionsValue.get(&state, Identifier::fromString(&state, "multiEntry")).toBoolean(&state);
+        if (state.hadException())
             return jsUndefined();
     }
 
     ExceptionCode ec = 0;
-    JSValue result = toJS(exec, globalObject(), impl().createIndex(context, name, keyPath, unique, multiEntry, ec).get());
-    setDOMException(exec, ec);
+    JSValue result = toJS(&state, globalObject(), impl().createIndex(context, name, keyPath, unique, multiEntry, ec).get());
+    setDOMException(&state, ec);
     return result;
 }
 

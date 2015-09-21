@@ -41,22 +41,22 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* imp, const String& value)
+static inline bool allowSettingJavascriptURL(ExecState& state, HTMLFrameElement* imp, const String& value)
 {
     if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Document* contentDocument = imp->contentDocument();
-        if (contentDocument && !shouldAllowAccessToNode(exec, contentDocument))
+        if (contentDocument && !shouldAllowAccessToNode(&state, contentDocument))
             return false;
     }
     return true;
 }
 
-void JSHTMLFrameElement::setLocation(ExecState* exec, JSValue value)
+void JSHTMLFrameElement::setLocation(ExecState& state, JSValue value)
 {
     HTMLFrameElement& imp = impl();
-    String locationValue = valueToStringWithNullCheck(exec, value);
+    String locationValue = valueToStringWithNullCheck(&state, value);
 
-    if (!allowSettingJavascriptURL(exec, &imp, locationValue))
+    if (!allowSettingJavascriptURL(state, &imp, locationValue))
         return;
 
     imp.setLocation(locationValue);

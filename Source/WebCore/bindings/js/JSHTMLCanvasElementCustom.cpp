@@ -44,14 +44,14 @@ using namespace JSC;
 namespace WebCore {
 
 #if ENABLE(WEBGL)
-static void get3DContextAttributes(ExecState* exec, RefPtr<CanvasContextAttributes>& attrs)
+static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttributes>& attrs)
 {
-    JSValue initializerValue = exec->argument(1);
+    JSValue initializerValue = state.argument(1);
     if (initializerValue.isUndefinedOrNull())
         return;
     
-    JSObject* initializerObject = initializerValue.toObject(exec);
-    JSDictionary dictionary(exec, initializerObject);
+    JSObject* initializerObject = initializerValue.toObject(&state);
+    JSDictionary dictionary(&state, initializerObject);
     
     GraphicsContext3D::Attributes graphicsAttrs;
     
@@ -66,16 +66,16 @@ static void get3DContextAttributes(ExecState* exec, RefPtr<CanvasContextAttribut
 }
 #endif
 
-JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
+JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 {
     HTMLCanvasElement& canvas = impl();
-    const String& contextId = exec->argument(0).toString(exec)->value(exec);
+    const String& contextId = state.argument(0).toString(&state)->value(&state);
     
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::is3dType(contextId)) {
-        get3DContextAttributes(exec, attrs);
-        if (exec->hadException())
+        get3DContextAttributes(state, attrs);
+        if (state.hadException())
             return jsUndefined();
     }
 #endif
@@ -83,23 +83,23 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     CanvasRenderingContext* context = canvas.getContext(contextId, attrs.get());
     if (!context)
         return jsNull();
-    return toJS(exec, globalObject(), WTF::getPtr(context));
+    return toJS(&state, globalObject(), WTF::getPtr(context));
 }
 
-JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)
+JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState& state)
 {
     HTMLCanvasElement& canvas = impl();
-    if (!exec->argumentCount())
+    if (!state.argumentCount())
         return jsBoolean(false);
-    const String& contextId = exec->uncheckedArgument(0).toString(exec)->value(exec);
-    if (exec->hadException())
+    const String& contextId = state.uncheckedArgument(0).toString(&state)->value(&state);
+    if (state.hadException())
         return jsUndefined();
     
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::is3dType(contextId)) {
-        get3DContextAttributes(exec, attrs);
-        if (exec->hadException())
+        get3DContextAttributes(state, attrs);
+        if (state.hadException())
             return jsUndefined();
     }
 #endif
@@ -107,24 +107,24 @@ JSValue JSHTMLCanvasElement::probablySupportsContext(ExecState* exec)
     return jsBoolean(canvas.probablySupportsContext(contextId, attrs.get()));
 }
 
-JSValue JSHTMLCanvasElement::toDataURL(ExecState* exec)
+JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)
 {
     HTMLCanvasElement& canvas = impl();
     ExceptionCode ec = 0;
 
-    const String& type = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
+    const String& type = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
     double quality;
     double* qualityPtr = 0;
-    if (exec->argumentCount() > 1) {
-        JSValue v = exec->uncheckedArgument(1);
+    if (state.argumentCount() > 1) {
+        JSValue v = state.uncheckedArgument(1);
         if (v.isNumber()) {
-            quality = v.toNumber(exec);
+            quality = v.toNumber(&state);
             qualityPtr = &quality;
         }
     }
 
-    JSValue result = JSC::jsString(exec, canvas.toDataURL(type, qualityPtr, ec));
-    setDOMException(exec, ec);
+    JSValue result = JSC::jsString(&state, canvas.toDataURL(type, qualityPtr, ec));
+    setDOMException(&state, ec);
     return result;
 }
 

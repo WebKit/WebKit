@@ -1302,7 +1302,7 @@ EncodedJSValue jsTestObjCustomAttr(ExecState* state, JSObject* slotBase, Encoded
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestObj*>(slotBase);
-    return JSValue::encode(castedThis->customAttr(state));
+    return JSValue::encode(castedThis->customAttr(*state));
 }
 
 
@@ -2573,7 +2573,7 @@ void setJSTestObjCustomAttr(ExecState* state, JSObject* baseObject, EncodedJSVal
     auto* castedThis = jsCast<JSTestObj*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(state);
-    castedThis->setCustomAttr(state, value);
+    castedThis->setCustomAttr(*state, value);
 }
 
 
@@ -3487,7 +3487,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* s
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "customMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    return JSValue::encode(castedThis->customMethod(state));
+    return JSValue::encode(castedThis->customMethod(*state));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(ExecState* state)
@@ -3497,7 +3497,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(Exec
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestObj", "customMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    return JSValue::encode(castedThis->customMethodWithArgs(state));
+    return JSValue::encode(castedThis->customMethodWithArgs(*state));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* state)

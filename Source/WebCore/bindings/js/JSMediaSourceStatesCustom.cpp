@@ -35,7 +35,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSMediaSourceStates::width(ExecState*) const
+JSValue JSMediaSourceStates::width(ExecState&) const
 {
     if (!impl().hasVideoSource())
         return jsUndefined();
@@ -43,7 +43,7 @@ JSValue JSMediaSourceStates::width(ExecState*) const
     return jsNumber(impl().width());
 }
 
-JSValue JSMediaSourceStates::height(ExecState*) const
+JSValue JSMediaSourceStates::height(ExecState&) const
 {
     if (!impl().hasVideoSource())
         return jsUndefined();
@@ -51,7 +51,7 @@ JSValue JSMediaSourceStates::height(ExecState*) const
     return jsNumber(impl().height());
 }
 
-JSValue JSMediaSourceStates::frameRate(ExecState*) const
+JSValue JSMediaSourceStates::frameRate(ExecState&) const
 {
     if (!impl().hasVideoSource())
         return jsUndefined();
@@ -59,7 +59,7 @@ JSValue JSMediaSourceStates::frameRate(ExecState*) const
     return jsNumber(impl().frameRate());
 }
 
-JSValue JSMediaSourceStates::aspectRatio(ExecState*) const
+JSValue JSMediaSourceStates::aspectRatio(ExecState&) const
 {
     if (!impl().hasVideoSource())
         return jsUndefined();
@@ -67,7 +67,7 @@ JSValue JSMediaSourceStates::aspectRatio(ExecState*) const
     return jsNumber(impl().aspectRatio());
 }
 
-JSValue JSMediaSourceStates::facingMode(ExecState* exec) const
+JSValue JSMediaSourceStates::facingMode(ExecState& state) const
 {
     if (!impl().hasVideoSource())
         return jsUndefined();
@@ -76,10 +76,10 @@ JSValue JSMediaSourceStates::facingMode(ExecState* exec) const
     if (mode.isEmpty())
         return jsUndefined();
     
-    return jsStringWithCache(exec, impl().facingMode());
+    return jsStringWithCache(&state, impl().facingMode());
 }
 
-JSValue JSMediaSourceStates::volume(ExecState*) const
+JSValue JSMediaSourceStates::volume(ExecState&) const
 {
     if (impl().hasVideoSource())
         return jsUndefined();

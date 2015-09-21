@@ -47,11 +47,11 @@ bool JSHTMLOptionsCollection::nameGetter(ExecState* exec, PropertyName propertyN
     return true;
 }
 
-void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
+void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
 {
     ExceptionCode ec = 0;
     unsigned newLength = 0;
-    double lengthValue = value.toNumber(exec);
+    double lengthValue = value.toNumber(&state);
     if (!std::isnan(lengthValue) && !std::isinf(lengthValue)) {
         if (lengthValue < 0.0)
             ec = INDEX_SIZE_ERR;
@@ -62,7 +62,7 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
     }
     if (!ec)
         impl().setLength(newLength, ec);
-    setDOMException(exec, ec);
+    setDOMException(&state, ec);
 }
 
 void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
@@ -70,14 +70,14 @@ void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSVal
     selectIndexSetter(&impl().selectElement(), exec, index, value);
 }
 
-JSValue JSHTMLOptionsCollection::remove(ExecState* exec)
+JSValue JSHTMLOptionsCollection::remove(ExecState& state)
 {
     // The argument can be an HTMLOptionElement or an index.
-    JSValue argument = exec->argument(0);
+    JSValue argument = state.argument(0);
     if (HTMLOptionElement* option = JSHTMLOptionElement::toWrapped(argument))
         impl().remove(option);
     else
-        impl().remove(argument.toInt32(exec));
+        impl().remove(argument.toInt32(&state));
     return jsUndefined();
 }
 

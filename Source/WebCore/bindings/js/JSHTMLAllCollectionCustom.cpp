@@ -36,18 +36,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue namedItems(ExecState* exec, JSHTMLAllCollection* collection, PropertyName propertyName)
+static JSValue namedItems(ExecState& state, JSHTMLAllCollection* collection, PropertyName propertyName)
 {
     Vector<Ref<Element>> namedItems = collection->impl().namedItems(propertyNameToAtomicString(propertyName));
 
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
-        return toJS(exec, collection->globalObject(), namedItems[0].ptr());
+        return toJS(&state, collection->globalObject(), namedItems[0].ptr());
 
     // FIXME: HTML5 specification says this should be a HTMLCollection.
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#htmlallcollection
-    return toJS(exec, collection->globalObject(), StaticElementList::adopt(namedItems).get());
+    return toJS(&state, collection->globalObject(), StaticElementList::adopt(namedItems).get());
 }
 
 // HTMLAllCollections are strange objects, they support both get and call.
@@ -69,7 +69,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index.value())));
 
         // Support for document.images('<name>') etc.
-        return JSValue::encode(namedItems(exec, jsCollection, Identifier::fromString(exec, string)));
+        return JSValue::encode(namedItems(*exec, jsCollection, Identifier::fromString(exec, string)));
     }
 
     // The second arg, if set, is the index of the item we want
@@ -88,9 +88,9 @@ CallType JSHTMLAllCollection::getCallData(JSCell*, CallData& callData)
     return CallTypeHost;
 }
 
-bool JSHTMLAllCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
+bool JSHTMLAllCollection::nameGetter(ExecState* state, PropertyName propertyName, JSValue& value)
 {
-    JSValue items = namedItems(exec, this, propertyName);
+    JSValue items = namedItems(*state, this, propertyName);
     if (items.isUndefined())
         return false;
 
@@ -98,16 +98,16 @@ bool JSHTMLAllCollection::nameGetter(ExecState* exec, PropertyName propertyName,
     return true;
 }
 
-JSValue JSHTMLAllCollection::item(ExecState* exec)
+JSValue JSHTMLAllCollection::item(ExecState& state)
 {
-    if (Optional<uint32_t> index = parseIndex(*exec->argument(0).toString(exec)->value(exec).impl()))
-        return toJS(exec, globalObject(), impl().item(index.value()));
-    return namedItems(exec, this, Identifier::fromString(exec, exec->argument(0).toString(exec)->value(exec)));
+    if (Optional<uint32_t> index = parseIndex(*state.argument(0).toString(&state)->value(&state).impl()))
+        return toJS(&state, globalObject(), impl().item(index.value()));
+    return namedItems(state, this, Identifier::fromString(&state, state.argument(0).toString(&state)->value(&state)));
 }
 
-JSValue JSHTMLAllCollection::namedItem(ExecState* exec)
+JSValue JSHTMLAllCollection::namedItem(ExecState& state)
 {
-    JSValue value = namedItems(exec, this, Identifier::fromString(exec, exec->argument(0).toString(exec)->value(exec)));
+    JSValue value = namedItems(state, this, Identifier::fromString(&state, state.argument(0).toString(&state)->value(&state)));
     return value.isUndefined() ? jsNull() : value;
 }
 

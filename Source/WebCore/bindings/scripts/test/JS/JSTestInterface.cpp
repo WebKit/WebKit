@@ -515,7 +515,7 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, JSObject* slotBas
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestInterface*>(slotBase);
-    return JSValue::encode(castedThis->implementsStr3(state));
+    return JSValue::encode(castedThis->implementsStr3(*state));
 }
 
 #endif
@@ -608,7 +608,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, JSObject* slotB
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestInterface*>(slotBase);
-    return JSValue::encode(castedThis->supplementalStr3(state));
+    return JSValue::encode(castedThis->supplementalStr3(*state));
 }
 
 #endif
@@ -704,7 +704,7 @@ void setJSTestInterfaceImplementsStr3(ExecState* state, JSObject* baseObject, En
     auto* castedThis = jsCast<JSTestInterface*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(state);
-    castedThis->setImplementsStr3(state, value);
+    castedThis->setImplementsStr3(*state, value);
 }
 
 #endif
@@ -775,7 +775,7 @@ void setJSTestInterfaceSupplementalStr3(ExecState* state, JSObject* baseObject, 
     auto* castedThis = jsCast<JSTestInterface*>(baseObject);
     UNUSED_PARAM(thisValue);
     UNUSED_PARAM(state);
-    castedThis->setSupplementalStr3(state, value);
+    castedThis->setSupplementalStr3(*state, value);
 }
 
 #endif
@@ -859,7 +859,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(E
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "implementsMethod3");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    return JSValue::encode(castedThis->implementsMethod3(state));
+    return JSValue::encode(castedThis->implementsMethod3(*state));
 }
 
 #endif
@@ -925,7 +925,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod3");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    return JSValue::encode(castedThis->supplementalMethod3(state));
+    return JSValue::encode(castedThis->supplementalMethod3(*state));
 }
 
 #endif

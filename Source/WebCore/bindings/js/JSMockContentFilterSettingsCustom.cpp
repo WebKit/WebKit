@@ -38,7 +38,7 @@ namespace WebCore {
 using Decision = MockContentFilterSettings::Decision;
 using DecisionPoint = MockContentFilterSettings::DecisionPoint;
 
-JSValue JSMockContentFilterSettings::decisionPoint(ExecState*) const
+JSValue JSMockContentFilterSettings::decisionPoint(ExecState&) const
 {
     DecisionPoint decisionPoint = impl().decisionPoint();
     switch (decisionPoint) {
@@ -55,10 +55,10 @@ JSValue JSMockContentFilterSettings::decisionPoint(ExecState*) const
     return jsUndefined();
 }
 
-void JSMockContentFilterSettings::setDecisionPoint(ExecState* exec, JSValue value)
+void JSMockContentFilterSettings::setDecisionPoint(ExecState& state, JSValue value)
 {
-    uint8_t nativeValue { toUInt8(exec, value, EnforceRange) };
-    if (exec->hadException())
+    uint8_t nativeValue { toUInt8(&state, value, EnforceRange) };
+    if (state.hadException())
         return;
 
     DecisionPoint decisionPoint { static_cast<DecisionPoint>(nativeValue) };
@@ -73,7 +73,7 @@ void JSMockContentFilterSettings::setDecisionPoint(ExecState* exec, JSValue valu
         return;
     }
 
-    throwTypeError(exec, String::format("%u is not a valid decisionPoint value.", nativeValue));
+    throwTypeError(&state, String::format("%u is not a valid decisionPoint value.", nativeValue));
 }
 
 static inline JSValue toJSValue(Decision decision)
@@ -88,10 +88,10 @@ static inline JSValue toJSValue(Decision decision)
     return jsUndefined();
 }
 
-static inline Decision toDecision(ExecState* exec, JSValue value)
+static inline Decision toDecision(ExecState& state, JSValue value)
 {
-    uint8_t nativeValue { toUInt8(exec, value, EnforceRange) };
-    if (exec->hadException())
+    uint8_t nativeValue { toUInt8(&state, value, EnforceRange) };
+    if (state.hadException())
         return Decision::Allow;
 
     Decision decision { static_cast<Decision>(nativeValue) };
@@ -101,33 +101,33 @@ static inline Decision toDecision(ExecState* exec, JSValue value)
         return decision;
     }
 
-    throwTypeError(exec, String::format("%u is not a valid decision value.", nativeValue));
+    throwTypeError(&state, String::format("%u is not a valid decision value.", nativeValue));
     return Decision::Allow;
 }
 
-JSValue JSMockContentFilterSettings::decision(ExecState*) const
+JSValue JSMockContentFilterSettings::decision(ExecState&) const
 {
     return toJSValue(impl().decision());
 }
 
-void JSMockContentFilterSettings::setDecision(ExecState* exec, JSValue value)
+void JSMockContentFilterSettings::setDecision(ExecState& state, JSValue value)
 {
-    Decision decision { toDecision(exec, value) };
-    if (exec->hadException())
+    Decision decision { toDecision(state, value) };
+    if (state.hadException())
         return;
 
     impl().setDecision(decision);
 }
 
-JSValue JSMockContentFilterSettings::unblockRequestDecision(ExecState*) const
+JSValue JSMockContentFilterSettings::unblockRequestDecision(ExecState&) const
 {
     return toJSValue(impl().unblockRequestDecision());
 }
 
-void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState* exec, JSValue value)
+void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState& state, JSValue value)
 {
-    Decision unblockRequestDecision { toDecision(exec, value) };
-    if (exec->hadException())
+    Decision unblockRequestDecision { toDecision(state, value) };
+    if (state.hadException())
         return;
 
     impl().setUnblockRequestDecision(unblockRequestDecision);

@@ -1077,12 +1077,12 @@ sub GenerateHeader
             if (HasCustomGetter($attribute->signature->extendedAttributes)) {
                 push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
                 my $methodName = $codeGenerator->WK_lcfirst($attribute->signature->name);
-                push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
+                push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState&) const;\n");
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
             if (HasCustomSetter($attribute->signature->extendedAttributes) && !IsReadonly($attribute)) {
                 push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
-                push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
+                push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState&, JSC::JSValue);\n");
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
         }
@@ -1117,7 +1117,7 @@ sub GenerateHeader
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($function->signature->name);
-            push(@headerContent, "    " . ($function->isStatic ? "static " : "") . "JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
+            push(@headerContent, "    " . ($function->isStatic ? "static " : "") . "JSC::JSValue " . $functionImplementationName . "(JSC::ExecState&);\n");
             push(@headerContent, "#endif\n") if $conditionalString;
         }
         push(@headerContent, $endAppleCopyright) if $inAppleCopyright;
@@ -2333,7 +2333,7 @@ sub GenerateImplementation
             } # attribute Nondeterministic
 
             if (HasCustomGetter($attribute->signature->extendedAttributes)) {
-                push(@implContent, "    return JSValue::encode(castedThis->$implGetterFunctionName(state));\n");
+                push(@implContent, "    return JSValue::encode(castedThis->$implGetterFunctionName(*state));\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckSecurityForNode"}) {
                 $implIncludes{"JSDOMBinding.h"} = 1;
                 push(@implContent, "    auto& impl = castedThis->impl();\n");
@@ -2618,7 +2618,7 @@ sub GenerateImplementation
             }
 
             if (HasCustomSetter($attribute->signature->extendedAttributes)) {
-                push(@implContent, "    castedThis->set$implSetterFunctionName(state, value);\n");
+                push(@implContent, "    castedThis->set$implSetterFunctionName(*state, value);\n");
             } elsif ($type eq "EventHandler") {
                 $implIncludes{"JSEventListener.h"} = 1;
                 my $eventName = EventHandlerAttributeEventName($attribute);
@@ -2874,7 +2874,7 @@ sub GenerateImplementation
                 }
 
                 if ($isCustom) {
-                    push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(state));\n");
+                    push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(*state));\n");
                 } else {
                     push(@implContent, "    auto& impl = castedThis->impl();\n");
                     if ($svgPropertyType) {

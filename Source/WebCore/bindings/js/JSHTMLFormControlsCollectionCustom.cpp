@@ -30,7 +30,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue namedItems(ExecState* exec, JSHTMLFormControlsCollection* collection, PropertyName propertyName)
+static JSValue namedItems(ExecState& state, JSHTMLFormControlsCollection* collection, PropertyName propertyName)
 {
     const AtomicString& name = propertyNameToAtomicString(propertyName);
     Vector<Ref<Element>> namedItems = collection->impl().namedItems(name);
@@ -38,15 +38,15 @@ static JSValue namedItems(ExecState* exec, JSHTMLFormControlsCollection* collect
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
-        return toJS(exec, collection->globalObject(), namedItems[0].ptr());
+        return toJS(&state, collection->globalObject(), namedItems[0].ptr());
 
     ASSERT(collection->impl().type() == FormControls);
-    return toJS(exec, collection->globalObject(), collection->impl().ownerNode().radioNodeList(name).get());
+    return toJS(&state, collection->globalObject(), collection->impl().ownerNode().radioNodeList(name).get());
 }
 
-bool JSHTMLFormControlsCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
+bool JSHTMLFormControlsCollection::nameGetter(ExecState* state, PropertyName propertyName, JSValue& value)
 {
-    auto items = namedItems(exec, this, propertyName);
+    auto items = namedItems(*state, this, propertyName);
     if (items.isUndefined())
         return false;
 
@@ -54,9 +54,9 @@ bool JSHTMLFormControlsCollection::nameGetter(ExecState* exec, PropertyName prop
     return true;
 }
 
-JSValue JSHTMLFormControlsCollection::namedItem(ExecState* exec)
+JSValue JSHTMLFormControlsCollection::namedItem(ExecState& state)
 {
-    JSValue value = namedItems(exec, this, Identifier::fromString(exec, exec->argument(0).toString(exec)->value(exec)));
+    JSValue value = namedItems(state, this, Identifier::fromString(&state, state.argument(0).toString(&state)->value(&state)));
     return value.isUndefined() ? jsNull() : value;
 }
 

@@ -36,14 +36,14 @@ using namespace JSC;
 namespace WebCore {
 
 #if ENABLE(DATACUE_VALUE)
-JSValue JSDataCue::value(ExecState* exec) const
+JSValue JSDataCue::value(ExecState& state) const
 {
-    return impl().value(exec);
+    return impl().value(&state);
 }
 
-void JSDataCue::setValue(ExecState* exec, JSValue value)
+void JSDataCue::setValue(ExecState& state, JSValue value)
 {
-    impl().setValue(exec, value);
+    impl().setValue(&state, value);
 }
 #endif
 

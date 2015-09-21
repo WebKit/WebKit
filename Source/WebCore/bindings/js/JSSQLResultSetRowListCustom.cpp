@@ -39,20 +39,20 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSQLResultSetRowList::item(ExecState* exec)
+JSValue JSSQLResultSetRowList::item(ExecState& state)
 {
     bool indexOk;
-    int index = finiteInt32Value(exec->argument(0), exec, indexOk);
+    int index = finiteInt32Value(state.argument(0), &state, indexOk);
     if (!indexOk) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
+        setDOMException(&state, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }
     if (index < 0 || (unsigned)index >= m_impl->length()) {
-        setDOMException(exec, INDEX_SIZE_ERR);
+        setDOMException(&state, INDEX_SIZE_ERR);
         return jsUndefined();
     }
 
-    JSObject* object = constructEmptyObject(exec);
+    JSObject* object = constructEmptyObject(&state);
 
     unsigned numColumns = m_impl->columnNames().size();
     unsigned valuesIndex = index * numColumns;
@@ -61,20 +61,20 @@ JSValue JSSQLResultSetRowList::item(ExecState* exec)
         JSValue jsValue;
 
         switch (value.type()) {
-            case SQLValue::StringValue:
-              jsValue = jsStringWithCache(exec, value.string());
-              break;
-          case SQLValue::NullValue:
-              jsValue = jsNull();
-              break;
-          case SQLValue::NumberValue:
-              jsValue = jsNumber(value.number());
-              break;
-          default:
-              ASSERT_NOT_REACHED();
+        case SQLValue::StringValue:
+            jsValue = jsStringWithCache(&state, value.string());
+            break;
+        case SQLValue::NullValue:
+            jsValue = jsNull();
+            break;
+        case SQLValue::NumberValue:
+            jsValue = jsNumber(value.number());
+            break;
+        default:
+            ASSERT_NOT_REACHED();
         }
 
-        object->putDirect(exec->vm(), Identifier::fromString(exec, m_impl->columnNames()[i]), jsValue, DontDelete | ReadOnly);
+        object->putDirect(state.vm(), Identifier::fromString(&state, m_impl->columnNames()[i]), jsValue, DontDelete | ReadOnly);
     }
 
     return object;
