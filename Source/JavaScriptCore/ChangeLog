@@ -1,3 +1,35 @@
+2015-09-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement call statements and call expressions of type void in WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149411
+
+        Reviewed by Mark Lam.
+
+        Call instructions in WebAssembly can be both statements and expressions.
+        This patch implements call statements. It also implements call
+        expressions of type void. The only place where call expressions of type
+        void can occur is the left-hand side of the comma (,) operator, which
+        will be implemented in a subsequent patch. The comma operator requires
+        both of its operands to be expressions.
+
+        * tests/stress/wasm-calls.js:
+        * tests/stress/wasm/calls.wasm:
+        * wasm/WASMConstants.h:
+        * wasm/WASMFunctionParser.cpp:
+        (JSC::WASMFunctionParser::parseStatement):
+        (JSC::WASMFunctionParser::parseExpression):
+        (JSC::WASMFunctionParser::parseExpressionI32):
+        (JSC::WASMFunctionParser::parseExpressionF32):
+        (JSC::WASMFunctionParser::parseExpressionF64):
+        (JSC::WASMFunctionParser::parseExpressionVoid):
+        (JSC::WASMFunctionParser::parseCallInternal):
+        (JSC::WASMFunctionParser::parseCallIndirect):
+        (JSC::WASMFunctionParser::parseCallImport):
+        * wasm/WASMFunctionParser.h:
+        * wasm/WASMReader.cpp:
+        (JSC::WASMReader::readOpExpressionVoid):
+        * wasm/WASMReader.h:
+
 2015-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should infer property types

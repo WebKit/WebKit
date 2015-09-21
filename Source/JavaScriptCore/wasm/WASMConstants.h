@@ -261,6 +261,13 @@ enum class WASMOpExpressionF64WithImmediate : uint8_t {
     NumberOfWASMOpExpressionF64WithImmediates
 };
 
+enum class WASMOpExpressionVoid : uint8_t {
+    CallInternal,
+    CallIndirect,
+    CallImport,
+    NumberOfWASMOpExpressionVoids
+};
+
 enum class WASMVariableTypes : uint8_t {
     I32 = 1 << 0,
     F32 = 1 << 1,

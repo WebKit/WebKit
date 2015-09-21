@@ -14,6 +14,7 @@ function asmModule(global, imports, buffer) {
     var imul = global.Math.imul;
     var sum = imports.sum;
     var max = imports.max;
+    var g = 0;
 
     function fibonacci(x) {
         x = x | 0;
@@ -34,6 +35,17 @@ function asmModule(global, imports, buffer) {
         x = x | 0;
         y = y | 0;
         return (imul(x, y) / (gcd(x, y) | 0)) | 0;
+    }
+
+    function setG(x) {
+        x = x | 0;
+        g = x;
+    }
+
+    function testCallStatement(x) {
+        x = x | 0;
+        setG(x);
+        return g | 0;
     }
 
     function addSubMulDiv(i, x, y) {
@@ -85,6 +97,7 @@ function asmModule(global, imports, buffer) {
         fibonacci: fibonacci,
         gcd: gcd,
         lcm: lcm,
+        testCallStatement: testCallStatement,
 
         addSubMulDiv: addSubMulDiv,
 
@@ -103,6 +116,7 @@ var module = loadWebAssembly("wasm/calls.wasm", imports);
 shouldBe(module.fibonacci(10), 89);
 shouldBe(module.gcd(15, 25), 5);
 shouldBe(module.lcm(15, 25), 75);
+shouldBe(module.testCallStatement(42), 42);
 
 shouldBe(module.addSubMulDiv(0, 6, 2), 8);
 shouldBe(module.addSubMulDiv(1, 6, 2), 4);

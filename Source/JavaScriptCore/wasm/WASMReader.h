@@ -58,6 +58,7 @@ public:
     bool readOpExpressionI32(bool& hasImmediate, WASMOpExpressionI32&, WASMOpExpressionI32WithImmediate&, uint8_t& immediate);
     bool readOpExpressionF32(bool& hasImmediate, WASMOpExpressionF32&, WASMOpExpressionF32WithImmediate&, uint8_t& immediate);
     bool readOpExpressionF64(bool& hasImmediate, WASMOpExpressionF64&, WASMOpExpressionF64WithImmediate&, uint8_t& immediate);
+    bool readOpExpressionVoid(WASMOpExpressionVoid&);
     bool readVariableTypes(bool& hasImmediate, WASMVariableTypes&, WASMVariableTypesWithImmediate&, uint8_t& immediate);
     bool readSwitchCase(WASMSwitchCase& result);
 

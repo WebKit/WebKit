@@ -203,6 +203,12 @@ bool WASMReader::readOpExpressionF64(bool& hasImmediate, WASMOpExpressionF64& op
         static_cast<uint8_t>(WASMOpExpressionF64WithImmediate::NumberOfWASMOpExpressionF64WithImmediates));
 }
 
+bool WASMReader::readOpExpressionVoid(WASMOpExpressionVoid& op)
+{
+    return readByte<WASMOpExpressionVoid>(op,
+        static_cast<uint8_t>(WASMOpExpressionVoid::NumberOfWASMOpExpressionVoids));
+}
+
 bool WASMReader::readVariableTypes(bool& hasImmediate, WASMVariableTypes& variableTypes, WASMVariableTypesWithImmediate& variableTypesWithImmediate, uint8_t& immediate)
 {
     return readOp(hasImmediate, variableTypes, variableTypesWithImmediate, immediate,
