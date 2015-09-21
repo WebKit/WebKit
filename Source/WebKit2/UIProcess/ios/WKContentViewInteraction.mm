@@ -3241,8 +3241,6 @@ static bool isAssistableInputType(InputType type)
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
 {
-    _lastPreviewStartTime = std::chrono::steady_clock::now();
-
     if (!_highlightLongPressCanClick)
         return NO;
 
@@ -3388,10 +3386,6 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_interactionStoppedFromPreviewItemController:(UIPreviewItemController *)controller
 {
-    std::chrono::milliseconds elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _lastPreviewStartTime);
-    if (elapsedTime <= 250_ms)
-        [self _attemptClickAtLocation:_positionInformation.point];
-
     [self _addDefaultGestureRecognizers];
 
     if (![_actionSheetAssistant isShowingSheet])
