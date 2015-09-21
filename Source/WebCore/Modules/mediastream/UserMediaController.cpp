@@ -46,8 +46,7 @@ UserMediaController::~UserMediaController()
 
 void provideUserMediaTo(Page* page, UserMediaClient* client)
 {
-    if (!Supplement<Page>::from(page, UserMediaController::supplementName()))
-        UserMediaController::provideTo(page, UserMediaController::supplementName(), std::make_unique<UserMediaController>(client));
+    UserMediaController::provideTo(page, UserMediaController::supplementName(), std::make_unique<UserMediaController>(client));
 }
 
 } // namespace WebCore

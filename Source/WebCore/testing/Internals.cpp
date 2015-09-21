@@ -112,6 +112,7 @@
 #include "TextIterator.h"
 #include "TreeScope.h"
 #include "TypeConversions.h"
+#include "UserMediaController.h"
 #include "ViewportArguments.h"
 #include "WebConsoleAgent.h"
 #include "WorkerThread.h"
@@ -385,6 +386,7 @@ Internals::Internals(Document* document)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter();
     enableMockRTCPeerConnectionHandler();
+    document->page()->removeSupplement(UserMediaController::supplementName());
     WebCore::provideUserMediaTo(document->page(), new UserMediaClientMock());
 #endif
 }

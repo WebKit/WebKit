@@ -42,7 +42,7 @@ public:
     void requestPermission(Ref<UserMediaRequest>&&);
     void cancelRequest(UserMediaRequest&);
 
-    static const char* supplementName();
+    WEBCORE_EXPORT static const char* supplementName();
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
