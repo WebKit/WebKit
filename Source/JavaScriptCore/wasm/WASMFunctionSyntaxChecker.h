@@ -119,9 +119,11 @@ public:
         return UNUSED;
     }
 
-    int buildStore(const MemoryAddress&, WASMExpressionType, WASMMemoryType, int)
+    int buildStore(WASMOpKind opKind, const MemoryAddress&, WASMExpressionType, WASMMemoryType, int)
     {
         m_tempStackTop -= 2;
+        if (opKind == WASMOpKind::Expression)
+            m_tempStackTop++;
         return UNUSED;
     }
 

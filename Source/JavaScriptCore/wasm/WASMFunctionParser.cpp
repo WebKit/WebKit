@@ -158,34 +158,34 @@ ContextStatement WASMFunctionParser::parseStatement(Context& context)
             parseSetGlobal(context, WASMOpKind::Statement, WASMExpressionType::Void);
             break;
         case WASMOpStatement::I32Store8:
-            parseStore(context, WASMExpressionType::I32, WASMMemoryType::I8, MemoryAccessOffsetMode::NoOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::I32, WASMMemoryType::I8, MemoryAccessOffsetMode::NoOffset);
             break;
         case WASMOpStatement::I32StoreWithOffset8:
-            parseStore(context, WASMExpressionType::I32, WASMMemoryType::I8, MemoryAccessOffsetMode::WithOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::I32, WASMMemoryType::I8, MemoryAccessOffsetMode::WithOffset);
             break;
         case WASMOpStatement::I32Store16:
-            parseStore(context, WASMExpressionType::I32, WASMMemoryType::I16, MemoryAccessOffsetMode::NoOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::I32, WASMMemoryType::I16, MemoryAccessOffsetMode::NoOffset);
             break;
         case WASMOpStatement::I32StoreWithOffset16:
-            parseStore(context, WASMExpressionType::I32, WASMMemoryType::I16, MemoryAccessOffsetMode::WithOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::I32, WASMMemoryType::I16, MemoryAccessOffsetMode::WithOffset);
             break;
         case WASMOpStatement::I32Store32:
-            parseStore(context, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::NoOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::NoOffset);
             break;
         case WASMOpStatement::I32StoreWithOffset32:
-            parseStore(context, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::WithOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::WithOffset);
             break;
         case WASMOpStatement::F32Store:
-            parseStore(context, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::NoOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::NoOffset);
             break;
         case WASMOpStatement::F32StoreWithOffset:
-            parseStore(context, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::WithOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::WithOffset);
             break;
         case WASMOpStatement::F64Store:
-            parseStore(context, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::NoOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::NoOffset);
             break;
         case WASMOpStatement::F64StoreWithOffset:
-            parseStore(context, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::WithOffset);
+            parseStore(context, WASMOpKind::Statement, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::WithOffset);
             break;
         case WASMOpStatement::Return:
             parseReturnStatement(context);
@@ -548,6 +548,18 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseLoad(context, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::NoOffset);
         case WASMOpExpressionI32::LoadWithOffset32:
             return parseLoad(context, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::WithOffset);
+        case WASMOpExpressionI32::Store8:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::I32, WASMMemoryType::I8, MemoryAccessOffsetMode::NoOffset);
+        case WASMOpExpressionI32::StoreWithOffset8:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::I32, WASMMemoryType::I8, MemoryAccessOffsetMode::WithOffset);
+        case WASMOpExpressionI32::Store16:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::I32, WASMMemoryType::I16, MemoryAccessOffsetMode::NoOffset);
+        case WASMOpExpressionI32::StoreWithOffset16:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::I32, WASMMemoryType::I16, MemoryAccessOffsetMode::WithOffset);
+        case WASMOpExpressionI32::Store32:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::NoOffset);
+        case WASMOpExpressionI32::StoreWithOffset32:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::I32, WASMMemoryType::I32, MemoryAccessOffsetMode::WithOffset);
         case WASMOpExpressionI32::CallInternal:
             return parseCallInternal(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallIndirect:
@@ -603,12 +615,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::GreaterThanF64:
         case WASMOpExpressionI32::GreaterThanOrEqualF64:
             return parseRelationalF64ExpressionI32(context, op);
-        case WASMOpExpressionI32::Store8:
-        case WASMOpExpressionI32::StoreWithOffset8:
-        case WASMOpExpressionI32::Store16:
-        case WASMOpExpressionI32::StoreWithOffset16:
-        case WASMOpExpressionI32::Store32:
-        case WASMOpExpressionI32::StoreWithOffset32:
         case WASMOpExpressionI32::Conditional:
         case WASMOpExpressionI32::Comma:
         case WASMOpExpressionI32::SMin:
@@ -738,6 +744,10 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseLoad(context, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::NoOffset);
         case WASMOpExpressionF32::LoadWithOffset:
             return parseLoad(context, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::WithOffset);
+        case WASMOpExpressionF32::Store:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::NoOffset);
+        case WASMOpExpressionF32::StoreWithOffset:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::F32, WASMMemoryType::F32, MemoryAccessOffsetMode::WithOffset);
         case WASMOpExpressionF32::CallInternal:
             return parseCallInternal(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::CallIndirect:
@@ -759,8 +769,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::Mul:
         case WASMOpExpressionF32::Div:
             return parseBinaryExpressionF32(context, op);
-        case WASMOpExpressionF32::Store:
-        case WASMOpExpressionF32::StoreWithOffset:
         case WASMOpExpressionF32::Conditional:
         case WASMOpExpressionF32::Comma:
             // FIXME: Implement these instructions.
@@ -848,6 +856,10 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseLoad(context, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::NoOffset);
         case WASMOpExpressionF64::LoadWithOffset:
             return parseLoad(context, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::WithOffset);
+        case WASMOpExpressionF64::Store:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::NoOffset);
+        case WASMOpExpressionF64::StoreWithOffset:
+            return parseStore(context, WASMOpKind::Expression, WASMExpressionType::F64, WASMMemoryType::F64, MemoryAccessOffsetMode::WithOffset);
         case WASMOpExpressionF64::CallInternal:
             return parseCallInternal(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::CallImport:
@@ -882,8 +894,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::ATan2:
         case WASMOpExpressionF64::Pow:
             return parseBinaryExpressionF64(context, op);
-        case WASMOpExpressionF64::Store:
-        case WASMOpExpressionF64::StoreWithOffset:
         case WASMOpExpressionF64::Conditional:
         case WASMOpExpressionF64::Comma:
         case WASMOpExpressionF64::Min:
@@ -1034,7 +1044,7 @@ ContextExpression WASMFunctionParser::parseLoad(Context& context, WASMExpression
 }
 
 template <class Context>
-ContextExpression WASMFunctionParser::parseStore(Context& context, WASMExpressionType expressionType, WASMMemoryType memoryType, MemoryAccessOffsetMode offsetMode)
+ContextExpression WASMFunctionParser::parseStore(Context& context, WASMOpKind opKind, WASMExpressionType expressionType, WASMMemoryType memoryType, MemoryAccessOffsetMode offsetMode)
 {
     FAIL_IF_FALSE(m_module->arrayBuffer(), "An ArrayBuffer is not provided.");
     const ContextMemoryAddress& memoryAddress = parseMemoryAddress(context, offsetMode);
@@ -1042,7 +1052,7 @@ ContextExpression WASMFunctionParser::parseStore(Context& context, WASMExpressio
 
     ContextExpression value = parseExpression(context, expressionType);
     PROPAGATE_ERROR();
-    return context.buildStore(memoryAddress, expressionType, memoryType, value);
+    return context.buildStore(opKind, memoryAddress, expressionType, memoryType, value);
 }
 
 template <class Context>

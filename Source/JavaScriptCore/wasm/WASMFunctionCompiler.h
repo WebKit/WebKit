@@ -532,7 +532,7 @@ public:
         return UNUSED;
     }
 
-    int buildStore(const MemoryAddress& memoryAddress, WASMExpressionType expressionType, WASMMemoryType memoryType, int)
+    int buildStore(WASMOpKind opKind, const MemoryAddress& memoryAddress, WASMExpressionType expressionType, WASMMemoryType memoryType, int)
     {
         const ArrayBuffer* arrayBuffer = m_module->arrayBuffer()->impl();
         move(TrustedImmPtr(arrayBuffer->data()), GPRInfo::regT0);
@@ -580,6 +580,20 @@ public:
             ASSERT_NOT_REACHED();
         }
         m_tempStackTop -= 2;
+
+        if (opKind == WASMOpKind::Expression) {
+            switch (expressionType) {
+            case WASMExpressionType::I32:
+            case WASMExpressionType::F32:
+                store32(GPRInfo::regT2, temporaryAddress(m_tempStackTop++));
+                break;
+            case WASMExpressionType::F64:
+                storeDouble(FPRInfo::fpRegT0, temporaryAddress(m_tempStackTop++));
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+        }
         return UNUSED;
     }
 

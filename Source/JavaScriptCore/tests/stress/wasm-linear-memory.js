@@ -110,6 +110,48 @@ function asmModule(global, imports, buffer) {
         float64Array[i >> 3] = x;
     }
 
+    function setInt8Expression(i, x) {
+        i = i | 0;
+        x = x | 0;
+        return (int8Array[i] = x) | 0;
+    }
+
+    function setUint8Expression(i, x) {
+        i = i | 0;
+        x = x | 0;
+        return (uint8Array[i] = x) | 0;
+    }
+
+    function setInt16Expression(i, x) {
+        i = i | 0;
+        x = x | 0;
+        return (int16Array[i >> 1] = x) | 0;
+    }
+
+    function setUint16Expression(i, x) {
+        i = i | 0;
+        x = x | 0;
+        return (uint16Array[i >> 1] = x) | 0;
+    }
+
+    function setInt32Expression(i, x) {
+        i = i | 0;
+        x = x | 0;
+        return (int32Array[i >> 2] = x) | 0;
+    }
+
+    function setFloat32Expression(i, x) {
+        i = i | 0;
+        x = fround(x);
+        return float32Array[i >> 2] = x;
+    }
+
+    function setFloat64Expression(i, x) {
+        i = i | 0;
+        x = +x;
+        return float64Array[i >> 3] = x;
+    }
+
     return {
         getInt8: getInt8,
         getUint8: getUint8,
@@ -118,6 +160,7 @@ function asmModule(global, imports, buffer) {
         getInt32: getInt32,
         getFloat32: getFloat32,
         getFloat64: getFloat64,
+
         setInt8: setInt8,
         setUint8: setUint8,
         setInt16: setInt16,
@@ -125,6 +168,14 @@ function asmModule(global, imports, buffer) {
         setInt32: setInt32,
         setFloat32: setFloat32,
         setFloat64: setFloat64,
+
+        setInt8Expression: setInt8Expression,
+        setUint8Expression: setUint8Expression,
+        setInt16Expression: setInt16Expression,
+        setUint16Expression: setUint16Expression,
+        setInt32Expression: setInt32Expression,
+        setFloat32Expression: setFloat32Expression,
+        setFloat64Expression: setFloat64Expression,
     };
 }
 */
@@ -202,3 +253,19 @@ module.setInt32(7, 5);
 shouldBe(int32Array[0] == 1 && int32Array[1] == 5 && int32Array[2] == 0, true);
 module.setInt32(8, 6);
 shouldBe(int32Array[0] == 1 && int32Array[1] == 5 && int32Array[2] == 6, true);
+
+// Store expressions.
+shouldBe(module.setInt8Expression(0, 1), 1);
+shouldBe(module.getInt8(0), 1);
+shouldBe(module.setUint8Expression(0, -1), -1);
+shouldBe(module.getUint8(0), 255);
+shouldBe(module.setInt16Expression(0, 2), 2);
+shouldBe(module.getInt16(0), 2);
+shouldBe(module.setUint16Expression(0, -1), -1);
+shouldBe(module.getUint16(0), 65535);
+shouldBe(module.setInt32Expression(0, 3), 3);
+shouldBe(module.getInt32(0), 3);
+shouldBe(module.setFloat32Expression(0, 4.2), 4.199999809265137);
+shouldBe(module.getFloat32(0), 4.199999809265137);
+shouldBe(module.setFloat64Expression(0, 4.2), 4.2);
+shouldBe(module.getFloat64(0), 4.2);

@@ -112,7 +112,7 @@ private:
     template <class Context> ContextExpression parseSetGlobal(Context&, WASMOpKind, WASMExpressionType);
     template <class Context> ContextMemoryAddress parseMemoryAddress(Context&, MemoryAccessOffsetMode);
     template <class Context> ContextExpression parseLoad(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode, MemoryAccessConversion = MemoryAccessConversion::NoConversion);
-    template <class Context> ContextExpression parseStore(Context&, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode);
+    template <class Context> ContextExpression parseStore(Context&, WASMOpKind, WASMExpressionType, WASMMemoryType, MemoryAccessOffsetMode);
     template <class Context> ContextExpressionList parseCallArguments(Context&, const Vector<WASMType>& arguments);
     template <class Context> ContextExpression parseCallInternal(Context&, WASMExpressionType returnType);
     template <class Context> ContextExpression parseCallIndirect(Context&, WASMExpressionType returnType);
