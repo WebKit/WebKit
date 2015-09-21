@@ -33,7 +33,7 @@
 #if PLATFORM(IOS)
 @interface WKWebView ()
 
-- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale;
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
 
 @end
 #endif
@@ -63,7 +63,7 @@
     [self.scrollView setZoomScale:scale animated:animated];
 }
 
-- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     [super scrollViewDidEndZooming:scrollView withView:view atScale:scale];
     

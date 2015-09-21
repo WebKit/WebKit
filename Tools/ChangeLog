@@ -1,3 +1,10 @@
+2015-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove 'nullable' to fix older iOS builds.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView scrollViewDidEndZooming:withView:atScale:]):
+
 2015-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use command-line argument to launch in regular or High DPI mode.
