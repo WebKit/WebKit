@@ -1,3 +1,23 @@
+2015-09-22  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: update Esprima to latest version
+        https://bugs.webkit.org/show_bug.cgi?id=148960
+
+        Reviewed by Joseph Pecoraro.
+
+        Esprima version 2.6 further supports ES6. We're
+        updating to it so we can support more ES6 features
+        in our script syntax tree.
+
+        * UserInterface/External/Esprima/LICENSE:
+        * UserInterface/External/Esprima/esprima.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration.gatherIdentifiers):
+        (WebInspector.ScriptSyntaxTree.prototype._gatherIdentifiersInDeclaration):
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+
 2015-09-21  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: requestAnimationFrame continues to be called after stopping the timeline recording

@@ -38,5 +38,7 @@ passed VariableDeclaration
 passed VariableDeclarator
 passed WhileStatement
 passed WithStatement
+passed ClassStatement, Super, MetaProperty
+passed AssignmentPattern
 passed ALL TESTS
 
