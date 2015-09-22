@@ -328,6 +328,9 @@ class Driver(object):
 
     def _start(self, pixel_tests, per_test_args):
         self.stop()
+        # Each driver process should be using individual directories under _driver_tempdir (which is deleted when stopping),
+        # however some subsystems on some platforms could end up using process default ones.
+        self._port._clear_global_caches_and_temporary_files()
         self._driver_tempdir = self._port._driver_tempdir()
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)

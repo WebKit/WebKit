@@ -1,3 +1,14 @@
+2015-09-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Mavericks: Media tests start to time out after a few days of bot uptime
+        https://bugs.webkit.org/show_bug.cgi?id=149468
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/driver.py:
+        * Scripts/webkitpy/port/mac.py:
+
 2015-09-22  Nan Wang  <n_wang@apple.com>
 
         Unreviewed, add myself to the committers list.

@@ -853,6 +853,9 @@ class Port(object):
 
         return clean_env
 
+    def _clear_global_caches_and_temporary_files(self):
+        pass
+
     @staticmethod
     def _append_value_colon_separated(env, name, value):
         assert ":" not in value

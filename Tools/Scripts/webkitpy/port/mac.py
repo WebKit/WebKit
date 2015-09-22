@@ -107,6 +107,13 @@ class MacPort(ApplePort):
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
+    def _clear_global_caches_and_temporary_files(self):
+        self._filesystem.rmtree('/private/tmp/MediaCache')
+        self._filesystem.rmtree(os.path.expanduser('~/Library/' + self.driver_name()))
+        self._filesystem.rmtree(os.path.expanduser('~/Library/Application Support/' + self.driver_name()))
+        self._filesystem.rmtree(os.path.expanduser('~/Library/Caches/' + self.driver_name()))
+        self._filesystem.rmtree(os.path.expanduser('~/Library/WebKit/' + self.driver_name()))
+
     def operating_system(self):
         return 'mac'
 
