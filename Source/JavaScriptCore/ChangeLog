@@ -1,3 +1,14 @@
+2015-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Always use the compiler's CAS implementation and get rid of ENABLE(COMPARE_AND_SWAP)
+        https://bugs.webkit.org/show_bug.cgi?id=149438
+
+        Reviewed by Mark Lam.
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::deprecatedReportExtraMemory):
+
 2015-09-21  Saam barati  <sbarati@apple.com>
 
         functionProtoFuncToString should not rely on typeProfilingEndOffset()

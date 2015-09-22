@@ -1,3 +1,18 @@
+2015-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Always use the compiler's CAS implementation and get rid of ENABLE(COMPARE_AND_SWAP)
+        https://bugs.webkit.org/show_bug.cgi?id=149438
+
+        Reviewed by Mark Lam.
+
+        * wtf/Atomics.h: Make weakCompareAndSwap() just forward to the system CAS via WTF::Atomic.
+        (WTF::weakCompareAndSwap):
+        (WTF::weakCompareAndSwapUIntPtr): Deleted.
+        (WTF::weakCompareAndSwapSize): Deleted.
+        * wtf/Bitmap.h: Small changes to use the new API.
+        (WTF::WordType>::concurrentTestAndSet):
+        * wtf/Platform.h: Remove ENABLE(COMPARE_AND_SWAP)
+
 2015-09-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove old GCC cruft from wtf/StdLibExtras.h

@@ -124,7 +124,7 @@ inline bool Bitmap<size, atomicMode, WordType>::concurrentTestAndSet(size_t n)
         oldValue = *wordPtr;
         if (oldValue & mask)
             return true;
-    } while (!weakCompareAndSwap(wordPtr, oldValue, oldValue | mask));
+    } while (!weakCompareAndSwap(wordPtr, oldValue, static_cast<WordType>(oldValue | mask)));
     return false;
 }
 
@@ -144,7 +144,7 @@ inline bool Bitmap<size, atomicMode, WordType>::concurrentTestAndClear(size_t n)
         oldValue = *wordPtr;
         if (!(oldValue & mask))
             return false;
-    } while (!weakCompareAndSwap(wordPtr, oldValue, oldValue & ~mask));
+    } while (!weakCompareAndSwap(wordPtr, oldValue, static_cast<WordType>(oldValue & ~mask)));
     return true;
 }
 

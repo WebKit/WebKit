@@ -812,16 +812,7 @@ static TextBreakIterator* nonSharedCharacterBreakIterator;
 
 static inline bool compareAndSwapNonSharedCharacterBreakIterator(TextBreakIterator* expected, TextBreakIterator* newValue)
 {
-#if ENABLE(COMPARE_AND_SWAP)
-    return WTF::weakCompareAndSwap(reinterpret_cast<void**>(&nonSharedCharacterBreakIterator), expected, newValue);
-#else
-    static StaticLock nonSharedCharacterBreakIteratorMutex;
-    std::lock_guard<StaticLock> locker(nonSharedCharacterBreakIteratorMutex);
-    if (nonSharedCharacterBreakIterator != expected)
-        return false;
-    nonSharedCharacterBreakIterator = newValue;
-    return true;
-#endif
+    return WTF::weakCompareAndSwap(&nonSharedCharacterBreakIterator, expected, newValue);
 }
 
 NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(StringView string)

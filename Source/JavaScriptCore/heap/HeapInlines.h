@@ -171,15 +171,11 @@ inline void Heap::reportExtraMemoryVisited(JSCell* owner, size_t size)
 
     size_t* counter = &m_extraMemorySize;
     
-#if ENABLE(COMPARE_AND_SWAP)
     for (;;) {
         size_t oldSize = *counter;
-        if (WTF::weakCompareAndSwapSize(counter, oldSize, oldSize + size))
+        if (WTF::weakCompareAndSwap(counter, oldSize, oldSize + size))
             return;
     }
-#else
-    (*counter) += size;
-#endif
 }
 
 inline void Heap::deprecatedReportExtraMemory(size_t size)
