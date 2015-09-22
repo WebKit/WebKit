@@ -1,3 +1,9 @@
+2015-09-22  Nan Wang  <n_wang@apple.com>
+
+        Unreviewed, add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Remove 'nullable' to fix older iOS builds.
