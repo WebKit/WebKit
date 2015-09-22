@@ -1,3 +1,25 @@
+2015-09-22  Andreas Kling  <akling@apple.com>
+
+        [WK2][NetworkCache] New entry bodies remain in dirty memory after being written to disk.
+        <https://webkit.org/b/149463>
+
+        Reviewed by Antti Koivisto.
+
+        Call msync(MS_ASYNC) on cache entry bodies after writing their data to a
+        memory-mapped file. This turns the previously dirty memory into clean memory,
+        reducing our effective footprint.
+
+        I previously believed this would happen automatically when the kernel finds
+        itself under memory pressure, around the same time as it starts dropping
+        volatile pages. Turns out that's not the case. Even under considerable pressure,
+        we never flush this memory to file. So let's take care of it ourselves.
+
+        If this ends up generating more IO activity than we're comfortable with on some
+        scenario, we can look at throttling.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::Data::mapToFile):
+
 2015-09-22  Chris Dumez  <cdumez@apple.com>
 
         Drop support for legacy EntityReference DOM Node type
