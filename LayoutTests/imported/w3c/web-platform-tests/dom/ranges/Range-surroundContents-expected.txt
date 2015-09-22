@@ -825,13 +825,9 @@ PASS 17,20: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node d
 PASS 17,20: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node doctype 
 PASS 17,21: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignDoctype 
 PASS 17,21: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignDoctype 
-FAIL 18,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 18,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 18,0: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
-FAIL 18,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 18,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
 PASS 18,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
 PASS 18,2: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
 PASS 18,2: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
@@ -843,21 +839,15 @@ PASS 18,5: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild,
 PASS 18,5: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedPara1 
 PASS 18,6: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild 
 PASS 18,6: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild 
-FAIL 18,7: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 18,7: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node document 
 PASS 18,7: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node document 
 PASS 18,8: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedDiv 
 PASS 18,8: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedDiv 
-FAIL 18,9: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 18,9: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoc 
 PASS 18,9: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoc 
 PASS 18,10: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignPara2 
 PASS 18,10: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignPara2 
-FAIL 18,11: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 18,11: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node xmlDoc 
 PASS 18,11: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node xmlDoc 
 PASS 18,12: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node xmlElement 
 PASS 18,12: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node xmlElement 
@@ -873,25 +863,15 @@ PASS 18,17: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild
 PASS 18,17: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node comment 
 PASS 18,18: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedComment 
 PASS 18,18: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node detachedComment 
-FAIL 18,19: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 18,19: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node docfrag 
 PASS 18,19: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node docfrag 
-FAIL 18,20: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 18,20: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node doctype 
 PASS 18,20: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node doctype 
-FAIL 18,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 18,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoctype 
 PASS 18,21: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoctype 
-FAIL 19,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 19,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] 
 PASS 19,0: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] 
-FAIL 19,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 19,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild 
 PASS 19,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild 
 PASS 19,2: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[1].firstChild 
 PASS 19,2: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[1].firstChild 
@@ -903,21 +883,15 @@ PASS 19,5: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild,
 PASS 19,5: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedPara1 
 PASS 19,6: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedPara1.firstChild 
 PASS 19,6: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedPara1.firstChild 
-FAIL 19,7: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 19,7: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node document 
 PASS 19,7: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node document 
 PASS 19,8: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedDiv 
 PASS 19,8: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedDiv 
-FAIL 19,9: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 19,9: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoc 
 PASS 19,9: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoc 
 PASS 19,10: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignPara2 
 PASS 19,10: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignPara2 
-FAIL 19,11: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 19,11: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node xmlDoc 
 PASS 19,11: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node xmlDoc 
 PASS 19,12: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node xmlElement 
 PASS 19,12: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node xmlElement 
@@ -933,25 +907,15 @@ PASS 19,17: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild
 PASS 19,17: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node comment 
 PASS 19,18: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedComment 
 PASS 19,18: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node detachedComment 
-FAIL 19,19: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 19,19: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node docfrag 
 PASS 19,19: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node docfrag 
-FAIL 19,20: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 19,20: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node doctype 
 PASS 19,20: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node doctype 
-FAIL 19,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 19,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoctype 
 PASS 19,21: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoctype 
-FAIL 20,0: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 20,0: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] 
 PASS 20,0: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] 
-FAIL 20,1: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 20,1: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild 
 PASS 20,1: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild 
 PASS 20,2: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[1].firstChild 
 PASS 20,2: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[1].firstChild 
@@ -963,21 +927,15 @@ PASS 20,5: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node d
 PASS 20,5: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node detachedPara1 
 PASS 20,6: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node detachedPara1.firstChild 
 PASS 20,6: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node detachedPara1.firstChild 
-FAIL 20,7: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 20,7: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node document 
 PASS 20,7: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node document 
 PASS 20,8: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node detachedDiv 
 PASS 20,8: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node detachedDiv 
-FAIL 20,9: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 20,9: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignDoc 
 PASS 20,9: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node foreignDoc 
 PASS 20,10: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignPara2 
 PASS 20,10: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node foreignPara2 
-FAIL 20,11: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 20,11: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node xmlDoc 
 PASS 20,11: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node xmlDoc 
 PASS 20,12: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node xmlElement 
 PASS 20,12: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node xmlElement 
@@ -993,17 +951,11 @@ PASS 20,17: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node 
 PASS 20,17: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node comment 
 PASS 20,18: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node detachedComment 
 PASS 20,18: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node detachedComment 
-FAIL 20,19: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 20,19: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node docfrag 
 PASS 20,19: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node docfrag 
-FAIL 20,20: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 20,20: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node doctype 
 PASS 20,20: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node doctype 
-FAIL 20,21: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 20,21: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignDoctype 
 PASS 20,21: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node foreignDoctype 
 FAIL 21,0: resulting DOM for range [paras[0], 0, paras[0].firstChild, 7], node paras[0] assert_true: First differing node: expected Element node <p id="b" style="display:none">Ijklmnop
 </p>, got Text node "Äb̈c̈d̈ëf̈g̈ḧ
@@ -1067,21 +1019,15 @@ PASS 22,5: resulting DOM for range [testDiv, 2, paras[4], 1], node detachedPara1
 PASS 22,5: resulting range position for range [testDiv, 2, paras[4], 1], node detachedPara1 
 PASS 22,6: resulting DOM for range [testDiv, 2, paras[4], 1], node detachedPara1.firstChild 
 PASS 22,6: resulting range position for range [testDiv, 2, paras[4], 1], node detachedPara1.firstChild 
-FAIL 22,7: resulting DOM for range [testDiv, 2, paras[4], 1], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 22,7: resulting DOM for range [testDiv, 2, paras[4], 1], node document 
 PASS 22,7: resulting range position for range [testDiv, 2, paras[4], 1], node document 
 PASS 22,8: resulting DOM for range [testDiv, 2, paras[4], 1], node detachedDiv 
 PASS 22,8: resulting range position for range [testDiv, 2, paras[4], 1], node detachedDiv 
-FAIL 22,9: resulting DOM for range [testDiv, 2, paras[4], 1], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 22,9: resulting DOM for range [testDiv, 2, paras[4], 1], node foreignDoc 
 PASS 22,9: resulting range position for range [testDiv, 2, paras[4], 1], node foreignDoc 
 PASS 22,10: resulting DOM for range [testDiv, 2, paras[4], 1], node foreignPara2 
 PASS 22,10: resulting range position for range [testDiv, 2, paras[4], 1], node foreignPara2 
-FAIL 22,11: resulting DOM for range [testDiv, 2, paras[4], 1], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 22,11: resulting DOM for range [testDiv, 2, paras[4], 1], node xmlDoc 
 PASS 22,11: resulting range position for range [testDiv, 2, paras[4], 1], node xmlDoc 
 PASS 22,12: resulting DOM for range [testDiv, 2, paras[4], 1], node xmlElement 
 PASS 22,12: resulting range position for range [testDiv, 2, paras[4], 1], node xmlElement 
@@ -1097,17 +1043,11 @@ PASS 22,17: resulting DOM for range [testDiv, 2, paras[4], 1], node comment
 PASS 22,17: resulting range position for range [testDiv, 2, paras[4], 1], node comment 
 PASS 22,18: resulting DOM for range [testDiv, 2, paras[4], 1], node detachedComment 
 PASS 22,18: resulting range position for range [testDiv, 2, paras[4], 1], node detachedComment 
-FAIL 22,19: resulting DOM for range [testDiv, 2, paras[4], 1], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 22,19: resulting DOM for range [testDiv, 2, paras[4], 1], node docfrag 
 PASS 22,19: resulting range position for range [testDiv, 2, paras[4], 1], node docfrag 
-FAIL 22,20: resulting DOM for range [testDiv, 2, paras[4], 1], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 22,20: resulting DOM for range [testDiv, 2, paras[4], 1], node doctype 
 PASS 22,20: resulting range position for range [testDiv, 2, paras[4], 1], node doctype 
-FAIL 22,21: resulting DOM for range [testDiv, 2, paras[4], 1], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 22,21: resulting DOM for range [testDiv, 2, paras[4], 1], node foreignDoctype 
 PASS 22,21: resulting range position for range [testDiv, 2, paras[4], 1], node foreignDoctype 
 PASS 23,0: resulting DOM for range [document, 0, document, 1], node paras[0] 
 PASS 23,0: resulting range position for range [document, 0, document, 1], node paras[0] 
@@ -1255,21 +1195,15 @@ PASS 26,5: resulting DOM for range [testDiv, 0, comment, 5], node detachedPara1
 PASS 26,5: resulting range position for range [testDiv, 0, comment, 5], node detachedPara1 
 PASS 26,6: resulting DOM for range [testDiv, 0, comment, 5], node detachedPara1.firstChild 
 PASS 26,6: resulting range position for range [testDiv, 0, comment, 5], node detachedPara1.firstChild 
-FAIL 26,7: resulting DOM for range [testDiv, 0, comment, 5], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 26,7: resulting DOM for range [testDiv, 0, comment, 5], node document 
 PASS 26,7: resulting range position for range [testDiv, 0, comment, 5], node document 
 PASS 26,8: resulting DOM for range [testDiv, 0, comment, 5], node detachedDiv 
 PASS 26,8: resulting range position for range [testDiv, 0, comment, 5], node detachedDiv 
-FAIL 26,9: resulting DOM for range [testDiv, 0, comment, 5], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 26,9: resulting DOM for range [testDiv, 0, comment, 5], node foreignDoc 
 PASS 26,9: resulting range position for range [testDiv, 0, comment, 5], node foreignDoc 
 PASS 26,10: resulting DOM for range [testDiv, 0, comment, 5], node foreignPara2 
 PASS 26,10: resulting range position for range [testDiv, 0, comment, 5], node foreignPara2 
-FAIL 26,11: resulting DOM for range [testDiv, 0, comment, 5], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 26,11: resulting DOM for range [testDiv, 0, comment, 5], node xmlDoc 
 PASS 26,11: resulting range position for range [testDiv, 0, comment, 5], node xmlDoc 
 PASS 26,12: resulting DOM for range [testDiv, 0, comment, 5], node xmlElement 
 PASS 26,12: resulting range position for range [testDiv, 0, comment, 5], node xmlElement 
@@ -1285,77 +1219,41 @@ PASS 26,17: resulting DOM for range [testDiv, 0, comment, 5], node comment
 PASS 26,17: resulting range position for range [testDiv, 0, comment, 5], node comment 
 PASS 26,18: resulting DOM for range [testDiv, 0, comment, 5], node detachedComment 
 PASS 26,18: resulting range position for range [testDiv, 0, comment, 5], node detachedComment 
-FAIL 26,19: resulting DOM for range [testDiv, 0, comment, 5], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 26,19: resulting DOM for range [testDiv, 0, comment, 5], node docfrag 
 PASS 26,19: resulting range position for range [testDiv, 0, comment, 5], node docfrag 
-FAIL 26,20: resulting DOM for range [testDiv, 0, comment, 5], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 26,20: resulting DOM for range [testDiv, 0, comment, 5], node doctype 
 PASS 26,20: resulting range position for range [testDiv, 0, comment, 5], node doctype 
-FAIL 26,21: resulting DOM for range [testDiv, 0, comment, 5], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 26,21: resulting DOM for range [testDiv, 0, comment, 5], node foreignDoctype 
 PASS 26,21: resulting range position for range [testDiv, 0, comment, 5], node foreignDoctype 
-FAIL 27,0: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node paras[0] assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,0: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node paras[0] 
 PASS 27,0: resulting range position for range [foreignDoc, 1, foreignComment, 2], node paras[0] 
-FAIL 27,1: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node paras[0].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,1: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node paras[0].firstChild 
 PASS 27,1: resulting range position for range [foreignDoc, 1, foreignComment, 2], node paras[0].firstChild 
-FAIL 27,2: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node paras[1].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,2: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node paras[1].firstChild 
 PASS 27,2: resulting range position for range [foreignDoc, 1, foreignComment, 2], node paras[1].firstChild 
-FAIL 27,3: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignPara1 assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,3: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignPara1 
 PASS 27,3: resulting range position for range [foreignDoc, 1, foreignComment, 2], node foreignPara1 
-FAIL 27,4: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignPara1.firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,4: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignPara1.firstChild 
 PASS 27,4: resulting range position for range [foreignDoc, 1, foreignComment, 2], node foreignPara1.firstChild 
-FAIL 27,5: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedPara1 assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,5: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedPara1 
 PASS 27,5: resulting range position for range [foreignDoc, 1, foreignComment, 2], node detachedPara1 
-FAIL 27,6: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedPara1.firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,6: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedPara1.firstChild 
 PASS 27,6: resulting range position for range [foreignDoc, 1, foreignComment, 2], node detachedPara1.firstChild 
-FAIL 27,7: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 27,7: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node document 
 PASS 27,7: resulting range position for range [foreignDoc, 1, foreignComment, 2], node document 
-FAIL 27,8: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedDiv assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,8: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedDiv 
 PASS 27,8: resulting range position for range [foreignDoc, 1, foreignComment, 2], node detachedDiv 
-FAIL 27,9: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 27,9: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignDoc 
 PASS 27,9: resulting range position for range [foreignDoc, 1, foreignComment, 2], node foreignDoc 
-FAIL 27,10: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignPara2 assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,10: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignPara2 
 PASS 27,10: resulting range position for range [foreignDoc, 1, foreignComment, 2], node foreignPara2 
-FAIL 27,11: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 27,11: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node xmlDoc 
 PASS 27,11: resulting range position for range [foreignDoc, 1, foreignComment, 2], node xmlDoc 
-FAIL 27,12: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node xmlElement assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,12: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node xmlElement 
 PASS 27,12: resulting range position for range [foreignDoc, 1, foreignComment, 2], node xmlElement 
-FAIL 27,13: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedTextNode assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,13: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedTextNode 
 PASS 27,13: resulting range position for range [foreignDoc, 1, foreignComment, 2], node detachedTextNode 
-FAIL 27,14: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignTextNode assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 27,14: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignTextNode 
 PASS 27,14: resulting range position for range [foreignDoc, 1, foreignComment, 2], node foreignTextNode 
 PASS 27,15: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node processingInstruction 
 PASS 27,15: resulting range position for range [foreignDoc, 1, foreignComment, 2], node processingInstruction 
@@ -1365,17 +1263,11 @@ PASS 27,17: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node com
 PASS 27,17: resulting range position for range [foreignDoc, 1, foreignComment, 2], node comment 
 PASS 27,18: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node detachedComment 
 PASS 27,18: resulting range position for range [foreignDoc, 1, foreignComment, 2], node detachedComment 
-FAIL 27,19: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 27,19: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node docfrag 
 PASS 27,19: resulting range position for range [foreignDoc, 1, foreignComment, 2], node docfrag 
-FAIL 27,20: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 27,20: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node doctype 
 PASS 27,20: resulting range position for range [foreignDoc, 1, foreignComment, 2], node doctype 
-FAIL 27,21: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 27,21: resulting DOM for range [foreignDoc, 1, foreignComment, 2], node foreignDoctype 
 PASS 27,21: resulting range position for range [foreignDoc, 1, foreignComment, 2], node foreignDoctype 
 PASS 28,0: resulting DOM for range [foreignDoc.body, 0, foreignTextNode, 36], node paras[0] 
 PASS 28,0: resulting range position for range [foreignDoc.body, 0, foreignTextNode, 36], node paras[0] 
@@ -1421,65 +1313,35 @@ PASS 28,20: resulting DOM for range [foreignDoc.body, 0, foreignTextNode, 36], n
 PASS 28,20: resulting range position for range [foreignDoc.body, 0, foreignTextNode, 36], node doctype 
 PASS 28,21: resulting DOM for range [foreignDoc.body, 0, foreignTextNode, 36], node foreignDoctype 
 PASS 28,21: resulting range position for range [foreignDoc.body, 0, foreignTextNode, 36], node foreignDoctype 
-FAIL 29,0: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node paras[0] assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,0: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node paras[0] 
 PASS 29,0: resulting range position for range [xmlDoc, 1, xmlComment, 0], node paras[0] 
-FAIL 29,1: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node paras[0].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,1: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node paras[0].firstChild 
 PASS 29,1: resulting range position for range [xmlDoc, 1, xmlComment, 0], node paras[0].firstChild 
-FAIL 29,2: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node paras[1].firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,2: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node paras[1].firstChild 
 PASS 29,2: resulting range position for range [xmlDoc, 1, xmlComment, 0], node paras[1].firstChild 
-FAIL 29,3: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignPara1 assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,3: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignPara1 
 PASS 29,3: resulting range position for range [xmlDoc, 1, xmlComment, 0], node foreignPara1 
-FAIL 29,4: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignPara1.firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,4: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignPara1.firstChild 
 PASS 29,4: resulting range position for range [xmlDoc, 1, xmlComment, 0], node foreignPara1.firstChild 
-FAIL 29,5: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedPara1 assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,5: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedPara1 
 PASS 29,5: resulting range position for range [xmlDoc, 1, xmlComment, 0], node detachedPara1 
-FAIL 29,6: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedPara1.firstChild assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,6: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedPara1.firstChild 
 PASS 29,6: resulting range position for range [xmlDoc, 1, xmlComment, 0], node detachedPara1.firstChild 
-FAIL 29,7: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node document assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 29,7: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node document 
 PASS 29,7: resulting range position for range [xmlDoc, 1, xmlComment, 0], node document 
-FAIL 29,8: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedDiv assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,8: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedDiv 
 PASS 29,8: resulting range position for range [xmlDoc, 1, xmlComment, 0], node detachedDiv 
-FAIL 29,9: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 29,9: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignDoc 
 PASS 29,9: resulting range position for range [xmlDoc, 1, xmlComment, 0], node foreignDoc 
-FAIL 29,10: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignPara2 assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,10: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignPara2 
 PASS 29,10: resulting range position for range [xmlDoc, 1, xmlComment, 0], node foreignPara2 
-FAIL 29,11: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node xmlDoc assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 29,11: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node xmlDoc 
 PASS 29,11: resulting range position for range [xmlDoc, 1, xmlComment, 0], node xmlDoc 
-FAIL 29,12: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node xmlElement assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,12: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node xmlElement 
 PASS 29,12: resulting range position for range [xmlDoc, 1, xmlComment, 0], node xmlElement 
-FAIL 29,13: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedTextNode assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,13: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedTextNode 
 PASS 29,13: resulting range position for range [xmlDoc, 1, xmlComment, 0], node detachedTextNode 
-FAIL 29,14: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignTextNode assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: HierarchyRequestError: DOM Exception 3" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 3, expected 11
+PASS 29,14: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignTextNode 
 PASS 29,14: resulting range position for range [xmlDoc, 1, xmlComment, 0], node foreignTextNode 
 PASS 29,15: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node processingInstruction 
 PASS 29,15: resulting range position for range [xmlDoc, 1, xmlComment, 0], node processingInstruction 
@@ -1489,17 +1351,11 @@ PASS 29,17: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node comment
 PASS 29,17: resulting range position for range [xmlDoc, 1, xmlComment, 0], node comment 
 PASS 29,18: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node detachedComment 
 PASS 29,18: resulting range position for range [xmlDoc, 1, xmlComment, 0], node detachedComment 
-FAIL 29,19: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node docfrag assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 29,19: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node docfrag 
 PASS 29,19: resulting range position for range [xmlDoc, 1, xmlComment, 0], node docfrag 
-FAIL 29,20: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node doctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 29,20: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node doctype 
 PASS 29,20: resulting range position for range [xmlDoc, 1, xmlComment, 0], node doctype 
-FAIL 29,21: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignDoctype assert_throws: A INVALID_STATE_ERR must be thrown in this case function "function () {
-        try {
-          actualRange.surroun..." threw object "Error: InvalidNodeTypeError: DOM Exception 24" that is not a DOMException INVALID_STATE_ERR: property "code" is equal to 24, expected 11
+PASS 29,21: resulting DOM for range [xmlDoc, 1, xmlComment, 0], node foreignDoctype 
 PASS 29,21: resulting range position for range [xmlDoc, 1, xmlComment, 0], node foreignDoctype 
 FAIL 30,0: resulting DOM for range [detachedTextNode, 0, detachedTextNode, 8], node paras[0] assert_true: First differing node: expected Text node "", got Text node "Uvwxyzab" [Actual and expected mismatch for range's tree root.  ] expected true got false
 FAIL 30,0: resulting range position for range [detachedTextNode, 0, detachedTextNode, 8], node paras[0] assert_true: First differing node: expected Text node "", got Text node "Uvwxyzab" [Actual and expected mismatch for range's tree root.  ] expected true got false

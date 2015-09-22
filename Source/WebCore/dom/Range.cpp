@@ -1208,6 +1208,19 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         return;
     }
 
+    // INVALID_STATE_ERR: Raised if the Range partially selects a non-Text node.
+    // https://dom.spec.whatwg.org/#dom-range-surroundcontents (step 1).
+    Node* startNonTextContainer = &startContainer();
+    if (startNonTextContainer->nodeType() == Node::TEXT_NODE)
+        startNonTextContainer = startNonTextContainer->parentNode();
+    Node* endNonTextContainer = &endContainer();
+    if (endNonTextContainer->nodeType() == Node::TEXT_NODE)
+        endNonTextContainer = endNonTextContainer->parentNode();
+    if (startNonTextContainer != endNonTextContainer) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
     // INVALID_NODE_TYPE_ERR: Raised if node is an Attr, Entity, DocumentType,
     // Document, or DocumentFragment node.
     switch (newParent->nodeType()) {
@@ -1246,19 +1259,6 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
 
     // FIXME: Do we need a check if the node would end up with a child node of a type not
     // allowed by the type of node?
-
-    // INVALID_STATE_ERR: Raised if the Range partially selects a non-Text node.
-    // https://dom.spec.whatwg.org/#dom-range-surroundcontents (step 1).
-    Node* startNonTextContainer = &startContainer();
-    if (startNonTextContainer->nodeType() == Node::TEXT_NODE)
-        startNonTextContainer = startNonTextContainer->parentNode();
-    Node* endNonTextContainer = &endContainer();
-    if (endNonTextContainer->nodeType() == Node::TEXT_NODE)
-        endNonTextContainer = endNonTextContainer->parentNode();
-    if (startNonTextContainer != endNonTextContainer) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
 
     ec = 0;
     while (Node* n = newParent->firstChild()) {
