@@ -47,6 +47,8 @@
 @property (assign) BOOL altMode;
 @property (assign) BOOL immediate;
 
+@property (copy) NSArray *allowedActionUTIs;
+
 - (DDActionContext *)contextForView:(NSView *)view altMode:(BOOL)altMode interactionStartedHandler:(void (^)(void))interactionStartedHandler interactionChangedHandler:(void (^)(void))interactionChangedHandler interactionStoppedHandler:(void (^)(void))interactionStoppedHandler;
 
 @end

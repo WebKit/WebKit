@@ -1,3 +1,17 @@
+2015-09-21  Timothy Horton  <timothy_horton@apple.com>
+
+        Allow DataDetectors to pre-filter telephone number menu items
+        https://bugs.webkit.org/show_bug.cgi?id=149444
+        <rdar://problem/19286320>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/mac/MenuUtilities.mm:
+        (WebKit::menuItemForTelephoneNumber):
+        (WebKit::menuForTelephoneNumber):
+        Let DataDetectors know what kind of items we want, so that they can avoid
+        some unnecessary work in cases where we were just going to throw away the items anyway.
+
 2015-09-21  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [Threaded Compositor] Modified to use reference of GraphicsContext instead of pointer

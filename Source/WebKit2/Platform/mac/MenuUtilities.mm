@@ -50,8 +50,11 @@ NSString *menuItemTitleForTelephoneNumberGroup()
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 {
-    NSArray *proposedMenu = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:nil];
-    for (NSMenuItem *item in proposedMenu) {
+    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
+
+    NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
+    for (NSMenuItem *item in proposedMenuItems) {
         NSDictionary *representedObject = item.representedObject;
         if (![representedObject isKindOfClass:[NSDictionary class]])
             continue;
@@ -75,8 +78,11 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
     NSMutableArray *faceTimeItems = [NSMutableArray array];
     NSMenuItem *dialItem = nil;
 
-    NSArray *proposedMenu = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:nil];
-    for (NSMenuItem *item in proposedMenu) {
+    RetainPtr<DDActionContext> actionContext = [[getDDActionContextClass() alloc] init];
+    [actionContext setAllowedActionUTIs:@[ @"com.apple.dial", @"com.apple.facetime", @"com.apple.facetimeaudio" ]];
+
+    NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
+    for (NSMenuItem *item in proposedMenuItems) {
         NSDictionary *representedObject = item.representedObject;
         if (![representedObject isKindOfClass:[NSDictionary class]])
             continue;
@@ -85,12 +91,9 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
         if (![actionObject isKindOfClass:getDDActionClass()])
             continue;
 
-        if ([actionObject.actionUTI hasPrefix:@"com.apple.dial"]) {
+        if ([actionObject.actionUTI hasPrefix:@"com.apple.dial"])
             dialItem = item;
-            continue;
-        }
-
-        if ([actionObject.actionUTI hasPrefix:@"com.apple.facetime"])
+        else if ([actionObject.actionUTI hasPrefix:@"com.apple.facetime"])
             [faceTimeItems addObject:item];
     }
 
