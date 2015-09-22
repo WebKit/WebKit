@@ -2,39 +2,62 @@
 <html>
 <body>
 <p>Test passes if you see a single 100px by 100px green box below.</p> 
-<green-host style="background: green;"><span>FAIL</span></green-host>
-<red-host style="background: red;"></red-host>
+<my-host id="host1" style="background: green;"><span>FAIL</span></my-host>
+<my-host id="host2" style="background: red;"></my-host>
+<my-host id="host3" style="background: green;">FAIL</my-host>
+<my-host id="host4" style="background: green;">FAIL</my-host>
 <style>
 
-green-host, red-host {
+my-host {
     display: block;
     width: 100px;
-    height: 50px;
+    height: 25px;
     overflow: hidden;
+    font-size: 30px;
 }
 
 </style>
 <script>
 
-try {
-    var greenHost = document.querySelector('green-host');
-    greenHost.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
-
-    var redHost = document.querySelector('red-host');
-    redHost.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>FAIL';
-
+function forceLayout() {
     if (window.internals)
         internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
     else
-        document.querySelector('span').getBoundingClientRect();
+        document.querySelector('p').getBoundingClientRect();
+}
 
-    greenHost.removeChild(greenHost.firstChild);
+try {
+    var host1 = document.getElementById('host1');
+    host1.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
+
+    var host2 = document.getElementById('host2');
+    host2.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>FAIL';
+
+    var host3 = document.getElementById('host3');
+    host3.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
+
+    var host4 = document.getElementById('host4');
+    host4.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
+
+    forceLayout();
+
+    host1.removeChild(host1.firstChild);
+
+    forceLayout();
 
     var greenChild = document.createElement('div');
     greenChild.style.width = '100%';
     greenChild.style.height = '100%';
     greenChild.style.backgroundColor = 'green';
-    redHost.appendChild(greenChild);
+    host2.appendChild(greenChild);
+
+    forceLayout();
+
+    host3.removeChild(host3.firstChild);
+
+    forceLayout();
+
+    host4.insertBefore(document.createTextNode('________'), host4.firstChild);
 
 } catch (exception) {
     document.body.appendChild(document.createTextNode(exception));

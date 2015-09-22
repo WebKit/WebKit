@@ -166,7 +166,13 @@ void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotEleme
 void ShadowRoot::invalidateSlotAssignments()
 {
     if (m_slotAssignments)
-        m_slotAssignments->invalidate();
+        m_slotAssignments->invalidate(*this);
+}
+
+void ShadowRoot::invalidateDefaultSlotAssignments()
+{
+    if (m_slotAssignments)
+        m_slotAssignments->invalidateDefaultSlot(*this);
 }
 
 const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)

@@ -1308,6 +1308,4 @@ webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-host-rule.html [ ImageOnl
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-slotted-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-slot-display-override.html [ ImageOnlyFailure ]
-webkit.org/b/149328 fast/shadow-dom/shadow-layout-after-host-child-changes.html [ ImageOnlyFailure ]
-webkit.org/b/149328 fast/shadow-dom/shadow-layout-after-inserting-or-removing-host-child.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/shadow-layout-after-slot-changes.html [ ImageOnlyFailure ]

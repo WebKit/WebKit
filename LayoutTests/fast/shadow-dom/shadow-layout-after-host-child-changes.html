@@ -23,6 +23,13 @@ my-host > div {
 </style>
 <script>
 
+function forceLayout() {
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    else
+        document.querySelector('p').getBoundingClientRect();
+}
+
 try {
     var host1 = document.getElementById('host1');
     host1.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
@@ -36,14 +43,20 @@ try {
     var host4 = document.getElementById('host4');
     host4.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
 
-    if (window.internals)
-        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
-    else
-        document.querySelector('p').getBoundingClientRect();
+    forceLayout();
 
     host1.removeChild(host1.firstChild);
+
+    forceLayout();
+
     host2.firstChild.slot = 'bar';
+
+    forceLayout();
+
     host3.firstChild.slot = null;
+
+    forceLayout();
+
     var greenBox = document.createElement('div');
     greenBox.style.backgroundColor = 'green';
     host4.insertBefore(greenBox, host4.firstChild);

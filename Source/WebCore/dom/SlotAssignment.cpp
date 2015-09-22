@@ -122,6 +122,20 @@ const Vector<Node*>* SlotAssignment::assignedNodesForSlot(const HTMLSlotElement&
     return &slotInfo.assignedNodes;
 }
 
+void SlotAssignment::invalidate(ShadowRoot& shadowRoot)
+{
+    // FIXME: We should be able to do a targeted reconstruction.
+    shadowRoot.host()->setNeedsStyleRecalc(ReconstructRenderTree);
+    m_slotAssignmentsIsValid = false;
+}
+
+void SlotAssignment::invalidateDefaultSlot(ShadowRoot& shadowRoot)
+{
+    auto it = m_slots.find(emptyAtom);
+    if (it != m_slots.end() && it->value->elementCount)
+        invalidate(shadowRoot); // FIXME: We should be able to reconstruct only under the default slot.
+}
+
 HTMLSlotElement* SlotAssignment::findFirstSlotElement(SlotInfo& slotInfo, ShadowRoot& shadowRoot)
 {
     if (slotInfo.shouldResolveSlotElement())

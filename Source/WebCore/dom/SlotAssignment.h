@@ -52,7 +52,8 @@ public:
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
 
-    void invalidate() { m_slotAssignmentsIsValid = false; }
+    void invalidate(ShadowRoot&);
+    void invalidateDefaultSlot(ShadowRoot&);
 
 private:
     struct SlotInfo {

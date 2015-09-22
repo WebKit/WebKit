@@ -83,6 +83,7 @@ public:
     void removeSlotElementByName(const AtomicString&, HTMLSlotElement&);
 
     void invalidateSlotAssignments();
+    void invalidateDefaultSlotAssignments();
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
 #endif

@@ -1864,7 +1864,20 @@ void Element::childrenChanged(const ChildChange& change)
         if (auto* distributor = shadowRoot->distributor())
             distributor->invalidateDistribution(this);
 #if ENABLE(SHADOW_DOM)
-        shadowRoot->invalidateSlotAssignments();
+        switch (change.type) {
+        case ElementInserted:
+        case ElementRemoved:
+        case AllChildrenRemoved:
+            shadowRoot->invalidateSlotAssignments();
+            break;
+        case TextInserted:
+        case TextRemoved:
+        case TextChanged:
+            shadowRoot->invalidateDefaultSlotAssignments();
+            break;
+        case NonContentsChildChanged:
+            break;
+        }
 #endif
     }
 }

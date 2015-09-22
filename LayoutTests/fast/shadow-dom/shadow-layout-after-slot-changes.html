@@ -23,6 +23,13 @@ my-host > div {
 </style>
 <script>
 
+function forceLayout() {
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    else
+        document.querySelector('p').getBoundingClientRect();
+}
+
 try {
     var shadow1 = document.getElementById('host1').attachShadow({mode: 'open'});
     shadow1.innerHTML = '<slot></slot>';
@@ -36,14 +43,17 @@ try {
     var shadow4 = document.getElementById('host4').attachShadow({mode: 'open'});
     shadow4.innerHTML = 'FAIL';
 
-    if (window.internals)
-        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
-    else
-        document.querySelector('p').getBoundingClientRect();
+    forceLayout();
 
     shadow1.removeChild(shadow1.firstChild);
+    forceLayout();
+
     shadow2.firstChild.name = 'bar';
+    forceLayout();
+
     shadow3.firstChild.name = null;
+    forceLayout();
+
     shadow4.insertBefore(document.createElement('slot'), shadow4.firstChild);
 
 } catch (exception) {
