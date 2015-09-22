@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that location.hash is set synchronously even when handling a user gesture (see bug 149415).");
+
+jsTestIsAsync = true;
+
+function test()
+{
+    location.hash = "x";
+    shouldBe("location.hash", "'#x'");
+    finishJSTest();
+}
+
+function clickOn(element)
+{
+    if (!window.eventSender)
+        return;
+    var rect = element.getBoundingClientRect();
+    var x = rect.left + rect.width / 2;
+    var y = rect.top + rect.height / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+onload = function() {
+    clickOn(document.getElementsByTagName("button")[0]);
+}
+
+</script>
+<button onclick="test()"></button>
+</body>
+</html>
