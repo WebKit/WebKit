@@ -1,3 +1,74 @@
+2015-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of ENABLE(GGC)
+        https://bugs.webkit.org/show_bug.cgi?id=149472
+
+        Reviewed by Mark Hahnenberg and Mark Lam.
+
+        Getting rid of this feature flag allows us to remove a lot of yuck.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark):
+        (JSC::ScriptExecutable::forEachCodeBlock):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::linkBranches):
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::DFG::SpeculativeJIT::selectScratchGPR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBaseValueStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::moveTrueTo):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBaseValueStoreBarrier):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::moveTrueTo):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        (JSC::CodeBlockSet::dump):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::clearRememberedSet):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        (JSC::Heap::shouldDoFullCollection):
+        (JSC::Heap::addLogicallyEmptyWeakBlock):
+        * heap/HeapInlines.h:
+        (JSC::Heap::isWriteBarrierEnabled):
+        (JSC::Heap::writeBarrier):
+        (JSC::Heap::reportExtraMemoryAllocated):
+        (JSC::Heap::reportExtraMemoryVisited):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::clearMarks):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::visitWeakSets):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::didAllocateInBlock):
+        (JSC::MarkedSpace::objectCount):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+        (JSC::JIT::emitIdentifierCheck):
+        (JSC::JIT::privateCompilePutByVal):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2015-09-22  Saam barati  <sbarati@apple.com>
 
         the toInt32 operation inside DFGSpeculativeJIT.cpp can't throw so we shouldn't emit an exceptionCheck after it.

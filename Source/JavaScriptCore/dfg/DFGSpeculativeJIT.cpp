@@ -6537,7 +6537,6 @@ void SpeculativeJIT::linkBranches()
     }
 }
 
-#if ENABLE(GGC)
 void SpeculativeJIT::compileStoreBarrier(Node* node)
 {
     ASSERT(node->op() == StoreBarrier);
@@ -6581,13 +6580,6 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scrat
     storeToWriteBarrierBuffer(ownerGPR, scratch1, scratch2);
     ownerIsRememberedOrInEden.link(&m_jit);
 }
-#else
-void SpeculativeJIT::compileStoreBarrier(Node* node)
-{
-    DFG_NODE_DO_TO_CHILDREN(m_jit.graph(), node, speculate);
-    noResult(node);
-}
-#endif // ENABLE(GGC)
 
 } } // namespace JSC::DFG
 

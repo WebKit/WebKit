@@ -494,60 +494,54 @@ macro storeStructureWithTypeInfo(cell, structure, scratch)
 end
 
 macro writeBarrierOnOperand(cellOperand)
-    if GGC
-        loadisFromInstruction(cellOperand, t1)
-        loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
-        skipIfIsRememberedOrInEden(t2, t1, t3, 
-            macro(gcData)
-                btbnz gcData, .writeBarrierDone
-                push cfr, PC
-                # We make two extra slots because cCall2 will poke.
-                subp 8, sp
-                move t2, a1 # t2 can be a0 on x86
-                move cfr, a0
-                cCall2Void(_llint_write_barrier_slow)
-                addp 8, sp
-                pop PC, cfr
-            end
-        )
-    .writeBarrierDone:
-    end
+    loadisFromInstruction(cellOperand, t1)
+    loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
+    skipIfIsRememberedOrInEden(t2, t1, t3, 
+        macro(gcData)
+            btbnz gcData, .writeBarrierDone
+            push cfr, PC
+            # We make two extra slots because cCall2 will poke.
+            subp 8, sp
+            move t2, a1 # t2 can be a0 on x86
+            move cfr, a0
+            cCall2Void(_llint_write_barrier_slow)
+            addp 8, sp
+            pop PC, cfr
+        end
+    )
+.writeBarrierDone:
 end
 
 macro writeBarrierOnOperands(cellOperand, valueOperand)
-    if GGC
-        loadisFromInstruction(valueOperand, t1)
-        loadConstantOrVariableTag(t1, t0)
-        bineq t0, CellTag, .writeBarrierDone
-    
-        writeBarrierOnOperand(cellOperand)
-    .writeBarrierDone:
-    end
+    loadisFromInstruction(valueOperand, t1)
+    loadConstantOrVariableTag(t1, t0)
+    bineq t0, CellTag, .writeBarrierDone
+
+    writeBarrierOnOperand(cellOperand)
+.writeBarrierDone:
 end
 
 macro writeBarrierOnGlobal(valueOperand, loadHelper)
-    if GGC
-        loadisFromInstruction(valueOperand, t1)
-        loadConstantOrVariableTag(t1, t0)
-        bineq t0, CellTag, .writeBarrierDone
+    loadisFromInstruction(valueOperand, t1)
+    loadConstantOrVariableTag(t1, t0)
+    bineq t0, CellTag, .writeBarrierDone
 
-        loadHelper(t3)
-    
-        skipIfIsRememberedOrInEden(t3, t1, t2,
-            macro(gcData)
-                btbnz gcData, .writeBarrierDone
-                push cfr, PC
-                # We make two extra slots because cCall2 will poke.
-                subp 8, sp
-                move cfr, a0
-                move t3, a1
-                cCall2Void(_llint_write_barrier_slow)
-                addp 8, sp
-                pop PC, cfr
-            end
-        )
-    .writeBarrierDone:
-    end
+    loadHelper(t3)
+
+    skipIfIsRememberedOrInEden(t3, t1, t2,
+        macro(gcData)
+            btbnz gcData, .writeBarrierDone
+            push cfr, PC
+            # We make two extra slots because cCall2 will poke.
+            subp 8, sp
+            move cfr, a0
+            move t3, a1
+            cCall2Void(_llint_write_barrier_slow)
+            addp 8, sp
+            pop PC, cfr
+        end
+    )
+.writeBarrierDone:
 end
 
 macro writeBarrierOnGlobalObject(valueOperand)

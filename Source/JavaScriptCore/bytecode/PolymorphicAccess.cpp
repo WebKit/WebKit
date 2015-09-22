@@ -826,7 +826,6 @@ void AccessCase::generate(AccessGenerationState& state)
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity())
             scratchBuffer = vm.scratchBufferForSize(allocator.desiredScratchBufferSizeForCall());
 
-#if ENABLE(GGC)
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
             CCallHelpers::Call callFlushWriteBarrierBuffer;
             CCallHelpers::Jump ownerIsRememberedOrInEden = jit.jumpIfIsRememberedOrInEden(baseGPR);
@@ -869,7 +868,6 @@ void AccessCase::generate(AccessGenerationState& state)
                     linkBuffer.link(callFlushWriteBarrierBuffer, operationFlushWriteBarrierBuffer);
                 });
         }
-#endif // ENABLE(GGC)
         
         allocator.restoreReusedRegistersByPopping(jit, numberOfPaddingBytes);
         state.succeed();

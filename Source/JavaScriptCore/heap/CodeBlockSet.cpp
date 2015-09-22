@@ -148,7 +148,6 @@ void CodeBlockSet::traceMarked(SlotVisitor& visitor)
 
 void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
 {
-#if ENABLE(GGC)
     if (verbose)
         dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
     for (const RefPtr<CodeBlock>& codeBlock : m_currentlyExecuting)
@@ -158,9 +157,6 @@ void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
     // in them until the next GC, and we'll recompute them at that time.
     m_currentlyExecuting.clear();
     m_remembered.clear();
-#else
-    UNUSED_PARAM(heap);
-#endif // ENABLE(GGC)
 }
 
 void CodeBlockSet::dump(PrintStream& out) const

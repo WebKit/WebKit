@@ -1256,9 +1256,7 @@ inline void CodeBlockSet::mark(CodeBlock* codeBlock)
     // a barrier when a CodeBlock needs it.
     codeBlock->clearMarks();
 
-#if ENABLE(GGC)
     m_currentlyExecuting.add(codeBlock);
-#endif
 }
 
 template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Functor&& functor)

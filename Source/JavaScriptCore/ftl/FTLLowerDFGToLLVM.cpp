@@ -8198,7 +8198,6 @@ private:
 
     void emitStoreBarrier(LValue base)
     {
-#if ENABLE(GGC)
         LBasicBlock isMarkedAndNotRemembered = FTL_NEW_BLOCK(m_out, ("Store barrier is marked block"));
         LBasicBlock bufferHasSpace = FTL_NEW_BLOCK(m_out, ("Store barrier buffer has space"));
         LBasicBlock bufferIsFull = FTL_NEW_BLOCK(m_out, ("Store barrier buffer is full"));
@@ -8229,9 +8228,6 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-#else
-        UNUSED_PARAM(base);
-#endif
     }
 
     template<typename... Args>

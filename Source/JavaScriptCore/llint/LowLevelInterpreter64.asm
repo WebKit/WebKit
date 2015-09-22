@@ -398,53 +398,47 @@ macro loadConstantOrVariableCell(index, value, slow)
 end
 
 macro writeBarrierOnOperand(cellOperand)
-    if GGC
-        loadisFromInstruction(cellOperand, t1)
-        loadConstantOrVariableCell(t1, t2, .writeBarrierDone)
-        skipIfIsRememberedOrInEden(t2, t1, t3, 
-            macro(gcData)
-                btbnz gcData, .writeBarrierDone
-                push PB, PC
-                move t2, a1 # t2 can be a0 (not on 64 bits, but better safe than sorry)
-                move cfr, a0
-                cCall2Void(_llint_write_barrier_slow)
-                pop PC, PB
-            end
-        )
-    .writeBarrierDone:
-    end
+    loadisFromInstruction(cellOperand, t1)
+    loadConstantOrVariableCell(t1, t2, .writeBarrierDone)
+    skipIfIsRememberedOrInEden(t2, t1, t3, 
+        macro(gcData)
+            btbnz gcData, .writeBarrierDone
+            push PB, PC
+            move t2, a1 # t2 can be a0 (not on 64 bits, but better safe than sorry)
+            move cfr, a0
+            cCall2Void(_llint_write_barrier_slow)
+            pop PC, PB
+        end
+    )
+.writeBarrierDone:
 end
 
 macro writeBarrierOnOperands(cellOperand, valueOperand)
-    if GGC
-        loadisFromInstruction(valueOperand, t1)
-        loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
-        btpz t0, .writeBarrierDone
-    
-        writeBarrierOnOperand(cellOperand)
-    .writeBarrierDone:
-    end
+    loadisFromInstruction(valueOperand, t1)
+    loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
+    btpz t0, .writeBarrierDone
+
+    writeBarrierOnOperand(cellOperand)
+.writeBarrierDone:
 end
 
 macro writeBarrierOnGlobal(valueOperand, loadHelper)
-    if GGC
-        loadisFromInstruction(valueOperand, t1)
-        loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
-        btpz t0, .writeBarrierDone
-    
-        loadHelper(t3)
-        skipIfIsRememberedOrInEden(t3, t1, t2,
-            macro(gcData)
-                btbnz gcData, .writeBarrierDone
-                push PB, PC
-                move cfr, a0
-                move t3, a1
-                cCall2Void(_llint_write_barrier_slow)
-                pop PC, PB
-            end
-        )
-    .writeBarrierDone:
-    end
+    loadisFromInstruction(valueOperand, t1)
+    loadConstantOrVariableCell(t1, t0, .writeBarrierDone)
+    btpz t0, .writeBarrierDone
+
+    loadHelper(t3)
+    skipIfIsRememberedOrInEden(t3, t1, t2,
+        macro(gcData)
+            btbnz gcData, .writeBarrierDone
+            push PB, PC
+            move cfr, a0
+            move t3, a1
+            cCall2Void(_llint_write_barrier_slow)
+            pop PC, PB
+        end
+    )
+.writeBarrierDone:
 end
 
 macro writeBarrierOnGlobalObject(valueOperand)

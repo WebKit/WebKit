@@ -781,15 +781,6 @@
 #define ENABLE_FTL_JIT 0
 #endif
 
-/* Generational collector for JSC */
-#if !defined(ENABLE_GGC)
-#if CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM)
-#define ENABLE_GGC 1
-#else
-#define ENABLE_GGC 0
-#endif /* CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM) */
-#endif /* !defined(ENABLE_GGC) */
-
 /* Counts uses of write barriers using sampling counters. Be sure to also
    set ENABLE_SAMPLING_COUNTERS to 1. */
 #if !defined(ENABLE_WRITE_BARRIER_PROFILING)

@@ -347,11 +347,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_lastFullGCLength(0.01)
     , m_lastEdenGCLength(0.01)
     , m_fullActivityCallback(GCActivityCallback::createFullTimer(this))
-#if ENABLE(GGC)
     , m_edenActivityCallback(GCActivityCallback::createEdenTimer(this))
-#else
-    , m_edenActivityCallback(m_fullActivityCallback)
-#endif
 #if USE(CF)
     , m_sweeper(std::make_unique<IncrementalSweeper>(this, CFRunLoopGetCurrent()))
 #else
@@ -523,12 +519,8 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     GCPHASE(MarkRoots);
     ASSERT(isValidThreadState(m_vm));
 
-#if ENABLE(GGC)
     Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
     m_slotVisitor.markStack().fillVector(rememberedSet);
-#else
-    Vector<const JSCell*> rememberedSet;
-#endif
 
 #if ENABLE(DFG_JIT)
     DFG::clearCodeBlockMarks(*m_vm);
@@ -792,13 +784,9 @@ void Heap::visitWeakHandles(HeapRootVisitor& visitor)
 
 void Heap::clearRememberedSet(Vector<const JSCell*>& rememberedSet)
 {
-#if ENABLE(GGC)
     GCPHASE(ClearRememberedSet);
     for (auto* cell : rememberedSet)
         const_cast<JSCell*>(cell)->setRemembered(false);
-#else
-    UNUSED_PARAM(rememberedSet);
-#endif
 }
 
 void Heap::updateObjectCounts(double gcStartTime)
@@ -1426,17 +1414,12 @@ void Heap::zombifyDeadObjects()
 
 void Heap::flushWriteBarrierBuffer(JSCell* cell)
 {
-#if ENABLE(GGC)
     m_writeBarrierBuffer.flush(*this);
     m_writeBarrierBuffer.add(cell);
-#else
-    UNUSED_PARAM(cell);
-#endif
 }
 
 bool Heap::shouldDoFullCollection(HeapOperation requestedCollectionType) const
 {
-#if ENABLE(GGC)
     if (Options::alwaysDoFullCollection())
         return true;
 
@@ -1453,10 +1436,6 @@ bool Heap::shouldDoFullCollection(HeapOperation requestedCollectionType) const
     }
     RELEASE_ASSERT_NOT_REACHED();
     return false;
-#else
-    UNUSED_PARAM(requestedCollectionType);
-    return true;
-#endif
 }
 
 void Heap::addLogicallyEmptyWeakBlock(WeakBlock* block)

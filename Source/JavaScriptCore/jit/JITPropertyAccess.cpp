@@ -1138,7 +1138,6 @@ void JIT::emit_op_put_to_arguments(Instruction* currentInstruction)
 #if USE(JSVALUE64)
 void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
 {
-#if ENABLE(GGC)
     Jump valueNotCell;
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
         emitGetVirtualRegister(value, regT0);
@@ -1158,16 +1157,10 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
         ownerNotCell.link(this);
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) 
         valueNotCell.link(this);
-#else
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(mode);
-#endif
 }
 
 void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 {
-#if ENABLE(GGC)
     emitGetVirtualRegister(value, regT0);
     Jump valueNotCell;
     if (mode == ShouldFilterValue)
@@ -1177,18 +1170,12 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 
     if (mode == ShouldFilterValue) 
         valueNotCell.link(this);
-#else
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(mode);
-#endif
 }
 
 #else // USE(JSVALUE64)
 
 void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode)
 {
-#if ENABLE(GGC)
     Jump valueNotCell;
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) {
         emitLoadTag(value, regT0);
@@ -1208,16 +1195,10 @@ void JIT::emitWriteBarrier(unsigned owner, unsigned value, WriteBarrierMode mode
         ownerNotCell.link(this);
     if (mode == ShouldFilterValue || mode == ShouldFilterBaseAndValue) 
         valueNotCell.link(this);
-#else
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(mode);
-#endif
 }
 
 void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 {
-#if ENABLE(GGC)
     Jump valueNotCell;
     if (mode == ShouldFilterValue) {
         emitLoadTag(value, regT0);
@@ -1228,27 +1209,18 @@ void JIT::emitWriteBarrier(JSCell* owner, unsigned value, WriteBarrierMode mode)
 
     if (mode == ShouldFilterValue) 
         valueNotCell.link(this);
-#else
-    UNUSED_PARAM(owner);
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(mode);
-#endif
 }
 
 #endif // USE(JSVALUE64)
 
 void JIT::emitWriteBarrier(JSCell* owner)
 {
-#if ENABLE(GGC)
     if (!MarkedBlock::blockFor(owner)->isMarked(owner)) {
         Jump ownerIsRememberedOrInEden = jumpIfIsRememberedOrInEden(owner);
         callOperation(operationUnconditionalWriteBarrier, owner);
         ownerIsRememberedOrInEden.link(this);
     } else
         callOperation(operationUnconditionalWriteBarrier, owner);
-#else
-    UNUSED_PARAM(owner);
-#endif // ENABLE(GGC)
 }
 
 void JIT::emitIdentifierCheck(RegisterID cell, RegisterID scratch, const Identifier& propertyName, JumpList& slowCases)
@@ -1353,9 +1325,7 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     PatchableJump badType;
     JumpList slowCases;
 
-#if ENABLE(GGC)
     bool needsLinkForWriteBarrier = false;
-#endif
 
     switch (arrayMode) {
     case JITInt32:
@@ -1366,15 +1336,11 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
         break;
     case JITContiguous:
         slowCases = emitContiguousPutByVal(currentInstruction, badType);
-#if ENABLE(GGC)
         needsLinkForWriteBarrier = true;
-#endif
         break;
     case JITArrayStorage:
         slowCases = emitArrayStoragePutByVal(currentInstruction, badType);
-#if ENABLE(GGC)
         needsLinkForWriteBarrier = true;
-#endif
         break;
     default:
         TypedArrayType type = typedArrayTypeForJITArrayMode(arrayMode);
@@ -1391,12 +1357,10 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     patchBuffer.link(badType, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
     patchBuffer.link(slowCases, CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(returnAddress.value())).labelAtOffset(byValInfo->returnAddressToSlowPath));
     patchBuffer.link(done, byValInfo->badTypeJump.labelAtOffset(byValInfo->badTypeJumpToDone));
-#if ENABLE(GGC)
     if (needsLinkForWriteBarrier) {
         ASSERT(m_calls.last().to == operationUnconditionalWriteBarrier);
         patchBuffer.link(m_calls.last().from, operationUnconditionalWriteBarrier);
     }
-#endif
     
     bool isDirect = m_interpreter->getOpcodeID(currentInstruction->u.opcode) == op_put_by_val_direct;
     if (!isDirect) {
