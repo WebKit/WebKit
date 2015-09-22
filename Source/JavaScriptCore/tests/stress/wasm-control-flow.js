@@ -240,26 +240,50 @@ function asmModule(global, env, buffer) {
         return y | 0;
     }
 
+    function conditionalTrue() {
+        var x = 0;
+        x = 5;
+        return (((x | 0) > 0) ? 1 : 2) | 0;
+    }
+
+    function conditionalFalse() {
+        var x = 0;
+        return ((x | 0) > 0) ? 1.0 : 2.0;
+    }
+
+    function conditionalFalse2() {
+        var x = 0, y = 0;
+        return (((x | 0) > 0) ? (y = (y + 1) | 0) : (y = (y + 2) | 0)) | 0;
+    }
+
     return {
         ifTrue: ifTrue,
         ifFalse: ifFalse,
         ifElseTrue: ifElseTrue,
         ifElseFalse: ifElseFalse,
         ifInIf: ifInIf,
+
         whileLoop: whileLoop,
         whileBreak: whileBreak,
         whileContinue: whileContinue,
         whileInWhile: whileInWhile,
+
         doLoop: doLoop,
         doBreak: doBreak,
         doContinue: doContinue,
+
         labelBreak: labelBreak,
         labelContinue: labelContinue,
         labelInLabelBreakInner: labelInLabelBreakInner,
         labelInLabelBreakOuter: labelInLabelBreakOuter,
         whileInWhileBreakOuter: whileInWhileBreakOuter,
+
         switchCase: switchCase,
         switchFallThrough: switchFallThrough,
+
+        conditionalTrue: conditionalTrue,
+        conditionalFalse: conditionalFalse,
+        conditionalFalse2: conditionalFalse2,
     };
 }
 */
@@ -296,3 +320,7 @@ shouldBe(module.switchFallThrough(1), 11);
 shouldBe(module.switchFallThrough(2), 111);
 shouldBe(module.switchFallThrough(3), 1111);
 shouldBe(module.switchFallThrough(4), 1);
+
+shouldBe(module.conditionalTrue(), 1);
+shouldBe(module.conditionalFalse(), 2);
+shouldBe(module.conditionalFalse2(), 2);

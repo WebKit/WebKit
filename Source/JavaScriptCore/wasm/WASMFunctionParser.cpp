@@ -570,6 +570,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseCallIndirect(context, WASMOpKind::Expression, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallImport:
             return parseCallImport(context, WASMOpKind::Expression, WASMExpressionType::I32);
+        case WASMOpExpressionI32::Conditional:
+            return parseConditional(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::Comma:
             return parseComma(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::FromF32:
@@ -621,7 +623,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::GreaterThanF64:
         case WASMOpExpressionI32::GreaterThanOrEqualF64:
             return parseRelationalF64ExpressionI32(context, op);
-        case WASMOpExpressionI32::Conditional:
         case WASMOpExpressionI32::SMin:
         case WASMOpExpressionI32::UMin:
         case WASMOpExpressionI32::SMax:
@@ -757,6 +758,8 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseCallInternal(context, WASMOpKind::Expression, WASMExpressionType::F32);
         case WASMOpExpressionF32::CallIndirect:
             return parseCallIndirect(context, WASMOpKind::Expression, WASMExpressionType::F32);
+        case WASMOpExpressionF32::Conditional:
+            return parseConditional(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::Comma:
             return parseComma(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::FromS32:
@@ -776,9 +779,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::Mul:
         case WASMOpExpressionF32::Div:
             return parseBinaryExpressionF32(context, op);
-        case WASMOpExpressionF32::Conditional:
-            // FIXME: Implement these instructions.
-            FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
             ASSERT_NOT_REACHED();
         }
@@ -872,6 +872,8 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseCallImport(context, WASMOpKind::Expression, WASMExpressionType::F64);
         case WASMOpExpressionF64::CallIndirect:
             return parseCallIndirect(context, WASMOpKind::Expression, WASMExpressionType::F64);
+        case WASMOpExpressionF64::Conditional:
+            return parseConditional(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::Comma:
             return parseComma(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::FromS32:
@@ -902,7 +904,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::ATan2:
         case WASMOpExpressionF64::Pow:
             return parseBinaryExpressionF64(context, op);
-        case WASMOpExpressionF64::Conditional:
         case WASMOpExpressionF64::Min:
         case WASMOpExpressionF64::Max:
             // FIXME: Implement these instructions.
@@ -1139,6 +1140,32 @@ ContextExpression WASMFunctionParser::parseCallImport(Context& context, WASMOpKi
     ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
     PROPAGATE_ERROR();
     return context.buildCallImport(functionImportSignature.functionImportIndex, argumentList, signature, returnType);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseConditional(Context& context, WASMExpressionType expressionType)
+{
+    ContextJumpTarget elseTarget;
+    ContextJumpTarget end;
+
+    ContextExpression condition = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+
+    context.jumpToTargetIf(Context::JumpCondition::Zero, condition, elseTarget);
+
+    parseExpression(context, expressionType);
+    PROPAGATE_ERROR();
+    
+    context.jumpToTarget(end);
+    context.linkTarget(elseTarget);
+
+    // We use discard() here to decrement the stack top in the baseline JIT.
+    context.discard(UNUSED);
+    parseExpression(context, expressionType);
+    PROPAGATE_ERROR();
+    
+    context.linkTarget(end);
+    return UNUSED;
 }
 
 template <class Context>
