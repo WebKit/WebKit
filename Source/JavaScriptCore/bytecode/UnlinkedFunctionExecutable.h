@@ -91,6 +91,7 @@ public:
     unsigned parametersStartOffset() const { return m_parametersStartOffset; }
     unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
+    void setInvalidTypeProfilingOffsets();
 
     UnlinkedFunctionCodeBlock* unlinkedCodeBlockFor(
         VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, 

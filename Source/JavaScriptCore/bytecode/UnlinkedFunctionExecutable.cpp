@@ -212,4 +212,10 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
     return result;
 }
 
+void UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets()
+{
+    m_typeProfilingStartOffset = std::numeric_limits<unsigned>::max();
+    m_typeProfilingEndOffset = std::numeric_limits<unsigned>::max();
+}
+
 } // namespace JSC

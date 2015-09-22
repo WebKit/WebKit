@@ -1,3 +1,31 @@
+2015-09-22  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Basic Block Annotations and Type Profiler annotations wrong for script with "class" with default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=149248
+
+        Reviewed by Mark Lam.
+
+        We keep track of which functions have and have not
+        executed so we can show visually, inside the inspector,
+        which functions have and have not executed. With a default
+        constructor, our parser parses code that isn't in the actual
+        JavaScript source code of the user. Our parser would then
+        give us a range of starting at "1" to "1 + default constructor length"
+        as being the text range of a function. But, this would then pollute
+        actual source code that was at these ranges.
+
+        Therefore, we should treat these default constructor source 
+        codes as having "invalid" ranges. We use [UINT_MAX, UINT_MAX] 
+        as the invalid range. This range has the effect of not polluting 
+        valid ranges inside the source code.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::unlinkedCodeBlockFor):
+        (JSC::UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitNewDefaultConstructor):
+
 2015-09-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the comma instruction in WebAssembly
