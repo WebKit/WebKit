@@ -68,8 +68,8 @@ protected:
 
 class JSTestCustomConstructorWithNoInterfaceObjectOwner : public JSC::WeakHandleOwner {
 public:
-    bool isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor&) override;
-    void finalize(JSC::JSCell*&, void* context) override;
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestCustomConstructorWithNoInterfaceObject*)

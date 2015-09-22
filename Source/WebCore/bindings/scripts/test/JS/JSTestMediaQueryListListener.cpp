@@ -177,18 +177,18 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     return JSValue::encode(jsUndefined());
 }
 
-bool JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestMediaQueryListListenerOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestMediaQueryListListenerOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestMediaQueryListListener&>(*cell);
+    auto* jsTestMediaQueryListListener = jsCast<JSTestMediaQueryListListener*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

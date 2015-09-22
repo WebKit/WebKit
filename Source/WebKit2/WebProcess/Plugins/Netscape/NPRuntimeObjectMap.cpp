@@ -305,11 +305,11 @@ void NPRuntimeObjectMap::addToInvalidationQueue(NPObject* npObject)
     m_npObjectsToFinalize.append(npObject);
 }
 
-void NPRuntimeObjectMap::finalize(JSC::JSCell*& cell, void* context)
+void NPRuntimeObjectMap::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    JSNPObject& object = jsCast<JSNPObject&>(*cell);
-    weakRemove(m_jsNPObjects, static_cast<NPObject*>(context), &object);
-    addToInvalidationQueue(object.leakNPObject());
+    JSNPObject* object = jsCast<JSNPObject*>(handle.get().asCell());
+    weakRemove(m_jsNPObjects, static_cast<NPObject*>(context), object);
+    addToInvalidationQueue(object->leakNPObject());
 }
 
 } // namespace WebKit

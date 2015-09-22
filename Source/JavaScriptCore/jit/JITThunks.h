@@ -63,7 +63,7 @@ public:
     void clearHostFunctionStubs();
 
 private:
-    void finalize(JSCell*&, void* context) override;
+    void finalize(Handle<Unknown>, void* context) override;
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
     CTIStubMap m_ctiStubMap;

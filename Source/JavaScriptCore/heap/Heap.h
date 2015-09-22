@@ -268,8 +268,8 @@ private:
 
     static const size_t minExtraMemory = 256;
     
-    class FinalizerOwner final : public WeakHandleOwner {
-        void finalize(JSCell*&, void* context) override;
+    class FinalizerOwner : public WeakHandleOwner {
+        virtual void finalize(Handle<Unknown>, void* context) override;
     };
 
     JS_EXPORT_PRIVATE bool isValidAllocation(size_t);

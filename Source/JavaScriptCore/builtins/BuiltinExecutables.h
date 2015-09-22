@@ -53,7 +53,7 @@ const SourceCode& name##Source() { return m_##name##Source; }
     UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name);
 
 private:
-    void finalize(JSCell*&, void* context) override;
+    void finalize(Handle<Unknown>, void* context) override;
 
     VM& m_vm;
 

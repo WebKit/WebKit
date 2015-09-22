@@ -34,9 +34,8 @@
 namespace JSC {
 
 template<typename T> inline Weak<T>::Weak(T* cell, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(cell ? WeakSet::allocate(*cell, weakOwner, context) : 0)
+    : m_impl(cell ? WeakSet::allocate(cell, weakOwner, context) : 0)
 {
-    static_assert((std::is_convertible<T, JSCell>::value), "JSC::Weak can only be used with cell types.");
 }
 
 template<typename T> inline bool Weak<T>::isHashTableDeletedValue() const
@@ -74,30 +73,30 @@ template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
 template<typename T> inline T* Weak<T>::operator->() const
 {
     ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
-    return jsCast<T*>(m_impl->cell());
+    return jsCast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline T& Weak<T>::operator*() const
 {
     ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
-    return *jsCast<T*>(m_impl->cell());
+    return *jsCast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline T* Weak<T>::get() const
 {
     if (!m_impl || m_impl->state() != WeakImpl::Live)
         return 0;
-    return jsCast<T*>(m_impl->cell());
+    return jsCast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline bool Weak<T>::was(T* other) const
 {
-    return static_cast<T*>(m_impl->cell()) == other;
+    return static_cast<T*>(m_impl->jsValue().asCell()) == other;
 }
 
 template<typename T> inline bool Weak<T>::operator!() const
 {
-    return !m_impl || !m_impl->cell() || m_impl->state() != WeakImpl::Live;
+    return !m_impl || !m_impl->jsValue() || m_impl->state() != WeakImpl::Live;
 }
 
 template<typename T> inline Weak<T>::operator bool() const

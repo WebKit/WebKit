@@ -190,18 +190,18 @@ JSValue JSTestException::getConstructor(VM& vm, JSGlobalObject* globalObject)
     return getDOMConstructor<JSTestExceptionConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestExceptionOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestException&>(*cell);
+    auto* jsTestException = jsCast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestException->impl(), jsTestException);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

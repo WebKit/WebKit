@@ -311,18 +311,18 @@ void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisit
     visitor.append(&thisObject->m_cachedReadonlyValue);
 }
 
-bool JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestSerializedScriptValueInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestSerializedScriptValueInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestSerializedScriptValueInterface&>(*cell);
+    auto* jsTestSerializedScriptValueInterface = jsCast<JSTestSerializedScriptValueInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestSerializedScriptValueInterface->impl(), jsTestSerializedScriptValueInterface);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

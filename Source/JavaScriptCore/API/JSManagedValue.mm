@@ -39,10 +39,10 @@
 #import "JSCInlines.h"
 #import <wtf/spi/cocoa/NSMapTableSPI.h>
 
-class JSManagedValueHandleOwner final : public JSC::WeakHandleOwner {
+class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
 public:
-    void finalize(JSC::JSCell*&, void* context) override;
-    bool isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor&) override;
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
 };
 
 static JSManagedValueHandleOwner* managedValueHandleOwner()
@@ -295,13 +295,13 @@ private:
 - (void)disconnectValue;
 @end
 
-bool JSManagedValueHandleOwner::isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor& visitor)
+bool JSManagedValueHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor& visitor)
 {
     JSManagedValue *managedValue = static_cast<JSManagedValue *>(context);
     return visitor.containsOpaqueRoot(managedValue);
 }
 
-void JSManagedValueHandleOwner::finalize(JSC::JSCell*&, void* context)
+void JSManagedValueHandleOwner::finalize(JSC::Handle<JSC::Unknown>, void* context)
 {
     JSManagedValue *managedValue = static_cast<JSManagedValue *>(context);
     [managedValue disconnectValue];

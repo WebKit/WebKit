@@ -54,7 +54,7 @@ private:
 
     static const int maxStrongCacheableEntries = 32;
 
-    void finalize(JSCell*&, void* context) override;
+    virtual void finalize(Handle<Unknown>, void* context) override;
 
     RegExp* lookupOrCreate(const WTF::String& patternString, RegExpFlags);
     void addToStrongCache(RegExp*);

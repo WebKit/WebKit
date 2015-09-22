@@ -225,18 +225,18 @@ EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunc
     return JSValue::encode(jsUndefined());
 }
 
-bool JSTestCustomNamedGetterOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestCustomNamedGetterOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestCustomNamedGetterOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestCustomNamedGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestCustomNamedGetter&>(*cell);
+    auto* jsTestCustomNamedGetter = jsCast<JSTestCustomNamedGetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestCustomNamedGetter->impl(), jsTestCustomNamedGetter);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

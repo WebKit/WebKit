@@ -35,7 +35,7 @@ class WeakHandleOwner;
 
 namespace WebCore {
 
-class WebCoreTypedArrayController final : public JSC::TypedArrayController {
+class WebCoreTypedArrayController : public JSC::TypedArrayController {
 public:
     WebCoreTypedArrayController();
     virtual ~WebCoreTypedArrayController();
@@ -45,10 +45,10 @@ public:
     JSC::WeakHandleOwner* wrapperOwner() { return &m_owner; }
 
 private:
-    class JSArrayBufferOwner final : public JSC::WeakHandleOwner {
+    class JSArrayBufferOwner : public JSC::WeakHandleOwner {
     public:
-        bool isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor&) override;
-        void finalize(JSC::JSCell*&, void* context) override;
+        virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&) override;
+        virtual void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
     };
 
     JSArrayBufferOwner m_owner;

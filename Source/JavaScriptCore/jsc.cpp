@@ -176,12 +176,12 @@ private:
     WriteBarrier<Root> m_root;
 };
 
-class ElementHandleOwner final : public WeakHandleOwner {
+class ElementHandleOwner : public WeakHandleOwner {
 public:
-    virtual bool isReachableFromOpaqueRoots(JSCell& cell, void*, SlotVisitor& visitor)
+    virtual bool isReachableFromOpaqueRoots(Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
     {
-        auto& element = jsCast<Element&>(cell);
-        return visitor.containsOpaqueRoot(element.root());
+        Element* element = jsCast<Element*>(handle.slot()->asCell());
+        return visitor.containsOpaqueRoot(element->root());
     }
 };
 

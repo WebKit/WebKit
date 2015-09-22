@@ -230,20 +230,20 @@ JSValue JSTestNamedConstructor::getNamedConstructor(VM& vm, JSGlobalObject* glob
     return getDOMConstructor<JSTestNamedConstructorNamedConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    auto& jsTestNamedConstructor = jsCast<JSTestNamedConstructor&>(cell);
-    if (jsTestNamedConstructor.impl().hasPendingActivity())
+    auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
+    if (jsTestNamedConstructor->impl().hasPendingActivity())
         return true;
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestNamedConstructorOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestNamedConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestNamedConstructor&>(*cell);
+    auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestNamedConstructor->impl(), jsTestNamedConstructor);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

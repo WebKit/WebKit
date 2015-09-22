@@ -483,18 +483,18 @@ EncodedJSValue JSC_HOST_CALL jsTestNondeterministicPrototypeFunctionNondetermini
     return JSValue::encode(result);
 }
 
-bool JSTestNondeterministicOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestNondeterministicOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestNondeterministicOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestNondeterministicOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestNondeterministic&>(*cell);
+    auto* jsTestNondeterministic = jsCast<JSTestNondeterministic*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestNondeterministic->impl(), jsTestNondeterministic);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

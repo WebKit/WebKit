@@ -112,17 +112,18 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
         if (weakImpl->state() != WeakImpl::Live)
             continue;
 
-        if (m_markedBlock->isMarkedOrNewlyAllocated(weakImpl->m_cell))
+        const JSValue& jsValue = weakImpl->jsValue();
+        if (m_markedBlock->isMarkedOrNewlyAllocated(jsValue.asCell()))
             continue;
 
         WeakHandleOwner* weakHandleOwner = weakImpl->weakHandleOwner();
         if (!weakHandleOwner)
             continue;
 
-        if (!weakHandleOwner->isReachableFromOpaqueRoots(*weakImpl->m_cell, weakImpl->context(), visitor))
+        if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
             continue;
 
-        heapRootVisitor.visit(&weakImpl->m_cell);
+        heapRootVisitor.visit(&const_cast<JSValue&>(jsValue));
     }
 }
 
@@ -143,7 +144,7 @@ void WeakBlock::reap()
         if (weakImpl->state() > WeakImpl::Dead)
             continue;
 
-        if (m_markedBlock->isMarkedOrNewlyAllocated(weakImpl->cell())) {
+        if (m_markedBlock->isMarkedOrNewlyAllocated(weakImpl->jsValue().asCell())) {
             ASSERT(weakImpl->state() == WeakImpl::Live);
             continue;
         }

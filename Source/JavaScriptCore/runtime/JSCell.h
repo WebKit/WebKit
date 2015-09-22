@@ -245,13 +245,6 @@ private:
 };
 
 template<typename To, typename From>
-inline To& jsCast(From& from)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(from.JSCell::inherits(std::remove_reference<To>::type::info()));
-    return static_cast<To&>(from);
-}
-
-template<typename To, typename From>
 inline To jsCast(From* from)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));

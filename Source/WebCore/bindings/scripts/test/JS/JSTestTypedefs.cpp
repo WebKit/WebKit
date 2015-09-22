@@ -720,18 +720,18 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithException(
     return JSValue::encode(jsUndefined());
 }
 
-bool JSTestTypedefsOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestTypedefsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestTypedefsOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestTypedefsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestTypedefs&>(*cell);
+    auto* jsTestTypedefs = jsCast<JSTestTypedefs*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestTypedefs->impl(), jsTestTypedefs);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

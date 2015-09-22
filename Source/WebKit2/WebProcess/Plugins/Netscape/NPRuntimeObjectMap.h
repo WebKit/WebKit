@@ -52,7 +52,7 @@ class NPJSObject;
 class PluginView;
 
 // A per plug-in map of NPObjects that wrap JavaScript objects.
-class NPRuntimeObjectMap final : private JSC::WeakHandleOwner {
+class NPRuntimeObjectMap : private JSC::WeakHandleOwner {
 public:
     explicit NPRuntimeObjectMap(PluginView*);
 
@@ -90,8 +90,7 @@ public:
 
 private:
     // WeakHandleOwner
-    void finalize(JSC::JSCell*&, void* context) override;
-
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
     void addToInvalidationQueue(NPObject*);
     void invalidateQueuedObjects();
 

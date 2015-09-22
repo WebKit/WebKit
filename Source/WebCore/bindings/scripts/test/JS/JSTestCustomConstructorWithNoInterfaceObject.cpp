@@ -157,18 +157,18 @@ EncodedJSValue jsTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState
     return JSValue::encode(constructor);
 }
 
-bool JSTestCustomConstructorWithNoInterfaceObjectOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestCustomConstructorWithNoInterfaceObjectOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestCustomConstructorWithNoInterfaceObjectOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestCustomConstructorWithNoInterfaceObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestCustomConstructorWithNoInterfaceObject&>(*cell);
+    auto* jsTestCustomConstructorWithNoInterfaceObject = jsCast<JSTestCustomConstructorWithNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestCustomConstructorWithNoInterfaceObject->impl(), jsTestCustomConstructorWithNoInterfaceObject);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

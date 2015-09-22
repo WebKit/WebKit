@@ -62,7 +62,7 @@ static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
 #endif
 
 class SingleSlotTransitionWeakOwner final : public WeakHandleOwner {
-    void finalize(JSCell*&, void* context) override
+    void finalize(Handle<Unknown>, void* context) override
     {
         StructureTransitionTable* table = reinterpret_cast<StructureTransitionTable*>(context);
         ASSERT(table->isUsingSingleSlot());
@@ -82,7 +82,7 @@ inline Structure* StructureTransitionTable::singleTransition() const
     ASSERT(isUsingSingleSlot());
     if (WeakImpl* impl = this->weakImpl()) {
         if (impl->state() == WeakImpl::Live)
-            return jsCast<Structure*>(impl->cell());
+            return jsCast<Structure*>(impl->jsValue().asCell());
     }
     return nullptr;
 }
@@ -92,7 +92,7 @@ inline void StructureTransitionTable::setSingleTransition(Structure* structure)
     ASSERT(isUsingSingleSlot());
     if (WeakImpl* impl = this->weakImpl())
         WeakSet::deallocate(impl);
-    WeakImpl* impl = WeakSet::allocate(*structure, &singleSlotTransitionWeakOwner(), this);
+    WeakImpl* impl = WeakSet::allocate(structure, &singleSlotTransitionWeakOwner(), this);
     m_data = reinterpret_cast<intptr_t>(impl) | UsingSingleSlotFlag;
 }
 

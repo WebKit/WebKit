@@ -221,18 +221,18 @@ EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(Ex
     return JSValue::encode(result);
 }
 
-bool JSTestOverrideBuiltinsOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestOverrideBuiltinsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestOverrideBuiltinsOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestOverrideBuiltinsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestOverrideBuiltins&>(*cell);
+    auto* jsTestOverrideBuiltins = jsCast<JSTestOverrideBuiltins*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestOverrideBuiltins->impl(), jsTestOverrideBuiltins);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

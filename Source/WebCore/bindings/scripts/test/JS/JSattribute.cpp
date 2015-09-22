@@ -173,18 +173,18 @@ JSValue JSattribute::getConstructor(VM& vm, JSGlobalObject* globalObject)
     return getDOMConstructor<JSattributeConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSattributeOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSattributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSattribute&>(*cell);
+    auto* jsattribute = jsCast<JSattribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsattribute->impl(), jsattribute);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

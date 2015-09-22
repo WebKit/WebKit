@@ -35,8 +35,8 @@ class SlotVisitor;
 class JS_EXPORT_PRIVATE WeakHandleOwner {
 public:
     virtual ~WeakHandleOwner();
-    virtual bool isReachableFromOpaqueRoots(JSCell&, void* context, SlotVisitor&);
-    virtual void finalize(JSCell*&, void* context);
+    virtual bool isReachableFromOpaqueRoots(Handle<Unknown>, void* context, SlotVisitor&);
+    virtual void finalize(Handle<Unknown>, void* context);
 };
 
 } // namespace JSC

@@ -246,18 +246,18 @@ JSValue JSTestOverloadedConstructors::getConstructor(VM& vm, JSGlobalObject* glo
     return getDOMConstructor<JSTestOverloadedConstructorsConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    UNUSED_PARAM(cell);
+    UNUSED_PARAM(handle);
     UNUSED_PARAM(visitor);
     return false;
 }
 
-void JSTestOverloadedConstructorsOwner::finalize(JSC::JSCell*& cell, void* context)
+void JSTestOverloadedConstructorsOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    auto& wrapper = jsCast<JSTestOverloadedConstructors&>(*cell);
+    auto* jsTestOverloadedConstructors = jsCast<JSTestOverloadedConstructors*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &wrapper.impl(), &wrapper);
+    uncacheWrapper(world, &jsTestOverloadedConstructors->impl(), jsTestOverloadedConstructors);
 }
 
 #if ENABLE(BINDING_INTEGRITY)

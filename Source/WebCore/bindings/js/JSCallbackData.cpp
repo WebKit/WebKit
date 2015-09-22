@@ -90,7 +90,7 @@ JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer&
     return result;
 }
 
-bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::JSCell&, void* context, SlotVisitor& visitor)
+bool JSCallbackDataWeak::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, SlotVisitor& visitor)
 {
     return visitor.containsOpaqueRoot(context);
 }

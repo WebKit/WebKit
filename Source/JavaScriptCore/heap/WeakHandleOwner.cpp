@@ -37,12 +37,12 @@ WeakHandleOwner::~WeakHandleOwner()
 {
 }
 
-bool WeakHandleOwner::isReachableFromOpaqueRoots(JSCell&, void*, SlotVisitor&)
+bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, SlotVisitor&)
 {
     return false;
 }
 
-void WeakHandleOwner::finalize(JSCell*&, void*)
+void WeakHandleOwner::finalize(Handle<Unknown>, void*)
 {
 }
 

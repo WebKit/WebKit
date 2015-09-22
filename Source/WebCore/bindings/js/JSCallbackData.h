@@ -105,8 +105,8 @@ public:
     }
 
 private:
-    class WeakOwner final : public JSC::WeakHandleOwner {
-        bool isReachableFromOpaqueRoots(JSC::JSCell&, void* context, JSC::SlotVisitor&) override;
+    class WeakOwner : public JSC::WeakHandleOwner {
+        virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     };
     WeakOwner m_weakOwner;
     JSC::Weak<JSC::JSObject> m_callback;

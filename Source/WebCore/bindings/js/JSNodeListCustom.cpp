@@ -37,17 +37,17 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::JSCell& cell, void*, SlotVisitor& visitor)
+bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    auto& jsNodeList = jsCast<JSNodeList&>(cell);
-    if (!jsNodeList.hasCustomProperties())
+    JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.slot()->asCell());
+    if (!jsNodeList->hasCustomProperties())
         return false;
-    if (jsNodeList.impl().isLiveNodeList())
-        return visitor.containsOpaqueRoot(root(static_cast<LiveNodeList&>(jsNodeList.impl()).ownerNode()));
-    if (jsNodeList.impl().isChildNodeList())
-        return visitor.containsOpaqueRoot(root(static_cast<ChildNodeList&>(jsNodeList.impl()).ownerNode()));
-    if (jsNodeList.impl().isEmptyNodeList())
-        return visitor.containsOpaqueRoot(root(static_cast<EmptyNodeList&>(jsNodeList.impl()).ownerNode()));
+    if (jsNodeList->impl().isLiveNodeList())
+        return visitor.containsOpaqueRoot(root(static_cast<LiveNodeList&>(jsNodeList->impl()).ownerNode()));
+    if (jsNodeList->impl().isChildNodeList())
+        return visitor.containsOpaqueRoot(root(static_cast<ChildNodeList&>(jsNodeList->impl()).ownerNode()));
+    if (jsNodeList->impl().isEmptyNodeList())
+        return visitor.containsOpaqueRoot(root(static_cast<EmptyNodeList&>(jsNodeList->impl()).ownerNode()));
     return false;
 }
 
