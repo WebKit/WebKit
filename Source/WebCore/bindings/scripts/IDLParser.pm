@@ -300,13 +300,15 @@ sub unquoteString
 sub typeHasNullableSuffix
 {
     my $type = shift;
-    return $type =~ /\?$/;
+    return $type ? $type =~ /\?$/ : 0;
 }
 
 sub typeRemoveNullableSuffix
 {
     my $type = shift;
-    $type =~ s/\?//g;
+    if ($type) {
+        $type =~ s/\?//g;
+    }
     return $type;
 }
 
