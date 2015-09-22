@@ -94,16 +94,4 @@ const Vector<Node*>* HTMLSlotElement::assignedNodes() const
     return shadowRoot->assignedNodesForSlot(*this);
 }
 
-Vector<RefPtr<Node>> HTMLSlotElement::getDistributedNodes() const
-{
-    Vector<RefPtr<Node>> distributedNodes;
-
-    if (auto* assignedNodes = this->assignedNodes()) {
-        for (auto* node : *assignedNodes)
-            distributedNodes.append(node);
-    }
-
-    return distributedNodes;
-}
-
 }

@@ -38,8 +38,6 @@ public:
 
     const Vector<Node*>* assignedNodes() const;
 
-    Vector<RefPtr<Node>> getDistributedNodes() const;
-
 private:
     HTMLSlotElement(const QualifiedName&, Document&);
 
