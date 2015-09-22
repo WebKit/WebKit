@@ -1,3 +1,19 @@
+2015-09-22  Anders Carlsson  <andersca@apple.com>
+
+        URL of page visited in private browsing still appears in Activity Monitor after page is closed
+        https://bugs.webkit.org/show_bug.cgi?id=149475
+        rdar://problem/22684521
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        Make sure to call updateActivePages after removing the page from the page map.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateActivePages):
+        Don't include pages that have private browsing enabled.
+
 2015-09-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it more obvious when using an unaccelerated image buffer, and fix a few callers who do

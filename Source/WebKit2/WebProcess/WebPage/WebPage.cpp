@@ -1004,6 +1004,8 @@ void WebPage::close()
     // The WebPage can be destroyed by this call.
     WebProcess::singleton().removeWebPage(m_pageID);
 
+    WebProcess::singleton().updateActivePages();
+
     if (isRunningModal)
         RunLoop::main().stop();
 }
