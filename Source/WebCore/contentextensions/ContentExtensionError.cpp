@@ -80,7 +80,7 @@ const std::error_category& contentExtensionErrorCategory()
             case ContentExtensionError::JSONTooManyRules:
                 return "Too many rules in JSON array.";
             case ContentExtensionError::JSONDomainNotLowerCaseASCII:
-                return "Domains must be lower case ASCII.  Use punycode to encode non-ASCII characters.";
+                return "Domains must be lower case ASCII. Use punycode to encode non-ASCII characters.";
             case ContentExtensionError::JSONUnlessAndIfDomain:
                 return "A trigger cannot have both unless- and if-domain.";
             }
