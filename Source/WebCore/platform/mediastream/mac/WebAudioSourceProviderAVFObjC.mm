@@ -105,7 +105,7 @@ void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToP
 
     uint64_t framesAvailable = endFrame - (m_readCount + m_writeAheadCount);
     if (framesAvailable < framesToProcess) {
-        framesToProcess = framesAvailable;
+        framesToProcess = static_cast<size_t>(framesAvailable);
         bus->zero();
     }
 
