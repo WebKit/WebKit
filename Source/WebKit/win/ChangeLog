@@ -1,3 +1,23 @@
+2015-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Show tiled drawing debug overlay on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=149426
+
+        Reviewed by Dean Jackson.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Add new IWebPreferencesPrivate3 API version
+        so we can add new methods this cycle.
+        * WebPreferenceKeysPrivate.h: Add key for 'WebKitShowTiledScrollingIndicator'
+        * WebPreferences.cpp:
+        (WebPreferences::QueryInterface): Recognize the new IWebPreferencesPrivate3 API.
+        (WebPreferences::showTiledScrollingIndicator): Added.
+        (WebPreferences::setShowTiledScrollingIndicator): Ditto.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Update to recognize 'showTiledScrollingIndicator'.
+        (WebView::setAcceleratedCompositing): Link the CACFLayerTreeHost to the WebCore Page object
+        so that it can see settings information.
+
 2015-09-18  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Use tiled drawing for main background layer

@@ -532,6 +532,8 @@ HRESULT WebPreferences::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
         *ppvObject = static_cast<IWebPreferencesPrivate*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate2))
         *ppvObject = static_cast<IWebPreferencesPrivate2*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate3))
+        *ppvObject = static_cast<IWebPreferencesPrivate3*>(this);
     else if (IsEqualGUID(riid, CLSID_WebPreferences))
         *ppvObject = this;
     else
@@ -1899,5 +1901,19 @@ HRESULT WebPreferences::allowDisplayAndRunningOfInsecureContent(_Out_ BOOL* enab
 HRESULT WebPreferences::setAllowDisplayAndRunningOfInsecureContent(BOOL enabled)
 {
     setBoolValue(WebKitAllowDisplayAndRunningOfInsecureContentPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::showTiledScrollingIndicator(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitShowTiledScrollingIndicatorPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setShowTiledScrollingIndicator(BOOL enabled)
+{
+    setBoolValue(WebKitShowTiledScrollingIndicatorPreferenceKey, enabled);
     return S_OK;
 }

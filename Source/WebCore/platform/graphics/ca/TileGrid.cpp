@@ -642,13 +642,9 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
         String repaintCount = String::number(m_tileRepaintCounts.get(tileLayer));
 
         CGContextSaveGState(context);
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(3, -3));
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        CGContextSelectFont(context, "Helvetica", 58, kCGEncodingMacRoman);
-        CGContextShowTextAtPoint(context, frame.origin.x + 64, frame.origin.y + 192, repaintCount.ascii().data(), repaintCount.length());
-#pragma clang diagnostic pop
+        tileLayer->drawTextAtPoint(context, frame.origin.x + 64, frame.origin.y + 192, CGSizeMake(3, -3), 58,
+            repaintCount.ascii().data(), repaintCount.length());
 
         CGContextRestoreGState(context);
     }

@@ -393,6 +393,9 @@ static bool ToggleMenuItem(HWND hWnd, UINT menuID)
         gMiniBrowser->privatePreferences()->setShowDebugBorders(newState);
         gMiniBrowser->privatePreferences()->setShowRepaintCounter(newState);
         break;
+    case IDM_DEBUG_INFO_LAYER:
+        gMiniBrowser->privatePreferences()->setShowTiledScrollingIndicator(newState);
+        break;
     case IDM_INVERT_COLORS:
         gMiniBrowser->privatePreferences()->setShouldInvertColors(newState);
         break;

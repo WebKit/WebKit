@@ -27,9 +27,14 @@
 #include "CACFLayerTreeHost.h"
 
 #include "CACFLayerTreeHostClient.h"
+#include "DebugPageOverlays.h"
 #include "DefWndProcWindowClass.h"
+#include "FrameView.h"
 #include "LayerChangesFlusher.h"
+#include "MainFrame.h"
 #include "PlatformCALayerWin.h"
+#include "PlatformLayer.h"
+#include "TiledBacking.h"
 #include "WKCACFViewLayerTreeHost.h"
 #include "WebCoreInstanceHandle.h"
 #include <limits.h>
@@ -110,21 +115,14 @@ bool CACFLayerTreeHost::acceleratedCompositingAvailable()
 PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 {
     if (!acceleratedCompositingAvailable())
-        return 0;
+        return nullptr;
     RefPtr<CACFLayerTreeHost> host = WKCACFViewLayerTreeHost::create();
     host->initialize();
     return host.release();
 }
 
 CACFLayerTreeHost::CACFLayerTreeHost()
-    : m_client(0)
-    , m_rootLayer(PlatformCALayerWin::create(PlatformCALayer::LayerTypeRootLayer, 0))
-    , m_window(0)
-    , m_shouldFlushPendingGraphicsLayerChanges(false)
-    , m_isFlushingLayerChanges(false)
-#if !ASSERT_DISABLED
-    , m_state(WindowNotSet)
-#endif
+    : m_rootLayer(PlatformCALayerWin::create(PlatformCALayer::LayerTypeRootLayer, nullptr))
 {
 }
 
@@ -187,6 +185,11 @@ void CACFLayerTreeHost::setWindow(HWND window)
     m_window = window;
 }
 
+void CACFLayerTreeHost::setPage(Page* page)
+{
+    m_page = page;
+}
+
 PlatformCALayer* CACFLayerTreeHost::rootLayer() const
 {
     return m_rootLayer.get();
@@ -203,6 +206,7 @@ void CACFLayerTreeHost::setRootChildLayer(PlatformCALayer* layer)
     m_rootChildLayer = layer;
     if (m_rootChildLayer)
         m_rootLayer->appendSublayer(*m_rootChildLayer);
+    updateDebugInfoLayer(m_page->settings().showTiledScrollingIndicator());
 }
    
 void CACFLayerTreeHost::layerTreeDidChange()
@@ -279,6 +283,8 @@ void CACFLayerTreeHost::flushPendingLayerChangesNow()
     // Calling out to the client could cause our last reference to go away.
     RefPtr<CACFLayerTreeHost> protector(this);
 
+    updateDebugInfoLayer(m_page->settings().showTiledScrollingIndicator());
+
     m_isFlushingLayerChanges = true;
 
     // Flush changes stored up in GraphicsLayers to their underlying PlatformCALayers, if
@@ -328,6 +334,38 @@ String CACFLayerTreeHost::layerTreeAsString() const
         return emptyString();
 
     return m_rootLayer->layerTreeAsString();
+}
+
+TiledBacking* CACFLayerTreeHost::mainFrameTiledBacking() const
+{
+    if (!m_page)
+        return nullptr;
+
+    FrameView* frameView = m_page->mainFrame().view();
+    if (!frameView)
+        return nullptr;
+    
+    return frameView->tiledBacking();
+}
+
+void CACFLayerTreeHost::updateDebugInfoLayer(bool showLayer)
+{
+    if (showLayer) {
+        if (!m_debugInfoLayer) {
+            if (TiledBacking* tiledBacking = mainFrameTiledBacking())
+                m_debugInfoLayer = tiledBacking->tiledScrollingIndicatorLayer();
+        }
+
+        if (m_debugInfoLayer) {
+#ifndef NDEBUG
+            m_debugInfoLayer->setName("Debug Info");
+#endif
+            m_rootLayer->appendSublayer(*m_debugInfoLayer);
+        }
+    } else if (m_debugInfoLayer) {
+        m_debugInfoLayer->removeFromSuperlayer();
+        m_debugInfoLayer = nullptr;
+    }
 }
 
 }

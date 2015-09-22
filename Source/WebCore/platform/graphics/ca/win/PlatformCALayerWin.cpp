@@ -899,7 +899,7 @@ TiledBacking* PlatformCALayerWin::tiledBacking()
     return reinterpret_cast<WebTiledBackingLayerWin*>(intern(this))->tiledBacking();
 }
 
-void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, const char* message, size_t length) const
+void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* message, size_t length) const
 {
     String text(message, length);
 
@@ -910,7 +910,7 @@ void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloa
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
     desc.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
 
-    desc.setComputedSize(18);
+    desc.setComputedSize(scale.width * fontSize);
 
     FontCascade font = FontCascade(desc, 0, 0);
     font.update(nullptr);

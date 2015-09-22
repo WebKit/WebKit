@@ -53,6 +53,7 @@
 #define IDM_ZOOM_IN                     172
 #define IDM_ZOOM_OUT                    173
 #define IDM_SHOW_LAYER_TREE             174
+#define IDM_DEBUG_INFO_LAYER            175
 #define IDC_EMPTY_URL_CACHE             1000
 #define IDC_RETURN_FREE_MEMORY          1001
 #define IDC_EMPTY_WEBCORE_CACHE         1002

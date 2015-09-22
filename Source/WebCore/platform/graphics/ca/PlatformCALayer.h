@@ -226,7 +226,7 @@ public:
 
     virtual TiledBacking* tiledBacking() = 0;
 
-    virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, const char* text, size_t length) const;
+    virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length) const;
 
     static void flipContext(CGContextRef, CGFloat height);
 

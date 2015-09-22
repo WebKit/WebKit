@@ -7,6 +7,20 @@
 
 2015-09-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Show tiled drawing debug overlay on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=149426
+
+        Reviewed by Dean Jackson.
+
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLib.rc: Add new menu option.
+        * MiniBrowser/MiniBrowser.vcxproj/MiniBrowserLibResource.h: Ditto.
+        * MiniBrowser/win/Common.cpp:
+        (::ToggleMenuItem): Recognize new menu item and toggle the 'showTiledScrollingIndicator'
+        flag if needed.
+        * MiniBrowser/win/MiniBrowser.h: Update to use new IWebPreferencesPrivate3 class.
+
+2015-09-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Use command-line argument to launch in regular or High DPI mode.
         https://bugs.webkit.org/show_bug.cgi?id=149417
 

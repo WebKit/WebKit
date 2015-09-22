@@ -105,6 +105,7 @@ BEGIN
         MENUITEM "Enable WebKit Full Screen",   IDM_WK_FULLSCREEN, CHECKED
         MENUITEM SEPARATOR
         MENUITEM "Show Compositing Borders",    IDM_COMPOSITING_BORDERS
+        MENUITEM "Show Tiled Drawing indicator", IDM_DEBUG_INFO_LAYER
         MENUITEM SEPARATOR
         MENUITEM "Show Caches Window",          IDM_CACHES
         MENUITEM "Show Layer Tree",             IDM_SHOW_LAYER_TREE

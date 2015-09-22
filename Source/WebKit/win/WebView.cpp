@@ -4935,7 +4935,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setShouldDisplayTextDescriptions(enabled);
 #endif
 
-    COMPtr<IWebPreferencesPrivate2> prefsPrivate(Query, preferences);
+    COMPtr<IWebPreferencesPrivate3> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
         hr = prefsPrivate->localStorageDatabasePath(&str);
         if (FAILED(hr))
@@ -5180,6 +5180,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings.setShowRepaintCounter(enabled);
+
+    hr = prefsPrivate->showTiledScrollingIndicator(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setShowTiledScrollingIndicator(!!enabled);
 
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(true);
@@ -6817,6 +6822,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             m_layerTreeHost->setClient(this);
             ASSERT(m_viewWindow);
             m_layerTreeHost->setWindow(m_viewWindow);
+            m_layerTreeHost->setPage(page());
 
             // FIXME: We could perhaps get better performance by never allowing this layer to
             // become tiled (or choosing a higher-than-normal tiling threshold).

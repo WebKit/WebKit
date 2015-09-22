@@ -31,7 +31,7 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate2 {
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate3 {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -229,6 +229,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptRuntimeFlags(unsigned);
     virtual HRESULT STDMETHODCALLTYPE allowDisplayAndRunningOfInsecureContent(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setAllowDisplayAndRunningOfInsecureContent(BOOL);
+
+    // IWebPreferencesPrivate3
+    virtual HRESULT STDMETHODCALLTYPE showTiledScrollingIndicator(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShowTiledScrollingIndicator(BOOL);
 
     // WebPreferences
 

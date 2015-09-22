@@ -148,7 +148,7 @@ public:
     virtual PlatformCALayer* rootLayer() const override;
     virtual void setNeedsLayout() override;
     virtual void setNeedsCommit() override;
-    virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, const char* text, size_t length) const override;
+    virtual void drawTextAtPoint(CGContextRef, CGFloat x, CGFloat y, CGSize scale, CGFloat fontSize, const char* text, size_t length) const override;
 
     virtual String layerTreeAsString() const override;
 
