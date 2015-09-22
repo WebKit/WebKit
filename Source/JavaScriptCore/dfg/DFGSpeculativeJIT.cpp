@@ -1928,7 +1928,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         GPRReg gpr = result.gpr();
         JITCompiler::Jump notTruncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateFailed);
         
-        addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this, toInt32, gpr, fpr));
+        addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this, toInt32, gpr, fpr, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded));
         
         int32Result(gpr, node);
         return;
@@ -1982,7 +1982,6 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             silentSpillAllRegisters(resultGpr);
             callOperation(toInt32, resultGpr, fpr);
             silentFillAllRegisters(resultGpr);
-            m_jit.exceptionCheck();
 
             converted.append(m_jit.jump());
 
@@ -2042,7 +2041,6 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                 silentSpillAllRegisters(resultGpr);
                 callOperation(toInt32, resultGpr, fpr);
                 silentFillAllRegisters(resultGpr);
-                m_jit.exceptionCheck();
 
                 converted.append(m_jit.jump());
 
@@ -2577,7 +2575,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(GPRReg base, GPRReg propert
                 MacroAssembler::Jump failed = m_jit.branchTruncateDoubleToInt32(
                     fpr, gpr, MacroAssembler::BranchIfTruncateFailed);
                 
-                addSlowPathGenerator(slowPathCall(failed, this, toInt32, gpr, fpr));
+                addSlowPathGenerator(slowPathCall(failed, this, toInt32, gpr, fpr, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded));
                 
                 fixed.link(&m_jit);
                 value.adopt(result);

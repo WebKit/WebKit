@@ -1,3 +1,24 @@
+2015-09-22  Saam barati  <sbarati@apple.com>
+
+        the toInt32 operation inside DFGSpeculativeJIT.cpp can't throw so we shouldn't emit an exceptionCheck after it.
+        https://bugs.webkit.org/show_bug.cgi?id=149467
+
+        Reviewed by Mark Lam.
+
+        The callOperation for toInt32 won't store a call site index in the call frame.
+        Therefore, if this is the first callOperation in the current compilation, 
+        and we emit an exception check inside a try block, we will hit an assertion 
+        saying that we must have DFGCommonData::codeOrigins.size() be > 0 inside
+        DFGCommonData::lastCallSite(). Therefore, it is imperative that we don't 
+        emit exception checks for callOperations that don't throw exceptions and 
+        don't store a call site index in the call frame.
+
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::lastCallSite):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+
 2015-09-22  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement the conditional instruction in WebAssembly
