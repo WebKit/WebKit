@@ -1,3 +1,14 @@
+2015-09-22  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [EFL] Build break when DEVELOPER_MODE is OFF
+        https://bugs.webkit.org/show_bug.cgi?id=149448
+
+        Reviewed by Gyuyoung Kim.
+
+        Since r187191, DatabaseProcessMainUnix is missing in symbol filter.
+
+        * Source/cmake/eflsymbols.filter:
+
 2015-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Disable PICTURE_SIZES in Windows CMake build like r189745.
