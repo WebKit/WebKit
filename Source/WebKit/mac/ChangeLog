@@ -1,3 +1,19 @@
+2015-09-21  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r182648): UIWebView does not set location.hash synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=149415
+        <rdar://problem/22169467>
+
+        Reviewed by Darin Adler.
+
+        The problem was that the delegate in UI thread became asynchronous due to calling
+        into LaunchServices.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: (shouldTryAppLink): Don't attempt app
+        links for same domain navigations. This check is part of substantially more complicated
+        logic in WebKit2 that I don't understand, but that should be enough to demonstrate
+        that this fix is an improvement at least.
+
 2015-09-20  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Remove XHR_TIMEOUT compilation guard
