@@ -124,6 +124,15 @@ if (UNIX AND NOT APPLE AND NOT ENABLED_COMPILER_SANITIZERS)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
 endif ()
 
+# Enable the usage of OpenMP.
+#  - At this moment, OpenMP is only used as an alternative implementation
+#    to native threads for the parallelization of the SVG filters.
+if (USE_OPENMP)
+    find_package(OpenMP REQUIRED)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif ()
+
 # GTK uses the GNU installation directories as defaults.
 if (NOT PORT STREQUAL "GTK")
     set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Absolute path to library installation directory")

@@ -1,3 +1,16 @@
+2015-09-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Allow to enable OpenMP support.
+        https://bugs.webkit.org/show_bug.cgi?id=149457
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsCommon.cmake: Add the option USE_OPENMP that
+        will enable the support for OpenMP. Currently this is only used as
+        an alternative implementation to native threads for the parallelization
+        of the SVG filters. But name the option with a generic name (USE_OPENMP)
+        as it could be also used to enable future features that depend on OpenMP.
+
 2015-09-22  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [EFL] Build break when DEVELOPER_MODE is OFF
