@@ -139,7 +139,7 @@ private:
 
     PendingSheetType m_pendingSheetType;
 
-    std::unique_ptr<AttributeDOMTokenList> m_relList;
+    RefPtr<AttributeDOMTokenList> m_relList;
 };
 
 } //namespace

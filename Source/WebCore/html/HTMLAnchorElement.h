@@ -145,7 +145,7 @@ private:
     uint32_t m_linkRelations : 30;
     mutable LinkHash m_cachedVisitedLinkHash;
 
-    std::unique_ptr<AttributeDOMTokenList> m_relList;
+    RefPtr<AttributeDOMTokenList> m_relList;
 };
 
 inline LinkHash HTMLAnchorElement::visitedLinkHash() const

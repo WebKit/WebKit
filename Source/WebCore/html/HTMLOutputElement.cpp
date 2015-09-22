@@ -37,12 +37,14 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
     , m_isDefaultValueMode(true)
     , m_isSetTextContentInProgress(false)
     , m_defaultValue("")
-    , m_tokens(DOMSettableTokenList::create())
+    , m_tokens(AttributeDOMTokenList::create(*this, forAttr))
 {
 }
 
@@ -64,15 +66,10 @@ bool HTMLOutputElement::supportsFocus() const
 
 void HTMLOutputElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == HTMLNames::forAttr)
-        setFor(value);
+    if (name == forAttr)
+        m_tokens->attributeValueChanged(value);
     else
         HTMLFormControlElement::parseAttribute(name, value);
-}
-
-void HTMLOutputElement::setFor(const String& value)
-{
-    m_tokens->setValue(value);
 }
 
 void HTMLOutputElement::childrenChanged(const ChildChange& change)

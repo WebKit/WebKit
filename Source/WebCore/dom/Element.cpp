@@ -2715,7 +2715,7 @@ DOMTokenList& Element::classList()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.classList())
-        data.setClassList(std::make_unique<AttributeDOMTokenList>(*this, HTMLNames::classAttr));
+        data.setClassList(AttributeDOMTokenList::create(*this, HTMLNames::classAttr));
     return *data.classList();
 }
 

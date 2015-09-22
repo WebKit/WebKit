@@ -316,7 +316,7 @@ bool HTMLAnchorElement::hasRel(uint32_t relation) const
 DOMTokenList& HTMLAnchorElement::relList()
 {
     if (!m_relList) 
-        m_relList = std::make_unique<AttributeDOMTokenList>(*this, HTMLNames::relAttr);
+        m_relList = AttributeDOMTokenList::create(*this, HTMLNames::relAttr);
     return *m_relList;
 }
 
