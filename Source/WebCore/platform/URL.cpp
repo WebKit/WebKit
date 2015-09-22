@@ -432,7 +432,12 @@ void URL::invalidate()
 URL::URL(ParsedURLStringTag, const String& url)
 {
     parse(url);
+#if OS(WINDOWS)
+    // FIXME(148598): Work around Windows local file handling bug in CFNetwork
+    ASSERT(isLocalFile() || url == m_string);
+#else
     ASSERT(url == m_string);
+#endif
 }
 
 URL::URL(const URL& base, const String& relative)

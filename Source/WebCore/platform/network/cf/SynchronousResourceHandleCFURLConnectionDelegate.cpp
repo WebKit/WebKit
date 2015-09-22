@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2013, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,6 +109,29 @@ static void setDefaultMIMEType(CFURLResponseRef response)
     
     CFURLResponseSetMIMEType(response, defaultMIMETypeString);
 }
+
+static void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
+{
+    RetainPtr<CFStringRef> result = CFURLResponseGetMIMEType(cfResponse);
+    RetainPtr<CFStringRef> originalResult = result;
+
+    if (!result) {
+        CFURLRef cfURL = CFURLResponseGetURL(cfResponse);
+        URL url(cfURL);
+        if (url.isLocalFile()) {
+            String mimeType = mimeTypeFromURL(url);
+            result = mimeType.createCFString().leakRef();
+        }
+    }
+
+    if (!result) {
+        static CFStringRef defaultMIMETypeString = WebCore::defaultMIMEType().createCFString().leakRef();
+        result = defaultMIMETypeString;
+    }
+
+    if (result != originalResult)
+        CFURLResponseSetMIMEType(cfResponse, result.get());
+}
 #endif // !PLATFORM(COCOA)
 
 void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLConnectionRef connection, CFURLResponseRef cfResponse)
@@ -131,6 +154,9 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
         wkSetCFURLResponseMIMEType(cfResponse, CFSTR("text/html"));
 #endif // !PLATFORM(IOS)
 #else
+    if (!CFURLResponseGetMIMEType(cfResponse))
+        adjustMIMETypeIfNecessary(cfResponse);
+
     if (!CFURLResponseGetMIMEType(cfResponse)) {
         // We should never be applying the default MIMEType if we told the networking layer to do content sniffing for handle.
         ASSERT(!m_handle->shouldContentSniff());
