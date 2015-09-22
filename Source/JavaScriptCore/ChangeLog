@@ -1,3 +1,48 @@
+2015-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of ENABLE(PARALLEL_GC)
+        https://bugs.webkit.org/show_bug.cgi?id=149436
+
+        Reviewed by Mark Lam.
+
+        We always enable parallel GC everywhere but Windows, and it doesn't look like it was disabled
+        there for any good reason. So, get rid of the flag.
+
+        The only effect of this change is that parallel GC will now be enabled on Windows, provided
+        that the CPU detection finds more than one.
+
+        * heap/GCThread.cpp:
+        (JSC::GCThread::gcThreadMain):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::resetChildren):
+        (JSC::GCThreadSharedData::childBytesCopied):
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        (JSC::GCThreadSharedData::~GCThreadSharedData):
+        (JSC::GCThreadSharedData::reset):
+        (JSC::GCThreadSharedData::didStartMarking):
+        * heap/Heap.cpp:
+        (JSC::Heap::converge):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::resetVisitors):
+        * heap/MarkedBlock.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        (JSC::JSString::tryHashConsLock):
+        (JSC::JSString::releaseHashConsLock):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::addOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRootTriState):
+        (JSC::SlotVisitor::opaqueRootCount):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary):
+        * runtime/Options.cpp:
+        (JSC::computeNumberOfGCMarkers):
+
 2015-09-22  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement min and max instructions in WebAssembly

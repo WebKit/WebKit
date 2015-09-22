@@ -84,9 +84,7 @@ GCPhase GCThread::waitForNextPhase()
 void GCThread::gcThreadMain()
 {
     GCPhase currentPhase;
-#if ENABLE(PARALLEL_GC)
     WTF::registerGCThread();
-#endif
     // Wait for the main thread to finish creating and initializing us. The main thread grabs this lock before 
     // creating this thread. We aren't guaranteed to have a valid threadID until the main thread releases this lock.
     {

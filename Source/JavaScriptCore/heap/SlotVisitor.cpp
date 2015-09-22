@@ -64,20 +64,13 @@ SlotVisitor::~SlotVisitor()
 
 void SlotVisitor::didStartMarking()
 {
-    if (heap()->operationInProgress() == FullCollection) {
-#if ENABLE(PARALLEL_GC)
+    if (heap()->operationInProgress() == FullCollection)
         ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
-#else
-        m_opaqueRoots.clear();
-#endif
-    }
 
     m_shared.m_shouldHashCons = m_shared.m_vm->haveEnoughNewStringsToHashCons();
     m_shouldHashCons = m_shared.m_shouldHashCons;
-#if ENABLE(PARALLEL_GC)
     for (unsigned i = 0; i < m_shared.m_gcThreads.size(); ++i)
         m_shared.m_gcThreads[i]->slotVisitor()->m_shouldHashCons = m_shared.m_shouldHashCons;
-#endif
 }
 
 void SlotVisitor::reset()
@@ -163,7 +156,6 @@ void SlotVisitor::drain()
     StackStats::probe();
     ASSERT(m_isInParallelMode);
    
-#if ENABLE(PARALLEL_GC)
     if (Options::numberOfGCMarkers() > 1) {
         while (!m_stack.isEmpty()) {
             m_stack.refill();
@@ -175,7 +167,6 @@ void SlotVisitor::drain()
         mergeOpaqueRootsIfNecessary();
         return;
     }
-#endif
     
     while (!m_stack.isEmpty()) {
         m_stack.refill();
@@ -193,12 +184,7 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
     
     bool shouldBeParallel;
 
-#if ENABLE(PARALLEL_GC)
     shouldBeParallel = Options::numberOfGCMarkers() > 1;
-#else
-    ASSERT(Options::numberOfGCMarkers() == 1);
-    shouldBeParallel = false;
-#endif
     
     if (!shouldBeParallel) {
         // This call should be a no-op.
@@ -208,7 +194,6 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
         return;
     }
     
-#if ENABLE(PARALLEL_GC)
     {
         std::lock_guard<Lock> lock(m_shared.m_markingMutex);
         m_shared.m_numberOfActiveParallelMarkers++;
@@ -258,7 +243,6 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
         
         drain();
     }
-#endif
 }
 
 void SlotVisitor::mergeOpaqueRoots()
@@ -275,7 +259,6 @@ void SlotVisitor::mergeOpaqueRoots()
 
 ALWAYS_INLINE bool JSString::tryHashConsLock()
 {
-#if ENABLE(PARALLEL_GC)
     unsigned currentFlags = m_flags;
 
     if (currentFlags & HashConsLock)
@@ -288,21 +271,11 @@ ALWAYS_INLINE bool JSString::tryHashConsLock()
 
     WTF::memoryBarrierAfterLock();
     return true;
-#else
-    if (isHashConsSingleton())
-        return false;
-
-    m_flags |= HashConsLock;
-
-    return true;
-#endif
 }
 
 ALWAYS_INLINE void JSString::releaseHashConsLock()
 {
-#if ENABLE(PARALLEL_GC)
     WTF::memoryBarrierBeforeUnlock();
-#endif
     m_flags &= ~HashConsLock;
 }
 

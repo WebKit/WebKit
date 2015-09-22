@@ -37,7 +37,6 @@
 
 namespace JSC {
 
-#if ENABLE(PARALLEL_GC)
 void GCThreadSharedData::resetChildren()
 {
     for (size_t i = 0; i < m_gcThreads.size(); ++i)
@@ -67,7 +66,6 @@ size_t GCThreadSharedData::childBytesCopied()
         result += m_gcThreads[i]->slotVisitor()->bytesCopied();
     return result;
 }
-#endif
 
 GCThreadSharedData::GCThreadSharedData(VM* vm)
     : m_vm(vm)
@@ -81,7 +79,6 @@ GCThreadSharedData::GCThreadSharedData(VM* vm)
     , m_gcThreadsShouldWait(false)
     , m_currentPhase(NoPhase)
 {
-#if ENABLE(PARALLEL_GC)
     // Grab the lock so the new GC threads can be properly initialized before they start running.
     std::unique_lock<Lock> lock(m_phaseMutex);
     for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
@@ -94,12 +91,10 @@ GCThreadSharedData::GCThreadSharedData(VM* vm)
 
     // Wait for all the GCThreads to get to the right place.
     m_activityConditionVariable.wait(lock, [this] { return !m_numberOfActiveGCThreads; });
-#endif
 }
 
 GCThreadSharedData::~GCThreadSharedData()
 {
-#if ENABLE(PARALLEL_GC)    
     // Destroy our marking threads.
     {
         std::lock_guard<Lock> markingLock(m_markingMutex);
@@ -114,7 +109,6 @@ GCThreadSharedData::~GCThreadSharedData()
         waitForThreadCompletion(m_gcThreads[i]->threadID());
         delete m_gcThreads[i];
     }
-#endif
 }
 
 void GCThreadSharedData::reset()
@@ -151,13 +145,8 @@ void GCThreadSharedData::endCurrentPhase()
 
 void GCThreadSharedData::didStartMarking()
 {
-    if (m_vm->heap.operationInProgress() == FullCollection) {
-#if ENABLE(PARALLEL_GC)
+    if (m_vm->heap.operationInProgress() == FullCollection)
         m_opaqueRoots.clear();
-#else
-        ASSERT(m_opaqueRoots.isEmpty());
-#endif
-}
     std::lock_guard<Lock> lock(m_markingMutex);
     m_parallelMarkersShouldExit = false;
     startNextPhase(Mark);

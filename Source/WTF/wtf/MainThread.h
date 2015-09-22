@@ -66,14 +66,8 @@ inline bool isUIThread() { return isMainThread(); }
 
 void initializeGCThreads();
 
-#if ENABLE(PARALLEL_GC)
-void registerGCThread();
+WTF_EXPORT_PRIVATE void registerGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
-#elif OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
-WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
-#else
-inline bool isMainThreadOrGCThread() { return isMainThread(); }
-#endif
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
 void initializeMainThreadPlatform();

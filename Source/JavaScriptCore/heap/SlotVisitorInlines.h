@@ -158,7 +158,6 @@ inline void SlotVisitor::addUnconditionalFinalizer(UnconditionalFinalizer* uncon
 
 inline void SlotVisitor::addOpaqueRoot(void* root)
 {
-#if ENABLE(PARALLEL_GC)
     if (Options::numberOfGCMarkers() == 1) {
         // Put directly into the shared HashSet.
         m_shared.m_opaqueRoots.add(root);
@@ -168,20 +167,13 @@ inline void SlotVisitor::addOpaqueRoot(void* root)
     // a while to make sure that the local sets don't grow too large.
     mergeOpaqueRootsIfProfitable();
     m_opaqueRoots.add(root);
-#else
-    m_opaqueRoots.add(root);
-#endif
 }
 
 inline bool SlotVisitor::containsOpaqueRoot(void* root) const
 {
     ASSERT(!m_isInParallelMode);
-#if ENABLE(PARALLEL_GC)
     ASSERT(m_opaqueRoots.isEmpty());
     return m_shared.m_opaqueRoots.contains(root);
-#else
-    return m_opaqueRoots.contains(root);
-#endif
 }
 
 inline TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
@@ -197,12 +189,8 @@ inline TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
 inline int SlotVisitor::opaqueRootCount()
 {
     ASSERT(!m_isInParallelMode);
-#if ENABLE(PARALLEL_GC)
     ASSERT(m_opaqueRoots.isEmpty());
     return m_shared.m_opaqueRoots.size();
-#else
-    return m_opaqueRoots.size();
-#endif
 }
 
 inline void SlotVisitor::mergeOpaqueRootsIfNecessary()

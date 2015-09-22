@@ -195,11 +195,7 @@ namespace JSC {
 
         size_t m_atomsPerCell;
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
-#if ENABLE(PARALLEL_GC)
         WTF::Bitmap<atomsPerBlock, WTF::BitmapAtomic, uint8_t> m_marks;
-#else
-        WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic, uint8_t> m_marks;
-#endif
         std::unique_ptr<WTF::Bitmap<atomsPerBlock>> m_newlyAllocated;
 
         size_t m_capacity;

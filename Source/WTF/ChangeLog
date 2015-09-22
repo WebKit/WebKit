@@ -1,5 +1,22 @@
 2015-09-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of ENABLE(PARALLEL_GC)
+        https://bugs.webkit.org/show_bug.cgi?id=149436
+
+        Reviewed by Mark Lam.
+
+        We always enable parallel GC everywhere but Windows, and it doesn't look like it was disabled
+        there for any good reason. So, get rid of the flag.
+
+        * wtf/MainThread.cpp:
+        (WTF::canAccessThreadLocalDataForThread):
+        (WTF::initializeGCThreads):
+        (WTF::registerGCThread):
+        (WTF::isMainThreadOrGCThread):
+        * wtf/Platform.h:
+
+2015-09-22  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of ENABLE(GGC)
         https://bugs.webkit.org/show_bug.cgi?id=149472
 

@@ -41,7 +41,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if OS(DARWIN) && ENABLE(PARALLEL_GC)
+#if OS(DARWIN)
 #include <sys/sysctl.h>
 #endif
 
@@ -148,12 +148,7 @@ static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta,
 
 static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
 {
-#if ENABLE(PARALLEL_GC)
     return computeNumberOfWorkerThreads(maxNumberOfGCMarkers);
-#else
-    UNUSED_PARAM(maxNumberOfGCMarkers);
-    return 1;
-#endif
 }
 
 const char* const OptionRange::s_nullRangeStr = "<null>";

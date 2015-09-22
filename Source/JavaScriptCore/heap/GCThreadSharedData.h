@@ -65,13 +65,11 @@ public:
     void didStartCopying();
     void didFinishCopying();
 
-#if ENABLE(PARALLEL_GC)
     void resetChildren();
     size_t childVisitCount();
     size_t childBytesVisited();
     size_t childBytesCopied();
     size_t childDupStrings();
-#endif
     
 private:
     friend class GCThread;

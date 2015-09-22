@@ -963,10 +963,6 @@
 #define USE_IMLANG_FONT_LINK2 1
 #endif
 
-#if !defined(ENABLE_PARALLEL_GC) && (OS(DARWIN) || PLATFORM(EFL) || PLATFORM(GTK))
-#define ENABLE_PARALLEL_GC 1
-#endif
-
 #if !defined(ENABLE_GC_VALIDATION) && !defined(NDEBUG)
 #define ENABLE_GC_VALIDATION 1
 #endif

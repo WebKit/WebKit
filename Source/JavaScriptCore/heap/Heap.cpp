@@ -753,10 +753,8 @@ void Heap::traceCodeBlocksAndJITStubRoutines()
 
 void Heap::converge()
 {
-#if ENABLE(PARALLEL_GC)
     GCPHASE(Convergence);
     m_slotVisitor.drainFromShared(SlotVisitor::MasterDrain);
-#endif
 }
 
 void Heap::visitWeakHandles(HeapRootVisitor& visitor)
@@ -775,9 +773,7 @@ void Heap::visitWeakHandles(HeapRootVisitor& visitor)
         {
             ParallelModeEnabler enabler(m_slotVisitor);
             m_slotVisitor.donateAndDrain();
-#if ENABLE(PARALLEL_GC)
             m_slotVisitor.drainFromShared(SlotVisitor::MasterDrain);
-#endif
         }
     }
 }
@@ -795,9 +791,7 @@ void Heap::updateObjectCounts(double gcStartTime)
 
     if (Options::logGC() == GCLogging::Verbose) {
         size_t visitCount = m_slotVisitor.visitCount();
-#if ENABLE(PARALLEL_GC)
         visitCount += m_sharedData.childVisitCount();
-#endif
         dataLogF("\nNumber of live Objects after GC %lu, took %.6f secs\n", static_cast<unsigned long>(visitCount), WTF::monotonicallyIncreasingTime() - gcStartTime);
     }
     
@@ -812,18 +806,14 @@ void Heap::updateObjectCounts(double gcStartTime)
     
     m_totalBytesVisited += m_slotVisitor.bytesVisited();
     m_totalBytesCopied += m_slotVisitor.bytesCopied();
-#if ENABLE(PARALLEL_GC)
     m_totalBytesVisited += m_sharedData.childBytesVisited();
     m_totalBytesCopied += m_sharedData.childBytesCopied();
-#endif
 }
 
 void Heap::resetVisitors()
 {
     m_slotVisitor.reset();
-#if ENABLE(PARALLEL_GC)
     m_sharedData.resetChildren();
-#endif
     m_sharedData.reset();
 }
 

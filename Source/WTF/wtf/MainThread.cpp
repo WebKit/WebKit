@@ -187,18 +187,13 @@ bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
 }
 #endif
 
-#if ENABLE(PARALLEL_GC)
 static ThreadSpecific<bool>* isGCThread;
-#endif
 
 void initializeGCThreads()
 {
-#if ENABLE(PARALLEL_GC)
     isGCThread = new ThreadSpecific<bool>();
-#endif
 }
 
-#if ENABLE(PARALLEL_GC)
 void registerGCThread()
 {
     if (!isGCThread) {
@@ -217,12 +212,5 @@ bool isMainThreadOrGCThread()
 
     return isMainThread();
 }
-#elif OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
-// This is necessary because JavaScriptCore.exp doesn't support preprocessor macros.
-bool isMainThreadOrGCThread()
-{
-    return isMainThread();
-}
-#endif
 
 } // namespace WTF
