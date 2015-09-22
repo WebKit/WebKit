@@ -1,3 +1,10 @@
+2015-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKit/WebKitApple.props: We need to link against
+        libdispatch on Windows.
+
 2015-09-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows tests after r189934.
