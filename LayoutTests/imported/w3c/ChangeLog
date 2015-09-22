@@ -1,5 +1,17 @@
 2015-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Update HTMLTableRowElement.rowIndex to behave according to the specification
+        https://bugs.webkit.org/show_bug.cgi?id=148842
+        <rdar://problem/22586914>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C HTML test now that one more check is passing.
+
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/rowIndex-expected.txt:
+
+2015-09-21  Chris Dumez  <cdumez@apple.com>
+
         [JS Bindings] prototype.constructor should be writable
         https://bugs.webkit.org/show_bug.cgi?id=149412
         <rdar://problem/22545096>

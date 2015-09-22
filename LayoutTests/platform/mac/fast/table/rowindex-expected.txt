@@ -73,14 +73,14 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 112: "table C, footer A row A"
             RenderTableCell {TD} at (123,0) size 76x16 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 66x12
-                text run at (2,2) width 66: "rowIndex = 6"
+                text run at (2,2) width 66: "rowIndex = 8"
           RenderTableRow {TR} at (0,18) size 201x16
             RenderTableCell {TD} at (2,18) size 119x16 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 110x12
                 text run at (2,2) width 110: "table C, footer A row B"
             RenderTableCell {TD} at (123,18) size 76x16 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 66x12
-                text run at (2,2) width 66: "rowIndex = 7"
+                text run at (2,2) width 66: "rowIndex = 9"
         RenderTableSection {TFOOT} at (1,39) size 201x36
           RenderTableRow {TR} at (0,0) size 201x16
             RenderTableCell {TD} at (2,0) size 119x16 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -88,14 +88,14 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 110: "table C, footer B row A"
             RenderTableCell {TD} at (123,0) size 76x16 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 72x12
-                text run at (2,2) width 72: "rowIndex = -1"
+                text run at (2,2) width 72: "rowIndex = 10"
           RenderTableRow {TR} at (0,18) size 201x16
             RenderTableCell {TD} at (2,18) size 119x16 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 109x12
                 text run at (2,2) width 109: "table C, footer B row B"
             RenderTableCell {TD} at (123,18) size 76x16 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 72x12
-                text run at (2,2) width 72: "rowIndex = -1"
+                text run at (2,2) width 72: "rowIndex = 11"
         RenderTableSection {TBODY} at (1,75) size 201x36
           RenderTableRow {TR} at (0,0) size 201x16
             RenderTableCell {TD} at (2,0) size 119x16 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -103,14 +103,14 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 106: "table C, body A row A"
             RenderTableCell {TD} at (123,0) size 76x16 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 66x12
-                text run at (2,2) width 66: "rowIndex = 2"
+                text run at (2,2) width 66: "rowIndex = 4"
           RenderTableRow {TR} at (0,18) size 201x16
             RenderTableCell {TD} at (2,18) size 119x16 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 105x12
                 text run at (2,2) width 105: "table C, body A row B"
             RenderTableCell {TD} at (123,18) size 76x16 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 66x12
-                text run at (2,2) width 66: "rowIndex = 3"
+                text run at (2,2) width 66: "rowIndex = 5"
         RenderTableSection {TBODY} at (1,111) size 201x36
           RenderTableRow {TR} at (0,0) size 201x16
             RenderTableCell {TD} at (2,0) size 119x16 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -118,14 +118,14 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 105: "table C, body B row A"
             RenderTableCell {TD} at (123,0) size 76x16 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 66x12
-                text run at (2,2) width 66: "rowIndex = 4"
+                text run at (2,2) width 66: "rowIndex = 6"
           RenderTableRow {TR} at (0,18) size 201x16
             RenderTableCell {TD} at (2,18) size 119x16 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 104x12
                 text run at (2,2) width 104: "table C, body B row B"
             RenderTableCell {TD} at (123,18) size 76x16 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 66x12
-                text run at (2,2) width 66: "rowIndex = 5"
+                text run at (2,2) width 66: "rowIndex = 7"
         RenderTableSection {THEAD} at (1,1) size 201x38
           RenderTableRow {TR} at (0,2) size 201x16
             RenderTableCell {TD} at (2,2) size 119x16 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -147,12 +147,12 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 114x12
                 text run at (2,2) width 114: "table C, header B row A"
             RenderTableCell {TD} at (123,0) size 76x16 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x12
-                text run at (2,2) width 72: "rowIndex = -1"
+              RenderText {#text} at (2,2) size 66x12
+                text run at (2,2) width 66: "rowIndex = 2"
           RenderTableRow {TR} at (0,18) size 201x16
             RenderTableCell {TD} at (2,18) size 119x16 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 113x12
                 text run at (2,2) width 113: "table C, header B row B"
             RenderTableCell {TD} at (123,18) size 76x16 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 72x12
-                text run at (2,2) width 72: "rowIndex = -1"
+              RenderText {#text} at (2,2) size 66x12
+                text run at (2,2) width 66: "rowIndex = 3"

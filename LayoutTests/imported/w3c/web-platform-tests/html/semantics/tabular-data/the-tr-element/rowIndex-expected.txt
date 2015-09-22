@@ -3,7 +3,7 @@ PASS HTMLTableRowElement.rowIndex
 PASS HTMLTableRowElement.rowIndex 1 
 PASS HTMLTableRowElement.rowIndex 2 
 PASS HTMLTableRowElement.rowIndex 3 
-FAIL HTMLTableRowElement.rowIndex 4 assert_equals: expected 0 but got -1
+PASS HTMLTableRowElement.rowIndex 4 
 PASS HTMLTableRowElement.rowIndex 5 
 PASS HTMLTableRowElement.rowIndex 6 
 PASS HTMLTableRowElement.rowIndex 7 
