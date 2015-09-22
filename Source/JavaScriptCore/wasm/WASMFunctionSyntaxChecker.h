@@ -178,6 +178,18 @@ public:
         return UNUSED;
     }
 
+    int buildMinOrMaxI32(int, int, WASMOpExpressionI32)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
+    int buildMinOrMaxF64(int, int, WASMOpExpressionF64)
+    {
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
     int buildCallInternal(uint32_t, int, const WASMSignature& signature, WASMExpressionType returnType)
     {
         size_t argumentCount = signature.arguments.size();

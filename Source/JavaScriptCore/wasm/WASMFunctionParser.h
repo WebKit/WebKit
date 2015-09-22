@@ -88,6 +88,7 @@ private:
     template <class Context> ContextExpression parseRelationalI32ExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalF32ExpressionI32(Context&, WASMOpExpressionI32);
     template <class Context> ContextExpression parseRelationalF64ExpressionI32(Context&, WASMOpExpressionI32);
+    template <class Context> ContextExpression parseMinOrMaxExpressionI32(Context&, WASMOpExpressionI32);
 
     template <class Context> ContextExpression parseExpressionF32(Context&);
     template <class Context> ContextExpression parseConstantPoolIndexExpressionF32(Context&, uint32_t constantIndex);
@@ -102,6 +103,7 @@ private:
     template <class Context> ContextExpression parseImmediateExpressionF64(Context&);
     template <class Context> ContextExpression parseUnaryExpressionF64(Context&, WASMOpExpressionF64);
     template <class Context> ContextExpression parseBinaryExpressionF64(Context&, WASMOpExpressionF64);
+    template <class Context> ContextExpression parseMinOrMaxExpressionF64(Context&, WASMOpExpressionF64);
 
     template <class Context> ContextExpression parseExpressionVoid(Context&);
 

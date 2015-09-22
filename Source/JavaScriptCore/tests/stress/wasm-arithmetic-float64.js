@@ -25,6 +25,8 @@ function asmModule(global, env, buffer) {
     var exp = global.Math.exp;
     var log = global.Math.log;
     var pow = global.Math.pow;
+    var min = global.Math.min;
+    var max = global.Math.max;
 
     function number() {
         return 4.2;
@@ -137,6 +139,20 @@ function asmModule(global, env, buffer) {
         return pow(x, y);
     }
 
+    function minimum(x, y, z) {
+        x = +x;
+        y = +y;
+        z = +z;
+        return min(x, y, z);
+    }
+
+    function maximum(x, y, z) {
+        x = +x;
+        y = +y;
+        z = +z;
+        return max(x, y, z);
+    }
+
     return {
         number: number,
         negate: negate,
@@ -159,6 +175,8 @@ function asmModule(global, env, buffer) {
         exponential: exponential,
         logarithm: logarithm,
         power: power,
+        minimum: minimum,
+        maximum: maximum,
     };
 }
 */
@@ -193,3 +211,5 @@ shouldBe(module.arctangent2(1, 0), Math.PI / 2);
 shouldBe(module.exponential(1), Math.E);
 shouldBe(module.logarithm(Math.E), 1);
 shouldBe(module.power(4, 1.5), 8);
+shouldBe(module.minimum(0.1, -0.2, 0.3), -0.2);
+shouldBe(module.maximum(0.1, -0.2, 0.3), 0.3);

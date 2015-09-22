@@ -1010,6 +1010,56 @@ public:
         return UNUSED;
     }
 
+    int buildMinOrMaxI32(int, int, WASMOpExpressionI32 op)
+    {
+        load32(temporaryAddress(m_tempStackTop - 2), GPRInfo::regT0);
+        load32(temporaryAddress(m_tempStackTop - 1), GPRInfo::regT1);
+        RelationalCondition condition;
+        switch (op) {
+        case WASMOpExpressionI32::SMin:
+            condition = LessThanOrEqual;
+            break;
+        case WASMOpExpressionI32::UMin:
+            condition = BelowOrEqual;
+            break;
+        case WASMOpExpressionI32::SMax:
+            condition = GreaterThanOrEqual;
+            break;
+        case WASMOpExpressionI32::UMax:
+            condition = AboveOrEqual;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Jump useLeft = branch32(condition, GPRInfo::regT0, GPRInfo::regT1);
+        store32(GPRInfo::regT1, temporaryAddress(m_tempStackTop - 2));
+        useLeft.link(this);
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
+    int buildMinOrMaxF64(int, int, WASMOpExpressionF64 op)
+    {
+        loadDouble(temporaryAddress(m_tempStackTop - 2), FPRInfo::fpRegT0);
+        loadDouble(temporaryAddress(m_tempStackTop - 1), FPRInfo::fpRegT1);
+        DoubleCondition condition;
+        switch (op) {
+        case WASMOpExpressionF64::Min:
+            condition = DoubleLessThanOrEqual;
+            break;
+        case WASMOpExpressionF64::Max:
+            condition = DoubleGreaterThanOrEqual;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        Jump useLeft = branchDouble(condition, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
+        storeDouble(FPRInfo::fpRegT1, temporaryAddress(m_tempStackTop - 2));
+        useLeft.link(this);
+        m_tempStackTop--;
+        return UNUSED;
+    }
+
     int buildCallInternal(uint32_t functionIndex, int, const WASMSignature& signature, WASMExpressionType returnType)
     {
         boxArgumentsAndAdjustStackPointer(signature.arguments);

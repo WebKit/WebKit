@@ -627,8 +627,7 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::UMin:
         case WASMOpExpressionI32::SMax:
         case WASMOpExpressionI32::UMax:
-            // FIXME: Implement these instructions.
-            FAIL_WITH_MESSAGE("Unsupported instruction.");
+            return parseMinOrMaxExpressionI32(context, op);
         default:
             ASSERT_NOT_REACHED();
         }
@@ -722,6 +721,22 @@ ContextExpression WASMFunctionParser::parseRelationalF64ExpressionI32(Context& c
     ContextExpression right = parseExpressionF64(context);
     PROPAGATE_ERROR();
     return context.buildRelationalF64(left, right, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseMinOrMaxExpressionI32(Context& context, WASMOpExpressionI32 op)
+{
+    uint32_t numberOfArguments;
+    READ_COMPACT_UINT32_OR_FAIL(numberOfArguments, "Cannot read the number of arguments to min/max.");
+    FAIL_IF_FALSE(numberOfArguments >= 2, "Min/max must be passed at least 2 arguments.");
+    ContextExpression current = parseExpressionI32(context);
+    PROPAGATE_ERROR();
+    for (uint32_t i = 1; i < numberOfArguments; ++i) {
+        ContextExpression expression = parseExpressionI32(context);
+        PROPAGATE_ERROR();
+        current = context.buildMinOrMaxI32(current, expression, op);
+    }
+    return current;
 }
 
 template <class Context>
@@ -906,8 +921,7 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseBinaryExpressionF64(context, op);
         case WASMOpExpressionF64::Min:
         case WASMOpExpressionF64::Max:
-            // FIXME: Implement these instructions.
-            FAIL_WITH_MESSAGE("Unsupported instruction.");
+            return parseMinOrMaxExpressionF64(context, op);
         default:
             ASSERT_NOT_REACHED();
         }
@@ -963,6 +977,22 @@ ContextExpression WASMFunctionParser::parseBinaryExpressionF64(Context& context,
     ContextExpression right = parseExpressionF64(context);
     PROPAGATE_ERROR();
     return context.buildBinaryF64(left, right, op);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseMinOrMaxExpressionF64(Context& context, WASMOpExpressionF64 op)
+{
+    uint32_t numberOfArguments;
+    READ_COMPACT_UINT32_OR_FAIL(numberOfArguments, "Cannot read the number of arguments to min/max.");
+    FAIL_IF_FALSE(numberOfArguments >= 2, "Min/max must be passed at least 2 arguments.");
+    ContextExpression current = parseExpressionF64(context);
+    PROPAGATE_ERROR();
+    for (uint32_t i = 1; i < numberOfArguments; ++i) {
+        ContextExpression expression = parseExpressionF64(context);
+        PROPAGATE_ERROR();
+        current = context.buildMinOrMaxF64(current, expression, op);
+    }
+    return current;
 }
 
 template <class Context>

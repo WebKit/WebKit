@@ -27,6 +27,8 @@ function asmModule(global, env, buffer) {
     var clz32 = global.Math.clz32;
     var imul = global.Math.imul;
     var abs = global.Math.abs;
+    var min = global.Math.min;
+    var max = global.Math.max;
 
     function negate(x) {
         x = x | 0;
@@ -131,6 +133,20 @@ function asmModule(global, env, buffer) {
         return abs(x | 0) | 0;
     }
 
+    function minimum(x, y, z) {
+        x = x | 0;
+        y = y | 0;
+        z = z | 0;
+        return min(x | 0, y | 0, z | 0);
+    }
+
+    function maximum(x, y, z) {
+        x = x | 0;
+        y = y | 0;
+        z = z | 0;
+        return max(x | 0, y | 0, z | 0);
+    }
+
     return {
         negate: negate,
         add: add,
@@ -150,6 +166,8 @@ function asmModule(global, env, buffer) {
         countLeadingZeros: countLeadingZeros,
         logicalNot: logicalNot,
         absolute: absolute,
+        minimum: minimum,
+        maximum: maximum,
     };
 }
 */
@@ -198,3 +216,5 @@ shouldBe(module.logicalNot(42), 0);
 shouldBe(module.logicalNot(0), 1);
 shouldBe(module.absolute(-42), 42);
 shouldBe(module.absolute(42), 42);
+shouldBe(module.minimum(1, -2, 3), -2);
+shouldBe(module.maximum(1, -2, 3), 3);
