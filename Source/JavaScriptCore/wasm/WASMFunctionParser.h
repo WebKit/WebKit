@@ -119,6 +119,7 @@ private:
     template <class Context> ContextExpression parseCallInternal(Context&, WASMOpKind, WASMExpressionType returnType);
     template <class Context> ContextExpression parseCallIndirect(Context&, WASMOpKind, WASMExpressionType returnType);
     template <class Context> ContextExpression parseCallImport(Context&, WASMOpKind, WASMExpressionType returnType);
+    template <class Context> ContextExpression parseComma(Context&, WASMExpressionType);
     template <class Context> ContextExpression parseConvertType(Context&, WASMExpressionType fromType, WASMExpressionType toType, WASMTypeConversion);
 
     JSWASMModule* m_module;

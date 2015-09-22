@@ -1049,6 +1049,11 @@ public:
 
     void appendExpressionList(int&, int) { }
 
+    void discard(int)
+    {
+        m_tempStackTop--;
+    }
+
     void linkTarget(JumpTarget& target)
     {
         target.label = label();

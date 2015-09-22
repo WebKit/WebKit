@@ -39,6 +39,7 @@
 #define READ_DOUBLE_OR_FAIL(result, errorMessage) do { if (!m_reader.readDouble(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_COMPACT_INT32_OR_FAIL(result, errorMessage) do { if (!m_reader.readCompactInt32(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_COMPACT_UINT32_OR_FAIL(result, errorMessage) do { if (!m_reader.readCompactUInt32(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
+#define READ_EXPRESSION_TYPE_OR_FAIL(result, errorMessage) do { if (!m_reader.readExpressionType(result)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_STATEMENT_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpStatement(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_EXPRESSION_I32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpExpressionI32(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
 #define READ_OP_EXPRESSION_F32_OR_FAIL(hasImmediate, op, opWithImmediate, immediate, errorMessage) do { if (!m_reader.readOpExpressionF32(hasImmediate, op, opWithImmediate, immediate)) FAIL_WITH_MESSAGE(errorMessage); } while (0)
@@ -569,6 +570,8 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
             return parseCallIndirect(context, WASMOpKind::Expression, WASMExpressionType::I32);
         case WASMOpExpressionI32::CallImport:
             return parseCallImport(context, WASMOpKind::Expression, WASMExpressionType::I32);
+        case WASMOpExpressionI32::Comma:
+            return parseComma(context, WASMExpressionType::I32);
         case WASMOpExpressionI32::FromF32:
             return parseConvertType(context, WASMExpressionType::F32, WASMExpressionType::I32, WASMTypeConversion::ConvertSigned);
         case WASMOpExpressionI32::FromF64:
@@ -619,7 +622,6 @@ ContextExpression WASMFunctionParser::parseExpressionI32(Context& context)
         case WASMOpExpressionI32::GreaterThanOrEqualF64:
             return parseRelationalF64ExpressionI32(context, op);
         case WASMOpExpressionI32::Conditional:
-        case WASMOpExpressionI32::Comma:
         case WASMOpExpressionI32::SMin:
         case WASMOpExpressionI32::UMin:
         case WASMOpExpressionI32::SMax:
@@ -755,6 +757,8 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
             return parseCallInternal(context, WASMOpKind::Expression, WASMExpressionType::F32);
         case WASMOpExpressionF32::CallIndirect:
             return parseCallIndirect(context, WASMOpKind::Expression, WASMExpressionType::F32);
+        case WASMOpExpressionF32::Comma:
+            return parseComma(context, WASMExpressionType::F32);
         case WASMOpExpressionF32::FromS32:
             return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F32, WASMTypeConversion::ConvertSigned);
         case WASMOpExpressionF32::FromU32:
@@ -773,7 +777,6 @@ ContextExpression WASMFunctionParser::parseExpressionF32(Context& context)
         case WASMOpExpressionF32::Div:
             return parseBinaryExpressionF32(context, op);
         case WASMOpExpressionF32::Conditional:
-        case WASMOpExpressionF32::Comma:
             // FIXME: Implement these instructions.
             FAIL_WITH_MESSAGE("Unsupported instruction.");
         default:
@@ -869,6 +872,8 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
             return parseCallImport(context, WASMOpKind::Expression, WASMExpressionType::F64);
         case WASMOpExpressionF64::CallIndirect:
             return parseCallIndirect(context, WASMOpKind::Expression, WASMExpressionType::F64);
+        case WASMOpExpressionF64::Comma:
+            return parseComma(context, WASMExpressionType::F64);
         case WASMOpExpressionF64::FromS32:
             return parseConvertType(context, WASMExpressionType::I32, WASMExpressionType::F64, WASMTypeConversion::ConvertSigned);
         case WASMOpExpressionF64::FromU32:
@@ -898,7 +903,6 @@ ContextExpression WASMFunctionParser::parseExpressionF64(Context& context)
         case WASMOpExpressionF64::Pow:
             return parseBinaryExpressionF64(context, op);
         case WASMOpExpressionF64::Conditional:
-        case WASMOpExpressionF64::Comma:
         case WASMOpExpressionF64::Min:
         case WASMOpExpressionF64::Max:
             // FIXME: Implement these instructions.
@@ -1135,6 +1139,18 @@ ContextExpression WASMFunctionParser::parseCallImport(Context& context, WASMOpKi
     ContextExpressionList argumentList = parseCallArguments(context, signature.arguments);
     PROPAGATE_ERROR();
     return context.buildCallImport(functionImportSignature.functionImportIndex, argumentList, signature, returnType);
+}
+
+template <class Context>
+ContextExpression WASMFunctionParser::parseComma(Context& context, WASMExpressionType expressionType)
+{
+    WASMExpressionType leftExpressionType;
+    READ_EXPRESSION_TYPE_OR_FAIL(leftExpressionType, "Cannot read the expression type.");
+    ContextExpression leftExpression = parseExpression(context, leftExpressionType);
+    PROPAGATE_ERROR();
+    if (leftExpressionType != WASMExpressionType::Void)
+        context.discard(leftExpression);
+    return parseExpression(context, expressionType);
 }
 
 template <class Context>

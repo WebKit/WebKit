@@ -214,6 +214,11 @@ public:
 
     void appendExpressionList(int&, int) { }
 
+    void discard(int)
+    {
+        m_tempStackTop--;
+    }
+
     void linkTarget(const int&) { }
     void jumpToTarget(const int&) { }
     void jumpToTargetIf(JumpCondition, int, const int&)
