@@ -1,3 +1,18 @@
+2015-09-21  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [Threaded Compositor] Modified to use reference of GraphicsContext instead of pointer
+        https://bugs.webkit.org/show_bug.cgi?id=149399
+
+        Reviewed by Darin Adler.
+
+        This fixes build failure after r189144
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::paintToSurface):
+        (WebKit::ThreadSafeCoordinatedSurface::beginPaint):
+        (WebKit::ThreadSafeCoordinatedSurface::endPaint):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.h:
+
 2015-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add the ability for tests to run script in the UI process in WebKitTestRunner

@@ -54,7 +54,7 @@ public:
     const IntRect& rect() const { return m_rect; }
     void resize(const IntSize&);
 
-    virtual void paintToSurfaceContext(GraphicsContext*) override;
+    virtual void paintToSurfaceContext(GraphicsContext&) override;
 
 private:
     TiledBackingStore& m_tiledBackingStore;

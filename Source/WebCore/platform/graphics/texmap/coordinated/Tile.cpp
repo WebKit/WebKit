@@ -93,10 +93,10 @@ bool Tile::updateBackBuffer()
     return true;
 }
 
-void Tile::paintToSurfaceContext(GraphicsContext* context)
+void Tile::paintToSurfaceContext(GraphicsContext& context)
 {
-    context->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
-    context->scale(FloatSize(m_tiledBackingStore.contentsScale(), m_tiledBackingStore.contentsScale()));
+    context.translate(-m_dirtyRect.x(), -m_dirtyRect.y());
+    context.scale(FloatSize(m_tiledBackingStore.contentsScale(), m_tiledBackingStore.contentsScale()));
     m_tiledBackingStore.client()->tiledBackingStorePaint(context, m_tiledBackingStore.mapToContents(m_dirtyRect));
 }
 

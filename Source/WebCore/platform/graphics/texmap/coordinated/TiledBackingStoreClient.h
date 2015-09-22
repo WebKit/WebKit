@@ -32,7 +32,7 @@ class SurfaceUpdateInfo;
 class TiledBackingStoreClient {
 public:
     virtual ~TiledBackingStoreClient() { }
-    virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
+    virtual void tiledBackingStorePaint(GraphicsContext&, const IntRect&) = 0;
     virtual void didUpdateTileBuffers() = 0;
     virtual void tiledBackingStoreHasPendingTileCreation() = 0;
 

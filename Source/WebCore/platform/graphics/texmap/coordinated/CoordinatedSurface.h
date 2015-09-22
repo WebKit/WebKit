@@ -41,7 +41,7 @@ public:
     class Client {
     public:
         virtual ~Client() { }
-        virtual void paintToSurfaceContext(GraphicsContext*) = 0;
+        virtual void paintToSurfaceContext(GraphicsContext&) = 0;
     };
 
     typedef PassRefPtr<CoordinatedSurface> Factory(const IntSize&, Flags);

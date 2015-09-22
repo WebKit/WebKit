@@ -869,11 +869,11 @@ void CoordinatedGraphicsLayer::createBackingStore()
     m_mainBackingStore->setSupportsAlpha(!contentsOpaque());
 }
 
-void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
+void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext& context, const IntRect& rect)
 {
     if (rect.isEmpty())
         return;
-    paintGraphicsLayerContents(*context, rect);
+    paintGraphicsLayerContents(context, rect);
 }
 
 void CoordinatedGraphicsLayer::didUpdateTileBuffers()

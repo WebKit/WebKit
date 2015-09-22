@@ -39,12 +39,12 @@ public:
     {
     }
 
-    virtual void paintToSurfaceContext(GraphicsContext* context) override
+    virtual void paintToSurfaceContext(GraphicsContext& context) override
     {
         if (m_supportsAlpha) {
-            context->setCompositeOperation(CompositeCopy);
-            context->fillRect(IntRect(IntPoint::zero(), m_size), Color::transparent, ColorSpaceDeviceRGB);
-            context->setCompositeOperation(CompositeSourceOver);
+            context.setCompositeOperation(CompositeCopy);
+            context.fillRect(IntRect(IntPoint::zero(), m_size), Color::transparent, ColorSpaceDeviceRGB);
+            context.setCompositeOperation(CompositeSourceOver);
         }
 
         m_client->paintToSurfaceContext(context);

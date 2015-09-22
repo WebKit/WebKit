@@ -129,7 +129,7 @@ public:
     IntRect transformedVisibleRect();
 
     // TiledBackingStoreClient
-    virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) override;
+    virtual void tiledBackingStorePaint(GraphicsContext&, const IntRect&) override;
     virtual void didUpdateTileBuffers() override;
     virtual void tiledBackingStoreHasPendingTileCreation() override;
     virtual void createTile(uint32_t tileID, float) override;
