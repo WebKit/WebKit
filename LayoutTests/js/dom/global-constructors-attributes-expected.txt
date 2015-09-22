@@ -708,6 +708,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').hasOwnProper
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTextAreaElement').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTimeElement').value is HTMLTimeElement
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTimeElement').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTimeElement').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTimeElement').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'HTMLTimeElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTitleElement').value is HTMLTitleElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTitleElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLTitleElement').hasOwnProperty('set') is false

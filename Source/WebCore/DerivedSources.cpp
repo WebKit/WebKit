@@ -245,6 +245,7 @@
 #include "JSHTMLTemplateElement.cpp"
 #endif
 #include "JSHTMLTextAreaElement.cpp"
+#include "JSHTMLTimeElement.cpp"
 #include "JSHTMLTitleElement.cpp"
 #include "JSHTMLUnknownElement.cpp"
 #include "JSHTMLUListElement.cpp"

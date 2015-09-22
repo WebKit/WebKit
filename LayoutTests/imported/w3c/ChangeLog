@@ -1,5 +1,17 @@
 2015-09-21  Chris Dumez  <cdumez@apple.com>
 
+        time element should use HTMLTimeElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=148840
+        <rdar://problem/22586690>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C HTML test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/text-level-semantics/the-time-element/001-expected.txt:
+
+2015-09-21  Chris Dumez  <cdumez@apple.com>
+
         Update HTMLTableRowElement.rowIndex to behave according to the specification
         https://bugs.webkit.org/show_bug.cgi?id=148842
         <rdar://problem/22586914>

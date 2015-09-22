@@ -227,8 +227,8 @@ PASS Interfaces for header
 PASS Interfaces for HEADER 
 PASS Interfaces for footer 
 PASS Interfaces for FOOTER 
-FAIL Interfaces for time assert_equals: Element time should have HTMLTimeElement as its primary interface. expected "[object HTMLTimeElement]" but got "[object HTMLElement]"
-FAIL Interfaces for TIME assert_equals: Element TIME should have HTMLTimeElement as its primary interface. expected "[object HTMLTimeElement]" but got "[object HTMLElement]"
+PASS Interfaces for time 
+PASS Interfaces for TIME 
 PASS Interfaces for mark 
 PASS Interfaces for MARK 
 PASS Interfaces for progress 

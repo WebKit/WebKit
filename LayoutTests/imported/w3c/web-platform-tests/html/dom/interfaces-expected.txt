@@ -224,6 +224,7 @@ CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'charset' on a 
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'name' on a non-HTMLAnchorElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'rev' on a non-HTMLAnchorElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'shape' on a non-HTMLAnchorElement object.
+CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'dateTime' on a non-HTMLTimeElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'clear' on a non-HTMLBRElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'cite' on a non-HTMLModElement object.
 CONSOLE MESSAGE: line 583: Deprecated attempt to access property 'dateTime' on a non-HTMLModElement object.
@@ -2730,14 +2731,18 @@ FAIL HTMLDataElement interface: attribute value assert_own_property: self does n
 FAIL HTMLDataElement must be primary interface of document.createElement("data") assert_own_property: self does not have own property "HTMLDataElement" expected property "HTMLDataElement" missing
 FAIL Stringification of document.createElement("data") assert_equals: class string of document.createElement("data") expected "[object HTMLDataElement]" but got "[object HTMLUnknownElement]"
 FAIL HTMLDataElement interface: document.createElement("data") must inherit property "value" with the proper type (0) assert_inherits: property "value" not found in prototype chain
-FAIL HTMLTimeElement interface: existence and properties of interface object assert_own_property: self does not have own property "HTMLTimeElement" expected property "HTMLTimeElement" missing
-FAIL HTMLTimeElement interface object length assert_own_property: self does not have own property "HTMLTimeElement" expected property "HTMLTimeElement" missing
-FAIL HTMLTimeElement interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HTMLTimeElement" expected property "HTMLTimeElement" missing
-FAIL HTMLTimeElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HTMLTimeElement" expected property "HTMLTimeElement" missing
-FAIL HTMLTimeElement interface: attribute dateTime assert_own_property: self does not have own property "HTMLTimeElement" expected property "HTMLTimeElement" missing
-FAIL HTMLTimeElement must be primary interface of document.createElement("time") assert_own_property: self does not have own property "HTMLTimeElement" expected property "HTMLTimeElement" missing
-FAIL Stringification of document.createElement("time") assert_equals: class string of document.createElement("time") expected "[object HTMLTimeElement]" but got "[object HTMLElement]"
-FAIL HTMLTimeElement interface: document.createElement("time") must inherit property "dateTime" with the proper type (0) assert_inherits: property "dateTime" not found in prototype chain
+FAIL HTMLTimeElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLTimeElement" is not Function.prototype expected (function) function "function () {
+    [native code]
+}" but got (object) object "[object Object]"
+PASS HTMLTimeElement interface object length 
+PASS HTMLTimeElement interface: existence and properties of interface prototype object 
+PASS HTMLTimeElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTimeElement interface: attribute dateTime assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS HTMLTimeElement must be primary interface of document.createElement("time") 
+PASS Stringification of document.createElement("time") 
+PASS HTMLTimeElement interface: document.createElement("time") must inherit property "dateTime" with the proper type (0) 
 FAIL HTMLSpanElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLSpanElement" is not Function.prototype expected (function) function "function () {
     [native code]
 }" but got (object) object "[object Object]"

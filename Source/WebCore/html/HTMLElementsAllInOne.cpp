@@ -107,6 +107,7 @@
 #include "HTMLTemplateElement.cpp"
 #include "HTMLTextAreaElement.cpp"
 #include "HTMLTextFormControlElement.cpp"
+#include "HTMLTimeElement.cpp"
 #include "HTMLTitleElement.cpp"
 #include "HTMLTrackElement.cpp"
 #include "HTMLUListElement.cpp"
