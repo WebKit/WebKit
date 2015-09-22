@@ -160,7 +160,7 @@ bool ImageBuffer::copyToPlatformTexture(GraphicsContext3D&, GC3Denum, Platform3D
 
 std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext& context, bool)
 {
-    return create(size, resolutionScale, colorSpace, context.isAcceleratedContext() ? Accelerated : Unaccelerated);
+    return create(size, context.renderingMode(), resolutionScale, colorSpace);
 }
 
 }

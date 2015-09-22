@@ -94,7 +94,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, uns
         static_cast<float>(m_attributes.patternTransform().yScale()));
 
     // Build tile image.
-    auto tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries, context.isAcceleratedContext() ? Accelerated : Unaccelerated);
+    auto tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries, context.renderingMode());
     if (!tileImage)
         return nullptr;
 

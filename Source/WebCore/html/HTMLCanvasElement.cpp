@@ -577,7 +577,7 @@ void HTMLCanvasElement::createImageBuffer() const
         return;
 
     RenderingMode renderingMode = shouldAccelerate(bufferSize) ? Accelerated : Unaccelerated;
-    m_imageBuffer = ImageBuffer::create(size(), 1, ColorSpaceDeviceRGB, renderingMode);
+    m_imageBuffer = ImageBuffer::create(size(), renderingMode);
     if (!m_imageBuffer)
         return;
     m_imageBuffer->context().setShadowsIgnoreTransforms(true);

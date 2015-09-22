@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "FontCascade.h"
 #include "Gradient.h"
+#include "GraphicsTypes.h"
 #include "Image.h"
 #include "ImageOrientation.h"
 #include "Path.h"
@@ -270,6 +271,7 @@ namespace WebCore {
         WEBCORE_EXPORT void setIsAcceleratedContext(bool);
 #endif
         bool isAcceleratedContext() const;
+        RenderingMode renderingMode() const { return isAcceleratedContext() ? Accelerated : Unaccelerated; }
 
         WEBCORE_EXPORT void save();
         WEBCORE_EXPORT void restore();

@@ -471,7 +471,8 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!clientFloatRectForNode(*node, rect))
         return nil;
 
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(rect.size());
+    // This is effectively a snapshot, and will be painted in an unaccelerated fashion in line with FrameSnapshotting.
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(rect.size(), Unaccelerated);
     if (!buffer)
         return nil;
 

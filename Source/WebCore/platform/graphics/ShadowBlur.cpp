@@ -79,7 +79,9 @@ public:
         IntSize roundedSize(roundUpToMultipleOf32(size.width()), roundUpToMultipleOf32(size.height()));
 
         clearScratchBuffer();
-        m_imageBuffer = ImageBuffer::create(roundedSize, 1);
+
+        // ShadowBlur is not used with accelerated drawing, so it's OK to make an unconditionally unaccelerated buffer.
+        m_imageBuffer = ImageBuffer::create(roundedSize, Unaccelerated, 1);
         return m_imageBuffer.get();
     }
 

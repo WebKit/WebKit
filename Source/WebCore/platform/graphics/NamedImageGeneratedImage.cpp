@@ -63,7 +63,6 @@ void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& d
 void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
 #if USE(NEW_THEME)
-//    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(size(), 1, ColorSpaceDeviceRGB, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
     std::unique_ptr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(size(), true);
     if (!imageBuffer)
         return;

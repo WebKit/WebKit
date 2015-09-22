@@ -37,7 +37,9 @@ namespace WebKit {
 
 Ref<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
-    return adoptRef(*new ThreadSafeCoordinatedSurface(size, flags, ImageBuffer::create(size)));
+    // Making an unconditionally unaccelerated buffer here is OK because this code
+    // isn't used by any platforms that respect the accelerated bit.
+    return adoptRef(*new ThreadSafeCoordinatedSurface(size, flags, ImageBuffer::create(size, Unaccelerated)));
 }
 
 Ref<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, std::unique_ptr<ImageBuffer> buffer)

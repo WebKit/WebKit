@@ -1,3 +1,13 @@
+2015-09-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it more obvious when using an unaccelerated image buffer, and fix a few callers who do
+        https://bugs.webkit.org/show_bug.cgi?id=149428
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::create):
+
 2015-09-22  Andreas Kling  <akling@apple.com>
 
         [WK2][NetworkCache] New entry bodies remain in dirty memory after being written to disk.

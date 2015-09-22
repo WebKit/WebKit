@@ -1371,7 +1371,8 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
 
     IntRect paintingRect = IntRect(IntPoint(), layer->size());
 
-    std::unique_ptr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), deviceScaleFactor, ColorSpaceDeviceRGB));
+    // FIXME (149422): This buffer should not be unconditionally unaccelerated.
+    std::unique_ptr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), Unaccelerated, deviceScaleFactor));
     if (!buffer)
         return nullptr;
 

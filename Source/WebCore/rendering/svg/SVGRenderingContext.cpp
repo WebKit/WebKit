@@ -257,7 +257,7 @@ std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatR
     FloatSize scale;
     FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
 
-    auto imageBuffer = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
+    auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, 1, colorSpace);
     if (!imageBuffer)
         return nullptr;
 
@@ -279,7 +279,7 @@ std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatR
     if (clampedSize.isEmpty())
         return nullptr;
 
-    auto imageBuffer = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
+    auto imageBuffer = ImageBuffer::create(clampedSize, renderingMode, 1, colorSpace);
     if (!imageBuffer)
         return nullptr;
 

@@ -120,7 +120,8 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSiz
         return Image::nullImage();
 
     // Transform Image into ImageBuffer.
-    std::unique_ptr<ImageBuffer> texture = ImageBuffer::create(size);
+    // FIXME (149424): This buffer should not be unconditionally unaccelerated.
+    std::unique_ptr<ImageBuffer> texture = ImageBuffer::create(size, Unaccelerated);
     if (!texture)
         return Image::nullImage();
     FloatRect imageRect = FloatRect(FloatPoint(), size);
