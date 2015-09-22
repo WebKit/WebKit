@@ -494,34 +494,29 @@ void Range::deleteContents(ExceptionCode& ec)
 
 bool Range::intersectsNode(Node* refNode, ExceptionCode& ec) const
 {
-    // http://developer.mozilla.org/en/docs/DOM:range.intersectsNode
-    // Returns a bool if the node intersects the range.
-
     if (!refNode) {
         ec = TypeError;
         return false;
     }
 
-    if (!refNode->inDocument() || &refNode->document() != &ownerDocument()) {
-        // Firefox doesn't throw an exception for these cases; it returns false.
+    if (!refNode->inDocument() || &refNode->document() != &ownerDocument())
         return false;
-    }
 
     ContainerNode* parentNode = refNode->parentNode();
-    unsigned nodeIndex = refNode->computeNodeIndex();
-    
     if (!parentNode)
         return true;
 
-    if (comparePoint(parentNode, nodeIndex, ec) < 0 && // starts before start
-        comparePoint(parentNode, nodeIndex + 1, ec) < 0) { // ends before start
-        return false;
-    } else if (comparePoint(parentNode, nodeIndex, ec) > 0 && // starts after end
-               comparePoint(parentNode, nodeIndex + 1, ec) > 0) { // ends after end
-        return false;
-    }
-    
-    return true; // all other cases
+    unsigned nodeIndex = refNode->computeNodeIndex();
+
+    // If (parent, offset) is before end and (parent, offset + 1) is after start, return true.
+    // Otherwise, return false.
+    short compareFirst = comparePoint(parentNode, nodeIndex, ec);
+    short compareSecond = comparePoint(parentNode, nodeIndex + 1, ec);
+
+    bool isFirstBeforeEnd = m_start == m_end ? compareFirst < 0 : compareFirst <= 0;
+    bool isSecondAfterStart = m_start == m_end ? compareSecond > 0 : compareSecond >= 0;
+
+    return isFirstBeforeEnd && isSecondAfterStart;
 }
 
 static inline Node* highestAncestorUnderCommonRoot(Node* node, Node* commonRoot)

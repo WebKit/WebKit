@@ -1,5 +1,17 @@
 2015-09-22  Chris Dumez  <cdumez@apple.com>
 
+        Range.intersectsNode() does not behave according to the specification when start / end are equal
+        https://bugs.webkit.org/show_bug.cgi?id=148774
+        <rdar://problem/22571418>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C Range test now that another check is passing.
+
+        * web-platform-tests/dom/ranges/Range-intersectsNode-expected.txt:
+
+2015-09-22  Chris Dumez  <cdumez@apple.com>
+
         Drop support for legacy EntityReference DOM Node type
         https://bugs.webkit.org/show_bug.cgi?id=149348
 

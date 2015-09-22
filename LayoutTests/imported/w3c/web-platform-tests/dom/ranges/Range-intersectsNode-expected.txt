@@ -1219,7 +1219,7 @@ PASS Node 19 docfrag, range 56 [detachedComment, 5, detachedComment, 5]
 PASS Node 19 docfrag, range 57 [detachedForeignComment, 4, detachedForeignComment, 4] 
 PASS Node 19 docfrag, range 58 [foreignDocfrag, 0, foreignDocfrag, 0] 
 PASS Node 19 docfrag, range 59 [xmlDocfrag, 0, xmlDocfrag, 0] 
-FAIL Node 20 doctype, detached range assert_equals: expected false but got true
+PASS Node 20 doctype, detached range 
 PASS Node 20 doctype, range 0 [paras[0].firstChild, 0, paras[0].firstChild, 0] 
 PASS Node 20 doctype, range 1 [paras[0].firstChild, 0, paras[0].firstChild, 1] 
 PASS Node 20 doctype, range 2 [paras[0].firstChild, 2, paras[0].firstChild, 8] 
