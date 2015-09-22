@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p> 
+<green-host style="background: green;"><span>FAIL</span></green-host>
+<red-host style="background: red;"></red-host>
+<style>
+
+green-host, red-host {
+    display: block;
+    width: 100px;
+    height: 50px;
+    overflow: hidden;
+}
+
+</style>
+<script>
+
+try {
+    var greenHost = document.querySelector('green-host');
+    greenHost.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>';
+
+    var redHost = document.querySelector('red-host');
+    redHost.attachShadow({mode: 'open'}).innerHTML = '<slot></slot>FAIL';
+
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+    else
+        document.querySelector('span').getBoundingClientRect();
+
+    greenHost.removeChild(greenHost.firstChild);
+
+    var greenChild = document.createElement('div');
+    greenChild.style.width = '100%';
+    greenChild.style.height = '100%';
+    greenChild.style.backgroundColor = 'green';
+    redHost.appendChild(greenChild);
+
+} catch (exception) {
+    document.body.appendChild(document.createTextNode(exception));
+}
+
+</script>
+</body>
+</html>
