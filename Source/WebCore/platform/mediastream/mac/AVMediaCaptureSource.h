@@ -63,6 +63,7 @@ protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
 
     const RealtimeMediaSourceStates& states() override;
+    AudioSourceProvider* audioSourceProvider() override;
 
     virtual void setupCaptureSession() = 0;
     virtual void updateStates() = 0;

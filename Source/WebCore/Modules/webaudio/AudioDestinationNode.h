@@ -62,42 +62,12 @@ public:
     virtual void suspend(std::function<void()>) { }
     virtual void close(std::function<void()>) { }
 
-    AudioSourceProvider* localAudioInputProvider() { return &m_localAudioInputProvider; }
-
     virtual bool isPlaying() { return false; }
     virtual void isPlayingDidChange() override;
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
     void setMuted(bool muted) { m_muted = muted; }
 
 protected:
-    // LocalAudioInputProvider allows us to expose an AudioSourceProvider for local/live audio input.
-    // If there is local/live audio input, we call set() with the audio input data every render quantum.
-    class LocalAudioInputProvider : public AudioSourceProvider {
-    public:
-        LocalAudioInputProvider()
-            : m_sourceBus(AudioBus::create(2, AudioNode::ProcessingSizeInFrames)) // FIXME: handle non-stereo local input.
-        {
-        }
-
-        void set(AudioBus* bus)
-        {
-            if (bus)
-                m_sourceBus->copyFrom(*bus);
-        }
-
-        // AudioSourceProvider.
-        virtual void provideInput(AudioBus* destinationBus, size_t numberOfFrames) override
-        {
-            bool isGood = destinationBus && destinationBus->length() == numberOfFrames && m_sourceBus->length() == numberOfFrames;
-            ASSERT(isGood);
-            if (isGood)
-                destinationBus->copyFrom(*m_sourceBus);
-        }
-
-    private:
-        RefPtr<AudioBus> m_sourceBus;
-    };
-
     virtual double tailTime() const override { return 0; }
     virtual double latencyTime() const override { return 0; }
 
@@ -107,7 +77,6 @@ protected:
     // Counts the number of sample-frames processed by the destination.
     size_t m_currentSampleFrame;
 
-    LocalAudioInputProvider m_localAudioInputProvider;
     bool m_isSilent;
     bool m_isEffectivelyPlayingAudio;
     bool m_muted;

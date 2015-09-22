@@ -33,6 +33,7 @@
 #import "NotImplemented.h"
 #import "RealtimeMediaSourceStates.h"
 #import "SoftLinking.h"
+#import "WebAudioSourceProviderAVFObjC.h"
 #import <AVFoundation/AVFoundation.h>
 #import <CoreAudio/CoreAudioTypes.h>
 #import <wtf/HashSet.h>
@@ -162,6 +163,14 @@ void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
 
     for (auto& observer : observers)
         observer->process(formatDescription, sampleBuffer);
+}
+
+AudioSourceProvider* AVAudioCaptureSource::audioSourceProvider()
+{
+    if (!m_audioSourceProvider)
+        m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+
+    return m_audioSourceProvider.get();
 }
 
 } // namespace WebCore

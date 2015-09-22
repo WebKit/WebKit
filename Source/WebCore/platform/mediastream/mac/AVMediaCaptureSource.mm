@@ -209,6 +209,12 @@ void AVMediaCaptureSource::scheduleDeferredTask(std::function<void ()> function)
     });
 }
 
+AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
+{
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 } // namespace WebCore
 
 @implementation WebCoreAVMediaCaptureSourceObserver

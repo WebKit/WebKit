@@ -36,6 +36,8 @@ typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
 
 namespace WebCore {
 
+class WebAudioSourceProviderAVFObjC;
+
 class AVAudioCaptureSource : public AVMediaCaptureSource {
 public:
 
@@ -61,9 +63,11 @@ private:
     
     void setupCaptureSession() override;
     void updateStates() override;
+    AudioSourceProvider* audioSourceProvider() override;
 
     RetainPtr<AVCaptureConnection> m_audioConnection;
 
+    RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
     std::unique_ptr<AudioStreamBasicDescription> m_inputDescription;
     Vector<Observer*> m_observers;
     Lock m_lock;

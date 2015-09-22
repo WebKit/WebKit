@@ -47,10 +47,8 @@ public:
 
     ~MediaStreamAudioSource() { }
 
-    virtual bool useIDForTrackID() const { return true; }
-
-    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const;
-    virtual const RealtimeMediaSourceStates& states();
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
+    const RealtimeMediaSourceStates& states() override;
     
     const String& deviceId() const { return m_deviceId; }
     void setDeviceId(const String& deviceId) { m_deviceId = deviceId; }
@@ -64,6 +62,8 @@ public:
 
 private:
     MediaStreamAudioSource();
+
+    AudioSourceProvider* audioSourceProvider() override;
 
     String m_deviceId;
     Lock m_audioConsumersLock;

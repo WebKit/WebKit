@@ -455,38 +455,40 @@ PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(H
 #if ENABLE(MEDIA_STREAM)
 PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(MediaStream* mediaStream, ExceptionCode& ec)
 {
+    ASSERT(isMainThread());
+
     ASSERT(mediaStream);
     if (!mediaStream) {
         ec = INVALID_STATE_ERR;
         return nullptr;
     }
 
-    ASSERT(isMainThread());
-    lazyInitialize();
+    auto audioTracks = mediaStream->getAudioTracks();
+    if (audioTracks.isEmpty()) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
 
-    AudioSourceProvider* provider = nullptr;
-
-    RefPtr<MediaStreamTrack> audioTrack;
-
-    // FIXME: get a provider for non-local MediaStreams (like from a remote peer).
-    for (auto& track : mediaStream->getAudioTracks()) {
-        audioTrack = track;
-        if (audioTrack->source()->isAudioStreamSource()) {
-            auto source = static_cast<MediaStreamAudioSource*>(audioTrack->source());
-            ASSERT(!source->deviceId().isEmpty());
-            destination()->enableInput(source->deviceId());
-            provider = destination()->localAudioInputProvider();
+    MediaStreamTrack* providerTrack = nullptr;
+    for (auto& track : audioTracks) {
+        if (track->audioSourceProvider()) {
+            providerTrack = track.get();
             break;
         }
     }
 
-    RefPtr<MediaStreamAudioSourceNode> node = MediaStreamAudioSourceNode::create(this, mediaStream, audioTrack.get(), provider);
+    if (!providerTrack) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
 
-    // FIXME: Only stereo streams are supported right now. We should be able to accept multi-channel streams.
+    lazyInitialize();
+
+    auto node = MediaStreamAudioSourceNode::create(*this, *mediaStream, *providerTrack);
     node->setFormat(2, sampleRate());
 
-    refNode(node.get()); // context keeps reference until node is disconnected
-    return node;
+    refNode(&node.get()); // context keeps reference until node is disconnected
+    return &node.get();
 }
 
 PassRefPtr<MediaStreamAudioDestinationNode> AudioContext::createMediaStreamDestination()

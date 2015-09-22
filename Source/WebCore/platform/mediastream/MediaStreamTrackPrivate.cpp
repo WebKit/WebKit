@@ -150,6 +150,11 @@ void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints&)
     // https://bugs.webkit.org/show_bug.cgi?id=122428
 }
 
+AudioSourceProvider* MediaStreamTrackPrivate::audioSourceProvider()
+{
+    return m_source->audioSourceProvider();
+}
+
 void MediaStreamTrackPrivate::sourceStopped()
 {
     if (m_isEnded)

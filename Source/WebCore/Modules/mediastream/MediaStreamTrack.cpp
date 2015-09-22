@@ -235,6 +235,11 @@ bool MediaStreamTrack::canSuspendForPageCache() const
     return false;
 }
 
+AudioSourceProvider* MediaStreamTrack::audioSourceProvider()
+{
+    return m_private->audioSourceProvider();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

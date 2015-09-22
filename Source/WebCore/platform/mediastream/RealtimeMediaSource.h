@@ -36,6 +36,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioSourceProvider.h"
 #include "MediaConstraints.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include <wtf/RefCounted.h>
@@ -107,6 +108,8 @@ public:
 
     void reset();
 
+    virtual AudioSourceProvider* audioSourceProvider() { return nullptr; }
+    
 protected:
     RealtimeMediaSource(const String& id, Type, const String& name);
 

@@ -88,6 +88,8 @@ public:
     RefPtr<MediaConstraints> constraints() const;
     void applyConstraints(const MediaConstraints&);
 
+    AudioSourceProvider* audioSourceProvider();
+
 private:
     explicit MediaStreamTrackPrivate(const MediaStreamTrackPrivate&);
     MediaStreamTrackPrivate(RefPtr<RealtimeMediaSource>&&, const String& id);
