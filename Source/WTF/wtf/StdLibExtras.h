@@ -33,19 +33,11 @@
 #include <wtf/CheckedArithmetic.h>
 
 // This was used to declare and define a static local variable (static T;) so that
-//  it was leaked so that its destructors were not called at exit. Using this
-//  macro also allowed to workaround a compiler bug present in Apple's version of GCC 4.0.1.
-//
+//  it was leaked so that its destructors were not called at exit.
 // Newly written code should use static NeverDestroyed<T> instead.
 #ifndef DEPRECATED_DEFINE_STATIC_LOCAL
-#if COMPILER(GCC_OR_CLANG) && defined(__APPLE_CC__) && __GNUC__ == 4 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 1
-#define DEPRECATED_DEFINE_STATIC_LOCAL(type, name, arguments) \
-    static type* name##Ptr = new type arguments; \
-    type& name = *name##Ptr
-#else
 #define DEPRECATED_DEFINE_STATIC_LOCAL(type, name, arguments) \
     static type& name = *new type arguments
-#endif
 #endif
 
 // Use this macro to declare and define a debug-only global variable that may have a

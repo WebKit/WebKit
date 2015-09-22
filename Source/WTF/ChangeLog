@@ -1,3 +1,12 @@
+2015-09-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove old GCC cruft from wtf/StdLibExtras.h
+        https://bugs.webkit.org/show_bug.cgi?id=149401
+
+        Reviewed by Alex Christensen.
+
+        * wtf/StdLibExtras.h:
+
 2015-09-21  Andy Estes  <aestes@apple.com>
 
         Disable Parental Controls on the Apple TV platform
