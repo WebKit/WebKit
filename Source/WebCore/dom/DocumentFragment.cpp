@@ -60,7 +60,6 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
         case COMMENT_NODE:
         case TEXT_NODE:
         case CDATA_SECTION_NODE:
-        case ENTITY_REFERENCE_NODE:
             return true;
         default:
             return false;

@@ -17,8 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+
 [
+    NoInterfaceObject,
     JSGenerateToJSObject
 ] interface EntityReference : Node {
 };
 
+#endif

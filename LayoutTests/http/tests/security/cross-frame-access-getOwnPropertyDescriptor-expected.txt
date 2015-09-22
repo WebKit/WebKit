@@ -78,7 +78,6 @@ PASS: canGetDescriptor(targetWindow, 'Document') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'DocumentFragment') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'DocumentType') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'Element') should be 'false' and is.
-PASS: canGetDescriptor(targetWindow, 'EntityReference') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'EvalError') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'Event') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'HTMLAnchorElement') should be 'false' and is.

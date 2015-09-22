@@ -30,18 +30,15 @@
 
 namespace WebCore {
 
-NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& nodeFilter, bool expandEntityReferences)
+NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& nodeFilter)
     : m_root(rootNode)
     , m_whatToShow(whatToShow)
     , m_filter(WTF::move(nodeFilter))
-    , m_expandEntityReferences(expandEntityReferences)
 {
 }
 
 short NodeIteratorBase::acceptNode(Node* node) const
 {
-    // FIXME: To handle XML properly we would have to check m_expandEntityReferences.
-
     // The bit twiddling here is done to map DOM node types, which are given as integers from
     // 1 through 14, to whatToShow bit masks.
     if (!(((1 << (node->nodeType() - 1)) & m_whatToShow)))

@@ -148,13 +148,7 @@ Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
 // DOM Section 1.1.1
 bool Attr::childTypeAllowed(NodeType type) const
 {
-    switch (type) {
-        case TEXT_NODE:
-        case ENTITY_REFERENCE_NODE:
-            return true;
-        default:
-            return false;
-    }
+    return type == TEXT_NODE;
 }
 
 void Attr::childrenChanged(const ChildChange&)

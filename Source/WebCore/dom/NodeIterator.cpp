@@ -76,8 +76,8 @@ bool NodeIterator::NodePointer::moveToPrevious(Node* root)
     return node;
 }
 
-NodeIterator::NodeIterator(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences)
-    : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter), expandEntityReferences)
+NodeIterator::NodeIterator(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+    : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter))
     , m_referenceNode(root(), true)
 {
     root()->document().attachNodeIterator(this);

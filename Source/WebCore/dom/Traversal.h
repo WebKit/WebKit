@@ -38,17 +38,16 @@ namespace WebCore {
         Node* root() const { return m_root.get(); }
         unsigned long whatToShow() const { return m_whatToShow; }
         NodeFilter* filter() const { return m_filter.get(); }
-        bool expandEntityReferences() const { return m_expandEntityReferences; }
+        bool expandEntityReferences() const { return false; }
 
     protected:
-        NodeIteratorBase(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool expandEntityReferences);
+        NodeIteratorBase(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&);
         short acceptNode(Node*) const;
 
     private:
         RefPtr<Node> m_root;
         unsigned long m_whatToShow;
         RefPtr<NodeFilter> m_filter;
-        bool m_expandEntityReferences;
     };
 
 } // namespace WebCore

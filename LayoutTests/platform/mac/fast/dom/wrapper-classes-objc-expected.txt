@@ -21,7 +21,6 @@ XML
 PASS objCWrapperClass(xmlDocument) is 'DOMDocument'
 PASS objCWrapperClass(xmlDocument.createCDATASection()) is 'DOMCDATASection'
 PASS objCWrapperClass(xmlDocument.createElementNS('x', 'x', 'x')) is 'DOMElement'
-PASS objCWrapperClass(xmlDocument.createEntityReference()) is 'DOMEntityReference'
 PASS objCWrapperClass(xmlDocument.createProcessingInstruction()) is 'DOMProcessingInstruction'
 
 Events

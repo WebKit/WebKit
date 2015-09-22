@@ -308,11 +308,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Element').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'Element').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Element').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Element').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'EntityReference').value is EntityReference
-PASS Object.getOwnPropertyDescriptor(global, 'EntityReference').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'EntityReference').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'EntityReference').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'EntityReference').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'ErrorEvent').value is ErrorEvent
 PASS Object.getOwnPropertyDescriptor(global, 'ErrorEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ErrorEvent').hasOwnProperty('set') is false

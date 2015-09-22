@@ -909,17 +909,10 @@ RefPtr<ProcessingInstruction> Document::createProcessingInstruction(const String
     return ProcessingInstruction::create(*this, target, data);
 }
 
-RefPtr<EntityReference> Document::createEntityReference(const String& name, ExceptionCode& ec)
+RefPtr<EntityReference> Document::createEntityReference(const String&, ExceptionCode& ec)
 {
-    if (!isValidName(name)) {
-        ec = INVALID_CHARACTER_ERR;
-        return nullptr;
-    }
-    if (isHTMLDocument()) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
-    return EntityReference::create(*this, name);
+    ec = NOT_SUPPORTED_ERR;
+    return nullptr;
 }
 
 Ref<Text> Document::createEditingTextNode(const String& text)
@@ -944,7 +937,6 @@ RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& 
     case ELEMENT_NODE:
     case TEXT_NODE:
     case CDATA_SECTION_NODE:
-    case ENTITY_REFERENCE_NODE:
     case PROCESSING_INSTRUCTION_NODE:
     case COMMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
@@ -971,11 +963,6 @@ RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
 {
     if (!source) {
         ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
-
-    if (source->isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
         return nullptr;
     }
 
@@ -1710,52 +1697,52 @@ Ref<Range> Document::createRange()
     return Range::create(*this);
 }
 
-RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences, ExceptionCode& ec)
+RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool, ExceptionCode& ec)
 {
-    if (!root) {
-        ec = TypeError;
-        return nullptr;
-    }
-    return NodeIterator::create(root, whatToShow, WTF::move(filter), expandEntityReferences);
+    return createNodeIterator(root, whatToShow, WTF::move(filter), ec);
 }
 
 RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
 {
-    return createNodeIterator(root, whatToShow, WTF::move(filter), false, ec);
+    if (!root) {
+        ec = TypeError;
+        return nullptr;
+    }
+    return NodeIterator::create(root, whatToShow, WTF::move(filter));
 }
 
 RefPtr<NodeIterator> Document::createNodeIterator(Node* root, unsigned long whatToShow, ExceptionCode& ec)
 {
-    return createNodeIterator(root, whatToShow, nullptr, false, ec);
+    return createNodeIterator(root, whatToShow, nullptr, ec);
 }
 
 RefPtr<NodeIterator> Document::createNodeIterator(Node* root, ExceptionCode& ec)
 {
-    return createNodeIterator(root, 0xFFFFFFFF, nullptr, false, ec);
+    return createNodeIterator(root, 0xFFFFFFFF, nullptr, ec);
 }
 
-RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences, ExceptionCode& ec)
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool, ExceptionCode& ec)
+{
+    return createTreeWalker(root, whatToShow, WTF::move(filter), ec);
+}
+
+RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
 {
     if (!root) {
         ec = TypeError;
         return nullptr;
     }
-    return TreeWalker::create(root, whatToShow, WTF::move(filter), expandEntityReferences);
-}
-
-RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, ExceptionCode& ec)
-{
-    return createTreeWalker(root, whatToShow, WTF::move(filter), false, ec);
+    return TreeWalker::create(root, whatToShow, WTF::move(filter));
 }
 
 RefPtr<TreeWalker> Document::createTreeWalker(Node* root, unsigned long whatToShow, ExceptionCode& ec)
 {
-    return createTreeWalker(root, whatToShow, nullptr, false, ec);
+    return createTreeWalker(root, whatToShow, nullptr, ec);
 }
 
 RefPtr<TreeWalker> Document::createTreeWalker(Node* root, ExceptionCode& ec)
 {
-    return createTreeWalker(root, 0xFFFFFFFF, nullptr, false, ec);
+    return createTreeWalker(root, 0xFFFFFFFF, nullptr, ec);
 }
 
 void Document::scheduleForcedStyleRecalc()
@@ -3357,7 +3344,6 @@ bool Document::childTypeAllowed(NodeType type) const
     case CDATA_SECTION_NODE:
     case DOCUMENT_FRAGMENT_NODE:
     case DOCUMENT_NODE:
-    case ENTITY_REFERENCE_NODE:
     case TEXT_NODE:
     case XPATH_NAMESPACE_NODE:
         return false;
@@ -3385,7 +3371,6 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
     case ATTRIBUTE_NODE:
     case CDATA_SECTION_NODE:
     case DOCUMENT_NODE:
-    case ENTITY_REFERENCE_NODE:
     case TEXT_NODE:
     case XPATH_NAMESPACE_NODE:
         return false;

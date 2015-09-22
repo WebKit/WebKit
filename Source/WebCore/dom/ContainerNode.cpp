@@ -180,7 +180,6 @@ static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& new
 {
     // Use common case fast path if possible.
     if ((newChild.isElementNode() || newChild.isTextNode()) && newParent.isElementNode()) {
-        ASSERT(!newParent.isReadOnlyNode());
         ASSERT(!newParent.isDocumentTypeNode());
         ASSERT(isChildTypeAllowed(newParent, newChild));
         if (containsConsideringHostElements(newChild, newParent))
@@ -193,8 +192,6 @@ static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& new
     if (newChild.isPseudoElement())
         return HIERARCHY_REQUEST_ERR;
 
-    if (newParent.isReadOnlyNode())
-        return NO_MODIFICATION_ALLOWED_ERR;
     if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
 
@@ -209,7 +206,6 @@ static inline ExceptionCode checkAcceptChild(ContainerNode& newParent, Node& new
 
 static inline bool checkAcceptChildGuaranteedNodeTypes(ContainerNode& newParent, Node& newChild, ExceptionCode& ec)
 {
-    ASSERT(!newParent.isReadOnlyNode());
     ASSERT(!newParent.isDocumentTypeNode());
     ASSERT(isChildTypeAllowed(newParent, newChild));
     if (newChild.contains(&newParent)) {
@@ -520,12 +516,6 @@ bool ContainerNode::removeChild(Node& oldChild, ExceptionCode& ec)
     Ref<ContainerNode> protect(*this);
 
     ec = 0;
-
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-    if (isReadOnlyNode()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return false;
-    }
 
     // NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
     if (oldChild.parentNode() != this) {

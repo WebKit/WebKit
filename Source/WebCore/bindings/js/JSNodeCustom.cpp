@@ -33,7 +33,6 @@
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Entity.h"
-#include "EntityReference.h"
 #include "ExceptionCode.h"
 #include "HTMLAudioElement.h"
 #include "HTMLCanvasElement.h"
@@ -51,7 +50,6 @@
 #include "JSDocument.h"
 #include "JSDocumentFragment.h"
 #include "JSDocumentType.h"
-#include "JSEntityReference.h"
 #include "JSEventListener.h"
 #include "JSHTMLElement.h"
 #include "JSHTMLElementWrapperFactory.h"
@@ -208,9 +206,6 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
             else
 #endif
                 wrapper = CREATE_DOM_WRAPPER(globalObject, DocumentFragment, node);
-            break;
-        case Node::ENTITY_REFERENCE_NODE:
-            wrapper = CREATE_DOM_WRAPPER(globalObject, EntityReference, node);
             break;
         default:
             wrapper = CREATE_DOM_WRAPPER(globalObject, Node, node);

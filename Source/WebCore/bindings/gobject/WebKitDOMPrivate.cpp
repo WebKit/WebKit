@@ -47,7 +47,6 @@
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMDocumentTypePrivate.h"
 #include "WebKitDOMElementPrivate.h"
-#include "WebKitDOMEntityReferencePrivate.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTargetPrivate.h"
 #include "WebKitDOMFilePrivate.h"
@@ -93,8 +92,6 @@ WebKitDOMNode* wrap(Node* node)
         return WEBKIT_DOM_NODE(wrapText(downcast<Text>(node)));
     case Node::CDATA_SECTION_NODE:
         return WEBKIT_DOM_NODE(wrapCDATASection(static_cast<CDATASection*>(node)));
-    case Node::ENTITY_REFERENCE_NODE:
-        return WEBKIT_DOM_NODE(wrapEntityReference(static_cast<EntityReference*>(node)));
     case Node::PROCESSING_INSTRUCTION_NODE:
         return WEBKIT_DOM_NODE(wrapProcessingInstruction(static_cast<ProcessingInstruction*>(node)));
     case Node::COMMENT_NODE:

@@ -156,16 +156,6 @@ shouldBe("element.prefix", "'html'");
 shouldBe("element.nodeValue", "null");
 shouldBe("element.attributes.toString()", "'[object NamedNodeMap]'");
 
-// Not possible to create Entity nodes via the DOM, WebKit doesn't create them from parsing
-
-shouldThrow("document.createEntityReference('gt')");
-var entityReference = xmlDoc.createEntityReference("gt");
-shouldBe("entityReference.nodeName", "'gt'");
-shouldBe("entityReference.localName", "null");
-shouldBe("entityReference.namespaceURI", "null");
-shouldBe("entityReference.prefix", "null");
-shouldBe("entityReference.nodeValue", "null");
-
 // Not possible to create Notation nodes via the DOM, WebKit doesn't create them from parsing
 
 var processingInstruction = document.createProcessingInstruction('xml-stylesheet', 'type=\"text/xsl\" href=\"missing.xsl\"');

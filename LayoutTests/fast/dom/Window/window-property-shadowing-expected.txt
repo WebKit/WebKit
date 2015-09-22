@@ -96,8 +96,6 @@ PASS: Comment successfully shadowed
 PASS: CDATASection successfully shadowed
 PASS: DocumentType successfully shadowed
 PASS: Notation successfully shadowed
-PASS: Entity successfully shadowed
-PASS: EntityReference successfully shadowed
 PASS: ProcessingInstruction successfully shadowed
 PASS: HTMLDocument successfully shadowed
 PASS: HTMLElement successfully shadowed

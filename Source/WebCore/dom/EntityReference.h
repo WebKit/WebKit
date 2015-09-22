@@ -26,18 +26,9 @@
 
 namespace WebCore {
 
-class EntityReference final : public ContainerNode {
-public:
-    static Ref<EntityReference> create(Document&, const String& entityName);
-
+class EntityReference : public ContainerNode {
 private:
     EntityReference(Document&, const String& entityName);
-
-    virtual String nodeName() const override;
-    virtual NodeType nodeType() const override;
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
-
-    String m_entityName;
 };
 
 } //namespace

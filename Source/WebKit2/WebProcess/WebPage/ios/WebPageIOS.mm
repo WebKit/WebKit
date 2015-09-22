@@ -2324,11 +2324,11 @@ static inline bool isAssistableElement(Element& node)
     if (is<HTMLSelectElement>(node))
         return true;
     if (is<HTMLTextAreaElement>(node))
-        return !downcast<HTMLTextAreaElement>(node).isReadOnlyNode();
+        return true;
     if (is<HTMLInputElement>(node)) {
         HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
-        return !inputElement.isReadOnlyNode() && (inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField());
+        return inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField();
     }
     return node.isContentEditable();
 }

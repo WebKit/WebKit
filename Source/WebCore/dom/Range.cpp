@@ -489,10 +489,6 @@ bool Range::boundaryPointsValid() const
 
 void Range::deleteContents(ExceptionCode& ec)
 {
-    checkDeleteExtract(ec);
-    if (ec)
-        return;
-
     processContents(Delete, ec);
 }
 
@@ -572,7 +568,6 @@ static inline unsigned lengthOfContentsInNode(Node* node)
         return downcast<CharacterData>(*node).length();
     case Node::ELEMENT_NODE:
     case Node::ATTRIBUTE_NODE:
-    case Node::ENTITY_REFERENCE_NODE:
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
@@ -733,7 +728,6 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
         break;
     case Node::ELEMENT_NODE:
     case Node::ATTRIBUTE_NODE:
-    case Node::ENTITY_REFERENCE_NODE:
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
@@ -839,10 +833,6 @@ RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* co
 
 RefPtr<DocumentFragment> Range::extractContents(ExceptionCode& ec)
 {
-    checkDeleteExtract(ec);
-    if (ec)
-        return nullptr;
-
     return processContents(Extract, ec);
 }
 
@@ -858,13 +848,6 @@ void Range::insertNode(PassRefPtr<Node> prpNewNode, ExceptionCode& ec)
     ec = 0;
     if (!newNode) {
         ec = TypeError;
-        return;
-    }
-
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if an ancestor container of either boundary-point of
-    // the Range is read-only.
-    if (containedByReadOnly()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -1027,7 +1010,6 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
         case Node::ELEMENT_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
         case Node::XPATH_NAMESPACE_NODE: {
             if (!offset)
                 return nullptr;
@@ -1057,7 +1039,6 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::COMMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
         case Node::ELEMENT_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
         case Node::XPATH_NAMESPACE_NODE:
@@ -1077,7 +1058,6 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
         case Node::COMMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
         case Node::ELEMENT_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
         case Node::XPATH_NAMESPACE_NODE:
@@ -1154,7 +1134,6 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
             case Node::DOCUMENT_FRAGMENT_NODE:
             case Node::DOCUMENT_NODE:
             case Node::ELEMENT_NODE:
-            case Node::ENTITY_REFERENCE_NODE:
             case Node::PROCESSING_INSTRUCTION_NODE:
             case Node::TEXT_NODE:
             case Node::XPATH_NAMESPACE_NODE:
@@ -1170,7 +1149,6 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
         case Node::COMMENT_NODE:
         case Node::DOCUMENT_TYPE_NODE:
         case Node::ELEMENT_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
         case Node::XPATH_NAMESPACE_NODE:
@@ -1209,7 +1187,6 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
             case Node::DOCUMENT_FRAGMENT_NODE:
             case Node::DOCUMENT_NODE:
             case Node::ELEMENT_NODE:
-            case Node::ENTITY_REFERENCE_NODE:
             case Node::PROCESSING_INSTRUCTION_NODE:
             case Node::TEXT_NODE:
             case Node::XPATH_NAMESPACE_NODE:
@@ -1248,18 +1225,10 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:
         case Node::ELEMENT_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
         case Node::XPATH_NAMESPACE_NODE:
             break;
-    }
-
-    // NO_MODIFICATION_ALLOWED_ERR: Raised if an ancestor container of either boundary-point of
-    // the Range is read-only.
-    if (containedByReadOnly()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
     }
 
     // Raise a HIERARCHY_REQUEST_ERR if startContainer() doesn't accept children like newParent.
@@ -1327,39 +1296,6 @@ void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
         return;
 
     setStart(refNode->parentNode(), refNode->computeNodeIndex(), ec);
-}
-
-void Range::checkDeleteExtract(ExceptionCode& ec)
-{
-    ec = 0;
-    if (!commonAncestorContainer())
-        return;
-
-    Node* pastLast = pastLastNode();
-    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(*n)) {
-        if (n->isReadOnlyNode()) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return;
-        }
-    }
-
-    if (containedByReadOnly()) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
-}
-
-bool Range::containedByReadOnly() const
-{
-    for (Node* n = &startContainer(); n; n = n->parentNode()) {
-        if (n->isReadOnlyNode())
-            return true;
-    }
-    for (Node* n = &endContainer(); n; n = n->parentNode()) {
-        if (n->isReadOnlyNode())
-            return true;
-    }
-    return false;
 }
 
 Node* Range::firstNode() const

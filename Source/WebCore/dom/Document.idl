@@ -39,7 +39,10 @@
     [ObjCLegacyUnnamedParameters, NewObject, RaisesException] ProcessingInstruction createProcessingInstruction([Default=Undefined] optional DOMString target,
                                                                                  [Default=Undefined] optional DOMString data);
     [NewObject, RaisesException] Attr createAttribute([Default=Undefined] optional DOMString name);
-    [NewObject, RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    [RaisesException] EntityReference createEntityReference([Default=Undefined] optional DOMString name);
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [ImplementedAs=getElementsByTagNameForObjC] NodeList getElementsByTagName([Default=Undefined] optional DOMString tagname);
@@ -92,14 +95,23 @@
 
     // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] NodeIterator createNodeIterator(Node root,
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    [ObjCLegacyUnnamedParameters, RaisesException] NodeIterator createNodeIterator(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);
-    [ObjCLegacyUnnamedParameters, RaisesException, NewObject] TreeWalker createTreeWalker(Node root,
+    [ObjCLegacyUnnamedParameters, RaisesException] TreeWalker createTreeWalker(Node root,
         optional unsigned long whatToShow = 0xFFFFFFFF,
         optional NodeFilter? filter,
         optional boolean expandEntityReferences);
+#else
+    [RaisesException, NewObject] NodeIterator createNodeIterator(Node root,
+        optional unsigned long whatToShow = 0xFFFFFFFF,
+        optional NodeFilter? filter);
+    [RaisesException, NewObject] TreeWalker createTreeWalker(Node root,
+        optional unsigned long whatToShow = 0xFFFFFFFF,
+        optional NodeFilter? filter);
+#endif
 
     // DOM Level 2 Abstract Views (DocumentView interface)
 

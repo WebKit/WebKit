@@ -113,12 +113,6 @@ PASS element.namespaceURI is 'http://www.w3.org/1999/xhtml'
 PASS element.prefix is 'html'
 PASS element.nodeValue is null
 PASS element.attributes.toString() is '[object NamedNodeMap]'
-PASS document.createEntityReference('gt') threw exception Error: NotSupportedError: DOM Exception 9.
-PASS entityReference.nodeName is 'gt'
-PASS entityReference.localName is null
-PASS entityReference.namespaceURI is null
-PASS entityReference.prefix is null
-PASS entityReference.nodeValue is null
 PASS processingInstruction.nodeName is 'xml-stylesheet'
 PASS processingInstruction.localName is null
 PASS processingInstruction.namespaceURI is null

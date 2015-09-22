@@ -33,8 +33,8 @@
 
 namespace WebCore {
 
-TreeWalker::TreeWalker(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences)
-    : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter), expandEntityReferences)
+TreeWalker::TreeWalker(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
+    : NodeIteratorBase(rootNode, whatToShow, WTF::move(filter))
     , m_current(root())
 {
 }

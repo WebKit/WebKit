@@ -37,9 +37,9 @@ namespace WebCore {
 
     class NodeIterator : public ScriptWrappable, public RefCounted<NodeIterator>, public NodeIteratorBase {
     public:
-        static Ref<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter, bool expandEntityReferences)
+        static Ref<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
         {
-            return adoptRef(*new NodeIterator(rootNode, whatToShow, WTF::move(filter), expandEntityReferences));
+            return adoptRef(*new NodeIterator(rootNode, whatToShow, WTF::move(filter)));
         }
         ~NodeIterator();
 
@@ -54,7 +54,7 @@ namespace WebCore {
         void nodeWillBeRemoved(Node&);
 
     private:
-        NodeIterator(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&, bool expandEntityReferences);
+        NodeIterator(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&);
 
         struct NodePointer {
             RefPtr<Node> node;
