@@ -1330,10 +1330,7 @@ sub GenerateAttributesHashTable
         # configurable and should not be enumerable.
         my $is_global_constructor = $attribute->signature->type =~ /Constructor$/;
 
-        # FIXME: Attributes should be configurable unless [Unforgeable] is specified.
-        # https://heycam.github.io/webidl/#es-attributes
-        push(@specials, "DontDelete") if (!$attribute->signature->extendedAttributes->{"Deletable"} && !$is_global_constructor)
-            || $attribute->signature->extendedAttributes->{"Unforgeable"}
+        push(@specials, "DontDelete") if ($isInstance && !$is_global_constructor) || $attribute->signature->extendedAttributes->{"Unforgeable"}
             || $interface->extendedAttributes->{"Unforgeable"};
 
         push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{"NotEnumerable"} || $is_global_constructor);
