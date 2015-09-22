@@ -1,3 +1,18 @@
+2015-09-22  Andy Estes  <aestes@apple.com>
+
+        ContentFiltering.AllowDownloadAfterAddData is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=148885
+        <rdar://problem/22729563>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The AllowDownload* tests were relying on -_downloadDidStart: being called before -webView:didFinishNavigation:,
+        but there is no guarantee of this. For tests that should allow a download, spin the runloop until
+        -_downloadDidStart: is called. The test will now timeout on failure, but will no longer produce false failures.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+        (downloadTest):
+
 2015-09-22  Alexey Proskuryakov  <ap@apple.com>
 
         Mavericks: Media tests start to time out after a few days of bot uptime

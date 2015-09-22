@@ -185,9 +185,12 @@ static void downloadTest(Decision decision, DecisionPoint decisionPoint)
 
         isDone = false;
         downloadDidStart = false;
-        TestWebKitAPI::Util::run(&isDone);
-
         const bool downloadShouldStart = decision == Decision::Allow || decisionPoint > DecisionPoint::AfterResponse;
+        if (downloadShouldStart)
+            TestWebKitAPI::Util::run(&downloadDidStart);
+        else
+            TestWebKitAPI::Util::run(&isDone);
+
         EXPECT_EQ(downloadShouldStart, downloadDidStart);
 
         [WKBrowsingContextController unregisterSchemeForCustomProtocol:[TestProtocol scheme]];
