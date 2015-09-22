@@ -38,10 +38,4 @@ void DOMSettableTokenList::deref()
     RefCounted<DOMSettableTokenList>::deref();
 }
 
-void DOMSettableTokenList::setValue(const String& value)
-{
-    setValueInternal(value);
-    updateAfterTokenChange();
-}
-
 } // namespace WebCore

@@ -35,7 +35,7 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class DOMSettableTokenList : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
+class DOMSettableTokenList final : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<DOMSettableTokenList> create()
@@ -43,13 +43,12 @@ public:
         return adoptRef(*new DOMSettableTokenList);
     }
 
-    void setValue(const String&);
-
     // Make public.
     using DOMTokenList::value;
+    using DOMTokenList::setValue;
 
-    virtual void ref() override final;
-    virtual void deref() override final;
+    virtual void ref() override;
+    virtual void deref() override;
 };
 
 } // namespace WebCore

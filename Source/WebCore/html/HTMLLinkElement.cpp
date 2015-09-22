@@ -403,7 +403,7 @@ void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
 DOMTokenList& HTMLLinkElement::relList()
 {
     if (!m_relList) 
-        m_relList = AttributeDOMTokenList::create(*this, HTMLNames::relAttr);
+        m_relList = std::make_unique<AttributeDOMTokenList>(*this, HTMLNames::relAttr);
     return *m_relList;
 }
 

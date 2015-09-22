@@ -93,7 +93,7 @@ public:
     void setComputedStyle(Ref<RenderStyle>&& computedStyle) { m_computedStyle = WTF::move(computedStyle); }
 
     AttributeDOMTokenList* classList() const { return m_classList.get(); }
-    void setClassList(RefPtr<AttributeDOMTokenList>&& classList) { m_classList = WTF::move(classList); }
+    void setClassList(std::unique_ptr<AttributeDOMTokenList> classList) { m_classList = WTF::move(classList); }
 
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
     void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTF::move(dataset); }
@@ -134,7 +134,7 @@ private:
     RefPtr<RenderStyle> m_computedStyle;
 
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
-    RefPtr<AttributeDOMTokenList> m_classList;
+    std::unique_ptr<AttributeDOMTokenList> m_classList;
     RefPtr<ShadowRoot> m_shadowRoot;
     std::unique_ptr<NamedNodeMap> m_attributeMap;
 

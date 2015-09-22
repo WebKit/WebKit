@@ -26,22 +26,19 @@
 #ifndef AttributeDOMTokenList_h
 #define AttributeDOMTokenList_h
 
-#include "DOMSettableTokenList.h"
+#include "DOMTokenList.h"
 #include "Element.h"
 
 namespace WebCore {
 
-class AttributeDOMTokenList final : public DOMSettableTokenList {
+class AttributeDOMTokenList final : public DOMTokenList {
 public:
-    static Ref<AttributeDOMTokenList> create(Element& element, const QualifiedName& attributeName)
-    {
-        return adoptRef(*new AttributeDOMTokenList(element, attributeName));
-    }
-
+    AttributeDOMTokenList(Element&, const QualifiedName& attributeName);
     void attributeValueChanged(const AtomicString&);
 
 private:
-    AttributeDOMTokenList(Element&, const QualifiedName& attributeName);
+    virtual void ref() override { m_element.ref(); }
+    virtual void deref() override { m_element.deref(); }
 
     virtual Element* element() const override { return &m_element; }
     virtual void updateAfterTokenChange() override;

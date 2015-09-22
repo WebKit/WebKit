@@ -61,7 +61,7 @@ public:
 protected:
     DOMTokenList() = default;
     const AtomicString& value() const;
-    void setValueInternal(const String&);
+    void setValue(const String&);
 
     virtual void updateAfterTokenChange() { m_cachedValue = nullAtom; }
 

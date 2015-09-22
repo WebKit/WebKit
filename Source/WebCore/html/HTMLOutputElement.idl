@@ -23,7 +23,9 @@
  */
 
 interface HTMLOutputElement : HTMLElement {
-    [PutForwards=value] readonly attribute DOMSettableTokenList htmlFor;
+    // FIXME: This is supposed to be:
+    // [PutForwards=value] readonly attribute DOMSettableTokenList htmlFor;
+    readonly attribute DOMSettableTokenList htmlFor;
 
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString name;
