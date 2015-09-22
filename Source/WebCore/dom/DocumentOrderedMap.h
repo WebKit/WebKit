@@ -85,7 +85,7 @@ private:
         Element* element;
         unsigned count;
         Vector<Element*> orderedList;
-#ifndef NDEBUG
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
         HashSet<Element*> registeredElements;
 #endif
     };

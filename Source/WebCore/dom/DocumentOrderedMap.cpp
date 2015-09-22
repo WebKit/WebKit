@@ -57,7 +57,7 @@ void DocumentOrderedMap::add(const AtomicStringImpl& key, Element& element, cons
     Map::AddResult addResult = m_map.add(&key, MapEntry(&element));
     MapEntry& entry = addResult.iterator->value;
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
     ASSERT_WITH_SECURITY_IMPLICATION(!entry.registeredElements.contains(&element));
     entry.registeredElements.add(&element);
 #endif
