@@ -314,11 +314,13 @@ public:
         return m_technique == InPair;
     }
 
+#if ENABLE(JIT)
     JSValueRegs jsValueRegs() const
     {
         ASSERT(isInJSValueRegs());
         return JSValueRegs(tagGPR(), payloadGPR());
     }
+#endif // ENABLE(JIT)
 #else
     bool isInJSValueRegs() const
     {

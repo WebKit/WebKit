@@ -1,3 +1,12 @@
+2015-09-22  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: speculative non-JIT build fix after r189999.
+
+        Not reviewed.
+
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::jsValueRegs):
+
 2015-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         GCThreadSharedData is just a bad way of saying Heap
