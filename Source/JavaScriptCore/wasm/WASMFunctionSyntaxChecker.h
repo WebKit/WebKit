@@ -81,14 +81,14 @@ public:
         return UNUSED;
     }
 
-    int buildImmediateF32(uint32_t)
+    int buildImmediateF32(float)
     {
         m_tempStackTop++;
         updateTempStackHeight();
         return UNUSED;
     }
 
-    int buildImmediateF64(uint32_t)
+    int buildImmediateF64(double)
     {
         m_tempStackTop++;
         updateTempStackHeight();
