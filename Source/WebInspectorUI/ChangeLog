@@ -1,5 +1,16 @@
 2015-09-23  Saam barati  <sbarati@apple.com>
 
+        Web Inspector: Don't use bind() when creating internal AST, instead, pass in "this" parameter to map()
+        https://bugs.webkit.org/show_bug.cgi?id=149483
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+
+2015-09-23  Saam barati  <sbarati@apple.com>
+
         Web Inspector: Type bubbles missing for computed methods and methods on object literals
         https://bugs.webkit.org/show_bug.cgi?id=148562
 
