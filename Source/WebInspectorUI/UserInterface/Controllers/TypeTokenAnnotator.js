@@ -106,8 +106,7 @@ WebInspector.TypeTokenAnnotator = class TypeTokenAnnotator extends WebInspector.
         var scriptSyntaxTree = this._script._scriptSyntaxTree;
         if (!node.attachments.__typeToken && (scriptSyntaxTree.containsNonEmptyReturnStatement(node.body) || !functionReturnType.typeSet.isContainedIn(WebInspector.TypeSet.TypeBit.Undefined))) {
             var functionName = node.id ? node.id.name : null;
-            var offset = node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0];
-            this._insertToken(offset, node, true, WebInspector.TypeTokenView.TitleType.ReturnStatement, functionName);
+            this._insertToken(node.typeProfilingReturnDivot, node, true, WebInspector.TypeTokenView.TitleType.ReturnStatement, functionName);
         }
 
         if (node.attachments.__typeToken)

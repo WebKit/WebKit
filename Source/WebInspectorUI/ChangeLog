@@ -1,3 +1,28 @@
+2015-09-23  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: Type bubbles missing for computed methods and methods on object literals
+        https://bugs.webkit.org/show_bug.cgi?id=148562
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch makes sure that computed methods are working
+        for both classes and object literals. Also, methods now
+        work on object literals. This patch also cleans up the
+        "isGetterOrSetter" and "getterOrSetterRange" fields.
+        Basically, we used this as a way to ask the type profiler
+        for the return types of a function. Now, we just have
+        a field called "typeProfilingReturnDivot" that is set
+        on all functions so we don't need to conditionally ask
+        if it's a getter or setter.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeToken):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.functionReturnDivot):
+        (WebInspector.ScriptSyntaxTree.prototype._recurseArray):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+
 2015-09-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: The right sidebar always opens up on breakpoint

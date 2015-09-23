@@ -157,8 +157,9 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         if (!DOMAgent.hasEvent("pseudoElementAdded"))
             return node.body.range[0];
 
-        // "f" in function, "s" in set, "g" in get, first letter in any method name for classes.
-        return node.isGetterOrSetter ? node.getterOrSetterRange[0] : node.range[0];
+        // "f" in "function". "s" in "set". "g" in "get". First letter in any method name for classes and object literals. 
+        // The "[" for computed methods in classes and object literals.
+        return node.typeProfilingReturnDivot;
     }
 
     updateTypes(nodesToUpdate, callback)
@@ -516,7 +517,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
     }
 
     // This function translates from esprima's Abstract Syntax Tree to ours.
-    // Mostly, this is just the identity function. We've added an extra isGetterOrSetter property for functions.
+    // Mostly, this is just the identity function. We've added an extra typeProfilingReturnDivot property for functions/methods.
     // Our AST complies with the Mozilla parser API:
     // https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey/Parser_API
     _createInternalSyntaxTree(node)
@@ -546,7 +547,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
                 body: this._createInternalSyntaxTree(node.body),
                 expression: node.expression, // Boolean indicating if the body a single expression or a block statement.
-                isGetterOrSetter: false
+                typeProfilingReturnDivot: node.range[0]
             };
             break;
         case "AssignmentExpression":
@@ -689,7 +690,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 params: node.params.map(this._createInternalSyntaxTree.bind(this)),
                 defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
                 body: this._createInternalSyntaxTree(node.body),
-                isGetterOrSetter: false // This is obvious, but is convenient none the less b/c Declarations and Expressions are often intertwined.
+                typeProfilingReturnDivot: node.range[0]
             };
             break;
         case "FunctionExpression":
@@ -699,7 +700,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 params: node.params.map(this._createInternalSyntaxTree.bind(this)),
                 defaults: node.defaults.map(this._createInternalSyntaxTree.bind(this)),
                 body: this._createInternalSyntaxTree(node.body),
-                isGetterOrSetter: false // If true, it is set in the Property AST node.
+                typeProfilingReturnDivot: node.range[0] // This may be overridden in the Property AST node.
             };
             break;
         case "Identifier":
@@ -763,14 +764,7 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 kind: node.kind,
                 static: node.static
             };
-            if (result.kind === "get" || result.kind === "set") {
-                const length = result.key.range[1] - result.key.range[0];
-                result.value.getterOrSetterRange = node.range;
-                result.value.getterOrSetterRange[1] = node.range[0] + length;
-            } else
-                result.value.getterOrSetterRange = result.key.range;
-            // FIXME: <https://webkit.org/b/143171> Web Inspector: Improve Type Profiler Support for ES6 Syntax
-            result.value.isGetterOrSetter = true;
+            result.value.typeProfilingReturnDivot = node.range[0]; // "g" in "get" or "s" in "set" or "[" in "['computed']" or "m" in "methodName".
             break;
         case "NewExpression":
             result = {
@@ -803,12 +797,12 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.Property,
                 key: this._createInternalSyntaxTree(node.key),
                 value: this._createInternalSyntaxTree(node.value),
-                kind: node.kind
+                kind: node.kind,
+                method: node.method,
+                computed: node.computed
             };
-            if (result.kind === "get" || result.kind === "set") {
-                result.value.isGetterOrSetter = true;
-                result.value.getterOrSetterRange = result.key.range;
-            }
+            if (result.kind === "get" || result.kind === "set" || result.method)
+                result.value.typeProfilingReturnDivot = node.range[0];  // "g" in "get" or "s" in "set" or "[" in "['computed']" method or "m" in "methodName".
             break;
         case "ReturnStatement":
             result = {
