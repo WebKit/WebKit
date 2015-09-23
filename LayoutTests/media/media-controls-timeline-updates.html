@@ -42,7 +42,10 @@
 
                 testExpected("timeLineValue()", 0);
 
-                video.play();
+                video.addEventListener("seeked", function() {
+                    video.play();
+                });
+                video.fastSeek(video.duration - 1);
             }
         </script>
     </head>
