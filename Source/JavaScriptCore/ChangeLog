@@ -1,3 +1,10 @@
+2015-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        Hopefully fix the production build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * PlatformWin.cmake:
+
 2015-09-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement ReadableStream pipeThrough

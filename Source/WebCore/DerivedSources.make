@@ -1255,7 +1255,7 @@ WEBCORE_JS_BUILTINS = \
 all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
 
 %Builtins.cpp: %.js
-	$(PYTHON) $(WebCore)/generate-js-builtins --input $< --webcore_dir $(WebCore)
+	$(PYTHON) $(WebCore)/generate-js-builtins --input $< --generate_js_builtins_path $(GenerateJSBuiltinsScripts)
 
 # ------------------------
 

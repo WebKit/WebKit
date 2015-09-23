@@ -950,6 +950,7 @@
 		2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ADFA26218EF3540004F9FCC /* GCLogging.cpp */; };
 		2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */; };
 		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2DFB8AFE1BB323BD0093D237 /* generate-js-builtins in Headers */ = {isa = PBXBuildFile; fileRef = A71DA80D1880D71F00D1F299 /* generate-js-builtins */; settings = {ATTRIBUTES = (Private, ); }; };
 		371D842D17C98B6E00ECF994 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 371D842C17C98B6E00ECF994 /* libz.dylib */; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		41DEA1321B9F3163006D65DD /* BuiltinUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DEA1311B9F3154006D65DD /* BuiltinUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5967,6 +5968,7 @@
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */,
+				2DFB8AFE1BB323BD0093D237 /* generate-js-builtins in Headers */,
 				79F8FC1F1B9FED0F00CA66AB /* DFGMaximalFlushInsertionPhase.h in Headers */,
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
 				7964656A1B952FF0003059EE /* GetPutInfo.h in Headers */,

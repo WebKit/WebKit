@@ -74,6 +74,7 @@ chomp($featureDefines);
 $ENV{'FEATURE_DEFINES'} = $featureDefines;
 $ENV{'InspectorScripts'} = File::Spec->catdir($XDSTROOT, 'include', 'private', 'JavaScriptCore');
 $ENV{'WebReplayScripts'} = File::Spec->catdir($XDSTROOT, 'include', 'private', 'JavaScriptCore');
+$ENV{'GenerateJSBuiltinsScripts'} = File::Spec->catdir($XDSTROOT, 'include', 'private', 'JavaScriptCore');
 
 if ($ARGV[2] eq 'cairo') {
     $ENV{'PLATFORM_FEATURE_DEFINES'} = File::Spec->catfile($SDKROOT, 'tools', 'vsprops', 'FeatureDefinesCairo.props');

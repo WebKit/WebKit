@@ -34,7 +34,7 @@ from string import Template
 parser = argparse.ArgumentParser()
 parser.add_argument('--output_dir', default='', help='output directory')
 parser.add_argument('--input', help='path to input JS file')
-parser.add_argument('--webcore_dir', help='path to WebCore directory')
+parser.add_argument('--generate_js_builtins_path', help='path to directory containing JavaScriptCore\'s generate-js-builtins')
 
 args = parser.parse_args()
 filename = os.path.splitext(os.path.basename(args.input))[0]
@@ -43,7 +43,7 @@ filename = os.path.splitext(os.path.basename(args.input))[0]
 namespace = "WebCore"
 prefix = "WEBCORE" + filename.upper()
 output = os.path.join(args.output_dir, filename + "Builtins")
-jsc_generate_builtin_script = os.path.join(args.webcore_dir, "..", "JavaScriptCore", "generate-js-builtins")
+jsc_generate_builtin_script = os.path.join(args.generate_js_builtins_path, "generate-js-builtins")
 
 subprocess.call(["python", jsc_generate_builtin_script, "--output", output, "--namespace", namespace, "--prefix", prefix, args.input], stderr=subprocess.STDOUT)
 
