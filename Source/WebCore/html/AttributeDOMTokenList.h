@@ -26,13 +26,12 @@
 #ifndef AttributeDOMTokenList_h
 #define AttributeDOMTokenList_h
 
-#include "DOMSettableTokenList.h"
+#include "DOMTokenList.h"
 #include "Element.h"
 
 namespace WebCore {
 
-class AttributeDOMTokenList final : public DOMSettableTokenList {
-    WTF_MAKE_FAST_ALLOCATED;
+class AttributeDOMTokenList final : public DOMTokenList {
 public:
     AttributeDOMTokenList(Element&, const QualifiedName& attributeName);
     void attributeValueChanged(const AtomicString&);

@@ -24,10 +24,10 @@
 #ifndef HTMLLinkElement_h
 #define HTMLLinkElement_h
 
-#include "AttributeDOMTokenList.h"
 #include "CSSStyleSheet.h"
 #include "CachedStyleSheetClient.h"
 #include "CachedResourceHandle.h"
+#include "DOMSettableTokenList.h"
 #include "HTMLElement.h"
 #include "LinkLoader.h"
 #include "LinkLoaderClient.h"
@@ -57,7 +57,7 @@ public:
     IconType iconType() const;
 
     // the icon size string as parsed from the HTML attribute
-    String iconSizes();
+    String iconSizes() const;
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
@@ -65,7 +65,7 @@ public:
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }
-    DOMSettableTokenList& sizes();
+    DOMSettableTokenList& sizes() { return m_sizes.get(); }
 
     void dispatchPendingEvent(LinkEventSender*);
     static void dispatchPendingLoadEvents();
@@ -128,7 +128,7 @@ private:
 
     String m_type;
     String m_media;
-    std::unique_ptr<AttributeDOMTokenList> m_sizes;
+    Ref<DOMSettableTokenList> m_sizes;
     DisabledState m_disabledState;
     LinkRelAttribute m_relAttribute;
     bool m_loading;

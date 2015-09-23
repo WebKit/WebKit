@@ -34,7 +34,7 @@ AttributeDOMTokenList::AttributeDOMTokenList(Element& element, const QualifiedNa
     : m_element(element)
     , m_attributeName(attributeName)
 {
-    setValueInternal(m_element.getAttribute(m_attributeName));
+    setValue(m_element.getAttribute(m_attributeName));
 }
 
 void AttributeDOMTokenList::attributeValueChanged(const AtomicString& newValue)
@@ -43,7 +43,7 @@ void AttributeDOMTokenList::attributeValueChanged(const AtomicString& newValue)
     if (m_isUpdatingAttributeValue)
         return;
 
-    setValueInternal(newValue);
+    DOMTokenList::setValue(newValue);
 }
 
 void AttributeDOMTokenList::updateAfterTokenChange()

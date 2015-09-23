@@ -158,7 +158,7 @@ const AtomicString& DOMTokenList::value() const
     return m_cachedValue;
 }
 
-void DOMTokenList::setValueInternal(const WTF::String& value)
+void DOMTokenList::setValue(const String& value)
 {
     // Clear tokens but not capacity.
     m_tokens.shrink(0);

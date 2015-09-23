@@ -31,7 +31,7 @@
 #ifndef HTMLOutputElement_h
 #define HTMLOutputElement_h
 
-#include "AttributeDOMTokenList.h"
+#include "DOMSettableTokenList.h"
 #include "HTMLFormControlElement.h"
 
 namespace WebCore {
@@ -44,7 +44,8 @@ public:
     void setValue(const String&);
     String defaultValue() const;
     void setDefaultValue(const String&);
-    DOMSettableTokenList& htmlFor();
+    void setFor(const String&);
+    DOMSettableTokenList& htmlFor() { return m_tokens.get(); }
     
     virtual bool canContainRangeEndPoint() const override { return false; }
 
@@ -65,7 +66,7 @@ private:
     bool m_isDefaultValueMode;
     bool m_isSetTextContentInProgress;
     String m_defaultValue;
-    std::unique_ptr<AttributeDOMTokenList> m_tokens;
+    Ref<DOMSettableTokenList> m_tokens;
 };
 
 } // namespace
