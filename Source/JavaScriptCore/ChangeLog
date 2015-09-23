@@ -1,3 +1,96 @@
+2015-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        GCThreadSharedData is just a bad way of saying Heap
+        https://bugs.webkit.org/show_bug.cgi?id=149435
+
+        Reviewed by Mark Lam.
+
+        This removes the GCThreadSharedData class and moves its members into Heap. This is a net
+        simplification since GCThreadSharedData had a 1-to-1 mapping to Heap and the two classes had a
+        vast contract with a lot of interdependencies. Heap would call a lot of GCThreadSharedData
+        methods; now a lot of those are inlined since they were only called from the one place in Heap.
+        This makes it a lot easier to see what is going on. For example, you no longer have to look at
+        code in two places (Heap and GCThreadSharedData) to figure out the timing and synchronization
+        of GC phases - all of that code is in Heap now.
+
+        This also removes weird indirections in other places. It used to be that a lot of GC helper
+        classes woud have a pointer to GCThreadSharedData, and then would use that to get to Heap, VM,
+        and the visitors. Now these helpers just point to Heap.
+
+        I think that GCThreadSharedData was only useful for defining the set of things that we need to
+        know to collect garbage. That's how we decided if something would go into GCThreadSharedData
+        instead of Heap. But I think that separating things into multiple classes usually makes the
+        code less hackable, so there should be a very high bar for doing this in a way that produces a
+        1-to-1 mapping between two classes - where one instance of one of the classes is always paired
+        with exactly one instance of the other class and vice-versa.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CopiedSpace.h:
+        * heap/CopyVisitor.cpp:
+        (JSC::CopyVisitor::CopyVisitor):
+        (JSC::CopyVisitor::copyFromShared):
+        * heap/CopyVisitor.h:
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::allocateNewSpaceSlow):
+        (JSC::CopyVisitor::startCopying):
+        (JSC::CopyVisitor::doneCopying):
+        (JSC::CopyVisitor::didCopy):
+        * heap/GCThread.cpp:
+        (JSC::GCThread::GCThread):
+        (JSC::GCThread::waitForNextPhase):
+        (JSC::GCThread::gcThreadMain):
+        * heap/GCThread.h:
+        * heap/GCThreadSharedData.cpp: Removed.
+        * heap/GCThreadSharedData.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::isPagedOut):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::resetVisitors):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::sweepNextLogicallyEmptyWeakBlock):
+        (JSC::Heap::threadVisitCount):
+        (JSC::Heap::threadBytesVisited):
+        (JSC::Heap::threadBytesCopied):
+        (JSC::Heap::startNextPhase):
+        (JSC::Heap::endCurrentPhase):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::unregisterWeakGCMap):
+        (JSC::Heap::getNextBlocksToCopy):
+        * heap/ListableHandler.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        (JSC::SlotVisitor::finalizeUnconditionalFinalizers):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::markStack):
+        (JSC::SlotVisitor::isEmpty):
+        (JSC::SlotVisitor::sharedData): Deleted.
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::addWeakReferenceHarvester):
+        (JSC::SlotVisitor::addUnconditionalFinalizer):
+        (JSC::SlotVisitor::addOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRootTriState):
+        (JSC::SlotVisitor::opaqueRootCount):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary):
+        (JSC::SlotVisitor::copyLater):
+        (JSC::SlotVisitor::heap):
+        (JSC::SlotVisitor::vm):
+
 2015-09-22  Saam barati  <sbarati@apple.com>
 
         Web Inspector: [ES6] Improve Type Profiler Support for Arrow Functions

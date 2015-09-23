@@ -42,13 +42,13 @@
 
 namespace JSC {
 
-SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
+SlotVisitor::SlotVisitor(Heap& heap)
     : m_stack()
     , m_bytesVisited(0)
     , m_bytesCopied(0)
     , m_visitCount(0)
     , m_isInParallelMode(false)
-    , m_shared(shared)
+    , m_heap(heap)
     , m_shouldHashCons(false)
 #if !ASSERT_DISABLED
     , m_isCheckingForDefaultMarkViolation(false)
@@ -67,10 +67,10 @@ void SlotVisitor::didStartMarking()
     if (heap()->operationInProgress() == FullCollection)
         ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
 
-    m_shared.m_shouldHashCons = m_shared.m_vm->haveEnoughNewStringsToHashCons();
-    m_shouldHashCons = m_shared.m_shouldHashCons;
-    for (unsigned i = 0; i < m_shared.m_gcThreads.size(); ++i)
-        m_shared.m_gcThreads[i]->slotVisitor()->m_shouldHashCons = m_shared.m_shouldHashCons;
+    m_heap.m_shouldHashCons = m_heap.m_vm->haveEnoughNewStringsToHashCons();
+    m_shouldHashCons = m_heap.m_shouldHashCons;
+    for (unsigned i = 0; i < m_heap.m_gcThreads.size(); ++i)
+        m_heap.m_gcThreads[i]->slotVisitor()->m_shouldHashCons = m_heap.m_shouldHashCons;
 }
 
 void SlotVisitor::reset()
@@ -135,20 +135,20 @@ void SlotVisitor::donateKnownParallel()
 
     // If there's already some shared work queued up, be conservative and assume
     // that donating more is not profitable.
-    if (m_shared.m_sharedMarkStack.size())
+    if (m_heap.m_sharedMarkStack.size())
         return;
 
     // If we're contending on the lock, be conservative and assume that another
     // thread is already donating.
-    std::unique_lock<Lock> lock(m_shared.m_markingMutex, std::try_to_lock);
+    std::unique_lock<Lock> lock(m_heap.m_markingMutex, std::try_to_lock);
     if (!lock.owns_lock())
         return;
 
     // Otherwise, assume that a thread will go idle soon, and donate.
-    m_stack.donateSomeCellsTo(m_shared.m_sharedMarkStack);
+    m_stack.donateSomeCellsTo(m_heap.m_sharedMarkStack);
 
-    if (m_shared.m_numberOfActiveParallelMarkers < Options::numberOfGCMarkers())
-        m_shared.m_markingConditionVariable.notifyAll();
+    if (m_heap.m_numberOfActiveParallelMarkers < Options::numberOfGCMarkers())
+        m_heap.m_markingConditionVariable.notifyAll();
 }
 
 void SlotVisitor::drain()
@@ -190,18 +190,18 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
         // This call should be a no-op.
         ASSERT_UNUSED(sharedDrainMode, sharedDrainMode == MasterDrain);
         ASSERT(m_stack.isEmpty());
-        ASSERT(m_shared.m_sharedMarkStack.isEmpty());
+        ASSERT(m_heap.m_sharedMarkStack.isEmpty());
         return;
     }
     
     {
-        std::lock_guard<Lock> lock(m_shared.m_markingMutex);
-        m_shared.m_numberOfActiveParallelMarkers++;
+        std::lock_guard<Lock> lock(m_heap.m_markingMutex);
+        m_heap.m_numberOfActiveParallelMarkers++;
     }
     while (true) {
         {
-            std::unique_lock<Lock> lock(m_shared.m_markingMutex);
-            m_shared.m_numberOfActiveParallelMarkers--;
+            std::unique_lock<Lock> lock(m_heap.m_markingMutex);
+            m_heap.m_numberOfActiveParallelMarkers--;
 
             // How we wait differs depending on drain mode.
             if (sharedDrainMode == MasterDrain) {
@@ -209,36 +209,36 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 // for us to do.
                 while (true) {
                     // Did we reach termination?
-                    if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty()) {
+                    if (!m_heap.m_numberOfActiveParallelMarkers && m_heap.m_sharedMarkStack.isEmpty()) {
                         // Let any sleeping slaves know it's time for them to return;
-                        m_shared.m_markingConditionVariable.notifyAll();
+                        m_heap.m_markingConditionVariable.notifyAll();
                         return;
                     }
                     
                     // Is there work to be done?
-                    if (!m_shared.m_sharedMarkStack.isEmpty())
+                    if (!m_heap.m_sharedMarkStack.isEmpty())
                         break;
                     
                     // Otherwise wait.
-                    m_shared.m_markingConditionVariable.wait(lock);
+                    m_heap.m_markingConditionVariable.wait(lock);
                 }
             } else {
                 ASSERT(sharedDrainMode == SlaveDrain);
                 
                 // Did we detect termination? If so, let the master know.
-                if (!m_shared.m_numberOfActiveParallelMarkers && m_shared.m_sharedMarkStack.isEmpty())
-                    m_shared.m_markingConditionVariable.notifyAll();
+                if (!m_heap.m_numberOfActiveParallelMarkers && m_heap.m_sharedMarkStack.isEmpty())
+                    m_heap.m_markingConditionVariable.notifyAll();
 
-                m_shared.m_markingConditionVariable.wait(lock, [this] { return !m_shared.m_sharedMarkStack.isEmpty() || m_shared.m_parallelMarkersShouldExit; });
+                m_heap.m_markingConditionVariable.wait(lock, [this] { return !m_heap.m_sharedMarkStack.isEmpty() || m_heap.m_parallelMarkersShouldExit; });
                 
                 // Is the current phase done? If so, return from this function.
-                if (m_shared.m_parallelMarkersShouldExit)
+                if (m_heap.m_parallelMarkersShouldExit)
                     return;
             }
            
-            size_t idleThreadCount = Options::numberOfGCMarkers() - m_shared.m_numberOfActiveParallelMarkers;
-            m_stack.stealSomeCellsFrom(m_shared.m_sharedMarkStack, idleThreadCount);
-            m_shared.m_numberOfActiveParallelMarkers++;
+            size_t idleThreadCount = Options::numberOfGCMarkers() - m_heap.m_numberOfActiveParallelMarkers;
+            m_stack.stealSomeCellsFrom(m_heap.m_sharedMarkStack, idleThreadCount);
+            m_heap.m_numberOfActiveParallelMarkers++;
         }
         
         drain();
@@ -250,9 +250,9 @@ void SlotVisitor::mergeOpaqueRoots()
     StackStats::probe();
     ASSERT(!m_opaqueRoots.isEmpty()); // Should only be called when opaque roots are non-empty.
     {
-        std::lock_guard<Lock> lock(m_shared.m_opaqueRootsMutex);
+        std::lock_guard<Lock> lock(m_heap.m_opaqueRootsMutex);
         for (auto* root : m_opaqueRoots)
-            m_shared.m_opaqueRoots.add(root);
+            m_heap.m_opaqueRoots.add(root);
     }
     m_opaqueRoots.clear();
 }
@@ -327,15 +327,15 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSValue* slot)
 void SlotVisitor::harvestWeakReferences()
 {
     StackStats::probe();
-    for (WeakReferenceHarvester* current = m_shared.m_weakReferenceHarvesters.head(); current; current = current->next())
+    for (WeakReferenceHarvester* current = m_heap.m_weakReferenceHarvesters.head(); current; current = current->next())
         current->visitWeakReferences(*this);
 }
 
 void SlotVisitor::finalizeUnconditionalFinalizers()
 {
     StackStats::probe();
-    while (m_shared.m_unconditionalFinalizers.hasNext())
-        m_shared.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
+    while (m_heap.m_unconditionalFinalizers.hasNext())
+        m_heap.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
 }
 
 #if ENABLE(GC_VALIDATION)

@@ -1657,8 +1657,6 @@
 		BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFD8C910EEB2EE700283848 /* JumpTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C20328201981979D0088B499 /* CustomGlobalObjectClassTest.c in Sources */ = {isa = PBXBuildFile; fileRef = C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */; };
 		C20BA92D16BB1C1500B3AEA2 /* StructureRareDataInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C20BA92C16BB1C1500B3AEA2 /* StructureRareDataInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */; };
-		C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */ = {isa = PBXBuildFile; fileRef = C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2181FC218A948FB0025A235 /* JSExportTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2181FC118A948FB0025A235 /* JSExportTests.mm */; };
 		C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */ = {isa = PBXBuildFile; fileRef = C218D13F1655CFD50062BB81 /* CopyWorkList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1666,7 +1664,7 @@
 		C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1316262BDD005AC5FD /* CopyVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1416262BDD005AC5FD /* CopyVisitorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2239D1516262BDD005AC5FD /* GCThread.cpp */; };
-		C2239D1B16262BDD005AC5FD /* GCThread.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1616262BDD005AC5FD /* GCThread.h */; };
+		C2239D1B16262BDD005AC5FD /* GCThread.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1616262BDD005AC5FD /* GCThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C225494315F7DBAA0065E898 /* SlotVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C225494215F7DBAA0065E898 /* SlotVisitor.cpp */; };
 		C22B31B9140577D700DB475A /* SamplingCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F77008E1402FDD60078EB39 /* SamplingCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C240305314B404C90079EB64 /* CopiedSpace.cpp */; };
@@ -3529,8 +3527,6 @@
 		C203281E1981979D0088B499 /* CustomGlobalObjectClassTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = CustomGlobalObjectClassTest.c; path = API/tests/CustomGlobalObjectClassTest.c; sourceTree = "<group>"; };
 		C203281F1981979D0088B499 /* CustomGlobalObjectClassTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomGlobalObjectClassTest.h; path = API/tests/CustomGlobalObjectClassTest.h; sourceTree = "<group>"; };
 		C20BA92C16BB1C1500B3AEA2 /* StructureRareDataInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureRareDataInlines.h; sourceTree = "<group>"; };
-		C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCThreadSharedData.cpp; sourceTree = "<group>"; };
-		C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCThreadSharedData.h; sourceTree = "<group>"; };
 		C211B574176A224D000E2A23 /* APICallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICallbackFunction.h; sourceTree = "<group>"; };
 		C2181FC018A948FB0025A235 /* JSExportTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSExportTests.h; path = API/tests/JSExportTests.h; sourceTree = "<group>"; };
 		C2181FC118A948FB0025A235 /* JSExportTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JSExportTests.mm; path = API/tests/JSExportTests.mm; sourceTree = "<group>"; };
@@ -4255,8 +4251,6 @@
 				2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */,
 				C2239D1516262BDD005AC5FD /* GCThread.cpp */,
 				C2239D1616262BDD005AC5FD /* GCThread.h */,
-				C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */,
-				C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */,
 				142E312B134FF0A600AFADB5 /* Handle.h */,
 				C28318FF16FE4B7D00157BFD /* HandleBlock.h */,
 				C283190116FE533E00157BFD /* HandleBlockInlines.h */,
@@ -6401,7 +6395,6 @@
 				0F2B66AE17B6B54500A7AE3F /* GCIncomingRefCountedSet.h in Headers */,
 				0F2B66AF17B6B54500A7AE3F /* GCIncomingRefCountedSetInlines.h in Headers */,
 				C2239D1B16262BDD005AC5FD /* GCThread.h in Headers */,
-				C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */,
 				0F2B66E017B6B5AB00A7AE3F /* GenericTypedArrayView.h in Headers */,
 				0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */,
 				0F2B66E117B6B5AB00A7AE3F /* GenericTypedArrayViewInlines.h in Headers */,
@@ -7723,7 +7716,6 @@
 				0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
 				C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */,
-				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
 				0F0332C318B01763005F979A /* GetByIdVariant.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,

@@ -282,9 +282,6 @@
     <ClCompile Include="..\heap\GCThread.cpp">
       <Filter>heap</Filter>
     </ClCompile>
-    <ClCompile Include="..\heap\GCThreadSharedData.cpp">
-      <Filter>heap</Filter>
-    </ClCompile>
     <ClCompile Include="..\heap\HandleSet.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -2268,9 +2265,6 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\GCThread.h">
-      <Filter>heap</Filter>
-    </ClInclude>
-    <ClInclude Include="..\heap\GCThreadSharedData.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\Handle.h">

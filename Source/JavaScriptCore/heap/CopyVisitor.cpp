@@ -29,7 +29,6 @@
 #include "CopiedSpaceInlines.h"
 #include "CopyVisitorInlines.h"
 #include "CopyWorkList.h"
-#include "GCThreadSharedData.h"
 #include "JSCell.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
@@ -37,18 +36,18 @@
 
 namespace JSC {
 
-CopyVisitor::CopyVisitor(GCThreadSharedData& shared)
-    : m_shared(shared)
+CopyVisitor::CopyVisitor(Heap& heap)
+    : m_heap(heap)
 {
 }
 
 void CopyVisitor::copyFromShared()
 {
     size_t next, end;
-    m_shared.getNextBlocksToCopy(next, end);
+    m_heap.getNextBlocksToCopy(next, end);
     while (next < end) {
         for (; next < end; ++next) {
-            CopiedBlock* block = m_shared.m_blocksToCopy[next];
+            CopiedBlock* block = m_heap.m_blocksToCopy[next];
             if (!block->hasWorkList())
                 continue;
 
@@ -57,9 +56,9 @@ void CopyVisitor::copyFromShared()
                 visitItem(*it);
 
             ASSERT(!block->liveBytes());
-            m_shared.m_copiedSpace->recycleEvacuatedBlock(block, m_shared.m_vm->heap.operationInProgress());
+            m_heap.m_storageSpace.recycleEvacuatedBlock(block, m_heap.operationInProgress());
         }
-        m_shared.getNextBlocksToCopy(next, end);
+        m_heap.getNextBlocksToCopy(next, end);
     }
     ASSERT(next == end);
 }

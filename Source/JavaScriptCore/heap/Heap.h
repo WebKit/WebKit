@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2009, 2013-2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2009, 2013-2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -26,11 +26,12 @@
 #include "CodeBlockSet.h"
 #include "CopyVisitor.h"
 #include "GCIncomingRefCountedSet.h"
-#include "GCThreadSharedData.h"
+#include "GCThread.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
 #include "HeapOperation.h"
 #include "JITStubRoutineSet.h"
+#include "ListableHandler.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
@@ -38,7 +39,9 @@
 #include "Options.h"
 #include "SlotVisitor.h"
 #include "StructureIDTable.h"
+#include "UnconditionalFinalizer.h"
 #include "WeakHandleOwner.h"
+#include "WeakReferenceHarvester.h"
 #include "WriteBarrierBuffer.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/HashCountedSet.h>
@@ -85,7 +88,6 @@ class Heap {
 public:
     friend class JIT;
     friend class DFG::SpeculativeJIT;
-    friend class GCThreadSharedData;
     static Heap* heap(const JSValue); // 0 for immediate values
     static Heap* heap(const JSCell*);
 
@@ -243,6 +245,7 @@ private:
     friend class DeferGCForAWhile;
     friend class GCAwareJITStubRoutine;
     friend class GCLogging;
+    friend class GCThread;
     friend class HandleSet;
     friend class HeapVerifier;
     friend class JITStubRoutine;
@@ -339,6 +342,15 @@ private:
     void decrementDeferralDepth();
     void decrementDeferralDepthAndGCIfNeeded();
 
+    size_t threadVisitCount();
+    size_t threadBytesVisited();
+    size_t threadBytesCopied();
+    size_t threadDupStrings();
+
+    void getNextBlocksToCopy(size_t&, size_t&);
+    void startNextPhase(GCPhase);
+    void endCurrentPhase();
+
     const HeapType m_heapType;
     const size_t m_ramSize;
     const size_t m_minBytesPerCycle;
@@ -371,7 +383,6 @@ private:
 
     MachineThreads m_machineThreads;
     
-    GCThreadSharedData m_sharedData;
     SlotVisitor m_slotVisitor;
     CopyVisitor m_copyVisitor;
 
@@ -409,6 +420,34 @@ private:
 #endif
 
     HashMap<void*, std::function<void()>> m_weakGCMaps;
+
+    bool m_shouldHashCons { false };
+
+    Vector<GCThread*> m_gcThreads;
+
+    Lock m_markingMutex;
+    Condition m_markingConditionVariable;
+    MarkStackArray m_sharedMarkStack;
+    unsigned m_numberOfActiveParallelMarkers { 0 };
+    bool m_parallelMarkersShouldExit { false };
+
+    Lock m_opaqueRootsMutex;
+    HashSet<void*> m_opaqueRoots;
+
+    Lock m_copyLock;
+    Vector<CopiedBlock*> m_blocksToCopy;
+    size_t m_copyIndex { 0 };
+    static const size_t s_blockFragmentLength = 32;
+
+    Lock m_phaseMutex;
+    Condition m_phaseConditionVariable;
+    Condition m_activityConditionVariable;
+    unsigned m_numberOfActiveGCThreads { 0 };
+    bool m_gcThreadsShouldWait { false };
+    GCPhase m_currentPhase { NoPhase };
+
+    ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;
+    ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
 };
 
 } // namespace JSC

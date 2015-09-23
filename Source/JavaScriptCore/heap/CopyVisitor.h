@@ -30,12 +30,12 @@
 
 namespace JSC {
 
-class GCThreadSharedData;
+class Heap;
 class JSCell;
 
 class CopyVisitor {
 public:
-    CopyVisitor(GCThreadSharedData&);
+    CopyVisitor(Heap&);
 
     void copyFromShared();
 
@@ -53,7 +53,7 @@ private:
     void* allocateNewSpaceSlow(size_t);
     void visitItem(CopyWorklistItem);
 
-    GCThreadSharedData& m_shared;
+    Heap& m_heap;
     CopiedAllocator m_copiedAllocator;
 };
 

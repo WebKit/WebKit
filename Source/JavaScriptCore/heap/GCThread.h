@@ -26,19 +26,25 @@
 #ifndef GCThread_h
 #define GCThread_h
 
-#include <GCThreadSharedData.h>
 #include <wtf/Deque.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
 
 class CopyVisitor;
-class GCThreadSharedData;
+class Heap;
 class SlotVisitor;
+
+enum GCPhase {
+    NoPhase,
+    Mark,
+    Copy,
+    Exit
+};
 
 class GCThread {
 public:
-    GCThread(GCThreadSharedData&, std::unique_ptr<SlotVisitor>, std::unique_ptr<CopyVisitor>);
+    GCThread(Heap&, std::unique_ptr<SlotVisitor>, std::unique_ptr<CopyVisitor>);
 
     SlotVisitor* slotVisitor();
     CopyVisitor* copyVisitor();
@@ -52,7 +58,7 @@ private:
     GCPhase waitForNextPhase();
 
     ThreadIdentifier m_threadID;
-    GCThreadSharedData& m_shared;
+    Heap& m_heap;
     std::unique_ptr<SlotVisitor> m_slotVisitor;
     std::unique_ptr<CopyVisitor> m_copyVisitor;
 };

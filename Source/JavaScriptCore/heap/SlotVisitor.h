@@ -50,7 +50,7 @@ class SlotVisitor {
     friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
 
 public:
-    SlotVisitor(GCThreadSharedData&);
+    SlotVisitor(Heap&);
     ~SlotVisitor();
 
     MarkStackArray& markStack() { return m_stack; }
@@ -82,7 +82,6 @@ public:
     TriState containsOpaqueRootTriState(void*) const;
     int opaqueRootCount();
 
-    GCThreadSharedData& sharedData() const { return m_shared; }
     bool isEmpty() { return m_stack.isEmpty(); }
 
     void didStartMarking();
@@ -143,7 +142,7 @@ private:
     size_t m_visitCount;
     bool m_isInParallelMode;
     
-    GCThreadSharedData& m_shared;
+    Heap& m_heap;
 
     bool m_shouldHashCons; // Local per-thread copy of shared flag for performance reasons
     typedef HashMap<StringImpl*, JSValue> UniqueStringMap;

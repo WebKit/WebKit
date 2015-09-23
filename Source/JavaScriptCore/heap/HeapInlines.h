@@ -326,6 +326,14 @@ inline void Heap::unregisterWeakGCMap(void* weakGCMap)
     m_weakGCMaps.remove(weakGCMap);
 }
     
+inline void Heap::getNextBlocksToCopy(size_t& start, size_t& end)
+{
+    LockHolder locker(m_copyLock);
+    start = m_copyIndex;
+    end = std::min(m_blocksToCopy.size(), m_copyIndex + s_blockFragmentLength);
+    m_copyIndex = end;
+}
+
 } // namespace JSC
 
 #endif // HeapInlines_h

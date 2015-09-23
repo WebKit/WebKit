@@ -46,7 +46,7 @@ class CopiedBlock;
 
 class CopiedSpace {
     friend class CopyVisitor;
-    friend class GCThreadSharedData;
+    friend class Heap;
     friend class SlotVisitor;
     friend class JIT;
 public:

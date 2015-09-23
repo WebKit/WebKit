@@ -295,7 +295,6 @@ set(JavaScriptCore_SOURCES
     heap/GCActivityCallback.cpp
     heap/GCLogging.cpp
     heap/GCThread.cpp
-    heap/GCThreadSharedData.cpp
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp

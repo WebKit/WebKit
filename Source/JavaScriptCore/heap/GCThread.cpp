@@ -28,16 +28,15 @@
 
 #include "CopyVisitor.h"
 #include "CopyVisitorInlines.h"
-#include "GCThreadSharedData.h"
 #include "JSCInlines.h"
 #include "SlotVisitor.h"
 #include <wtf/MainThread.h>
 
 namespace JSC {
 
-GCThread::GCThread(GCThreadSharedData& shared, std::unique_ptr<SlotVisitor> slotVisitor, std::unique_ptr<CopyVisitor> copyVisitor)
+GCThread::GCThread(Heap& heap, std::unique_ptr<SlotVisitor> slotVisitor, std::unique_ptr<CopyVisitor> copyVisitor)
     : m_threadID(0)
-    , m_shared(shared)
+    , m_heap(heap)
     , m_slotVisitor(WTF::move(slotVisitor))
     , m_copyVisitor(WTF::move(copyVisitor))
 {
@@ -69,16 +68,16 @@ CopyVisitor* GCThread::copyVisitor()
 
 GCPhase GCThread::waitForNextPhase()
 {
-    std::unique_lock<Lock> lock(m_shared.m_phaseMutex);
-    m_shared.m_phaseConditionVariable.wait(lock, [this] { return !m_shared.m_gcThreadsShouldWait; });
+    std::unique_lock<Lock> lock(m_heap.m_phaseMutex);
+    m_heap.m_phaseConditionVariable.wait(lock, [this] { return !m_heap.m_gcThreadsShouldWait; });
 
-    m_shared.m_numberOfActiveGCThreads--;
-    if (!m_shared.m_numberOfActiveGCThreads)
-        m_shared.m_activityConditionVariable.notifyOne();
+    m_heap.m_numberOfActiveGCThreads--;
+    if (!m_heap.m_numberOfActiveGCThreads)
+        m_heap.m_activityConditionVariable.notifyOne();
 
-    m_shared.m_phaseConditionVariable.wait(lock, [this] { return m_shared.m_currentPhase != NoPhase; });
-    m_shared.m_numberOfActiveGCThreads++;
-    return m_shared.m_currentPhase;
+    m_heap.m_phaseConditionVariable.wait(lock, [this] { return m_heap.m_currentPhase != NoPhase; });
+    m_heap.m_numberOfActiveGCThreads++;
+    return m_heap.m_currentPhase;
 }
 
 void GCThread::gcThreadMain()
@@ -88,7 +87,7 @@ void GCThread::gcThreadMain()
     // Wait for the main thread to finish creating and initializing us. The main thread grabs this lock before 
     // creating this thread. We aren't guaranteed to have a valid threadID until the main thread releases this lock.
     {
-        std::lock_guard<Lock> lock(m_shared.m_phaseMutex);
+        std::lock_guard<Lock> lock(m_heap.m_phaseMutex);
     }
     {
         ParallelModeEnabler enabler(*m_slotVisitor);
