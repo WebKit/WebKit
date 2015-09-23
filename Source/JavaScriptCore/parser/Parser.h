@@ -319,6 +319,8 @@ struct Scope {
         addResult.iterator->value.setIsVar();
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
+        if (m_lexicalVariables.contains(ident->impl()))
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
         return result;
     }
 

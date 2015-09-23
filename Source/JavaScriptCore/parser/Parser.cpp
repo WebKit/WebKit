@@ -604,7 +604,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVariableDecl
                         internalFailWithMessage(false, "Cannot declare a let variable twice: '", name->impl(), "'");
                     if (declarationType == DeclarationType::ConstDeclaration)
                         internalFailWithMessage(false, "Cannot declare a const variable twice: '", name->impl(), "'");
-                    RELEASE_ASSERT_NOT_REACHED();
+                    ASSERT(declarationType == DeclarationType::VarDeclaration);
+                    internalFailWithMessage(false, "Cannot declare a var variable that shadows a let/const/class variable: '", name->impl(), "'");
                 }
             }
             if (exportType == ExportType::Exported) {
@@ -667,9 +668,12 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::createB
     
     ASSERT(name.impl()->isAtomic() || name.impl()->isSymbol());
 
-    if (kind == DestructureToVariables)
-        failIfTrueIfStrict(declareVariable(&name) & DeclarationResult::InvalidStrictMode, "Cannot declare a variable named '", name.impl(), "' in strict mode");
-    else if (kind == DestructureToLet || kind == DestructureToConst) {
+    if (kind == DestructureToVariables) {
+        DeclarationResultMask declarationResult = declareVariable(&name);
+        failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare a variable named '", name.impl(), "' in strict mode");
+        if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
+            internalFailWithMessage(false, "Cannot declare a var variable that shadows a let/const/class variable: '", name.impl(), "'");
+    } else if (kind == DestructureToLet || kind == DestructureToConst) {
         DeclarationResultMask declarationResult = declareVariable(&name, kind == DestructureToLet ? DeclarationType::LetDeclaration : DeclarationType::ConstDeclaration);
         if (declarationResult != DeclarationResult::Valid) {
             failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot destructure to a variable named '", name.impl(), "' in strict mode");
@@ -1873,7 +1877,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     failIfFalse((parseFunctionInfo(context, FunctionNeedsName, SourceParseMode::NormalFunctionMode, true, ConstructorKind::None, SuperBinding::NotNeeded,
         functionKeywordStart, functionInfo, StandardFunctionParseType)), "Cannot parse this function");
     failIfFalse(functionInfo.name, "Function statements must have a name");
-    failIfTrueIfStrict(declareVariable(functionInfo.name) & DeclarationResult::InvalidStrictMode, "Cannot declare a function named '", functionInfo.name->impl(), "' in strict mode");
+    DeclarationResultMask declarationResult = declareVariable(functionInfo.name);
+    failIfTrueIfStrict(declarationResult & DeclarationResult::InvalidStrictMode, "Cannot declare a function named '", functionInfo.name->impl(), "' in strict mode");
+    if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
+        internalFailWithMessage(false, "Cannot declare a function that shadows a let/const/class variable '", functionInfo.name->impl(), "' in strict mode");
     if (exportType == ExportType::Exported) {
         semanticFailIfFalse(exportName(*functionInfo.name), "Cannot export a duplicate function name: '", functionInfo.name->impl(), "'");
         currentScope()->moduleScopeData().exportBinding(*functionInfo.name);

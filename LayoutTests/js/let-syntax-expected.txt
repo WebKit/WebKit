@@ -31,91 +31,375 @@ PASS Does not have syntax error: 'function foo() { var bar; if (truth()) { let b
 PASS Does not have syntax error: ''use strict'; function foo() { var bar; if (truth()) { let bar; } }'
 PASS Does not have syntax error: ';({ get let() { return 50; }, set let(x) { return 50;} });'
 PASS Does not have syntax error: ''use strict'; ;({ get let() { return 50; }, set let(x) { return 50;} });'
+PASS Does not have syntax error: 'function foo() { { let x; } var x; }'
+PASS Does not have syntax error: ''use strict'; function foo() { { let x; } var x; }'
+SyntaxError: Unexpected keyword 'let'
+SyntaxError: Unexpected keyword 'let'
 PASS Has syntax error: 'let let;'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; let let;'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'const let;'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; const let;'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let {let};'
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 PASS Has syntax error: ''use strict'; let {let};'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let {l: let};'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; let {l: let};'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let {l: {let}};'
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 PASS Has syntax error: ''use strict'; let {l: {let}};'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'let {l: [let]};'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; let {l: [let]};'
+SyntaxError: Unexpected token ';'. Expected an initializer in destructuring variable declaration.
+SyntaxError: Unexpected token ';'. Expected an initializer in destructuring variable declaration.
 PASS Has syntax error: 'var {let};'
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 PASS Has syntax error: ''use strict'; var {let};'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: 'let x, x;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let x, x;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: 'let x = 20, y, x = 40;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let x = 20, y, x = 40;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: 'let x = 20, y; let x = 40;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let x = 20, y; let x = 40;'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
 PASS Has syntax error: 'let x = 20, y, {x} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let x = 20, y, {x} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
 PASS Has syntax error: 'let x = 20, y; let {x} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let x = 20, y; let {x} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
 PASS Has syntax error: 'let {x, y, z, x} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let {x, y, z, x} = {};'
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
 PASS Has syntax error: 'let {x: xx, y, x: xx} = {};'
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
 PASS Has syntax error: ''use strict'; let {x: xx, y, x: xx} = {};'
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
 PASS Has syntax error: 'let {x: xx,  foo: [xx]} = {foo:[12]};'
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
 PASS Has syntax error: ''use strict'; let {x: xx,  foo: [xx]} = {foo:[12]};'
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
 PASS Has syntax error: 'let {x: xx,  foo: {y: xx}} = {foo:[12]};'
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
+SyntaxError: Unexpected identifier 'xx'. Cannot declare a lexical variable twice: 'xx'.
 PASS Has syntax error: ''use strict'; let {x: xx,  foo: {y: xx}} = {foo:[12]};'
+SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: 'for (let; ; ) {}'
+SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; for (let; ; ) {}'
+SyntaxError: Unexpected identifier 'arr'. Expected either 'in' or 'of' in enumeration syntax.
+SyntaxError: Unexpected identifier 'arr'. Expected either 'in' or 'of' in enumeration syntax.
 PASS Has syntax error: 'let arr = []; for (let    of arr) {}'
+SyntaxError: Unexpected identifier 'arr'. Expected either 'in' or 'of' in enumeration syntax.
+SyntaxError: Unexpected identifier 'arr'. Expected either 'in' or 'of' in enumeration syntax.
 PASS Has syntax error: ''use strict'; let arr = []; for (let    of arr) {}'
+SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a variable name.
 PASS Has syntax error: 'let obj = {}; for (let    in arr) {}'
+SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a variable name.
 PASS Has syntax error: ''use strict'; let obj = {}; for (let    in arr) {}'
+SyntaxError: Cannot declare a let variable twice: 'i'.
+SyntaxError: Cannot declare a let variable twice: 'i'.
 PASS Has syntax error: 'for (let i = 20, j = 40, i = 10; i < 10; i++) {}'
+SyntaxError: Cannot declare a let variable twice: 'i'.
+SyntaxError: Cannot declare a let variable twice: 'i'.
 PASS Has syntax error: ''use strict'; for (let i = 20, j = 40, i = 10; i < 10; i++) {}'
+SyntaxError: Unexpected identifier 'x'. Parse error.
+SyntaxError: Unexpected identifier 'x'. Parse error.
 PASS Has syntax error: 'let x = 20; if (truth()) let x = 40;'
+SyntaxError: Unexpected keyword 'let'
+SyntaxError: Unexpected keyword 'let'
 PASS Has syntax error: ''use strict'; let x = 20; if (truth()) let x = 40;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: 'let baz = 20; if (truth()) { let x = 20; let x = 40;} '
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
 PASS Has syntax error: ''use strict'; let baz = 20; if (truth()) { let x = 20; let x = 40;} '
+SyntaxError: Cannot declare a let variable twice: 'bar'.
+SyntaxError: Cannot declare a let variable twice: 'bar'.
 PASS Has syntax error: 'function foo() { var bar; let bar; }'
+SyntaxError: Cannot declare a let variable twice: 'bar'.
+SyntaxError: Cannot declare a let variable twice: 'bar'.
 PASS Has syntax error: ''use strict'; function foo() { var bar; let bar; }'
+SyntaxError: Cannot declare a let variable twice: 'bar'.
+SyntaxError: Cannot declare a let variable twice: 'bar'.
 PASS Has syntax error: 'function foo(bar) { let bar; }'
+SyntaxError: Cannot declare a let variable twice: 'bar'.
+SyntaxError: Cannot declare a let variable twice: 'bar'.
 PASS Has syntax error: ''use strict'; function foo(bar) { let bar; }'
+SyntaxError: Cannot declare a let variable twice: 'foo'.
+SyntaxError: Cannot declare a let variable twice: 'foo'.
 PASS Has syntax error: 'function foo() {}; let foo;'
+SyntaxError: Cannot declare a let variable twice: 'foo'.
+SyntaxError: Cannot declare a let variable twice: 'foo'.
 PASS Has syntax error: ''use strict'; function foo() {}; let foo;'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
 PASS Has syntax error: 'function foo() {}; function bar(){} let baz, {bar} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
 PASS Has syntax error: ''use strict'; function foo() {}; function bar(){} let baz, {bar} = {};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
 PASS Has syntax error: 'function foo() {}; function bar(){} let baz, {f: {bar}} = {f:{}};'
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
+SyntaxError: Unexpected token '}'. Cannot declare a lexical variable twice: 'bar'.
 PASS Has syntax error: ''use strict'; function foo() {}; function bar(){} let baz, {f: {bar}} = {f:{}};'
+SyntaxError: Unexpected identifier 'bar'. Cannot declare a lexical variable twice: 'bar'.
+SyntaxError: Unexpected identifier 'bar'. Cannot declare a lexical variable twice: 'bar'.
 PASS Has syntax error: 'function foo() {}; function bar(){} let baz, {f: [bar]} = {f:[10]};'
+SyntaxError: Unexpected identifier 'bar'. Cannot declare a lexical variable twice: 'bar'.
+SyntaxError: Unexpected identifier 'bar'. Cannot declare a lexical variable twice: 'bar'.
 PASS Has syntax error: ''use strict'; function foo() {}; function bar(){} let baz, {f: [bar]} = {f:[10]};'
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
+SyntaxError: Unexpected keyword 'let'. Can't use 'let' as an identifier name for a LexicalDeclaration.
 PASS Has syntax error: 'for (let let = 0; let < 10; let++) {}'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; for (let let = 0; let < 10; let++) {}'
+SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
+SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
 PASS Has syntax error: 'for (let of []) {}'
+SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
+SyntaxError: Unexpected token '['. Expected either 'in' or 'of' in enumeration syntax.
 PASS Has syntax error: ''use strict'; for (let of []) {}'
+SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a variable name.
 PASS Has syntax error: 'for (let in {}) {}'
+SyntaxError: Cannot use the keyword 'in' as a variable name.
+SyntaxError: Cannot use the keyword 'in' as a variable name.
 PASS Has syntax error: ''use strict'; for (let in {}) {}'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'let x; var x;'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; let x; var x;'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'let x; var {x} = 20;'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; let x; var {x} = 20;'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'let x; var [x] = 20;'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; let x; var [x] = 20;'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+PASS Has syntax error: 'function f() { var x; let x; }'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { var x; let x; }'
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+PASS Has syntax error: 'function f() { var x; let [x] = 20; }'
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { var x; let [x] = 20; }'
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+PASS Has syntax error: 'function f() { var [x] = 20; let [x] = 20; }'
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+SyntaxError: Unexpected identifier 'x'. Cannot declare a lexical variable twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { var [x] = 20; let [x] = 20; }'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+PASS Has syntax error: 'function f() { var [x] = 20; let x; }'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { var [x] = 20; let x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { let x; var x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { let x; var x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { let x; var {x} = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { let x; var {x} = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { let x; var [x] = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { let x; var [x] = 20; }'
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+PASS Has syntax error: 'function f() { let x;  function x(){} }'
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+PASS Has syntax error: ''use strict'; function f() { let x;  function x(){} }'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+PASS Has syntax error: 'function f() { function x(){}; let x; }'
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { function x(){}; let x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { const x = 20; var x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { const x = 20; var x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { const x = 20; var {x} = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { const x = 20; var {x} = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { const x = 20; var [x] = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { const x = 20; var [x] = 20; }'
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+PASS Has syntax error: 'function f() { const x = 20;  function x(){} }'
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+PASS Has syntax error: ''use strict'; function f() { const x = 20;  function x(){} }'
+SyntaxError: Cannot declare a const variable twice: 'x'.
+SyntaxError: Cannot declare a const variable twice: 'x'.
+PASS Has syntax error: 'function f() { function x(){}; const x = 20; }'
+SyntaxError: Cannot declare a const variable twice: 'x'.
+SyntaxError: Cannot declare a const variable twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { function x(){}; const x = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { class x{}; var x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { class x{}; var x; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { class x{}; var {x} = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { class x{}; var {x} = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: 'function f() { class x{}; var [x] = 20; }'
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+PASS Has syntax error: ''use strict'; function f() { class x{}; var [x] = 20; }'
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+PASS Has syntax error: 'function f() { class x{};  function x(){} }'
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+SyntaxError: Cannot declare a function that shadows a let/const/class variable 'x' in strict mode.
+PASS Has syntax error: ''use strict'; function f() { class x{};  function x(){} }'
+SyntaxError: Cannot declare a class twice: 'x'.
+SyntaxError: Cannot declare a class twice: 'x'.
+PASS Has syntax error: 'function f() { function x(){}; class x{}; }'
+SyntaxError: Cannot declare a class twice: 'x'.
+SyntaxError: Cannot declare a class twice: 'x'.
+PASS Has syntax error: ''use strict'; function f() { function x(){}; class x{}; }'
+ReferenceError: Can't find variable: let
 PASS Does not have syntax error: 'let;'
+SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let;'
 PASS Does not have syntax error: 'var let;'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; var let;'
 PASS Does not have syntax error: 'var {let} = 40;'
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
+SyntaxError: Cannot use abbreviated destructuring syntax for keyword 'let'.
 PASS Has syntax error: ''use strict'; var {let} = 40;'
+TypeError: [let] is not a function. (In '[let]', '[let]' is undefined)
 PASS Does not have syntax error: 'var [let] = 40;'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; var [let] = 40;'
 PASS Does not have syntax error: 'var {p: let} = 40;'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; var {p: let} = 40;'
 PASS Does not have syntax error: '(function test(let){});'
+SyntaxError: Cannot use the keyword 'let' as a variable name.
+SyntaxError: Cannot use the keyword 'let' as a variable name.
 PASS Has syntax error: ''use strict'; (function test(let){});'
 PASS Does not have syntax error: 'let: for (v of []) break let;'
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let: for (v of []) break let;'
 PASS Does not have syntax error: 'let: for (v of []) continue let;'
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let: for (v of []) continue let;'
 PASS Does not have syntax error: 'let: for (v in {}) break;'
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let: for (v in {}) break;'
 PASS Does not have syntax error: 'let: for (v in {}) break;'
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let: for (v in {}) break;'
 PASS Does not have syntax error: 'let: for (var v = 0; false; ) {};'
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
+SyntaxError: Unexpected token ':'. Expected a parameter pattern or a ')' in parameter list.
 PASS Has syntax error: ''use strict'; let: for (var v = 0; false; ) {};'
 PASS Does not have syntax error: 'try { } catch(let) {}'
+SyntaxError: Cannot use the keyword 'let' as a catch variable name.
+SyntaxError: Cannot use the keyword 'let' as a catch variable name.
 PASS Has syntax error: ''use strict'; try { } catch(let) {}'
 PASS successfullyParsed is true
 

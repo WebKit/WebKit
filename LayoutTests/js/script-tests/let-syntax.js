@@ -16,6 +16,7 @@ function hasSyntaxError(str) {
         if (e.name === "SyntaxError") {
             hadError = true;
         }
+        debug(e);
     }
     return hadError; 
 }
@@ -66,6 +67,7 @@ shouldNotHaveSyntaxError("function foo() { let foo = 20; }");
 shouldNotHaveSyntaxError("function foo(bar) { if (truth()) { let bar; } }");
 shouldNotHaveSyntaxError("function foo() { var bar; if (truth()) { let bar; } }");
 shouldNotHaveSyntaxError(";({ get let() { return 50; }, set let(x) { return 50;} });");
+shouldNotHaveSyntaxError("function foo() { { let x; } var x; }");
 
 shouldHaveSyntaxError("let let;");
 shouldHaveSyntaxError("const let;");
@@ -98,6 +100,28 @@ shouldHaveSyntaxError("function foo() {}; function bar(){} let baz, {f: [bar]} =
 shouldHaveSyntaxError("for (let let = 0; let < 10; let++) {}");
 shouldHaveSyntaxError("for (let of []) {}");
 shouldHaveSyntaxError("for (let in {}) {}");
+shouldHaveSyntaxError("let x; var x;");
+shouldHaveSyntaxError("let x; var {x} = 20;");
+shouldHaveSyntaxError("let x; var [x] = 20;");
+shouldHaveSyntaxError("function f() { var x; let x; }");
+shouldHaveSyntaxError("function f() { var x; let [x] = 20; }");
+shouldHaveSyntaxError("function f() { var [x] = 20; let [x] = 20; }");
+shouldHaveSyntaxError("function f() { var [x] = 20; let x; }");
+shouldHaveSyntaxError("function f() { let x; var x; }");
+shouldHaveSyntaxError("function f() { let x; var {x} = 20; }");
+shouldHaveSyntaxError("function f() { let x; var [x] = 20; }");
+shouldHaveSyntaxError("function f() { let x;  function x(){} }");
+shouldHaveSyntaxError("function f() { function x(){}; let x; }");
+shouldHaveSyntaxError("function f() { const x = 20; var x; }");
+shouldHaveSyntaxError("function f() { const x = 20; var {x} = 20; }");
+shouldHaveSyntaxError("function f() { const x = 20; var [x] = 20; }");
+shouldHaveSyntaxError("function f() { const x = 20;  function x(){} }");
+shouldHaveSyntaxError("function f() { function x(){}; const x = 20; }");
+shouldHaveSyntaxError("function f() { class x{}; var x; }");
+shouldHaveSyntaxError("function f() { class x{}; var {x} = 20; }");
+shouldHaveSyntaxError("function f() { class x{}; var [x] = 20; }");
+shouldHaveSyntaxError("function f() { class x{};  function x(){} }");
+shouldHaveSyntaxError("function f() { function x(){}; class x{}; }");
 
 // Stay classy, ES6.
 shouldHaveSyntaxErrorStrictOnly("let;");
