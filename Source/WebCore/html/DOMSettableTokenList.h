@@ -28,24 +28,19 @@
 
 #include "DOMTokenList.h"
 #include "SpaceSplitString.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
 typedef int ExceptionCode;
 
-class DOMSettableTokenList final : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
+class DOMSettableTokenList : public DOMTokenList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<DOMSettableTokenList> create()
-    {
-        return adoptRef(*new DOMSettableTokenList);
-    }
+    void setValue(const String&);
 
     // Make public.
     using DOMTokenList::value;
-    using DOMTokenList::setValue;
 
     virtual void ref() override;
     virtual void deref() override;

@@ -14,10 +14,14 @@ function createElement(tokenList)
 
 debug('- Tests from http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/');
 
-// HTMLOutputElement::htmlFor is readonly attribute.
+// HTMLOutputElement::htmlFor should be settable.
 createElement('x');
-element.htmlFor = 'y';
-shouldBeEqualToString('String(element.htmlFor)', 'x');
+shouldBe('element.htmlFor.__proto__', 'DOMSettableTokenList.prototype');
+element.htmlFor = 'y  z';
+shouldBeEqualToString('String(element.htmlFor)', 'y z');
+shouldBeEqualToString('element.getAttribute("for")', 'y z');
+element.setAttribute('for', 'r s t');
+shouldBeEqualToString('String(element.htmlFor)', 'r s t');
 
 // http://simon.html5.org/test/html/dom/reflecting/DOMTokenList/getting/001.htm
 createElement('');
