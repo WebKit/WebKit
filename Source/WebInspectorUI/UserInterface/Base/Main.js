@@ -820,7 +820,7 @@ WebInspector.showElementsTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
-WebInspector.showDebuggerTab = function(breakpointToSelect, showScopeChainDetailsSidebarPanel)
+WebInspector.showDebuggerTab = function(breakpointToSelect)
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.DebuggerTabContentView);
     if (!tabContentView)
@@ -828,9 +828,6 @@ WebInspector.showDebuggerTab = function(breakpointToSelect, showScopeChainDetail
 
     if (breakpointToSelect instanceof WebInspector.Breakpoint)
         tabContentView.revealAndSelectBreakpoint(breakpointToSelect);
-
-    if (showScopeChainDetailsSidebarPanel)
-        tabContentView.showScopeChainDetailsSidebarPanel();
 
     this.tabBrowser.showTabForContentView(tabContentView);
 };
@@ -1171,7 +1168,8 @@ WebInspector._captureDidStart = function(event)
 
 WebInspector._debuggerDidPause = function(event)
 {
-    this.showDebuggerTab(null, true);
+    // FIXME: <webkit.org/b/###> Web Inspector: Preference for Auto Showing Scope Chain sidebar on pause
+    this.showDebuggerTab();
 
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.debugger);
 
