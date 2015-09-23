@@ -1109,24 +1109,9 @@ void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    // INVALID_NODE_TYPE_ERR: Raised if refNode or an ancestor of refNode is an Entity,
-    // or DocumentType node.
-    for (Node* n = refNode; n; n = n->parentNode()) {
-        switch (n->nodeType()) {
-            case Node::ATTRIBUTE_NODE:
-            case Node::CDATA_SECTION_NODE:
-            case Node::COMMENT_NODE:
-            case Node::DOCUMENT_FRAGMENT_NODE:
-            case Node::DOCUMENT_NODE:
-            case Node::ELEMENT_NODE:
-            case Node::PROCESSING_INSTRUCTION_NODE:
-            case Node::TEXT_NODE:
-            case Node::XPATH_NAMESPACE_NODE:
-                break;
-            case Node::DOCUMENT_TYPE_NODE:
-                ec = INVALID_NODE_TYPE_ERR;
-                return;
-        }
+    if (refNode->isDocumentTypeNode()) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
     }
 
     if (&ownerDocument() != &refNode->document())
