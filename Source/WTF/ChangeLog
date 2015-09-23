@@ -1,3 +1,13 @@
+2015-09-23  Andy Estes  <aestes@apple.com>
+
+        Disable QuickLook on watchOS
+        https://bugs.webkit.org/show_bug.cgi?id=149508
+        <rdar://problem/22517968>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Platform.h:
+
 2015-09-22  Andy Estes  <aestes@apple.com>
 
         Disable QuickLook on tvOS
