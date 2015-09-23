@@ -1118,27 +1118,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    // INVALID_NODE_TYPE_ERR: Raised if an ancestor of refNode is an Entity, or
-    // DocumentType node or if refNode is a Document, DocumentFragment, ShadowRoot, Attr, or Entity
-    // node.
-    for (ContainerNode* anc = refNode->parentNode(); anc; anc = anc->parentNode()) {
-        switch (anc->nodeType()) {
-            case Node::ATTRIBUTE_NODE:
-            case Node::CDATA_SECTION_NODE:
-            case Node::COMMENT_NODE:
-            case Node::DOCUMENT_FRAGMENT_NODE:
-            case Node::DOCUMENT_NODE:
-            case Node::ELEMENT_NODE:
-            case Node::PROCESSING_INSTRUCTION_NODE:
-            case Node::TEXT_NODE:
-            case Node::XPATH_NAMESPACE_NODE:
-                break;
-            case Node::DOCUMENT_TYPE_NODE:
-                ec = INVALID_NODE_TYPE_ERR;
-                return;
-        }
-    }
-
+    // INVALID_NODE_TYPE_ERR: Raised if refNode is a Document, DocumentFragment or Attr node.
     switch (refNode->nodeType()) {
         case Node::CDATA_SECTION_NODE:
         case Node::COMMENT_NODE:
