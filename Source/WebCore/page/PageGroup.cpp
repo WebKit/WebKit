@@ -30,7 +30,6 @@
 #include "ChromeClient.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "DocumentStyleSheetCollection.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"

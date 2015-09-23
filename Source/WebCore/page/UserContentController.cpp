@@ -28,6 +28,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "ExtensionStyleSheets.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "ResourceLoadInfo.h"
@@ -243,7 +244,7 @@ void UserContentController::invalidateInjectedStyleSheetCacheInAllFrames()
 {
     for (auto& page : m_pages) {
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            frame->document()->styleSheetCollection().invalidateInjectedStyleSheetCache();
+            frame->document()->extensionStyleSheets().invalidateInjectedStyleSheetCache();
             frame->document()->styleResolverChanged(DeferRecalcStyle);
         }
     }

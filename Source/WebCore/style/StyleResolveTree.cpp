@@ -28,6 +28,7 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
+#include "AuthorStyleSheets.h"
 #include "CSSFontSelector.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -685,7 +686,7 @@ static Change resolveLocal(Element& current, RenderStyle& inheritedStyle, Render
 
     // If "rem" units are used anywhere in the document, and if the document element's font size changes, then force font updating
     // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
-    if (document.styleSheetCollection().usesRemUnits() && document.documentElement() == &current && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
+    if (document.authorStyleSheets().usesRemUnits() && document.documentElement() == &current && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
         // Cached RenderStyles may depend on the re units.
         if (StyleResolver* styleResolver = document.styleResolverIfExists())
             styleResolver->invalidateMatchedPropertiesCache();
@@ -914,6 +915,8 @@ void resolveTree(Element& current, RenderStyle& inheritedStyle, RenderTreePositi
 
 void resolveTree(Document& document, Change change)
 {
+    auto& renderView = *document.renderView();
+
     if (change == Force) {
         auto documentStyle = resolveForDocument(document);
 
@@ -924,9 +927,9 @@ void resolveTree(Document& document, Change change)
                 documentStyle.get().fontCascade().update(&document.fontSelector());
         }
 
-        Style::Change documentChange = determineChange(documentStyle.get(), document.renderView()->style());
+        Style::Change documentChange = determineChange(documentStyle.get(), renderView.style());
         if (documentChange != NoChange)
-            document.renderView()->setStyle(WTF::move(documentStyle));
+            renderView.setStyle(WTF::move(documentStyle));
     }
 
     Element* documentElement = document.documentElement();
@@ -934,8 +937,18 @@ void resolveTree(Document& document, Change change)
         return;
     if (change < Inherit && !documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
         return;
-    RenderTreePosition renderTreePosition(*document.renderView());
+
+    auto& styleResolved = document.ensureStyleResolver();
+
+    // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
+    renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || styleResolved.usesFirstLineRules());
+    renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || styleResolved.usesFirstLetterRules());
+
+    RenderTreePosition renderTreePosition(renderView);
     resolveTree(*documentElement, *document.renderStyle(), renderTreePosition, change);
+
+    renderView.setUsesFirstLineRules(styleResolved.usesFirstLineRules());
+    renderView.setUsesFirstLetterRules(styleResolved.usesFirstLetterRules());
 }
 
 void detachRenderTree(Element& element)

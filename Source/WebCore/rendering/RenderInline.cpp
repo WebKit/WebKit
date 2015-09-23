@@ -219,7 +219,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         || parentStyle->lineHeight() != style().lineHeight()))
         || (flowThread && flowThread->isRenderNamedFlowThread()); // FIXME: Enable the optimization once we make overflow computation for culled inlines in regions.
 
-    if (!alwaysCreateLineBoxes && checkFonts && document().styleSheetCollection().usesFirstLineRules()) {
+    if (!alwaysCreateLineBoxes && checkFonts && view().usesFirstLineRules()) {
         // Have to check the first line style as well.
         parentStyle = &parent()->firstLineStyle();
         RenderStyle& childStyle = firstLineStyle();
@@ -1457,7 +1457,7 @@ InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 
 LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
-    if (firstLine && document().styleSheetCollection().usesFirstLineRules()) {
+    if (firstLine && view().usesFirstLineRules()) {
         const RenderStyle& firstLineStyle = this->firstLineStyle();
         if (&firstLineStyle != &style())
             return firstLineStyle.computedLineHeight();

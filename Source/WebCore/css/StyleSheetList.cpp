@@ -21,9 +21,9 @@
 #include "config.h"
 #include "StyleSheetList.h"
 
+#include "AuthorStyleSheets.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
-#include "DocumentStyleSheetCollection.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include <wtf/text/WTFString.h>
@@ -45,13 +45,13 @@ inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
 {
     if (!m_document)
         return m_detachedStyleSheets;
-    return m_document->styleSheetCollection().styleSheetsForStyleSheetList();
+    return m_document->authorStyleSheets().styleSheetsForStyleSheetList();
 }
 
 void StyleSheetList::detachFromDocument()
 {
-    m_detachedStyleSheets = m_document->styleSheetCollection().styleSheetsForStyleSheetList();
-    m_document = 0;
+    m_detachedStyleSheets = m_document->authorStyleSheets().styleSheetsForStyleSheetList();
+    m_document = nullptr;
 }
 
 unsigned StyleSheetList::length() const

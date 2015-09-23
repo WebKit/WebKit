@@ -64,7 +64,6 @@
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
-#include "DocumentStyleSheetCollection.h"
 #include "ElementRuleCollector.h"
 #include "FilterOperation.h"
 #include "Frame.h"
@@ -301,8 +300,7 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
 
     m_ruleSets.resetAuthorStyle();
 
-    DocumentStyleSheetCollection& styleSheetCollection = m_document.styleSheetCollection();
-    m_ruleSets.initUserStyle(styleSheetCollection, *m_medium, *this);
+    m_ruleSets.initUserStyle(m_document.extensionStyleSheets(), *m_medium, *this);
 
 #if ENABLE(SVG_FONTS)
     if (m_document.svgExtensions()) {
@@ -311,8 +309,6 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
             m_document.fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
     }
 #endif
-
-    appendAuthorStyleSheets(0, styleSheetCollection.activeAuthorStyleSheets());
 }
 
 void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>& styleSheets)

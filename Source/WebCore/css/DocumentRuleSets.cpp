@@ -31,7 +31,7 @@
 
 #include "CSSDefaultStyleSheets.h"
 #include "CSSStyleSheet.h"
-#include "DocumentStyleSheetCollection.h"
+#include "ExtensionStyleSheets.h"
 #include "MediaQueryEvaluator.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -46,13 +46,13 @@ DocumentRuleSets::~DocumentRuleSets()
 {
 }
 
-void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection& styleSheetCollection, const MediaQueryEvaluator& medium, StyleResolver& resolver)
+void DocumentRuleSets::initUserStyle(ExtensionStyleSheets& extensionStyleSheets, const MediaQueryEvaluator& medium, StyleResolver& resolver)
 {
     auto tempUserStyle = std::make_unique<RuleSet>();
-    if (CSSStyleSheet* pageUserSheet = styleSheetCollection.pageUserSheet())
+    if (CSSStyleSheet* pageUserSheet = extensionStyleSheets.pageUserSheet())
         tempUserStyle->addRulesFromSheet(&pageUserSheet->contents(), medium, &resolver);
-    collectRulesFromUserStyleSheets(styleSheetCollection.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
-    collectRulesFromUserStyleSheets(styleSheetCollection.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
+    collectRulesFromUserStyleSheets(extensionStyleSheets.documentUserStyleSheets(), *tempUserStyle, medium, resolver);
     if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
         m_userStyle = WTF::move(tempUserStyle);
 }

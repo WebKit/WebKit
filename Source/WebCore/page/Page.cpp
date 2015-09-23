@@ -32,7 +32,6 @@
 #include "ContextMenuController.h"
 #include "DatabaseProvider.h"
 #include "DocumentMarkerController.h"
-#include "DocumentStyleSheetCollection.h"
 #include "DragController.h"
 #include "Editor.h"
 #include "EditorClient.h"
@@ -40,6 +39,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
+#include "ExtensionStyleSheets.h"
 #include "FileSystem.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
@@ -1013,7 +1013,7 @@ void Page::userStyleSheetLocationChanged()
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
-            frame->document()->styleSheetCollection().updatePageUserSheet();
+            frame->document()->extensionStyleSheets().updatePageUserSheet();
     }
 }
 
@@ -1631,7 +1631,7 @@ void Page::setUserContentController(UserContentController* userContentController
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document *document = frame->document()) {
-            document->styleSheetCollection().invalidateInjectedStyleSheetCache();
+            document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
             document->styleResolverChanged(DeferRecalcStyle);
         }
     }

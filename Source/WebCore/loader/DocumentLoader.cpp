@@ -40,6 +40,7 @@
 #include "DocumentParser.h"
 #include "DocumentWriter.h"
 #include "Event.h"
+#include "ExtensionStyleSheets.h"
 #include "FormState.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -845,13 +846,13 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    DocumentStyleSheetCollection& styleSheetCollection = m_frame->document()->styleSheetCollection();
+    auto& extensionStyleSheets = m_frame->document()->extensionStyleSheets();
 
     for (auto& pendingStyleSheet : m_pendingNamedContentExtensionStyleSheets)
-        styleSheetCollection.maybeAddContentExtensionSheet(pendingStyleSheet.key, *pendingStyleSheet.value);
+        extensionStyleSheets.maybeAddContentExtensionSheet(pendingStyleSheet.key, *pendingStyleSheet.value);
     for (auto& pendingSelectorEntry : m_pendingContentExtensionDisplayNoneSelectors) {
         for (const auto& pendingSelector : pendingSelectorEntry.value)
-            styleSheetCollection.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
+            extensionStyleSheets.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
     }
 
     m_pendingNamedContentExtensionStyleSheets.clear();

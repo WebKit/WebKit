@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2010, 2012-2013, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -32,7 +32,6 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
-#include "DocumentStyleSheetCollection.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
 #include "FontSelector.h"
@@ -70,6 +69,7 @@ namespace WebCore {
 
 class AXObjectCache;
 class Attr;
+class AuthorStyleSheets;
 class CDATASection;
 class CSSFontSelector;
 class CSSStyleDeclaration;
@@ -97,6 +97,7 @@ class Element;
 class EntityReference;
 class Event;
 class EventListener;
+class ExtensionStyleSheets;
 class FloatRect;
 class FloatQuad;
 class FormController;
@@ -503,7 +504,10 @@ public:
     // This is a DOM function.
     StyleSheetList& styleSheets();
 
-    DocumentStyleSheetCollection& styleSheetCollection() { return m_styleSheetCollection; }
+    AuthorStyleSheets& authorStyleSheets() { return *m_authorStyleSheets; }
+    const AuthorStyleSheets& authorStyleSheets() const { return *m_authorStyleSheets; }
+    ExtensionStyleSheets& extensionStyleSheets() { return *m_extensionStyleSheets; }
+    const ExtensionStyleSheets& extensionStyleSheets() const { return *m_extensionStyleSheets; }
 
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
@@ -1459,7 +1463,8 @@ private:
 
     MutationObserverOptions m_mutationObserverTypes;
 
-    DocumentStyleSheetCollection m_styleSheetCollection;
+    std::unique_ptr<AuthorStyleSheets> m_authorStyleSheets;
+    std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;

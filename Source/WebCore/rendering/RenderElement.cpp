@@ -232,7 +232,7 @@ static PassRefPtr<RenderStyle> firstLineStyleForCachedUncachedType(StyleCacheSta
 
 PassRefPtr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style) const
 {
-    if (!document().styleSheetCollection().usesFirstLineRules())
+    if (!view().usesFirstLineRules())
         return nullptr;
 
     return firstLineStyleForCachedUncachedType(Uncached, *this, style);
@@ -240,13 +240,18 @@ PassRefPtr<RenderStyle> RenderElement::uncachedFirstLineStyle(RenderStyle* style
 
 RenderStyle* RenderElement::cachedFirstLineStyle() const
 {
-    ASSERT(document().styleSheetCollection().usesFirstLineRules());
+    ASSERT(view().usesFirstLineRules());
 
     RenderStyle& style = this->style();
     if (RefPtr<RenderStyle> firstLineStyle = firstLineStyleForCachedUncachedType(Cached, *this, &style))
         return firstLineStyle.get();
 
     return &style;
+}
+
+RenderStyle& RenderElement::firstLineStyle() const
+{
+    return view().usesFirstLineRules() ? *cachedFirstLineStyle() : style();
 }
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsigned contextSensitiveProperties) const

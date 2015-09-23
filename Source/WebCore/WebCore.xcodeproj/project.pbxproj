@@ -6381,6 +6381,8 @@
 		E45390490EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */; };
 		E453904D0EAFD637003695C8 /* WidgetIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E453903C0EAFD637003695C8 /* WidgetIOS.mm */; };
 		E45390AE0EAFF4B5003695C8 /* SystemMemoryIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */; };
+		E461D65D1BB0C7F000CB5645 /* AuthorStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E461D65C1BB0C7F000CB5645 /* AuthorStyleSheets.cpp */; settings = {ASSET_TAGS = (); }; };
+		E461D65F1BB0C80D00CB5645 /* AuthorStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E461D65E1BB0C80D00CB5645 /* AuthorStyleSheets.h */; settings = {ASSET_TAGS = (); }; };
 		E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E462A4A0113E71BE004A4220 /* IntPointHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E46A2B1B17CA65B9000DBCD8 /* TypedElementDescendantIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E46A2B1E17CA76B1000DBCD8 /* ElementChildIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6390,8 +6392,8 @@
 		E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E4778B7E115A581A00B5D372 /* JSCustomEvent.h */; };
 		E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = E47B4BE60E71241600038854 /* CachedResourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */; };
-		E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */; };
+		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E47E276816036EDC00EE2AFB /* ExtensionStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */; };
 		E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14132,6 +14134,8 @@
 		E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSystemInterfaceIOS.mm; sourceTree = "<group>"; };
 		E453903C0EAFD637003695C8 /* WidgetIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetIOS.mm; sourceTree = "<group>"; };
 		E45390AD0EAFF4B5003695C8 /* SystemMemoryIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemMemoryIOS.cpp; sourceTree = "<group>"; };
+		E461D65C1BB0C7F000CB5645 /* AuthorStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthorStyleSheets.cpp; sourceTree = "<group>"; };
+		E461D65E1BB0C80D00CB5645 /* AuthorStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthorStyleSheets.h; sourceTree = "<group>"; };
 		E462A4A0113E71BE004A4220 /* IntPointHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntPointHash.h; sourceTree = "<group>"; };
 		E46A2B1B17CA65B9000DBCD8 /* TypedElementDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedElementDescendantIterator.h; sourceTree = "<group>"; };
 		E46A2B1D17CA76B1000DBCD8 /* ElementChildIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementChildIterator.h; sourceTree = "<group>"; };
@@ -14141,8 +14145,8 @@
 		E47A97CF163059FC005DCD99 /* StyleInvalidationAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleInvalidationAnalysis.h; sourceTree = "<group>"; };
 		E47B4BE60E71241600038854 /* CachedResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceHandle.h; sourceTree = "<group>"; };
 		E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceHandle.cpp; sourceTree = "<group>"; };
-		E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentStyleSheetCollection.h; sourceTree = "<group>"; };
-		E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentStyleSheetCollection.cpp; sourceTree = "<group>"; };
+		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
+		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
@@ -23285,6 +23289,8 @@
 				A8C4A7FB09D563270003AC8D /* Attr.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
 				A8C4A7F909D563270003AC8D /* Attribute.h */,
+				E461D65C1BB0C7F000CB5645 /* AuthorStyleSheets.cpp */,
+				E461D65E1BB0C80D00CB5645 /* AuthorStyleSheets.h */,
 				760847CD19A6A27700428CCC /* AutocompleteErrorEvent.h */,
 				760847CF19A6A28600428CCC /* AutocompleteErrorEvent.idl */,
 				BC9462D7107A7B4C00857193 /* BeforeLoadEvent.h */,
@@ -23380,8 +23386,6 @@
 				BCCFBAE70B5152ED0001F1D7 /* DocumentParser.h */,
 				AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */,
 				AD6E71AB1668899D00320C13 /* DocumentSharedObjectPool.h */,
-				E47E276716036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp */,
-				E47E276416036ED200EE2AFB /* DocumentStyleSheetCollection.h */,
 				86D982F6125C154000AD9E3D /* DocumentTiming.h */,
 				A8185F3209765765005826D9 /* DocumentType.cpp */,
 				A8185F3109765765005826D9 /* DocumentType.h */,
@@ -23455,6 +23459,8 @@
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */,
 				A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */,
+				E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */,
+				E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */,
 				B6D9D23414EABD260090D75E /* FocusEvent.cpp */,
 				B6D9D23314EABD260090D75E /* FocusEvent.h */,
 				B6D9D27214EABF030090D75E /* FocusEvent.idl */,
@@ -24629,7 +24635,7 @@
 				BCCFBAE80B5152ED0001F1D7 /* DocumentParser.h in Headers */,
 				4A4F48AA16B0DFC000EDBB29 /* DocumentRuleSets.h in Headers */,
 				AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */,
-				E47E276516036ED200EE2AFB /* DocumentStyleSheetCollection.h in Headers */,
+				E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */,
 				0B90561A0F2578BF0095FF6A /* DocumentThreadableLoader.h in Headers */,
 				86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */,
 				A8185F3909765766005826D9 /* DocumentType.h in Headers */,
@@ -26831,6 +26837,7 @@
 				99CC0B5E18BE984A006CEBCC /* SegmentedInputStorage.h in Headers */,
 				B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */,
 				BEA807C90F714A0300524199 /* SelectionRect.h in Headers */,
+				E461D65F1BB0C80D00CB5645 /* AuthorStyleSheets.h in Headers */,
 				51405C89190B014400754F94 /* SelectionRectGatherer.h in Headers */,
 				CDCFABBD18C0AF78006F8450 /* SelectionSubtreeRoot.h in Headers */,
 				E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */,
@@ -28385,7 +28392,7 @@
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,
 				4A4F48A916B0DFC000EDBB29 /* DocumentRuleSets.cpp in Sources */,
 				AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */,
-				E47E276816036EDC00EE2AFB /* DocumentStyleSheetCollection.cpp in Sources */,
+				E47E276816036EDC00EE2AFB /* ExtensionStyleSheets.cpp in Sources */,
 				0B9056190F2578BE0095FF6A /* DocumentThreadableLoader.cpp in Sources */,
 				A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */,
 				973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */,
@@ -28490,6 +28497,7 @@
 				85ECBEF80AA7626900544F0B /* DOMHTMLParamElement.mm in Sources */,
 				7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */,
 				85183B490AA6926100F19FA3 /* DOMHTMLPreElement.mm in Sources */,
+				E461D65D1BB0C7F000CB5645 /* AuthorStyleSheets.cpp in Sources */,
 				A4226E961163D73A008B8397 /* DOMHTMLProgressElement.mm in Sources */,
 				85183B4B0AA6926100F19FA3 /* DOMHTMLQuoteElement.mm in Sources */,
 				85DF819C0AA77E4B00486AD7 /* DOMHTMLScriptElement.mm in Sources */,

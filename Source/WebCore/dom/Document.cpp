@@ -31,6 +31,7 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "Attr.h"
+#include "AuthorStyleSheets.h"
 #include "CDATASection.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleDeclaration.h"
@@ -57,6 +58,7 @@
 #include "EntityReference.h"
 #include "EventFactory.h"
 #include "EventHandler.h"
+#include "ExtensionStyleSheets.h"
 #include "FocusController.h"
 #include "FontLoader.h"
 #include "FormController.h"
@@ -439,7 +441,8 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_domTreeVersion(++s_globalTreeVersion)
     , m_listenerTypes(0)
     , m_mutationObserverTypes(0)
-    , m_styleSheetCollection(*this)
+    , m_authorStyleSheets(std::make_unique<AuthorStyleSheets>(*this))
+    , m_extensionStyleSheets(std::make_unique<ExtensionStyleSheets>(*this))
     , m_visitedLinkState(std::make_unique<VisitedLinkState>(*this))
     , m_visuallyOrdered(false)
     , m_readyState(Complete)
@@ -624,7 +627,7 @@ Document::~Document()
 
     if (m_elementSheet)
         m_elementSheet->detachFromDocument();
-    m_styleSheetCollection.detachFromDocument();
+    extensionStyleSheets().detachFromDocument();
 
     clearStyleResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
 
@@ -791,8 +794,8 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
 
     if (inQuirksMode() != wasInQuirksMode) {
         // All user stylesheets have to reparse using the different mode.
-        m_styleSheetCollection.clearPageUserSheet();
-        m_styleSheetCollection.invalidateInjectedStyleSheetCache();
+        extensionStyleSheets().clearPageUserSheet();
+        extensionStyleSheets().invalidateInjectedStyleSheetCache();
     }
 }
 
@@ -1810,7 +1813,7 @@ void Document::recalcStyle(Style::Change change)
     // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
-    m_styleSheetCollection.flushPendingUpdates();
+    authorStyleSheets().flushPendingUpdates();
 
     frameView.willRecalcStyle();
 
@@ -1818,7 +1821,7 @@ void Document::recalcStyle(Style::Change change)
 
     // FIXME: We never reset this flags.
     if (m_elementSheet && m_elementSheet->contents().usesRemUnits())
-        m_styleSheetCollection.setUsesRemUnit(true);
+        authorStyleSheets().setUsesRemUnit(true);
     // We don't call setUsesStyleBasedEditability here because the whole point of the flag is to avoid style recalc.
     // i.e. updating the flag here would be too late.
 
@@ -1845,10 +1848,6 @@ void Document::recalcStyle(Style::Change change)
         unscheduleStyleRecalc();
 
         m_inStyleRecalc = false;
-
-        // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-        if (m_styleResolver)
-            m_styleSheetCollection.resetCSSFeatureFlags();
     }
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
@@ -2117,7 +2116,7 @@ void Document::createStyleResolver()
     if (Settings* settings = this->settings())
         matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
     m_styleResolver = std::make_unique<StyleResolver>(*this, matchAuthorAndUserStyles);
-    m_styleSheetCollection.combineCSSFeatureFlags();
+    m_styleResolver->appendAuthorStyleSheets(0, authorStyleSheets().activeStyleSheets());
 }
 
 void Document::fontsNeedUpdate(FontSelector&)
@@ -3077,9 +3076,9 @@ bool Document::usesStyleBasedEditability() const
     ASSERT(!m_renderView || !m_renderView->frameView().isPainting());
     ASSERT(!m_inStyleRecalc);
 
-    auto& collection = document().styleSheetCollection();
-    collection.flushPendingUpdates();
-    return collection.usesStyleBasedEditability();
+    auto& authorSheets = const_cast<AuthorStyleSheets&>(authorStyleSheets());
+    authorSheets.flushPendingUpdates();
+    return authorSheets.usesStyleBasedEditability();
 }
 
 void Document::processHttpEquiv(const String& equiv, const String& content)
@@ -3119,8 +3118,8 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
         // For more info, see the test at:
         // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
         // -dwh
-        m_styleSheetCollection.setSelectedStylesheetSetName(content);
-        m_styleSheetCollection.setPreferredStylesheetSetName(content);
+        authorStyleSheets().setSelectedStylesheetSetName(content);
+        authorStyleSheets().setPreferredStylesheetSetName(content);
         styleResolverChanged(DeferRecalcStyle);
         break;
 
@@ -3473,17 +3472,17 @@ StyleSheetList& Document::styleSheets()
 
 String Document::preferredStylesheetSet() const
 {
-    return m_styleSheetCollection.preferredStylesheetSetName();
+    return authorStyleSheets().preferredStylesheetSetName();
 }
 
 String Document::selectedStylesheetSet() const
 {
-    return m_styleSheetCollection.selectedStylesheetSetName();
+    return authorStyleSheets().selectedStylesheetSetName();
 }
 
 void Document::setSelectedStylesheetSet(const String& aString)
 {
-    m_styleSheetCollection.setSelectedStylesheetSetName(aString);
+    authorStyleSheets().setSelectedStylesheetSetName(aString);
     styleResolverChanged(DeferRecalcStyle);
 }
 
@@ -3502,7 +3501,7 @@ void Document::scheduleOptimizedStyleSheetUpdate()
 {
     if (m_optimizedStyleSheetUpdateTimer.isActive())
         return;
-    m_styleSheetCollection.setPendingUpdateType(DocumentStyleSheetCollection::OptimizedUpdate);
+    authorStyleSheets().setPendingUpdateType(AuthorStyleSheets::OptimizedUpdate);
     m_optimizedStyleSheetUpdateTimer.startOneShot(0);
 }
 
@@ -3589,10 +3588,10 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
         printf("Beginning update of style selector at time %lld.\n", elapsedTime().count());
 #endif
 
-    DocumentStyleSheetCollection::UpdateFlag styleSheetUpdate = (updateFlag == RecalcStyleIfNeeded || updateFlag == DeferRecalcStyleIfNeeded)
-        ? DocumentStyleSheetCollection::OptimizedUpdate
-        : DocumentStyleSheetCollection::FullUpdate;
-    bool stylesheetChangeRequiresStyleRecalc = m_styleSheetCollection.updateActiveStyleSheets(styleSheetUpdate);
+    auto styleSheetUpdate = (updateFlag == RecalcStyleIfNeeded || updateFlag == DeferRecalcStyleIfNeeded)
+        ? AuthorStyleSheets::OptimizedUpdate
+        : AuthorStyleSheets::FullUpdate;
+    bool stylesheetChangeRequiresStyleRecalc = authorStyleSheets().updateActiveStyleSheets(styleSheetUpdate);
 
     if (updateFlag == DeferRecalcStyle) {
         scheduleForcedStyleRecalc();
@@ -6487,7 +6486,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
 bool Document::haveStylesheetsLoaded() const
 {
-    return !m_styleSheetCollection.hasPendingSheets() || m_ignorePendingStylesheets;
+    return !authorStyleSheets().hasPendingSheets() || m_ignorePendingStylesheets;
 }
 
 Locale& Document::getCachedLocale(const AtomicString& locale)

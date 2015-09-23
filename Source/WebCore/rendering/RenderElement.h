@@ -346,11 +346,6 @@ inline void RenderElement::setAnimatableStyle(Ref<RenderStyle>&& style, StyleDif
     setStyle(WTF::move(animatedStyle), minimalStyleDifference);
 }
 
-inline RenderStyle& RenderElement::firstLineStyle() const
-{
-    return document().styleSheetCollection().usesFirstLineRules() ? *cachedFirstLineStyle() : style();
-}
-
 inline void RenderElement::setAncestorLineBoxDirty(bool f)
 {
     m_ancestorLineBoxDirty = f;

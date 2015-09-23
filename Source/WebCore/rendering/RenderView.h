@@ -187,6 +187,11 @@ public:
     WEBCORE_EXPORT RenderLayerCompositor& compositor();
     WEBCORE_EXPORT bool usesCompositing() const;
 
+    bool usesFirstLineRules() const { return m_usesFirstLineRules; }
+    bool usesFirstLetterRules() const { return m_usesFirstLetterRules; }
+    void setUsesFirstLineRules(bool value) { m_usesFirstLineRules = value; }
+    void setUsesFirstLetterRules(bool value) { m_usesFirstLetterRules = value; }
+
     WEBCORE_EXPORT IntRect unscaledDocumentRect() const;
     LayoutRect unextendedBackgroundRect() const;
     LayoutRect backgroundRect() const;
@@ -369,6 +374,8 @@ private:
 
     bool m_selectionWasCaret;
     bool m_hasSoftwareFilters;
+    bool m_usesFirstLineRules { false };
+    bool m_usesFirstLetterRules { false };
 
     HashSet<RenderElement*> m_renderersWithPausedImageAnimation;
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InspectorCSSAgent.h"
 
+#include "AuthorStyleSheets.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
 #include "CSSPropertyNames.h"
@@ -665,7 +666,7 @@ void InspectorCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& resu
 
 void InspectorCSSAgent::collectAllDocumentStyleSheets(Document& document, Vector<CSSStyleSheet*>& result)
 {
-    Vector<RefPtr<CSSStyleSheet>> cssStyleSheets = document.styleSheetCollection().activeStyleSheetsForInspector();
+    auto cssStyleSheets = document.authorStyleSheets().activeStyleSheetsForInspector();
     for (auto& cssStyleSheet : cssStyleSheets)
         collectStyleSheets(cssStyleSheet.get(), result);
 }
@@ -1015,7 +1016,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
 
     // StyleRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document().styleSheetCollection());
+    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document().authorStyleSheets(), styleResolver.document().extensionStyleSheets());
     if (!cssomWrapper)
         return nullptr;
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssomWrapper->parentStyleSheet());

@@ -49,6 +49,7 @@
 #include "Element.h"
 #include "EventHandler.h"
 #include "ExceptionCode.h"
+#include "ExtensionStyleSheets.h"
 #include "File.h"
 #include "FontCache.h"
 #include "FormController.h"
@@ -1940,7 +1941,7 @@ void Internals::insertAuthorCSS(const String& css, ExceptionCode& ec) const
     auto parsedSheet = StyleSheetContents::create(*document);
     parsedSheet.get().setIsUserStyleSheet(false);
     parsedSheet.get().parseString(css);
-    document->styleSheetCollection().addAuthorSheet(WTF::move(parsedSheet));
+    document->extensionStyleSheets().addAuthorStyleSheetForTesting(WTF::move(parsedSheet));
 }
 
 void Internals::insertUserCSS(const String& css, ExceptionCode& ec) const
@@ -1954,7 +1955,7 @@ void Internals::insertUserCSS(const String& css, ExceptionCode& ec) const
     auto parsedSheet = StyleSheetContents::create(*document);
     parsedSheet.get().setIsUserStyleSheet(true);
     parsedSheet.get().parseString(css);
-    document->styleSheetCollection().addUserSheet(WTF::move(parsedSheet));
+    document->extensionStyleSheets().addUserStyleSheet(WTF::move(parsedSheet));
 }
 
 String Internals::counterValue(Element* element)

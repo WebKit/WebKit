@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSStyleSheet.h"
 
+#include "AuthorStyleSheets.h"
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
@@ -30,8 +31,8 @@
 #include "CSSStyleRule.h"
 #include "CachedCSSStyleSheet.h"
 #include "Document.h"
-#include "DocumentStyleSheetCollection.h"
 #include "ExceptionCode.h"
+#include "ExtensionStyleSheets.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "MediaList.h"
@@ -170,7 +171,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     if (!owner)
         return;
 
-    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->styleSheetCollection().activeStyleSheetsContains(this)) {
+    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->authorStyleSheets().activeStyleSheetsContains(this)) {
         if (insertedKeyframesRule) {
             if (StyleResolver* resolver = owner->styleResolverIfExists())
                 resolver->addKeyframeStyle(insertedKeyframesRule);

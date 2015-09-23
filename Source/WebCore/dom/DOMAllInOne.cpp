@@ -27,6 +27,7 @@
 
 #include "ActiveDOMObject.cpp"
 #include "AnimationEvent.cpp"
+#include "AuthorStyleSheets.cpp"
 #include "Attr.cpp"
 #include "BeforeTextInsertedEvent.cpp"
 #include "BeforeUnloadEvent.cpp"
@@ -69,7 +70,6 @@
 #include "DocumentOrderedMap.cpp"
 #include "DocumentParser.cpp"
 #include "DocumentSharedObjectPool.cpp"
-#include "DocumentStyleSheetCollection.cpp"
 #include "DocumentType.cpp"
 #include "Element.cpp"
 #include "ElementData.cpp"
@@ -85,6 +85,7 @@
 #include "EventTarget.cpp"
 #include "ExceptionBase.cpp"
 #include "ExceptionCodePlaceholder.cpp"
+#include "ExtensionStyleSheets.cpp"
 #include "FocusEvent.cpp"
 #include "GenericEventQueue.cpp"
 #include "IdTargetObserver.cpp"
