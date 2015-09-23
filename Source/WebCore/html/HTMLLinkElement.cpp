@@ -69,7 +69,6 @@ static LinkEventSender& linkLoadEventSender()
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , m_linkLoader(*this)
-    , m_sizes(DOMSettableTokenList::create())
     , m_disabledState(Unset)
     , m_loading(false)
     , m_createdByParser(createdByParser)
@@ -159,7 +158,8 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         return;
     }
     if (name == sizesAttr) {
-        m_sizes->setValue(value);
+        if (m_sizes)
+            m_sizes->attributeValueChanged(value);
         process();
         return;
     }
@@ -367,6 +367,13 @@ bool HTMLLinkElement::styleSheetIsLoading() const
     return m_sheet->contents().isLoading();
 }
 
+DOMSettableTokenList& HTMLLinkElement::sizes()
+{
+    if (!m_sizes)
+        m_sizes = std::make_unique<AttributeDOMTokenList>(*this, sizesAttr);
+    return *m_sizes;
+}
+
 void HTMLLinkElement::linkLoaded()
 {
     dispatchEvent(Event::create(eventNames().loadEvent, false, false));
@@ -475,9 +482,9 @@ IconType HTMLLinkElement::iconType() const
     return m_relAttribute.iconType;
 }
 
-String HTMLLinkElement::iconSizes() const
+String HTMLLinkElement::iconSizes()
 {
-    return m_sizes->toString();
+    return sizes().toString();
 }
 
 void HTMLLinkElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

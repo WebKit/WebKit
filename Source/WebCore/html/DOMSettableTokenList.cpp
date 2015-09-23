@@ -28,14 +28,10 @@
 
 namespace WebCore {
 
-void DOMSettableTokenList::ref()
+void DOMSettableTokenList::setValue(const String& value)
 {
-    RefCounted<DOMSettableTokenList>::ref();
-}
-
-void DOMSettableTokenList::deref()
-{
-    RefCounted<DOMSettableTokenList>::deref();
+    setValueInternal(value);
+    updateAfterTokenChange();
 }
 
 } // namespace WebCore
