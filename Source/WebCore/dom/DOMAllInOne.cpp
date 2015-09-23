@@ -27,8 +27,8 @@
 
 #include "ActiveDOMObject.cpp"
 #include "AnimationEvent.cpp"
-#include "AuthorStyleSheets.cpp"
 #include "Attr.cpp"
+#include "AuthorStyleSheets.cpp"
 #include "BeforeTextInsertedEvent.cpp"
 #include "BeforeUnloadEvent.cpp"
 #include "CDATASection.cpp"
