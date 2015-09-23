@@ -948,6 +948,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     API
     assembler
     bindings
+    builtins
     bytecode
     debugger
     dfg

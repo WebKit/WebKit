@@ -1,3 +1,29 @@
+2015-09-23  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Implement ReadableStream pipeThrough
+        https://bugs.webkit.org/show_bug.cgi?id=147556
+
+        Reviewed by Darin Adler.
+
+        Updating BuiltIns infrastructure to make it reusable from WebCore.
+        Extracting macros from BuiltinNames and createBuiltinExecutable from BuiltinExecutables.
+        Updated generate-js-builtins to allow generating builtin CPP/H files in WebCore namespace.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        (JSC::BuiltinExecutables::createBuiltinExecutable):
+        (JSC::createBuiltinExecutable):
+        (JSC::createExecutableInternal):
+        * builtins/BuiltinExecutables.h:
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames): Deleted.
+        * builtins/BuiltinUtils.h: Extracting code from BuiltinNames and BuiltinExecutables.h.
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * generate-js-builtins:
+        (getFunctions):
+        (writeIncludeDirectives):
+
 2015-09-22  Mark Lam  <mark.lam@apple.com>
 
         Gardening: speculative non-JIT build fix after r189999.

@@ -59,7 +59,6 @@ enum UnlinkedFunctionKind {
 
 class UnlinkedFunctionExecutable final : public JSCell {
 public:
-    friend class BuiltinExecutables;
     friend class CodeCache;
     friend class VM;
 
@@ -77,6 +76,7 @@ public:
     const Identifier& name() const { return m_name; }
     const Identifier& inferredName() const { return m_inferredName; }
     JSString* nameValue() const { return m_nameValue.get(); }
+    void setNameValue(VM& vm, JSString* nameValue) { m_nameValue.set(vm, this, nameValue); }
     unsigned parameterCount() const { return m_parameterCount; };
     SourceParseMode parseMode() const { return m_parseMode; };
     bool isInStrictContext() const { return m_isInStrictContext; }
@@ -101,7 +101,7 @@ public:
         const Identifier&, ExecState&, const SourceCode&, JSObject*& exception, 
         int overrideLineNumber);
 
-    FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
+    JS_EXPORT_PRIVATE FunctionExecutable* link(VM&, const SourceCode&, int overrideLineNumber = -1);
 
     void clearCode()
     {

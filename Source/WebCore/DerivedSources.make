@@ -792,6 +792,7 @@ all : \
     $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
     $(JS_DOM_HEADERS) \
     $(WEB_DOM_HEADERS) \
+    $(WEBCORE_JS_BUILTINS) \
     \
     CSSGrammar.cpp \
     CSSPropertyNames.cpp \
@@ -1245,6 +1246,16 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 	$(PYTHON) $(WebReplayScripts)/CodeGeneratorReplayInputs.py --outputDir . --framework WebCore $(INPUT_GENERATOR_SPECIFICATIONS)
 
 -include $(JS_DOM_HEADERS:.h=.dep)
+
+# WebCore JS Builtins
+
+WEBCORE_JS_BUILTINS = \
+    $(WebCore)/Modules/streams/ReadableStream.js
+
+all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
+
+%Builtins.cpp: %.js
+	$(PYTHON) $(WebCore)/generate-js-builtins --input $< --webcore_dir $(WebCore)
 
 # ------------------------
 

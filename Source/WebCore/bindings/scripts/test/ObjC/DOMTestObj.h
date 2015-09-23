@@ -143,6 +143,8 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 - (void)methodWithException;
 - (void)customMethod;
 - (void)customMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+- (void)jsBuiltinMethod;
+- (void)jsBuiltinMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture;
 - (void)withScriptStateVoid;

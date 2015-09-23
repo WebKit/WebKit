@@ -73,6 +73,7 @@ ImplementedAs=*
 InitializedByEventConstructor
 InterfaceName=*
 IsWeakCallback
+JSBuiltin
 JSCustomDefineOwnProperty
 JSCustomDefineOwnPropertyOnPrototype
 JSCustomFinalize

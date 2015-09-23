@@ -309,6 +309,7 @@
 #include "JSReadableStream.cpp"
 #include "JSReadableStreamController.cpp"
 #include "JSReadableStreamReader.cpp"
+#include "ReadableStreamBuiltins.cpp"
 #endif
 #include "JSRect.cpp"
 #include "JSRequestAnimationFrameCallback.cpp"

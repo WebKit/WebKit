@@ -9,6 +9,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/API"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/assembler"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/builtins"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/bytecode"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/bytecompiler"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/dfg"

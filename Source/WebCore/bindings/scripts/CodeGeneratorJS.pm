@@ -548,6 +548,16 @@ sub GetAttributeSetterName
 sub GetFunctionName
 {
     my ($className, $function) = @_;
+
+    my $scopeName = $function->signature->extendedAttributes->{"ImplementedBy"};
+    if (!$scopeName) {
+        $scopeName = substr $className, 2;
+    }
+
+    if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
+        return $codeGenerator->WK_lcfirst($scopeName) . $codeGenerator->WK_ucfirst($function->signature->name) . "CodeGenerator";
+    }
+
     my $kind = $function->isStatic ? "Constructor" : "Prototype";
     return $codeGenerator->WK_lcfirst($className) . $kind . "Function" . $codeGenerator->WK_ucfirst($function->signature->name);
 }
@@ -1731,6 +1741,8 @@ sub GenerateImplementation
     my $implType = GetImplClassName($interfaceName);
     AddIncludesForTypeInImpl($implType);
 
+    AddIncludesForJSBuiltinMethods($interface);
+
     @implContent = ();
 
     push(@implContent, "\nusing namespace JSC;\n\n");
@@ -1747,6 +1759,7 @@ sub GenerateImplementation
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             next if $function->signature->extendedAttributes->{"ForwardDeclareInHeader"};
             next if $function->signature->extendedAttributes->{"CustomBinding"};
+            next if $function->signature->extendedAttributes->{"JSBuiltin"};
 
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
@@ -1905,12 +1918,7 @@ sub GenerateImplementation
             my $functionLength = GetFunctionLength($function);
             push(@hashValue2, $functionLength);
 
-            my @specials = ();
-            push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"NotDeletable"};
-            push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
-            push(@specials, "JSC::Function");
-            my $special = (@specials > 0) ? join(" | ", @specials) : "0";
-            push(@hashSpecials, $special);
+            push(@hashSpecials, ComputeFunctionSpecial($interface, $function));
 
             my $conditional = $function->signature->extendedAttributes->{"Conditional"};
             if ($conditional) {
@@ -1981,14 +1989,7 @@ sub GenerateImplementation
         my $functionLength = GetFunctionLength($function);
         push(@hashValue2, $functionLength);
 
-        my @specials = ();
-        push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"NotDeletable"}
-           || $function->signature->extendedAttributes->{"Unforgeable"}
-           || $interface->extendedAttributes->{"Unforgeable"};
-        push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
-        push(@specials, "JSC::Function");
-        my $special = (@specials > 0) ? join(" | ", @specials) : "0";
-        push(@hashSpecials, $special);
+        push(@hashSpecials, ComputeFunctionSpecial($interface, $function));
 
         my $conditional = $function->signature->extendedAttributes->{"Conditional"};
         if ($conditional) {
@@ -2788,6 +2789,7 @@ sub GenerateImplementation
         my $inAppleCopyright = 0;
         foreach my $function (@{$interface->functions}) {
             next if $function->signature->extendedAttributes->{"CustomBinding"};
+            next if $function->signature->extendedAttributes->{"JSBuiltin"};
             my $needsAppleCopyright = $function->signature->extendedAttributes->{"AppleCopyright"};
             if ($needsAppleCopyright) {
                 if (!$inAppleCopyright) {
@@ -4250,6 +4252,8 @@ sub GenerateHashTableValueArray
         
         if ("@$specials[$i]" =~ m/Function/) {
             $firstTargetType = "static_cast<NativeFunction>";
+        } elsif ("@$specials[$i]" =~ m/Builtin/) {
+            $firstTargetType = "static_cast<BuiltinGenerator>";
         } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {
             $firstTargetType = "";
         } else {
@@ -5000,6 +5004,53 @@ sub HeaderNeedsPrototypeDeclaration
     my $interface = shift;
 
     return IsDOMGlobalObject($interface) || $interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"} || $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
+}
+
+sub ComputeFunctionSpecial
+{
+    my $interface = shift;
+    my $function = shift;
+
+    my @specials = ();
+    push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"NotDeletable"}
+       || $function->signature->extendedAttributes->{"Unforgeable"}
+       || $interface->extendedAttributes->{"Unforgeable"};
+    push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
+    if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
+        push(@specials, "JSC::Builtin");
+    }
+    else {
+        push(@specials, "JSC::Function");
+    }
+    return (@specials > 0) ? join(" | ", @specials) : "0";
+}
+
+sub UseJSBuiltins
+{
+    my $interface = shift;
+    foreach my $function (@{$interface->functions}) {
+        if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
+            return 1;
+        }
+    }
+    return 0
+}
+
+sub AddIncludesForJSBuiltinMethods()
+{
+    my $interface = shift;
+
+    foreach my $function (@{$interface->functions}) {
+        next unless ($function->signature->extendedAttributes->{"JSBuiltin"});
+        my $scopeName = $function->signature->extendedAttributes->{"ImplementedBy"};
+        if (!$scopeName) {
+            $scopeName = $interface->name;
+        }
+        AddToImplIncludes($scopeName . "Builtins.h", $function->signature->extendedAttributes->{"Conditional"});
+
+        return 1;
+    }
+
 }
 
 1;

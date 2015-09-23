@@ -53,12 +53,6 @@ JSValue JSReadableStream::pipeTo(ExecState& state)
     return state.vm().throwException(&state, error);
 }
 
-JSValue JSReadableStream::pipeThrough(ExecState& state)
-{
-    JSValue error = createError(&state, ASCIILiteral("pipeThrough is not implemented"));
-    return state.vm().throwException(&state, error);
-}
-
 } // namespace WebCore
 
 #endif

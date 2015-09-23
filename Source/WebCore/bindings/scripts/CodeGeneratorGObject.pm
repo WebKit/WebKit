@@ -379,6 +379,10 @@ sub SkipFunction {
         return 1;
     }
 
+    if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
+        return 1;
+    }
+
     return 0;
 }
 
