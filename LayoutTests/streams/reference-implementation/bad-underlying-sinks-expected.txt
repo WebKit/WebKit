@@ -1,0 +1,14 @@
+
+FAIL Underlying sink: throwing start getter assert_throws: function "function () {
+        new WritableStream({
+            ge..." threw object "ReferenceError: Can't find variable: WritableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
+FAIL Underlying sink: throwing start method assert_throws: function "function () {
+        new WritableStream({
+            st..." threw object "ReferenceError: Can't find variable: WritableStream" ("ReferenceError") expected object "Error: a unique string" ("Error")
+FAIL Underlying sink: throwing write getter Can't find variable: WritableStream
+FAIL Underlying sink: throwing write method Can't find variable: WritableStream
+FAIL Underlying sink: throwing abort getter Can't find variable: WritableStream
+FAIL Underlying sink: throwing abort method Can't find variable: WritableStream
+FAIL Underlying sink: throwing close getter Can't find variable: WritableStream
+FAIL Underlying sink: throwing close method Can't find variable: WritableStream
+
