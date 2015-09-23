@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSStyleRule;
 class CSSStyleSheet;
-class DocumentStyleSheetCollection;
+class ExtensionStyleSheets;
 class InspectorCSSOMWrappers;
 class MediaQueryEvaluator;
 class RuleSet;

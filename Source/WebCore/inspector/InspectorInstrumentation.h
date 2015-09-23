@@ -76,7 +76,6 @@ class DOMWrapperWorld;
 class Database;
 class Document;
 class DocumentLoader;
-class DocumentStyleSheetCollection;
 class Element;
 class GraphicsContext;
 class HTTPHeaderMap;
