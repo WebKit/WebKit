@@ -819,11 +819,14 @@ set(WebCore_IDL_FILES
 if (WIN32)
     if (INTERNAL_BUILD)
         set(WebCore_INSPECTOR_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore")
+        set(WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore")
     else ()
         set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
+        set(WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}")
     endif ()
 else ()
     set(WebCore_INSPECTOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
+    set(WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}")
 endif ()
 
 set(WebCore_SOURCES
@@ -3567,9 +3570,9 @@ foreach (_builtinjs ${WEBCORE_JS_BUILTINS})
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}BuiltinsWrapper.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.cpp
         MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins
-        DEPENDS ${JAVASCRIPTCORE_DIR}/generate-js-builtins
+        DEPENDS $(WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR)/generate-js-builtins
         DEPENDS ${_builtinjs}
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins --input ${_builtinjs} --output_dir ${DERIVED_SOURCES_WEBCORE_DIR} --webcore_dir ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins --input ${_builtinjs} --output_dir ${DERIVED_SOURCES_WEBCORE_DIR} --generate_js_builtins_path $(WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR)
         VERBATIM)
     list(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.h
