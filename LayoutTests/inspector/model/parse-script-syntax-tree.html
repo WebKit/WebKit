@@ -476,6 +476,26 @@ function test()
     InspectorTest.assert(node.declarations[0].id.elements[0].right.value === 20);
     InspectorTest.log("passed AssignmentPattern");
 
+    node = makeNode("(x) => x;", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
+    InspectorTest.assert(node.params.length === 1);
+    InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[0].name === "x");
+    InspectorTest.assert(node.expression === true);
+    InspectorTest.assert(node.defaults.length === 0);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+
+    node = makeNode("(x = 20) => { return x; };", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
+    InspectorTest.assert(node.params.length === 1);
+    InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[0].name === "x");
+    InspectorTest.assert(node.expression === false);
+    InspectorTest.assert(node.defaults.length === 1);
+    InspectorTest.assert(node.defaults[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
+    InspectorTest.log("passed ArrowFunctionExpression");
+
     InspectorTest.log("passed ALL TESTS");
     InspectorTest.completeTest();
 }

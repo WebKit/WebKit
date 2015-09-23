@@ -1,5 +1,28 @@
 2015-09-22  Saam barati  <sbarati@apple.com>
 
+        Web Inspector: [ES6] Improve Type Profiler Support for Arrow Functions
+        https://bugs.webkit.org/show_bug.cgi?id=143171
+
+        Reviewed by Joseph Pecoraro.
+
+        Esprima and JSC both support arrow functions. We just
+        need to support it in our AST and do the right things
+        to include support in the type profiler bits.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype._insertTypeToken):
+        (WebInspector.TypeTokenAnnotator.prototype._translateToOffsetAfterFunctionParameterList.isLineTerminator):
+        (WebInspector.TypeTokenAnnotator.prototype._translateToOffsetAfterFunctionParameterList):
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement.removeFunctionsFilter):
+        (WebInspector.ScriptSyntaxTree.prototype.containsNonEmptyReturnStatement):
+        (WebInspector.ScriptSyntaxTree.functionReturnDivot):
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        (WebInspector.ScriptSyntaxTree):
+
+2015-09-22  Saam barati  <sbarati@apple.com>
+
         Web Inspector: update Esprima to latest version
         https://bugs.webkit.org/show_bug.cgi?id=148960
 

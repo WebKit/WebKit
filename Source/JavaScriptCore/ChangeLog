@@ -1,3 +1,27 @@
+2015-09-22  Saam barati  <sbarati@apple.com>
+
+        Web Inspector: [ES6] Improve Type Profiler Support for Arrow Functions
+        https://bugs.webkit.org/show_bug.cgi?id=143171
+
+        Reviewed by Joseph Pecoraro.
+
+        We now need to take into account TypeProfilerSearchDescriptor when
+        hashing results for type profiler queries. Before, we've gotten
+        away with not doing this because before we would never have a text 
+        collision between a return type text offset and a normal expression text
+        offset. But, with arrow functions, we will have collisions when
+        the arrow function doesn't have parens around its single parameter.
+        I.e: "param => { ... };"
+
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::findLocation):
+        * runtime/TypeProfiler.h:
+        (JSC::QueryKey::QueryKey):
+        (JSC::QueryKey::isHashTableDeletedValue):
+        (JSC::QueryKey::operator==):
+        (JSC::QueryKey::hash):
+        * tests/typeProfiler/arrow-functions.js: Added.
+
 2015-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of ENABLE(PARALLEL_GC)

@@ -40,5 +40,6 @@ passed WhileStatement
 passed WithStatement
 passed ClassStatement, Super, MetaProperty
 passed AssignmentPattern
+passed ArrowFunctionExpression
 passed ALL TESTS
 

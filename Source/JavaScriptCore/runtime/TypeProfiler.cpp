@@ -108,7 +108,7 @@ String TypeProfiler::typeInformationForExpressionAtOffset(TypeProfilerSearchDesc
 
 TypeLocation* TypeProfiler::findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor descriptor, VM& vm)
 {
-    QueryKey queryKey(sourceID, divot);
+    QueryKey queryKey(sourceID, divot, descriptor);
     auto iter = m_queryCache.find(queryKey);
     if (iter != m_queryCache.end())
         return iter->value;
@@ -129,7 +129,7 @@ TypeLocation* TypeProfiler::findLocation(unsigned divot, intptr_t sourceID, Type
         if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID == TypeProfilerReturnStatement && location->m_divotForFunctionOffsetIfReturnStatement == divot)
             return location;
 
-        if (descriptor != TypeProfilerSearchDescriptorFunctionReturn && location->m_divotStart <= divot && divot <= location->m_divotEnd && location->m_divotEnd - location->m_divotStart <= distance) {
+        if (descriptor != TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID != TypeProfilerReturnStatement && location->m_divotStart <= divot && divot <= location->m_divotEnd && location->m_divotEnd - location->m_divotStart <= distance) {
             distance = location->m_divotEnd - location->m_divotStart;
             bestMatch = location;
         }
