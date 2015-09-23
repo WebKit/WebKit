@@ -1,3 +1,12 @@
+2015-09-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unimplemented method Heap::showStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=149507
+
+        Reviewed by Darin Adler.
+
+        * heap/Heap.h:
+
 2015-09-23  Tim Horton  <timothy_horton@apple.com>
 
         Hopefully fix the production build.
