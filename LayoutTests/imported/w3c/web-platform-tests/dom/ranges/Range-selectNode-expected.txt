@@ -183,22 +183,22 @@ PASS  detached div in current doc: div node, current doc's range, type 1
 PASS  detached div in current doc: div node, foreign doc's range, type 1 
 PASS  detached div in current doc: div node, XML doc's range, type 1 
 PASS  detached div in current doc: div node, detached range, type 1 
-FAIL ** detached div in current doc: p node, current doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, foreign doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, XML doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, detached range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, current doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, foreign doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, XML doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, detached range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, current doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, foreign doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, XML doc's range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL ** detached div in current doc: p node, detached range, type 1 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, current doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, foreign doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, XML doc's range, type 3 InvalidNodeTypeError: DOM Exception 24
-FAIL **** detached div in current doc: #text node, detached range, type 3 InvalidNodeTypeError: DOM Exception 24
+PASS ** detached div in current doc: p node, current doc's range, type 1 
+PASS ** detached div in current doc: p node, foreign doc's range, type 1 
+PASS ** detached div in current doc: p node, XML doc's range, type 1 
+PASS ** detached div in current doc: p node, detached range, type 1 
+PASS **** detached div in current doc: #text node, current doc's range, type 3 
+PASS **** detached div in current doc: #text node, foreign doc's range, type 3 
+PASS **** detached div in current doc: #text node, XML doc's range, type 3 
+PASS **** detached div in current doc: #text node, detached range, type 3 
+PASS ** detached div in current doc: p node, current doc's range, type 1 
+PASS ** detached div in current doc: p node, foreign doc's range, type 1 
+PASS ** detached div in current doc: p node, XML doc's range, type 1 
+PASS ** detached div in current doc: p node, detached range, type 1 
+PASS **** detached div in current doc: #text node, current doc's range, type 3 
+PASS **** detached div in current doc: #text node, foreign doc's range, type 3 
+PASS **** detached div in current doc: #text node, XML doc's range, type 3 
+PASS **** detached div in current doc: #text node, detached range, type 3 
 PASS  #document node, current doc's range, type 9 
 PASS  #document node, foreign doc's range, type 9 
 PASS  #document node, XML doc's range, type 9 

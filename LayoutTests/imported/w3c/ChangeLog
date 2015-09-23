@@ -1,3 +1,15 @@
+2015-09-23  Chris Dumez  <cdumez@apple.com>
+
+        Range's setStartBefore() / setStartAfter() / setEndBefore() / setEndAfter() do not match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=149490
+
+        Reviewed by Andreas Kling.
+
+        Rebaseline several W3C DOM tests now that more checks are passing.
+
+        * web-platform-tests/dom/ranges/Range-selectNode-expected.txt:
+        * web-platform-tests/dom/ranges/Range-surroundContents-expected.txt:
+
 2015-09-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Event fired on a detached node does not bubble up

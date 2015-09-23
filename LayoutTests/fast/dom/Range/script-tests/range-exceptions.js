@@ -6,12 +6,6 @@ description(
 var node = document.createElement("DIV");
 node.innerHTML = "<BAR>AB<MOO>C</MOO>DE</BAR>";
 shouldBe("node.innerHTML", "'<bar>AB<moo>C</moo>DE</bar>'");
-var range = document.createRange();
-range.setStart(node.firstChild, 1);
-range.setEnd(node.firstChild, 2);
-var foo = document.createElement("FOO");
-shouldBe("foo.outerHTML", "'<foo></foo>'");
-shouldThrow("range.surroundContents(foo)");
 
 // Ensure that we throw BAD_BOUNDARYPOINTS_ERR when trying to split a comment
 // (non-text but character-offset node). (Test adapted from Acid3.)

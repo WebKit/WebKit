@@ -1018,49 +1018,6 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
     return nullptr;
 }
 
-void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
-{
-    // INVALID_NODE_TYPE_ERR: Raised if the root container of refNode is not an
-    // Attr, Document, DocumentFragment or ShadowRoot node, or part of a SVG shadow DOM tree,
-    // or if refNode is a Document, DocumentFragment, ShadowRoot, Attr, or Entity node.
-
-    switch (n->nodeType()) {
-        case Node::ATTRIBUTE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
-        case Node::DOCUMENT_NODE:
-            ec = INVALID_NODE_TYPE_ERR;
-            return;
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::ELEMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::TEXT_NODE:
-        case Node::XPATH_NAMESPACE_NODE:
-            break;
-    }
-
-    Node* root = n;
-    while (ContainerNode* parent = root->parentNode())
-        root = parent;
-
-    switch (root->nodeType()) {
-        case Node::ATTRIBUTE_NODE:
-        case Node::DOCUMENT_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
-            break;
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::ELEMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::TEXT_NODE:
-        case Node::XPATH_NAMESPACE_NODE:
-            ec = INVALID_NODE_TYPE_ERR;
-            return;
-    }
-}
-
 Ref<Range> Range::cloneRange() const
 {
     return Range::create(ownerDocument(), &startContainer(), m_start.offset(), &endContainer(), m_end.offset());
@@ -1073,10 +1030,10 @@ void Range::setStartAfter(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    ec = 0;
-    checkNodeBA(refNode, ec);
-    if (ec)
+    if (!refNode->parentNode()) {
+        ec = INVALID_NODE_TYPE_ERR;
         return;
+    }
 
     setStart(refNode->parentNode(), refNode->computeNodeIndex() + 1, ec);
 }
@@ -1088,10 +1045,10 @@ void Range::setEndBefore(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    ec = 0;
-    checkNodeBA(refNode, ec);
-    if (ec)
+    if (!refNode->parentNode()) {
+        ec = INVALID_NODE_TYPE_ERR;
         return;
+    }
 
     setEnd(refNode->parentNode(), refNode->computeNodeIndex(), ec);
 }
@@ -1103,10 +1060,10 @@ void Range::setEndAfter(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    ec = 0;
-    checkNodeBA(refNode, ec);
-    if (ec)
+    if (!refNode->parentNode()) {
+        ec = INVALID_NODE_TYPE_ERR;
         return;
+    }
 
     setEnd(refNode->parentNode(), refNode->computeNodeIndex() + 1, ec);
 }
@@ -1265,10 +1222,10 @@ void Range::setStartBefore(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    ec = 0;
-    checkNodeBA(refNode, ec);
-    if (ec)
+    if (!refNode->parentNode()) {
+        ec = INVALID_NODE_TYPE_ERR;
         return;
+    }
 
     setStart(refNode->parentNode(), refNode->computeNodeIndex(), ec);
 }

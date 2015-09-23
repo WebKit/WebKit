@@ -293,14 +293,14 @@ PASS 5,20: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild,
 PASS 5,20: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node doctype 
 PASS 5,21: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignDoctype 
 PASS 5,21: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignDoctype 
-FAIL 6,0: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] InvalidNodeTypeError: DOM Exception 24
-FAIL 6,0: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 0
+PASS 6,0: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] 
+PASS 6,0: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] 
 PASS 6,1: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild 
 FAIL 6,1: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
 PASS 6,2: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild 
 FAIL 6,2: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
-FAIL 6,3: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 InvalidNodeTypeError: DOM Exception 24
-FAIL 6,3: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 0
+PASS 6,3: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 
+PASS 6,3: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 
 PASS 6,4: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild 
 FAIL 6,4: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
 FAIL 6,5: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 assert_true: First differing node: expected Element node <p>Wxyzabcd</p>, got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
@@ -313,12 +313,12 @@ FAIL 6,8: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.fi
 FAIL 6,8: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedDiv assert_unreached: DOMs were not equal but we couldn't figure out why Reached unreachable code
 PASS 6,9: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoc 
 PASS 6,9: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoc 
-FAIL 6,10: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 InvalidNodeTypeError: DOM Exception 24
-FAIL 6,10: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 0
+PASS 6,10: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 
+PASS 6,10: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 
 PASS 6,11: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlDoc 
 PASS 6,11: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlDoc 
-FAIL 6,12: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement InvalidNodeTypeError: DOM Exception 24
-FAIL 6,12: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 0
+PASS 6,12: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement 
+PASS 6,12: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement 
 PASS 6,13: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode 
 FAIL 6,13: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
 PASS 6,14: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode 
@@ -337,14 +337,14 @@ PASS 6,20: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.f
 PASS 6,20: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node doctype 
 PASS 6,21: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoctype 
 PASS 6,21: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoctype 
-FAIL 7,0: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[0] InvalidNodeTypeError: DOM Exception 24
-FAIL 7,0: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[0] assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 2
+PASS 7,0: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[0] 
+PASS 7,0: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[0] 
 PASS 7,1: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[0].firstChild 
 PASS 7,1: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[0].firstChild 
 PASS 7,2: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[1].firstChild 
 PASS 7,2: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node paras[1].firstChild 
-FAIL 7,3: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1 InvalidNodeTypeError: DOM Exception 24
-FAIL 7,3: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1 assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 2
+PASS 7,3: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1 
+PASS 7,3: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1 
 PASS 7,4: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1.firstChild 
 PASS 7,4: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1.firstChild 
 FAIL 7,5: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1 assert_true: First differing node: expected Element node <p>Wxyzabcd</p>, got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
@@ -357,12 +357,12 @@ FAIL 7,8: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.fi
 FAIL 7,8: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedDiv assert_unreached: DOMs were not equal but we couldn't figure out why Reached unreachable code
 PASS 7,9: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignDoc 
 PASS 7,9: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignDoc 
-FAIL 7,10: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara2 InvalidNodeTypeError: DOM Exception 24
-FAIL 7,10: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara2 assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 2
+PASS 7,10: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara2 
+PASS 7,10: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara2 
 PASS 7,11: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node xmlDoc 
 PASS 7,11: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node xmlDoc 
-FAIL 7,12: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node xmlElement InvalidNodeTypeError: DOM Exception 24
-FAIL 7,12: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node xmlElement assert_equals: Unexpected startOffset after surroundContents() expected 1 but got 2
+PASS 7,12: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node xmlElement 
+PASS 7,12: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node xmlElement 
 PASS 7,13: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedTextNode 
 PASS 7,13: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedTextNode 
 PASS 7,14: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignTextNode 
@@ -781,13 +781,13 @@ PASS 16,20: resulting DOM for range [paras[0], 0, paras[0], 1], node doctype
 PASS 16,20: resulting range position for range [paras[0], 0, paras[0], 1], node doctype 
 PASS 16,21: resulting DOM for range [paras[0], 0, paras[0], 1], node foreignDoctype 
 PASS 16,21: resulting range position for range [paras[0], 0, paras[0], 1], node foreignDoctype 
-FAIL 17,0: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node paras[0] InvalidNodeTypeError: DOM Exception 24
+PASS 17,0: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node paras[0] 
 PASS 17,0: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node paras[0] 
 PASS 17,1: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node paras[0].firstChild 
 PASS 17,1: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node paras[0].firstChild 
 PASS 17,2: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node paras[1].firstChild 
 PASS 17,2: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node paras[1].firstChild 
-FAIL 17,3: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignPara1 InvalidNodeTypeError: DOM Exception 24
+PASS 17,3: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignPara1 
 PASS 17,3: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignPara1 
 PASS 17,4: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignPara1.firstChild 
 PASS 17,4: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignPara1.firstChild 
@@ -801,11 +801,11 @@ FAIL 17,8: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node de
 FAIL 17,8: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node detachedDiv assert_unreached: DOMs were not equal but we couldn't figure out why Reached unreachable code
 PASS 17,9: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignDoc 
 PASS 17,9: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignDoc 
-FAIL 17,10: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignPara2 InvalidNodeTypeError: DOM Exception 24
+PASS 17,10: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node foreignPara2 
 PASS 17,10: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignPara2 
 PASS 17,11: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node xmlDoc 
 PASS 17,11: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node xmlDoc 
-FAIL 17,12: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node xmlElement InvalidNodeTypeError: DOM Exception 24
+PASS 17,12: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node xmlElement 
 PASS 17,12: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node xmlElement 
 PASS 17,13: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node detachedTextNode 
 PASS 17,13: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node detachedTextNode 
