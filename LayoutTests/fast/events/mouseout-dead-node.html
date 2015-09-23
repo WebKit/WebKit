@@ -7,16 +7,16 @@
 <p id="description"></p>
 <div id="test-container">
 <div id=d0 style='border:2px solid red'>
-<div onmouseout='testFailed("mouseout")'  onmouseover='document.getElementById("d0").innerHTML ="you should see PASS below"'>
-<div onmouseout='testFailed("mouseout")'>
-<span id=target1 onmouseout='testPassed("mouseout")' >
+<div onmouseout='testPassed("mouseout 3")'  onmouseover='document.getElementById("d0").innerHTML ="you should see PASS below"'>
+<div onmouseout='testPassed("mouseout 2")'>
+<span id=target1 onmouseout='testPassed("mouseout 1")' >
 mouse over me
 </span>
 </div>
 </div>
 </div>
 <div id=d1 style='border:2px solid blue'>
-<div id=target2 onmouseout='testPassed("mouseout")'  onmouseover='document.getElementById("d1").innerHTML ="you should see PASS below"' >
+<div id=target2 onmouseout='testPassed("mouseout 4")'  onmouseover='document.getElementById("d1").innerHTML ="you should see PASS below"' >
 mouse over me
 </div>
 </div>
