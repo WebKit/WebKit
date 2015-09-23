@@ -1303,9 +1303,13 @@ webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validat
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
 
 webkit.org/b/148695 fast/shadow-dom [ Pass ]
+
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-with-rules.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-host-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-host-functional-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-slotted-rule.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/css-scoping-shadow-slot-display-override.html [ ImageOnlyFailure ]
 webkit.org/b/149328 fast/shadow-dom/shadow-layout-after-slot-changes.html [ ImageOnlyFailure ]
+
+webkit.org/b/149510 accessibility/mac/aria-expanded-notifications.html [ Pass Failure ]
+
