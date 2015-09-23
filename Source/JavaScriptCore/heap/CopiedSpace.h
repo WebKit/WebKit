@@ -139,7 +139,6 @@ private:
     bool m_shouldDoCopyPhase;
 
     Lock m_loanedBlocksLock; 
-    Condition m_loanedBlocksCondition;
     size_t m_numberOfLoanedBlocks;
     
     size_t m_bytesRemovedFromOldSpaceDueToReallocation;

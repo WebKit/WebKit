@@ -34,11 +34,10 @@
 
 namespace JSC {
 
-GCThread::GCThread(Heap& heap, std::unique_ptr<SlotVisitor> slotVisitor, std::unique_ptr<CopyVisitor> copyVisitor)
+GCThread::GCThread(Heap& heap, std::unique_ptr<SlotVisitor> slotVisitor)
     : m_threadID(0)
     , m_heap(heap)
     , m_slotVisitor(WTF::move(slotVisitor))
-    , m_copyVisitor(WTF::move(copyVisitor))
 {
 }
 
@@ -58,12 +57,6 @@ SlotVisitor* GCThread::slotVisitor()
 {
     ASSERT(m_slotVisitor);
     return m_slotVisitor.get();
-}
-
-CopyVisitor* GCThread::copyVisitor()
-{
-    ASSERT(m_copyVisitor);
-    return m_copyVisitor.get();
 }
 
 GCPhase GCThread::waitForNextPhase()
@@ -102,20 +95,21 @@ void GCThread::gcThreadMain()
                 // that all of the various subphases in Heap::markRoots() have been fully finished and there is 
                 // no more marking work to do and all of the GCThreads are idle, meaning no more work can be generated.
                 break;
-            case Copy:
-                // We don't have to call startCopying() because it's called for us on the main thread to avoid a 
-                // race condition.
-                m_copyVisitor->copyFromShared();
+            case Copy: {
+                CopyVisitor copyVisitor(m_heap);
+                copyVisitor.startCopying();
+                copyVisitor.copyFromShared();
                 // We know we're done copying when we return from copyFromShared() because we would 
                 // only do so if there were no more chunks of copying work left to do. When there is no 
                 // more copying work to do, the main thread will wait in CopiedSpace::doneCopying() until 
                 // all of the blocks that the GCThreads borrowed have been returned. doneCopying() 
                 // returns our borrowed CopiedBlock, allowing the copying phase to finish.
-                m_copyVisitor->doneCopying();
+                copyVisitor.doneCopying();
 
                 WTF::releaseFastMallocFreeMemoryForThisThread();
 
                 break;
+            }
             case NoPhase:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;

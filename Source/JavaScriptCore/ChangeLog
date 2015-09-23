@@ -1,3 +1,45 @@
+2015-09-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Parallel copy phase synchronization should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=149509
+
+        Reviewed by Mark Lam.
+
+        Before this change, we didn't wait for the copy phase to finish before starting to do things to
+        copied space that presumed that copying was done. Copied space would "detect" that nobody was
+        copying anymore by waiting for all loaned blocks to be returned. But that would succeed if some
+        thread had not yet started copying. So, we had weird hacks to ensure that a block was loaned
+        before any threads started. It also meant that we had two separate mechanisms for waiting for
+        copying threads to finish - one mechanism in the Heap phase logic and another in the
+        CopiedSpace::doneCopying() method.
+
+        We can get rid of a lot of the weirdness by just having a sound shutdown sequence:
+
+        1) Threads concur on when there is no more work. We already have this; once
+           Heap::getNextBlocksToCopy() returns no work in any thread, it will also return no work in
+           any other thread that asks for work.
+        2) Main thread waits for the threads to not be copying anymore.
+        3) Do whatever we need to do after copying finishes.
+
+        Currently, we do (3) before (2) and so we have weird problems. This just changes the code to do
+        (3) after (2), and so we can get rid of the synchronization in doneCopying() and we can safely
+        call startCopying() inside GCThread. This also means that we don't need to make CopyVisitor a
+        property of GCThread. Instead, GCThread just instantiates its own CopyVisitor when it needs to.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::doneCopying):
+        * heap/GCThread.cpp:
+        (JSC::GCThread::GCThread):
+        (JSC::GCThread::slotVisitor):
+        (JSC::GCThread::waitForNextPhase):
+        (JSC::GCThread::gcThreadMain):
+        (JSC::GCThread::copyVisitor): Deleted.
+        * heap/GCThread.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::gatherStackRoots):
+
 2015-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unimplemented method Heap::showStatistics

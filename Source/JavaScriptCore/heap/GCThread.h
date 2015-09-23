@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-class CopyVisitor;
 class Heap;
 class SlotVisitor;
 
@@ -44,10 +43,9 @@ enum GCPhase {
 
 class GCThread {
 public:
-    GCThread(Heap&, std::unique_ptr<SlotVisitor>, std::unique_ptr<CopyVisitor>);
+    GCThread(Heap&, std::unique_ptr<SlotVisitor>);
 
     SlotVisitor* slotVisitor();
-    CopyVisitor* copyVisitor();
     ThreadIdentifier threadID();
     void initializeThreadID(ThreadIdentifier);
 
@@ -60,7 +58,6 @@ private:
     ThreadIdentifier m_threadID;
     Heap& m_heap;
     std::unique_ptr<SlotVisitor> m_slotVisitor;
-    std::unique_ptr<CopyVisitor> m_copyVisitor;
 };
 
 } // namespace JSC

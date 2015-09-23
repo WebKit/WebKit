@@ -362,7 +362,7 @@ Heap::Heap(VM* vm, HeapType heapType)
         std::unique_lock<Lock> lock(m_phaseMutex);
         for (unsigned i = 1; i < Options::numberOfGCMarkers(); ++i) {
             m_numberOfActiveGCThreads++;
-            GCThread* newThread = new GCThread(*this, std::make_unique<SlotVisitor>(*this), std::make_unique<CopyVisitor>(*this));
+            GCThread* newThread = new GCThread(*this, std::make_unique<SlotVisitor>(*this));
             ThreadIdentifier threadID = createThread(GCThread::gcThreadStartFunc, newThread, "JavaScriptCore::Marking");
             newThread->initializeThreadID(threadID);
             m_gcThreads.append(newThread);
@@ -634,25 +634,17 @@ void Heap::copyBackingStores()
             m_copyIndex = 0;
         }
         
-        // We do this here so that we avoid a race condition where the main thread can 
-        // blow through all of the copying work before the GCThreads fully wake up. 
-        // The GCThreads then request a block from the CopiedSpace when the copying phase 
-        // has completed, which isn't allowed.
-        for (size_t i = 0; i < m_gcThreads.size(); i++)
-            m_gcThreads[i]->copyVisitor()->startCopying();
-        
         startNextPhase(Copy);
         
         m_copyVisitor.startCopying();
         m_copyVisitor.copyFromShared();
         m_copyVisitor.doneCopying();
-        // We need to wait for everybody to finish and return their CopiedBlocks 
-        // before signaling that the phase is complete.
-        m_storageSpace.doneCopying();
+
         ASSERT(m_currentPhase == Copy);
         endCurrentPhase();
-    } else
-        m_storageSpace.doneCopying();
+    }
+    
+    m_storageSpace.doneCopying();
 }
 
 void Heap::gatherStackRoots(ConservativeRoots& roots, void* stackOrigin, void* stackTop, MachineThreads::RegisterState& calleeSavedRegisters)

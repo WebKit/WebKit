@@ -117,8 +117,6 @@ inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
         ASSERT(m_numberOfLoanedBlocks > 0);
         ASSERT(m_inCopyingPhase);
         m_numberOfLoanedBlocks--;
-        if (!m_numberOfLoanedBlocks)
-            m_loanedBlocksCondition.notifyOne();
     }
 }
 
