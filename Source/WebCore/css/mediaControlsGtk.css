@@ -145,12 +145,6 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
     outline: none;
 }
 
-/* paused classes for audio/video controls should be defined to make a difference in style from not having this class. Overwise a repaint would not happen. */
-audio::-webkit-media-controls-play-button.paused,
-video::-webkit-media-controls-play-button.paused {
-    position: relative;
-}
-
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display,
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-current-time-display;
