@@ -677,4 +677,4 @@ webkit.org/b/148695 fast/shadow-dom [ Failure ImageOnlyFailure ]
 
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.html [ Failure Pass ]
 
-webkit.org/b/149218 http/tests/notifications/events.html [ Failure Pass ]
+webkit.org/b/149218 http/tests/notifications/events.html [ Pass Crash Timeout ]
