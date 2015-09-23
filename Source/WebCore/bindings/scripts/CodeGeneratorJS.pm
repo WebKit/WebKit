@@ -1320,7 +1320,7 @@ sub GenerateAttributesHashTable
                 push(@$hashSpecials, "DontEnum | DontDelete");
             } else {
                 push(@$hashValue2, "0");
-                push(@$hashSpecials, "DontEnum");
+                push(@$hashSpecials, "DontEnum | ReadOnly");
             }
         }
     }

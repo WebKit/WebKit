@@ -1671,7 +1671,7 @@ FAIL HTMLElement interface: existence and properties of interface object assert_
 }" but got (object) object "[object Object]"
 PASS HTMLElement interface object length 
 PASS HTMLElement interface: existence and properties of interface prototype object 
-PASS HTMLElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLElement.prototype.constructor is not writable expected true got false
 FAIL HTMLElement interface: attribute title assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2256,7 +2256,7 @@ FAIL HTMLUnknownElement interface: existence and properties of interface object 
 }" but got (object) object "[object Object]"
 PASS HTMLUnknownElement interface object length 
 PASS HTMLUnknownElement interface: existence and properties of interface prototype object 
-PASS HTMLUnknownElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLUnknownElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLUnknownElement.prototype.constructor is not writable expected true got false
 PASS HTMLUnknownElement must be primary interface of document.createElement("quasit") 
 PASS Stringification of document.createElement("quasit") 
 FAIL HTMLUnknownElement must be primary interface of document.createElement("bgsound") assert_equals: document.createElement("bgsound")'s prototype is not HTMLUnknownElement.prototype expected Node object of unknown type but got Node object of unknown type
@@ -2282,7 +2282,7 @@ FAIL HTMLHtmlElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLHtmlElement interface object length 
 PASS HTMLHtmlElement interface: existence and properties of interface prototype object 
-PASS HTMLHtmlElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLHtmlElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHtmlElement.prototype.constructor is not writable expected true got false
 FAIL HTMLHtmlElement interface: attribute version assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2294,7 +2294,7 @@ FAIL HTMLHeadElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLHeadElement interface object length 
 PASS HTMLHeadElement interface: existence and properties of interface prototype object 
-PASS HTMLHeadElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLHeadElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHeadElement.prototype.constructor is not writable expected true got false
 PASS HTMLHeadElement must be primary interface of document.createElement("head") 
 PASS Stringification of document.createElement("head") 
 FAIL HTMLTitleElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLTitleElement" is not Function.prototype expected (function) function "function () {
@@ -2302,7 +2302,7 @@ FAIL HTMLTitleElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLTitleElement interface object length 
 PASS HTMLTitleElement interface: existence and properties of interface prototype object 
-PASS HTMLTitleElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTitleElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTitleElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTitleElement interface: attribute text assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2314,7 +2314,7 @@ FAIL HTMLBaseElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLBaseElement interface object length 
 PASS HTMLBaseElement interface: existence and properties of interface prototype object 
-PASS HTMLBaseElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLBaseElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLBaseElement.prototype.constructor is not writable expected true got false
 FAIL HTMLBaseElement interface: attribute href assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2330,7 +2330,7 @@ FAIL HTMLLinkElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLLinkElement interface object length 
 PASS HTMLLinkElement interface: existence and properties of interface prototype object 
-PASS HTMLLinkElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLLinkElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLinkElement.prototype.constructor is not writable expected true got false
 FAIL HTMLLinkElement interface: attribute href assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2381,7 +2381,7 @@ FAIL HTMLMetaElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLMetaElement interface object length 
 PASS HTMLMetaElement interface: existence and properties of interface prototype object 
-PASS HTMLMetaElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLMetaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMetaElement.prototype.constructor is not writable expected true got false
 FAIL HTMLMetaElement interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2405,7 +2405,7 @@ FAIL HTMLStyleElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLStyleElement interface object length 
 PASS HTMLStyleElement interface: existence and properties of interface prototype object 
-PASS HTMLStyleElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLStyleElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLStyleElement.prototype.constructor is not writable expected true got false
 FAIL HTMLStyleElement interface: attribute media assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2424,7 +2424,7 @@ FAIL HTMLBodyElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLBodyElement interface object length 
 PASS HTMLBodyElement interface: existence and properties of interface prototype object 
-PASS HTMLBodyElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLBodyElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLBodyElement.prototype.constructor is not writable expected true got false
 FAIL HTMLBodyElement interface: attribute text assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2502,7 +2502,7 @@ FAIL HTMLHeadingElement interface: existence and properties of interface object 
 }" but got (object) object "[object Object]"
 PASS HTMLHeadingElement interface object length 
 PASS HTMLHeadingElement interface: existence and properties of interface prototype object 
-PASS HTMLHeadingElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLHeadingElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHeadingElement.prototype.constructor is not writable expected true got false
 FAIL HTMLHeadingElement interface: attribute align assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2529,7 +2529,7 @@ FAIL HTMLParagraphElement interface: existence and properties of interface objec
 }" but got (object) object "[object Object]"
 PASS HTMLParagraphElement interface object length 
 PASS HTMLParagraphElement interface: existence and properties of interface prototype object 
-PASS HTMLParagraphElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLParagraphElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLParagraphElement.prototype.constructor is not writable expected true got false
 FAIL HTMLParagraphElement interface: attribute align assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2541,7 +2541,7 @@ FAIL HTMLHRElement interface: existence and properties of interface object asser
 }" but got (object) object "[object Object]"
 PASS HTMLHRElement interface object length 
 PASS HTMLHRElement interface: existence and properties of interface prototype object 
-PASS HTMLHRElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLHRElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLHRElement.prototype.constructor is not writable expected true got false
 FAIL HTMLHRElement interface: attribute align assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2567,7 +2567,7 @@ FAIL HTMLPreElement interface: existence and properties of interface object asse
 }" but got (object) object "[object Object]"
 PASS HTMLPreElement interface object length 
 PASS HTMLPreElement interface: existence and properties of interface prototype object 
-PASS HTMLPreElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLPreElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLPreElement.prototype.constructor is not writable expected true got false
 FAIL HTMLPreElement interface: attribute width assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2588,7 +2588,7 @@ FAIL HTMLQuoteElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLQuoteElement interface object length 
 PASS HTMLQuoteElement interface: existence and properties of interface prototype object 
-PASS HTMLQuoteElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLQuoteElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLQuoteElement.prototype.constructor is not writable expected true got false
 FAIL HTMLQuoteElement interface: attribute cite assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2603,7 +2603,7 @@ FAIL HTMLOListElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLOListElement interface object length 
 PASS HTMLOListElement interface: existence and properties of interface prototype object 
-PASS HTMLOListElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLOListElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOListElement.prototype.constructor is not writable expected true got false
 FAIL HTMLOListElement interface: attribute reversed assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2621,7 +2621,7 @@ FAIL HTMLUListElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLUListElement interface object length 
 PASS HTMLUListElement interface: existence and properties of interface prototype object 
-PASS HTMLUListElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLUListElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLUListElement.prototype.constructor is not writable expected true got false
 FAIL HTMLUListElement interface: attribute compact assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2633,7 +2633,7 @@ FAIL HTMLLIElement interface: existence and properties of interface object asser
 }" but got (object) object "[object Object]"
 PASS HTMLLIElement interface object length 
 PASS HTMLLIElement interface: existence and properties of interface prototype object 
-PASS HTMLLIElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLLIElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLIElement.prototype.constructor is not writable expected true got false
 FAIL HTMLLIElement interface: attribute value assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2649,7 +2649,7 @@ FAIL HTMLDListElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLDListElement interface object length 
 PASS HTMLDListElement interface: existence and properties of interface prototype object 
-PASS HTMLDListElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLDListElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDListElement.prototype.constructor is not writable expected true got false
 FAIL HTMLDListElement interface: attribute compact assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2658,7 +2658,7 @@ FAIL HTMLDivElement interface: existence and properties of interface object asse
 }" but got (object) object "[object Object]"
 PASS HTMLDivElement interface object length 
 PASS HTMLDivElement interface: existence and properties of interface prototype object 
-PASS HTMLDivElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLDivElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDivElement.prototype.constructor is not writable expected true got false
 FAIL HTMLDivElement interface: attribute align assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2670,7 +2670,7 @@ FAIL HTMLAnchorElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLAnchorElement interface object length 
 PASS HTMLAnchorElement interface: existence and properties of interface prototype object 
-PASS HTMLAnchorElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLAnchorElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAnchorElement.prototype.constructor is not writable expected true got false
 FAIL HTMLAnchorElement interface: attribute target assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2748,7 +2748,7 @@ FAIL HTMLSpanElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLSpanElement interface object length 
 PASS HTMLSpanElement interface: existence and properties of interface prototype object 
-PASS HTMLSpanElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLSpanElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLSpanElement.prototype.constructor is not writable expected true got false
 PASS HTMLSpanElement must be primary interface of document.createElement("span") 
 PASS Stringification of document.createElement("span") 
 FAIL HTMLBRElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLBRElement" is not Function.prototype expected (function) function "function () {
@@ -2756,7 +2756,7 @@ FAIL HTMLBRElement interface: existence and properties of interface object asser
 }" but got (object) object "[object Object]"
 PASS HTMLBRElement interface object length 
 PASS HTMLBRElement interface: existence and properties of interface prototype object 
-PASS HTMLBRElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLBRElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLBRElement.prototype.constructor is not writable expected true got false
 FAIL HTMLBRElement interface: attribute clear assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2768,7 +2768,7 @@ FAIL HTMLModElement interface: existence and properties of interface object asse
 }" but got (object) object "[object Object]"
 PASS HTMLModElement interface object length 
 PASS HTMLModElement interface: existence and properties of interface prototype object 
-PASS HTMLModElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLModElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLModElement.prototype.constructor is not writable expected true got false
 FAIL HTMLModElement interface: attribute cite assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2794,7 +2794,7 @@ FAIL HTMLImageElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLImageElement interface object length 
 PASS HTMLImageElement interface: existence and properties of interface prototype object 
-PASS HTMLImageElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLImageElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLImageElement.prototype.constructor is not writable expected true got false
 FAIL HTMLImageElement interface: attribute alt assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -2900,7 +2900,7 @@ FAIL HTMLIFrameElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLIFrameElement interface object length 
 PASS HTMLIFrameElement interface: existence and properties of interface prototype object 
-PASS HTMLIFrameElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLIFrameElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLIFrameElement.prototype.constructor is not writable expected true got false
 FAIL HTMLIFrameElement interface: attribute src assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3083,7 +3083,7 @@ FAIL HTMLParamElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLParamElement interface object length 
 PASS HTMLParamElement interface: existence and properties of interface prototype object 
-PASS HTMLParamElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLParamElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLParamElement.prototype.constructor is not writable expected true got false
 FAIL HTMLParamElement interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3107,7 +3107,7 @@ FAIL HTMLVideoElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLVideoElement interface object length 
 PASS HTMLVideoElement interface: existence and properties of interface prototype object 
-PASS HTMLVideoElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLVideoElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLVideoElement.prototype.constructor is not writable expected true got false
 FAIL HTMLVideoElement interface: attribute width assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3184,7 +3184,7 @@ FAIL HTMLAudioElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLAudioElement interface object length 
 PASS HTMLAudioElement interface: existence and properties of interface prototype object 
-PASS HTMLAudioElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLAudioElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAudioElement.prototype.constructor is not writable expected true got false
 PASS HTMLAudioElement must be primary interface of document.createElement("audio") 
 PASS Stringification of document.createElement("audio") 
 PASS HTMLMediaElement interface: document.createElement("audio") must inherit property "error" with the proper type (0) 
@@ -3292,7 +3292,7 @@ FAIL HTMLSourceElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLSourceElement interface object length 
 PASS HTMLSourceElement interface: existence and properties of interface prototype object 
-PASS HTMLSourceElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLSourceElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLSourceElement.prototype.constructor is not writable expected true got false
 FAIL HTMLSourceElement interface: attribute src assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3316,7 +3316,7 @@ FAIL HTMLTrackElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLTrackElement interface object length 
 PASS HTMLTrackElement interface: existence and properties of interface prototype object 
-PASS HTMLTrackElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTrackElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTrackElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTrackElement interface: attribute kind assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3364,7 +3364,7 @@ FAIL HTMLMediaElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLMediaElement interface object length 
 PASS HTMLMediaElement interface: existence and properties of interface prototype object 
-PASS HTMLMediaElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLMediaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMediaElement.prototype.constructor is not writable expected true got false
 FAIL HTMLMediaElement interface: attribute error assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3475,7 +3475,7 @@ FAIL MediaError interface: existence and properties of interface object assert_e
 }" but got (object) object "[object Object]"
 PASS MediaError interface object length 
 PASS MediaError interface: existence and properties of interface prototype object 
-PASS MediaError interface: existence and properties of interface prototype object's "constructor" property 
+FAIL MediaError interface: existence and properties of interface prototype object's "constructor" property assert_true: MediaError.prototype.constructor is not writable expected true got false
 PASS MediaError interface: constant MEDIA_ERR_ABORTED on interface object 
 PASS MediaError interface: constant MEDIA_ERR_ABORTED on interface prototype object 
 PASS MediaError interface: constant MEDIA_ERR_NETWORK on interface object 
@@ -3534,7 +3534,7 @@ FAIL MediaController interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS MediaController interface object length 
 FAIL MediaController interface: existence and properties of interface prototype object assert_equals: prototype of MediaController.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-PASS MediaController interface: existence and properties of interface prototype object's "constructor" property 
+FAIL MediaController interface: existence and properties of interface prototype object's "constructor" property assert_true: MediaController.prototype.constructor is not writable expected true got false
 FAIL MediaController interface: attribute readyState assert_true: The prototype object must have a property "readyState" expected true got false
 FAIL MediaController interface: attribute buffered assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -3661,7 +3661,7 @@ FAIL TextTrack interface: existence and properties of interface object assert_eq
 }" but got (object) object "[object Object]"
 PASS TextTrack interface object length 
 FAIL TextTrack interface: existence and properties of interface prototype object assert_equals: prototype of TextTrack.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-PASS TextTrack interface: existence and properties of interface prototype object's "constructor" property 
+FAIL TextTrack interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrack.prototype.constructor is not writable expected true got false
 FAIL TextTrack interface: attribute kind assert_true: The prototype object must have a property "kind" expected true got false
 FAIL TextTrack interface: attribute label assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -3730,7 +3730,7 @@ FAIL TextTrackCue interface: existence and properties of interface object assert
 }" but got (object) object "[object Object]"
 FAIL TextTrackCue interface object length assert_equals: wrong value for TextTrackCue.length expected 0 but got 3
 FAIL TextTrackCue interface: existence and properties of interface prototype object assert_equals: prototype of TextTrackCue.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-PASS TextTrackCue interface: existence and properties of interface prototype object's "constructor" property 
+FAIL TextTrackCue interface: existence and properties of interface prototype object's "constructor" property assert_true: TextTrackCue.prototype.constructor is not writable expected true got false
 FAIL TextTrackCue interface: attribute track assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3757,7 +3757,7 @@ FAIL TimeRanges interface: existence and properties of interface object assert_e
 }" but got (object) object "[object Object]"
 PASS TimeRanges interface object length 
 PASS TimeRanges interface: existence and properties of interface prototype object 
-PASS TimeRanges interface: existence and properties of interface prototype object's "constructor" property 
+FAIL TimeRanges interface: existence and properties of interface prototype object's "constructor" property assert_true: TimeRanges.prototype.constructor is not writable expected true got false
 FAIL TimeRanges interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS TimeRanges interface: operation start(unsigned long) 
 PASS TimeRanges interface: operation end(unsigned long) 
@@ -3773,7 +3773,7 @@ FAIL TrackEvent interface: existence and properties of interface object assert_e
 }" but got (object) object "[object Object]"
 PASS TrackEvent interface object length 
 PASS TrackEvent interface: existence and properties of interface prototype object 
-PASS TrackEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL TrackEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: TrackEvent.prototype.constructor is not writable expected true got false
 FAIL TrackEvent interface: attribute track assert_true: The prototype object must have a property "track" expected true got false
 FAIL TrackEvent must be primary interface of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
 FAIL Stringification of new TrackEvent("addtrack"; {track:document.createElement("track").track}) assert_equals: Unexpected exception when evaluating object expected null but got object "SyntaxError: Unexpected token ';'. Expected ')' to end a ..."
@@ -3801,7 +3801,7 @@ FAIL HTMLMapElement interface: existence and properties of interface object asse
 }" but got (object) object "[object Object]"
 PASS HTMLMapElement interface object length 
 PASS HTMLMapElement interface: existence and properties of interface prototype object 
-PASS HTMLMapElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLMapElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMapElement.prototype.constructor is not writable expected true got false
 FAIL HTMLMapElement interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3819,7 +3819,7 @@ FAIL HTMLAreaElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLAreaElement interface object length 
 PASS HTMLAreaElement interface: existence and properties of interface prototype object 
-PASS HTMLAreaElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLAreaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLAreaElement.prototype.constructor is not writable expected true got false
 FAIL HTMLAreaElement interface: attribute alt assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3865,7 +3865,7 @@ FAIL HTMLTableElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLTableElement interface object length 
 PASS HTMLTableElement interface: existence and properties of interface prototype object 
-PASS HTMLTableElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTableElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTableElement interface: attribute caption assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3955,7 +3955,7 @@ FAIL HTMLTableCaptionElement interface: existence and properties of interface ob
 }" but got (object) object "[object Object]"
 PASS HTMLTableCaptionElement interface object length 
 PASS HTMLTableCaptionElement interface: existence and properties of interface prototype object 
-PASS HTMLTableCaptionElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTableCaptionElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableCaptionElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTableCaptionElement interface: attribute align assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -3967,7 +3967,7 @@ FAIL HTMLTableColElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLTableColElement interface object length 
 PASS HTMLTableColElement interface: existence and properties of interface prototype object 
-PASS HTMLTableColElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTableColElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableColElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTableColElement interface: attribute span assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4007,7 +4007,7 @@ FAIL HTMLTableSectionElement interface: existence and properties of interface ob
 }" but got (object) object "[object Object]"
 PASS HTMLTableSectionElement interface object length 
 PASS HTMLTableSectionElement interface: existence and properties of interface prototype object 
-PASS HTMLTableSectionElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTableSectionElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableSectionElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTableSectionElement interface: attribute rows assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4069,7 +4069,7 @@ FAIL HTMLTableRowElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLTableRowElement interface object length 
 PASS HTMLTableRowElement interface: existence and properties of interface prototype object 
-PASS HTMLTableRowElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTableRowElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableRowElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTableRowElement interface: attribute rowIndex assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4165,7 +4165,7 @@ FAIL HTMLTableCellElement interface: existence and properties of interface objec
 }" but got (object) object "[object Object]"
 PASS HTMLTableCellElement interface object length 
 PASS HTMLTableCellElement interface: existence and properties of interface prototype object 
-PASS HTMLTableCellElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTableCellElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableCellElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTableCellElement interface: attribute colSpan assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4250,7 +4250,7 @@ FAIL HTMLLabelElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLLabelElement interface object length 
 PASS HTMLLabelElement interface: existence and properties of interface prototype object 
-PASS HTMLLabelElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLLabelElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLabelElement.prototype.constructor is not writable expected true got false
 FAIL HTMLLabelElement interface: attribute form assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4270,7 +4270,7 @@ FAIL HTMLInputElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLInputElement interface object length 
 PASS HTMLInputElement interface: existence and properties of interface prototype object 
-PASS HTMLInputElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLInputElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLInputElement.prototype.constructor is not writable expected true got false
 FAIL HTMLInputElement interface: attribute accept assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4486,7 +4486,7 @@ FAIL HTMLButtonElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLButtonElement interface object length 
 PASS HTMLButtonElement interface: existence and properties of interface prototype object 
-PASS HTMLButtonElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLButtonElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLButtonElement.prototype.constructor is not writable expected true got false
 FAIL HTMLButtonElement interface: attribute autofocus assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4672,7 +4672,7 @@ FAIL HTMLOptGroupElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLOptGroupElement interface object length 
 PASS HTMLOptGroupElement interface: existence and properties of interface prototype object 
-PASS HTMLOptGroupElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLOptGroupElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOptGroupElement.prototype.constructor is not writable expected true got false
 FAIL HTMLOptGroupElement interface: attribute disabled assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4688,7 +4688,7 @@ FAIL HTMLOptionElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLOptionElement interface object length 
 PASS HTMLOptionElement interface: existence and properties of interface prototype object 
-PASS HTMLOptionElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLOptionElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOptionElement.prototype.constructor is not writable expected true got false
 FAIL HTMLOptionElement interface: attribute disabled assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4738,7 +4738,7 @@ FAIL HTMLTextAreaElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLTextAreaElement interface object length 
 PASS HTMLTextAreaElement interface: existence and properties of interface prototype object 
-PASS HTMLTextAreaElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTextAreaElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTextAreaElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTextAreaElement interface: attribute autocomplete assert_true: The prototype object must have a property "autocomplete" expected true got false
 FAIL HTMLTextAreaElement interface: attribute autofocus assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -4866,7 +4866,7 @@ FAIL HTMLKeygenElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLKeygenElement interface object length 
 PASS HTMLKeygenElement interface: existence and properties of interface prototype object 
-PASS HTMLKeygenElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLKeygenElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLKeygenElement.prototype.constructor is not writable expected true got false
 FAIL HTMLKeygenElement interface: attribute autofocus assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4925,7 +4925,7 @@ FAIL HTMLOutputElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLOutputElement interface object length 
 PASS HTMLOutputElement interface: existence and properties of interface prototype object 
-PASS HTMLOutputElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLOutputElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLOutputElement.prototype.constructor is not writable expected true got false
 FAIL HTMLOutputElement interface: attribute htmlFor assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -4980,7 +4980,7 @@ FAIL HTMLProgressElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLProgressElement interface object length 
 PASS HTMLProgressElement interface: existence and properties of interface prototype object 
-PASS HTMLProgressElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLProgressElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLProgressElement.prototype.constructor is not writable expected true got false
 FAIL HTMLProgressElement interface: attribute value assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5004,7 +5004,7 @@ FAIL HTMLMeterElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLMeterElement interface object length 
 PASS HTMLMeterElement interface: existence and properties of interface prototype object 
-PASS HTMLMeterElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLMeterElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMeterElement.prototype.constructor is not writable expected true got false
 FAIL HTMLMeterElement interface: attribute value assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5040,7 +5040,7 @@ FAIL HTMLFieldSetElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLFieldSetElement interface object length 
 PASS HTMLFieldSetElement interface: existence and properties of interface prototype object 
-PASS HTMLFieldSetElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLFieldSetElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFieldSetElement.prototype.constructor is not writable expected true got false
 FAIL HTMLFieldSetElement interface: attribute disabled assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5073,7 +5073,7 @@ FAIL HTMLLegendElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLLegendElement interface object length 
 PASS HTMLLegendElement interface: existence and properties of interface prototype object 
-PASS HTMLLegendElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLLegendElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLLegendElement.prototype.constructor is not writable expected true got false
 FAIL HTMLLegendElement interface: attribute form assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5122,7 +5122,7 @@ FAIL HTMLDetailsElement interface: existence and properties of interface object 
 }" but got (object) object "[object Object]"
 PASS HTMLDetailsElement interface object length 
 PASS HTMLDetailsElement interface: existence and properties of interface prototype object 
-PASS HTMLDetailsElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLDetailsElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDetailsElement.prototype.constructor is not writable expected true got false
 FAIL HTMLDetailsElement interface: attribute open assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5134,7 +5134,7 @@ FAIL HTMLMenuElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLMenuElement interface object length 
 PASS HTMLMenuElement interface: existence and properties of interface prototype object 
-PASS HTMLMenuElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLMenuElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMenuElement.prototype.constructor is not writable expected true got false
 FAIL HTMLMenuElement interface: attribute type assert_true: The prototype object must have a property "type" expected true got false
 FAIL HTMLMenuElement interface: attribute label assert_true: The prototype object must have a property "label" expected true got false
 FAIL HTMLMenuElement interface: attribute compact assert_throws: getting property on prototype object must throw TypeError function "function () {
@@ -5176,7 +5176,7 @@ FAIL HTMLScriptElement interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS HTMLScriptElement interface object length 
 PASS HTMLScriptElement interface: existence and properties of interface prototype object 
-PASS HTMLScriptElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLScriptElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLScriptElement.prototype.constructor is not writable expected true got false
 FAIL HTMLScriptElement interface: attribute src assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5220,14 +5220,14 @@ FAIL HTMLTemplateElement interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS HTMLTemplateElement interface object length 
 PASS HTMLTemplateElement interface: existence and properties of interface prototype object 
-PASS HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTemplateElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTemplateElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTemplateElement interface: attribute content assert_true: The prototype object must have a property "content" expected true got false
 FAIL HTMLCanvasElement interface: existence and properties of interface object assert_equals: prototype of self's property "HTMLCanvasElement" is not Function.prototype expected (function) function "function () {
     [native code]
 }" but got (object) object "[object Object]"
 PASS HTMLCanvasElement interface object length 
 PASS HTMLCanvasElement interface: existence and properties of interface prototype object 
-PASS HTMLCanvasElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLCanvasElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLCanvasElement.prototype.constructor is not writable expected true got false
 FAIL HTMLCanvasElement interface: attribute width assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5269,7 +5269,7 @@ FAIL CanvasRenderingContext2D interface: existence and properties of interface o
 }" but got (object) object "[object Object]"
 FAIL CanvasRenderingContext2D interface object length assert_equals: wrong value for CanvasRenderingContext2D.length expected 1 but got 0
 FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object assert_equals: prototype of CanvasRenderingContext2D.prototype is not Object.prototype expected object "[object Object]" but got object "[object CanvasRenderingContextPrototype]"
-PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property 
+FAIL CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property assert_true: CanvasRenderingContext2D.prototype.constructor is not writable expected true got false
 FAIL CanvasRenderingContext2D interface: attribute canvas assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5537,21 +5537,21 @@ FAIL CanvasGradient interface: existence and properties of interface object asse
 }" but got (object) object "[object Object]"
 PASS CanvasGradient interface object length 
 PASS CanvasGradient interface: existence and properties of interface prototype object 
-PASS CanvasGradient interface: existence and properties of interface prototype object's "constructor" property 
+FAIL CanvasGradient interface: existence and properties of interface prototype object's "constructor" property assert_true: CanvasGradient.prototype.constructor is not writable expected true got false
 FAIL CanvasGradient interface: operation addColorStop(double,DOMString) assert_equals: property has wrong .length expected 2 but got 0
 FAIL CanvasPattern interface: existence and properties of interface object assert_equals: prototype of self's property "CanvasPattern" is not Function.prototype expected (function) function "function () {
     [native code]
 }" but got (object) object "[object Object]"
 PASS CanvasPattern interface object length 
 PASS CanvasPattern interface: existence and properties of interface prototype object 
-PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property 
+FAIL CanvasPattern interface: existence and properties of interface prototype object's "constructor" property assert_true: CanvasPattern.prototype.constructor is not writable expected true got false
 FAIL CanvasPattern interface: operation setTransform(SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
 FAIL TextMetrics interface: existence and properties of interface object assert_equals: prototype of self's property "TextMetrics" is not Function.prototype expected (function) function "function () {
     [native code]
 }" but got (object) object "[object Object]"
 PASS TextMetrics interface object length 
 PASS TextMetrics interface: existence and properties of interface prototype object 
-PASS TextMetrics interface: existence and properties of interface prototype object's "constructor" property 
+FAIL TextMetrics interface: existence and properties of interface prototype object's "constructor" property assert_true: TextMetrics.prototype.constructor is not writable expected true got false
 FAIL TextMetrics interface: attribute width assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5571,7 +5571,7 @@ FAIL ImageData interface: existence and properties of interface object assert_eq
 }" but got (object) object "[object Object]"
 PASS ImageData interface object length 
 PASS ImageData interface: existence and properties of interface prototype object 
-PASS ImageData interface: existence and properties of interface prototype object's "constructor" property 
+FAIL ImageData interface: existence and properties of interface prototype object's "constructor" property assert_true: ImageData.prototype.constructor is not writable expected true got false
 FAIL ImageData interface: attribute width assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5599,7 +5599,7 @@ FAIL Path2D interface: existence and properties of interface object assert_equal
 }" but got (object) object "[object Object]"
 PASS Path2D interface object length 
 PASS Path2D interface: existence and properties of interface prototype object 
-PASS Path2D interface: existence and properties of interface prototype object's "constructor" property 
+FAIL Path2D interface: existence and properties of interface prototype object's "constructor" property assert_true: Path2D.prototype.constructor is not writable expected true got false
 PASS Path2D interface: operation addPath(Path2D,SVGMatrix) 
 FAIL Path2D interface: operation addPathByStrokingPath(Path2D,CanvasDrawingStyles,SVGMatrix) assert_own_property: interface prototype object missing non-static operation expected property "addPathByStrokingPath" missing
 FAIL Path2D interface: operation addText(DOMString,CanvasDrawingStyles,SVGMatrix,unrestricted double,unrestricted double,unrestricted double) assert_own_property: interface prototype object missing non-static operation expected property "addText" missing
@@ -5621,7 +5621,7 @@ FAIL DataTransfer interface: existence and properties of interface object assert
 }" but got (object) object "[object Object]"
 PASS DataTransfer interface object length 
 PASS DataTransfer interface: existence and properties of interface prototype object 
-PASS DataTransfer interface: existence and properties of interface prototype object's "constructor" property 
+FAIL DataTransfer interface: existence and properties of interface prototype object's "constructor" property assert_true: DataTransfer.prototype.constructor is not writable expected true got false
 FAIL DataTransfer interface: attribute dropEffect assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5934,7 +5934,7 @@ FAIL BarProp interface: existence and properties of interface object assert_equa
 }" but got (object) object "[object Object]"
 PASS BarProp interface object length 
 PASS BarProp interface: existence and properties of interface prototype object 
-PASS BarProp interface: existence and properties of interface prototype object's "constructor" property 
+FAIL BarProp interface: existence and properties of interface prototype object's "constructor" property assert_true: BarProp.prototype.constructor is not writable expected true got false
 FAIL BarProp interface: attribute visible assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -5992,7 +5992,7 @@ FAIL PopStateEvent interface: existence and properties of interface object asser
 }" but got (object) object "[object Object]"
 PASS PopStateEvent interface object length 
 PASS PopStateEvent interface: existence and properties of interface prototype object 
-PASS PopStateEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL PopStateEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: PopStateEvent.prototype.constructor is not writable expected true got false
 FAIL PopStateEvent interface: attribute state assert_true: The prototype object must have a property "state" expected true got false
 PASS PopStateEvent must be primary interface of new PopStateEvent("popstate", { data: {} }) 
 PASS Stringification of new PopStateEvent("popstate", { data: {} }) 
@@ -6022,7 +6022,7 @@ FAIL HashChangeEvent interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HashChangeEvent interface object length 
 PASS HashChangeEvent interface: existence and properties of interface prototype object 
-PASS HashChangeEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HashChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: HashChangeEvent.prototype.constructor is not writable expected true got false
 FAIL HashChangeEvent interface: attribute oldURL assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6034,7 +6034,7 @@ FAIL PageTransitionEvent interface: existence and properties of interface object
 }" but got (object) object "[object Object]"
 PASS PageTransitionEvent interface object length 
 PASS PageTransitionEvent interface: existence and properties of interface prototype object 
-PASS PageTransitionEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL PageTransitionEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: PageTransitionEvent.prototype.constructor is not writable expected true got false
 FAIL PageTransitionEvent interface: attribute persisted assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6043,7 +6043,7 @@ FAIL BeforeUnloadEvent interface: existence and properties of interface object a
 }" but got (object) object "[object Object]"
 PASS BeforeUnloadEvent interface object length 
 PASS BeforeUnloadEvent interface: existence and properties of interface prototype object 
-PASS BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL BeforeUnloadEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: BeforeUnloadEvent.prototype.constructor is not writable expected true got false
 FAIL BeforeUnloadEvent interface: attribute returnValue assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6110,7 +6110,7 @@ FAIL ErrorEvent interface: existence and properties of interface object assert_e
 }" but got (object) object "[object Object]"
 PASS ErrorEvent interface object length 
 PASS ErrorEvent interface: existence and properties of interface prototype object 
-PASS ErrorEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL ErrorEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: ErrorEvent.prototype.constructor is not writable expected true got false
 FAIL ErrorEvent interface: attribute message assert_true: The prototype object must have a property "message" expected true got false
 FAIL ErrorEvent interface: attribute filename assert_true: The prototype object must have a property "filename" expected true got false
 FAIL ErrorEvent interface: attribute lineno assert_true: The prototype object must have a property "lineno" expected true got false
@@ -6121,7 +6121,7 @@ FAIL Navigator interface: existence and properties of interface object assert_eq
 }" but got (object) object "[object Object]"
 PASS Navigator interface object length 
 PASS Navigator interface: existence and properties of interface prototype object 
-PASS Navigator interface: existence and properties of interface prototype object's "constructor" property 
+FAIL Navigator interface: existence and properties of interface prototype object's "constructor" property assert_true: Navigator.prototype.constructor is not writable expected true got false
 FAIL Navigator interface: attribute appCodeName assert_true: The prototype object must have a property "appCodeName" expected true got false
 FAIL Navigator interface: attribute appName assert_true: The prototype object must have a property "appName" expected true got false
 FAIL Navigator interface: attribute appVersion assert_true: The prototype object must have a property "appVersion" expected true got false
@@ -6210,7 +6210,7 @@ FAIL MimeType interface: existence and properties of interface object assert_equ
 }" but got (object) object "[object Object]"
 PASS MimeType interface object length 
 PASS MimeType interface: existence and properties of interface prototype object 
-PASS MimeType interface: existence and properties of interface prototype object's "constructor" property 
+FAIL MimeType interface: existence and properties of interface prototype object's "constructor" property assert_true: MimeType.prototype.constructor is not writable expected true got false
 FAIL MimeType interface: attribute type assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6246,7 +6246,7 @@ FAIL MessageEvent interface: existence and properties of interface object assert
 }" but got (object) object "[object Object]"
 PASS MessageEvent interface object length 
 PASS MessageEvent interface: existence and properties of interface prototype object 
-PASS MessageEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL MessageEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: MessageEvent.prototype.constructor is not writable expected true got false
 FAIL MessageEvent interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
 FAIL MessageEvent interface: attribute origin assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
@@ -6266,7 +6266,7 @@ FAIL EventSource interface: existence and properties of interface object assert_
 }" but got (object) object "[object Object]"
 PASS EventSource interface object length 
 FAIL EventSource interface: existence and properties of interface prototype object assert_equals: prototype of EventSource.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-PASS EventSource interface: existence and properties of interface prototype object's "constructor" property 
+FAIL EventSource interface: existence and properties of interface prototype object's "constructor" property assert_true: EventSource.prototype.constructor is not writable expected true got false
 FAIL EventSource interface: attribute url assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6297,7 +6297,7 @@ FAIL WebSocket interface: existence and properties of interface object assert_eq
 }" but got (object) object "[object Object]"
 PASS WebSocket interface object length 
 FAIL WebSocket interface: existence and properties of interface prototype object assert_equals: prototype of WebSocket.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-PASS WebSocket interface: existence and properties of interface prototype object's "constructor" property 
+FAIL WebSocket interface: existence and properties of interface prototype object's "constructor" property assert_true: WebSocket.prototype.constructor is not writable expected true got false
 FAIL WebSocket interface: attribute url assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6346,7 +6346,7 @@ FAIL CloseEvent interface: existence and properties of interface object assert_e
 }" but got (object) object "[object Object]"
 PASS CloseEvent interface object length 
 PASS CloseEvent interface: existence and properties of interface prototype object 
-PASS CloseEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL CloseEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: CloseEvent.prototype.constructor is not writable expected true got false
 FAIL CloseEvent interface: attribute wasClean assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6361,7 +6361,7 @@ FAIL MessageChannel interface: existence and properties of interface object asse
 }" but got (object) object "[object Object]"
 PASS MessageChannel interface object length 
 PASS MessageChannel interface: existence and properties of interface prototype object 
-PASS MessageChannel interface: existence and properties of interface prototype object's "constructor" property 
+FAIL MessageChannel interface: existence and properties of interface prototype object's "constructor" property assert_true: MessageChannel.prototype.constructor is not writable expected true got false
 FAIL MessageChannel interface: attribute port1 assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6373,7 +6373,7 @@ FAIL MessagePort interface: existence and properties of interface object assert_
 }" but got (object) object "[object Object]"
 PASS MessagePort interface object length 
 FAIL MessagePort interface: existence and properties of interface prototype object assert_equals: prototype of MessagePort.prototype is not EventTarget.prototype expected object "[object EventTargetPrototype]" but got object "[object Object]"
-PASS MessagePort interface: existence and properties of interface prototype object's "constructor" property 
+FAIL MessagePort interface: existence and properties of interface prototype object's "constructor" property assert_true: MessagePort.prototype.constructor is not writable expected true got false
 PASS MessagePort interface: operation postMessage(any,[object Object]) 
 PASS MessagePort interface: operation start() 
 PASS MessagePort interface: operation close() 
@@ -6436,7 +6436,7 @@ FAIL Worker interface: existence and properties of interface object assert_equal
 }" but got (object) object "[object Object]"
 PASS Worker interface object length 
 PASS Worker interface: existence and properties of interface prototype object 
-PASS Worker interface: existence and properties of interface prototype object's "constructor" property 
+FAIL Worker interface: existence and properties of interface prototype object's "constructor" property assert_true: Worker.prototype.constructor is not writable expected true got false
 PASS Worker interface: operation terminate() 
 PASS Worker interface: operation postMessage(any,[object Object]) 
 FAIL Worker interface: attribute onmessage assert_throws: getting property on prototype object must throw TypeError function "function () {
@@ -6486,7 +6486,7 @@ FAIL StorageEvent interface: existence and properties of interface object assert
 }" but got (object) object "[object Object]"
 PASS StorageEvent interface object length 
 PASS StorageEvent interface: existence and properties of interface prototype object 
-PASS StorageEvent interface: existence and properties of interface prototype object's "constructor" property 
+FAIL StorageEvent interface: existence and properties of interface prototype object's "constructor" property assert_true: StorageEvent.prototype.constructor is not writable expected true got false
 FAIL StorageEvent interface: attribute key assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6559,7 +6559,7 @@ FAIL HTMLMarqueeElement interface: existence and properties of interface object 
 }" but got (object) object "[object Object]"
 PASS HTMLMarqueeElement interface object length 
 PASS HTMLMarqueeElement interface: existence and properties of interface prototype object 
-PASS HTMLMarqueeElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLMarqueeElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLMarqueeElement.prototype.constructor is not writable expected true got false
 FAIL HTMLMarqueeElement interface: attribute behavior assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6659,7 +6659,7 @@ FAIL HTMLFrameElement interface: existence and properties of interface object as
 }" but got (object) object "[object Object]"
 PASS HTMLFrameElement interface object length 
 PASS HTMLFrameElement interface: existence and properties of interface prototype object 
-PASS HTMLFrameElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLFrameElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFrameElement.prototype.constructor is not writable expected true got false
 FAIL HTMLFrameElement interface: attribute name assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6705,7 +6705,7 @@ FAIL HTMLDirectoryElement interface: existence and properties of interface objec
 }" but got (object) object "[object Object]"
 PASS HTMLDirectoryElement interface object length 
 PASS HTMLDirectoryElement interface: existence and properties of interface prototype object 
-PASS HTMLDirectoryElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLDirectoryElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLDirectoryElement.prototype.constructor is not writable expected true got false
 FAIL HTMLDirectoryElement interface: attribute compact assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -6717,7 +6717,7 @@ FAIL HTMLFontElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLFontElement interface object length 
 PASS HTMLFontElement interface: existence and properties of interface prototype object 
-PASS HTMLFontElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLFontElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLFontElement.prototype.constructor is not writable expected true got false
 FAIL HTMLFontElement interface: attribute color assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
