@@ -1,3 +1,13 @@
+2015-09-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Add a file of pointer-lock to cmake ports
+        https://bugs.webkit.org/show_bug.cgi?id=149453
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick): Fix a build break.
+
 2015-09-22  Anders Carlsson  <andersca@apple.com>
 
         URL of page visited in private browsing still appears in Activity Monitor after page is closed

@@ -1,3 +1,12 @@
+2015-09-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Add a file of pointer-lock to cmake ports
+        https://bugs.webkit.org/show_bug.cgi?id=149453
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsEfl.cmake: Add a ENABLE_POINTER_LOCK.
+
 2015-09-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Allow to enable OpenMP support.
