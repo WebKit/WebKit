@@ -146,7 +146,7 @@ PASS document.createTreeWalker(document, 0, (function(node) { return node.nodeNa
 PASS document.createTreeWalker(document, 0xFFFFFFFF, null) 
 PASS document.createTreeWalker(document, 0xFFFFFFFF, (function(node) { return true })) 
 PASS document.createTreeWalker(document, 0xFFFFFFFF, (function(node) { return false })) 
-FAIL document.createTreeWalker(document, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) assert_equals: .nextSibling() expected Text node "TreeWalker tests" but got null
+PASS document.createTreeWalker(document, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) 
 PASS document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, null) 
 PASS document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, (function(node) { return true })) 
 PASS document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, (function(node) { return false })) 
@@ -166,7 +166,7 @@ PASS document.createTreeWalker(detachedDiv, 0, (function(node) { return node.nod
 PASS document.createTreeWalker(detachedDiv, 0xFFFFFFFF, null) 
 PASS document.createTreeWalker(detachedDiv, 0xFFFFFFFF, (function(node) { return true })) 
 PASS document.createTreeWalker(detachedDiv, 0xFFFFFFFF, (function(node) { return false })) 
-FAIL document.createTreeWalker(detachedDiv, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) assert_equals: .nextSibling() expected Text node "Wxyzabcd" but got null
+PASS document.createTreeWalker(detachedDiv, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) 
 PASS document.createTreeWalker(detachedDiv, NodeFilter.SHOW_ELEMENT, null) 
 PASS document.createTreeWalker(detachedDiv, NodeFilter.SHOW_ELEMENT, (function(node) { return true })) 
 PASS document.createTreeWalker(detachedDiv, NodeFilter.SHOW_ELEMENT, (function(node) { return false })) 
@@ -186,7 +186,7 @@ PASS document.createTreeWalker(foreignDoc, 0, (function(node) { return node.node
 PASS document.createTreeWalker(foreignDoc, 0xFFFFFFFF, null) 
 PASS document.createTreeWalker(foreignDoc, 0xFFFFFFFF, (function(node) { return true })) 
 PASS document.createTreeWalker(foreignDoc, 0xFFFFFFFF, (function(node) { return false })) 
-FAIL document.createTreeWalker(foreignDoc, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) assert_equals: .nextSibling() expected Text node "Efghijkl" but got Comment node <!--"Commenter" and "commentator" mean different things.  I'v...-->
+PASS document.createTreeWalker(foreignDoc, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) 
 PASS document.createTreeWalker(foreignDoc, NodeFilter.SHOW_ELEMENT, null) 
 PASS document.createTreeWalker(foreignDoc, NodeFilter.SHOW_ELEMENT, (function(node) { return true })) 
 PASS document.createTreeWalker(foreignDoc, NodeFilter.SHOW_ELEMENT, (function(node) { return false })) 
@@ -226,7 +226,7 @@ PASS document.createTreeWalker(xmlDoc, 0, (function(node) { return node.nodeName
 PASS document.createTreeWalker(xmlDoc, 0xFFFFFFFF, null) 
 PASS document.createTreeWalker(xmlDoc, 0xFFFFFFFF, (function(node) { return true })) 
 PASS document.createTreeWalker(xmlDoc, 0xFFFFFFFF, (function(node) { return false })) 
-FAIL document.createTreeWalker(xmlDoc, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) assert_equals: .nextSibling() expected Text node "do re mi fa so la ti" but got Comment node <!--I maliciously created a comment that will break incautiou...-->
+PASS document.createTreeWalker(xmlDoc, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) 
 PASS document.createTreeWalker(xmlDoc, NodeFilter.SHOW_ELEMENT, null) 
 PASS document.createTreeWalker(xmlDoc, NodeFilter.SHOW_ELEMENT, (function(node) { return true })) 
 PASS document.createTreeWalker(xmlDoc, NodeFilter.SHOW_ELEMENT, (function(node) { return false })) 
@@ -506,8 +506,7 @@ PASS document.createTreeWalker(testDiv, 0, (function(node) { return node.nodeNam
 PASS document.createTreeWalker(testDiv, 0xFFFFFFFF, null) 
 PASS document.createTreeWalker(testDiv, 0xFFFFFFFF, (function(node) { return true })) 
 PASS document.createTreeWalker(testDiv, 0xFFFFFFFF, (function(node) { return false })) 
-FAIL document.createTreeWalker(testDiv, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) assert_equals: .nextSibling() expected Text node "Ijklmnop
-" but got Comment node <!--Alphabet soup?-->
+PASS document.createTreeWalker(testDiv, 0xFFFFFFFF, (function(node) { return node.nodeName[0] == '#' })) 
 PASS document.createTreeWalker(testDiv, NodeFilter.SHOW_ELEMENT, null) 
 PASS document.createTreeWalker(testDiv, NodeFilter.SHOW_ELEMENT, (function(node) { return true })) 
 PASS document.createTreeWalker(testDiv, NodeFilter.SHOW_ELEMENT, (function(node) { return false })) 

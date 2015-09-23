@@ -130,29 +130,24 @@ Node* TreeWalker::lastChild()
     return nullptr;
 }
 
-Node* TreeWalker::previousSibling()
+template<TreeWalker::SiblingTraversalType type> Node* TreeWalker::traverseSiblings()
 {
     RefPtr<Node> node = m_current;
     if (node == root())
         return nullptr;
-    while (1) {
-        for (RefPtr<Node> sibling = node->previousSibling(); sibling; ) {
+
+    auto isNext = type == SiblingTraversalType::Next;
+    while (true) {
+        for (RefPtr<Node> sibling = isNext ? node->nextSibling() : node->previousSibling(); sibling; ) {
             short acceptNodeResult = acceptNode(sibling.get());
-            switch (acceptNodeResult) {
-                case NodeFilter::FILTER_ACCEPT:
-                    m_current = sibling.release();
-                    return m_current.get();
-                case NodeFilter::FILTER_SKIP:
-                    if (sibling->lastChild()) {
-                        sibling = sibling->lastChild();
-                        node = sibling;
-                        continue;
-                    }
-                    break;
-                case NodeFilter::FILTER_REJECT:
-                    break;
+            if (acceptNodeResult == NodeFilter::FILTER_ACCEPT) {
+                m_current = WTF::move(sibling);
+                return m_current.get();
             }
-            sibling = sibling->previousSibling();
+            node = sibling;
+            sibling = isNext ? sibling->firstChild() : sibling->lastChild();
+            if (acceptNodeResult == NodeFilter::FILTER_REJECT || !sibling)
+                sibling = isNext ? node->nextSibling() : node->previousSibling();
         }
         node = node->parentNode();
         if (!node || node == root())
@@ -163,37 +158,14 @@ Node* TreeWalker::previousSibling()
     }
 }
 
+Node* TreeWalker::previousSibling()
+{
+    return traverseSiblings<SiblingTraversalType::Previous>();
+}
+
 Node* TreeWalker::nextSibling()
 {
-    RefPtr<Node> node = m_current;
-    if (node == root())
-        return nullptr;
-    while (1) {
-        for (RefPtr<Node> sibling = node->nextSibling(); sibling; ) {
-            short acceptNodeResult = acceptNode(sibling.get());
-            switch (acceptNodeResult) {
-                case NodeFilter::FILTER_ACCEPT:
-                    m_current = sibling.release();
-                    return m_current.get();
-                case NodeFilter::FILTER_SKIP:
-                    if (sibling->firstChild()) {
-                        sibling = sibling->firstChild();
-                        node = sibling;
-                        continue;
-                    }
-                    break;
-                case NodeFilter::FILTER_REJECT:
-                    break;
-            }
-            sibling = sibling->nextSibling();
-        }
-        node = node->parentNode();
-        if (!node || node == root())
-            return nullptr;
-        short acceptNodeResult = acceptNode(node.get());
-        if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
-            return nullptr;
-    }
+    return traverseSiblings<SiblingTraversalType::Next>();
 }
 
 Node* TreeWalker::previousNode()

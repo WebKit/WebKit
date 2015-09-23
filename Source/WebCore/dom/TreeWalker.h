@@ -55,6 +55,8 @@ namespace WebCore {
 
     private:
         TreeWalker(PassRefPtr<Node>, unsigned long whatToShow, RefPtr<NodeFilter>&&);
+        enum class SiblingTraversalType { Previous, Next };
+        template<SiblingTraversalType> Node* traverseSiblings();
         
         Node* setCurrent(PassRefPtr<Node>);
 
