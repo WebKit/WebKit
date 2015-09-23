@@ -1,3 +1,18 @@
+2015-09-22  Andy Estes  <aestes@apple.com>
+
+        Disable QuickLook on tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=149492
+        <rdar://problem/22741586>
+
+        Reviewed by Dan Bernstein.
+
+        We can't use USE(QUICK_LOOK) in a Private header, and postprocess-headers.sh doesn't know how to strip things
+        that aren't feature flags. So, if QuickLook is disabled, we'll just always define WebQuickLookFileNameKey and
+        WebQuickLookUTIKey, and we'll also define -quickLookContentForURL: but have it return nil.
+
+        * WebView/WebView.mm:
+        (-[WebView quickLookContentForURL:]):
+
 2015-09-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it more obvious when using an unaccelerated image buffer, and fix a few callers who do

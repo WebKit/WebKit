@@ -1,3 +1,13 @@
+2015-09-22  Andy Estes  <aestes@apple.com>
+
+        Disable QuickLook on tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=149492
+        <rdar://problem/22741586>
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Platform.h: Stopped enabling QuickLook on tvOS.
+
 2015-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of ENABLE(PARALLEL_GC)

@@ -611,7 +611,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 NSString *_WebMainFrameDocumentKey =    @"mainFrameDocument";
 #endif
 
-#if USE(QUICK_LOOK)
+#if PLATFORM(IOS)
 NSString *WebQuickLookFileNameKey = @"WebQuickLookFileNameKey";
 NSString *WebQuickLookUTIKey      = @"WebQuickLookUTIKey";
 #endif
@@ -3570,9 +3570,10 @@ static inline IMP getMethod(id o, SEL s)
     return _private->page->setDefersLoading(defer);
 }
 
-#if TARGET_OS_IPHONE && USE(QUICK_LOOK)
+#if PLATFORM(IOS)
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url
 {
+#if USE(QUICK_LOOK)
     NSString *uti = qlPreviewConverterUTIForURL(url);
     if (!uti)
         return nil;
@@ -3582,10 +3583,11 @@ static inline IMP getMethod(id o, SEL s)
         return nil;
 
     return [NSDictionary dictionaryWithObjectsAndKeys: fileName, WebQuickLookFileNameKey, uti, WebQuickLookUTIKey, nil];
-}
+#else
+    return nil;
 #endif
+}
 
-#if PLATFORM(IOS)
 - (BOOL)_isStopping
 {
     return _private->isStopping;
