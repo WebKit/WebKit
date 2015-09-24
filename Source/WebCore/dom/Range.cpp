@@ -556,7 +556,6 @@ static inline unsigned lengthOfContentsInNode(Node& node)
 {
     // This switch statement must be consistent with that of Range::processContentsBetweenOffsets.
     switch (node.nodeType()) {
-    case Node::XPATH_NAMESPACE_NODE: // FIXME: Remove from NodeType as there is no way to construct such Node in WebKit.
     case Node::DOCUMENT_TYPE_NODE:
         return 0;
     case Node::TEXT_NODE:
@@ -727,7 +726,6 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
-    case Node::XPATH_NAMESPACE_NODE:
         // FIXME: Should we assert that some nodes never appear here?
         if (action == Extract || action == Clone) {
             if (fragment)
@@ -1005,8 +1003,7 @@ Node* Range::checkNodeWOffset(Node* n, int offset, ExceptionCode& ec) const
         case Node::ATTRIBUTE_NODE:
         case Node::DOCUMENT_FRAGMENT_NODE:
         case Node::DOCUMENT_NODE:
-        case Node::ELEMENT_NODE:
-        case Node::XPATH_NAMESPACE_NODE: {
+        case Node::ELEMENT_NODE: {
             if (!offset)
                 return nullptr;
             Node* childBefore = n->traverseToChildAt(offset - 1);
@@ -1147,7 +1144,6 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         case Node::ELEMENT_NODE:
         case Node::PROCESSING_INSTRUCTION_NODE:
         case Node::TEXT_NODE:
-        case Node::XPATH_NAMESPACE_NODE:
             break;
     }
 

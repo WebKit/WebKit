@@ -80,7 +80,6 @@ static Class WKDOMNodeClass(WebCore::Node* impl)
     case WebCore::Node::COMMENT_NODE:
     case WebCore::Node::DOCUMENT_TYPE_NODE:
     case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
-    case WebCore::Node::XPATH_NAMESPACE_NODE:
         return [WKDOMNode class];
     }
     ASSERT_NOT_REACHED();

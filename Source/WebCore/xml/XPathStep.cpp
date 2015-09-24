@@ -153,8 +153,6 @@ static inline Node::NodeType primaryNodeType(Step::Axis axis)
     switch (axis) {
         case Step::AttributeAxis:
             return Node::ATTRIBUTE_NODE;
-        case Step::NamespaceAxis:
-            return Node::XPATH_NAMESPACE_NODE;
         default:
             return Node::ELEMENT_NODE;
     }
@@ -285,7 +283,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             return;
         }
         case FollowingSiblingAxis:
-            if (context.nodeType() == Node::ATTRIBUTE_NODE || context.nodeType() == Node::XPATH_NAMESPACE_NODE)
+            if (context.isAttributeNode())
                 return;
             for (Node* node = context.nextSibling(); node; node = node->nextSibling()) {
                 if (nodeMatches(*node, FollowingSiblingAxis, m_nodeTest))
@@ -293,7 +291,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             }
             return;
         case PrecedingSiblingAxis:
-            if (context.nodeType() == Node::ATTRIBUTE_NODE || context.nodeType() == Node::XPATH_NAMESPACE_NODE)
+            if (context.isAttributeNode())
                 return;
             for (Node* node = context.previousSibling(); node; node = node->previousSibling()) {
                 if (nodeMatches(*node, PrecedingSiblingAxis, m_nodeTest))

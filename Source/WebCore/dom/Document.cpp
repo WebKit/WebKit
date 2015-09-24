@@ -952,11 +952,8 @@ RefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCode& 
     case DOCUMENT_NODE: // Can't import a document into another document.
     case DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
         break;
-
-    case XPATH_NAMESPACE_NODE:
-        ASSERT_NOT_REACHED(); // These two types of DOM nodes are not implemented.
-        break;
     }
+
     ec = NOT_SUPPORTED_ERR;
     return nullptr;
 }
@@ -973,7 +970,6 @@ RefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
 
     switch (source->nodeType()) {
     case DOCUMENT_NODE:
-    case XPATH_NAMESPACE_NODE:
         ec = NOT_SUPPORTED_ERR;
         return nullptr;
     case ATTRIBUTE_NODE: {                   
@@ -3344,7 +3340,6 @@ bool Document::childTypeAllowed(NodeType type) const
     case DOCUMENT_FRAGMENT_NODE:
     case DOCUMENT_NODE:
     case TEXT_NODE:
-    case XPATH_NAMESPACE_NODE:
         return false;
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:
@@ -3371,7 +3366,6 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
     case CDATA_SECTION_NODE:
     case DOCUMENT_NODE:
     case TEXT_NODE:
-    case XPATH_NAMESPACE_NODE:
         return false;
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:

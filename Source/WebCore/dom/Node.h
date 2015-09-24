@@ -130,7 +130,6 @@ public:
         DOCUMENT_NODE = 9,
         DOCUMENT_TYPE_NODE = 10,
         DOCUMENT_FRAGMENT_NODE = 11,
-        XPATH_NAMESPACE_NODE = 13,
     };
     enum DeprecatedNodeType {
         ENTITY_REFERENCE_NODE = 5,

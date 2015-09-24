@@ -108,7 +108,6 @@ void Node::dumpStatistics()
     size_t documentNodes = 0;
     size_t docTypeNodes = 0;
     size_t fragmentNodes = 0;
-    size_t xpathNSNodes = 0;
     size_t shadowRootNodes = 0;
 
     HashMap<String, size_t> perTagCount;
@@ -190,10 +189,6 @@ void Node::dumpStatistics()
                     ++fragmentNodes;
                 break;
             }
-            case XPATH_NAMESPACE_NODE: {
-                ++xpathNSNodes;
-                break;
-            }
         }
     }
 
@@ -211,7 +206,6 @@ void Node::dumpStatistics()
     printf("  Number of Document nodes: %zu\n", documentNodes);
     printf("  Number of DocumentType nodes: %zu\n", docTypeNodes);
     printf("  Number of DocumentFragment nodes: %zu\n", fragmentNodes);
-    printf("  Number of XPathNS nodes: %zu\n", xpathNSNodes);
     printf("  Number of ShadowRoot nodes: %zu\n", shadowRootNodes);
 
     printf("Element tag name distibution:\n");
@@ -1416,7 +1410,6 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
 
     case Node::DOCUMENT_NODE:
     case Node::DOCUMENT_TYPE_NODE:
-    case Node::XPATH_NAMESPACE_NODE:
         break;
     }
 }
@@ -1450,7 +1443,6 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
         }
         case DOCUMENT_NODE:
         case DOCUMENT_TYPE_NODE:
-        case XPATH_NAMESPACE_NODE:
             // Do nothing.
             return;
     }

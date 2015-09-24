@@ -1,3 +1,17 @@
+2015-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Drop XPATH_NAMESPACE_NODE from Node::NodeType enum
+        https://bugs.webkit.org/show_bug.cgi?id=149532
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop XPATH_NAMESPACE_NODE from Node::NodeType enum as there is currently
+        no way to construct such Node in WebKit. This avoid having to handle this
+        Node type everywhere.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm:
+        (WebKit::WKDOMNodeClass): Deleted.
+
 2015-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Ran sort-Xcode-project-file.
