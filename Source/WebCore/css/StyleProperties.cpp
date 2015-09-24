@@ -24,6 +24,7 @@
 #include "StyleProperties.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -218,6 +219,14 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     default:
         return String();
     }
+}
+
+String StyleProperties::getCustomPropertyValue(const String& propertyName) const
+{
+    RefPtr<CSSValue> value = getCustomPropertyCSSValue(propertyName);
+    if (value)
+        return value->cssText();
+    return String();
 }
 
 String StyleProperties::borderSpacingValue(const StylePropertyShorthand& shorthand) const
@@ -587,6 +596,14 @@ PassRefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID property
     return propertyAt(foundPropertyIndex).value();
 }
 
+RefPtr<CSSValue> StyleProperties::getCustomPropertyCSSValue(const String& propertyName) const
+{
+    int foundPropertyIndex = findCustomPropertyIndex(propertyName);
+    if (foundPropertyIndex == -1)
+        return nullptr;
+    return propertyAt(foundPropertyIndex).value();
+}
+
 bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
@@ -631,6 +648,25 @@ bool MutableStyleProperties::removeProperty(CSSPropertyID propertyID, String* re
     return true;
 }
 
+bool MutableStyleProperties::removeCustomProperty(const String& propertyName, String* returnText)
+{
+    int foundPropertyIndex = findCustomPropertyIndex(propertyName);
+    if (foundPropertyIndex == -1) {
+        if (returnText)
+            *returnText = "";
+        return false;
+    }
+
+    if (returnText)
+        *returnText = propertyAt(foundPropertyIndex).value()->cssText();
+
+    // A more efficient removal strategy would involve marking entries as empty
+    // and sweeping them when the vector grows too big.
+    m_propertyVector.remove(foundPropertyIndex);
+
+    return true;
+}
+
 void MutableStyleProperties::removePrefixedOrUnprefixedProperty(CSSPropertyID propertyID)
 {
     int foundPropertyIndex = findPropertyIndex(prefixingVariantForPropertyId(propertyID));
@@ -654,6 +690,14 @@ bool StyleProperties::propertyIsImportant(CSSPropertyID propertyID) const
             return false;
     }
     return true;
+}
+
+bool StyleProperties::customPropertyIsImportant(const String& propertyName) const
+{
+    int foundPropertyIndex = findCustomPropertyIndex(propertyName);
+    if (foundPropertyIndex != -1)
+        return propertyAt(foundPropertyIndex).isImportant();
+    return false;
 }
 
 String StyleProperties::getPropertyShorthand(CSSPropertyID propertyID) const
@@ -684,6 +728,21 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     return CSSParser::parseValue(this, propertyID, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
+bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, StyleSheetContents* /*contextStyleSheet*/)
+{
+    // Setting the value to an empty string just removes the property in both IE and Gecko.
+    // Setting it to null seems to produce less consistent results, but we treat it just the same.
+    if (value.isEmpty())
+        return removeCustomProperty(propertyName);
+
+    // When replacing an existing property value, this moves the property to the end of the list.
+    // Firefox preserves the position, and MSIE moves the property to the beginning.
+    RefPtr<CSSCustomPropertyValue> customValue = CSSCustomPropertyValue::create(propertyName, value);
+    addParsedProperty(CSSProperty(CSSPropertyCustom, customValue, important));
+    
+    return true;
+}
+
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> prpValue, bool important)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
@@ -702,7 +761,15 @@ void MutableStyleProperties::setProperty(CSSPropertyID propertyID, PassRefPtr<CS
 bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSProperty* slot)
 {
     if (!removeShorthandProperty(property.id())) {
-        CSSProperty* toReplace = slot ? slot : findCSSPropertyWithID(property.id());
+        CSSProperty* toReplace = slot;
+        if (!slot) {
+            if (property.id() == CSSPropertyCustom) {
+                if (property.value())
+                    toReplace = findCustomCSSPropertyWithName(downcast<CSSCustomPropertyValue>(*property.value()).name());
+            } else
+                toReplace = findCSSPropertyWithID(property.id());
+        }
+        
         if (toReplace) {
             if (*toReplace == property)
                 return false;
@@ -781,6 +848,12 @@ bool MutableStyleProperties::addParsedProperties(const CSSParser::ParsedProperty
 
 bool MutableStyleProperties::addParsedProperty(const CSSProperty& property)
 {
+    if (property.id() == CSSPropertyCustom) {
+        if ((property.value() && !customPropertyIsImportant(downcast<CSSCustomPropertyValue>(*property.value()).name())) || property.isImportant())
+            return setProperty(property);
+        return false;
+    }
+    
     // Only add properties that have no !important counterpart present
     if (!propertyIsImportant(property.id()) || property.isImportant())
         return setProperty(property);
@@ -973,12 +1046,17 @@ String StyleProperties::asText() const
         } else
             value = property.value()->cssText();
 
-        if (value == "initial" && !CSSProperty::isInheritedProperty(propertyID))
+        if (propertyID != CSSPropertyCustom && value == "initial" && !CSSProperty::isInheritedProperty(propertyID))
             continue;
 
         if (numDecls++)
             result.append(' ');
-        result.append(getPropertyName(propertyID));
+
+        if (propertyID == CSSPropertyCustom)
+            result.append(downcast<CSSCustomPropertyValue>(*property.value()).name());
+        else
+            result.append(getPropertyName(propertyID));
+
         result.appendLiteral(": ");
         result.append(value);
         if (property.isImportant())
@@ -1175,9 +1253,51 @@ int MutableStyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
     return -1;
 }
 
+int ImmutableStyleProperties::findCustomPropertyIndex(const String& propertyName) const
+{
+    // Convert the propertyID into an uint16_t to compare it with the metadata's m_propertyID to avoid
+    // the compiler converting it to an int multiple times in the loop.
+    for (int n = m_arraySize - 1 ; n >= 0; --n) {
+        if (metadataArray()[n].m_propertyID == CSSPropertyCustom) {
+            // We found a custom property. See if the name matches.
+            if (!valueArray()[n])
+                continue;
+            if (downcast<CSSCustomPropertyValue>(*valueArray()[n]).name() == propertyName)
+                return n;
+        }
+    }
+
+    return -1;
+}
+
+int MutableStyleProperties::findCustomPropertyIndex(const String& propertyName) const
+{
+    // Convert the propertyID into an uint16_t to compare it with the metadata's m_propertyID to avoid
+    // the compiler converting it to an int multiple times in the loop.
+    for (int n = m_propertyVector.size() - 1 ; n >= 0; --n) {
+        if (m_propertyVector.at(n).metadata().m_propertyID == CSSPropertyCustom) {
+            // We found a custom property. See if the name matches.
+            if (!m_propertyVector.at(n).value())
+                continue;
+            if (downcast<CSSCustomPropertyValue>(*m_propertyVector.at(n).value()).name() == propertyName)
+                return n;
+        }
+    }
+
+    return -1;
+}
+
 CSSProperty* MutableStyleProperties::findCSSPropertyWithID(CSSPropertyID propertyID)
 {
     int foundPropertyIndex = findPropertyIndex(propertyID);
+    if (foundPropertyIndex == -1)
+        return 0;
+    return &m_propertyVector.at(foundPropertyIndex);
+}
+
+CSSProperty* MutableStyleProperties::findCustomCSSPropertyWithName(const String& propertyName)
+{
+    int foundPropertyIndex = findCustomPropertyIndex(propertyName);
     if (foundPropertyIndex == -1)
         return 0;
     return &m_propertyVector.at(foundPropertyIndex);
@@ -1265,6 +1385,8 @@ Ref<MutableStyleProperties> MutableStyleProperties::create(const CSSProperty* pr
 
 String StyleProperties::PropertyReference::cssName() const
 {
+    if (id() == CSSPropertyCustom)
+        return downcast<CSSCustomPropertyValue>(*value()).name();
     return getPropertyNameString(id());
 }
 

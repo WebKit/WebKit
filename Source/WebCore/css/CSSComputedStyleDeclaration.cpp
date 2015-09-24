@@ -32,6 +32,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
@@ -2095,6 +2096,20 @@ inline static bool isFlexOrGrid(ContainerNode* element)
     return element && element->computedStyle() && element->computedStyle()->isDisplayFlexibleOrGridBox();
 }
 
+RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& propertyName) const
+{
+    Node* styledNode = this->styledNode();
+    if (!styledNode)
+        return nullptr;
+
+    RefPtr<RenderStyle> style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, CSSPropertyCustom);
+    if (!style || !style->hasCustomProperty(propertyName))
+        return nullptr;
+
+    String result = style->getCustomPropertyValue(propertyName);
+    return CSSCustomPropertyValue::create(propertyName, result);
+}
+
 RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
@@ -3553,6 +3568,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWritingMode:
         case CSSPropertyWebkitSvgShadow:
             return svgPropertyValue(propertyID, DoNotUpdateLayout);
+        case CSSPropertyCustom:
+            ASSERT_NOT_REACHED();
+            return nullptr;
     }
 
     logUnimplementedPropertyID(propertyID);
@@ -3577,15 +3595,35 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!style)
         return 0;
 
-    return numComputedProperties;
+    const HashMap<AtomicString, String>* customProperties = style->customProperties();
+    return numComputedProperties + (customProperties ? customProperties->size() : 0);
 }
 
 String CSSComputedStyleDeclaration::item(unsigned i) const
 {
     if (i >= length())
         return emptyString();
+    
+    if (i < numComputedProperties)
+        return getPropertyNameString(computedProperties[i]);
+    
+    Node* node = m_node.get();
+    if (!node)
+        return emptyString();
 
-    return getPropertyNameString(computedProperties[i]);
+    RenderStyle* style = node->computedStyle(m_pseudoElementSpecifier);
+    if (!style)
+        return emptyString();
+    
+    unsigned index = i - numComputedProperties;
+    
+    const auto* customProperties = style->customProperties();
+    if (!customProperties || index >= customProperties->size())
+        return emptyString();
+    
+    Vector<String, 4> results;
+    copyKeysToVector(*customProperties, results);
+    return results.at(index);
 }
 
 bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value) const
@@ -3666,6 +3704,22 @@ Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CS
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
+    
+    auto* styledNode = this->styledNode();
+    if (styledNode) {
+        RefPtr<RenderStyle> style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, CSSPropertyCustom);
+        if (style) {
+            const auto* customProperties = style->customProperties();
+            if (customProperties) {
+                HashMap<AtomicString, String>::const_iterator end = customProperties->end();
+                for (HashMap<AtomicString, String>::const_iterator it = customProperties->begin(); it != end; ++it) {
+                    RefPtr<CSSCustomPropertyValue> value = CSSCustomPropertyValue::create(it->key, it->value);
+                    list.append(CSSProperty(CSSPropertyCustom, value.release(), false));
+                }
+            }
+        }
+    }
+    
     return MutableStyleProperties::create(list.data(), list.size());
 }
 
@@ -3676,6 +3730,11 @@ CSSRule* CSSComputedStyleDeclaration::parentRule() const
 
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
+    if (isCustomPropertyName(propertyName)) {
+        RefPtr<CSSValue> value = ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
+        return value ? value->cloneForCSSOM() : nullptr;
+    }
+
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return nullptr;
@@ -3685,6 +3744,13 @@ RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& 
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 {
+    if (isCustomPropertyName(propertyName)) {
+        RefPtr<CSSValue> value = ComputedStyleExtractor(m_node, m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
+        if (!value)
+            return String();
+        return value->cssText();
+    }
+
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return String();

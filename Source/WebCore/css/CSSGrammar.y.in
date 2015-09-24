@@ -88,6 +88,7 @@ static inline bool isCSSTokenAString(int yytype)
     case DIRFUNCTION:
     case ROLEFUNCTION:
 #endif
+    case CUSTOM_PROPERTY:
     case UNICODERANGE:
         return true;
     default:
@@ -243,6 +244,8 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %token <string> DIRFUNCTION
 %token <string> ROLEFUNCTION
 #endif
+
+%token <string> CUSTOM_PROPERTY
 
 %token <string> UNICODERANGE
 
@@ -1535,7 +1538,13 @@ decl_list_recovery:
     ;
 
 declaration:
-    property ':' maybe_space expr priority {
+    CUSTOM_PROPERTY maybe_space ':' maybe_space expr priority {
+        std::unique_ptr<CSSParserValueList> propertyValue($5);
+        parser->addCustomPropertyDeclaration($1, propertyValue.get(), $6);
+        $$ = true;
+        parser->markPropertyEnd($6, true);
+    }
+    | property ':' maybe_space expr priority {
         $$ = false;
         bool isPropertyParsed = false;
         std::unique_ptr<CSSParserValueList> propertyValue($4);

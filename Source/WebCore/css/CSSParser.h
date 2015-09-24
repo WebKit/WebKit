@@ -143,6 +143,8 @@ public:
     bool parseQuotes(CSSPropertyID, bool important);
     bool parseAlt(CSSPropertyID, bool important);
     
+    void addCustomPropertyDeclaration(const CSSParserString&, CSSParserValueList*, bool important);
+    
     RefPtr<CSSValue> parseAttr(CSSParserValueList& args);
 
     RefPtr<CSSValue> parseBackgroundColor();
@@ -753,6 +755,11 @@ inline UChar CSSParser::tokenStartChar()
     if (is8BitSource())
         return *m_tokenStart.ptr8;
     return *m_tokenStart.ptr16;
+}
+
+inline bool isCustomPropertyName(const String& propertyName)
+{
+    return propertyName.length() > 2 && propertyName.characterAt(0) == '-' && propertyName.characterAt(1) == '-';
 }
 
 inline int cssyylex(void* yylval, CSSParser* parser)
