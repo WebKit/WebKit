@@ -12,15 +12,15 @@ FAIL 0,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 
 FAIL 0,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild assert_true: First differing node: expected Text node "", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 " [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 0,2: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild 
-FAIL 0,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild 
 PASS 0,3: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1 
 PASS 0,3: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1 
 PASS 0,4: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1.firstChild 
-FAIL 0,4: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,4: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1.firstChild 
 PASS 0,5: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1 
 PASS 0,5: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1 
 PASS 0,6: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1.firstChild 
-FAIL 0,6: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,6: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1.firstChild 
 PASS 0,7: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node document 
 PASS 0,7: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node document 
 PASS 0,8: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedDiv 
@@ -34,17 +34,17 @@ PASS 0,11: resulting range position for range [paras[0].firstChild, 0, paras[0].
 PASS 0,12: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlElement 
 PASS 0,12: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlElement 
 PASS 0,13: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedTextNode 
-FAIL 0,13: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,13: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedTextNode 
 PASS 0,14: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignTextNode 
-FAIL 0,14: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,14: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignTextNode 
 PASS 0,15: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node processingInstruction 
-FAIL 0,15: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,15: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node processingInstruction 
 PASS 0,16: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedProcessingInstruction 
-FAIL 0,16: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,16: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedProcessingInstruction 
 PASS 0,17: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node comment 
-FAIL 0,17: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node comment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,17: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node comment 
 PASS 0,18: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedComment 
-FAIL 0,18: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 0,18: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedComment 
 PASS 0,19: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node docfrag 
 PASS 0,19: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node docfrag 
 PASS 0,20: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node doctype 
@@ -62,15 +62,15 @@ FAIL 1,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 
 FAIL 1,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild assert_true: First differing node: expected Text node "", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
 " [Actual and expected mismatch for range's tree root.  ] expected true got false
 PASS 1,2: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild 
-FAIL 1,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild 
 PASS 1,3: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1 
 PASS 1,3: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1 
 PASS 1,4: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1.firstChild 
-FAIL 1,4: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,4: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1.firstChild 
 PASS 1,5: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedPara1 
 PASS 1,5: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedPara1 
 PASS 1,6: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedPara1.firstChild 
-FAIL 1,6: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,6: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedPara1.firstChild 
 PASS 1,7: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node document 
 PASS 1,7: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node document 
 PASS 1,8: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedDiv 
@@ -84,17 +84,17 @@ PASS 1,11: resulting range position for range [paras[0].firstChild, 0, paras[0].
 PASS 1,12: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node xmlElement 
 PASS 1,12: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node xmlElement 
 PASS 1,13: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedTextNode 
-FAIL 1,13: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,13: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedTextNode 
 PASS 1,14: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignTextNode 
-FAIL 1,14: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,14: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignTextNode 
 PASS 1,15: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node processingInstruction 
-FAIL 1,15: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node processingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,15: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node processingInstruction 
 PASS 1,16: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedProcessingInstruction 
-FAIL 1,16: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedProcessingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,16: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedProcessingInstruction 
 PASS 1,17: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node comment 
-FAIL 1,17: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node comment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,17: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node comment 
 PASS 1,18: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedComment 
-FAIL 1,18: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedComment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 1,18: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node detachedComment 
 PASS 1,19: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node docfrag 
 PASS 1,19: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node docfrag 
 PASS 1,20: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node doctype 
@@ -204,7 +204,7 @@ PASS 3,21: resulting range position for range [paras[0].firstChild, 2, paras[0].
 PASS 4,0: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 4,0: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 4,1: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
-FAIL 4,1: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,1: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
 FAIL 4,2: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild assert_true: First differing node: expected Text node "", got Text node "Ijklmnop
 " [Actual and expected mismatch for range's tree root.  ] expected true got false
 FAIL 4,2: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild assert_true: First differing node: expected Text node "", got Text node "Ijklmnop
@@ -212,11 +212,11 @@ FAIL 4,2: resulting range position for range [paras[1].firstChild, 0, paras[1].f
 PASS 4,3: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
 PASS 4,3: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
 PASS 4,4: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild 
-FAIL 4,4: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,4: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild 
 PASS 4,5: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1 
 PASS 4,5: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1 
 PASS 4,6: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild 
-FAIL 4,6: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,6: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild 
 PASS 4,7: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node document 
 PASS 4,7: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node document 
 PASS 4,8: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedDiv 
@@ -230,17 +230,17 @@ PASS 4,11: resulting range position for range [paras[1].firstChild, 0, paras[1].
 PASS 4,12: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlElement 
 PASS 4,12: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlElement 
 PASS 4,13: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedTextNode 
-FAIL 4,13: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,13: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedTextNode 
 PASS 4,14: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignTextNode 
-FAIL 4,14: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,14: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignTextNode 
 PASS 4,15: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node processingInstruction 
-FAIL 4,15: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,15: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node processingInstruction 
 PASS 4,16: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedProcessingInstruction 
-FAIL 4,16: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,16: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedProcessingInstruction 
 PASS 4,17: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node comment 
-FAIL 4,17: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node comment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,17: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node comment 
 PASS 4,18: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedComment 
-FAIL 4,18: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 4,18: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedComment 
 PASS 4,19: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node docfrag 
 PASS 4,19: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node docfrag 
 PASS 4,20: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node doctype 
@@ -296,13 +296,13 @@ PASS 5,21: resulting range position for range [paras[1].firstChild, 2, paras[1].
 PASS 6,0: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] 
 PASS 6,0: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] 
 PASS 6,1: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild 
-FAIL 6,1: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,1: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild 
 PASS 6,2: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild 
-FAIL 6,2: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,2: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild 
 PASS 6,3: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 
 PASS 6,3: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 
 PASS 6,4: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild 
-FAIL 6,4: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,4: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild 
 FAIL 6,5: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 assert_true: First differing node: expected Element node <p>Wxyzabcd</p>, got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
 FAIL 6,5: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 assert_true: First differing node: expected Element node <p>Wxyzabcd</p>, got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
 FAIL 6,6: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild assert_true: First differing node: expected Text node "", got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
@@ -320,17 +320,17 @@ PASS 6,11: resulting range position for range [detachedPara1.firstChild, 0, deta
 PASS 6,12: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement 
 PASS 6,12: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement 
 PASS 6,13: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode 
-FAIL 6,13: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,13: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode 
 PASS 6,14: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode 
-FAIL 6,14: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,14: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode 
 PASS 6,15: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node processingInstruction 
-FAIL 6,15: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,15: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node processingInstruction 
 PASS 6,16: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedProcessingInstruction 
-FAIL 6,16: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,16: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedProcessingInstruction 
 PASS 6,17: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node comment 
-FAIL 6,17: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node comment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,17: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node comment 
 PASS 6,18: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedComment 
-FAIL 6,18: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 6,18: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedComment 
 PASS 6,19: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node docfrag 
 PASS 6,19: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node docfrag 
 PASS 6,20: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node doctype 
@@ -384,9 +384,9 @@ PASS 7,21: resulting range position for range [detachedPara1.firstChild, 2, deta
 PASS 8,0: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0] 
 PASS 8,0: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0] 
 PASS 8,1: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0].firstChild 
-FAIL 8,1: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,1: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0].firstChild 
 PASS 8,2: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild 
-FAIL 8,2: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,2: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild 
 FAIL 8,3: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1 assert_true: First differing node: expected Element node <p>Mnopqrst</p>, got Text node "Efghijkl" [Actual and expected mismatch for range's tree root.  ] expected true got false
 FAIL 8,3: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1 assert_true: First differing node: expected Element node <p>Mnopqrst</p>, got Text node "Efghijkl" [Actual and expected mismatch for range's tree root.  ] expected true got false
 FAIL 8,4: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild assert_true: First differing node: expected Text node "", got Text node "Efghijkl" [Actual and expected mismatch for range's tree root.  ] expected true got false
@@ -394,7 +394,7 @@ FAIL 8,4: resulting range position for range [foreignPara1.firstChild, 0, foreig
 PASS 8,5: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 
 PASS 8,5: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 
 PASS 8,6: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild 
-FAIL 8,6: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,6: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild 
 PASS 8,7: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node document 
 PASS 8,7: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node document 
 PASS 8,8: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedDiv 
@@ -408,17 +408,17 @@ PASS 8,11: resulting range position for range [foreignPara1.firstChild, 0, forei
 PASS 8,12: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlElement 
 PASS 8,12: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlElement 
 PASS 8,13: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedTextNode 
-FAIL 8,13: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,13: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedTextNode 
 PASS 8,14: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignTextNode 
-FAIL 8,14: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,14: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignTextNode 
 PASS 8,15: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node processingInstruction 
-FAIL 8,15: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,15: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node processingInstruction 
 PASS 8,16: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedProcessingInstruction 
-FAIL 8,16: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,16: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedProcessingInstruction 
 PASS 8,17: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node comment 
-FAIL 8,17: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node comment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,17: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node comment 
 PASS 8,18: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedComment 
-FAIL 8,18: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after surroundContents() expected 2 but got 0
+PASS 8,18: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedComment 
 PASS 8,19: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node docfrag 
 PASS 8,19: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node docfrag 
 PASS 8,20: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node doctype 

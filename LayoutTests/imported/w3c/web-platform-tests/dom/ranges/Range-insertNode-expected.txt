@@ -3,54 +3,52 @@ To debug test failures, add a query parameter "subtest" with the test id (like "
 
 PASS 0,0: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0] 
 PASS 0,0: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0] 
-FAIL 0,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 0,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild assert_true: First differing node: expected Text node "", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 0,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild 
+PASS 0,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[0].firstChild 
 PASS 0,2: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild 
-FAIL 0,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node paras[1].firstChild 
 PASS 0,3: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1 
-FAIL 0,3: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,3: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1 
 PASS 0,4: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1.firstChild 
-FAIL 0,4: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,4: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara1.firstChild 
 PASS 0,5: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1 
-FAIL 0,5: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,5: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1 
 PASS 0,6: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1.firstChild 
-FAIL 0,6: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1.firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,6: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedPara1.firstChild 
 PASS 0,7: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node document 
 PASS 0,7: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node document 
 PASS 0,8: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedDiv 
-FAIL 0,8: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedDiv assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,8: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedDiv 
 PASS 0,9: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignDoc 
 PASS 0,9: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignDoc 
 PASS 0,10: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara2 
-FAIL 0,10: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara2 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,10: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignPara2 
 PASS 0,11: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlDoc 
 PASS 0,11: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlDoc 
 PASS 0,12: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlElement 
-FAIL 0,12: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlElement assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,12: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node xmlElement 
 PASS 0,13: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedTextNode 
-FAIL 0,13: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,13: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedTextNode 
 PASS 0,14: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignTextNode 
-FAIL 0,14: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,14: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignTextNode 
 PASS 0,15: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node processingInstruction 
-FAIL 0,15: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,15: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node processingInstruction 
 PASS 0,16: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedProcessingInstruction 
-FAIL 0,16: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,16: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedProcessingInstruction 
 PASS 0,17: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node comment 
-FAIL 0,17: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node comment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,17: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node comment 
 PASS 0,18: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedComment 
-FAIL 0,18: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 0,18: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node detachedComment 
 PASS 0,19: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node docfrag 
-FAIL 0,19: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node docfrag assert_equals: Unexpected endOffset after insertNode() expected 1 but got 0
+PASS 0,19: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node docfrag 
 PASS 0,20: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node doctype 
 PASS 0,20: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node doctype 
 PASS 0,21: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignDoctype 
 PASS 0,21: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 0], node foreignDoctype 
 PASS 1,0: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0] 
 PASS 1,0: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0] 
-FAIL 1,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 1,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild assert_true: First differing node: expected Text node "", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 1,1: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild 
+PASS 1,1: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[0].firstChild 
 PASS 1,2: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild 
 PASS 1,2: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node paras[1].firstChild 
 PASS 1,3: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignPara1 
@@ -93,9 +91,8 @@ PASS 1,21: resulting DOM for range [paras[0].firstChild, 0, paras[0].firstChild,
 PASS 1,21: resulting range position for range [paras[0].firstChild, 0, paras[0].firstChild, 1], node foreignDoctype 
 PASS 2,0: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0] 
 PASS 2,0: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0] 
-FAIL 2,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 2,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild assert_true: First differing node: expected Text node "Ä", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 2,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild 
+PASS 2,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[0].firstChild 
 PASS 2,2: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[1].firstChild 
 PASS 2,2: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node paras[1].firstChild 
 PASS 2,3: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node foreignPara1 
@@ -138,9 +135,8 @@ PASS 2,21: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild,
 PASS 2,21: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 8], node foreignDoctype 
 PASS 3,0: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0] 
 PASS 3,0: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0] 
-FAIL 3,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 3,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild assert_true: First differing node: expected Text node "Ä", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 3,1: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild 
+PASS 3,1: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[0].firstChild 
 PASS 3,2: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[1].firstChild 
 PASS 3,2: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node paras[1].firstChild 
 PASS 3,3: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node foreignPara1 
@@ -182,46 +178,45 @@ PASS 3,20: resulting range position for range [paras[0].firstChild, 2, paras[0].
 PASS 3,21: resulting DOM for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node foreignDoctype 
 PASS 3,21: resulting range position for range [paras[0].firstChild, 2, paras[0].firstChild, 9], node foreignDoctype 
 PASS 4,0: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
-FAIL 4,0: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0] assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,0: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 4,1: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
-FAIL 4,1: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
-FAIL 4,2: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 4,2: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild assert_true: First differing node: expected Text node "", got Text node "Ijklmnop
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 4,1: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
+PASS 4,2: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
+PASS 4,2: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
 PASS 4,3: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
-FAIL 4,3: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,3: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
 PASS 4,4: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild 
-FAIL 4,4: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,4: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara1.firstChild 
 PASS 4,5: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1 
-FAIL 4,5: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,5: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1 
 PASS 4,6: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild 
-FAIL 4,6: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,6: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedPara1.firstChild 
 PASS 4,7: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node document 
 PASS 4,7: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node document 
 PASS 4,8: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedDiv 
-FAIL 4,8: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedDiv assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,8: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedDiv 
 PASS 4,9: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignDoc 
 PASS 4,9: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignDoc 
 PASS 4,10: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara2 
-FAIL 4,10: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara2 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,10: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignPara2 
 PASS 4,11: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlDoc 
 PASS 4,11: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlDoc 
 PASS 4,12: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlElement 
-FAIL 4,12: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlElement assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,12: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node xmlElement 
 PASS 4,13: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedTextNode 
-FAIL 4,13: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,13: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedTextNode 
 PASS 4,14: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignTextNode 
-FAIL 4,14: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,14: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignTextNode 
 PASS 4,15: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node processingInstruction 
-FAIL 4,15: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,15: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node processingInstruction 
 PASS 4,16: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedProcessingInstruction 
-FAIL 4,16: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,16: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedProcessingInstruction 
 PASS 4,17: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node comment 
-FAIL 4,17: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node comment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,17: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node comment 
 PASS 4,18: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedComment 
-FAIL 4,18: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 4,18: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node detachedComment 
 PASS 4,19: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node docfrag 
-FAIL 4,19: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node docfrag assert_equals: Unexpected endOffset after insertNode() expected 1 but got 0
+PASS 4,19: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node docfrag 
 PASS 4,20: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node doctype 
 PASS 4,20: resulting range position for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node doctype 
 PASS 4,21: resulting DOM for range [paras[1].firstChild, 0, paras[1].firstChild, 0], node foreignDoctype 
@@ -230,9 +225,8 @@ PASS 5,0: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 
 PASS 5,0: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[0] 
 PASS 5,1: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[0].firstChild 
 PASS 5,1: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[0].firstChild 
-FAIL 5,2: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 5,2: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild assert_true: First differing node: expected Text node "Ij", got Text node "Ijklmnop
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 5,2: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild 
+PASS 5,2: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node paras[1].firstChild 
 PASS 5,3: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignPara1 
 PASS 5,3: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignPara1 
 PASS 5,4: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignPara1.firstChild 
@@ -272,19 +266,19 @@ PASS 5,20: resulting range position for range [paras[1].firstChild, 2, paras[1].
 PASS 5,21: resulting DOM for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignDoctype 
 PASS 5,21: resulting range position for range [paras[1].firstChild, 2, paras[1].firstChild, 9], node foreignDoctype 
 PASS 6,0: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] 
-FAIL 6,0: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,0: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0] 
 PASS 6,1: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild 
-FAIL 6,1: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,1: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[0].firstChild 
 PASS 6,2: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild 
-FAIL 6,2: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,2: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node paras[1].firstChild 
 PASS 6,3: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 
-FAIL 6,3: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,3: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1 
 PASS 6,4: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild 
-FAIL 6,4: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,4: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara1.firstChild 
 PASS 6,5: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 
 PASS 6,5: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1 
-FAIL 6,6: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild HierarchyRequestError: DOM Exception 3
-FAIL 6,6: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild assert_true: First differing node: expected Text node "", got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 6,6: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild 
+PASS 6,6: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedPara1.firstChild 
 PASS 6,7: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node document 
 PASS 6,7: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node document 
 PASS 6,8: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedDiv 
@@ -292,25 +286,25 @@ PASS 6,8: resulting range position for range [detachedPara1.firstChild, 0, detac
 PASS 6,9: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoc 
 PASS 6,9: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoc 
 PASS 6,10: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 
-FAIL 6,10: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,10: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignPara2 
 PASS 6,11: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlDoc 
 PASS 6,11: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlDoc 
 PASS 6,12: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement 
-FAIL 6,12: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,12: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node xmlElement 
 PASS 6,13: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode 
-FAIL 6,13: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,13: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedTextNode 
 PASS 6,14: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode 
-FAIL 6,14: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,14: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignTextNode 
 PASS 6,15: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node processingInstruction 
-FAIL 6,15: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,15: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node processingInstruction 
 PASS 6,16: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedProcessingInstruction 
-FAIL 6,16: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,16: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedProcessingInstruction 
 PASS 6,17: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node comment 
-FAIL 6,17: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node comment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,17: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node comment 
 PASS 6,18: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedComment 
-FAIL 6,18: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 6,18: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node detachedComment 
 PASS 6,19: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node docfrag 
-FAIL 6,19: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node docfrag assert_equals: Unexpected endOffset after insertNode() expected 1 but got 0
+PASS 6,19: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node docfrag 
 PASS 6,20: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node doctype 
 PASS 6,20: resulting range position for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node doctype 
 PASS 6,21: resulting DOM for range [detachedPara1.firstChild, 0, detachedPara1.firstChild, 0], node foreignDoctype 
@@ -327,8 +321,8 @@ PASS 7,4: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.fi
 PASS 7,4: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignPara1.firstChild 
 PASS 7,5: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1 
 PASS 7,5: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1 
-FAIL 7,6: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild HierarchyRequestError: DOM Exception 3
-FAIL 7,6: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild assert_true: First differing node: expected Text node "Op", got Text node "Opqrstuv" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 7,6: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild 
+PASS 7,6: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedPara1.firstChild 
 PASS 7,7: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node document 
 PASS 7,7: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node document 
 PASS 7,8: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node detachedDiv 
@@ -360,45 +354,45 @@ PASS 7,20: resulting range position for range [detachedPara1.firstChild, 2, deta
 PASS 7,21: resulting DOM for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignDoctype 
 PASS 7,21: resulting range position for range [detachedPara1.firstChild, 2, detachedPara1.firstChild, 8], node foreignDoctype 
 PASS 8,0: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0] 
-FAIL 8,0: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0] assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,0: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0] 
 PASS 8,1: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0].firstChild 
-FAIL 8,1: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0].firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,1: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[0].firstChild 
 PASS 8,2: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild 
-FAIL 8,2: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,2: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node paras[1].firstChild 
 PASS 8,3: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1 
 PASS 8,3: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1 
-FAIL 8,4: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild HierarchyRequestError: DOM Exception 3
-FAIL 8,4: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild assert_true: First differing node: expected Text node "", got Text node "Efghijkl" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 8,4: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild 
+PASS 8,4: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara1.firstChild 
 PASS 8,5: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 
-FAIL 8,5: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,5: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1 
 PASS 8,6: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild 
-FAIL 8,6: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,6: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedPara1.firstChild 
 PASS 8,7: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node document 
 PASS 8,7: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node document 
 PASS 8,8: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedDiv 
-FAIL 8,8: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedDiv assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,8: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedDiv 
 PASS 8,9: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignDoc 
 PASS 8,9: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignDoc 
 PASS 8,10: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara2 
-FAIL 8,10: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara2 assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,10: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignPara2 
 PASS 8,11: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlDoc 
 PASS 8,11: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlDoc 
 PASS 8,12: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlElement 
-FAIL 8,12: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlElement assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,12: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node xmlElement 
 PASS 8,13: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedTextNode 
-FAIL 8,13: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,13: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedTextNode 
 PASS 8,14: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignTextNode 
-FAIL 8,14: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignTextNode assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,14: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignTextNode 
 PASS 8,15: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node processingInstruction 
-FAIL 8,15: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node processingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,15: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node processingInstruction 
 PASS 8,16: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedProcessingInstruction 
-FAIL 8,16: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedProcessingInstruction assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,16: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedProcessingInstruction 
 PASS 8,17: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node comment 
-FAIL 8,17: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node comment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,17: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node comment 
 PASS 8,18: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedComment 
-FAIL 8,18: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedComment assert_equals: Unexpected endOffset after insertNode() expected 2 but got 0
+PASS 8,18: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node detachedComment 
 PASS 8,19: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node docfrag 
-FAIL 8,19: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node docfrag assert_equals: Unexpected endOffset after insertNode() expected 1 but got 0
+PASS 8,19: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node docfrag 
 PASS 8,20: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node doctype 
 PASS 8,20: resulting range position for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node doctype 
 PASS 8,21: resulting DOM for range [foreignPara1.firstChild, 0, foreignPara1.firstChild, 0], node foreignDoctype 
@@ -411,8 +405,8 @@ PASS 9,2: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firs
 PASS 9,2: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node paras[1].firstChild 
 PASS 9,3: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1 
 PASS 9,3: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1 
-FAIL 9,4: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild HierarchyRequestError: DOM Exception 3
-FAIL 9,4: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild assert_true: First differing node: expected Text node "Ef", got Text node "Efghijkl" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 9,4: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild 
+PASS 9,4: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node foreignPara1.firstChild 
 PASS 9,5: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node detachedPara1 
 PASS 9,5: resulting range position for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node detachedPara1 
 PASS 9,6: resulting DOM for range [foreignPara1.firstChild, 2, foreignPara1.firstChild, 8], node detachedPara1.firstChild 
@@ -801,9 +795,8 @@ PASS 17,21: resulting DOM for range [detachedPara1, 0, detachedPara1, 1], node f
 PASS 17,21: resulting range position for range [detachedPara1, 0, detachedPara1, 1], node foreignDoctype 
 PASS 18,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
 PASS 18,0: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0] 
-FAIL 18,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 18,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild assert_true: First differing node: expected Text node "", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 18,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
+PASS 18,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[0].firstChild 
 PASS 18,2: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
 PASS 18,2: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node paras[1].firstChild 
 PASS 18,3: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignPara1 
@@ -846,9 +839,8 @@ PASS 18,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild
 PASS 18,21: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 0], node foreignDoctype 
 PASS 19,0: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] 
 PASS 19,0: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0] 
-FAIL 19,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 19,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild assert_true: First differing node: expected Text node "", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 19,1: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild 
+PASS 19,1: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[0].firstChild 
 PASS 19,2: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[1].firstChild 
 PASS 19,2: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node paras[1].firstChild 
 PASS 19,3: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignPara1 
@@ -891,9 +883,8 @@ PASS 19,21: resulting DOM for range [paras[0].firstChild, 0, paras[1].firstChild
 PASS 19,21: resulting range position for range [paras[0].firstChild, 0, paras[1].firstChild, 8], node foreignDoctype 
 PASS 20,0: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] 
 PASS 20,0: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0] 
-FAIL 20,1: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild HierarchyRequestError: DOM Exception 3
-FAIL 20,1: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild assert_true: First differing node: expected Text node "Äb", got Text node "Äb̈c̈d̈ëf̈g̈ḧ
-" [Actual and expected mismatch for range's tree root.  ] expected true got false
+PASS 20,1: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild 
+PASS 20,1: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[0].firstChild 
 PASS 20,2: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node paras[1].firstChild 
 PASS 20,2: resulting range position for range [paras[0].firstChild, 3, paras[3], 1], node paras[1].firstChild 
 PASS 20,3: resulting DOM for range [paras[0].firstChild, 3, paras[3], 1], node foreignPara1 
@@ -937,7 +928,7 @@ PASS 20,21: resulting range position for range [paras[0].firstChild, 3, paras[3]
 PASS 21,0: resulting DOM for range [paras[0], 0, paras[0].firstChild, 7], node paras[0] 
 PASS 21,0: resulting range position for range [paras[0], 0, paras[0].firstChild, 7], node paras[0] 
 PASS 21,1: resulting DOM for range [paras[0], 0, paras[0].firstChild, 7], node paras[0].firstChild 
-FAIL 21,1: resulting range position for range [paras[0], 0, paras[0].firstChild, 7], node paras[0].firstChild assert_equals: Unexpected endOffset after insertNode() expected 1 but got 7
+PASS 21,1: resulting range position for range [paras[0], 0, paras[0].firstChild, 7], node paras[0].firstChild 
 PASS 21,2: resulting DOM for range [paras[0], 0, paras[0].firstChild, 7], node paras[1].firstChild 
 PASS 21,2: resulting range position for range [paras[0], 0, paras[0].firstChild, 7], node paras[1].firstChild 
 PASS 21,3: resulting DOM for range [paras[0], 0, paras[0].firstChild, 7], node foreignPara1 

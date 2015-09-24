@@ -153,6 +153,8 @@ public:
     void append(Vector<NodeOrString>&&, ExceptionCode&);
     void prepend(Vector<NodeOrString>&&, ExceptionCode&);
 
+    bool ensurePreInsertionValidity(Node& newChild, Node* refChild, ExceptionCode&);
+
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
 

@@ -216,13 +216,15 @@ static inline bool checkAcceptChildGuaranteedNodeTypes(ContainerNode& newParent,
     return true;
 }
 
-static inline bool checkAddChild(ContainerNode& newParent, Node& newChild, Node* refChild, ExceptionCode& ec)
+// https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity
+bool ContainerNode::ensurePreInsertionValidity(Node& newChild, Node* refChild, ExceptionCode& ec)
 {
-    ec = checkAcceptChild(newParent, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd);
+    ec = checkAcceptChild(*this, newChild, refChild, Document::AcceptChildOperation::InsertOrAdd);
     return !ec;
 }
 
-static inline bool checkReplaceChild(ContainerNode& newParent, Node& newChild, Node& oldChild, ExceptionCode& ec)
+// https://dom.spec.whatwg.org/#concept-node-replace
+static inline bool checkPreReplacementValidity(ContainerNode& newParent, Node& newChild, Node& oldChild, ExceptionCode& ec)
 {
     ec = checkAcceptChild(newParent, newChild, &oldChild, Document::AcceptChildOperation::Replace);
     return !ec;
@@ -243,7 +245,7 @@ bool ContainerNode::insertBefore(Ref<Node>&& newChild, Node* refChild, Exception
         return appendChild(WTF::move(newChild), ec);
 
     // Make sure adding the new child is OK.
-    if (!checkAddChild(*this, newChild, refChild, ec))
+    if (!ensurePreInsertionValidity(newChild, refChild, ec))
         return false;
 
     // NOT_FOUND_ERR: Raised if refChild is not a child of this node
@@ -401,7 +403,7 @@ bool ContainerNode::replaceChild(Ref<Node>&& newChild, Node& oldChild, Exception
         return true;
 
     // Make sure replacing the old child with the new is ok
-    if (!checkReplaceChild(*this, newChild, oldChild, ec))
+    if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
         return false;
 
     // NOT_FOUND_ERR: Raised if oldChild is not a child of this node.
@@ -424,7 +426,7 @@ bool ContainerNode::replaceChild(Ref<Node>&& newChild, Node& oldChild, Exception
         return true;
 
     // Does this one more time because removeChild() fires a MutationEvent.
-    if (!checkReplaceChild(*this, newChild, oldChild, ec))
+    if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
         return false;
 
     NodeVector targets;
@@ -433,7 +435,7 @@ bool ContainerNode::replaceChild(Ref<Node>&& newChild, Node& oldChild, Exception
         return false;
 
     // Does this yet another check because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
-    if (!checkReplaceChild(*this, newChild, oldChild, ec))
+    if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
         return false;
 
     InspectorInstrumentation::willInsertDOMNode(document(), *this);
@@ -667,7 +669,7 @@ bool ContainerNode::appendChild(Ref<Node>&& newChild, ExceptionCode& ec)
     ec = 0;
 
     // Make sure adding the new child is ok
-    if (!checkAddChild(*this, newChild, nullptr, ec))
+    if (!ensurePreInsertionValidity(newChild, nullptr, ec))
         return false;
 
     if (newChild.ptr() == m_lastChild) // nothing to do

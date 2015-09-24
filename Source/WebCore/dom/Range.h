@@ -83,7 +83,7 @@ public:
     void deleteContents(ExceptionCode&);
     RefPtr<DocumentFragment> extractContents(ExceptionCode&);
     RefPtr<DocumentFragment> cloneContents(ExceptionCode&);
-    void insertNode(PassRefPtr<Node>, ExceptionCode&);
+    void insertNode(RefPtr<Node>&&, ExceptionCode&);
     String toString() const;
 
     String toHTML() const;

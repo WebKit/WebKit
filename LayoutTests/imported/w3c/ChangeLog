@@ -1,3 +1,15 @@
+2015-09-24  Chris Dumez  <cdumez@apple.com>
+
+        Rewrite Range::insertNode() as per the latest DOM specification
+        https://bugs.webkit.org/show_bug.cgi?id=149528
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C DOM tests now that more tests are passing.
+
+        * web-platform-tests/dom/ranges/Range-insertNode-expected.txt:
+        * web-platform-tests/dom/ranges/Range-surroundContents-expected.txt:
+
 2015-09-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline web-platform-tests/html/dom/interfaces.html after r190190
