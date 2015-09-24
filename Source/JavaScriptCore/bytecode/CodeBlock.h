@@ -406,14 +406,14 @@ public:
         return &m_rareCaseProfiles.last();
     }
     unsigned numberOfRareCaseProfiles() { return m_rareCaseProfiles.size(); }
-    RareCaseProfile* rareCaseProfile(int index) { return &m_rareCaseProfiles[index]; }
     RareCaseProfile* rareCaseProfileForBytecodeOffset(int bytecodeOffset);
+    unsigned rareCaseProfileCountForBytecodeOffset(int bytecodeOffset);
 
     bool likelyToTakeSlowCase(int bytecodeOffset)
     {
         if (!hasBaselineJITProfiling())
             return false;
-        unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+        unsigned value = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
         return value >= Options::likelyToTakeSlowCaseMinimumCount();
     }
 
@@ -421,7 +421,7 @@ public:
     {
         if (!hasBaselineJITProfiling())
             return false;
-        unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+        unsigned value = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
         return value >= Options::couldTakeSlowCaseMinimumCount();
     }
 
@@ -459,7 +459,7 @@ public:
     {
         if (!hasBaselineJITProfiling())
             return false;
-        unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+        unsigned slowCaseCount = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
         unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
         unsigned value = slowCaseCount - specialFastCaseCount;
         return value >= Options::likelyToTakeSlowCaseMinimumCount();
@@ -469,7 +469,7 @@ public:
     {
         if (!hasBaselineJITProfiling())
             return false;
-        unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
+        unsigned slowCaseCount = rareCaseProfileCountForBytecodeOffset(bytecodeOffset);
         unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
         unsigned value = slowCaseCount + specialFastCaseCount;
         return value >= Options::likelyToTakeSlowCaseMinimumCount();

@@ -795,7 +795,6 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
     if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
-        addSlowCase();
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
         slowPathCall.call();
         return;
@@ -824,10 +823,7 @@ void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>
     int op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
-    if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
-        linkDummySlowCase(iter);
-        return;
-    }
+    RELEASE_ASSERT(types.first().mightBeNumber() && types.second().mightBeNumber());
 
     bool op1HasImmediateIntFastCase = isOperandConstantImmediateInt(op1);
     bool op2HasImmediateIntFastCase = !op1HasImmediateIntFastCase && isOperandConstantImmediateInt(op2);

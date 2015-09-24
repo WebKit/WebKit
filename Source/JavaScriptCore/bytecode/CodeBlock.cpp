@@ -3969,6 +3969,14 @@ RareCaseProfile* CodeBlock::rareCaseProfileForBytecodeOffset(int bytecodeOffset)
         getRareCaseProfileBytecodeOffset);
 }
 
+unsigned CodeBlock::rareCaseProfileCountForBytecodeOffset(int bytecodeOffset)
+{
+    RareCaseProfile* profile = rareCaseProfileForBytecodeOffset(bytecodeOffset);
+    if (profile)
+        return profile->m_counter;
+    return 0;
+}
+
 #if ENABLE(JIT)
 DFG::CapabilityLevel CodeBlock::capabilityLevel()
 {

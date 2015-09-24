@@ -1,3 +1,38 @@
+2015-09-24  Mark Lam  <mark.lam@apple.com>
+
+        We should only expect a RareCaseProfile to exist if the rare case actually exists.
+        https://bugs.webkit.org/show_bug.cgi?id=149531
+
+        Reviewed by Saam Barati.
+
+        The current code that calls rareCaseProfileForBytecodeOffset() assumes that it
+        will always return a non-null RareCaseProfile.  As a result, op_add in the
+        baseline JIT is forced to add a dummy slow case that will never be taken, only to
+        ensure that the RareCaseProfile for that bytecode is created.  This profile will
+        always produce a counter value of 0 (since that path will never be taken).
+
+        Instead, we'll make the callers of rareCaseProfileForBytecodeOffset() check if
+        the profile actually exist before dereferencing it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::rareCaseProfileForBytecodeOffset):
+        (JSC::CodeBlock::rareCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::capabilityLevel):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addRareCaseProfile):
+        (JSC::CodeBlock::numberOfRareCaseProfiles):
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        (JSC::CodeBlock::rareCaseProfile): Deleted.
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+
 2015-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Ran sort-Xcode-project-file.
