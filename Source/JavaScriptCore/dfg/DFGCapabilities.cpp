@@ -179,8 +179,10 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_throw:
     case op_throw_static_error:
     case op_call:
+    case op_tail_call:
     case op_construct:
     case op_call_varargs:
+    case op_tail_call_varargs:
     case op_construct_varargs:
     case op_create_direct_arguments:
     case op_create_scoped_arguments:

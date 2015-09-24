@@ -26,11 +26,21 @@
 #ifndef CallMode_h
 #define CallMode_h
 
+#include "CodeSpecializationKind.h"
+
 namespace JSC {
 
 enum class CallMode { Regular, Tail, Construct };
 
 enum FrameAction { KeepTheFrame = 0, ReuseTheFrame };
+
+inline CodeSpecializationKind specializationKindFor(CallMode callMode)
+{
+    if (callMode == CallMode::Construct)
+        return CodeForConstruct;
+
+    return CodeForCall;
+}
 
 } // namespace JSC
 

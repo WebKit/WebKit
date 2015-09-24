@@ -26,6 +26,7 @@
 #ifndef CodeOrigin_h
 #define CodeOrigin_h
 
+#include "CallMode.h"
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
 #include "WriteBarrier.h"

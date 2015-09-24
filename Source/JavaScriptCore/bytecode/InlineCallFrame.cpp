@@ -77,7 +77,7 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
     out.print(briefFunctionInformation(), ":<", RawPointer(executable.get()));
     if (executable->isStrictMode())
         out.print(" (StrictMode)");
-    out.print(", bc#", caller.bytecodeIndex, ", ", kind);
+    out.print(", bc#", directCaller.bytecodeIndex, ", ", static_cast<Kind>(kind));
     if (isClosureCall)
         out.print(", closure call");
     else
@@ -105,11 +105,17 @@ void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
     case JSC::InlineCallFrame::Construct:
         out.print("Construct");
         return;
+    case JSC::InlineCallFrame::TailCall:
+        out.print("TailCall");
+        return;
     case JSC::InlineCallFrame::CallVarargs:
         out.print("CallVarargs");
         return;
     case JSC::InlineCallFrame::ConstructVarargs:
         out.print("ConstructVarargs");
+        return;
+    case JSC::InlineCallFrame::TailCallVarargs:
+        out.print("TailCallVarargs");
         return;
     case JSC::InlineCallFrame::GetterCall:
         out.print("GetterCall");

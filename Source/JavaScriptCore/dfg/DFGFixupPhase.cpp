@@ -1343,11 +1343,15 @@ private:
         case NotifyWrite:
         case VarInjectionWatchpoint:
         case Call:
+        case TailCallInlinedCaller:
         case Construct:
         case CallVarargs:
+        case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
         case CallForwardVarargs:
         case ConstructForwardVarargs:
+        case TailCallForwardVarargs:
+        case TailCallForwardVarargsInlinedCaller:
         case LoadVarargs:
         case ProfileControlFlow:
         case NewObject:
@@ -1365,6 +1369,8 @@ private:
         case CreateClonedArguments:
         case Jump:
         case Return:
+        case TailCall:
+        case TailCallVarargs:
         case Throw:
         case ThrowReferenceError:
         case CountExecution:

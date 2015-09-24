@@ -81,8 +81,8 @@ public:
             if (!inlineCallFrame)
                 return false;
 
-            bytecodeIndexToCheck = inlineCallFrame->caller.bytecodeIndex;
-            origin = inlineCallFrame->caller;
+            bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex;
+            origin = inlineCallFrame->directCaller;
         }
     }
 

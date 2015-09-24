@@ -570,6 +570,8 @@ private:
                 case Upsilon:
                 case ForwardVarargs:
                 case CallForwardVarargs:
+                case TailCallForwardVarargs:
+                case TailCallForwardVarargsInlinedCaller:
                 case ConstructForwardVarargs:
                 case GetMyArgumentByVal:
                     break;

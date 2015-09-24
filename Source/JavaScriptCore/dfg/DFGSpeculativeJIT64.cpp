@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "CallFrameShuffler.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGOperations.h"
@@ -613,9 +614,19 @@ void SpeculativeJIT::emitCall(Node* node)
     CallLinkInfo::CallType callType;
     bool isVarargs = false;
     bool isForwardVarargs = false;
+    bool isTail = false;
+    bool isEmulatedTail = false;
     switch (node->op()) {
     case Call:
         callType = CallLinkInfo::Call;
+        break;
+    case TailCall:
+        callType = CallLinkInfo::TailCall;
+        isTail = true;
+        break;
+    case TailCallInlinedCaller:
+        callType = CallLinkInfo::Call;
+        isEmulatedTail = true;
         break;
     case Construct:
         callType = CallLinkInfo::Construct;
@@ -623,6 +634,16 @@ void SpeculativeJIT::emitCall(Node* node)
     case CallVarargs:
         callType = CallLinkInfo::CallVarargs;
         isVarargs = true;
+        break;
+    case TailCallVarargs:
+        callType = CallLinkInfo::TailCallVarargs;
+        isVarargs = true;
+        isTail = true;
+        break;
+    case TailCallVarargsInlinedCaller:
+        callType = CallLinkInfo::CallVarargs;
+        isVarargs = true;
+        isEmulatedTail = true;
         break;
     case ConstructVarargs:
         callType = CallLinkInfo::ConstructVarargs;
@@ -636,12 +657,23 @@ void SpeculativeJIT::emitCall(Node* node)
         callType = CallLinkInfo::ConstructVarargs;
         isForwardVarargs = true;
         break;
+    case TailCallForwardVarargs:
+        callType = CallLinkInfo::TailCallVarargs;
+        isTail = true;
+        isForwardVarargs = true;
+        break;
+    case TailCallForwardVarargsInlinedCaller:
+        callType = CallLinkInfo::CallVarargs;
+        isEmulatedTail = true;
+        isForwardVarargs = true;
+        break;
     default:
         DFG_CRASH(m_jit.graph(), node, "bad node type");
         break;
     }
 
-    Edge calleeEdge = m_jit.graph().child(node, 0);
+    GPRReg calleeGPR;
+    CallFrameShuffleData shuffleData;
     
     // Gotta load the arguments somehow. Varargs is trickier.
     if (isVarargs || isForwardVarargs) {
@@ -732,60 +764,112 @@ void SpeculativeJIT::emitCall(Node* node)
         int numPassedArgs = node->numChildren() - 1;
 
         m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), JITCompiler::calleeFramePayloadSlot(JSStack::ArgumentCount));
-    
-        for (int i = 0; i < numPassedArgs; i++) {
-            Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
-            JSValueOperand arg(this, argEdge);
-            GPRReg argGPR = arg.gpr();
-            use(argEdge);
-        
-            m_jit.store64(argGPR, JITCompiler::calleeArgumentSlot(i));
+
+        if (node->op() == TailCall) {
+            Edge calleeEdge = m_jit.graph().child(node, 0);
+            JSValueOperand callee(this, calleeEdge);
+            calleeGPR = callee.gpr();
+            callee.use();
+
+            shuffleData.numLocals = m_jit.graph().frameRegisterCount();
+            shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatJS);
+            shuffleData.args.resize(numPassedArgs);
+
+            for (int i = 0; i < numPassedArgs; ++i) {
+                Edge argEdge = m_jit.graph().varArgChild(node, i + 1);
+                GenerationInfo& info = generationInfo(argEdge.node());
+                use(argEdge);
+                shuffleData.args[i] = info.recovery(argEdge->virtualRegister());
+            }
+
+            shuffleData.setupCalleeSaveRegisters(m_jit.codeBlock());
+        } else {
+            m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), JITCompiler::calleeFramePayloadSlot(JSStack::ArgumentCount));
+
+            for (int i = 0; i < numPassedArgs; i++) {
+                Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
+                JSValueOperand arg(this, argEdge);
+                GPRReg argGPR = arg.gpr();
+                use(argEdge);
+                
+                m_jit.store64(argGPR, JITCompiler::calleeArgumentSlot(i));
+            }
         }
     }
 
-    JSValueOperand callee(this, calleeEdge);
-    GPRReg calleeGPR = callee.gpr();
-    callee.use();
-    m_jit.store64(calleeGPR, JITCompiler::calleeFrameSlot(JSStack::Callee));
-    
-    flushRegisters();
+    if (node->op() != TailCall) {
+        Edge calleeEdge = m_jit.graph().child(node, 0);
+        JSValueOperand callee(this, calleeEdge);
+        calleeGPR = callee.gpr();
+        callee.use();
+        m_jit.store64(calleeGPR, JITCompiler::calleeFrameSlot(JSStack::Callee));
 
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
+        flushRegisters();
+    }
 
-    JITCompiler::DataLabelPtr targetToCheck;
-    JITCompiler::Jump slowPath;
+    CodeOrigin staticOrigin = node->origin.semantic;
+    ASSERT(!isTail || !staticOrigin.inlineCallFrame || !staticOrigin.inlineCallFrame->getCallerSkippingDeadFrames());
+    ASSERT(!isEmulatedTail || (staticOrigin.inlineCallFrame && staticOrigin.inlineCallFrame->getCallerSkippingDeadFrames()));
+    CodeOrigin dynamicOrigin =
+    isEmulatedTail ? *staticOrigin.inlineCallFrame->getCallerSkippingDeadFrames() : staticOrigin;
 
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(node->origin.semantic, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
     m_jit.emitStoreCallSiteIndex(callSite);
     
     CallLinkInfo* callLinkInfo = m_jit.codeBlock()->addCallLinkInfo();
-    
-    slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(0));
 
-    JITCompiler::Call fastCall = m_jit.nearCall();
+    JITCompiler::DataLabelPtr targetToCheck;
+    JITCompiler::Jump slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(0));
+
+    if (isTail) {
+        if (node->op() == TailCall) {
+            callLinkInfo->setFrameShuffleData(shuffleData);
+            CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
+        } else {
+            m_jit.emitRestoreCalleeSaves();
+            m_jit.prepareForTailCallSlow();
+        }
+    }
+
+    JITCompiler::Call fastCall = isTail ? m_jit.nearTailCall() : m_jit.nearCall();
 
     JITCompiler::Jump done = m_jit.jump();
-    
+
     slowPath.link(&m_jit);
-    
-    m_jit.move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
+
+    if (node->op() == TailCall) {
+        CallFrameShuffler callFrameShuffler(m_jit, shuffleData);
+        callFrameShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
+        callFrameShuffler.prepareForSlowPath();
+    } else {
+        m_jit.move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
+
+        if (isTail)
+            m_jit.emitRestoreCalleeSaves(); // This needs to happen after we moved calleeGPR to regT0
+    }
+
     m_jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::regT2); // Link info needs to be in regT2
     JITCompiler::Call slowCall = m_jit.nearCall();
-    
+
     done.link(&m_jit);
-    
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-    
-    jsValueResult(resultGPR, m_currentNode, DataFormatJS, UseChildrenCalledExplicitly);
-    
+
+    if (isTail)
+        m_jit.abortWithReason(JITDidReturnFromTailCall);
+    else {
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+
+        jsValueResult(resultGPR, m_currentNode, DataFormatJS, UseChildrenCalledExplicitly);
+
+        // After the calls are done, we need to reestablish our stack
+        // pointer. We rely on this for varargs calls, calls with arity
+        // mismatch (the callframe is slided) and tail calls.
+        m_jit.addPtr(TrustedImm32(m_jit.graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, JITCompiler::stackPointerRegister);
+    }
+
     callLinkInfo->setUpCall(callType, m_currentNode->origin.semantic,  calleeGPR);    
     m_jit.addJSCall(fastCall, slowCall, targetToCheck, callLinkInfo);
-
-    // After the calls are done, we need to reestablish our stack
-    // pointer. We rely on this for varargs calls, calls with arity
-    // mismatch (the callframe is slided) and tail calls.
-    m_jit.addPtr(TrustedImm32(m_jit.graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, JITCompiler::stackPointerRegister);
 }
 
 // Clang should allow unreachable [[clang::fallthrough]] in template functions if any template expansion uses it
@@ -4248,14 +4332,20 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Call:
+    case TailCall:
+    case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
+    case TailCallVarargs:
+    case TailCallVarargsInlinedCaller:
     case CallForwardVarargs:
     case ConstructVarargs:
     case ConstructForwardVarargs:
+    case TailCallForwardVarargs:
+    case TailCallForwardVarargsInlinedCaller:
         emitCall(node);
         break;
-        
+
     case LoadVarargs: {
         LoadVarargsData* data = node->loadVarargsData();
         

@@ -120,12 +120,16 @@ bool doesGC(Graph& graph, Node* node)
     case CompareEq:
     case CompareStrictEq:
     case Call:
+    case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
+    case TailCallVarargsInlinedCaller:
     case ConstructVarargs:
     case LoadVarargs:
     case CallForwardVarargs:
     case ConstructForwardVarargs:
+    case TailCallForwardVarargs:
+    case TailCallForwardVarargsInlinedCaller:
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:
@@ -150,6 +154,8 @@ bool doesGC(Graph& graph, Node* node)
     case Branch:
     case Switch:
     case Return:
+    case TailCall:
+    case TailCallVarargs:
     case Throw:
     case CountExecution:
     case ForceOSRExit:

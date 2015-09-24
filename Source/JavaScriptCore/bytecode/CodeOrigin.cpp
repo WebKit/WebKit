@@ -37,7 +37,7 @@ namespace JSC {
 unsigned CodeOrigin::inlineDepthForCallFrame(InlineCallFrame* inlineCallFrame)
 {
     unsigned result = 1;
-    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
+    for (InlineCallFrame* current = inlineCallFrame; current; current = current->directCaller.inlineCallFrame)
         result++;
     return result;
 }
@@ -78,8 +78,8 @@ bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
         if (a.inlineCallFrame->executable.get() != b.inlineCallFrame->executable.get())
             return false;
         
-        a = a.inlineCallFrame->caller;
-        b = b.inlineCallFrame->caller;
+        a = a.inlineCallFrame->directCaller;
+        b = b.inlineCallFrame->directCaller;
     }
 }
 
@@ -100,7 +100,7 @@ unsigned CodeOrigin::approximateHash() const
         
         result += WTF::PtrHash<JSCell*>::hash(codeOrigin.inlineCallFrame->executable.get());
         
-        codeOrigin = codeOrigin.inlineCallFrame->caller;
+        codeOrigin = codeOrigin.inlineCallFrame->directCaller;
     }
 }
 
@@ -109,8 +109,8 @@ Vector<CodeOrigin> CodeOrigin::inlineStack() const
     Vector<CodeOrigin> result(inlineDepth());
     result.last() = *this;
     unsigned index = result.size() - 2;
-    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
-        result[index--] = current->caller;
+    for (InlineCallFrame* current = inlineCallFrame; current; current = current->directCaller.inlineCallFrame)
+        result[index--] = current->directCaller;
     RELEASE_ASSERT(!result[0].inlineCallFrame);
     return result;
 }

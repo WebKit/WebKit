@@ -1,3 +1,133 @@
+2015-09-24  Michael Saboff  <msaboff@apple.com>
+
+        [ES6] Implement tail calls in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=148663
+
+        Reviewed by Filip Pizlo.
+
+        jsc-tailcall: Implement the tail call opcodes in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=146850
+
+        This patch adds support for tail calls in the DFG. This requires a slightly high number of nodes:
+
+         - TailCall and TailCallVarargs are straightforward. They are terminal
+           nodes and have the semantics of an actual tail call.
+
+         - TailCallInlinedCaller and TailCallVarargsInlinedCaller are here to perform a
+           tail call inside an inlined function. They are non terminal nodes,
+           and are performing the call as a regular call after popping an
+           appropriate number of inlined tail call frames.
+
+         - TailCallForwardVarargs and TailCallForwardVarargsInlinedCaller are the
+           extension of TailCallVarargs and TailCallVarargsInlinedCaller to enable
+           the varargs forwarding optimization so that we don't lose
+           performance with a tail call instead of a regular call.
+
+        This also required two broad kind of changes:
+
+         - Changes in the JIT itself (DFGSpeculativeJIT) are pretty
+           straightforward since they are just an extension of the baseline JIT
+           changes introduced previously.
+
+         - Changes in the runtime are mostly related with handling inline call
+           frames. The idea here is that we have a special TailCall type for
+           call frames that indicates to the various pieces of code walking the
+           inline call frame that they should (recursively) skip the caller in
+           their analysis.
+
+        * bytecode/CallMode.h:
+        (JSC::specializationKindFor):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::inlineDepthForCallFrame):
+        (JSC::CodeOrigin::isApproximatelyEqualTo):
+        (JSC::CodeOrigin::approximateHash):
+        (JSC::CodeOrigin::inlineStack):
+        * bytecode/CodeOrigin.h:
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext):
+        (WTF::printInternal):
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::callModeFor):
+        (JSC::InlineCallFrame::kindFor):
+        (JSC::InlineCallFrame::varargsKindFor):
+        (JSC::InlineCallFrame::specializationKindFor):
+        (JSC::InlineCallFrame::isVarargs):
+        (JSC::InlineCallFrame::isTail):
+        (JSC::InlineCallFrame::computeCallerSkippingDeadFrames):
+        (JSC::InlineCallFrame::getCallerSkippingDeadFrames):
+        (JSC::InlineCallFrame::getCallerInlineFrameSkippingDeadFrames):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::findTerminal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCallFrame):
+        (JSC::DFG::ByteCodeParser::allInlineFramesAreTailCalls):
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleVarargsCall):
+        (JSC::DFG::ByteCodeParser::emitArgumentPhantoms):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::willCatchExceptionInMachineFrame):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::FlushLiveCatchVariablesInsertionPhase::willCatchException):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCallVarargsData):
+        (JSC::DFG::Node::isTerminal):
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::osrWriteBarrier):
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateSSA):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeOffset):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::gotoNextFrame):
+
 2015-09-23  Filip Pizlo  <fpizlo@apple.com>
 
         Remove special case code for the no-parallel-GC case

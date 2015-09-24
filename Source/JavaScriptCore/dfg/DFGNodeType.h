@@ -245,6 +245,9 @@ namespace JSC { namespace DFG {
     macro(CallForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructForwardVarargs, NodeResultJS | NodeMustGenerate) \
+    macro(TailCallInlinedCaller, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(TailCallVarargsInlinedCaller, NodeResultJS | NodeMustGenerate) \
+    macro(TailCallForwardVarargsInlinedCaller, NodeResultJS | NodeMustGenerate) \
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \
@@ -310,6 +313,9 @@ namespace JSC { namespace DFG {
     macro(Branch, NodeMustGenerate) \
     macro(Switch, NodeMustGenerate) \
     macro(Return, NodeMustGenerate) \
+    macro(TailCall, NodeMustGenerate | NodeHasVarArgs) \
+    macro(TailCallVarargs, NodeMustGenerate) \
+    macro(TailCallForwardVarargs, NodeMustGenerate) \
     macro(Unreachable, NodeMustGenerate) \
     \
     /* Count execution. */\

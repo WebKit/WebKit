@@ -364,6 +364,9 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
     }
         
     case Return:
+    case TailCall:
+    case TailCallVarargs:
+    case TailCallForwardVarargs:
     case Unreachable:
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
         return false;

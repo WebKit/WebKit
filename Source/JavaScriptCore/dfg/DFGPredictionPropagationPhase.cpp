@@ -194,11 +194,14 @@ private:
         case MultiGetByOffset:
         case GetDirectPname:
         case Call:
+        case TailCallInlinedCaller:
         case Construct:
         case CallVarargs:
+        case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
         case CallForwardVarargs:
         case ConstructForwardVarargs:
+        case TailCallForwardVarargsInlinedCaller:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case GetClosureVar:
@@ -634,6 +637,9 @@ private:
         case PutClosureVar:
         case PutToArguments:
         case Return:
+        case TailCall:
+        case TailCallVarargs:
+        case TailCallForwardVarargs:
         case Throw:
         case PutById:
         case PutByIdFlush:

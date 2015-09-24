@@ -111,7 +111,9 @@ private:
         case GetMyArgumentByVal:
         case ForwardVarargs:
         case CallForwardVarargs:
-        case ConstructForwardVarargs: {
+        case ConstructForwardVarargs:
+        case TailCallForwardVarargs:
+        case TailCallForwardVarargsInlinedCaller: {
             InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
             if (!inlineCallFrame) {
                 // Read the outermost arguments and argument count.
@@ -138,7 +140,7 @@ private:
                 m_read(VirtualRegister(i));
         
             // Read all of the inline arguments and call frame headers that we didn't already capture.
-            for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
+            for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->getCallerInlineFrameSkippingDeadFrames()) {
                 for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
                     m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
                 if (inlineCallFrame->isClosureCall)

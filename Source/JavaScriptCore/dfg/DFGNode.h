@@ -1007,6 +1007,10 @@ struct Node {
         switch (op()) {
         case CallVarargs:
         case CallForwardVarargs:
+        case TailCallVarargs:
+        case TailCallForwardVarargs:
+        case TailCallVarargsInlinedCaller:
+        case TailCallForwardVarargsInlinedCaller:
         case ConstructVarargs:
         case ConstructForwardVarargs:
             return true;
@@ -1104,6 +1108,9 @@ struct Node {
         case Branch:
         case Switch:
         case Return:
+        case TailCall:
+        case TailCallVarargs:
+        case TailCallForwardVarargs:
         case Unreachable:
             return true;
         default:
@@ -1254,10 +1261,13 @@ struct Node {
         case GetByIdFlush:
         case GetByVal:
         case Call:
+        case TailCallInlinedCaller:
         case Construct:
         case CallVarargs:
+        case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
         case CallForwardVarargs:
+        case TailCallForwardVarargsInlinedCaller:
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:

@@ -60,8 +60,16 @@ void StackVisitor::gotoNextFrame()
 #if ENABLE(DFG_JIT)
     if (m_frame.isInlinedFrame()) {
         InlineCallFrame* inlineCallFrame = m_frame.inlineCallFrame();
-        CodeOrigin* callerCodeOrigin = &inlineCallFrame->caller;
-        readInlinedFrame(m_frame.callFrame(), callerCodeOrigin);
+        CodeOrigin* callerCodeOrigin = inlineCallFrame->getCallerSkippingDeadFrames();
+        if (!callerCodeOrigin) {
+            while (inlineCallFrame) {
+                readInlinedFrame(m_frame.callFrame(), &inlineCallFrame->directCaller);
+                inlineCallFrame = m_frame.inlineCallFrame();
+            }
+            m_frame.m_VMEntryFrame = m_frame.m_CallerVMEntryFrame;
+            readFrame(m_frame.callerFrame());
+        } else
+            readInlinedFrame(m_frame.callFrame(), callerCodeOrigin);
         return;
     }
 #endif // ENABLE(DFG_JIT)

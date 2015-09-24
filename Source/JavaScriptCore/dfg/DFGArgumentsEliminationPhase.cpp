@@ -167,6 +167,8 @@ private:
                     
                 case CallVarargs:
                 case ConstructVarargs:
+                case TailCallVarargs:
+                case TailCallVarargsInlinedCaller:
                     escape(node->child1());
                     escape(node->child3());
                     break;
@@ -560,7 +562,9 @@ private:
                 }
                     
                 case CallVarargs:
-                case ConstructVarargs: {
+                case ConstructVarargs:
+                case TailCallVarargs:
+                case TailCallVarargsInlinedCaller: {
                     Node* candidate = node->child2().node();
                     if (!m_candidates.contains(candidate))
                         break;
@@ -585,16 +589,44 @@ private:
                         m_graph.m_varArgChildren.append(node->child3());
                         for (Node* argument : arguments)
                             m_graph.m_varArgChildren.append(Edge(argument));
-                        node->setOpAndDefaultFlags(
-                            node->op() == CallVarargs ? Call : Construct);
+                        switch (node->op()) {
+                        case CallVarargs:
+                            node->setOpAndDefaultFlags(Call);
+                            break;
+                        case ConstructVarargs:
+                            node->setOpAndDefaultFlags(Construct);
+                            break;
+                        case TailCallVarargs:
+                            node->setOpAndDefaultFlags(TailCall);
+                            break;
+                        case TailCallVarargsInlinedCaller:
+                            node->setOpAndDefaultFlags(TailCallInlinedCaller);
+                            break;
+                        default:
+                            RELEASE_ASSERT_NOT_REACHED();
+                        }
                         node->children = AdjacencyList(
                             AdjacencyList::Variable,
                             firstChild, m_graph.m_varArgChildren.size() - firstChild);
                         break;
                     }
                     
-                    node->setOpAndDefaultFlags(
-                        node->op() == CallVarargs ? CallForwardVarargs : ConstructForwardVarargs);
+                    switch (node->op()) {
+                    case CallVarargs:
+                        node->setOpAndDefaultFlags(CallForwardVarargs);
+                        break;
+                    case ConstructVarargs:
+                        node->setOpAndDefaultFlags(ConstructForwardVarargs);
+                        break;
+                    case TailCallVarargs:
+                        node->setOpAndDefaultFlags(TailCallForwardVarargs);
+                        break;
+                    case TailCallVarargsInlinedCaller:
+                        node->setOpAndDefaultFlags(TailCallForwardVarargsInlinedCaller);
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
                     break;
                 }
                     

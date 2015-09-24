@@ -1552,6 +1552,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case Return:
         m_state.setIsValid(false);
         break;
+
+    case TailCall:
+    case TailCallVarargs:
+    case TailCallForwardVarargs:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        m_state.setIsValid(false);
+        break;
         
     case Throw:
     case ThrowReferenceError:
@@ -2442,11 +2449,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case Call:
+    case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
     case CallForwardVarargs:
+    case TailCallVarargsInlinedCaller:
     case ConstructVarargs:
     case ConstructForwardVarargs:
+    case TailCallForwardVarargsInlinedCaller:
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;

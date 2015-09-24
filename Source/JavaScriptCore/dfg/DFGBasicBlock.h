@@ -92,6 +92,9 @@ struct BasicBlock : RefCounted<BasicBlock> {
             case Branch:
             case Switch:
             case Return:
+            case TailCall:
+            case TailCallVarargs:
+            case TailCallForwardVarargs:
             case Unreachable:
                 return NodeAndIndex(node, i);
             // The bitter end can contain Phantoms and the like. There will probably only be one or two nodes after the terminal. They are all no-ops and will not have any checked children.

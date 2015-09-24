@@ -64,7 +64,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     
     AssemblyHelpers::JumpList loopThreshold;
     
-    for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
+    for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame) {
         loopThreshold.append(
             jit.branchTest8(
                 AssemblyHelpers::NonZero,
@@ -136,63 +136,80 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 
 void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 {
+    // FIXME: We shouldn't leave holes on the stack when performing an OSR exit
+    // in presence of inlined tail calls.
+    // https://bugs.webkit.org/show_bug.cgi?id=147511
     ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
 
-    CodeOrigin codeOrigin;
-    for (codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
-        CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
-        CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(inlineCallFrame->caller);
-        void* jumpTarget = nullptr;
+    const CodeOrigin* codeOrigin;
+    for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame; codeOrigin = codeOrigin->inlineCallFrame->getCallerSkippingDeadFrames()) {
+        InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
+        CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(*codeOrigin);
+        CodeOrigin* trueCaller = inlineCallFrame->getCallerSkippingDeadFrames();
         void* trueReturnPC = nullptr;
-        
-        unsigned callBytecodeIndex = inlineCallFrame->caller.bytecodeIndex;
-        
-        switch (inlineCallFrame->kind) {
-        case InlineCallFrame::Call:
-        case InlineCallFrame::Construct:
-        case InlineCallFrame::CallVarargs:
-        case InlineCallFrame::ConstructVarargs: {
-            CallLinkInfo* callLinkInfo =
-                baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
-            RELEASE_ASSERT(callLinkInfo);
-            
-            jumpTarget = callLinkInfo->callReturnLocation().executableAddress();
-            break;
-        }
-            
-        case InlineCallFrame::GetterCall:
-        case InlineCallFrame::SetterCall: {
-            StructureStubInfo* stubInfo =
-                baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
-            RELEASE_ASSERT(stubInfo);
-            
+        GPRReg callerFrameGPR = GPRInfo::callFrameRegister;
+
+        if (!trueCaller) {
+            ASSERT(inlineCallFrame->isTail());
+            jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
+            jit.storePtr(GPRInfo::regT3, AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+            jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), GPRInfo::regT3);
+            callerFrameGPR = GPRInfo::regT3;
+        } else {
+            CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(*trueCaller);
+            unsigned callBytecodeIndex = trueCaller->bytecodeIndex;
+            void* jumpTarget = nullptr;
+
             switch (inlineCallFrame->kind) {
-            case InlineCallFrame::GetterCall:
-                jumpTarget = jit.vm()->getCTIStub(baselineGetterReturnThunkGenerator).code().executableAddress();
-                break;
-            case InlineCallFrame::SetterCall:
-                jumpTarget = jit.vm()->getCTIStub(baselineSetterReturnThunkGenerator).code().executableAddress();
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
+            case InlineCallFrame::Call:
+            case InlineCallFrame::Construct:
+            case InlineCallFrame::CallVarargs:
+            case InlineCallFrame::ConstructVarargs:
+            case InlineCallFrame::TailCall:
+            case InlineCallFrame::TailCallVarargs: {
+                CallLinkInfo* callLinkInfo =
+                    baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
+                RELEASE_ASSERT(callLinkInfo);
+
+                jumpTarget = callLinkInfo->callReturnLocation().executableAddress();
                 break;
             }
-            
-            trueReturnPC = stubInfo->callReturnLocation.labelAtOffset(
-                stubInfo->patch.deltaCallToDone).executableAddress();
-            break;
-        } }
 
-        GPRReg callerFrameGPR;
-        if (inlineCallFrame->caller.inlineCallFrame) {
-            jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
-            callerFrameGPR = GPRInfo::regT3;
-        } else
-            callerFrameGPR = GPRInfo::callFrameRegister;
-        
-        jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+            case InlineCallFrame::GetterCall:
+            case InlineCallFrame::SetterCall: {
+                StructureStubInfo* stubInfo =
+                    baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
+                RELEASE_ASSERT(stubInfo);
+
+                switch (inlineCallFrame->kind) {
+                case InlineCallFrame::GetterCall:
+                    jumpTarget = jit.vm()->getCTIStub(baselineGetterReturnThunkGenerator).code().executableAddress();
+                    break;
+                case InlineCallFrame::SetterCall:
+                    jumpTarget = jit.vm()->getCTIStub(baselineSetterReturnThunkGenerator).code().executableAddress();
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+
+                trueReturnPC = stubInfo->callReturnLocation.labelAtOffset(
+                    stubInfo->patch.deltaCallToDone).executableAddress();
+                break;
+            } }
+
+            if (trueCaller->inlineCallFrame) {
+                jit.addPtr(
+                    AssemblyHelpers::TrustedImm32(trueCaller->inlineCallFrame->stackOffset * sizeof(EncodedJSValue)),
+                    GPRInfo::callFrameRegister,
+                    GPRInfo::regT3);
+                callerFrameGPR = GPRInfo::regT3;
+            }
+
+            jit.storePtr(AssemblyHelpers::TrustedImmPtr(jumpTarget), AssemblyHelpers::addressForByteOffset(inlineCallFrame->returnPCOffset()));
+        }
+
         if (trueReturnPC)
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(trueReturnPC), AssemblyHelpers::addressFor(inlineCallFrame->stackOffset + virtualRegisterForArgument(inlineCallFrame->arguments.size()).offset()));
                          
@@ -202,13 +219,13 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
 #if USE(JSVALUE64)
         jit.store64(callerFrameGPR, AssemblyHelpers::addressForByteOffset(inlineCallFrame->callerFrameOffset()));
-        uint32_t locationBits = CallSiteIndex(codeOrigin.bytecodeIndex).bits();
+        uint32_t locationBits = CallSiteIndex(codeOrigin->bytecodeIndex).bits();
         jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
         if (!inlineCallFrame->isClosureCall)
             jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->calleeConstant()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
 #else // USE(JSVALUE64) // so this is the 32-bit part
         jit.storePtr(callerFrameGPR, AssemblyHelpers::addressForByteOffset(inlineCallFrame->callerFrameOffset()));
-        Instruction* instruction = baselineCodeBlock->instructions().begin() + codeOrigin.bytecodeIndex;
+        Instruction* instruction = baselineCodeBlock->instructions().begin() + codeOrigin->bytecodeIndex;
         uint32_t locationBits = CallSiteIndex(instruction).bits();
         jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
         jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
@@ -217,13 +234,16 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 #endif // USE(JSVALUE64) // ending the #else part, so directly above is the 32-bit part
     }
 
+    // Don't need to set the toplevel code origin if we only did inline tail calls
+    if (codeOrigin) {
 #if USE(JSVALUE64)
-    uint32_t locationBits = CallSiteIndex(codeOrigin.bytecodeIndex).bits();
+    uint32_t locationBits = CallSiteIndex(codeOrigin->bytecodeIndex).bits();
 #else
-    Instruction* instruction = jit.baselineCodeBlock()->instructions().begin() + codeOrigin.bytecodeIndex;
+    Instruction* instruction = jit.baselineCodeBlock()->instructions().begin() + codeOrigin->bytecodeIndex;
     uint32_t locationBits = CallSiteIndex(instruction).bits();
 #endif
-    jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(JSStack::ArgumentCount)));
+        jit.store32(AssemblyHelpers::TrustedImm32(locationBits), AssemblyHelpers::tagFor((VirtualRegister)(JSStack::ArgumentCount)));
+    }
 }
 
 static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)

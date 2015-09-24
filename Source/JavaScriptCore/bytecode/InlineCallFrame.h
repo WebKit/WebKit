@@ -49,37 +49,59 @@ struct InlineCallFrame {
     enum Kind {
         Call,
         Construct,
+        TailCall,
         CallVarargs,
         ConstructVarargs,
+        TailCallVarargs,
         
         // For these, the stackOffset incorporates the argument count plus the true return PC
         // slot.
         GetterCall,
         SetterCall
     };
-    
-    static Kind kindFor(CodeSpecializationKind kind)
+
+    static CallMode callModeFor(Kind kind)
     {
         switch (kind) {
-        case CodeForCall:
-            return Call;
-        case CodeForConstruct:
-            return Construct;
+        case Call:
+        case CallVarargs:
+        case GetterCall:
+        case SetterCall:
+            return CallMode::Regular;
+        case TailCall:
+        case TailCallVarargs:
+            return CallMode::Tail;
+        case Construct:
+        case ConstructVarargs:
+            return CallMode::Construct;
         }
         RELEASE_ASSERT_NOT_REACHED();
-        return Call;
+    }
+
+    static Kind kindFor(CallMode callMode)
+    {
+        switch (callMode) {
+        case CallMode::Regular:
+            return Call;
+        case CallMode::Construct:
+            return Construct;
+        case CallMode::Tail:
+            return TailCall;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
-    static Kind varargsKindFor(CodeSpecializationKind kind)
+    static Kind varargsKindFor(CallMode callMode)
     {
-        switch (kind) {
-        case CodeForCall:
+        switch (callMode) {
+        case CallMode::Regular:
             return CallVarargs;
-        case CodeForConstruct:
+        case CallMode::Construct:
             return ConstructVarargs;
+        case CallMode::Tail:
+            return TailCallVarargs;
         }
         RELEASE_ASSERT_NOT_REACHED();
-        return Call;
     }
     
     static CodeSpecializationKind specializationKindFor(Kind kind)
@@ -87,6 +109,8 @@ struct InlineCallFrame {
         switch (kind) {
         case Call:
         case CallVarargs:
+        case TailCall:
+        case TailCallVarargs:
         case GetterCall:
         case SetterCall:
             return CodeForCall;
@@ -95,24 +119,64 @@ struct InlineCallFrame {
             return CodeForConstruct;
         }
         RELEASE_ASSERT_NOT_REACHED();
-        return CodeForCall;
     }
     
     static bool isVarargs(Kind kind)
     {
         switch (kind) {
         case CallVarargs:
+        case TailCallVarargs:
         case ConstructVarargs:
             return true;
         default:
             return false;
         }
     }
+
+    static bool isTail(Kind kind)
+    {
+        switch (kind) {
+        case TailCall:
+        case TailCallVarargs:
+            return true;
+        default:
+            return false;
+        }
+    }
+    bool isTail() const
+    {
+        return isTail(static_cast<Kind>(kind));
+    }
+
+    static CodeOrigin* computeCallerSkippingDeadFrames(InlineCallFrame* inlineCallFrame)
+    {
+        CodeOrigin* codeOrigin;
+        bool tailCallee;
+        do {
+            tailCallee = inlineCallFrame->isTail();
+            codeOrigin = &inlineCallFrame->directCaller;
+            inlineCallFrame = codeOrigin->inlineCallFrame;
+        } while (inlineCallFrame && tailCallee);
+        if (tailCallee)
+            return nullptr;
+        return codeOrigin;
+    }
+
+    CodeOrigin* getCallerSkippingDeadFrames()
+    {
+        return computeCallerSkippingDeadFrames(this);
+    }
+
+    InlineCallFrame* getCallerInlineFrameSkippingDeadFrames()
+    {
+        CodeOrigin* caller = getCallerSkippingDeadFrames();
+        return caller ? caller->inlineCallFrame : nullptr;
+    }
     
     Vector<ValueRecovery> arguments; // Includes 'this'.
     WriteBarrier<ScriptExecutable> executable;
     ValueRecovery calleeRecovery;
-    CodeOrigin caller;
+    CodeOrigin directCaller;
 
     signed stackOffset : 28;
     unsigned kind : 3; // real type is Kind

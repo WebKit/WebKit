@@ -961,30 +961,31 @@ BytecodeKills& Graph::killsFor(InlineCallFrame* inlineCallFrame)
 
 bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
 {
+    CodeOrigin* codeOriginPtr = &codeOrigin;
     for (;;) {
         VirtualRegister reg = VirtualRegister(
-            operand.offset() - codeOrigin.stackOffset());
+            operand.offset() - codeOriginPtr->stackOffset());
         
-        if (operand.offset() < codeOrigin.stackOffset() + JSStack::CallFrameHeaderSize) {
+        if (operand.offset() < codeOriginPtr->stackOffset() + JSStack::CallFrameHeaderSize) {
             if (reg.isArgument()) {
                 RELEASE_ASSERT(reg.offset() < JSStack::CallFrameHeaderSize);
                 
-                if (codeOrigin.inlineCallFrame->isClosureCall
+                if (codeOriginPtr->inlineCallFrame->isClosureCall
                     && reg.offset() == JSStack::Callee)
                     return true;
                 
-                if (codeOrigin.inlineCallFrame->isVarargs()
+                if (codeOriginPtr->inlineCallFrame->isVarargs()
                     && reg.offset() == JSStack::ArgumentCount)
                     return true;
                 
                 return false;
             }
             
-            return livenessFor(codeOrigin.inlineCallFrame).operandIsLive(
-                reg.offset(), codeOrigin.bytecodeIndex);
+            return livenessFor(codeOriginPtr->inlineCallFrame).operandIsLive(
+                reg.offset(), codeOriginPtr->bytecodeIndex);
         }
         
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+        InlineCallFrame* inlineCallFrame = codeOriginPtr->inlineCallFrame;
         if (!inlineCallFrame)
             break;
 
@@ -994,7 +995,11 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
             && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->arguments.size())
             return true;
         
-        codeOrigin = inlineCallFrame->caller;
+        codeOriginPtr = inlineCallFrame->getCallerSkippingDeadFrames();
+
+        // The first inline call frame could be an inline tail call
+        if (!codeOriginPtr)
+            break;
     }
     
     return true;

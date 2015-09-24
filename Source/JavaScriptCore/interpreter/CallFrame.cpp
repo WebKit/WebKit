@@ -95,7 +95,7 @@ unsigned CallFrame::bytecodeOffset()
         ASSERT(codeBlock());
         CodeOrigin codeOrigin = this->codeOrigin();
         for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
-            codeOrigin = inlineCallFrame->caller;
+            codeOrigin = inlineCallFrame->directCaller;
             inlineCallFrame = codeOrigin.inlineCallFrame;
         }
         return codeOrigin.bytecodeIndex;

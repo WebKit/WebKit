@@ -717,9 +717,11 @@ public:
         // call, both callee and caller will see the variables live.
         VirtualRegister exclusionStart;
         VirtualRegister exclusionEnd;
+
+        CodeOrigin* codeOriginPtr = &codeOrigin;
         
         for (;;) {
-            InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = codeOriginPtr->inlineCallFrame;
             VirtualRegister stackOffset(inlineCallFrame ? inlineCallFrame->stackOffset : 0);
             
             if (inlineCallFrame) {
@@ -731,7 +733,7 @@ public:
             
             CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
             FullBytecodeLiveness& fullLiveness = livenessFor(codeBlock);
-            const FastBitVector& liveness = fullLiveness.getLiveness(codeOrigin.bytecodeIndex);
+            const FastBitVector& liveness = fullLiveness.getLiveness(codeOriginPtr->bytecodeIndex);
             for (unsigned relativeLocal = codeBlock->m_numCalleeRegisters; relativeLocal--;) {
                 VirtualRegister reg = stackOffset + virtualRegisterForLocal(relativeLocal);
                 
@@ -758,7 +760,11 @@ public:
             for (VirtualRegister reg = exclusionStart; reg < exclusionEnd; reg += 1)
                 functor(reg);
             
-            codeOrigin = inlineCallFrame->caller;
+            codeOriginPtr = inlineCallFrame->getCallerSkippingDeadFrames();
+
+            // The first inline call frame could be an inline tail call
+            if (!codeOriginPtr)
+                break;
         }
     }
     
