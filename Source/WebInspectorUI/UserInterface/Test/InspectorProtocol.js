@@ -35,7 +35,7 @@ InspectorProtocol.sendCommand = function(methodOrObject, params, handler)
     // Allow new-style arguments object, as in awaitCommand.
     let method = methodOrObject;
     if (typeof methodOrObject === "object")
-        var {method, params, handler} = methodOrObject;
+        ({method, params, handler} = methodOrObject);
 
     this._dispatchTable[++this._requestId] = handler;
     let messageObject = {method, params, id: this._requestId};
@@ -98,7 +98,7 @@ InspectorProtocol.addEventListener = function(eventTypeOrObject, listener)
 {
     let event = eventTypeOrObject;
     if (typeof eventTypeOrObject === "object")
-        var {event, listener} = eventTypeOrObject;
+        ({event, listener} = eventTypeOrObject);
 
     if (typeof event !== "string")
         throw new Error("Event name must be a string.");

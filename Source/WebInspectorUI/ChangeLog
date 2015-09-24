@@ -1,5 +1,19 @@
 2015-09-23  Saam barati  <sbarati@apple.com>
 
+        Fix broken inspector tests.
+
+        Reviewed by Joseph Pecoraro and Brian Burg.
+
+        We can't redeclare a "let" variable and "var" variable using the same
+        identifier at the top-level of a function.
+
+        * UserInterface/Test/InspectorProtocol.js:
+        (InspectorProtocol.sendCommand):
+        (InspectorProtocol.addEventListener):
+        (InspectorProtocol.dispatchMessageFromBackend):
+
+2015-09-23  Saam barati  <sbarati@apple.com>
+
         Web Inspector: Don't use bind() when creating internal AST, instead, pass in "this" parameter to map()
         https://bugs.webkit.org/show_bug.cgi?id=149483
 
