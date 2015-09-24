@@ -1,3 +1,9 @@
+2015-09-24  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+
 2015-09-24  Mark Lam  <mark.lam@apple.com>
 
         Unreviewed. Make Lucas Forschler a WebKit reviewer.
