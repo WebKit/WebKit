@@ -1,3 +1,16 @@
+2015-09-23  Timothy Horton  <timothy_horton@apple.com>
+
+        Link highlight rect is too rounded on blocks with border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=149511
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (nsSizeForTapHighlightBorderRadius):
+        (-[WKContentView _updateTapHighlight]):
+        Scale the border radius from content to view coordinates, just like
+        we do for the rects that WebKit returns us.
+
 2015-09-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Add a file of pointer-lock to cmake ports
