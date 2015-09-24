@@ -1,3 +1,15 @@
+2015-09-24  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] NULL pointer crash when trying to use tiled backing for frame view.
+        https://bugs.webkit.org/show_bug.cgi?id=149523
+
+        Reviewed by Brent Fulgham.
+
+        For WinCairo, disable tiled backing for frame view.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::shouldUseTiledBackingForFrameView):
+
 2015-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Show tiled drawing debug overlay on Windows
