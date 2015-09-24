@@ -2736,7 +2736,7 @@ FAIL HTMLTimeElement interface: existence and properties of interface object ass
 }" but got (object) object "[object Object]"
 PASS HTMLTimeElement interface object length 
 PASS HTMLTimeElement interface: existence and properties of interface prototype object 
-PASS HTMLTimeElement interface: existence and properties of interface prototype object's "constructor" property 
+FAIL HTMLTimeElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTimeElement.prototype.constructor is not writable expected true got false
 FAIL HTMLTimeElement interface: attribute dateTime assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw

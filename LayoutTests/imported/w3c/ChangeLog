@@ -1,5 +1,11 @@
 2015-09-23  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline web-platform-tests/html/dom/interfaces.html after r190190
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
+2015-09-23  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, roll out r190085 as it seems to cause crashes in JSC
         <rdar://problem/22825602>
 
