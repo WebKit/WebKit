@@ -76,10 +76,10 @@
 			isa = PBXGroup;
 			children = (
 				1C60FE2E14E5F3CD006CD77D /* Configurations */,
+				996231EA18D180C200C03FDA /* Frameworks */,
 				A54C2258148B23DF00373FA3 /* Products */,
 				1C60FF1514E6E39B006CD77D /* Resources */,
 				1C60FFE014E79B0F006CD77D /* Scripts */,
-				996231EA18D180C200C03FDA /* Frameworks */,
 				1C60FF1014E6D992006CD77D /* UserInterface */,
 				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
 			);

@@ -1,3 +1,9 @@
+2015-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Ran sort-Xcode-project-file.
+
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+
 2015-09-23  Saam barati  <sbarati@apple.com>
 
         Fix broken inspector tests.

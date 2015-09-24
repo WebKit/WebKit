@@ -1,3 +1,9 @@
+2015-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Ran sort-Xcode-project-file.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2015-09-23  Andy Estes  <aestes@apple.com>
 
         Disable QuickLook on watchOS

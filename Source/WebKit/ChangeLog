@@ -1,3 +1,9 @@
+2015-09-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Ran sort-Xcode-project-file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2015-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
