@@ -57,7 +57,7 @@ def main():
         return 1
 
     if action == 'archive':
-        return archiveBuiltProduct(options.configuration, genericPlatform, options.platform)
+        return archiveBuiltProduct(options.configuration, genericPlatform)
     else:
         return extractBuiltProduct(options.configuration, genericPlatform)
 
