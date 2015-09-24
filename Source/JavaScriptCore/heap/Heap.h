@@ -428,6 +428,7 @@ private:
     Condition m_markingConditionVariable;
     MarkStackArray m_sharedMarkStack;
     unsigned m_numberOfActiveParallelMarkers { 0 };
+    unsigned m_numberOfWaitingParallelMarkers { 0 };
     bool m_parallelMarkersShouldExit { false };
 
     Lock m_opaqueRootsMutex;

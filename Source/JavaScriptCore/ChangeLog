@@ -1,5 +1,24 @@
 2015-09-23  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove special case code for the no-parallel-GC case
+        https://bugs.webkit.org/show_bug.cgi?id=149512
+
+        Reviewed by Mark Lam.
+
+        Make serial GC just a parallel GC where the helper threads don't do anything. Also make the
+        idle thread calculation a bit more explicit.
+
+        The main outcome is that we no longer use Options::numberOfGCMarkers() as much, so the code is
+        resilient against the number of GC markers changing.
+
+        * heap/Heap.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+
+2015-09-23  Filip Pizlo  <fpizlo@apple.com>
+
         PolymorphicAccess should remember that it checked an ObjectPropertyCondition with a check on some structure
         https://bugs.webkit.org/show_bug.cgi?id=149514
 
