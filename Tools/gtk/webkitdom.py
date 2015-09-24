@@ -27,6 +27,8 @@ from ConfigParser import SafeConfigParser
 
 class WebKitDOMDocGenerator(object):
 
+    DELETED_CLASSES = ["WebKitDOMEntityReference"]
+
     def __init__(self, symbol_files, file_handle):
         self._symbol_files = symbol_files
         self._file_handle = file_handle
@@ -35,6 +37,9 @@ class WebKitDOMDocGenerator(object):
         pass
 
     def write_section(self, symbol_file):
+        raise NotImplementedError
+
+    def write_deleted_classes(self):
         raise NotImplementedError
 
     def write_footer(self):
@@ -53,6 +58,7 @@ class WebKitDOMDocGenerator(object):
             if WebKitDOMDocGenerator.is_deprecated_symbol_file(symbol_file):
                 continue
             self.write_section(symbol_file)
+        self.write_deleted_classes()
         self.write_footer()
 
 
@@ -76,6 +82,10 @@ class WebKitDOMDocGeneratorSGML(WebKitDOMDocGenerator):
     def write_section(self, symbol_file):
         basename = os.path.basename(symbol_file)
         self.write('    <xi:include href="xml/%s"/>\n' % basename.replace(".symbols", ".xml"))
+
+    def write_deleted_classes(self):
+        for class_name in self.DELETED_CLASSES:
+            self.write('    <xi:include href="xml/%s.xml"/>\n' % class_name)
 
     def write_footer(self):
         self.write('''  </chapter>
@@ -128,6 +138,13 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
         retval = retval.replace('HTMLU', 'HTML_U')
 
         return retval
+
+    def _deleted_class(self, function):
+        for deleted_class in self.DELETED_CLASSES:
+            decamelized = 'webkit_dom_%s' % self._dom_class_decamelize(deleted_class).lower()
+            if function.startswith(decamelized):
+                return deleted_class
+        return None
 
     def _find_deprecated_symbols(self, symbol_file):
         retval = {}
@@ -198,6 +215,27 @@ class WebKitDOMDocGeneratorSections(WebKitDOMDocGenerator):
                 self.write('%sPrivate\n' % class_name)
             self.write('webkit_dom_%s_get_type\n' % dom_class.lower())
         self.write('</SECTION>\n\n')
+
+    def write_deleted_classes(self):
+        for class_name in self.DELETED_CLASSES:
+            self.write('<SECTION>\n')
+            self.write('<FILE>%s</FILE>\n<TITLE>%s</TITLE>\n' % (class_name, class_name))
+            try:
+                self.write('\n'.join([name for name in self._deprecated_symbols[class_name] if not name.endswith('get_type')]) + '\n')
+            except KeyError:
+                # A deleted class with no public methods doesn't have deprecated symbols.
+                pass
+            self.write('\n<SUBSECTION Standard>\n')
+            dom_class = self._dom_class_decamelize(class_name).upper()
+            self.write('WEBKIT_DOM_TYPE_%s\n' % dom_class)
+            self.write('WEBKIT_DOM_%s\n' % dom_class)
+            self.write('WEBKIT_DOM_IS_%s\n' % dom_class)
+            self.write('WEBKIT_DOM_%s_CLASS\n' % dom_class)
+            self.write('WEBKIT_DOM_IS_%s_CLASS\n' % dom_class)
+            self.write('WEBKIT_DOM_%s_GET_CLASS\n' % dom_class)
+            self.write('\n<SUBSECTION Private>\n')
+            self.write('webkit_dom_%s_get_type\n' % self._dom_class_decamelize(class_name).lower())
+            self.write('</SECTION>\n\n')
 
     def write_footer(self):
         self.write('<SECTION>\n')

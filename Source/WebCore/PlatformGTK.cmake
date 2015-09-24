@@ -583,7 +583,6 @@ list(APPEND GObjectDOMBindingsStable_IDL_FILES
     dom/DocumentFragment.idl
     dom/DocumentType.idl
     dom/Element.idl
-    dom/EntityReference.idl
     dom/Event.idl
     dom/KeyboardEvent.idl
     dom/MouseEvent.idl

@@ -22,6 +22,7 @@
 #if !defined(WEBKIT_DISABLE_DEPRECATED)
 
 #include <glib.h>
+#include <webkitdom/WebKitDOMNode.h>
 #include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
@@ -156,6 +157,64 @@ webkit_dom_element_get_elements_by_tag_name_ns(WebKitDOMElement* self, const gch
  */
 WEBKIT_DEPRECATED_FOR(webkit_dom_element_get_elements_by_class_name_as_html_collection) WebKitDOMNodeList*
 webkit_dom_element_get_elements_by_class_name(WebKitDOMElement* self, const gchar* class_name);
+
+
+#define WEBKIT_DOM_TYPE_ENTITY_REFERENCE            (webkit_dom_entity_reference_get_type())
+#define WEBKIT_DOM_ENTITY_REFERENCE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReference))
+#define WEBKIT_DOM_ENTITY_REFERENCE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReferenceClass)
+#define WEBKIT_DOM_IS_ENTITY_REFERENCE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_DOM_TYPE_ENTITY_REFERENCE))
+#define WEBKIT_DOM_IS_ENTITY_REFERENCE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_ENTITY_REFERENCE))
+#define WEBKIT_DOM_ENTITY_REFERENCE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_ENTITY_REFERENCE, WebKitDOMEntityReferenceClass))
+
+typedef struct _WebKitDOMEntityReference WebKitDOMEntityReference;
+typedef struct _WebKitDOMEntityReferenceClass WebKitDOMEntityReferenceClass;
+
+struct _WebKitDOMEntityReference {
+    WebKitDOMNode parent_instance;
+};
+
+struct _WebKitDOMEntityReferenceClass {
+    WebKitDOMNodeClass parent_class;
+};
+
+WEBKIT_DEPRECATED GType webkit_dom_entity_reference_get_type(void);
+
+/**
+ * webkit_dom_node_iterator_get_expand_entity_references:
+ * @self: A #WebKitDOMNodeIterator
+ *
+ * This function has been removed from the DOM spec and it just returns %FALSE.
+ *
+ * Returns: A #gboolean                                                                                                                                                                       *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED gboolean webkit_dom_node_iterator_get_expand_entity_references(WebKitDOMNodeIterator* self);
+
+/**
+ * webkit_dom_tree_walker_get_expand_entity_references:
+ * @self: A #WebKitDOMTreeWalker
+ *
+ * This function has been removed from the DOM spec and it just returns %FALSE.
+ *
+ * Returns: A #gboolean
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED gboolean webkit_dom_tree_walker_get_expand_entity_references(WebKitDOMTreeWalker* self);
+
+/**
+ * webkit_dom_document_create_entity_reference:
+ * @self: A #WebKitDOMDocument
+ * @name: (allow-none): A #gchar
+ * @error: #GError
+ *
+ * This function has been removed from the DOM spec and it just returns %NULL.
+ *
+ * Returns: (transfer none): A #WebKitDOMEntityReference
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED WebKitDOMEntityReference* webkit_dom_document_create_entity_reference(WebKitDOMDocument* self, const gchar* name, GError** error);
 
 G_END_DECLS
 

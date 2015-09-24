@@ -9,3 +9,7 @@ WebKitDOMNodeList* webkit_dom_document_get_elements_by_tag_name_ns(WebKitDOMDocu
 WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name(WebKitDOMElement*, const gchar*)
 WebKitDOMNodeList* webkit_dom_element_get_elements_by_tag_name_ns(WebKitDOMElement*, const gchar*, const gchar*)
 WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElement*, const gchar*)
+GType webkit_dom_entity_reference_get_type(void)
+gboolean webkit_dom_tree_walker_get_expand_entity_references(WebKitDOMTreeWalker*)
+WebKitDOMEntityReference* webkit_dom_document_create_entity_reference(WebKitDOMDocument*, const gchar*, GError**)
+gboolean webkit_dom_node_iterator_get_expand_entity_references(WebKitDOMNodeIterator*)

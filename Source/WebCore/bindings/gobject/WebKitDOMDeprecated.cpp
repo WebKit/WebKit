@@ -127,3 +127,31 @@ WebKitDOMNodeList* webkit_dom_element_get_elements_by_class_name(WebKitDOMElemen
     RefPtr<WebCore::NodeList> nodeList = WTF::getPtr(element->getElementsByClassNameForObjC(String::fromUTF8(className)));
     return WebKit::kit(nodeList.get());
 }
+
+G_DEFINE_TYPE(WebKitDOMEntityReference, webkit_dom_entity_reference, WEBKIT_DOM_TYPE_NODE)
+
+static void webkit_dom_entity_reference_init(WebKitDOMEntityReference*)
+{
+}
+
+static void webkit_dom_entity_reference_class_init(WebKitDOMEntityReferenceClass*)
+{
+}
+
+gboolean webkit_dom_node_iterator_get_expand_entity_references(WebKitDOMNodeIterator*)
+{
+    g_warning("%s: EntityReference has been removed from DOM spec, this function does nothing.", __func__);
+    return FALSE;
+}
+
+gboolean webkit_dom_tree_walker_get_expand_entity_references(WebKitDOMTreeWalker*)
+{
+    g_warning("%s: EntityReference has been removed from DOM spec, this function does nothing.", __func__);
+    return FALSE;
+}
+
+WebKitDOMEntityReference* webkit_dom_document_create_entity_reference(WebKitDOMDocument*, const gchar*, GError**)
+{
+    g_warning("%s: EntityReference has been removed from DOM spec, this function does nothing.", __func__);
+    return nullptr;
+}

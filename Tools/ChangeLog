@@ -1,3 +1,20 @@
+2015-09-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GObject DOM API breaks after r190120.
+
+        Bring back code removed in r169931 to handle documentation of
+        deleted classes.
+
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGenerator):
+        (WebKitDOMDocGenerator.write_deleted_classes):
+        (WebKitDOMDocGenerator.generate):
+        (write_deleted_classes):
+        (WebKitDOMDocGeneratorSections._deleted_class):
+        (WebKitDOMDocGeneratorSections._deleted_class.in):
+        (WebKitDOMDocGeneratorSections.write_deleted_classes):
+        (WebKitDOMDocGeneratorSections.write_deleted_classes.with):
+
 2015-09-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] [Font Features] Implement font-variant-*

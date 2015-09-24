@@ -290,12 +290,6 @@ sub SkipFunction {
     # Static methods are unsupported
     return 1 if $function->isStatic;
 
-    # FIXME: This is skipped because I don't know how to fix the build any better way.
-    # https://bugs.webkit.org/show_bug.cgi?id=149348
-    if ($functionName eq "webkit_dom_document_create_entity_reference") {
-        return 1;
-    }
-
     if (($isCustomFunction || $isUnsupportedCallWith) &&
         $functionName ne "webkit_dom_node_replace_child" &&
         $functionName ne "webkit_dom_node_insert_before" &&
