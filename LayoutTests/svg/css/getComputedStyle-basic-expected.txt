@@ -316,8 +316,18 @@ rect: style.getPropertyValue(-webkit-font-kerning) : auto
 rect: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
-rect: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-variant-ligatures) : normal
+rect: style.getPropertyCSSValue(font-variant-ligatures) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-variant-position) : normal
+rect: style.getPropertyCSSValue(font-variant-position) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-variant-caps) : normal
+rect: style.getPropertyCSSValue(font-variant-caps) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-variant-numeric) : normal
+rect: style.getPropertyCSSValue(font-variant-numeric) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-variant-alternates) : normal
+rect: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(font-variant-east-asian) : normal
+rect: style.getPropertyCSSValue(font-variant-east-asian) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-grid-auto-columns) : auto
 rect: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-grid-auto-flow) : row
@@ -840,8 +850,18 @@ g: style.getPropertyValue(-webkit-font-kerning) : auto
 g: style.getPropertyCSSValue(-webkit-font-kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-font-variant-ligatures) : normal
-g: style.getPropertyCSSValue(-webkit-font-variant-ligatures) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-variant-ligatures) : normal
+g: style.getPropertyCSSValue(font-variant-ligatures) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-variant-position) : normal
+g: style.getPropertyCSSValue(font-variant-position) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-variant-caps) : normal
+g: style.getPropertyCSSValue(font-variant-caps) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-variant-numeric) : normal
+g: style.getPropertyCSSValue(font-variant-numeric) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-variant-alternates) : normal
+g: style.getPropertyCSSValue(font-variant-alternates) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(font-variant-east-asian) : normal
+g: style.getPropertyCSSValue(font-variant-east-asian) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-grid-auto-columns) : auto
 g: style.getPropertyCSSValue(-webkit-grid-auto-columns) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-grid-auto-flow) : row

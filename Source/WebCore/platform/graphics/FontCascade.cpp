@@ -600,7 +600,8 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run) const
         return Simple;
 #endif
 
-    if (m_fontDescription.featureSettings() && m_fontDescription.featureSettings()->size() > 0)
+    // FIXME: This shouldn't be necessary because Font::applyTransforms() should perform all necessary shaping.
+    if (m_fontDescription.featureSettings().size() > 0 || !m_fontDescription.variantSettings().isAllNormal())
         return Complex;
     
     if (run.length() > 1 && !WidthIterator::supportsTypesettingFeatures(*this))

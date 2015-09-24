@@ -1036,6 +1036,18 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
 #endif
+    case CSSPropertyFontVariantPosition: // normal | sub | super
+        if (valueID == CSSValueNormal || valueID == CSSValueSub || valueID == CSSValueSuper)
+            return true;
+        break;
+    case CSSPropertyFontVariantCaps: // normal | small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps
+        if (valueID == CSSValueNormal || valueID == CSSValueSmallCaps || valueID == CSSValueAllSmallCaps || valueID == CSSValuePetiteCaps || valueID == CSSValueAllPetiteCaps || valueID == CSSValueUnicase || valueID == CSSValueTitlingCaps)
+            return true;
+        break;
+    case CSSPropertyFontVariantAlternates: // We only support the normal and historical-forms values.
+        if (valueID == CSSValueNormal || valueID == CSSValueHistoricalForms)
+            return true;
+        break;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1162,6 +1174,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord:
 #endif
+    case CSSPropertyFontVariantPosition:
+    case CSSPropertyFontVariantCaps:
+    case CSSPropertyFontVariantAlternates:
         return true;
     default:
         return false;
@@ -3015,13 +3030,25 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             return parseFontFeatureSettings(important);
         break;
-
-    case CSSPropertyWebkitFontVariantLigatures:
-        if (id == CSSValueNormal)
+    case CSSPropertyFontVariantLigatures:
+        if (id == CSSValueNormal || id == CSSValueNone)
             validPrimitive = true;
         else
             return parseFontVariantLigatures(important);
         break;
+    case CSSPropertyFontVariantNumeric:
+        if (id == CSSValueNormal)
+            validPrimitive = true;
+        else
+            return parseFontVariantNumeric(important);
+        break;
+    case CSSPropertyFontVariantEastAsian:
+        if (id == CSSValueNormal)
+            validPrimitive = true;
+        else
+            return parseFontVariantEastAsian(important);
+        break;
+
     case CSSPropertyWebkitClipPath:
         parsedValue = parseClipPath();
         break;
@@ -10382,23 +10409,21 @@ bool CSSParser::parseLineBoxContain(bool important)
 
 bool CSSParser::parseFontFeatureTag(CSSValueList& settings)
 {
-    // Feature tag name consists of 4-letter characters.
-    static const unsigned tagNameLength = 4;
-
     CSSParserValue* value = m_valueList->current();
     // Feature tag name comes first
     if (value->unit != CSSPrimitiveValue::CSS_STRING)
         return false;
-    if (value->string.length() != tagNameLength)
+    FontFeatureTag tag;
+    if (value->string.length() != tag.size())
         return false;
-    for (unsigned i = 0; i < tagNameLength; ++i) {
+    for (unsigned i = 0; i < tag.size(); ++i) {
         // Limits the range of characters to 0x20-0x7E, following the tag name rules defiend in the OpenType specification.
         UChar character = value->string[i];
         if (character < 0x20 || character > 0x7E)
             return false;
+        tag[i] = toASCIILower(character);
     }
 
-    String tag = String(value->string).convertToASCIILowercase();
     int tagValue = 1;
     // Feature tag values could follow: <integer> | on | off
     value = m_valueList->next();
@@ -10413,7 +10438,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList& settings)
             m_valueList->next();
         }
     }
-    settings.append(CSSFontFeatureValue::create(tag, tagValue));
+    settings.append(CSSFontFeatureValue::create(WTF::move(tag), tagValue));
     return true;
 }
 
@@ -10445,10 +10470,11 @@ bool CSSParser::parseFontFeatureSettings(bool important)
 
 bool CSSParser::parseFontVariantLigatures(bool important)
 {
-    RefPtr<CSSValueList> ligatureValues = CSSValueList::createSpaceSeparated();
-    bool sawCommonLigaturesValue = false;
-    bool sawDiscretionaryLigaturesValue = false;
-    bool sawHistoricalLigaturesValue = false;
+    auto values = CSSValueList::createSpaceSeparated();
+    bool sawCommonValue = false;
+    bool sawDiscretionaryValue = false;
+    bool sawHistoricalValue = false;
+    bool sawContextualValue = false;
 
     for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
         if (value->unit != CSSPrimitiveValue::CSS_IDENT)
@@ -10457,34 +10483,148 @@ bool CSSParser::parseFontVariantLigatures(bool important)
         switch (value->id) {
         case CSSValueNoCommonLigatures:
         case CSSValueCommonLigatures:
-            if (sawCommonLigaturesValue)
+            if (sawCommonValue)
                 return false;
-            sawCommonLigaturesValue = true;
-            ligatureValues->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            sawCommonValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
             break;
         case CSSValueNoDiscretionaryLigatures:
         case CSSValueDiscretionaryLigatures:
-            if (sawDiscretionaryLigaturesValue)
+            if (sawDiscretionaryValue)
                 return false;
-            sawDiscretionaryLigaturesValue = true;
-            ligatureValues->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            sawDiscretionaryValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
             break;
         case CSSValueNoHistoricalLigatures:
         case CSSValueHistoricalLigatures:
-            if (sawHistoricalLigaturesValue)
+            if (sawHistoricalValue)
                 return false;
-            sawHistoricalLigaturesValue = true;
-            ligatureValues->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            sawHistoricalValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueContextual:
+        case CSSValueNoContextual:
+            if (sawContextualValue)
+                return false;
+            sawContextualValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
             break;
         default:
             return false;
         }
     }
 
-    if (!ligatureValues->length())
+    if (!values->length())
         return false;
 
-    addProperty(CSSPropertyWebkitFontVariantLigatures, ligatureValues.release(), important);
+    addProperty(CSSPropertyFontVariantLigatures, WTF::move(values), important);
+    return true;
+}
+
+bool CSSParser::parseFontVariantNumeric(bool important)
+{
+    auto values = CSSValueList::createSpaceSeparated();
+    bool sawFigureValue = false;
+    bool sawSpacingValue = false;
+    bool sawFractionValue = false;
+    bool sawOrdinal = false;
+    bool sawSlashedZero = false;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        switch (value->id) {
+        case CSSValueLiningNums:
+        case CSSValueOldstyleNums:
+            if (sawFigureValue)
+                return false;
+            sawFigureValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueProportionalNums:
+        case CSSValueTabularNums:
+            if (sawSpacingValue)
+                return false;
+            sawSpacingValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueDiagonalFractions:
+        case CSSValueStackedFractions:
+            if (sawFractionValue)
+                return false;
+            sawFractionValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueOrdinal:
+            if (sawOrdinal)
+                return false;
+            sawOrdinal = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueSlashedZero:
+            if (sawSlashedZero)
+                return false;
+            sawSlashedZero = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        default:
+            return false;
+        }
+    }
+
+    if (!values->length())
+        return false;
+
+    addProperty(CSSPropertyFontVariantNumeric, WTF::move(values), important);
+    return true;
+}
+
+bool CSSParser::parseFontVariantEastAsian(bool important)
+{
+    auto values = CSSValueList::createSpaceSeparated();
+    bool sawVariantValue = false;
+    bool sawWidthValue = false;
+    bool sawRuby = false;
+
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (value->unit != CSSPrimitiveValue::CSS_IDENT)
+            return false;
+
+        switch (value->id) {
+        case CSSValueJis78:
+        case CSSValueJis83:
+        case CSSValueJis90:
+        case CSSValueJis04:
+        case CSSValueSimplified:
+        case CSSValueTraditional:
+            if (sawVariantValue)
+                return false;
+            sawVariantValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueFullWidth:
+        case CSSValueProportionalWidth:
+            if (sawWidthValue)
+                return false;
+            sawWidthValue = true;
+            values->append(CSSValuePool::singleton().createIdentifierValue(value->id));
+            break;
+        case CSSValueRuby:
+            sawRuby = true;
+            break;
+        default:
+            return false;
+        }
+    }
+
+    if (sawRuby)
+        values->append(CSSValuePool::singleton().createIdentifierValue(CSSValueRuby));
+
+    if (!values->length())
+        return false;
+
+    addProperty(CSSPropertyFontVariantEastAsian, WTF::move(values), important);
     return true;
 }
 

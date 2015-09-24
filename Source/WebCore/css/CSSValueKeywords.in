@@ -67,15 +67,53 @@ all
 //normal
 small-caps
 
-// -webkit-font-variant-ligatures:
+// font-variant-ligatures:
 //
-// normal
 common-ligatures
 no-common-ligatures
 discretionary-ligatures
 no-discretionary-ligatures
 historical-ligatures
 no-historical-ligatures
+contextual
+no-contextual
+
+// font-variant-caps
+//
+// FIXME: Unify this with plain font-variant
+// small-caps
+all-small-caps
+petite-caps
+all-petite-caps
+unicase
+titling-caps
+
+// font-variant-numeric
+//
+lining-nums
+oldstyle-nums
+proportional-nums
+tabular-nums
+diagonal-fractions
+stacked-fractions
+ordinal
+slashed-zero
+
+// font-variant-alternates
+//
+historical-forms
+
+// font-variant-east-asian
+//
+jis78
+jis83
+jis90
+jis04
+simplified
+traditional
+full-width
+proportional-width
+ruby
 
 //
 // CSS_PROP_FONT_WEIGHT:

@@ -32,6 +32,7 @@
 
 #include "FontDescription.h"
 #include "Timer.h"
+#include <array>
 #include <limits.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -73,7 +74,7 @@ struct FontDescriptionKey {
     FontDescriptionKey(const FontDescription& description)
         : m_size(description.computedPixelSize())
         , m_weight(description.weight())
-        , m_flags(makeFlagKey(description))
+        , m_flags(makeFlagsKey(description))
         , m_locale(description.locale())
         , m_featureSettings(description.featureSettings())
     { }
@@ -85,7 +86,7 @@ struct FontDescriptionKey {
     bool operator==(const FontDescriptionKey& other) const
     {
         return m_size == other.m_size && m_weight == other.m_weight && m_flags == other.m_flags && m_locale == other.m_locale
-            && ((m_featureSettings == other.m_featureSettings) || (m_featureSettings && other.m_featureSettings && m_featureSettings.get() == other.m_featureSettings.get()));
+            && m_featureSettings == other.m_featureSettings;
     }
 
     bool operator!=(const FontDescriptionKey& other) const
@@ -97,15 +98,21 @@ struct FontDescriptionKey {
 
     inline unsigned computeHash() const
     {
-        unsigned toHash[] = {m_size, m_weight, m_flags, m_locale.isNull() ? 0 : m_locale.impl()->existingHash(), m_featureSettings ? m_featureSettings->hash() : 0};
-        return StringHasher::hashMemory(toHash, sizeof(toHash));
+        IntegerHasher hasher;
+        hasher.add(m_size);
+        hasher.add(m_weight);
+        for (unsigned flagItem : m_flags)
+            hasher.add(flagItem);
+        hasher.add(m_locale.isNull() ? 0 : m_locale.impl()->existingHash());
+        hasher.add(m_featureSettings.hash());
+        return hasher.hash();
     }
 
 private:
-    static unsigned makeFlagKey(const FontDescription& description)
+    static std::array<unsigned, 2> makeFlagsKey(const FontDescription& description)
     {
         static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
-        return static_cast<unsigned>(description.script()) << 11
+        unsigned first = static_cast<unsigned>(description.script()) << 11
             | static_cast<unsigned>(description.textRenderingMode()) << 9
             | static_cast<unsigned>(description.smallCaps()) << 8
             | static_cast<unsigned>(description.fontSynthesis()) << 6
@@ -114,15 +121,31 @@ private:
             | static_cast<unsigned>(description.orientation()) << 2
             | static_cast<unsigned>(description.italic()) << 1
             | static_cast<unsigned>(description.renderingMode());
+        unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 27
+            | static_cast<unsigned>(description.variantEastAsianWidth()) << 25
+            | static_cast<unsigned>(description.variantEastAsianVariant()) << 22
+            | static_cast<unsigned>(description.variantAlternates()) << 21
+            | static_cast<unsigned>(description.variantNumericSlashedZero()) << 20
+            | static_cast<unsigned>(description.variantNumericOrdinal()) << 19
+            | static_cast<unsigned>(description.variantNumericFraction()) << 17
+            | static_cast<unsigned>(description.variantNumericSpacing()) << 15
+            | static_cast<unsigned>(description.variantNumericFigure()) << 13
+            | static_cast<unsigned>(description.variantCaps()) << 10
+            | static_cast<unsigned>(description.variantPosition()) << 8
+            | static_cast<unsigned>(description.variantContextualAlternates()) << 6
+            | static_cast<unsigned>(description.variantHistoricalLigatures()) << 4
+            | static_cast<unsigned>(description.variantDiscretionaryLigatures()) << 2
+            | static_cast<unsigned>(description.variantCommonLigatures());
+        return {{ first, second }};
     }
 
     static const unsigned cHashTableDeletedSize = 0xFFFFFFFFU;
 
     unsigned m_size { 0 };
     unsigned m_weight { 0 };
-    unsigned m_flags { 0 };
+    std::array<unsigned, 2> m_flags {{ 0, 0 }};
     AtomicString m_locale;
-    RefPtr<FontFeatureSettings> m_featureSettings;
+    FontFeatureSettings m_featureSettings;
 };
 
 struct FontDescriptionKeyHash {
@@ -234,14 +257,14 @@ struct SynthesisPair {
     bool needsSyntheticOblique;
 };
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const FontFeatureSettings*);
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, TextRenderingMode, const FontFeatureSettings&, const FontVariantSettings&);
 FontWeight fontWeightFromCoreText(CGFloat weight);
 uint16_t toCoreTextFontWeight(FontWeight);
 bool isFontWeightBold(FontWeight);
 void platformInvalidateFontCache();
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight, CTFontSymbolicTraits, float size);
-RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits, FontWeight, const FontFeatureSettings*, TextRenderingMode, float size);
+RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits, FontWeight, TextRenderingMode, float size);
 RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef, FontWeight, const AtomicString& locale, const UChar* characters, unsigned length);
 bool requiresCustomFallbackFont(UChar32 character);
 

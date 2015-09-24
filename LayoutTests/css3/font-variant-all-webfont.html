@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "FontFeaturesTest";
+    src: url("resources/FontWithFeatures.otf") format("opentype");
+}
+</style>
+</head>
+<body>
+<p>This test is a dump-render-tree test which makes sure that the following properties are appropriately applied:</p>
+<ul>
+<li>-webkit-font-variant-ligatures</li>
+<li>-webkit-font-variant-position</li>
+<li>-webkit-font-variant-caps</li>
+<li>-webkit-font-variant-numeric</li>
+<li>-webkit-font-variant-alternates</li>
+<li>-webkit-font-variant-east-asian</li>
+</ul>
+The test passes if there is a particular sequence of checks and x characters below. Note that some x characters are expected.
+<div id="insertionpoint"></div>
+<script>
+var insertionpoint = document.getElementById("insertionpoint");
+function addElement(property, value, text) {
+    var element = document.createElement("span");
+    element.textContent = text;
+    element.setAttribute("style", "font-family: FontFeaturesTest; " + property + ": " + value + ";");
+    insertionpoint.appendChild(element);
+    insertionpoint.appendChild(document.createTextNode(" "));
+}
+addElement("font-variant-ligatures", "common-ligatures", "C");
+addElement("font-variant-ligatures", "common-ligatures", "D");
+addElement("font-variant-ligatures", "no-common-ligatures", "C");
+addElement("font-variant-ligatures", "no-common-ligatures", "D");
+addElement("font-variant-ligatures", "discretionary-ligatures", "E");
+addElement("font-variant-ligatures", "no-discretionary-ligatures", "E");
+addElement("font-variant-ligatures", "historical-ligatures", "F");
+addElement("font-variant-ligatures", "no-historical-ligatures", "F");
+addElement("font-variant-ligatures", "contextual", "G");
+addElement("font-variant-ligatures", "no-contextual", "G");
+addElement("font-variant-position", "sub", "H");
+addElement("font-variant-position", "super", "I");
+addElement("font-variant-caps", "small-caps", "J");
+addElement("font-variant-caps", "all-small-caps", "K");
+addElement("font-variant-caps", "petite-caps", "L");
+addElement("font-variant-caps", "all-petite-caps", "M");
+addElement("font-variant-caps", "unicase", "N");
+addElement("font-variant-caps", "titling-caps", "O");
+addElement("font-variant-numeric", "lining-nums", "P");
+addElement("font-variant-numeric", "oldstyle-nums", "Q");
+addElement("font-variant-numeric", "proportional-nums", "R");
+addElement("font-variant-numeric", "tabular-nums", "S");
+addElement("font-variant-numeric", "diagonal-fractions", "T");
+//addElement("font-variant-numeric", "stacked-fractions", "U");
+addElement("font-variant-numeric", "ordinal", "V");
+addElement("font-variant-numeric", "slashed-zero", "W");
+addElement("font-variant-alternates", "historical-forms", "X");
+addElement("font-variant-east-asian", "jis78", "Y");
+addElement("font-variant-east-asian", "jis83", "Z");
+addElement("font-variant-east-asian", "jis90", "a");
+addElement("font-variant-east-asian", "jis04", "b");
+addElement("font-variant-east-asian", "simplified", "c");
+addElement("font-variant-east-asian", "traditional", "d");
+addElement("font-variant-east-asian", "full-width", "e");
+addElement("font-variant-east-asian", "proportional-width", "f");
+addElement("font-variant-east-asian", "ruby", "g");
+</script>
+</body>
+</html>

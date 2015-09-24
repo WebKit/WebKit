@@ -35,11 +35,14 @@
 namespace WebCore {
 
 struct SameSizeAsFontCascadeDescription {
-    void* pointers[3];
-    float sizes[2];
-    // FIXME: Make them fit into one word.
-    uint32_t bitfields;
-    uint32_t bitfields2 : 8;
+    Vector<void*> vector;
+    void* string;
+    float size;
+    unsigned bitfields1;
+    unsigned bitfields2 : 22;
+    void* array;
+    float size2;
+    unsigned bitfields3 : 10;
 };
 
 COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), FontCascadeDescription_should_stay_small);
@@ -55,6 +58,21 @@ FontDescription::FontDescription()
     , m_textRendering(AutoTextRendering)
     , m_script(localeToScriptCodeForFontSelection(m_locale))
     , m_fontSynthesis(FontSynthesisWeight | FontSynthesisStyle)
+    , m_variantCommonLigatures(static_cast<unsigned>(FontVariantLigatures::Normal))
+    , m_variantDiscretionaryLigatures(static_cast<unsigned>(FontVariantLigatures::Normal))
+    , m_variantHistoricalLigatures(static_cast<unsigned>(FontVariantLigatures::Normal))
+    , m_variantContextualAlternates(static_cast<unsigned>(FontVariantLigatures::Normal))
+    , m_variantPosition(static_cast<unsigned>(FontVariantPosition::Normal))
+    , m_variantCaps(static_cast<unsigned>(FontVariantCaps::Normal))
+    , m_variantNumericFigure(static_cast<unsigned>(FontVariantNumericFigure::Normal))
+    , m_variantNumericSpacing(static_cast<unsigned>(FontVariantNumericSpacing::Normal))
+    , m_variantNumericFraction(static_cast<unsigned>(FontVariantNumericFraction::Normal))
+    , m_variantNumericOrdinal(static_cast<unsigned>(FontVariantNumericOrdinal::Normal))
+    , m_variantNumericSlashedZero(static_cast<unsigned>(FontVariantNumericSlashedZero::Normal))
+    , m_variantAlternates(static_cast<unsigned>(FontVariantAlternates::Normal))
+    , m_variantEastAsianVariant(static_cast<unsigned>(FontVariantEastAsianVariant::Normal))
+    , m_variantEastAsianWidth(static_cast<unsigned>(FontVariantEastAsianWidth::Normal))
+    , m_variantEastAsianRuby(static_cast<unsigned>(FontVariantEastAsianRuby::Normal))
 {
 }
 
@@ -75,9 +93,6 @@ FontTraitsMask FontDescription::traitsMask() const
 FontCascadeDescription::FontCascadeDescription()
     : m_isAbsoluteSize(false)
     , m_kerning(AutoKerning)
-    , m_commonLigaturesState(NormalLigaturesState)
-    , m_discretionaryLigaturesState(NormalLigaturesState)
-    , m_historicalLigaturesState(NormalLigaturesState)
     , m_keywordSize(0)
     , m_fontSmoothing(AutoSmoothing)
     , m_isSpecifiedFont(false)

@@ -5322,6 +5322,131 @@ template<> inline CSSPrimitiveValue::operator TrailingWord() const
 }
 #endif
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontVariantPosition position)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (position) {
+    case FontVariantPosition::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case FontVariantPosition::Subscript:
+        m_value.valueID = CSSValueSub;
+        break;
+    case FontVariantPosition::Superscript:
+        m_value.valueID = CSSValueSuper;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator FontVariantPosition() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return FontVariantPosition::Normal;
+    case CSSValueSub:
+        return FontVariantPosition::Subscript;
+    case CSSValueSuper:
+        return FontVariantPosition::Superscript;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return FontVariantPosition::Normal;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontVariantCaps caps)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (caps) {
+    case FontVariantCaps::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case FontVariantCaps::Small:
+        m_value.valueID = CSSValueSmallCaps;
+        break;
+    case FontVariantCaps::AllSmall:
+        m_value.valueID = CSSValueAllSmallCaps;
+        break;
+    case FontVariantCaps::Petite:
+        m_value.valueID = CSSValuePetiteCaps;
+        break;
+    case FontVariantCaps::AllPetite:
+        m_value.valueID = CSSValueAllPetiteCaps;
+        break;
+    case FontVariantCaps::Unicase:
+        m_value.valueID = CSSValueUnicase;
+        break;
+    case FontVariantCaps::Titling:
+        m_value.valueID = CSSValueTitlingCaps;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator FontVariantCaps() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return FontVariantCaps::Normal;
+    case CSSValueSmallCaps:
+        return FontVariantCaps::Small;
+    case CSSValueAllSmallCaps:
+        return FontVariantCaps::AllSmall;
+    case CSSValuePetiteCaps:
+        return FontVariantCaps::Petite;
+    case CSSValueAllPetiteCaps:
+        return FontVariantCaps::AllPetite;
+    case CSSValueUnicase:
+        return FontVariantCaps::Unicase;
+    case CSSValueTitlingCaps:
+        return FontVariantCaps::Titling;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return FontVariantCaps::Normal;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontVariantAlternates alternates)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (alternates) {
+    case FontVariantAlternates::Normal:
+        m_value.valueID = CSSValueNormal;
+        break;
+    case FontVariantAlternates::HistoricalForms:
+        m_value.valueID = CSSValueHistoricalForms;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator FontVariantAlternates() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNormal:
+        return FontVariantAlternates::Normal;
+    case CSSValueHistoricalForms:
+        return FontVariantAlternates::HistoricalForms;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return FontVariantAlternates::Normal;
+}
 }
 
 #endif

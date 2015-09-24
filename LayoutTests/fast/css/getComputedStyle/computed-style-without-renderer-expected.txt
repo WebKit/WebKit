@@ -158,7 +158,12 @@ justify-self: auto
 justify-items: auto
 -webkit-font-kerning: auto
 -webkit-font-smoothing: auto
--webkit-font-variant-ligatures: normal
+font-variant-ligatures: normal
+font-variant-position: normal
+font-variant-caps: normal
+font-variant-numeric: normal
+font-variant-alternates: normal
+font-variant-east-asian: normal
 -webkit-grid-auto-columns: auto
 -webkit-grid-auto-flow: row
 -webkit-grid-auto-rows: auto

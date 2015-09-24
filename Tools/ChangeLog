@@ -1,3 +1,15 @@
+2015-09-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] [Font Features] Implement font-variant-*
+        https://bugs.webkit.org/show_bug.cgi?id=148413
+
+        Reviewed by Darin Adler.
+
+        Update test font to use "lnum" feature.
+
+        * FontWithFeatures/FontWithFeatures/FontCreator.cpp:
+        (Generator::appendGSUBTable):
+
 2015-09-22  Andy Estes  <aestes@apple.com>
 
         ContentFiltering.AllowDownloadAfterAddData is very flaky

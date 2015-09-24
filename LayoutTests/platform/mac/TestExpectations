@@ -262,6 +262,8 @@ fast/css/draggable-region-parser.html
 css3/font-feature-settings-rendering.html
 
 webkit.org/b/149246 [ Mavericks ] css3/font-feature-settings-rendering-2.html
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-all-webfont.html
+webkit.org/b/149246 [ Mavericks ] css3/font-variant-parsing.html
 
 # This feature is disabled on Mavericks.
 [ Mavericks ] http/tests/navigation/page-cache-pending-image-load.html [ Skip ]

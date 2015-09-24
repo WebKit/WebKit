@@ -47,9 +47,14 @@ static inline void appendRawTrueTypeFeature(CFMutableArrayRef features, int type
     CFArrayAppendValue(features, feature.get());
 }
 
+static inline bool tagEquals(FontFeatureTag tag, const char comparison[4])
+{
+    return equalIgnoringASCIICase(tag.data(), comparison, 4);
+}
+
 static inline void appendTrueTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
 {
-    if (equalIgnoringASCIICase(feature.tag(), "liga") || equalIgnoringASCIICase(feature.tag(), "clig")) {
+    if (tagEquals(feature.tag(), "liga") || tagEquals(feature.tag(), "clig")) {
         if (feature.enabled()) {
             appendRawTrueTypeFeature(features, kLigaturesType, kCommonLigaturesOnSelector);
             appendRawTrueTypeFeature(features, kLigaturesType, kContextualLigaturesOnSelector);
@@ -57,79 +62,79 @@ static inline void appendTrueTypeFeature(CFMutableArrayRef features, const FontF
             appendRawTrueTypeFeature(features, kLigaturesType, kCommonLigaturesOffSelector);
             appendRawTrueTypeFeature(features, kLigaturesType, kContextualLigaturesOffSelector);
         }
-    } else if (equalIgnoringASCIICase(feature.tag(), "dlig")) {
+    } else if (tagEquals(feature.tag(), "dlig")) {
         if (feature.enabled())
             appendRawTrueTypeFeature(features, kLigaturesType, kRareLigaturesOnSelector);
         else
             appendRawTrueTypeFeature(features, kLigaturesType, kRareLigaturesOffSelector);
-    } else if (equalIgnoringASCIICase(feature.tag(), "hlig")) {
+    } else if (tagEquals(feature.tag(), "hlig")) {
         if (feature.enabled())
             appendRawTrueTypeFeature(features, kLigaturesType, kHistoricalLigaturesOnSelector);
         else
             appendRawTrueTypeFeature(features, kLigaturesType, kHistoricalLigaturesOffSelector);
-    } else if (equalIgnoringASCIICase(feature.tag(), "calt")) {
+    } else if (tagEquals(feature.tag(), "calt")) {
         if (feature.enabled())
             appendRawTrueTypeFeature(features, kContextualAlternatesType, kContextualAlternatesOnSelector);
         else
             appendRawTrueTypeFeature(features, kContextualAlternatesType, kContextualAlternatesOffSelector);
-    } else if (equalIgnoringASCIICase(feature.tag(), "subs") && feature.enabled())
+    } else if (tagEquals(feature.tag(), "subs") && feature.enabled())
         appendRawTrueTypeFeature(features, kVerticalPositionType, kInferiorsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "sups") && feature.enabled())
+    else if (tagEquals(feature.tag(), "sups") && feature.enabled())
         appendRawTrueTypeFeature(features, kVerticalPositionType, kSuperiorsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "smcp") && feature.enabled())
+    else if (tagEquals(feature.tag(), "smcp") && feature.enabled())
         appendRawTrueTypeFeature(features, kLowerCaseType, kLowerCaseSmallCapsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "c2sc") && feature.enabled())
+    else if (tagEquals(feature.tag(), "c2sc") && feature.enabled())
         appendRawTrueTypeFeature(features, kUpperCaseType, kUpperCaseSmallCapsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "pcap") && feature.enabled())
+    else if (tagEquals(feature.tag(), "pcap") && feature.enabled())
         appendRawTrueTypeFeature(features, kLowerCaseType, kLowerCasePetiteCapsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "c2pc") && feature.enabled())
+    else if (tagEquals(feature.tag(), "c2pc") && feature.enabled())
         appendRawTrueTypeFeature(features, kUpperCaseType, kUpperCasePetiteCapsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "unic") && feature.enabled())
+    else if (tagEquals(feature.tag(), "unic") && feature.enabled())
         appendRawTrueTypeFeature(features, kLetterCaseType, 14);
-    else if (equalIgnoringASCIICase(feature.tag(), "titl") && feature.enabled())
+    else if (tagEquals(feature.tag(), "titl") && feature.enabled())
         appendRawTrueTypeFeature(features, kStyleOptionsType, kTitlingCapsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "lnum") && feature.enabled())
+    else if (tagEquals(feature.tag(), "lnum") && feature.enabled())
         appendRawTrueTypeFeature(features, kNumberCaseType, kUpperCaseNumbersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "onum") && feature.enabled())
+    else if (tagEquals(feature.tag(), "onum") && feature.enabled())
         appendRawTrueTypeFeature(features, kNumberCaseType, kLowerCaseNumbersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "pnum") && feature.enabled())
+    else if (tagEquals(feature.tag(), "pnum") && feature.enabled())
         appendRawTrueTypeFeature(features, kNumberSpacingType, kProportionalNumbersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "tnum") && feature.enabled())
+    else if (tagEquals(feature.tag(), "tnum") && feature.enabled())
         appendRawTrueTypeFeature(features, kNumberSpacingType, kMonospacedNumbersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "frac") && feature.enabled())
+    else if (tagEquals(feature.tag(), "frac") && feature.enabled())
         appendRawTrueTypeFeature(features, kFractionsType, kDiagonalFractionsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "afrc") && feature.enabled())
+    else if (tagEquals(feature.tag(), "afrc") && feature.enabled())
         appendRawTrueTypeFeature(features, kFractionsType, kVerticalFractionsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "ordn") && feature.enabled())
+    else if (tagEquals(feature.tag(), "ordn") && feature.enabled())
         appendRawTrueTypeFeature(features, kVerticalPositionType, kOrdinalsSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "zero") && feature.enabled())
+    else if (tagEquals(feature.tag(), "zero") && feature.enabled())
         appendRawTrueTypeFeature(features, kTypographicExtrasType, kSlashedZeroOnSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "hist") && feature.enabled())
+    else if (tagEquals(feature.tag(), "hist") && feature.enabled())
         appendRawTrueTypeFeature(features, kLigaturesType, kHistoricalLigaturesOnSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "jp78") && feature.enabled())
+    else if (tagEquals(feature.tag(), "jp78") && feature.enabled())
         appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS1978CharactersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "jp83") && feature.enabled())
+    else if (tagEquals(feature.tag(), "jp83") && feature.enabled())
         appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS1983CharactersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "jp90") && feature.enabled())
+    else if (tagEquals(feature.tag(), "jp90") && feature.enabled())
         appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS1990CharactersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "jp04") && feature.enabled())
+    else if (tagEquals(feature.tag(), "jp04") && feature.enabled())
         appendRawTrueTypeFeature(features, kCharacterShapeType, kJIS2004CharactersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "smpl") && feature.enabled())
+    else if (tagEquals(feature.tag(), "smpl") && feature.enabled())
         appendRawTrueTypeFeature(features, kCharacterShapeType, kSimplifiedCharactersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "trad") && feature.enabled())
+    else if (tagEquals(feature.tag(), "trad") && feature.enabled())
         appendRawTrueTypeFeature(features, kCharacterShapeType, kTraditionalCharactersSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "fwid") && feature.enabled())
+    else if (tagEquals(feature.tag(), "fwid") && feature.enabled())
         appendRawTrueTypeFeature(features, kTextSpacingType, kMonospacedTextSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "pwid") && feature.enabled())
+    else if (tagEquals(feature.tag(), "pwid") && feature.enabled())
         appendRawTrueTypeFeature(features, kTextSpacingType, kProportionalTextSelector);
-    else if (equalIgnoringASCIICase(feature.tag(), "ruby") && feature.enabled())
+    else if (tagEquals(feature.tag(), "ruby") && feature.enabled())
         appendRawTrueTypeFeature(features, kRubyKanaType, kRubyKanaOnSelector);
 }
 
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000)
-    RetainPtr<CFStringRef> featureKey = feature.tag().string().createCFString();
+    RetainPtr<CFStringRef> featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(feature.tag().data()), feature.tag().size() * sizeof(FontFeatureTag::value_type), kCFStringEncodingASCII, false));
     int rawFeatureValue = feature.value();
     RetainPtr<CFNumberRef> featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawFeatureValue));
     CFTypeRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
@@ -142,17 +147,197 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 #endif
 }
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* features)
+typedef HashMap<FontFeatureTag, int, FontFeatureTagHash, FontFeatureTagHashTraits> FeaturesMap;
+
+static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
 {
-    if (!originalFont || ((!features || !features->size()) && (textRenderingMode != OptimizeLegibility)))
+    FeaturesMap result;
+
+    switch (variantSettings.commonLigatures) {
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("liga"), 1);
+        result.add(fontFeatureTag("clig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("liga"), 0);
+        result.add(fontFeatureTag("clig"), 0);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.discretionaryLigatures) {
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("dlig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("dlig"), 0);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.historicalLigatures) {
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("hlig"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("hlig"), 0);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.contextualAlternates) {
+    case FontVariantLigatures::Yes:
+        result.add(fontFeatureTag("calt"), 1);
+        break;
+    case FontVariantLigatures::No:
+        result.add(fontFeatureTag("calt"), 0);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.position) {
+    case FontVariantPosition::Subscript:
+        result.add(fontFeatureTag("subs"), 1);
+        break;
+    case FontVariantPosition::Superscript:
+        result.add(fontFeatureTag("sups"), 1);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.caps) {
+    case FontVariantCaps::AllSmall:
+        result.add(fontFeatureTag("c2sc"), 1);
+        FALLTHROUGH;
+    case FontVariantCaps::Small:
+        result.add(fontFeatureTag("smcp"), 1);
+        break;
+    case FontVariantCaps::AllPetite:
+        result.add(fontFeatureTag("c2pc"), 1);
+        FALLTHROUGH;
+    case FontVariantCaps::Petite:
+        result.add(fontFeatureTag("pcap"), 1);
+        break;
+    case FontVariantCaps::Unicase:
+        result.add(fontFeatureTag("unic"), 1);
+        break;
+    case FontVariantCaps::Titling:
+        result.add(fontFeatureTag("titl"), 1);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.numericFigure) {
+    case FontVariantNumericFigure::LiningNumbers:
+        result.add(fontFeatureTag("lnum"), 1);
+        break;
+    case FontVariantNumericFigure::OldStyleNumbers:
+        result.add(fontFeatureTag("onum"), 1);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.numericSpacing) {
+    case FontVariantNumericSpacing::ProportionalNumbers:
+        result.add(fontFeatureTag("pnum"), 1);
+        break;
+    case FontVariantNumericSpacing::TabularNumbers:
+        result.add(fontFeatureTag("tnum"), 1);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.numericFraction) {
+    case FontVariantNumericFraction::DiagonalFractions:
+        result.add(fontFeatureTag("frac"), 1);
+        break;
+    case FontVariantNumericFraction::StackedFractions:
+        result.add(fontFeatureTag("afrc"), 1);
+        break;
+    default:
+        break;
+    }
+
+    if (variantSettings.numericOrdinal == FontVariantNumericOrdinal::Yes)
+        result.add(fontFeatureTag("ordn"), 1);
+    if (variantSettings.numericSlashedZero == FontVariantNumericSlashedZero::Yes)
+        result.add(fontFeatureTag("zero"), 1);
+
+    switch (variantSettings.alternates) {
+    case FontVariantAlternates::HistoricalForms:
+        result.add(fontFeatureTag("hist"), 1);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.eastAsianVariant) {
+    case FontVariantEastAsianVariant::Jis78:
+        result.add(fontFeatureTag("jp78"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis83:
+        result.add(fontFeatureTag("jp83"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis90:
+        result.add(fontFeatureTag("jp90"), 1);
+        break;
+    case FontVariantEastAsianVariant::Jis04:
+        result.add(fontFeatureTag("jp04"), 1);
+        break;
+    case FontVariantEastAsianVariant::Simplified:
+        result.add(fontFeatureTag("smpl"), 1);
+        break;
+    case FontVariantEastAsianVariant::Traditional:
+        result.add(fontFeatureTag("trad"), 1);
+        break;
+    default:
+        break;
+    }
+
+    switch (variantSettings.eastAsianWidth) {
+    case FontVariantEastAsianWidth::FullWidth:
+        result.add(fontFeatureTag("fwid"), 1);
+        break;
+    case FontVariantEastAsianWidth::ProportionalWidth:
+        result.add(fontFeatureTag("pwid"), 1);
+        break;
+    default:
+        break;
+    }
+
+    if (variantSettings.eastAsianRuby == FontVariantEastAsianRuby::Yes)
+        result.add(fontFeatureTag("ruby"), 1);
+
+    return result;
+}
+
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
+{
+    if (!originalFont || (!features.size() && (textRenderingMode != OptimizeLegibility) && variantSettings.isAllNormal()))
         return originalFont;
 
+    // FIXME: We don't consult with the @font-face first, like the spec says we should.
+
+    // Spec says that font-feature-settings should override font-variant-*.
+    auto fontFeatureSettingsFromVariants = computeFeatureSettingsFromVariants(variantSettings);
+    for (auto& newFeature : features)
+        fontFeatureSettingsFromVariants.set(newFeature.tag(), newFeature.value());
+
     RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    if (features && features->size()) {
-        RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features->size(), &kCFTypeArrayCallBacks));
-        for (size_t i = 0; i < features->size(); ++i) {
-            appendTrueTypeFeature(featureArray.get(), features->at(i));
-            appendOpenTypeFeature(featureArray.get(), features->at(i));
+    if (fontFeatureSettingsFromVariants.size()) {
+        RetainPtr<CFMutableArrayRef> featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
+        for (auto& p : fontFeatureSettingsFromVariants) {
+            auto feature = FontFeature(p.key, p.value);
+            appendTrueTypeFeature(featureArray.get(), feature);
+            appendOpenTypeFeature(featureArray.get(), feature);
         }
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }
@@ -410,27 +595,29 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
 }
 
 #if ENABLE(PLATFORM_FONT_LOOKUP)
-static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, const FontFeatureSettings* featureSettings, TextRenderingMode textRenderingMode, float size)
+static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, TextRenderingMode textRenderingMode, float size)
 {
     const auto& whitelist = fontWhitelist();
     if (whitelist.size() && !whitelist.contains(family))
         return nullptr;
 
     auto foundFont = adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
-    return preparePlatformFont(foundFont.get(), textRenderingMode, featureSettings);
+    return preparePlatformFont(foundFont.get(), textRenderingMode, featureSettings, variantSettings);
 }
 #endif
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings* featureSettings, TextRenderingMode textRenderingMode, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSymbolicTraits desiredTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, const TextRenderingMode& textRenderingMode, float size)
 {
     if (family.isEmpty())
         return nullptr;
     if (auto specialCase = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size))
         return specialCase;
 #if ENABLE(PLATFORM_FONT_LOOKUP)
-    return platformFontLookupWithFamily(family, desiredTraits, weight, featureSettings, textRenderingMode, size);
+    return platformFontLookupWithFamily(family, desiredTraits, weight, featureSettings, variantSettings, textRenderingMode, size);
 #else
-    return platformFontWithFamily(family, desiredTraits, weight, featureSettings, textRenderingMode, size);
+    UNUSED_PARAM(featureSettings);
+    UNUSED_PARAM(variantSettings);
+    return platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
 }
 
@@ -471,7 +658,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     CTFontSymbolicTraits traits = computeTraits(fontDescription);
     float size = fontDescription.computedPixelSize();
 
-    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
+    RetainPtr<CTFontRef> font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.textRenderingMode(), size);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -482,7 +669,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.textRenderingMode(), size);
+        font = fontWithFamily(family, traits, fontDescription.weight(), fontDescription.featureSettings(), fontDescription.variantSettings(), fontDescription.textRenderingMode(), size);
     }
 #endif
 
@@ -526,7 +713,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     const FontPlatformData& platformData = originalFontData->platformData();
     RetainPtr<CTFontRef> result = platformLookupFallbackFont(platformData.font(), description.weight(), description.locale(), characters, length);
-    result = preparePlatformFont(result.get(), description.textRenderingMode(), description.featureSettings());
+    result = preparePlatformFont(result.get(), description.textRenderingMode(), description.featureSettings(), description.variantSettings());
     if (!result)
         return lastResortFallbackFont(description);
 

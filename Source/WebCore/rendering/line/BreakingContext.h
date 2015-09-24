@@ -83,6 +83,7 @@ struct WordTrailingSpace {
         m_state = WordTrailingSpaceState::Computed;
         return m_width;
     }
+
 private:
     enum class WordTrailingSpaceState { Uninitialized, Computed };
     WordTrailingSpaceState m_state { WordTrailingSpaceState::Uninitialized };

@@ -254,7 +254,7 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
 }
 
 #if !ENABLE(PLATFORM_FONT_LOOKUP)
-RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, const FontFeatureSettings*, TextRenderingMode, float size)
+RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, TextRenderingMode, float size)
 {
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSString *availableFamily;

@@ -89,7 +89,9 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitAspectRatio);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitFontVariantLigatures);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantLigatures);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
 #if ENABLE(CSS_GRID_LAYOUT)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateAreas);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateColumns);
@@ -1388,55 +1390,145 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
         styleResolver.style()->clearContent();
 }
 
-inline void StyleBuilderCustom::applyInitialWebkitFontVariantLigatures(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInheritFontVariantLigatures(StyleResolver& styleResolver)
 {
     auto fontDescription = styleResolver.fontDescription();
-
-    fontDescription.setCommonLigaturesState(FontCascadeDescription::NormalLigaturesState);
-    fontDescription.setDiscretionaryLigaturesState(FontCascadeDescription::NormalLigaturesState);
-    fontDescription.setHistoricalLigaturesState(FontCascadeDescription::NormalLigaturesState);
-
+    fontDescription.setVariantCommonLigatures(styleResolver.parentFontDescription().variantCommonLigatures());
+    fontDescription.setVariantDiscretionaryLigatures(styleResolver.parentFontDescription().variantDiscretionaryLigatures());
+    fontDescription.setVariantHistoricalLigatures(styleResolver.parentFontDescription().variantHistoricalLigatures());
+    fontDescription.setVariantContextualAlternates(styleResolver.parentFontDescription().variantContextualAlternates());
     styleResolver.setFontDescription(fontDescription);
 }
 
-inline void StyleBuilderCustom::applyInheritWebkitFontVariantLigatures(StyleResolver& styleResolver)
+inline void StyleBuilderCustom::applyInitialFontVariantLigatures(StyleResolver& styleResolver)
 {
-    const auto& parentFontDescription = styleResolver.parentFontDescription();
     auto fontDescription = styleResolver.fontDescription();
-
-    fontDescription.setCommonLigaturesState(parentFontDescription.commonLigaturesState());
-    fontDescription.setDiscretionaryLigaturesState(parentFontDescription.discretionaryLigaturesState());
-    fontDescription.setHistoricalLigaturesState(parentFontDescription.historicalLigaturesState());
-
+    fontDescription.setVariantCommonLigatures(FontVariantLigatures::Normal);
+    fontDescription.setVariantDiscretionaryLigatures(FontVariantLigatures::Normal);
+    fontDescription.setVariantHistoricalLigatures(FontVariantLigatures::Normal);
+    fontDescription.setVariantContextualAlternates(FontVariantLigatures::Normal);
     styleResolver.setFontDescription(fontDescription);
 }
 
-inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
+inline void StyleBuilderCustom::applyValueFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
 {
-    auto commonLigaturesState = FontCascadeDescription::NormalLigaturesState;
-    auto discretionaryLigaturesState = FontCascadeDescription::NormalLigaturesState;
-    auto historicalLigaturesState = FontCascadeDescription::NormalLigaturesState;
+    FontVariantLigatures common = FontVariantLigatures::Normal;
+    FontVariantLigatures discretionary = FontVariantLigatures::Normal;
+    FontVariantLigatures historical = FontVariantLigatures::Normal;
+    FontVariantLigatures contextualAlternates = FontVariantLigatures::Normal;
 
     if (is<CSSValueList>(value)) {
         for (auto& item : downcast<CSSValueList>(value)) {
             switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
             case CSSValueNoCommonLigatures:
-                commonLigaturesState = FontCascadeDescription::DisabledLigaturesState;
+                common = FontVariantLigatures::No;
                 break;
             case CSSValueCommonLigatures:
-                commonLigaturesState = FontCascadeDescription::EnabledLigaturesState;
+                common = FontVariantLigatures::Yes;
                 break;
             case CSSValueNoDiscretionaryLigatures:
-                discretionaryLigaturesState = FontCascadeDescription::DisabledLigaturesState;
+                discretionary = FontVariantLigatures::No;
                 break;
             case CSSValueDiscretionaryLigatures:
-                discretionaryLigaturesState = FontCascadeDescription::EnabledLigaturesState;
+                discretionary = FontVariantLigatures::Yes;
                 break;
             case CSSValueNoHistoricalLigatures:
-                historicalLigaturesState = FontCascadeDescription::DisabledLigaturesState;
+                historical = FontVariantLigatures::No;
                 break;
             case CSSValueHistoricalLigatures:
-                historicalLigaturesState = FontCascadeDescription::EnabledLigaturesState;
+                historical = FontVariantLigatures::Yes;
+                break;
+            case CSSValueContextual:
+                contextualAlternates = FontVariantLigatures::Yes;
+                break;
+            case CSSValueNoContextual:
+                contextualAlternates = FontVariantLigatures::No;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    } else {
+        switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
+        case CSSValueNormal:
+            break;
+        case CSSValueNone:
+            common = FontVariantLigatures::No;
+            discretionary = FontVariantLigatures::No;
+            historical = FontVariantLigatures::No;
+            contextualAlternates = FontVariantLigatures::No;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setVariantCommonLigatures(common);
+    fontDescription.setVariantDiscretionaryLigatures(discretionary);
+    fontDescription.setVariantHistoricalLigatures(historical);
+    fontDescription.setVariantContextualAlternates(contextualAlternates);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritFontVariantNumeric(StyleResolver& styleResolver)
+{
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setVariantNumericFigure(styleResolver.parentFontDescription().variantNumericFigure());
+    fontDescription.setVariantNumericSpacing(styleResolver.parentFontDescription().variantNumericSpacing());
+    fontDescription.setVariantNumericFraction(styleResolver.parentFontDescription().variantNumericFraction());
+    fontDescription.setVariantNumericOrdinal(styleResolver.parentFontDescription().variantNumericOrdinal());
+    fontDescription.setVariantNumericSlashedZero(styleResolver.parentFontDescription().variantNumericSlashedZero());
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInitialFontVariantNumeric(StyleResolver& styleResolver)
+{
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setVariantNumericFigure(FontVariantNumericFigure::Normal);
+    fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::Normal);
+    fontDescription.setVariantNumericFraction(FontVariantNumericFraction::Normal);
+    fontDescription.setVariantNumericOrdinal(FontVariantNumericOrdinal::Normal);
+    fontDescription.setVariantNumericSlashedZero(FontVariantNumericSlashedZero::Normal);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyValueFontVariantNumeric(StyleResolver& styleResolver, CSSValue& value)
+{
+    FontVariantNumericFigure figure = FontVariantNumericFigure::Normal;
+    FontVariantNumericSpacing spacing = FontVariantNumericSpacing::Normal;
+    FontVariantNumericFraction fraction = FontVariantNumericFraction::Normal;
+    FontVariantNumericOrdinal ordinal = FontVariantNumericOrdinal::Normal;
+    FontVariantNumericSlashedZero slashedZero = FontVariantNumericSlashedZero::Normal;
+
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value)) {
+            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
+            case CSSValueLiningNums:
+                figure = FontVariantNumericFigure::LiningNumbers;
+                break;
+            case CSSValueOldstyleNums:
+                figure = FontVariantNumericFigure::OldStyleNumbers;
+                break;
+            case CSSValueProportionalNums:
+                spacing = FontVariantNumericSpacing::ProportionalNumbers;
+                break;
+            case CSSValueTabularNums:
+                spacing = FontVariantNumericSpacing::TabularNumbers;
+                break;
+            case CSSValueDiagonalFractions:
+                fraction = FontVariantNumericFraction::DiagonalFractions;
+                break;
+            case CSSValueStackedFractions:
+                fraction = FontVariantNumericFraction::StackedFractions;
+                break;
+            case CSSValueOrdinal:
+                ordinal = FontVariantNumericOrdinal::Yes;
+                break;
+            case CSSValueSlashedZero:
+                slashedZero = FontVariantNumericSlashedZero::Yes;
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -1447,9 +1539,80 @@ inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolv
         ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
 
     auto fontDescription = styleResolver.fontDescription();
-    fontDescription.setCommonLigaturesState(commonLigaturesState);
-    fontDescription.setDiscretionaryLigaturesState(discretionaryLigaturesState);
-    fontDescription.setHistoricalLigaturesState(historicalLigaturesState);
+    fontDescription.setVariantNumericFigure(figure);
+    fontDescription.setVariantNumericSpacing(spacing);
+    fontDescription.setVariantNumericFraction(fraction);
+    fontDescription.setVariantNumericOrdinal(ordinal);
+    fontDescription.setVariantNumericSlashedZero(slashedZero);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritFontVariantEastAsian(StyleResolver& styleResolver)
+{
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setVariantEastAsianVariant(styleResolver.parentFontDescription().variantEastAsianVariant());
+    fontDescription.setVariantEastAsianWidth(styleResolver.parentFontDescription().variantEastAsianWidth());
+    fontDescription.setVariantEastAsianRuby(styleResolver.parentFontDescription().variantEastAsianRuby());
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInitialFontVariantEastAsian(StyleResolver& styleResolver)
+{
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setVariantEastAsianVariant(FontVariantEastAsianVariant::Normal);
+    fontDescription.setVariantEastAsianWidth(FontVariantEastAsianWidth::Normal);
+    fontDescription.setVariantEastAsianRuby(FontVariantEastAsianRuby::Normal);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyValueFontVariantEastAsian(StyleResolver& styleResolver, CSSValue& value)
+{
+    FontVariantEastAsianVariant variant = FontVariantEastAsianVariant::Normal;
+    FontVariantEastAsianWidth width = FontVariantEastAsianWidth::Normal;
+    FontVariantEastAsianRuby ruby = FontVariantEastAsianRuby::Normal;
+
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value)) {
+            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
+            case CSSValueJis78:
+                variant = FontVariantEastAsianVariant::Jis78;
+                break;
+            case CSSValueJis83:
+                variant = FontVariantEastAsianVariant::Jis83;
+                break;
+            case CSSValueJis90:
+                variant = FontVariantEastAsianVariant::Jis90;
+                break;
+            case CSSValueJis04:
+                variant = FontVariantEastAsianVariant::Jis04;
+                break;
+            case CSSValueSimplified:
+                variant = FontVariantEastAsianVariant::Simplified;
+                break;
+            case CSSValueTraditional:
+                variant = FontVariantEastAsianVariant::Traditional;
+                break;
+            case CSSValueFullWidth:
+                width = FontVariantEastAsianWidth::FullWidth;
+                break;
+            case CSSValueProportionalWidth:
+                width = FontVariantEastAsianWidth::ProportionalWidth;
+                break;
+            case CSSValueRuby:
+                ruby = FontVariantEastAsianRuby::Yes;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    } else
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+
+    auto fontDescription = styleResolver.fontDescription();
+    fontDescription.setVariantEastAsianVariant(variant);
+    fontDescription.setVariantEastAsianWidth(width);
+    fontDescription.setVariantEastAsianRuby(ruby);
     styleResolver.setFontDescription(fontDescription);
 }
 

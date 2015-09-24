@@ -1237,7 +1237,7 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
 
     ASSERT(fontDescriptor);
     RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 0, nullptr));
-    font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), fontDescription.featureSettings());
+    font = preparePlatformFont(font.get(), fontDescription.textRenderingMode(), fontDescription.featureSettings(), fontDescription.variantSettings());
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setOneFamily(textStyle);
     fontDescription.setSpecifiedSize(CTFontGetSize(font.get()));
