@@ -1,5 +1,19 @@
 2015-09-24  Daniel Bates  <dabates@apple.com>
 
+        Support building for arbitrary architectures
+        https://bugs.webkit.org/show_bug.cgi?id=149539
+
+        Reviewed by Alexey Proskuryakov.
+
+        Teach buildbot to pass the architectures associated with the builder to build-webkit
+        when building on OS X and iOS. As a side effect of this change we now support building
+        universal binaries when multiples architectures are specified.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
+2015-09-24  Daniel Bates  <dabates@apple.com>
+
         Fix the build after <http://trac.webkit.org/changeset/190212>
         (http://trac.webkit.org/changeset/190212)
 
