@@ -1075,31 +1075,20 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
         return;
     }
 
-    // INVALID_NODE_TYPE_ERR: Raised if refNode is a Document, DocumentFragment or Attr node.
-    switch (refNode->nodeType()) {
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::ELEMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::TEXT_NODE:
-        case Node::XPATH_NAMESPACE_NODE:
-            break;
-        case Node::ATTRIBUTE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
-        case Node::DOCUMENT_NODE:
-            ec = INVALID_NODE_TYPE_ERR;
-            return;
+    if (!refNode->parentNode()) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
     }
 
     if (&ownerDocument() != &refNode->document())
         setDocument(refNode->document());
 
+    unsigned index = refNode->computeNodeIndex();
     ec = 0;
-    setStartBefore(refNode, ec);
+    setStart(refNode->parentNode(), index, ec);
     if (ec)
         return;
-    setEndAfter(refNode, ec);
+    setEnd(refNode->parentNode(), index + 1, ec);
 }
 
 void Range::selectNodeContents(Node* refNode, ExceptionCode& ec)
