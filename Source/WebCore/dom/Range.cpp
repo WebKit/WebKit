@@ -552,22 +552,23 @@ static inline Node* childOfCommonRootBeforeOffset(Node* container, unsigned offs
     return container;
 }
 
-static inline unsigned lengthOfContentsInNode(Node* node)
+static inline unsigned lengthOfContentsInNode(Node& node)
 {
     // This switch statement must be consistent with that of Range::processContentsBetweenOffsets.
-    switch (node->nodeType()) {
+    switch (node.nodeType()) {
+    case Node::XPATH_NAMESPACE_NODE: // FIXME: Remove from NodeType as there is no way to construct such Node in WebKit.
+    case Node::DOCUMENT_TYPE_NODE:
+        return 0;
     case Node::TEXT_NODE:
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
     case Node::PROCESSING_INSTRUCTION_NODE:
-        return downcast<CharacterData>(*node).length();
+        return downcast<CharacterData>(node).length();
     case Node::ELEMENT_NODE:
     case Node::ATTRIBUTE_NODE:
     case Node::DOCUMENT_NODE:
-    case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
-    case Node::XPATH_NAMESPACE_NODE:
-        return node->countChildNodes();
+        return downcast<ContainerNode>(node).countChildNodes();
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -622,7 +623,7 @@ RefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode
 
     RefPtr<Node> leftContents;
     if (originalStart.container() != commonRoot && commonRoot->contains(originalStart.container())) {
-        leftContents = processContentsBetweenOffsets(action, 0, originalStart.container(), originalStart.offset(), lengthOfContentsInNode(originalStart.container()), ec);
+        leftContents = processContentsBetweenOffsets(action, 0, originalStart.container(), originalStart.offset(), lengthOfContentsInNode(*originalStart.container()), ec);
         leftContents = processAncestorsAndTheirSiblings(action, originalStart.container(), ProcessContentsForward, leftContents, commonRoot.get(), ec);
     }
 
