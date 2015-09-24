@@ -31,6 +31,7 @@
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLSlotElement.h"
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "MouseEvent.h"
@@ -413,20 +414,24 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
     return is<PseudoElement>(*node) ? downcast<PseudoElement>(*node).hostElement() : node;
 }
 
-EventPath::EventPath(Node& targetNode, Event& event)
+EventPath::EventPath(Node& originalTarget, Event& event)
 {
-    bool isSVGElement = targetNode.isSVGElement();
+#if ENABLE(SHADOW_DOM)
+    Vector<EventTarget*, 16> targetStack;
+#endif
+
     bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     bool isTouchEvent = event.isTouchEvent();
 #endif
     EventTarget* target = nullptr;
 
-    Node* node = nodeOrHostIfPseudoElement(&targetNode);
+    Node* node = nodeOrHostIfPseudoElement(&originalTarget);
     while (node) {
-        if (!target || !isSVGElement) // FIXME: This code doesn't make sense once we've climbed out of the SVG subtree in a HTML document.
+        if (!target)
             target = eventTargetRespectingTargetRules(*node);
-        for (; node; node = node->parentNode()) {
+        ContainerNode* parent;
+        for (; node; node = parent) {
             EventTarget* currentTarget = eventTargetRespectingTargetRules(*node);
             if (isMouseOrFocusEvent)
                 m_path.append(std::make_unique<MouseOrFocusEventContext>(node, currentTarget, target));
@@ -438,10 +443,36 @@ EventPath::EventPath(Node& targetNode, Event& event)
                 m_path.append(std::make_unique<EventContext>(node, currentTarget, target));
             if (is<ShadowRoot>(*node))
                 break;
+            parent = node->parentNode();
+            if (!parent)
+                return;
+#if ENABLE(SHADOW_DOM)
+            if (ShadowRoot* shadowRootOfParent = parent->shadowRoot()) {
+                if (auto* assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
+                    // node is assigned to a slot. Continue dispatching the event at this slot.
+                    targetStack.append(target);
+                    parent = assignedSlot;
+                    target = assignedSlot;
+                }
+            }
+#endif
+            node = parent;
         }
-        if (!node || !shouldEventCrossShadowBoundary(event, downcast<ShadowRoot>(*node), *target))
+
+        ShadowRoot& shadowRoot = downcast<ShadowRoot>(*node);
+        // At a shadow root. Continue dispatching the event at the shadow host.
+#if ENABLE(SHADOW_DOM)
+        if (!targetStack.isEmpty()) {
+            // Move target back to a descendant of the shadow host if the event did not originate in this shadow tree or its inner shadow trees.
+            target = targetStack.last();
+            targetStack.removeLast();
+            ASSERT(shadowRoot.host()->contains(target->toNode()));
+        } else
+            target = nullptr;
+#endif
+        if (!shouldEventCrossShadowBoundary(event, shadowRoot, originalTarget))
             return;
-        node = downcast<ShadowRoot>(*node).host();
+        node = shadowRoot.host();
     }
 }
 
