@@ -909,6 +909,9 @@ webkit.org/b/137368 media/video-controls-no-scripting.html [ Pass Failure ]
 [ Mavericks ] fast/history/page-cache-removed-source-buffer.html [ WontFix ]
 ## --- End media tests failing on Mavericks and earlier ---
 
+# Yosemite has different expected results. It needs to rebase.
+webkit.org/b/149113 [ Yosemite ] media/media-controls-play-button-updates.html [ Skip ]
+
 ## --- Start flaky media tests ---
 webkit.org/b/34331 http/tests/media/video-referer.html [ Pass Timeout ]
 webkit.org/b/35297 media/video-display-aspect-ratio.html [ Pass Failure ]
