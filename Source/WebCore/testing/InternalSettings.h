@@ -35,7 +35,6 @@
 #include "IntSize.h"
 #include "InternalSettingsGenerated.h"
 #include "SecurityOrigin.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -103,9 +102,9 @@ public:
         bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
     };
 
-    static PassRefPtr<InternalSettings> create(Page* page)
+    static Ref<InternalSettings> create(Page* page)
     {
-        return adoptRef(new InternalSettings(page));
+        return adoptRef(*new InternalSettings(page));
     }
     static InternalSettings* from(Page*);
     void hostDestroyed() { m_page = 0; }

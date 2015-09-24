@@ -32,14 +32,13 @@
 #define MemoryInfo_h
 
 #include "JSDOMWindow.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class MemoryInfo : public RefCounted<MemoryInfo> {
 public:
-    static PassRefPtr<MemoryInfo> create() { return adoptRef(new MemoryInfo); }
+    static Ref<MemoryInfo> create() { return adoptRef(*new MemoryInfo); }
 
     size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
     size_t totalJSHeapSize() const { return m_totalJSHeapSize; }

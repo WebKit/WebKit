@@ -317,9 +317,9 @@ static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerType
 
 const char* Internals::internalsId = "internals";
 
-PassRefPtr<Internals> Internals::create(Document* document)
+Ref<Internals> Internals::create(Document* document)
 {
-    return adoptRef(new Internals(document));
+    return adoptRef(*new Internals(document));
 }
 
 Internals::~Internals()
@@ -739,11 +739,11 @@ bool Internals::hasPausedImageAnimations(Element* element, ExceptionCode& ec)
     return element->renderer() && element->renderer()->hasPausedImageAnimations();
 }
 
-PassRefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Node* node, ExceptionCode& ec) const
+RefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Node* node, ExceptionCode& ec) const
 {
     if (!node) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     bool allowVisitedStyle = true;
@@ -1029,7 +1029,7 @@ RenderedDocumentMarker* Internals::markerAt(Node* node, const String& markerType
     return markers[index];
 }
 
-PassRefPtr<Range> Internals::markerRangeForNode(Node* node, const String& markerType, unsigned index, ExceptionCode& ec)
+RefPtr<Range> Internals::markerRangeForNode(Node* node, const String& markerType, unsigned index, ExceptionCode& ec)
 {
     RenderedDocumentMarker* marker = markerAt(node, markerType, index, ec);
     if (!marker)
@@ -1235,11 +1235,11 @@ void Internals::paintControlTints(ExceptionCode& ec)
     frameView->paintControlTints();
 }
 
-PassRefPtr<Range> Internals::rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode& ec)
+RefPtr<Range> Internals::rangeFromLocationAndLength(Element* scope, int rangeLocation, int rangeLength, ExceptionCode& ec)
 {
     if (!scope) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     return TextIterator::rangeFromLocationAndLength(scope, rangeLocation, rangeLength);
@@ -1281,11 +1281,11 @@ String Internals::rangeAsText(const Range* range, ExceptionCode& ec)
     return range->text();
 }
 
-PassRefPtr<Range> Internals::subrange(Range* range, int rangeLocation, int rangeLength, ExceptionCode& ec)
+RefPtr<Range> Internals::subrange(Range* range, int rangeLocation, int rangeLength, ExceptionCode& ec)
 {
     if (!range) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     return TextIterator::subrange(range, rangeLocation, rangeLength);
@@ -1407,19 +1407,19 @@ unsigned Internals::touchEventHandlerCount(ExceptionCode& ec)
 // contextDocument(), with the exception of a few tests that pass a
 // different document, and could just make the call through another Internals
 // instance instead.
-PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
+RefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
     unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent, bool allowChildFrameContent, ExceptionCode& ec) const
 {
     if (!document || !document->frame() || !document->frame()->view()) {
         ec = INVALID_ACCESS_ERR;
-        return 0;
+        return nullptr;
     }
 
     Frame* frame = document->frame();
     FrameView* frameView = document->view();
     RenderView* renderView = document->renderView();
     if (!renderView)
-        return 0;
+        return nullptr;
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -1438,7 +1438,7 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int centerX, i
 
     // When ignoreClipping is false, this method returns null for coordinates outside of the viewport.
     if (!request.ignoreClipping() && !frameView->visibleContentRect().intersects(HitTestLocation::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
-        return 0;
+        return nullptr;
 
     Vector<Ref<Node>> matches;
 
@@ -2152,17 +2152,17 @@ void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const 
     SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
 }
 
-PassRefPtr<MallocStatistics> Internals::mallocStatistics() const
+Ref<MallocStatistics> Internals::mallocStatistics() const
 {
     return MallocStatistics::create();
 }
 
-PassRefPtr<TypeConversions> Internals::typeConversions() const
+Ref<TypeConversions> Internals::typeConversions() const
 {
     return TypeConversions::create();
 }
 
-PassRefPtr<MemoryInfo> Internals::memoryInfo() const
+Ref<MemoryInfo> Internals::memoryInfo() const
 {
     return MemoryInfo::create();
 }
@@ -2385,13 +2385,13 @@ String Internals::getCurrentCursorInfo(ExceptionCode& ec)
 #endif
 }
 
-PassRefPtr<ArrayBuffer> Internals::serializeObject(PassRefPtr<SerializedScriptValue> value) const
+RefPtr<ArrayBuffer> Internals::serializeObject(PassRefPtr<SerializedScriptValue> value) const
 {
     Vector<uint8_t> bytes = value->data();
     return ArrayBuffer::create(bytes.data(), bytes.size());
 }
 
-PassRefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayBuffer> buffer) const
+RefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayBuffer> buffer) const
 {
     Vector<uint8_t> bytes;
     bytes.append(static_cast<const uint8_t*>(buffer->data()), buffer->byteLength());
@@ -2575,11 +2575,11 @@ void Internals::setCaptionDisplayMode(const String& mode, ExceptionCode& ec)
 }
 
 #if ENABLE(VIDEO)
-PassRefPtr<TimeRanges> Internals::createTimeRanges(Float32Array* startTimes, Float32Array* endTimes)
+Ref<TimeRanges> Internals::createTimeRanges(Float32Array* startTimes, Float32Array* endTimes)
 {
     ASSERT(startTimes && endTimes);
     ASSERT(startTimes->length() == endTimes->length());
-    RefPtr<TimeRanges> ranges = TimeRanges::create();
+    Ref<TimeRanges> ranges = TimeRanges::create();
 
     unsigned count = std::min(startTimes->length(), endTimes->length());
     for (unsigned i = 0; i < count; ++i)

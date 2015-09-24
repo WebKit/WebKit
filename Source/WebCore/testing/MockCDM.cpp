@@ -44,7 +44,7 @@ public:
 
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
-    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
+    virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
     virtual void releaseKeys() override;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
 
@@ -111,12 +111,12 @@ MockCDMSession::MockCDMSession()
 {
 }
 
-PassRefPtr<Uint8Array> MockCDMSession::generateKeyRequest(const String&, Uint8Array* initData, String&, unsigned short& errorCode, unsigned long&)
+RefPtr<Uint8Array> MockCDMSession::generateKeyRequest(const String&, Uint8Array* initData, String&, unsigned short& errorCode, unsigned long&)
 {
     for (unsigned i = 0; i < initDataPrefix()->length(); ++i) {
         if (!initData || i >= initData->length() || initData->item(i) != initDataPrefix()->item(i)) {
             errorCode = MediaKeyError::MEDIA_KEYERR_UNKNOWN;
-            return 0;
+            return nullptr;
         }
     }
     return keyRequest();
