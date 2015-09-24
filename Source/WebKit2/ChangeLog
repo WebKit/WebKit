@@ -1,3 +1,15 @@
+2015-09-24  Tim Horton  <timothy_horton@apple.com>
+
+        Find hole drawn at subframe's 0x0 when a subframe find match is not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=149543
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::rectsForTextMatches):
+        Don't add empty rects to the list. Later code will just inflate them
+        and end up drawing a nonsensical find hole.
+
 2015-09-24  Chris Dumez  <cdumez@apple.com>
 
         Drop XPATH_NAMESPACE_NODE from Node::NodeType enum

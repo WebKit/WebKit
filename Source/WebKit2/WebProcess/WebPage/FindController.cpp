@@ -410,7 +410,11 @@ Vector<IntRect> FindController::rectsForTextMatches()
 
         for (Vector<IntRect>::iterator it = frameRects.begin(), end = frameRects.end(); it != end; ++it) {
             it->intersect(visibleRect);
-            it->move(frameOffset.x(), frameOffset.y());
+
+            if (it->isEmpty())
+                continue;
+
+            it->moveBy(frameOffset);
             rects.append(*it);
         }
     }
