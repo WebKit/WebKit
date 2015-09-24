@@ -206,6 +206,9 @@ public:
         return m_rareData->callLinkInfo.get();
     }
 
+    // Is it still possible for this case to ever be taken?
+    bool couldStillSucceed() const;
+
     // If this method returns true, then it's a good idea to remove 'other' from the access once 'this'
     // is added. This method assumes that in case of contradictions, 'this' represents a newer, and so
     // more useful, truth. This method can be conservative; it will return false when it doubt.
@@ -301,6 +304,7 @@ private:
     ListType m_list;
     RefPtr<JITStubRoutine> m_stubRoutine;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
+    std::unique_ptr<Vector<WriteBarrier<JSCell>>> m_weakReferences;
 };
 
 } // namespace JSC

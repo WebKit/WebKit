@@ -1,3 +1,30 @@
+2015-09-23  Filip Pizlo  <fpizlo@apple.com>
+
+        PolymorphicAccess should remember that it checked an ObjectPropertyCondition with a check on some structure
+        https://bugs.webkit.org/show_bug.cgi?id=149514
+
+        Reviewed by Oliver Hunt.
+
+        When we checked an ObjectPropertyCondition using an explicit structure check, we would forget to
+        note the structure in any weak reference table and we would attempt to regenerate the condition
+        check even if the condition became invalid.
+
+        We need to account for this better and we need to prune AccessCases that have an invalid condition
+        set. This change does both.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::addWatchpoint):
+        (JSC::AccessCase::alternateBase):
+        (JSC::AccessCase::couldStillSucceed):
+        (JSC::AccessCase::canReplace):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerateWithCases):
+        (JSC::PolymorphicAccess::visitWeak):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::callLinkInfo):
+        * tests/stress/make-dictionary-repatch.js: Added. This used to crash on a release assert. If we removed the release assert, this would return bad results.
+
 2015-09-24  Mark Lam  <mark.lam@apple.com>
 
         We should only expect a RareCaseProfile to exist if the rare case actually exists.

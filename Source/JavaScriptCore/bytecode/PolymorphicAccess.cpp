@@ -61,6 +61,7 @@ struct AccessGenerationState {
     Vector<std::function<void(LinkBuffer&)>> callbacks;
     const Identifier* ident;
     std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
+    Vector<WriteBarrier<JSCell>> weakReferences;
 
     Watchpoint* addWatchpoint(const ObjectPropertyCondition& condition = ObjectPropertyCondition())
     {
@@ -251,6 +252,11 @@ JSObject* AccessCase::alternateBase() const
     return conditionSet().slotBaseCondition().object();
 }
 
+bool AccessCase::couldStillSucceed() const
+{
+    return m_conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint();
+}
+
 bool AccessCase::canReplace(const AccessCase& other)
 {
     // We could do a lot better here, but for now we just do something obvious.
@@ -375,6 +381,7 @@ void AccessCase::generate(AccessGenerationState& state)
     
     CCallHelpers& jit = *state.jit;
     VM& vm = *jit.vm();
+    CodeBlock* codeBlock = jit.codeBlock();
     StructureStubInfo& stubInfo = *state.stubInfo;
     const Identifier& ident = *state.ident;
     JSValueRegs valueRegs = state.valueRegs;
@@ -398,7 +405,14 @@ void AccessCase::generate(AccessGenerationState& state)
             continue;
         }
 
-        RELEASE_ASSERT(condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(structure));
+        if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(structure)) {
+            dataLog("This condition is no longer met: ", condition, "\n");
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        // We will emit code that has a weak reference that isn't otherwise listed anywhere.
+        state.weakReferences.append(WriteBarrier<JSCell>(vm, codeBlock->ownerExecutable(), structure));
+        
         jit.move(CCallHelpers::TrustedImmPtr(condition.object()), scratchGPR);
         state.failAndRepatch.append(
             jit.branchStructure(
@@ -977,6 +991,11 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
     // then adding the new cases.
     ListType newCases;
     for (auto& oldCase : m_list) {
+        // Ignore old cases that cannot possibly succeed anymore.
+        if (!oldCase->couldStillSucceed())
+            continue;
+
+        // Figure out if this is replaced by any new cases.
         bool found = false;
         for (auto& caseToAdd : casesToAdd) {
             if (caseToAdd->canReplace(*oldCase)) {
@@ -984,8 +1003,10 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
                 break;
             }
         }
-        if (!found)
-            newCases.append(oldCase->clone());
+        if (found)
+            continue;
+        
+        newCases.append(oldCase->clone());
     }
     for (auto& caseToAdd : casesToAdd)
         newCases.append(WTF::move(caseToAdd));
@@ -1021,6 +1042,12 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
     for (unsigned i = 0; i < size(); ++i) {
         if (!at(i).visitWeak(vm))
             return false;
+    }
+    if (Vector<WriteBarrier<JSCell>>* weakReferences = m_weakReferences.get()) {
+        for (WriteBarrier<JSCell>& weakReference : *weakReferences) {
+            if (!Heap::isMarked(weakReference.get()))
+                return false;
+        }
     }
     return true;
 }
@@ -1145,6 +1172,8 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock->ownerExecutable(), doesCalls);
     m_watchpoints = WTF::move(state.watchpoints);
+    if (!state.weakReferences.isEmpty())
+        m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTF::move(state.weakReferences));
     if (verbose)
         dataLog("Returning: ", code.code(), "\n");
     return code.code();
