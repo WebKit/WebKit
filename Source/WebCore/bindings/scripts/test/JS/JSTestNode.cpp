@@ -98,7 +98,7 @@ EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::constructJSTestNode(ExecStat
 const ClassInfo JSTestNodeConstructor::s_info = { "TestNodeConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNodeConstructor) };
 
 JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(structure, globalObject)
+    : Base(structure, globalObject)
 {
 }
 

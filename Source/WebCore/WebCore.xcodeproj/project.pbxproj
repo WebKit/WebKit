@@ -619,7 +619,6 @@
 		1479FAF4109AE37500DED655 /* RenderRubyText.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479FAEC109AE37500DED655 /* RenderRubyText.h */; };
 		148AFDA50AF58360008CC700 /* ExceptionHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 148AFDA30AF58360008CC700 /* ExceptionHandlers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148AFDA60AF58360008CC700 /* ExceptionHandlers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */; };
-		148B4FF81B69042100C954E4 /* JSCountQueuingStrategyCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 148B4FF71B69042100C954E4 /* JSCountQueuingStrategyCustom.cpp */; };
 		148B4FFE1B6904AA00C954E4 /* CountQueuingStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 148B4FFD1B6904AA00C954E4 /* CountQueuingStrategy.h */; };
 		14947FFD12F80CD200A0F631 /* DocumentOrderedMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14947FFB12F80CD200A0F631 /* DocumentOrderedMap.cpp */; };
 		14947FFE12F80CD200A0F631 /* DocumentOrderedMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14947FFC12F80CD200A0F631 /* DocumentOrderedMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2596,6 +2595,7 @@
 		7C48A6D1191C9D6500026674 /* WebKitNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C48A6CF191C9D6500026674 /* WebKitNamespace.h */; };
 		7C4902A218B825F8007D9298 /* DOMWheelEventInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85989DCA0ACC8BBD00A0BC51 /* DOMWheelEventInternal.h */; };
 		7C4C96DC1AD4483500365A50 /* JSReadableStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96D81AD4483500365A50 /* JSReadableStream.cpp */; };
+		7C4C96DC1AD4483500365A52 /* CountQueuingStrategyBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96D81AD4483500365A52 /* CountQueuingStrategyBuiltins.cpp */; };
 		7C4C96DC1AD4483500365A51 /* ReadableStreamBuiltins.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96D81AD4483500365A51 /* ReadableStreamBuiltins.cpp */; };
 		7C4C96DD1AD4483500365A50 /* JSReadableStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4C96D91AD4483500365A50 /* JSReadableStream.h */; };
 		7C4C96DE1AD4483500365A50 /* JSReadableStreamReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4C96DA1AD4483500365A50 /* JSReadableStreamReader.cpp */; };
@@ -7796,7 +7796,6 @@
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
 		148AFDA30AF58360008CC700 /* ExceptionHandlers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExceptionHandlers.h; sourceTree = "<group>"; };
 		148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ExceptionHandlers.mm; sourceTree = "<group>"; };
-		148B4FF71B69042100C954E4 /* JSCountQueuingStrategyCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCountQueuingStrategyCustom.cpp; sourceTree = "<group>"; };
 		148B4FFD1B6904AA00C954E4 /* CountQueuingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CountQueuingStrategy.h; sourceTree = "<group>"; };
 		148B4FFF1B6904C500C954E4 /* CountQueuingStrategy.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CountQueuingStrategy.idl; sourceTree = "<group>"; };
 		14947FFB12F80CD200A0F631 /* DocumentOrderedMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOrderedMap.cpp; sourceTree = "<group>"; };
@@ -9987,6 +9986,7 @@
 		7C48A6CF191C9D6500026674 /* WebKitNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitNamespace.h; sourceTree = "<group>"; };
 		7C48A6D2191C9D8E00026674 /* WebKitNamespace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitNamespace.idl; sourceTree = "<group>"; };
 		7C4C96D81AD4483500365A50 /* JSReadableStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStream.cpp; sourceTree = "<group>"; };
+		7C4C96D81AD4483500365A52 /* CountQueuingStrategyBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CountQueuingStrategyBuiltins.cpp; sourceTree = "<group>"; };
 		7C4C96D81AD4483500365A51 /* ReadableStreamBuiltins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReadableStreamBuiltins.cpp; sourceTree = "<group>"; };
 		7C4C96D91AD4483500365A50 /* JSReadableStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStream.h; sourceTree = "<group>"; };
 		7C4C96DA1AD4483500365A50 /* JSReadableStreamReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamReader.cpp; sourceTree = "<group>"; };
@@ -16215,6 +16215,7 @@
 		41A023FA1A39F13A00F722CF /* Streams */ = {
 			isa = PBXGroup;
 			children = (
+				7C4C96D81AD4483500365A52 /* CountQueuingStrategyBuiltins.cpp */,
 				7C4C96D81AD4483500365A51 /* ReadableStreamBuiltins.cpp */,
 				7C4C96D81AD4483500365A50 /* JSReadableStream.cpp */,
 				7C4C96D91AD4483500365A50 /* JSReadableStream.h */,
@@ -21628,7 +21629,6 @@
 				49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */,
 				7C33F3581B4A044800502CAF /* JSCharacterDataCustom.cpp */,
 				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
-				148B4FF71B69042100C954E4 /* JSCountQueuingStrategyCustom.cpp */,
 				209B456A16796A7E00E54E4E /* JSCryptoCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
 				E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */,
@@ -28893,7 +28893,6 @@
 				536D5A21193E18EE00CE4CAB /* HTMLSrcsetParser.cpp in Sources */,
 				A871DC260A15205700B12A68 /* HTMLStyleElement.cpp in Sources */,
 				310D71951B335C9D009C7B73 /* ThemeCocoa.cpp in Sources */,
-				148B4FF81B69042100C954E4 /* JSCountQueuingStrategyCustom.cpp in Sources */,
 				D3D4E972130C7CFE007BA540 /* HTMLSummaryElement.cpp in Sources */,
 				A871DB320A150BD600B12A68 /* HTMLTableCaptionElement.cpp in Sources */,
 				A871DB2E0A150BD600B12A68 /* HTMLTableCellElement.cpp in Sources */,
@@ -29414,6 +29413,7 @@
 				077664FC183E6B5C00133B92 /* JSQuickTimePluginReplacement.cpp in Sources */,
 				B658FFA11522EF3A00DD5595 /* JSRadioNodeList.cpp in Sources */,
 				65DF320109D1CC60000BE325 /* JSRange.cpp in Sources */,
+				7C4C96DC1AD4483500365A52 /* CountQueuingStrategyBuiltins.cpp in Sources */,
 				7C4C96DC1AD4483500365A51 /* ReadableStreamBuiltins.cpp in Sources */,
 				7C4C96DC1AD4483500365A50 /* JSReadableStream.cpp in Sources */,
 				6C4C96DE1AD4483500365A50 /* JSReadableStreamController.cpp in Sources */,

@@ -1102,7 +1102,6 @@ set(WebCore_SOURCES
     bindings/js/JSCanvasRenderingContextCustom.cpp
     bindings/js/JSCharacterDataCustom.cpp
     bindings/js/JSCommandLineAPIHostCustom.cpp
-    bindings/js/JSCountQueuingStrategyCustom.cpp
     bindings/js/JSCryptoAlgorithmBuilder.cpp
     bindings/js/JSCryptoAlgorithmDictionary.cpp
     bindings/js/JSCryptoCustom.cpp
@@ -3342,6 +3341,7 @@ set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/
 set(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 set(WEBCORE_JS_BUILTINS
+    ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStream.js
 )
 

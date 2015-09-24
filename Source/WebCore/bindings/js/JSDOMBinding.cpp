@@ -646,4 +646,24 @@ EncodedJSValue throwThisTypeError(JSC::ExecState& state, const char* interfaceNa
     return throwTypeError(state, makeString("Can only call ", interfaceName, '.', functionName, " on instances of ", interfaceName));
 }
 
+void callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)
+{
+    JSC::CallData callData;
+    JSC::CallType callType = JSC::getCallData(&function, callData);
+    ASSERT(callType != CallTypeNone);
+
+    JSC::MarkedArgumentBuffer arguments;
+    for (unsigned i = 0; i < state.argumentCount(); ++i)
+        arguments.append(state.uncheckedArgument(i));
+    JSC::call(&state, &function, callType, callData, &thisObject, arguments);
+}
+
+void DOMConstructorJSBuiltinObject::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& visitor)
+{
+    auto* thisObject = jsCast<DOMConstructorJSBuiltinObject*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_initializeFunction);
+}
+
 } // namespace WebCore

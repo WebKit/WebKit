@@ -545,6 +545,12 @@ sub GetAttributeSetterName
     return "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
 }
 
+sub GetJSBuiltinFunctionName
+{
+    my ($className, $functionName) = @_;
+    return $codeGenerator->WK_lcfirst(substr $className, 2) . $codeGenerator->WK_ucfirst($functionName) . "CodeGenerator";
+}
+
 sub GetFunctionName
 {
     my ($className, $function) = @_;
@@ -555,7 +561,7 @@ sub GetFunctionName
     }
 
     if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
-        return $codeGenerator->WK_lcfirst($scopeName) . $codeGenerator->WK_ucfirst($function->signature->name) . "CodeGenerator";
+        return GetJSBuiltinFunctionName($className, $function->signature->name);
     }
 
     my $kind = $function->isStatic ? "Constructor" : "Prototype";
@@ -783,7 +789,8 @@ sub InstanceNeedsVisitChildren
     return $interface->extendedAttributes->{"JSCustomMarkFunction"}
         || $interface->extendedAttributes->{"EventTarget"}
         || $interface->name eq "EventTarget"
-        || $interface->extendedAttributes->{"ReportExtraMemoryCost"};
+        || $interface->extendedAttributes->{"ReportExtraMemoryCost"}
+        || $interface->extendedAttributes->{"JSBuiltinConstructor"};
 }
 
 sub GetImplClassName
@@ -4531,6 +4538,16 @@ sub GeneratePrototypeDeclaration
     push(@$outputArray, "};\n\n");
 }
 
+sub GetParentConstructorClassName
+{
+    my $interface = shift;
+    if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
+        return "DOMConstructorJSBuiltinObject";
+    }
+    return "DOMConstructorObject";
+
+}
+
 sub GenerateConstructorDeclaration
 {
     my $outputArray = shift;
@@ -4539,14 +4556,15 @@ sub GenerateConstructorDeclaration
     my $interfaceName = shift;
 
     my $constructorClassName = "${className}Constructor";
+    my $parentClassName = GetParentConstructorClassName($interface);
 
-    push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
+    push(@$outputArray, "class ${constructorClassName} : public " . $parentClassName . " {\n");
     push(@$outputArray, "private:\n");
     push(@$outputArray, "    ${constructorClassName}(JSC::Structure*, JSDOMGlobalObject*);\n");
     push(@$outputArray, "    void finishCreation(JSC::VM&, JSDOMGlobalObject*);\n\n");
 
     push(@$outputArray, "public:\n");
-    push(@$outputArray, "    typedef DOMConstructorObject Base;\n");
+    push(@$outputArray, "    typedef " . $parentClassName . " Base;\n");
     push(@$outputArray, "    static $constructorClassName* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        $constructorClassName* ptr = new (NotNull, JSC::allocateCell<$constructorClassName>(vm.heap)) $constructorClassName(structure, globalObject);\n");
@@ -4768,6 +4786,14 @@ END
 }
 
 END
+        } elsif ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
+            push(@$outputArray, "JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(JSC::ExecState* state)\n");
+            push(@$outputArray, "{\n");
+
+            push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->callee());\n");
+            push(@$outputArray, "    return createFromJSBuiltin<${className}, ${interfaceName}>(*state, *castedThis->initializeFunction(), *castedThis->globalObject());\n");
+
+            push(@$outputArray, "}\n\n");
         } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
             my $overloadedIndexString = "";
             if ($function->{overloadedIndex} && $function->{overloadedIndex} > 0) {
@@ -4882,7 +4908,6 @@ sub GenerateConstructorHelperMethods
     my $generatingNamedConstructor = shift;
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
-    my $constructorParentClassName = $generatingNamedConstructor ? "DOMConstructorWithDocument" : "DOMConstructorObject";
     my $leastConstructorLength = 0;
     if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
         $leastConstructorLength = 1;
@@ -4901,7 +4926,7 @@ sub GenerateConstructorHelperMethods
     push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
 
     push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
-    push(@$outputArray, "    : ${constructorParentClassName}(structure, globalObject)\n");
+    push(@$outputArray, "    : Base(structure, globalObject)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "}\n\n");
 
@@ -4934,6 +4959,11 @@ sub GenerateConstructorHelperMethods
 
     if (ConstructorHasProperties($interface)) {
         push(@$outputArray, "    reifyStaticProperties(vm, ${className}ConstructorTableValues, *this);\n");
+    }
+
+    if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
+        my $initializeFunctionName = GetJSBuiltinFunctionName(${className}, "initialize" . ${interfaceName});
+        push(@$outputArray, "    setInitializeFunction(vm, *JSC::JSFunction::createBuiltinFunction(vm, ${initializeFunctionName}(vm), globalObject));\n");
     }
 
     push(@$outputArray, "}\n\n");
@@ -4996,7 +5026,7 @@ sub IsConstructable
 {
     my $interface = shift;
 
-    return HasCustomConstructor($interface) || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"NamedConstructor"} || $interface->extendedAttributes->{"ConstructorTemplate"};
+    return HasCustomConstructor($interface) || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"NamedConstructor"} || $interface->extendedAttributes->{"ConstructorTemplate"} || $interface->extendedAttributes->{"JSBuiltinConstructor"};
 }
 
 sub HeaderNeedsPrototypeDeclaration

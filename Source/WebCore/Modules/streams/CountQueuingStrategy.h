@@ -33,16 +33,20 @@
 #if ENABLE(STREAMS_API)
 
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-// CountQueuingStrategy implements a strategy for streams that counts chunks one by one according to the spec. See
-// https://streams.spec.whatwg.org/#cqs-class
+// CountQueuingStrategy is implemented as JS builtin.
+// This class only serves to integrate with WebIDL auto-generated code.
 class CountQueuingStrategy : public RefCounted<CountQueuingStrategy> {
 public:
+    static Ref<CountQueuingStrategy> create() { return adoptRef(*new CountQueuingStrategy); }
+
     virtual ~CountQueuingStrategy() { }
 
-    inline static int size() { return 1; }
+private:
+    CountQueuingStrategy() { }
 };
 
 }

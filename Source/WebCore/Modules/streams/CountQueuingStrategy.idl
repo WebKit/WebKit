@@ -28,8 +28,8 @@
  */
 
 [
-    CustomConstructor(any properties),
+    JSBuiltinConstructor,
     Conditional=STREAMS_API,
 ] interface CountQueuingStrategy {
-    [CustomBinding] double size();
+    [JSBuiltin] double size();
 };

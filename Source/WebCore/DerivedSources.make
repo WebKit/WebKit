@@ -1250,7 +1250,9 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 # WebCore JS Builtins
 
 WEBCORE_JS_BUILTINS = \
-    $(WebCore)/Modules/streams/ReadableStream.js
+    $(WebCore)/Modules/streams/CountQueuingStrategy.js \
+    $(WebCore)/Modules/streams/ReadableStream.js \
+#
 
 all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
 

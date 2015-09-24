@@ -85,7 +85,7 @@ public:
 const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
 
 JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(structure, globalObject)
+    : Base(structure, globalObject)
 {
 }
 

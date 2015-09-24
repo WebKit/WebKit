@@ -95,7 +95,7 @@ COMPILE_ASSERT(2 == TestCallback::CONSTANT2, TestCallbackEnumCONSTANT2IsWrongUse
 const ClassInfo JSTestCallbackConstructor::s_info = { "TestCallbackConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackConstructor) };
 
 JSTestCallbackConstructor::JSTestCallbackConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(structure, globalObject)
+    : Base(structure, globalObject)
 {
 }
 

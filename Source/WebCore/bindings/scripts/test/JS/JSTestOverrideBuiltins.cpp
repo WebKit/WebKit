@@ -105,7 +105,7 @@ static const HashTable JSTestOverrideBuiltinsTable = { 1, 1, true, JSTestOverrid
 const ClassInfo JSTestOverrideBuiltinsConstructor::s_info = { "TestOverrideBuiltinsConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverrideBuiltinsConstructor) };
 
 JSTestOverrideBuiltinsConstructor::JSTestOverrideBuiltinsConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(structure, globalObject)
+    : Base(structure, globalObject)
 {
 }
 
