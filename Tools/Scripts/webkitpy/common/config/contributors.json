@@ -1816,14 +1816,6 @@
             "demarchi"
          ]
       },
-      "Lucas Forschler" : {
-         "emails" : [
-            "lforschler@apple.com"
-         ],
-         "nicks" : [
-            "lforschler"
-         ]
-      },
       "Luciano Wolf" : {
          "emails" : [
             "luciano.wolf@openbossa.org"
@@ -4457,6 +4449,14 @@
          "expertise" : "Layout (bidi and line layout, sub-pixel positioning), svg, editing",
          "nicks" : [
             "leviw"
+         ]
+      },
+      "Lucas Forschler" : {
+         "emails" : [
+            "lforschler@apple.com"
+         ],
+         "nicks" : [
+            "lforschler"
          ]
       },
       "Luiz Agostini" : {
