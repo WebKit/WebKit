@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (C) 2013 Apple Inc.  All rights reserved.
+# Copyright (C) 2013, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -45,14 +45,14 @@ def main():
         return -2
 
     genericPlatform = options.platform.split('-', 1)[0]
-    if genericPlatform != 'mac':
+    if genericPlatform not in ('mac', 'ios'):
         print 'Exited without removing any files.'
         return 0
 
     if options.build_directory:
         buildDirectory = options.build_directory
     else:
-        buildDirectory = webkitBuildDirectory(genericPlatform, options.configuration)
+        buildDirectory = webkitBuildDirectory(genericPlatform, options.platform, options.configuration)
 
     exit_code = 0
 
@@ -78,7 +78,11 @@ def main():
     return exit_code
 
 
-def webkitBuildDirectory(platform, configuration):
+def webkitBuildDirectory(platform, fullPlatform, configuration):
+    if fullPlatform.startswith('ios-simulator'):
+        platform = 'ios-simulator'
+    elif platform == 'ios':
+        platform = 'device'
     return subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
         "--" + platform, "--" + configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
 

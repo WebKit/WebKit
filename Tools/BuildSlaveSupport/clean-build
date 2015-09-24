@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Copyright (C) 2013 Apple Inc.  All rights reserved.
+# Copyright (C) 2013, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,10 +43,15 @@ def main():
         parser.error("Configuration is required")
         return -2
 
-    generic_platform = options.platform.split('-', 1)[0]
+    if options.platform.startswith('ios-simulator'):
+        platform = 'ios-simulator'
+    elif options.platform.startswith('ios'):
+        platform = 'device'
+    else:
+        platform = options.platform.split('-', 1)[0]
 
     webkit_build_directory = subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
-        "--" + generic_platform, "--" + options.configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
+        "--" + platform, "--" + options.configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
 
     shutil.rmtree(webkit_build_directory)
 

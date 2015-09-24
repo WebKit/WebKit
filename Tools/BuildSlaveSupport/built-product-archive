@@ -52,7 +52,7 @@ def main():
         return 1
 
     genericPlatform = options.platform.split('-', 1)[0]
-    if not determineWebKitBuildDirectory(genericPlatform, options.configuration):
+    if not determineWebKitBuildDirectory(genericPlatform, options.platform, options.configuration):
         print >> sys.stderr, "Could not determine build directory"
         return 1
 
@@ -62,8 +62,12 @@ def main():
         return extractBuiltProduct(options.configuration, genericPlatform)
 
 
-def determineWebKitBuildDirectory(platform, configuration):
+def determineWebKitBuildDirectory(platform, fullPlatform, configuration):
     global _buildDirectory
+    if fullPlatform.startswith('ios-simulator'):
+        platform = 'ios-simulator'
+    elif platform == 'ios':
+        platform = 'device'
     _buildDirectory = subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
         "--" + platform, "--" + configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
     return _buildDirectory
@@ -110,12 +114,12 @@ def createZip(directoryToZip, configuration):
         return subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=directoryToZip)
 
 
-def archiveBuiltProduct(configuration, platform, fullPlatform):
-    assert platform in ('mac', 'win', 'gtk', 'efl')
+def archiveBuiltProduct(configuration, platform):
+    assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
 
-    if platform == 'mac':
+    if platform in ('mac', 'ios'):
         return createZip(configurationBuildDirectory, configuration)
     elif platform == 'win':
         binDirectory = os.path.join(configurationBuildDirectory, "bin32")
@@ -179,7 +183,7 @@ def unzipArchive(directoryToExtractTo, configuration):
 
 
 def extractBuiltProduct(configuration, platform):
-    assert platform in ('mac', 'win', 'gtk', 'efl')
+    assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
     archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
@@ -187,7 +191,7 @@ def extractBuiltProduct(configuration, platform):
     removeDirectoryIfExists(configurationBuildDirectory)
     os.makedirs(configurationBuildDirectory)
 
-    if platform == 'mac':
+    if platform in ('mac', 'ios'):
         return unzipArchive(_buildDirectory, configuration)
     elif platform == 'win' or platform == 'gtk' or platform == 'efl':
         print "Extracting", configurationBuildDirectory
