@@ -158,6 +158,7 @@ public:
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     RefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     String markerDescriptionForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
+    String dumpMarkerRectsForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);
     void addTextMatchMarker(const Range*, bool isActive);
     void setMarkedTextMatchesAreHighlighted(bool, ExceptionCode&);
 

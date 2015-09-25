@@ -1045,6 +1045,27 @@ String Internals::markerDescriptionForNode(Node* node, const String& markerType,
     return marker->description();
 }
 
+String Internals::dumpMarkerRectsForNode(Node* node, const String& markerType, unsigned index, ExceptionCode& ec)
+{
+    RenderedDocumentMarker* marker = markerAt(node, markerType, index, ec);
+    if (!marker)
+        return String();
+    StringBuilder rectString;
+    rectString.append("marker rects: ");
+    for (const auto& rect : marker->renderedRects()) {
+        rectString.append("(");
+        rectString.appendNumber(rect.x().toFloat());
+        rectString.append(", ");
+        rectString.appendNumber(rect.y().toFloat());
+        rectString.append(", ");
+        rectString.appendNumber(rect.width().toFloat());
+        rectString.append(", ");
+        rectString.appendNumber(rect.height().toFloat());
+        rectString.append(") ");
+    }
+    return rectString.toString();
+}
+
 void Internals::addTextMatchMarker(const Range* range, bool isActive)
 {
     range->ownerDocument().updateLayoutIgnorePendingStylesheets();

@@ -1142,8 +1142,13 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
     font.adjustSelectionRectForText(run, renderedRect, sPos, ePos);
     IntRect markerRect = enclosingIntRect(renderedRect);
     markerRect = renderer().localToAbsoluteQuad(FloatQuad(markerRect)).enclosingBoundingBox();
+    markerRect.intersect(enclosingIntRect(renderer().absoluteClippedOverflowRect()));
+
+    if (markerRect.isEmpty())
+        return;
+
     marker.addRenderedRect(markerRect);
-    
+
     // Optionally highlight the text
     if (renderer().frame().editor().markedTextMatchesAreHighlighted()) {
         Color color = marker.activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
