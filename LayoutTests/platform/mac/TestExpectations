@@ -1318,4 +1318,3 @@ webkit.org/b/149328 fast/shadow-dom/shadow-layout-after-slot-changes.html [ Imag
 
 webkit.org/b/149510 accessibility/mac/aria-expanded-notifications.html [ Pass Failure ]
 
-webkit.org/b/147430 fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
