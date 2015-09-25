@@ -108,11 +108,13 @@ class MacPort(ApplePort):
         return env
 
     def _clear_global_caches_and_temporary_files(self):
-        self._filesystem.rmtree('/private/tmp/MediaCache')
         self._filesystem.rmtree(os.path.expanduser('~/Library/' + self.driver_name()))
         self._filesystem.rmtree(os.path.expanduser('~/Library/Application Support/' + self.driver_name()))
         self._filesystem.rmtree(os.path.expanduser('~/Library/Caches/' + self.driver_name()))
         self._filesystem.rmtree(os.path.expanduser('~/Library/WebKit/' + self.driver_name()))
+
+    def remove_cache_directory(self, name):
+        self._filesystem.rmtree(os.confstr(65538) + name)
 
     def operating_system(self):
         return 'mac'

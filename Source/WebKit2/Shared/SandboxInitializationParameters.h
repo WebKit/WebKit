@@ -86,8 +86,8 @@ public:
         return m_overrideSandboxProfilePathOrSandboxProfile;
     }
 
-    void setSystemDirectorySuffix(const String& suffix) { m_systemDirectorySuffix = suffix; }
-    const String& systemDirectorySuffix() const { return m_systemDirectorySuffix; }
+    void setUserDirectorySuffix(const String& suffix) { m_userDirectorySuffix = suffix; }
+    const String& userDirectorySuffix() const { return m_userDirectorySuffix; }
 #endif
 
 private:
@@ -95,7 +95,7 @@ private:
     void appendPathInternal(const char* name, const char* path);
 
     mutable Vector<const char*> m_namedParameters;
-    String m_systemDirectorySuffix;
+    String m_userDirectorySuffix;
 
     ProfileSelectionMode m_profileSelectionMode;
     String m_overrideSandboxProfilePathOrSandboxProfile;

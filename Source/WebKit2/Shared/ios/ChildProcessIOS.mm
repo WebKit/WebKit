@@ -73,9 +73,9 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 #if ENABLE(MANUAL_SANDBOXING)
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
-    if (sandboxParameters.systemDirectorySuffix().isNull()) {
-        String defaultSystemDirectorySuffix = String([[NSBundle mainBundle] bundleIdentifier]) + "+" + parameters.clientIdentifier;
-        sandboxParameters.setSystemDirectorySuffix(defaultSystemDirectorySuffix);
+    if (sandboxParameters.userDirectorySuffix().isNull()) {
+        String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier);
+        sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
     }
 
     String sandboxImportPath = "/usr/local/share/sandbox/imports";

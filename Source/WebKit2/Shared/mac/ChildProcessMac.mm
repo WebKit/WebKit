@@ -90,9 +90,14 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
     String defaultProfilePath = [webkit2Bundle pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
 
-    if (sandboxParameters.systemDirectorySuffix().isNull()) {
-        String defaultSystemDirectorySuffix = String([[NSBundle mainBundle] bundleIdentifier]) + "+" + parameters.clientIdentifier;
-        sandboxParameters.setSystemDirectorySuffix(defaultSystemDirectorySuffix);
+    if (sandboxParameters.userDirectorySuffix().isNull()) {
+        auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
+        if (userDirectorySuffix != parameters.extraInitializationData.end())
+            sandboxParameters.setUserDirectorySuffix([makeString(userDirectorySuffix->value, '/', String([[NSBundle mainBundle] bundleIdentifier])) fileSystemRepresentation]);
+        else {
+            String defaultUserDirectorySuffix = makeString(String([[NSBundle mainBundle] bundleIdentifier]), '+', parameters.clientIdentifier);
+            sandboxParameters.setUserDirectorySuffix(defaultUserDirectorySuffix);
+        }
     }
 
     Vector<String> osVersionParts;
@@ -106,7 +111,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
     // Use private temporary and cache directories.
-    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.systemDirectorySuffix()).data(), 0);
+    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.userDirectorySuffix()).data(), 1);
     char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);

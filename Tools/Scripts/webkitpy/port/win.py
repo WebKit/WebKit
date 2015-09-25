@@ -138,9 +138,6 @@ class WinPort(ApplePort):
     def _path_to_lighttpd_php(self):
         return "/usr/bin/php-cgi"
 
-    def _driver_tempdir_for_environment(self):
-        return cygpath(self._driver_tempdir())
-
     def test_search_path(self):
         test_fallback_names = [path for path in self.baseline_search_path() if not path.startswith(self._webkit_baseline_path('mac'))]
         return map(self._webkit_baseline_path, test_fallback_names)

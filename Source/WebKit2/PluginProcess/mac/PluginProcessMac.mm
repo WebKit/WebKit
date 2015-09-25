@@ -508,7 +508,7 @@ void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters
         exit(EX_OSERR);
     }
 
-    sandboxParameters.setSystemDirectorySuffix([[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] lastPathComponent] fileSystemRepresentation]);
+    sandboxParameters.setUserDirectorySuffix([[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:temporaryDirectory length:strlen(temporaryDirectory)] lastPathComponent] fileSystemRepresentation]);
 
     sandboxParameters.addPathParameter("PLUGIN_PATH", m_pluginPath);
     sandboxParameters.addPathParameter("NSURL_CACHE_DIR", m_nsurlCacheDirectory);

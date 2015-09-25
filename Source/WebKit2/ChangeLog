@@ -1,3 +1,53 @@
+2015-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Media tests start to time out after a few days of bot uptime
+        https://bugs.webkit.org/show_bug.cgi?id=149468
+
+        Reviewed by Darin Adler.
+
+        Make the fix work with WebKit2, and avoid touching user's media cache for WebKit1.
+
+        When UI process is not sandboxed, inherit DIRHELPER_USER_DIR_SUFFIX from it.
+        This means that during testing, WebContent uses a temporary directory of the form
+        /private/var/folders/.../T/WebKitTestRunner-VKjmz0/com.apple.WebKit.WebContent.Development,
+        instead of /private/var/folders/.../T/com.apple.WebKit.WebContent.Development+WebKitTestRunner.
+
+        WebKit1 now also better respects a temporary directory of the form
+        /private/var/folders/.../T/DumpRenderTree-VKjmz0, instead of the default, which
+        makes CoreMedia put its cache inside it.
+
+        As a result, almost everything is isolated per testing process, and deleted at the end.
+        Same with cache directories. The only outliers that I know of are plug-in directories,
+        which are per-process, but are not under the testing root, and thus aren't deleted.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeSandbox):
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::fromConnection):
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        (WebKit::ChildProcessProxy::connect):
+        * Shared/ChildProcessProxy.h:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * Shared/SandboxInitializationParameters.h:
+        (WebKit::SandboxInitializationParameters::sandboxProfile):
+        (WebKit::SandboxInitializationParameters::setUserDirectorySuffix):
+        (WebKit::SandboxInitializationParameters::userDirectorySuffix):
+        (WebKit::SandboxInitializationParameters::setSystemDirectorySuffix): Deleted.
+        (WebKit::SandboxInitializationParameters::systemDirectorySuffix): Deleted.
+        * Shared/ios/ChildProcessIOS.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::getLaunchOptions):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::getLaunchOptions):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+
 2015-09-25  Beth Dakin  <bdakin@apple.com>
 
         Clicking on a data detected item inside a form control always pops up a map 

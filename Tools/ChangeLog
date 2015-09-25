@@ -1,3 +1,20 @@
+2015-09-25  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Media tests start to time out after a few days of bot uptime
+        https://bugs.webkit.org/show_bug.cgi?id=149468
+
+        Reviewed by Darin Adler.
+
+        Delete cache directory in addition to the temporary one. Don't delete /private/tmp/MediaCache,
+        as it's not longer used by tests. Set TMPDIR and DIRHELPER_USER_DIR_SUFFIX to make
+        all temporary and cache files go to a custom location.
+
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/driver.py:
+        * Scripts/webkitpy/port/mac.py:
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._driver_tempdir_for_environment): Deleted unused function.
+
 2015-09-25  Dan Bernstein  <mitz@apple.com>
 
         Removed MiniBrowser.entitlements.
