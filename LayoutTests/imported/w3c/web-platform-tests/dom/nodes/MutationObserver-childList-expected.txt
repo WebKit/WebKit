@@ -22,7 +22,7 @@ PASS childList Node.appendChild: fragment removal mutations
 PASS childList Node.appendChild: addition outside document tree mutation 
 PASS childList Node.replaceChild: replacement mutation 
 PASS childList Node.replaceChild: removal mutation 
-FAIL childList Node.replaceChild: internal replacement mutation assert_equals: mutation records must match expected 2 but got 1
+PASS childList Node.replaceChild: internal replacement mutation 
 PASS childList Node.removeChild: removal mutation 
 PASS Range (r70) is created 
 PASS childList Range.deleteContents: child removal mutation 

@@ -1,5 +1,17 @@
 2015-09-24  Chris Dumez  <cdumez@apple.com>
 
+        Node.replaceChild() does not behave according to the specification
+        https://bugs.webkit.org/show_bug.cgi?id=149546
+        <rdar://problem/22571887>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C DOM test now that one more check is passing.
+
+        * web-platform-tests/dom/nodes/MutationObserver-childList-expected.txt:
+
+2015-09-24  Chris Dumez  <cdumez@apple.com>
+
         Rewrite Range::insertNode() as per the latest DOM specification
         https://bugs.webkit.org/show_bug.cgi?id=149528
 

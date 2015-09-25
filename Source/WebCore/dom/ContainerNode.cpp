@@ -414,50 +414,48 @@ bool ContainerNode::replaceChild(Ref<Node>&& newChild, Node& oldChild, Exception
 
     ChildListMutationScope mutation(*this);
 
-    RefPtr<Node> next = oldChild.nextSibling();
-
-    // Remove the node we're replacing
-    Ref<Node> removedChild(oldChild);
-    removeChild(oldChild, ec);
-    if (ec)
-        return false;
-
-    if (next && (next->previousSibling() == newChild.ptr() || next == newChild.ptr())) // nothing to do
-        return true;
-
-    // Does this one more time because removeChild() fires a MutationEvent.
-    if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
-        return false;
+    RefPtr<Node> refChild = oldChild.nextSibling();
+    if (refChild.get() == newChild.ptr())
+        refChild = refChild->nextSibling();
 
     NodeVector targets;
     collectChildrenAndRemoveFromOldParent(newChild, targets, ec);
     if (ec)
         return false;
 
-    // Does this yet another check because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
+    // Does this one more time because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
+    if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
+        return false;
+
+    // Remove the node we're replacing.
+    Ref<Node> protectOldChild(oldChild);
+    removeChild(oldChild, ec);
+    if (ec)
+        return false;
+
+    // Does this one more time because removeChild() fires a MutationEvent.
     if (!checkPreReplacementValidity(*this, newChild, oldChild, ec))
         return false;
 
     InspectorInstrumentation::willInsertDOMNode(document(), *this);
 
-    // Add the new child(ren)
+    // Add the new child(ren).
     for (auto& child : targets) {
         // Due to arbitrary code running in response to a DOM mutation event it's
-        // possible that "next" is no longer a child of "this".
+        // possible that "refChild" is no longer a child of "this".
         // It's also possible that "child" has been inserted elsewhere.
         // In either of those cases, we'll just stop.
-        if (next && next->parentNode() != this)
+        if (refChild && refChild->parentNode() != this)
             break;
         if (child->parentNode())
             break;
 
         treeScope().adoptIfNeeded(child.ptr());
 
-        // Add child before "next".
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            if (next)
-                insertBeforeCommon(*next, child.get());
+            if (refChild)
+                insertBeforeCommon(*refChild, child.get());
             else
                 appendChildCommon(child);
         }
