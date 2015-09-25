@@ -1,3 +1,14 @@
+2015-09-24  Daniel Bates  <dabates@apple.com>
+
+        Add WebKitSystemInterface for iOS 9.0
+        https://bugs.webkit.org/show_bug.cgi?id=149550
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceIOSDevice9.0.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator9.0.a: Added.
+
 2015-09-18  Alex Christensen  <achristensen@webkit.org>
 
         Remove last required use of WEBKIT_LIBRARIES environment variable on Windows

@@ -54,7 +54,7 @@ CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
 void WKSetMetadataURL(NSString *URLString, NSString *referrer, NSString *path);
 void WKSetNSURLConnectionDefersCallbacks(NSURLConnection *connection, BOOL defers);
-void WKSetNSURLRequestShouldContentSniff(NSMutableURLRequest *, BOOL shouldContentSniff);
+void WKSetNSURLRequestShouldContentSniff(NSMutableURLRequest *request, BOOL shouldContentSniff);
     
 typedef enum {
     WKPlugInModuleLoadPolicyLoadNormally = 0,
@@ -70,7 +70,7 @@ BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);
 BOOL WKShouldBlockWebGL();
 BOOL WKShouldSuggestBlockingWebGL();
 
-BOOL WKCGContextGetShouldSmoothFonts(CGContextRef);
+BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
 void WKSetUpFontCache(void);
 
@@ -93,7 +93,7 @@ enum {
 };
 typedef int WKCTFontTransformOptions;
 
-bool WKCTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, WKCTFontTransformOptions);
+bool WKCTFontTransformGlyphs(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, WKCTFontTransformOptions options);
 
 typedef enum {
     WKPatternTilingNoDistortion,
@@ -101,11 +101,11 @@ typedef enum {
     WKPatternTilingConstantSpacing
 } WKPatternTiling;
 
-CGPatternRef WKCGPatternCreateWithImageAndTransform(CGImageRef, CGAffineTransform, int tiling);
+CGPatternRef WKCGPatternCreateWithImageAndTransform(CGImageRef image, CGAffineTransform transform, int tiling);
 void WKCGContextResetClip(CGContextRef);
 
-BOOL WKCGContextIsBitmapContext(CGContextRef);
-bool WKCGContextIsPDFContext(CGContextRef);
+BOOL WKCGContextIsBitmapContext(CGContextRef context);
+bool WKCGContextIsPDFContext(CGContextRef context);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
@@ -135,7 +135,7 @@ CFURLRef WKCopyBundleURLForExecutableURL(CFURLRef);
 CALayer *WKMakeRenderLayer(uint32_t contextID);
 
 typedef struct __WKCAContextRef *WKCAContextRef;
-WKCAContextRef WKCAContextMakeRemoteWithServerPort(mach_port_t);
+WKCAContextRef WKCAContextMakeRemoteWithServerPort(mach_port_t port);
 void WKCAContextInvalidate(WKCAContextRef);
 uint32_t WKCAContextGetContextId(WKCAContextRef);
 void WKCAContextSetLayer(WKCAContextRef, CALayer *);
@@ -144,7 +144,7 @@ void WKCAContextSetColorSpace(WKCAContextRef, CGColorSpaceRef);
 CGColorSpaceRef WKCAContextGetColorSpace(WKCAContextRef);
 void WKDestroyRenderingResources(void);
 
-void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *, CGContextRef, void (^block)(CGRect rect));
+void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
 
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 int WKGetHTTPRequestPriority(CFURLRequestRef);
@@ -157,12 +157,12 @@ void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 
-CFDictionaryRef WKNSURLRequestCreateSerializableRepresentation(NSURLRequest *, CFTypeRef tokenNull);
+CFDictionaryRef WKNSURLRequestCreateSerializableRepresentation(NSURLRequest *request, CFTypeRef tokenNull);
 NSURLRequest *WKNSURLRequestFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
 CFDictionaryRef WKCFURLRequestCreateSerializableRepresentation(CFURLRequestRef cfRequest, CFTypeRef tokenNull);
 CFURLRequestRef WKCreateCFURLRequestFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
 
-CFDictionaryRef WKNSURLResponseCreateSerializableRepresentation(NSURLResponse *, CFTypeRef tokenNull);
+CFDictionaryRef WKNSURLResponseCreateSerializableRepresentation(NSURLResponse *response, CFTypeRef tokenNull);
 NSURLResponse *WKNSURLResponseFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull);
 
 CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStore(void);
@@ -180,18 +180,18 @@ typedef enum {
 } WKSandboxExtensionType;
 typedef struct __WKSandboxExtension *WKSandboxExtensionRef;
 
-WKSandboxExtensionRef WKSandboxExtensionCreate(const char* path, WKSandboxExtensionType);
-void WKSandboxExtensionDestroy(WKSandboxExtensionRef);
+WKSandboxExtensionRef WKSandboxExtensionCreate(const char* path, WKSandboxExtensionType type);
+void WKSandboxExtensionDestroy(WKSandboxExtensionRef sandboxExtension);
 
-bool WKSandboxExtensionConsume(WKSandboxExtensionRef);
-bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef);
+bool WKSandboxExtensionConsume(WKSandboxExtensionRef sandboxExtension);
+bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef sandboxExtension);
 
-const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef, size_t* length);
+const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxExtension, size_t* length);
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
 
 void WKSetCrashReportApplicationSpecificInformation(CFStringRef);
 
-void WKCGPathAddRoundedRect(CGMutablePathRef, const CGAffineTransform* matrix, CGRect, CGFloat cornerWidth, CGFloat cornerHeight);
+void WKCGPathAddRoundedRect(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 
 void WKCFURLRequestAllowAllPostCaching(CFURLRequestRef);
 void WKCFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
@@ -420,7 +420,7 @@ bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOc
 
 #if defined(__x86_64__)
 #import <mach/mig.h>
-CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t, mach_port_t serverPort);
+CFRunLoopSourceRef WKCreateMIGServerSource(mig_subsystem_t subsystem, mach_port_t serverPort);
 #endif
 
 
@@ -438,9 +438,9 @@ BOOL WKConvertNSEventToCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent
 void WKSendKeyEventToTSM(NSEvent *theEvent);
 void WKCallDrawingNotification(CGrafPtr port, Rect *bounds);
 
-NSEvent *WKCreateNSEventWithCarbonEvent(EventRef);
-NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *);
-NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef);
+NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);
+NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *window);
+NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef windowRef);
 
 ScriptCode WKGetScriptCodeFromCurrentKeyboardInputSource(void);
 
