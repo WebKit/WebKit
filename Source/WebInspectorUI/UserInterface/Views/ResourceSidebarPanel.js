@@ -311,21 +311,24 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     _scriptsCleared(event)
     {
+        const suppressOnDeselect = true;
+        const suppressSelectSibling = true;
+        
         if (this._extensionScriptsFolderTreeElement) {
             if (this._extensionScriptsFolderTreeElement.parent)
-                this._extensionScriptsFolderTreeElement.parent.removeChild(this._extensionScriptsFolderTreeElement);
+                this._extensionScriptsFolderTreeElement.parent.removeChild(this._extensionScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
             this._extensionScriptsFolderTreeElement = null;
         }
 
         if (this._extraScriptsFolderTreeElement) {
             if (this._extraScriptsFolderTreeElement.parent)
-                this._extraScriptsFolderTreeElement.parent.removeChild(this._extraScriptsFolderTreeElement);
+                this._extraScriptsFolderTreeElement.parent.removeChild(this._extraScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
             this._extraScriptsFolderTreeElement = null;
         }
 
         if (this._anonymousScriptsFolderTreeElement) {
             if (this._anonymousScriptsFolderTreeElement.parent)
-                this._anonymousScriptsFolderTreeElement.parent.removeChild(this._anonymousScriptsFolderTreeElement);
+                this._anonymousScriptsFolderTreeElement.parent.removeChild(this._anonymousScriptsFolderTreeElement, suppressOnDeselect, suppressSelectSibling);
             this._anonymousScriptsFolderTreeElement = null;
         }
     }
