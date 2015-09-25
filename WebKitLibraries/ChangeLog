@@ -1,3 +1,10 @@
+2015-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * win/tools/vsprops/FeatureDefines.props: Let Windows build know about
+        the STREAMS_API feature.
+
 2015-09-24  Daniel Bates  <dabates@apple.com>
 
         Add WebKitSystemInterface for iOS 9.0
