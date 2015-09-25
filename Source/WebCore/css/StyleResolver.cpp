@@ -1901,7 +1901,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     
     if (id == CSSPropertyCustom) {
         CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*value);
-        state.style()->setCustomPropertyValue(customProperty->name(), customProperty->value());
+        state.style()->setCustomPropertyValue(customProperty->name(), value);
         return;
     }
 

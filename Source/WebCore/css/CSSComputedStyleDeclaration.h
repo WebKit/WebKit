@@ -50,6 +50,7 @@ public:
     ComputedStyleExtractor(PassRefPtr<Node>, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
+    String customPropertyText(const String& propertyName) const;
     RefPtr<CSSValue> customPropertyValue(const String& propertyName) const;
 
     // Helper methods for HTML editing.

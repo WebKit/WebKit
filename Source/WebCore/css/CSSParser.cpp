@@ -1351,6 +1351,19 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
 
+CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties* declaration, const AtomicString& propertyName, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
+{
+    CSSParserContext context(cssParserMode);
+    if (contextStyleSheet) {
+        context = contextStyleSheet->parserContext();
+        context.mode = cssParserMode;
+    }
+
+    CSSParser parser(context);
+    parser.setCustomPropertyName(propertyName);
+    return parser.parseValue(declaration, CSSPropertyCustom, string, important, contextStyleSheet);
+}
+
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
 {
     setStyleSheet(contextStyleSheet);
@@ -1895,6 +1908,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 {
     if (!m_valueList || !m_valueList->current())
         return false;
+    
+    if (propId == CSSPropertyCustom) {
+        // FIXME: For now put this ahead of inherit/initial processing.
+        // Eventually we want to support initial and inherit.
+        return parseCustomPropertyDeclaration(important);
+    }
 
     ValueWithCalculation valueWithCalculation(*m_valueList->current());
     CSSValueID id = valueWithCalculation.value().id;
@@ -4137,26 +4156,12 @@ bool CSSParser::parseAlt(CSSPropertyID propID, bool important)
     return false;
 }
 
-void CSSParser::addCustomPropertyDeclaration(const CSSParserString& name, CSSParserValueList* value, bool important)
+bool CSSParser::parseCustomPropertyDeclaration(bool important)
 {
-    if (!value)
-        return;
-
-    // The custom property comes in as a parsed set of CSSParserValues collected into a list.
-    // For CSS variables, we just want to treat the entire set of values as a string, so what we do
-    // is build up a set of CSSValues and serialize them using cssText, separating multiple values
-    // with spaces.
-    AtomicString propertyName = name;
-    StringBuilder builder;
-    for (unsigned i = 0; i < value->size(); i++) {
-        if (i)
-            builder.append(' ');
-        RefPtr<CSSValue> cssValue = value->valueAt(i)->createCSSValue();
-        if (!cssValue)
-            return;
-        builder.append(cssValue->cssText());
-    }
-    addProperty(CSSPropertyCustom, CSSCustomPropertyValue::create(propertyName, builder.toString().lower()), important, false);
+    if (m_customPropertyName.isEmpty() || !m_valueList)
+        return false;
+    addProperty(CSSPropertyCustom, CSSCustomPropertyValue::create(m_customPropertyName, m_valueList), important, false);
+    return true;
 }
 
 // [ <string> | <uri> | <counter> | attr(X) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit

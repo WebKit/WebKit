@@ -168,6 +168,8 @@ public:
     CSSParserValue* valueAt(unsigned i) { return i < m_values.size() ? &m_values[i] : 0; }
 
     void clear() { m_values.clear(); }
+    
+    String toString();
 
 private:
     unsigned m_current;

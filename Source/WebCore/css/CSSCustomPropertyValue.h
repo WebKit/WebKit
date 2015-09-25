@@ -26,34 +26,47 @@
 #ifndef CSSCustomPropertyValue_h
 #define CSSCustomPropertyValue_h
 
+#include "CSSParserValues.h"
 #include "CSSValue.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSCustomPropertyValue : public CSSValue {
 public:
-    static Ref<CSSCustomPropertyValue> create(const AtomicString& name, const String& value)
+    static Ref<CSSCustomPropertyValue> create(const AtomicString& name, std::unique_ptr<CSSParserValueList>& valueList)
     {
-        return adoptRef(*new CSSCustomPropertyValue(name, value));
+        return adoptRef(*new CSSCustomPropertyValue(name, valueList));
     }
     
-    bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && m_value == other.m_value; }
-
-    String customCSSText() const { return value(); }
+    String customCSSText() const
+    {
+        if (!m_serialized) {
+            m_serialized = true;
+            m_stringValue = m_parserValue ? m_parserValue->toString() : "";
+        }
+        return m_stringValue;
+    }
 
     const AtomicString& name() const { return m_name; }
-    const String& value() const { return m_value; }
     
+    // FIXME: Should arguably implement equals on all of the CSSParserValues, but CSSValue equivalence
+    // is rarely used, so serialization to compare is probably fine.
+    bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && customCSSText() == other.customCSSText(); }
+
 private:
-    CSSCustomPropertyValue(const AtomicString& name, const String& value)
+    CSSCustomPropertyValue(const AtomicString& name, std::unique_ptr<CSSParserValueList>& valueList)
         : CSSValue(CustomPropertyClass)
         , m_name(name)
-        , m_value(value)
+        , m_parserValue(WTF::move(valueList))
+        , m_serialized(false)
     {
     }
 
     const AtomicString m_name;
-    const String m_value;
+    std::unique_ptr<CSSParserValueList> m_parserValue;
+    mutable String m_stringValue;
+    mutable bool m_serialized;
 };
 
 } // namespace WebCore

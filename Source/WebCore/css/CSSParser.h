@@ -119,6 +119,7 @@ public:
     bool parseSupportsCondition(const String&);
 
     static ParseResult parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, CSSParserMode, StyleSheetContents*);
+    static ParseResult parseCustomPropertyValue(MutableStyleProperties*, const AtomicString& propertyName, const String&, bool important, CSSParserMode, StyleSheetContents* contextStyleSheet);
 
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool isValidSystemColorValue(CSSValueID);
@@ -143,7 +144,7 @@ public:
     bool parseQuotes(CSSPropertyID, bool important);
     bool parseAlt(CSSPropertyID, bool important);
     
-    void addCustomPropertyDeclaration(const CSSParserString&, CSSParserValueList*, bool important);
+    bool parseCustomPropertyDeclaration(bool important);
     
     RefPtr<CSSValue> parseAttr(CSSParserValueList& args);
 
@@ -395,6 +396,7 @@ public:
 
     bool m_important;
     CSSPropertyID m_id;
+    AtomicString m_customPropertyName;
     StyleSheetContents* m_styleSheet;
     RefPtr<StyleRuleBase> m_rule;
     RefPtr<StyleKeyframe> m_keyframe;
@@ -465,6 +467,8 @@ public:
 
     Location currentLocation();
     static bool isCalculation(CSSParserValue&);
+
+    void setCustomPropertyName(const AtomicString& propertyName) { m_customPropertyName = propertyName; }
 
 private:
     bool is8BitSource() { return m_is8BitSource; }
