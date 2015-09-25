@@ -59,25 +59,26 @@ class LegacyTransaction;
 
 class LegacyAny : public IDBAny {
 public:
-    static PassRefPtr<LegacyAny> createInvalid();
-    static PassRefPtr<LegacyAny> createNull();
-    static PassRefPtr<LegacyAny> createString(const String&);
+    static RefPtr<LegacyAny> createInvalid();
+    static RefPtr<LegacyAny> createNull();
+    static RefPtr<LegacyAny> createString(const String&);
     template<typename T>
-    static PassRefPtr<LegacyAny> create(T* idbObject)
+    static RefPtr<LegacyAny> create(T* idbObject)
     {
         return adoptRef(new LegacyAny(idbObject));
     }
     template<typename T>
-    static PassRefPtr<LegacyAny> create(const T& idbObject)
+    static RefPtr<LegacyAny> create(const T& idbObject)
     {
         return adoptRef(new LegacyAny(idbObject));
     }
     template<typename T>
-    static PassRefPtr<LegacyAny> create(PassRefPtr<T> idbObject)
+    static RefPtr<LegacyAny> create(PassRefPtr<T> idbObject)
     {
-        return adoptRef(new LegacyAny(idbObject));
+        RefPtr<T> refObject = idbObject;
+        return adoptRef(new LegacyAny(WTF::move(refObject)));
     }
-    static PassRefPtr<LegacyAny> create(int64_t value)
+    static RefPtr<LegacyAny> create(int64_t value)
     {
         return adoptRef(new LegacyAny(value));
     }
@@ -85,14 +86,14 @@ public:
 
     virtual Type type() const override final { return m_type; }
     // Use type() to figure out which one of these you're allowed to call.
-    virtual PassRefPtr<DOMStringList> domStringList() override final;
-    virtual PassRefPtr<IDBCursor> idbCursor() override final;
-    virtual PassRefPtr<IDBCursorWithValue> idbCursorWithValue() override final;
-    virtual PassRefPtr<IDBDatabase> idbDatabase() override final;
-    virtual PassRefPtr<IDBFactory> idbFactory() override final;
-    virtual PassRefPtr<IDBIndex> idbIndex() override final;
-    virtual PassRefPtr<IDBObjectStore> idbObjectStore() override final;
-    virtual PassRefPtr<IDBTransaction> idbTransaction() override final;
+    virtual RefPtr<DOMStringList> domStringList() override final;
+    virtual RefPtr<IDBCursor> idbCursor() override final;
+    virtual RefPtr<IDBCursorWithValue> idbCursorWithValue() override final;
+    virtual RefPtr<IDBDatabase> idbDatabase() override final;
+    virtual RefPtr<IDBFactory> idbFactory() override final;
+    virtual RefPtr<IDBIndex> idbIndex() override final;
+    virtual RefPtr<IDBObjectStore> idbObjectStore() override final;
+    virtual RefPtr<IDBTransaction> idbTransaction() override final;
     virtual const Deprecated::ScriptValue& scriptValue() override final;
     virtual int64_t integer() override final;
     virtual const String& string() override final;
@@ -108,14 +109,14 @@ public:
 
 private:
     explicit LegacyAny(Type);
-    explicit LegacyAny(PassRefPtr<DOMStringList>);
-    explicit LegacyAny(PassRefPtr<LegacyCursor>);
-    explicit LegacyAny(PassRefPtr<LegacyCursorWithValue>);
-    explicit LegacyAny(PassRefPtr<LegacyDatabase>);
-    explicit LegacyAny(PassRefPtr<LegacyFactory>);
-    explicit LegacyAny(PassRefPtr<LegacyIndex>);
-    explicit LegacyAny(PassRefPtr<LegacyObjectStore>);
-    explicit LegacyAny(PassRefPtr<LegacyTransaction>);
+    explicit LegacyAny(RefPtr<DOMStringList>);
+    explicit LegacyAny(RefPtr<LegacyCursor>);
+    explicit LegacyAny(RefPtr<LegacyCursorWithValue>);
+    explicit LegacyAny(RefPtr<LegacyDatabase>);
+    explicit LegacyAny(RefPtr<LegacyFactory>);
+    explicit LegacyAny(RefPtr<LegacyIndex>);
+    explicit LegacyAny(RefPtr<LegacyObjectStore>);
+    explicit LegacyAny(RefPtr<LegacyTransaction>);
     explicit LegacyAny(const IDBKeyPath&);
     explicit LegacyAny(const String&);
     explicit LegacyAny(const Deprecated::ScriptValue&);

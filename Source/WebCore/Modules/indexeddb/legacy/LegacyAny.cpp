@@ -38,17 +38,17 @@
 
 namespace WebCore {
 
-PassRefPtr<LegacyAny> LegacyAny::createInvalid()
+RefPtr<LegacyAny> LegacyAny::createInvalid()
 {
     return adoptRef(new LegacyAny(Type::Undefined));
 }
 
-PassRefPtr<LegacyAny> LegacyAny::createNull()
+RefPtr<LegacyAny> LegacyAny::createNull()
 {
     return adoptRef(new LegacyAny(Type::Null));
 }
 
-PassRefPtr<LegacyAny> LegacyAny::createString(const String& value)
+RefPtr<LegacyAny> LegacyAny::createString(const String& value)
 {
     return adoptRef(new LegacyAny(value));
 }
@@ -64,49 +64,49 @@ LegacyAny::~LegacyAny()
 {
 }
 
-PassRefPtr<DOMStringList> LegacyAny::domStringList()
+RefPtr<DOMStringList> LegacyAny::domStringList()
 {
     ASSERT(m_type == Type::DOMStringList);
     return m_domStringList;
 }
 
-PassRefPtr<IDBCursor> LegacyAny::idbCursor()
+RefPtr<IDBCursor> LegacyAny::idbCursor()
 {
     ASSERT(m_type == Type::IDBCursor);
     return m_idbCursor;
 }
 
-PassRefPtr<IDBCursorWithValue> LegacyAny::idbCursorWithValue()
+RefPtr<IDBCursorWithValue> LegacyAny::idbCursorWithValue()
 {
     ASSERT(m_type == Type::IDBCursorWithValue);
     return m_idbCursorWithValue;
 }
 
-PassRefPtr<IDBDatabase> LegacyAny::idbDatabase()
+RefPtr<IDBDatabase> LegacyAny::idbDatabase()
 {
     ASSERT(m_type == Type::IDBDatabase);
     return m_idbDatabase;
 }
 
-PassRefPtr<IDBFactory> LegacyAny::idbFactory()
+RefPtr<IDBFactory> LegacyAny::idbFactory()
 {
     ASSERT(m_type == Type::IDBFactory);
     return m_idbFactory;
 }
 
-PassRefPtr<IDBIndex> LegacyAny::idbIndex()
+RefPtr<IDBIndex> LegacyAny::idbIndex()
 {
     ASSERT(m_type == Type::IDBIndex);
     return m_idbIndex;
 }
 
-PassRefPtr<IDBObjectStore> LegacyAny::idbObjectStore()
+RefPtr<IDBObjectStore> LegacyAny::idbObjectStore()
 {
     ASSERT(m_type == Type::IDBObjectStore);
     return m_idbObjectStore;
 }
 
-PassRefPtr<IDBTransaction> LegacyAny::idbTransaction()
+RefPtr<IDBTransaction> LegacyAny::idbTransaction()
 {
     ASSERT(m_type == Type::IDBTransaction);
     return m_idbTransaction;
@@ -130,56 +130,56 @@ int64_t LegacyAny::integer()
     return m_integer;
 }
 
-LegacyAny::LegacyAny(PassRefPtr<DOMStringList> value)
+LegacyAny::LegacyAny(RefPtr<DOMStringList> value)
     : m_type(Type::DOMStringList)
     , m_domStringList(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyCursorWithValue> value)
+LegacyAny::LegacyAny(RefPtr<LegacyCursorWithValue> value)
     : m_type(Type::IDBCursorWithValue)
     , m_idbCursorWithValue(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyCursor> value)
+LegacyAny::LegacyAny(RefPtr<LegacyCursor> value)
     : m_type(Type::IDBCursor)
     , m_idbCursor(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyDatabase> value)
+LegacyAny::LegacyAny(RefPtr<LegacyDatabase> value)
     : m_type(Type::IDBDatabase)
     , m_idbDatabase(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyFactory> value)
+LegacyAny::LegacyAny(RefPtr<LegacyFactory> value)
     : m_type(Type::IDBFactory)
     , m_idbFactory(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyIndex> value)
+LegacyAny::LegacyAny(RefPtr<LegacyIndex> value)
     : m_type(Type::IDBIndex)
     , m_idbIndex(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyTransaction> value)
+LegacyAny::LegacyAny(RefPtr<LegacyTransaction> value)
     : m_type(Type::IDBTransaction)
     , m_idbTransaction(value)
     , m_integer(0)
 {
 }
 
-LegacyAny::LegacyAny(PassRefPtr<LegacyObjectStore> value)
+LegacyAny::LegacyAny(RefPtr<LegacyObjectStore> value)
     : m_type(Type::IDBObjectStore)
     , m_idbObjectStore(value)
     , m_integer(0)

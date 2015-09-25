@@ -33,7 +33,6 @@
 #include "IndexedDB.h"
 #include "ScriptWrappable.h"
 #include <bindings/ScriptValue.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -66,12 +65,12 @@ public:
     virtual const Deprecated::ScriptValue& value() const = 0;
     virtual IDBAny* source() const = 0;
 
-    virtual PassRefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> update(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
     virtual void advance(unsigned long, ExceptionCode&) = 0;
     // FIXME: Try to modify the code generator so this overload is unneeded.
     virtual void continueFunction(ScriptExecutionContext*, ExceptionCode&) = 0;
     virtual void continueFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&) = 0;
 
 protected:
     IDBCursor();

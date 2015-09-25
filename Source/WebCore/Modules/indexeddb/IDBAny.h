@@ -31,7 +31,6 @@
 #include "IDBKeyPath.h"
 #include "ScriptWrappable.h"
 #include <bindings/ScriptValue.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -70,14 +69,14 @@ public:
     };
 
     virtual Type type() const = 0;
-    virtual PassRefPtr<DOMStringList> domStringList() = 0;
-    virtual PassRefPtr<IDBCursor> idbCursor() = 0;
-    virtual PassRefPtr<IDBCursorWithValue> idbCursorWithValue() = 0;
-    virtual PassRefPtr<IDBDatabase> idbDatabase() = 0;
-    virtual PassRefPtr<IDBFactory> idbFactory() = 0;
-    virtual PassRefPtr<IDBIndex> idbIndex() = 0;
-    virtual PassRefPtr<IDBObjectStore> idbObjectStore() = 0;
-    virtual PassRefPtr<IDBTransaction> idbTransaction() = 0;
+    virtual RefPtr<DOMStringList> domStringList() = 0;
+    virtual RefPtr<IDBCursor> idbCursor() = 0;
+    virtual RefPtr<IDBCursorWithValue> idbCursorWithValue() = 0;
+    virtual RefPtr<IDBDatabase> idbDatabase() = 0;
+    virtual RefPtr<IDBFactory> idbFactory() = 0;
+    virtual RefPtr<IDBIndex> idbIndex() = 0;
+    virtual RefPtr<IDBObjectStore> idbObjectStore() = 0;
+    virtual RefPtr<IDBTransaction> idbTransaction() = 0;
     virtual const Deprecated::ScriptValue& scriptValue() = 0;
     virtual int64_t integer() = 0;
     virtual const String& string() = 0;

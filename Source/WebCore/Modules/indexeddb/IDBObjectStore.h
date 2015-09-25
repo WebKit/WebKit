@@ -29,7 +29,6 @@
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "ScriptWrappable.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -62,36 +61,36 @@ public:
     // Implement the IDBObjectStore IDL
     virtual int64_t id() const = 0;
     virtual const String name() const = 0;
-    virtual PassRefPtr<IDBAny> keyPathAny() const = 0;
+    virtual RefPtr<IDBAny> keyPathAny() const = 0;
     virtual const IDBKeyPath keyPath() const = 0;
-    virtual PassRefPtr<DOMStringList> indexNames() const = 0;
-    virtual PassRefPtr<IDBTransaction> transaction() const = 0;
+    virtual RefPtr<DOMStringList> indexNames() const = 0;
+    virtual RefPtr<IDBTransaction> transaction() const = 0;
     virtual bool autoIncrement() const = 0;
 
-    virtual PassRefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCode&) = 0;
+    virtual RefPtr<IDBIndex> createIndex(ScriptExecutionContext*, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&) = 0;
+    virtual RefPtr<IDBIndex> index(const String& name, ExceptionCode&) = 0;
     virtual void deleteIndex(const String& name, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<IDBRequest> count(ScriptExecutionContext*, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
 
 protected:
     IDBObjectStore();

@@ -67,8 +67,8 @@ public:
 
     virtual const String& mode() const override final;
     virtual IDBDatabase* db() const override final;
-    virtual PassRefPtr<DOMError> error() const override final { return m_error; }
-    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) override final;
+    virtual RefPtr<DOMError> error() const override final { return m_error; }
+    virtual RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) override final;
     virtual void abort(ExceptionCode&) override final;
 
     class OpenCursorNotifier {

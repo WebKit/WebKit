@@ -49,11 +49,11 @@ class IDBRequest : public ScriptWrappable, public EventTargetWithInlineData, pub
 public:
     virtual ~IDBRequest() { }
 
-    virtual PassRefPtr<IDBAny> result(ExceptionCode&) const = 0;
+    virtual RefPtr<IDBAny> result(ExceptionCode&) const = 0;
     virtual unsigned short errorCode(ExceptionCode&) const = 0;
-    virtual PassRefPtr<DOMError> error(ExceptionCode&) const = 0;
-    virtual PassRefPtr<IDBAny> source() const = 0;
-    virtual PassRefPtr<IDBTransaction> transaction() const = 0;
+    virtual RefPtr<DOMError> error(ExceptionCode&) const = 0;
+    virtual RefPtr<IDBAny> source() const = 0;
+    virtual RefPtr<IDBTransaction> transaction() const = 0;
 
     // Defined in the IDL
     enum ReadyState {

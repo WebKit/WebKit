@@ -68,19 +68,19 @@ IDBFactory::IDBFactory()
 
 }
 
-PassRefPtr<WebCore::IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext*, ExceptionCode&)
 {
     return nullptr;
 }
 
-PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
+RefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
     return openInternal(context, name, 0, ec).release();
 }
 
-PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
+RefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
@@ -116,7 +116,7 @@ RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* contex
     return adoptRef(&request.leakRef());
 }
 
-PassRefPtr<WebCore::IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
+RefPtr<WebCore::IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBFactory::deleteDatabase");
 

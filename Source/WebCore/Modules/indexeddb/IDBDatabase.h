@@ -36,7 +36,6 @@
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
 #include "ScriptWrappable.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -55,12 +54,12 @@ public:
     // Implement the IDL
     virtual const String name() const = 0;
     virtual uint64_t version() const = 0;
-    virtual PassRefPtr<DOMStringList> objectStoreNames() const = 0;
+    virtual RefPtr<DOMStringList> objectStoreNames() const = 0;
 
-    virtual PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) = 0;
-    virtual PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) = 0;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) = 0;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) = 0;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) = 0;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) = 0;
     virtual void deleteObjectStore(const String& name, ExceptionCode&) = 0;
     virtual void close() = 0;
 

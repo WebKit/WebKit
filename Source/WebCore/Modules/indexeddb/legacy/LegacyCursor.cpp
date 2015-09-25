@@ -96,7 +96,7 @@ IDBAny* LegacyCursor::source() const
     return m_source.get();
 }
 
-PassRefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyCursor::update(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyCursor::update");
 
@@ -201,7 +201,7 @@ void LegacyCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
     ASSERT(!ec);
 }
 
-PassRefPtr<IDBRequest> LegacyCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     ec = 0;
     LOG(StorageAPI, "LegacyCursor::delete");

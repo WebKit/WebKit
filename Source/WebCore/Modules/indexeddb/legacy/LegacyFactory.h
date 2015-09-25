@@ -61,13 +61,13 @@ public:
     // FIXME: getDatabaseNames is no longer a web-facing API, and should be removed from LegacyFactory.
     // The Web Inspector currently uses this to enumerate the list of databases, but is more complicated as a result.
     // We should provide a simpler API to the Web Inspector then remove getDatabaseNames.
-    PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&);
+    virtual RefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override;
 
-    PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&);
-    PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&);
-    PassRefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
+    virtual RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) override;
+    virtual RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override;
+    virtual RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override;
 
-    short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&);
+    short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&) override;
 
 private:
     LegacyFactory(IDBFactoryBackendInterface*);

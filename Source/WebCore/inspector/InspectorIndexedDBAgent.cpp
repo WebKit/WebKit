@@ -539,9 +539,9 @@ public:
                 return;
             }
 
-            idbRequest = idbIndex->openCursor(context(), m_idbKeyRange.copyRef(), ec);
+            idbRequest = idbIndex->openCursor(context(), m_idbKeyRange.get(), ec);
         } else
-            idbRequest = idbObjectStore->openCursor(context(), m_idbKeyRange.copyRef(), ec);
+            idbRequest = idbObjectStore->openCursor(context(), m_idbKeyRange.get(), ec);
         idbRequest->addEventListener(eventNames().successEvent, WTF::move(openCursorCallback), false);
     }
 

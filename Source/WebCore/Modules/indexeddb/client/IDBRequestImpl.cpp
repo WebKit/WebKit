@@ -38,7 +38,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context)
 {
 }
 
-PassRefPtr<IDBAny> IDBRequest::result(ExceptionCode&) const
+RefPtr<IDBAny> IDBRequest::result(ExceptionCode&) const
 {
     return nullptr;
 }
@@ -48,17 +48,17 @@ unsigned short IDBRequest::errorCode(ExceptionCode&) const
     return 0;
 }
 
-PassRefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
+RefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
 {
     return nullptr;
 }
 
-PassRefPtr<IDBAny> IDBRequest::source() const
+RefPtr<IDBAny> IDBRequest::source() const
 {
     return nullptr;
 }
 
-PassRefPtr<IDBTransaction> IDBRequest::transaction() const
+RefPtr<IDBTransaction> IDBRequest::transaction() const
 {
     return nullptr;
 }

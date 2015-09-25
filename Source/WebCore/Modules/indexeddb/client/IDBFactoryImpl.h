@@ -39,11 +39,11 @@ class IDBFactory : public WebCore::IDBFactory {
 public:
     static Ref<IDBFactory> create();
 
-    virtual PassRefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override final;
 
-    virtual PassRefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
-    virtual PassRefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override final;
-    virtual PassRefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&) override final;
 
     virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&) override final;
 

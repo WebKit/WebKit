@@ -54,7 +54,7 @@ LegacyIndex::~LegacyIndex()
 {
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openCursor");
     if (m_deleted) {
@@ -75,16 +75,16 @@ PassRefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, 
     return request;
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return openCursor(context, keyRange.release(), direction, ec);
+    return openCursor(context, keyRange.get(), direction, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::count");
     if (m_deleted) {
@@ -100,16 +100,16 @@ PassRefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, PassR
     return request;
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::count");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return count(context, keyRange.release(), ec);
+    return count(context, keyRange.get(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, const String& directionString, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, const String& directionString, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openKeyCursor");
     if (m_deleted) {
@@ -130,25 +130,25 @@ PassRefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* contex
     return request;
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::openKeyCursor");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return openKeyCursor(context, keyRange.release(), direction, ec);
+    return openKeyCursor(context, keyRange.get(), direction, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::get");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return get(context, keyRange.release(), ec);
+    return get(context, keyRange.get(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::get");
     if (m_deleted) {
@@ -169,17 +169,17 @@ PassRefPtr<IDBRequest> LegacyIndex::get(ScriptExecutionContext* context, PassRef
     return request;
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::getKey");
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
 
-    return getKey(context, keyRange.release(), ec);
+    return getKey(context, keyRange.get(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyIndex::getKey(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyIndex::getKey");
     if (m_deleted) {

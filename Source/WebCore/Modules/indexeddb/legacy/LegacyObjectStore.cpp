@@ -58,7 +58,7 @@ LegacyObjectStore::LegacyObjectStore(const IDBObjectStoreMetadata& metadata, Leg
     relaxAdoptionRequirement();
 }
 
-PassRefPtr<DOMStringList> LegacyObjectStore::indexNames() const
+RefPtr<DOMStringList> LegacyObjectStore::indexNames() const
 {
     LOG(StorageAPI, "LegacyObjectStore::indexNames");
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
@@ -68,7 +68,7 @@ PassRefPtr<DOMStringList> LegacyObjectStore::indexNames() const
     return indexNames.release();
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::get");
     if (m_deleted) {
@@ -88,39 +88,39 @@ PassRefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, P
     return request.release();
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return get(context, keyRange.release(), ec);
+    return get(context, keyRange.get(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
     return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
     return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
     return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, value, key, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
     return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)
 {
     ScriptExecutionContext* context = scriptExecutionContextFromExecState(&state);
     DOMRequestState requestState(context);
@@ -128,7 +128,7 @@ PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMod
     return put(putMode, source, state, value, key.release(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, PassRefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, PassRefPtr<IDBKey> prpKey, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, RefPtr<IDBKey> prpKey, ExceptionCode& ec)
 {
     RefPtr<IDBKey> key = prpKey;
     if (m_deleted) {
@@ -220,7 +220,7 @@ PassRefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMod
     return request.release();
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::delete");
     if (m_deleted) {
@@ -245,15 +245,15 @@ PassRefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext*
     return request.release();
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::deleteFunction(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return deleteFunction(context, keyRange.release(), ec);
+    return deleteFunction(context, keyRange.get(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::clear");
     if (m_deleted) {
@@ -282,7 +282,7 @@ namespace {
 // cursor success handlers are kept alive.
 class IndexPopulator : public EventListener {
 public:
-    static Ref<IndexPopulator> create(PassRefPtr<IDBDatabaseBackend> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static Ref<IndexPopulator> create(RefPtr<IDBDatabaseBackend> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
     {
         return adoptRef(*new IndexPopulator(backend, transactionId, objectStoreId, indexMetadata));
     }
@@ -293,7 +293,7 @@ public:
     }
 
 private:
-    IndexPopulator(PassRefPtr<IDBDatabaseBackend> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    IndexPopulator(RefPtr<IDBDatabaseBackend> backend, int64_t transactionId, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
         : EventListener(CPPEventListenerType)
         , m_databaseBackend(backend)
         , m_transactionId(transactionId)
@@ -350,7 +350,7 @@ private:
 };
 }
 
-PassRefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
+RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, const Dictionary& options, ExceptionCode& ec)
 {
     bool unique = false;
     options.get("unique", unique);
@@ -361,7 +361,7 @@ PassRefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* cont
     return createIndex(context, name, keyPath, unique, multiEntry, ec);
 }
 
-PassRefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
+RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context, const String& name, const IDBKeyPath& keyPath, bool unique, bool multiEntry, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::createIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
@@ -408,7 +408,7 @@ PassRefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* cont
     return index.release();
 }
 
-PassRefPtr<IDBIndex> LegacyObjectStore::index(const String& name, ExceptionCode& ec)
+RefPtr<IDBIndex> LegacyObjectStore::index(const String& name, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::index");
     if (m_deleted) {
@@ -472,27 +472,27 @@ void LegacyObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
     }
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
     return openCursor(context, keyRange, IDBCursor::directionNext(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     return openCursor(context, key, IDBCursor::directionNext(), ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& direction, ExceptionCode& ec)
 {
     return openCursor(context, range, direction, IDBDatabaseBackend::NormalTask, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, const String& directionString, IDBDatabaseBackend::TaskType taskType, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, IDBKeyRange* range, const String& directionString, IDBDatabaseBackend::TaskType taskType, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::openCursor");
     if (m_deleted) {
@@ -514,15 +514,15 @@ PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* con
     return request.release();
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return openCursor(context, keyRange.release(), direction, ec);
+    return openCursor(context, keyRange.get(), direction, ec);
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::count");
     if (m_deleted) {
@@ -538,12 +538,12 @@ PassRefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context,
     return request.release();
 }
 
-PassRefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(context, key, ec);
     if (ec)
         return 0;
-    return count(context, keyRange.release(), ec);
+    return count(context, keyRange.get(), ec);
 }
 
 void LegacyObjectStore::transactionFinished()

@@ -145,7 +145,7 @@ void LegacyDatabase::onComplete(int64_t transactionId)
     m_transactions.get(transactionId)->onComplete();
 }
 
-PassRefPtr<DOMStringList> LegacyDatabase::objectStoreNames() const
+RefPtr<DOMStringList> LegacyDatabase::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (auto& objectStore : m_metadata.objectStores.values())
@@ -161,7 +161,7 @@ uint64_t LegacyDatabase::version() const
     return m_metadata.version != IDBDatabaseMetadata::NoIntVersion ? m_metadata.version : static_cast<uint64_t>(IDBDatabaseMetadata::DefaultIntVersion);
 }
 
-PassRefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
+RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
 {
     IDBKeyPath keyPath;
     bool autoIncrement = false;
@@ -179,7 +179,7 @@ PassRefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name,
     return createObjectStore(name, keyPath, autoIncrement, ec);
 }
 
-PassRefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCode& ec)
+RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyDatabase::createObjectStore");
     if (!m_versionChangeTransaction) {
@@ -241,7 +241,7 @@ void LegacyDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
     m_metadata.objectStores.remove(objectStoreId);
 }
 
-PassRefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCode& ec)
+RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyDatabase::transaction");
     if (!scope.size()) {
@@ -275,7 +275,7 @@ PassRefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* c
     return transaction.release();
 }
 
-PassRefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const String& storeName, const String& mode, ExceptionCode& ec)
+RefPtr<IDBTransaction> LegacyDatabase::transaction(ScriptExecutionContext* context, const String& storeName, const String& mode, ExceptionCode& ec)
 {
     RefPtr<DOMStringList> storeNames = DOMStringList::create();
     storeNames->append(storeName);

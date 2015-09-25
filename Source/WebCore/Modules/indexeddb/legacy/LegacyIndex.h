@@ -56,34 +56,34 @@ public:
 
     // Implement the IDL
     virtual const String name() const override final { return m_metadata.name; }
-    virtual PassRefPtr<IDBObjectStore> objectStore() const override final { return m_objectStore; }
-    PassRefPtr<LegacyObjectStore> legacyObjectStore() const { return m_objectStore; }
-    virtual PassRefPtr<IDBAny> keyPathAny() const override final { return LegacyAny::create(m_metadata.keyPath); }
+    virtual RefPtr<IDBObjectStore> objectStore() const override final { return m_objectStore; }
+    LegacyObjectStore* legacyObjectStore() const { return m_objectStore.get(); }
+    virtual RefPtr<IDBAny> keyPathAny() const override final { return LegacyAny::create(m_metadata.keyPath); }
     virtual const IDBKeyPath keyPath() const override final { return m_metadata.keyPath; }
     virtual bool unique() const override final { return m_metadata.unique; }
     virtual bool multiEntry() const override final { return m_metadata.multiEntry; }
     virtual int64_t id() const override final { return m_metadata.id; }
 
     // FIXME: Try to modify the code generator so this is unneeded.
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) override final { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openCursor(context, key, IDBCursor::directionNext(), ec); }
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) override final { return count(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    virtual PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec) override final { return openCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openCursor(context, key, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) override final { return count(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
-    virtual PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openKeyCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
-    virtual PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) override final { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
-    virtual PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
-    virtual PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCode& ec) override final { return openKeyCursor(context, static_cast<IDBKeyRange*>(nullptr), ec); }
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec) override final { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec) override final { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, IDBKeyRange*, const String& direction, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
 
-    virtual PassRefPtr<IDBRequest> get(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> getKey(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
+    virtual RefPtr<IDBRequest> getKey(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
     void markDeleted() { m_deleted = true; }
 

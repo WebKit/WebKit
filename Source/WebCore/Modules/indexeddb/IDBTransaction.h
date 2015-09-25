@@ -62,8 +62,8 @@ public:
     // Implement the IDBTransaction IDL
     virtual const String& mode() const = 0;
     virtual IDBDatabase* db() const = 0;
-    virtual PassRefPtr<DOMError> error() const = 0;
-    virtual PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) = 0;
+    virtual RefPtr<DOMError> error() const = 0;
+    virtual RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) = 0;
     virtual void abort(ExceptionCode&) = 0;
 
     using RefCounted<IDBTransaction>::ref;

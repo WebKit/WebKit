@@ -63,12 +63,12 @@ public:
     // Implement the IDL
     virtual const String name() const override final { return m_metadata.name; }
     virtual uint64_t version() const override final;
-    virtual PassRefPtr<DOMStringList> objectStoreNames() const override final;
+    virtual RefPtr<DOMStringList> objectStoreNames() const override final;
 
-    virtual PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) override final;
-    virtual PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) override final;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) override final;
+    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) override final;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) override final;
+    virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) override final;
     virtual void deleteObjectStore(const String& name, ExceptionCode&) override final;
     virtual void close() override final;
 

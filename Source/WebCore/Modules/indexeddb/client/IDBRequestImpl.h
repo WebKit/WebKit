@@ -36,11 +36,11 @@ namespace IDBClient {
 
 class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBRequest> {
 public:
-    virtual PassRefPtr<IDBAny> result(ExceptionCode&) const override;
+    virtual RefPtr<IDBAny> result(ExceptionCode&) const override;
     virtual unsigned short errorCode(ExceptionCode&) const override;
-    virtual PassRefPtr<DOMError> error(ExceptionCode&) const override;
-    virtual PassRefPtr<IDBAny> source() const override;
-    virtual PassRefPtr<IDBTransaction> transaction() const override;
+    virtual RefPtr<DOMError> error(ExceptionCode&) const override;
+    virtual RefPtr<IDBAny> source() const override;
+    virtual RefPtr<IDBTransaction> transaction() const override;
     virtual const String& readyState() const override;
 
     // EventTarget

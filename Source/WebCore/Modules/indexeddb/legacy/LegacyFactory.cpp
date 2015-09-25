@@ -75,7 +75,7 @@ static bool isContextValid(ScriptExecutionContext* context)
     return true;
 }
 
-PassRefPtr<IDBRequest> LegacyFactory::getDatabaseNames(ScriptExecutionContext* context, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyFactory::getDatabaseNames(ScriptExecutionContext* context, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyFactory::getDatabaseNames");
     if (!isContextValid(context))
@@ -90,13 +90,13 @@ PassRefPtr<IDBRequest> LegacyFactory::getDatabaseNames(ScriptExecutionContext* c
     return request;
 }
 
-PassRefPtr<IDBOpenDBRequest> LegacyFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> LegacyFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyFactory::open");
     return openInternal(context, name, 0, IndexedDB::VersionNullness::Null, ec);
 }
 
-PassRefPtr<IDBOpenDBRequest> LegacyFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> LegacyFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyFactory::open");
     if (!version) {
@@ -127,7 +127,7 @@ PassRefPtr<IDBOpenDBRequest> LegacyFactory::openInternal(ScriptExecutionContext*
     return request;
 }
 
-PassRefPtr<IDBOpenDBRequest> LegacyFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
+RefPtr<IDBOpenDBRequest> LegacyFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyFactory::deleteDatabase");
     if (name.isNull()) {
