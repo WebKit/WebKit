@@ -1,3 +1,19 @@
+2015-09-25  Beth Dakin  <bdakin@apple.com>
+
+        Clicking on a data detected item inside a form control always pops up a map 
+        on force touch trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=149559
+        -and corresponding-
+        rdar://problem/22826796
+
+        Reviewed by Tim Horton.
+
+        Look for Data Detected text for text nodes and HitTestResults that are over 
+        text inside form controls.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+
 2015-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ASSERTION FAILED: !m_inUpdateBackingStoreState in DrawingAreaImpl::display() after DrawingAreaImpl::forceRepaint()
