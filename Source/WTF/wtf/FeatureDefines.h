@@ -704,7 +704,11 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_STREAMS_API)
+#if PLATFORM(WIN)
+#define ENABLE_STREAMS_API 0
+#else
 #define ENABLE_STREAMS_API 1
+#endif
 #endif
 
 #if !defined(ENABLE_SVG_FONTS)

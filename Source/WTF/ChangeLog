@@ -1,3 +1,10 @@
+2015-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * wtf/FeatureDefines.h: Don't turn STREAMS_API on by default
+        on Windows.
+
 2015-09-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Ran sort-Xcode-project-file.
