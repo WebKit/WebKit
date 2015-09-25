@@ -10,3 +10,8 @@ add_custom_target(
     DEPENDS JavaScriptCore WebCore
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+
+if (EXISTS ${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitSystemInterface/win/CMakeLists.txt)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitSystemInterface/win ${CMAKE_CURRENT_BINARY_DIR}/WebKitSystemInterface)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitQuartzCoreAdditions ${CMAKE_CURRENT_BINARY_DIR}/WebKitQuartzCoreAdditions)
+endif ()

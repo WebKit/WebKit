@@ -1,3 +1,13 @@
+2015-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare internal AppleWin build for CMake
+        https://bugs.webkit.org/show_bug.cgi?id=149570
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/scripts/auto-version.pl:
+        Use the WEBKIT_LIBRARIES environment variable if it exists.
+
 2015-09-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
