@@ -868,7 +868,7 @@ void Range::insertNode(RefPtr<Node>&& node, ExceptionCode& ec)
             return;
     }
 
-    if (referenceNode.get() == node.get())
+    if (referenceNode == node)
         referenceNode = referenceNode->nextSibling();
 
     node->remove(ec);
