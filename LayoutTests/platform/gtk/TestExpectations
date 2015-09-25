@@ -698,16 +698,6 @@ webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html 
 
 webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
 
-webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Crash ]
-webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-percent-size-child.html [ Crash ]
-webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Crash ]
-webkit.org/b/148956 [ Debug ] css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Crash ]
-webkit.org/b/148956 [ Debug ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Crash ]
-webkit.org/b/148956 [ Debug ] fast/dom/Window/window-resize-contents.html [ Crash ]
-webkit.org/b/148956 [ Debug ] fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Crash ]
-webkit.org/b/148956 [ Debug ] fast/dynamic/window-resize-scrollbars-test.html [ Crash ]
-webkit.org/b/148956 [ Debug ] fast/fixed-layout/fixed-layout.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

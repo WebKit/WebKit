@@ -1,3 +1,30 @@
+2015-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ASSERTION FAILED: !m_inUpdateBackingStoreState in DrawingAreaImpl::display() after DrawingAreaImpl::forceRepaint()
+        https://bugs.webkit.org/show_bug.cgi?id=148956
+
+        Reviewed by Žan Doberšek.
+
+        This is because those tests call notifyDone in the onresize event
+        handler. InjectedBundlePage::dump() always calls WKBundlePageForceRepaint()
+        before dumping. When the view is resized DrawingAreaImpl::updateBackingStoreState()
+        is called, so if the size has changed the FrameView::resize()
+        method is called and all children are resized, so the onresize
+        handlers happen at that point, before the
+        m_inUpdateBackingStoreState is set to false again. For WTR we
+        could probably just return early from froceReapaint() when
+        m_inUpdateBackingStoreState is true, because in that case we know
+        the layout is updated because of the resize and the actual display
+        is not really needed. But the UI process can also request a force
+        repaint, so we could wait until the backing store update is done
+        and then force the repaint. For WTR it will happen after the
+        dump, but it shouldn't be a problem.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2015-09-24  Tim Horton  <timothy_horton@apple.com>
 
         Find hole drawn at subframe's 0x0 when a subframe find match is not rendered
