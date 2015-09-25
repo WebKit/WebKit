@@ -181,7 +181,7 @@ void JIT::emit_op_is_undefined(Instruction* currentInstruction)
 
     notMasqueradesAsUndefined.link(this);
     done.link(this);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     emitPutVirtualRegister(dst);
 }
 
@@ -193,7 +193,7 @@ void JIT::emit_op_is_boolean(Instruction* currentInstruction)
     emitGetVirtualRegister(value, regT0);
     xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), regT0);
     test64(Zero, regT0, TrustedImm32(static_cast<int32_t>(~1)), regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     emitPutVirtualRegister(dst);
 }
 
@@ -204,7 +204,7 @@ void JIT::emit_op_is_number(Instruction* currentInstruction)
     
     emitGetVirtualRegister(value, regT0);
     test64(NonZero, regT0, tagTypeNumberRegister, regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     emitPutVirtualRegister(dst);
 }
 
@@ -217,7 +217,7 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     Jump isNotCell = emitJumpIfNotJSCell(regT0);
     
     compare8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType), regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     Jump done = jump();
     
     isNotCell.link(this);
@@ -236,7 +236,7 @@ void JIT::emit_op_is_object(Instruction* currentInstruction)
     Jump isNotCell = emitJumpIfNotJSCell(regT0);
 
     compare8(AboveOrEqual, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(ObjectType), regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     Jump done = jump();
 
     isNotCell.link(this);
@@ -303,7 +303,7 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
     addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNumber(0)))), target);
-    Jump isNonZero = emitJumpIfImmediateInteger(regT0);
+    Jump isNonZero = emitJumpIfInt(regT0);
 
     addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsBoolean(false)))), target);
     addSlowCase(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsBoolean(true)))));
@@ -370,9 +370,9 @@ void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
 void JIT::emit_op_eq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
-    emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
+    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     compare32(Equal, regT1, regT0, regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -382,7 +382,7 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
     Jump isZero = branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsNumber(0))));
-    addJump(emitJumpIfImmediateInteger(regT0), target);
+    addJump(emitJumpIfInt(regT0), target);
 
     addJump(branch64(Equal, regT0, TrustedImm64(JSValue::encode(jsBoolean(true)))), target);
     addSlowCase(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsBoolean(false)))));
@@ -393,9 +393,9 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
 void JIT::emit_op_neq(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
-    emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
+    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     compare32(NotEqual, regT1, regT0, regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 
@@ -404,16 +404,16 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
 void JIT::emit_op_bitxor(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
-    emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
+    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     xor64(regT1, regT0);
-    emitFastArithReTagImmediate(regT0, regT0);
+    emitTagInt(regT0, regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_bitor(Instruction* currentInstruction)
 {
     emitGetVirtualRegisters(currentInstruction[2].u.operand, regT0, currentInstruction[3].u.operand, regT1);
-    emitJumpSlowCaseIfNotImmediateIntegers(regT0, regT1, regT2);
+    emitJumpSlowCaseIfNotInt(regT0, regT1, regT2);
     or64(regT1, regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -448,18 +448,18 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     
     // Jump slow if either is a double. First test if it's an integer, which is fine, and then test
     // if it's a double.
-    Jump leftOK = emitJumpIfImmediateInteger(regT0);
-    addSlowCase(emitJumpIfImmediateNumber(regT0));
+    Jump leftOK = emitJumpIfInt(regT0);
+    addSlowCase(emitJumpIfNumber(regT0));
     leftOK.link(this);
-    Jump rightOK = emitJumpIfImmediateInteger(regT1);
-    addSlowCase(emitJumpIfImmediateNumber(regT1));
+    Jump rightOK = emitJumpIfInt(regT1);
+    addSlowCase(emitJumpIfNumber(regT1));
     rightOK.link(this);
 
     if (type == OpStrictEq)
         compare64(Equal, regT1, regT0, regT0);
     else
         compare64(NotEqual, regT1, regT0, regT0);
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
 
     emitPutVirtualRegister(dst);
 }
@@ -479,7 +479,7 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
     int srcVReg = currentInstruction[2].u.operand;
     emitGetVirtualRegister(srcVReg, regT0);
     
-    addSlowCase(emitJumpIfNotImmediateNumber(regT0));
+    addSlowCase(emitJumpIfNotNumber(regT0));
 
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -621,7 +621,7 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
     wasNotImmediate.link(this);
     wasNotMasqueradesAsUndefined.link(this);
 
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     emitPutVirtualRegister(dst);
 
 }
@@ -653,7 +653,7 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
     wasNotImmediate.link(this);
     wasNotMasqueradesAsUndefined.link(this);
 
-    emitTagAsBoolImmediate(regT0);
+    emitTagBool(regT0);
     emitPutVirtualRegister(dst);
 }
 
@@ -831,7 +831,7 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
 {
     linkSlowCase(iter);
     callOperation(operationCompareEq, regT0, regT1);
-    emitTagAsBoolImmediate(returnValueGPR);
+    emitTagBool(returnValueGPR);
     emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
 }
 
@@ -840,7 +840,7 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkSlowCase(iter);
     callOperation(operationCompareEq, regT0, regT1);
     xor32(TrustedImm32(0x1), regT0);
-    emitTagAsBoolImmediate(returnValueGPR);
+    emitTagBool(returnValueGPR);
     emitPutVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
 }
 
@@ -1285,9 +1285,9 @@ void JIT::emit_op_profile_type(Instruction* currentInstruction)
         and64(TrustedImm32(~1), regT1);
         jumpToEnd.append(branch64(Equal, regT1, TrustedImm64(ValueFalse)));
     } else if (cachedTypeLocation->m_lastSeenType == TypeMachineInt)
-        jumpToEnd.append(emitJumpIfImmediateInteger(regT0));
+        jumpToEnd.append(emitJumpIfInt(regT0));
     else if (cachedTypeLocation->m_lastSeenType == TypeNumber)
-        jumpToEnd.append(emitJumpIfImmediateNumber(regT0));
+        jumpToEnd.append(emitJumpIfNumber(regT0));
     else if (cachedTypeLocation->m_lastSeenType == TypeString) {
         Jump isNotCell = emitJumpIfNotJSCell(regT0);
         jumpToEnd.append(branch8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType)));

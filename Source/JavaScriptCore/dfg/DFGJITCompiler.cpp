@@ -109,7 +109,7 @@ void JITCompiler::compileEntry()
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
     emitFunctionPrologue();
-    emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+    emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 }
 
 void JITCompiler::compileSetupRegistersForEntry()

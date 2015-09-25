@@ -323,7 +323,7 @@ namespace JSC {
 
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
-        bool isOperandConstantImmediateDouble(int src);
+        bool isOperandConstantDouble(int src);
         
         void emitLoadDouble(int index, FPRegisterID value);
         void emitLoadInt32ToDouble(int index, FPRegisterID value);
@@ -401,7 +401,7 @@ namespace JSC {
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
 #if USE(JSVALUE32_64)
-        bool getOperandConstantImmediateInt(int op1, int op2, int& op, int32_t& constant);
+        bool getOperandConstantInt(int op1, int op2, int& op, int32_t& constant);
 
         void emitLoadTag(int index, RegisterID tag);
         void emitLoadPayload(int index, RegisterID payload);
@@ -448,24 +448,22 @@ namespace JSC {
             emitPutVirtualRegister(dst, payload);
         }
 
-        int32_t getConstantOperandImmediateInt(int src);
+        int32_t getOperandConstantInt(int src);
 
         Jump emitJumpIfJSCell(RegisterID);
         Jump emitJumpIfBothJSCells(RegisterID, RegisterID, RegisterID);
         void emitJumpSlowCaseIfJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, int VReg);
-        Jump emitJumpIfImmediateInteger(RegisterID);
-        Jump emitJumpIfNotImmediateInteger(RegisterID);
-        Jump emitJumpIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
-        PatchableJump emitPatchableJumpIfNotImmediateInteger(RegisterID);
-        void emitJumpSlowCaseIfNotImmediateInteger(RegisterID);
-        void emitJumpSlowCaseIfNotImmediateNumber(RegisterID);
-        void emitJumpSlowCaseIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
+        Jump emitJumpIfInt(RegisterID);
+        Jump emitJumpIfNotInt(RegisterID);
+        Jump emitJumpIfNotInt(RegisterID, RegisterID, RegisterID scratch);
+        PatchableJump emitPatchableJumpIfNotInt(RegisterID);
+        void emitJumpSlowCaseIfNotInt(RegisterID);
+        void emitJumpSlowCaseIfNotNumber(RegisterID);
+        void emitJumpSlowCaseIfNotInt(RegisterID, RegisterID, RegisterID scratch);
 
-        void emitFastArithReTagImmediate(RegisterID src, RegisterID dest);
-
-        void emitTagAsBoolImmediate(RegisterID reg);
+        void emitTagBool(RegisterID);
         void compileBinaryArithOp(OpcodeID, int dst, int src1, int src2, OperandTypes opi);
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, int dst, int src1, int src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
@@ -692,8 +690,8 @@ namespace JSC {
         void emitPutIntToCallFrameHeader(RegisterID from, JSStack::CallFrameHeaderEntry);
 
         JSValue getConstantOperand(int src);
-        bool isOperandConstantImmediateInt(int src);
-        bool isOperandConstantImmediateChar(int src);
+        bool isOperandConstantInt(int src);
+        bool isOperandConstantChar(int src);
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {

@@ -257,7 +257,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     }
 #endif
 
-    jit.emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
+    jit.emitPutToCallFrameHeader(0, JSStack::CodeBlock);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86)

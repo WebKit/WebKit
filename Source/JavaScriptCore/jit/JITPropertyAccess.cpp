@@ -104,7 +104,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
 
-    PatchableJump notIndex = emitPatchableJumpIfNotImmediateInteger(regT1);
+    PatchableJump notIndex = emitPatchableJumpIfNotInt(regT1);
     addSlowCase(notIndex);
 
     // This is technically incorrect - we're zero-extending an int32.  On the hot path this doesn't matter.
@@ -301,7 +301,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
 
     emitGetVirtualRegisters(base, regT0, property, regT1);
     emitJumpSlowCaseIfNotJSCell(regT0, base);
-    PatchableJump notIndex = emitPatchableJumpIfNotImmediateInteger(regT1);
+    PatchableJump notIndex = emitPatchableJumpIfNotInt(regT1);
     addSlowCase(notIndex);
     // See comment in op_get_by_val.
     zeroExtend32ToPtr(regT1, regT1);
@@ -354,11 +354,11 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction
     emitGetVirtualRegister(value, regT3);
     switch (indexingShape) {
     case Int32Shape:
-        slowCases.append(emitJumpIfNotImmediateInteger(regT3));
+        slowCases.append(emitJumpIfNotInt(regT3));
         store64(regT3, BaseIndex(regT2, regT1, TimesEight));
         break;
     case DoubleShape: {
-        Jump notInt = emitJumpIfNotImmediateInteger(regT3);
+        Jump notInt = emitJumpIfNotInt(regT3);
         convertInt32ToDouble(regT3, fpRegT0);
         Jump ready = jump();
         notInt.link(this);
@@ -617,7 +617,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 
     emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
 
-    // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
     JITPutByIdGenerator gen(
@@ -1630,7 +1629,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     
 #if USE(JSVALUE64)
     emitGetVirtualRegister(value, earlyScratch);
-    slowCases.append(emitJumpIfNotImmediateInteger(earlyScratch));
+    slowCases.append(emitJumpIfNotInt(earlyScratch));
 #else
     emitLoad(value, lateScratch, earlyScratch);
     slowCases.append(branch32(NotEqual, lateScratch, TrustedImm32(JSValue::Int32Tag)));
@@ -1702,11 +1701,11 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     
 #if USE(JSVALUE64)
     emitGetVirtualRegister(value, earlyScratch);
-    Jump doubleCase = emitJumpIfNotImmediateInteger(earlyScratch);
+    Jump doubleCase = emitJumpIfNotInt(earlyScratch);
     convertInt32ToDouble(earlyScratch, fpRegT0);
     Jump ready = jump();
     doubleCase.link(this);
-    slowCases.append(emitJumpIfNotImmediateNumber(earlyScratch));
+    slowCases.append(emitJumpIfNotNumber(earlyScratch));
     add64(tagTypeNumberRegister, earlyScratch);
     move64ToDouble(earlyScratch, fpRegT0);
     ready.link(this);

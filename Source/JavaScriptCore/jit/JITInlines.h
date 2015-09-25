@@ -77,7 +77,7 @@ inline MacroAssembler::JumpList JIT::emitArrayStorageGetByVal(Instruction* instr
     return emitArrayStorageLoad(instruction, badType);
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(int src)
+ALWAYS_INLINE bool JIT::isOperandConstantDouble(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isDouble();
 }
@@ -871,7 +871,7 @@ ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
 #endif
 #endif
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(int src)
+ALWAYS_INLINE bool JIT::isOperandConstantChar(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
@@ -1114,20 +1114,20 @@ inline void JIT::emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterI
     }
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(int src)
+ALWAYS_INLINE bool JIT::isOperandConstantInt(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isInt32();
 }
 
-ALWAYS_INLINE bool JIT::getOperandConstantImmediateInt(int op1, int op2, int& op, int32_t& constant)
+ALWAYS_INLINE bool JIT::getOperandConstantInt(int op1, int op2, int& op, int32_t& constant)
 {
-    if (isOperandConstantImmediateInt(op1)) {
+    if (isOperandConstantInt(op1)) {
         constant = getConstantOperand(op1).asInt32();
         op = op2;
         return true;
     }
 
-    if (isOperandConstantImmediateInt(op2)) {
+    if (isOperandConstantInt(op2)) {
         constant = getConstantOperand(op2).asInt32();
         op = op1;
         return true;
@@ -1172,12 +1172,12 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisters(VirtualRegister src1, RegisterID
     emitGetVirtualRegisters(src1.offset(), dst1, src2.offset(), dst2);
 }
 
-ALWAYS_INLINE int32_t JIT::getConstantOperandImmediateInt(int src)
+ALWAYS_INLINE int32_t JIT::getOperandConstantInt(int src)
 {
     return getConstantOperand(src).asInt32();
 }
 
-ALWAYS_INLINE bool JIT::isOperandConstantImmediateInt(int src)
+ALWAYS_INLINE bool JIT::isOperandConstantInt(int src)
 {
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isInt32();
 }
@@ -1237,55 +1237,50 @@ inline void JIT::emitLoadDouble(int index, FPRegisterID value)
 inline void JIT::emitLoadInt32ToDouble(int index, FPRegisterID value)
 {
     if (m_codeBlock->isConstantRegisterIndex(index)) {
-        ASSERT(isOperandConstantImmediateInt(index));
+        ASSERT(isOperandConstantInt(index));
         convertInt32ToDouble(Imm32(getConstantOperand(index).asInt32()), value);
     } else
         convertInt32ToDouble(addressFor(index), value);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateInteger(RegisterID reg)
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfInt(RegisterID reg)
 {
     return branch64(AboveOrEqual, reg, tagTypeNumberRegister);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateInteger(RegisterID reg)
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg)
 {
     return branch64(Below, reg, tagTypeNumberRegister);
 }
 
-ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotImmediateInteger(RegisterID reg)
+ALWAYS_INLINE JIT::PatchableJump JIT::emitPatchableJumpIfNotInt(RegisterID reg)
 {
     return patchableBranch64(Below, reg, tagTypeNumberRegister);
 }
 
-ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateIntegers(RegisterID reg1, RegisterID reg2, RegisterID scratch)
+ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotInt(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
     move(reg1, scratch);
     and64(reg2, scratch);
-    return emitJumpIfNotImmediateInteger(scratch);
+    return emitJumpIfNotInt(scratch);
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateInteger(RegisterID reg)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg)
 {
-    addSlowCase(emitJumpIfNotImmediateInteger(reg));
+    addSlowCase(emitJumpIfNotInt(reg));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateIntegers(RegisterID reg1, RegisterID reg2, RegisterID scratch)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotInt(RegisterID reg1, RegisterID reg2, RegisterID scratch)
 {
-    addSlowCase(emitJumpIfNotImmediateIntegers(reg1, reg2, scratch));
+    addSlowCase(emitJumpIfNotInt(reg1, reg2, scratch));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateNumber(RegisterID reg)
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
 {
-    addSlowCase(emitJumpIfNotImmediateNumber(reg));
+    addSlowCase(emitJumpIfNotNumber(reg));
 }
 
-ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID src, RegisterID dest)
-{
-    emitFastArithIntToImmNoCheck(src, dest);
-}
-
-ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
+ALWAYS_INLINE void JIT::emitTagBool(RegisterID reg)
 {
     or32(TrustedImm32(static_cast<int32_t>(ValueFalse)), reg);
 }

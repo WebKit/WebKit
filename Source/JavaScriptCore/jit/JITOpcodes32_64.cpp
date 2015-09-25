@@ -53,7 +53,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     Call nativeCall;
 
     emitFunctionPrologue();
-    emitPutImmediateToCallFrameHeader(0, JSStack::CodeBlock);
+    emitPutToCallFrameHeader(0, JSStack::CodeBlock);
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 
 #if CPU(X86)

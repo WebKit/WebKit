@@ -128,7 +128,7 @@ public:
         m_codeBlock->setCalleeSaveRegisters(RegisterSet::webAssemblyCalleeSaveRegisters());
 
         emitFunctionPrologue();
-        emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+        emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 
         m_beginLabel = label();
 
@@ -215,7 +215,7 @@ public:
         // FIXME: Implement arity check.
         Label arityCheck = label();
         emitFunctionPrologue();
-        emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+        emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
         jump(m_beginLabel);
 
         if (!m_divideErrorJumpList.empty()) {

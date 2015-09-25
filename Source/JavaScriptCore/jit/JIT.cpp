@@ -510,7 +510,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         nop();
 
     emitFunctionPrologue();
-    emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+    emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 
     Label beginLabel(this);
 
@@ -566,7 +566,7 @@ CompilationResult JIT::privateCompile(JITCompilationEffort effort)
         arityCheck = label();
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         emitFunctionPrologue();
-        emitPutImmediateToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
+        emitPutToCallFrameHeader(m_codeBlock, JSStack::CodeBlock);
 
         load32(payloadFor(JSStack::ArgumentCount), regT1);
         branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);

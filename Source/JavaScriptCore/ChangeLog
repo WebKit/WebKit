@@ -1,3 +1,161 @@
+2015-09-24  Mark Lam  <mark.lam@apple.com>
+
+        Remove the use of "Immediate" in JIT function names.
+        https://bugs.webkit.org/show_bug.cgi?id=149542
+
+        Reviewed by Geoffrey Garen.
+
+        We will rename the following:
+            isOperandConstantImmediateDouble => isOperandConstantDouble
+            isOperandConstantImmediateInt => isOperandConstantInt
+            isOperandConstantImmediateChar => isOperandConstantChar
+
+            getOperandConstantImmediateInt => getOperandConstantInt
+            getConstantOperandImmediateInt => getOperandConstantInt
+
+            emitJumpIfImmediateInteger => emitJumpIfInt
+            emitJumpIfNotImmediateInteger => emitJumpIfNotInt
+            emitJumpIfNotImmediateIntegers => emitJumpIfNotInt
+            emitPatchableJumpIfNotImmediateInteger => emitPatchableJumpIfNotInt
+            emitJumpSlowCaseIfNotImmediateInteger => emitJumpSlowCaseIfNotInt
+            emitJumpSlowCaseIfNotImmediateNumber => emitJumpSlowCaseIfNotNumber
+            emitJumpSlowCaseIfNotImmediateIntegers => emitJumpSlowCaseIfNotInt
+            emitFastArithReTagImmediate => emitTagInt
+            emitTagAsBoolImmediate => emitTagBool
+            emitJumpIfImmediateNumber => emitJumpIfNumber
+            emitJumpIfNotImmediateNumber => emitJumpIfNotNumber
+            emitFastArithImmToInt - Deleted because this is an empty function.
+            emitFastArithIntToImmNoCheck => emitTagInt
+            emitPutImmediateToCallFrameHeader => emitPutToCallFrameHeader
+
+        This is purely a refactoring patch to do the renaming.  There is no behavior
+        change.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        (JSC::DFG::JITCompiler::compileSetupRegistersForEntry):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitPutToCallFrameHeader):
+        (JSC::AssemblyHelpers::emitPutImmediateToCallFrameHeader): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::emitStoreCell):
+        (JSC::JIT::getSlowCase):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emit_op_unsigned):
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_inc):
+        (JSC::JIT::emit_op_dec):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emitSlow_op_div):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareAndJump):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emitRightShift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emitSlow_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emitSlow_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emitSlow_op_bitxor):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayStorageGetByVal):
+        (JSC::JIT::isOperandConstantDouble):
+        (JSC::JIT::isOperandConstantChar):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::isOperandConstantInt):
+        (JSC::JIT::getOperandConstantInt):
+        (JSC::JIT::emitGetVirtualRegisters):
+        (JSC::JIT::emitLoadInt32ToDouble):
+        (JSC::JIT::emitJumpIfInt):
+        (JSC::JIT::emitJumpIfNotInt):
+        (JSC::JIT::emitPatchableJumpIfNotInt):
+        (JSC::JIT::emitJumpSlowCaseIfNotInt):
+        (JSC::JIT::emitJumpSlowCaseIfNotNumber):
+        (JSC::JIT::emitTagBool):
+        (JSC::JIT::isOperandConstantImmediateDouble): Deleted.
+        (JSC::JIT::isOperandConstantImmediateChar): Deleted.
+        (JSC::JIT::isOperandConstantImmediateInt): Deleted.
+        (JSC::JIT::getOperandConstantImmediateInt): Deleted.
+        (JSC::JIT::getConstantOperandImmediateInt): Deleted.
+        (JSC::JIT::emitJumpIfImmediateInteger): Deleted.
+        (JSC::JIT::emitJumpIfNotImmediateInteger): Deleted.
+        (JSC::JIT::emitPatchableJumpIfNotImmediateInteger): Deleted.
+        (JSC::JIT::emitJumpIfNotImmediateIntegers): Deleted.
+        (JSC::JIT::emitJumpSlowCaseIfNotImmediateInteger): Deleted.
+        (JSC::JIT::emitJumpSlowCaseIfNotImmediateIntegers): Deleted.
+        (JSC::JIT::emitJumpSlowCaseIfNotImmediateNumber): Deleted.
+        (JSC::JIT::emitFastArithReTagImmediate): Deleted.
+        (JSC::JIT::emitTagAsBoolImmediate): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_is_boolean):
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_is_string):
+        (JSC::JIT::emit_op_is_object):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfNotJSCell):
+        (JSC::JSInterfaceJIT::emitJumpIfNumber):
+        (JSC::JSInterfaceJIT::emitJumpIfNotNumber):
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        (JSC::JSInterfaceJIT::emitTagInt):
+        (JSC::JSInterfaceJIT::emitPutToCallFrameHeader):
+        (JSC::JSInterfaceJIT::emitJumpIfImmediateNumber): Deleted.
+        (JSC::JSInterfaceJIT::emitJumpIfNotImmediateNumber): Deleted.
+        (JSC::JSInterfaceJIT::emitFastArithImmToInt): Deleted.
+        (JSC::JSInterfaceJIT::emitFastArithIntToImmNoCheck): Deleted.
+        (JSC::JSInterfaceJIT::emitPutImmediateToCallFrameHeader): Deleted.
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * wasm/WASMFunctionCompiler.h:
+        (JSC::WASMFunctionCompiler::startFunction):
+        (JSC::WASMFunctionCompiler::endFunction):
+
 2015-09-24  Michael Saboff  <msaboff@apple.com>
 
         [ES6] Implement tail calls in the DFG
