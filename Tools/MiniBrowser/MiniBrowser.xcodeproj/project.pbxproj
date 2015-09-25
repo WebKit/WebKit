@@ -51,7 +51,6 @@
 		0FE643A0161FA8940059E3FF /* BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserWindowController.m; path = mac/BrowserWindowController.m; sourceTree = "<group>"; };
 		0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK1BrowserWindowController.h; path = mac/WK1BrowserWindowController.h; sourceTree = "<group>"; };
 		0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WK1BrowserWindowController.m; path = mac/WK1BrowserWindowController.m; sourceTree = "<group>"; };
-		1AFF1A6C1AC35D45007AB10C /* MiniBrowser.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = MiniBrowser.entitlements; sourceTree = "<group>"; };
 		1AFFEF751860EE6700DA465E /* MiniBrowser.wkbundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiniBrowser.wkbundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AFFEF761860EE6800DA465E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		1AFFEF781860EE6800DA465E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -105,7 +104,6 @@
 		080E96DDFE201D6D7F000001 /* MiniBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				1AFF1A6C1AC35D45007AB10C /* MiniBrowser.entitlements */,
 				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
 				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
@@ -356,8 +354,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = MiniBrowser.entitlements;
-				CODE_SIGN_IDENTITY = "";
 			};
 			name = Debug;
 		};
@@ -365,8 +361,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = MiniBrowser.entitlements;
-				CODE_SIGN_IDENTITY = "";
 			};
 			name = Release;
 		};

@@ -1,3 +1,14 @@
+2015-09-25  Dan Bernstein  <mitz@apple.com>
+
+        Removed MiniBrowser.entitlements.
+
+        Rubber-stamped by Anders Carlsson.
+
+        The entitlements weren’t used anyway.
+
+        * MiniBrowser/MiniBrowser.entitlements: Removed.
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+
 2015-09-24  Daniel Bates  <dabates@apple.com>
 
         Add WebKitSystemInterface for iOS 9.0
