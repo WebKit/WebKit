@@ -909,6 +909,12 @@ list(REMOVE_ITEM GObjectDOMBindings_GIR_HEADERS
 # Propagate this variable to the parent scope, so that it can be used in other parts of the build.
 set(GObjectDOMBindings_GIR_HEADERS ${GObjectDOMBindings_GIR_HEADERS} PARENT_SCOPE)
 
+if (ENABLE_SMOOTH_SCROLLING)
+    list(APPEND WebCore_SOURCES
+        platform/ScrollAnimatorNone.cpp
+    )
+endif ()
+
 if (ENABLE_SUBTLE_CRYPTO)
     list(APPEND WebCore_SOURCES
         crypto/CryptoAlgorithm.cpp

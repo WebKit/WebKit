@@ -17,8 +17,6 @@ find_library(XML2_LIBRARY XML2)
 find_package(ZLIB REQUIRED)
 
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
-find_library(PDFKIT_LIBRARY PDFKit HINTS ${QUARTZ_LIBRARY}/Frameworks)
-find_library(QUICKLOOKUI_LIBRARY QuickLookUI HINTS ${QUARTZ_LIBRARY}/Frameworks)
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
@@ -40,7 +38,6 @@ list(APPEND WebKit_LIBRARIES
     PRIVATE ${IOKIT_LIBRARY}
     PRIVATE ${IOSURFACE_LIBRARY}
     PRIVATE ${OPENGL_LIBRARY}
-    PRIVATE ${PDFKIT_LIBRARY}
     PRIVATE ${QUARTZ_LIBRARY}
     PRIVATE ${QUARTZCORE_LIBRARY}
     PRIVATE ${SECURITY_LIBRARY}
@@ -408,13 +405,8 @@ add_custom_command(
     COMMAND mig -I.. -sheader WebKitPluginClientServer.h WebKitPluginClient.defs
     VERBATIM)
 list(APPEND WebKit_SOURCES
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyServer.c
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyUser.c
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentServer.c
     ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
     ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientUser.c
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostServer.c
     ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c
 )
 

@@ -1,5 +1,14 @@
 2015-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Clean up CMake build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=149573
+
+        Reviewed by Chris Dumez.
+
+        * PlatformMac.cmake:
+
+2015-09-25  Alex Christensen  <achristensen@webkit.org>
+
         [Win] Switch to CMake
         https://bugs.webkit.org/show_bug.cgi?id=148111
 

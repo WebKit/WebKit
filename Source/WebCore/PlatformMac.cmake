@@ -1,6 +1,16 @@
 find_library(QUARTZ_FRAMEWORK Quartz)
 add_definitions(-iframework ${QUARTZ_FRAMEWORK}/Frameworks)
 
+find_library(DATADETECTORSCORE_FRAMEWORK DataDetectorsCore HINTS /System/Library/PrivateFrameworks)
+if (NOT DATADETECTORSCORE_FRAMEWORK-NOTFOUND)
+    list(APPEND WebCore_LIBRARIES ${DATADETECTORSCORE_FRAMEWORK})
+endif ()
+
+find_library(LOOKUP_FRAMEWORK Lookup HINTS /System/Library/PrivateFrameworks)
+if (NOT LOOKUP_FRAMEWORK-NOTFOUND)
+    list(APPEND WebCore_LIBRARIES ${LOOKUP_FRAMEWORK})
+endif ()
+
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
@@ -266,6 +276,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/NetworkExtensionContentFilter.mm
     platform/cocoa/ParentalControlsContentFilter.mm
     platform/cocoa/ScrollController.mm
+    platform/cocoa/ScrollSnapAnimatorState.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.cpp
@@ -516,6 +527,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     Modules/notifications
     Modules/webdatabase
 
+    Modules/indexeddb/legacy
+
     bindings/generic
     bindings/js
     bindings/objc
@@ -631,6 +644,10 @@ set(WebCore_FORWARDING_HEADERS_FILES
     rendering/style/RenderStyleConstants.h
 )
 
+list(APPEND WebCore_IDL_FILES
+    Modules/plugins/QuickTimePluginReplacement.idl
+)
+
 set(OBJC_BINDINGS_IDL_FILES
     dom/EventListener.idl
     ${WebCore_NON_SVG_IDL_FILES}
@@ -693,6 +710,7 @@ GENERATE_BINDINGS(WebCore_SOURCES
 list(APPEND WebCore_SOURCES
     ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAttr.mm
     ${DERIVED_SOURCES_WEBCORE_DIR}/DOMBeforeLoadEvent.mm
+    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMBlob.mm
     ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCDATASection.mm
     ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCharacterData.mm
     ${DERIVED_SOURCES_WEBCORE_DIR}/DOMComment.mm

@@ -513,6 +513,12 @@ if (ENABLE_ACCESSIBILITY)
     )
 endif ()
 
+if (ENABLE_SMOOTH_SCROLLING)
+    list(APPEND WebCore_SOURCES
+        platform/ScrollAnimatorNone.cpp
+    )
+endif ()
+
 if (ENABLE_SPEECH_SYNTHESIS)
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${ESPEAK_INCLUDE_DIRS}

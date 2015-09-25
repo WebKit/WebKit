@@ -23,4 +23,5 @@ list(APPEND WTF_SOURCES
 
 list(APPEND WTF_INCLUDE_DIRECTORIES
     "${WTF_DIR}/icu"
+    "${WTF_DIR}/wtf/spi/darwin"
 )

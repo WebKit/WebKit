@@ -29,9 +29,13 @@
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
 #include "DisplayRefreshMonitorClient.h"
-#include "DisplayRefreshMonitorIOS.h"
-#include "DisplayRefreshMonitorMac.h"
 #include "DisplayRefreshMonitorManager.h"
+
+#if PLATFORM(IOS)
+#include "DisplayRefreshMonitorIOS.h"
+#else
+#include "DisplayRefreshMonitorMac.h"
+#endif
 
 namespace WebCore {
 
