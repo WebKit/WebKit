@@ -564,7 +564,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& rect)
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
     // of the window and the plugin expects that the passed in DC has window coordinates.
-    if (!context.isInTransparencyLayer()) {
+    if (context.hdc() == windowsContext.hdc()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
         transform.eDx = 0;

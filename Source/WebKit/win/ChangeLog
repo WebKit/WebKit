@@ -1,3 +1,17 @@
+2015-09-25  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Incorrect position for windowless plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=149524
+
+        Reviewed by Alex Christensen.
+
+        Only perform the device context transformation if the plugin is painting
+        directly into the GraphicsContext HDC. The previous check was not correct
+        in all cases.
+
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::paint):
+
 2015-09-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support composited content in WebView render-to-context methods

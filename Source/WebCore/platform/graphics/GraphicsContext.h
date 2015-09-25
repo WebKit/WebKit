@@ -452,6 +452,7 @@ namespace WebCore {
 #if OS(WINDOWS)
         HDC getWindowsContext(const IntRect&, bool supportAlphaBlend, bool mayCreateBitmap); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
         void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend, bool mayCreateBitmap); // The passed in HDC should be the one handed back by getWindowsContext.
+        HDC hdc() const;
 #if PLATFORM(WIN)
 #if USE(WINGDI)
         void setBitmap(PassRefPtr<SharedBitmap>);
