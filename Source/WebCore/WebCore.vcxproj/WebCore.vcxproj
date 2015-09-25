@@ -20561,7 +20561,6 @@
     <ClInclude Include="..\Modules\notifications\NotificationClient.h" />
     <ClInclude Include="..\Modules\notifications\WorkerGlobalScopeNotifications.h" />
     <ClInclude Include="..\Modules\plugins\PluginReplacement.h" />
-    <ClInclude Include="..\Modules\streams\CountQueuingStrategy.h" />
     <ClInclude Include="..\Modules\streams\ReadableStream.h" />
     <ClInclude Include="..\Modules\streams\ReadableStreamController.h" />
     <ClInclude Include="..\Modules\streams\ReadableStreamReader.h" />

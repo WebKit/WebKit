@@ -866,6 +866,8 @@ sub GenerateHeader
 
     my $exportLabel = ExportLabelForClass($className);
 
+    GenerateDummyDOMClassForJSBuiltin($implType) if UseDummyDOMClass($interface);
+
     # Class declaration
     push(@headerContent, "class $exportLabel$className : public $parentClassName {\n");
 
@@ -898,7 +900,7 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } else {
-        AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
+        AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType || UseDummyDOMClass($interface);
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, globalObject, WTF::move(impl));\n");
@@ -1746,7 +1748,7 @@ sub GenerateImplementation
     $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $indexedGetterFunction;
 
     my $implType = GetImplClassName($interfaceName);
-    AddIncludesForTypeInImpl($implType);
+    AddIncludesForTypeInImpl($implType) if not UseDummyDOMClass($interface);
 
     AddIncludesForJSBuiltinMethods($interface);
 
@@ -5080,6 +5082,24 @@ sub AddIncludesForJSBuiltinMethods()
         return 1;
     }
 
+}
+
+sub UseDummyDOMClass()
+{
+    my $interface = shift;
+
+    return $interface->extendedAttributes->{"JSBuiltinConstructor"};
+}
+
+sub GenerateDummyDOMClassForJSBuiltin()
+{
+    my $className = shift;
+
+    push(@headerContent, "class $className : public RefCounted<$className> {\n");
+    push(@headerContent, "public:\n");
+    push(@headerContent, "    static Ref<$className> create() { return adoptRef(* new $className); }\n");
+    push(@headerContent, "    virtual ~$className() { }\n");
+    push(@headerContent, "};\n\n");
 }
 
 1;
