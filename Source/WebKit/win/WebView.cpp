@@ -1119,21 +1119,9 @@ void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
-    if (isAcceleratedCompositing() && !usesLayeredWindow()) {
-#if USE(CA)
-        m_layerTreeHost->flushPendingLayerChangesNow();
-#elif USE(TEXTURE_MAPPER_GL)
-        m_acceleratedCompositingContext->flushAndRenderLayers();
-#endif
-        // Flushing might have taken us out of compositing mode.
-        if (isAcceleratedCompositing()) {
-#if USE(CA)
-            // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
-            m_layerTreeHost->paint();
-#endif
-            ::ValidateRect(m_viewWindow, 0);
-            return;
-        }
+    if (paintCompositedContentToHDC(dc)) {
+        ::ValidateRect(m_viewWindow, nullptr);
+        return;
     }
 
     Frame* coreFrame = core(m_mainFrame);
@@ -6143,6 +6131,28 @@ HRESULT WebView::windowAncestryDidChange()
     return S_OK;
 }
 
+bool WebView::paintCompositedContentToHDC(HDC deviceContext)
+{
+    if (!isAcceleratedCompositing() || usesLayeredWindow())
+        return false;
+
+#if USE(CA)
+    m_layerTreeHost->flushPendingLayerChangesNow();
+#elif USE(TEXTURE_MAPPER_GL)
+    m_acceleratedCompositingContext->flushAndRenderLayers();
+#endif
+
+    // Flushing might have taken us out of compositing mode.
+    if (!isAcceleratedCompositing())
+        return false;
+
+#if USE(CA)
+    m_layerTreeHost->paint(deviceContext);
+#endif
+
+    return true;
+}
+
 HRESULT WebView::paintDocumentRectToContext(RECT rect, _In_ HDC deviceContext)
 {
     if (!deviceContext)
@@ -6150,6 +6160,9 @@ HRESULT WebView::paintDocumentRectToContext(RECT rect, _In_ HDC deviceContext)
 
     if (!m_mainFrame)
         return E_UNEXPECTED;
+
+    if (paintCompositedContentToHDC(deviceContext))
+        return S_OK;
 
     return m_mainFrame->paintDocumentRectToContext(rect, deviceContext);
 }
@@ -6161,6 +6174,9 @@ HRESULT WebView::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, _In_ H
 
     if (!m_mainFrame)
         return E_UNEXPECTED;
+
+    if (paintCompositedContentToHDC(deviceContext))
+        return S_OK;
 
     return m_mainFrame->paintScrollViewRectToContextAtPoint(rect, pt, deviceContext);
 }

@@ -1,3 +1,21 @@
+2015-09-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Support composited content in WebView render-to-context methods
+        https://bugs.webkit.org/show_bug.cgi?id=149516
+        <rdar://problem/22635080>
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::paint): Call the new 'paintCompositedContentToHDC' method. If
+        it handles the pain, return.
+        (WebView::paintCompositedContentToHDC): New method to share code with other
+        paint methods.
+        (WebView::paintDocumentRectToContext): Call new 'paintCompositedContentToHDC'
+        to handle any composited layers. Otherwise, use slow drawing path.
+        (WebView::paintScrollViewRectToContextAtPoint): Ditto.
+        * WebView.h:
+
 2015-09-24  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] NULL pointer crash when trying to use tiled backing for frame view.
