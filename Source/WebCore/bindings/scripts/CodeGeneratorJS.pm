@@ -5042,8 +5042,7 @@ sub ComputeFunctionSpecial
     my $function = shift;
 
     my @specials = ();
-    push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"NotDeletable"}
-       || $function->signature->extendedAttributes->{"Unforgeable"}
+    push(@specials, "DontDelete") if $function->signature->extendedAttributes->{"Unforgeable"}
        || $interface->extendedAttributes->{"Unforgeable"};
     push(@specials, "DontEnum") if $function->signature->extendedAttributes->{"NotEnumerable"};
     if ($function->signature->extendedAttributes->{"JSBuiltin"}) {

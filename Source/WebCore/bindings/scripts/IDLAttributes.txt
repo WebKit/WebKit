@@ -94,7 +94,6 @@ NewObject
 NoInterfaceObject
 Nondeterministic
 NotEnumerable
-NotDeletable
 ObjCCustomImplementation
 ObjCExplicitAtomicString
 ObjCImplementedAsUnsignedLong

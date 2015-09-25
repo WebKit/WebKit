@@ -31,5 +31,5 @@
     [CustomGetter] readonly attribute any timedMetaData;
     [CustomGetter] readonly attribute any accessLog;
     [CustomGetter] readonly attribute any errorLog;
-    [NotDeletable] void postEvent(DOMString eventName);
+    void postEvent(DOMString eventName);
 };
