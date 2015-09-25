@@ -183,6 +183,7 @@ struct FontCascadeCacheKey {
     Vector<AtomicString, 3> families;
     unsigned fontSelectorId;
     unsigned fontSelectorVersion;
+    unsigned fontSelectorFlags;
 };
 
 struct FontCascadeCacheEntry {
@@ -202,7 +203,7 @@ static bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& 
 {
     if (a.fontDescriptionKey != b.fontDescriptionKey)
         return false;
-    if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion)
+    if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion|| a.fontSelectorFlags != b.fontSelectorFlags)
         return false;
     if (a.families.size() != b.families.size())
         return false;
@@ -230,6 +231,11 @@ void clearWidthCaches()
         value->fonts.get().widthCache().clear();
 }
 
+static unsigned makeFontSelectorFlags(const FontDescription& description)
+{
+    return static_cast<unsigned>(description.script()) << 1 | static_cast<unsigned>(description.smallCaps());
+}
+
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     FontCascadeCacheKey key;
@@ -238,6 +244,7 @@ static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription&
         key.families.append(description.familyAt(i));
     key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
     key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
+    key.fontSelectorFlags = fontSelector && fontSelector->resolvesFamilyFor(description) ? makeFontSelectorFlags(description) : 0;
     return key;
 }
 
@@ -250,6 +257,7 @@ static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
     hashCodes.uncheckedAppend(key.fontDescriptionKey.computeHash());
     hashCodes.uncheckedAppend(key.fontSelectorId);
     hashCodes.uncheckedAppend(key.fontSelectorVersion);
+    hashCodes.uncheckedAppend(key.fontSelectorFlags);
     for (unsigned i = 0; i < key.families.size(); ++i)
         hashCodes.uncheckedAppend(key.families[i].impl() ? CaseFoldingHash::hash(key.families[i]) : 0);
 
