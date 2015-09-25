@@ -435,7 +435,7 @@ static void compileStub(
     RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!allFTLCalleeSaves.get(reg) || !reg.isGPR())
+        if (!allFTLCalleeSaves.get(reg))
             continue;
         unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
         RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
