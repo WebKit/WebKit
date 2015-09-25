@@ -41,10 +41,8 @@ class WebCoreJSClientData : public JSC::VM::ClientData {
 
 public:
     explicit WebCoreJSClientData(JSC::VM& vm)
-#if ENABLE(STREAMS_API)
         : m_readableStreamBuiltins(&vm)
         , m_countQueuingStrategyBuiltins(&vm)
-#endif
     {
     }
 
@@ -80,19 +78,15 @@ public:
         m_worldSet.remove(&world);
     }
 
-#if ENABLE(STREAMS_API)
     ReadableStreamBuiltinsWrapper& readableStreamBuiltins() { return m_readableStreamBuiltins; }
     CountQueuingStrategyBuiltinsWrapper& countQueuingStrategyBuiltins() { return m_countQueuingStrategyBuiltins; }
-#endif
 
 private:
     HashSet<DOMWrapperWorld*> m_worldSet;
     RefPtr<DOMWrapperWorld> m_normalWorld;
 
-#if ENABLE(STREAMS_API)
     ReadableStreamBuiltinsWrapper m_readableStreamBuiltins;
     CountQueuingStrategyBuiltinsWrapper m_countQueuingStrategyBuiltins;
-#endif
 };
 
 inline void initNormalWorldClientData(JSC::VM* vm)
