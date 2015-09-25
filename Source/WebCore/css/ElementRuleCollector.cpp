@@ -40,6 +40,7 @@
 #include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCompiler.h"
+#include "ShadowRoot.h"
 #include "StyleProperties.h"
 #include "StyledElement.h"
 
@@ -152,7 +153,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
         collectMatchingRulesForList(matchRequest.ruleSet->cuePseudoRules(), matchRequest, ruleRange);
 #endif
 
-    if (m_element.isInShadowTree()) {
+    auto* shadowRoot = m_element.containingShadowRoot();
+    if (shadowRoot && shadowRoot->type() == ShadowRoot::Type::UserAgent) {
         const AtomicString& pseudoId = m_element.shadowPseudoId();
         if (!pseudoId.isEmpty())
             collectMatchingRulesForList(matchRequest.ruleSet->shadowPseudoElementRules(pseudoId.impl()), matchRequest, ruleRange);

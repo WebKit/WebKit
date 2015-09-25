@@ -27,6 +27,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "ScriptableDocumentParser.h"
+#include "ShadowRoot.h"
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
 #include <wtf/text/StringBuilder.h>
@@ -46,9 +47,15 @@ InlineStyleSheetOwner::~InlineStyleSheetOwner()
 {
 }
 
-void InlineStyleSheetOwner::insertedIntoDocument(Document& document, Element& element)
+static AuthorStyleSheets& authorStyleSheetsForElement(Element& element)
 {
-    document.authorStyleSheets().addStyleSheetCandidateNode(element, m_isParsingChildren);
+    auto* shadowRoot = element.containingShadowRoot();
+    return shadowRoot ? shadowRoot->authorStyleSheets() : element.document().authorStyleSheets();
+}
+
+void InlineStyleSheetOwner::insertedIntoDocument(Document&, Element& element)
+{
+    authorStyleSheetsForElement(element).addStyleSheetCandidateNode(element, m_isParsingChildren);
 
     if (m_isParsingChildren)
         return;
@@ -57,7 +64,7 @@ void InlineStyleSheetOwner::insertedIntoDocument(Document& document, Element& el
 
 void InlineStyleSheetOwner::removedFromDocument(Document& document, Element& element)
 {
-    document.authorStyleSheets().removeStyleSheetCandidateNode(element);
+    authorStyleSheetsForElement(element).removeStyleSheetCandidateNode(element);
 
     if (m_sheet)
         clearSheet();
@@ -67,14 +74,14 @@ void InlineStyleSheetOwner::removedFromDocument(Document& document, Element& ele
         document.styleResolverChanged(DeferRecalcStyle);
 }
 
-void InlineStyleSheetOwner::clearDocumentData(Document& document, Element& element)
+void InlineStyleSheetOwner::clearDocumentData(Document&, Element& element)
 {
     if (m_sheet)
         m_sheet->clearOwnerNode();
 
     if (!element.inDocument())
         return;
-    document.authorStyleSheets().removeStyleSheetCandidateNode(element);
+    authorStyleSheetsForElement(element).removeStyleSheetCandidateNode(element);
 }
 
 void InlineStyleSheetOwner::childrenChanged(Element& element)
@@ -138,7 +145,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (!screenEval.eval(mediaQueries.get()) && !printEval.eval(mediaQueries.get()))
         return;
 
-    document.authorStyleSheets().addPendingSheet();
+    authorStyleSheetsForElement(element).addPendingSheet();
 
     m_loading = true;
 
@@ -160,18 +167,18 @@ bool InlineStyleSheetOwner::isLoading() const
     return m_sheet && m_sheet->isLoading();
 }
 
-bool InlineStyleSheetOwner::sheetLoaded(Document& document)
+bool InlineStyleSheetOwner::sheetLoaded(Element& element)
 {
     if (isLoading())
         return false;
 
-    document.authorStyleSheets().removePendingSheet();
+    authorStyleSheetsForElement(element).removePendingSheet();
     return true;
 }
 
-void InlineStyleSheetOwner::startLoadingDynamicSheet(Document& document)
+void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
 {
-    document.authorStyleSheets().addPendingSheet();
+    authorStyleSheetsForElement(element).addPendingSheet();
 }
 
 }

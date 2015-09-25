@@ -59,8 +59,8 @@ private:
     virtual void finishParsingChildren() override;
 
     virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
-    virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(document()); }
-    virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(document()); }
+    virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(*this); }
+    virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
     virtual Timer* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
     InlineStyleSheetOwner m_styleSheetOwner;

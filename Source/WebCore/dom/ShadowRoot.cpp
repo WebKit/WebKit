@@ -27,6 +27,8 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
+#include "AuthorStyleSheets.h"
+#include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
 #include "InsertionPoint.h"
 #include "RenderElement.h"
@@ -40,6 +42,7 @@ namespace WebCore {
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
     void* styleResolver;
+    void* authorStyleSheets;
     void* host;
 #if ENABLE(SHADOW_DOM)
     void* slotAssignment;
@@ -73,10 +76,42 @@ ShadowRoot::~ShadowRoot()
 
 StyleResolver& ShadowRoot::styleResolver()
 {
-    if (m_styleResolver)
-        return *m_styleResolver;
+    // FIXME: Use isolated style resolver for user agent shadow roots.
+    if (m_type == Type::UserAgent)
+        return document().ensureStyleResolver();
 
-    return document().ensureStyleResolver();
+    if (!m_styleResolver) {
+        // FIXME: We could share style resolver with shadow roots that have identical style.
+        m_styleResolver = std::make_unique<StyleResolver>(document(), true);
+        if (m_authorStyleSheets)
+            m_styleResolver->appendAuthorStyleSheets(0, m_authorStyleSheets->activeStyleSheets());
+    }
+    return *m_styleResolver;
+}
+
+void ShadowRoot::resetStyleResolver()
+{
+    m_styleResolver = nullptr;
+}
+
+AuthorStyleSheets& ShadowRoot::authorStyleSheets()
+{
+    if (!m_authorStyleSheets)
+        m_authorStyleSheets = std::make_unique<AuthorStyleSheets>(*this);
+    return *m_authorStyleSheets;
+}
+
+void ShadowRoot::updateStyle()
+{
+    bool shouldRecalcStyle = false;
+
+    if (m_authorStyleSheets) {
+        // FIXME: Make optimized updated work.
+        shouldRecalcStyle = m_authorStyleSheets->updateActiveStyleSheets(AuthorStyleSheets::FullUpdate);
+    }
+
+    if (shouldRecalcStyle)
+        setNeedsStyleRecalc();
 }
 
 PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)

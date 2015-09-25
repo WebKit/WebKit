@@ -41,6 +41,7 @@
 #include "SVGNames.h"
 #include "SVGStyleElement.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StyleInvalidationAnalysis.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -54,8 +55,14 @@ namespace WebCore {
 using namespace ContentExtensions;
 using namespace HTMLNames;
 
-AuthorStyleSheets::AuthorStyleSheets(TreeScope& treeScope)
-    : m_document(treeScope.documentScope())
+AuthorStyleSheets::AuthorStyleSheets(Document& document)
+    : m_document(document)
+{
+}
+
+AuthorStyleSheets::AuthorStyleSheets(ShadowRoot& shadowRoot)
+    : m_document(shadowRoot.documentScope())
+    , m_shadowRoot(&shadowRoot)
 {
 }
 
@@ -79,7 +86,12 @@ void AuthorStyleSheets::removePendingSheet(RemovePendingSheetNotificationType no
         m_document.setNeedsNotifyRemoveAllPendingStylesheet();
         return;
     }
-    
+
+    if (m_shadowRoot) {
+        m_shadowRoot->updateStyle();
+        return;
+    }
+
     m_document.didRemoveAllPendingStylesheet();
 }
 
@@ -299,9 +311,12 @@ bool AuthorStyleSheets::updateActiveStyleSheets(UpdateFlag updateFlag)
     bool requiresFullStyleRecalc;
     analyzeStyleSheetChange(updateFlag, activeCSSStyleSheets, styleResolverUpdateType, requiresFullStyleRecalc);
 
-    if (styleResolverUpdateType == Reconstruct)
-        m_document.clearStyleResolver();
-    else {
+    if (styleResolverUpdateType == Reconstruct) {
+        if (m_shadowRoot)
+            m_shadowRoot->resetStyleResolver();
+        else
+            m_document.clearStyleResolver();
+    } else {
         StyleResolver& styleResolver = m_document.ensureStyleResolver();
         if (styleResolverUpdateType == Reset) {
             styleResolver.ruleSets().resetAuthorStyle();

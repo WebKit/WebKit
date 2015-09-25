@@ -59,9 +59,9 @@ private:
     virtual void finishParsingChildren() override;
 
     bool isLoading() const { return m_styleSheetOwner.isLoading(); }
-    virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(document()); }
+    virtual bool sheetLoaded() override { return m_styleSheetOwner.sheetLoaded(*this); }
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred) override;
-    virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(document()); }
+    virtual void startLoadingDynamicSheet() override { m_styleSheetOwner.startLoadingDynamicSheet(*this); }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 

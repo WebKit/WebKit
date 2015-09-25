@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class AuthorStyleSheets;
 class ContentDistributor;
 class HTMLSlotElement;
 class SlotAssignment;
@@ -56,6 +57,10 @@ public:
     virtual ~ShadowRoot();
 
     StyleResolver& styleResolver();
+    AuthorStyleSheets& authorStyleSheets();
+    
+    void updateStyle();
+    void resetStyleResolver();
 
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
@@ -102,9 +107,10 @@ private:
     bool m_resetStyleInheritance;
     Type m_type;
 
-    std::unique_ptr<StyleResolver> m_styleResolver;
-
     Element* m_host;
+
+    std::unique_ptr<StyleResolver> m_styleResolver;
+    std::unique_ptr<AuthorStyleSheets> m_authorStyleSheets;
 
 #if ENABLE(SHADOW_DOM)
     std::unique_ptr<SlotAssignment> m_slotAssignments;

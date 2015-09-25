@@ -45,12 +45,14 @@ class Node;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
+class ShadowRoot;
 class TreeScope;
 
 class AuthorStyleSheets {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AuthorStyleSheets(TreeScope&);
+    explicit AuthorStyleSheets(Document&);
+    explicit AuthorStyleSheets(ShadowRoot&);
 
     const Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets() const { return m_activeStyleSheets; }
 
@@ -107,6 +109,7 @@ private:
     void analyzeStyleSheetChange(UpdateFlag, const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, StyleResolverUpdateType&, bool& requiresFullStyleRecalc);
 
     Document& m_document;
+    ShadowRoot* m_shadowRoot { nullptr };
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
