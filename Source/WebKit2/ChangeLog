@@ -1,3 +1,13 @@
+2015-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r188639): [GTK] Several inspector tests started to time out in GTK+ bots after r188639
+        https://bugs.webkit.org/show_bug.cgi?id=148569
+
+        Reviewed by Darin Adler.
+
+        * PlatformGTK.cmake: Add missing inspector files required for
+        layout tests.
+
 2015-09-25  Eric Carlson  <eric.carlson@apple.com>
 
         Clean up user media request internal API
