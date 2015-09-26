@@ -127,10 +127,10 @@ class ParallelHelperClient {
     WTF_MAKE_NONCOPYABLE(ParallelHelperClient);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ParallelHelperClient(RefPtr<ParallelHelperPool>);
-    ~ParallelHelperClient();
+    WTF_EXPORT_PRIVATE ParallelHelperClient(RefPtr<ParallelHelperPool>);
+    WTF_EXPORT_PRIVATE ~ParallelHelperClient();
 
-    void setTask(RefPtr<SharedTask>);
+    WTF_EXPORT_PRIVATE void setTask(RefPtr<SharedTask>);
 
     template<typename Functor>
     void setFunction(const Functor& functor)
@@ -138,15 +138,15 @@ public:
         setTask(createSharedTask(functor));
     }
     
-    void finish();
+    WTF_EXPORT_PRIVATE void finish();
 
-    void doSomeHelping();
+    WTF_EXPORT_PRIVATE void doSomeHelping();
 
     // Equivalent to:
     // client->setTask(task);
     // client->doSomeHelping();
     // client->finish();
-    void runTaskInParallel(RefPtr<SharedTask>);
+    WTF_EXPORT_PRIVATE void runTaskInParallel(RefPtr<SharedTask>);
 
     // Equivalent to:
     // client->setFunction(functor);
@@ -175,14 +175,14 @@ private:
 
 class ParallelHelperPool : public ThreadSafeRefCounted<ParallelHelperPool> {
 public:
-    ParallelHelperPool();
-    ~ParallelHelperPool();
+    WTF_EXPORT_PRIVATE ParallelHelperPool();
+    WTF_EXPORT_PRIVATE ~ParallelHelperPool();
 
-    void ensureThreads(unsigned numThreads);
+    WTF_EXPORT_PRIVATE void ensureThreads(unsigned numThreads);
 
     unsigned numberOfThreads() const { return m_numThreads; }
     
-    void doSomeHelping();
+    WTF_EXPORT_PRIVATE void doSomeHelping();
 
 private:
     friend class ParallelHelperClient;
