@@ -2469,6 +2469,12 @@ void WKPageClearWheelEventTestTrigger(WKPageRef pageRef)
     toImpl(pageRef)->clearWheelEventTestTrigger();
 }
 
+void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKPagePostPresentationUpdateFunction callback)
+{
+    toImpl(pageRef)->callAfterNextPresentationUpdate([context, callback](WebKit::CallbackBase::Error error) {
+        callback(error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    });
+}
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 

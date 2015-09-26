@@ -15,6 +15,7 @@ editing/pasteboard/gtk [ Skip ]
 tiled-drawing [ Skip ]
 swipe [ Skip ]
 fast/zooming/ios [ Skip ]
+fast/viewport/ios [ Skip ]
 
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]

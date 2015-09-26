@@ -121,6 +121,9 @@ WK_EXPORT void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType event);
 
 WK_EXPORT void WKPageLoadURLWithShouldOpenExternalURLsPolicy(WKPageRef page, WKURLRef url, bool shouldOpenExternalURLs);
 
+typedef void (*WKPagePostPresentationUpdateFunction)(WKErrorRef, void*);
+WK_EXPORT void WKPageCallAfterNextPresentationUpdate(WKPageRef page, void* context, WKPagePostPresentationUpdateFunction function);
+
 #ifdef __cplusplus
 }
 #endif

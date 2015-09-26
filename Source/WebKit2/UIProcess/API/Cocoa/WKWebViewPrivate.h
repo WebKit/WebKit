@@ -125,12 +125,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 // The viewport meta tag width is negative if the value is not defined.
 @property (nonatomic, readonly) CGFloat _viewportMetaTagWidth;
 
-@property (nonatomic, readonly) CGRect _contentVisibleRect;
-
 @property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
-
-- (CGPoint)_convertPointFromContentsToView:(CGPoint)point;
-- (CGPoint)_convertPointFromViewToContents:(CGPoint)point;
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
@@ -216,5 +211,19 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 
 @end
+
+
+@interface WKWebView (WKTesting)
+
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly) CGRect _contentVisibleRect WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (CGPoint)_convertPointFromContentsToView:(CGPoint)point WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (CGPoint)_convertPointFromViewToContents:(CGPoint)point WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+#endif
+
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+@end
+
 
 #endif

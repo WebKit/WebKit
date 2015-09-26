@@ -1,3 +1,22 @@
+2015-09-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Add viewport tests and fix runUIScript() timing issues
+        https://bugs.webkit.org/show_bug.cgi?id=149577
+
+        Reviewed by Tim Horton.
+        
+        When calling testRunner.runUIScript() from a page load event, the script could run
+        in the UI process before the current remote layer tree transaction had been handled
+        there. This meant that runUIScript() could query state which was about to change.
+        
+        Fix by delaying the execution of the UI script until a layer tree transaction has
+        been handled by the UI process, leveraging the existing DrawingAreaProxy::dispatchAfterEnsuringDrawing().
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::runUISideScriptAfterUpdateCallback):
+        * WebKitTestRunner/TestInvocation.h:
+
 2015-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Media tests start to time out after a few days of bot uptime

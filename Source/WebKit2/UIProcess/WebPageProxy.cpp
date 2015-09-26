@@ -6084,6 +6084,11 @@ void WebPageProxy::clearWheelEventTestTrigger()
     m_process->send(Messages::WebPage::ClearWheelEventTestTrigger(), m_pageID);
 }
 
+void WebPageProxy::callAfterNextPresentationUpdate(std::function<void (CallbackBase::Error)> callback)
+{
+    m_drawingArea->dispatchAfterEnsuringDrawing(callback);
+}
+
 void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
 {
     if (m_shouldScaleViewToFitDocument == shouldScaleViewToFitDocument)

@@ -74,6 +74,13 @@ private:
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
 
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
+    
+    struct UIScriptInvocationData {
+        unsigned callbackID;
+        WebKit::WKRetainPtr<WKStringRef> scriptString;
+        TestInvocation* testInvocation;
+    };
+    static void runUISideScriptAfterUpdateCallback(WKErrorRef, void* context);
 
     bool shouldLogFrameLoadDelegates() const;
     bool shouldLogHistoryClientCallbacks() const;

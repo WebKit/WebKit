@@ -1057,7 +1057,9 @@ public:
     void didChangeBackgroundColor();
     void didLayoutForCustomContentProvider();
 
+    // For testing
     void clearWheelEventTestTrigger();
+    void callAfterNextPresentationUpdate(std::function<void (CallbackBase::Error)>);
 
     void didLayout(uint32_t layoutMilestones);
 
