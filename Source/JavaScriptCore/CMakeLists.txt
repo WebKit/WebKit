@@ -294,10 +294,10 @@ set(JavaScriptCore_SOURCES
     heap/FullGCActivityCallback.cpp
     heap/GCActivityCallback.cpp
     heap/GCLogging.cpp
-    heap/GCThread.cpp
     heap/HandleSet.cpp
     heap/HandleStack.cpp
     heap/Heap.cpp
+    heap/HeapHelperPool.cpp
     heap/HeapStatistics.cpp
     heap/HeapTimer.cpp
     heap/HeapVerifier.cpp

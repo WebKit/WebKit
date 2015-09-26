@@ -32,6 +32,7 @@
 #import "Regress141809.h"
 
 #import <pthread.h>
+#import <vector>
 
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 extern "C" void JSSynchronousEdenCollectForDebugging(JSContextRef);
@@ -481,7 +482,32 @@ static void* threadMain(void* contextPtr)
     // Do something to enter the VM.
     TestObject *testObject = [TestObject testObject];
     context[@"testObject"] = testObject;
-    pthread_exit(nullptr);
+    return nullptr;
+}
+
+static void* multiVMThreadMain(void* okPtr)
+{
+    bool& ok = *static_cast<bool*>(okPtr);
+    JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+    JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+    [context evaluateScript:
+        @"var array = [{}];\n"
+         "for (var i = 0; i < 20; ++i) {\n"
+         "    var newArray = new Array(array.length * 2);\n"
+         "    for (var j = 0; j < newArray.length; ++j)\n"
+         "        newArray[j] = {parent: array[j / 2]};\n"
+         "    array = newArray;\n"
+         "}\n"];
+    if (context.exception) {
+        NSLog(@"Uncaught exception.\n");
+        ok = false;
+    }
+    if (![context.globalObject valueForProperty:@"array"].toObject) {
+        NSLog(@"Did not find \"array\" variable.\n");
+        ok = false;
+    }
+    JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+    return nullptr;
 }
 
 // This test is flaky. Since GC marks C stack and registers as roots conservatively,
@@ -1414,6 +1440,21 @@ static void testObjectiveCAPIMain()
         JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
 
         checkResult(@"Did not crash after entering the VM from another thread", true);
+    }
+    
+    @autoreleasepool {
+        std::vector<pthread_t> threads;
+        bool ok = true;
+        for (unsigned i = 0; i < 5; ++i) {
+            pthread_t threadID;
+            pthread_create(&threadID, nullptr, multiVMThreadMain, &ok);
+            threads.push_back(threadID);
+        }
+
+        for (pthread_t thread : threads)
+            pthread_join(thread, nullptr);
+
+        checkResult(@"Ran code in five concurrent VMs that GC'd", ok);
     }
     
     currentThisInsideBlockGetterTest();

@@ -31,10 +31,10 @@
 #include "SourceCode.h"
 #include "Strong.h"
 #include "VariableEnvironment.h"
-#include "WeakRandom.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Forward.h>
 #include <wtf/RandomNumber.h>
+#include <wtf/WeakRandom.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {

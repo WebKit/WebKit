@@ -115,6 +115,7 @@
     <ClCompile Include="..\wtf\OSAllocatorWin.cpp" />
     <ClCompile Include="..\wtf\OSRandomSource.cpp" />
     <ClCompile Include="..\wtf\PageBlock.cpp" />
+    <ClCompile Include="..\wtf\ParallelHelperPool.cpp" />
     <ClCompile Include="..\wtf\ParallelJobsGeneric.cpp" />
     <ClCompile Include="..\wtf\ParkingLot.cpp" />
     <ClCompile Include="..\wtf\PrintStream.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="..\wtf\PageAllocation.h" />
     <ClInclude Include="..\wtf\PageBlock.h" />
     <ClInclude Include="..\wtf\PageReservation.h" />
+    <ClInclude Include="..\wtf\ParallelHelperPool.h" />
     <ClInclude Include="..\wtf\ParallelJobs.h" />
     <ClInclude Include="..\wtf\ParallelJobsGeneric.h" />
     <ClInclude Include="..\wtf\ParallelJobsLibdispatch.h" />
@@ -269,6 +271,7 @@
     <ClInclude Include="..\wtf\SegmentedVector.h" />
     <ClInclude Include="..\wtf\SentinelLinkedList.h" />
     <ClInclude Include="..\wtf\SHA1.h" />
+    <ClInclude Include="..\wtf\SharedTask.h" />
     <ClInclude Include="..\wtf\SinglyLinkedList.h" />
     <ClInclude Include="..\wtf\SixCharacterHash.h" />
     <ClInclude Include="..\wtf\StackBounds.h" />
@@ -313,6 +316,7 @@
     <ClInclude Include="..\wtf\VMTags.h" />
     <ClInclude Include="..\wtf\win\GDIObject.h" />
     <ClInclude Include="..\wtf\win\WorkItemWin.h" />
+    <ClInclude Include="..\wtf\WeakRandom.h" />
     <ClInclude Include="..\wtf\WordLock.h" />
     <ClInclude Include="..\wtf\WorkQueue.h" />
     <ClInclude Include="..\wtf\WTFThreadData.h" />

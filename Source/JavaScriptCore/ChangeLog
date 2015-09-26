@@ -1,3 +1,76 @@
+2015-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        VMs should share GC threads
+        https://bugs.webkit.org/show_bug.cgi?id=149433
+        rdar://problem/12859344
+
+        Reviewed by Geoffrey Garen.
+
+        This changes the GC to use a new WTF abstraction for parallelism called ParallelHelperPool.
+        This allows us to remove GCThread and all of the GCPhase machinery. This kills a lot of
+        code and also gives our GC magical thread sharing powers. If two GCs in two different VMs
+        fire at the same time, then they will both get a random subset of the available shared GC
+        threads. If one GC happens before the other, then it will probably get all of the available
+        threads. If a GC happens while another VM already started GCing, then it will probably not
+        get any helper threads. This is probably fine, since in multi-VM scenarios we have no
+        reason to optimize for anything other than total throughput.
+
+        The GC has one static helper pool. This pool is available via JSC::heapHelperPool(). It
+        would be OK for other parts of JSC to use it in the future for parallel tasks. Each Heap
+        instance has a helper client attached to the pool.
+
+        The marking phase tells the ParallelHelperClient to asynchronously run a function that
+        joins parallel marking and finishes once marking reaches termination. It uses the
+        client.setFunction() idiom where the threads share work with each other using a specialized
+        worklist. The ParallelHelperPool is not involved in deciding when threads should terminate.
+
+        The copying phase tells the ParallelHelperClient to run a copying function in parallel. It
+        uses the client.runFunctionInParallel() idiom. The copying function gets work from the
+        m_blocksToCopy worklist inside Heap.
+
+        To test that multiple VMs work properly, this adds a multi-VM test to testapi.mm. This test
+        creates five concurrent VMs and has each of them allocate about 30MB of memory before doing
+        a full GC. I've confirmed that this tests uses only 6 total GC threads on my 8-core
+        computer (this is correct since we are currently configured for 7-way parallelism).
+
+        This shouldn't affect performance on benchmarks, but it will sure help apps with a lot of
+        VM instances.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * heap/GCThread.cpp: Removed.
+        * heap/GCThread.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::isPagedOut):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        (JSC::Heap::resetVisitors):
+        (JSC::Heap::threadVisitCount):
+        (JSC::Heap::threadBytesVisited):
+        (JSC::Heap::threadBytesCopied):
+        (JSC::Heap::startNextPhase): Deleted.
+        (JSC::Heap::endCurrentPhase): Deleted.
+        * heap/Heap.h:
+        * heap/HeapHelperPool.cpp: Added.
+        (JSC::heapHelperPool):
+        * heap/HeapHelperPool.h: Added.
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::stealSomeCellsFrom):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset):
+        (JSC::SlotVisitor::drainFromShared):
+        * jit/BinarySwitch.h:
+        * runtime/CodeCache.h:
+        * runtime/VM.h:
+        * runtime/WeakRandom.h: Removed.
+        * API/tests/testapi.mm:
+
 2015-09-25  Saam barati  <sbarati@apple.com>
 
         DFG should use PhantomLocal instead of Flush as liveness preservation mechanism in LiveCatchVariablesPreservationPhase

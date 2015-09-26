@@ -30,7 +30,6 @@
 #include "ConservativeRoots.h"
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
-#include "GCThread.h"
 #include "JSArray.h"
 #include "JSDestructibleObject.h"
 #include "VM.h"
@@ -67,10 +66,7 @@ void SlotVisitor::didStartMarking()
     if (heap()->operationInProgress() == FullCollection)
         ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
 
-    m_heap.m_shouldHashCons = m_heap.m_vm->haveEnoughNewStringsToHashCons();
     m_shouldHashCons = m_heap.m_shouldHashCons;
-    for (unsigned i = 0; i < m_heap.m_gcThreads.size(); ++i)
-        m_heap.m_gcThreads[i]->slotVisitor()->m_shouldHashCons = m_heap.m_shouldHashCons;
 }
 
 void SlotVisitor::reset()
@@ -221,7 +217,7 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
                 if (m_heap.m_parallelMarkersShouldExit)
                     return;
             }
-           
+
             m_stack.stealSomeCellsFrom(
                 m_heap.m_sharedMarkStack, m_heap.m_numberOfWaitingParallelMarkers);
             m_heap.m_numberOfActiveParallelMarkers++;

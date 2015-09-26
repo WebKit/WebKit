@@ -26,7 +26,6 @@
 #include "CodeBlockSet.h"
 #include "CopyVisitor.h"
 #include "GCIncomingRefCountedSet.h"
-#include "GCThread.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
 #include "HeapOperation.h"
@@ -46,6 +45,7 @@
 #include "WriteBarrierSupport.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/ParallelHelperPool.h>
 
 namespace JSC {
 
@@ -347,8 +347,6 @@ private:
     size_t threadDupStrings();
 
     void getNextBlocksToCopy(size_t&, size_t&);
-    void startNextPhase(GCPhase);
-    void endCurrentPhase();
 
     const HeapType m_heapType;
     const size_t m_ramSize;
@@ -383,7 +381,14 @@ private:
     MachineThreads m_machineThreads;
     
     SlotVisitor m_slotVisitor;
-    CopyVisitor m_copyVisitor;
+
+    // We pool the slot visitors used by parallel marking threads. It's useful to be able to
+    // enumerate over them, and it's useful to have them cache some small amount of memory from
+    // one GC to the next. GC marking threads claim these at the start of marking, and return
+    // them at the end.
+    Vector<std::unique_ptr<SlotVisitor>> m_parallelSlotVisitors;
+    Vector<SlotVisitor*> m_availableParallelSlotVisitors;
+    Lock m_parallelSlotVisitorLock;
 
     HandleSet m_handleSet;
     HandleStack m_handleStack;
@@ -422,8 +427,6 @@ private:
 
     bool m_shouldHashCons { false };
 
-    Vector<GCThread*> m_gcThreads;
-
     Lock m_markingMutex;
     Condition m_markingConditionVariable;
     MarkStackArray m_sharedMarkStack;
@@ -439,15 +442,10 @@ private:
     size_t m_copyIndex { 0 };
     static const size_t s_blockFragmentLength = 32;
 
-    Lock m_phaseMutex;
-    Condition m_phaseConditionVariable;
-    Condition m_activityConditionVariable;
-    unsigned m_numberOfActiveGCThreads { 0 };
-    bool m_gcThreadsShouldWait { false };
-    GCPhase m_currentPhase { NoPhase };
-
     ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;
     ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
+
+    ParallelHelperClient m_helperClient;
 };
 
 } // namespace JSC

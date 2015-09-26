@@ -82,6 +82,7 @@ set(WTF_HEADERS
     RetainPtr.h
     RunLoop.h
     SHA1.h
+    SharedTask.h
     SaturatedArithmetic.h
     SegmentedVector.h
     StackBounds.h
@@ -167,6 +168,7 @@ set(WTF_SOURCES
     NumberOfCores.cpp
     OSRandomSource.cpp
     PageBlock.cpp
+    ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
     PrintStream.cpp

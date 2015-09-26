@@ -291,6 +291,9 @@
     <ClCompile Include="..\heap\Heap.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\HeapHelperPool.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\HeapStatistics.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -2288,6 +2291,9 @@
     <ClInclude Include="..\heap\Heap.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\HeapHelperPool.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\HeapInlines.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -3165,9 +3171,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\WeakGCMap.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\WeakRandom.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\WriteBarrier.h">

@@ -1,3 +1,100 @@
+2015-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+        VMs should share GC threads
+        https://bugs.webkit.org/show_bug.cgi?id=149433
+        rdar://problem/12859344
+
+        Reviewed by Geoffrey Garen.
+
+        This adds two major things to WTF: WeakRandom and ParallelHelperPool. WeakRandom was
+        already in JSC; we're just hoisting it into WTF. It's just a weak random number generator
+        that's suitable for places where you need just a tiny bit of randomness.
+
+        ParallelHelperPool is a new API that simplifies data-parallel algorithms like the JSC GC.
+        In a data-parallel algorithm, we want to run one task on as many cores as possible and let
+        the task worry about which subset of the input data to work on. In some cases, the
+        algorithm will not need to do any load balancing - and if load balancing is required, it's
+        up to the user. This is appropriate in contexts where the load balancing needs to be
+        custom-tuned for performance, like the GC's marking phase.
+
+        This new API has three concepts: task, client, and pool. A task is a reference counted
+        object with a run() method, which may be run in parallel. It is usually used to wrap a
+        functor. A pool is a pool of threads that can run things. A client is a placeholder for a
+        task. A client can have zero or one tasks. A client must be registered with a pool. When a
+        client has a task, the pool's threads may choose to run it. If a thread starts running a
+        task, it will run it to completion. When the task returns on any thread, the client takes
+        it to mean that the task should be removed. That means that any currently running instances
+        of the task will finish but no new threads will attempt to run the task. You can easily ask
+        a client to wait until a task finishes. You can also easily ask a client to run a task on
+        the current thread in addition to possibly some helper threads from the pool.
+
+        For some data-parallel algorithms, programming with ParallelHelperPool is as easy as:
+
+        client.runFunctionInParallel(
+            [=] () {
+                do things;
+            });
+
+        Note that you cannot tell ahead of time how many threads will join to help the task.
+        Threads may become available after the task has already started running. Those threads may
+        join after the other threads have already started. It's not advisable to make algorithmic
+        decisions based on client.numberOfActiveThreads(), since that number may change. Usually
+        the best way to use ParallelHelperPool is with an algorithm that has its own custom
+        worklist. An example of a very simple custom worklist is the one in the JSC GC's copying
+        phase - it's just a Vector and an index that indicates the next set of elements to process.
+
+        This new API was initially designed to simplify how GCThread works, by replacing Phase with
+        a callback that contains the phase's workload. I then realized that with a few tweaks, I
+        could make this somewhat general enough that it might become interesting outside GC. I also
+        realized that I could use this to enable thread sharing. So, although the API is kinda
+        quirky, it's grounded in the reality of how the JSC GC does parallelism.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ParallelHelperPool.cpp: Added.
+        (WTF::ParallelHelperClient::ParallelHelperClient):
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTaskInParallel):
+        (WTF::ParallelHelperClient::claimTask):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        (WTF::ParallelHelperPool::~ParallelHelperPool):
+        (WTF::ParallelHelperPool::addThreads):
+        (WTF::ParallelHelperPool::ensureThreads):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        (WTF::ParallelHelperPool::didMakeWorkAvailable):
+        (WTF::ParallelHelperPool::helperThreadBody):
+        (WTF::ParallelHelperPool::hasClientWithTask):
+        (WTF::ParallelHelperPool::getClientWithTask):
+        (WTF::ParallelHelperPool::waitForClientWithTask):
+        * wtf/ParallelHelperPool.h: Added.
+        (WTF::ParallelHelperClient::setFunction):
+        (WTF::ParallelHelperClient::runFunctionInParallel):
+        (WTF::ParallelHelperClient::pool):
+        (WTF::ParallelHelperClient::numberOfActiveThreads):
+        (WTF::ParallelHelperPool::numberOfThreads):
+        * wtf/SharedTask.h: Added.
+        (WTF::SharedTask::SharedTask):
+        (WTF::SharedTask::~SharedTask):
+        (WTF::SharedTaskFunctor::SharedTaskFunctor):
+        (WTF::createSharedTask):
+        * wtf/WeakRandom.h: Copied from Source/JavaScriptCore/runtime/WeakRandom.h.
+        (WTF::WeakRandom::WeakRandom):
+        (WTF::WeakRandom::initializeSeed):
+        (WTF::WeakRandom::seedUnsafe):
+        (WTF::WeakRandom::getUint32):
+        (WTF::WeakRandom::advance):
+        (JSC::WeakRandom::WeakRandom): Deleted.
+        (JSC::WeakRandom::seedUnsafe): Deleted.
+        (JSC::WeakRandom::getUint32): Deleted.
+        (JSC::WeakRandom::advance): Deleted.
+        (JSC::WeakRandom::initializeSeed): Deleted.
+
 2015-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CMake build on Mac

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,7 +107,8 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
         return;
     }
 
-    size_t numberOfCellsToSteal = (other.size() + idleThreadCount - 1) / idleThreadCount; // Round up to steal 1 / 1.
+    // Steal ceil(other.size() / idleThreadCount) things.
+    size_t numberOfCellsToSteal = (other.size() + idleThreadCount - 1) / idleThreadCount;
     while (numberOfCellsToSteal-- > 0 && other.canRemoveLast())
         append(other.removeLast());
 }

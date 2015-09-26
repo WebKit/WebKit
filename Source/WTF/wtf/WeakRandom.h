@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,18 +51,29 @@
 #define WeakRandom_h
 
 #include <limits.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
-namespace JSC {
+namespace WTF {
 
 class WeakRandom {
-friend class JSGlobalObject; // For access to initializeSeed() during replay.
 public:
+    WeakRandom()
+    {
+        initializeSeed(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
+    }
+    
     WeakRandom(unsigned seed)
     {
         initializeSeed(seed);
     }
     
+    void initializeSeed(unsigned seed)
+    {
+        m_low = seed ^ 0x49616E42;
+        m_high = seed;
+    }
+
     // Returns the seed provided that you've never called get() or getUint32().
     unsigned seedUnsafe() const { return m_high; }
 
@@ -76,6 +87,19 @@ public:
         return advance();
     }
 
+    unsigned getUint32(unsigned limit)
+    {
+        if (limit <= 1)
+            return 0;
+        uint64_t cutoff = (static_cast<uint64_t>(UINT_MAX) + 1) / limit * limit;
+        for (;;) {
+            uint64_t value = getUint32();
+            if (value >= cutoff)
+                continue;
+            return value % limit;
+        }
+    }
+
 private:
     unsigned advance()
     {
@@ -85,16 +109,12 @@ private:
         return m_high;
     }
 
-    void initializeSeed(unsigned seed)
-    {
-        m_low = seed ^ 0x49616E42;
-        m_high = seed;
-    }
-
     unsigned m_low;
     unsigned m_high;
 };
 
-} // namespace JSC
+} // namespace WTF
+
+using WTF::WeakRandom;
 
 #endif // WeakRandom_h

@@ -569,6 +569,7 @@
     <ClCompile Include="..\heap\HandleSet.cpp" />
     <ClCompile Include="..\heap\HandleStack.cpp" />
     <ClCompile Include="..\heap\Heap.cpp" />
+    <ClCompile Include="..\heap\HeapHelperPool.cpp" />
     <ClCompile Include="..\heap\HeapStatistics.cpp" />
     <ClCompile Include="..\heap\HeapTimer.cpp" />
     <ClCompile Include="..\heap\HeapVerifier.cpp" />
@@ -1350,6 +1351,7 @@
     <ClInclude Include="..\heap\HandleStack.h" />
     <ClInclude Include="..\heap\HandleTypes.h" />
     <ClInclude Include="..\heap\Heap.h" />
+    <ClInclude Include="..\heap\HeapHelperPool.h" />
     <ClInclude Include="..\heap\HeapInlines.h" />
     <ClInclude Include="..\heap\HeapOperation.h" />
     <ClInclude Include="..\heap\HeapRootVisitor.h" />
@@ -1809,7 +1811,6 @@
     <ClInclude Include="..\runtime\WeakMapPrototype.h" />
     <ClInclude Include="..\runtime\WeakSetConstructor.h" />
     <ClInclude Include="..\runtime\WeakSetPrototype.h" />
-    <ClInclude Include="..\runtime\WeakRandom.h" />
     <ClInclude Include="..\runtime\WriteBarrier.h" />
     <ClInclude Include="..\runtime\WriteBarrierInlines.h" />
     <ClInclude Include="..\tools\CodeProfile.h" />
