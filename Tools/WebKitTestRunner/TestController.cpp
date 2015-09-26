@@ -1619,9 +1619,24 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         return;
 
     for (auto& request : m_userMediaPermissionRequests) {
-        if (m_isUserMediaPermissionAllowed) {
-            if (WKArrayGetSize(WKUserMediaPermissionRequestDeviceNamesVideo(request.get())) || WKArrayGetSize(WKUserMediaPermissionRequestDeviceNamesAudio(request.get())))
-                WKUserMediaPermissionRequestAllow(request.get(), WKUserMediaPermissionRequestFirstVideoDeviceUID(request.get()), WKUserMediaPermissionRequestFirstAudioDeviceUID(request.get()));
+        WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(request.get());
+        WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(request.get());
+
+        if (m_isUserMediaPermissionAllowed && (WKArrayGetSize(videoDeviceUIDs.get()) || WKArrayGetSize(audioDeviceUIDs.get()))) {
+            WKRetainPtr<WKStringRef> videoDeviceUID;
+            if (WKArrayGetSize(videoDeviceUIDs.get()))
+                videoDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(videoDeviceUIDs.get(), 0));
+            else
+                videoDeviceUID = WKStringCreateWithUTF8CString("");
+
+            WKRetainPtr<WKStringRef> audioDeviceUID;
+            if (WKArrayGetSize(audioDeviceUIDs.get()))
+                audioDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(audioDeviceUIDs.get(), 0));
+            else
+                audioDeviceUID = WKStringCreateWithUTF8CString("");
+
+            WKUserMediaPermissionRequestAllow(request.get(), videoDeviceUID.get(), audioDeviceUID.get());
+
         } else
             WKUserMediaPermissionRequestDeny(request.get());
     }

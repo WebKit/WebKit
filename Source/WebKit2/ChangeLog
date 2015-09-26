@@ -1,3 +1,60 @@
+2015-09-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Clean up user media request internal API
+        https://bugs.webkit.org/show_bug.cgi?id=149527
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKUserMediaPermissionRequest.cpp:
+        (WKUserMediaPermissionRequestVideoDeviceUIDs): New, renamed from WKUserMediaPermissionRequestDeviceNamesVideo.
+        (WKUserMediaPermissionRequestAudioDeviceUIDs): New, renamed from WKUserMediaPermissionRequestDeviceNamesAudio.
+        (WKUserMediaPermissionRequestAllowBest): Deleted.
+        (WKUserMediaPermissionRequestDeviceNamesVideo): Deleted.
+        (WKUserMediaPermissionRequestDeviceNamesAudio): Deleted.
+        (WKUserMediaPermissionRequestFirstVideoDeviceUID): Deleted.
+        (WKUserMediaPermissionRequestFirstAudioDeviceUID): Deleted.
+        * UIProcess/API/C/WKUserMediaPermissionRequest.h:
+
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp:
+        (webkitUserMediaPermissionRequestAllow): Update for UserMediaRequest API change.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest): Get rid of the bool parameters.
+          Switch audio/video parameter order to be consistent with everywhere else.
+        (WebKit::UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecision): Ditto.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy): Get rid of the bool parameters.
+          Switch audio/video parameter order to be consistent with everywhere else.
+        (WebKit::UserMediaPermissionRequestProxy::allow): Switch audio/video parameter order.
+        (WebKit::UserMediaPermissionRequestProxy::getDeviceNameForUID): Deleted.
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::videoDeviceUIDs):
+        (WebKit::UserMediaPermissionRequestProxy::audioDeviceUIDs):
+        (WebKit::UserMediaPermissionRequestProxy::firstAudioDeviceUID):
+        (WebKit::UserMediaPermissionRequestProxy::requiresAudio): Deleted.
+        (WebKit::UserMediaPermissionRequestProxy::requiresVideo): Deleted.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame): Get rid of the bool parameters.
+          Switch audio/video parameter order to be consistent with everywhere else.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startRequest): Get rid of bool params, the device
+          vectors have the same information.
+        (WebKit::UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision): Switch audio/video
+          parameter order to be consistent with everywhere else. deviceUIDVideo -> videoDeviceUID,
+        deviceUIDAudio -> audioDeviceUID.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveUserMediaPermissionDecision): Switch audio/video parameter order.
+        * WebProcess/WebPage/WebPage.h:
+
 2015-09-25  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Add viewport tests and fix runUIScript() timing issues

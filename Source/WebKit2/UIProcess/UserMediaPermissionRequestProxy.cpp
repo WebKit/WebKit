@@ -26,19 +26,17 @@
 
 namespace WebKit {
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
     : m_manager(manager)
     , m_userMediaID(userMediaID)
-    , m_requiresAudio(requiresAudio)
-    , m_requiresVideo(requiresVideo)
-    , m_videoDeviceUIDs(deviceUIDsVideo)
-    , m_audiodeviceUIDs(deviceUIDsAudio)
+    , m_videoDeviceUIDs(videoDeviceUIDs)
+    , m_audioDeviceUIDs(audioDeviceUIDs)
 {
 }
 
-void UserMediaPermissionRequestProxy::allow(const String& videoDeviceUID, const String& audioDeviceUID)
+void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const String& videoDeviceUID)
 {
-    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, true, videoDeviceUID, audioDeviceUID);
+    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, true, audioDeviceUID, videoDeviceUID);
 }
 
 void UserMediaPermissionRequestProxy::deny()
@@ -50,13 +48,6 @@ void UserMediaPermissionRequestProxy::invalidate()
 {
     m_manager.invalidateRequests();
 }
-
-#if ENABLE(MEDIA_STREAM)
-const String& UserMediaPermissionRequestProxy::getDeviceNameForUID(const String& UID, WebCore::RealtimeMediaSource::Type type)
-{
-    return WebCore::RealtimeMediaSourceCenter::singleton().sourceWithUID(UID, type, nullptr)->label();
-}
-#endif
 
 } // namespace WebKit
 

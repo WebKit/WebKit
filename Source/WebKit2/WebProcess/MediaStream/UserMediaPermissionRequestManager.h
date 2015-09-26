@@ -37,7 +37,7 @@ public:
     void startRequest(WebCore::UserMediaRequest&);
     void cancelRequest(WebCore::UserMediaRequest&);
 
-    void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& deviceUIDVideo, const String& deviceUIDAudio);
+    void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID);
 
 private:
     WebPage& m_page;

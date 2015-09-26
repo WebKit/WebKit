@@ -1,3 +1,16 @@
+2015-09-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Clean up user media request internal API
+        https://bugs.webkit.org/show_bug.cgi?id=149527
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebUserMediaClient.mm:
+        (WebUserMediaClient::cancelRequest): Put UserMediaRequestsMap in a local instead or calling
+          userMediaRequestsMap() three times.
+        (-[WebUserMediaPolicyListener allow]): Get rid of unneeded local variables.
+        (-[WebUserMediaPolicyListener allowDeviceWithVideoUID]): Deleted, unused.
+
 2015-09-22  Andy Estes  <aestes@apple.com>
 
         Disable QuickLook on tvOS

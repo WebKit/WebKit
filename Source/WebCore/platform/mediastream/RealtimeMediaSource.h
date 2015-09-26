@@ -70,8 +70,8 @@ public:
 
     const String& id() const { return m_id; }
 
-    const String& persistentId() const { return m_persistentId; }
-    virtual void setPersistentId(const String& persistentId) { m_persistentId = persistentId; }
+    const String& persistentID() const { return m_persistentID; }
+    virtual void setPersistentID(const String& persistentID) { m_persistentID = persistentID; }
 
     enum Type { None, Audio, Video };
     Type type() const { return m_type; }
@@ -115,7 +115,7 @@ protected:
 
 private:
     String m_id;
-    String m_persistentId;
+    String m_persistentID;
     Type m_type;
     String m_name;
     bool m_stopped;

@@ -55,7 +55,7 @@ RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const Stri
 
     if (m_id.isEmpty())
         m_id = createCanonicalUUIDString();
-    m_persistentId = m_id;
+    m_persistentID = m_id;
 }
 
 void RealtimeMediaSource::reset()
