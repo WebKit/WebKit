@@ -37,9 +37,9 @@
 
 namespace JSC { namespace DFG {
 
-class FlushLiveCatchVariablesInsertionPhase : public Phase {
+class LiveCatchVariablePreservationPhase : public Phase {
 public:
-    FlushLiveCatchVariablesInsertionPhase(Graph& graph)
+    LiveCatchVariablePreservationPhase(Graph& graph)
         : Phase(graph, "live catch variable preservation phase")
     {
     }
@@ -113,12 +113,12 @@ public:
                     if ((operand.isLocal() && m_currentBlockLiveness.get(operand.toLocal()))
                         || (operand.offset() == stackOffset + CallFrame::thisArgumentOffset())) {
 
-                        VariableAccessData* flushAccessData = currentBlockAccessData.operand(operand);
-                        if (!flushAccessData)
-                            flushAccessData = newVariableAccessData(operand);
+                        VariableAccessData* variableAccessData = currentBlockAccessData.operand(operand);
+                        if (!variableAccessData)
+                            variableAccessData = newVariableAccessData(operand);
 
                         insertionSet.insertNode(i, SpecNone, 
-                            Flush, node->origin, OpInfo(flushAccessData));
+                            PhantomLocal, node->origin, OpInfo(variableAccessData));
                     }
                 }
 
@@ -127,17 +127,13 @@ public:
             }
         }
 
-        // Flush everything at the end of the block.
-        // FIXME: I think this will only be necessary if we have any successor
-        // blocks who aren't inside this "try" statement. If all our successor's
-        // are in this try statement, they will have Flushes for any live "catch"
-        // variables.
+        // Insert PhantomLocals for everything at the end of the block.
         {
             NodeOrigin origin = block->at(block->size() - 1)->origin;
-            auto insertFlushAtEnd = [&] (VirtualRegister operand, bool alwaysFlush) {
+            auto insertPhantomLocalAtEnd = [&] (VirtualRegister operand, bool alwaysInsert) {
                 if ((operand.isLocal() && m_currentBlockLiveness.get(operand.toLocal())) 
                     || operand.isArgument()
-                    || alwaysFlush) {
+                    || alwaysInsert) {
                     VariableAccessData* accessData = currentBlockAccessData.operand(operand);
                     if (!accessData)
                         accessData = newVariableAccessData(operand);
@@ -145,14 +141,14 @@ public:
                     currentBlockAccessData.operand(operand) = accessData;
 
                     insertionSet.insertNode(block->size(), SpecNone, 
-                        Flush, origin, OpInfo(accessData));
+                        PhantomLocal, origin, OpInfo(accessData));
                 }
             };
             for (unsigned local = 0; local < block->variablesAtTail.numberOfLocals(); local++)
-                insertFlushAtEnd(virtualRegisterForLocal(local), false);
+                insertPhantomLocalAtEnd(virtualRegisterForLocal(local), false);
             for (InlineCallFrame* inlineCallFrame : seenInlineCallFrames)
-                insertFlushAtEnd(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
-            insertFlushAtEnd(VirtualRegister(CallFrame::thisArgumentOffset()), true);
+                insertPhantomLocalAtEnd(VirtualRegister(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset()), true);
+            insertPhantomLocalAtEnd(VirtualRegister(CallFrame::thisArgumentOffset()), true);
         }
     }
 
@@ -170,7 +166,7 @@ public:
 bool performLiveCatchVariablePreservationPhase(Graph& graph)
 {
     SamplingRegion samplingRegion("DFG Live Catch Variables Preservation Phase");
-    return runPhase<FlushLiveCatchVariablesInsertionPhase>(graph);
+    return runPhase<LiveCatchVariablePreservationPhase>(graph);
 }
 
 } } // namespace JSC::DFG
