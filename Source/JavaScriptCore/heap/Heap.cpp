@@ -560,6 +560,8 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
                     slotVisitor = m_availableParallelSlotVisitors.takeLast();
             }
 
+            WTF::registerGCThread();
+
             {
                 ParallelModeEnabler parallelModeEnabler(*slotVisitor);
                 slotVisitor->didStartMarking();
