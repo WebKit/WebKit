@@ -1,3 +1,10 @@
+2015-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Gardening: skip media stream tests failing after r190262.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2015-09-25  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] USE_INTERNAL_SDK is used undefined in tools projects

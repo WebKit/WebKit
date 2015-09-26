@@ -698,6 +698,26 @@ webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html 
 
 webkit.org/b/144771 editing/selection/selection-invalid-offset.html [ Crash ]
 
+webkit.org/b/149580 fast/mediastream/MediaDevices-getUserMedia.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStream-add-ended-tracks.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStream-add-remove-tracks.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStream-add-tracks-to-inactive-stream.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStream-clone.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStream-getTracks.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStreamConstructor.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStreamTrack-clone.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStreamTrack-kind.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStreamTrack-stop.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/MediaStreamTrackEvent-constructor.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/delayed-permission-allowed.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/delayed-permission-denied.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/error.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/getusermedia.html [ Crash ]
+webkit.org/b/149580 fast/mediastream/success.html [ Crash ]
+webkit.org/b/149580 http/tests/media/media-stream/disconnected-frame-permission-denied.html [ Crash ]
+webkit.org/b/149580 http/tests/media/media-stream/disconnected-frame.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
