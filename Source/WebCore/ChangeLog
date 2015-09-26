@@ -1,3 +1,41 @@
+2015-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r190235. rdar://problem/22852382
+
+    2015-09-24  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Support composited content in WebView render-to-context methods
+            https://bugs.webkit.org/show_bug.cgi?id=149516
+            <rdar://problem/22635080>
+
+            Reviewed by Simon Fraser.
+
+            Extend the CACFLayerTreeHost implementation to render into a passed
+            device context when requested. When no context is provided (the default
+            case) paint as normal.
+
+            Will be tested by existing compositing tests in a future bug. DumpRenderTree
+            has to be extended to do this painting properly.
+
+            * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+            (WebCore::CACFLayerTreeHost::paint): Accept an optional HDC argument, and
+            pass it to the render method.
+            * platform/graphics/ca/win/CACFLayerTreeHost.h:
+            * platform/graphics/ca/win/LegacyCACFLayerTreeHost.cpp: Add missing SOFT_LINK
+            command for the WKCACFViewDrawIntoDC.
+            (WebCore::LegacyCACFLayerTreeHost::paint): Accept optional HDC argument and
+            pass it to the parent class.
+            (WebCore::LegacyCACFLayerTreeHost::render): Accept new optional HDC argument.
+            If provided, call WKCACFViewDrawIntoDC. Otherwise, call WKCACFVIewDraw.
+            * platform/graphics/ca/win/LegacyCACFLayerTreeHost.h:
+            * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp: Add missing SOFT_LINK
+            command for the WKCACFViewDrawIntoDC.
+            (WebCore::WKCACFViewLayerTreeHost::paint): Accept optional HDC argument and
+            pass it to the parent class.
+            (WebCore::WKCACFViewLayerTreeHost::render): Accept new optional HDC argument.
+            If provided, call WKCACFViewDrawIntoDC. Otherwise, call WKCACFVIewDraw.
+            * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h:
+
 2015-09-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r189200. rdar://problem/22803080

@@ -229,7 +229,7 @@ void LegacyCACFLayerTreeHost::renderTimerFired()
     paint();
 }
 
-void LegacyCACFLayerTreeHost::paint()
+void LegacyCACFLayerTreeHost::paint(HDC hdc)
 {
     createRenderer();
     if (!m_d3dDevice) {
@@ -238,10 +238,10 @@ void LegacyCACFLayerTreeHost::paint()
         return;
     }
 
-    CACFLayerTreeHost::paint();
+    CACFLayerTreeHost::paint(hdc);
 }
 
-void LegacyCACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
+void LegacyCACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects, HDC)
 {
     ASSERT(m_d3dDevice);
 

@@ -64,7 +64,7 @@ public:
 
     void setRootChildLayer(PlatformCALayer*);
     void setWindow(HWND);
-    virtual void paint();
+    virtual void paint(HDC = nullptr);
     virtual void resize() = 0;
     void flushPendingGraphicsLayerChangesSoon();
     virtual void setShouldInvertColors(bool);
@@ -100,7 +100,7 @@ private:
 
     virtual void flushContext() = 0;
     virtual CFTimeInterval lastCommitTime() const = 0;
-    virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>()) = 0;
+    virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>(), HDC dc = nullptr) = 0;
     virtual void initializeContext(void* userData, PlatformCALayer*) = 0;
 
     CACFLayerTreeHostClient* m_client;

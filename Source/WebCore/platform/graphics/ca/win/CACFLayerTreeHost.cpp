@@ -260,11 +260,11 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
         outRects[i] = winRectToCGRect(*rect, clientRect);
 }
 
-void CACFLayerTreeHost::paint()
+void CACFLayerTreeHost::paint(HDC dc)
 {
     Vector<CGRect> dirtyRects;
     getDirtyRects(m_window, dirtyRects);
-    render(dirtyRects);
+    render(dirtyRects, dc);
 }
 
 void CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon()

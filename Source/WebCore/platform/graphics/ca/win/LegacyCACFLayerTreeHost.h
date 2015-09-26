@@ -59,8 +59,8 @@ private:
     virtual CFTimeInterval lastCommitTime() const;
     virtual void flushContext();
     virtual void contextDidChange();
-    virtual void paint();
-    virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
+    virtual void paint(HDC = nullptr);
+    virtual void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>(), HDC dc = nullptr);
 
 #if USE(AVFOUNDATION)
     virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const override { return 0; }

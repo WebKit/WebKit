@@ -130,6 +130,7 @@
 #include <WebCore/PageCache.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
@@ -1123,21 +1124,9 @@ void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
-    if (isAcceleratedCompositing() && !usesLayeredWindow()) {
-#if USE(CA)
-        m_layerTreeHost->flushPendingLayerChangesNow();
-#elif USE(TEXTURE_MAPPER_GL)
-        m_acceleratedCompositingContext->flushAndRenderLayers();
-#endif
-        // Flushing might have taken us out of compositing mode.
-        if (isAcceleratedCompositing()) {
-#if USE(CA)
-            // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
-            m_layerTreeHost->paint();
-#endif
-            ::ValidateRect(m_viewWindow, 0);
-            return;
-        }
+    if (paintCompositedContentToHDC(dc)) {
+        ::ValidateRect(m_viewWindow, nullptr);
+        return;
     }
 
     Frame* coreFrame = core(m_mainFrame);
@@ -6046,6 +6035,28 @@ HRESULT STDMETHODCALLTYPE WebView::windowAncestryDidChange()
     return S_OK;
 }
 
+bool WebView::paintCompositedContentToHDC(HDC deviceContext)
+{
+    if (!isAcceleratedCompositing() || usesLayeredWindow())
+        return false;
+
+#if USE(CA)
+    m_layerTreeHost->flushPendingLayerChangesNow();
+#elif USE(TEXTURE_MAPPER_GL)
+    m_acceleratedCompositingContext->flushAndRenderLayers();
+#endif
+
+    // Flushing might have taken us out of compositing mode.
+    if (!isAcceleratedCompositing())
+        return false;
+
+#if USE(CA)
+    m_layerTreeHost->paint(deviceContext);
+#endif
+
+    return true;
+}
+
 HRESULT WebView::paintDocumentRectToContext(RECT rect, HDC deviceContext)
 {
     if (!deviceContext)
@@ -6053,6 +6064,9 @@ HRESULT WebView::paintDocumentRectToContext(RECT rect, HDC deviceContext)
 
     if (!m_mainFrame)
         return E_FAIL;
+
+    if (paintCompositedContentToHDC(deviceContext))
+        return S_OK;
 
     return m_mainFrame->paintDocumentRectToContext(rect, deviceContext);
 }
@@ -6064,6 +6078,9 @@ HRESULT WebView::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, HDC de
 
     if (!m_mainFrame)
         return E_FAIL;
+
+    if (paintCompositedContentToHDC(deviceContext))
+        return S_OK;
 
     return m_mainFrame->paintScrollViewRectToContextAtPoint(rect, pt, deviceContext);
 }
@@ -6686,6 +6703,11 @@ HRESULT WebView::unused4()
 HRESULT WebView::unused5()
 {
     ASSERT_NOT_REACHED();
+
+    // The following line works around a linker issue in MSVC. unused5 should never be called,
+    // and this code does nothing more than force the symbol to be included in WebKit dll.
+    (void)WebCore::PathUtilities::pathWithShrinkWrappedRects(Vector<FloatRect>(), 0);
+
     return E_FAIL;
 }
 

@@ -1033,6 +1033,7 @@ protected:
     static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     void updateWindowIfNeeded(HWND hWnd, UINT message);
+    bool paintCompositedContentToHDC(HDC);
 
     HIMC getIMMContext();
     void releaseIMMContext(HIMC);
