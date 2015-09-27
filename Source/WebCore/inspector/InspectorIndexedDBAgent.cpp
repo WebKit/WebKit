@@ -259,9 +259,8 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
         break;
     case IDBKeyPath::ArrayType: {
         auto array = Inspector::Protocol::Array<String>::create();
-        const Vector<String>& stringArray = idbKeyPath.array();
-        for (size_t i = 0; i < stringArray.size(); ++i)
-            array->addItem(stringArray[i]);
+        for (auto& string : idbKeyPath.array())
+            array->addItem(string);
         keyPath = KeyPath::create()
             .setType(KeyPath::Type::Array)
             .release();

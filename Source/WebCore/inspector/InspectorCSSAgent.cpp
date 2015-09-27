@@ -87,8 +87,7 @@ static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
         return PseudoClassNone;
 
     unsigned result = PseudoClassNone;
-    for (size_t i = 0; i < pseudoClassArray.length(); ++i) {
-        RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray.get(i);
+    for (auto& pseudoClassValue : pseudoClassArray) {
         String pseudoClass;
         bool success = pseudoClassValue->asString(pseudoClass);
         if (!success)
@@ -148,8 +147,8 @@ void ChangeRegionOversetTask::reset()
 void ChangeRegionOversetTask::timerFired()
 {
     // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
-    for (HashMap<WebKitNamedFlow*, int>::iterator it = m_namedFlows.begin(), end = m_namedFlows.end(); it != end; ++it)
-        m_cssAgent->regionOversetChanged(it->key, it->value);
+    for (auto& namedFlow : m_namedFlows)
+        m_cssAgent->regionOversetChanged(namedFlow.key, namedFlow.value);
 
     m_namedFlows.clear();
 }
@@ -904,8 +903,8 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int doc
     Vector<RefPtr<WebKitNamedFlow>> namedFlowsVector = document->namedFlows().namedFlows();
     auto namedFlows = Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>::create();
 
-    for (Vector<RefPtr<WebKitNamedFlow>>::iterator it = namedFlowsVector.begin(); it != namedFlowsVector.end(); ++it)
-        namedFlows->addItem(buildObjectForNamedFlow(errorString, it->get(), documentNodeId));
+    for (auto& namedFlow : namedFlowsVector)
+        namedFlows->addItem(buildObjectForNamedFlow(errorString, namedFlow.get(), documentNodeId));
 
     result = WTF::move(namedFlows);
 }
@@ -1183,14 +1182,14 @@ void InspectorCSSAgent::styleSheetChanged(InspectorStyleSheet* styleSheet)
 void InspectorCSSAgent::resetPseudoStates()
 {
     HashSet<Document*> documentsToChange;
-    for (NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.begin(), end = m_nodeIdToForcedPseudoState.end(); it != end; ++it) {
-        if (Element* element = downcast<Element>(m_domAgent->nodeForId(it->key)))
+    for (auto& nodeId : m_nodeIdToForcedPseudoState) {
+        if (Element* element = downcast<Element>(m_domAgent->nodeForId(nodeId.key)))
             documentsToChange.add(&element->document());
     }
 
     m_nodeIdToForcedPseudoState.clear();
-    for (HashSet<Document*>::iterator it = documentsToChange.begin(), end = documentsToChange.end(); it != end; ++it)
-        (*it)->styleResolverChanged(RecalcStyleImmediately);
+    for (auto& document : documentsToChange)
+        document->styleResolverChanged(RecalcStyleImmediately);
 }
 
 } // namespace WebCore

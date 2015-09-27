@@ -76,8 +76,8 @@ static Ref<Inspector::Protocol::Replay::ReplaySession> buildInspectorObjectForSe
 {
     auto segments = Inspector::Protocol::Array<SegmentIdentifier>::create();
 
-    for (auto it = session->begin(); it != session->end(); ++it)
-        segments->addItem((*it)->identifier());
+    for (auto& segment : *session)
+        segments->addItem(segment->identifier());
 
     return Inspector::Protocol::Replay::ReplaySession::create()
         .setId(session->identifier())
@@ -185,8 +185,8 @@ void InspectorReplayAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter
     RefPtr<ReplaySession> session = m_page.replayController().loadedSession();
     m_sessionsMap.add(session->identifier(), session);
 
-    for (auto it = session->begin(); it != session->end(); ++it)
-        m_segmentsMap.add((*it)->identifier(), *it);
+    for (auto& segment : *session)
+        m_segmentsMap.add(segment->identifier(), segment);
 }
 
 void InspectorReplayAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)

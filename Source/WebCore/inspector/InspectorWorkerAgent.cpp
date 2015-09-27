@@ -203,15 +203,15 @@ void InspectorWorkerAgent::workerGlobalScopeTerminated(WorkerGlobalScopeProxy* p
 
 void InspectorWorkerAgent::createWorkerFrontendChannelsForExistingWorkers()
 {
-    for (DedicatedWorkers::iterator it = m_dedicatedWorkers.begin(); it != m_dedicatedWorkers.end(); ++it)
-        createWorkerFrontendChannel(it->key, it->value);
+    for (auto& worker : m_dedicatedWorkers)
+        createWorkerFrontendChannel(worker.key, worker.value);
 }
 
 void InspectorWorkerAgent::destroyWorkerFrontendChannels()
 {
-    for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
-        it->value->disconnectFromWorkerGlobalScope();
-        delete it->value;
+    for (auto& channel : m_idToChannel.values()) {
+        channel->disconnectFromWorkerGlobalScope();
+        delete channel;
     }
     m_idToChannel.clear();
 }

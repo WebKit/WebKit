@@ -96,8 +96,7 @@ void ParsedStyleSheet::setText(const String& text)
 
 static void flattenSourceData(RuleSourceDataList* dataList, RuleSourceDataList* target)
 {
-    for (size_t i = 0; i < dataList->size(); ++i) {
-        RefPtr<CSSRuleSourceData>& data = dataList->at(i);
+    for (auto& data : *dataList) {
         if (data->type == CSSRuleSourceData::STYLE_RULE)
             target->append(data);
         else if (data->type == CSSRuleSourceData::MEDIA_RULE)
@@ -319,8 +318,8 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStylePropert
     Vector<InspectorStyleProperty> properties;
     populateAllProperties(&properties);
 
-    for (Vector<InspectorStyleProperty>::iterator it = properties.begin(), itEnd = properties.end(); it != itEnd; ++it) {
-        const CSSPropertySourceData& propertyEntry = it->sourceData;
+    for (auto& property : properties) {
+        const CSSPropertySourceData& propertyEntry = property.sourceData;
         auto entry = Inspector::Protocol::CSS::CSSComputedStyleProperty::create()
             .setName(propertyEntry.name)
             .setValue(propertyEntry.value)
@@ -366,11 +365,11 @@ bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
         String styleDeclaration;
         bool isStyleTextKnown = getText(&styleDeclaration);
         ASSERT_UNUSED(isStyleTextKnown, isStyleTextKnown);
-        for (Vector<CSSPropertySourceData>::const_iterator it = sourcePropertyData->begin(); it != sourcePropertyData->end(); ++it) {
-            InspectorStyleProperty p(*it, true, false);
+        for (auto& sourceData : *sourcePropertyData) {
+            InspectorStyleProperty p(sourceData, true, false);
             p.setRawTextFromStyleDeclaration(styleDeclaration);
             result->append(p);
-            sourcePropertyNames.add(lowercasePropertyName(it->name));
+            sourcePropertyNames.add(lowercasePropertyName(sourceData.name));
         }
     }
 
@@ -884,16 +883,14 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> se
     DEPRECATED_DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, comment, ("/\\*[^]*?\\*/", TextCaseSensitive, JSC::Yarr::MultilineEnabled));
 
     auto result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>::create();
-    const SelectorRangeList& ranges = sourceData->selectorRanges;
     const CSSSelector* selector = selectorList.first();
-    for (size_t i = 0, size = ranges.size(); i < size; ++i) {
+    for (auto& range : sourceData->selectorRanges) {
         // If we don't have a selector, that means the SourceData for this CSSStyleSheet
         // no longer matches up with the actual rules in the CSSStyleSheet.
         ASSERT(selector);
         if (!selector)
             break;
 
-        const SourceRange& range = ranges.at(i);
         String selectorText = sheetText.substring(range.start, range.length());
 
         // We don't want to see any comments in the selector components, only the meaningful parts.
@@ -1076,8 +1073,8 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(CSSStyleDeclaration* pageStyle) c
 {
     ensureFlatRules();
     unsigned index = 0;
-    for (unsigned i = 0, size = m_flatRules.size(); i < size; ++i) {
-        if (&m_flatRules.at(i)->style() == pageStyle)
+    for (auto& rule : m_flatRules) {
+        if (&rule->style() == pageStyle)
             return index;
 
         ++index;
@@ -1240,8 +1237,8 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> InspectorStyl
     CSSStyleRuleVector rules;
     collectFlatRules(WTF::move(refRuleList), &rules);
 
-    for (unsigned i = 0, size = rules.size(); i < size; ++i)
-        result->addItem(buildObjectForRule(rules.at(i).get(), nullptr));
+    for (auto& rule : rules)
+        result->addItem(buildObjectForRule(rule.get(), nullptr));
 
     return WTF::move(result);
 }

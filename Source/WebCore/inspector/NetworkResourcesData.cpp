@@ -254,13 +254,11 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::data(const Strin
 Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cachedResource)
 {
     Vector<String> result;
-    ResourceDataMap::iterator it;
-    ResourceDataMap::iterator end = m_requestIdToResourceDataMap.end();
-    for (it = m_requestIdToResourceDataMap.begin(); it != end; ++it) {
-        ResourceData* resourceData = it->value;
+    for (auto& entry : m_requestIdToResourceDataMap) {
+        ResourceData* resourceData = entry.value;
         if (resourceData->cachedResource() == cachedResource) {
             resourceData->setCachedResource(nullptr);
-            result.append(it->key);
+            result.append(entry.key);
         }
     }
 
@@ -274,13 +272,11 @@ void NetworkResourcesData::clear(const String& preservedLoaderId)
 
     ResourceDataMap preservedMap;
 
-    ResourceDataMap::iterator it;
-    ResourceDataMap::iterator end = m_requestIdToResourceDataMap.end();
-    for (it = m_requestIdToResourceDataMap.begin(); it != end; ++it) {
-        ResourceData* resourceData = it->value;
+    for (auto& entry : m_requestIdToResourceDataMap) {
+        ResourceData* resourceData = entry.value;
         ASSERT(resourceData);
         if (!preservedLoaderId.isNull() && resourceData->loaderId() == preservedLoaderId)
-            preservedMap.set(it->key, it->value);
+            preservedMap.set(entry.key, entry.value);
         else
             delete resourceData;
     }

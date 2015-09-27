@@ -53,14 +53,13 @@ void WebConsoleAgent::setMonitoringXHREnabled(ErrorString&, bool enabled)
 
 void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 {
-    size_t messageCount = m_consoleMessages.size();
-    for (size_t i = 0; i < messageCount; ++i) {
-        JSC::ExecState* exec = m_consoleMessages[i]->scriptState();
+    for (auto& message : m_consoleMessages) {
+        JSC::ExecState* exec = message->scriptState();
         if (!exec)
             continue;
         if (domWindowFromExecState(exec) != window)
             continue;
-        m_consoleMessages[i]->clear();
+        message->clear();
     }
 
     static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).discardInjectedScriptsFor(window);

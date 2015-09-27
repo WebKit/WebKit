@@ -512,10 +512,9 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<Inspector::Protocol::Ar
                 // because "document" is the document of the main frame of the page.
                 stringCookiesList.append(document->cookie(ASSERT_NO_EXCEPTION));
             } else {
-                int cookiesSize = docCookiesList.size();
-                for (int i = 0; i < cookiesSize; i++) {
-                    if (!rawCookiesList.contains(docCookiesList[i]))
-                        rawCookiesList.add(docCookiesList[i]);
+                for (auto& cookie : docCookiesList) {
+                    if (!rawCookiesList.contains(cookie))
+                        rawCookiesList.add(cookie);
                 }
             }
         }

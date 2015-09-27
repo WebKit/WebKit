@@ -96,8 +96,8 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
     if (isSVGRenderer) {
         highlight.type = HighlightType::Rects;
         renderer->absoluteQuads(highlight.quads);
-        for (size_t i = 0; i < highlight.quads.size(); ++i)
-            contentsQuadToCoordinateSystem(mainView, containingView, highlight.quads[i], coordinateSystem);
+        for (auto& quad : highlight.quads)
+            contentsQuadToCoordinateSystem(mainView, containingView, quad, coordinateSystem);
     } else if (is<RenderBox>(*renderer) || is<RenderInline>(*renderer)) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
@@ -378,8 +378,8 @@ static Ref<Inspector::Protocol::OverlayTypes::Quad> buildArrayForQuad(const Floa
 static Ref<Inspector::Protocol::OverlayTypes::FragmentHighlightData> buildObjectForHighlight(const Highlight& highlight)
 {
     auto arrayOfQuads = Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Quad>::create();
-    for (size_t i = 0; i < highlight.quads.size(); ++i)
-        arrayOfQuads->addItem(buildArrayForQuad(highlight.quads[i]));
+    for (auto& quad : highlight.quads)
+        arrayOfQuads->addItem(buildArrayForQuad(quad));
 
     return Inspector::Protocol::OverlayTypes::FragmentHighlightData::create()
         .setQuads(WTF::move(arrayOfQuads))

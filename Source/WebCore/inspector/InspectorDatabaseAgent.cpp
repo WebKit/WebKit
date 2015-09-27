@@ -80,14 +80,11 @@ public:
         SQLResultSetRowList* rowList = resultSet->rows();
 
         auto columnNames = Inspector::Protocol::Array<String>::create();
-        const Vector<String>& columns = rowList->columnNames();
-        for (size_t i = 0; i < columns.size(); ++i)
-            columnNames->addItem(columns[i]);
+        for (auto& column : rowList->columnNames())
+            columnNames->addItem(column);
 
         auto values = Inspector::Protocol::Array<InspectorValue>::create();
-        const Vector<SQLValue>& data = rowList->values();
-        for (size_t i = 0; i < data.size(); ++i) {
-            const SQLValue& value = rowList->values()[i];
+        for (auto& value : rowList->values()) {
             RefPtr<InspectorValue> inspectorValue;
             switch (value.type()) {
             case SQLValue::StringValue: inspectorValue = InspectorString::create(value.string()); break;
@@ -241,9 +238,8 @@ void InspectorDatabaseAgent::enable(ErrorString&)
         return;
     m_enabled = true;
 
-    DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
-    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
-        it->value->bind(m_frontendDispatcher.get());
+    for (auto& resource : m_resources.values())
+        resource->bind(m_frontendDispatcher.get());
 }
 
 void InspectorDatabaseAgent::disable(ErrorString&)
@@ -264,10 +260,8 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const Str
 
     Database* database = databaseForId(databaseId);
     if (database) {
-        Vector<String> tableNames = database->tableNames();
-        unsigned length = tableNames.size();
-        for (unsigned i = 0; i < length; ++i)
-            names->addItem(tableNames[i]);
+        for (auto& tableName : database->tableNames())
+            names->addItem(tableName);
     }
 }
 
@@ -292,18 +286,18 @@ void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, 
 
 String InspectorDatabaseAgent::databaseId(Database* database)
 {
-    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-        if (it->value->database() == database)
-            return it->key;
+    for (auto& resource : m_resources) {
+        if (resource.value->database() == database)
+            return resource.key;
     }
     return String();
 }
 
 InspectorDatabaseResource* InspectorDatabaseAgent::findByFileName(const String& fileName)
 {
-    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
-        if (it->value->database()->fileName() == fileName)
-            return it->value.get();
+    for (auto& resource : m_resources.values()) {
+        if (resource->database()->fileName() == fileName)
+            return resource.get();
     }
     return nullptr;
 }

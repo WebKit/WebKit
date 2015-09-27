@@ -152,8 +152,8 @@ void PageRuntimeAgent::reportExecutionContextCreation()
         frame->script().collectIsolatedContexts(isolatedContexts);
         if (isolatedContexts.isEmpty())
             continue;
-        for (size_t i = 0; i< isolatedContexts.size(); i++)
-            notifyContextCreated(frameId, isolatedContexts[i].first, isolatedContexts[i].second, false);
+        for (auto& context : isolatedContexts)
+            notifyContextCreated(frameId, context.first, context.second, false);
         isolatedContexts.clear();
     }
 }

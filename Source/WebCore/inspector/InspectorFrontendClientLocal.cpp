@@ -166,8 +166,8 @@ void InspectorFrontendClientLocal::frontendLoaded()
     setDockingUnavailable(!canAttachWindow());
     bringToFront();
     m_frontendLoaded = true;
-    for (Vector<String>::iterator it = m_evaluateOnLoad.begin(); it != m_evaluateOnLoad.end(); ++it)
-        evaluateOnLoad(*it);
+    for (auto& evaluate : m_evaluateOnLoad)
+        evaluateOnLoad(evaluate);
     m_evaluateOnLoad.clear();
 }
 

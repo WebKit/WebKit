@@ -186,8 +186,8 @@ void RevalidateStyleAttributeTask::timerFired()
 {
     // The timer is stopped on m_domAgent destruction, so this method will never be called after m_domAgent has been destroyed.
     Vector<Element*> elements;
-    for (HashSet<RefPtr<Element>>::iterator it = m_elements.begin(), end = m_elements.end(); it != end; ++it)
-        elements.append(it->get());
+    for (auto& element : m_elements)
+        elements.append(element.get());
     m_domAgent->styleAttributeInvalidated(elements);
 
     m_elements.clear();
@@ -631,8 +631,8 @@ void InspectorDOMAgent::releaseBackendNodeIds(ErrorString& errorString, const St
 {
     if (m_nodeGroupToBackendIdMap.contains(nodeGroup)) {
         NodeToBackendIdMap& map = m_nodeGroupToBackendIdMap.find(nodeGroup)->value;
-        for (NodeToBackendIdMap::iterator it = map.begin(); it != map.end(); ++it)
-            m_backendIdToNode.remove(it->value);
+        for (auto& backendId : map.values())
+            m_backendIdToNode.remove(backendId);
         m_nodeGroupToBackendIdMap.remove(nodeGroup);
         return;
     }
@@ -813,11 +813,8 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
 
     // Get Capturing Listeners (in this order)
     size_t eventInformationLength = eventInformation.size();
-    for (size_t i = 0; i < eventInformationLength; ++i) {
-        const EventListenerInfo& info = eventInformation[i];
-        const EventListenerVector& vector = info.eventListenerVector;
-        for (size_t j = 0; j < vector.size(); ++j) {
-            const RegisteredEventListener& listener = vector[j];
+    for (auto& info : eventInformation) {
+        for (auto& listener : info.eventListenerVector) {
             if (listener.useCapture)
                 listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node, objectGroup));
         }
@@ -826,9 +823,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
     // Get Bubbling Listeners (reverse order)
     for (size_t i = eventInformationLength; i; --i) {
         const EventListenerInfo& info = eventInformation[i - 1];
-        const EventListenerVector& vector = info.eventListenerVector;
-        for (size_t j = 0; j < vector.size(); ++j) {
-            const RegisteredEventListener& listener = vector[j];
+        for (auto& listener : info.eventListenerVector) {
             if (!listener.useCapture)
                 listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node, objectGroup));
         }
@@ -853,15 +848,13 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
         if (!d)
             continue;
         // Get the list of event types this Node is concerned with
-        Vector<AtomicString> eventTypes = d->eventListenerMap.eventTypes();
-        for (size_t j = 0; j < eventTypes.size(); ++j) {
-            AtomicString& type = eventTypes[j];
+        for (auto& type : d->eventListenerMap.eventTypes()) {
             const EventListenerVector& listeners = ancestor->getEventListeners(type);
             EventListenerVector filteredListeners;
             filteredListeners.reserveCapacity(listeners.size());
-            for (size_t k = 0; k < listeners.size(); ++k) {
-                if (listeners[k].listener->type() == EventListener::JSEventListenerType)
-                    filteredListeners.append(listeners[k]);
+            for (auto& listener : listeners) {
+                if (listener.listener->type() == EventListener::JSEventListenerType)
+                    filteredListeners.append(listener);
             }
             if (!filteredListeners.isEmpty())
                 eventInformation.append(EventListenerInfo(ancestor, type, filteredListeners));
@@ -884,8 +877,7 @@ void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& wh
     InspectorNodeFinder finder(whitespaceTrimmedQuery);
 
     if (nodeIds) {
-        for (unsigned i = 0; i < nodeIds->length(); ++i) {
-            RefPtr<InspectorValue> nodeValue = nodeIds->get(i);
+        for (auto& nodeValue : *nodeIds) {
             if (!nodeValue) {
                 errorString = ASCIILiteral("Invalid nodeIds item.");
                 return;
@@ -912,8 +904,8 @@ void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& wh
     *searchId = IdentifiersFactory::createIdentifier();
 
     auto& resultsVector = m_searchResults.add(*searchId, Vector<RefPtr<Node>>()).iterator->value;
-    for (auto iterator = finder.results().begin(); iterator != finder.results().end(); ++iterator)
-        resultsVector.append(*iterator);
+    for (auto& result : finder.results())
+        resultsVector.append(result);
 
     *resultCount = resultsVector.size();
 }
@@ -1963,8 +1955,7 @@ void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomicString& n
 void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elements)
 {
     auto nodeIds = Inspector::Protocol::Array<int>::create();
-    for (unsigned i = 0, size = elements.size(); i < size; ++i) {
-        Element* element = elements.at(i);
+    for (auto& element : elements) {
         int id = boundNodeId(element);
         // If node is not mapped yet -> ignore the event.
         if (!id)

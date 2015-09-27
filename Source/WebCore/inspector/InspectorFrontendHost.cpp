@@ -85,8 +85,8 @@ private:
     
     virtual void populateContextMenu(ContextMenu* menu) override
     {
-        for (size_t i = 0; i < m_items.size(); ++i)
-            menu->appendItem(m_items[i]);
+        for (auto& item : m_items)
+            menu->appendItem(item);
     }
     
     virtual void contextMenuItemSelected(ContextMenuItem* item) override

@@ -395,9 +395,9 @@ void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
     if (m_pauseOnAllXHRsEnabled)
         breakpointURL = emptyString();
     else {
-        for (auto it = m_xhrBreakpoints.begin(), end = m_xhrBreakpoints.end(); it != end; ++it) {
-            if (url.contains(*it)) {
-                breakpointURL = *it;
+        for (auto& breakpoint : m_xhrBreakpoints) {
+            if (url.contains(breakpoint)) {
+                breakpointURL = breakpoint;
                 break;
             }
         }

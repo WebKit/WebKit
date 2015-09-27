@@ -146,11 +146,8 @@ void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool
 {
     setMainThreadCallbacksPaused(paused);
 
-    const HashSet<Page*>& pages = pageGroup.pages();
-
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it)
-        setJavaScriptPaused(*it, paused);
+    for (auto& page : pageGroup.pages())
+        setJavaScriptPaused(page, paused);
 }
 
 void PageScriptDebugServer::setJavaScriptPaused(Page* page, bool paused)
