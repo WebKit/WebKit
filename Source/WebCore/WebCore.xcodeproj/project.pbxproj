@@ -6324,6 +6324,8 @@
 		E1FF8F681807460800132674 /* JSSubtleCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F661807460800132674 /* JSSubtleCryptoCustom.cpp */; };
 		E1FF8F6C180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */; };
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
+		E38838981BAD145F00D62EE3 /* JSModuleLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38838941BAD145F00D62EE3 /* JSModuleLoader.cpp */; settings = {ASSET_TAGS = (); }; };
+		E38838991BAD145F00D62EE3 /* JSModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E38838951BAD145F00D62EE3 /* JSModuleLoader.h */; settings = {ASSET_TAGS = (); }; };
 		E401C27517CE53EC00C41A35 /* ElementIteratorAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E424A39E1330DF0100CF6DC9 /* LegacyTileGridTile.h in Headers */ = {isa = PBXBuildFile; fileRef = E424A39D1330DF0100CF6DC9 /* LegacyTileGridTile.h */; };
 		E424A3A01330DF1E00CF6DC9 /* LegacyTileGridTile.mm in Sources */ = {isa = PBXBuildFile; fileRef = E424A39F1330DF1E00CF6DC9 /* LegacyTileGridTile.mm */; };
@@ -14085,6 +14087,8 @@
 		E1FF8F661807460800132674 /* JSSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
 		E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRegistry.cpp; sourceTree = "<group>"; };
 		E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRegistry.h; sourceTree = "<group>"; };
+		E38838941BAD145F00D62EE3 /* JSModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleLoader.cpp; sourceTree = "<group>"; };
+		E38838951BAD145F00D62EE3 /* JSModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleLoader.h; sourceTree = "<group>"; };
 		E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIteratorAssertions.h; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
 		E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyNames.cpp; sourceTree = "<group>"; };
@@ -21537,6 +21541,8 @@
 				41189EF81AD8233C00B90A0D /* JSReadableStreamControllerCustom.cpp */,
 				E1C36D320EB0A094007410BC /* JSWorkerGlobalScopeBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerGlobalScopeBase.h */,
+				E38838941BAD145F00D62EE3 /* JSModuleLoader.cpp */,
+				E38838951BAD145F00D62EE3 /* JSModuleLoader.h */,
 				4198BDEE1A81123600B22FB5 /* ReadableJSStream.cpp */,
 				4198BDEF1A81123600B22FB5 /* ReadableJSStream.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
@@ -26207,6 +26213,7 @@
 				CE1252411A16B1B600864480 /* MediaPlayerSPI.h in Headers */,
 				52E2CAFC19FF0207001EEB4F /* MediaProducer.h in Headers */,
 				4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */,
+				E38838991BAD145F00D62EE3 /* JSModuleLoader.h in Headers */,
 				4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */,
 				4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */,
 				D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */,
@@ -28573,6 +28580,7 @@
 				3106037A143281CD00ABF4BA /* DOMWebKitCSSFilterValue.mm in Sources */,
 				498391510F1E76B400C23782 /* DOMWebKitCSSMatrix.mm in Sources */,
 				8AD0A59714C88358000D83C5 /* DOMWebKitCSSRegionRule.mm in Sources */,
+				E38838981BAD145F00D62EE3 /* JSModuleLoader.cpp in Sources */,
 				31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */,
 				3F2B33EC165AF15600E3987C /* DOMWebKitCSSViewportRule.mm in Sources */,
 				8A195933147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm in Sources */,

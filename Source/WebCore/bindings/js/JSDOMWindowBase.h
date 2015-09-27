@@ -78,6 +78,10 @@ namespace WebCore {
         JSC::WatchpointSet m_windowCloseWatchpoints;
 
     private:
+        static JSC::JSInternalPromise* moduleLoaderResolve(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSValue, JSC::JSValue);
+        static JSC::JSInternalPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSValue);
+        static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::ExecState*, JSC::JSValue, JSC::JSValue);
+
         RefPtr<DOMWindow> m_impl;
         JSDOMWindowShell* m_shell;
     };

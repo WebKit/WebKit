@@ -122,6 +122,7 @@ class IntPoint;
 class LayoutPoint;
 class LayoutRect;
 class LiveNodeList;
+class JSModuleLoader;
 class JSNode;
 class Locale;
 class Location;
@@ -934,6 +935,7 @@ public:
     Document& topDocument() const;
     
     ScriptRunner* scriptRunner() { return m_scriptRunner.get(); }
+    JSModuleLoader* moduleLoader() { return m_moduleLoader.get(); }
 
     HTMLScriptElement* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : 0; }
     void pushCurrentScript(PassRefPtr<HTMLScriptElement>);
@@ -1518,6 +1520,7 @@ private:
     bool m_overMinimumLayoutThreshold;
     
     std::unique_ptr<ScriptRunner> m_scriptRunner;
+    std::unique_ptr<JSModuleLoader> m_moduleLoader;
 
     Vector<RefPtr<HTMLScriptElement>> m_currentScriptStack;
 

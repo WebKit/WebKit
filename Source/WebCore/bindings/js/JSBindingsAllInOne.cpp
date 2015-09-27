@@ -106,6 +106,7 @@
 #include "JSMessageChannelCustom.cpp"
 #include "JSMessageEventCustom.cpp"
 #include "JSMessagePortCustom.cpp"
+#include "JSModuleLoader.cpp"
 #include "JSMutationCallback.cpp"
 #include "JSMutationObserverCustom.cpp"
 #include "JSNamedNodeMapCustom.cpp"

@@ -96,6 +96,7 @@
 #include "ImageLoader.h"
 #include "InspectorInstrumentation.h"
 #include "JSLazyEventListener.h"
+#include "JSModuleLoader.h"
 #include "Language.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
@@ -464,6 +465,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_startTime(std::chrono::steady_clock::now())
     , m_overMinimumLayoutThreshold(false)
     , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
+    , m_moduleLoader(std::make_unique<JSModuleLoader>(*this))
     , m_xmlVersion(ASCIILiteral("1.0"))
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(false)
@@ -605,6 +607,7 @@ Document::~Document()
         m_domWindow->resetUnlessSuspendedForPageCache();
 
     m_scriptRunner = nullptr;
+    m_moduleLoader = nullptr;
 
     removeAllEventListeners();
 

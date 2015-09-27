@@ -4380,6 +4380,9 @@
     <ClCompile Include="..\bindings\js\JSMessagePortCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSModuleLoader.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSMutationCallback.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -11474,6 +11477,9 @@
     <ClInclude Include="..\bindings\js\JSMessagePortCustom.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
+    <ClInclude Include="..\bindings\js\JSModuleLoader.h">
+      <Filter>bindings\js</Filter>
+    </ClInclude>
     <ClInclude Include="..\bindings\js\JSMutationCallback.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
@@ -11654,10 +11660,19 @@
     <ClInclude Include="..\ForwardingHeaders\runtime\Identifier.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSInternalPromise.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSInternalPromiseDeferred.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\JSLock.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\JSObject.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\JSModuleRecord.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\JSString.h">
@@ -11676,6 +11691,9 @@
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\runtime\StringObject.h">
+      <Filter>ForwardingHeaders\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\runtime\Symbol.h">
       <Filter>ForwardingHeaders\runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\yarr\RegularExpression.h">

@@ -1,0 +1,4 @@
+#ifndef WebCore_FWD_JSInternalPromiseDeferred_h
+#define WebCore_FWD_JSInternalPromiseDeferred_h
+#include <JavaScriptCore/JSInternalPromiseDeferred.h>
+#endif
