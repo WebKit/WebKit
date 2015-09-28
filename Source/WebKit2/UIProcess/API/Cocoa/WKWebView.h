@@ -241,6 +241,11 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 /*! @abstract The scroll view associated with the web view.
  */
 @property (nonatomic, readonly, strong) UIScrollView *scrollView;
+
+/*! @abstract A Boolean value indicating whether programmatic focus on
+ an element is allowed to trigger assistance.
+ */
+@property (nonatomic) BOOL canAssistOnProgrammaticFocus;
 #endif
 
 #if !TARGET_OS_IPHONE

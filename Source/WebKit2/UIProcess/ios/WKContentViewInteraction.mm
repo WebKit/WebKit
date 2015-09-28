@@ -3015,7 +3015,7 @@ static bool isAssistableInputType(InputType type)
 {
     // FIXME: This is a temporary workaround for <rdar://problem/22126518>. The real fix will involve refactoring
     // the way we assist programmatically focused nodes.
-    if (!userIsInteracting && !_textSelectionAssistant)
+    if (!userIsInteracting && !_textSelectionAssistant && !_webView.canAssistOnProgrammaticFocus)
         return;
 
     if (blurPreviousNode)

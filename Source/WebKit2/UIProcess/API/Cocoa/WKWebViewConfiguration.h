@@ -119,6 +119,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
  */
 @property (nonatomic) BOOL allowsPictureInPictureMediaPlayback WK_AVAILABLE(NA, 9_0);
 
+/*! @abstract A Boolean value indicating whether programmatic focus on
+ an element is allowed to trigger assistance.
+ @discussion The default value is NO.
+ */
+@property (nonatomic) BOOL canAssistOnProgrammaticFocus;
+
 #endif
 
 @end

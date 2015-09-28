@@ -211,6 +211,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     BOOL _pageIsPrintingToPDF;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
     Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
+
+    BOOL _canAssistOnProgrammaticFocus;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -366,6 +368,8 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
 
     [[_configuration _contentProviderRegistry] addPage:*_page];
+
+    [self setCanAssistOnProgrammaticFocus:[_configuration canAssistOnProgrammaticFocus]];
 #endif
 
 #if PLATFORM(MAC)
@@ -714,6 +718,16 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 - (UIScrollView *)scrollView
 {
     return _scrollView.get();
+}
+
+- (BOOL)canAssistOnProgrammaticFocus
+{
+    return _canAssistOnProgrammaticFocus;
+}
+
+- (void)setCanAssistOnProgrammaticFocus:(BOOL)canAssistOnProgrammaticFocus
+{
+    _canAssistOnProgrammaticFocus = canAssistOnProgrammaticFocus;
 }
 
 - (WKBrowsingContextController *)browsingContextController

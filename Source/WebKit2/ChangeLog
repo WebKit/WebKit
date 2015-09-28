@@ -1,3 +1,40 @@
+2015-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Expose a WKWebView API for allowing programmatic focus to trigger node assistance
+        https://bugs.webkit.org/show_bug.cgi?id=149567
+
+        Reviewed by Darin Adler.
+
+        Adds an API method to WKWebView that allows clients to override the default iOS behavior of not
+        starting node assistance when programmatically focusing. Also fixes a bug caused by naively
+        introducing the flag where the autofocus attribute could trigger node assistance before layout
+        occurs, causing an ASSERT to fail in EditorState::postLayoutData.
+
+        I fixed this issue by not assisting the node if the editor state is missing post layout data,
+        instead deferring node assistance until layout has occurred.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]): Initializes the new node assistance flag to NO, which
+            is the current default behavior.
+        (-[WKWebView canAssistOnProgrammaticFocus]):
+        (-[WKWebView setCanAssistOnProgrammaticFocus:]): New API method that allows clients to set node
+            assistance behavior upon programmatic focus.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Added new node assistance flag to configuration.
+        (-[WKWebViewConfiguration _canAssistOnProgrammaticFocus]):
+        (-[WKWebViewConfiguration _setCanAssistOnProgrammaticFocus:]):
+        * UIProcess/WebPageProxy.h: Added NodeAssistanceArguments struct.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]): Do not return
+            early if the node assistance flag is set to allow programmatic focus.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree): After committing the layer tree, if we have deferred
+            starting node assistance, immediately trigger node assistance.
+        (WebKit::WebPageProxy::startAssistingNode): Defer starting node assistance if we have not yet repainted.
+        (WebKit::WebPageProxy::stopAssistingNode): Also cancel any deferred node assistance.
+
 2015-09-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r188639): [GTK] Several inspector tests started to time out in GTK+ bots after r188639
