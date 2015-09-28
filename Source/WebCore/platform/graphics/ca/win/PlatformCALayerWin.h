@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,7 +84,8 @@ public:
     virtual void setBackingStoreAttached(bool) override;
     virtual bool backingStoreAttached() const override;
 
-    virtual void setGeometryFlipped(bool) override;
+    bool geometryFlipped() const override;
+    void setGeometryFlipped(bool) override;
 
     virtual bool isDoubleSided() const override;
     virtual void setDoubleSided(bool) override;

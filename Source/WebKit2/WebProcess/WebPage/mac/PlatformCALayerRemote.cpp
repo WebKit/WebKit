@@ -522,6 +522,11 @@ void PlatformCALayerRemote::setGeometryFlipped(bool value)
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::GeometryFlippedChanged);
 }
 
+bool PlatformCALayerRemote::geometryFlipped() const
+{
+    return m_properties.geometryFlipped;
+}
+
 bool PlatformCALayerRemote::isDoubleSided() const
 {
     return m_properties.doubleSided;

@@ -452,6 +452,11 @@ bool PlatformCALayerWin::backingStoreAttached() const
     return true;
 }
 
+bool PlatformCALayerWin::geometryFlipped() const
+{
+    return CACFLayerIsGeometryFlipped(m_layer.get());
+}
+
 void PlatformCALayerWin::setGeometryFlipped(bool value)
 {
     CACFLayerSetGeometryFlipped(m_layer.get(), value);
@@ -785,6 +790,12 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
         builder.append('\n');
         printIndent(builder, indent + 1);
         builder.append("(masksToBounds true)");
+    }
+
+    if (bool geometryFlipped = layer->geometryFlipped()) {
+        builder.append('\n');
+        printIndent(builder, indent + 1);
+        builder.append("(geometryFlipped true)");
     }
 
     // Print opacity if needed

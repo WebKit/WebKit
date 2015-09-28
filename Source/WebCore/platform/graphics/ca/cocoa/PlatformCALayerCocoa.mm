@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -616,6 +616,11 @@ void PlatformCALayerCocoa::setBackingStoreAttached(bool)
 bool PlatformCALayerCocoa::backingStoreAttached() const
 {
     return true;
+}
+
+bool PlatformCALayerCocoa::geometryFlipped() const
+{
+    return [m_layer isGeometryFlipped];
 }
 
 void PlatformCALayerCocoa::setGeometryFlipped(bool value)

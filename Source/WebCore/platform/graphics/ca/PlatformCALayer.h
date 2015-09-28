@@ -157,6 +157,7 @@ public:
 
     virtual void setHidden(bool) = 0;
 
+    virtual bool geometryFlipped() const = 0;
     virtual void setGeometryFlipped(bool) = 0;
 
     virtual bool isDoubleSided() const = 0;

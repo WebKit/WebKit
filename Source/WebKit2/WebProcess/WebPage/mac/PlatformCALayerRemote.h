@@ -98,6 +98,7 @@ public:
     virtual bool backingStoreAttached() const override;
     virtual bool backingContributesToMemoryEstimate() const override { return backingStoreAttached(); }
 
+    virtual bool geometryFlipped() const override;
     virtual void setGeometryFlipped(bool) override;
 
     virtual bool isDoubleSided() const override;
