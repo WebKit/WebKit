@@ -1315,3 +1315,6 @@ webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.htm
 webkit.org/b/149593 fast/shadow-dom/shadow-layout-after-slot-changes.html [ ImageOnlyFailure ]
 
 webkit.org/b/149510 accessibility/mac/aria-expanded-notifications.html [ Pass Failure ]
+
+# Times out in debug.
+[ Debug ] js/regress/getter-richards-try-catch.html [ Skip ]
