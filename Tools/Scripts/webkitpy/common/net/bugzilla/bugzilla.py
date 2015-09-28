@@ -286,11 +286,10 @@ class BugzillaQueries(object):
         # We could pull the EditUsersParser off Bugzilla if needed.
         return EditUsersParser().login_userid_pairs_from_edit_user_results(results_page)
 
-    # FIXME: We should consider adding a BugzillaUser class.
-    def fetch_logins_matching_substring(self, search_string):
-        pairs = self.fetch_login_userid_pairs_matching_substring(search_string)
-        return map(lambda pair: pair[0], pairs)
-
+    def is_invalid_bugzilla_email(self, search_string):
+        review_queue_url = "request.cgi?action=queue&requester=%s&product=&type=review&requestee=&component=&group=requestee" % urllib.quote(search_string)
+        results_page = self._load_query(review_queue_url)
+        return bool(re.search("did not match anything", results_page.read()))
 
 class CommitQueueFlag(object):
     mark_for_nothing = 0

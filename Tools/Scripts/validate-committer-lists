@@ -253,7 +253,7 @@ class CommitterListBugzillaChecker(object):
         self._bugzilla = Bugzilla()
 
     def _has_invalid_bugzilla_email(self, committer):
-        return not self._bugzilla.queries.fetch_logins_matching_substring(committer.bugzilla_email())
+        return self._bugzilla.queries.is_invalid_bugzilla_email(committer.bugzilla_email())
 
     def print_committers_with_invalid_bugzilla_emails(self, committer_list):
         print # Print a newline before we start hitting bugzilla (it logs about logging in).
