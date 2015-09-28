@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2009, 2013, 2015 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -213,27 +213,27 @@ class GlobalVariablesTest(unittest.TestCase):
 
         assertCheck("random_path.cpp",
                     "build/include")
-        assertNoCheck("Tools/WebKitAPITest/main.cpp",
+        assertNoCheck(os.path.join('Tools', 'WebKitAPITest', 'main.cpp'),
                       "build/include")
         assertCheck("random_path.cpp",
                     "readability/naming")
-        assertNoCheck("Source/WebKit/gtk/webkit/webkit.h",
+        assertNoCheck(os.path.join('Source', 'WebKit', 'gtk', 'webkit', 'webkit.h'),
                       "readability/naming")
-        assertNoCheck("Tools/DumpRenderTree/gtk/DumpRenderTree.cpp",
+        assertNoCheck(os.path.join('Tools', 'DumpRenderTree', 'gtk', 'DumpRenderTree.cpp'),
                       "readability/null")
-        assertNoCheck("Source/WebKit2/UIProcess/API/efl/ewk_view.h",
+        assertNoCheck(os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'efl', 'ewk_view.h'),
                       "readability/naming")
-        assertNoCheck("Source/WebCore/css/CSSParser.cpp",
+        assertNoCheck(os.path.join('Source', 'WebCore', 'css', 'CSSParser.cpp'),
                       "readability/naming")
 
-        assertNoCheck("Source/WebCore/ForwardingHeaders/debugger/Debugger.h",
+        assertNoCheck(os.path.join('Source', 'WebCore', 'ForwardingHeaders', 'debugger', 'Debugger.h'),
                       "build/header_guard")
 
-        assertNoCheck("Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp",
+        assertNoCheck(os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer.cpp'),
                       "readability/naming")
 
         # Third-party Python code: webkitpy/thirdparty
-        path = "Tools/Scripts/webkitpy/thirdparty/mock.py"
+        path = os.path.join('Tools', 'Scripts', 'webkitpy', 'thirdparty', 'mock.py')
         assertNoCheck(path, "build/include")
         assertNoCheck(path, "pep8/E401")  # A random pep8 category.
         assertCheck(path, "pep8/W191")
@@ -241,11 +241,11 @@ class GlobalVariablesTest(unittest.TestCase):
         assertCheck(path, "whitespace/carriage_return")
 
         # Test if the exception for GDBInterface.cpp is in place.
-        assertNoCheck("Source/JavaScriptCore/jit/GDBInterface.cpp",
+        assertNoCheck(os.path.join('Source', 'JavaScriptCore', 'jit', 'GDBInterface.cpp'),
                       "readability/naming")
 
         # Javascript keywords.
-        assertCheck("Source/JavaScriptCore/parser/Keywords.table", "whitespace/carriage_return")
+        assertCheck(os.path.join('Source', 'JavaScriptCore', 'parser', 'Keywords.table'), "whitespace/carriage_return")
 
     def test_max_reports_per_category(self):
         """Check that _MAX_REPORTS_PER_CATEGORY is valid."""
@@ -280,10 +280,10 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         """Test should_skip_with_warning()."""
         # Check skipped files.
         paths_to_skip = [
-           "Tools/TestWebKitAPI/Tests/WebKitGtk/testatk.c",
-           "Source/WebKit2/UIProcess/API/gtk/webkit2.h",
-           "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.h",
-           "Source/WebKit2/UIProcess/API/gtk/WebKitLoader.h",
+           os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKitGtk', 'testatk.c'),
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitWebView.h'),
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitLoader.h'),
             ]
 
         for path in paths_to_skip:
@@ -293,12 +293,12 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         # Verify that some files are not skipped.
         paths_not_to_skip = [
            "foo.txt",
-           "Source/WebKit2/UIProcess/API/gtk/HelperClass.cpp",
-           "Source/WebKit2/UIProcess/API/gtk/HelperClass.h",
-           "Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp",
-           "Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h",
-           "Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebViewTest.cpp",
-           "Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebViewTest.h",
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'HelperClass.cpp'),
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'HelperClass.h'),
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitWebView.cpp'),
+           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitWebViewPrivate.h'),
+           os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKit2Gtk', 'WebViewTest.cpp'),
+           os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKit2Gtk', 'WebViewTest.h'),
             ]
 
         for path in paths_not_to_skip:
@@ -471,7 +471,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def test_js_paths(self):
         """Test paths that should be checked as JavaScript."""
         paths = [
-           "Source/WebInspectorUI/UserInterface/dummy.js",
+           os.path.join('Source', 'WebInspectorUI', 'UserInterface', 'dummy.js'),
         ]
 
         for path in paths:
@@ -489,8 +489,8 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def test_json_paths(self):
         """Test paths that should be checked as JSON."""
         paths = [
-           "Source/WebCore/inspector/Inspector.json",
-           "Tools/BuildSlaveSupport/build.webkit.org-config/config.json",
+           os.path.join('Source', 'WebCore', 'inspector', 'Inspector.json'),
+           os.path.join('Tools', 'BuildSlaveSupport', 'build.webkit.org-config', 'config.json'),
         ]
 
         for path in paths:
@@ -509,7 +509,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         """Test paths that should be checked as Python."""
         paths = [
            "foo.py",
-           "Tools/Scripts/modules/text_style.py",
+           os.path.join('Tools', 'Scripts', 'modules', 'text_style.py'),
         ]
 
         for path in paths:
@@ -550,10 +550,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
            "foo.wm",
            "foo.xhtml",
            "foo.y",
-           "Source/WebInspectorUI/External/codemirror.js",
-           "LayoutTests/fast/foo.js",
-           "Websites/webkit.org/foo.js",
-           os.path.join("Tools", "Scripts", "check-webkit-style"),
+           os.path.join('Source', 'WebInspectorUI', 'External', 'codemirror.js'),
+           os.path.join('LayoutTests', 'fast', 'foo.js'),
+           os.path.join('Websites', 'webkit.org', 'foo.js'),
+           os.path.join('Tools', 'Scripts', 'check-webkit-style'),
         ]
 
         for path in paths:
@@ -571,8 +571,8 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def test_xml_paths(self):
         """Test paths that should be checked as XML."""
         paths = [
-           "Source/WebCore/WebCore.vcproj/WebCore.vcproj",
-           "WebKitLibraries/win/tools/vsprops/common.vsprops",
+           os.path.join('Source', 'WebCore', 'WebCore.vcproj', 'WebCore.vcproj'),
+           os.path.join('WebKitLibraries', 'win', 'tools', 'vsprops', 'common.vsprops'),
         ]
 
         for path in paths:
@@ -807,22 +807,22 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
 
     def test_should_process__skip_without_warning(self):
         """Test should_process() for a skip-without-warning file."""
-        file_path = "foo/skip_without_warning.txt"
+        file_path = os.path.join('foo', 'skip_without_warning.txt')
 
         self.assertFalse(self._processor.should_process(file_path))
 
     def test_should_process__skip_with_warning(self):
         """Test should_process() for a skip-with-warning file."""
-        file_path = "foo/skip_with_warning.txt"
+        file_path = os.path.join('foo', 'skip_with_warning.txt')
 
         self.assertFalse(self._processor.should_process(file_path))
 
         self.assertLog(['WARNING: File exempt from style guide. '
-                        'Skipping: "foo/skip_with_warning.txt"\n'])
+                        'Skipping: "{0}"\n'.format(os.path.join('foo', 'skip_with_warning.txt'))])
 
     def test_should_process__true_result(self):
         """Test should_process() for a file that should be processed."""
-        file_path = "foo/skip_process.txt"
+        file_path = os.path.join('foo', 'skip_process.txt')
 
         self.assertTrue(self._processor.should_process(file_path))
 

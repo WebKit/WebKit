@@ -1,3 +1,40 @@
+2015-09-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Allow Windows to run test-webkitpy without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=149602
+
+        Reviewed by Alex Christensen.
+
+        These changes mostly shift from hard-coded paths using UNIX-style
+        separators to Python's "os.path.join" syntax that uses the correct
+        path separator for each platform.
+        
+        * Scripts/webkitpy/common/system/path.py:
+        (cygpath): Don't pass paths through Cygpath on native Windows.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._path_to_apache): Use os.path.join.
+        (WinPort._ntsd_location): Support 64-bit environment (ProgramW6432 doesn't exist
+        in 64-bit environments).
+        * Scripts/webkitpy/style/checker.py: Use os.path.join.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_path_rules_specifier.assertNoCheck): Use os.path.join.
+        (GlobalVariablesTest.test_path_rules_specifier): Ditto.
+        (GlobalVariablesTest): Ditto.
+        (GlobalVariablesTest.test_max_reports_per_category): Ditto.
+        (CheckerDispatcherSkipTest.test_should_skip_with_warning): Ditto.
+        (CheckerDispatcherDispatchTest.test_js_paths): Ditto.
+        (CheckerDispatcherDispatchTest.test_json_paths): Ditto.
+        (CheckerDispatcherDispatchTest.test_python_paths): Ditto.
+        (CheckerDispatcherDispatchTest.test_text_paths): Ditto.
+        (CheckerDispatcherDispatchTest.test_xml_paths): Ditto.
+        (StyleProcessor_CodeCoverageTest._create_carriage_checker_class): Ditto.
+        (StyleProcessor_CodeCoverageTest): Ditto.
+        (StyleProcessor_CodeCoverageTest.test_should_process__skip_without_warning): Ditto.
+        (StyleProcessor_CodeCoverageTest.test_should_process__skip_with_warning): Ditto.
+        (StyleProcessor_CodeCoverageTest.test_should_process__true_result): Ditto.
+        * Scripts/webkitpy/w3c/test_parser_unittest.py: Uses os.path.join rather than
+        manual string concatenation of paths.
+
 2015-09-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add bugzilla addresses of committers to contributors.json

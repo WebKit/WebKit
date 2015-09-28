@@ -29,6 +29,7 @@
 """generic routines to convert platform-specific paths to URIs."""
 
 import atexit
+import os
 import subprocess
 import sys
 import logging
@@ -44,7 +45,9 @@ def abspath_to_uri(platform, path):
 
 def cygpath(path):
     """Converts an absolute cygwin path to an absolute Windows path."""
-    return _CygPath.convert_using_singleton(path)
+    if sys.platform == 'cygwin':
+        return _CygPath.convert_using_singleton(path)
+    return path
 
 
 # Note that this object is not threadsafe and must only be called

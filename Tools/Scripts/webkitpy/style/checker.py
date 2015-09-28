@@ -1,7 +1,7 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010 ProFUSION embedded systems
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -136,29 +136,29 @@ _PATH_RULES_SPECIFIER = [
 
     ([# TestNetscapePlugIn has no config.h and uses funny names like
       # NPP_SetWindow.
-      "Tools/DumpRenderTree/TestNetscapePlugIn/",
+      os.path.join('Tools', 'DumpRenderTree', 'TestNetscapePlugIn'),
       # The API test harnesses have no config.h and use funny macros like
       # TEST_CLASS_NAME.
-      "Tools/WebKitAPITest/",
-      "Tools/TestWebKitAPI/"],
+      os.path.join('Tools', 'WebKitAPITest'),
+      os.path.join('Tools', 'TestWebKitAPI')],
      ["-build/include",
       "-readability/naming"]),
     ([# There is no clean way to avoid "yy_*" names used by flex.
-      "Source/WebCore/css/CSSParser.cpp"],
+      os.path.join('Source', 'WebCore', 'css', 'CSSParser.cpp')],
      ["-readability/naming"]),
 
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values, whitespace before
       # parens for function calls, and always having variable names.
       # Also, GTK+ allows the use of NULL.
-      "Source/WebCore/bindings/gobject/WebKitDOMCustom.h",
-      "Source/WebCore/bindings/gobject/WebKitDOMDeprecated.h",
-      "Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h",
-      "Source/WebCore/bindings/gobject/WebKitDOMNodeFilter.h",
-      "Source/WebCore/bindings/gobject/WebKitDOMXPathNSResolver.h",
-      "Source/WebCore/bindings/scripts/test/GObject",
-      "Source/WebKit/gtk/webkit/",
-      "Tools/DumpRenderTree/gtk/"],
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMCustom.h'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMDeprecated.h'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMEventTarget.h'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMNodeFilter.h'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMXPathNSResolver.h'),
+      os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test', 'GObject'),
+      os.path.join('Source', 'WebKit', 'gtk', 'webkit'),
+      os.path.join('Tools', 'DumpRenderTree', 'gtk')],
      ["-readability/naming",
       "-readability/parameter_name",
       "-readability/null",
@@ -169,34 +169,34 @@ _PATH_RULES_SPECIFIER = [
 
     ([# The GTK+ API use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
-      "Source/WebKit2/UIProcess/API/gtk",
-      "Source/WebKit2/WebProcess/InjectedBundle/API/gtk"],
+      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk'),
+      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')],
      ["-readability/enum_casing"]),
 
     ([# Header files in ForwardingHeaders have no header guards or
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
-      "/ForwardingHeaders/"],
+      os.path.join(os.path.sep, 'ForwardingHeaders')],
      ["-build/header_guard"]),
     ([# assembler has lots of opcodes that use underscores, so
       # we don't check for underscores in that directory.
-      "Source/JavaScriptCore/assembler/",
-      "Source/JavaScriptCore/jit/JIT"],
+      os.path.join('Source', 'JavaScriptCore', 'assembler'),
+      os.path.join('Source', 'JavaScriptCore', 'jit', 'JIT')],
      ["-readability/naming/underscores"]),
     ([# JITStubs has an usual syntax which causes false alarms for a few checks.
-      "JavaScriptCore/jit/JITStubs.cpp"],
+      os.path.join('JavaScriptCore', 'jit', 'JITStubs.cpp')],
      ["-readability/parameter_name",
       "-whitespace/parens"]),
 
     ([# The EFL APIs use EFL naming style, which includes
       # both lower-cased and camel-cased, underscore-sparated
       # values.
-      "Source/WebKit2/UIProcess/API/efl/",
-      "Source/WebKit2/WebProcess/InjectedBundle/API/efl/"],
+      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'efl'),
+      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'efl')],
      ["-readability/naming",
       "-readability/parameter_name"]),
     ([# MiniBrowser/efl are EFL simple application.
       # They need to use efl coding style and they don't have config.h.
-      "Tools/MiniBrowser/efl/"],
+      os.path.join('Tools', 'MiniBrowser', 'efl')],
      ["-readability/naming",
       "-readability/parameter_name",
       "-runtime/ctype_function",
@@ -206,33 +206,33 @@ _PATH_RULES_SPECIFIER = [
     # WebKit2 rules:
     # WebKit2 and certain directories have idiosyncracies.
     ([# NPAPI has function names with underscores.
-      "Source/WebKit2/WebProcess/Plugins/Netscape"],
+      os.path.join('Source', 'WebKit2', 'WebProcess', 'Plugins', 'Netscape')],
      ["-readability/naming"]),
     ([# The WebKit2 C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
       # WebKit2 APIs because we're matching CF's header style.
       # Additionally, we use word which starts with non-capital letter 'k'
       # for types of enums.
-      "Source/WebKit2/UIProcess/API/C/",
-      "Source/WebKit2/Shared/API/c/",
-      "Source/WebKit2/WebProcess/InjectedBundle/API/c/"],
+      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'C'),
+      os.path.join('Source', 'WebKit2', 'Shared', 'API', 'c'),
+      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'c')],
      ["-readability/enum_casing",
       "-readability/naming",
       "-readability/parameter_name",
       "-whitespace/declaration"]),
     ([# These files define GObjects, which implies some definitions of
       # variables and functions containing underscores.
-      "Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp",
-      "Source/WebCore/bindings/gobject/WebKitDOMDeprecated.cpp",
-      "Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp",
-      "Source/WebCore/bindings/gobject/WebKitDOMNodeFilter.cpp",
-      "Source/WebCore/bindings/gobject/WebKitDOMXPathNSResolver.cpp",
-      "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer1.cpp",
-      "Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp",
-      "Source/WebCore/platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp",
-      "Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp",
-      "Source/WebCore/platform/network/soup/ProxyResolverSoup.cpp",
-      "Source/WebCore/platform/network/soup/ProxyResolverSoup.h"],
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMCustom.cpp'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMDeprecated.cpp'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMEventTarget.cpp'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMNodeFilter.cpp'),
+      os.path.join('Source', 'WebCore', 'bindings', 'gobject', 'WebKitDOMXPathNSResolver.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer1.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'VideoSinkGStreamer.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'WebKitWebSourceGStreamer.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'audio', 'gstreamer', 'WebKitWebAudioSourceGStreamer.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'ProxyResolverSoup.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'network', 'soup', 'ProxyResolverSoup.h')],
      ["-readability/naming",
       "-readability/enum_casing"]),
 
@@ -242,7 +242,7 @@ _PATH_RULES_SPECIFIER = [
     #   No trailing white space: since this is easy to correct.
     #   No carriage-return line endings: since this is easy to correct.
     #
-    (["webkitpy/thirdparty/"],
+    ([os.path.join('webkitpy', 'thirdparty')],
      ["-",
       "+pep8/W191",  # Tabs
       "+pep8/W291",  # Trailing white space
@@ -250,11 +250,11 @@ _PATH_RULES_SPECIFIER = [
 
     ([# There is no way to avoid the symbols __jit_debug_register_code
       # and __jit_debug_descriptor when integrating with gdb.
-      "Source/JavaScriptCore/jit/GDBInterface.cpp"],
+      os.path.join('Source', 'JavaScriptCore', 'jit', 'GDBInterface.cpp')],
      ["-readability/naming"]),
 
     ([# On some systems the trailing CR is causing parser failure.
-      "Source/JavaScriptCore/parser/Keywords.table"],
+      os.path.join('Source', 'JavaScriptCore', 'parser', 'Keywords.table')],
      ["+whitespace/carriage_return"]),
 ]
 
@@ -316,14 +316,14 @@ _CMAKE_FILE_EXTENSION = 'cmake'
 # WebKit maintains some files in Mozilla style on purpose to ease
 # future merges.
 _SKIPPED_FILES_WITH_WARNING = [
-    "Tools/TestWebKitAPI/Tests/WebKitGtk/",
+    os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKitGtk'),
     # All WebKit*.h files in Source/WebKit2/UIProcess/API/gtk,
     # except those ending in ...Private.h are GTK+ API headers,
     # which differ greatly from WebKit coding style.
-    re.compile(r'Source/WebKit2/UIProcess/API/gtk/WebKit(?!.*Private\.h).*\.h$'),
-    re.compile(r'Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKit(?!.*Private\.h).*\.h$'),
-    'Source/WebKit2/UIProcess/API/gtk/webkit2.h',
-    'Source/WebKit2/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h']
+    re.compile(re.escape(os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
+    os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
+    os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-extension.h')]
 
 # Files to skip that are more common or obvious.
 #
