@@ -1,3 +1,14 @@
+2015-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Build WK1 with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=149604
+
+        Reviewed by Chris Dumez.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+        ObjC bindings now have their own list of IDL files, but some of them still don't generate a .mm file.
+
 2015-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CMake build on Mac

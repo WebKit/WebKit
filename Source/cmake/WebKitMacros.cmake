@@ -108,11 +108,7 @@ macro(GENERATE_BINDINGS _output_source _input_files _base_dir _idl_includes _fea
                 COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${BINDING_GENERATOR} --defines "${_features}" --generator ${_generator} ${_idl_includes} --outputDir "${_destination}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${_idl_attributes_file} ${_supplemental_dependency} ${_file}
                 WORKING_DIRECTORY ${_base_dir}
                 VERBATIM)
-            if (${_generator} STREQUAL "ObjC")
-                list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.h)
-            else ()
-                list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.${_extension})
-            endif ()
+            list(APPEND ${_output_source} ${_destination}/${_prefix}${_name}.${_extension})
         endif ()
     endforeach ()
 endmacro()

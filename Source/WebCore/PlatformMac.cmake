@@ -177,6 +177,7 @@ list(APPEND WebCore_SOURCES
     crypto/mac/SerializedCryptoKeyWrapMac.mm
 
     dom/DataTransferMac.mm
+    dom/SlotAssignment.cpp
 
     editing/SelectionRectGatherer.cpp
     editing/SmartReplaceCF.cpp
@@ -193,6 +194,8 @@ list(APPEND WebCore_SOURCES
     editing/mac/TextUndoInsertionMarkupMac.mm
 
     fileapi/FileMac.mm
+
+    html/HTMLSlotElement.cpp
 
     html/shadow/ImageControlsRootElement.cpp
     html/shadow/YouTubeEmbedShadowElement.cpp
@@ -648,11 +651,6 @@ list(APPEND WebCore_IDL_FILES
     Modules/plugins/QuickTimePluginReplacement.idl
 )
 
-set(OBJC_BINDINGS_IDL_FILES
-    dom/EventListener.idl
-    ${WebCore_NON_SVG_IDL_FILES}
-)
-
 WEBKIT_CREATE_FORWARDING_HEADERS(WebCore DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebCore_FORWARDING_HEADERS_FILES})
 
 set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
@@ -660,6 +658,144 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
     ${WINDOW_CONSTRUCTORS_FILE}
     ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+)
+
+set(ObjC_Bindings_IDL_FILES
+    css/CSSCharsetRule.idl
+    css/CSSFontFaceRule.idl
+    css/CSSImportRule.idl
+    css/CSSKeyframeRule.idl
+    css/CSSKeyframesRule.idl
+    css/CSSMediaRule.idl
+    css/CSSPageRule.idl
+    css/CSSPrimitiveValue.idl
+    css/CSSRule.idl
+    css/CSSRuleList.idl
+    css/CSSStyleDeclaration.idl
+    css/CSSStyleRule.idl
+    css/CSSStyleSheet.idl
+    css/CSSSupportsRule.idl
+    css/CSSUnknownRule.idl
+    css/CSSValue.idl
+    css/CSSValueList.idl
+    css/Counter.idl
+    css/MediaList.idl
+    css/RGBColor.idl
+    css/Rect.idl
+    css/StyleSheet.idl
+    css/StyleSheetList.idl
+    css/WebKitCSSFilterValue.idl
+    css/WebKitCSSRegionRule.idl
+    css/WebKitCSSTransformValue.idl
+
+    dom/Attr.idl
+    dom/BeforeLoadEvent.idl
+    dom/CDATASection.idl
+    dom/CharacterData.idl
+    dom/Comment.idl
+    dom/DOMImplementation.idl
+    dom/DOMNamedFlowCollection.idl
+    dom/Document.idl
+    dom/DocumentFragment.idl
+    dom/DocumentType.idl
+    dom/Element.idl
+    dom/Entity.idl
+    dom/EntityReference.idl
+    dom/Event.idl
+    dom/EventListener.idl
+    dom/EventTarget.idl
+    dom/KeyboardEvent.idl
+    dom/MessageEvent.idl
+    dom/MessagePort.idl
+    dom/MouseEvent.idl
+    dom/MutationEvent.idl
+    dom/NamedNodeMap.idl
+    dom/Node.idl
+    dom/NodeFilter.idl
+    dom/NodeIterator.idl
+    dom/NodeList.idl
+    dom/OverflowEvent.idl
+    dom/ProcessingInstruction.idl
+    dom/ProgressEvent.idl
+    dom/Range.idl
+    dom/Text.idl
+    dom/TextEvent.idl
+    dom/TreeWalker.idl
+    dom/UIEvent.idl
+    dom/WebKitNamedFlow.idl
+    dom/WheelEvent.idl
+
+    fileapi/Blob.idl
+    fileapi/File.idl
+    fileapi/FileList.idl
+
+    html/DOMTokenList.idl
+    html/HTMLAnchorElement.idl
+    html/HTMLAppletElement.idl
+    html/HTMLAreaElement.idl
+    html/HTMLBRElement.idl
+    html/HTMLBaseElement.idl
+    html/HTMLBaseFontElement.idl
+    html/HTMLBodyElement.idl
+    html/HTMLButtonElement.idl
+    html/HTMLCanvasElement.idl
+    html/HTMLCollection.idl
+    html/HTMLDListElement.idl
+    html/HTMLDirectoryElement.idl
+    html/HTMLDivElement.idl
+    html/HTMLDocument.idl
+    html/HTMLElement.idl
+    html/HTMLEmbedElement.idl
+    html/HTMLFieldSetElement.idl
+    html/HTMLFontElement.idl
+    html/HTMLFormElement.idl
+    html/HTMLFrameElement.idl
+    html/HTMLFrameSetElement.idl
+    html/HTMLHRElement.idl
+    html/HTMLHeadElement.idl
+    html/HTMLHeadingElement.idl
+    html/HTMLHtmlElement.idl
+    html/HTMLIFrameElement.idl
+    html/HTMLImageElement.idl
+    html/HTMLInputElement.idl
+    html/HTMLLIElement.idl
+    html/HTMLLabelElement.idl
+    html/HTMLLegendElement.idl
+    html/HTMLLinkElement.idl
+    html/HTMLMapElement.idl
+    html/HTMLMarqueeElement.idl
+    html/HTMLMenuElement.idl
+    html/HTMLMetaElement.idl
+    html/HTMLModElement.idl
+    html/HTMLOListElement.idl
+    html/HTMLObjectElement.idl
+    html/HTMLOptGroupElement.idl
+    html/HTMLOptionElement.idl
+    html/HTMLOptionsCollection.idl
+    html/HTMLParagraphElement.idl
+    html/HTMLParamElement.idl
+    html/HTMLPreElement.idl
+    html/HTMLQuoteElement.idl
+    html/HTMLScriptElement.idl
+    html/HTMLSelectElement.idl
+    html/HTMLStyleElement.idl
+    html/HTMLTableCaptionElement.idl
+    html/HTMLTableCellElement.idl
+    html/HTMLTableColElement.idl
+    html/HTMLTableElement.idl
+    html/HTMLTableRowElement.idl
+    html/HTMLTableSectionElement.idl
+    html/HTMLTextAreaElement.idl
+    html/HTMLTitleElement.idl
+    html/HTMLUListElement.idl
+    html/ValidityState.idl
+
+    page/AbstractView.idl
+    page/DOMSecurityPolicy.idl
+
+    xml/XPathExpression.idl
+    xml/XPathNSResolver.idl
+    xml/XPathResult.idl
 )
 
 set(ObjC_BINDINGS_NO_MM
@@ -698,7 +834,7 @@ set(ObjC_BINDINGS_NO_MM
 )
 
 GENERATE_BINDINGS(WebCore_SOURCES
-    "${OBJC_BINDINGS_IDL_FILES}"
+    "${ObjC_Bindings_IDL_FILES}"
     "${WEBCORE_DIR}"
     "${IDL_INCLUDES}"
     "${FEATURE_DEFINES_OBJECTIVE_C}"
@@ -706,130 +842,3 @@ GENERATE_BINDINGS(WebCore_SOURCES
     ${IDL_ATTRIBUTES_FILE}
     ${SUPPLEMENTAL_DEPENDENCY_FILE}
     ${ADDITIONAL_BINDINGS_DEPENDENCIES})
-
-list(APPEND WebCore_SOURCES
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMAttr.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMBeforeLoadEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMBlob.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCDATASection.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCharacterData.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMComment.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCounter.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSCharsetRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSFontFaceRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSImportRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSKeyframeRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSKeyframesRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSMediaRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSPageRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSPrimitiveValue.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSRuleList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSStyleDeclaration.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSStyleRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSStyleSheet.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSSupportsRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSUnknownRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSValue.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMCSSValueList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDocument.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDocumentFragment.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDocumentType.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMImplementation.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMNamedFlowCollection.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMDOMTokenList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMEntity.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMEntityReference.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMFile.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMFileList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLAnchorElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLAppletElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLAreaElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLBaseElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLBaseFontElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLBodyElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLBRElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLButtonElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLCanvasElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLCollection.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLDirectoryElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLDivElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLDListElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLDocument.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLEmbedElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLFieldSetElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLFontElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLFormElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLFrameElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLFrameSetElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLHeadElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLHeadingElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLHRElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLHtmlElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLIFrameElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLImageElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLInputElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLLabelElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLLegendElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLLIElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLLinkElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLMapElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLMarqueeElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLMenuElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLMetaElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLModElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLObjectElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLOListElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLOptGroupElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLOptionElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLOptionsCollection.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLParagraphElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLParamElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLPreElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLQuoteElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLScriptElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLSelectElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLStyleElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTableCaptionElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTableCellElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTableColElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTableElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTableRowElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTableSectionElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTextAreaElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLTitleElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMHTMLUListElement.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMKeyboardEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMediaList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMessageEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMessagePort.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMouseEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMMutationEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNamedNodeMap.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNode.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNodeIterator.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMNodeList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMOverflowEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMProcessingInstruction.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMProgressEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMRange.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMRect.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMRGBColor.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMStyleSheet.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMStyleSheetList.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMText.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMTextEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMTreeWalker.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMUIEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMValidityState.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebKitCSSFilterValue.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebKitCSSRegionRule.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebKitCSSTransformValue.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWebKitNamedFlow.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMWheelEvent.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMXPathExpression.mm
-    ${DERIVED_SOURCES_WEBCORE_DIR}/DOMXPathResult.mm
-)
