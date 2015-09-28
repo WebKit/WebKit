@@ -1147,5 +1147,5 @@ Packet.prototype.toString = function () {
     return "Packet";
 };
 
-for (var i = 0; i < 280; ++i)
+for (var i = 0; i < 100; ++i)
     runRichards();
