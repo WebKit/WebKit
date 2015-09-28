@@ -323,11 +323,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Event').hasOwnProperty('get') is f
 PASS Object.getOwnPropertyDescriptor(global, 'Event').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Event').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Event').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'EventException').value is EventException
-PASS Object.getOwnPropertyDescriptor(global, 'EventException').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'EventException').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'EventException').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'EventException').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'EventSource').value is EventSource
 PASS Object.getOwnPropertyDescriptor(global, 'EventSource').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'EventSource').hasOwnProperty('set') is false

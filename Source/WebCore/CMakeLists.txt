@@ -393,7 +393,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Element.idl
     dom/ErrorEvent.idl
     dom/Event.idl
-    dom/EventException.idl
     dom/EventTarget.idl
     dom/FocusEvent.idl
     dom/GlobalEventHandlers.idl
@@ -1431,7 +1430,6 @@ set(WebCore_SOURCES
     dom/Event.cpp
     dom/EventContext.cpp
     dom/EventDispatcher.cpp
-    dom/EventException.cpp
     dom/EventListenerMap.cpp
     dom/EventNames.cpp
     dom/EventTarget.cpp

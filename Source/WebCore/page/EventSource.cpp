@@ -38,7 +38,6 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventException.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTTPHeaderNames.h"

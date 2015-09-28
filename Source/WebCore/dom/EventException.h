@@ -34,22 +34,6 @@
 namespace WebCore {
 
 class EventException : public ExceptionBase {
-public:
-    static Ref<EventException> create(const ExceptionCodeDescription& description)
-    {
-        return adoptRef(*new EventException(description));
-    }
-
-    static const int EventExceptionOffset = 100;
-    static const int EventExceptionMax = 199;
-
-    enum EventExceptionCode {
-        UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset,
-        DISPATCH_REQUEST_ERR
-    };
-
-    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
-
 private:
     explicit EventException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)

@@ -34,7 +34,6 @@
 #include "EventListenerMap.h"
 
 #include "Event.h"
-#include "EventException.h"
 #include "EventTarget.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

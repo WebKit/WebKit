@@ -32,7 +32,7 @@
 #include "config.h"
 #include "EventTarget.h"
 
-#include "EventException.h"
+#include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "ScriptController.h"
 #include "WebKitAnimationEvent.h"

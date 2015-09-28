@@ -57,7 +57,6 @@ var propertyInfo = [
     ["DocumentType", "object"],
     ["Element", "object"],
     ["Event", "object"],
-    ["EventException", "object"],
     ["HTMLAnchorElement", "object"],
     ["HTMLAppletElement", "object"],
     ["HTMLAreaElement", "object"],

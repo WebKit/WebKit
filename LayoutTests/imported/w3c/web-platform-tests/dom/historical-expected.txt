@@ -10,7 +10,7 @@ PASS Historical DOM features must be removed: DOMObject
 PASS Historical DOM features must be removed: DOMUserData 
 PASS Historical DOM features must be removed: Entity 
 PASS Historical DOM features must be removed: EntityReference 
-FAIL Historical DOM features must be removed: EventException assert_equals: expected (undefined) undefined but got (object) object "[object EventExceptionConstructor]"
+PASS Historical DOM features must be removed: EventException 
 PASS Historical DOM features must be removed: NameList 
 PASS Historical DOM features must be removed: Notation 
 PASS Historical DOM features must be removed: TypeInfo 

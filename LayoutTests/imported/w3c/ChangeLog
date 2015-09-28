@@ -1,5 +1,17 @@
 2015-09-28  Chris Dumez  <cdumez@apple.com>
 
+        Drop support for legacy EventException
+        https://bugs.webkit.org/show_bug.cgi?id=149597
+        <rdar://problem/22879795>
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline W3C DOM test now that a new check is passing.
+
+        * web-platform-tests/dom/historical-expected.txt:
+
+2015-09-28  Chris Dumez  <cdumez@apple.com>
+
         Object.getOwnPropertyNames() does not return named properties
         https://bugs.webkit.org/show_bug.cgi?id=149562
         <rdar://problem/22879779>

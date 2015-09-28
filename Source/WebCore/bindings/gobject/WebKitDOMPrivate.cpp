@@ -28,7 +28,6 @@
 #include "DOMObjectCache.h"
 #include "Element.h"
 #include "Event.h"
-#include "EventException.h"
 #include "EventTarget.h"
 #include "File.h"
 #include "HTMLElement.h"

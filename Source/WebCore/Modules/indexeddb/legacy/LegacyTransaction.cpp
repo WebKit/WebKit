@@ -28,7 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventException.h"
 #include "EventQueue.h"
 #include "ExceptionCodePlaceholder.h"
 #include "IDBDatabase.h"

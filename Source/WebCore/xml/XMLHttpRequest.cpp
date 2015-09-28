@@ -30,7 +30,6 @@
 #include "DOMFormData.h"
 #include "DOMImplementation.h"
 #include "Event.h"
-#include "EventException.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "HTMLDocument.h"

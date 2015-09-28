@@ -26,8 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+
 // Introduced in DOM Level 2:
 [
+    NoInterfaceObject,
     DoNotCheckConstants,
     ImplementationLacksVTable,
 ] exception EventException {
@@ -36,13 +39,9 @@
     readonly attribute DOMString        name;
     readonly attribute DOMString        message;
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    // Override in a Mozilla compatible format
-    [NotEnumerable] DOMString toString();
-#endif
-
     // EventExceptionCode
     const unsigned short UNSPECIFIED_EVENT_TYPE_ERR = 0;
     const unsigned short DISPATCH_REQUEST_ERR = 1;
 };
 
+#endif

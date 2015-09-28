@@ -31,7 +31,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventQueue.h"

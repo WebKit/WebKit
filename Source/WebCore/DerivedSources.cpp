@@ -152,7 +152,6 @@
 #include "JSElement.cpp"
 #include "JSErrorEvent.cpp"
 #include "JSEvent.cpp"
-#include "JSEventException.cpp"
 #include "JSEventSource.cpp"
 #include "JSEventTarget.cpp"
 #include "JSFile.cpp"

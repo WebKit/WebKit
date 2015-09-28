@@ -54,7 +54,6 @@
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "Element.h"
-#include "EventException.h"
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventNames.h"

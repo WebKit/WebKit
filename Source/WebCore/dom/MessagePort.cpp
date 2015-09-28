@@ -28,7 +28,7 @@
 #include "MessagePort.h"
 
 #include "Document.h"
-#include "EventException.h"
+#include "ExceptionCode.h"
 #include "MessageEvent.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"

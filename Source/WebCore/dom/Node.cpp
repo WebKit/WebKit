@@ -39,7 +39,6 @@
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
 #include "EventDispatcher.h"
-#include "EventException.h"
 #include "EventHandler.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"

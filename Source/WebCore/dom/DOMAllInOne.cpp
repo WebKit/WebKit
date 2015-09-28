@@ -79,7 +79,6 @@
 #include "Event.cpp"
 #include "EventContext.cpp"
 #include "EventDispatcher.cpp"
-#include "EventException.cpp"
 #include "EventListenerMap.cpp"
 #include "EventNames.cpp"
 #include "EventTarget.cpp"

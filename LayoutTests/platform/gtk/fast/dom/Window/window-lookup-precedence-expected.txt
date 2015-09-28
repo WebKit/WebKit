@@ -116,8 +116,6 @@ PASS win['Element'] == '[object ElementConstructor]' is true
 PASS win['Element'] == '[object ElementConstructor]' is true
 PASS win['Event'] == '[object EventConstructor]' is true
 PASS win['Event'] == '[object EventConstructor]' is true
-PASS win['EventException'] == '[object EventExceptionConstructor]' is true
-PASS win['EventException'] == '[object EventExceptionConstructor]' is true
 PASS win['HTMLAnchorElement'] == '[object HTMLAnchorElementConstructor]' is true
 PASS win['HTMLAnchorElement'] == '[object HTMLAnchorElementConstructor]' is true
 PASS win['HTMLAppletElement'] == '[object HTMLAppletElementConstructor]' is true
