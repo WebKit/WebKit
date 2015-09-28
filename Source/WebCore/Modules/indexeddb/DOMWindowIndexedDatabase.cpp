@@ -114,7 +114,7 @@ IDBFactory* DOMWindowIndexedDatabase::indexedDB()
 
     if (!m_idbFactory) {
         if (page->databaseProvider().supportsModernIDB())
-            m_idbFactory = IDBClient::IDBFactory::create();
+            m_idbFactory = IDBClient::IDBFactory::create(page->idbConnection());
         else
             m_idbFactory = LegacyFactory::create(page->databaseProvider().idbFactoryBackend());
     }

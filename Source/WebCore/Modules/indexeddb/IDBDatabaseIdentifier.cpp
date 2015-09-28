@@ -44,6 +44,14 @@ IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, const S
     ASSERT(!databaseName.isNull());
 }
 
+
+#ifndef NDEBUG
+String IDBDatabaseIdentifier::debugString() const
+{
+    return makeString(m_databaseName, "@", m_openingOrigin.debugString(), ":", m_mainFrameOrigin.debugString());
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

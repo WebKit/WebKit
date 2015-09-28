@@ -37,6 +37,11 @@ public:
 
 #if ENABLE(INDEXED_DATABASE)
     virtual bool supportsModernIDB() const override { return false; }
+
+    virtual WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const WebCore::SessionID&) override
+    {
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 #endif
 
 private:

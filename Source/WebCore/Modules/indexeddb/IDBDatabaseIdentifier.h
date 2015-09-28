@@ -83,6 +83,10 @@ public:
 
     const String& databaseName() const { return m_databaseName; }
 
+#ifndef NDEBUG
+    String debugString() const;
+#endif
+
 private:
     String m_databaseName;
     SecurityOriginData m_openingOrigin;

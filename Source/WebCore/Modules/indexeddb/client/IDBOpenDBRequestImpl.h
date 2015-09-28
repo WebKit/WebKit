@@ -28,20 +28,36 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMError.h"
+#include "IDBDatabaseIdentifier.h"
 #include "IDBRequestImpl.h"
 
 namespace WebCore {
+
+class IDBDatabaseIdentifier;
+
 namespace IDBClient {
+
+class IDBConnectionToServer;
 
 class IDBOpenDBRequest : public IDBRequest {
 public:
-    static Ref<IDBOpenDBRequest> create(ScriptExecutionContext* context)
-    {
-        return adoptRef(*new IDBOpenDBRequest(context));
-    }
+    static Ref<IDBOpenDBRequest> createDeleteRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&);
+    static Ref<IDBOpenDBRequest> createOpenRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);
+
+    virtual ~IDBOpenDBRequest();
+    
+    const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
+    uint64_t version() const { return m_version; }
+
+    void requestCompleted(const IDBResultData&);
 
 private:
-    IDBOpenDBRequest(ScriptExecutionContext*);
+    IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);
+    
+    IDBDatabaseIdentifier m_databaseIdentifier;
+    uint64_t m_version;
+    RefPtr<DOMError> m_domError;
 };
 
 } // namespace IDBClient

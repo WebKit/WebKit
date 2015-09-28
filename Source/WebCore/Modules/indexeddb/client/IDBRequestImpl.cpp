@@ -28,13 +28,16 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "EventQueue.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace IDBClient {
 
-IDBRequest::IDBRequest(ScriptExecutionContext* context)
+IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context)
     : IDBOpenDBRequest(context)
+    , m_requestIdentifier(connection)
 {
 }
 
@@ -83,7 +86,16 @@ bool IDBRequest::canSuspendForPageCache() const
 {
     return false;
 }
-    
+
+void IDBRequest::enqueueEvent(Ref<Event>&& event)
+{
+    if (!scriptExecutionContext())
+        return;
+
+    event->setTarget(this);
+    scriptExecutionContext()->eventQueue().enqueueEvent(&event.get());
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

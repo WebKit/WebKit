@@ -1,3 +1,12 @@
+2015-09-28  Brady Eidson  <beidson@apple.com>
+
+        Add an IDB Server that can roundtrip a request back to the client.
+        https://bugs.webkit.org/show_bug.cgi?id=149603
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Databases/WebDatabaseProvider.h:
+
 2015-09-28  Beth Dakin  <bdakin@apple.com>
 
         Heavy taps on links are sometimes interpreted as the preview gesture

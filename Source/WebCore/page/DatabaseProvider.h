@@ -33,6 +33,11 @@ namespace WebCore {
 
 class IDBConnectionManager;
 class IDBFactoryBackendInterface;
+class SessionID;
+
+namespace IDBClient {
+class IDBConnectionToServer;
+}
 
 class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
 public:
@@ -42,6 +47,7 @@ public:
     IDBFactoryBackendInterface* idbFactoryBackend();
 
     virtual bool supportsModernIDB() const = 0;
+    virtual IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const SessionID&) = 0;
 #endif
 
 private:

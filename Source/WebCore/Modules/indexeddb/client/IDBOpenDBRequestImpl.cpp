@@ -28,13 +28,47 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBError.h"
+#include "IDBResultData.h"
+#include "Logging.h"
+
 namespace WebCore {
 namespace IDBClient {
 
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context)
-    : IDBRequest(context)
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::createDeleteRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier)
+{
+    ASSERT(databaseIdentifier.isValid());
+    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, 0));
+}
+
+Ref<IDBOpenDBRequest> IDBOpenDBRequest::createOpenRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
+{
+    ASSERT(databaseIdentifier.isValid());
+    return adoptRef(*new IDBOpenDBRequest(connection, context, databaseIdentifier, version));
+}
+    
+IDBOpenDBRequest::IDBOpenDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context, const IDBDatabaseIdentifier& databaseIdentifier, uint64_t version)
+    : IDBRequest(connection, context)
+    , m_databaseIdentifier(databaseIdentifier)
+    , m_version(version)
 {
     suspendIfNeeded();
+}
+
+IDBOpenDBRequest::~IDBOpenDBRequest()
+{
+}
+
+void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
+{
+    LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
+
+    if (!data.error().isNull()) {
+        LOG(IndexedDB, "  with error: (%s) '%s'", data.error().name().utf8().data(), data.error().message().utf8().data());
+        m_domError = DOMError::create(data.error().name());
+        enqueueEvent(Event::create(eventNames().errorEvent, true, true));
+    } else
+        enqueueEvent(Event::create(eventNames().successEvent, true, true));
 }
 
 } // namespace IDBClient

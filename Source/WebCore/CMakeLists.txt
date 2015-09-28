@@ -12,6 +12,8 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/legacy"
+    "${WEBCORE_DIR}/Modules/indexeddb/server"
+    "${WEBCORE_DIR}/Modules/indexeddb/shared"
     "${WEBCORE_DIR}/Modules/indieui"
     "${WEBCORE_DIR}/Modules/mediacontrols/"
     "${WEBCORE_DIR}/Modules/mediasession"
@@ -869,6 +871,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 
+    Modules/indexeddb/client/IDBConnectionToServer.cpp
     Modules/indexeddb/client/IDBFactoryImpl.cpp
     Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp
     Modules/indexeddb/client/IDBRequestImpl.cpp
@@ -892,6 +895,15 @@ set(WebCore_SOURCES
     Modules/indexeddb/legacy/LegacyRequest.cpp
     Modules/indexeddb/legacy/LegacyTransaction.cpp
     Modules/indexeddb/legacy/LegacyVersionChangeEvent.cpp
+
+    Modules/indexeddb/server/IDBConnectionToClient.cpp
+    Modules/indexeddb/server/IDBServer.cpp
+
+    Modules/indexeddb/shared/IDBError.cpp
+    Modules/indexeddb/shared/IDBRequestData.cpp
+    Modules/indexeddb/shared/IDBRequestIdentifier.cpp
+    Modules/indexeddb/shared/IDBResultData.cpp
+    Modules/indexeddb/shared/InProcessIDBServer.cpp
 
     Modules/mediacontrols/MediaControlsHost.cpp
 

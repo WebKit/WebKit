@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBConnectionToServer.h"
 #include "IDBFactory.h"
 
 namespace WebCore {
@@ -37,7 +38,7 @@ class IDBOpenDBRequest;
 
 class IDBFactory : public WebCore::IDBFactory {
 public:
-    static Ref<IDBFactory> create();
+    static Ref<IDBFactory> create(IDBConnectionToServer&);
 
     virtual RefPtr<WebCore::IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&) override final;
 
@@ -48,9 +49,11 @@ public:
     virtual short cmp(ScriptExecutionContext*, const Deprecated::ScriptValue& first, const Deprecated::ScriptValue& second, ExceptionCode&) override final;
 
 private:
-    IDBFactory();
+    IDBFactory(IDBConnectionToServer&);
     
     RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&);
+    
+    Ref<IDBConnectionToServer> m_connectionToServer;
 };
 
 } // namespace IDBClient

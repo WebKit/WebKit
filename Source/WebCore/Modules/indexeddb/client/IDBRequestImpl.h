@@ -29,13 +29,22 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBOpenDBRequest.h"
+#include "IDBRequestIdentifier.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class Event;
+class IDBResultData;
+
 namespace IDBClient {
+
+class IDBConnectionToServer;
 
 class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBRequest> {
 public:
+    const IDBRequestIdentifier& requestIdentifier() const { return m_requestIdentifier; }
+
     virtual RefPtr<IDBAny> result(ExceptionCode&) const override;
     virtual unsigned short errorCode(ExceptionCode&) const override;
     virtual RefPtr<DOMError> error(ExceptionCode&) const override;
@@ -50,8 +59,10 @@ public:
     using RefCounted<IDBRequest>::ref;
     using RefCounted<IDBRequest>::deref;
 
+    void enqueueEvent(Ref<Event>&&);
+    
 protected:
-    IDBRequest(ScriptExecutionContext*);
+    IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
 
     // ActiveDOMObject.
     virtual const char* activeDOMObjectName() const override final;
@@ -60,6 +71,8 @@ protected:
     // EventTarget.
     virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
     virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
+
+    IDBRequestIdentifier m_requestIdentifier;
 };
 
 } // namespace IDBClient

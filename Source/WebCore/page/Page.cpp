@@ -50,6 +50,7 @@
 #include "HTMLElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "IDBConnectionToServer.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
@@ -111,6 +112,10 @@
 
 #if ENABLE(MEDIA_SESSION)
 #include "MediaSessionManager.h"
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+#include "InProcessIDBServer.h"
 #endif
 
 namespace WebCore {
@@ -1755,6 +1760,21 @@ void Page::setAllowsMediaDocumentInlinePlayback(bool flag)
 
     for (auto& document : documents)
         document->allowsMediaDocumentInlinePlaybackChanged();
+}
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+IDBClient::IDBConnectionToServer& Page::idbConnection()
+{
+    if (!m_idbIDBConnectionToServer) {
+        if (usesEphemeralSession()) {
+            auto inProcessServer = InProcessIDBServer::create();
+            m_idbIDBConnectionToServer = &inProcessServer->connectionToServer();
+        } else
+            m_idbIDBConnectionToServer = &databaseProvider().idbConnectionToServerForSession(m_sessionID);
+    }
+    
+    return *m_idbIDBConnectionToServer;
 }
 #endif
 

@@ -46,6 +46,13 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
     return securityOriginData;
 }
 
+#ifndef NDEBUG
+String SecurityOriginData::debugString() const
+{
+    return makeString(protocol, "://", host, ":", String::number(port));
+}
+#endif
+
 SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
 {
     if (!frame)

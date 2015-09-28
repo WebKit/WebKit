@@ -64,6 +64,10 @@ class Debugger;
 
 namespace WebCore {
 
+namespace IDBClient {
+class IDBConnectionToServer;
+}
+
 class AlternativeTextClient;
 class ApplicationCacheStorage;
 class BackForwardController;
@@ -466,6 +470,10 @@ public:
     WEBCORE_EXPORT void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+    IDBClient::IDBConnectionToServer& idbConnection();
+#endif
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -601,6 +609,10 @@ private:
 
 #if ENABLE(REMOTE_INSPECTOR)
     const std::unique_ptr<PageDebuggable> m_inspectorDebuggable;
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+    RefPtr<IDBClient::IDBConnectionToServer> m_idbIDBConnectionToServer;
 #endif
 
     HashSet<String> m_seenPlugins;

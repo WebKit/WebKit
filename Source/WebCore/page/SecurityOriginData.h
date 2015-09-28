@@ -49,6 +49,10 @@ struct SecurityOriginData {
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, SecurityOriginData&);
+
+#ifndef NDEBUG
+    String debugString() const;
+#endif
 };
 
 WEBCORE_EXPORT bool operator==(const SecurityOriginData&, const SecurityOriginData&);
