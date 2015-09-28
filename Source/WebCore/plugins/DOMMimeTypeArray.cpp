@@ -86,6 +86,12 @@ RefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& propertyName
     return nullptr;
 }
 
+Vector<AtomicString> DOMMimeTypeArray::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 PluginData* DOMMimeTypeArray::getPluginData() const
 {
     if (!m_frame)

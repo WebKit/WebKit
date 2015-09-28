@@ -85,4 +85,10 @@ RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
     return nullptr;
 }
 
+Vector<AtomicString> DOMPlugin::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 } // namespace WebCore

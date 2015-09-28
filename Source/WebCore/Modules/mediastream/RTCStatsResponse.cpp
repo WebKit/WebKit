@@ -46,6 +46,12 @@ RefPtr<RTCStatsReport> RTCStatsResponse::namedItem(const AtomicString& name)
     return nullptr;
 }
 
+Vector<AtomicString> WebCore::RTCStatsResponse::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 size_t RTCStatsResponse::addReport(String id, String type, double timestamp)
 {
     m_result.append(RTCStatsReport::create(id, type, timestamp));

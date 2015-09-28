@@ -81,4 +81,10 @@ HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
     return nullptr;
 }
 
+Vector<AtomicString> StyleSheetList::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 } // namespace WebCore

@@ -63,6 +63,12 @@ RefPtr<Node> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCo
     return m_element.detachAttribute(index);
 }
 
+Vector<AtomicString> NamedNodeMap::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 RefPtr<Node> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
 {
     unsigned index = m_element.hasAttributes() ? m_element.findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : ElementData::attributeNotFound;

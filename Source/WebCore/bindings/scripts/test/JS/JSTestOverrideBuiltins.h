@@ -52,6 +52,7 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
+    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
     TestOverrideBuiltins& impl() const { return *m_impl; }
     void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
@@ -59,7 +60,7 @@ public:
 private:
     TestOverrideBuiltins* m_impl;
 public:
-    static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
+    static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 protected:
     JSTestOverrideBuiltins(JSC::Structure*, JSDOMGlobalObject*, Ref<TestOverrideBuiltins>&&);
 

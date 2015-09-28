@@ -201,6 +201,17 @@ EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* state, JSObject*, En
     return JSValue::encode(JSTestOverrideBuiltins::getConstructor(state->vm(), domObject->globalObject()));
 }
 
+void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    if (mode.includeDontEnumProperties()) {
+        for (auto& propertyName : thisObject->impl().supportedPropertyNames())
+            propertyNames.add(Identifier::fromString(state, propertyName));
+    }
+    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
+}
+
 JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestOverrideBuiltinsConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));

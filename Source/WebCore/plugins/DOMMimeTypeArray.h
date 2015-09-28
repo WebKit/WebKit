@@ -39,6 +39,7 @@ public:
     unsigned length() const;
     RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
+    Vector<AtomicString> supportedPropertyNames();
 
 private:
     explicit DOMMimeTypeArray(Frame*);

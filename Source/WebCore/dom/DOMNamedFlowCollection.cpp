@@ -61,6 +61,12 @@ RefPtr<WebKitNamedFlow> DOMNamedFlowCollection::namedItem(const AtomicString& na
     return nullptr;
 }
 
+Vector<AtomicString> DOMNamedFlowCollection::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 // The HashFunctions object used by the HashSet to compare between RefPtr<NamedFlows>.
 // It is safe to set safeToCompareToEmptyOrDeleted because the HashSet will never contain null pointers or deleted values.
 struct DOMNamedFlowCollection::DOMNamedFlowHashFunctions {

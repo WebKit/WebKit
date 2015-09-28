@@ -44,6 +44,7 @@ public:
 
     RefPtr<DOMMimeType> item(unsigned index);
     RefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
+    Vector<AtomicString> supportedPropertyNames();
 
 private:
     DOMPlugin(PluginData*, Frame*, PluginInfo);

@@ -77,6 +77,12 @@ RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomicString& propertyName)
     return nullptr;
 }
 
+Vector<AtomicString> DOMPluginArray::supportedPropertyNames()
+{
+    // FIXME: Should be implemented.
+    return Vector<AtomicString>();
+}
+
 void DOMPluginArray::refresh(bool reload)
 {
     Page::refreshPlugins(reload);

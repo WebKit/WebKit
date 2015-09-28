@@ -233,6 +233,10 @@ void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, 
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)
         propertyNames.add(Identifier::from(state, i));
+    if (mode.includeDontEnumProperties()) {
+        for (auto& propertyName : thisObject->impl().supportedPropertyNames())
+            propertyNames.add(Identifier::fromString(state, propertyName));
+    }
     Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 

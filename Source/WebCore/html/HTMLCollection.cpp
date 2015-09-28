@@ -166,6 +166,15 @@ Element* HTMLCollection::namedItemSlow(const AtomicString& name) const
     return nullptr;
 }
 
+// Documented in https://dom.spec.whatwg.org/#interface-htmlcollection.
+const Vector<AtomicString>& HTMLCollection::supportedPropertyNames()
+{
+    updateNamedElementCache();
+    ASSERT(m_namedElementCache);
+
+    return m_namedElementCache->propertyNames();
+}
+
 void HTMLCollection::updateNamedElementCache() const
 {
     if (hasNamedElementCache())

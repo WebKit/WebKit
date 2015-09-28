@@ -1033,7 +1033,7 @@ sub GenerateHeader
     }
 
     # Custom getOwnPropertyNames function
-    if ($interface->extendedAttributes->{"CustomEnumerateProperty"} || $indexedGetterFunction) {
+    if ($interface->extendedAttributes->{"CustomEnumerateProperty"} || $indexedGetterFunction || $namedGetterFunction) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
@@ -2771,13 +2771,22 @@ sub GenerateImplementation
         }
     }
 
-    if ($indexedGetterFunction && !$interface->extendedAttributes->{"CustomEnumerateProperty"}) {
+    if (($indexedGetterFunction || $namedGetterFunction) && !$interface->extendedAttributes->{"CustomEnumerateProperty"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(object);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
-        push(@implContent, "    for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)\n");
-        push(@implContent, "        propertyNames.add(Identifier::from(state, i));\n");
+        if ($indexedGetterFunction) {
+            push(@implContent, "    for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)\n");
+            push(@implContent, "        propertyNames.add(Identifier::from(state, i));\n");
+        }
+        if ($namedGetterFunction) {
+            # FIXME: We may need to add an IDL extended attribute at some point if an interface needs enumerable named properties.
+            push(@implContent, "    if (mode.includeDontEnumProperties()) {\n");
+            push(@implContent, "        for (auto& propertyName : thisObject->impl().supportedPropertyNames())\n");
+            push(@implContent, "            propertyNames.add(Identifier::fromString(state, propertyName));\n");
+            push(@implContent, "    }\n");
+        }
         push(@implContent, "    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);\n");
         push(@implContent, "}\n\n");
     }
