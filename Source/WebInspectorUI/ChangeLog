@@ -1,3 +1,16 @@
+2015-09-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hitting ESC while editing element tag name leaves element in bad state
+        https://bugs.webkit.org/show_bug.cgi?id=149506
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._startEditingTagName.editingCancelled):
+        (WebInspector.DOMTreeElement.prototype._startEditingTagName):
+        When cancelling editing of a tag name, revert any changes we had
+        been making to the closing tag name.
+
 2015-09-28  João Oliveira  <hello@jxs.pt>
 
         Web Inspector: search shortcut in split console moves focus to search box, but doesn't show caret
