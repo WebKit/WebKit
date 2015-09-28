@@ -51,8 +51,8 @@
       },
       "Ademar de Souza Reis Jr" : {
          "emails" : [
-            "ademar.reis@gmail.com",
-            "ademar@webkit.org"
+            "ademar@webkit.org",
+            "ademar.reis@gmail.com"
          ],
          "nicks" : [
             "ademar"
@@ -104,6 +104,7 @@
       },
       "Alexander Kellett" : {
          "emails" : [
+            "a@lypanov.net",
             "lypanov@mac.com",
             "a-lists001@lypanov.net",
             "lypanov@kde.org"
@@ -191,8 +192,8 @@
       },
       "Andrew Lo" : {
          "emails" : [
-            "anlo@blackberry.com",
             "anlo@rim.com",
+            "anlo@blackberry.com",
             "andrewlo@gmail.com"
          ],
          "nicks" : [
@@ -326,8 +327,8 @@
       },
       "Arvid Nilsson" : {
          "emails" : [
-            "anilsson@blackberry.com",
-            "anilsson@rim.com"
+            "anilsson@rim.com",
+            "anilsson@blackberry.com"
          ],
          "nicks" : [
             "anilsson"
@@ -350,6 +351,7 @@
       },
       "Basile Clement" : {
         "emails" : [
+            "basile_clement@apple.com",
             "cbasile06+webkit@gmail.com"
         ],
         "nicks" : [
@@ -410,8 +412,8 @@
       },
       "Bill Budge" : {
          "emails" : [
-            "bbudge@chromium.org",
-            "bbudge@gmail.com"
+            "bbudge@gmail.com",
+            "bbudge@chromium.org"
          ],
          "nicks" : [
             "bbudge"
@@ -447,9 +449,9 @@
       },
       "Bruno de Oliveira Abinader" : {
          "emails" : [
+            "brunoabinader@gmail.com",
             "bruno.d@partner.samsung.com",
-            "bruno.abinader@basyskom.com",
-            "brunoabinader@gmail.com"
+            "bruno.abinader@basyskom.com"
          ],
          "expertise" : "The QtWebKit Port, CSS, Layout and Rendering",
          "nicks" : [
@@ -557,6 +559,7 @@
       },
       "Chris Petersen" : {
          "emails" : [
+            "c.petersen87@yahoo.com",
             "cpetersen@apple.com"
          ],
          "expertise" : "Performance testing, Qualification testing",
@@ -763,7 +766,9 @@
       },
       "Dinu Jacob" : {
          "emails" : [
-            "dinu.s.jacob@intel.com"
+            "dinu.jacob@gmail.com",
+            "dinu.s.jacob@intel.com",
+            "dinu.jacob@nokia.com"
          ],
          "nicks" : [
             "dsjacob"
@@ -807,8 +812,8 @@
       },
       "Dominik R\u00f6ttsches" : {
          "emails" : [
-            "dominik.rottsches@intel.com",
-            "d-r@roettsches.de"
+            "d-r@roettsches.de",
+            "dominik.rottsches@intel.com"
          ],
          "expertise" : "WebKit EFL, Cairo HarfBuzz Support, GraphicsContextCairo",
          "nicks" : [
@@ -847,8 +852,8 @@
       },
       "Eli Fidler" : {
          "emails" : [
-            "efidler@blackberry.com",
-            "efidler@rim.com"
+            "efidler@rim.com",
+            "efidler@blackberry.com"
          ],
          "nicks" : [
             "efidler"
@@ -1042,10 +1047,11 @@
             "grzegorz"
          ]
       },
-	  "Gurpreet Kaur" : {
+      "Gurpreet Kaur" : {
          "emails" : [
+            "gur.trio@gmail.com",
             "k.gurpreet@samsung.com",
-			"k.gurpreet@webkit.org"
+            "k.gurpreet@webkit.org"
          ],
          "nicks" : [
             "k.gurpreet"
@@ -1295,8 +1301,8 @@
       },
       "Jason Liu" : {
          "emails" : [
-            "jason.liu@torchmobile.com.cn",
-            "jasonliuwebkit@gmail.com"
+            "jasonliuwebkit@gmail.com",
+            "jason.liu@torchmobile.com.cn"
          ],
          "nicks" : [
             "jasonliu"
@@ -1336,6 +1342,7 @@
       },
       "Jeffrey Pfau" : {
          "emails" : [
+            "jeffrey+webkit@endrift.com",
             "jpfau@apple.com"
          ],
          "nicks" : [
@@ -1386,6 +1393,7 @@
       },
       "Jia Pu" : {
          "emails" : [
+            "jiapu.mail@gmail.com",
             "jpu@apple.com"
          ]
       },
@@ -1482,6 +1490,7 @@
       },
       "Jono Wells" : {
          "emails" : [
+            "jonowells@me.com",
             "jonowells@apple.com"
          ],
          "expertise" : "Developer Tools, Web Inspector",
@@ -1570,6 +1579,7 @@
       },
       "Karen Grunberg" : {
          "emails" : [
+            "karen+webkit@chromium.org",
             "kareng@chromium.org"
          ],
          "nicks" : [
@@ -1587,6 +1597,7 @@
       },
       "Kaustubh Atrawalkar" : {
          "emails" : [
+            "kaustubh.ra@gmail.com",
             "kaustubh@motorola.com"
          ],
          "nicks" : [
@@ -1613,6 +1624,7 @@
       },
       "Kelly Norton" : {
          "emails" : [
+            "knorton@google.com",
             "knorton@alum.mit.edu"
          ]
       },
@@ -1788,8 +1800,8 @@
       },
       "Leo Yang" : {
          "emails" : [
-            "leoyang@blackberry.com",
             "leoyang@rim.com",
+            "leoyang@blackberry.com",
             "leoyang@webkit.org",
             "leoyang.webkit@gmail.com"
          ],
@@ -1913,6 +1925,7 @@
       },
       "Matt Delaney" : {
          "emails" : [
+            "mdelaney7@gmail.com",
             "mdelaney@apple.com"
          ]
       },
@@ -1934,6 +1947,7 @@
       },
       "Matt Lilek" : {
          "emails" : [
+            "dev+webkit@mattlilek.com",
             "mlilek@apple.com",
             "webkit@mattlilek.com",
             "pewtermoose@webkit.org"
@@ -2162,8 +2176,8 @@
       },
       "Nick Diego Yamane" : {
          "emails" : [
-            "nick.yamane@openbossa.org",
-            "nick.diego@gmail.com"
+            "nick.diego@gmail.com",
+            "nick.yamane@openbossa.org"
          ],
          "nicks" : [
             "diegoyam"
@@ -2201,8 +2215,8 @@
       },
       "Pablo Flouret" : {
          "emails" : [
-            "pablof@motorola.com",
-            "pf@parb.es"
+            "pf@parb.es",
+            "pablof@motorola.com"
          ],
          "nicks" : [
             "pablof"
@@ -2302,6 +2316,7 @@
       },
       "Pierre d'Herbemont" : {
          "emails" : [
+            "pdherbemont@webkit.org",
             "pdherbemont@free.fr",
             "pdherbemont@apple.com"
          ],
@@ -2312,6 +2327,7 @@
       },
       "Pierre-Olivier Latour" : {
          "emails" : [
+            "pol@mac.com",
             "pol@apple.com"
          ],
          "nicks" : [
@@ -2329,6 +2345,7 @@
       },
       "Qi Zhang" : {
          "emails" : [
+            "qi.2.zhang@nokia.com",
             "qi.zhang02180@gmail.com"
          ],
          "nicks" : [
@@ -2346,6 +2363,7 @@
       },
       "Rafael Antognolli" : {
          "emails" : [
+            "antognolli+webkit@gmail.com",
             "antognolli@profusion.mobi"
          ],
          "nicks" : [
@@ -2456,8 +2474,8 @@
       },
       "Ruth Fong" : {
          "emails" : [
-            "ruth_fong@apple.com",
-            "ruthiecftg@gmail.com"
+            "ruthiecftg@gmail.com",
+            "ruth_fong@apple.com"
          ],
          "nicks" : [
             "ruthfong",
@@ -2545,6 +2563,7 @@
       },
       "Sergio Correia" : {
          "emails" : [
+            "sergio@correia.cc",
             "sergio.correia@openbossa.org"
          ],
          "nicks" : [
@@ -3203,8 +3222,8 @@
       },
       "Finnur Thorarinsson" : {
          "emails" : [
-            "finnur@chromium.org",
-            "finnur.webkit@gmail.com"
+            "finnur.webkit@gmail.com",
+            "finnur@chromium.org"
          ],
          "nicks" : [
             "finnur"
@@ -3271,6 +3290,7 @@
       },
       "Ian Henderson" : {
          "emails" : [
+            "ian@ianhenderson.org",
             "ianh@apple.com"
          ],
          "nicks" : [
@@ -3383,6 +3403,7 @@
       },
       "Lia Chen" : {
          "emails" : [
+            "liachen@blackberry.com",
             "liachen@rim.com"
          ]
       },
@@ -3580,6 +3601,7 @@
       },
       "Adam Treat" : {
          "emails" : [
+            "manyoso@yahoo.com",
             "treat@kde.org",
             "treat@webkit.org"
          ],
@@ -3657,8 +3679,8 @@
       },
       "Alexis Menard" : {
          "emails" : [
-            "alexis@webkit.org",
             "menard@kde.org",
+            "alexis@webkit.org",
             "alexis.menard@openbossa.org"
          ],
          "expertise" : "The QtWebKit Port, CSS, CSS shorthands, HTML5 Media Elements",
@@ -3668,6 +3690,7 @@
       },
       "Alice Liu" : {
          "emails" : [
+            "alice.barraclough@webkit.org",
             "alice.liu@apple.com"
          ],
          "expertise" : "HTML Editing, Memory Use / Leaks, Core DOM, Web Compatibility (Web Apps), Web Compatibility (General), Bug Mastery, Web Accessibility",
@@ -4275,6 +4298,7 @@
       },
       "Jocelyn Turcotte" : {
          "emails" : [
+            "jturcotte@woboq.com",
             "jocelyn.turcotte@digia.com",
             "jocelyn.turcotte@nokia.com"
          ],
@@ -4419,6 +4443,7 @@
       },
       "Lars Knoll" : {
          "emails" : [
+            "lars.knoll@gmail.com",
             "lars@trolltech.com",
             "lars@kde.org",
             "lars.knoll@nokia.com"
@@ -4502,6 +4527,7 @@
       },
       "Mark Rowe" : {
          "emails" : [
+            "mrowe@bdash.net.nz",
             "mrowe@apple.com"
          ],
          "expertise" : "Build/Release Engineering, Malloc, FastMalloc",

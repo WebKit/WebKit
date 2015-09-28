@@ -1,5 +1,14 @@
 2015-09-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Add bugzilla addresses of committers to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=149520
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2015-09-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         validate-committer-lists -b shouldn't need edituser privileges
         https://bugs.webkit.org/show_bug.cgi?id=149519
 
