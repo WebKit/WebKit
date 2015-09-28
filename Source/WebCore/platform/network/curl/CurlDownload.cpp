@@ -297,8 +297,6 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
     if (!listener)
         return;
 
-    LockHolder locker(m_mutex);
-
     URL url(ParsedURLString, request.url());
 
     init(listener, url);
@@ -366,6 +364,8 @@ void CurlDownload::writeDataToFile(const char* data, int size)
 
 void CurlDownload::addHeaders(const ResourceRequest& request)
 {
+    LockHolder locker(m_mutex);
+
     if (request.httpHeaderFields().size() > 0) {
         struct curl_slist* headers = 0;
 
