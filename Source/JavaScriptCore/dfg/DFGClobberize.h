@@ -1035,8 +1035,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         
     case ThrowReferenceError:
         write(SideState);
-        read(HeapObjectCount);
-        write(HeapObjectCount);
         return;
         
     case CountExecution:

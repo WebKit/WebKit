@@ -1,3 +1,107 @@
+2015-09-28  basile_clement@apple.com  <basile_clement@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
+
+        [ES6] Implement tail calls in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=148664
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements the tail call opcodes in the FTL, making tail
+        calls available through all tiers. The changes are relatively
+        straightforward, although the frame shuffler had to be extended to
+        handle the possibility of running out of stack when spilling or
+        building a slow path frame. The other tiers always ensure that we have
+        enough stack space to build the new frame at the bottom of the old one,
+        but that is not true for the FTL.
+
+        Moreover, for efficiency, this adds to the shuffler the ability to
+        record the state of the TagTypeNumber, and to re-use the same register
+        when doing several consecutive integer boxings with no spilling in
+        between.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::inRegister):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isFunctionTerminal):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfTailCallVarargs):
+        (JSC::FTL::sizeOfTailCallForwardVarargs):
+        (JSC::FTL::sizeOfICFor):
+        * ftl/FTLInlineCacheSize.h:
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::emit):
+        (JSC::FTL::JSCallBase::link):
+        * ftl/FTLJSCallBase.h:
+        * ftl/FTLJSCallVarargs.cpp:
+        (JSC::FTL::JSCallVarargs::JSCallVarargs):
+        (JSC::FTL::JSCallVarargs::emit):
+        * ftl/FTLJSTailCall.cpp: Added.
+        (JSC::FTL::getRegisterWithAddend):
+        (JSC::FTL::recoveryFor):
+        (JSC::FTL::sizeFor):
+        (JSC::FTL::JSTailCall::JSTailCall):
+        (JSC::FTL::m_instructionOffset):
+        (JSC::FTL::JSTailCall::emit):
+        * ftl/FTLJSTailCall.h: Copied from Source/JavaScriptCore/ftl/FTLJSCallBase.h.
+        (JSC::FTL::JSTailCall::stackmapID):
+        (JSC::FTL::JSTailCall::estimatedSize):
+        (JSC::FTL::JSTailCall::numArguments):
+        (JSC::FTL::JSTailCall::operator<):
+        * ftl/FTLLocation.h:
+        (JSC::FTL::Location::operator bool):
+        (JSC::FTL::Location::operator!):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callPreflight):
+        (JSC::FTL::DFG::LowerDFGToLLVM::exitValueForTailCall):
+        * ftl/FTLState.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitExceptionCheck):
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::dump):
+        (JSC::CallFrameShuffler::spill):
+        (JSC::CallFrameShuffler::extendFrameIfNeeded):
+        (JSC::CallFrameShuffler::prepareForSlowPath):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::restoreGPR):
+        (JSC::CallFrameShuffler::getFreeRegister):
+        (JSC::CallFrameShuffler::getFreeTempGPR):
+        (JSC::CallFrameShuffler::ensureTempGPR):
+        (JSC::CallFrameShuffler::addNew):
+        * jit/CallFrameShuffler64.cpp:
+        (JSC::CallFrameShuffler::emitBox):
+        (JSC::CallFrameShuffler::tryAcquireTagTypeNumber):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/Reg.h:
+        (JSC::Reg::Reg):
+        (JSC::Reg::isHashTableDeletedValue):
+        (JSC::Reg::deleted):
+        (JSC::RegHash::hash):
+        (JSC::RegHash::equal):
+        * test/es6.yaml:
+
 2015-09-28  Keith Miller  <keith_miller@apple.com>
 
         ObjectPropertyConditionSet::mergedWith does not produce a minimal intersection.

@@ -51,12 +51,15 @@ JSCallVarargs::JSCallVarargs(unsigned stackmapID, Node* node)
     , m_node(node)
     , m_callBase(
         (node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs)
-        ? CallLinkInfo::ConstructVarargs : CallLinkInfo::CallVarargs,
+        ? CallLinkInfo::ConstructVarargs : (node->op() == TailCallVarargs || node->op() == TailCallForwardVarargs)
+        ? CallLinkInfo::TailCallVarargs : CallLinkInfo::CallVarargs,
         node->origin.semantic)
     , m_instructionOffset(0)
 {
     ASSERT(
         node->op() == CallVarargs || node->op() == CallForwardVarargs
+        || node->op() == TailCallVarargsInlinedCaller || node->op() == TailCallForwardVarargsInlinedCaller
+        || node->op() == TailCallVarargs || node->op() == TailCallForwardVarargs
         || node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs);
 }
 
@@ -83,11 +86,15 @@ void JSCallVarargs::emit(CCallHelpers& jit, int32_t spillSlotsOffset)
     
     switch (m_node->op()) {
     case CallVarargs:
+    case TailCallVarargs:
+    case TailCallVarargsInlinedCaller:
     case ConstructVarargs:
         argumentsGPR = GPRInfo::argumentGPR1;
         thisGPR = GPRInfo::argumentGPR2;
         break;
     case CallForwardVarargs:
+    case TailCallForwardVarargs:
+    case TailCallForwardVarargsInlinedCaller:
     case ConstructForwardVarargs:
         thisGPR = GPRInfo::argumentGPR1;
         forwarding = true;
@@ -196,7 +203,7 @@ void JSCallVarargs::emit(CCallHelpers& jit, int32_t spillSlotsOffset)
     // Henceforth we make the call. The base FTL call machinery expects the callee in regT0 and for the
     // stack frame to already be set up, which it is.
     jit.store64(GPRInfo::regT0, CCallHelpers::calleeFrameSlot(JSStack::Callee));
-    
+
     m_callBase.emit(jit);
     
     // Undo the damage we've done.

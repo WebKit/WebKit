@@ -1882,11 +1882,15 @@ bool ByteCodeParser::handleInlining(
         m_currentIndex = nextOffset;
         m_exitOK = true;
         processSetLocalQueue(); // This only comes into play for intrinsics, since normal inlined code will leave an empty queue.
-        addToGraph(Jump);
+        if (Node* terminal = m_currentBlock->terminal())
+            ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
+        else {
+            addToGraph(Jump);
+            landingBlocks.append(m_currentBlock);
+        }
         if (verbose)
             dataLog("Marking ", RawPointer(m_currentBlock), " as linked (tail of poly inlinee)\n");
         m_currentBlock->didLink();
-        landingBlocks.append(m_currentBlock);
 
         if (verbose)
             dataLog("Finished inlining ", callLinkStatus[i], " at ", currentCodeOrigin(), ".\n");
@@ -1919,8 +1923,12 @@ bool ByteCodeParser::handleInlining(
     m_currentIndex = nextOffset;
     m_exitOK = true; // Origin changed, so it's fine to exit again.
     processSetLocalQueue();
-    addToGraph(Jump);
-    landingBlocks.append(m_currentBlock);
+    if (Node* terminal = m_currentBlock->terminal())
+        ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
+    else {
+        addToGraph(Jump);
+        landingBlocks.append(m_currentBlock);
+    }
     
     RefPtr<BasicBlock> continuationBlock = adoptRef(
         new BasicBlock(UINT_MAX, m_numArguments, m_numLocals, PNaN));
@@ -3664,7 +3672,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 // We could be the dummy jump to a return after a non-inlined, non-emulated tail call in a ternary operator
                 Node* terminal = m_currentBlock->terminal();
                 ASSERT_UNUSED(terminal, terminal->op() == TailCall || terminal->op() == TailCallVarargs);
-                LAST_OPCODE(op_ret);
+                LAST_OPCODE(op_jmp);
             }
             int relativeOffset = currentInstruction[1].u.operand;
             addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));

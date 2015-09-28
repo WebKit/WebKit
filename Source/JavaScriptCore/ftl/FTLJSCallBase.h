@@ -50,7 +50,7 @@ public:
     void emit(CCallHelpers&);
     void link(VM&, LinkBuffer&);
     
-private:
+protected:
     CallLinkInfo::CallType m_type;
     CodeOrigin m_origin;
     CCallHelpers::DataLabelPtr m_targetToCheck;

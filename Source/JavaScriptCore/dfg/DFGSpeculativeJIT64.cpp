@@ -771,6 +771,7 @@ void SpeculativeJIT::emitCall(Node* node)
             calleeGPR = callee.gpr();
             callee.use();
 
+            shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
             shuffleData.numLocals = m_jit.graph().frameRegisterCount();
             shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatJS);
             shuffleData.args.resize(numPassedArgs);

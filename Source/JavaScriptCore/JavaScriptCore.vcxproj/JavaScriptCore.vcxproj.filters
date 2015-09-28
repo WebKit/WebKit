@@ -1581,6 +1581,9 @@
     <ClCompile Include="..\ftl\FTLJSCall.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
+    <ClCompile Include="..\ftl\FTLJSTailCall.cpp">
+      <Filter>ftl</Filter>
+    </ClCompile>
     <ClCompile Include="..\ftl\FTLLink.cpp">
       <Filter>ftl</Filter>
     </ClCompile>
@@ -4142,6 +4145,9 @@
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLJSCall.h">
+      <Filter>ftl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ftl\FTLJSTailCall.h">
       <Filter>ftl</Filter>
     </ClInclude>
     <ClInclude Include="..\ftl\FTLLink.h">
