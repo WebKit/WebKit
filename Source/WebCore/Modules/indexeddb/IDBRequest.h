@@ -30,7 +30,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMError.h"
-#include "DOMRequestState.h"
 #include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
