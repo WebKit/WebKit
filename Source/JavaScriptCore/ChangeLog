@@ -1,3 +1,16 @@
+2015-09-28  Keith Miller  <keith_miller@apple.com>
+
+        ObjectPropertyConditionSet::mergedWith does not produce a minimal intersection.
+        https://bugs.webkit.org/show_bug.cgi?id=149598
+
+        Reviewed by Michael Saboff.
+
+        mergedWith sometimes creates duplicates of an ObjectPropertyCondition, which causes GetByIdVariant
+        in believe that the condition has more than one slotBaseCondition when only one was necessary.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::mergedWith):
+
 2015-09-26  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix debug tests. Before marking, we need to call registerGCThreads().

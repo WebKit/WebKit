@@ -91,13 +91,17 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
         result.appendVector(m_data->vector);
     
     for (const ObjectPropertyCondition& newCondition : other) {
+        bool foundMatch = false;
         for (const ObjectPropertyCondition& existingCondition : *this) {
-            if (newCondition == existingCondition)
+            if (newCondition == existingCondition) {
+                foundMatch = true;
                 continue;
+            }
             if (!newCondition.isCompatibleWith(existingCondition))
                 return invalid();
-            result.append(newCondition);
         }
+        if (!foundMatch)
+            result.append(newCondition);
     }
 
     return create(result);
