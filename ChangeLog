@@ -1,3 +1,10 @@
+2015-09-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix for internal systems.
+
+        * Source/cmake/OptionsWin.cmake: Preferentially use the build target
+        location for include and link libraries, rather than the system locations.
+
 2015-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Build WK1 with CMake on Mac
