@@ -1431,6 +1431,13 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* imageElement, const F
     Image* image = cachedImage->imageForRenderer(imageElement->renderer());
     if (!image)
         return;
+    
+    ImageObserver* observer = image->imageObserver();
+
+    if (image->isSVGImage()) {
+        image->setImageObserver(nullptr);
+        image->setContainerSize(normalizedSrcRect.size());
+    }
 
     if (rectContainsCanvas(normalizedDstRect)) {
         c->drawImage(image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
@@ -1446,6 +1453,9 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* imageElement, const F
         c->drawImage(image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDraw(normalizedDstRect);
     }
+    
+    if (image->isSVGImage())
+        image->setImageObserver(observer);
 
     checkOrigin(imageElement);
 }
