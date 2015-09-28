@@ -1,3 +1,18 @@
+2015-09-28  Beth Dakin  <bdakin@apple.com>
+
+        Heavy taps on links are sometimes interpreted as the preview gesture
+        https://bugs.webkit.org/show_bug.cgi?id=149304
+        -and corresponding-
+        rdar://problem/22689258
+
+        Rubber-stamped by Tim Horton.
+
+        Rolling out this patch. We should try to fix this at the UIKit-level.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _interactionStoppedFromPreviewItemController:]):
+
 2015-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Expose a WKWebView API for allowing programmatic focus to trigger node assistance
