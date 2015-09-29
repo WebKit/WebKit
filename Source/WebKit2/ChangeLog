@@ -1,3 +1,67 @@
+2015-09-29  Brady Eidson  <beidson@apple.com>
+
+        Move WebKit2 AsyncTask to WebCore CrossThreadTask.
+        https://bugs.webkit.org/show_bug.cgi?id=149651
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::ensureIndexedDatabaseRelativePathExists):
+        (WebKit::DatabaseProcess::postDatabaseTask):
+        (WebKit::DatabaseProcess::performNextDatabaseTask):
+        (WebKit::DatabaseProcess::fetchWebsiteData):
+        (WebKit::DatabaseProcess::deleteWebsiteData):
+        (WebKit::DatabaseProcess::deleteWebsiteDataForOrigins):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::shutdown):
+        (WebKit::UniqueIDBDatabase::shutdownBackingStore):
+        (WebKit::UniqueIDBDatabase::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::UniqueIDBDatabase::openBackingStoreAndReadMetadata):
+        (WebKit::UniqueIDBDatabase::openTransaction):
+        (WebKit::UniqueIDBDatabase::beginTransaction):
+        (WebKit::UniqueIDBDatabase::commitTransaction):
+        (WebKit::UniqueIDBDatabase::resetTransaction):
+        (WebKit::UniqueIDBDatabase::rollbackTransaction):
+        (WebKit::UniqueIDBDatabase::postTransactionOperation):
+        (WebKit::UniqueIDBDatabase::changeDatabaseVersion):
+        (WebKit::UniqueIDBDatabase::createObjectStore):
+        (WebKit::UniqueIDBDatabase::deleteObjectStore):
+        (WebKit::UniqueIDBDatabase::clearObjectStore):
+        (WebKit::UniqueIDBDatabase::createIndex):
+        (WebKit::UniqueIDBDatabase::deleteIndex):
+        (WebKit::UniqueIDBDatabase::putRecord):
+        (WebKit::UniqueIDBDatabase::getRecord):
+        (WebKit::UniqueIDBDatabase::openCursor):
+        (WebKit::UniqueIDBDatabase::cursorAdvance):
+        (WebKit::UniqueIDBDatabase::cursorIterate):
+        (WebKit::UniqueIDBDatabase::count):
+        (WebKit::UniqueIDBDatabase::deleteRange):
+        (WebKit::UniqueIDBDatabase::openBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::beginBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::commitBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::resetBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::rollbackBackingStoreTransaction):
+        (WebKit::UniqueIDBDatabase::changeDatabaseVersionInBackingStore):
+        (WebKit::UniqueIDBDatabase::createObjectStoreInBackingStore):
+        (WebKit::UniqueIDBDatabase::deleteObjectStoreInBackingStore):
+        (WebKit::UniqueIDBDatabase::clearObjectStoreInBackingStore):
+        (WebKit::UniqueIDBDatabase::createIndexInBackingStore):
+        (WebKit::UniqueIDBDatabase::deleteIndexInBackingStore):
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore):
+        (WebKit::UniqueIDBDatabase::getRecordFromBackingStore):
+        (WebKit::UniqueIDBDatabase::openCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::advanceCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::iterateCursorInBackingStore):
+        (WebKit::UniqueIDBDatabase::countInBackingStore):
+        (WebKit::UniqueIDBDatabase::deleteRangeInBackingStore):
+        (WebKit::UniqueIDBDatabase::postMainThreadTask):
+        (WebKit::UniqueIDBDatabase::performNextMainThreadTask):
+        (WebKit::UniqueIDBDatabase::postDatabaseTask):
+        (WebKit::UniqueIDBDatabase::performNextDatabaseTask):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-09-29  Chris Dumez  <cdumez@apple.com>
 
         Memory cache revalidations should refresh the network disk cache

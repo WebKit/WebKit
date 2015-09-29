@@ -56,7 +56,7 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
-class AsyncTask;
+class CrossThreadTask;
 class DatabaseProcessIDBConnection;
 class UniqueIDBDatabaseBackingStore;
 
@@ -125,7 +125,7 @@ private:
         Normal,
         Shutdown
     };
-    void postDatabaseTask(std::unique_ptr<AsyncTask>, DatabaseTaskType = DatabaseTaskType::Normal);
+    void postDatabaseTask(std::unique_ptr<CrossThreadTask>, DatabaseTaskType = DatabaseTaskType::Normal);
 
     void shutdown(UniqueIDBDatabaseShutdownType);
 
@@ -138,11 +138,11 @@ private:
     // Returns true if this origin can use the same databases as the given origin.
     bool canShareDatabases(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&) const;
 
-    void postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<AsyncTask>, std::function<void (bool)> successCallback);
+    void postTransactionOperation(const IDBIdentifier& transactionIdentifier, std::unique_ptr<CrossThreadTask>, std::function<void (bool)> successCallback);
     
     // To be called from the database workqueue thread only
     void performNextDatabaseTask();
-    void postMainThreadTask(std::unique_ptr<AsyncTask>, DatabaseTaskType = DatabaseTaskType::Normal);
+    void postMainThreadTask(std::unique_ptr<CrossThreadTask>, DatabaseTaskType = DatabaseTaskType::Normal);
     void openBackingStoreAndReadMetadata(const UniqueIDBDatabaseIdentifier&, const String& databaseDirectory);
     void openBackingStoreTransaction(const IDBIdentifier& transactionIdentifier, const Vector<int64_t>& objectStoreIDs, WebCore::IndexedDB::TransactionMode);
     void beginBackingStoreTransaction(const IDBIdentifier&);
@@ -208,10 +208,10 @@ private:
 
     RefPtr<UniqueIDBDatabaseBackingStore> m_backingStore;
 
-    Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
+    Deque<std::unique_ptr<CrossThreadTask>> m_databaseTasks;
     Lock m_databaseTaskMutex;
 
-    Deque<std::unique_ptr<AsyncTask>> m_mainThreadTasks;
+    Deque<std::unique_ptr<CrossThreadTask>> m_mainThreadTasks;
     Lock m_mainThreadTaskMutex;
 };
 

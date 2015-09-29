@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AsyncTask_h
-#define AsyncTask_h
+#ifndef CrossThreadTask_h
+#define CrossThreadTask_h
 
-#include <WebCore/CrossThreadCopier.h>
+#include "CrossThreadCopier.h"
 #include <functional>
 
 namespace WebKit {
 
-class AsyncTask {
-    WTF_MAKE_NONCOPYABLE(AsyncTask);
+class CrossThreadTask {
+    WTF_MAKE_NONCOPYABLE(CrossThreadTask);
 public:
-    AsyncTask(const std::function<void ()> taskFunction)
+    CrossThreadTask(const std::function<void ()> taskFunction)
         : m_taskFunction(taskFunction)
     {
         ASSERT(taskFunction);
@@ -46,15 +46,15 @@ public:
     }
 
 protected:
-    AsyncTask() { }
+    CrossThreadTask() { }
 
     std::function<void ()> m_taskFunction;
 };
 
 template <typename T, typename... Arguments>
-class AsyncTaskImpl final : public AsyncTask {
+class CrossThreadTaskImpl final : public CrossThreadTask {
 public:
-    AsyncTaskImpl(T* callee, void (T::*method)(Arguments...), Arguments&&... arguments)
+    CrossThreadTaskImpl(T* callee, void (T::*method)(Arguments...), Arguments&&... arguments)
     {
         m_taskFunction = [callee, method, arguments...] {
             (callee->*method)(arguments...);
@@ -63,33 +63,33 @@ public:
 };
 
 template<typename T>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)())
 {
-    return std::make_unique<AsyncTaskImpl<T>>(&callee, method);
+    return std::make_unique<CrossThreadTaskImpl<T>>(&callee, method);
 }
 
 template<typename T, typename P1, typename MP1>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1),
     const P1& parameter1)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1));
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2),
     const P1& parameter1,
     const P2& parameter2)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -98,14 +98,14 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3),
     const P1& parameter1,
     const P2& parameter2,
     const P3& parameter3)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -114,7 +114,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4),
     const P1& parameter1,
@@ -122,7 +122,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
     const P3& parameter3,
     const P4& parameter4)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -132,7 +132,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5),
     const P1& parameter1,
@@ -141,7 +141,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
     const P4& parameter4,
     const P5& parameter5)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4, MP5>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -152,7 +152,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6),
     const P1& parameter1,
@@ -162,7 +162,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
     const P5& parameter5,
     const P6& parameter6)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -174,7 +174,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6, MP7),
     const P1& parameter1,
@@ -185,7 +185,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
     const P6& parameter6,
     const P7& parameter7)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -198,7 +198,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4, typename P5, typename MP5, typename P6, typename MP6, typename P7, typename MP7, typename P8, typename MP8>
-std::unique_ptr<AsyncTask> createAsyncTask(
+std::unique_ptr<CrossThreadTask> createCrossThreadTask(
     T& callee,
     void (T::*method)(MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8),
     const P1& parameter1,
@@ -210,7 +210,7 @@ std::unique_ptr<AsyncTask> createAsyncTask(
     const P7& parameter7,
     const P8& parameter8)
 {
-    return std::make_unique<AsyncTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8>>(
+    return std::make_unique<CrossThreadTaskImpl<T, MP1, MP2, MP3, MP4, MP5, MP6, MP7, MP8>>(
         &callee,
         method,
         WebCore::CrossThreadCopier<P1>::copy(parameter1),
@@ -225,4 +225,4 @@ std::unique_ptr<AsyncTask> createAsyncTask(
 
 } // namespace WebKit
 
-#endif // AsyncTask_h
+#endif // CrossThreadTask_h

@@ -985,7 +985,6 @@
 		51AD35731AD2F3940057B38E /* WebHitTestResult.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AD35721AD2F3750057B38E /* WebHitTestResult.mm */; };
 		51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */; };
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
-		51BA24441858EE3000EA2811 /* AsyncTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BA24431858EE3000EA2811 /* AsyncTask.h */; };
 		51BA24461858F55D00EA2811 /* WebCrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */; };
 		51C96118183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */; };
 		51C96119183D294700D2002E /* WebIDBServerConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C96117183D294700D2002E /* WebIDBServerConnectionMessages.h */; };
@@ -3161,7 +3160,6 @@
 		51AD35721AD2F3750057B38E /* WebHitTestResult.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHitTestResult.mm; sourceTree = "<group>"; };
 		51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnvironmentUtilities.cpp; path = unix/EnvironmentUtilities.cpp; sourceTree = "<group>"; };
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
-		51BA24431858EE3000EA2811 /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncTask.h; sourceTree = "<group>"; };
 		51BA24451858F41500EA2811 /* WebCrossThreadCopier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCrossThreadCopier.cpp; sourceTree = "<group>"; };
 		51C96115183C95FF00D2002E /* WebIDBServerConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebIDBServerConnection.messages.in; sourceTree = "<group>"; };
 		51C96116183D294700D2002E /* WebIDBServerConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIDBServerConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -4681,7 +4679,6 @@
 				C59C4A5718B81174007BDCB6 /* AssistedNodeInformation.h */,
 				515E7725183DD6F60007203F /* AsyncRequest.cpp */,
 				515E7726183DD6F60007203F /* AsyncRequest.h */,
-				51BA24431858EE3000EA2811 /* AsyncTask.h */,
 				E164A2EF191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp */,
 				E164A2F0191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h */,
 				4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */,
@@ -7593,7 +7590,6 @@
 				CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* AssistedNodeInformation.h in Headers */,
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
-				51BA24441858EE3000EA2811 /* AsyncTask.h in Headers */,
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,
 				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,

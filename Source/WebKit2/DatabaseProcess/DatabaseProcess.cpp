@@ -28,7 +28,6 @@
 
 #if ENABLE(DATABASE_PROCESS)
 
-#include "AsyncTask.h"
 #include "DatabaseProcessCreationParameters.h"
 #include "DatabaseProcessMessages.h"
 #include "DatabaseProcessProxyMessages.h"
@@ -36,6 +35,7 @@
 #include "UniqueIDBDatabase.h"
 #include "WebCrossThreadCopier.h"
 #include "WebsiteData.h"
+#include <WebCore/CrossThreadTask.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SessionID.h>
@@ -134,7 +134,7 @@ void DatabaseProcess::initializeDatabaseProcess(const DatabaseProcessCreationPar
 #if ENABLE(INDEXED_DATABASE)
 void DatabaseProcess::ensureIndexedDatabaseRelativePathExists(const String& relativePath)
 {
-    postDatabaseTask(createAsyncTask(*this, &DatabaseProcess::ensurePathExists, absoluteIndexedDatabasePathFromDatabaseRelativePath(relativePath)));
+    postDatabaseTask(createCrossThreadTask(*this, &DatabaseProcess::ensurePathExists, absoluteIndexedDatabasePathFromDatabaseRelativePath(relativePath)));
 }
 #endif
 
@@ -155,7 +155,7 @@ String DatabaseProcess::absoluteIndexedDatabasePathFromDatabaseRelativePath(cons
 }
 #endif
 
-void DatabaseProcess::postDatabaseTask(std::unique_ptr<AsyncTask> task)
+void DatabaseProcess::postDatabaseTask(std::unique_ptr<CrossThreadTask> task)
 {
     ASSERT(RunLoop::isMain());
 
@@ -172,7 +172,7 @@ void DatabaseProcess::performNextDatabaseTask()
 {
     ASSERT(!RunLoop::isMain());
 
-    std::unique_ptr<AsyncTask> task;
+    std::unique_ptr<CrossThreadTask> task;
     {
         LockHolder locker(m_databaseTaskMutex);
         ASSERT(!m_databaseTasks.isEmpty());
@@ -235,7 +235,7 @@ void DatabaseProcess::fetchWebsiteData(SessionID, uint64_t websiteDataTypes, uin
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
         // FIXME: Pick the right database store based on the session ID.
-        postDatabaseTask(std::make_unique<AsyncTask>([callbackAggregator, websiteDataTypes, this] {
+        postDatabaseTask(std::make_unique<CrossThreadTask>([callbackAggregator, websiteDataTypes, this] {
 
             Vector<RefPtr<SecurityOrigin>> securityOrigins = indexedDatabaseOrigins();
 
@@ -272,7 +272,7 @@ void DatabaseProcess::deleteWebsiteData(WebCore::SessionID, uint64_t websiteData
 
 #if ENABLE(INDEXED_DATABASE)
     if (websiteDataTypes & WebsiteDataTypeIndexedDBDatabases) {
-        postDatabaseTask(std::make_unique<AsyncTask>([this, callbackAggregator, modifiedSince] {
+        postDatabaseTask(std::make_unique<CrossThreadTask>([this, callbackAggregator, modifiedSince] {
 
             deleteIndexedDatabaseEntriesModifiedSince(modifiedSince);
             RunLoop::main().dispatch([callbackAggregator] { });
@@ -309,7 +309,7 @@ void DatabaseProcess::deleteWebsiteDataForOrigins(WebCore::SessionID, uint64_t w
         for (const auto& securityOriginData : securityOriginDatas)
             securityOrigins.append(securityOriginData.securityOrigin());
 
-        postDatabaseTask(std::make_unique<AsyncTask>([this, securityOrigins, callbackAggregator] {
+        postDatabaseTask(std::make_unique<CrossThreadTask>([this, securityOrigins, callbackAggregator] {
             deleteIndexedDatabaseEntriesForOrigins(securityOrigins);
 
             RunLoop::main().dispatch([callbackAggregator] { });

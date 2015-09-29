@@ -39,7 +39,7 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
-class AsyncTask;
+class CrossThreadTask;
 class DatabaseToWebProcessConnection;
 class UniqueIDBDatabase;
 
@@ -64,7 +64,7 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
-    void postDatabaseTask(std::unique_ptr<AsyncTask>);
+    void postDatabaseTask(std::unique_ptr<CrossThreadTask>);
 
 private:
     DatabaseProcess();
@@ -112,7 +112,7 @@ private:
     HashMap<UniqueIDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_idbDatabases;
 #endif
 
-    Deque<std::unique_ptr<AsyncTask>> m_databaseTasks;
+    Deque<std::unique_ptr<CrossThreadTask>> m_databaseTasks;
     Lock m_databaseTaskMutex;
 };
 
