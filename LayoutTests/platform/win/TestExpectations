@@ -638,6 +638,8 @@ webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nes
 # font-variant-* not implemented on Windows
 webkit.org/b/149630 css3/font-variant-all-webfont.html [ ImageOnlyFailure ]
 
+webkit.org/b/149572 fast/text/mark-matches-overflow-clip.html [ Failure ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################
