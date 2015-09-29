@@ -92,6 +92,23 @@ test(function () {
 
 test(function () {
     var shadowHost = document.createElement('div');
+    var child = document.createElement('span');
+    shadowHost.appendChild(child);
+
+    var shadowRoot = shadowHost.attachShadow({mode: 'open'});
+    var slotElement = document.createElement('slot');
+    slotElement.name = 'foo';
+    shadowRoot.appendChild(slotElement);
+
+    assert_array_equals(slotElement.getDistributedNodes(), [], 'getDistributedNodes must be empty when there are no matching elements for the slot name');
+
+    slotElement.name = null;
+    assert_array_equals(slotElement.getDistributedNodes(), [child], 'getDistributedNodes must be empty when there are no matching elements for the slot name');
+
+}, 'getDistributedNodes must update when a default slot is introduced dynamically by a slot rename');
+
+test(function () {
+    var shadowHost = document.createElement('div');
     var p = document.createElement('p');
     var text = document.createTextNode('');
     var b = document.createElement('b');

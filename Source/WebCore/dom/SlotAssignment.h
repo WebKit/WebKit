@@ -47,8 +47,8 @@ public:
 
     HTMLSlotElement* findAssignedSlot(const Node&, ShadowRoot&);
 
-    void addSlotElementByName(const AtomicString&, HTMLSlotElement&);
-    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&);
+    void addSlotElementByName(const AtomicString&, HTMLSlotElement&, ShadowRoot&);
+    void removeSlotElementByName(const AtomicString&, HTMLSlotElement&, ShadowRoot&);
 
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
 
