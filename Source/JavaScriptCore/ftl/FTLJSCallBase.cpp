@@ -55,29 +55,16 @@ void JSCallBase::emit(CCallHelpers& jit)
     CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
         CCallHelpers::NotEqual, GPRInfo::regT0, m_targetToCheck,
         CCallHelpers::TrustedImmPtr(0));
-
-    CCallHelpers::Jump done;
-
-    if (CallLinkInfo::callModeFor(m_type) == CallMode::Tail) {
-        jit.emitRestoreCalleeSaves();
-        jit.prepareForTailCallSlow();
-        m_fastCall = jit.nearTailCall();
-    } else {
-        m_fastCall = jit.nearCall();
-        done = jit.jump();
-    }
-
+    
+    m_fastCall = jit.nearCall();
+    CCallHelpers::Jump done = jit.jump();
+    
     slowPath.link(&jit);
-
+    
     jit.move(CCallHelpers::TrustedImmPtr(m_callLinkInfo), GPRInfo::regT2);
     m_slowCall = jit.nearCall();
-
-    if (CallLinkInfo::callModeFor(m_type) == CallMode::Tail)
-        jit.abortWithReason(JITDidReturnFromTailCall);
-    else
-        done.link(&jit);
-
-    m_callLinkInfo->setUpCall(m_type, m_origin, GPRInfo::regT0);
+    
+    done.link(&jit);
 }
 
 void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)
@@ -85,8 +72,9 @@ void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)
     linkBuffer.link(
         m_slowCall, FunctionPtr(vm.getCTIStub(linkCallThunkGenerator).code().executableAddress()));
 
-    m_callLinkInfo->setCallLocations(linkBuffer.locationOfNearCall(m_slowCall),
-        linkBuffer.locationOf(m_targetToCheck), linkBuffer.locationOfNearCall(m_fastCall));
+    m_callLinkInfo->setUpCallFromFTL(m_type, m_origin, linkBuffer.locationOfNearCall(m_slowCall),
+        linkBuffer.locationOf(m_targetToCheck), linkBuffer.locationOfNearCall(m_fastCall),
+        GPRInfo::regT0);
 }
 
 } } // namespace JSC::FTL

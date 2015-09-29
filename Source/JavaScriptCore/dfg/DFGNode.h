@@ -1118,14 +1118,6 @@ struct Node {
         }
     }
 
-    bool isFunctionTerminal()
-    {
-        if (isTerminal() && !numSuccessors())
-            return true;
-
-        return false;
-    }
-
     unsigned targetBytecodeOffsetDuringParsing()
     {
         ASSERT(isJump());

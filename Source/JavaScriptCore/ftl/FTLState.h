@@ -37,7 +37,6 @@
 #include "FTLJITFinalizer.h"
 #include "FTLJSCall.h"
 #include "FTLJSCallVarargs.h"
-#include "FTLJSTailCall.h"
 #include "FTLStackMaps.h"
 #include "FTLState.h"
 #include <wtf/Noncopyable.h>
@@ -80,7 +79,6 @@ public:
     SegmentedVector<CheckInDescriptor> checkIns;
     Vector<JSCall> jsCalls;
     Vector<JSCallVarargs> jsCallVarargses;
-    Vector<JSTailCall> jsTailCalls;
     Vector<CString> codeSectionNames;
     Vector<CString> dataSectionNames;
     void* unwindDataSection;

@@ -73,21 +73,6 @@ public:
         m_lockedRegisters.clear(gpr);
     }
 
-    void restoreGPR(GPRReg gpr)
-    {
-        if (!m_newRegisters[gpr])
-            return;
-
-        ensureGPR();
-#if USE(JSVALUE32_64)
-        GPRReg tempGPR { getFreeGPR() };
-        lockGPR(tempGPR);
-        ensureGPR();
-        releaseGPR(tempGPR);
-#endif
-        emitDisplace(*m_newRegisters[gpr]);
-    }
-
     // You can only take a snapshot if the recovery has not started
     // yet. The only operations that are valid before taking a
     // snapshot are lockGPR(), acquireGPR() and releaseGPR().
@@ -324,10 +309,6 @@ private:
         return reg >= firstOld() && reg <= lastOld();
     }
 
-    bool m_didExtendFrame { false };
-
-    void extendFrameIfNeeded();
-
     // This stores, for each slot in the new frame, information about
     // the recovery for the value that should eventually go into that
     // slot.
@@ -404,18 +385,12 @@ private:
     // We also use this to lock registers temporarily, for instance to
     // ensure that we have at least 2 available registers for loading
     // a pair on 32bits.
-    mutable RegisterSet m_lockedRegisters;
+    RegisterSet m_lockedRegisters;
 
     // This stores the current recoveries present in registers. A null
     // CachedRecovery means we can trash the current value as we don't
     // care about it. 
     RegisterMap<CachedRecovery*> m_registers;
-
-#if USE(JSVALUE64)
-    mutable GPRReg m_tagTypeNumber;
-
-    bool tryAcquireTagTypeNumber();
-#endif
 
     // This stores, for each register, information about the recovery
     // for the value that should eventually go into that register. The
@@ -446,24 +421,7 @@ private:
                     nonTemp = reg;
             }
         }
-
-#if USE(JSVALUE64)
-        if (!nonTemp && m_tagTypeNumber != InvalidGPRReg && check(Reg { m_tagTypeNumber })) {
-            ASSERT(m_lockedRegisters.get(m_tagTypeNumber));
-            m_lockedRegisters.clear(m_tagTypeNumber);
-            nonTemp = Reg { m_tagTypeNumber };
-            m_tagTypeNumber = InvalidGPRReg;
-        }
-#endif
         return nonTemp;
-    }
-
-    GPRReg getFreeTempGPR() const
-    {
-        Reg freeTempGPR { getFreeRegister([this] (Reg reg) { return reg.isGPR() && !m_newRegisters[reg]; }) };
-        if (!freeTempGPR)
-            return InvalidGPRReg;
-        return freeTempGPR.gpr();
     }
 
     GPRReg getFreeGPR() const
@@ -561,31 +519,6 @@ private:
             });
     }
 
-    void ensureTempGPR()
-    {
-        if (getFreeTempGPR() != InvalidGPRReg)
-            return;
-
-        if (verbose)
-            dataLog("  Finding a temp GPR to spill\n");
-        ensureRegister(
-            [this] (const CachedRecovery& cachedRecovery) {
-                if (cachedRecovery.recovery().isInGPR()) {
-                    return !m_lockedRegisters.get(cachedRecovery.recovery().gpr()) 
-                        && !m_newRegisters[cachedRecovery.recovery().gpr()];
-                }
-#if USE(JSVALUE32_64)
-                if (cachedRecovery.recovery().technique() == InPair) {
-                    return !m_lockedRegisters.get(cachedRecovery.recovery().tagGPR())
-                        && !m_lockedRegisters.get(cachedRecovery.recovery().payloadGPR())
-                        && !m_newRegisters[cachedRecovery.recovery().tagGPR()]
-                        && !m_newRegisters[cachedRecovery.recovery().payloadGPR()];
-                }
-#endif
-                return false;
-            });
-    }
-
     void ensureGPR()
     {
         if (getFreeGPR() != InvalidGPRReg)
@@ -640,24 +573,16 @@ private:
     {
         ASSERT(jsValueRegs && !getNew(jsValueRegs));
         CachedRecovery* cachedRecovery = addCachedRecovery(recovery);
+        ASSERT(!cachedRecovery->wantedJSValueRegs());
+        cachedRecovery->setWantedJSValueRegs(jsValueRegs);
 #if USE(JSVALUE64)
-        if (cachedRecovery->wantedJSValueRegs())
-            m_newRegisters[cachedRecovery->wantedJSValueRegs().gpr()] = nullptr;
         m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
 #else
-        if (JSValueRegs oldRegs { cachedRecovery->wantedJSValueRegs() }) {
-            if (oldRegs.payloadGPR())
-                m_newRegisters[oldRegs.payloadGPR()] = nullptr;
-            if (oldRegs.tagGPR())
-                m_newRegisters[oldRegs.tagGPR()] = nullptr;
-        }
         if (jsValueRegs.payloadGPR() != InvalidGPRReg)
             m_newRegisters[jsValueRegs.payloadGPR()] = cachedRecovery;
         if (jsValueRegs.tagGPR() != InvalidGPRReg)
             m_newRegisters[jsValueRegs.tagGPR()] = cachedRecovery;
 #endif
-        ASSERT(!cachedRecovery->wantedJSValueRegs());
-        cachedRecovery->setWantedJSValueRegs(jsValueRegs);
     }
 
     void addNew(FPRReg fpr, ValueRecovery recovery)

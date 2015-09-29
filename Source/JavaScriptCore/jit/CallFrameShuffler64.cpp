@@ -87,15 +87,9 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
             m_jit.zeroExtend32ToPtr(
                 cachedRecovery.recovery().gpr(),
                 cachedRecovery.recovery().gpr());
-            m_lockedRegisters.set(cachedRecovery.recovery().gpr());
-            if (tryAcquireTagTypeNumber())
-                m_jit.or64(m_tagTypeNumber, cachedRecovery.recovery().gpr());
-            else {
-                // We have to do this the hard way
-                m_jit.or64(MacroAssembler::TrustedImm64(TagTypeNumber),
-                    cachedRecovery.recovery().gpr());
-            }
-            m_lockedRegisters.clear(cachedRecovery.recovery().gpr());
+            // We have to do this the hard way.
+            m_jit.or64(MacroAssembler::TrustedImm64(TagTypeNumber),
+                cachedRecovery.recovery().gpr());
             cachedRecovery.setRecovery(
                 ValueRecovery::inGPR(cachedRecovery.recovery().gpr(), DataFormatJS));
             if (verbose)
@@ -147,12 +141,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
             ASSERT(resultGPR != InvalidGPRReg);
             m_jit.purifyNaN(cachedRecovery.recovery().fpr());
             m_jit.moveDoubleTo64(cachedRecovery.recovery().fpr(), resultGPR);
-            m_lockedRegisters.set(resultGPR);
-            if (tryAcquireTagTypeNumber())
-                m_jit.sub64(m_tagTypeNumber, resultGPR);
-            else
-                m_jit.sub64(MacroAssembler::TrustedImm64(TagTypeNumber), resultGPR);
-            m_lockedRegisters.clear(resultGPR);
+            m_jit.sub64(MacroAssembler::TrustedImm64(TagTypeNumber), resultGPR);
             updateRecovery(cachedRecovery, ValueRecovery::inGPR(resultGPR, DataFormatJS));
             if (verbose)
                 dataLog(" into ", cachedRecovery.recovery(), "\n");
@@ -347,21 +336,6 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
     }
 
     ASSERT(m_registers[wantedReg] == &cachedRecovery);
-}
-    
-bool CallFrameShuffler::tryAcquireTagTypeNumber()
-{
-    if (m_tagTypeNumber != InvalidGPRReg)
-        return true;
-
-    m_tagTypeNumber = getFreeGPR();
-
-    if (m_tagTypeNumber == InvalidGPRReg)
-        return false;
-
-    m_lockedRegisters.set(m_tagTypeNumber);
-    m_jit.move(MacroAssembler::TrustedImm64(TagTypeNumber), m_tagTypeNumber);
-    return true;
 }
 
 } // namespace JSC

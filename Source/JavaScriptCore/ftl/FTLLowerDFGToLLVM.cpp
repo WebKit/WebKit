@@ -173,11 +173,7 @@ public:
             for (Node* node : *block) {
                 switch (node->op()) {
                 case CallVarargs:
-                case TailCallVarargs:
-                case TailCallVarargsInlinedCaller:
                 case CallForwardVarargs:
-                case TailCallForwardVarargs:
-                case TailCallForwardVarargsInlinedCaller:
                 case ConstructVarargs:
                 case ConstructForwardVarargs:
                     hasVarargs = true;
@@ -727,19 +723,11 @@ private:
             compileLogicalNot();
             break;
         case Call:
-        case TailCallInlinedCaller:
         case Construct:
             compileCallOrConstruct();
             break;
-        case TailCall:
-            compileTailCall();
-            break;
         case CallVarargs:
         case CallForwardVarargs:
-        case TailCallVarargs:
-        case TailCallVarargsInlinedCaller:
-        case TailCallForwardVarargs:
-        case TailCallForwardVarargsInlinedCaller:
         case ConstructVarargs:
         case ConstructForwardVarargs:
             compileCallOrConstructVarargs();
@@ -4412,41 +4400,6 @@ private:
         
         setJSValue(call);
     }
-
-    void compileTailCall()
-    {
-        int numArgs = m_node->numChildren() - 1;
-        ExitArgumentList exitArguments;
-        exitArguments.reserveCapacity(numArgs + 6);
-
-        unsigned stackmapID = m_stackmapIDs++;
-        exitArguments.append(lowJSValue(m_graph.varArgChild(m_node, 0)));
-        exitArguments.append(m_tagTypeNumber);
-
-        Vector<ExitValue> callArguments(numArgs);
-
-        bool needsTagTypeNumber { false };
-        for (int i = 0; i < numArgs; ++i) {
-            callArguments[i] =
-                exitValueForTailCall(exitArguments, m_graph.varArgChild(m_node, 1 + i).node());
-            if (callArguments[i].dataFormat() == DataFormatInt32)
-                needsTagTypeNumber = true;
-        }
-
-        JSTailCall tailCall(stackmapID, m_node, WTF::move(callArguments));
-
-        exitArguments.insert(0, m_out.constInt32(needsTagTypeNumber ? 2 : 1));
-        exitArguments.insert(0, constNull(m_out.ref8));
-        exitArguments.insert(0, m_out.constInt32(tailCall.estimatedSize()));
-        exitArguments.insert(0, m_out.constInt64(stackmapID));
-
-        LValue call =
-            m_out.call(m_out.patchpointVoidIntrinsic(), exitArguments);
-        setInstructionCallingConvention(call, LLVMAnyRegCallConv);
-        m_out.unreachable();
-
-        m_ftlState.jsTailCalls.append(tailCall);
-    }
     
     void compileCallOrConstructVarargs()
     {
@@ -4457,14 +4410,10 @@ private:
         
         switch (m_node->op()) {
         case CallVarargs:
-        case TailCallVarargs:
-        case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
             jsArguments = lowJSValue(m_node->child2());
             break;
         case CallForwardVarargs:
-        case TailCallForwardVarargs:
-        case TailCallForwardVarargsInlinedCaller:
         case ConstructForwardVarargs:
             break;
         default:
@@ -4491,16 +4440,8 @@ private:
         setInstructionCallingConvention(call, LLVMCCallConv);
         
         m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, m_node));
-
-        switch (m_node->op()) {
-        case TailCallVarargs:
-        case TailCallForwardVarargs:
-            m_out.unreachable();
-            break;
-
-        default:
-            setJSValue(call);
-        }
+        
+        setJSValue(call);
     }
     
     void compileLoadVarargs()
@@ -8315,14 +8256,7 @@ private:
     }
     void callPreflight()
     {
-        CodeOrigin codeOrigin = m_node->origin.semantic;
-
-        if (m_node->op() == TailCallInlinedCaller
-            || m_node->op() == TailCallVarargsInlinedCaller
-            || m_node->op() == TailCallForwardVarargsInlinedCaller)
-            codeOrigin =*codeOrigin.inlineCallFrame->getCallerSkippingDeadFrames();
-
-        callPreflight(codeOrigin);
+        callPreflight(m_node->origin.semantic);
     }
     
     void callCheck()
@@ -8593,45 +8527,12 @@ private:
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
         return ExitValue::dead();
     }
-
+    
     ExitValue exitArgument(ExitArgumentList& arguments, DataFormat format, LValue value)
     {
         ExitValue result = ExitValue::exitArgument(ExitArgument(format, arguments.size()));
         arguments.append(value);
         return result;
-    }
-
-    ExitValue exitValueForTailCall(ExitArgumentList& arguments, Node* node)
-    {
-        ASSERT(node->shouldGenerate());
-        ASSERT(node->hasResult());
-
-        switch (node->op()) {
-        case JSConstant:
-        case Int52Constant:
-        case DoubleConstant:
-            return ExitValue::constant(node->asJSValue());
-
-        default:
-            break;
-        }
-
-        LoweredNodeValue value = m_jsValueValues.get(node);
-        if (isValid(value))
-            return exitArgument(arguments, DataFormatJS, value.value());
-
-        value = m_int32Values.get(node);
-        if (isValid(value))
-            return exitArgument(arguments, DataFormatInt32, value.value());
-
-        value = m_booleanValues.get(node);
-        if (isValid(value)) {
-            LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
-            return exitArgument(arguments, DataFormatBoolean, valueToPass);
-        }
-
-        // Doubles and Int52 have been converted by ValueRep()
-        DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
     }
     
     bool doesKill(Edge edge)

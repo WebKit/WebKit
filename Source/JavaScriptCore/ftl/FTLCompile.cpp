@@ -618,22 +618,6 @@ static void fixFunctionBasedOnStackMaps(
             call.link(vm, linkBuffer, state.finalizer->handleExceptionsLinkBuffer->entrypoint());
         });
     }
-
-    adjustCallICsForStackmaps(state.jsTailCalls, recordMap);
-
-    for (unsigned i = state.jsTailCalls.size(); i--;) {
-        JSTailCall& call = state.jsTailCalls[i];
-
-        CCallHelpers fastPathJIT(&vm, codeBlock);
-        call.emit(*state.jitCode.get(), fastPathJIT);
-
-        char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
-        size_t sizeOfIC = call.estimatedSize();
-
-        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "tail call inline cache", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
-            call.link(vm, linkBuffer);
-        });
-    }
     
     auto iter = recordMap.find(state.handleStackOverflowExceptionStackmapID);
     // It's sort of remotely possible that we won't have an in-band exception handling

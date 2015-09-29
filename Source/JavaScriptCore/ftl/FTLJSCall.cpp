@@ -48,7 +48,7 @@ JSCall::JSCall(unsigned stackmapID, Node* node)
     , m_stackmapID(stackmapID)
     , m_instructionOffset(0)
 {
-    ASSERT(node->op() == Call || node->op() == Construct || node->op() == TailCallInlinedCaller);
+    ASSERT(node->op() == Call || node->op() == Construct);
 }
 
 void JSCall::emit(CCallHelpers& jit, unsigned stackSizeForLocals)

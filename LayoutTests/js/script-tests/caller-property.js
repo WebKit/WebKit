@@ -23,15 +23,11 @@ shouldBe('childHasCallerWhenCalledFromWithinParent', 'true')
 function nonStrictCallee() { return nonStrictCallee.caller; }
 function strictCallee() { "use strict"; return strictCallee.caller; }
 function nonStrictCaller(x) { return x(); }
-// Tail calls leak and show our caller's caller, which is null here
-function strictCaller(x) { "use strict"; var result = x(); return result; }
-function strictTailCaller(x) { "use strict"; return x(); }
+function strictCaller(x) { "use strict"; return x(); }
 shouldBe("nonStrictCaller(nonStrictCallee)", "nonStrictCaller");
 shouldThrow("nonStrictCaller(strictCallee)", '"TypeError: Type error"');
 shouldThrow("strictCaller(nonStrictCallee)", '"TypeError: Function.caller used to retrieve strict caller"');
 shouldThrow("strictCaller(strictCallee)", '"TypeError: Type error"');
-shouldBe("strictTailCaller(nonStrictCallee)", "null");
-shouldThrow("strictTailCaller(strictCallee)", '"TypeError: Type error"');
 
 // .caller within a bound function reaches the caller, ignoring the binding.
 var boundNonStrictCallee = nonStrictCallee.bind();
@@ -40,8 +36,6 @@ shouldBe("nonStrictCaller(boundNonStrictCallee)", "nonStrictCaller");
 shouldThrow("nonStrictCaller(boundStrictCallee)", '"TypeError: Type error"');
 shouldThrow("strictCaller(boundNonStrictCallee)", '"TypeError: Function.caller used to retrieve strict caller"');
 shouldThrow("strictCaller(boundStrictCallee)", '"TypeError: Type error"');
-shouldBe("strictTailCaller(boundNonStrictCallee)", "null");
-shouldThrow("strictTailCaller(boundStrictCallee)", '"TypeError: Type error"');
 
 // Check that .caller works (or throws) as expected, over an accessor call.
 function getFooGetter(x) { return Object.getOwnPropertyDescriptor(x, 'foo').get; }

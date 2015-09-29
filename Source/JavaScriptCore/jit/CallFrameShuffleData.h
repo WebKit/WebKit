@@ -39,7 +39,6 @@ struct CallFrameShuffleData {
     Vector<ValueRecovery> args;
 #if USE(JSVALUE64)
     RegisterMap<ValueRecovery> registers;
-    GPRReg tagTypeNumber { InvalidGPRReg };
 
     void setupCalleeSaveRegisters(CodeBlock*);
 #endif

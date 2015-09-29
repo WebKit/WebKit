@@ -130,16 +130,10 @@ inline CapabilityLevel canCompile(Node* node)
     case NotifyWrite:
     case StoreBarrier:
     case Call:
-    case TailCall:
-    case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
-    case TailCallVarargs:
-    case TailCallVarargsInlinedCaller:
-    case ConstructVarargs:
     case CallForwardVarargs:
-    case TailCallForwardVarargs:
-    case TailCallForwardVarargsInlinedCaller:
+    case ConstructVarargs:
     case ConstructForwardVarargs:
     case LoadVarargs:
     case ValueToInt32:

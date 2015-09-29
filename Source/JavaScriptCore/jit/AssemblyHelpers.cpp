@@ -338,7 +338,7 @@ AssemblyHelpers::Jump AssemblyHelpers::emitExceptionCheck(ExceptionCheckKind kin
     
     if (width == NormalJumpWidth)
         return result;
-
+    
     PatchableJump realJump = patchableJump();
     result.link(this);
     

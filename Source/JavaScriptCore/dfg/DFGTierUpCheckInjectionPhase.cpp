@@ -95,7 +95,7 @@ public:
             }
             
             NodeAndIndex terminal = block->findTerminal();
-            if (terminal.node->isFunctionTerminal()) {
+            if (terminal.node->op() == Return) {
                 insertionSet.insertNode(
                     terminal.index, SpecNone, CheckTierUpAtReturn, terminal.node->origin);
             }

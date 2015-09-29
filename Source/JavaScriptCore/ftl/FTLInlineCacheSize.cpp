@@ -82,30 +82,12 @@ size_t sizeOfCallVarargs()
 #endif
 }
 
-size_t sizeOfTailCallVarargs()
-{
-#if CPU(ARM64)
-    return 188 + sizeOfCallVarargs();
-#else
-    return 151 + sizeOfCallVarargs();
-#endif
-}
-
 size_t sizeOfCallForwardVarargs()
 {
 #if CPU(ARM64)
     return 312;
 #else
     return 262;
-#endif
-}
-
-size_t sizeOfTailCallForwardVarargs()
-{
-#if CPU(ARM64)
-    return 188 + sizeOfCallForwardVarargs();
-#else
-    return 151 + sizeOfCallForwardVarargs();
 #endif
 }
 
@@ -139,15 +121,9 @@ size_t sizeOfICFor(Node* node)
     case Construct:
         return sizeOfCall();
     case CallVarargs:
-    case TailCallVarargsInlinedCaller:
         return sizeOfCallVarargs();
-    case TailCallVarargs:
-        return sizeOfTailCallVarargs();
     case CallForwardVarargs:
-    case TailCallForwardVarargsInlinedCaller:
         return sizeOfCallForwardVarargs();
-    case TailCallForwardVarargs:
-        return sizeOfTailCallForwardVarargs();
     case ConstructVarargs:
         return sizeOfConstructVarargs();
     case ConstructForwardVarargs:
@@ -155,7 +131,7 @@ size_t sizeOfICFor(Node* node)
     case In:
         return sizeOfIn();
     default:
-        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
     }
 }
 
