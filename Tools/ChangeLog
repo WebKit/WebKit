@@ -1,3 +1,50 @@
+2015-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WTR] Pixel tests generate the snapshots twice in Web and UI processes
+        https://bugs.webkit.org/show_bug.cgi?id=149595
+
+        Reviewed by Tim Horton.
+
+        All ports except IOS implement
+        PlatformWebView::windowSnapshotImage() to generate the snapshot
+        for the pixel tests in the UI process. But we are still generating
+        a snapshot for pixel tests in the Web process too, that is passed
+        to the UI process but ignored.
+        Whether a pixel result is needed or not, is only known by the web
+        process depending on whether the test called dumpAsText with
+        dumpPixels == true or not. Since the pixels are now dump in the UI
+        process, we need to pass that information to the UI process when
+        the test is done. For that we set a PixelResultIsPending bool
+        parameter to the Done message, and we only add the PixelResult
+        when UI process doesn't need to generate the pixels dump.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage): Set
+        m_pixelResultIsPending to false on reset.
+        (WTR::InjectedBundle::done): Add PixelResultIsPending parameter to the
+        Done message, and set the PixelResult if m_pixelResultIsPending is false.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::setPixelResult): Set m_pixelResultIsPending to false.
+        (WTR::InjectedBundle::setNeedsPixelResult): Set m_pixelResultIsPending.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump): Only create a snapshot for IOS
+        port.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::dumpResults): Use either the pixel result
+        from the web process or generate a pixel result from the web view
+        if need it.
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h: Add SnapshotResultType enum
+        parameter to dumpPixelsAndCompareWithExpected, since the snapshot
+        is created by the caller now, but the CG implementation needs to
+        know if it's a Web or UI process snapshot.
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Create a
+        cairo surface for the given image.
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Create a
+        CGContext for the given image.
+
 2015-09-28  Dean Johnson  <dean_johnson@apple.com>
 
         Fix JS errors on dashboard metrics page

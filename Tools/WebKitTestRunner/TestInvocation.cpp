@@ -288,16 +288,22 @@ void TestInvocation::dumpResults()
     else
         dumpAudio(m_audioResult.get());
 
-    if (m_dumpPixels && m_pixelResult) {
-        m_gotRepaint = false;
-        WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-        TestController::singleton().runUntil(m_gotRepaint, TestController::shortTimeout);
-        if (!m_gotRepaint) {
-            m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
-            m_webProcessIsUnresponsive = true;
-            return;
+    if (m_dumpPixels) {
+        if (m_pixelResult)
+            dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get(), TestInvocation::SnapshotResultType::WebContents);
+        else if (m_pixelResultIsPending) {
+            m_gotRepaint = false;
+            WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
+            TestController::singleton().runUntil(m_gotRepaint, TestController::shortTimeout);
+            if (!m_gotRepaint) {
+                m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
+                m_webProcessIsUnresponsive = true;
+                return;
+            }
+            WKRetainPtr<WKImageRef> windowSnapshot = TestController::singleton().mainWebView()->windowSnapshotImage();
+            ASSERT(windowSnapshot);
+            dumpPixelsAndCompareWithExpected(windowSnapshot.get(), m_repaintRects.get(), TestInvocation::SnapshotResultType::WebView);
         }
-        dumpPixelsAndCompareWithExpected(m_pixelResult.get(), m_repaintRects.get());
     }
 
     fputs("#EOF\n", stdout);
@@ -364,9 +370,15 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
 
-        WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
-        m_pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
-        ASSERT(!m_pixelResult || m_dumpPixels);
+        WKRetainPtr<WKStringRef> pixelResultIsPendingKey = adoptWK(WKStringCreateWithUTF8CString("PixelResultIsPending"));
+        WKBooleanRef pixelResultIsPending = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultIsPendingKey.get()));
+        m_pixelResultIsPending = WKBooleanGetValue(pixelResultIsPending);
+
+        if (!m_pixelResultIsPending) {
+            WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
+            m_pixelResult = static_cast<WKImageRef>(WKDictionaryGetItemForKey(messageBodyDictionary, pixelResultKey.get()));
+            ASSERT(!m_pixelResult || m_dumpPixels);
+        }
 
         WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
         m_repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));

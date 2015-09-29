@@ -892,11 +892,16 @@ void InjectedBundlePage::dump()
         injectedBundle.dumpBackForwardListsForAllPages(stringBuilder);
 
     if (injectedBundle.shouldDumpPixels() && injectedBundle.testRunner()->shouldDumpPixels()) {
+#if PLATFORM(IOS)
+        // IOS doesn't implement PlatformWebView::windowSnapshotImage() yet, so we need to generate the snapshot in the web process.
         WKSnapshotOptions options = kWKSnapshotOptionsShareable | kWKSnapshotOptionsInViewCoordinates;
         if (injectedBundle.testRunner()->shouldDumpSelectionRect())
             options |= kWKSnapshotOptionsPaintSelectionRectangle;
 
         injectedBundle.setPixelResult(adoptWK(WKBundlePageCreateSnapshotWithOptions(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), options)).get());
+#else
+        injectedBundle.setPixelResultIsPending(true);
+#endif
         if (WKBundlePageIsTrackingRepaints(m_page))
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }

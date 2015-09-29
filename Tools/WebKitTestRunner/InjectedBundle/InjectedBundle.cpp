@@ -186,6 +186,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
 
         m_state = Idle;
         m_dumpPixels = false;
+        m_pixelResultIsPending = false;
 
         resetLocalSettings();
         m_testRunner->removeAllWebNotificationPermissions();
@@ -338,8 +339,14 @@ void InjectedBundle::done()
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
     WKRetainPtr<WKMutableDictionaryRef> doneMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
-    WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
-    WKDictionarySetItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
+    WKRetainPtr<WKStringRef> pixelResultIsPendingKey = adoptWK(WKStringCreateWithUTF8CString("PixelResultIsPending"));
+    WKRetainPtr<WKBooleanRef> pixelResultIsPending(AdoptWK, WKBooleanCreate(m_pixelResultIsPending));
+    WKDictionarySetItem(doneMessageBody.get(), pixelResultIsPendingKey.get(), pixelResultIsPending.get());
+
+    if (!m_pixelResultIsPending) {
+        WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));
+        WKDictionarySetItem(doneMessageBody.get(), pixelResultKey.get(), m_pixelResult.get());
+    }
 
     WKRetainPtr<WKStringRef> repaintRectsKey = adoptWK(WKStringCreateWithUTF8CString("RepaintRects"));
     WKDictionarySetItem(doneMessageBody.get(), repaintRectsKey.get(), m_repaintRects.get());

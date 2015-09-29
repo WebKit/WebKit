@@ -69,7 +69,8 @@ public:
 private:
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
-    void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
+    enum class SnapshotResultType { WebView, WebContents };
+    void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects, SnapshotResultType);
     void dumpAudio(WKDataRef);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
 
@@ -93,6 +94,7 @@ private:
     WTF::String m_urlString;
 
     bool m_dumpPixels;
+    bool m_pixelResultIsPending { false };
     std::string m_expectedPixelHash;
 
     int m_timeout;
