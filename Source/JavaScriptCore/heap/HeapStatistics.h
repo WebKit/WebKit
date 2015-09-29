@@ -40,7 +40,6 @@ public:
 
     static void initialize();
     static void recordGCPauseTime(double start, double end);
-    static size_t parseMemoryAmount(char*);
 
     static void showObjectStatistics(Heap*);
 

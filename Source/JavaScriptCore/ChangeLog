@@ -1,5 +1,16 @@
 2015-09-28  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Remove unused parseMemoryAmount
+        https://bugs.webkit.org/show_bug.cgi?id=149611
+
+        Reviewed by Mark Lam.
+
+        * heap/HeapStatistics.cpp:
+        (JSC::HeapStatistics::parseMemoryAmount): Deleted.
+        * heap/HeapStatistics.h:
+
+2015-09-28  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: JSGlobalRuntimeAgent unintentionally overrides InspectorRuntimeAgent destruction handling
         https://bugs.webkit.org/show_bug.cgi?id=149537
 

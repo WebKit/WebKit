@@ -141,28 +141,6 @@ void HeapStatistics::reportSuccess()
 
 #endif // OS(UNIX)
 
-size_t HeapStatistics::parseMemoryAmount(char* s)
-{
-    size_t multiplier = 1;
-    char* afterS;
-    size_t value = strtol(s, &afterS, 10);
-    char next = afterS[0];
-    switch (next) {
-    case 'K':
-        multiplier = KB;
-        break;
-    case 'M':
-        multiplier = MB;
-        break;
-    case 'G':
-        multiplier = GB;
-        break;
-    default:
-        break;
-    }
-    return value * multiplier;
-}
-
 class StorageStatistics : public MarkedBlock::VoidFunctor {
 public:
     StorageStatistics();
