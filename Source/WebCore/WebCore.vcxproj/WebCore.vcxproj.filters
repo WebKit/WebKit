@@ -15205,9 +15205,6 @@
     <ClInclude Include="..\platform\graphics\FontCascadeFonts.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\streams\CountQueuingStrategy.h">
-      <Filter>Modules\streams</Filter>
-    </ClInclude>
     <ClInclude Include="..\Modules\streams\ReadableStream.h">
       <Filter>Modules\streams</Filter>
     </ClInclude>
