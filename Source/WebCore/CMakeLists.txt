@@ -1243,6 +1243,7 @@ set(WebCore_SOURCES
     bindings/js/ScriptGlobalObject.cpp
     bindings/js/ScriptState.cpp
     bindings/js/SerializedScriptValue.cpp
+    bindings/js/WebCoreJSBuiltins.cpp
     bindings/js/WebCoreTypedArrayController.cpp
     bindings/js/WorkerScriptController.cpp
     bindings/js/WorkerScriptDebugServer.cpp
@@ -3586,8 +3587,8 @@ foreach (_builtinjs ${WEBCORE_JS_BUILTINS})
     list(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.h
         ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}BuiltinsWrapper.h
-        ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.cpp
     )
+    ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/bindings/js/WebCoreJSBuiltins.cpp ${_name}Builtins.cpp)
 endforeach ()
 
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
