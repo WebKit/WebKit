@@ -2567,6 +2567,19 @@ webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Skip ]
 webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe.html [ Skip ]
 
+# Some bugs introduced in recent work:
+webkit.org/b/149631 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
+webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
+webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
+webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
+webkit.org/b/149631 transforms/2d/preserve3d-not-fixed-container.html [ ImageOnlyFailure ]
+
+# Errors introduced by either r190209 or r190214:
+webkit.org/b/149632 fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
+webkit.org/b/149632 fast/events/shadow-event-path-2.html [ Skip ]
+webkit.org/b/149632 fast/forms/input-appearance-preventDefault.html [ Skip ]
+webkit.org/b/149632 fast/forms/textarea-input-event.html [ Skip ]
+
 ################################################################################
 ######################### Start list of UNREVIEWED failures ########################
 ################################################################################
