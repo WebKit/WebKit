@@ -46,10 +46,6 @@ void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter*, Ba
 {
 }
 
-void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason)
-{
-}
-
 VM& JSGlobalObjectRuntimeAgent::globalVM()
 {
     return m_globalObject.vm();

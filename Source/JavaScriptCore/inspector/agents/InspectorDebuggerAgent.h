@@ -173,7 +173,6 @@ private:
     bool m_javaScriptPauseScheduled { false };
     bool m_hasExceptionValue { false };
     bool m_didPauseStopwatch { false };
-    RefPtr<WTF::Stopwatch> m_stopwatch;
 };
 
 } // namespace Inspector

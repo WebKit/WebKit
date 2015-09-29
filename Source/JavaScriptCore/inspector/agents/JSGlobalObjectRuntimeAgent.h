@@ -39,7 +39,6 @@ public:
     JSGlobalObjectRuntimeAgent(JSAgentContext&);
 
     virtual void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-    virtual void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     virtual JSC::VM& globalVM() override;
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;

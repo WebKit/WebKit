@@ -1,3 +1,21 @@
+2015-09-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JSGlobalRuntimeAgent unintentionally overrides InspectorRuntimeAgent destruction handling
+        https://bugs.webkit.org/show_bug.cgi?id=149537
+
+        Reviewed by Darin Adler.
+
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        (Inspector::JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend): Deleted.
+        Do not override method, super class implementation is sufficient.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Fix file ordering.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        Remove unused member variable.
+
 2015-09-28  basile_clement@apple.com  <basile_clement@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 
         [ES6] Implement tail calls in the FTL
