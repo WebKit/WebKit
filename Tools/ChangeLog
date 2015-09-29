@@ -1,3 +1,12 @@
+2015-09-28  Aakash Jain  <aakash_jain@apple.com>
+
+        Appscale query fails because of missing index
+        https://bugs.webkit.org/show_bug.cgi?id=149609
+
+        Reviewed by Darin Adler.
+
+        * QueueStatusServer/index.yaml: Added the required index.
+
 2015-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Fix the 64-bit build after switch to cmake.
