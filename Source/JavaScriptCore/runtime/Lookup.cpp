@@ -35,9 +35,11 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObj,
         RefPtr<StringImpl> getterName = WTF::tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
         if (!getterName)
             return;
-        accessor->setGetter(vm, globalObject, JSFunction::create(vm, globalObject, 0, *getterName, value.accessorGetter()));
+        accessor->setGetter(vm, globalObject, value.attributes() & Builtin
+            ? JSFunction::createBuiltinFunction(vm, value.builtinAccessorGetterGenerator()(vm), globalObject, *getterName)
+            : JSFunction::create(vm, globalObject, 0, *getterName, value.accessorGetter()));
     }
-    thisObj.putDirectNonIndexAccessor(vm, propertyName, accessor, value.attributes());
+    thisObj.putDirectNonIndexAccessor(vm, propertyName, accessor, attributesForStructure(value.attributes()));
 }
 
 bool setUpStaticFunctionSlot(ExecState* exec, const HashTableValue* entry, JSObject* thisObj, PropertyName propertyName, PropertySlot& slot)

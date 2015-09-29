@@ -120,6 +120,8 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     // 'JSBuiltin' extended attribute
     [JSBuiltin] void jsBuiltinMethod();
     [JSBuiltin] void jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [JSBuiltin] attribute TestObj jsBuiltinAttribute;
+    [JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
 
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);

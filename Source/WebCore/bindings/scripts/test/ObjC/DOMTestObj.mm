@@ -450,6 +450,26 @@
     IMPL->setCustomAttr(newCustomAttr);
 }
 
+- (DOMTestObj *)jsBuiltinAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->jsBuiltinAttribute()));
+}
+
+- (void)setJsBuiltinAttribute:(DOMTestObj *)newJsBuiltinAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    ASSERT(newJsBuiltinAttribute);
+
+    IMPL->setJsBuiltinAttribute(core(newJsBuiltinAttribute));
+}
+
+- (DOMTestObj *)jsBuiltinReadOnlyAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return kit(WTF::getPtr(IMPL->jsBuiltinReadOnlyAttribute()));
+}
+
 - (int)withScriptStateAttribute
 {
     WebCore::JSMainThreadNullState state;

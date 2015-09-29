@@ -533,6 +533,9 @@ sub GetAttributeGetterName
     if ($attribute->isStatic) {
         return $codeGenerator->WK_lcfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst($attribute->signature->name);
     }
+    if ($attribute->signature->extendedAttributes->{"JSBuiltin"}) {
+        return GetJSBuiltinFunctionName($className, $attribute->signature->name);
+    }
     return "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
 }
 
@@ -541,6 +544,9 @@ sub GetAttributeSetterName
     my ($interfaceName, $className, $attribute) = @_;
     if ($attribute->isStatic) {
         return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst($attribute->signature->name);
+    }
+    if ($attribute->signature->extendedAttributes->{"JSBuiltin"}) {
+        return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute->signature->name));
     }
     return "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
 }
@@ -1352,7 +1358,8 @@ sub GenerateAttributesHashTable
 
         push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{"NotEnumerable"} || $is_global_constructor);
         push(@specials, "ReadOnly") if IsReadonly($attribute);
-        push(@specials, "CustomAccessor") unless $is_global_constructor;
+        push(@specials, "CustomAccessor") unless $is_global_constructor or $attribute->signature->extendedAttributes->{"JSBuiltin"};
+        push(@specials, "Accessor | Builtin") if  $attribute->signature->extendedAttributes->{"JSBuiltin"};
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@$hashSpecials, $special);
 
@@ -1797,6 +1804,7 @@ sub GenerateImplementation
         push(@implContent, "// Attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
             next if $attribute->signature->extendedAttributes->{"ForwardDeclareInHeader"};
+            next if $attribute->signature->extendedAttributes->{"JSBuiltin"};
 
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
@@ -2229,6 +2237,8 @@ sub GenerateImplementation
     $numAttributes = $numAttributes + 1 if NeedsConstructorProperty($interface);
     if ($numAttributes > 0) {
         foreach my $attribute (@{$interface->attributes}) {
+            next if $attribute->signature->extendedAttributes->{"JSBuiltin"};
+
             my $name = $attribute->signature->name;
             my $type = $attribute->signature->type;
             # Nullable wrapper types do not need any special handling as the implementation can return a null pointer.
@@ -2573,6 +2583,8 @@ sub GenerateImplementation
 
     foreach my $attribute (@{$interface->attributes}) {
         if (!IsReadonly($attribute)) {
+            next if $attribute->signature->extendedAttributes->{"JSBuiltin"};
+
             my $name = $attribute->signature->name;
             my $type = $attribute->signature->type;
             my $putFunctionName = GetAttributeSetterName($interfaceName, $className, $attribute);

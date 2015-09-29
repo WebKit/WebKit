@@ -1,3 +1,17 @@
+2015-09-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Add support for WebIDL JSBuiltin attributes
+        https://bugs.webkit.org/show_bug.cgi?id=149554
+
+        Reviewed by Darin Adler.
+
+        * runtime/Lookup.cpp:
+        (JSC::reifyStaticAccessor): Adding support for creating attribute getter from JS builtin functions.
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::builtinAccessorGetterGenerator):
+        (JSC::HashTableValue::builtinAccessorSetterGenerator):
+        (JSC::reifyStaticProperties): Ensuring that builtin attributes are not treated as Builtin functions.
+
 2015-09-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused parseMemoryAmount

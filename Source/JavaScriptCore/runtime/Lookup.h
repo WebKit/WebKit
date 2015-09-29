@@ -78,6 +78,8 @@ struct HashTableValue {
 
     NativeFunction accessorGetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_values.value1); }
     NativeFunction accessorSetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_values.value2); }
+    BuiltinGenerator builtinAccessorGetterGenerator() const;
+    BuiltinGenerator builtinAccessorSetterGenerator() const;
 
     long long constantInteger() const { ASSERT(m_attributes & ConstantInteger); return m_values.constant; }
 
@@ -182,6 +184,20 @@ struct HashTable {
 
 JS_EXPORT_PRIVATE bool setUpStaticFunctionSlot(ExecState*, const HashTableValue*, JSObject* thisObject, PropertyName, PropertySlot&);
 JS_EXPORT_PRIVATE void reifyStaticAccessor(VM&, const HashTableValue&, JSObject& thisObject, PropertyName);
+
+inline BuiltinGenerator HashTableValue::builtinAccessorGetterGenerator() const
+{
+    ASSERT(m_attributes & Accessor);
+    ASSERT(m_attributes & Builtin);
+    return reinterpret_cast<BuiltinGenerator>(m_values.value1);
+}
+
+inline BuiltinGenerator HashTableValue::builtinAccessorSetterGenerator() const
+{
+    ASSERT(m_attributes & Accessor);
+    ASSERT(m_attributes & Builtin);
+    return reinterpret_cast<BuiltinGenerator>(m_values.value2);
+}
 
 /**
  * This method does it all (looking in the hashtable, checking for function
@@ -292,7 +308,10 @@ inline void reifyStaticProperties(VM& vm, const HashTableValue (&values)[numberO
 
         Identifier propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(value.m_key), strlen(value.m_key));
         if (value.attributes() & Builtin) {
-            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
+            if (value.attributes() & Accessor)
+                reifyStaticAccessor(vm, value, thisObj, propertyName);
+            else
+                thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
             continue;
         }
 

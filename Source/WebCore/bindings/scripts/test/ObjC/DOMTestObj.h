@@ -90,6 +90,8 @@ WEBCORE_EXPORT @interface DOMTestObj : DOMObject
 @property (copy) NSString *stringAttrWithSetterException;
 @property (strong) DOMTestObj *strictTypeCheckingAttribute;
 @property int customAttr;
+@property (strong) DOMTestObj *jsBuiltinAttribute;
+@property (readonly, strong) DOMTestObj *jsBuiltinReadOnlyAttribute;
 @property int withScriptStateAttribute;
 @property int withCallWithAndSetterCallWithAttribute;
 @property (strong) DOMTestObj *withScriptExecutionContextAttribute;

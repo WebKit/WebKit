@@ -271,6 +271,10 @@ sub SkipAttribute {
         return 1;
     }
 
+    if ($attribute->signature->extendedAttributes->{"JSBuiltin"}) {
+        return 1;
+    }
+
     return 0;
 }
 
