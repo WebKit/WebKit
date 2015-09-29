@@ -3,7 +3,7 @@
 
 #
 #  Copyright (C) 2000, 2001 Eazel, Inc.
-#  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
+#  Copyright (C) 2002-2007, 2015 Apple Inc.  All rights reserved.
 #  Copyright (C) 2009 Torch Mobile, Inc.
 #  Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 #
@@ -107,10 +107,12 @@ sub pluralizeAndList($$@);
 sub printDiff($$$$);
 sub processPaths(\@);
 sub propertyChangeDescription($);
+sub resolveChangeLogsPath($@);
 sub resolveConflictedChangeLogs($);
 sub reviewerAndDescriptionForGitCommit($$);
 sub statusCommand($$$$);
 sub statusDescription($$$$);
+sub svnUpdateCommand(@);
 sub testListForChangeLog(@);
 
 ### Constant variables.
@@ -284,6 +286,7 @@ sub generateFunctionLists($$$$$)
         open DIFF, "-|", diffCommand($changedFiles, $gitCommit, $gitIndex, $mergeBase) or die "The diff failed: $!.\n";
         while (<DIFF>) {
             $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
+            $file = normalizePath($file);
             if (defined $file) {
                 my ($before_start, $before_end) = extractLineRangeBeforeChange($_);
                 if ($before_start >= 1 && $before_end >= 1) {
@@ -508,12 +511,34 @@ sub getLatestChangeLogs($)
     return \@changeLogs;
 }
 
+sub svnUpdateCommand(@)
+{
+    my @changeLogs = shift;
+
+    my @escapedChangeLogPaths = map(escapeSubversionPath($_), @changeLogs);
+    my $escapedChangeLogPathsString = qq(") . join(qq(" "), @escapedChangeLogPaths) . qq(");
+    my $command = SVN . " update $escapedChangeLogPathsString";
+
+    return $command;
+}
+
+sub resolveChangeLogsPath($@)
+{
+    my ($resolveChangeLogsPath, @conflictedChangeLogs) = @_;
+
+    my @escapedConflictedChangeLogs = map(escapeSubversionPath($_), @conflictedChangeLogs);
+    my $escapedConflictedChangeLogsString = qq(") . join(qq(" "), @escapedConflictedChangeLogs) . qq(");
+    my $command = "$resolveChangeLogsPath --no-warnings $escapedConflictedChangeLogsString";
+
+    return $command;
+}
+
 sub resolveConflictedChangeLogs($)
 {
     my ($changeLogs) = @_;
 
     print STDERR "  Running 'svn update' to update ChangeLog files.\n";
-    open ERRORS, "-|", SVN, "update", @$changeLogs
+    open ERRORS, "-|", svnUpdateCommand(@$changeLogs)
         or die "The svn update of ChangeLog files failed: $!.\n";
     my @conflictedChangeLogs;
     while (my $line = <ERRORS>) {
@@ -526,7 +551,7 @@ sub resolveConflictedChangeLogs($)
 
     print STDERR "  Attempting to merge conflicted ChangeLogs.\n";
     my $resolveChangeLogsPath = File::Spec->catfile(dirname($0), "resolve-ChangeLogs");
-    open RESOLVE, "-|", $resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs
+    open RESOLVE, "-|", resolveChangeLogsPath($resolveChangeLogsPath, @conflictedChangeLogs)
         or die "Could not open resolve-ChangeLogs script: $!.\n";
     print STDERR "    $_" while <RESOLVE>;
     close RESOLVE;
@@ -585,6 +610,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$$)
 
         foreach my $file (sort @{$filesInChangeLog->{$prefix}}) {
             my $file_stem = substr $file, length $prefix;
+            $file_stem = unixPath($file_stem);
             print CHANGE_LOG normalizeLineEndings("        * $file_stem:$functionLists->{$file}\n", $endl);
         }
 
@@ -1886,7 +1912,7 @@ sub diffCommand($$$$)
     my $command;
     if (isSVN()) {
         my @escapedPaths = map(escapeSubversionPath($_), @$paths);
-        my $escapedPathsString = "'" . join("' '", @escapedPaths) . "'";
+        my $escapedPathsString = qq(") . join(qq(" "), @escapedPaths) . qq(");
         $command = SVN . " diff --diff-cmd diff -x -u $escapedPathsString";
     } elsif (isGit()) {
         my $pathsString = "'" . join("' '", @$paths) . "'"; 
@@ -1904,7 +1930,7 @@ sub statusCommand($$$$)
     my $command;
     if (isSVN()) {
         my @escapedFiles = map(escapeSubversionPath($_), keys %$paths);
-        my $escapedFilesString = "'" . join("' '", @escapedFiles) . "'";
+        my $escapedFilesString = qq(") . join(qq(" "), @escapedFiles) . qq(");
         $command = SVN . " stat $escapedFilesString";
     } elsif (isGit()) {
         my $filesString = '"' . join('" "', keys %$paths) . '"';

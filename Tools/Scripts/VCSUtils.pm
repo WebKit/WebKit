@@ -1,4 +1,4 @@
-# Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc.  All rights reserved.
+# Copyright (C) 2007-2013, 2015 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
@@ -90,6 +90,7 @@ BEGIN {
         &toWindowsLineEndings
         &gitCommitForSVNRevision
         &listOfChangedFilesBetweenRevisions
+        &unixPath
     );
     %EXPORT_TAGS = ( );
     @EXPORT_OK   = ();
@@ -126,7 +127,7 @@ my $svnPropertyValueNoNewlineRegEx = qr#\ No newline at end of property#;
 sub exitStatus($)
 {
     my ($returnvalue) = @_;
-    if ($^O eq "MSWin32") {
+    if (isWindows()) {
         return $returnvalue >> 8;
     }
     if (!WIFEXITED($returnvalue)) {
@@ -333,7 +334,7 @@ sub svnVersion()
 sub isSVNVersion16OrNewer()
 {
     my $version = svnVersion();
-    return eval "v$version" ge v1.6;
+    return "v$version" ge v1.6;
 }
 
 sub chdirReturningRelativePath($)
@@ -479,6 +480,17 @@ sub makeFilePathRelative($)
 }
 
 sub normalizePath($)
+{
+    my ($path) = @_;
+    if (isWindows()) {
+        $path =~ s/\//\\/g;
+    } else {
+        $path =~ s/\\/\//g;
+    }
+    return $path;
+}
+
+sub unixPath($)
 {
     my ($path) = @_;
     $path =~ s/\\/\//g;
@@ -1923,7 +1935,10 @@ sub changeLogNameError($)
 
 sub changeLogName()
 {
-    my $name = $ENV{CHANGE_LOG_NAME} || $ENV{REAL_NAME} || gitConfig("user.name") || (split /\s*,\s*/, (getpwuid $<)[6])[0];
+    my $name = $ENV{CHANGE_LOG_NAME} || $ENV{REAL_NAME} || gitConfig("user.name");
+    if (not $name and !isWindows()) {
+        $name = (split /\s*,\s*/, (getpwuid $<)[6])[0];
+    }
 
     changeLogNameError("Failed to determine ChangeLog name.") unless $name;
     # getpwuid seems to always succeed on windows, returning the username instead of the full name.  This check will catch that case.

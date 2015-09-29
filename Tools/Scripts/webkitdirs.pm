@@ -1384,7 +1384,7 @@ sub launcherName()
     } elsif (isAppleMacWebKit()) {
         return "Safari";
     } elsif (isAppleWinWebKit()) {
-        return "WinLauncher";
+        return "MiniBrowser";
     }
 }
 

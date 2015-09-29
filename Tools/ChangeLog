@@ -1,5 +1,36 @@
 2015-09-29  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Allow 'prepare-ChangeLog' to be used without Cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=149639
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/VCSUtils.pm:
+        (exitStatus): Use 'isWindows()' method.
+        (isSVNVersion16OrNewer): 'eval' is not needed here, and just causes
+        an error. This method could probably just go away.
+        (normalizePath): Leave Windows (or Unix) paths as platform paths, rather than
+        always changing to Unix style. 
+        (unixPath): Added. Needed so Windows can always show a Unix path in the
+        ChangeLog file.
+        (changeLogName): Work around the fact that 'getpwuid' is not available on
+        a pure Windows build of Perl.
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists): Normalize path received from 'svn' in case it's a Unix
+        path on Windows.
+        (svnUpdateCommand): Added helper function. Needed because Windows Perl does not
+        support using arrays for 'open' arguments.
+        (resolveChangeLogsPath): Ditto.
+        (resolveConflictedChangeLogs): Use new helper functions.
+        (generateNewChangeLogs): Force Windows to use Unix paths in ChangeLog output.
+        (diffCommand): Use double-quotes for paths, since Windows doesn't understand single
+        quotes. Unix systems are happy either way.
+        (statusCommand): Ditto.
+        * Scripts/webkitdirs.pm:
+        (launcherName): Drive-by fix. WinLauncher was renamed to MiniBrowser some time ago.
+
+2015-09-29  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed 64-bit build fix after switch to CMake.
 
         * Scripts/webkitdirs.pm:
