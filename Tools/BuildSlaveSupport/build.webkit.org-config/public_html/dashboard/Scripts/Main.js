@@ -104,13 +104,6 @@ var testNames = {};
 testNames[Buildbot.TestCategory.WebKit2] = "WK2 Tests";
 testNames[Buildbot.TestCategory.WebKit1] = "WK1 Tests";
 
-function parsePlatformFamily(platformName)
-{
-    if (platformName)
-        return platformName.substr(0, platformName.indexOf("-"));
-    return ''
-}
-
 function initPlatformsByFamily()
 {
     var platforms = Dashboard.sortedPlatforms;
@@ -119,28 +112,11 @@ function initPlatformsByFamily()
         if (!categorizedQueuesByPlatformAndBuildType[platforms[i].name])
             continue;
 
-        var platformFamily = parsePlatformFamily(platforms[i].name);
+        var platformFamily = settings.parsePlatformFamily(platforms[i].name);
         if (platformsByFamily[platformFamily])
             platformsByFamily[platformFamily].push(platforms[i].name)
         else
             platformsByFamily[platformFamily] = [platforms[i].name]
-    }
-}
-
-function updateToggleButtons()
-{
-    var hiddenPlatformFamilies = settings.getObject("hiddenPlatformFamilies") || [];
-    var hiddenFamilyButtons = {"all": hiddenPlatformFamilies.length > 0};
-    for (var i = 0; i < hiddenPlatformFamilies.length; ++i)
-        hiddenFamilyButtons[hiddenPlatformFamilies[i]] = true;
-
-    var platformFamilyButtons = document.getElementsByClassName("platformFamilyToggleButton");
-    for (var i = 0; i < platformFamilyButtons.length; ++i) {
-        var hiddenPlatformFamily = parsePlatformFamily(platformFamilyButtons[i].id);
-        if (!hiddenFamilyButtons[hiddenPlatformFamily])
-            platformFamilyButtons[i].classList.add("familyShown");
-        else
-            platformFamilyButtons[i].classList.remove("familyShown");
     }
 }
 
@@ -160,7 +136,7 @@ function updateHiddenPlatforms()
                 platformRow.classList.add("hidden");
         }
     }
-    updateToggleButtons();
+    settings.updateToggleButtons();
 }
 
 function applyAccessibilityColorSetting()

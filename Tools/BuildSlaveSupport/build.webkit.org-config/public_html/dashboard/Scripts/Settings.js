@@ -84,6 +84,13 @@ Settings.prototype = {
         document.body.classList.toggle("settings-visible");
     },
 
+    parsePlatformFamily: function(platformName)
+    {
+        if (!platformName)
+            return '';
+        return platformName.substr(0, platformName.indexOf("-"));
+    },
+
     toggleHiddenPlatformFamily: function(platformFamily)
     {
         var hiddenPlatformFamilies = this.getObject("hiddenPlatformFamilies") || [];
@@ -101,5 +108,22 @@ Settings.prototype = {
     {
         this.setObject("hiddenPlatformFamilies", []);
         this.fireSettingListener("hiddenPlatformFamilies");
+    },
+
+    updateToggleButtons: function()
+    {
+        var hiddenPlatformFamilies = this.getObject("hiddenPlatformFamilies") || [];
+        var hiddenFamilyButtons = {"all": hiddenPlatformFamilies.length > 0};
+        for (var i = 0; i < hiddenPlatformFamilies.length; ++i)
+            hiddenFamilyButtons[hiddenPlatformFamilies[i]] = true;
+
+        var platformFamilyButtons = document.getElementsByClassName("platformFamilyToggleButton");
+        for (var i = 0; i < platformFamilyButtons.length; ++i) {
+            var hiddenPlatformFamily = this.parsePlatformFamily(platformFamilyButtons[i].id);
+            if (!hiddenFamilyButtons[hiddenPlatformFamily])
+                platformFamilyButtons[i].classList.add("familyShown");
+            else
+                platformFamilyButtons[i].classList.remove("familyShown");
+        }
     },
 };

@@ -1,3 +1,28 @@
+2015-09-28  Dean Johnson  <dean_johnson@apple.com>
+
+        Fix JS errors on dashboard metrics page
+        https://bugs.webkit.org/show_bug.cgi?id=149608
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js: Updated to use Settings.
+        (initPlatformsByFamily): 
+        (updateHiddenPlatforms):
+        (parsePlatformFamily): Deleted.
+        (updateToggleButtons): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsMain.js:
+        (updateHiddenPlatforms): Added to remove errors.
+        (initPlatformsByFamily): Added to remove errors.
+        (unhiddenQueues): Updated to use Settings.
+        (documentReady): Added logic to add toggle buttons to the settings menu.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Settings.js:
+        (Settings.prototype.parsePlatformFamily): Moved duplicate logic from Main.js and
+        MetricsMain.js to Settings.
+        (Settings.prototype.updateToggleButtons): Moved duplicate logic from Main.js and
+        MetricsMain.js to Settings.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/QueueView.js:
+        (QueueView.prototype._updateHiddenState): Updated to use Settings.
+
 2015-09-28  Aakash Jain  <aakash_jain@apple.com>
 
         Appscale query fails because of missing index

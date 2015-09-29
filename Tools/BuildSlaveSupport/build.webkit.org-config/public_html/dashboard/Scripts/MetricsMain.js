@@ -31,6 +31,7 @@ var allBuilderResultsPseudoQueue = { id: "allBuilderResultsPseudoQueue" };
 var allResultsPseudoQueue = { id: "allResultsPseudoQueue" };
 
 var categorizedQueuesByPlatformAndBuildType = {};
+var platformsByFamily = {};
 
 for (var i = 0; i < buildbots.length; ++i) {
     var buildbot = buildbots[i];
@@ -70,6 +71,43 @@ var testNames = {};
 testNames[Buildbot.TestCategory.WebKit2] = "WK2 Tests";
 testNames[Buildbot.TestCategory.WebKit1] = "WK1 Tests";
 
+
+function updateHiddenPlatforms()
+{
+    var hiddenPlatformFamilies = settings.getObject("hiddenPlatformFamilies") || [];
+    var platformRows = document.querySelectorAll("tr.platform");
+    for (var i = 0; i < platformRows.length; ++i)
+        platformRows[i].classList.remove("hidden");
+
+    for (var i = 0; i < hiddenPlatformFamilies.length; ++i) {
+        var platformFamily = hiddenPlatformFamilies[i];
+        for (var j = 0; j < platformsByFamily[platformFamily].length; ++j) {
+            var name = platformsByFamily[platformFamily][j];
+            var platformRow = document.querySelector("tr.platform." + name);
+            if (platformRow)
+                platformRow.classList.add("hidden");
+        }
+    }
+    settings.updateToggleButtons();
+}
+
+
+function initPlatformsByFamily()
+{
+    var platforms = Dashboard.sortedPlatforms;
+    for (var i in platforms) {
+        // Make sure the platform will be displayed on the page before considering its platform family.
+        if (!categorizedQueuesByPlatformAndBuildType[platforms[i].name])
+            continue;
+
+        var platformFamily = settings.parsePlatformFamily(platforms[i].name);
+        if (platformsByFamily[platformFamily])
+            platformsByFamily[platformFamily].push(platforms[i].name)
+        else
+            platformsByFamily[platformFamily] = [platforms[i].name]
+    }
+}
+
 function unhiddenQueues()
 {
     var hiddenPlatformFamilies = settings.getObject("hiddenPlatformFamilies") || [];
@@ -78,7 +116,7 @@ function unhiddenQueues()
         var buildbot = buildbots[i];
         for (var id in buildbot.queues) {
             var queue = buildbot.queues[id];
-            if (-1 === hiddenPlatformFamilies.indexOf(parsePlatformFamily(queue.platform)))
+            if (-1 === hiddenPlatformFamilies.indexOf(settings.parsePlatformFamily(queue.platform)))
                 result.push(queue);
         }
     }
@@ -304,6 +342,33 @@ function documentReady()
         settingsButton.addEventListener("click", function () { settings.toggleSettingsDisplay(); });
         settingsButton.classList.add("settings");
         document.body.appendChild(settingsButton);
+
+        var settingsWrapper = document.createElement("div");
+        settingsWrapper.classList.add("unhide", "hidden", "settingsWrapper")
+
+        var platformFamilyToggleWrapper = document.createElement("div");
+        platformFamilyToggleWrapper.classList.add("unhide", "hidden", "familyToggleWrapper");
+
+        var unhideAllButton = document.createElement("div");
+        unhideAllButton.addEventListener("click", function () { settings.clearHiddenPlatformFamilies(); });
+        unhideAllButton.classList.add("unhide", "hidden", "platformFamilyToggleButton");
+        unhideAllButton.setAttribute("id", "all-platformFamilyToggleButton");
+        unhideAllButton.textContent = "all";
+        platformFamilyToggleWrapper.appendChild(unhideAllButton);
+
+        initPlatformsByFamily();
+        for (var platformFamily in platformsByFamily) {
+            var platformFamilyToggle = document.createElement("div");
+            platformFamilyToggle.addEventListener("click", function () {
+                settings.toggleHiddenPlatformFamily(this.toString());
+            }.bind(platformFamily));
+            platformFamilyToggle.classList.add("unhide", "hidden", "platformFamilyToggleButton");
+            platformFamilyToggle.setAttribute("id", platformFamily + "-platformFamilyToggleButton");
+            platformFamilyToggle.textContent = platformFamily;
+            platformFamilyToggleWrapper.appendChild(platformFamilyToggle);
+        }
+        settingsWrapper.appendChild(platformFamilyToggleWrapper);
+        document.body.appendChild(settingsWrapper);
 
         updateHiddenPlatforms();
         settings.addSettingListener("hiddenPlatformFamilies", updateHiddenPlatforms);

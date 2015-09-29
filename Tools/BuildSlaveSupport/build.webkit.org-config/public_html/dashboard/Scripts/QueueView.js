@@ -69,7 +69,7 @@ QueueView.prototype = {
 
         var hiddenPlatformFamilies = settings.getObject("hiddenPlatformFamilies");
         var wasHidden = !this.updateTimer;
-        var isHidden = hiddenPlatformFamilies && hiddenPlatformFamilies.contains(parsePlatformFamily(this.platform));
+        var isHidden = hiddenPlatformFamilies && hiddenPlatformFamilies.contains(settings.parsePlatformFamily(this.platform));
 
         if (wasHidden && !isHidden) {
             this._updateQueues();
