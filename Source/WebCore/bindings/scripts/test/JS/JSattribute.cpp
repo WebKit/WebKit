@@ -23,7 +23,6 @@
 
 #include "JSDOMBinding.h"
 #include "URL.h"
-#include "attribute.h"
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 

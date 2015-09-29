@@ -22,7 +22,6 @@
 #include "JSTestCustomConstructorWithNoInterfaceObject.h"
 
 #include "JSDOMBinding.h"
-#include "TestCustomConstructorWithNoInterfaceObject.h"
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

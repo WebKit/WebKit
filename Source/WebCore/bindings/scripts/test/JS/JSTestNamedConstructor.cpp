@@ -24,7 +24,6 @@
 #include "DOMConstructorWithDocument.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
-#include "TestNamedConstructor.h"
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 

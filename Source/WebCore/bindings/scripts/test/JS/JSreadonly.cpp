@@ -22,7 +22,6 @@
 #include "JSreadonly.h"
 
 #include "JSDOMBinding.h"
-#include "readonly.h"
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

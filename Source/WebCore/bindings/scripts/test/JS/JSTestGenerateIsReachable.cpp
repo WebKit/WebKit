@@ -22,7 +22,6 @@
 #include "JSTestGenerateIsReachable.h"
 
 #include "JSDOMBinding.h"
-#include "TestGenerateIsReachable.h"
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

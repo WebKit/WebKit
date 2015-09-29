@@ -85,15 +85,6 @@ JSC::EncodedJSValue throwConstructorDocumentUnavailableError(JSC::ExecState&, co
 WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
 WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, const char* interfaceName, const char* functionName);
 
-void callFunctionWithCurrentArguments(JSC::ExecState&, JSC::JSObject& thisObject, JSC::JSFunction&);
-
-template<typename WrapperClass, typename DOMClass> inline JSC::EncodedJSValue createFromJSBuiltin(JSC::ExecState& state, JSC::JSFunction& initializeFunction, JSDOMGlobalObject& globalObject)
-{
-    JSC::JSObject* object = asObject(toJS(&state, &globalObject, DOMClass::create()));
-    callFunctionWithCurrentArguments(state, *object, initializeFunction);
-    return JSC::JSValue::encode(object);
-}
-
 // Base class for all constructor objects in the JSC bindings.
 class DOMConstructorObject : public JSDOMWrapper {
 public:
@@ -156,6 +147,15 @@ template<typename WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure
 template<typename WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& vm, JSC::JSGlobalObject* globalObject)
 {
     return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
+}
+
+void callFunctionWithCurrentArguments(JSC::ExecState&, JSC::JSObject& thisObject, JSC::JSFunction&);
+
+template<typename JSClass> inline JSC::EncodedJSValue createJSBuiltin(JSC::ExecState& state, JSC::JSFunction& initializeFunction, JSDOMGlobalObject& globalObject)
+{
+    JSC::JSObject* object = JSClass::create(getDOMStructure<JSClass>(globalObject.vm(), &globalObject), &globalObject);
+    callFunctionWithCurrentArguments(state, *object, initializeFunction);
+    return JSC::JSValue::encode(object);
 }
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuffer*)

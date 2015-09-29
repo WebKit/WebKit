@@ -23,7 +23,6 @@
 
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
-#include "TestEventConstructor.h"
 #include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>

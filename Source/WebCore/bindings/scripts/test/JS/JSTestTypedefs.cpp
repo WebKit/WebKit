@@ -32,7 +32,6 @@
 #include "JSTestSubObj.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
-#include "TestTypedefs.h"
 #include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
