@@ -3,6 +3,8 @@
 <script src='../../resources/testharnessreport.js'></script>
 <script src='resources/streams-utils.js'></script>
 <script>
+// This is updated till ec5ffa0 of the spec.
+
 var test1 = async_test('Piping from a ReadableStream from which lots of data are readable synchronously');
 test1.step(function() {
     var events = 0;
@@ -513,7 +515,7 @@ test11.step(function() {
             assert_unreached('Unexpected close call');
         },
         abort: function() {
-            test11.done();
+            test11.done('underlying source abort was called');
         }
     });
     ws.write('Hello');

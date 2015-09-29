@@ -2,6 +2,8 @@
 <script src='../../resources/testharness.js'></script>
 <script src='../../resources/testharnessreport.js'></script>
 <script>
+// This is updated till ec5ffa0 of the spec.
+
 test(function() {
     var theError = new Error('a unique string');
 
@@ -76,17 +78,6 @@ test(function() {
         }, 'construction should throw a TypeError for ' + highWaterMark);
     }
 }, 'Readable stream: invalid strategy.highWaterMark');
-
-test(function() {
-    assert_throws(new RangeError(), function() {
-        new ReadableStream({}, {
-            size: function() {
-                return 1;
-            },
-            highWaterMark: -1
-        });
-    }, 'construction should throw a RangeError');
-}, 'Readable stream: negative strategy.highWaterMark');
 
 var test2 = async_test('Readable stream: invalid strategy.size return value');
 test2.step(function() {
@@ -240,15 +231,4 @@ test(function() {
         }, 'construction should throw a TypeError for ' + highWaterMark);
     }
 }, 'Writable stream: invalid strategy.highWaterMark');
-
-test(function() {
-    assert_throws(new RangeError(), function() {
-        new WritableStream({}, {
-            size: function() {
-                return 1;
-            },
-            highWaterMark: -1
-        });
-    }, 'construction should throw a RangeError');
-}, 'Writable stream: negative strategy.highWaterMark');
 </script>
