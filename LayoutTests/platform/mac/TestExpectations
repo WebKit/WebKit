@@ -1080,10 +1080,6 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 # Seems like this should happen everywhere, but it only does on Yosemite.
 [ Yosemite+ ] http/tests/navigation/post-frames-goback1.html [ Pass Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16664245>)
-# We should land updated results if we can't get this bug fixed in time.
-[ Yosemite+ ] http/tests/xmlhttprequest/cache-override.html [ Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/16802068>)
 [ Yosemite+ ] fast/css/input-search-padding.html [ Failure ]
 

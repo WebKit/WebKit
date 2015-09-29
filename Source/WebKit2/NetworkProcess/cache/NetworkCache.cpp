@@ -204,6 +204,11 @@ static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response,
 
 static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRequest& request)
 {
+    // The request is conditional so we force revalidation from the network. We merely check the disk cache
+    // so we can update the cache entry.
+    if (request.isConditional())
+        return UseDecision::Validate;
+
     if (!verifyVaryingRequestHeaders(entry.varyingRequestHeaders(), request))
         return UseDecision::NoDueToVaryingHeaderMismatch;
 
@@ -225,10 +230,7 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
     // FIXME: Support HEAD requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;
-    // FIXME: We should be able to validate conditional requests using cache.
-    if (request.isConditional())
-        return RetrieveDecision::NoDueToConditionalRequest;
-    if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData)
+    if (request.cachePolicy() == WebCore::ReloadIgnoringCacheData && !request.isConditional())
         return RetrieveDecision::NoDueToReloadIgnoringCache;
 
     return RetrieveDecision::Yes;

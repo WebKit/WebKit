@@ -1,3 +1,29 @@
+2015-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Memory cache revalidations should refresh the network disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=149606
+
+        Reviewed by Darin Adler.
+
+        Previously, resource revalidations triggered by the memory cache would
+        bypass the disk cache entirely because the requests are conditional. As
+        a result, when the server responds with a 304, we were unable to update
+        the headers (e.g. new expiration date) of the corresponding entry in
+        the disk cache.
+
+        This patch updates our disk cache implementation to not bypass the disk
+        cache when the request is conditional. Instead, we look up the cached
+        entry and force its revalidation from the network. If the server then
+        returns a 304, we are now able to update the headers of this cached
+        entry. In such case though, we let the 304 response through to WebCore
+        unlike revalidations triggered by the disk cache.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeUseDecision):
+        (WebKit::NetworkCache::makeRetrieveDecision):
+
 2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         printing does not use minimum page zoom factor
