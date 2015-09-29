@@ -635,6 +635,9 @@ webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-shorthand-001.xht [
 webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-block-sibling-003.xht [ Skip ]
 webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
 
+# TODO font-variant-* not implemented on Windows
+webkit.org/b/149630 LayoutTests/css3/font-variant-all-webfont.html [ Failure ]
+
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
 ################################################################################
