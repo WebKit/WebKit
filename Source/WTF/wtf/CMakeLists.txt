@@ -60,10 +60,12 @@ set(WTF_HEADERS
     PageAllocation.h
     PageBlock.h
     PageReservation.h
+    ParallelHelperPool.h
     ParallelJobs.h
     ParallelJobsGeneric.h
     ParallelJobsLibdispatch.h
     ParallelJobsOpenMP.h
+    ParallelVectorIterator.h
     ParkingLot.h
     PassRefPtr.h
     Platform.h

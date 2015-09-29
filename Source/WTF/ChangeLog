@@ -1,3 +1,21 @@
+2015-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        GC copy phase spans too many files
+        https://bugs.webkit.org/show_bug.cgi?id=149586
+
+        Reviewed by Andreas Kling.
+
+        Extract the load balancing algorithm used by the GC's copy phase into a reusable template.
+        The GC copy phase now uses this.
+
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/ParallelVectorIterator.h: Added.
+        (WTF::ParallelVectorIterator::ParallelVectorIterator):
+        (WTF::ParallelVectorIterator::iterate):
+
 2015-09-26  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix Windows build by adding WTF_EXPORT_PRIVATE in various places.

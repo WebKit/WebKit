@@ -53,6 +53,7 @@
 #include <algorithm>
 #include <wtf/RAMSize.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/ParallelVectorIterator.h>
 #include <wtf/ProcessID.h>
 
 using namespace std;
@@ -60,7 +61,7 @@ using namespace JSC;
 
 namespace JSC {
 
-namespace { 
+namespace {
 
 static const size_t largeHeapSize = 32 * MB; // About 1.5X the average webpage.
 static const size_t smallHeapSize = 1 * MB; // Matches the FastMalloc per-thread cache.
@@ -619,27 +620,47 @@ void Heap::copyBackingStores()
     }
 
     if (m_storageSpace.shouldDoCopyPhase()) {
-        {
-            LockHolder locker(m_copyLock);
-            if (m_operationInProgress == EdenCollection) {
-                // Reset the vector to be empty, but don't throw away the backing store.
-                m_blocksToCopy.shrink(0);
-                for (CopiedBlock* block = m_storageSpace.m_newGen.fromSpace->head(); block; block = block->next())
-                    m_blocksToCopy.append(block);
-            } else {
-                ASSERT(m_operationInProgress == FullCollection);
-                WTF::copyToVector(m_storageSpace.m_blockSet, m_blocksToCopy);
-            }
-            m_copyIndex = 0;
+        if (m_operationInProgress == EdenCollection) {
+            // Reset the vector to be empty, but don't throw away the backing store.
+            m_blocksToCopy.shrink(0);
+            for (CopiedBlock* block = m_storageSpace.m_newGen.fromSpace->head(); block; block = block->next())
+                m_blocksToCopy.append(block);
+        } else {
+            ASSERT(m_operationInProgress == FullCollection);
+            WTF::copyToVector(m_storageSpace.m_blockSet, m_blocksToCopy);
         }
 
+        ParallelVectorIterator<Vector<CopiedBlock*>> iterator(
+            m_blocksToCopy, s_blockFragmentLength);
+
+        // Note that it's safe to use the [&] capture list here, even though we're creating a task
+        // that other threads run. That's because after runFunctionInParallel() returns, the task
+        // we have created is not going to be running anymore. Hence, everything on the stack here
+        // outlives the task.
         m_helperClient.runFunctionInParallel(
-            [this] () {
+            [&] () {
                 CopyVisitor copyVisitor(*this);
-                copyVisitor.startCopying();
-                copyVisitor.copyFromShared();
-                copyVisitor.doneCopying();
-                WTF::releaseFastMallocFreeMemoryForThisThread();
+                
+                iterator.iterate(
+                    [&] (CopiedBlock* block) {
+                        if (!block->hasWorkList())
+                            return;
+                        
+                        CopyWorkList& workList = block->workList();
+                        for (CopyWorklistItem item : workList) {
+                            if (item.token() == ButterflyCopyToken) {
+                                JSObject::copyBackingStore(
+                                    item.cell(), copyVisitor, ButterflyCopyToken);
+                                continue;
+                            }
+                            
+                            item.cell()->methodTable()->copyBackingStore(
+                                item.cell(), copyVisitor, item.token());
+                        }
+                        
+                        ASSERT(!block->liveBytes());
+                        m_storageSpace.recycleEvacuatedBlock(block, m_operationInProgress);
+                    });
             });
     }
     

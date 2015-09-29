@@ -34,16 +34,6 @@
 
 namespace JSC {
 
-inline void CopyVisitor::visitItem(CopyWorklistItem item)
-{
-    if (item.token() == ButterflyCopyToken) {
-        JSObject::copyBackingStore(item.cell(), *this, ButterflyCopyToken);
-        return;
-    }
-    
-    item.cell()->methodTable()->copyBackingStore(item.cell(), *this, item.token());
-}
-
 inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr)
 {
     CopiedBlock* block = CopiedSpace::blockFor(oldPtr);
@@ -73,22 +63,6 @@ inline void* CopyVisitor::allocateNewSpaceSlow(size_t bytes)
     CheckedBoolean didSucceed = m_copiedAllocator.tryAllocateDuringCopying(bytes, &result);
     ASSERT(didSucceed);
     return result;
-}
-
-inline void CopyVisitor::startCopying()
-{
-    ASSERT(!m_copiedAllocator.isValid());
-    CopiedBlock* block = 0;
-    m_heap.m_storageSpace.doneFillingBlock(m_copiedAllocator.resetCurrentBlock(), &block);
-    m_copiedAllocator.setCurrentBlock(block);
-}
-
-inline void CopyVisitor::doneCopying()
-{
-    if (!m_copiedAllocator.isValid())
-        return;
-
-    m_heap.m_storageSpace.doneFillingBlock(m_copiedAllocator.resetCurrentBlock(), 0);
 }
 
 inline void CopyVisitor::didCopy(void* ptr, size_t bytes)

@@ -252,6 +252,7 @@
     <ClInclude Include="..\wtf\ParallelJobsGeneric.h" />
     <ClInclude Include="..\wtf\ParallelJobsLibdispatch.h" />
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h" />
+    <ClInclude Include="..\wtf\ParallelVectorIterator.h" />
     <ClInclude Include="..\wtf\ParkingLot.h" />
     <ClInclude Include="..\wtf\PassRefPtr.h" />
     <ClInclude Include="..\wtf\Platform.h" />

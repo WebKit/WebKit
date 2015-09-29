@@ -565,6 +565,9 @@
     <ClInclude Include="..\wtf\ParallelJobsOpenMP.h">
       <Filter>wtf</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\ParallelVectorIterator.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
     <ClInclude Include="..\wtf\PassRefPtr.h">
       <Filter>wtf</Filter>
     </ClInclude>

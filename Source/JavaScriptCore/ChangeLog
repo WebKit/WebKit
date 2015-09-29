@@ -1,3 +1,55 @@
+2015-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        GC copy phase spans too many files
+        https://bugs.webkit.org/show_bug.cgi?id=149586
+
+        Reviewed by Andreas Kling.
+
+        This puts the core logic of the copy phase into Heap::copyBackingStores(). Now, instead of
+        using many helpers in many places, the actual algorithm is all in one place.
+
+        This lets me do a lot of simplification.
+
+        - CopyVisitor no longer requires that you call startCopying() before, and doneCopying() and
+          WTF::releaseFastMallocFreeMemoryForThisThread() after. The constructor and destructor now
+          do this for you.
+
+        - CopyVisitor no longer contains the algorithm that drives copying. That's all in
+          Heap::copyBackingStores() now. Basically, copyBackingStores() glues together the new
+          WTF::ParallelVectorIterator with the copying algorithm that we used to have in
+          CopyVisitor::copyFromShared().
+
+        - Lots of stuff that was in headers is now in .cpp files. That includes all non-hot-path
+          code in CopyVisitor. Also, the code for copying in HeapInlines.h is now in
+          ParallelVectorVisotor, and it's only included by Heap.cpp.
+
+        Overall, I like this direction for the GC. I don't think it's useful for Heap.cpp to have
+        calls to algorithms in some other file, unless those algorithms are either reusable or just
+        very dense. That's not actually true for the copy phase, and it's probably not true for
+        some other stuff like marking. I'll probably do the same refactoring for marking in another
+        bug.
+
+        This should have no effect on performance.
+
+        * heap/CopyVisitor.cpp:
+        (JSC::CopyVisitor::CopyVisitor):
+        (JSC::CopyVisitor::~CopyVisitor):
+        (JSC::CopyVisitor::copyFromShared): Deleted.
+        * heap/CopyVisitor.h:
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::checkIfShouldCopy):
+        (JSC::CopyVisitor::allocateNewSpaceSlow):
+        (JSC::CopyVisitor::didCopy):
+        (JSC::CopyVisitor::visitItem): Deleted.
+        (JSC::CopyVisitor::startCopying): Deleted.
+        (JSC::CopyVisitor::doneCopying): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::copyBackingStores):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::unregisterWeakGCMap):
+        (JSC::Heap::getNextBlocksToCopy): Deleted.
+
 2015-09-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Add support for WebIDL JSBuiltin attributes

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define CopyVisitor_h
 
 #include "CopiedSpace.h"
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
@@ -34,13 +35,12 @@ class Heap;
 class JSCell;
 
 class CopyVisitor {
+    WTF_MAKE_NONCOPYABLE(CopyVisitor);
 public:
     CopyVisitor(Heap&);
+    ~CopyVisitor();
 
     void copyFromShared();
-
-    void startCopying();
-    void doneCopying();
 
     // Low-level API for copying, appropriate for cases where the object's heap references
     // are discontiguous or if the object occurs frequently enough that you need to focus on

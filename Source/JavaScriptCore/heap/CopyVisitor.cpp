@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,28 +39,18 @@ namespace JSC {
 CopyVisitor::CopyVisitor(Heap& heap)
     : m_heap(heap)
 {
+    ASSERT(!m_copiedAllocator.isValid());
+    CopiedBlock* block = nullptr;
+    m_heap.m_storageSpace.doneFillingBlock(nullptr, &block);
+    m_copiedAllocator.setCurrentBlock(block);
 }
 
-void CopyVisitor::copyFromShared()
+CopyVisitor::~CopyVisitor()
 {
-    size_t next, end;
-    m_heap.getNextBlocksToCopy(next, end);
-    while (next < end) {
-        for (; next < end; ++next) {
-            CopiedBlock* block = m_heap.m_blocksToCopy[next];
-            if (!block->hasWorkList())
-                continue;
-
-            CopyWorkList& workList = block->workList();
-            for (CopyWorkList::iterator it = workList.begin(); it != workList.end(); ++it)
-                visitItem(*it);
-
-            ASSERT(!block->liveBytes());
-            m_heap.m_storageSpace.recycleEvacuatedBlock(block, m_heap.operationInProgress());
-        }
-        m_heap.getNextBlocksToCopy(next, end);
-    }
-    ASSERT(next == end);
+    if (m_copiedAllocator.isValid())
+        m_heap.m_storageSpace.doneFillingBlock(m_copiedAllocator.resetCurrentBlock(), nullptr);
+    
+    WTF::releaseFastMallocFreeMemoryForThisThread();
 }
 
 } // namespace JSC

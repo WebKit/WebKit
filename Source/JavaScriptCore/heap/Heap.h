@@ -346,8 +346,6 @@ private:
     size_t threadBytesCopied();
     size_t threadDupStrings();
 
-    void getNextBlocksToCopy(size_t&, size_t&);
-
     const HeapType m_heapType;
     const size_t m_ramSize;
     const size_t m_minBytesPerCycle;
@@ -437,9 +435,7 @@ private:
     Lock m_opaqueRootsMutex;
     HashSet<void*> m_opaqueRoots;
 
-    Lock m_copyLock;
     Vector<CopiedBlock*> m_blocksToCopy;
-    size_t m_copyIndex { 0 };
     static const size_t s_blockFragmentLength = 32;
 
     ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;

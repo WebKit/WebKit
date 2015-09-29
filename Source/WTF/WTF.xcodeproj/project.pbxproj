@@ -49,6 +49,7 @@
 		0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE4479A1B7AAA03009498EB /* WordLock.cpp */; };
 		0FE4479D1B7AAA03009498EB /* WordLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE4479B1B7AAA03009498EB /* WordLock.h */; };
 		0FEB3DCF1BB5D684009D7AAD /* SharedTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */; };
+		0FEB3DD11BB7366B009D7AAD /* ParallelVectorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */; };
 		0FED67B61B22D4D80066CE15 /* TinyPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */; };
 		0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */; };
 		0FFF19DD1BB334EB00886D91 /* ParallelHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */; };
@@ -341,6 +342,7 @@
 		0FE4479A1B7AAA03009498EB /* WordLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WordLock.cpp; sourceTree = "<group>"; };
 		0FE4479B1B7AAA03009498EB /* WordLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordLock.h; sourceTree = "<group>"; };
 		0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTask.h; sourceTree = "<group>"; };
+		0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelVectorIterator.h; sourceTree = "<group>"; };
 		0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyPtrSet.h; sourceTree = "<group>"; };
 		0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParallelHelperPool.cpp; sourceTree = "<group>"; };
 		0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelHelperPool.h; sourceTree = "<group>"; };
@@ -830,6 +832,7 @@
 				0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */,
 				A8A472E6151A825B004123FF /* ParallelJobs.h */,
 				A8A472E9151A825B004123FF /* ParallelJobsLibdispatch.h */,
+				0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */,
 				0F824A641B7443A0002E345D /* ParkingLot.cpp */,
 				0F824A651B7443A0002E345D /* ParkingLot.h */,
 				A8A472ED151A825B004123FF /* PassRefPtr.h */,
@@ -1085,6 +1088,7 @@
 				0FB14E19180FA218009B6B4D /* Bag.h in Headers */,
 				0FB14E1B1810E1DC009B6B4D /* BagToHashMap.h in Headers */,
 				8134013915B092FD001FF0B8 /* Base64.h in Headers */,
+				0FEB3DD11BB7366B009D7AAD /* ParallelVectorIterator.h in Headers */,
 				A8A473A9151A825B004123FF /* bignum-dtoa.h in Headers */,
 				A8A473AB151A825B004123FF /* bignum.h in Headers */,
 				0FFF19DD1BB334EB00886D91 /* ParallelHelperPool.h in Headers */,
