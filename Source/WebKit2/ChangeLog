@@ -1,3 +1,26 @@
+2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        printing does not use minimum page zoom factor
+        https://bugs.webkit.org/show_bug.cgi?id=108507
+
+        Reviewed by Darin Adler.
+
+        Add kWKSnapshotOptionsPrinting flag to indicate the snapshot
+        should be generated in printing mode.
+
+        * Shared/API/c/WKImage.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toSnapshotOptions):
+        * Shared/ImageOptions.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::numberOfPages): Pass the frame as a
+        reference instead of a pointer.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotWithOptions): In case of printing,
+        calculate the bitmap height based on the number of pages.
+        (WebKit::WebPage::snapshotAtSize): In case of printing, use
+        PrintContext::spoolAllPagesWithBoundaries() and return.
+
 2015-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         Expose 'geometryFlipped' state for debugging/logging purposes

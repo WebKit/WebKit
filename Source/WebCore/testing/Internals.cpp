@@ -2013,7 +2013,7 @@ int Internals::numberOfPages(float pageWidth, float pageHeight)
     if (!frame())
         return -1;
 
-    return PrintContext::numberOfPages(frame(), FloatSize(pageWidth, pageHeight));
+    return PrintContext::numberOfPages(*frame(), FloatSize(pageWidth, pageHeight));
 }
 
 String Internals::pageProperty(String propertyName, int pageNumber, ExceptionCode& ec) const

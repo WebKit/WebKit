@@ -894,15 +894,27 @@ void InjectedBundlePage::dump()
     if (injectedBundle.shouldDumpPixels() && injectedBundle.testRunner()->shouldDumpPixels()) {
 #if PLATFORM(IOS)
         // IOS doesn't implement PlatformWebView::windowSnapshotImage() yet, so we need to generate the snapshot in the web process.
-        WKSnapshotOptions options = kWKSnapshotOptionsShareable | kWKSnapshotOptionsInViewCoordinates;
-        if (injectedBundle.testRunner()->shouldDumpSelectionRect())
-            options |= kWKSnapshotOptionsPaintSelectionRectangle;
-
-        injectedBundle.setPixelResult(adoptWK(WKBundlePageCreateSnapshotWithOptions(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), options)).get());
+        bool shouldCreateSnapshot = true;
 #else
-        injectedBundle.setPixelResultIsPending(true);
+        bool shouldCreateSnapshot = injectedBundle.testRunner()->isPrinting();
 #endif
-        if (WKBundlePageIsTrackingRepaints(m_page))
+        if (shouldCreateSnapshot) {
+            WKSnapshotOptions options = kWKSnapshotOptionsShareable;
+            WKRect snapshotRect = WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page));
+
+            if (injectedBundle.testRunner()->isPrinting())
+                options |= kWKSnapshotOptionsPrinting;
+            else {
+                options |= kWKSnapshotOptionsInViewCoordinates;
+                if (injectedBundle.testRunner()->shouldDumpSelectionRect())
+                    options |= kWKSnapshotOptionsPaintSelectionRectangle;
+            }
+
+            injectedBundle.setPixelResult(adoptWK(WKBundlePageCreateSnapshotWithOptions(m_page, snapshotRect, options)).get());
+        } else
+            injectedBundle.setPixelResultIsPending(true);
+
+        if (WKBundlePageIsTrackingRepaints(m_page) && !injectedBundle.testRunner()->isPrinting())
             injectedBundle.setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }
 

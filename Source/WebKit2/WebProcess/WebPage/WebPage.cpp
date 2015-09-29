@@ -1717,10 +1717,18 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
 {
     IntRect snapshotRect = rect;
     IntSize bitmapSize = snapshotRect.size();
-    double scaleFactor = additionalScaleFactor;
-    if (!(options & SnapshotOptionsExcludeDeviceScaleFactor))
-        scaleFactor *= corePage()->deviceScaleFactor();
-    bitmapSize.scale(scaleFactor);
+    if (options & SnapshotOptionsPrinting) {
+        ASSERT(additionalScaleFactor == 1);
+        Frame* coreFrame = m_mainFrame->coreFrame();
+        if (!coreFrame)
+            return nullptr;
+        bitmapSize.setHeight(PrintContext::numberOfPages(*coreFrame, bitmapSize) * (bitmapSize.height() + 1) - 1);
+    } else {
+        double scaleFactor = additionalScaleFactor;
+        if (!(options & SnapshotOptionsExcludeDeviceScaleFactor))
+            scaleFactor *= corePage()->deviceScaleFactor();
+        bitmapSize.scale(scaleFactor);
+    }
 
     return snapshotAtSize(rect, bitmapSize, options);
 }
@@ -1745,6 +1753,11 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
         return nullptr;
 
     auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
+
+    if (options & SnapshotOptionsPrinting) {
+        PrintContext::spoolAllPagesWithBoundaries(*coreFrame, *graphicsContext, snapshotRect.size());
+        return snapshot.release();
+    }
 
     Color documentBackgroundColor = frameView->documentBackgroundColor();
     Color backgroundColor = (coreFrame->settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView->baseBackgroundColor();

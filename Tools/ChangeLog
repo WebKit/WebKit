@@ -1,3 +1,21 @@
+2015-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        printing does not use minimum page zoom factor
+        https://bugs.webkit.org/show_bug.cgi?id=108507
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner always takes the snapshots from the UI process
+        (expect for IOS), so in the case of printing, the layout in the
+        web view is not the expected one. When printing, we need to take
+        the snapshot in the web process and ensure it's rendered with a
+        PrintContext.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump): When dumping pixels, pass
+        kWKSnapshotOptionsPrinting option to
+        WKBundlePageCreateSnapshotWithOptions() when printing.
+
 2015-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WTR] Pixel tests generate the snapshots twice in Web and UI processes

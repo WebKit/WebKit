@@ -73,11 +73,11 @@ public:
     WEBCORE_EXPORT static String pageProperty(Frame*, const char* propertyName, int pageNumber);
     WEBCORE_EXPORT static bool isPageBoxVisible(Frame*, int pageNumber);
     WEBCORE_EXPORT static String pageSizeAndMarginsInPixels(Frame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
-    WEBCORE_EXPORT static int numberOfPages(Frame*, const FloatSize& pageSizeInPixels);
+    WEBCORE_EXPORT static int numberOfPages(Frame&, const FloatSize& pageSizeInPixels);
     // Draw all pages into a graphics context with lines which mean page boundaries.
     // The height of the graphics context should be
     // (pageSizeInPixels.height() + 1) * number-of-pages - 1
-    WEBCORE_EXPORT static void spoolAllPagesWithBoundaries(Frame*, GraphicsContext&, const FloatSize& pageSizeInPixels);
+    WEBCORE_EXPORT static void spoolAllPagesWithBoundaries(Frame&, GraphicsContext&, const FloatSize& pageSizeInPixels);
 
 protected:
     Frame* m_frame;
@@ -85,6 +85,7 @@ protected:
 
 private:
     void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
+    bool beginAndComputePageRectsWithPageSize(Frame&, const FloatSize& pageSizeInPixels);
 
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting;

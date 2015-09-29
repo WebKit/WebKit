@@ -45,6 +45,7 @@ enum {
     kWKSnapshotOptionsPaintSelectionRectangle = 1 << 3,
     kWKSnapshotOptionsForceBlackText = 1 << 4,
     kWKSnapshotOptionsForceWhiteText = 1 << 5,
+    kWKSnapshotOptionsPrinting = 1 << 6,
 };
 typedef uint32_t WKSnapshotOptions;
 
