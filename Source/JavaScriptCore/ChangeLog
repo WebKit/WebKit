@@ -1,5 +1,21 @@
 2015-09-29  Filip Pizlo  <fpizlo@apple.com>
 
+        ParallelHelperPool::runFunctionInParallel() shouldn't allocate, and ParallelHelperPool.h shouldn't be included everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=149635
+
+        Reviewed by Saam Barati.
+
+        It bugged me that this change caused a whole-world recompile. So, I changed the code so
+        that ParallelHelperPool.h is only included by Heap.cpp and not by Heap.h.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::copyBackingStores):
+        * heap/Heap.h:
+
+2015-09-29  Filip Pizlo  <fpizlo@apple.com>
+
         GC copy phase spans too many files
         https://bugs.webkit.org/show_bug.cgi?id=149586
 

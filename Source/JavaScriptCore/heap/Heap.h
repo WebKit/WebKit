@@ -45,7 +45,11 @@
 #include "WriteBarrierSupport.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
-#include <wtf/ParallelHelperPool.h>
+
+namespace WTF {
+class ParallelHelperClient;
+}
+using WTF::ParallelHelperClient;
 
 namespace JSC {
 
@@ -441,7 +445,7 @@ private:
     ListableHandler<WeakReferenceHarvester>::List m_weakReferenceHarvesters;
     ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
 
-    ParallelHelperClient m_helperClient;
+    std::unique_ptr<ParallelHelperClient> m_helperClient;
 };
 
 } // namespace JSC

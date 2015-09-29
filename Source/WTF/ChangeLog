@@ -1,5 +1,15 @@
 2015-09-29  Filip Pizlo  <fpizlo@apple.com>
 
+        ParallelHelperPool::runFunctionInParallel() shouldn't allocate, and ParallelHelperPool.h shouldn't be included everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=149635
+
+        Reviewed by Saam Barati.
+
+        * wtf/ParallelHelperPool.h:
+        (WTF::ParallelHelperClient::runFunctionInParallel): Stack-allocate the task instead of heap-allocating it.
+
+2015-09-29  Filip Pizlo  <fpizlo@apple.com>
+
         GC copy phase spans too many files
         https://bugs.webkit.org/show_bug.cgi?id=149586
 
