@@ -120,6 +120,7 @@
     </div>
 </div>
 
+<!-- We normalize fraction flex factors to 1, so we don't keep exact proportions with >1 factors. -->
 <div style="width: 10px; height: 60px;">
     <div class="grid gridWithIntrinsicSizeBiggerThanFlex" style="height: 100%">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
@@ -127,10 +128,11 @@
     </div>
 </div>
 
+<!-- We normalize fraction flex factors to 1, so we don't keep exact proportions with >1 factors. -->
 <div style="width: 10px; height: 60px;">
     <div class="grid gridWithIntrinsicSizeBiggerThanFlex">
         <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="40">XXXXX XXXXX XXXXX XXXXX</div>
-        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="160"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="80"></div>
     </div>
 </div>
 
