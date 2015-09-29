@@ -313,6 +313,10 @@ public:
     void setRootExtendedBackgroundColor(const Color&);
     Color rootExtendedBackgroundColor() const { return m_rootExtendedBackgroundColor; }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    void updateScrollSnapPropertiesWithFrameView(const FrameView&);
+#endif
+
     // For testing.
     WEBCORE_EXPORT void startTrackingLayerFlushes();
     WEBCORE_EXPORT unsigned layerFlushCount() const;

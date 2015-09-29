@@ -544,6 +544,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateSnapOffsets() override;
     bool isScrollSnapInProgress() const override;
+    void updateScrollingCoordinatorScrollSnapProperties() const;
 #endif
 
     virtual float adjustScrollStepForFixedContent(float step, ScrollbarOrientation, ScrollGranularity) override;

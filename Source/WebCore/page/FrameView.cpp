@@ -1007,6 +1007,11 @@ bool FrameView::isScrollSnapInProgress() const
     
     return false;
 }
+
+void FrameView::updateScrollingCoordinatorScrollSnapProperties() const
+{
+    renderView()->compositor().updateScrollSnapPropertiesWithFrameView(*this);
+}
 #endif
 
 bool FrameView::flushCompositingStateForThisFrame(const Frame& rootFrameForFlush)

@@ -26,6 +26,7 @@
 #include "RenderLayerModelObject.h"
 
 #include "RenderLayer.h"
+#include "RenderLayerCompositor.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -124,6 +125,16 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
     RenderElement::styleWillChange(diff, newStyle);
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+static bool scrollSnapContainerRequiresUpdateForStyleUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    return !(oldStyle.scrollSnapType() == newStyle.scrollSnapType()
+        && oldStyle.scrollSnapPointsX() == newStyle.scrollSnapPointsX()
+        && oldStyle.scrollSnapPointsY() == newStyle.scrollSnapPointsY()
+        && oldStyle.scrollSnapDestination() == newStyle.scrollSnapDestination());
+}
+#endif
+
 void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderElement::styleDidChange(diff, oldStyle);
@@ -169,6 +180,33 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         else
             view().frameView().removeViewportConstrainedObject(this);
     }
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    const RenderStyle& newStyle = style();
+    if (oldStyle && scrollSnapContainerRequiresUpdateForStyleUpdate(*oldStyle, newStyle)) {
+        if (RenderLayer* renderLayer = layer()) {
+            renderLayer->updateSnapOffsets();
+            renderLayer->updateScrollSnapState();
+        } else if (isBody() || isRoot()) {
+            FrameView& frameView = view().frameView();
+            frameView.updateSnapOffsets();
+            frameView.updateScrollSnapState();
+            frameView.updateScrollingCoordinatorScrollSnapProperties();
+        }
+    }
+    if (oldStyle && oldStyle->scrollSnapCoordinates() != newStyle.scrollSnapCoordinates()) {
+        const RenderBox* scrollSnapBox = enclosingBox().findEnclosingScrollableContainer();
+        if (scrollSnapBox && scrollSnapBox->layer()) {
+            const RenderStyle& style = scrollSnapBox->style();
+            if (style.scrollSnapType() != ScrollSnapType::None) {
+                scrollSnapBox->layer()->updateSnapOffsets();
+                scrollSnapBox->layer()->updateScrollSnapState();
+                if (scrollSnapBox->isBody() || scrollSnapBox->isRoot())
+                    scrollSnapBox->view().frameView().updateScrollingCoordinatorScrollSnapProperties();
+            }
+        }
+    }
+#endif
 }
 
 } // namespace WebCore

@@ -4264,4 +4264,12 @@ unsigned RenderLayerCompositor::compositingUpdateCount() const
     return m_compositingUpdateCount;
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView)
+{
+    if (ScrollingCoordinator* coordinator = scrollingCoordinator())
+        coordinator->updateScrollSnapPropertiesWithFrameView(frameView);
+}
+#endif
+
 } // namespace WebCore
