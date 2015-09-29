@@ -1,3 +1,14 @@
+2015-09-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][CMake] Warning about CMP0058
+        https://bugs.webkit.org/show_bug.cgi?id=149627
+
+        Reviewed by Martin Robinson.
+
+        Opt-in to the new behavior for CMP0058.
+
+        * CMakeLists.txt:
+
 2015-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix for internal systems.
