@@ -1850,6 +1850,8 @@ sub generateBuildSystemFromCMakeProject
         } else {
             push @args, "Ninja";
         }
+    } elsif (isAnyWindows() && isWin64()) {
+        push @args, '-G "Visual Studio 14 2015 Win64"';
     }
 
     # GTK+ has a production mode, but build-webkit should always use developer mode.
