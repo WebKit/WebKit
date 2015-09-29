@@ -1032,6 +1032,13 @@ sub determineIsWin64()
     $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit");
 }
 
+sub determineIsWin64FromArchitecture($)
+{
+    my $arch = shift;
+    $isWin64 = ($arch eq "x86_64");
+    return $isWin64;
+}
+
 sub isCygwin()
 {
     return ($^O eq "cygwin") || 0;
