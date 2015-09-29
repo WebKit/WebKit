@@ -181,6 +181,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     Modules/geolocation
     Modules/indexeddb
     Modules/indexeddb/legacy
+    Modules/indexeddb/shared
     Modules/notifications
     Modules/webdatabase
 
