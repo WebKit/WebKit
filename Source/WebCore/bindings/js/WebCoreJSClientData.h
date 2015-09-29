@@ -22,15 +22,12 @@
 #ifndef WebCoreJSClientData_h
 #define WebCoreJSClientData_h
 
+#include "CountQueuingStrategyBuiltinsWrapper.h"
 #include "DOMWrapperWorld.h"
+#include "ReadableStreamBuiltinsWrapper.h"
 #include "WebCoreTypedArrayController.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-
-#if ENABLE(STREAMS_API)
-#include "CountQueuingStrategyBuiltinsWrapper.h"
-#include "ReadableStreamBuiltinsWrapper.h"
-#endif
 
 namespace WebCore {
 
