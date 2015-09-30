@@ -66,12 +66,8 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     SVGRenderingContext renderingContext(renderSVGText(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
-        for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-            if (is<SVGInlineTextBox>(*child))
-                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(&downcast<SVGInlineTextBox>(*child).renderer());
-
+        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
             child->paint(paintInfo, paintOffset, 0, 0);
-        }
     }
 }
 

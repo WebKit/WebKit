@@ -458,8 +458,10 @@ public:
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { };
+    virtual void requestInstallMissingMediaPlugins(const String& /*details*/, const String& /*description*/, MediaPlayerRequestInstallMissingPluginsCallback&) { }
 #endif
+
+    virtual void didInvalidateDocumentMarkerRects() { }
 
 protected:
     virtual ~ChromeClient() { }

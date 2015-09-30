@@ -457,7 +457,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_updateFocusAppearanceRestoresSelection(false)
     , m_ignoreDestructiveWriteCount(0)
-    , m_markers(std::make_unique<DocumentMarkerController>())
+    , m_markers(std::make_unique<DocumentMarkerController>(*this))
     , m_updateFocusAppearanceTimer(*this, &Document::updateFocusAppearanceTimerFired)
     , m_cssTarget(nullptr)
     , m_processingLoadEvent(false)

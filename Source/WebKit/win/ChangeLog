@@ -1,3 +1,13 @@
+2015-09-30  Timothy Horton  <timothy_horton@apple.com>
+
+        Compute document marker rects at use time instead of paint time
+        https://bugs.webkit.org/show_bug.cgi?id=149643
+
+        Reviewed by Darin Adler.
+
+        * WebView.cpp:
+        (WebView::rectsForTextMatches):
+
 2015-09-25  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Incorrect position for windowless plugins.

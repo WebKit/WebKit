@@ -42,7 +42,6 @@ public:
 
     void setLogicalHeight(float h) { m_logicalHeight = h; }
     void paintSelectionBackground(PaintInfo&);
-    static void computeTextMatchMarkerRectForRenderer(RenderSVGInlineText*);
 
 private:
     virtual bool isSVGInlineFlowBox() const override { return true; }

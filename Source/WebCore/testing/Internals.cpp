@@ -281,34 +281,46 @@ bool InspectorStubFrontend::sendMessageToFrontend(const String& message)
     return InspectorClient::doDispatchMessageOnFrontendPage(frontendPage(), message);
 }
 
-static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
+static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType& result)
 {
-    if (markerType.isEmpty() || equalIgnoringCase(markerType, "all"))
-        result = DocumentMarker::AllMarkers();
-    else if (equalIgnoringCase(markerType, "Spelling"))
-        result =  DocumentMarker::Spelling;
+    if (equalIgnoringCase(markerType, "Spelling"))
+        result = DocumentMarker::Spelling;
     else if (equalIgnoringCase(markerType, "Grammar"))
-        result =  DocumentMarker::Grammar;
+        result = DocumentMarker::Grammar;
     else if (equalIgnoringCase(markerType, "TextMatch"))
-        result =  DocumentMarker::TextMatch;
+        result = DocumentMarker::TextMatch;
     else if (equalIgnoringCase(markerType, "Replacement"))
-        result =  DocumentMarker::Replacement;
+        result = DocumentMarker::Replacement;
     else if (equalIgnoringCase(markerType, "CorrectionIndicator"))
-        result =  DocumentMarker::CorrectionIndicator;
+        result = DocumentMarker::CorrectionIndicator;
     else if (equalIgnoringCase(markerType, "RejectedCorrection"))
-        result =  DocumentMarker::RejectedCorrection;
+        result = DocumentMarker::RejectedCorrection;
     else if (equalIgnoringCase(markerType, "Autocorrected"))
-        result =  DocumentMarker::Autocorrected;
+        result = DocumentMarker::Autocorrected;
     else if (equalIgnoringCase(markerType, "SpellCheckingExemption"))
-        result =  DocumentMarker::SpellCheckingExemption;
+        result = DocumentMarker::SpellCheckingExemption;
     else if (equalIgnoringCase(markerType, "DeletedAutocorrection"))
-        result =  DocumentMarker::DeletedAutocorrection;
+        result = DocumentMarker::DeletedAutocorrection;
     else if (equalIgnoringCase(markerType, "DictationAlternatives"))
-        result =  DocumentMarker::DictationAlternatives;
+        result = DocumentMarker::DictationAlternatives;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     else if (equalIgnoringCase(markerType, "TelephoneNumber"))
-        result =  DocumentMarker::TelephoneNumber;
+        result = DocumentMarker::TelephoneNumber;
 #endif
+    else
+        return false;
+    
+    return true;
+}
+
+static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
+{
+    DocumentMarker::MarkerType singularResult;
+
+    if (markerType.isEmpty() || equalIgnoringCase(markerType, "all"))
+        result = DocumentMarker::AllMarkers();
+    else if (markerTypeFrom(markerType, singularResult))
+        result = singularResult;
     else
         return false;
 
@@ -1043,23 +1055,29 @@ String Internals::markerDescriptionForNode(Node* node, const String& markerType,
     return marker->description();
 }
 
-String Internals::dumpMarkerRectsForNode(Node* node, const String& markerType, unsigned index, ExceptionCode& ec)
+String Internals::dumpMarkerRects(const String& markerTypeString, ExceptionCode& ec)
 {
-    RenderedDocumentMarker* marker = markerAt(node, markerType, index, ec);
-    if (!marker)
+    DocumentMarker::MarkerType markerType;
+    if (!markerTypeFrom(markerTypeString, markerType)) {
+        ec = SYNTAX_ERR;
         return String();
+    }
+
+    contextDocument()->markers().updateRectsForInvalidatedMarkersOfType(markerType);
+    auto rects = contextDocument()->markers().renderedRectsForMarkers(markerType);
+
     StringBuilder rectString;
-    rectString.append("marker rects: ");
-    for (const auto& rect : marker->renderedRects()) {
-        rectString.append("(");
-        rectString.appendNumber(rect.x().toFloat());
-        rectString.append(", ");
-        rectString.appendNumber(rect.y().toFloat());
-        rectString.append(", ");
-        rectString.appendNumber(rect.width().toFloat());
-        rectString.append(", ");
-        rectString.appendNumber(rect.height().toFloat());
-        rectString.append(") ");
+    rectString.appendLiteral("marker rects: ");
+    for (const auto& rect : rects) {
+        rectString.append('(');
+        rectString.appendNumber(rect.x());
+        rectString.appendLiteral(", ");
+        rectString.appendNumber(rect.y());
+        rectString.appendLiteral(", ");
+        rectString.appendNumber(rect.width());
+        rectString.appendLiteral(", ");
+        rectString.appendNumber(rect.height());
+        rectString.appendLiteral(") ");
     }
     return rectString.toString();
 }

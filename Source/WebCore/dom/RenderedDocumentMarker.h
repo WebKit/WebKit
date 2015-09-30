@@ -39,30 +39,39 @@ public:
     {
     }
 
-    bool contains(const LayoutPoint& point) const
+    bool contains(const FloatPoint& point) const
     {
-        for (const auto& rect : m_renderedRects) {
+        ASSERT(m_isValid);
+        for (const auto& rect : m_rects) {
             if (rect.contains(point))
                 return true;
         }
         return false;
     }
 
-    void addRenderedRect(const LayoutRect& r) { m_renderedRects.append(r); }
-    const Vector<LayoutRect, 1>& renderedRects() const { return m_renderedRects; }
-    void invalidate(const LayoutRect& r)
+    void setUnclippedAbsoluteRects(Vector<FloatRect>& rects)
     {
-        for (const auto& rect : m_renderedRects) {
-            if (rect.intersects(r)) {
-                invalidate();
-                return;
-            }
-        }
+        m_isValid = true;
+        m_rects = rects;
     }
-    void invalidate() { m_renderedRects.clear(); }
+
+    const Vector<FloatRect, 1>& unclippedAbsoluteRects() const
+    {
+        ASSERT(m_isValid);
+        return m_rects;
+    }
+
+    void invalidate()
+    {
+        m_isValid = false;
+        m_rects.clear();
+    }
+
+    bool isValid() const { return m_isValid; }
 
 private:
-    Vector<LayoutRect, 1> m_renderedRects;
+    Vector<FloatRect, 1> m_rects;
+    bool m_isValid { false };
 };
 
 

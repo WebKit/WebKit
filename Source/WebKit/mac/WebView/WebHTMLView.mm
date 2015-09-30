@@ -6862,7 +6862,7 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     if (!document)
         return [NSArray array];
 
-    Vector<IntRect> rects = document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
+    Vector<FloatRect> rects = document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
     unsigned count = rects.size();
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
     for (unsigned index = 0; index < count; ++index)

@@ -23,9 +23,7 @@
 #include "config.h"
 #include "SVGInlineFlowBox.h"
 
-#include "DocumentMarkerController.h"
 #include "GraphicsContext.h"
-#include "RenderedDocumentMarker.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 
@@ -52,12 +50,8 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     SVGRenderingContext renderingContext(renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
-        for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-            if (is<SVGInlineTextBox>(*child))
-                computeTextMatchMarkerRectForRenderer(&downcast<SVGInlineTextBox>(*child).renderer());
-
+        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
             child->paint(paintInfo, paintOffset, 0, 0);
-        }
     }
 }
 
@@ -70,62 +64,6 @@ FloatRect SVGInlineFlowBox::calculateBoundaries() const
         childRect.unite(child->calculateBoundaries());
     }
     return childRect;
-}
-
-void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText* textRenderer)
-{
-    ASSERT(textRenderer);
-
-    Text& textNode = textRenderer->textNode();
-    if (!textNode.inDocument())
-        return;
-
-    RenderStyle& style = textRenderer->style();
-
-    AffineTransform fragmentTransform;
-    Vector<RenderedDocumentMarker*> markers = textRenderer->document().markers().markersFor(&textNode);
-    for (auto* marker : markers) {
-        // SVG is only interessted in the TextMatch marker, for now.
-        if (marker->type() != DocumentMarker::TextMatch)
-            continue;
-
-        FloatRect markerRect;
-        for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (!is<SVGInlineTextBox>(*box))
-                continue;
-
-            auto& textBox = downcast<SVGInlineTextBox>(*box);
-
-            int markerStartPosition = std::max<int>(marker->startOffset() - textBox.start(), 0);
-            int markerEndPosition = std::min<int>(marker->endOffset() - textBox.start(), textBox.len());
-
-            if (markerStartPosition >= markerEndPosition)
-                continue;
-
-            int fragmentStartPosition = 0;
-            int fragmentEndPosition = 0;
-
-            const Vector<SVGTextFragment>& fragments = textBox.textFragments();
-            unsigned textFragmentsSize = fragments.size();
-            for (unsigned i = 0; i < textFragmentsSize; ++i) {
-                const SVGTextFragment& fragment = fragments.at(i);
-
-                fragmentStartPosition = markerStartPosition;
-                fragmentEndPosition = markerEndPosition;
-                if (!textBox.mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
-                    continue;
-
-                FloatRect fragmentRect = textBox.selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, &style);
-                fragment.buildFragmentTransform(fragmentTransform);
-                if (!fragmentTransform.isIdentity())
-                    fragmentRect = fragmentTransform.mapRect(fragmentRect);
-
-                markerRect.unite(fragmentRect);
-            }
-        }
-
-        marker->addRenderedRect(textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
-    }
 }
 
 } // namespace WebCore

@@ -51,6 +51,7 @@
 #include "DebugPageOverlays.h"
 #include "Document.h"
 #include "DocumentEventQueue.h"
+#include "DocumentMarkerController.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "FEColorMatrix.h"
@@ -576,6 +577,8 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
 
     if (geometryMap)
         geometryMap->popMappingsToAncestor(parent());
+
+    renderer().document().markers().invalidateRectsForAllMarkers();
 }
 
 LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
@@ -875,6 +878,8 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
 
     if (geometryMap)
         geometryMap->popMappingsToAncestor(parent());
+
+    renderer().document().markers().invalidateRectsForAllMarkers();
 }
 
 void RenderLayer::positionNewlyCreatedOverflowControls()

@@ -1177,4 +1177,9 @@ void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, c
 #endif
 #endif // ENABLE(VIDEO)
 
+void WebChromeClient::didInvalidateDocumentMarkerRects()
+{
+    m_page->findController().didInvalidateDocumentMarkerRects();
+}
+
 } // namespace WebKit

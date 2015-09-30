@@ -2103,7 +2103,7 @@ void FrameSelection::getTextRectangles(Vector<FloatRect>& rectangles, TextRectan
     range->absoluteTextQuads(quads, textRectHeight == TextRectangleHeight::SelectionHeight);
 
     for (const auto& quad : quads)
-        rectangles.append(quad.enclosingBoundingBox());
+        rectangles.append(quad.boundingBox());
 }
 
 // Scans logically forward from "start", including any child frames.

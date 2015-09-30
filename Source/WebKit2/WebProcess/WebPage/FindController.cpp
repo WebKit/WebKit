@@ -191,7 +191,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             m_webPage->mainFrame()->pageOverlayController().uninstallPageOverlay(m_findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
-            RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(*this);
+            RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
             m_findPageOverlay = findPageOverlay.get();
             m_webPage->mainFrame()->pageOverlayController().installPageOverlay(findPageOverlay.release(), PageOverlay::FadeMode::Fade);
         }
@@ -394,28 +394,26 @@ void FindController::redraw()
     updateFindIndicator(*selectedFrame, isShowingOverlay(), false);
 }
 
-Vector<IntRect> FindController::rectsForTextMatches()
+Vector<IntRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 {
     Vector<IntRect> rects;
+
+    FrameView* mainFrameView = m_webPage->corePage()->mainFrame().view();
 
     for (Frame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
         if (!document)
             continue;
 
-        IntRect visibleRect = frame->view()->visibleContentRect();
-        Vector<IntRect> frameRects = document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
-        IntPoint frameOffset(-frame->view()->documentScrollOffsetRelativeToViewOrigin().width(), -frame->view()->documentScrollOffsetRelativeToViewOrigin().height());
-        frameOffset = frame->view()->convertToContainingWindow(frameOffset);
+        for (FloatRect rect : document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch)) {
+            if (!frame->isMainFrame())
+                rect = mainFrameView->windowToContents(frame->view()->contentsToWindow(enclosingIntRect(rect)));
+            rect.intersect(clipRect);
 
-        for (Vector<IntRect>::iterator it = frameRects.begin(), end = frameRects.end(); it != end; ++it) {
-            it->intersect(visibleRect);
-
-            if (it->isEmpty())
+            if (rect.isEmpty())
                 continue;
 
-            it->moveBy(frameOffset);
-            rects.append(*it);
+            rects.append(rect);
         }
     }
 
@@ -453,9 +451,13 @@ const float shadowColorAlpha = 0.5;
 
 void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
+    const int borderWidth = 1;
+
     Color overlayBackgroundColor(0.1f, 0.1f, 0.1f, 0.25f);
 
-    Vector<IntRect> rects = rectsForTextMatches();
+    IntRect borderInflatedDirtyRect = dirtyRect;
+    borderInflatedDirtyRect.inflate(borderWidth);
+    Vector<IntRect> rects = rectsForTextMatchesInRect(borderInflatedDirtyRect);
 
     // Draw the background.
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor, ColorSpaceSRGB);
@@ -469,7 +471,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
         // Draw white frames around the holes.
         for (auto& rect : rects) {
             IntRect whiteFrameRect = rect;
-            whiteFrameRect.inflate(1);
+            whiteFrameRect.inflate(borderWidth);
             graphicsContext.fillRect(whiteFrameRect);
         }
     }
@@ -495,6 +497,12 @@ bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEve
         hideFindUI();
 
     return false;
+}
+
+void FindController::didInvalidateDocumentMarkerRects()
+{
+    if (m_findPageOverlay)
+        m_findPageOverlay->setNeedsDisplay();
 }
 
 } // namespace WebKit

@@ -1098,14 +1098,6 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         IntRect markerRect = enclosingIntRect(selectionRect);
         start = markerRect.x() - startPoint.x();
         width = markerRect.width();
-        
-        // Store rendered rects for bad grammar markers, so we can hit-test against it elsewhere in order to
-        // display a toolTip. We don't do this for misspelling markers.
-        if (grammar || isDictationMarker) {
-            markerRect.move(-boxOrigin.x(), -boxOrigin.y());
-            markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-            marker.addRenderedRect(markerRect);
-        }
     }
     
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
@@ -1130,56 +1122,27 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
 
 void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font)
 {
-    LayoutUnit selectionHeight = this->selectionHeight();
+    if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
+        return;
+
+    Color color = marker.activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
+    GraphicsContextStateSaver stateSaver(context);
+    updateGraphicsContext(context, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
+
+    // Use same y positioning and height as for selection, so that when the selection and this highlight are on
+    // the same word there are no pieces sticking out.
+    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
+    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, this->selectionHeight());
 
     int sPos = std::max<int>(marker.startOffset() - m_start, 0);
     int ePos = std::min<int>(marker.endOffset() - m_start, m_len);
     TextRun run = constructTextRun(style, font);
+    font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
 
-    // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
-    // FIXME: figure out how renderedRect and selectionRect are different.
-    LayoutRect renderedRect = LayoutRect(LayoutPoint(x(), selectionTop()), FloatSize(0, selectionHeight));
-    font.adjustSelectionRectForText(run, renderedRect, sPos, ePos);
-    IntRect markerRect = enclosingIntRect(renderedRect);
-    markerRect = renderer().localToAbsoluteQuad(FloatQuad(markerRect)).enclosingBoundingBox();
-    markerRect.intersect(enclosingIntRect(renderer().absoluteClippedOverflowRect()));
-
-    if (markerRect.isEmpty())
+    if (selectionRect.isEmpty())
         return;
 
-    marker.addRenderedRect(markerRect);
-
-    // Optionally highlight the text
-    if (renderer().frame().editor().markedTextMatchesAreHighlighted()) {
-        Color color = marker.activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
-        GraphicsContextStateSaver stateSaver(context);
-        updateGraphicsContext(context, TextPaintStyle(color, style.colorSpace())); // Don't draw text at all!
-
-        // Use same y positioning and height as for selection, so that when the selection and this highlight are on
-        // the same word there are no pieces sticking out.
-        LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
-        LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight);
-        font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
-        context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color, style.colorSpace());
-    }
-}
-
-void InlineTextBox::computeRectForReplacementMarker(RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font)
-{
-    // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
-    LayoutUnit top = selectionTop();
-    LayoutUnit h = selectionHeight();
-    
-    int sPos = std::max(marker.startOffset() - m_start, (unsigned)0);
-    int ePos = std::min(marker.endOffset() - m_start, (unsigned)m_len);
-    TextRun run = constructTextRun(style, font);
-
-    // Compute and store the rect associated with this marker.
-    LayoutRect selectionRect = LayoutRect(LayoutPoint(x(), top), LayoutSize(0, h));
-    font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
-    IntRect markerRect = enclosingIntRect(selectionRect);
-    markerRect = renderer().localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    marker.addRenderedRect(markerRect);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color, style.colorSpace());
 }
     
 void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)
@@ -1246,7 +1209,6 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPo
                 paintTextMatchMarker(context, boxOrigin, *marker, style, font);
                 break;
             case DocumentMarker::Replacement:
-                computeRectForReplacementMarker(*marker, style, font);
                 break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
             case DocumentMarker::TelephoneNumber:

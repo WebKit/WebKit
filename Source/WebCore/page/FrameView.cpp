@@ -1480,6 +1480,8 @@ void FrameView::layout(bool allowSubtree)
     if (document.hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
 
+    frame().document()->markers().invalidateRectsForAllMarkers();
+
     if (!m_postLayoutTasksTimer.isActive()) {
         if (!m_inSynchronousPostLayout) {
             if (inChildFrameLayoutWithFrameFlattening)
@@ -3925,7 +3927,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     adjustTiledBackingCoverage();
 }
 
-void FrameView::willPaintContents(GraphicsContext& context, const IntRect& dirtyRect, PaintingState& paintingState)
+void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, PaintingState& paintingState)
 {
     Document* document = frame().document();
 
@@ -3951,9 +3953,6 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect& dirty
         if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
             m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;
     }
-    
-    if (m_paintBehavior == PaintBehaviorNormal)
-        document->markers().invalidateRenderedRectsForMarkersInRect(dirtyRect);
 
     if (document->printing())
         m_paintBehavior |= PaintBehaviorFlattenCompositingLayers;

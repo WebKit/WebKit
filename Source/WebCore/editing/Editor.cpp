@@ -3230,25 +3230,6 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->countChildNodes(), IGNORE_EXCEPTION);
     } while (true);
 
-    if (markMatches || matches) {
-        // Do a "fake" paint in order to execute the code that computes the rendered rect for each text match.
-        if (m_frame.view() && m_frame.contentRenderer()) {
-            document().updateLayout(); // Ensure layout is up to date.
-            // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
-            // FIXME: this should probably look at paintsEntireContents()
-            LayoutRect visibleRect = m_frame.view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
-            if (!visibleRect.isEmpty()) {
-                GraphicsContext context((PlatformGraphicsContext*)0);
-                context.setPaintingDisabled(true);
-
-                PaintBehavior oldBehavior = m_frame.view()->paintBehavior();
-                m_frame.view()->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-                m_frame.view()->paintContents(context, enclosingIntRect(visibleRect));
-                m_frame.view()->setPaintBehavior(oldBehavior);
-            }
-        }
-    }
-
     return matchCount;
 }
 

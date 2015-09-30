@@ -131,7 +131,7 @@ enum MediaControlEvent {
     [RaisesException] unsigned long markerCountForNode(Node node, DOMString markerType);
     [RaisesException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
     [RaisesException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
-    [RaisesException] DOMString dumpMarkerRectsForNode(Node node, DOMString markerType, unsigned long index);
+    [RaisesException] DOMString dumpMarkerRects(DOMString markerType);
     void addTextMatchMarker(Range range, boolean isActive);
     [RaisesException] void setMarkedTextMatchesAreHighlighted(boolean flag);
 
