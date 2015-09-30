@@ -33,6 +33,8 @@
 #if PLATFORM(IOS)
 @interface WKWebView ()
 
+// FIXME: move these to WKWebView_Private.h
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
 
 @end
@@ -41,7 +43,7 @@
 #if WK_API_ENABLED
 
 @interface TestRunnerWKWebView ()
-@property (nonatomic, copy) void (^zoomCompletionHandler)(void);
+@property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
 @end
 
 @implementation TestRunnerWKWebView
@@ -57,26 +59,31 @@
 #if PLATFORM(IOS)
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {
-    ASSERT(!self.zoomCompletionHandler);
-    self.zoomCompletionHandler = completionHandler;
+    ASSERT(!self.zoomToScaleCompletionHandler);
+    self.zoomToScaleCompletionHandler = completionHandler;
 
     [self.scrollView setZoomScale:scale animated:animated];
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view
+{
+    [super scrollViewWillBeginZooming:scrollView withView:view];
+
+    if (self.willBeginZoomingCallback)
+        self.willBeginZoomingCallback();
 }
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
     [super scrollViewDidEndZooming:scrollView withView:view atScale:scale];
     
-    if (self.zoomCompletionHandler) {
-        self.zoomCompletionHandler();
-        self.zoomCompletionHandler = nullptr;
-    }
-}
+    if (self.didEndZoomingCallback)
+        self.didEndZoomingCallback();
 
-- (void)onDidEndZooming:(void (^)(void))completionHandler
-{
-    ASSERT(!self.zoomCompletionHandler);
-    self.zoomCompletionHandler = completionHandler;
+    if (self.zoomToScaleCompletionHandler) {
+        self.zoomToScaleCompletionHandler();
+        self.zoomToScaleCompletionHandler = nullptr;
+    }
 }
 #endif
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.didEndZoomingCallback = function() {
+                uiController.uiScriptComplete('Zoomed to scale ' + uiController.zoomScale);
+            };
+
+            uiController.doubleTapAtPoint(50, 50, function() {});
+        })();
+    </script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function getUIScript()
+        {
+            return document.getElementById('ui-script').text;
+        }
+
+        function runTest()
+        {
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    document.getElementById('target').innerText = result;
+                    testRunner.notifyDone();
+                });
+            }
+        }
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 100px;
+            background-color: silver;
+        }
+    </style>
+</head>
+<body onload="runTest()">
+
+<div id="target">
+</div>
+
+</body>
+</html>

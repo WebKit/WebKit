@@ -28,7 +28,7 @@
 
 #include "JSUIScriptController.h"
 #include "UIScriptContext.h"
-// #include <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JSValueRef.h>
 
 namespace WTR {
 
@@ -53,8 +53,38 @@ void UIScriptController::doAsyncTask(JSValueRef)
 }
 #endif
 
+void UIScriptController::setWillBeginZoomingCallback(JSValueRef callback)
+{
+    m_willBeginZoomingCallback = m_context.registerCallback(callback);
+    platformSetWillBeginZoomingCallback();
+}
+
+JSValueRef UIScriptController::willBeginZoomingCallback() const
+{
+    return m_context.callbackWithID(m_willBeginZoomingCallback);
+}
+
+void UIScriptController::setDidEndZoomingCallback(JSValueRef callback)
+{
+    m_didEndZoomingCallback = m_context.registerCallback(callback);
+    platformSetDidEndZoomingCallback();
+}
+
+JSValueRef UIScriptController::didEndZoomingCallback() const
+{
+    return m_context.callbackWithID(m_didEndZoomingCallback);
+}
+
 #if !PLATFORM(IOS)
 void UIScriptController::zoomToScale(double, JSValueRef)
+{
+}
+
+void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef)
+{
+}
+
+void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef)
 {
 }
 
@@ -76,6 +106,14 @@ double UIScriptController::maximumZoomScale() const
 JSObjectRef UIScriptController::contentVisibleRect() const
 {
     return nullptr;
+}
+
+void UIScriptController::platformSetWillBeginZoomingCallback()
+{
+}
+
+void UIScriptController::platformSetDidEndZoomingCallback()
+{
 }
 #endif
 

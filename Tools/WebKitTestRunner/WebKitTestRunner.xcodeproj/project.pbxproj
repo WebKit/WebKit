@@ -46,6 +46,7 @@
 		0F87B6201BACDA93004EC572 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F87B61C1BACDA93004EC572 /* UIScriptController.cpp */; settings = {ASSET_TAGS = (); }; };
 		0FEB90A01905A834000FDBF3 /* InjectedBundlePageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */; };
 		0FEB90A51905C016000FDBF3 /* CrashReporterInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */; };
+		0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */; settings = {ASSET_TAGS = (); }; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
 		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
@@ -189,6 +190,10 @@
 		0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundlePageCocoa.mm; sourceTree = "<group>"; };
 		0FEB90A21905BC6A000FDBF3 /* CrashReporterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CrashReporterInfo.h; path = cocoa/CrashReporterInfo.h; sourceTree = "<group>"; };
 		0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CrashReporterInfo.mm; path = cocoa/CrashReporterInfo.mm; sourceTree = "<group>"; };
+		0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDEventGenerator.h; sourceTree = "<group>"; };
+		0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDEventGenerator.mm; sourceTree = "<group>"; };
+		0FEBF85B1BB62A370028722D /* IOKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
+		0FEBF85C1BB62D460028722D /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		1A3326051B75396500F89F62 /* TestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
 		26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationProviderMock.cpp; sourceTree = "<group>"; };
 		26D758E6160BECDD00268472 /* GeolocationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationProviderMock.h; sourceTree = "<group>"; };
@@ -551,6 +556,10 @@
 			children = (
 				0F87B6181BACC558004EC572 /* Launch.storyboard */,
 				2EE52CEB1890A9A80010ED21 /* InfoPlist.strings */,
+				0FEBF85B1BB62A370028722D /* IOKitSPI.h */,
+				0FEBF85C1BB62D460028722D /* UIKitSPI.h */,
+				0FEBF8581BB61DF20028722D /* HIDEventGenerator.h */,
+				0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */,
 				2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */,
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
 				0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */,
@@ -914,6 +923,7 @@
 				2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */,
 				2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */,
 				2E63ED9C1891ADC7002A7AFC /* AppDelegate.m in Sources */,
+				0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */,
 				2E63ED911891ADAD002A7AFC /* PlatformWebViewIOS.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -45,6 +45,15 @@ public:
     void doAsyncTask(JSValueRef callback);
     void zoomToScale(double scale, JSValueRef callback);
 
+    void singleTapAtPoint(long x, long y, JSValueRef callback);
+    void doubleTapAtPoint(long x, long y, JSValueRef callback);
+    
+    void setWillBeginZoomingCallback(JSValueRef);
+    JSValueRef willBeginZoomingCallback() const;
+
+    void setDidEndZoomingCallback(JSValueRef);
+    JSValueRef didEndZoomingCallback() const;
+
     double zoomScale() const;
     double minimumZoomScale() const;
     double maximumZoomScale() const;
@@ -55,12 +64,18 @@ public:
 
 private:
     UIScriptController(UIScriptContext&);
+    
+    void platformSetWillBeginZoomingCallback();
+    void platformSetDidEndZoomingCallback();
 
     virtual JSClassRef wrapperClass() override;
 
     JSObjectRef objectFromRect(const WKRect&) const;
 
     UIScriptContext& m_context;
+
+    unsigned m_willBeginZoomingCallback { 0 };
+    unsigned m_didEndZoomingCallback { 0 };
 };
 
 }

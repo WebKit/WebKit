@@ -25,7 +25,9 @@
 
 #import "config.h"
 
+#import "HIDEventGenerator.h"
 #import "TestController.h"
+#import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
 
 static int _argc;
@@ -68,6 +70,11 @@ static const char **_argv;
             sleep(5);
         }
     });
+}
+
+- (void)_handleHIDEvent:(IOHIDEventRef)event
+{
+    [[HIDEventGenerator sharedHIDEventGenerator] markerEventReceived:event];
 }
 
 @end

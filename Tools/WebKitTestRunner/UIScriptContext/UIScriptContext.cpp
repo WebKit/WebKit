@@ -102,6 +102,40 @@ void UIScriptContext::asyncTaskComplete(unsigned callbackID)
     m_currentScriptCallbackID = 0;
 }
 
+unsigned UIScriptContext::registerCallback(JSValueRef taskCallback)
+{
+    return prepareForAsyncTask(taskCallback);
+}
+
+void UIScriptContext::unregisterCallback(unsigned callbackID)
+{
+    Task task = m_callbacks.take(callbackID);
+    ASSERT(task.callback);
+    JSValueUnprotect(m_context.get(), task.callback);
+}
+
+JSValueRef UIScriptContext::callbackWithID(unsigned callbackID)
+{
+    Task task = m_callbacks.get(callbackID);
+    return task.callback;
+}
+
+void UIScriptContext::fireCallback(unsigned callbackID)
+{
+    Task task = m_callbacks.get(callbackID);
+    ASSERT(task.callback);
+
+    JSValueRef exception = nullptr;
+    JSObjectRef callbackObject = JSValueToObject(m_context.get(), task.callback, &exception);
+
+    m_currentScriptCallbackID = task.parentScriptCallbackID;
+
+    exception = nullptr;
+    JSObjectCallAsFunction(m_context.get(), callbackObject, JSContextGetGlobalObject(m_context.get()), 0, nullptr, &exception);
+    
+    m_currentScriptCallbackID = 0;
+}
+
 void UIScriptContext::uiScriptComplete(JSStringRef result)
 {
     WKRetainPtr<WKStringRef> uiScriptResult = WKStringCreateWithJSString(result);

@@ -30,8 +30,12 @@
 @interface TestRunnerWKWebView : WKWebView
 
 #if PLATFORM(IOS)
+
+@property (nonatomic, copy) void (^willBeginZoomingCallback)(void);
+@property (nonatomic, copy) void (^didEndZoomingCallback)(void);
+
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
-- (void)onDidEndZooming:(void (^)(void))completionHandler;
+
 #endif
 
 @end

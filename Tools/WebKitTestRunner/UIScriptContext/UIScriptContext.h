@@ -47,8 +47,15 @@ public:
     void runUIScript(WKStringRef script, unsigned scriptCallbackID);
     void uiScriptComplete(JSStringRef);
 
+    // For one-shot tasks callbacks.
     unsigned prepareForAsyncTask(JSValueRef taskCallback);
     void asyncTaskComplete(unsigned taskCallbackID);
+
+    // For persistent callbacks.
+    unsigned registerCallback(JSValueRef taskCallback);
+    JSValueRef callbackWithID(unsigned callbackID);
+    void unregisterCallback(unsigned callbackID);
+    void fireCallback(unsigned callbackID);
 
     unsigned nextTaskCallbackID();
 

@@ -1,3 +1,84 @@
+2015-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Allow tests to generate user gestures for UI testing
+        https://bugs.webkit.org/show_bug.cgi?id=149653
+
+        Reviewed by Tim Horton.
+
+        Expose functionality in UIScriptController to allow for testing single- and double-tap,
+        and to listen for completion of scrolling and zooming in the WKWebView.
+        
+        Tap generation is done using synthetic IOHIDEvents, via a new HIDEventGenerator class
+        which hides the complexity of creating these events. Event dispatch is asynchronous.
+        We detect when the last event has been handled by dispatching a vendor-specific event,
+        which is detected via -_handleHIDEvent: in our UIApplication subclass.
+        
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig: Link with IOKit.
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl: Two new properties
+        for 'will begin zooming' and 'did end zooming' callbacks, and functions to dispatch
+        single and double taps.
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::registerCallback): Used to store the callbacks for zooming.
+        Unlike the "task" callbacks, these are persistent, but we store them in the same hash map.
+        (UIScriptContext::unregisterCallback):
+        (UIScriptContext::callbackWithID):
+        (UIScriptContext::fireCallback):
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.h:
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setWillBeginZoomingCallback): Cross-platform code.
+        (WTR::UIScriptController::willBeginZoomingCallback): Ditto.
+        (WTR::UIScriptController::setDidEndZoomingCallback):
+        (WTR::UIScriptController::didEndZoomingCallback):
+        (WTR::UIScriptController::singleTapAtPoint): Non-iOS stub.
+        (WTR::UIScriptController::doubleTapAtPoint): Ditto.
+        (WTR::UIScriptController::platformSetWillBeginZoomingCallback):
+        (WTR::UIScriptController::platformSetDidEndZoomingCallback):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h: Properties for the zooming callbacks.
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView zoomToScale:animated:completionHandler:]): Dispatch the zooming callback.
+        (-[TestRunnerWKWebView scrollViewWillBeginZooming:withView:]): Ditto.
+        (-[TestRunnerWKWebView scrollViewDidEndZooming:withView:atScale:]): Ditto.
+        (-[TestRunnerWKWebView onDidEndZooming:]): Deleted.
+        * WebKitTestRunner/ios/HIDEventGenerator.h: Copied from Tools/WebKitTestRunner/cocoa/TestRunnerWKWebView.h.
+        * WebKitTestRunner/ios/HIDEventGenerator.m: Added.
+        (simpleDragCurve):
+        (calculateNextLocation):
+        (delayBetweenMove):
+        (+[HIDEventGenerator sharedHIDEventGenerator]):
+        (+[HIDEventGenerator nextEventCallbackID]):
+        (-[HIDEventGenerator init]):
+        (-[HIDEventGenerator _createIOHIDEventType:]):
+        (-[HIDEventGenerator _sendHIDEvent:]):
+        (-[HIDEventGenerator _sendMarkerHIDEventWithCompletionBlock:]):
+        (-[HIDEventGenerator _updateTouchPoints:count:]):
+        (-[HIDEventGenerator touchDownAtPoints:touchCount:]):
+        (-[HIDEventGenerator touchDown:touchCount:]):
+        (-[HIDEventGenerator touchDown:]):
+        (-[HIDEventGenerator liftUpAtPoints:touchCount:]):
+        (-[HIDEventGenerator liftUp:touchCount:]):
+        (-[HIDEventGenerator liftUp:]):
+        (-[HIDEventGenerator moveToPoints:touchCount:duration:]):
+        (-[HIDEventGenerator sendTaps:location:withNumberOfTouches:completionBlock:]):
+        (-[HIDEventGenerator tap:completionBlock:]):
+        (-[HIDEventGenerator doubleTap:completionBlock:]):
+        (-[HIDEventGenerator twoFingerTap:completionBlock:]):
+        (-[HIDEventGenerator dragWithStartPoint:endPoint:duration:completionBlock:]):
+        (-[HIDEventGenerator pinchCloseWithStartPoint:endPoint:duration:completionBlock:]):
+        (-[HIDEventGenerator pinchOpenWithStartPoint:endPoint:duration:completionBlock:]):
+        (-[HIDEventGenerator markerEventReceived:]):
+        * WebKitTestRunner/ios/IOKitSPI.h: Added.
+        * WebKitTestRunner/ios/UIKitSPI.h: Copied from Tools/WebKitTestRunner/cocoa/TestRunnerWKWebView.h.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::globalToContentCoordinates):
+        (WTR::UIScriptController::singleTapAtPoint):
+        (WTR::UIScriptController::doubleTapAtPoint):
+        (WTR::UIScriptController::platformSetWillBeginZoomingCallback):
+        (WTR::UIScriptController::platformSetDidEndZoomingCallback):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp _handleHIDEvent:]):
+
 2015-09-30  Dana Burkart  <dburkart@apple.com>
 
         git-add-reviewer should trim trailing spaces/newlines
