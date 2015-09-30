@@ -1,3 +1,12 @@
+2015-09-30  Lucas Forschler  <lforschler@apple.com>
+
+        Bring El Capitan buildbot infrastructure online.
+        https://bugs.webkit.org/show_bug.cgi?id=149605
+        
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2015-09-30  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Deprecation warnings in DOMNodeTest
