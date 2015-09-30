@@ -37,7 +37,7 @@ def _should_file_trigger_build(target_platform, file):
     # and start using it for their bots. Someone familiar with each platform
     # will have to figure out what the right set of directories/patterns is for
     # that platform.
-    assert(target_platform in ("mac-mavericks", "mac-yosemite", "mac-elcapitan", "win"))
+    assert(target_platform in ("mac-mavericks", "mac-yosemite", "mac-elcapitan", "win", "ios-9", "ios-simulator-9"))
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.
@@ -47,29 +47,32 @@ def _should_file_trigger_build(target_platform, file):
         ("Tools/BuildSlaveSupport/build.webkit.org-config/public_html", []),
         ("Websites", []),
         ("efl", []),
-        ("ios", []),
         ("opengl", []),
         ("opentype", []),
         ("openvg", []),
         ("wx", []),
 
         # Directories that should trigger builds on only some bots.
+        ("LayoutTests/platform/ios-simulator", ["ios"]),
+        ("LayoutTests/platform/ios-simulator-wk1", ["ios"]),
+        ("LayoutTests/platform/ios-simulator-wk2", ["ios"]),
         ("LayoutTests/platform/mac-mavericks", ["mac-mavericks"]),
         ("LayoutTests/platform/mac-yosemite", ["mac-mavericks", "mac-yosemite"]),
         ("LayoutTests/platform/mac-elcapitan", ["mac-mavericks", "mac-yosemite", "mac-elcapitan"]),
         ("LayoutTests/platform/mac-wk2", ["mac-mavericks", "mac-yosemite", "mac-elcapitan"]),
         ("LayoutTests/platform/mac-wk1", ["mac-mavericks", "mac-yosemite", "mac-elcapitan"]),
         ("LayoutTests/platform/mac", ["mac", "win"]),
-        ("LayoutTests/platform/wk2", ["mac"]),
+        ("LayoutTests/platform/wk2", ["mac", "ios"]),
         ("cairo", ["gtk", "wincairo"]),
-        ("cf", ["mac", "win"]),
-        ("cocoa", ["mac"]),
+        ("cf", ["mac", "win", "ios"]),
+        ("cocoa", ["mac", "ios"]),
         ("curl", ["gtk", "wincairo"]),
         ("gobject", ["gtk"]),
         ("gstreamer", ["gtk"]),
         ("gtk", ["gtk"]),
+        ("ios", ["ios"]),
         ("mac", ["mac"]),
-        ("objc", ["mac"]),
+        ("objc", ["mac", "ios"]),
         ("soup", ["gtk"]),
         ("win", ["win"]),
     ]
@@ -87,12 +90,13 @@ def _should_file_trigger_build(target_platform, file):
         # Patterns that should trigger builds on only some bots.
         (r"(?:^|/)PlatformGTK\.cmake$", ["gtk"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
+        (r"IOS\.(?:cpp|h|mm)$", ["ios"]),
         (r"\.(?:vcproj|vsprops|sln|vcxproj|props|filters)$", ["win"]),
-        (r"\.exp(?:\.in)?$", ["mac"]),
-        (r"\.order$", ["mac"]),
+        (r"\.exp(?:\.in)?$", ["mac", "ios"]),
+        (r"\.order$", ["mac", "ios"]),
         (r"\.(?:vcproj|vcxproj)/", ["win"]),
-        (r"\.xcconfig$", ["mac"]),
-        (r"\.xcodeproj/", ["mac"]),
+        (r"\.xcconfig$", ["mac", "ios"]),
+        (r"\.xcodeproj/", ["mac", "ios"]),
     ]
 
     base_platform = target_platform.split("-")[0]
