@@ -1,3 +1,9 @@
+2015-09-30  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed Windows buildfix.
+
+        * CMakeLists.txt:
+
 2015-09-30  Michael Saboff  <msaboff@apple.com>
 
         Relanding r190289 with the following two fixes:
@@ -23,12 +29,6 @@
             
             * llint/LowLevelInterpreter.asm:
             (prepareForTailCall):
-
-2015-09-30  Keith Miller  <keith_miller@apple.com>
-
-        Unreviewed Windows buildfix.
-
-        * CMakeLists.txt:
 
 2015-09-30  Keith Miller  <keith_miller@apple.com>
 
