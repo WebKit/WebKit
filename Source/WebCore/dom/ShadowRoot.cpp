@@ -77,15 +77,14 @@ ShadowRoot::~ShadowRoot()
 
 StyleResolver& ShadowRoot::styleResolver()
 {
-    // FIXME: Use isolated style resolver for user agent shadow roots.
     if (m_type == Type::UserAgent)
-        return document().ensureStyleResolver();
+        return document().userAgentShadowTreeStyleResolver();
 
     if (!m_styleResolver) {
         // FIXME: We could share style resolver with shadow roots that have identical style.
-        m_styleResolver = std::make_unique<StyleResolver>(document(), true);
+        m_styleResolver = std::make_unique<StyleResolver>(document());
         if (m_authorStyleSheets)
-            m_styleResolver->appendAuthorStyleSheets(0, m_authorStyleSheets->activeStyleSheets());
+            m_styleResolver->appendAuthorStyleSheets(m_authorStyleSheets->activeStyleSheets());
     }
     return *m_styleResolver;
 }

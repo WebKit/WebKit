@@ -138,7 +138,7 @@ public:
 class StyleResolver {
     WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;
 public:
-    StyleResolver(Document&, bool matchAuthorAndUserStyles);
+    StyleResolver(Document&);
     ~StyleResolver();
 
     // Using these during tree walk will allow style selector to optimize child and descendant selector lookups.
@@ -162,9 +162,7 @@ public:
     Document& document() { return m_document; }
     Settings* documentSettings() { return m_document.settings(); }
 
-    // FIXME: It could be better to call m_ruleSets.appendAuthorStyleSheets() directly after we factor StyleRsolver further.
-    // https://bugs.webkit.org/show_bug.cgi?id=108890
-    void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>&);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&);
 
     DocumentRuleSets& ruleSets() { return m_ruleSets; }
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }

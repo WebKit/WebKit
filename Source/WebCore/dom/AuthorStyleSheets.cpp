@@ -211,9 +211,8 @@ void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& she
     }
 }
 
-void AuthorStyleSheets::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, StyleResolverUpdateType& styleResolverUpdateType, bool& requiresFullStyleRecalc)
+AuthorStyleSheets::StyleResolverUpdateType AuthorStyleSheets::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc)
 {
-    styleResolverUpdateType = Reconstruct;
     requiresFullStyleRecalc = true;
     
     // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
@@ -225,30 +224,32 @@ void AuthorStyleSheets::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vec
     }
     if (m_hadActiveLoadingStylesheet && !hasActiveLoadingStylesheet) {
         m_hadActiveLoadingStylesheet = false;
-        return;
+        return Reconstruct;
     }
     m_hadActiveLoadingStylesheet = hasActiveLoadingStylesheet;
 
     if (updateFlag != OptimizedUpdate)
-        return;
+        return Reconstruct;
     if (!m_document.styleResolverIfExists())
-        return;
+        return Reconstruct;
+
     StyleResolver& styleResolver = *m_document.styleResolverIfExists();
 
     // Find out which stylesheets are new.
     unsigned oldStylesheetCount = m_activeStyleSheets.size();
     if (newStylesheetCount < oldStylesheetCount)
-        return;
+        return Reconstruct;
+
     Vector<StyleSheetContents*> addedSheets;
     unsigned newIndex = 0;
     for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
         if (newIndex >= newStylesheetCount)
-            return;
+            return Reconstruct;
         while (m_activeStyleSheets[oldIndex] != newStylesheets[newIndex]) {
             addedSheets.append(&newStylesheets[newIndex]->contents());
             ++newIndex;
             if (newIndex == newStylesheetCount)
-                return;
+                return Reconstruct;
         }
         ++newIndex;
     }
@@ -259,16 +260,19 @@ void AuthorStyleSheets::analyzeStyleSheetChange(UpdateFlag updateFlag, const Vec
     }
     // If all new sheets were added at the end of the list we can just add them to existing StyleResolver.
     // If there were insertions we need to re-add all the stylesheets so rules are ordered correctly.
-    styleResolverUpdateType = hasInsertions ? Reset : Additive;
+    auto styleResolverUpdateType = hasInsertions ? Reset : Additive;
 
     // If we are already parsing the body and so may have significant amount of elements, put some effort into trying to avoid style recalcs.
     if (!m_document.bodyOrFrameset() || m_document.hasNodesWithPlaceholderStyle())
-        return;
+        return styleResolverUpdateType;
+
     StyleInvalidationAnalysis invalidationAnalysis(addedSheets, styleResolver.mediaQueryEvaluator());
     if (invalidationAnalysis.dirtiesAllStyle())
-        return;
+        return styleResolverUpdateType;
     invalidationAnalysis.invalidateStyle(m_document);
     requiresFullStyleRecalc = false;
+
+    return styleResolverUpdateType;
 }
 
 static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& result, const Vector<RefPtr<StyleSheet>>& sheets)
@@ -307,25 +311,10 @@ bool AuthorStyleSheets::updateActiveStyleSheets(UpdateFlag updateFlag)
     activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().authorStyleSheetsForTesting());
     filterEnabledNonemptyCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 
-    StyleResolverUpdateType styleResolverUpdateType;
     bool requiresFullStyleRecalc;
-    analyzeStyleSheetChange(updateFlag, activeCSSStyleSheets, styleResolverUpdateType, requiresFullStyleRecalc);
+    auto styleResolverUpdateType = analyzeStyleSheetChange(updateFlag, activeCSSStyleSheets, requiresFullStyleRecalc);
 
-    if (styleResolverUpdateType == Reconstruct) {
-        if (m_shadowRoot)
-            m_shadowRoot->resetStyleResolver();
-        else
-            m_document.clearStyleResolver();
-    } else {
-        StyleResolver& styleResolver = m_document.ensureStyleResolver();
-        if (styleResolverUpdateType == Reset) {
-            styleResolver.ruleSets().resetAuthorStyle();
-            styleResolver.appendAuthorStyleSheets(0, activeCSSStyleSheets);
-        } else {
-            ASSERT(styleResolverUpdateType == Additive);
-            styleResolver.appendAuthorStyleSheets(m_activeStyleSheets.size(), activeCSSStyleSheets);
-        }
-    }
+    updateStyleResolver(activeCSSStyleSheets, styleResolverUpdateType);
 
     m_weakCopyOfActiveStyleSheetListForFastLookup = nullptr;
     m_activeStyleSheets.swap(activeCSSStyleSheets);
@@ -342,6 +331,35 @@ bool AuthorStyleSheets::updateActiveStyleSheets(UpdateFlag updateFlag)
     m_pendingUpdateType = NoUpdate;
 
     return requiresFullStyleRecalc;
+}
+
+void AuthorStyleSheets::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, StyleResolverUpdateType updateType)
+{
+    if (updateType == Reconstruct) {
+        if (m_shadowRoot)
+            m_shadowRoot->resetStyleResolver();
+        else
+            m_document.clearStyleResolver();
+        return;
+    }
+    auto& styleResolver = m_document.ensureStyleResolver();
+    auto& userAgentShadowTreeStyleResolver = m_document.userAgentShadowTreeStyleResolver();
+
+    if (updateType == Reset) {
+        styleResolver.ruleSets().resetAuthorStyle();
+        styleResolver.appendAuthorStyleSheets(activeStyleSheets);
+    } else {
+        ASSERT(updateType == Additive);
+        unsigned firstNewIndex = m_activeStyleSheets.size();
+        Vector<RefPtr<CSSStyleSheet>> newStyleSheets;
+        newStyleSheets.appendRange(activeStyleSheets.begin() + firstNewIndex, activeStyleSheets.end());
+        styleResolver.appendAuthorStyleSheets(newStyleSheets);
+    }
+
+    userAgentShadowTreeStyleResolver.ruleSets().resetAuthorStyle();
+    auto& authorRuleSet = *styleResolver.ruleSets().authorStyle();
+    if (authorRuleSet.hasShadowPseudoElementRules())
+        userAgentShadowTreeStyleResolver.ruleSets().authorStyle()->copyShadowPseudoElementRulesFrom(authorRuleSet);
 }
 
 const Vector<RefPtr<CSSStyleSheet>> AuthorStyleSheets::activeStyleSheetsForInspector() const

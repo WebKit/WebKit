@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Document;
+class SelectorFilter;
 class StyleSheetContents;
 
 class StyleInvalidationAnalysis {
@@ -40,10 +41,16 @@ public:
     StyleInvalidationAnalysis(const Vector<StyleSheetContents*>&, const MediaQueryEvaluator&);
 
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
+    bool hasShadowPseudoElementRulesInAuthorSheet() const { return m_hasShadowPseudoElementRulesInAuthorSheet; }
     void invalidateStyle(Document&);
 
 private:
-    bool m_dirtiesAllStyle;
+    enum class CheckDescendants { Yes, No };
+    CheckDescendants invalidateIfNeeded(Element&, SelectorFilter&);
+    void invalidateStyleForTree(Element&, SelectorFilter&);
+
+    bool m_dirtiesAllStyle { false };
+    bool m_hasShadowPseudoElementRulesInAuthorSheet { false };
     DocumentRuleSets m_ruleSets;
 };
 

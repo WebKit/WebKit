@@ -2111,11 +2111,22 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
 void Document::createStyleResolver()
 {
-    bool matchAuthorAndUserStyles = true;
-    if (Settings* settings = this->settings())
-        matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
-    m_styleResolver = std::make_unique<StyleResolver>(*this, matchAuthorAndUserStyles);
-    m_styleResolver->appendAuthorStyleSheets(0, authorStyleSheets().activeStyleSheets());
+    m_styleResolver = std::make_unique<StyleResolver>(*this);
+    m_styleResolver->appendAuthorStyleSheets(authorStyleSheets().activeStyleSheets());
+}
+
+StyleResolver& Document::userAgentShadowTreeStyleResolver()
+{
+    if (!m_userAgentShadowTreeStyleResolver) {
+        m_userAgentShadowTreeStyleResolver = std::make_unique<StyleResolver>(*this);
+
+        // FIXME: Filter out shadow pseudo elements we don't want to expose to authors.
+        auto& documentAuthorStyle = *ensureStyleResolver().ruleSets().authorStyle();
+        if (documentAuthorStyle.hasShadowPseudoElementRules())
+            m_userAgentShadowTreeStyleResolver->ruleSets().authorStyle()->copyShadowPseudoElementRulesFrom(documentAuthorStyle);
+    }
+
+    return *m_userAgentShadowTreeStyleResolver;
 }
 
 void Document::fontsNeedUpdate(FontSelector&)
@@ -2139,6 +2150,7 @@ CSSFontSelector& Document::fontSelector()
 void Document::clearStyleResolver()
 {
     m_styleResolver = nullptr;
+    m_userAgentShadowTreeStyleResolver = nullptr;
 
     // FIXME: It would be better if the FontSelector could survive this operation.
     if (m_fontSelector) {

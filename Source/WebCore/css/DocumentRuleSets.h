@@ -51,7 +51,7 @@ public:
 
     void initUserStyle(ExtensionStyleSheets&, const MediaQueryEvaluator&, StyleResolver&);
     void resetAuthorStyle();
-    void appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, StyleResolver*);
+    void appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>&, MediaQueryEvaluator*, InspectorCSSOMWrappers&, StyleResolver*);
 
     void collectFeatures();
 

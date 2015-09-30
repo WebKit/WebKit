@@ -377,6 +377,29 @@ void RuleSet::addStyleRule(StyleRule* rule, AddRuleFlags addRuleFlags)
         addRule(rule, selectorIndex, addRuleFlags);
 }
 
+bool RuleSet::hasShadowPseudoElementRules() const
+{
+    if (!m_shadowPseudoElementRules.isEmpty())
+        return true;
+#if ENABLE(VIDEO_TRACK)
+    if (!m_cuePseudoRules.isEmpty())
+        return true;
+#endif
+    return false;
+}
+
+void RuleSet::copyShadowPseudoElementRulesFrom(const RuleSet& other)
+{
+    for (auto& keyValuePair : other.m_shadowPseudoElementRules)
+        m_shadowPseudoElementRules.add(keyValuePair.key, std::make_unique<RuleDataVector>(*keyValuePair.value));
+
+#if ENABLE(VIDEO_TRACK)
+    // FIXME: We probably shouldn't treat WebVTT as author stylable user agent shadow tree.
+    for (auto& cue : other.m_cuePseudoRules)
+        m_cuePseudoRules.append(cue);
+#endif
+}
+
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
 {
     for (auto& vector : map.values())

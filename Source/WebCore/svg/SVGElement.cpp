@@ -791,10 +791,11 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
 
 RefPtr<RenderStyle> SVGElement::customStyleForRenderer(RenderStyle& parentStyle)
 {
-    if (!correspondingElement())
-        return resolveStyle(&parentStyle);
+    // If the element is in a <use> tree we get the style from the definition tree.
+    if (auto* styleElement = this->correspondingElement())
+        return styleElement->styleResolver().styleForElement(styleElement, &parentStyle, DisallowStyleSharing);
 
-    return styleResolver().styleForElement(correspondingElement(), &parentStyle, DisallowStyleSharing);
+    return resolveStyle(&parentStyle);
 }
 
 MutableStyleProperties* SVGElement::animatedSMILStyleProperties() const

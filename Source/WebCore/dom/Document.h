@@ -495,6 +495,7 @@ public:
             createStyleResolver();
         return *m_styleResolver;
     }
+    StyleResolver& userAgentShadowTreeStyleResolver();
 
     CSSFontSelector& fontSelector();
 
@@ -1394,6 +1395,7 @@ private:
     unsigned m_referencingNodeCount;
 
     std::unique_ptr<StyleResolver> m_styleResolver;
+    std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
     bool m_didCalculateStyleResolver;
     bool m_hasNodesWithPlaceholderStyle;
     bool m_needsNotifyRemoveAllPendingStylesheet;

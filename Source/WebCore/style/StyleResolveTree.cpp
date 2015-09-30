@@ -725,6 +725,8 @@ static void resolveShadowTree(ShadowRoot& shadowRoot, Element& host, Style::Chan
 
     ASSERT(shadowRoot.host() == &host);
     ASSERT(host.renderer());
+    if (shadowRoot.styleChangeType() >= FullStyleChange)
+        change = Force;
     RenderTreePosition renderTreePosition(*host.renderer());
     for (Node* child = shadowRoot.firstChild(); child; child = child->nextSibling()) {
         if (child->renderer())

@@ -271,11 +271,11 @@ void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& pro
     }
 }
 
-StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
+StyleResolver::StyleResolver(Document& document)
     : m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
     , m_matchedPropertiesCacheSweepTimer(*this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
-    , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
+    , m_matchAuthorAndUserStyles(m_document.settings() ? m_document.settings()->authorAndUserStylesEnabled() : true)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
 #endif
@@ -316,9 +316,9 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
 #endif
 }
 
-void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>& styleSheets)
+void StyleResolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets)
 {
-    m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, this);
+    m_ruleSets.appendAuthorStyleSheets(styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, this);
     if (auto renderView = document().renderView())
         renderView->style().fontCascade().update(&document().fontSelector());
 

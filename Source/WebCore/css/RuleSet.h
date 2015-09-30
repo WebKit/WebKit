@@ -79,7 +79,7 @@ public:
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned linkMatchType() const { return m_linkMatchType; }
     bool hasDocumentSecurityOrigin() const { return m_hasDocumentSecurityOrigin; }
-    PropertyWhitelistType propertyWhitelistType(bool isMatchingUARules = false) const { return isMatchingUARules ? PropertyWhitelistNone : static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
+    PropertyWhitelistType propertyWhitelistType() const { return static_cast<PropertyWhitelistType>(m_propertyWhitelistType); }
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
@@ -187,7 +187,8 @@ public:
 
     unsigned ruleCount() const { return m_ruleCount; }
 
-    bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
+    bool hasShadowPseudoElementRules() const;
+    void copyShadowPseudoElementRulesFrom(const RuleSet&);
 
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, StyleResolver*, bool hasDocumentSecurityOrigin, bool isInitiatingElementInUserAgentShadowTree, AddRuleFlags);

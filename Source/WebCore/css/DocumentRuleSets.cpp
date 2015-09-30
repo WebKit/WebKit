@@ -83,18 +83,16 @@ void DocumentRuleSets::resetAuthorStyle()
     m_authorStyle->disableAutoShrinkToFit();
 }
 
-void DocumentRuleSets::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers, StyleResolver* resolver)
+void DocumentRuleSets::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styleSheets, MediaQueryEvaluator* medium, InspectorCSSOMWrappers& inspectorCSSOMWrappers, StyleResolver* resolver)
 {
     // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
     // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
-    unsigned size = styleSheets.size();
-    for (unsigned i = firstNew; i < size; ++i) {
-        CSSStyleSheet* cssSheet = styleSheets[i].get();
+    for (auto& cssSheet : styleSheets) {
         ASSERT(!cssSheet->disabled());
         if (cssSheet->mediaQueries() && !medium->eval(cssSheet->mediaQueries(), resolver))
             continue;
         m_authorStyle->addRulesFromSheet(&cssSheet->contents(), *medium, resolver);
-        inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet);
+        inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet.get());
     }
     m_authorStyle->shrinkToFit();
     collectFeatures();
