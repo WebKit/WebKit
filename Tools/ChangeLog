@@ -1,3 +1,13 @@
+2015-09-30  Dana Burkart  <dburkart@apple.com>
+
+        git-add-reviewer should trim trailing spaces/newlines
+        https://bugs.webkit.org/show_bug.cgi?id=149513
+
+        Reviewed by Darin Adler.
+
+        * Scripts/git-add-reviewer:
+        (nonInteractive):
+
 2015-09-30  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION(r190262): User media unit test failures after r190262

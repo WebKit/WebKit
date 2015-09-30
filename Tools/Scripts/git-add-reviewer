@@ -170,6 +170,7 @@ sub nonInteractive()
     my $headCommit = toCommit($head);
 
     isAncestor($commit, $head) or die "$ARGV[0] is not an ancestor of HEAD.";
+    chomp($reviewer);
 
     my %item = (
         reviewer => $reviewer,
