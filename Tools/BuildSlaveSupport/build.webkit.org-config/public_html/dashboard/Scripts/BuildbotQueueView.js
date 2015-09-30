@@ -89,6 +89,8 @@ BuildbotQueueView.prototype = {
             var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
             if (!latestProductiveRevisionNumber)
                 continue;
+            if (!trac)
+                continue;
             if (!trac.latestRecordedRevisionNumber || trac.oldestRecordedRevisionNumber > latestProductiveRevisionNumber) {
                 trac.loadMoreHistoricalData();
                 return;
