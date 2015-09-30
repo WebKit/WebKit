@@ -158,8 +158,8 @@ private:
     void initializeTestPluginDirectory();
 
     void ensureViewSupportsOptionsForTest(const TestInvocation&);
-    TestOptions testOptionsForTest(const TestInvocation&) const;
-    void updatePlatformSpecificTestOptionsForTest(TestOptions&, const TestInvocation&) const;
+    TestOptions testOptionsForTest(const std::string& pathOrURL) const;
+    void updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string& pathOrURL) const;
 
     void updateWebViewSizeForTest(const TestInvocation&);
     void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);

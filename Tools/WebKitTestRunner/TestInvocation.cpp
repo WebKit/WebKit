@@ -51,56 +51,15 @@
 #include <WebKit/WKPagePrivateMac.h>
 #endif
 
-#include <unistd.h> // For getcwd.
-
 using namespace JSC;
 using namespace WebKit;
 using namespace std;
 
 namespace WTR {
 
-static WKURLRef createWKURL(const char* pathOrURL)
-{
-    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
-        return WKURLCreateWithUTF8CString(pathOrURL);
-
-    // Creating from filesytem path.
-    size_t length = strlen(pathOrURL);
-    if (!length)
-        return 0;
-
-    const char separator = '/';
-    bool isAbsolutePath = pathOrURL[0] == separator;
-    const char* filePrefix = "file://";
-    static const size_t prefixLength = strlen(filePrefix);
-
-    std::unique_ptr<char[]> buffer;
-    if (isAbsolutePath) {
-        buffer = std::make_unique<char[]>(prefixLength + length + 1);
-        strcpy(buffer.get(), filePrefix);
-        strcpy(buffer.get() + prefixLength, pathOrURL);
-    } else {
-        buffer = std::make_unique<char[]>(prefixLength + PATH_MAX + length + 2); // 1 for the separator
-        strcpy(buffer.get(), filePrefix);
-        if (!getcwd(buffer.get() + prefixLength, PATH_MAX))
-            return 0;
-        size_t numCharacters = strlen(buffer.get());
-        buffer[numCharacters] = separator;
-        strcpy(buffer.get() + numCharacters + 1, pathOrURL);
-    }
-
-    return WKURLCreateWithUTF8CString(buffer.get());
-}
-
-TestInvocation::TestInvocation(const std::string& pathOrURL)
-    : m_url(AdoptWK, createWKURL(pathOrURL.c_str()))
-    , m_dumpPixels(false)
-    , m_timeout(0)
-    , m_gotInitialResponse(false)
-    , m_gotFinalMessage(false)
-    , m_gotRepaint(false)
-    , m_error(false)
-    , m_webProcessIsUnresponsive(false)
+TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
+    : m_options(options)
+    , m_url(url)
 {
     WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(m_url.get()));
 
@@ -144,21 +103,6 @@ bool TestInvocation::shouldLogHistoryClientCallbacks() const
     return urlContains("globalhistory/");
 }
 
-bool TestInvocation::shouldMakeViewportFlexible() const
-{
-    return urlContains("viewport/");
-}
-
-bool TestInvocation::shouldUseFixedLayout() const
-{
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (urlContains("device-adapt/") || urlContains("device-adapt\\"))
-        return true;
-#endif
-
-    return false;
-}
-
 void TestInvocation::invoke()
 {
     TestController::singleton().configureViewForTest(*this);
@@ -181,7 +125,7 @@ void TestInvocation::invoke()
     WKDictionarySetItem(beginTestMessageBody.get(), dumpFrameLoadDelegatesKey.get(), dumpFrameLoadDelegatesValue.get());
 
     WKRetainPtr<WKStringRef> useFlexibleViewportKey = adoptWK(WKStringCreateWithUTF8CString("UseFlexibleViewport"));
-    WKRetainPtr<WKBooleanRef> useFlexibleViewportValue = adoptWK(WKBooleanCreate(shouldMakeViewportFlexible()));
+    WKRetainPtr<WKBooleanRef> useFlexibleViewportValue = adoptWK(WKBooleanCreate(options().useFlexibleViewport));
     WKDictionarySetItem(beginTestMessageBody.get(), useFlexibleViewportKey.get(), useFlexibleViewportValue.get());
 
     WKRetainPtr<WKStringRef> dumpPixelsKey = adoptWK(WKStringCreateWithUTF8CString("DumpPixels"));

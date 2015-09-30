@@ -128,7 +128,7 @@ void TestController::platformResetPreferencesToConsistentValues()
     m_mainWebView->dismissAllPopupMenus();
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const TestInvocation&) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string&) const
 {
 }
 

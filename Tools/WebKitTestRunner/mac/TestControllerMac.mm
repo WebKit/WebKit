@@ -91,7 +91,7 @@ void TestController::platformResetStateToConsistentValues()
     }
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const TestInvocation& test) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const std::string&) const
 {
     options.useThreadedScrolling = true;
     options.useRemoteLayerTree = shouldUseRemoteLayerTree();

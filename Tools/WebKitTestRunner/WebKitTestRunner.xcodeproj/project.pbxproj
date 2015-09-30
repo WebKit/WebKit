@@ -34,6 +34,7 @@
 
 /* Begin PBXBuildFile section */
 		0F5169CC1445222D00E0A9D7 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
+		0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F622CE81BBB3A1A00838AD3 /* TestOptions.cpp */; settings = {ASSET_TAGS = (); }; };
 		0F73B5511BA78968004B3EF4 /* JSUIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F73B54F1BA78968004B3EF4 /* JSUIScriptController.cpp */; };
 		0F73B5521BA78968004B3EF4 /* JSUIScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F73B5501BA78968004B3EF4 /* JSUIScriptController.h */; };
 		0F73B55A1BA792FF004B3EF4 /* JSWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC952C0C11F3B965003398B4 /* JSWrapper.cpp */; };
@@ -170,6 +171,7 @@
 /* Begin PBXFileReference section */
 		0F2109C7189C650D00F879A3 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		0F5169CA1445222D00E0A9D7 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0F622CE81BBB3A1A00838AD3 /* TestOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestOptions.cpp; sourceTree = "<group>"; };
 		0F73B54F1BA78968004B3EF4 /* JSUIScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSUIScriptController.cpp; path = DerivedSources/WebKitTestRunner/JSUIScriptController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F73B5501BA78968004B3EF4 /* JSUIScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSUIScriptController.h; path = DerivedSources/WebKitTestRunner/JSUIScriptController.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F73B5571BA7929E004B3EF4 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -406,6 +408,7 @@
 				BC79342F118F7F19005EA8E2 /* TestController.h */,
 				BCD7D2F711921278006DB7EE /* TestInvocation.cpp */,
 				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
+				0F622CE81BBB3A1A00838AD3 /* TestOptions.cpp */,
 				1A3326051B75396500F89F62 /* TestOptions.h */,
 				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
 				3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */,
@@ -935,6 +938,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */,
 				0F73B55A1BA792FF004B3EF4 /* JSWrapper.cpp in Sources */,
 				A18510441B9AE14A00744AEB /* WorkQueueManager.cpp in Sources */,
 				A185103F1B9AE12900744AEB /* GeolocationProviderMock.cpp in Sources */,

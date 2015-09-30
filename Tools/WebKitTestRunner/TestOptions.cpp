@@ -23,28 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestOptions_h
-#define TestOptions_h
+#include "config.h"
+#include "TestOptions.h"
 
-#include <wtf/Vector.h>
+#include <string>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
 
-struct TestOptions {
-    bool useThreadedScrolling { false };
-    bool useRemoteLayerTree { false };
-    bool shouldShowWebView { false };
-    bool useFlexibleViewport { false };
-    bool useFixedLayout { false };
-    bool isSVGTest { false };
-    bool isHiDPITest { false };
-
-    Vector<String> overrideLanguages;
-    
-    TestOptions(const std::string& pathOrURL);
-};
-
+static bool pathContains(const std::string& pathOrURL, const char* substring)
+{
+    String path(pathOrURL.c_str());
+    return path.contains(substring); // Case-insensitive.
 }
 
-#endif // TestOptions_h
+static bool shouldMakeViewportFlexible(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "viewport/");
+}
+
+static bool shouldUseFixedLayout(const std::string& pathOrURL)
+{
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    if (pathContains(pathOrURL, "device-adapt/") || pathContains(pathOrURL, "device-adapt\\"))
+        return true;
+#endif
+    return false;
+}
+
+static bool isSVGTestPath(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "svg/W3C-SVG-1.1") || pathContains(pathOrURL, "svg\\W3C-SVG-1.1");
+}
+
+static bool isHiDPITestPath(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "/hidpi-");
+}
+
+TestOptions::TestOptions(const std::string& pathOrURL)
+    : useFlexibleViewport(shouldMakeViewportFlexible(pathOrURL))
+    , useFixedLayout(shouldUseFixedLayout(pathOrURL))
+    , isSVGTest(isSVGTestPath(pathOrURL))
+    , isHiDPITest(isHiDPITestPath(pathOrURL))
+{
+}
+
+}

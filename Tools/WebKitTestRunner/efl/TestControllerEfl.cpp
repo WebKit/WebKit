@@ -134,23 +134,24 @@ const char* TestController::platformLibraryPathForTesting()
     return 0;
 }
 
-static bool shouldUseFixedLayout(const TestInvocation& test)
+static bool pathContains(const std::string& pathOrURL, const char* substring)
 {
-#if ENABLE(CSS_DEVICE_ADAPTATION)
-    if (test.urlContains("device-adapt/") || test.urlContains("device-adapt\\"))
-        return true;
-#endif
+    String path(pathOrURL.c_str());
+    return path.contains(substring); // Case-insensitive.
+}
 
+static bool shouldUseFixedLayout(const std::string& pathOrURL)
+{
 #if USE(COORDINATED_GRAPHICS)
-    if (test.urlContains("sticky/") || test.urlContains("sticky\\"))
+    if (pathContains(pathOrURL, "sticky/") || pathContains(pathOrURL, "sticky\\"))
         return true;
 #endif
     return false;
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& testOptions, const TestInvocation& test) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& testOptions, const std::string& pathOrURL) const
 {
-    testOptions.useFixedLayout = shouldUseFixedLayout(test);
+    testOptions.useFixedLayout = shouldUseFixedLayout(pathOrURL);
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)

@@ -1,3 +1,58 @@
+2015-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        WebKitTestRunner fails to apply "useFlexibleViewport" when it's specified in a file comment
+        https://bugs.webkit.org/show_bug.cgi?id=149650
+
+        Reviewed by Tim Horton.
+        
+        TestInvocation::invoke() consulted shouldMakeViewportFlexible(), but that only
+        looks at the file path, and not the custom options that come from file comments.
+        
+        Fix by computing TestOptions before making the TestInvocation, and setting them
+        as const TestInvocation data. This meant changing various call sites to take
+        the std::string pathOrURL, rather than the TestInvocation itself.
+        
+        Also initialize TestInvocation with a WKURLRef, rather than a std::string.
+
+        * WebKitTestRunner/CMakeLists.txt:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+        (WTR::testPath):
+        (WTR::createTestURL):
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::testOptionsForTest):
+        (WTR::TestController::updateWebViewSizeForTest):
+        (WTR::TestController::updateWindowScaleForTest):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::invoke):
+        (WTR::createWKURL): Deleted.
+        (WTR::TestInvocation::shouldMakeViewportFlexible): Deleted.
+        (WTR::TestInvocation::shouldUseFixedLayout): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::options):
+        * WebKitTestRunner/TestOptions.cpp: Copied from Tools/WebKitTestRunner/TestOptions.h.
+        (WTR::pathContains):
+        (WTR::shouldMakeViewportFlexible):
+        (WTR::shouldUseFixedLayout):
+        (WTR::isSVGTestPath):
+        (WTR::isHiDPITestPath):
+        (WTR::TestOptions::TestOptions):
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::pathContains):
+        (WTR::shouldUseFixedLayout):
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest):
+
 2015-09-29  Aakash Jain  <aakash_jain@apple.com>
 
         Flakiness dashboard should support OS X El Capitan

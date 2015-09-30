@@ -58,6 +58,7 @@
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <string>
+#include <unistd.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TemporaryChange.h>
@@ -585,7 +586,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
 
 void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test)
 {
-    auto options = testOptionsForTest(test);
+    auto options = test.options();
 
     if (m_mainWebView) {
         if (m_mainWebView->viewSupportsOptions(options))
@@ -807,7 +808,7 @@ const char* TestController::networkProcessName()
 #endif
 }
 
-static std::string testPath(const WKURLRef url)
+static std::string testPath(WKURLRef url)
 {
     auto scheme = adoptWK(WKURLCopyScheme(url));
     if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file")) {
@@ -817,6 +818,39 @@ static std::string testPath(const WKURLRef url)
         return std::string(buffer.data(), length);
     }
     return std::string();
+}
+
+static WKURLRef createTestURL(const char* pathOrURL)
+{
+    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
+        return WKURLCreateWithUTF8CString(pathOrURL);
+
+    // Creating from filesytem path.
+    size_t length = strlen(pathOrURL);
+    if (!length)
+        return 0;
+
+    const char separator = '/';
+    bool isAbsolutePath = pathOrURL[0] == separator;
+    const char* filePrefix = "file://";
+    static const size_t prefixLength = strlen(filePrefix);
+
+    std::unique_ptr<char[]> buffer;
+    if (isAbsolutePath) {
+        buffer = std::make_unique<char[]>(prefixLength + length + 1);
+        strcpy(buffer.get(), filePrefix);
+        strcpy(buffer.get() + prefixLength, pathOrURL);
+    } else {
+        buffer = std::make_unique<char[]>(prefixLength + PATH_MAX + length + 2); // 1 for the separator
+        strcpy(buffer.get(), filePrefix);
+        if (!getcwd(buffer.get() + prefixLength, PATH_MAX))
+            return 0;
+        size_t numCharacters = strlen(buffer.get());
+        buffer[numCharacters] = separator;
+        strcpy(buffer.get() + numCharacters + 1, pathOrURL);
+    }
+
+    return WKURLCreateWithUTF8CString(buffer.get());
 }
 
 static bool parseBooleanTestHeaderValue(const std::string& value)
@@ -830,9 +864,11 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
     return false;
 }
 
-static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const TestInvocation& test)
+static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std::string& pathOrURL)
 {
-    std::string filename = testPath(test.url());
+    // Gross. Need to reduce conversions between all the string types and URLs.
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, createTestURL(pathOrURL.c_str()));
+    std::string filename = testPath(wkURL.get());
     if (filename.empty())
         return;
 
@@ -874,29 +910,24 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const Test
     }
 }
 
-TestOptions TestController::testOptionsForTest(const TestInvocation& test) const
+TestOptions TestController::testOptionsForTest(const std::string& pathOrURL) const
 {
-    TestOptions options;
+    TestOptions options(pathOrURL);
 
     options.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
     options.shouldShowWebView = m_shouldShowWebView;
-    options.useFixedLayout = test.shouldUseFixedLayout();
-    options.useFlexibleViewport = test.shouldMakeViewportFlexible();
 
-    updatePlatformSpecificTestOptionsForTest(options, test);
-
-    updateTestOptionsFromTestHeader(options, test);
+    updatePlatformSpecificTestOptionsForTest(options, pathOrURL);
+    updateTestOptionsFromTestHeader(options, pathOrURL);
 
     return options;
 }
 
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
-    bool isSVGW3CTest = test.urlContains("svg/W3C-SVG-1.1") || test.urlContains("svg\\W3C-SVG-1.1");
-
     unsigned width = viewWidth;
     unsigned height = viewHeight;
-    if (isSVGW3CTest) {
+    if (test.options().isSVGTest) {
         width = w3cSVGViewWidth;
         height = w3cSVGViewHeight;
     }
@@ -906,8 +937,7 @@ void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 
 void TestController::updateWindowScaleForTest(PlatformWebView* view, const TestInvocation& test)
 {
-    bool needsHighDPIWindow = test.urlContains("/hidpi-");
-    view->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
+    view->changeWindowScaleIfNeeded(test.options().isHiDPITest ? 2 : 1);
 }
 
 void TestController::configureViewForTest(const TestInvocation& test)
@@ -1009,8 +1039,12 @@ bool TestController::runTest(const char* inputLine)
     TestCommand command = parseInputLine(std::string(inputLine));
 
     m_state = RunningTest;
+    
+    TestOptions options = testOptionsForTest(command.pathOrURL);
 
-    m_currentInvocation = std::make_unique<TestInvocation>(command.pathOrURL);
+    WKRetainPtr<WKURLRef> wkURL(AdoptWK, createTestURL(command.pathOrURL.c_str()));
+    m_currentInvocation = std::make_unique<TestInvocation>(wkURL.get(), options);
+
     if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
     if (command.timeout > 0)

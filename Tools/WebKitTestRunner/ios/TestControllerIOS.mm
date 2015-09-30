@@ -88,7 +88,7 @@ void TestController::platformResetStateToConsistentValues()
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
-    if (test.shouldMakeViewportFlexible()) {
+    if (test.options().useFlexibleViewport) {
         const unsigned phoneViewHeight = 480;
         const unsigned phoneViewWidth = 320;
 
@@ -98,7 +98,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     }
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const TestInvocation&) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string&) const
 {
 }
 

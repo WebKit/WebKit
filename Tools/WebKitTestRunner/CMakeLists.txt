@@ -12,6 +12,7 @@ set(WebKitTestRunner_SOURCES
     ${WEBKIT_TESTRUNNER_DIR}/PixelDumpSupport.cpp
     ${WEBKIT_TESTRUNNER_DIR}/TestController.cpp
     ${WEBKIT_TESTRUNNER_DIR}/TestInvocation.cpp
+    ${WEBKIT_TESTRUNNER_DIR}/TestOptions.cpp
     ${WEBKIT_TESTRUNNER_DIR}/WebNotificationProvider.cpp
     ${WEBKIT_TESTRUNNER_DIR}/WorkQueueManager.cpp
     ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/UIScriptContext.cpp
