@@ -201,11 +201,10 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attribut
     Vector<std::pair<String, String>> formValues;
 
     bool containsPasswordData = false;
-    for (unsigned i = 0; i < form->associatedElements().size(); ++i) {
-        FormAssociatedElement& control = *form->associatedElements()[i];
-        HTMLElement& element = control.asHTMLElement();
+    for (auto& control : form->associatedElements()) {
+        HTMLElement& element = control->asHTMLElement();
         if (!element.isDisabledFormControl())
-            control.appendFormData(*domFormData, isMultiPartForm);
+            control->appendFormData(*domFormData, isMultiPartForm);
         if (is<HTMLInputElement>(element)) {
             HTMLInputElement& input = downcast<HTMLInputElement>(element);
             if (input.isTextField()) {

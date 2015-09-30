@@ -50,9 +50,8 @@ class StorageIDJournal {
 public:  
     ~StorageIDJournal()
     {
-        size_t size = m_records.size();
-        for (size_t i = 0; i < size; ++i)
-            m_records[i].restore();
+        for (auto& record : m_records)
+            record.restore();
     }
 
     void add(T* resource, unsigned storageID)
@@ -751,12 +750,11 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
     // Store the online whitelist
     const Vector<URL>& onlineWhitelist = cache->onlineWhitelist();
     {
-        size_t whitelistSize = onlineWhitelist.size();
-        for (size_t i = 0; i < whitelistSize; ++i) {
+        for (auto& whitelistURL : onlineWhitelist) {
             SQLiteStatement statement(m_database, "INSERT INTO CacheWhitelistURLs (url, cache) VALUES (?, ?)");
             statement.prepare();
 
-            statement.bindText(1, onlineWhitelist[i]);
+            statement.bindText(1, whitelistURL);
             statement.bindInt64(2, cacheStorageID);
 
             if (!executeStatement(statement))
@@ -779,13 +777,12 @@ bool ApplicationCacheStorage::store(ApplicationCache* cache, ResourceStorageIDJo
     // Store fallback URLs.
     const FallbackURLVector& fallbackURLs = cache->fallbackURLs();
     {
-        size_t fallbackCount = fallbackURLs.size();
-        for (size_t i = 0; i < fallbackCount; ++i) {
+        for (auto& fallbackURL : fallbackURLs) {
             SQLiteStatement statement(m_database, "INSERT INTO FallbackURLs (namespace, fallbackURL, cache) VALUES (?, ?, ?)");
             statement.prepare();
 
-            statement.bindText(1, fallbackURLs[i].first);
-            statement.bindText(2, fallbackURLs[i].second);
+            statement.bindText(1, fallbackURL.first);
+            statement.bindText(2, fallbackURL.second);
             statement.bindInt64(3, cacheStorageID);
 
             if (!executeStatement(statement))
@@ -1529,9 +1526,8 @@ void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>
 
     // Multiple manifest URLs might share the same SecurityOrigin, so we might be creating extra, wasted origins here.
     // The current schema doesn't allow for a more efficient way of building this list.
-    size_t count = urls.size();
-    for (size_t i = 0; i < count; ++i)
-        origins.add(SecurityOrigin::create(urls[i]));
+    for (auto& url : urls)
+        origins.add(SecurityOrigin::create(url));
 }
 
 void ApplicationCacheStorage::deleteAllEntries()

@@ -625,9 +625,7 @@ void CachedResource::switchClientsToRevalidatedResource()
     LOG(ResourceLoading, "CachedResource %p switchClientsToRevalidatedResource %p", this, m_resourceToRevalidate);
 
     m_switchingClientsToRevalidatedResource = true;
-    HashSet<CachedResourceHandleBase*>::iterator end = m_handlesToRevalidate.end();
-    for (HashSet<CachedResourceHandleBase*>::iterator it = m_handlesToRevalidate.begin(); it != end; ++it) {
-        CachedResourceHandleBase* handle = *it;
+    for (auto& handle : m_handlesToRevalidate) {
         handle->m_resource = m_resourceToRevalidate;
         m_resourceToRevalidate->registerHandle(handle);
         --m_handleCount;
@@ -636,30 +634,28 @@ void CachedResource::switchClientsToRevalidatedResource()
     m_handlesToRevalidate.clear();
 
     Vector<CachedResourceClient*> clientsToMove;
-    HashCountedSet<CachedResourceClient*>::iterator end2 = m_clients.end();
-    for (HashCountedSet<CachedResourceClient*>::iterator it = m_clients.begin(); it != end2; ++it) {
-        CachedResourceClient* client = it->key;
-        unsigned count = it->value;
+    for (auto& entry : m_clients) {
+        CachedResourceClient* client = entry.key;
+        unsigned count = entry.value;
         while (count) {
             clientsToMove.append(client);
             --count;
         }
     }
 
-    unsigned moveCount = clientsToMove.size();
-    for (unsigned n = 0; n < moveCount; ++n)
-        removeClient(clientsToMove[n]);
+    for (auto& client : clientsToMove)
+        removeClient(client);
     ASSERT(m_clients.isEmpty());
 
-    for (unsigned n = 0; n < moveCount; ++n)
-        m_resourceToRevalidate->addClientToSet(clientsToMove[n]);
-    for (unsigned n = 0; n < moveCount; ++n) {
+    for (auto& client : clientsToMove)
+        m_resourceToRevalidate->addClientToSet(client);
+    for (auto& client : clientsToMove) {
         // Calling didAddClient may do anything, including trying to cancel revalidation.
         // Assert that it didn't succeed.
         ASSERT(m_resourceToRevalidate);
         // Calling didAddClient for a client may end up removing another client. In that case it won't be in the set anymore.
-        if (m_resourceToRevalidate->m_clients.contains(clientsToMove[n]))
-            m_resourceToRevalidate->didAddClient(clientsToMove[n]);
+        if (m_resourceToRevalidate->m_clients.contains(client))
+            m_resourceToRevalidate->didAddClient(client);
     }
     m_switchingClientsToRevalidatedResource = false;
 }

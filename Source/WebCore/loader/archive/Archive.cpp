@@ -43,10 +43,10 @@ void Archive::clearAllSubframeArchives()
 
 void Archive::clearAllSubframeArchivesImpl(Vector<RefPtr<Archive>>* clearedArchives)
 {
-    for (Vector<RefPtr<Archive>>::iterator it = m_subframeArchives.begin(); it != m_subframeArchives.end(); ++it) {
-        if (!clearedArchives->contains(*it)) {
-            clearedArchives->append(*it);
-            (*it)->clearAllSubframeArchivesImpl(clearedArchives);
+    for (auto& archive : m_subframeArchives) {
+        if (!clearedArchives->contains(archive)) {
+            clearedArchives->append(archive);
+            archive->clearAllSubframeArchivesImpl(clearedArchives);
         }
     }
     m_subframeArchives.clear();

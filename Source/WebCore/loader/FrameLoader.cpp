@@ -244,9 +244,8 @@ FrameLoader::~FrameLoader()
 {
     setOpener(nullptr);
 
-    HashSet<Frame*>::iterator end = m_openedFrames.end();
-    for (HashSet<Frame*>::iterator it = m_openedFrames.begin(); it != end; ++it)
-        (*it)->loader().m_opener = 0;
+    for (auto& frame : m_openedFrames)
+        frame->loader().m_opener = nullptr;
 
     m_client.frameLoaderDestroyed();
 
@@ -1858,10 +1857,7 @@ void FrameLoader::commitProvisionalLoad()
         m_frame.view()->forceLayout();
 #endif
 
-        const ResponseVector& responses = m_documentLoader->responses();
-        size_t count = responses.size();
-        for (size_t i = 0; i < count; i++) {
-            const ResourceResponse& response = responses[i];
+        for (auto& response : m_documentLoader->responses()) {
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             ResourceError error;
             unsigned long identifier;
@@ -2428,8 +2424,8 @@ void FrameLoader::detachChildren()
     childrenToDetach.reserveInitialCapacity(m_frame.tree().childCount());
     for (Frame* child = m_frame.tree().lastChild(); child; child = child->tree().previousSibling())
         childrenToDetach.uncheckedAppend(*child);
-    for (unsigned i = 0; i < childrenToDetach.size(); ++i)
-        childrenToDetach[i]->loader().detachFromParent();
+    for (auto& child : childrenToDetach)
+        child->loader().detachFromParent();
 }
 
 void FrameLoader::closeAndRemoveChild(Frame* child)
@@ -3432,9 +3428,8 @@ void FrameLoader::tellClientAboutPastMemoryCacheLoads()
     Vector<ResourceRequest> pastLoads;
     m_documentLoader->takeMemoryCacheLoadsForClientNotification(pastLoads);
 
-    size_t size = pastLoads.size();
-    for (size_t i = 0; i < size; ++i) {
-        CachedResource* resource = MemoryCache::singleton().resourceForRequest(pastLoads[i], m_frame.page()->sessionID());
+    for (auto& pastLoad : pastLoads) {
+        CachedResource* resource = MemoryCache::singleton().resourceForRequest(pastLoad, m_frame.page()->sessionID());
 
         // FIXME: These loads, loaded from cache, but now gone from the cache by the time
         // Page::setMemoryCacheClientCallsEnabled(true) is called, will not be seen by the client.

@@ -305,10 +305,8 @@ void ApplicationCacheHost::stopLoadingInFrame(Frame* frame)
 void ApplicationCacheHost::stopDeferringEvents()
 {
     Ref<DocumentLoader> protect(m_documentLoader);
-    for (unsigned i = 0; i < m_deferredEvents.size(); ++i) {
-        const DeferredEvent& deferred = m_deferredEvents[i];
-        dispatchDOMEvent(deferred.eventID, deferred.progressTotal, deferred.progressDone);
-    }
+    for (auto& event : m_deferredEvents)
+        dispatchDOMEvent(event.eventID, event.progressTotal, event.progressDone);
     m_deferredEvents.clear();
     m_defersEvents = false;
 }

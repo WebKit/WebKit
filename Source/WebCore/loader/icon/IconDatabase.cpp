@@ -190,11 +190,9 @@ void IconDatabase::removeAllIcons()
         
         // Clear the IconRecords for every page URL - RefCounting will cause the IconRecords themselves to be deleted
         // We don't delete the actual PageRecords because we have the "retain icon for url" count to keep track of
-        HashMap<String, PageURLRecord*>::iterator iter = m_pageURLToRecordMap.begin();
-        HashMap<String, PageURLRecord*>::iterator end = m_pageURLToRecordMap.end();
-        for (; iter != end; ++iter)
-            (*iter).value->setIconRecord(0);
-            
+        for (auto& pageURL : m_pageURLToRecordMap.values())
+            pageURL->setIconRecord(nullptr);
+
         // Clear the iconURL -> IconRecord map
         m_iconURLToRecordMap.clear();
                     
@@ -585,11 +583,11 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         // Start the timer to commit this change - or further delay the timer if it was already started
         scheduleOrDeferSyncTimer();
 
-        for (unsigned i = 0; i < pageURLs.size(); ++i) {
+        for (auto& pageURL : pageURLs) {
             AutodrainedPool pool;
 
-            LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURLs[i]).ascii().data());
-            m_client->didChangeIconForPageURL(pageURLs[i]);
+            LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURL).ascii().data());
+            m_client->didChangeIconForPageURL(pageURL);
         }
     }
 }
@@ -775,13 +773,10 @@ size_t IconDatabase::iconRecordCountWithData()
 {
     LockHolder locker(m_urlAndIconLock);
     size_t result = 0;
-    
-    HashMap<String, IconRecord*>::iterator i = m_iconURLToRecordMap.begin();
-    HashMap<String, IconRecord*>::iterator end = m_iconURLToRecordMap.end();
-    
-    for (; i != end; ++i)
-        result += ((*i).value->imageDataStatus() == ImageDataStatusPresent);
-            
+
+    for (auto& iconRecord : m_iconURLToRecordMap.values())
+        result += (iconRecord->imageDataStatus() == ImageDataStatusPresent);
+
     return result;
 }
 
@@ -816,14 +811,12 @@ void IconDatabase::notifyPendingLoadDecisions()
     // This method should only be called upon completion of the initial url import from the database
     ASSERT(m_iconURLImportComplete);
     LOG(IconDatabase, "Notifying all DocumentLoaders that were waiting on a load decision for their icons");
-    
-    HashSet<RefPtr<DocumentLoader>>::iterator i = m_loadersPendingDecision.begin();
-    HashSet<RefPtr<DocumentLoader>>::iterator end = m_loadersPendingDecision.end();
-    
-    for (; i != end; ++i)
-        if ((*i)->refCount() > 1)
-            (*i)->iconLoadDecisionAvailable();
-            
+        
+    for (auto& loader : m_loadersPendingDecision) {
+        if (loader->refCount() > 1)
+            loader->iconLoadDecisionAvailable();
+    }
+
     m_loadersPendingDecision.clear();
 }
 
@@ -1288,11 +1281,11 @@ void IconDatabase::performURLImport()
 
         performPendingRetainAndReleaseOperations();
 
-        for (unsigned i = 0; i < urls.size(); ++i) {
-            if (!m_retainedPageURLs.contains(urls[i])) {
-                PageURLRecord* record = m_pageURLToRecordMap.get(urls[i]);
+        for (auto& url : urls) {
+            if (!m_retainedPageURLs.contains(url)) {
+                PageURLRecord* record = m_pageURLToRecordMap.get(url);
                 if (record && !databaseCleanupCounter) {
-                    m_pageURLToRecordMap.remove(urls[i]);
+                    m_pageURLToRecordMap.remove(url);
                     IconRecord* iconRecord = record->iconRecord();
                     
                     // If this page is the only remaining retainer of its icon, mark that icon for deletion and don't bother
@@ -1302,7 +1295,7 @@ void IconDatabase::performURLImport()
                         
                         {
                             LockHolder locker(m_pendingReadingLock);
-                            m_pageURLsInterestedInIcons.remove(urls[i]);
+                            m_pageURLsInterestedInIcons.remove(url);
                             m_iconsPendingReading.remove(iconRecord);
                         }
                         {
@@ -1314,18 +1307,18 @@ void IconDatabase::performURLImport()
                     delete record;
                 }
             } else {
-                urlsToNotify.append(urls[i]);
+                urlsToNotify.append(url);
             }
         }
     }
 
     LOG(IconDatabase, "Notifying %lu interested page URLs that their icon URL is known due to the import", static_cast<unsigned long>(urlsToNotify.size()));
     // Now that we don't hold any locks, perform the actual notifications
-    for (unsigned i = 0; i < urlsToNotify.size(); ++i) {
+    for (auto& url : urlsToNotify) {
         AutodrainedPool pool;
 
-        LOG(IconDatabase, "Notifying icon info known for pageURL %s", urlsToNotify[i].ascii().data());
-        dispatchDidImportIconURLForPageURLOnMainThread(urlsToNotify[i]);
+        LOG(IconDatabase, "Notifying icon info known for pageURL %s", url.ascii().data());
+        dispatchDidImportIconURLForPageURLOnMainThread(url);
         if (shouldStopThreadActivity())
             return;
     }
@@ -1465,14 +1458,14 @@ void IconDatabase::performPendingRetainAndReleaseOperations()
         m_retainOrReleaseIconRequested = false;
     }
 
-    for (HashCountedSet<String>::const_iterator it = toRetain.begin(), end = toRetain.end(); it != end; ++it) {
-        ASSERT(!it->key.impl() || it->key.impl()->hasOneRef());
-        performRetainIconForPageURL(it->key, it->value);
+    for (auto& entry : toRetain) {
+        ASSERT(!entry.key.impl() || entry.key.impl()->hasOneRef());
+        performRetainIconForPageURL(entry.key, entry.value);
     }
 
-    for (HashCountedSet<String>::const_iterator it = toRelease.begin(), end = toRelease.end(); it != end; ++it) {
-        ASSERT(!it->key.impl() || it->key.impl()->hasOneRef());
-        performReleaseIconForPageURL(it->key, it->value);
+    for (auto& entry : toRelease) {
+        ASSERT(!entry.key.impl() || entry.key.impl()->hasOneRef());
+        performReleaseIconForPageURL(entry.key, entry.value);
     }
 }
 
@@ -1528,12 +1521,10 @@ bool IconDatabase::readFromDatabase()
                         outerHash = &(icons[i]->retainingPageURLs());
                     }
                     
-                    HashSet<String>::const_iterator iter = outerHash->begin();
-                    HashSet<String>::const_iterator end = outerHash->end();
-                    for (; iter != end; ++iter) {
-                        if (innerHash->contains(*iter)) {
-                            LOG(IconDatabase, "%s is interested in the icon we just read. Adding it to the notification list and removing it from the interested set", urlForLogging(*iter).ascii().data());
-                            urlsToNotify.add(*iter);
+                    for (auto& outer : *outerHash) {
+                        if (innerHash->contains(outer)) {
+                            LOG(IconDatabase, "%s is interested in the icon we just read. Adding it to the notification list and removing it from the interested set", urlForLogging(outer).ascii().data());
+                            urlsToNotify.add(outer);
                         }
                         
                         // If we ever get to the point were we've seen every url interested in this icon, break early
@@ -1545,10 +1536,8 @@ bool IconDatabase::readFromDatabase()
                     if (urlsToNotify.size() == m_pageURLsInterestedInIcons.size())
                         m_pageURLsInterestedInIcons.clear();
                     else {
-                        iter = urlsToNotify.begin();
-                        end = urlsToNotify.end();
-                        for (; iter != end; ++iter)
-                            m_pageURLsInterestedInIcons.remove(*iter);
+                        for (auto& url : urlsToNotify)
+                            m_pageURLsInterestedInIcons.remove(url);
                     }
                 }
             }
@@ -1612,19 +1601,19 @@ bool IconDatabase::writeToDatabase()
         SQLiteTransaction syncTransaction(m_syncDB);
         syncTransaction.begin();
 
-        for (unsigned i = 0; i < iconSnapshots.size(); ++i) {
-            writeIconSnapshotToSQLDatabase(iconSnapshots[i]);
-            LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(iconSnapshots[i].iconURL()).ascii().data(), iconSnapshots[i].timestamp());
+        for (auto& snapshot : iconSnapshots) {
+            writeIconSnapshotToSQLDatabase(snapshot);
+            LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(snapshot.iconURL()).ascii().data(), snapshot.timestamp());
         }
 
-        for (unsigned i = 0; i < pageSnapshots.size(); ++i) {
+        for (auto& snapshot : pageSnapshots) {
             // If the icon URL is empty, this page is meant to be deleted
             // ASSERTs are sanity checks to make sure the mappings exist if they should and don't if they shouldn't
-            if (pageSnapshots[i].iconURL().isEmpty())
-                removePageURLFromSQLDatabase(pageSnapshots[i].pageURL());
+            if (snapshot.iconURL().isEmpty())
+                removePageURLFromSQLDatabase(snapshot.pageURL());
             else
-                setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL(), pageSnapshots[i].pageURL());
-            LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL()).ascii().data());
+                setIconURLForPageURLInSQLDatabase(snapshot.iconURL(), snapshot.pageURL());
+            LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(snapshot.pageURL()).ascii().data());
         }
 
         syncTransaction.commit();

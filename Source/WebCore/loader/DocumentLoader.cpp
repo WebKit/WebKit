@@ -1148,11 +1148,10 @@ void DocumentLoader::substituteResourceDeliveryTimerFired()
     SubstituteResourceMap copy;
     copy.swap(m_pendingSubstituteResources);
 
-    SubstituteResourceMap::const_iterator end = copy.end();
-    for (SubstituteResourceMap::const_iterator it = copy.begin(); it != end; ++it) {
-        RefPtr<ResourceLoader> loader = it->key;
-        SubstituteResource* resource = it->value.get();
-        
+    for (auto& entry : copy) {
+        auto& loader = entry.key;
+        SubstituteResource* resource = entry.value.get();
+
         if (resource)
             resource->deliver(*loader);
         else {

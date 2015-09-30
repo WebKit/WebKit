@@ -171,11 +171,10 @@ static String findPluginMIMETypeFromURL(Page* page, const String& url)
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;
     pluginData.getWebVisibleMimesAndPluginIndices(mimes, mimePluginIndices);
-    for (size_t i = 0; i < mimes.size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = mimes[i];
-        for (size_t j = 0; j < mimeClassInfo.extensions.size(); ++j) {
-            if (equalIgnoringCase(extension, mimeClassInfo.extensions[j]))
-                return mimeClassInfo.type;
+    for (auto& mime : mimes) {
+        for (auto& mimeExtension : mime.extensions) {
+            if (equalIgnoringCase(extension, mimeExtension))
+                return mime.type;
         }
     }
 

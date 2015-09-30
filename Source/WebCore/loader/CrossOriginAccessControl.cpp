@@ -170,8 +170,8 @@ void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHea
 {
     Vector<String> headers;
     headerValue.split(',', false, headers);
-    for (unsigned headerCount = 0; headerCount < headers.size(); headerCount++) {
-        String strippedHeader = headers[headerCount].stripWhiteSpace();
+    for (auto& header : headers) {
+        String strippedHeader = header.stripWhiteSpace();
         if (!strippedHeader.isEmpty())
             headerSet.add(strippedHeader);
     }

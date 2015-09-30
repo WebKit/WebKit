@@ -779,9 +779,8 @@ bool HistoryController::currentFramesMatchItem(HistoryItem* item) const
     if (childItems.size() != m_frame.tree().childCount())
         return false;
     
-    unsigned size = childItems.size();
-    for (unsigned i = 0; i < size; ++i) {
-        if (!m_frame.tree().child(childItems[i]->target()))
+    for (auto& item : childItems) {
+        if (!m_frame.tree().child(item->target()))
             return false;
     }
     

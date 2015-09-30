@@ -41,21 +41,18 @@ void ArchiveResourceCollection::addAllResources(Archive* archive)
     if (!archive)
         return;
 
-    const Vector<RefPtr<ArchiveResource>>& subresources = archive->subresources();
-    for (Vector<RefPtr<ArchiveResource>>::const_iterator iterator = subresources.begin(); iterator != subresources.end(); ++iterator)
-        m_subresources.set((*iterator)->url(), iterator->get());
+    for (auto& subresource : archive->subresources())
+        m_subresources.set(subresource->url(), subresource.get());
 
-    const Vector<RefPtr<Archive>>& subframes = archive->subframeArchives();
-    for (Vector<RefPtr<Archive>>::const_iterator iterator = subframes.begin(); iterator != subframes.end(); ++iterator) {
-        RefPtr<Archive> archive = *iterator;
-        ASSERT(archive->mainResource());
+    for (auto& subframeArchive : archive->subframeArchives()) {
+        ASSERT(subframeArchive->mainResource());
 
-        const String& frameName = archive->mainResource()->frameName();
+        const String& frameName = subframeArchive->mainResource()->frameName();
         if (!frameName.isNull())
-            m_subframes.set(frameName, archive.get());
+            m_subframes.set(frameName, subframeArchive.get());
         else {
             // In the MHTML case, frames don't have a name so we use the URL instead.
-            m_subframes.set(archive->mainResource()->url().string(), archive.get());
+            m_subframes.set(subframeArchive->mainResource()->url().string(), subframeArchive.get());
         }
     }
 }
