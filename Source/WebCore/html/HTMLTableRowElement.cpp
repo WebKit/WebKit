@@ -81,16 +81,25 @@ int HTMLTableRowElement::rowIndex() const
 
 int HTMLTableRowElement::sectionRowIndex() const
 {
-    int rIndex = 0;
-    const Node *n = this;
-    do {
-        n = n->previousSibling();
-        if (n && n->hasTagName(trTag))
-            rIndex++;
-    }
-    while (n);
+    auto* parent = parentNode();
+    if (!parent)
+        return -1;
 
-    return rIndex;
+    RefPtr<HTMLCollection> rows;
+    if (is<HTMLTableSectionElement>(*parent))
+        rows = downcast<HTMLTableSectionElement>(*parent).rows();
+    else if (is<HTMLTableElement>(*parent))
+        rows = downcast<HTMLTableElement>(*parent).rows();
+    else
+        return -1;
+
+    unsigned length = rows->length();
+    for (unsigned i = 0; i < length; ++i) {
+        if (rows->item(i) == this)
+            return i;
+    }
+
+    return -1;
 }
 
 RefPtr<HTMLTableCellElement> HTMLTableRowElement::insertCell(int index, ExceptionCode& ec)

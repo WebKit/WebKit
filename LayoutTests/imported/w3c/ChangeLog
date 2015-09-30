@@ -1,3 +1,15 @@
+2015-09-29  Chris Dumez  <cdumez@apple.com>
+
+        sectionRowIndex must return -1 when its parent is not a table, tbody, thead, or tfoot
+        https://bugs.webkit.org/show_bug.cgi?id=148841
+        <rdar://problem/22586870>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C HTML test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/sectionRowIndex-expected.txt:
+
 2015-09-28  Chris Dumez  <cdumez@apple.com>
 
         Drop support for legacy EventException
