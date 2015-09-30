@@ -1715,9 +1715,4 @@ void WebFrameLoaderClient::didRequestAutocomplete(PassRefPtr<WebCore::FormState>
 }
 #endif
 
-void WebFrameLoaderClient::prefetchDNS(const String& hostname)
-{
-    WebProcess::singleton().prefetchDNS(hostname);
-}
-
 } // namespace WebKit

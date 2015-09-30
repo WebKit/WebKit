@@ -1,3 +1,25 @@
+2015-09-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r188331: "NetworkProcess: DNS prefetch happens in the Web Process"
+        <rdar://problem/22560715>
+
+        Speculative roll out of r188331 as we had a ~2.5% PLT regression around
+        the time it landed and it seems the most likely culprit. I'll reland if
+        the perf bots do not recover after the roll out.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::storageSession): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (webkitWebExtensionDidReceiveMessage):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/WebProcess.h:
+
 2015-09-30  Timothy Horton  <timothy_horton@apple.com>
 
         Compute document marker rects at use time instead of paint time
