@@ -87,6 +87,8 @@ template<typename Adaptor>
 class JSGenericTypedArrayView : public JSArrayBufferView {
 public:
     typedef JSArrayBufferView Base;
+    typedef typename Adaptor::Type ElementType;
+
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetPropertyNames | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
     static const unsigned elementSize = sizeof(typename Adaptor::Type);
@@ -168,7 +170,48 @@ public:
         setIndexQuicklyToNativeValue(i, value);
         return true;
     }
-    
+
+    static Optional<typename Adaptor::Type> toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue)
+    {
+        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
+        if (exec->hadException())
+            return Nullopt;
+        return value;
+    }
+
+    bool setRangeToValue(ExecState* exec, unsigned start, unsigned end, JSValue jsValue)
+    {
+        ASSERT(0 <= start && start <= end && end <= m_length);
+
+        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
+        if (exec->hadException())
+            return false;
+
+        // We might want to do something faster here (e.g. SIMD) if this is too slow.
+        typename Adaptor::Type* array = typedVector();
+        for (unsigned i = start; i < end; ++i)
+            array[i] = value;
+
+        return true;
+    }
+
+    void sort()
+    {
+        switch (Adaptor::typeValue) {
+        case TypeFloat32:
+            sortFloat<int32_t>();
+            break;
+        case TypeFloat64:
+            sortFloat<int64_t>();
+            break;
+        default: {
+            ElementType* array = typedVector();
+            std::sort(array, array + m_length);
+            break;
+        }
+        }
+    }
+
     bool canAccessRangeQuickly(unsigned offset, unsigned length)
     {
         return offset <= m_length
@@ -257,6 +300,64 @@ private:
     bool setWithSpecificType(
         ExecState*, JSGenericTypedArrayView<OtherAdaptor>*,
         unsigned offset, unsigned length);
+
+    // The ECMA 6 spec states that floating point Typed Arrays should have the following ordering:
+    //
+    // -Inifinity < negative finite numbers < -0.0 < 0.0 < positive finite numbers < Infinity < NaN
+    // Note: regardless of the sign or exact representation of a NaN it is greater than all other values.
+    //
+    // An interesting fact about IEEE 754 floating point numbers is that have an adjacent representation
+    // i.e. for any finite floating point x there does not exist a finite floating point y such that
+    // ((float) ((int) x + 1)) > y > x (where int represents a signed bit integer with the same number
+    // of bits as float). Thus, if we have an array of floating points if we view it as an
+    // array of signed bit integers it will sort in the format we desire. Note, denormal
+    // numbers fit this property as they are floating point numbers with a exponent field of all
+    // zeros so they will be closer to the signed zeros than any normalized number.
+    //
+    // All the processors we support, however, use twos complement. Fortunately, if you compare a signed
+    // bit number as if it were twos complement the result will be correct assuming both numbers are not
+    // negative. e.g.
+    //
+    //    - <=> - = reversed (-30 > -20 = true)
+    //    + <=> + = ordered (30 > 20 = true)
+    //    - <=> + = ordered (-30 > 20 = false)
+    //    + <=> - = ordered (30 > -20 = true)
+    //
+    // For NaN, we normalize the NaN to a peticular representation; the sign bit is 0, all exponential bits
+    // are 1 and only the MSB of the mantissa is 1. So, NaN is recognized as the largest integral numbers.
+
+    void purifyArray()
+    {
+        ElementType* array = typedVector();
+        for (unsigned i = 0; i < m_length; i++)
+            array[i] = purifyNaN(array[i]);
+    }
+
+    template<typename IntegralType>
+    static bool ALWAYS_INLINE sortComparison(IntegralType a, IntegralType b)
+    {
+        if (a >= 0 || b >= 0)
+            return a < b;
+        return a > b;
+    }
+
+    template<typename IntegralType>
+    void sortFloat()
+    {
+        ASSERT(sizeof(IntegralType) == sizeof(ElementType));
+
+        // Since there might be another view that sets the bits of
+        // our floats to NaNs with negative sign bits we need to
+        // purify the array.
+        // We use a separate function here to avoid the strict aliasing rule.
+        // We could use a union but ASAN seems to frown upon that.
+        purifyArray();
+
+        IntegralType* array = reinterpret_cast<IntegralType*>(typedVector());
+        std::sort(array, array + m_length, sortComparison<IntegralType>);
+
+    }
+
 };
 
 template<typename Adaptor>

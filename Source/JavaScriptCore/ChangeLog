@@ -1,3 +1,199 @@
+2015-09-30  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add TypedArray.prototype functionality.
+        https://bugs.webkit.org/show_bug.cgi?id=148035
+
+        Reviewed by Geoffrey Garen.
+
+        This patch should add most of the functionality for
+        the prototype properties of TypedArray objects in ES6.
+        There are a few exceptions to this, which will be added
+        in upcoming patches:
+
+        1) First we do not use the species constructor for some
+        of the TypedArray prototype functions (namely: map, filter,
+        slice, and subarray). That will need to be added when
+        species constructors are finished.
+
+        2) TypedArrays still have a length, byteOffset, byteLength,
+        and buffer are still attached to the TypedArray instance (in
+        the spec they are on the TypedArray.prototype instance object)
+        since the JIT currently assumes those properties are fixed.
+
+        3) The TypedArray.constructor property is not added yet
+        as it should point to the TypedArray instance object,
+        which will be added in a future patch.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/TypedArray.prototype.js: Added.
+        (every):
+        (find):
+        (findIndex):
+        (forEach):
+        (some):
+        (sort.min):
+        (sort.merge):
+        (sort.mergeSort):
+        (sort):
+        (reduce):
+        (reduceRight):
+        (map):
+        (filter):
+        (toLocaleString):
+        * runtime/ArrayPrototype.cpp:
+        * runtime/ArrayPrototype.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValue):
+        (JSC::JSGenericTypedArrayView::setRangeToValue):
+        (JSC::JSGenericTypedArrayView::sort):
+        (JSC::JSGenericTypedArrayView::purifyArray):
+        (JSC::JSGenericTypedArrayView::sortComparison):
+        (JSC::JSGenericTypedArrayView::sortFloat):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h: Added.
+        (JSC::argumentClampedIndexFromStartOrEnd):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncEntries):
+        (JSC::genericTypedArrayViewProtoFuncCopyWithin):
+        (JSC::genericTypedArrayViewProtoFuncFill):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncJoin):
+        (JSC::genericTypedArrayViewProtoFuncKeys):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewProtoGetterFuncLength):
+        (JSC::genericTypedArrayViewProtoGetterFuncByteLength):
+        (JSC::genericTypedArrayViewProtoGetterFuncByteOffset):
+        (JSC::genericTypedArrayViewProtoFuncReverse):
+        (JSC::genericTypedArrayViewPrivateFuncSort):
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewProtoFuncSubarray):
+        (JSC::typedArrayViewProtoFuncValues):
+        * runtime/JSGenericTypedArrayViewPrototypeInlines.h:
+        (JSC::JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation):
+        (JSC::genericTypedArrayViewProtoFuncSet): Deleted.
+        (JSC::genericTypedArrayViewProtoFuncSubarray): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSObject.h:
+        * runtime/JSTypedArrayPrototypes.cpp:
+        * runtime/JSTypedArrayPrototypes.h:
+        * runtime/JSTypedArrayViewPrototype.cpp: Added.
+        (JSC::typedArrayViewPrivateFuncLength):
+        (JSC::typedArrayViewPrivateFuncSort):
+        (JSC::typedArrayViewProtoFuncSet):
+        (JSC::typedArrayViewProtoFuncEntries):
+        (JSC::typedArrayViewProtoFuncCopyWithin):
+        (JSC::typedArrayViewProtoFuncFill):
+        (JSC::typedArrayViewProtoFuncLastIndexOf):
+        (JSC::typedArrayViewProtoFuncIndexOf):
+        (JSC::typedArrayViewProtoFuncJoin):
+        (JSC::typedArrayViewProtoFuncKeys):
+        (JSC::typedArrayViewProtoGetterFuncLength):
+        (JSC::typedArrayViewProtoGetterFuncByteLength):
+        (JSC::typedArrayViewProtoGetterFuncByteOffset):
+        (JSC::typedArrayViewProtoFuncReverse):
+        (JSC::typedArrayViewProtoFuncSubarray):
+        (JSC::typedArrayViewProtoFuncSlice):
+        (JSC::typedArrayViewProtoFuncValues):
+        (JSC::JSTypedArrayViewPrototype::JSTypedArrayViewPrototype):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        (JSC::JSTypedArrayViewPrototype::create):
+        (JSC::JSTypedArrayViewPrototype::createStructure):
+        * runtime/JSTypedArrayViewPrototype.h: Copied from Source/JavaScriptCore/runtime/JSTypedArrayPrototypes.cpp.
+        * tests/stress/resources/standalone-pre.js: Added.
+        (description):
+        (debug):
+        (escapeString):
+        (testPassed):
+        (testFailed):
+        (areNumbersEqual):
+        (areArraysEqual):
+        (isMinusZero):
+        (isTypedArray):
+        (isResultCorrect):
+        (stringify):
+        (shouldBe):
+        (dfgShouldBe):
+        (shouldBeType):
+        (shouldBeTrue):
+        (shouldBeFalse):
+        (shouldBeNaN):
+        (shouldBeNull):
+        (shouldBeEqualToString):
+        (shouldBeUndefined):
+        (shouldNotThrow):
+        (shouldThrow):
+        (dfgCompiled):
+        (dfgIncrement):
+        (noInline):
+        (finishJSTest):
+        * tests/stress/resources/typedarray-test-helper-functions.js: Added.
+        (forEachTypedArray):
+        (isSameFunctionForEachTypedArrayPrototype.eq):
+        (isSameFunctionForEachTypedArrayPrototype):
+        (hasSameValues):
+        (.foo):
+        (testPrototypeFunctionHelper):
+        (testPrototypeFunctionOnSigned):
+        (testPrototypeFunctionOnFloat):
+        (testPrototypeFunction):
+        (.tester):
+        (testPrototypeReceivesArray):
+        * tests/stress/typedarray-copyWithin.js: Added.
+        * tests/stress/typedarray-every.js: Added.
+        (isBigEnough):
+        (isBigEnoughAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-fill.js: Added.
+        * tests/stress/typedarray-filter.js: Added.
+        (keepEven):
+        (keepEvenAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-find.js: Added.
+        (keepEven):
+        (keepEvenAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-findIndex.js: Added.
+        (keepEven):
+        (keepEvenAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-forEach.js: Added.
+        (.checkCorrect.let.list):
+        (.checkCorrect):
+        (createChecker):
+        (foo):
+        (changeArray):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-indexOf.js: Added.
+        (keepEven):
+        * tests/stress/typedarray-lastIndexOf.js: Added.
+        * tests/stress/typedarray-map.js: Added.
+        (even):
+        (evenAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-reduce.js: Added.
+        (createArray):
+        (sum):
+        (createArrayAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-reduceRight.js: Added.
+        (createArray):
+        (sum):
+        (createArrayAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-slice.js: Added.
+        * tests/stress/typedarray-some.js: Added.
+        (isBigEnough):
+        (isBigEnoughAndChange):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-sort.js: Added.
+        (sortBackwards):
+        (compareException):
+
 2015-09-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r190324.
