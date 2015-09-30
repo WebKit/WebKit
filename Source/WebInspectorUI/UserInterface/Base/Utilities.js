@@ -445,7 +445,7 @@ Object.defineProperty(Array.prototype, "keySet",
 {
     value: function()
     {
-        var keys = {};
+        let keys = Object.create(null);
         for (var i = 0; i < this.length; ++i)
             keys[this[i]] = true;
         return keys;

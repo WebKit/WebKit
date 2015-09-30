@@ -1,5 +1,23 @@
 2015-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Console completion suggestions should include properties on Object (hasOwnProperty, toString, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=149649
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+        Since keySets in this instance are often used as hash maps with the
+        `in` operator, create a blank object that won't have Object.prototype
+        functions that would be seen by `in`.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WebInspector.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.receivedPropertyNames.compare):
+        Sort __defineGetter__ and __lookupGetter__ and friends last, since they
+        are rarely used properties.
+
+2015-09-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Missing completions for Symbol objects, console.error warning
         https://bugs.webkit.org/show_bug.cgi?id=149641
 

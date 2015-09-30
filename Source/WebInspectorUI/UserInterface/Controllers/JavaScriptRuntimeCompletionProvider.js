@@ -263,9 +263,17 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
             function compare(a, b)
             {
                 // Try to sort in numerical order first.
-                var numericCompareResult = a - b;
+                let numericCompareResult = a - b;
                 if (!isNaN(numericCompareResult))
                     return numericCompareResult;
+
+                // Sort __defineGetter__, __lookupGetter__, and friends last.
+                let aRareProperty = a.startsWith("__") && a.endsWith("__");
+                let bRareProperty = b.startsWith("__") && b.endsWith("__");
+                if (aRareProperty && !bRareProperty)
+                    return 1;
+                if (!aRareProperty && bRareProperty)
+                    return -1;
 
                 // Not numbers, sort as strings.
                 return a.localeCompare(b);
