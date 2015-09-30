@@ -455,8 +455,9 @@ EventPath::EventPath(Node& originalTarget, Event& event)
             targetStack.removeLast();
             ASSERT(shadowRoot.host()->contains(target->toNode()));
         } else
-            target = nullptr;
 #endif
+            target = nullptr;
+
         if (!shouldEventCrossShadowBoundary(event, shadowRoot, originalTarget))
             return;
         node = shadowRoot.host();
