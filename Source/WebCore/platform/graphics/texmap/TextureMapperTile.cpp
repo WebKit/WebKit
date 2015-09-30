@@ -50,7 +50,7 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, Image* imag
     m_texture->updateContents(image, targetRect, sourceOffset, updateContentsFlag);
 }
 
-void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag)
+void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLayer* sourceLayer, const IntRect& dirtyRect, BitmapTexture::UpdateContentsFlag updateContentsFlag, float scale)
 {
     IntRect targetRect = enclosingIntRect(m_rect);
     targetRect.intersect(dirtyRect);
@@ -66,7 +66,7 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLay
         m_texture->reset(targetRect.size(), BitmapTexture::SupportsAlpha);
     }
 
-    m_texture->updateContents(textureMapper, sourceLayer, targetRect, sourceOffset, updateContentsFlag);
+    m_texture->updateContents(textureMapper, sourceLayer, targetRect, sourceOffset, updateContentsFlag, scale);
 }
 
 void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, const unsigned exposedEdges)

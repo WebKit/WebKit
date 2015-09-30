@@ -487,6 +487,7 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     if (!priv->redirectedWindow)
         return false;
 
+    priv->redirectedWindow->setDeviceScaleFactor(webViewBase->priv->pageProxy->deviceScaleFactor());
     priv->redirectedWindow->resize(drawingArea->size());
 
     if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
@@ -1063,6 +1064,10 @@ WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
 #if HAVE(GTK_SCALE_FACTOR)
 static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 {
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    if (webkitWebViewBase->priv->redirectedWindow)
+        webkitWebViewBase->priv->redirectedWindow->setDeviceScaleFactor(webkitWebViewBase->priv->pageProxy->deviceScaleFactor());
+#endif
     webkitWebViewBase->priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
 }
 #endif // HAVE(GTK_SCALE_FACTOR)
@@ -1339,6 +1344,7 @@ void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitW
     if (!drawingArea)
         return;
 
+    priv->redirectedWindow->setDeviceScaleFactor(webkitWebViewBase->priv->pageProxy->deviceScaleFactor());
     priv->redirectedWindow->resize(drawingArea->size());
     // Force a resize to ensure the new redirected window size is used by the WebProcess.
     drawingArea->forceResize();

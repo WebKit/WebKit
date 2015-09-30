@@ -29,6 +29,7 @@
 
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 
+#include <WebCore/CairoUtilities.h>
 #include <WebCore/PlatformDisplayX11.h>
 #include <X11/Xlib.h>
 #include <X11/extensions/Xcomposite.h>
@@ -138,6 +139,7 @@ std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(G
 RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, std::function<void()> damageNotify)
     : m_display(GDK_DISPLAY_XDISPLAY(gdk_window_get_display(parentWindow)))
     , m_needsNewPixmapAfterResize(false)
+    , m_deviceScale(1)
 {
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == m_display);
     Screen* screen = DefaultScreenOfDisplay(m_display);
@@ -211,14 +213,17 @@ RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
 
 void RedirectedXCompositeWindow::resize(const IntSize& size)
 {
-    if (size == m_size)
+    IntSize scaledSize(size);
+    scaledSize.scale(m_deviceScale);
+
+    if (scaledSize == m_size)
         return;
 
     // Resize the window to at last 1x1 since X doesn't allow to create empty windows.
-    XResizeWindow(m_display, m_window.get(), std::max(1, size.width()), std::max(1, size.height()));
+    XResizeWindow(m_display, m_window.get(), std::max(1, scaledSize.width()), std::max(1, scaledSize.height()));
     XFlush(m_display);
 
-    m_size = size;
+    m_size = scaledSize;
     m_needsNewPixmapAfterResize = true;
     if (m_size.isEmpty())
         cleanupPixmapAndPixmapSurface();
@@ -256,6 +261,7 @@ cairo_surface_t* RedirectedXCompositeWindow::surface()
     }
 
     RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_xlib_surface_create(m_display, newPixmap.get(), windowAttributes.visual, m_size.width(), m_size.height()));
+    cairoSurfaceSetDeviceScale(newSurface.get(), m_deviceScale, m_deviceScale);
 
     // Nvidia drivers seem to prepare their redirected window pixmap asynchronously, so for a few fractions
     // of a second after each resize, while doing continuous resizing (which constantly destroys and creates

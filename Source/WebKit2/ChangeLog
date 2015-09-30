@@ -1,3 +1,25 @@
+2015-09-30  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Support HiDPI Properly in WebKitGtk+ with the TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=141782
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+
+            Modified to create scaled size of window.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+        (WebKit::LayerTreeHostGtk::deviceOrPageScaleFactorChanged):
+
+            We should apply device scale factor to the root layer to apply
+            the scale matrix before applying other transform matrices.
+
+        (WebKit::LayerTreeHostGtk::deviceScaleFactor): Added.
+        (WebKit::LayerTreeHostGtk::pageScaleFactor): Added.
+
 2015-09-29  Daniel Bates  <dabates@apple.com>
 
         Make WebKit for iOS Simulator build with the public iOS 9 SDK

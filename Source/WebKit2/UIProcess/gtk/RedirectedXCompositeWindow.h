@@ -47,6 +47,7 @@ public:
 
     Window windowID() const { return m_window.get(); }
     void resize(const WebCore::IntSize&);
+    void setDeviceScaleFactor(float scale) { m_deviceScale = scale; }
     cairo_surface_t* surface();
 
 private:
@@ -61,6 +62,7 @@ private:
     WebCore::XUniqueDamage m_damage;
     RefPtr<cairo_surface_t> m_surface;
     bool m_needsNewPixmapAfterResize;
+    float m_deviceScale;
 };
 
 } // namespace WebKit
