@@ -53,7 +53,6 @@
 #include <algorithm>
 #include <wtf/RAMSize.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/ParallelHelperPool.h>
 #include <wtf/ParallelVectorIterator.h>
 #include <wtf/ProcessID.h>
 
@@ -358,7 +357,7 @@ Heap::Heap(VM* vm, HeapType heapType)
 #if USE(CF)
     , m_delayedReleaseRecursionCount(0)
 #endif
-    , m_helperClient(std::make_unique<ParallelHelperClient>(&heapHelperPool()))
+    , m_helperClient(&heapHelperPool())
 {
     m_storageSpace.init();
     if (Options::verifyHeap())
@@ -548,7 +547,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
 
     m_parallelMarkersShouldExit = false;
 
-    m_helperClient->setFunction(
+    m_helperClient.setFunction(
         [this] () {
             SlotVisitor* slotVisitor;
             {
@@ -605,7 +604,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
         m_parallelMarkersShouldExit = true;
         m_markingConditionVariable.notifyAll();
     }
-    m_helperClient->finish();
+    m_helperClient.finish();
     updateObjectCounts(gcStartTime);
     resetVisitors();
 }
@@ -638,7 +637,7 @@ void Heap::copyBackingStores()
         // that other threads run. That's because after runFunctionInParallel() returns, the task
         // we have created is not going to be running anymore. Hence, everything on the stack here
         // outlives the task.
-        m_helperClient->runFunctionInParallel(
+        m_helperClient.runFunctionInParallel(
             [&] () {
                 CopyVisitor copyVisitor(*this);
                 

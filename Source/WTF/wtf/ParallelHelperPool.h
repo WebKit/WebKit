@@ -148,19 +148,14 @@ public:
     // client->finish();
     WTF_EXPORT_PRIVATE void runTaskInParallel(RefPtr<SharedTask>);
 
-    // Semantically equivalent to:
+    // Equivalent to:
     // client->setFunction(functor);
     // client->doSomeHelping();
     // client->finish();
-    //
-    // Except, unlike the above sequence, this won't allocate the task in the heap. This allocates
-    // the task on the stack because it knows that the task is not reachable after this method is
-    // done.
     template<typename Functor>
     void runFunctionInParallel(const Functor& functor)
     {
-        SharedTaskFunctor<Functor> sharedTask(functor);
-        runTaskInParallel(&sharedTask);
+        runTaskInParallel(createSharedTask(functor));
     }
 
     ParallelHelperPool& pool() { return *m_pool; }
