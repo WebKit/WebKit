@@ -178,7 +178,7 @@ private:
         return true;
     }
 
-    bool testTagNames(WebKitWebPage* page)
+    bool testTagNamesNodeList(WebKitWebPage* page)
     {
         static const char* expectedTagNames[] = { "HTML", "HEAD", "BODY", "VIDEO", "SOURCE", "VIDEO", "SOURCE", "INPUT" };
 
@@ -186,13 +186,37 @@ private:
         g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
 
-        GRefPtr<WebKitDOMNodeList> list = adoptGRef(webkit_dom_document_get_elements_by_tag_name(document, "*"));
+        GRefPtr<WebKitDOMNodeList> list = adoptGRef(webkit_dom_document_query_selector_all(document, "*", nullptr));
         g_assert(WEBKIT_DOM_IS_NODE_LIST(list.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(list.get()));
         gulong nodeCount = webkit_dom_node_list_get_length(list.get());
         g_assert_cmpuint(nodeCount, ==, G_N_ELEMENTS(expectedTagNames));
         for (unsigned i = 0; i < nodeCount; i++) {
             WebKitDOMNode* node = webkit_dom_node_list_item(list.get(), i);
+            g_assert(WEBKIT_DOM_IS_NODE(node));
+            assertObjectIsDeletedWhenTestFinishes(G_OBJECT(node));
+            GUniquePtr<char> tagName(webkit_dom_node_get_node_name(node));
+            g_assert_cmpstr(tagName.get(), ==, expectedTagNames[i]);
+        }
+
+        return true;
+    }
+
+    bool testTagNamesHTMLCollection(WebKitWebPage* page)
+    {
+        static const char* expectedTagNames[] = { "HTML", "HEAD", "BODY", "VIDEO", "SOURCE", "VIDEO", "SOURCE", "INPUT" };
+
+        WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
+        g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(document));
+
+        GRefPtr<WebKitDOMHTMLCollection> collection = adoptGRef(webkit_dom_document_get_elements_by_tag_name_as_html_collection(document, "*"));
+        g_assert(WEBKIT_DOM_IS_HTML_COLLECTION(collection.get()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(collection.get()));
+        gulong nodeCount = webkit_dom_html_collection_get_length(collection.get());
+        g_assert_cmpuint(nodeCount, ==, G_N_ELEMENTS(expectedTagNames));
+        for (unsigned i = 0; i < nodeCount; i++) {
+            WebKitDOMNode* node = webkit_dom_html_collection_item(collection.get(), i);
             g_assert(WEBKIT_DOM_IS_NODE(node));
             assertObjectIsDeletedWhenTestFinishes(G_OBJECT(node));
             GUniquePtr<char> tagName(webkit_dom_node_get_node_name(node));
@@ -252,8 +276,10 @@ private:
             return testHierarchyNavigation(page);
         if (!strcmp(testName, "insertion"))
             return testInsertion(page);
-        if (!strcmp(testName, "tag-names"))
-            return testTagNames(page);
+        if (!strcmp(testName, "tag-names-node-list"))
+            return testTagNamesNodeList(page);
+        if (!strcmp(testName, "tag-names-html-collection"))
+            return testTagNamesHTMLCollection(page);
         if (!strcmp(testName, "dom-cache"))
             return testDOMCache(page);
 
@@ -266,7 +292,8 @@ static void __attribute__((constructor)) registerTests()
 {
     REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/hierarchy-navigation");
     REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/insertion");
-    REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/tag-names");
+    REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/tag-names-node-list");
+    REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/tag-names-html-collection");
     REGISTER_TEST(WebKitDOMNodeTest, "WebKitDOMNode/dom-cache");
 }
 

@@ -1,3 +1,29 @@
+2015-09-30  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Deprecation warnings in DOMNodeTest
+        https://bugs.webkit.org/show_bug.cgi?id=149663
+
+        After the webkit_dom_document_get_elements_by_tag_name deprecation we
+        need to update the tests to use webkit_dom_document_query_selector_all
+        to avoid compilation warnings.
+
+        Also add a new test for webkit_dom_document_get_elements_by_tag_name_as_html_collection
+        (the suggested replacement for the deprecated function).
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp:
+        (WebKitDOMNodeTest::testTagNamesNodeList):
+        (WebKitDOMNodeTest::testTagNamesHTMLCollection):
+        (registerTests):
+        (WebKitDOMNodeTest::testTagNames): Deleted.
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNode.cpp:
+        (prepareDOMForTagNamesTests):
+        (testWebKitDOMNodeTagNamesNodeList):
+        (testWebKitDOMNodeTagNamesHTMLCollection):
+        (beforeAll):
+        (testWebKitDOMNodeTagNames): Deleted.
+
 2015-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         WebKitTestRunner fails to apply "useFlexibleViewport" when it's specified in a file comment

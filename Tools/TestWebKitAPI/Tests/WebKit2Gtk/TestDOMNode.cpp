@@ -41,7 +41,7 @@ static void testWebKitDOMNodeInsertion(WebViewTest* test, gconstpointer)
     g_assert(test->runWebProcessTest("WebKitDOMNode", "insertion"));
 }
 
-static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
+static void prepareDOMForTagNamesTests(WebViewTest* test)
 {
     static const char* testHTML = "<html><head></head><body>"
         "<video id='video' preload='none'>"
@@ -53,10 +53,20 @@ static void testWebKitDOMNodeTagNames(WebViewTest* test, gconstpointer)
         "        Your browser does not support the video tag."
         "</video>"
         "<input type='hidden' id='test' name='finish' value='false'></body></html>";
-    test->loadHtml(testHTML, 0);
+    test->loadHtml(testHTML, nullptr);
     test->waitUntilLoadFinished();
+}
 
-    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names"));
+static void testWebKitDOMNodeTagNamesNodeList(WebViewTest* test, gconstpointer)
+{
+    prepareDOMForTagNamesTests(test);
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names-node-list"));
+}
+
+static void testWebKitDOMNodeTagNamesHTMLCollection(WebViewTest* test, gconstpointer)
+{
+    prepareDOMForTagNamesTests(test);
+    g_assert(test->runWebProcessTest("WebKitDOMNode", "tag-names-html-collection"));
 }
 
 static void testWebKitDOMObjectCache(WebViewTest* test, gconstpointer)
@@ -78,7 +88,8 @@ void beforeAll()
 {
     WebViewTest::add("WebKitDOMNode", "hierarchy-navigation", testWebKitDOMNodeHierarchyNavigation);
     WebViewTest::add("WebKitDOMNode", "insertion", testWebKitDOMNodeInsertion);
-    WebViewTest::add("WebKitDOMNode", "tag-names", testWebKitDOMNodeTagNames);
+    WebViewTest::add("WebKitDOMNode", "tag-names-node-list", testWebKitDOMNodeTagNamesNodeList);
+    WebViewTest::add("WebKitDOMNode", "tag-names-html-collection", testWebKitDOMNodeTagNamesHTMLCollection);
     WebViewTest::add("WebKitDOMNode", "dom-cache", testWebKitDOMObjectCache);
 }
 
