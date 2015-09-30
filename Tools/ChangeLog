@@ -1,3 +1,27 @@
+2015-09-29  Daniel Bates  <dabates@apple.com>
+
+        configure-xcode-for-ios-development does not work with Xcode 7
+        https://bugs.webkit.org/show_bug.cgi?id=149640
+
+        Reviewed by Alexey Proskuryakov.
+
+        When Xcode 7 is installed, running configure-xcode-for-ios-development dies with an error
+        because it cannot find the Xcode specification files for iOS simulator and device. These
+        files have moved to a new location in Xcode 7 distribution. Moreover we must add the
+        relevant definitions to the Xcode 7 specification files directly as opposed to creating
+        new specification files with the added definitions (as we did in older versions of Xcode)
+        in order for Xcode 7 to honor these definitions.
+
+        * Scripts/configure-xcode-for-ios-development: Sorted forward declarations.
+        (updateXcodeSpecificationFilesForSDKIfNeeded): Added.
+        (updateXcode7SpecificationFile): Added.
+        (createLegacyXcodeSpecificationFilesForSDKIfNeeded): Formerly named createXcodeSpecificationFilesForSDKIfNeeded.
+        (writeXcodeSpecification): Moved congratulations line to caller so as to write out the
+        appropriate success message.
+        (mergeXcodeSpecificationWithSpecificationAndId): Formerly named createXcodeSpecificationFromSpecificationAndId.
+        (createXcodeSpecificationFilesForSDKIfNeeded): Deleted.
+        (createXcodeSpecificationFromSpecificationAndId): Deleted.
+
 2015-09-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Allow 'prepare-ChangeLog' to be used without Cygwin

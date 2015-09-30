@@ -23,13 +23,14 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Checks if Xcode supports building a command line tool for the iOS Simulator.
-# If not, then creates xcspec files in the iOS Simulator SDK for a command line
+# If not, then updates/creates xcspec files in the iOS SDK for a command line
 # tool product- and package- type using the definitions in the OS X SDK for the
 # same types.
 
 use strict;
 use warnings;
 
+use Cwd qw(realpath);
 use English;
 use File::Basename;
 use File::Find;
@@ -40,16 +41,19 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 sub copyMissingHeadersToIPhoneOSSDKIfNeeded();
-sub createXcodeSpecificationFilesForSDKIfNeeded($);
-sub createXcodeSpecificationFromSpecificationAndId($$$);
+sub createLegacyXcodeSpecificationFilesForSDKIfNeeded($);
+sub mergeXcodeSpecificationWithSpecificationAndId($$$);
+sub readXcodeSpecificationById($$);
 sub sdkDirectory($);
 sub sdkPlatformDirectory($);
-sub readXcodeSpecificationById($$);
+sub updateXcode7SpecificationFile($);
+sub updateXcodeSpecificationFilesForSDKIfNeeded($);
 sub xcodeSDKSpecificationsPath($);
 
 use constant COMMAND_LINE_PACKAGE_TYPE => "com.apple.package-type.mach-o-executable";
 use constant COMMAND_LINE_PRODUCT_TYPE => "com.apple.product-type.tool";
 use constant SDK_TO_XCSPEC_NAME_MAP => +{ "iphoneos" => "iPhoneOS", "iphonesimulator" => "iPhone Simulator " };
+use constant SDK_TO_PLUGIN_XCSPEC_NAME_MAP => +{ "iphoneos" => "Embedded-Device.xcspec", "iphonesimulator" => "Embedded-Simulator.xcspec" };
 
 # FIXME: We should only require running as root if needed. It's not necessary to run as root if
 #        Xcode was installed by the user, say via a download from <http://developer.apple.com>.
@@ -59,7 +63,7 @@ if ($EFFECTIVE_USER_ID) {
 }
 
 for my $sdk (qw(iphoneos iphonesimulator)) {
-    createXcodeSpecificationFilesForSDKIfNeeded($sdk);
+    updateXcodeSpecificationFilesForSDKIfNeeded($sdk);
 }
 
 copyMissingHeadersToIPhoneOSSDKIfNeeded();
@@ -96,7 +100,41 @@ sub copyMissingHeadersToIPhoneOSSDKIfNeeded()
     }
 }
 
-sub createXcodeSpecificationFilesForSDKIfNeeded($)
+sub updateXcodeSpecificationFilesForSDKIfNeeded($)
+{
+    my ($sdkName) = @_;
+    my $xcode7SpecificationFile = realpath(File::Spec->catfile(sdkPlatformDirectory($sdkName), "..", "..", "..", "PlugIns", "IDEiOSSupportCore.ideplugin", "Contents", "Resources", SDK_TO_PLUGIN_XCSPEC_NAME_MAP->{$sdkName}));
+    if (-f $xcode7SpecificationFile) {
+        updateXcode7SpecificationFile($xcode7SpecificationFile);
+    } else {
+        createLegacyXcodeSpecificationFilesForSDKIfNeeded($sdkName);
+    }
+}
+
+sub updateXcode7SpecificationFile($)
+{
+    my ($specificationFile) = @_;
+
+    my $hasPackageTypeForCommandLineTool = !!readXcodeSpecificationById($specificationFile, COMMAND_LINE_PACKAGE_TYPE);
+    my $hasProductTypeForCommandLineTool = !!readXcodeSpecificationById($specificationFile, COMMAND_LINE_PRODUCT_TYPE);
+    if ($hasPackageTypeForCommandLineTool && $hasProductTypeForCommandLineTool) {
+        return; # Xcode knows how to build a command line tool for $sdkName.
+    }
+
+    my $macosxSDKSpecificationsPath = xcodeSDKSpecificationsPath("macosx");
+    if (!$hasPackageTypeForCommandLineTool) {
+        my $packageTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Package Types.xcspec");
+        mergeXcodeSpecificationWithSpecificationAndId($specificationFile, $packageTypesForMacOSXPath, COMMAND_LINE_PACKAGE_TYPE);
+    }
+
+    if (!$hasProductTypeForCommandLineTool) {
+        my $productTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Product Types.xcspec");
+        mergeXcodeSpecificationWithSpecificationAndId($specificationFile, $productTypesForMacOSXPath, COMMAND_LINE_PRODUCT_TYPE);
+    }
+    print "Successfully updated '$specificationFile'.\n";
+}
+
+sub createLegacyXcodeSpecificationFilesForSDKIfNeeded($)
 {
     my ($sdk) = @_;
     my $sdkSpecificationsPath = xcodeSDKSpecificationsPath($sdk);
@@ -145,13 +183,15 @@ sub createXcodeSpecificationFilesForSDKIfNeeded($)
     if (!$hasPackageTypeForCommandLineTool) {
         my $packageTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Package Types.xcspec");
         my $packageTypesForWebKitDevelopmentPath = File::Spec->catfile($sdkSpecificationsPath, "${fileNamePrefix}PackageTypes For WebKit Development.xcspec");
-        createXcodeSpecificationFromSpecificationAndId($packageTypesForWebKitDevelopmentPath, $packageTypesForMacOSXPath, COMMAND_LINE_PACKAGE_TYPE);
+        mergeXcodeSpecificationWithSpecificationAndId($packageTypesForWebKitDevelopmentPath, $packageTypesForMacOSXPath, COMMAND_LINE_PACKAGE_TYPE);
+        print "Successfully created '$packageTypesForWebKitDevelopmentPath'.\n";
     }
 
     if (!$hasProductTypeForCommandLineTool) {
         my $productTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Product Types.xcspec");
         my $productTypesForWebKitDevelopmentPath = File::Spec->catfile($sdkSpecificationsPath, "${fileNamePrefix}ProductTypes For WebKit Development.xcspec");
-        createXcodeSpecificationFromSpecificationAndId($productTypesForWebKitDevelopmentPath, $productTypesForMacOSXPath, COMMAND_LINE_PRODUCT_TYPE);
+        mergeXcodeSpecificationWithSpecificationAndId($productTypesForWebKitDevelopmentPath, $productTypesForMacOSXPath, COMMAND_LINE_PRODUCT_TYPE);
+        print "Successfully created '$productTypesForWebKitDevelopmentPath'.\n";
     }
 }
 
@@ -177,7 +217,9 @@ sub writeXcodeSpecification($$)
     my ($tempFileHandle, $tempFilename) = tempfile("webkit-xcspecXXXXXXX", UNLINK => 1);
     print $tempFileHandle $specification;
     close($tempFileHandle);
-    system("/usr/libexec/PlistBuddy -x -c 'clear array' '$xcodeSpecificationFile' > /dev/null") == 0 or die "PlistBuddy exited with $?: $!";
+    if (!-f $xcodeSpecificationFile) {
+        system("/usr/libexec/PlistBuddy -x -c 'clear array' '$xcodeSpecificationFile' > /dev/null") == 0 or die "PlistBuddy exited with $?: $!";
+    }
     system("/usr/libexec/PlistBuddy -x -c 'add 0 dict' '$xcodeSpecificationFile' > /dev/null") == 0 or die "PlistBuddy exited with $?: $!";
     system("/usr/libexec/PlistBuddy -x -c 'merge $tempFilename 0' '$xcodeSpecificationFile' > /dev/null") == 0 or die "PlistBuddy exited with $?: $!";
 }
@@ -233,7 +275,7 @@ sub xcodeSDKSpecificationsPath($)
     return File::Spec->catdir(sdkPlatformDirectory($sdkName), "Developer", "Library", "Xcode", "Specifications");
 }
 
-sub createXcodeSpecificationFromSpecificationAndId($$$)
+sub mergeXcodeSpecificationWithSpecificationAndId($$$)
 {
     my ($targetXcodeSpecificationFile, $sourceXcodeSpecificationFile, $id) = @_;
     my $specification = readXcodeSpecificationById($sourceXcodeSpecificationFile, $id);
@@ -241,5 +283,4 @@ sub createXcodeSpecificationFromSpecificationAndId($$$)
         die "Failed to find '$id' in '$sourceXcodeSpecificationFile'.\n";
     }
     writeXcodeSpecification($targetXcodeSpecificationFile, $specification);
-    print "Successfully created '$targetXcodeSpecificationFile'.\n";
 }
