@@ -1,3 +1,13 @@
+2015-09-30  Timothy Hatcher  <timothy@apple.com>
+
+        Give WebKitLauncher the get-task-allow entitlement to allow it to work on El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=149674
+
+        Reviewed by Lucas Forschler.
+
+        * WebKitLauncher/WebKitLauncher.entitlements: Added.
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj:
+
 2015-09-30  Jason Marcell  <jmarcell@apple.com>
 
         BuildbotQueueView.prototype._appendPendingRevisionCount should skip repositories that don't
