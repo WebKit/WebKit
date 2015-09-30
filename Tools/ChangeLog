@@ -1,3 +1,14 @@
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Mac builders build after <http://trac.webkit.org/changeset/190219>
+        (https://bugs.webkit.org/show_bug.cgi?id=149539)
+
+        {32, 64}-bit Mac builders should not try to build project {Plugin.64, Plugin.32},
+        respectively; only pass ONLY_ACTIVE_ARCH=NO when building for iOS.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
 2015-09-30  Lucas Forschler  <lforschler@apple.com>
 
         bot210 was configured for a queue instead of bot126.
