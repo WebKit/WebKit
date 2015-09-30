@@ -1,3 +1,16 @@
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
+        Add iOS builders and testers
+        https://bugs.webkit.org/show_bug.cgi?id=149549
+
+        Reviewed by Alexey Proskuryakov.
+
+        Adds definitions for 64-bit iOS Simulator release builders and testers and a iOS device
+        builder that builds universal release binaries for armv7, armv7s and arm64 architectures.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add definitions for builders and testers.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Update unit tests.
+
 2015-09-30  Timothy Hatcher  <timothy@apple.com>
 
         Give WebKitLauncher the get-task-allow entitlement to allow it to work on El Capitan

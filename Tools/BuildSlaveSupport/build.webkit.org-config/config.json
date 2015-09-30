@@ -57,6 +57,14 @@
                     { "name": "bot418", "platform": "mac-elcapitan" },
                     { "name": "bot419", "platform": "mac-elcapitan" },
 
+                    { "name": "bot407", "platform": "ios-9" },
+                    { "name": "bot197", "platform": "ios-simulator-9" },
+                    { "name": "bot402", "platform": "ios-simulator-9" },
+                    { "name": "bot403", "platform": "ios-simulator-9" },
+                    { "name": "bot215", "platform": "ios-simulator-9" },
+                    { "name": "bot216", "platform": "ios-simulator-9" },
+                    { "name": "bot217", "platform": "ios-simulator-9" },
+
                     { "name": "bot516", "platform": "win" },
                     { "name": "bot514", "platform": "win" },
                     { "name": "bot507", "platform": "win" },
@@ -246,6 +254,29 @@
                       "slavenames": ["bot194"]
                     },
                     {
+                      "name": "Apple iOS Release (Build)", "type": "Build", "builddir": "ios-9-release",
+                      "platform": "ios-9", "configuration": "release", "architectures": ["armv7", "armv7s", "arm64"],
+                      "slavenames": ["bot407"]
+                    },
+                    {
+                      "name": "Apple iOS Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-9-release",
+                      "platform": "ios-simulator-9", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-9-release-tests-wk1", "ios-simulator-9-release-tests-wk2"],
+                      "slavenames": ["bot402", "bot403"]
+                    },
+                    {
+                      "name": "Apple iOS Simulator Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "ios-simulator-9-release-tests-wk1",
+                      "platform": "ios-simulator-9", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot197", "bot215"]
+                    },
+                    {
+                      "name": "Apple iOS Simulator Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "ios-simulator-9-release-tests-wk2",
+                      "platform": "ios-simulator-9", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures"],
+                      "slavenames": ["bot216", "bot217"]
+                    },
+                    {
                       "name": "Apple Win Release (Build)", "type": "Build", "builddir": "win-release",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["win-release-tests"],
@@ -355,6 +386,12 @@
                     { "type": "PlatformSpecificScheduler", "platform": "mac-elcapitan", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple El Capitan Release (Build)", "Apple El Capitan Debug (Build)", "Apple El Capitan LLINT CLoop (BuildAndTest)", "Apple El Capitan 32-bit JSC (BuildAndTest)", "Apple El Capitan Release (32-bit Build)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-9", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS Release (Build)"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-9", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple iOS Simulator Release (Build)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple Win Release (Build)", "Apple Win Debug (Build)"]
                     },
@@ -420,6 +457,12 @@
                     },
                     { "type": "Triggerable", "name": "yosemite-release-perf",
                       "builderNames": ["Apple Yosemite Release WK2 (Perf)"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-9-release-tests-wk1",
+                      "builderNames": ["Apple iOS Simulator Release WK1 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "ios-simulator-9-release-tests-wk2",
+                      "builderNames": ["Apple iOS Simulator Release WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Apple Win 7 Release (Tests)"]
