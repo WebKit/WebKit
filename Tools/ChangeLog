@@ -1,5 +1,16 @@
 2015-09-30  Daniel Bates  <dabates@apple.com>
 
+        Actually fix the Mac builders build after <http://trac.webkit.org/changeset/190219>
+        (https://bugs.webkit.org/show_bug.cgi?id=149539)
+
+        I inadvertently didn't remove the ONLY_ACTIVE_ARCH=NO flag when building on a Mac
+        in <http://trac.webkit.org/changeset/190351>.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the Mac builders build after <http://trac.webkit.org/changeset/190219>
         (https://bugs.webkit.org/show_bug.cgi?id=149539)
 
