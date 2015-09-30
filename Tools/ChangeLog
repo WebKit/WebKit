@@ -1,5 +1,18 @@
 2015-09-30  Daniel Bates  <dabates@apple.com>
 
+        Rename iOS builders/testers to include version
+        https://bugs.webkit.org/show_bug.cgi?id=149685
+
+        Reviewed by Simon Fraser.
+
+        Substitute "Apple iOS 9" for "Apple iOS" in the names of iOS builders/testers so as
+        make it clear to a reader the version of iOS these builders/testers are using.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
         Add iOS criterion for triggering a build
         https://bugs.webkit.org/show_bug.cgi?id=149679
 
