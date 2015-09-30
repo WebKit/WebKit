@@ -162,6 +162,9 @@ bool RealtimeMediaSourceCenterOwr::getMediaStreamTrackSources(PassRefPtr<MediaSt
 
 void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
 {
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+
     for (auto item = sources; item; item = item->next) {
         OwrMediaSource* source = OWR_MEDIA_SOURCE(item->data);
 
@@ -187,10 +190,14 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
         if (sourceIterator == m_sourceMap.end())
             m_sourceMap.add(id, mediaSource);
 
+        if (mediaType & OWR_MEDIA_TYPE_AUDIO)
+            audioSources.append(mediaSource);
+        else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
+            videoSources.append(mediaSource);
     }
 
     // TODO: Make sure contraints are actually validated by checking source types.
-    m_client->constraintsValidated(Vector<RefPtr<RealtimeMediaSource>>(), Vector<RefPtr<RealtimeMediaSource>>());
+    m_client->constraintsValidated(audioSources, videoSources);
 }
 
 PassRefPtr<RealtimeMediaSource> RealtimeMediaSourceCenterOwr::firstSource(RealtimeMediaSource::Type type)

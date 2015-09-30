@@ -66,7 +66,10 @@ public:
         m_timer.startOneShot(0.5);
     }
 
-    virtual ~TimerEvent() { }
+    virtual ~TimerEvent()
+    {
+        m_mock = nullptr;
+    }
 
     void timerFired()
     {

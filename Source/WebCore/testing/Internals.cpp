@@ -387,8 +387,6 @@ Internals::Internals(Document* document)
 #if ENABLE(MEDIA_STREAM)
     MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter();
     enableMockRTCPeerConnectionHandler();
-    document->page()->removeSupplement(UserMediaController::supplementName());
-    WebCore::provideUserMediaTo(document->page(), new UserMediaClientMock());
 #endif
 }
 

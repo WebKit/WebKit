@@ -39,7 +39,7 @@ class MediaStreamCreationClient : public RefCounted<MediaStreamCreationClient> {
 public:
     virtual ~MediaStreamCreationClient() { }
 
-    virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& videoTracks, const Vector<RefPtr<RealtimeMediaSource>>& audioTracks) = 0;
+    virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) = 0;
     virtual void constraintsInvalid(const String& constraintName) = 0;
 
     virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) = 0;

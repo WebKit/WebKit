@@ -122,7 +122,7 @@ void UserMediaRequest::start()
     RealtimeMediaSourceCenter::singleton().validateRequestConstraints(this, m_audioConstraints, m_videoConstraints);
 }
 
-void UserMediaRequest::constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& videoTracks, const Vector<RefPtr<RealtimeMediaSource>>& audioTracks)
+void UserMediaRequest::constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks)
 {
     for (auto& audioTrack : audioTracks)
         m_audioDeviceUIDs.append(audioTrack->persistentID());

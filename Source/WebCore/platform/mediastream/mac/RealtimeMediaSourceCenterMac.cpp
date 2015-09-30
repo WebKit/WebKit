@@ -60,6 +60,9 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
 {
     ASSERT(client);
 
+    Vector<RefPtr<RealtimeMediaSource>> audioSources;
+    Vector<RefPtr<RealtimeMediaSource>> videoSources;
+
     if (audioConstraints) {
         String invalidConstraint;
         AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(nil, RealtimeMediaSource::Audio, audioConstraints.get(), invalidConstraint);
@@ -67,6 +70,8 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
             client->constraintsInvalid(invalidConstraint);
             return;
         }
+
+        audioSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints);
     }
 
     if (videoConstraints) {
@@ -76,10 +81,10 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
             client->constraintsInvalid(invalidConstraint);
             return;
         }
+
+        videoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints);
     }
-    Vector<RefPtr<RealtimeMediaSource>> bestVideoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints);
-    Vector<RefPtr<RealtimeMediaSource>> bestAudioSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints);
-    client->constraintsValidated(bestVideoSources, bestAudioSources);
+    client->constraintsValidated(audioSources, videoSources);
 }
 
 void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)

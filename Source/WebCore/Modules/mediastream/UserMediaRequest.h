@@ -81,7 +81,7 @@ private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&&);
 
     // MediaStreamCreationClient
-    virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>&, const Vector<RefPtr<RealtimeMediaSource>>&) override final;
+    virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>& videoTracks) override final;
     virtual void constraintsInvalid(const String& constraintName) override final;
     virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) override final;
     virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) override final;

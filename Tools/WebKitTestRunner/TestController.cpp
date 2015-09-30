@@ -1669,7 +1669,7 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
             else
                 audioDeviceUID = WKStringCreateWithUTF8CString("");
 
-            WKUserMediaPermissionRequestAllow(request.get(), videoDeviceUID.get(), audioDeviceUID.get());
+            WKUserMediaPermissionRequestAllow(request.get(), audioDeviceUID.get(), videoDeviceUID.get());
 
         } else
             WKUserMediaPermissionRequestDeny(request.get());

@@ -529,7 +529,9 @@ MediaStream* RTCPeerConnection::getStreamById(const String& streamId)
 
 void RTCPeerConnection::getStats(PassRefPtr<RTCStatsCallback> successCallback, PassRefPtr<RTCPeerConnectionErrorCallback> errorCallback, PassRefPtr<MediaStreamTrack> selector)
 {
-    RefPtr<RTCStatsRequestImpl> statsRequest = RTCStatsRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback, &selector->privateTrack());
+    RefPtr<MediaStreamTrack> track = selector;
+    RefPtr<RTCStatsRequestImpl> statsRequest = RTCStatsRequestImpl::create(scriptExecutionContext(), successCallback, errorCallback, track ? &track->privateTrack() : nullptr);
+
     // FIXME: Add passing selector as part of the statsRequest.
     m_peerHandler->getStats(statsRequest.release());
 }
