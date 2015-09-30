@@ -1,3 +1,9 @@
+2015-09-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after CMake conversion.
+
+        * Source/cmake/OptionsWin.cmake: Correct some Windows build flags.
+
 2015-09-29  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK][CMake] Warning about CMP0058
