@@ -29,7 +29,7 @@
 #include "CrossThreadCopier.h"
 #include <functional>
 
-namespace WebKit {
+namespace WebCore {
 
 class CrossThreadTask {
     WTF_MAKE_NONCOPYABLE(CrossThreadTask);
@@ -223,6 +223,6 @@ std::unique_ptr<CrossThreadTask> createCrossThreadTask(
         WebCore::CrossThreadCopier<P8>::copy(parameter8));
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // CrossThreadTask_h

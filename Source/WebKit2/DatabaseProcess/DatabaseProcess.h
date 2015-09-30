@@ -33,13 +33,13 @@
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+class CrossThreadTask;
 class SessionID;
 struct SecurityOriginData;
 }
 
 namespace WebKit {
 
-class CrossThreadTask;
 class DatabaseToWebProcessConnection;
 class UniqueIDBDatabase;
 
@@ -64,7 +64,7 @@ public:
 
     WorkQueue& queue() { return m_queue.get(); }
 
-    void postDatabaseTask(std::unique_ptr<CrossThreadTask>);
+    void postDatabaseTask(std::unique_ptr<WebCore::CrossThreadTask>);
 
 private:
     DatabaseProcess();
@@ -112,7 +112,7 @@ private:
     HashMap<UniqueIDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_idbDatabases;
 #endif
 
-    Deque<std::unique_ptr<CrossThreadTask>> m_databaseTasks;
+    Deque<std::unique_ptr<WebCore::CrossThreadTask>> m_databaseTasks;
     Lock m_databaseTaskMutex;
 };
 
