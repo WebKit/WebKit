@@ -1,3 +1,14 @@
+2015-09-29  Daniel Bates  <dabates@apple.com>
+
+        Make WebKit for iOS Simulator build with the public iOS 9 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=149652
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/SafariServicesSPI.h: Add definition for SFSafariViewController.
+        * Platform/spi/ios/UIKitSPI.h: Add more SPI.
+        * WebProcess/cocoa/WebProcessCocoa.mm: Include header pthreadSPI.h.
+
 2015-09-29  Brady Eidson  <beidson@apple.com>
 
         Followup to "Move WebKit2 AsyncTask to WebCore CrossThreadTask."

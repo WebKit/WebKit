@@ -51,6 +51,7 @@
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/pthreadSPI.h>
 #import <WebCore/VNodeTracker.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKitSystemInterface.h>

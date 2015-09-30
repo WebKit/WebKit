@@ -81,7 +81,7 @@ static const double DefaultWatchdogTimerInterval = 1;
 
 @class WebAVMediaSelectionOption;
 
-@interface WebAVPlayerController : NSObject <AVPlayerViewControllerDelegate> {
+@interface WebAVPlayerController : NSObject <AVPlayerViewControllerDelegate_WebKitOnly> {
     WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
     BOOL _pictureInPictureInterrupted;
