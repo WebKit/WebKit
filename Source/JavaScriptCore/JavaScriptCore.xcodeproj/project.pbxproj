@@ -980,6 +980,8 @@
 		623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 623A37EB1B87A7BD00754209 /* RegisterMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		627673231B680C1E00FD9F2E /* CallMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 627673211B680C1E00FD9F2E /* CallMode.cpp */; };
 		627673241B680C1E00FD9F2E /* CallMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 627673221B680C1E00FD9F2E /* CallMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		62774DAA1B8D4B190006F05A /* FTLJSTailCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62774DA81B8D4B190006F05A /* FTLJSTailCall.cpp */; };
+		62774DAB1B8D4B190006F05A /* FTLJSTailCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 62774DA91B8D4B190006F05A /* FTLJSTailCall.h */; };
 		62D2D38F1ADF103F000206C1 /* FunctionRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */; };
 		62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D2D38E1ADF103F000206C1 /* FunctionRareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62D755D41B84FB3D001801FA /* CallFrameShuffler64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 62D755D31B84FB39001801FA /* CallFrameShuffler64.cpp */; };
@@ -2804,6 +2806,8 @@
 		623A37EB1B87A7BD00754209 /* RegisterMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterMap.h; sourceTree = "<group>"; };
 		627673211B680C1E00FD9F2E /* CallMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallMode.cpp; sourceTree = "<group>"; };
 		627673221B680C1E00FD9F2E /* CallMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallMode.h; sourceTree = "<group>"; };
+		62774DA81B8D4B190006F05A /* FTLJSTailCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJSTailCall.cpp; path = ftl/FTLJSTailCall.cpp; sourceTree = "<group>"; };
+		62774DA91B8D4B190006F05A /* FTLJSTailCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJSTailCall.h; path = ftl/FTLJSTailCall.h; sourceTree = "<group>"; };
 		62A9A29E1B0BED4800BD54CA /* DFGLazyNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLazyNode.cpp; path = dfg/DFGLazyNode.cpp; sourceTree = "<group>"; };
 		62A9A29F1B0BED4800BD54CA /* DFGLazyNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLazyNode.h; path = dfg/DFGLazyNode.h; sourceTree = "<group>"; };
 		62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionRareData.cpp; sourceTree = "<group>"; };
@@ -3982,6 +3986,8 @@
 				0FD1202E1A8AED12000F5280 /* FTLJSCallBase.h */,
 				0FD120311A8C85BD000F5280 /* FTLJSCallVarargs.cpp */,
 				0FD120321A8C85BD000F5280 /* FTLJSCallVarargs.h */,
+				62774DA81B8D4B190006F05A /* FTLJSTailCall.cpp */,
+				62774DA91B8D4B190006F05A /* FTLJSTailCall.h */,
 				0F8F2B93172E049E007DBDA5 /* FTLLink.cpp */,
 				0F8F2B94172E049E007DBDA5 /* FTLLink.h */,
 				0FCEFADD180738C000472CE4 /* FTLLocation.cpp */,
@@ -6330,6 +6336,7 @@
 				0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */,
 				0FD120301A8AED12000F5280 /* FTLJSCallBase.h in Headers */,
 				0FD120341A8C85BD000F5280 /* FTLJSCallVarargs.h in Headers */,
+				62774DAB1B8D4B190006F05A /* FTLJSTailCall.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */,
@@ -7702,6 +7709,7 @@
 				0F6B1CB5185FC9E900845D97 /* FTLJSCall.cpp in Sources */,
 				0FD1202F1A8AED12000F5280 /* FTLJSCallBase.cpp in Sources */,
 				0FD120331A8C85BD000F5280 /* FTLJSCallVarargs.cpp in Sources */,
+				62774DAA1B8D4B190006F05A /* FTLJSTailCall.cpp in Sources */,
 				0F8F2B95172E04A0007DBDA5 /* FTLLink.cpp in Sources */,
 				0FCEFADF180738C000472CE4 /* FTLLocation.cpp in Sources */,
 				0FEA0A0F170513DB00BB722C /* FTLLowerDFGToLLVM.cpp in Sources */,

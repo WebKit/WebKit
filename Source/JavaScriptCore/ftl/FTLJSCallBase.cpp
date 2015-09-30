@@ -52,19 +52,34 @@ void JSCallBase::emit(CCallHelpers& jit)
 {
     m_callLinkInfo = jit.codeBlock()->addCallLinkInfo();
     
+    if (CallLinkInfo::callModeFor(m_type) == CallMode::Tail)
+        jit.emitRestoreCalleeSaves();
+
     CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
         CCallHelpers::NotEqual, GPRInfo::regT0, m_targetToCheck,
         CCallHelpers::TrustedImmPtr(0));
-    
-    m_fastCall = jit.nearCall();
-    CCallHelpers::Jump done = jit.jump();
-    
+
+    CCallHelpers::Jump done;
+
+    if (CallLinkInfo::callModeFor(m_type) == CallMode::Tail) {
+        jit.prepareForTailCallSlow();
+        m_fastCall = jit.nearTailCall();
+    } else {
+        m_fastCall = jit.nearCall();
+        done = jit.jump();
+    }
+
     slowPath.link(&jit);
-    
+
     jit.move(CCallHelpers::TrustedImmPtr(m_callLinkInfo), GPRInfo::regT2);
     m_slowCall = jit.nearCall();
-    
-    done.link(&jit);
+
+    if (CallLinkInfo::callModeFor(m_type) == CallMode::Tail)
+        jit.abortWithReason(JITDidReturnFromTailCall);
+    else
+        done.link(&jit);
+
+    m_callLinkInfo->setUpCall(m_type, m_origin, GPRInfo::regT0);
 }
 
 void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)
@@ -72,9 +87,8 @@ void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)
     linkBuffer.link(
         m_slowCall, FunctionPtr(vm.getCTIStub(linkCallThunkGenerator).code().executableAddress()));
 
-    m_callLinkInfo->setUpCallFromFTL(m_type, m_origin, linkBuffer.locationOfNearCall(m_slowCall),
-        linkBuffer.locationOf(m_targetToCheck), linkBuffer.locationOfNearCall(m_fastCall),
-        GPRInfo::regT0);
+    m_callLinkInfo->setCallLocations(linkBuffer.locationOfNearCall(m_slowCall),
+        linkBuffer.locationOf(m_targetToCheck), linkBuffer.locationOfNearCall(m_fastCall));
 }
 
 } } // namespace JSC::FTL

@@ -55,6 +55,11 @@ public:
         : m_index(invalid())
     {
     }
+
+    Reg(WTF::HashTableDeletedValueType)
+        : m_index(deleted())
+    {
+    }
     
     Reg(MacroAssembler::RegisterID reg)
         : m_index(MacroAssembler::registerIndex(reg))
@@ -102,6 +107,8 @@ public:
     bool isSet() const { return m_index != invalid(); }
     bool operator!() const { return !isSet(); }
     explicit operator bool() const { return isSet(); }
+
+    bool isHashTableDeletedValue() const { return m_index == deleted(); }
     
     bool isGPR() const
     {
@@ -165,11 +172,33 @@ public:
 
 private:
     static uint8_t invalid() { return 0xff; }
+
+    static uint8_t deleted() { return 0xfe; }
     
     uint8_t m_index;
 };
 
+struct RegHash {
+    static unsigned hash(const Reg& key) { return key.hash(); }
+    static bool equal(const Reg& a, const Reg& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::Reg> {
+    typedef JSC::RegHash Hash;
+};
+
+template<typename T> struct HashTraits;
+template<> struct HashTraits<JSC::Reg> : SimpleClassHashTraits<JSC::Reg> {
+    static const bool emptyValueIsZero = false;
+ };
+
+} // namespace WTF
 
 #endif // ENABLE(JIT)
 

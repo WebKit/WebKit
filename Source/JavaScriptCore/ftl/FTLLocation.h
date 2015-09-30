@@ -120,7 +120,9 @@ public:
         return u.constant;
     }
     
-    bool operator!() const { return kind() == Unprocessed && !u.variable.offset; }
+    explicit operator bool() const { return kind() != Unprocessed || u.variable.offset; }
+
+    bool operator!() const { return !static_cast<bool>(*this); }
     
     bool isHashTableDeletedValue() const { return kind() == Unprocessed && u.variable.offset; }
     

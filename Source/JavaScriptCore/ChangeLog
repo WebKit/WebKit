@@ -1,3 +1,29 @@
+2015-09-30  Michael Saboff  <msaboff@apple.com>
+
+        Relanding r190289 with the following two fixes:
+
+         1. REGRESSION(r190289): It made Speedometer/Full.html performance test fail
+            https://bugs.webkit.org/show_bug.cgi?id=149621
+
+            Reviewed by Saam Barati.
+
+            We need to restore callee saves for both the fast and slow paths before making a
+            tail call in the FTL.
+
+            * ftl/FTLJSCallBase.cpp:
+            (JSC::FTL::JSCallBase::emit):
+
+         2. [ARM] REGRESSION(r190289): It made 374 tests crash on 32 bit ARM Linux
+            https://bugs.webkit.org/show_bug.cgi?id=149619
+
+            Reviewed by Filip Pizlo.
+
+            Need to check for ARMv7_TRADITIONAL and ARMv7 in addition to ARM in "if"
+            statement to handle platforms with a link register.
+            
+            * llint/LowLevelInterpreter.asm:
+            (prepareForTailCall):
+
 2015-09-30  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add TypedArray.prototype functionality.

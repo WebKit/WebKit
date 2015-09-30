@@ -771,6 +771,7 @@ void SpeculativeJIT::emitCall(Node* node)
             calleeGPR = callee.gpr();
             callee.use();
 
+            shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
             shuffleData.numLocals = m_jit.graph().frameRegisterCount();
             shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatJS);
             shuffleData.args.resize(numPassedArgs);
@@ -868,7 +869,7 @@ void SpeculativeJIT::emitCall(Node* node)
         m_jit.addPtr(TrustedImm32(m_jit.graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, JITCompiler::stackPointerRegister);
     }
 
-    callLinkInfo->setUpCall(callType, m_currentNode->origin.semantic,  calleeGPR);    
+    callLinkInfo->setUpCall(callType, m_currentNode->origin.semantic, calleeGPR);
     m_jit.addJSCall(fastCall, slowCall, targetToCheck, callLinkInfo);
 }
 

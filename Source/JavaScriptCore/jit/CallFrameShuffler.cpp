@@ -71,6 +71,10 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
         else
             addNew(reg.fpr(), data.registers[reg]);
     }
+
+    m_tagTypeNumber = data.tagTypeNumber;
+    if (m_tagTypeNumber != InvalidGPRReg)
+        lockGPR(m_tagTypeNumber);
 #endif
 }
 
@@ -80,12 +84,12 @@ void CallFrameShuffler::dump(PrintStream& out) const
     static const char* dangerDelimiter       = " X-------------------------------X ";
     static const char* dangerBoundsDelimiter = " XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ";
     static const char* emptySpace            = "                                   ";
-    ASSERT(m_alignedNewFrameSize <= numLocals());
     out.print("          ");
     out.print("           Old frame               ");
     out.print("           New frame               ");
     out.print("\n");
-    for (int i = 0; i < m_alignedOldFrameSize + numLocals() + 3; ++i) {
+    int totalSize = m_alignedOldFrameSize + std::max(numLocals(), m_alignedNewFrameSize) + 3;
+    for (int i = 0; i < totalSize; ++i) {
         VirtualRegister old { m_alignedOldFrameSize - i - 1 };
         VirtualRegister newReg { old + m_frameDelta };
 
@@ -204,6 +208,10 @@ void CallFrameShuffler::dump(PrintStream& out) const
         out.print("   Old frame offset is ", m_oldFrameOffset, "\n");
     if (m_newFrameOffset)
         out.print("   New frame offset is ", m_newFrameOffset, "\n");
+#if USE(JSVALUE64)
+    if (m_tagTypeNumber != InvalidGPRReg)
+        out.print("   TagTypeNumber is currently in ", m_tagTypeNumber, "\n");
+#endif
 }
 
 CachedRecovery* CallFrameShuffler::getCachedRecovery(ValueRecovery recovery)
@@ -247,17 +255,26 @@ void CallFrameShuffler::spill(CachedRecovery& cachedRecovery)
     ASSERT(cachedRecovery.recovery().isInRegisters());
 
     VirtualRegister spillSlot { 0 };
-    for (VirtualRegister slot = firstOld(); slot <= lastOld(); slot -= 1) {
-        ASSERT(slot < newAsOld(firstNew()));
+    for (VirtualRegister slot = firstOld(); slot <= lastOld(); slot += 1) {
+        if (slot >= newAsOld(firstNew()))
+            break;
+
         if (getOld(slot))
             continue;
 
         spillSlot = slot;
         break;
     }
-    // We must have enough slots to be able to fit the whole
-    // callee's frame for the slow path.
-    RELEASE_ASSERT(spillSlot.isLocal());
+    // We must have enough slots to be able to fit the whole callee's
+    // frame for the slow path - unless we are in the FTL. In that
+    // case, we are allowed to extend the frame *once*, since we are
+    // guaranteed to have enough available space for that.
+    if (spillSlot >= newAsOld(firstNew()) || !spillSlot.isLocal()) {
+        RELEASE_ASSERT(!m_didExtendFrame);
+        extendFrameIfNeeded();
+        spill(cachedRecovery);
+        return;
+    }
 
     if (verbose)
         dataLog("   * Spilling ", cachedRecovery.recovery(), " into ", spillSlot, "\n");
@@ -286,6 +303,38 @@ void CallFrameShuffler::emitDeltaCheck()
         dataLog("  Skipping the fp-sp delta check since there is too much pressure");
 }
 
+void CallFrameShuffler::extendFrameIfNeeded()
+{
+    ASSERT(!m_didExtendFrame);
+    ASSERT(!isUndecided());
+
+    VirtualRegister firstRead { firstOld() };
+    for (; firstRead <= virtualRegisterForLocal(0); firstRead += 1) {
+        if (getOld(firstRead))
+            break;
+    }
+    size_t availableSize = static_cast<size_t>(firstRead.offset() - firstOld().offset());
+    size_t wantedSize = m_newFrame.size() + m_newFrameOffset;
+
+    if (availableSize < wantedSize) {
+        size_t delta = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), wantedSize - availableSize);
+        m_oldFrame.grow(m_oldFrame.size() + delta);
+        for (size_t i = 0; i < delta; ++i)
+            m_oldFrame[m_oldFrame.size() - i - 1] = nullptr;
+        m_jit.subPtr(MacroAssembler::TrustedImm32(delta * sizeof(Register)), MacroAssembler::stackPointerRegister);
+
+        if (isSlowPath())
+            m_frameDelta = numLocals() + JSStack::CallerFrameAndPCSize;
+        else
+            m_oldFrameOffset = numLocals();
+
+        if (verbose)
+            dataLogF("  Not enough space - extending the old frame %zu slot\n", delta);
+    }
+
+    m_didExtendFrame = true;
+}
+
 void CallFrameShuffler::prepareForSlowPath()
 {
     ASSERT(isUndecided());
@@ -296,7 +345,15 @@ void CallFrameShuffler::prepareForSlowPath()
     m_newFrameOffset = -JSStack::CallerFrameAndPCSize;
 
     if (verbose)
-        dataLog("\n\nPreparing frame for slow path call:\n", *this);
+        dataLog("\n\nPreparing frame for slow path call:\n");
+
+    // When coming from the FTL, we need to extend the frame. In other
+    // cases, we may end up extending the frame if we previously
+    // spilled things (e.g. in polymorphic cache).
+    extendFrameIfNeeded();
+
+    if (verbose)
+        dataLog(*this);
 
     prepareAny();
 
@@ -646,6 +703,11 @@ void CallFrameShuffler::prepareAny()
         ASSERT_UNUSED(writesOK, writesOK);
     }
 
+#if USE(JSVALUE64)
+    if (m_tagTypeNumber != InvalidGPRReg && m_newRegisters[m_tagTypeNumber])
+        releaseGPR(m_tagTypeNumber);
+#endif
+
     // Handle 2) by loading all registers. We don't have to do any
     // writes, since they have been taken care of above.
     if (verbose)
@@ -659,6 +721,11 @@ void CallFrameShuffler::prepareAny()
         emitBox(*cachedRecovery);
         ASSERT(cachedRecovery->targets().isEmpty());
     }
+
+#if USE(JSVALUE64)
+    if (m_tagTypeNumber != InvalidGPRReg)
+        releaseGPR(m_tagTypeNumber);
+#endif
 
     // At this point, we have read everything we cared about from the
     // stack, and written everything we had to to the stack.
