@@ -116,7 +116,7 @@
                     },
                     { "name": "Apple El Capitan Release JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-release-tests-jsc",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["bot210"]
+                      "slavenames": ["bot126"]
                     },
                     { "name": "Apple El Capitan Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "elcapitan-release-tests-wk1",
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
