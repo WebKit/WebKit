@@ -48,7 +48,7 @@ JSValue JSReadableStreamReader::closed(ExecState& state) const
 {
     if (!m_closed) {
         JSPromiseDeferred* closedPromise = JSPromiseDeferred::create(&state, globalObject());
-        const_cast<JSReadableStreamReader*>(this)->m_closed.set(state.vm(), this, closedPromise->promise());
+        m_closed.set(state.vm(), this, closedPromise->promise());
         impl().closed(DeferredWrapper(&state, globalObject(), closedPromise));
     }
     return m_closed.get();

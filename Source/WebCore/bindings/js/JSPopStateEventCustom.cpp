@@ -40,7 +40,7 @@ using namespace JSC;
 namespace WebCore {
 
 // Save the state value to the m_state member of a JSPopStateEvent, and return it, for convenience.
-static const JSValue& cacheState(ExecState& state, JSPopStateEvent* event, const JSValue& eventState)
+static const JSValue& cacheState(ExecState& state, const JSPopStateEvent* event, const JSValue& eventState)
 {
     event->m_state.set(state.vm(), event, eventState);
     return eventState;
@@ -69,12 +69,12 @@ JSValue JSPopStateEvent::state(ExecState& state) const
                 eventState = jsNull();
         }
         
-        return cacheState(state, const_cast<JSPopStateEvent*>(this), eventState);
+        return cacheState(state, this, eventState);
     }
     
     History* history = event.history();
     if (!history || !event.serializedState())
-        return cacheState(state, const_cast<JSPopStateEvent*>(this), jsNull());
+        return cacheState(state, this, jsNull());
 
     // There's no cached value from a previous invocation, nor a state value was provided by the
     // event, but there is a history object, so first we need to see if the state object has been
@@ -91,7 +91,7 @@ JSValue JSPopStateEvent::state(ExecState& state) const
     } else
         result = event.serializedState()->deserialize(&state, globalObject(), 0);
 
-    return cacheState(state, const_cast<JSPopStateEvent*>(this), result);
+    return cacheState(state, this, result);
 }
 
 } // namespace WebCore

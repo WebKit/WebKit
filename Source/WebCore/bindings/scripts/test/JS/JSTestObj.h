@@ -52,8 +52,8 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
-    JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
 

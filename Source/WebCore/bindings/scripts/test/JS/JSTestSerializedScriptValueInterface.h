@@ -53,8 +53,8 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    JSC::WriteBarrier<JSC::Unknown> m_cachedValue;
-    JSC::WriteBarrier<JSC::Unknown> m_cachedReadonlyValue;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_cachedValue;
+    mutable JSC::WriteBarrier<JSC::Unknown> m_cachedReadonlyValue;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
     TestSerializedScriptValueInterface& impl() const { return *m_impl; }

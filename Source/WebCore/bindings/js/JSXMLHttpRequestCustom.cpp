@@ -196,8 +196,7 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
             JSValue value = JSONParse(&state, impl().responseTextIgnoringResponseType());
             if (!value)
                 value = jsNull();
-            JSXMLHttpRequest* jsRequest = const_cast<JSXMLHttpRequest*>(this);
-            jsRequest->m_response.set(state.vm(), jsRequest, value);
+            m_response.set(state.vm(), this, value);
 
             impl().didCacheResponseJSON();
 

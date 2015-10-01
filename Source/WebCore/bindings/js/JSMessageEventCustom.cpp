@@ -99,7 +99,7 @@ JSValue JSMessageEvent::data(ExecState& state) const
     }
 
     // Save the result so we don't have to deserialize the value again.
-    const_cast<JSMessageEvent*>(this)->m_data.set(state.vm(), this, result);
+    m_data.set(state.vm(), this, result);
     return result;
 }
 
