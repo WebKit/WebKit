@@ -3705,6 +3705,9 @@ set_target_properties(WebCoreTestSupport PROPERTIES FOLDER "WebCore")
 
 if (WebCoreTestSupport_OUTPUT_NAME)
     set_target_properties(WebCoreTestSupport PROPERTIES OUTPUT_NAME ${WebCoreTestSupport_OUTPUT_NAME})
+    if (MSVC)
+        add_compile_options(/GF- /WX-)
+    endif ()
 endif ()
 
 if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)

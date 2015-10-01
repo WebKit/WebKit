@@ -1,3 +1,12 @@
+2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed CMake build fixes.
+
+        * CMakeLists.txt: Set the same build definitions as the original
+        project file.
+        * PlatformWin.cmake: Remove some soft-linked files from the static
+        link commands. Set build flags to match original project files.
+
 2015-09-28  Brady Eidson  <beidson@apple.com>
 
         Add an IDB Server that can roundtrip a request back to the client.

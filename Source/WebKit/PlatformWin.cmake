@@ -22,22 +22,12 @@ else ()
         win/WebURLAuthenticationChallengeSenderCFNet.cpp
     )
     list(APPEND WebKit_LIBRARIES
-        PRIVATE ASL${DEBUG_SUFFIX}
-        PRIVATE AVFoundationCF${DEBUG_SUFFIX}
         PRIVATE CFNetwork${DEBUG_SUFFIX}
-        PRIVATE CoreAudioToolbox${DEBUG_SUFFIX}
         PRIVATE CoreFoundation${DEBUG_SUFFIX}
         PRIVATE CoreGraphics${DEBUG_SUFFIX}
-        PRIVATE CoreMedia${DEBUG_SUFFIX}
-        PRIVATE CoreText${DEBUG_SUFFIX}
-        PRIVATE CoreVideo${DEBUG_SUFFIX}
-        PRIVATE MediaAccessibility${DEBUG_SUFFIX}
-        PRIVATE QuartzCore${DEBUG_SUFFIX}
         PRIVATE SQLite3${DEBUG_SUFFIX}
         PRIVATE WebKitSystemInterface${DEBUG_SUFFIX}
-        PRIVATE WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
         PRIVATE libdispatch${DEBUG_SUFFIX}
-        PRIVATE libexslt${DEBUG_SUFFIX}
         PRIVATE libicuin${DEBUG_SUFFIX}
         PRIVATE libicuuc${DEBUG_SUFFIX}
         PRIVATE libxml2${DEBUG_SUFFIX}
@@ -451,6 +441,9 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
 endif ()
 
 set(WebKit_LIBRARY_TYPE SHARED)
+
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 
 # We need the webkit libraries to come before the system default libraries to prevent symbol conflicts with uuid.lib.
 # To do this we add system default libs as webkit libs and zero out system default libs.
