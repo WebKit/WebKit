@@ -424,6 +424,7 @@ list(APPEND WebKit_LIBRARIES
     PRIVATE Comsupp
     PRIVATE Crypt32
     PRIVATE Iphlpapi
+    PRIVATE Psapi
     PRIVATE Rpcrt4
     PRIVATE Shlwapi
     PRIVATE Usp10
