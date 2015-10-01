@@ -1,3 +1,21 @@
+2015-10-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Clip string previews
+        https://bugs.webkit.org/show_bug.cgi?id=149708
+
+        Only show first 140 characters in strings previews.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Utilities.js:
+        (String.prototype.truncate): Added.
+        A smart trancate function that doesn't split words.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._shouldConsiderObjectLossless):
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createElementForTypesAndValue):
+
 2015-09-30  João Oliveira  <hello@jxs.pt>
 
         Web Inspector: Adjust font size of Developer Tools using Command,+ or Command,-

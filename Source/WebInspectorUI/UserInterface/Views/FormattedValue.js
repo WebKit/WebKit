@@ -166,6 +166,7 @@ WebInspector.FormattedValue.createElementForTypesAndValue = function(type, subty
 
     // String: quoted and replace newlines as nice unicode symbols.
     if (type === "string") {
+        displayString = displayString.truncate(WebInspector.FormattedValue.MAX_PREVIEW_STRING_LENGTH);
         span.textContent = doubleQuotedString(displayString.replace(/\n/g, "\u21B5"));
         return span;
     }
@@ -236,3 +237,5 @@ WebInspector.FormattedValue.createObjectTreeOrFormattedValueForRemoteObject = fu
 
     return WebInspector.FormattedValue.createElementForRemoteObject(object);
 };
+
+WebInspector.FormattedValue.MAX_PREVIEW_STRING_LENGTH = 140;

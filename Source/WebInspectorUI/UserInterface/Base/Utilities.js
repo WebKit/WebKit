@@ -474,6 +474,24 @@ Object.defineProperty(String.prototype, "trimEnd",
     }
 });
 
+Object.defineProperty(String.prototype, "truncate",
+{
+    value: function(maxLength)
+    {
+        "use strict";
+
+        if (this.length <= maxLength)
+            return this;
+
+        let clipped = this.slice(0, maxLength);
+        let indexOfLastWhitespace = clipped.search(/\s\S*$/);
+        if (indexOfLastWhitespace > Math.floor(maxLength / 2))
+            clipped = clipped.slice(0, indexOfLastWhitespace - 1);
+
+        return clipped + "\u2026";
+    }
+});
+
 Object.defineProperty(String.prototype, "collapseWhitespace",
 {
     value: function()
