@@ -43,6 +43,7 @@ WebInspector.ProbeSetDataGrid = class ProbeSetDataGrid extends WebInspector.Data
         this.element.classList.add("inline");
 
         this._frameNodes = new Map;
+        this._lastUpdatedFrame = null;
         this._nodesSinceLastNavigation = [];
 
         this._listeners = new WebInspector.EventListenerSet(this, "ProbeSetDataGrid instance listeners");
@@ -103,8 +104,7 @@ WebInspector.ProbeSetDataGrid = class ProbeSetDataGrid extends WebInspector.Data
         this._dataListeners.uninstall(true);
         this.removeChildren();
         this._frameNodes = new Map;
-        this._separators = new Map;
-        delete this._lastUpdatedFrame;
+        this._lastUpdatedFrame = null;
     }
 
     _updateNodeForFrame(frame)
