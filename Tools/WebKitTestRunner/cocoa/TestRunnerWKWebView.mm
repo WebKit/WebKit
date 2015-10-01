@@ -44,6 +44,7 @@
 
 @interface TestRunnerWKWebView ()
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
+@property (nonatomic, copy) void (^showKeyboardCompletionHandler)(void);
 @end
 
 @implementation TestRunnerWKWebView
@@ -57,12 +58,40 @@
 #endif
 
 #if PLATFORM(IOS)
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    if (self = [super initWithFrame:frame configuration:configuration]) {
+        NSNotificationCenter* center = [NSNotificationCenter defaultCenter];
+        [center addObserver:self selector:@selector(_keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+        [center addObserver:self selector:@selector(_keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [super dealloc];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {
     ASSERT(!self.zoomToScaleCompletionHandler);
     self.zoomToScaleCompletionHandler = completionHandler;
 
     [self.scrollView setZoomScale:scale animated:animated];
+}
+
+- (void)_keyboardDidShow:(NSNotification *)notification
+{
+    if (self.didShowKeyboardCallback)
+        self.didShowKeyboardCallback();
+}
+
+- (void)_keyboardDidHide:(NSNotification *)notification
+{
+    if (self.didHideKeyboardCallback)
+        self.didHideKeyboardCallback();
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view

@@ -30,6 +30,7 @@
 
 #import "HIDEventGenerator.h"
 #import "PlatformWebView.h"
+#import "StringFunctions.h"
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
@@ -92,6 +93,16 @@ void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef callback)
     }];
 }
 
+void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback)
+{
+    unsigned callbackID = m_context.prepareForAsyncTask(callback);
+
+    // Assumes that the keyboard is already shown.
+    [[HIDEventGenerator sharedHIDEventGenerator] keyDown:toWTFString(toWK(character)) completionBlock:^{
+        m_context.asyncTaskComplete(callbackID);
+    }];
+}
+
 double UIScriptController::minimumZoomScale() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
@@ -127,6 +138,22 @@ void UIScriptController::platformSetDidEndZoomingCallback()
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
     webView.didEndZoomingCallback = ^{
         m_context.fireCallback(m_didEndZoomingCallback);
+    };
+}
+
+void UIScriptController::platformSetDidShowKeyboardCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didShowKeyboardCallback = ^{
+        m_context.fireCallback(m_didShowKeyboardCallback);
+    };
+}
+
+void UIScriptController::platformSetDidHideKeyboardCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didHideKeyboardCallback = ^{
+        m_context.fireCallback(m_didHideKeyboardCallback);
     };
 }
 

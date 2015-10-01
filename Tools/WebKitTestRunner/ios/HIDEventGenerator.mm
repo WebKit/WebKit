@@ -129,6 +129,17 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     return self;
 }
 
+- (void)_sendIOHIDKeyboardEvent:(uint64_t)timestamp usage:(uint32_t)usage isKeyDown:(bool)isKeyDown
+{
+    RetainPtr<IOHIDEventRef> eventRef = adoptCF(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault,
+        timestamp,
+        kHIDPage_KeyboardOrKeypad,
+        usage,
+        isKeyDown,
+        kIOHIDEventOptionNone));
+    [self _sendHIDEvent:eventRef.get()];
+}
+
 - (IOHIDEventRef)_createIOHIDEventType:(HandEventType)eventType
 {
     BOOL isTouching = (eventType == HandEventTouched || eventType == HandEventMoved || eventType == HandEventChordChanged);
@@ -426,6 +437,171 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         completionBlock();
         Block_release(completionBlock);
     }
+}
+
+static inline bool shouldWrapWithShiftKeyEventForCharacter(NSString *key)
+{
+    if (key.length != 1)
+        return false;
+    int keyCode = [key characterAtIndex:0];
+    if (65 <= keyCode && keyCode <= 90)
+        return true;
+    switch (keyCode) {
+    case '`':
+    case '!':
+    case '@':
+    case '#':
+    case '$':
+    case '%':
+    case '^':
+    case '&':
+    case '*':
+    case '(':
+    case ')':
+    case '_':
+    case '+':
+    case '{':
+    case '}':
+    case '|':
+    case ':':
+    case '"':
+    case '<':
+    case '>':
+    case '?':
+    case '~':
+        return true;
+    }
+    return false;
+}
+
+static inline uint32_t hidUsageCodeForCharacter(NSString *key)
+{
+    const int uppercaseAlphabeticOffset = 'A' - kHIDUsage_KeyboardA;
+    const int lowercaseAlphabeticOffset = 'a' - kHIDUsage_KeyboardA;
+    const int numericNonZeroOffset = '1' - kHIDUsage_Keyboard1;
+    if (key.length == 1) {
+        // Handle alphanumeric characters and basic symbols.
+        int keyCode = [key characterAtIndex:0];
+        if (97 <= keyCode && keyCode <= 122) // Handle a-z.
+            return keyCode - lowercaseAlphabeticOffset;
+
+        if (65 <= keyCode && keyCode <= 90) // Handle A-Z.
+            return keyCode - uppercaseAlphabeticOffset;
+
+        if (49 <= keyCode && keyCode <= 57) // Handle 1-9.
+            return keyCode - numericNonZeroOffset;
+
+        // Handle all other cases.
+        switch (keyCode) {
+        case '`':
+        case '~':
+            return kHIDUsage_KeyboardGraveAccentAndTilde;
+        case '!':
+            return kHIDUsage_Keyboard1;
+        case '@':
+            return kHIDUsage_Keyboard2;
+        case '#':
+            return kHIDUsage_Keyboard3;
+        case '$':
+            return kHIDUsage_Keyboard4;
+        case '%':
+            return kHIDUsage_Keyboard5;
+        case '^':
+            return kHIDUsage_Keyboard6;
+        case '&':
+            return kHIDUsage_Keyboard7;
+        case '*':
+            return kHIDUsage_Keyboard8;
+        case '(':
+            return kHIDUsage_Keyboard9;
+        case ')':
+        case '0':
+            return kHIDUsage_Keyboard0;
+        case '-':
+        case '_':
+            return kHIDUsage_KeyboardHyphen;
+        case '=':
+        case '+':
+            return kHIDUsage_KeyboardEqualSign;
+        case '\t':
+            return kHIDUsage_KeyboardTab;
+        case '[':
+        case '{':
+            return kHIDUsage_KeyboardOpenBracket;
+        case ']':
+        case '}':
+            return kHIDUsage_KeyboardCloseBracket;
+        case '\\':
+        case '|':
+            return kHIDUsage_KeyboardBackslash;
+        case ';':
+        case ':':
+            return kHIDUsage_KeyboardSemicolon;
+        case '\'':
+        case '"':
+            return kHIDUsage_KeyboardQuote;
+        case '\r':
+        case '\n':
+            return kHIDUsage_KeyboardReturnOrEnter;
+        case ',':
+        case '<':
+            return kHIDUsage_KeyboardComma;
+        case '.':
+        case '>':
+            return kHIDUsage_KeyboardPeriod;
+        case '/':
+        case '?':
+            return kHIDUsage_KeyboardSlash;
+        case ' ':
+            return kHIDUsage_KeyboardSpacebar;
+        }
+    }
+    const int functionKeyOffset = kHIDUsage_KeyboardF1;
+    for (int functionKeyIndex = 1; functionKeyIndex <= 12; ++functionKeyIndex) {
+        if ([key isEqualToString:[NSString stringWithFormat:@"F%d", functionKeyIndex]])
+            return functionKeyOffset + functionKeyIndex - 1;
+    }
+    if ([key isEqualToString:@"escape"])
+        return kHIDUsage_KeyboardEscape;
+    if ([key isEqualToString:@"return"] || [key isEqualToString:@"enter"])
+        return kHIDUsage_KeyboardReturnOrEnter;
+    if ([key isEqualToString:@"leftArrow"])
+        return kHIDUsage_KeyboardLeftArrow;
+    if ([key isEqualToString:@"rightArrow"])
+        return kHIDUsage_KeyboardRightArrow;
+    if ([key isEqualToString:@"upArrow"])
+        return kHIDUsage_KeyboardUpArrow;
+    if ([key isEqualToString:@"downArrow"])
+        return kHIDUsage_KeyboardDownArrow;
+    if ([key isEqualToString:@"delete"])
+        return kHIDUsage_KeyboardDeleteOrBackspace;
+    // The simulator keyboard interprets both left and right modifier keys using the left version of the usage code.
+    if ([key isEqualToString:@"leftControl"] || [key isEqualToString:@"rightControl"])
+        return kHIDUsage_KeyboardLeftControl;
+    if ([key isEqualToString:@"leftShift"] || [key isEqualToString:@"rightShift"])
+        return kHIDUsage_KeyboardLeftShift;
+    if ([key isEqualToString:@"leftAlt"] || [key isEqualToString:@"rightAlt"])
+        return kHIDUsage_KeyboardLeftAlt;
+
+    return 0;
+}
+
+- (void)keyDown:(NSString *)character completionBlock:(void (^)(void))completionBlock
+{
+    bool shouldWrapWithShift = shouldWrapWithShiftKeyEventForCharacter(character);
+    uint32_t usage = hidUsageCodeForCharacter(character);
+    uint64_t absoluteMachTime = mach_absolute_time();
+
+    if (shouldWrapWithShift)
+        [self _sendIOHIDKeyboardEvent:absoluteMachTime usage:kHIDUsage_KeyboardLeftShift isKeyDown:true];
+
+    [self _sendIOHIDKeyboardEvent:absoluteMachTime usage:usage isKeyDown:true];
+    [self _sendIOHIDKeyboardEvent:absoluteMachTime usage:usage isKeyDown:false];
+
+    if (shouldWrapWithShift)
+        [self _sendIOHIDKeyboardEvent:absoluteMachTime usage:kHIDUsage_KeyboardLeftShift isKeyDown:false];
+
+    [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
 }
 
 @end

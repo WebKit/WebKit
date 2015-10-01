@@ -1,3 +1,40 @@
+2015-10-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement keyboard event sending for iOS in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=149676
+
+        Reviewed by Simon Fraser.
+
+        Adds support for generating and sending key events in WebKitTestRunner. This is accomplished in a similar
+        way as touch events, using IOHIDEvent machinery. Also adds callbacks to the UIScriptController JS API that
+        allows us to run code when the keyboard is shown or hidden.
+
+        * WebKitTestRunner/UIScriptContext/Bindings/UIScriptController.idl: Adds the typeCharacter JS interface.
+        * WebKitTestRunner/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setDidShowKeyboardCallback):
+        (WTR::UIScriptController::didShowKeyboardCallback):
+        (WTR::UIScriptController::setDidHideKeyboardCallback):
+        (WTR::UIScriptController::didHideKeyboardCallback):
+        (WTR::UIScriptController::typeCharacterUsingHardwareKeyboard):
+        (WTR::UIScriptController::platformSetDidShowKeyboardCallback):
+        (WTR::UIScriptController::platformSetDidHideKeyboardCallback):
+        * WebKitTestRunner/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]): Registers the TestRunnerWKWebView to listen to
+                the notifications that the keyboard has been raised or lowered.
+        (-[TestRunnerWKWebView _keyboardDidShow:]):
+        (-[TestRunnerWKWebView _keyboardDidHide:]):
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.m:
+        (-[HIDEventGenerator _sendIOHIDKeyboardEvent:usage:isKeyDown:]): Helper to send a HID keyboard event.
+        (shouldWrapWithShiftKeyEventForCharacter): Helper used to generate key events.
+        (hidUsageCodeForCharacter): Ditto.
+        (-[HIDEventGenerator keyDown:completionBlock:]): Synthesizes and sends HIDKeyboardEvents, triggering
+                a keyDown event in WebKit.
+        * WebKitTestRunner/ios/IOKitSPI.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+
 2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r190399.

@@ -75,6 +75,28 @@ JSValueRef UIScriptController::didEndZoomingCallback() const
     return m_context.callbackWithID(m_didEndZoomingCallback);
 }
 
+void UIScriptController::setDidShowKeyboardCallback(JSValueRef callback)
+{
+    m_didShowKeyboardCallback = m_context.registerCallback(callback);
+    platformSetDidShowKeyboardCallback();
+}
+
+JSValueRef UIScriptController::didShowKeyboardCallback() const
+{
+    return m_context.callbackWithID(m_didShowKeyboardCallback);
+}
+
+void UIScriptController::setDidHideKeyboardCallback(JSValueRef callback)
+{
+    m_didHideKeyboardCallback = m_context.registerCallback(callback);
+    platformSetDidHideKeyboardCallback();
+}
+
+JSValueRef UIScriptController::didHideKeyboardCallback() const
+{
+    return m_context.callbackWithID(m_didHideKeyboardCallback);
+}
+
 #if !PLATFORM(IOS)
 void UIScriptController::zoomToScale(double, JSValueRef)
 {
@@ -85,6 +107,10 @@ void UIScriptController::singleTapAtPoint(long x, long y, JSValueRef)
 }
 
 void UIScriptController::doubleTapAtPoint(long x, long y, JSValueRef)
+{
+}
+
+void UIScriptController::typeCharacterUsingHardwareKeyboard(JSStringRef, JSValueRef)
 {
 }
 
@@ -113,6 +139,14 @@ void UIScriptController::platformSetWillBeginZoomingCallback()
 }
 
 void UIScriptController::platformSetDidEndZoomingCallback()
+{
+}
+
+void UIScriptController::platformSetDidShowKeyboardCallback()
+{
+}
+
+void UIScriptController::platformSetDidHideKeyboardCallback()
 {
 }
 #endif

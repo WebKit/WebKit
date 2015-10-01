@@ -33,9 +33,13 @@
 
 @property (nonatomic, copy) void (^willBeginZoomingCallback)(void);
 @property (nonatomic, copy) void (^didEndZoomingCallback)(void);
+@property (nonatomic, copy) void (^didShowKeyboardCallback)(void);
+@property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
+
+- (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration;
+- (void)dealloc;
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
-
 #endif
 
 @end

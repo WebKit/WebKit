@@ -50,4 +50,7 @@
 
 - (void)markerEventReceived:(IOHIDEventRef)event;
 
+// Keyboard
+- (void)keyDown:(NSString *)character completionBlock:(void (^)(void))completionBlock;
+
 @end

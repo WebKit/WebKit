@@ -60,6 +60,7 @@ typedef struct __IOHIDEvent * IOHIDEventRef;
 #define IOHIDEventFieldBase(type) (type << 16)
 
 enum {
+    kHIDPage_KeyboardOrKeypad       = 0x07
     kHIDPage_VendorDefinedStart     = 0xFF00
 };
 
@@ -126,6 +127,47 @@ IOHIDEventSystemClientRef IOHIDEventSystemClientCreate(CFAllocatorRef);
 
 #define kGSEventPathInfoInRange (1 << 0)
 #define kGSEventPathInfoInTouch (1 << 1)
+
+enum {
+    kHIDUsage_KeyboardA = 0x04,
+    kHIDUsage_Keyboard1 = 0x1E,
+    kHIDUsage_Keyboard2 = 0x1F,
+    kHIDUsage_Keyboard3 = 0x20,
+    kHIDUsage_Keyboard4 = 0x21,
+    kHIDUsage_Keyboard5 = 0x22,
+    kHIDUsage_Keyboard6 = 0x23,
+    kHIDUsage_Keyboard7 = 0x24,
+    kHIDUsage_Keyboard8 = 0x25,
+    kHIDUsage_Keyboard9 = 0x26,
+    kHIDUsage_Keyboard0 = 0x27,
+    kHIDUsage_KeyboardReturnOrEnter = 0x28,
+    kHIDUsage_KeyboardEscape = 0x29,
+    kHIDUsage_KeyboardDeleteOrBackspace = 0x2A,
+    kHIDUsage_KeyboardTab = 0x2B,
+    kHIDUsage_KeyboardSpacebar = 0x2C,
+    kHIDUsage_KeyboardHyphen = 0x2D,
+    kHIDUsage_KeyboardEqualSign = 0x2E,
+    kHIDUsage_KeyboardOpenBracket = 0x2F,
+    kHIDUsage_KeyboardCloseBracket = 0x30,
+    kHIDUsage_KeyboardBackslash = 0x31,
+    kHIDUsage_KeyboardSemicolon = 0x33,
+    kHIDUsage_KeyboardQuote = 0x34,
+    kHIDUsage_KeyboardGraveAccentAndTilde = 0x35,
+    kHIDUsage_KeyboardComma = 0x36,
+    kHIDUsage_KeyboardPeriod = 0x37,
+    kHIDUsage_KeyboardSlash = 0x38,
+    kHIDUsage_KeyboardF1 = 0x3A,
+    kHIDUsage_KeyboardHome = 0x4A,
+    kHIDUsage_KeyboardPageUp = 0x4B,
+    kHIDUsage_KeyboardEnd = 0x4D,
+    kHIDUsage_KeyboardRightArrow = 0x4F,
+    kHIDUsage_KeyboardLeftArrow = 0x50,
+    kHIDUsage_KeyboardDownArrow = 0x51,
+    kHIDUsage_KeyboardUpArrow = 0x52,
+    kHIDUsage_KeyboardLeftControl = 0xE0,
+    kHIDUsage_KeyboardLeftShift = 0xE1,
+    kHIDUsage_KeyboardLeftAlt = 0xE2
+};
 
 WTF_EXTERN_C_END
 

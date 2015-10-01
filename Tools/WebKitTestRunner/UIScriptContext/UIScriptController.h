@@ -48,11 +48,19 @@ public:
     void singleTapAtPoint(long x, long y, JSValueRef callback);
     void doubleTapAtPoint(long x, long y, JSValueRef callback);
     
+    void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
+
     void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;
 
     void setDidEndZoomingCallback(JSValueRef);
     JSValueRef didEndZoomingCallback() const;
+
+    void setDidShowKeyboardCallback(JSValueRef);
+    JSValueRef didShowKeyboardCallback() const;
+
+    void setDidHideKeyboardCallback(JSValueRef);
+    JSValueRef didHideKeyboardCallback() const;
 
     double zoomScale() const;
     double minimumZoomScale() const;
@@ -67,6 +75,8 @@ private:
     
     void platformSetWillBeginZoomingCallback();
     void platformSetDidEndZoomingCallback();
+    void platformSetDidShowKeyboardCallback();
+    void platformSetDidHideKeyboardCallback();
 
     virtual JSClassRef wrapperClass() override;
 
@@ -76,6 +86,8 @@ private:
 
     unsigned m_willBeginZoomingCallback { 0 };
     unsigned m_didEndZoomingCallback { 0 };
+    unsigned m_didShowKeyboardCallback { 0 };
+    unsigned m_didHideKeyboardCallback { 0 };
 };
 
 }
