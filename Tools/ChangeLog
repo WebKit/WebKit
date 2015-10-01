@@ -1,5 +1,14 @@
 2015-10-01  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Fix TestWebKitAPI build under CMake.
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/PlatformWin.cmake: Add missing link command
+        for Psapi.lib.
+
+2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Fix behavior of webkit-build-directory script
         https://bugs.webkit.org/show_bug.cgi?id=149718
 

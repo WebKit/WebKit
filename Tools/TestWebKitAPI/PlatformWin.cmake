@@ -27,6 +27,7 @@ add_definitions(-DWEBCORE_EXPORT=)
 set(test_webcore_LIBRARIES
     Crypt32
     Iphlpapi
+    Psapi
     Shlwapi
     Usp10
     WebCore${DEBUG_SUFFIX}
