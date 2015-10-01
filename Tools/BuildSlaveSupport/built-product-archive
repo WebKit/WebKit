@@ -127,8 +127,10 @@ def archiveBuiltProduct(configuration, platform):
     if platform in ('mac', 'ios'):
         return createZip(_configurationBuildDirectory, configuration)
     elif platform == 'win':
-        binDirectory = os.path.join(_configurationBuildDirectory, 'bin32')
-        thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
+        # FIXME: We shouldn't hardcode the assumption of a 32-bit build. We should use _configurationBuildDirectory for
+        # the configuration-specific build directory.
+        binDirectory = os.path.join(_topLevelBuildDirectory, 'bin32')
+        thinDirectory = os.path.join(_topLevelBuildDirectory, 'thin')
         thinBinDirectory = os.path.join(thinDirectory, "bin32")
 
         removeDirectoryIfExists(thinDirectory)

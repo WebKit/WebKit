@@ -1,3 +1,15 @@
+2015-10-01  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Windows build after <https://trac.webkit.org/changeset/190387>
+        (https://bugs.webkit.org/show_bug.cgi?id=149695)
+
+        For some reason built-product-archive hardcodes the assumption that we build for 32-bit Windows.
+        For now, use the path to the top-level WebKit build directory instead of using the configuration-
+        specific build directory.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2015-10-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix the openwebrtc and gst-plugins-openwebrtc build with clang
