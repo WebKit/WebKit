@@ -1,3 +1,12 @@
+2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Unskip GTK+ user media unit tests after r190362.
+
+        They should pass now.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2015-09-30  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the build after <https://trac.webkit.org/changeset/190387>

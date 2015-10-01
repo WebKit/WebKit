@@ -62,7 +62,6 @@ class TestRunner:
 
     SKIPPED = [
         SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
-        SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/usermedia-permission-requests", "Test fails after r190262", 149580),
         SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
@@ -77,7 +76,6 @@ class TestRunner:
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.DidAssociateFormControls", "Test times out", 120302),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
-        SkippedTest("WebKit2/TestWebKit2", "WebKit2.UserMediaBasic", "Test crashes after r190262", 149580),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
         SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
     ]
