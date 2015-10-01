@@ -288,20 +288,6 @@ void PlatformMediaSessionManager::applicationWillEnterBackground() const
     }
 }
 
-void PlatformMediaSessionManager::applicationDidEnterBackground(bool isSuspendedUnderLock) const
-{
-    LOG(Media, "PlatformMediaSessionManager::applicationDidEnterBackground");
-
-    if (!isSuspendedUnderLock)
-        return;
-
-    Vector<PlatformMediaSession*> sessions = m_sessions;
-    for (auto* session : sessions) {
-        if (m_restrictions[session->mediaType()] & BackgroundProcessPlaybackRestricted)
-            session->forceInterruption(PlatformMediaSession::EnteringBackground);
-    }
-}
-
 void PlatformMediaSessionManager::applicationWillEnterForeground() const
 {
     LOG(Media, "PlatformMediaSessionManager::applicationWillEnterForeground");
@@ -323,8 +309,8 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
     if (!m_isApplicationInBackground || !(m_restrictions[session.mediaType()] & BackgroundProcessPlaybackRestricted))
         return;
 
-    if (session.state() != PlatformMediaSession::Interrupted && session.shouldDoInterruption(PlatformMediaSession::EnteringBackground))
-        session.doInterruption();
+    if (session.state() != PlatformMediaSession::Interrupted)
+        session.beginInterruption(PlatformMediaSession::EnteringBackground);
 }
 
 #if !PLATFORM(COCOA)

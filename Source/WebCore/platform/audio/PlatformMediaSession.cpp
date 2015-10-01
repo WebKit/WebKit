@@ -39,14 +39,28 @@ const double kClientDataBufferingTimerThrottleDelay = 0.1;
 #if !LOG_DISABLED
 static const char* stateName(PlatformMediaSession::State state)
 {
-#define CASE(state) case PlatformMediaSession::state: return #state
+#define STATE_CASE(state) case PlatformMediaSession::state: return #state
     switch (state) {
-    CASE(Idle);
-    CASE(Playing);
-    CASE(Paused);
-    CASE(Interrupted);
+    STATE_CASE(Idle);
+    STATE_CASE(Playing);
+    STATE_CASE(Paused);
+    STATE_CASE(Interrupted);
     }
 
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+static const char* interruptionName(PlatformMediaSession::InterruptionType type)
+{
+#define INTERRUPTION_CASE(type) case PlatformMediaSession::type: return #type
+    switch (type) {
+    INTERRUPTION_CASE(SystemSleep);
+    INTERRUPTION_CASE(EnteringBackground);
+    INTERRUPTION_CASE(SystemInterruption);
+    INTERRUPTION_CASE(SuspendedUnderLock);
+    }
+    
     ASSERT_NOT_REACHED();
     return "";
 }
@@ -79,47 +93,21 @@ void PlatformMediaSession::setState(State state)
     m_state = state;
 }
 
-void PlatformMediaSession::doInterruption()
+void PlatformMediaSession::beginInterruption(InterruptionType type)
 {
+    LOG(Media, "PlatformMediaSession::beginInterruption(%p), state = %s, interruption type = %s, interruption count = %i", this, stateName(m_state), interruptionName(type), m_interruptionCount);
+
+    if (++m_interruptionCount > 1)
+        return;
+
+    if (client().shouldOverrideBackgroundPlaybackRestriction(type))
+        return;
+
     m_stateToRestore = state();
     m_notifyingClient = true;
     setState(Interrupted);
     client().suspendPlayback();
     m_notifyingClient = false;
-}
-
-bool PlatformMediaSession::shouldDoInterruption(InterruptionType type)
-{
-    return type != EnteringBackground || !client().overrideBackgroundPlaybackRestriction();
-}
-
-void PlatformMediaSession::beginInterruption(InterruptionType type)
-{
-    LOG(Media, "PlatformMediaSession::beginInterruption(%p), state = %s, interruption count = %i", this, stateName(m_state), m_interruptionCount);
-
-    if (++m_interruptionCount > 1 || !shouldDoInterruption(type))
-        return;
-
-    doInterruption();
-}
-
-void PlatformMediaSession::forceInterruption(InterruptionType type)
-{
-    LOG(Media, "PlatformMediaSession::forceInterruption(%p), state = %s, interruption count = %i", this, stateName(m_state), m_interruptionCount);
-
-    // beginInterruption() must have been called before calling this function.
-    if (!m_interruptionCount) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    // The purpose of this function is to override the decision which was made by
-    // beginInterruption(). If it was decided to interrupt the media session there,
-    // then nothing should be done here.
-    if (shouldDoInterruption(type))
-        return;
-
-    doInterruption();
 }
 
 void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)

@@ -322,7 +322,7 @@ private:
     virtual void suspendPlayback() override;
     virtual bool canReceiveRemoteControlCommands() const override { return false; }
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override { }
-    virtual bool overrideBackgroundPlaybackRestriction() const override { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override { return false; }
 
     // EventTarget
     virtual void refEventTarget() override { ref(); }

@@ -735,7 +735,7 @@ private:
     virtual double mediaSessionCurrentTime() const override { return currentTime(); }
     virtual bool canReceiveRemoteControlCommands() const override { return true; }
     virtual void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType) override;
-    virtual bool overrideBackgroundPlaybackRestriction() const override;
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const override;
 
     virtual void pageMutedStateDidChange() override;
 

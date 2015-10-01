@@ -2702,8 +2702,21 @@ void Internals::setShouldGenerateTimestamps(SourceBuffer* buffer, bool flag)
 #endif
 
 #if ENABLE(VIDEO)
-void Internals::beginMediaSessionInterruption()
+void Internals::beginMediaSessionInterruption(const String& interruptionString, ExceptionCode& ec)
 {
+    PlatformMediaSession::InterruptionType interruption = PlatformMediaSession::SystemInterruption;
+
+    if (equalIgnoringCase(interruptionString, "System"))
+        interruption = PlatformMediaSession::SystemInterruption;
+    else if (equalIgnoringCase(interruptionString, "SystemSleep"))
+        interruption = PlatformMediaSession::SystemSleep;
+    else if (equalIgnoringCase(interruptionString, "EnteringBackground"))
+        interruption = PlatformMediaSession::EnteringBackground;
+    else {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
     PlatformMediaSessionManager::sharedManager().beginInterruption(PlatformMediaSession::SystemInterruption);
 }
 

@@ -6,7 +6,7 @@ RUN(video.play())
 
 EVENT(playing)
 EXPECTED (video.paused == 'false') OK
-RUN(internals.beginMediaSessionInterruption())
+RUN(internals.beginMediaSessionInterruption('System'))
 
 100ms timer fired...
 EXPECTED (video.paused == 'true') OK
@@ -16,7 +16,7 @@ EVENT(playing)
 EXPECTED (video.paused == 'false') OK
 
 EXPECTED (video.paused == 'false') OK
-RUN(internals.beginMediaSessionInterruption())
+RUN(internals.beginMediaSessionInterruption('System'))
 
 100ms timer fired...
 EXPECTED (video.paused == 'true') OK
