@@ -1,3 +1,13 @@
+2015-09-30  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend JetStream timeout for slow devices.
+
+        Reviewed by Chris Dumez.
+
+        Extend JetStream timeout to 20 minutes.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream.plan:
+
 2015-09-30  Daniel Bates  <dabates@apple.com>
 
         Rename iOS builders/testers to include version

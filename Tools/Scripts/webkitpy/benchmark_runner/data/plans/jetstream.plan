@@ -1,5 +1,5 @@
 {
-    "timeout": 600,
+    "timeout": 1200,
     "count": 5,
     "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/JetStream/@r183091",
     "benchmark_patch": "data/patches/JetStream.patch",
