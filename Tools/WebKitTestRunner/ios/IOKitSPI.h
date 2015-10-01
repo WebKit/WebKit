@@ -60,7 +60,7 @@ typedef struct __IOHIDEvent * IOHIDEventRef;
 #define IOHIDEventFieldBase(type) (type << 16)
 
 enum {
-    kHIDPage_KeyboardOrKeypad       = 0x07
+    kHIDPage_KeyboardOrKeypad       = 0x07,
     kHIDPage_VendorDefinedStart     = 0xFF00
 };
 
