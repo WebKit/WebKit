@@ -45,11 +45,13 @@ struct FontFeatureTagHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
+#define _0xFF static_cast<char>(0xFF)
 struct FontFeatureTagHashTraits : WTF::GenericHashTraits<FontFeatureTag> {
     static const bool emptyValueIsZero = true;
-    static void constructDeletedValue(FontFeatureTag& slot) { new (NotNull, std::addressof(slot)) FontFeatureTag({{ -1, -1, -1, -1 }}); }
-    static bool isDeletedValue(const FontFeatureTag& value) { return value == FontFeatureTag({{ -1, -1, -1, -1 }}); }
+    static void constructDeletedValue(FontFeatureTag& slot) { new (NotNull, std::addressof(slot)) FontFeatureTag({{ _0xFF, _0xFF, _0xFF, _0xFF }}); }
+    static bool isDeletedValue(const FontFeatureTag& value) { return value == FontFeatureTag({{ _0xFF, _0xFF, _0xFF, _0xFF }}); }
 };
+#undef _0xFF
 
 class FontFeature {
 public:
