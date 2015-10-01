@@ -1,3 +1,19 @@
+2015-10-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Add support for private WebCore JS builtins functions
+        https://bugs.webkit.org/show_bug.cgi?id=149518
+
+        Reviewed by Darin Adler.
+
+        Adding API to add private identifiers on the fly.
+        This is used to support private JS Builtin functions/private JS Builtin names in WebCore.
+
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::appendExternalName):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::appendExternalName):
+        * runtime/CommonIdentifiers.h:
+
 2015-09-30  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, cleanup after r190385

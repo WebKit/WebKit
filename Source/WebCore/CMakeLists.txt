@@ -3355,6 +3355,7 @@ set(WEBCORE_JS_BUILTINS
     ${WEBCORE_DIR}/Modules/streams/ByteLengthQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStream.js
+    ${WEBCORE_DIR}/Modules/streams/ReadableStreamInternals.js
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

@@ -1,6 +1,6 @@
 
 PASS Running templatedRSEmpty with ReadableStream (empty) 
-FAIL instances have the correct methods and properties assert_equals: has a tee method expected "function" but got "undefined"
+PASS instances have the correct methods and properties 
 PASS Running templatedRSEmptyReader with ReadableStream (empty) reader 
 PASS instances have the correct methods and properties 
 PASS locked should be true 

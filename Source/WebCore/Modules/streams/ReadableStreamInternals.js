@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, Canon Inc. All Rights Reserved.
+ * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+function teeReadableStream(stream, shouldClone)
+{
+    "use strict";
 
-#if ENABLE(STREAMS_API)
-#include "ByteLengthQueuingStrategyBuiltins.cpp"
-#include "CountQueuingStrategyBuiltins.cpp"
-#include "ReadableStreamBuiltins.cpp"
-#include "ReadableStreamInternalsBuiltins.cpp"
-#endif
+    throw new @TypeError("tee is not implemented");
+}

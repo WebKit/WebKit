@@ -37,6 +37,7 @@
     [RaisesException] ReadableStreamReader getReader();
     [Custom] Promise pipeTo(any streams, any options);
     [JSBuiltin] Object pipeThrough(any dest, any options);
+    [JSBuiltin] Object tee();
 
     readonly attribute boolean locked;
 };

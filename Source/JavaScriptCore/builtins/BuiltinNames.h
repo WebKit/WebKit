@@ -59,6 +59,8 @@ public:
     const Identifier* lookUpPrivateName(const Identifier&) const;
     const Identifier& lookUpPublicName(const Identifier&) const;
     
+    void appendExternalName(const Identifier& publicName, const Identifier& privateName);
+
     JSC_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(DECLARE_BUILTIN_IDENTIFIER_ACCESSOR)
     JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(DECLARE_BUILTIN_SYMBOL_ACCESSOR)
@@ -108,6 +110,16 @@ inline const Identifier& BuiltinNames::lookUpPublicName(const Identifier& ident)
     return m_emptyIdentifier;
 }
 
+inline void BuiltinNames::appendExternalName(const Identifier& publicName, const Identifier& privateName)
+{
+#ifndef NDEBUG
+    for (const auto& key : m_publicToPrivateMap.keys())
+        ASSERT(publicName.string() != *key);
+#endif
+
+    m_privateToPublicMap.add(privateName.impl(), &publicName);
+    m_publicToPrivateMap.add(publicName.impl(), &privateName);
+}
 
 }
 

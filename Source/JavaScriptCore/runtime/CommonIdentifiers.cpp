@@ -78,5 +78,9 @@ Identifier CommonIdentifiers::lookUpPublicName(const Identifier& ident) const
     return m_builtinNames->lookUpPublicName(ident);
 }
 
+void CommonIdentifiers::appendExternalName(const Identifier& publicName, const Identifier& privateName)
+{
+    m_builtinNames->appendExternalName(publicName, privateName);
+}
 
 } // namespace JSC

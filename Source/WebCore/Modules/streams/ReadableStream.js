@@ -30,3 +30,11 @@ function pipeThrough(streams, options)
     this.pipeTo(streams.writable, options);
     return streams.readable;
 }
+
+function tee()
+{
+    "use strict";
+
+    // TODO: check this is a ReadableStream
+    return @teeReadableStream(this, false)
+}

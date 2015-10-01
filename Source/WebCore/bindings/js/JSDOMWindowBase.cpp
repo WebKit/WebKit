@@ -47,6 +47,10 @@
 #include "WebSafeIncrementalSweeperIOS.h"
 #endif
 
+#if ENABLE(STREAMS_API)
+#include "ReadableStreamInternalsBuiltins.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -65,6 +69,9 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWin
     , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
     , m_impl(window)
     , m_shell(shell)
+#if ENABLE(STREAMS_API)
+    , m_readableStreamFunctions(vm)
+#endif
 {
 }
 
@@ -73,12 +80,34 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
     Base::finishCreation(vm, shell);
     ASSERT(inherits(info()));
 
+#if ENABLE(STREAMS_API)
+    m_readableStreamFunctions.init(*this);
+#endif
+
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly)
+        GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
+#if ENABLE(STREAMS_API)
+#define DECLARE_GLOBAL_STATIC(name)\
+        GlobalPropertyInfo(\
+            static_cast<WebCoreJSClientData*>(vm.clientData)->readableStreamInternalsBuiltins().name##PrivateName(),\
+            m_readableStreamFunctions.m_##name##Function.get() , DontDelete | ReadOnly),
+        WEBCOREREADABLESTREAMINTERNALS_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
+#undef EXPORT_FUNCTION
+#endif
     };
-    
+
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
+}
+
+void JSDOMWindowBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSDOMWindowBase* thisObject = jsCast<JSDOMWindowBase*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+#if ENABLE(STREAMS_API)
+    thisObject->m_readableStreamFunctions.visit(visitor);
+#endif
 }
 
 void JSDOMWindowBase::destroy(JSCell* cell)

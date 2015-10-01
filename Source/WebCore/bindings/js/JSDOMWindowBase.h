@@ -22,6 +22,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
+#include "ReadableStreamInternalsBuiltinsWrapper.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -73,6 +74,7 @@ namespace WebCore {
 
         static JSC::VM& commonVM();
         static void fireFrameClearedWatchpointsForWindow(DOMWindow*);
+        static void visitChildren(JSC::JSCell*, JSC::SlotVisitor&);
 
     protected:
         JSC::WatchpointSet m_windowCloseWatchpoints;
@@ -84,6 +86,10 @@ namespace WebCore {
 
         RefPtr<DOMWindow> m_impl;
         JSDOMWindowShell* m_shell;
+
+#if ENABLE(STREAMS_API)
+        ReadableStreamInternalsBuiltinFunctions m_readableStreamFunctions;
+#endif
     };
 
     // Returns a JSDOMWindow or jsNull()
