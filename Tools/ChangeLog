@@ -1,3 +1,14 @@
+2015-10-01  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the iOS 9 Simulator testers
+
+        Add dependency DumpRenderTree.app to target All of project DumpRenderTree so that we
+        build DumpRenderTree.app, if applicable. Also, teach build-webkit to build project
+        LayoutTestRelay when building for iOS Simulator.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * Scripts/build-webkit:
+
 2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Websites with invalid auth header keep loading forever
