@@ -1,3 +1,15 @@
+2015-10-01  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Make run-api-tests work with System Integrity Protection
+        https://bugs.webkit.org/show_bug.cgi?id=149711
+        rdar://problem/22928202
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/run-api-tests:
+        (runTest):
+        (archCommandLineArgumentsForRestrictedEnvironmentVariables):
+
 2015-10-01  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Windows build after <https://trac.webkit.org/changeset/190387>

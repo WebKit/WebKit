@@ -40,6 +40,7 @@ sub listAllTests();
 sub runTest($$);
 sub runTestsBySuite(\@);
 sub prepareEnvironmentForRunningTestTool();
+sub archCommandLineArgumentsForRestrictedEnvironmentVariables();
 sub testToolPaths();
 
 # Defined in VCSUtils.
@@ -196,7 +197,7 @@ sub runTest($$)
         if (isIOSWebKit()) {
             $pid = open3($childIn, $childOut, $childErr, qw(xcrun -sdk iphonesimulator sim --environment=merge), @commonArguments) or die "Failed to run test: $test.";
         } elsif (isAppleMacWebKit() && architecture()) {
-            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), @commonArguments) or die "Failed to run test: $test.";
+            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), @commonArguments) or die "Failed to run test: $test.";
         } else {
             $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to run test: $test.";
         }
@@ -345,6 +346,17 @@ sub prepareEnvironmentForRunningTestTool()
     return unless isAppleMacWebKit();
 
     setupMacWebKitEnvironment(productDir());
+}
+
+sub archCommandLineArgumentsForRestrictedEnvironmentVariables()
+{
+    my @arguments = ();
+    foreach my $key (keys(%ENV)) {
+        if ($key =~ /^DYLD_/) {
+            push @arguments, "-e", "$key=$ENV{$key}";
+        }
+    }
+    return @arguments;
 }
 
 sub testToolPaths()
