@@ -1,3 +1,15 @@
+2015-09-30  João Oliveira  <hello@jxs.pt>
+
+        Web Inspector: Adjust font size of Developer Tools using Command,+ or Command,-
+        https://bugs.webkit.org/show_bug.cgi?id=149590
+
+        Reviewed by Joseph Pecoraro.
+
+        Patch by João Oliveira and Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Add global keyboard shortcuts for zoom in and zoom out.
+
 2015-10-01  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: Add GTK+ icons for the numerical input and slider based Visual editors for CSS properties

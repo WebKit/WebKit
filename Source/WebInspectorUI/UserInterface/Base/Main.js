@@ -245,6 +245,9 @@ WebInspector.contentLoaded = function()
     this.navigationSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "0", this.toggleNavigationSidebar.bind(this));
     this.detailsSidebarKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl | WebInspector.KeyboardShortcut.Modifier.Option, "0", this.toggleDetailsSidebar.bind(this));
 
+    this._increaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Plus, this._increaseZoom.bind(this));
+    this._decreaseZoomKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Minus, this._decreaseZoom.bind(this));
+
     this.tabBrowser = new WebInspector.TabBrowser(document.getElementById("tab-browser"), this.tabBar, this.navigationSidebar, this.detailsSidebar);
     this.tabBrowser.addEventListener(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange, this._tabBrowserSelectedTabContentViewDidChange, this);
 
@@ -1805,6 +1808,18 @@ WebInspector._copy = function(event)
     // Remove word break characters from the selection before putting it on the pasteboard.
     var selectionString = selection.toString().removeWordBreakCharacters();
     event.clipboardData.setData("text/plain", selectionString);
+    event.preventDefault();
+};
+
+WebInspector._increaseZoom = function(event) {
+    let currentZoom = InspectorFrontendHost.zoomFactor();
+    InspectorFrontendHost.setZoomFactor(currentZoom * 1.2);
+    event.preventDefault();
+};
+
+WebInspector._decreaseZoom = function(event) {
+    let currentZoom = InspectorFrontendHost.zoomFactor();
+    InspectorFrontendHost.setZoomFactor(currentZoom * 0.8);
     event.preventDefault();
 };
 
