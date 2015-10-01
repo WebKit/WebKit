@@ -16,6 +16,7 @@ PASS ReadableStream: should only call pull once upon starting the stream
 PASS ReadableStream: should call pull when trying to read from a started, empty stream 
 PASS ReadableStream: should only call pull once on a non-empty stream read from before start fulfills 
 PASS ReadableStream: should only call pull once on a non-empty stream read from after start fulfills 
+PASS ReadableStream: should call pull in reaction to read()ing the last chunk, if not draining 
 PASS ReadableStream: should not call pull() in reaction to read()ing the last chunk, if draining 
 PASS ReadableStream: should not call pull until the previous pull call's promise fulfills 
 PASS ReadableStream: should pull after start, and after every read 
