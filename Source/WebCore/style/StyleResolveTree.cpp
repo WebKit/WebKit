@@ -480,6 +480,13 @@ static void attachSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedSty
             else if (is<Element>(*child))
                 attachRenderTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, nullptr);
         }
+    } else {
+        for (Node* child = slot.firstChild(); child; child = child->nextSibling()) {
+            if (is<Text>(*child))
+                attachTextRenderer(downcast<Text>(*child), renderTreePosition);
+            else if (is<Element>(*child))
+                attachRenderTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, nullptr);
+        }
     }
     slot.clearNeedsStyleRecalc();
     slot.clearChildNeedsStyleRecalc();
@@ -576,6 +583,13 @@ static void detachSlotAssignees(HTMLSlotElement& slot, DetachType detachType)
     ASSERT(!slot.renderer());
     if (auto* assignedNodes = slot.assignedNodes()) {
         for (auto* child : *assignedNodes) {
+            if (is<Text>(*child))
+                detachTextRenderer(downcast<Text>(*child));
+            else if (is<Element>(*child))
+                detachRenderTree(downcast<Element>(*child), detachType);
+        }
+    } else {
+        for (Node* child = slot.firstChild(); child; child = child->nextSibling()) {
             if (is<Text>(*child))
                 detachTextRenderer(downcast<Text>(*child));
             else if (is<Element>(*child))
@@ -847,6 +861,13 @@ static void resolveSlotAssignees(HTMLSlotElement& slot, RenderStyle& inheritedSt
 {
     if (auto* assignedNodes = slot.assignedNodes()) {
         for (auto* child : *assignedNodes) {
+            if (is<Text>(*child))
+                resolveTextNode(downcast<Text>(*child), renderTreePosition);
+            else if (is<Element>(*child))
+                resolveTree(downcast<Element>(*child), inheritedStyle, renderTreePosition, change);
+        }
+    } else {
+        for (Node* child = slot.firstChild(); child; child = child->nextSibling()) {
             if (is<Text>(*child))
                 resolveTextNode(downcast<Text>(*child), renderTreePosition);
             else if (is<Element>(*child))
