@@ -188,7 +188,6 @@ WebInspector.GeneralTreeElement = class GeneralTreeElement extends WebInspector.
 
         this._status = x || "";
         this._updateStatusElement();
-        this.didChange();
     }
 
     get filterableData()

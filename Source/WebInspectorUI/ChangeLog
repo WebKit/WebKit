@@ -1,5 +1,26 @@
 2015-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Thousands of timers fire after switching to JavaScript and Events timeline
+        https://bugs.webkit.org/show_bug.cgi?id=149682
+
+        Reviewed by Timothy Hatcher.
+
+        Setting the status element of a GeneralTreeElement was triggering a
+        TreeOutline.onchange event. For TreeOutlines with lots of tree elements
+        (JavaScript & Events with profile nodes) this could result in thousands
+        of onchange events that causes lots of unnecessary work and blocks
+        future timers (like scroll synchronization) from firing.
+
+        This change eliminates TreeOutline change events for tree element
+        changes that are not interesting.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.set status): Deleted.
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeElement.prototype.set tooltip): Deleted.
+
+2015-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Reduce `delete` in TreeElements and DataGridNodes
         https://bugs.webkit.org/show_bug.cgi?id=149680
 
