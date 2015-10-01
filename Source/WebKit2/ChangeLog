@@ -1,3 +1,16 @@
+2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Websites with invalid auth header keep loading forever
+        https://bugs.webkit.org/show_bug.cgi?id=149710
+
+        Reviewed by Martin Robinson.
+
+        Do not show the remember credentials checkbutton in the auth
+        dialog if the realm is empty.
+
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogInitialize):
+
 2015-09-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r188331: "NetworkProcess: DNS prefetch happens in the Web Process"

@@ -1,3 +1,18 @@
+2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Websites with invalid auth header keep loading forever
+        https://bugs.webkit.org/show_bug.cgi?id=149710
+
+        Reviewed by Martin Robinson.
+
+        Add test case to check that we can authenticate sites with an
+        empty realm.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAuthentication.cpp:
+        (testWebViewAuthenticationEmptyRealm):
+        (serverCallback):
+        (beforeAll):
+
 2015-10-01  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Make run-api-tests work with System Integrity Protection
