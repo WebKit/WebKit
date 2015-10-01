@@ -31,6 +31,9 @@
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
+#include "MemoryIDBBackingStore.h"
+#include <wtf/Locker.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -42,6 +45,8 @@ Ref<IDBServer> IDBServer::create()
 
 IDBServer::IDBServer()
 {
+    Locker<Lock> locker(m_databaseThreadCreationLock);
+    m_threadID = createThread(IDBServer::databaseThreadEntry, this, "IndexedDatabase Server");
 }
 
 void IDBServer::registerConnection(IDBConnectionToClient& connection)
@@ -58,22 +63,108 @@ void IDBServer::unregisterConnection(IDBConnectionToClient& connection)
     m_connectionMap.remove(connection.identifier());
 }
 
-void IDBServer::deleteDatabase(const IDBRequestData& data)
+UniqueIDBDatabase& IDBServer::getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier& identifier)
 {
-    LOG(IndexedDB, "IDBServer::deleteDatabase - %s", data.databaseIdentifier().debugString().utf8().data());
-    
-    auto connection = m_connectionMap.get(data.requestIdentifier().connectionIdentifier());
+    auto uniqueIDBDatabase = m_uniqueIDBDatabaseMap.add(identifier, nullptr);
+    if (uniqueIDBDatabase.isNewEntry)
+        uniqueIDBDatabase.iterator->value = UniqueIDBDatabase::create(*this, identifier);
+
+    return *uniqueIDBDatabase.iterator->value;
+}
+
+std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabaseIdentifier& identifier)
+{
+    ASSERT(!isMainThread());
+
+    // FIXME: For now we only have the in-memory backing store, which we'll continue to use for private browsing.
+    // Once it's time for persistent backing stores this is where we'll calculate the correct path on disk
+    // and create it.
+
+    return MemoryIDBBackingStore::create(identifier);
+}
+
+void IDBServer::openDatabase(const IDBRequestData& requestData)
+{
+    LOG(IndexedDB, "IDBServer::openDatabase");
+
+    auto& uniqueIDBDatabase = getOrCreateUniqueIDBDatabase(requestData.databaseIdentifier());
+
+    auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
     if (!connection) {
-        // If we don't have record of this connection (e.g. it has dropped due to a process crashing)
-        // then we can't report back status of the operation.
-        // Therefore we shouldn't bother performing it.
+        // If the connection back to the client is gone, there's no way to open the database as
+        // well as no way to message back failure.
+        return;
+    }
+
+    uniqueIDBDatabase.openDatabaseConnection(*connection, requestData);
+}
+
+void IDBServer::deleteDatabase(const IDBRequestData& requestData)
+{
+    LOG(IndexedDB, "IDBServer::deleteDatabase - %s", requestData.databaseIdentifier().debugString().utf8().data());
+    
+    auto connection = m_connectionMap.get(requestData.requestIdentifier().connectionIdentifier());
+    if (!connection) {
+        // If the connection back to the client is gone, there's no way to delete the database as
+        // well as no way to message back failure.
         return;
     }
     
     // FIXME: During bringup of modern IDB, the database deletion is a no-op, and is
     // immediately reported back to the WebProcess as failure.
-    IDBResultData result(data.requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
+    IDBResultData result(requestData.requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
     connection->didDeleteDatabase(result);
+}
+
+void IDBServer::postDatabaseTask(std::unique_ptr<CrossThreadTask>&& task)
+{
+    ASSERT(isMainThread());
+    m_databaseQueue.append(WTF::move(task));
+}
+
+void IDBServer::postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&& task)
+{
+    ASSERT(!isMainThread());
+    m_databaseReplyQueue.append(WTF::move(task));
+
+
+    Locker<Lock> locker(m_mainThreadReplyLock);
+    if (m_mainThreadReplyScheduled)
+        return;
+
+    m_mainThreadReplyScheduled = true;
+    callOnMainThread([this] {
+        handleTaskRepliesOnMainThread();
+    });
+}
+
+void IDBServer::databaseThreadEntry(void* threadData)
+{
+    ASSERT(threadData);
+    IDBServer* server = reinterpret_cast<IDBServer*>(threadData);
+    server->databaseRunLoop();
+}
+
+void IDBServer::databaseRunLoop()
+{
+    ASSERT(!isMainThread());
+    {
+        Locker<Lock> locker(m_databaseThreadCreationLock);
+    }
+
+    while (auto task = m_databaseQueue.waitForMessage())
+        task->performTask();
+}
+
+void IDBServer::handleTaskRepliesOnMainThread()
+{
+    {
+        Locker<Lock> locker(m_mainThreadReplyLock);
+        m_mainThreadReplyScheduled = false;
+    }
+
+    while (auto task = m_databaseReplyQueue.tryGetMessage())
+        task->performTask();
 }
 
 } // namespace IDBServer

@@ -40,7 +40,8 @@ public:
 
     virtual uint64_t identifier() const = 0;
     virtual void deleteDatabase(IDBRequestData&) = 0;
-    
+    virtual void openDatabase(IDBRequestData&) = 0;
+
     virtual void ref() = 0;
     virtual void deref() = 0;
 };

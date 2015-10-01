@@ -83,7 +83,24 @@ void InProcessIDBServer::didDeleteDatabase(const IDBResultData& resultData)
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, resultData] {
         m_connectionToServer->didDeleteDatabase(resultData);
-    });}
+    });
+}
+
+void InProcessIDBServer::openDatabase(IDBRequestData& requestData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, requestData] {
+        m_server->openDatabase(requestData);
+    });
+}
+
+void InProcessIDBServer::didOpenDatabase(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didOpenDatabase(resultData);
+    });
+}
 
 } // namespace WebCore
 

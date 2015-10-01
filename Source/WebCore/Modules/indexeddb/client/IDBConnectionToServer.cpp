@@ -72,6 +72,27 @@ void IDBConnectionToServer::didDeleteDatabase(const IDBResultData& resultData)
     request->requestCompleted(resultData);
 }
 
+void IDBConnectionToServer::openDatabase(IDBOpenDBRequest& request)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::openDatabase - %s", request.databaseIdentifier().debugString().utf8().data());
+
+    ASSERT(!m_openDBRequestMap.contains(request.requestIdentifier()));
+    m_openDBRequestMap.set(request.requestIdentifier(), &request);
+    
+    IDBRequestData requestData(*this, request);
+    m_delegate->openDatabase(requestData);
+}
+
+void IDBConnectionToServer::didOpenDatabase(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didOpenDatabase");
+
+    auto request = m_openDBRequestMap.take(resultData.requestIdentifier());
+    ASSERT(request);
+
+    request->requestCompleted(resultData);
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

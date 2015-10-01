@@ -44,6 +44,16 @@ IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, const S
     ASSERT(!databaseName.isNull());
 }
 
+IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
+{
+    IDBDatabaseIdentifier identifier;
+
+    identifier.m_databaseName = m_databaseName.isolatedCopy();
+    identifier.m_openingOrigin = m_openingOrigin.isolatedCopy();
+    identifier.m_mainFrameOrigin = m_mainFrameOrigin.isolatedCopy();
+
+    return WTF::move(identifier);
+}
 
 #ifndef NDEBUG
 String IDBDatabaseIdentifier::debugString() const

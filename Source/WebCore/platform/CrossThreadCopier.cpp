@@ -42,6 +42,8 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
+#include "IDBDatabaseIdentifier.h"
+#include "IDBDatabaseInfo.h"
 #include "IDBDatabaseMetadata.h"
 #include "IDBGetResult.h"
 #include "IDBKeyData.h"
@@ -127,6 +129,15 @@ CrossThreadCopierBase<false, false, IDBObjectStoreMetadata>::Type CrossThreadCop
     return metadata.isolatedCopy();
 }
 
+CrossThreadCopierBase<false, false, IDBDatabaseInfo>::Type CrossThreadCopierBase<false, false, IDBDatabaseInfo>::copy(const IDBDatabaseInfo& info)
+{
+    return info.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBDatabaseIdentifier>::Type CrossThreadCopierBase<false, false, IDBDatabaseIdentifier>::copy(const IDBDatabaseIdentifier& identifier)
+{
+    return identifier.isolatedCopy();
+}
 #endif
 
 // Test CrossThreadCopier using COMPILE_ASSERT.

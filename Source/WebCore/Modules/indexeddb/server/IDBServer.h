@@ -28,14 +28,20 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "CrossThreadTask.h"
 #include "IDBConnectionToClient.h"
+#include "IDBDatabaseIdentifier.h"
+#include "UniqueIDBDatabase.h"
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/MessageQueue.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class CrossThreadTask;
 class IDBRequestData;
 
 namespace IDBServer {
@@ -48,12 +54,33 @@ public:
     void unregisterConnection(IDBConnectionToClient&);
 
     // Operations requested by the client.
+    void openDatabase(const IDBRequestData&);
     void deleteDatabase(const IDBRequestData&);
+
+    void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);
+    void postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&&);
+
+    std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
 private:
     IDBServer();
 
+    UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
+
+    static void databaseThreadEntry(void*);
+    void databaseRunLoop();
+    void handleTaskRepliesOnMainThread();
+
     HashMap<uint64_t, RefPtr<IDBConnectionToClient>> m_connectionMap;
+    HashMap<IDBDatabaseIdentifier, RefPtr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
+
+    ThreadIdentifier m_threadID { 0 };
+    Lock m_databaseThreadCreationLock;
+    Lock m_mainThreadReplyLock;
+    bool m_mainThreadReplyScheduled { false };
+
+    MessageQueue<CrossThreadTask> m_databaseQueue;
+    MessageQueue<CrossThreadTask> m_databaseReplyQueue;
 };
 
 } // namespace IDBServer

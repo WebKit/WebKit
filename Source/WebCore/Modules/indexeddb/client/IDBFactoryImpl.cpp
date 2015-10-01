@@ -115,6 +115,8 @@ RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* contex
     }
 
     auto request = IDBOpenDBRequest::createOpenRequest(m_connectionToServer.get(), context, databaseIdentifier, version);
+    m_connectionToServer->openDatabase(request.get());
+
     return adoptRef(&request.leakRef());
 }
 

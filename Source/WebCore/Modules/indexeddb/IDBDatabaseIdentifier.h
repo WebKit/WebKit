@@ -50,6 +50,8 @@ public:
         m_mainFrameOrigin.port = -1;
     }
 
+    IDBDatabaseIdentifier isolatedCopy() const;
+
     bool isHashTableDeletedValue() const
     {
         return m_openingOrigin.port == -1 && m_mainFrameOrigin.port == -1;

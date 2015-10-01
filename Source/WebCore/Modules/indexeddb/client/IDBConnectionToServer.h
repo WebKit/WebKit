@@ -50,7 +50,10 @@ public:
 
     void deleteDatabase(IDBOpenDBRequest&);
     void didDeleteDatabase(const IDBResultData&);
-    
+
+    void openDatabase(IDBOpenDBRequest&);
+    void didOpenDatabase(const IDBResultData&);
+
 private:
     IDBConnectionToServer(IDBConnectionToServerDelegate&);
     

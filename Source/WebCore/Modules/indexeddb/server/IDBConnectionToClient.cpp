@@ -51,6 +51,11 @@ void IDBConnectionToClient::didDeleteDatabase(const IDBResultData& result)
     m_delegate->didDeleteDatabase(result);
 }
 
+void IDBConnectionToClient::didOpenDatabase(const IDBResultData& result)
+{
+    m_delegate->didOpenDatabase(result);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

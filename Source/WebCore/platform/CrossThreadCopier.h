@@ -190,6 +190,19 @@ namespace WebCore {
         typedef IDBObjectStoreMetadata Type;
         static Type copy(const IDBObjectStoreMetadata&);
     };
+
+    class IDBDatabaseInfo;
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseInfo> {
+        typedef IDBDatabaseInfo Type;
+        static Type copy(const IDBDatabaseInfo&);
+    };
+
+    class IDBDatabaseIdentifier;
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBDatabaseIdentifier> {
+        typedef IDBDatabaseIdentifier Type;
+        static Type copy(const IDBDatabaseIdentifier&);
+    };
+
 #endif
 
     template<typename T>

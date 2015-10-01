@@ -45,6 +45,7 @@ public:
     uint64_t identifier() const;
 
     void didDeleteDatabase(const IDBResultData&);
+    void didOpenDatabase(const IDBResultData&);
     
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);

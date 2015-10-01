@@ -55,10 +55,12 @@ public:
 
     // IDBConnectionToServer
     virtual void deleteDatabase(IDBRequestData&) override final;
-    
+    virtual void openDatabase(IDBRequestData&) override final;
+
     // IDBConnectionToClient
     virtual uint64_t identifier() const override;
     virtual void didDeleteDatabase(const IDBResultData&) override final;
+    virtual void didOpenDatabase(const IDBResultData&) override final;
 
     virtual void ref() override { RefCounted<InProcessIDBServer>::ref(); }
     virtual void deref() override { RefCounted<InProcessIDBServer>::deref(); }

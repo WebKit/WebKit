@@ -898,7 +898,11 @@ set(WebCore_SOURCES
 
     Modules/indexeddb/server/IDBConnectionToClient.cpp
     Modules/indexeddb/server/IDBServer.cpp
+    Modules/indexeddb/server/IDBServerOperation.cpp
+    Modules/indexeddb/server/MemoryIDBBackingStore.cpp
+    Modules/indexeddb/server/UniqueIDBDatabase.cpp
 
+    Modules/indexeddb/shared/IDBDatabaseInfo.cpp
     Modules/indexeddb/shared/IDBError.cpp
     Modules/indexeddb/shared/IDBRequestData.cpp
     Modules/indexeddb/shared/IDBRequestIdentifier.cpp
