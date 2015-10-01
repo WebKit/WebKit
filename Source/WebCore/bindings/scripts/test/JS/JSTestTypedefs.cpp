@@ -214,8 +214,7 @@ void JSTestTypedefsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, CREATE_METHOD_TABLE(JSTestTypedefs) };
 
 JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTypedefs>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestTypedefs>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -233,11 +232,6 @@ void JSTestTypedefs::destroy(JSC::JSCell* cell)
 {
     JSTestTypedefs* thisObject = static_cast<JSTestTypedefs*>(cell);
     thisObject->JSTestTypedefs::~JSTestTypedefs();
-}
-
-JSTestTypedefs::~JSTestTypedefs()
-{
-    releaseImpl();
 }
 
 bool JSTestTypedefs::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

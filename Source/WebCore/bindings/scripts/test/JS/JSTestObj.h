@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestObj : public JSDOMWrapper {
+class JSTestObj : public JSDOMWrapperWithImplementation<TestObj> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestObj> Base;
     static JSTestObj* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
     {
         JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(globalObject->vm().heap)) JSTestObj(structure, globalObject, WTF::move(impl));
@@ -42,7 +42,6 @@ public:
     static TestObj* toWrapped(JSC::JSValue);
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
-    ~JSTestObj();
 
     DECLARE_INFO;
 
@@ -65,11 +64,6 @@ public:
     JSC::JSValue customMethod(JSC::ExecState&);
     JSC::JSValue customMethodWithArgs(JSC::ExecState&);
     static JSC::JSValue classMethod2(JSC::ExecState&);
-    TestObj& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestObj* m_impl;
 public:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:

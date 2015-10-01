@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestCustomConstructorWithNoInterfaceObject : public JSDOMWrapper {
+class JSTestCustomConstructorWithNoInterfaceObject : public JSDOMWrapperWithImplementation<TestCustomConstructorWithNoInterfaceObject> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestCustomConstructorWithNoInterfaceObject> Base;
     static JSTestCustomConstructorWithNoInterfaceObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomConstructorWithNoInterfaceObject>&& impl)
     {
         JSTestCustomConstructorWithNoInterfaceObject* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObject>(globalObject->vm().heap)) JSTestCustomConstructorWithNoInterfaceObject(structure, globalObject, WTF::move(impl));
@@ -41,7 +41,6 @@ public:
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static TestCustomConstructorWithNoInterfaceObject* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
-    ~JSTestCustomConstructorWithNoInterfaceObject();
 
     DECLARE_INFO;
 
@@ -50,11 +49,6 @@ public:
         return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    TestCustomConstructorWithNoInterfaceObject& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestCustomConstructorWithNoInterfaceObject* m_impl;
 protected:
     JSTestCustomConstructorWithNoInterfaceObject(JSC::Structure*, JSDOMGlobalObject*, Ref<TestCustomConstructorWithNoInterfaceObject>&&);
 

@@ -120,8 +120,7 @@ void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
 JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestMediaQueryListListener>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -139,11 +138,6 @@ void JSTestMediaQueryListListener::destroy(JSC::JSCell* cell)
 {
     JSTestMediaQueryListListener* thisObject = static_cast<JSTestMediaQueryListListener*>(cell);
     thisObject->JSTestMediaQueryListListener::~JSTestMediaQueryListListener();
-}
-
-JSTestMediaQueryListListener::~JSTestMediaQueryListListener()
-{
-    releaseImpl();
 }
 
 EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)

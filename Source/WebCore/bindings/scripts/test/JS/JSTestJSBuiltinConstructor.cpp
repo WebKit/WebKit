@@ -146,10 +146,6 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor();
 }
 
-JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor()
-{
-}
-
 EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestJSBuiltinConstructorPrototype*>(baseValue);

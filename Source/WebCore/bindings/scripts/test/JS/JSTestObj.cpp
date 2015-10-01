@@ -707,8 +707,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestObj>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -726,11 +725,6 @@ void JSTestObj::destroy(JSC::JSCell* cell)
 {
     JSTestObj* thisObject = static_cast<JSTestObj*>(cell);
     thisObject->JSTestObj::~JSTestObj();
-}
-
-JSTestObj::~JSTestObj()
-{
-    releaseImpl();
 }
 
 bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

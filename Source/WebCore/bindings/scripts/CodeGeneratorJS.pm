@@ -180,7 +180,8 @@ sub GetParentClassName
     my $interface = shift;
 
     return $interface->extendedAttributes->{"JSLegacyParent"} if $interface->extendedAttributes->{"JSLegacyParent"};
-    return "JSDOMWrapper" unless $interface->parent;
+    return "JSDOMWrapper" unless NeedsImplementationClass($interface);
+    return "JSDOMWrapperWithImplementation<" . GetImplClassName($interface->name) . ">" unless $interface->parent;
     return "JS" . $interface->parent;
 }
 
@@ -840,6 +841,10 @@ sub GetImplClassName
     my $name = shift;
 
     return "DOMWindow" if $name eq "AbstractView";
+
+    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($name);
+    return $svgNativeType if $svgNativeType;
+
     return $name;
 }
 
@@ -881,9 +886,7 @@ sub GenerateHeader
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     my $implType = GetImplClassName($interfaceName);
-    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implType);
-    $implType = $svgNativeType if $svgNativeType;
-
+    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interfaceName);
     my $svgPropertyOrListPropertyType;
     $svgPropertyOrListPropertyType = $svgPropertyType if $svgPropertyType;
     $svgPropertyOrListPropertyType = $svgListPropertyType if $svgListPropertyType;
@@ -1027,7 +1030,6 @@ sub GenerateHeader
 
     if (!$hasParent) {
         push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
-        push(@headerContent, "    ~${className}();\n");
     }
 
     # Class info
@@ -1188,12 +1190,7 @@ sub GenerateHeader
     }
 
     if (NeedsImplementationClass($interface)) {
-        if (!$hasParent) {
-            push(@headerContent, "    $implType& impl() const { return *m_impl; }\n");
-            push(@headerContent, "    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }\n\n");
-            push(@headerContent, "private:\n");
-            push(@headerContent, "    $implType* m_impl;\n");
-        } else {
+        if ($hasParent) {
             push(@headerContent, "    $interfaceName& impl() const\n");
             push(@headerContent, "    {\n");
             push(@headerContent, "        return static_cast<$interfaceName&>(Base::impl());\n");
@@ -2138,9 +2135,7 @@ sub GenerateImplementation
     }
     push(@implContent, ", CREATE_METHOD_TABLE($className) };\n\n");
 
-    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implType);
-    $implType = $svgNativeType if $svgNativeType;
-
+    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($interfaceName);
     my $svgPropertyOrListPropertyType;
     $svgPropertyOrListPropertyType = $svgPropertyType if $svgPropertyType;
     $svgPropertyOrListPropertyType = $svgListPropertyType if $svgListPropertyType;
@@ -2163,12 +2158,7 @@ sub GenerateImplementation
         push(@implContent, "    : $parentClassName(structure, globalObject) { }\n\n");
      }else {
         push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
-        if ($hasParent) {
-            push(@implContent, "    : $parentClassName(structure, globalObject, WTF::move(impl))\n");
-        } else {
-            push(@implContent, "    : $parentClassName(structure, globalObject)\n");
-            push(@implContent, "    , m_impl(&impl.leakRef())\n");
-        }
+        push(@implContent, "    : $parentClassName(structure, globalObject, WTF::move(impl))\n");
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
     }
@@ -2195,13 +2185,6 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = static_cast<${className}*>(cell);\n");
         push(@implContent, "    thisObject->${className}::~${className}();\n");
-        push(@implContent, "}\n\n");
-
-        push(@implContent, "${className}::~${className}()\n");
-        push(@implContent, "{\n");
-        if (NeedsImplementationClass($interface)) {
-            push(@implContent, "    releaseImpl();\n");
-        }
         push(@implContent, "}\n\n");
     }
 

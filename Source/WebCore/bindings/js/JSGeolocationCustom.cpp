@@ -114,7 +114,7 @@ JSValue JSGeolocation::getCurrentPosition(ExecState& state)
         return jsUndefined();
     ASSERT(positionOptions);
 
-    m_impl->getCurrentPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
+    impl().getCurrentPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
     return jsUndefined();
 }
 
@@ -136,7 +136,7 @@ JSValue JSGeolocation::watchPosition(ExecState& state)
         return jsUndefined();
     ASSERT(positionOptions);
 
-    int watchID = m_impl->watchPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
+    int watchID = impl().watchPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
     return jsNumber(watchID);
 }
 

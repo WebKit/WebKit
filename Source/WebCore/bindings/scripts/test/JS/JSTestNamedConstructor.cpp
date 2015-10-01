@@ -185,8 +185,7 @@ void JSTestNamedConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructor) };
 
 JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedConstructor>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestNamedConstructor>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -204,11 +203,6 @@ void JSTestNamedConstructor::destroy(JSC::JSCell* cell)
 {
     JSTestNamedConstructor* thisObject = static_cast<JSTestNamedConstructor*>(cell);
     thisObject->JSTestNamedConstructor::~JSTestNamedConstructor();
-}
-
-JSTestNamedConstructor::~JSTestNamedConstructor()
-{
-    releaseImpl();
 }
 
 EncodedJSValue jsTestNamedConstructorConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)

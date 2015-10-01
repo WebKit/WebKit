@@ -170,8 +170,7 @@ void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructor) };
 
 JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestEventConstructor>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -189,11 +188,6 @@ void JSTestEventConstructor::destroy(JSC::JSCell* cell)
 {
     JSTestEventConstructor* thisObject = static_cast<JSTestEventConstructor*>(cell);
     thisObject->JSTestEventConstructor::~JSTestEventConstructor();
-}
-
-JSTestEventConstructor::~JSTestEventConstructor()
-{
-    releaseImpl();
 }
 
 EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)

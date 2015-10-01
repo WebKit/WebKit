@@ -42,10 +42,26 @@ public:
 
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
-        : JSDestructibleObject(globalObject->vm(), structure)
+        : Base(globalObject->vm(), structure)
     {
         ASSERT(scriptExecutionContext());
     }
+};
+
+template<typename ImplementationClass> class JSDOMWrapperWithImplementation : public JSDOMWrapper {
+public:
+    typedef JSDOMWrapper Base;
+
+    ImplementationClass& impl() const { return *m_impl; }
+    ~JSDOMWrapperWithImplementation() { std::exchange(m_impl, nullptr)->deref(); }
+
+protected:
+    JSDOMWrapperWithImplementation(JSC::Structure* structure, JSC::JSGlobalObject* globalObject, Ref<ImplementationClass>&& impl)
+        : Base(structure, globalObject)
+        , m_impl(&impl.leakRef()) { }
+
+private:
+    ImplementationClass* m_impl;
 };
 
 } // namespace WebCore

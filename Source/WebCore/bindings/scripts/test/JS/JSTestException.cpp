@@ -129,8 +129,7 @@ void JSTestExceptionPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestException::s_info = { "TestException", &Base::s_info, &JSTestExceptionTable, CREATE_METHOD_TABLE(JSTestException) };
 
 JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestException>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -148,11 +147,6 @@ void JSTestException::destroy(JSC::JSCell* cell)
 {
     JSTestException* thisObject = static_cast<JSTestException*>(cell);
     thisObject->JSTestException::~JSTestException();
-}
-
-JSTestException::~JSTestException()
-{
-    releaseImpl();
 }
 
 bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

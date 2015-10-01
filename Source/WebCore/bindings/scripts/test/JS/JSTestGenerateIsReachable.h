@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestGenerateIsReachable : public JSDOMWrapper {
+class JSTestGenerateIsReachable : public JSDOMWrapperWithImplementation<TestGenerateIsReachable> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestGenerateIsReachable> Base;
     static JSTestGenerateIsReachable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
     {
         JSTestGenerateIsReachable* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachable>(globalObject->vm().heap)) JSTestGenerateIsReachable(structure, globalObject, WTF::move(impl));
@@ -41,7 +41,6 @@ public:
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static TestGenerateIsReachable* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
-    ~JSTestGenerateIsReachable();
 
     DECLARE_INFO;
 
@@ -51,11 +50,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    TestGenerateIsReachable& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestGenerateIsReachable* m_impl;
 protected:
     JSTestGenerateIsReachable(JSC::Structure*, JSDOMGlobalObject*, Ref<TestGenerateIsReachable>&&);
 

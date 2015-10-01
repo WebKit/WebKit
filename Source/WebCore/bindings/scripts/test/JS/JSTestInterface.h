@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT JSTestInterface : public JSDOMWrapper {
+class WEBCORE_EXPORT JSTestInterface : public JSDOMWrapperWithImplementation<TestInterface> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestInterface> Base;
     static JSTestInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
     {
         JSTestInterface* ptr = new (NotNull, JSC::allocateCell<JSTestInterface>(globalObject->vm().heap)) JSTestInterface(structure, globalObject, WTF::move(impl));
@@ -47,7 +47,6 @@ public:
     static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
     bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
     static void destroy(JSC::JSCell*);
-    ~JSTestInterface();
 
     DECLARE_INFO;
 
@@ -79,11 +78,6 @@ public:
 #if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalMethod3(JSC::ExecState&);
 #endif
-    TestInterface& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestInterface* m_impl;
 public:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:

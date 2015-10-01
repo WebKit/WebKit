@@ -131,8 +131,7 @@ void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
 
 JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestSerializedScriptValueInterface>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -150,11 +149,6 @@ void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
 {
     JSTestSerializedScriptValueInterface* thisObject = static_cast<JSTestSerializedScriptValueInterface*>(cell);
     thisObject->JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface();
-}
-
-JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface()
-{
-    releaseImpl();
 }
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)

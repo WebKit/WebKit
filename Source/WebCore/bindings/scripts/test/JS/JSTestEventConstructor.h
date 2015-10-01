@@ -29,9 +29,9 @@ namespace WebCore {
 
 class JSDictionary;
 
-class JSTestEventConstructor : public JSDOMWrapper {
+class JSTestEventConstructor : public JSDOMWrapperWithImplementation<TestEventConstructor> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestEventConstructor> Base;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
     {
         JSTestEventConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructor>(globalObject->vm().heap)) JSTestEventConstructor(structure, globalObject, WTF::move(impl));
@@ -43,7 +43,6 @@ public:
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static TestEventConstructor* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
-    ~JSTestEventConstructor();
 
     DECLARE_INFO;
 
@@ -53,11 +52,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    TestEventConstructor& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestEventConstructor* m_impl;
 protected:
     JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject*, Ref<TestEventConstructor>&&);
 

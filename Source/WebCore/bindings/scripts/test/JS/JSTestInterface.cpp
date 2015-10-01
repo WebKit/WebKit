@@ -410,8 +410,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, CREATE_METHOD_TABLE(JSTestInterface) };
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestInterface>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -429,11 +428,6 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
 {
     JSTestInterface* thisObject = static_cast<JSTestInterface*>(cell);
     thisObject->JSTestInterface::~JSTestInterface();
-}
-
-JSTestInterface::~JSTestInterface()
-{
-    releaseImpl();
 }
 
 bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

@@ -145,8 +145,7 @@ void JSTestEventTargetPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, CREATE_METHOD_TABLE(JSTestEventTarget) };
 
 JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestEventTarget>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -164,11 +163,6 @@ void JSTestEventTarget::destroy(JSC::JSCell* cell)
 {
     JSTestEventTarget* thisObject = static_cast<JSTestEventTarget*>(cell);
     thisObject->JSTestEventTarget::~JSTestEventTarget();
-}
-
-JSTestEventTarget::~JSTestEventTarget()
-{
-    releaseImpl();
 }
 
 bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

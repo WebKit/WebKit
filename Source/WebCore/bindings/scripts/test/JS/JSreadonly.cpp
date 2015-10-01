@@ -112,8 +112,7 @@ void JSreadonlyPrototype::finishCreation(VM& vm)
 const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonly) };
 
 JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject* globalObject, Ref<readonly>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<readonly>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -131,11 +130,6 @@ void JSreadonly::destroy(JSC::JSCell* cell)
 {
     JSreadonly* thisObject = static_cast<JSreadonly*>(cell);
     thisObject->JSreadonly::~JSreadonly();
-}
-
-JSreadonly::~JSreadonly()
-{
-    releaseImpl();
 }
 
 EncodedJSValue jsreadonlyConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)

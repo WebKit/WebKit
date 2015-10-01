@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestOverloadedConstructors : public JSDOMWrapper {
+class JSTestOverloadedConstructors : public JSDOMWrapperWithImplementation<TestOverloadedConstructors> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestOverloadedConstructors> Base;
     static JSTestOverloadedConstructors* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
     {
         JSTestOverloadedConstructors* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructors>(globalObject->vm().heap)) JSTestOverloadedConstructors(structure, globalObject, WTF::move(impl));
@@ -41,7 +41,6 @@ public:
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static TestOverloadedConstructors* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
-    ~JSTestOverloadedConstructors();
 
     DECLARE_INFO;
 
@@ -51,11 +50,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
-    TestOverloadedConstructors& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestOverloadedConstructors* m_impl;
 protected:
     JSTestOverloadedConstructors(JSC::Structure*, JSDOMGlobalObject*, Ref<TestOverloadedConstructors>&&);
 

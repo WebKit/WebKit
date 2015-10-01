@@ -112,8 +112,7 @@ void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestGenerateIsReachable::s_info = { "TestGenerateIsReachable", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachable) };
 
 JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestGenerateIsReachable>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -131,11 +130,6 @@ void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
 {
     JSTestGenerateIsReachable* thisObject = static_cast<JSTestGenerateIsReachable*>(cell);
     thisObject->JSTestGenerateIsReachable::~JSTestGenerateIsReachable();
-}
-
-JSTestGenerateIsReachable::~JSTestGenerateIsReachable()
-{
-    releaseImpl();
 }
 
 EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)

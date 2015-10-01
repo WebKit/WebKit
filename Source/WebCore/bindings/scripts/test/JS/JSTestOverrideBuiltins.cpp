@@ -135,8 +135,7 @@ void JSTestOverrideBuiltinsPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestOverrideBuiltins::s_info = { "TestOverrideBuiltins", &Base::s_info, &JSTestOverrideBuiltinsTable, CREATE_METHOD_TABLE(JSTestOverrideBuiltins) };
 
 JSTestOverrideBuiltins::JSTestOverrideBuiltins(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverrideBuiltins>&& impl)
-    : JSDOMWrapper(structure, globalObject)
-    , m_impl(&impl.leakRef())
+    : JSDOMWrapperWithImplementation<TestOverrideBuiltins>(structure, globalObject, WTF::move(impl))
 {
 }
 
@@ -154,11 +153,6 @@ void JSTestOverrideBuiltins::destroy(JSC::JSCell* cell)
 {
     JSTestOverrideBuiltins* thisObject = static_cast<JSTestOverrideBuiltins*>(cell);
     thisObject->JSTestOverrideBuiltins::~JSTestOverrideBuiltins();
-}
-
-JSTestOverrideBuiltins::~JSTestOverrideBuiltins()
-{
-    releaseImpl();
 }
 
 bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)

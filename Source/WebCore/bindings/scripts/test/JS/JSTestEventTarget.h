@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestEventTarget : public JSDOMWrapper {
+class JSTestEventTarget : public JSDOMWrapperWithImplementation<TestEventTarget> {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMWrapperWithImplementation<TestEventTarget> Base;
     static JSTestEventTarget* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
     {
         globalObject->masqueradesAsUndefinedWatchpoint()->fireAll("Allocated masquerading object");
@@ -44,7 +44,6 @@ public:
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
-    ~JSTestEventTarget();
 
     DECLARE_INFO;
 
@@ -57,11 +56,6 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    TestEventTarget& impl() const { return *m_impl; }
-    void releaseImpl() { std::exchange(m_impl, nullptr)->deref(); }
-
-private:
-    TestEventTarget* m_impl;
 public:
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::MasqueradesAsUndefined | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 protected:
