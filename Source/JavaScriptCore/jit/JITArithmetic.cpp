@@ -666,7 +666,6 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, int, int op1, int op2, Operand
     emitGetVirtualRegisters(op1, regT0, op2, regT1);
     emitJumpSlowCaseIfNotInt(regT0);
     emitJumpSlowCaseIfNotInt(regT1);
-    RareCaseProfile* profile = m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
     if (opcodeID == op_add)
         addSlowCase(branchAdd32(Overflow, regT1, regT0));
     else if (opcodeID == op_sub)
@@ -688,7 +687,7 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, int, int op1, int op2, Operand
             // We only get here if we have a genuine negative zero. Record this,
             // so that the speculative JIT knows that we failed speculation
             // because of a negative zero.
-            add32(TrustedImm32(1), AbsoluteAddress(&profile->m_counter));
+            add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter));
             addSlowCase(jump());
             done.link(this);
             move(regT2, regT0);
@@ -836,15 +835,11 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
     // For now, only plant a fast int case if the constant operand is greater than zero.
     int32_t value;
     if (isOperandConstantInt(op1) && ((value = getOperandConstantInt(op1)) > 0)) {
-        // Add a special fast case profile because the DFG JIT will expect one.
-        m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
         emitGetVirtualRegister(op2, regT0);
         emitJumpSlowCaseIfNotInt(regT0);
         addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
         emitTagInt(regT1, regT0);
     } else if (isOperandConstantInt(op2) && ((value = getOperandConstantInt(op2)) > 0)) {
-        // Add a special fast case profile because the DFG JIT will expect one.
-        m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset);
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotInt(regT0);
         addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));

@@ -1,3 +1,33 @@
+2015-10-01  Mark Lam  <mark.lam@apple.com>
+
+        Remove unnecessary SpecialFastCaseProfiles.
+        https://bugs.webkit.org/show_bug.cgi?id=149729
+
+        Reviewed by Saam Barati.
+
+        The current baseline code creates special fast case profiles records for
+        bytecodes that don't need them.  This was done to keep the DFG from crashing when
+        it searches for such a profile and don't find one.  Instead, we will fix the code
+        to check for the existence of the profile before dereferencing it to get a count.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::specialFastCaseProfileCountForBytecodeOffset):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::numberOfArrayProfiles):
+        (JSC::CodeBlock::arrayProfiles):
+        (JSC::CodeBlock::addArrayProfile):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase): Deleted.  Not used.
+        (JSC::CodeBlock::likelyToTakeAnySlowCase): Deleted.   Not used.
+        * jit/JITArithmetic.cpp:
+
+        (JSC::JIT::compileBinaryArithOp):
+        - Only op_mul needs the profile.  So, only allocate it in the op_mul case.
+
+        (JSC::JIT::emit_op_mul):
+        - These op_mul cases create the profile but never increments its counter.
+          Hence, we can get rid of these.
+
 2015-10-01  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add TypedArray.prototype functionality.
