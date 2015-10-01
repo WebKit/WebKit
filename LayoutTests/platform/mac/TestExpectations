@@ -322,7 +322,7 @@ webkit.org/b/82665 http/tests/webarchive/test-css-url-encoding.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 
-webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
+webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Pass Failure ]
 
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 
@@ -582,7 +582,6 @@ webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
-webaudio/mediastreamaudiodestinationnode.html [ Failure ]
 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 webaudio/codec-tests/vorbis/ [ WontFix ]
 webkit.org/b/119467 webaudio/audiobuffersource-loop-points.html [ Skip ]
@@ -757,9 +756,6 @@ webkit.org/b/131887 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncom
 webkit.org/b/132990 fast/regions/overflow/overflow-size-change-with-stacking-context.html [ ImageOnlyFailure ]
 
 webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
-
-# Clipping filter effects when region is present.
-webkit.org/b/133523 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 
 webkit.org/b/136419 fast/sub-pixel/block-with-margin-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/137729 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
@@ -1142,7 +1138,7 @@ webkit.org/b/136109 [ Yosemite+ ] fast/multicol/mixed-opacity-fixed-test.html  [
 # Specific to Yosemite's font fallback
 webkit.org/b/138328 [ Mavericks ] fast/text/font-cursive-italic-cjk.html [ Skip ]
 
-webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Timeout ]
+webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Pass Timeout ]
 
 # Verified passing, so override generic skip
 webkit.org/b/89235 css3/line-break [ Pass ]
