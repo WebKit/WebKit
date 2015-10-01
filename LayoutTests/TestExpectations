@@ -17,6 +17,7 @@ swipe [ Skip ]
 fast/zooming/ios [ Skip ]
 fast/viewport/ios [ Skip ]
 fast/events/ios [ Skip ]
+fast/events/touch/ios [ Skip ]
 
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
