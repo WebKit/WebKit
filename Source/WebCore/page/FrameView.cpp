@@ -173,7 +173,6 @@ FrameView::FrameView(Frame& frame)
     , m_baseBackgroundColor(Color::white)
     , m_mediaType("screen")
     , m_overflowStatusDirty(true)
-    , m_viewportRenderer(nullptr)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
     , m_safeToPropagateScrollToParent(true)
@@ -620,18 +619,19 @@ void FrameView::adjustViewSize()
 IntSize FrameView::contentsSizeRespectingOverflow() const
 {
     RenderView* renderView = this->renderView();
-    if (!renderView || !m_viewportRenderer || !is<RenderBox>(m_viewportRenderer) || !frame().isMainFrame())
+    auto* viewportRenderer = this->viewportRenderer();
+    if (!renderView || !is<RenderBox>(viewportRenderer) || !frame().isMainFrame())
         return contentsSize();
 
     ASSERT(frame().view() == this);
 
     FloatRect contentRect = renderView->unscaledDocumentRect();
-    RenderBox& viewportRendererBox = downcast<RenderBox>(*m_viewportRenderer);
+    RenderBox& viewportRendererBox = downcast<RenderBox>(*viewportRenderer);
 
-    if (m_viewportRenderer->style().overflowX() == OHIDDEN)
+    if (viewportRendererBox.style().overflowX() == OHIDDEN)
         contentRect.setWidth(std::min<float>(contentRect.width(), viewportRendererBox.frameRect().width()));
 
-    if (m_viewportRenderer->style().overflowY() == OHIDDEN)
+    if (viewportRendererBox.style().overflowY() == OHIDDEN)
         contentRect.setHeight(std::min<float>(contentRect.height(), viewportRendererBox.frameRect().height()));
 
     if (renderView->hasTransform())
@@ -640,7 +640,7 @@ IntSize FrameView::contentsSizeRespectingOverflow() const
     return IntSize(contentRect.size());
 }
 
-void FrameView::applyOverflowToViewport(RenderElement* renderer, ScrollbarMode& hMode, ScrollbarMode& vMode)
+void FrameView::applyOverflowToViewport(const RenderElement& renderer, ScrollbarMode& hMode, ScrollbarMode& vMode)
 {
     // Handle the overflow:hidden/scroll case for the body/html elements.  WinIE treats
     // overflow:hidden and overflow:scroll on <body> as applying to the document's
@@ -653,13 +653,13 @@ void FrameView::applyOverflowToViewport(RenderElement* renderer, ScrollbarMode& 
 
     bool overrideHidden = frame().isMainFrame() && ((frame().frameScaleFactor() > 1) || headerHeight() || footerHeight());
 
-    EOverflow overflowX = renderer->style().overflowX();
-    EOverflow overflowY = renderer->style().overflowY();
+    EOverflow overflowX = renderer.style().overflowX();
+    EOverflow overflowY = renderer.style().overflowY();
 
-    if (is<RenderSVGRoot>(*renderer)) {
+    if (is<RenderSVGRoot>(renderer)) {
         // FIXME: evaluate if we can allow overflow for these cases too.
         // Overflow is always hidden when stand-alone SVG documents are embedded.
-        if (downcast<RenderSVGRoot>(*renderer).isEmbeddedThroughFrameContainingSVGDocument()) {
+        if (downcast<RenderSVGRoot>(renderer).isEmbeddedThroughFrameContainingSVGDocument()) {
             overflowX = OHIDDEN;
             overflowY = OHIDDEN;
         }
@@ -700,8 +700,6 @@ void FrameView::applyOverflowToViewport(RenderElement* renderer, ScrollbarMode& 
             // Don't set it at all. Values of OPAGEDX and OPAGEDY are handled by applyPaginationToViewPort().
             ;
     }
-
-    m_viewportRenderer = renderer;
 }
 
 void FrameView::applyPaginationToViewport()
@@ -732,7 +730,7 @@ void FrameView::applyPaginationToViewport()
 
 void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode, ScrollbarModesCalculationStrategy strategy)
 {
-    m_viewportRenderer = nullptr;
+    m_viewportRendererType = ViewportRendererType::None;
 
     const HTMLFrameOwnerElement* owner = frame().ownerElement();
     if (owner && (owner->scrollingMode() == ScrollbarAlwaysOff)) {
@@ -749,24 +747,47 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         vMode = ScrollbarAlwaysOff;
     }
     
-    if (!m_layoutRoot) {
-        Document* document = frame().document();
-        auto documentElement = document->documentElement();
-        RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr;
-        auto* body = document->bodyOrFrameset();
-        if (body && body->renderer()) {
-            if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled()) {
-                vMode = ScrollbarAlwaysOff;
-                hMode = ScrollbarAlwaysOff;
-            } else if (is<HTMLBodyElement>(*body)) {
-                // It's sufficient to just check the X overflow,
-                // since it's illegal to have visible in only one direction.
-                RenderElement* o = rootRenderer->style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(*document->documentElement()) ? body->renderer() : rootRenderer;
-                applyOverflowToViewport(o, hMode, vMode);
+    if (m_layoutRoot)
+        return;
+    
+    auto* document = frame().document();
+    if (!document)
+        return;
+
+    auto documentElement = document->documentElement();
+    if (!documentElement)
+        return;
+
+    auto* bodyOrFrameset = document->bodyOrFrameset();
+    auto* rootRenderer = documentElement->renderer();
+    if (!bodyOrFrameset || !bodyOrFrameset->renderer()) {
+        if (rootRenderer) {
+            applyOverflowToViewport(*rootRenderer, hMode, vMode);
+            m_viewportRendererType = ViewportRendererType::Document;
+        }
+        return;
+    }
+    
+    if (is<HTMLFrameSetElement>(*bodyOrFrameset) && !frameFlatteningEnabled()) {
+        vMode = ScrollbarAlwaysOff;
+        hMode = ScrollbarAlwaysOff;
+        return;
+    }
+
+    if (is<HTMLBodyElement>(*bodyOrFrameset) && rootRenderer) {
+        // It's sufficient to just check the X overflow,
+        // since it's illegal to have visible in only one direction.
+        if (rootRenderer->style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(documentElement)) {
+            auto* bodyRenderer = bodyOrFrameset->renderer();
+            if (bodyRenderer) {
+                applyOverflowToViewport(*bodyRenderer, hMode, vMode);
+                m_viewportRendererType = ViewportRendererType::Body;
             }
-        } else if (rootRenderer)
-            applyOverflowToViewport(rootRenderer, hMode, vMode);
-    }    
+        } else {
+            applyOverflowToViewport(*rootRenderer, hMode, vMode);
+            m_viewportRendererType = ViewportRendererType::Document;
+        }
+    }
 }
 
 void FrameView::willRecalcStyle()
@@ -3264,9 +3285,37 @@ void FrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
     setNeedsLayout();
 }
 
+RenderElement* FrameView::viewportRenderer() const
+{
+    if (m_viewportRendererType == ViewportRendererType::None)
+        return nullptr;
+
+    auto* document = frame().document();
+    if (!document)
+        return nullptr;
+
+    if (m_viewportRendererType == ViewportRendererType::Document) {
+        auto* documentElement = document->documentElement();
+        if (!documentElement)
+            return nullptr;
+        return documentElement->renderer();
+    }
+
+    if (m_viewportRendererType == ViewportRendererType::Body) {
+        auto* body = document->body();
+        if (!body)
+            return nullptr;
+        return body->renderer();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
 {
-    if (!m_viewportRenderer)
+    auto* viewportRenderer = this->viewportRenderer();
+    if (!viewportRenderer)
         return;
     
     if (m_overflowStatusDirty) {
@@ -3285,7 +3334,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
 
         RefPtr<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow);
-        overflowEvent->setTarget(m_viewportRenderer->element());
+        overflowEvent->setTarget(viewportRenderer->element());
 
         frame().document()->enqueueOverflowEvent(overflowEvent.release());
     }
