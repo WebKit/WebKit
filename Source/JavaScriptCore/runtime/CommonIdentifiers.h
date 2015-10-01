@@ -292,6 +292,8 @@
     macro(getPrototypeOf) \
     macro(getOwnPropertyNames) \
     macro(TypeError) \
+    macro(typedArrayLength) \
+    macro(typedArraySort) \
     macro(undefined) \
     macro(BuiltinLog) \
     macro(homeObject) \

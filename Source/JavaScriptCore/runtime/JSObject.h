@@ -1475,6 +1475,16 @@ ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)
     putDirectBuiltinFunction(\
         vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
 
+// Helper for defining native getters on properties.
+#define JSC_NATIVE_GETTER(jsName, cppName, attributes, length) do { \
+        Identifier ident = makeIdentifier(vm, (jsName)); \
+        GetterSetter* accessor = GetterSetter::create(vm, globalObject); \
+        JSFunction* function = JSFunction::create(vm, globalObject, (length), ident.string(), (cppName)); \
+        accessor->setGetter(vm, globalObject, function); \
+        putDirectNonIndexAccessor(vm, ident, accessor, (attributes) | Accessor); \
+    } while (false)
+
+
 } // namespace JSC
 
 #endif // JSObject_h

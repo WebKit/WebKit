@@ -27,6 +27,7 @@
 #define JSTypedArrayPrototypes_h
 
 #include "JSGenericTypedArrayViewPrototype.h"
+#include "JSTypedArrayViewPrototype.h"
 #include "JSTypedArrays.h"
 
 namespace JSC {

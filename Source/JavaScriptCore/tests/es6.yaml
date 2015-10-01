@@ -1119,47 +1119,47 @@
 - path: es6/typed_arrays_%TypedArray%.of.js
   cmd: runES6 :fail
 - path: es6/typed_arrays_%TypedArray%.prototype.copyWithin.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.entries.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.every.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.fill.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.filter.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.find.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.findIndex.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.forEach.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.indexOf.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.join.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.keys.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.lastIndexOf.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.map.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.reduce.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.reduceRight.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.reverse.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.slice.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.some.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.sort.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.values.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype[Symbol.iterator].js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%[Symbol.species].js
   cmd: runES6 :fail
 - path: es6/typed_arrays_ArrayBuffer[Symbol.species].js
