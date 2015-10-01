@@ -1083,9 +1083,6 @@
     <ClCompile Include="..\runtime\JSTypedArrays.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\JSTypedArrayViewPrototype.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\runtime\DataView.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -3381,9 +3378,6 @@
     <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototype.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototypeFunctions.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
     <ClInclude Include="..\runtime\JSInternalPromise.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -3459,9 +3453,6 @@
     <ClInclude Include="..\runtime\JSTypedArrays.h">
       <Filter>runtime</Filter>
     </ClInclude>
-    <ClInclude Include="..\runtime\JSTypedArrayViewPrototype.h">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClInclude Include="..\runtime\JSUint16Array.h">
       <Filter>runtime</Filter>
     </ClInclude>
