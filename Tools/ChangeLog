@@ -1,5 +1,16 @@
 2015-09-30  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the build after <https://trac.webkit.org/changeset/190387>
+        (https://bugs.webkit.org/show_bug.cgi?id=149695)
+
+        Actually, we need to pass --configuration to script webkit-build-directory to have
+        it return the path to the configuration-specific build directory.
+
+        * BuildSlaveSupport/built-product-archive:
+        (determineWebKitBuildDirectories):
+
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
         built-product-archive archives incorrect build directory for iOS port
         https://bugs.webkit.org/show_bug.cgi?id=149695
 
