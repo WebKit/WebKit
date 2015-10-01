@@ -369,8 +369,8 @@
     </branch>
   </autotools>
 
-  <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure">
-    <branch repo="github.com" module="ossy-szeged/sctp-refimpl.git" checkoutdir="libusrsctp" tag="libusrsctp-r9168c"/>
+  <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
+    <branch repo="github.com" module="sctplab/usrsctp.git" checkoutdir="usrsctp" tag="078ff3252f73327e0ac11d6fd5eff62011f6646e"/>
    </autotools>
 
    <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" autogen-sh="./autogen.sh; ./configure">

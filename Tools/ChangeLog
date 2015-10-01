@@ -1,3 +1,13 @@
+2015-10-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [jhbuild] switch to new upstream usrsctp library
+        https://bugs.webkit.org/show_bug.cgi?id=149494
+
+        Reviewed by Philippe Normand.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
 2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Unskip GTK+ user media unit tests after r190362.
