@@ -1,3 +1,14 @@
+2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r190399.
+
+        Tests are still failing even after r190362
+
+        Reverted changeset:
+
+        "Unreviewed. Unskip GTK+ user media unit tests after r190362."
+        http://trac.webkit.org/changeset/190399
+
 2015-10-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [jhbuild] switch to new upstream usrsctp library
