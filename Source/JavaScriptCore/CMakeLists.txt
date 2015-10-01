@@ -1088,7 +1088,6 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ReflectObject.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringIterator.prototype.js
-    ${JAVASCRIPTCORE_DIR}/builtins/TypedArray.prototype.js
 )
 
 add_custom_command(
