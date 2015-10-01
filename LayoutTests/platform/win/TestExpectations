@@ -2271,7 +2271,7 @@ http/tests/history/back-during-onload-triggered-by-back.html [ Skip ] # Timeout
 http/tests/media/clearkey/clear-key-hls-aes128.html	[ Skip ] # Timeout
 
 # SSL Configuration on Windows <rdar://problem/5345985>
-http/tests/navigation/ping-cross-origin-from-https.html [ Skip ] # Timeout
+http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Skip ] # Timeout
 http/tests/security/cross-frame-access-protocol.html [ Skip ] # Timeout
 
 #<rdar://problem/5224271> Some LayoutTests fail when not run by themselves.
@@ -3243,6 +3243,6 @@ css3/line-break-language-sensitive [ Pass ImageOnlyFailure ]
 # TestRunner::cellForColumnAndRow() not implemented
 webkit.org/b/148354 accessibility/aria-table-content.html [ Skip ]
 
-webkit.org/b/148886 http/tests/navigation/ping-same-origin.html [ Pass Failure ]
+webkit.org/b/148886 http/tests/navigation/ping-attribute/anchor-same-origin.html [ Pass Failure ]
 webkit.org/b/148887 http/tests/navigation/success200-reload.html [ Pass Failure ]
 webkit.org/b/148888 http/tests/navigation/slowmetaredirect-basic.html [ Pass Failure ]

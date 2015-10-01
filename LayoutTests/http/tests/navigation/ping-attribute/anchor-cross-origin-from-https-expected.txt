@@ -1,0 +1,4 @@
+Ping sent successfully
+CONTENT_TYPE: text/ping
+HTTP_PING_TO: https://127.0.0.1:8443/navigation/resources/check-ping.php
+REQUEST_METHOD: POST
