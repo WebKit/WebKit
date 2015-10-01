@@ -1,3 +1,31 @@
+2015-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce `delete` in TreeElements and DataGridNodes
+        https://bugs.webkit.org/show_bug.cgi?id=149680
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement):
+        (WebInspector.BreakpointTreeElement.prototype._removeProbeSet):
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype._editingCommitted.moveToNextCell):
+        (WebInspector.DataGrid.prototype._editingCommitted):
+        (WebInspector.DataGrid.prototype._editingCancelled):
+        (WebInspector.DataGrid.prototype.removeColumn):
+        (WebInspector.DataGridNode.prototype.refreshIfNeeded):
+        (WebInspector.DataGridNode.prototype.refresh):
+        (WebInspector.DataGridNode.prototype.expand):
+        (WebInspector.DataGridNode.prototype.restorePosition):
+        (WebInspector.DataGridNode):
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WebInspector.GeneralTreeElement.prototype.ondetach):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype.refresh):
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeElement.prototype._fireDidChange):
+        (WebInspector.TreeElement.prototype.expand):
+
 2015-09-30  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: Add GTK+ icon for the Bezier curve visual editor

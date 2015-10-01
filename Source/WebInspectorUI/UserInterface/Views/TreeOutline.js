@@ -690,7 +690,7 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
 
     _fireDidChange()
     {
-        delete this._didChangeTimeoutIdentifier;
+        this._didChangeTimeoutIdentifier = undefined;
 
         if (this.treeOutline)
             this.treeOutline._treeElementDidChange(this);
@@ -890,7 +890,7 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
             for (var i = 0; i < this.children.length; ++i)
                 this.children[i]._attach();
 
-            delete this._shouldRefreshChildren;
+            this._shouldRefreshChildren = false;
         }
 
         if (this._listItemNode) {

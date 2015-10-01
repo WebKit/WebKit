@@ -315,7 +315,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
             var moveCommand = determineNextCell.call(this, valueDidChange);
             if (moveCommand.shouldSort && this._sortAfterEditingCallback) {
                 this._sortAfterEditingCallback();
-                delete this._sortAfterEditingCallback;
+                this._sortAfterEditingCallback = null;
             }
             if (moveCommand.editingNode)
                 this._startEditingNodeAtColumnIndex(moveCommand.editingNode, moveCommand.columnIndex);
@@ -334,7 +334,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
     _editingCancelled(element)
     {
         console.assert(this._editingNode.element === element.enclosingNodeOrSelfWithNodeName("tr"));
-        delete this._editing;
+        this._editing = false;
         this._editingNode = null;
     }
 
@@ -516,7 +516,7 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
         removedColumn["listeners"].uninstall(true);
 
         if (removedColumn["disclosure"])
-            delete this.disclosureColumnIdentifier;
+            this.disclosureColumnIdentifier = undefined;
 
         if (this.sortColumnIdentifier === columnIdentifier)
             this.sortColumnIdentifier = null;
@@ -1391,7 +1391,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (!this._needsRefresh)
             return;
 
-        delete this._needsRefresh;
+        this._needsRefresh = false;
 
         this.refresh();
     }
@@ -1551,10 +1551,10 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
         if (this._scheduledRefreshIdentifier) {
             cancelAnimationFrame(this._scheduledRefreshIdentifier);
-            delete this._scheduledRefreshIdentifier;
+            this._scheduledRefreshIdentifier = undefined;
         }
 
-        delete this._needsRefresh;
+        this._needsRefresh = false;
 
         this._element.removeChildren();
         this.createCells();
@@ -1685,7 +1685,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
                 }
             }
 
-            delete this._shouldRefreshChildren;
+            this._shouldRefreshChildren = false;
         }
 
         if (this._element)
@@ -1896,7 +1896,7 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
         if (this.parent !== this._savedPosition.parent)
             this._savedPosition.parent.insertChild(this, this._savedPosition.index);
 
-        delete this._savedPosition;
+        this._savedPosition = null;
     }
 };
 
