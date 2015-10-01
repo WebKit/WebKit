@@ -34,6 +34,7 @@
 #include "ColorSpace.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
+#include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
 #include "Path.h"
@@ -228,6 +229,15 @@ public:
     bool imageSmoothingEnabled() const;
     void setImageSmoothingEnabled(bool);
 
+    String imageSmoothingQuality() const;
+    void setImageSmoothingQuality(const String&);
+
+    enum class SmoothingQuality {
+        Low,
+        Medium,
+        High
+    };
+
 private:
     enum class Direction {
         Inherit,
@@ -281,6 +291,7 @@ private:
         Vector<float> lineDash;
         float lineDashOffset;
         bool imageSmoothingEnabled;
+        SmoothingQuality imageSmoothingQuality;
 
         // Text state.
         TextAlign textAlign;

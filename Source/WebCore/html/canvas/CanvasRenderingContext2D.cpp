@@ -42,7 +42,6 @@
 #include "DOMPath.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
-#include "GraphicsContext.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
@@ -173,6 +172,7 @@ CanvasRenderingContext2D::State::State()
     , hasInvertibleTransform(true)
     , lineDashOffset(0)
     , imageSmoothingEnabled(true)
+    , imageSmoothingQuality(SmoothingQuality::Low)
     , textAlign(StartTextAlign)
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
@@ -199,6 +199,7 @@ CanvasRenderingContext2D::State::State(const State& other)
     , hasInvertibleTransform(other.hasInvertibleTransform)
     , lineDashOffset(other.lineDashOffset)
     , imageSmoothingEnabled(other.imageSmoothingEnabled)
+    , imageSmoothingQuality(other.imageSmoothingQuality)
     , textAlign(other.textAlign)
     , textBaseline(other.textBaseline)
     , direction(other.direction)
@@ -229,6 +230,7 @@ CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(cons
     transform = other.transform;
     hasInvertibleTransform = other.hasInvertibleTransform;
     imageSmoothingEnabled = other.imageSmoothingEnabled;
+    imageSmoothingQuality = other.imageSmoothingQuality;
     textAlign = other.textAlign;
     textBaseline = other.textBaseline;
     direction = other.direction;
@@ -2539,6 +2541,63 @@ PlatformLayer* CanvasRenderingContext2D::platformLayer() const
 }
 #endif
 
+static InterpolationQuality smoothingToInterpolationQuality(CanvasRenderingContext2D::SmoothingQuality quality)
+{
+    switch (quality) {
+    case CanvasRenderingContext2D::SmoothingQuality::Low:
+        return InterpolationLow;
+    case CanvasRenderingContext2D::SmoothingQuality::Medium:
+        return InterpolationMedium;
+    case CanvasRenderingContext2D::SmoothingQuality::High:
+        return InterpolationHigh;
+    }
+
+    ASSERT_NOT_REACHED();
+    return InterpolationLow;
+};
+
+String CanvasRenderingContext2D::imageSmoothingQuality() const
+{
+    switch (state().imageSmoothingQuality) {
+    case SmoothingQuality::Low:
+        return ASCIILiteral("low");
+    case SmoothingQuality::Medium:
+        return ASCIILiteral("medium");
+    case SmoothingQuality::High:
+        return ASCIILiteral("high");
+    }
+
+    ASSERT_NOT_REACHED();
+    return ASCIILiteral("low");
+}
+
+void CanvasRenderingContext2D::setImageSmoothingQuality(const String& smoothingQualityString)
+{
+    SmoothingQuality quality;
+    if (smoothingQualityString == "low")
+        quality = SmoothingQuality::Low;
+    else if (smoothingQualityString == "medium")
+        quality = SmoothingQuality::Medium;
+    else if (smoothingQualityString == "high")
+        quality = SmoothingQuality::High;
+    else {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (quality == state().imageSmoothingQuality)
+        return;
+
+    realizeSaves();
+    modifiableState().imageSmoothingQuality = quality;
+
+    if (!modifiableState().imageSmoothingEnabled)
+        return;
+
+    if (auto* context = drawingContext())
+        context->setImageInterpolationQuality(smoothingToInterpolationQuality(quality));
+}
+
 bool CanvasRenderingContext2D::imageSmoothingEnabled() const
 {
     return state().imageSmoothingEnabled;
@@ -2553,7 +2612,7 @@ void CanvasRenderingContext2D::setImageSmoothingEnabled(bool enabled)
     modifiableState().imageSmoothingEnabled = enabled;
     GraphicsContext* c = drawingContext();
     if (c)
-        c->setImageInterpolationQuality(enabled ? DefaultInterpolationQuality : InterpolationNone);
+        c->setImageInterpolationQuality(enabled ? smoothingToInterpolationQuality(state().imageSmoothingQuality) : InterpolationNone);
 }
 
 } // namespace WebCore
