@@ -1,5 +1,14 @@
 2015-09-30  Daniel Bates  <dabates@apple.com>
 
+        Another attempt to fix the build after <https://trac.webkit.org/changeset/190387>
+        (https://bugs.webkit.org/show_bug.cgi?id=149695)
+
+        * BuildSlaveSupport/built-product-archive:
+        (determineWebKitBuildDirectories): Substitute _configurationBuildDirectory for _buildDirectory.
+        (extractBuiltProduct): Substitute _topLevelBuildDirectory for _buildDirectory.
+
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
         Attempt to fix the build after <https://trac.webkit.org/changeset/190387>
         (https://bugs.webkit.org/show_bug.cgi?id=149695)
 
