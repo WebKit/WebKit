@@ -45,13 +45,13 @@ class PositionOptions;
 
 class GeoNotifier : public RefCounted<GeoNotifier> {
 public:
-    static Ref<GeoNotifier> create(Geolocation& geolocation, PassRefPtr<PositionCallback> positionCallback, PassRefPtr<PositionErrorCallback> positionErrorCallback, PassRefPtr<PositionOptions> options)
+    static Ref<GeoNotifier> create(Geolocation& geolocation, RefPtr<PositionCallback>&& positionCallback, RefPtr<PositionErrorCallback>&& positionErrorCallback, RefPtr<PositionOptions>&& options)
     {
-        return adoptRef(*new GeoNotifier(geolocation, positionCallback, positionErrorCallback, options));
+        return adoptRef(*new GeoNotifier(geolocation, WTF::move(positionCallback), WTF::move(positionErrorCallback), WTF::move(options)));
     }
 
     PositionOptions* options() const { return m_options.get(); }
-    void setFatalError(PassRefPtr<PositionError>);
+    void setFatalError(RefPtr<PositionError>&&);
 
     bool useCachedPosition() const { return m_useCachedPosition; }
     void setUseCachedPosition();
@@ -65,7 +65,7 @@ public:
     bool hasZeroTimeout() const;
 
 private:
-    GeoNotifier(Geolocation&, PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
+    GeoNotifier(Geolocation&, RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
 
     Ref<Geolocation> m_geolocation;
     RefPtr<PositionCallback> m_successCallback;

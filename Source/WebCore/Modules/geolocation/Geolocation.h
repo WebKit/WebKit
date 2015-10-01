@@ -61,8 +61,8 @@ public:
     Document* document() const;
     WEBCORE_EXPORT Frame* frame() const;
 
-    void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
-    int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
+    void getCurrentPosition(RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
+    int watchPosition(RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
     void clearWatch(int watchID);
 
     WEBCORE_EXPORT void setIsAllowed(bool);
@@ -93,7 +93,7 @@ private:
 
     class Watchers {
     public:
-        bool add(int id, PassRefPtr<GeoNotifier>);
+        bool add(int id, RefPtr<GeoNotifier>&&);
         GeoNotifier* find(int id);
         void remove(int id);
         void remove(GeoNotifier*);

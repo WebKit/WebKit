@@ -26,7 +26,6 @@
 #ifndef GeolocationPosition_h
 #define GeolocationPosition_h
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

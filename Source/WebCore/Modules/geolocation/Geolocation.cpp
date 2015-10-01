@@ -49,10 +49,10 @@ static const char permissionDeniedErrorMessage[] = "User denied Geolocation";
 static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocation service";
 static const char framelessDocumentErrorMessage[] = "Geolocation cannot be used in frameless documents";
 
-static PassRefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
+static RefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
 {
     if (!position)
-        return 0;
+        return nullptr;
     
     RefPtr<Coordinates> coordinates = Coordinates::create(position->latitude(), position->longitude(), position->canProvideAltitude(), position->altitude(), 
                                                           position->accuracy(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(),
@@ -60,7 +60,7 @@ static PassRefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
     return Geoposition::create(coordinates.release(), convertSecondsToDOMTimeStamp(position->timestamp()));
 }
 
-static PassRefPtr<PositionError> createPositionError(GeolocationError* error)
+static Ref<PositionError> createPositionError(GeolocationError* error)
 {
     PositionError::ErrorCode code = PositionError::POSITION_UNAVAILABLE;
     switch (error->code()) {
@@ -75,14 +75,13 @@ static PassRefPtr<PositionError> createPositionError(GeolocationError* error)
     return PositionError::create(code, error->message());
 }
 
-bool Geolocation::Watchers::add(int id, PassRefPtr<GeoNotifier> prpNotifier)
+bool Geolocation::Watchers::add(int id, RefPtr<GeoNotifier>&& notifier)
 {
     ASSERT(id > 0);
-    RefPtr<GeoNotifier> notifier = prpNotifier;
 
     if (!m_idToNotifierMap.add(id, notifier.get()).isNewEntry)
         return false;
-    m_notifierToIdMap.set(notifier.release(), id);
+    m_notifierToIdMap.set(WTF::move(notifier), id);
     return true;
 }
 
@@ -304,34 +303,34 @@ Geoposition* Geolocation::lastPosition()
     return m_lastPosition.get();
 }
 
-void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
+void Geolocation::getCurrentPosition(RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
 {
     if (!frame())
         return;
 
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, successCallback, errorCallback, options);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, WTF::move(successCallback), WTF::move(errorCallback), WTF::move(options));
     startRequest(notifier.get());
 
     m_oneShots.add(notifier);
 }
 
-int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
+int Geolocation::watchPosition(RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
 {
     if (!frame())
         return 0;
 
-    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, successCallback, errorCallback, options);
+    RefPtr<GeoNotifier> notifier = GeoNotifier::create(*this, WTF::move(successCallback), WTF::move(errorCallback), WTF::move(options));
     startRequest(notifier.get());
 
     int watchID;
     // Keep asking for the next id until we're given one that we don't already have.
     do {
         watchID = m_scriptExecutionContext->circularSequentialID();
-    } while (!m_watchers.add(watchID, notifier));
+    } while (!m_watchers.add(watchID, WTF::move(notifier)));
     return watchID;
 }
 
-void Geolocation::startRequest(GeoNotifier *notifier)
+void Geolocation::startRequest(GeoNotifier* notifier)
 {
     // Check whether permissions have already been denied. Note that if this is the case,
     // the permission state can not change again in the lifetime of this page.

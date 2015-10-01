@@ -34,11 +34,11 @@
 
 namespace WebCore {
 
-GeoNotifier::GeoNotifier(Geolocation& geolocation, PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
+GeoNotifier::GeoNotifier(Geolocation& geolocation, RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
     : m_geolocation(geolocation)
-    , m_successCallback(successCallback)
-    , m_errorCallback(errorCallback)
-    , m_options(options)
+    , m_successCallback(WTF::move(successCallback))
+    , m_errorCallback(WTF::move(errorCallback))
+    , m_options(WTF::move(options))
     , m_timer(*this, &GeoNotifier::timerFired)
     , m_useCachedPosition(false)
 {
@@ -48,7 +48,7 @@ GeoNotifier::GeoNotifier(Geolocation& geolocation, PassRefPtr<PositionCallback> 
     ASSERT(m_options);
 }
 
-void GeoNotifier::setFatalError(PassRefPtr<PositionError> error)
+void GeoNotifier::setFatalError(RefPtr<PositionError>&& error)
 {
     // If a fatal error has already been set, stick with it. This makes sure that
     // when permission is denied, this is the error reported, as required by the
@@ -56,7 +56,7 @@ void GeoNotifier::setFatalError(PassRefPtr<PositionError> error)
     if (m_fatalError)
         return;
 
-    m_fatalError = error;
+    m_fatalError = WTF::move(error);
     // An existing timer may not have a zero timeout.
     m_timer.stop();
     m_timer.startOneShot(0);
