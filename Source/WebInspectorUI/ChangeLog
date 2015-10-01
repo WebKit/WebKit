@@ -1,3 +1,17 @@
+2015-10-01  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r189567): Toolbar collapses when inspector at minimum height with console open
+        https://bugs.webkit.org/show_bug.cgi?id=149725
+
+        Reviewed by Timothy Hatcher.
+
+        CSS Flexible Box Layout Module Level 1 introduces a new `auto` initial value for the min-{width|height}
+        of flex box items, breaking some areas of the inspector UI. This is fixed by setting a min-height of
+        zero for the #main <div>.
+
+        * UserInterface/Views/Main.css:
+        (#main):
+
 2015-10-01  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Clip string previews

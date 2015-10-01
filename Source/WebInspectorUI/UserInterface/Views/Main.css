@@ -128,6 +128,7 @@ input[type=range]::-webkit-slider-runnable-track::before {
 #main {
     display: flex;
     flex: 1;
+    min-height: 0;
 
     background-color: white;
 
