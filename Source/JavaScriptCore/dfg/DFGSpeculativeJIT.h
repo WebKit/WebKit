@@ -2094,6 +2094,11 @@ public:
     void compileStringZeroLength(Node*);
     void compileMiscStrictEq(Node*);
 
+    template<typename Functor>
+    void extractStringImplFromBinarySymbols(Edge leftSymbolEdge, Edge rightSymbolEdge, const Functor&);
+    void compileSymbolEquality(Node*);
+    void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
+
     void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitStringBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitBranch(Node*);

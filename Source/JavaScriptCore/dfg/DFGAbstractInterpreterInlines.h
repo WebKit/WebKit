@@ -1188,6 +1188,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
+
+            if (node->op() == CompareEq && leftConst.isSymbol() && rightConst.isSymbol()) {
+                setConstant(node, jsBoolean(asSymbol(leftConst)->privateName() == asSymbol(rightConst)->privateName()));
+                break;
+            }
         }
         
         if (node->op() == CompareEq) {
@@ -1231,6 +1236,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 node->isBinaryUseKind(Int52RepUse) ||
                 node->isBinaryUseKind(StringUse) ||
                 node->isBinaryUseKind(BooleanUse) ||
+                node->isBinaryUseKind(SymbolUse) ||
                 node->isBinaryUseKind(StringIdentUse) ||
                 node->isBinaryUseKind(ObjectUse) ||
                 node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse) ||
@@ -1291,6 +1297,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 node->isBinaryUseKind(Int52RepUse) ||
                 node->isBinaryUseKind(StringUse) ||
                 node->isBinaryUseKind(StringIdentUse) ||
+                node->isBinaryUseKind(SymbolUse) ||
                 node->isBinaryUseKind(ObjectUse) ||
                 node->isBinaryUseKind(MiscUse, UntypedUse) ||
                 node->isBinaryUseKind(UntypedUse, MiscUse) ||

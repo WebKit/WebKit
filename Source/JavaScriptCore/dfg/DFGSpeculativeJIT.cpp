@@ -1356,6 +1356,8 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
             }
             if (node->isBinaryUseKind(BooleanUse))
                 compilePeepHoleBooleanBranch(node, branchNode, condition);
+            else if (node->isBinaryUseKind(SymbolUse))
+                compilePeepHoleSymbolEquality(node, branchNode);
             else if (node->isBinaryUseKind(ObjectUse))
                 compilePeepHoleObjectEquality(node, branchNode);
             else if (node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse))
@@ -3879,6 +3881,11 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
             compileStringIdentEquality(node);
             return false;
         }
+
+        if (node->isBinaryUseKind(SymbolUse)) {
+            compileSymbolEquality(node);
+            return false;
+        }
         
         if (node->isBinaryUseKind(ObjectUse)) {
             compileObjectEquality(node);
@@ -3912,6 +3919,12 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
 
 bool SpeculativeJIT::compileStrictEq(Node* node)
 {
+    // FIXME: Currently, we have op_jless, op_jgreater etc. But we don't have op_jeq, op_jstricteq etc.
+    // `==` and `===` operations with branching will be compiled to op_{eq,stricteq} and op_{jfalse,jtrue}.
+    // In DFG bytecodes, between op_eq and op_jfalse, we have MovHint to store the result of op_eq.
+    // As a result, detectPeepHoleBranch() never detects peep hole for that case.
+    // https://bugs.webkit.org/show_bug.cgi?id=149713
+
     if (node->isBinaryUseKind(BooleanUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
@@ -3971,6 +3984,21 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
             return true;
         }
         compileDoubleCompare(node, MacroAssembler::DoubleEqual);
+        return false;
+    }
+
+    if (node->isBinaryUseKind(SymbolUse)) {
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_block->at(branchIndexInBlock);
+            compilePeepHoleSymbolEquality(node, branchNode);
+            use(node->child1());
+            use(node->child2());
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileSymbolEquality(node);
         return false;
     }
     
@@ -4068,6 +4096,52 @@ void SpeculativeJIT::compileBooleanCompare(Node* node, MacroAssembler::Relationa
     m_jit.compare32(condition, op1.gpr(), op2.gpr(), result.gpr());
     
     unblessedBooleanResult(result.gpr(), node);
+}
+
+template<typename Functor>
+void SpeculativeJIT::extractStringImplFromBinarySymbols(Edge leftSymbolEdge, Edge rightSymbolEdge, const Functor& functor)
+{
+    SpeculateCellOperand left(this, leftSymbolEdge);
+    SpeculateCellOperand right(this, rightSymbolEdge);
+    GPRTemporary leftTemp(this);
+    GPRTemporary rightTemp(this);
+
+    GPRReg leftGPR = left.gpr();
+    GPRReg rightGPR = right.gpr();
+    GPRReg leftTempGPR = leftTemp.gpr();
+    GPRReg rightTempGPR = rightTemp.gpr();
+
+    speculateSymbol(leftSymbolEdge, leftGPR);
+    speculateSymbol(rightSymbolEdge, rightGPR);
+
+    m_jit.loadPtr(JITCompiler::Address(leftGPR, Symbol::offsetOfPrivateName()), leftTempGPR);
+    m_jit.loadPtr(JITCompiler::Address(rightGPR, Symbol::offsetOfPrivateName()), rightTempGPR);
+
+    functor(leftTempGPR, rightTempGPR);
+}
+
+void SpeculativeJIT::compileSymbolEquality(Node* node)
+{
+    extractStringImplFromBinarySymbols(node->child1(), node->child2(), [&] (GPRReg leftStringImpl, GPRReg rightStringImpl) {
+        m_jit.comparePtr(JITCompiler::Equal, leftStringImpl, rightStringImpl, leftStringImpl);
+        unblessedBooleanResult(leftStringImpl, node);
+    });
+}
+
+void SpeculativeJIT::compilePeepHoleSymbolEquality(Node* node, Node* branchNode)
+{
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
+
+    extractStringImplFromBinarySymbols(node->child1(), node->child2(), [&] (GPRReg leftStringImpl, GPRReg rightStringImpl) {
+        if (taken == nextBlock()) {
+            branchPtr(JITCompiler::NotEqual, leftStringImpl, rightStringImpl, notTaken);
+            jump(taken);
+        } else {
+            branchPtr(JITCompiler::Equal, leftStringImpl, rightStringImpl, taken);
+            jump(notTaken);
+        }
+    });
 }
 
 void SpeculativeJIT::compileStringEquality(

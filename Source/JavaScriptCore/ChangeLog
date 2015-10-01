@@ -1,3 +1,43 @@
+2015-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce SymbolUse optimization into CompareEq and CompareStrictEq
+        https://bugs.webkit.org/show_bug.cgi?id=149616
+
+        Reviewed by Saam Barati.
+
+        Since ES6 Symbols are used as an enum value[1] (And WebKit inspector do so for Esprima's type of nodes),
+        optimizing equality comparison for symbols makes much sense.
+
+        This patch leverages SymbolUse for CompareEq and CompareStrictEq.
+        Optimizations for both DFG and FTL are implemented.
+
+        [1]: http://www.2ality.com/2014/12/es6-symbols.html
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateSymbol):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::extractStringImplFromBinarySymbols):
+        (JSC::DFG::SpeculativeJIT::compileSymbolEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleSymbolEquality):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareEq):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCompareStrictEq):
+        * tests/stress/symbol-equality.js: Added.
+        (shouldBe):
+        (equal):
+        (strictEqual):
+        (list.forEach.result.set 1):
+
 2015-10-01  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Add support for private WebCore JS builtins functions

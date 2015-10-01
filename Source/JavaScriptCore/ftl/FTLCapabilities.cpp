@@ -320,6 +320,8 @@ inline CapabilityLevel canCompile(Node* node)
             break;
         if (node->isBinaryUseKind(StringIdentUse))
             break;
+        if (node->isBinaryUseKind(SymbolUse))
+            break;
         if (node->isBinaryUseKind(ObjectUse))
             break;
         if (node->isBinaryUseKind(UntypedUse))
@@ -349,6 +351,8 @@ inline CapabilityLevel canCompile(Node* node)
         if (node->isBinaryUseKind(ObjectUse))
             break;
         if (node->isBinaryUseKind(BooleanUse))
+            break;
+        if (node->isBinaryUseKind(SymbolUse))
             break;
         if (node->isBinaryUseKind(MiscUse, UntypedUse))
             break;

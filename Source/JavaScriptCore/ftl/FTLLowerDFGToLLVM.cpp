@@ -4202,6 +4202,7 @@ private:
             || m_node->isBinaryUseKind(DoubleRepUse)
             || m_node->isBinaryUseKind(ObjectUse)
             || m_node->isBinaryUseKind(BooleanUse)
+            || m_node->isBinaryUseKind(SymbolUse)
             || m_node->isBinaryUseKind(StringIdentUse)) {
             compileCompareStrictEq();
             return;
@@ -4292,6 +4293,15 @@ private:
         if (m_node->isBinaryUseKind(BooleanUse)) {
             setBoolean(
                 m_out.equal(lowBoolean(m_node->child1()), lowBoolean(m_node->child2())));
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(SymbolUse)) {
+            LValue left = lowSymbol(m_node->child1());
+            LValue right = lowSymbol(m_node->child2());
+            LValue leftStringImpl = m_out.loadPtr(left, m_heaps.Symbol_privateName);
+            LValue rightStringImpl = m_out.loadPtr(right, m_heaps.Symbol_privateName);
+            setBoolean(m_out.equal(leftStringImpl, rightStringImpl));
             return;
         }
         
