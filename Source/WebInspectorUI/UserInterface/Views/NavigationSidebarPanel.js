@@ -292,6 +292,12 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         this._updateFilter();
     }
 
+    shouldFilterPopulate()
+    {
+        // Overriden by subclasses if needed.
+        return this.hasCustomFilters();
+    }
+
     hasCustomFilters()
     {
         // Implemented by subclasses if needed.
@@ -525,7 +531,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.
-        var dontPopulate = !this._filterBar.hasActiveFilters() && !this.hasCustomFilters();
+        var dontPopulate = !this._filterBar.hasActiveFilters() && !this.shouldFilterPopulate();
 
         // Update the whole tree.
         var currentTreeElement = this._contentTreeOutline.children[0];
@@ -554,7 +560,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
     {
         // Don't populate if we don't have any active filters.
         // We only need to populate when a filter needs to reveal.
-        var dontPopulate = !this._filterBar.hasActiveFilters() && !this.hasCustomFilters();
+        var dontPopulate = !this._filterBar.hasActiveFilters() && !this.shouldFilterPopulate();
 
         // Apply the filters to the tree element and its descendants.
         var currentTreeElement = treeElement;

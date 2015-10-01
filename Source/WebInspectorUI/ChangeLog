@@ -1,3 +1,23 @@
+2015-10-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Do not immediately create all ProfileNodeTreeElements when showing JavaScript and Events timeline
+        https://bugs.webkit.org/show_bug.cgi?id=149726
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.shouldFilterPopulate):
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        (WebInspector.NavigationSidebarPanel.prototype._treeElementAddedOrChanged):
+        We were populating during filtering if there were any custom filters.
+        However the TimelineSidebarPanel has custom filters (based on time and type)
+        but those don't need to trigger population. Delay population until it
+        would actually be needed (like a text search).
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.shouldFilterPopulate):
+        Do not populate on filter via this custom filters.
+
 2015-10-01  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r189567): Toolbar collapses when inspector at minimum height with console open
