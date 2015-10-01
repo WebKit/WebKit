@@ -30,11 +30,21 @@
     var notifyName = 0;
     // The order of notifications should be Row Count, Row Collapsed, Row Count, Row Expanded
     function notifyCallback(element, notification) {  
+        if (notification == "AXLoadComplete" || notification == "AXLayoutComplete")
+            return;
         notifyName = notification;
-        document.getElementById("notifications").innerHTML += "Notification: " + notifyName + "<br>";
-        if (notifyCount == 4) {
+        if (notifyCount == 0)
+            shouldBeEqualToString("notifyName", "AXRowCountChanged");
+        else if (notifyCount == 1)
+            shouldBeEqualToString("notifyName", "AXRowCollapsed");
+        else if (notifyCount == 2)
+            shouldBeEqualToString("notifyName", "AXRowCountChanged");
+        else if (notifyCount == 3) {
+            shouldBeEqualToString("notifyName", "AXRowExpanded");
             accessibilityController.removeNotificationListener();
-            window.testRunner.notifyDone();
+            var scriptElement = document.createElement("script");
+            scriptElement.src = "../../resources/js-test-post-async.js";
+            document.body.appendChild(scriptElement);
         }
         notifyCount++;
     }
@@ -59,6 +69,5 @@
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
