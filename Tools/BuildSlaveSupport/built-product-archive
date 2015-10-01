@@ -31,7 +31,8 @@ import subprocess
 import sys
 import zipfile
 
-_buildDirectory = None
+_configurationBuildDirectory = None
+_topLevelBuildDirectory = None
 
 
 def main():
@@ -52,8 +53,12 @@ def main():
         return 1
 
     genericPlatform = options.platform.split('-', 1)[0]
-    if not determineWebKitBuildDirectory(genericPlatform, options.platform, options.configuration):
-        print >> sys.stderr, "Could not determine build directory"
+    determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration)
+    if not _topLevelBuildDirectory:
+        print >> sys.stderr, 'Could not determine top-level build directory'
+        return 1
+    if not _configurationBuildDirectory:
+        print >> sys.stderr, 'Could not determine configuration-specific build directory'
         return 1
 
     if action == 'archive':
@@ -62,15 +67,17 @@ def main():
         return extractBuiltProduct(options.configuration, genericPlatform)
 
 
-def determineWebKitBuildDirectory(platform, fullPlatform, configuration):
+def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
     global _buildDirectory
+    global _topLevelBuildDirectory
     if fullPlatform.startswith('ios-simulator'):
         platform = 'ios-simulator'
     elif platform == 'ios':
         platform = 'device'
-    _buildDirectory = subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
-        "--" + platform, "--" + configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
-    return _buildDirectory
+    command = ['perl', os.path.join(os.path.dirname(__file__), '..', 'Scripts', 'webkit-build-directory'), '--' + platform, '--' + configuration]
+    _configurationBuildDirectory = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip()
+    _topLevelBuildDirectory = subprocess.Popen(command + ['--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
+    return _topLevelBuildDirectory
 
 
 def removeDirectoryIfExists(thinDirectory):
@@ -117,13 +124,11 @@ def createZip(directoryToZip, configuration):
 def archiveBuiltProduct(configuration, platform):
     assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
-    configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
-
     if platform in ('mac', 'ios'):
-        return createZip(configurationBuildDirectory, configuration)
+        return createZip(_configurationBuildDirectory, configuration)
     elif platform == 'win':
-        binDirectory = os.path.join(configurationBuildDirectory, "bin32")
-        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
+        binDirectory = os.path.join(_configurationBuildDirectory, 'bin32')
+        thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
         thinBinDirectory = os.path.join(thinDirectory, "bin32")
 
         removeDirectoryIfExists(thinDirectory)
@@ -134,7 +139,7 @@ def archiveBuiltProduct(configuration, platform):
         shutil.rmtree(thinDirectory)
 
     elif platform == 'gtk' or platform == 'efl':
-        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
+        thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
 
         removeDirectoryIfExists(thinDirectory)
         os.mkdir(thinDirectory)
@@ -144,12 +149,12 @@ def archiveBuiltProduct(configuration, platform):
         # On GTK we need this for the WebKit GObject DOM bindings API break test
         if platform == 'gtk':
             neededDirectories.append("DerivedSources/webkitdom")
-            webkitdomFile = os.path.join(configurationBuildDirectory, "gtkdoc-webkitdom.cfg")
+            webkitdomFile = os.path.join(_configurationBuildDirectory, 'gtkdoc-webkitdom.cfg')
             if subprocess.call('cp %s %s' % (webkitdomFile, thinDirectory), shell=True):
                 return 1
 
         for dirname in neededDirectories:
-            fromDir = os.path.join(configurationBuildDirectory, dirname, ".")
+            fromDir = os.path.join(_configurationBuildDirectory, dirname, '.')
             toDir = os.path.join(thinDirectory, dirname)
             os.makedirs(toDir)
             if subprocess.call('cp -R %s %s' % (fromDir, toDir), shell=True):
@@ -185,17 +190,16 @@ def unzipArchive(directoryToExtractTo, configuration):
 def extractBuiltProduct(configuration, platform):
     assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
-    archiveFile = os.path.join(_buildDirectory, configuration + ".zip")
-    configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
+    archiveFile = os.path.join(_topLevelBuildDirectory, configuration + '.zip')
 
-    removeDirectoryIfExists(configurationBuildDirectory)
-    os.makedirs(configurationBuildDirectory)
+    removeDirectoryIfExists(_configurationBuildDirectory)
+    os.makedirs(_configurationBuildDirectory)
 
     if platform in ('mac', 'ios'):
         return unzipArchive(_buildDirectory, configuration)
     elif platform == 'win' or platform == 'gtk' or platform == 'efl':
-        print "Extracting", configurationBuildDirectory
-        return unzipArchive(configurationBuildDirectory, configuration)
+        print 'Extracting', _configurationBuildDirectory
+        return unzipArchive(_configurationBuildDirectory, configuration)
 
 
 if __name__ == '__main__':

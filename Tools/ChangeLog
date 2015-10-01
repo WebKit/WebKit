@@ -1,3 +1,35 @@
+2015-09-30  Daniel Bates  <dabates@apple.com>
+
+        built-product-archive archives incorrect build directory for iOS port
+        https://bugs.webkit.org/show_bug.cgi?id=149695
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where the script built-product-archive archives a non-existent
+        build directory for the iOS port. Without loss of generality, the script assumes
+        the path to the Release configuration build for iOS is in directory WebKitBuild/Release.
+        But the built products for this configuration are in directory WebKitBuild/Release-iphonesimulator.
+
+        Currently the script built-product-archive calls `webkit-build-directory --top-level ...`
+        to determine the top-level build directory and computes the configuration-specific
+        build directory to be the concatenation of the the top-level build directory and
+        the configuration (e.g. Release). This is incorrect. Instead we should call
+        webkit-build-directory omitting the flag --top-level to compute the path to the
+        configuration-specific build directory.
+
+        * BuildSlaveSupport/built-product-archive: Fix up the style such that we use single quoted literals.
+        (main): Renamed global variable _buildDirectory to _topLevelBuildDirectory to better describe
+        its purpose and added global variable _configurationBuildDirectory to store the path
+        to the configuration-specific build directory. Ensure that we have a non-empty string
+        for both the top-level and configuration-specific build directories.
+        (determineWebKitBuildDirectories): Formerly named determineWebKitBuildDirectory.
+        Compute the configuration-specific build directory and store it in the global variable
+        _configurationBuildDirectory.
+        (archiveBuiltProduct): Modified to use _configurationBuildDirectory.
+        (extractBuiltProduct): Modified to use _configurationBuildDirectory and _topLevelBuildDirectory
+        as needed.
+        (determineWebKitBuildDirectory): Deleted.
+
 2015-09-30  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] css3/device-adapt/* tests failed after r190335.
