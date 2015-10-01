@@ -559,8 +559,7 @@ sub determineConfigurationProductDir
     determineBaseProductDir();
     determineConfiguration();
     if (isAppleWinWebKit() || isWinCairo()) {
-        my $binDir = isWin64() ? "bin64" : "bin32";
-        $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration, $binDir);
+        $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
@@ -615,6 +614,10 @@ sub jscProductDir
 {
     my $productDir = productDir();
     $productDir .= "/bin" if (isEfl() || isGtk());
+    if (isAnyWindows()) {
+        my $binDir = isWin64() ? "bin64" : "bin32";
+        $productDir = File::Spec->catdir($productDir, $binDir);
+    }
 
     return $productDir;
 }
@@ -1995,12 +1998,16 @@ sub setPathForRunningWebKitApp
 {
     my ($env) = @_;
 
-    if (isAppleWinWebKit()) {
-        $env->{PATH} = join(':', productDir(), appleApplicationSupportPath(), $env->{PATH} || "");
-    } elsif (isWinCairo()) {
-        my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
-        my $gstreamerBin = isWin64() ? $ENV{"GSTREAMER_1_0_ROOT_X86_64"} . "bin" : $ENV{"GSTREAMER_1_0_ROOT_X86"} . "bin";
-        $env->{PATH} = join(':', productDir(), $winCairoBin, $gstreamerBin, $env->{PATH} || "");
+    if (isAnyWindows()) {
+        my $binDir = isWin64() ? "bin64" : "bin32";
+        my $productBinaryDir = File::Spec->catdir(productDir(), $binDir);
+        if (isAppleWinWebKit()) {
+            $env->{PATH} = join(':', $productBinaryDir, appleApplicationSupportPath(), $env->{PATH} || "");
+        } elsif (isWinCairo()) {
+            my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
+            my $gstreamerBin = isWin64() ? $ENV{"GSTREAMER_1_0_ROOT_X86_64"} . "bin" : $ENV{"GSTREAMER_1_0_ROOT_X86"} . "bin";
+            $env->{PATH} = join(':', $productBinaryDir, $winCairoBin, $gstreamerBin, $env->{PATH} || "");
+        }
     }
 }
 
@@ -2401,7 +2408,8 @@ sub runSafari
     if (isAppleWinWebKit()) {
         my $result;
         my $productDir = productDir();
-        my $webKitLauncherPath = File::Spec->catfile(productDir(), "WinLauncher.exe");
+        my $binDir = isWin64() ? "bin64" : "bin32";
+        my $webKitLauncherPath = File::Spec->catfile(productDir(), $binDir, "MiniBrowser.exe");
         return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
 
@@ -2412,6 +2420,12 @@ sub runMiniBrowser
 {
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
+    } elsif (isAppleWinWebKit()) {
+        my $result;
+        my $productDir = productDir();
+        my $binDir = isWin64() ? "bin64" : "bin32";
+        my $webKitLauncherPath = File::Spec->catfile(productDir(), $binDir, "MiniBrowser.exe");
+        return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
 
     return 1;
