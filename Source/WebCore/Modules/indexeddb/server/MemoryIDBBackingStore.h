@@ -35,7 +35,7 @@ namespace WebCore {
 namespace IDBServer {
 
 class MemoryIDBBackingStore : public IDBBackingStore {
-    friend std::unique_ptr<MemoryIDBBackingStore> std::make_unique<MemoryIDBBackingStore>(const IDBDatabaseIdentifier&);
+    friend std::unique_ptr<MemoryIDBBackingStore> std::make_unique<MemoryIDBBackingStore>(const WebCore::IDBDatabaseIdentifier&);
 public:
     static std::unique_ptr<MemoryIDBBackingStore> create(const IDBDatabaseIdentifier&);
     
