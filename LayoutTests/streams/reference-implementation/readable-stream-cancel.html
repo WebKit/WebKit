@@ -3,6 +3,8 @@
 <script src='../../resources/testharnessreport.js'></script>
 <script src='resources/streams-utils.js'></script>
 <script>
+// This is updated till https://github.com/whatwg/streams/commit/ec5ffa036308d9f6350d2946560d48cdbf090939
+
 var test1 = async_test('ReadableStream cancellation: integration test on an infinite stream derived from a random push source');
 test1.step(function() {
     var randomSource = new RandomPushSource();

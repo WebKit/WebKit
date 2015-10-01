@@ -2,6 +2,8 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
+// This is updated till https://github.com/whatwg/streams/commit/ec5ffa036308d9f6350d2946560d48cdbf090939
+
 var test1 = async_test('Reading twice on a stream that gets closed');
 test1.step(function() {
     var controller;
