@@ -1,3 +1,14 @@
+2015-10-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix the openwebrtc and gst-plugins-openwebrtc build with clang
+        https://bugs.webkit.org/show_bug.cgi?id=145837
+
+        Reviewed by Philippe Normand.
+
+        * efl/jhbuild.modules:
+        * efl/patches/openwebrtc-clang-warning-fix.patch: Added.
+        * efl/patches/openwebrtc-gst-plugins-clang-warning-fix.patch: Added.
+
 2015-10-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed. Fix the iOS build after r190407.
