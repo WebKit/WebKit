@@ -1,0 +1,10 @@
+Tests that the scroll-snap feature works properly in overflow regions.
+PASS div scrolled to next window.
+PASS div honored snap points.
+Testing that latch moves to bottom div:
+PASS top div did not move.
+PASS div scrolled to next window.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

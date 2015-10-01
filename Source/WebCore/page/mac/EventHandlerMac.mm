@@ -1068,8 +1068,11 @@ void EventHandler::platformNotifyIfEndGesture(const PlatformWheelEvent& wheelEve
         return;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (ScrollAnimator* scrollAnimator = scrollableArea->existingScrollAnimator())
+    if (ScrollAnimator* scrollAnimator = scrollableArea->existingScrollAnimator()) {
         scrollAnimator->processWheelEventForScrollSnap(wheelEvent);
+        if (scrollAnimator->isScrollSnapInProgress())
+            clearLatchedState();
+    }
 #endif
 }
 

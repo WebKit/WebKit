@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .gallery {
+                width: 200px;
+                height: 200px;
+                overflow-y: hidden;
+                overflow-x: auto;
+                margin-bottom: 2px;
+                -webkit-scroll-snap-points-x: repeat(100%);
+                -webkit-scroll-snap-type: mandatory;
+            }
+            .galleryDrawer {
+                width: 1200px;
+                height: 200px;
+            }
+            .colorBox {
+                height: 200px;
+                width: 200px;
+                float: left;
+            }
+            #itemH0, #itemV0 { background-color: red; }
+            #itemH1, #itemV1 { background-color: green; }
+            #itemH2, #itemV2 { background-color: blue; }
+            #itemH3, #itemV3 { background-color: aqua; }
+            #itemH4, #itemV4 { background-color: yellow; }
+            #itemH5, #itemV5 { background-color: fuchsia; }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        var divScrollPositionBeforeGlide;
+        var divScrollPositionBeforeSnap;
+        var divScrollPositionBeforeSecondaryMove;
+        var bottomDivScrollPositionBeforeSecondaryMove;
+
+        function locationInWindowCoordinates(element)
+        {
+            var position = {};
+            position.x = element.offsetLeft;
+            position.y = element.offsetTop;
+
+            while (element.offsetParent) {
+                position.x = position.x + element.offsetParent.offsetLeft;
+                position.y = position.y + element.offsetParent.offsetTop;
+                if (element == document.getElementsByTagName("body")[0])
+                    break;
+
+                element = element.offsetParent;
+            }
+
+            return position;
+        }
+
+
+        function checkForSecondaryScrollGlide(targetLabel)
+        {
+            var topDivTarget = document.getElementById("topTarget");
+
+            var actualTopPosition = topDivTarget.scrollLeft;
+            var expectedTopPosition = divScrollPositionBeforeSecondaryMove;
+
+            // The top div should NOT have scrolled (glided) to the next snap point.
+            if (actualTopPosition == expectedTopPosition)
+                testPassed("top div did not move.");
+            else
+                testFailed("top div was improperly latched. Expected " + expectedTopPosition + ", but got " + actualTopPosition);
+
+            var divTarget = document.getElementById("bottomTarget");
+
+            var actualPosition = divTarget.scrollLeft;
+            var expectedPosition = divTarget.clientWidth;
+
+            // The div should have scrolled (glided) to the next snap point.
+            if (actualPosition == expectedPosition)
+                testPassed("div scrolled to next window.");
+            else
+                testFailed("div did not honor snap points. Expected " + expectedPosition + ", but got " + actualPosition);
+
+            finishJSTest();
+        }
+
+        function performSwipeGestureOnElement(divTarget)
+        {
+            var windowPosition = locationInWindowCoordinates(divTarget);
+            var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
+            var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
+
+            eventSender.mouseMoveTo(startPosX, startPosY);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'begin');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'none', 'continue');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'none', 'end');
+        }
+
+        function scrollInSecondDiv()
+        {
+            debug("Testing that latch moves to bottom div:");
+            var topDivTarget = document.getElementById("topTarget");
+            divScrollPositionBeforeSecondaryMove = topDivTarget.scrollLeft;
+
+            var divTarget = document.getElementById("bottomTarget");
+
+            performSwipeGestureOnElement(divTarget);
+
+            eventSender.callAfterScrollingCompletes(function() { return checkForSecondaryScrollGlide(); });           
+        }
+
+        function checkForScrollSnap()
+        {
+            var divTarget = document.getElementById("topTarget");
+
+            var actualPosition = divTarget.scrollLeft;
+
+            // The div should have snapped back to the previous position
+            if (actualPosition != divScrollPositionBeforeSnap)
+                testFailed("div did not snap back to proper location for " + targetLabel +". Expected " + divScrollPositionBeforeSnap + ", but got " + actualPosition);
+            else
+                testPassed("div honored snap points.");
+
+            setTimeout(function() { scrollInSecondDiv() }, 0);
+        }
+
+        function scrollSnapTest()
+        {
+            var divTarget = document.getElementById("topTarget");
+ 
+            divScrollPositionBeforeSnap = divTarget.scrollLeft;
+
+            var windowPosition = locationInWindowCoordinates(divTarget);
+            var startPosX = windowPosition.x + 0.5 * divTarget.clientWidth;
+            var startPosY = windowPosition.y + 0.5 * divTarget.clientHeight;
+
+            eventSender.mouseMoveTo(startPosX, startPosY); // Make sure we are just outside the iFrame
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'began', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, 'changed', 'none');
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+            eventSender.callAfterScrollingCompletes(function() { return checkForScrollSnap(); });
+        }
+
+        function checkForScrollGlide(targetLabel)
+        {
+            var divTarget = document.getElementById("topTarget");
+
+            var actualPosition = divTarget.scrollLeft;
+            var expectedPosition = divTarget.clientWidth;
+
+            // The div should have scrolled (glided) to the next snap point.
+            if (actualPosition == expectedPosition)
+                testPassed("div scrolled to next window.");
+            else
+                testFailed("div did not honor snap points. Expected " + expectedPosition + ", but got " + actualPosition);
+
+            setTimeout(function() { scrollSnapTest() }, 0);
+        }
+
+        function scrollGlideTest()
+        {
+            var divTarget = document.getElementById("topTarget");
+ 
+            divScrollPositionBeforeGlide = divTarget.scrollLeft;
+
+            performSwipeGestureOnElement(divTarget);
+    
+            eventSender.callAfterScrollingCompletes(function() { return checkForScrollGlide(); });
+        }
+
+        function onLoad()
+        {
+            if (window.eventSender) {
+                eventSender.monitorWheelEvents();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                setTimeout(function() { scrollGlideTest() }, 0);
+            } else {
+                var messageLocationH = document.getElementById('itemH0');
+                var message = document.createElement('div');
+                message.innerHTML = "<p>This test is better run under WebKitTestRunner.<br/>To manually test it, place the mouse pointer<br/>"
+                    + "inside the red region at the top of the page,<br/>and then use the mouse wheel or a two-finger<br/>swipe to make a"
+                    + "small swipe gesture with<br/>some momentum.<br/><br/>"
+                    + "The region should scroll to show a green region.<br/><br/>"
+                    + "Next, perform a small scroll gesture that does<br/>not involve momentum. You should begin to<br/>see one of the colors "
+                    + "to the side of the current<br/>green box. When you release the wheel, the<br/>region should scroll back to a single color.";
+                messageLocationH.appendChild(message);
+
+                var messageLocationV = document.getElementById('itemV0');
+                var message = document.createElement('div');
+                message.innerHTML = "<p>You should also be able to repeat these tests steps for this vertical region.<br/>"
+                messageLocationV.appendChild(message);
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div style="position: relative; width: 200px">
+            <div>Tests that the scroll-snap feature works properly in overflow regions.</div>
+            <div class="gallery" id="topTarget">
+                <div class="galleryDrawer">
+                    <div id="itemH0" class="colorBox"></div>
+                    <div id="itemH1" class="colorBox"></div>
+                    <div id="itemH2" class="colorBox"></div>
+                    <div id="itemH3" class="colorBox"></div>
+                    <div id="itemH4" class="colorBox"></div>
+                    <div id="itemH5" class="colorBox"></div>
+                </div>
+            </div>
+            <div class="gallery" id="bottomTarget">
+                <div class="galleryDrawer">
+                    <div id="itemV0" class="colorBox"></div>
+                    <div id="itemV1" class="colorBox"></div>
+                    <div id="itemV2" class="colorBox"></div>
+                    <div id="itemV3" class="colorBox"></div>
+                    <div id="itemV4" class="colorBox"></div>
+                    <div id="itemV5" class="colorBox"></div>
+                </div>
+            </div>
+            <div id="console"></div>
+        </div>
+    </body>
+</html>
