@@ -174,6 +174,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisUtterance.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisVoice.idl \
+    $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.idl \
     $(WebCore)/Modules/streams/CountQueuingStrategy.idl \
     $(WebCore)/Modules/streams/ReadableStream.idl \
     $(WebCore)/Modules/streams/ReadableStreamController.idl \
@@ -1249,6 +1250,7 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 # WebCore JS Builtins
 
 WEBCORE_JS_BUILTINS = \
+    $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.js \
     $(WebCore)/Modules/streams/CountQueuingStrategy.js \
     $(WebCore)/Modules/streams/ReadableStream.js \
 #

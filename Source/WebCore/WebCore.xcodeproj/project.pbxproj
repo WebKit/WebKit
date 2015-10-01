@@ -635,6 +635,8 @@
 		14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D824060AF93AEB0004F057 /* ChromeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DC0D3709FED073007B0235 /* JSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DC0D3509FED073007B0235 /* JSNode.cpp */; };
 		14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 14DC0D3609FED073007B0235 /* JSNode.h */; settings = {ATTRIBUTES = (); }; };
+		14DCF3B21B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DCF3B01B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp */; };
+		14DCF3B31B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DCF3B11B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h */; };
 		14DCF3B21B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DCF3B01B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp */; };
 		14DCF3B31B6BE2080062D4C2 /* JSCountQueuingStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DCF3B11B6BE2080062D4C2 /* JSCountQueuingStrategy.h */; };
 		14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E8378309F85D1C00B85AE4 /* JSEvent.cpp */; };
@@ -7835,6 +7837,7 @@
 		14813BF309EDF88E00F757E1 /* IDLParser.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = IDLParser.pm; path = scripts/IDLParser.pm; sourceTree = "<group>"; };
 		148AFDA30AF58360008CC700 /* ExceptionHandlers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExceptionHandlers.h; sourceTree = "<group>"; };
 		148AFDA40AF58360008CC700 /* ExceptionHandlers.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ExceptionHandlers.mm; sourceTree = "<group>"; };
+		148B4FFF1B6904C500C954E5 /* ByteLengthQueuingStrategy.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ByteLengthQueuingStrategy.idl; sourceTree = "<group>"; };
 		148B4FFF1B6904C500C954E4 /* CountQueuingStrategy.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CountQueuingStrategy.idl; sourceTree = "<group>"; };
 		14947FFB12F80CD200A0F631 /* DocumentOrderedMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOrderedMap.cpp; sourceTree = "<group>"; };
 		14947FFC12F80CD200A0F631 /* DocumentOrderedMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentOrderedMap.h; sourceTree = "<group>"; };
@@ -7858,6 +7861,8 @@
 		14DC0D0B09FECFA4007B0235 /* Node.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Node.idl; sourceTree = "<group>"; };
 		14DC0D3509FED073007B0235 /* JSNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNode.cpp; sourceTree = "<group>"; };
 		14DC0D3609FED073007B0235 /* JSNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNode.h; sourceTree = "<group>"; };
+		14DCF3B01B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSByteLengthQueuingStrategy.cpp; sourceTree = "<group>"; };
+		14DCF3B11B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSByteLengthQueuingStrategy.h; sourceTree = "<group>"; };
 		14DCF3B01B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCountQueuingStrategy.cpp; sourceTree = "<group>"; };
 		14DCF3B11B6BE2080062D4C2 /* JSCountQueuingStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCountQueuingStrategy.h; sourceTree = "<group>"; };
 		14E836D209F8512000B85AE4 /* Event.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Event.idl; sourceTree = "<group>"; };
@@ -16266,6 +16271,7 @@
 		41A023EA1A39DB7900F722CF /* streams */ = {
 			isa = PBXGroup;
 			children = (
+				148B4FFF1B6904C500C954E5 /* ByteLengthQueuingStrategy.idl */,
 				148B4FFF1B6904C500C954E4 /* CountQueuingStrategy.idl */,
 				41A023EB1A39DB7900F722CF /* ReadableStream.cpp */,
 				41A023EC1A39DB7900F722CF /* ReadableStream.h */,
@@ -17050,6 +17056,8 @@
 				1AC900C21943C0A0008625B5 /* HTTPHeaderNames.h */,
 				53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */,
 				53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */,
+				14DCF3B01B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp */,
+				14DCF3B11B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h */,
 				14DCF3B01B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp */,
 				14DCF3B11B6BE2080062D4C2 /* JSCountQueuingStrategy.h */,
 				409EBDC416B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp */,
@@ -25631,6 +25639,7 @@
 				6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */,
 				FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
+				14DCF3B31B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
@@ -29202,6 +29211,7 @@
 				FD8AA63C1695148E00D2EA68 /* JSBiquadFilterNodeCustom.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
 				8931DE5B14C44C44000DC9D2 /* JSBlobCustom.cpp in Sources */,
+				14DCF3B21B6BE2080062D4C3 /* JSByteLengthQueuingStrategy.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,

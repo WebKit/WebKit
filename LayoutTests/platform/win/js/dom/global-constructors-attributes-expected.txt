@@ -38,6 +38,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Blob').hasOwnProperty('get') is fa
 PASS Object.getOwnPropertyDescriptor(global, 'Blob').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Blob').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Blob').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ByteLengthQueuingStrategy').value is ByteLengthQueuingStrategy
+PASS Object.getOwnPropertyDescriptor(global, 'ByteLengthQueuingStrategy').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ByteLengthQueuingStrategy').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ByteLengthQueuingStrategy').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ByteLengthQueuingStrategy').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').value is CDATASection
 PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CDATASection').hasOwnProperty('set') is false

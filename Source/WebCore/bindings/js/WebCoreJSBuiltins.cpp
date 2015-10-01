@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if ENABLE(STREAMS_API)
+#include "ByteLengthQueuingStrategyBuiltins.cpp"
 #include "CountQueuingStrategyBuiltins.cpp"
 #include "ReadableStreamBuiltins.cpp"
 #endif

@@ -28,6 +28,7 @@
 #include <wtf/RefPtr.h>
 
 #if ENABLE(STREAMS_API)
+#include "ByteLengthQueuingStrategyBuiltinsWrapper.h"
 #include "CountQueuingStrategyBuiltinsWrapper.h"
 #include "ReadableStreamBuiltinsWrapper.h"
 #endif
@@ -43,6 +44,7 @@ public:
 #if ENABLE(STREAMS_API)
     explicit WebCoreJSClientData(JSC::VM& vm)
         : m_readableStreamBuiltins(&vm)
+        , m_byteLengthQueuingStrategyBuiltins(&vm)
         , m_countQueuingStrategyBuiltins(&vm)
 #else
     WebCoreJSClientData(JSC::VM&)
@@ -84,6 +86,7 @@ public:
 
 #if ENABLE(STREAMS_API)
     ReadableStreamBuiltinsWrapper& readableStreamBuiltins() { return m_readableStreamBuiltins; }
+    ByteLengthQueuingStrategyBuiltinsWrapper& byteLengthQueuingStrategyBuiltins() { return m_byteLengthQueuingStrategyBuiltins; }
     CountQueuingStrategyBuiltinsWrapper& countQueuingStrategyBuiltins() { return m_countQueuingStrategyBuiltins; }
 #endif
 
@@ -93,6 +96,7 @@ private:
 
 #if ENABLE(STREAMS_API)
     ReadableStreamBuiltinsWrapper m_readableStreamBuiltins;
+    ByteLengthQueuingStrategyBuiltinsWrapper m_byteLengthQueuingStrategyBuiltins;
     CountQueuingStrategyBuiltinsWrapper m_countQueuingStrategyBuiltins;
 #endif
 };

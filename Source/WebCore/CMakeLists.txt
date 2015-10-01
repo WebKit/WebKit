@@ -276,6 +276,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/speech/SpeechSynthesisUtterance.idl
     Modules/speech/SpeechSynthesisVoice.idl
 
+    Modules/streams/ByteLengthQueuingStrategy.idl
     Modules/streams/CountQueuingStrategy.idl
     Modules/streams/ReadableStream.idl
     Modules/streams/ReadableStreamController.idl
@@ -3351,6 +3352,7 @@ set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/
 set(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
 set(WEBCORE_JS_BUILTINS
+    ${WEBCORE_DIR}/Modules/streams/ByteLengthQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStream.js
 )

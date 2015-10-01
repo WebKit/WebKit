@@ -42,6 +42,7 @@
 #include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
 #if ENABLE(STREAMS_API)
+#include "JSByteLengthQueuingStrategy.cpp"
 #include "JSCountQueuingStrategy.cpp"
 #endif
 #if ENABLE(WEBGL)
