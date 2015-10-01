@@ -151,7 +151,7 @@ static bool shouldUseFixedLayout(const std::string& pathOrURL)
 
 void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& testOptions, const std::string& pathOrURL) const
 {
-    testOptions.useFixedLayout = shouldUseFixedLayout(pathOrURL);
+    testOptions.useFixedLayout |= shouldUseFixedLayout(pathOrURL);
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation&)

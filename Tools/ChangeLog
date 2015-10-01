@@ -1,3 +1,16 @@
+2015-09-30  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] css3/device-adapt/* tests failed after r190335.
+        https://bugs.webkit.org/show_bug.cgi?id=149655
+
+        Reviewed by Simon Fraser.
+
+        device-adapt/* tests need the fixedLayout option but useFixedLayout option is
+        overwritten by updatePlatformSpecificViewOptionsForTest after r190335.
+
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::shouldUseFixedLayout):
+
 2015-09-30  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend JetStream timeout for slow devices.
