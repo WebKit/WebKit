@@ -1,3 +1,32 @@
+2015-10-01  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: Add GTK+ icons for the different types of non-numerical Visual editors for CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=147846
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/AUTHORS: Updated.
+        * UserInterface/Images/gtk/ClearBoth.svg: Added.
+        * UserInterface/Images/gtk/ClearLeft.svg: Added.
+        * UserInterface/Images/gtk/ClearRight.svg: Added.
+        * UserInterface/Images/gtk/CubicBezier.svg: Updated.
+        * UserInterface/Images/gtk/FloatLeft.svg: Added.
+        * UserInterface/Images/gtk/FloatRight.svg: Added.
+        * UserInterface/Images/gtk/FontStyleItalic.svg: Added.
+        * UserInterface/Images/gtk/FontStyleNormal.svg: Added.
+        * UserInterface/Images/gtk/FontVariantSmallCaps.svg: Added.
+        * UserInterface/Images/gtk/TextAlignCenter.svg: Added.
+        * UserInterface/Images/gtk/TextAlignJustify.svg: Added.
+        * UserInterface/Images/gtk/TextAlignLeft.svg: Added.
+        * UserInterface/Images/gtk/TextAlignRight.svg: Added.
+        * UserInterface/Images/gtk/TextDecorationLineThrough.svg: Added.
+        * UserInterface/Images/gtk/TextDecorationOverline.svg: Added.
+        * UserInterface/Images/gtk/TextDecorationUnderline.svg: Added.
+        * UserInterface/Images/gtk/TextTransformCapitalize.svg: Added.
+        * UserInterface/Images/gtk/TextTransformLowercase.svg: Added.
+        * UserInterface/Images/gtk/TextTransformUppercase.svg: Added.
+        * UserInterface/Images/gtk/VisualStyleNone.svg: Added.
+
 2015-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce `delete` in Timeline related classes
