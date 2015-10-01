@@ -1,3 +1,10 @@
+2015-10-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Stop building LayoutTestRelay for now. It's a Mac project, but build-webkit tries to
+        use iOS SDK, like with all the others.
+
+        * Scripts/build-webkit:
+
 2015-10-01  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the iOS 9 Simulator testers

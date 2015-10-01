@@ -193,8 +193,6 @@ if (isAppleMacWebKit()) {
         print(join(" ", @copyLibrariesArgs) . "\n");
         (system(@copyLibrariesArgs) == 0) or die;
     } else {
-        push @projects, ("Tools/LayoutTestRelay") if willUseIOSSimulatorSDKWhenBuilding();
-
         my @copyLibrariesArgs = (
             "perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory",
             "--sdk", xcodeSDK(), "--wksi", "--llvm", "--prefer-system-llvm",
