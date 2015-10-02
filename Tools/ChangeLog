@@ -1,3 +1,15 @@
+2015-10-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test fix.
+
+        You cannot run 'run-webkit-tests' from the command line because it does not know
+        to append the binary subdirectory (bin32/bin64). We don't see this on our builders
+        because they explicitly set use the 'root' argument to provide the full path to
+        the test binaries.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._build_path): Added.
+
 2015-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Reloading without content blockers doesn't apply to resource loads after the main frame finishes

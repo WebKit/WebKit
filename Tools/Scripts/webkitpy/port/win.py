@@ -118,6 +118,16 @@ class WinPort(ApplePort):
             return None
         return match_object.group('features_string').split(' ')
 
+    def _build_path(self, *comps):
+        """Returns the full path to the test driver (DumpRenderTree)."""
+        root_directory = self.get_option('root')
+        if not root_directory:
+            ApplePort._build_path(self, *comps)
+            root_directory = self._filesystem.join(self.get_option('root'), "bin32")
+            self.set_option('root', root_directory)
+
+        return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
+
     # Note: These are based on the stock XAMPP locations for these files.
     def _uses_apache(self):
         return True
