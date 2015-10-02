@@ -1,5 +1,4 @@
-add_definitions(-D_HAS_EXCEPTIONS=0 -DNOMINMAX -DUNICODE)
-add_definitions(-D_WINDOWS -DWINVER=0x601 -D_HAS_EXCEPTIONS=0)
+add_definitions(-DNOMINMAX -DUNICODE -D_UNICODE -D_WINDOWS -DWINVER=0x601)
 
 WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_3D_TRANSFORMS PUBLIC ON)
@@ -151,25 +150,24 @@ if (MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /DEBUG")
 
     # We do not use exceptions
-    add_compile_options(/EHa- /EHsc- /EHs- /fp:except-)
-
-    # Warnings are important
-    add_compile_options(/W4)
+    add_definitions(-D_HAS_EXCEPTIONS=0)
+    add_compile_options(/EHa- /EHc- /EHs- /fp:except-)
 
     # We have some very large object files that have to be linked
-    add_compile_options(/analyze- /bigobj /Bv)
+    add_compile_options(/analyze- /bigobj)
 
     # Use CRT security features
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
 
     # Turn off certain link features
-    add_compile_options(/Gy- /GR- /openmp- /GF-)
+    add_compile_options(/Gy- /openmp- /GF-)
     
     if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
         
-        # To debug linking time issues, uncomment the following two lines:
+        # To debug linking time issues, uncomment the following three lines:
+        #add_compile_options(/Bv)
         #set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /VERBOSE /VERBOSE:INCR /TIME")
         #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE /VERBOSE:INCR /TIME")
     elseif (${CMAKE_BUILD_TYPE} MATCHES "Release")
@@ -181,8 +179,10 @@ if (MSVC)
         add_definitions(/MP)
     endif ()
     if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
-        string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
-        string(REGEX REPLACE "/GR[^-]" "/GR-" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
+        string(REGEX REPLACE "(/EH[a-z]+) " "\\1- " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
+        string(REGEX REPLACE "/EHsc$" "/EHs- /EHc- " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
+        string(REGEX REPLACE "/GR " "/GR- " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
+        string(REGEX REPLACE "/W3" "/W4" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Warnings are important
     endif ()
 
     foreach (flag_var

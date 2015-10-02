@@ -11,6 +11,13 @@
 
 2015-10-01  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build fix.
+
+        * Scripts/webkitdirs.pm:
+        (setupAppleWinEnv): Use 64-bit build tools if available
+
+2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Fix TestWebKitAPI build under CMake.
 
         Reviewed by Alex Christensen.

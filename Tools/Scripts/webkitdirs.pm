@@ -1525,6 +1525,8 @@ sub setupAppleWinEnv()
         $variablesToSet{WEBKIT_LIBRARIES} = windowsLibrariesDir() unless $ENV{WEBKIT_LIBRARIES};
         $variablesToSet{WEBKIT_OUTPUTDIR} = windowsOutputDir() unless $ENV{WEBKIT_OUTPUTDIR};
         $variablesToSet{MSBUILDDISABLENODEREUSE} = "1" unless $ENV{MSBUILDDISABLENODEREUSE};
+        $variablesToSet{_IsNativeEnvironment} = "true" unless $ENV{_IsNativeEnvironment};
+        $variablesToSet{PreferredToolArchitecture} = "x64" unless $ENV{PreferredToolArchitecture};
 
         foreach my $variable (keys %variablesToSet) {
             print "Setting the Environment Variable '" . $variable . "' to '" . $variablesToSet{$variable} . "'\n\n";

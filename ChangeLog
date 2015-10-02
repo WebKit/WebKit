@@ -1,3 +1,10 @@
+2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed CMake build fix.
+
+        * Source/cmake/OptionsWin.cmake: Clean up options setttings,
+        and make sure exception handling is turned off.
+
 2015-09-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix after CMake conversion.
