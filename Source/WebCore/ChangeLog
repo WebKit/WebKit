@@ -1,5 +1,30 @@
 2015-10-02  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190252. rdar://problem/22867962
+
+    2015-09-25  Beth Dakin  <bdakin@apple.com>
+
+            Clicking on a data detected item inside a form control always pops up a map
+            on force touch trackpad
+            https://bugs.webkit.org/show_bug.cgi?id=149559
+            -and corresponding-
+            rdar://problem/22826796
+
+            Reviewed by Tim Horton.
+
+            The real bug here appears to be a bug in Lookup, but we can work around it.
+            For normal text, we call directly into Data Detectors for map results, and
+            that works fine. For text within form controls, we did not properly extract
+            the text for DD, so we sent it to Lookup instead, and Lookup has this bug
+            where they will pop open the map right away. If we properly extract the text
+            for form controls, then we can work around this bug.
+
+            * editing/mac/DataDetection.mm:
+            (WebCore::detectItemAtPositionWithRange):
+            (WebCore::DataDetection::detectItemAroundHitTestResult):
+
+2015-10-02  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r189560. rdar://problem/22824659
 
     2015-09-09  Benjamin Poulain  <bpoulain@apple.com>

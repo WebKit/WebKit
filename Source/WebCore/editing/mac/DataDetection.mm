@@ -30,6 +30,7 @@
 
 #import "DataDetectorsSPI.h"
 #import "FrameView.h"
+#import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
 #import "Node.h"
 #import "Range.h"
@@ -41,25 +42,8 @@
 
 namespace WebCore {
 
-RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
+static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition position, RefPtr<Range> contextRange, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
 {
-    if (!DataDetectorsLibrary())
-        return nullptr;
-
-    Node* node = hitTestResult.innerNonSharedNode();
-    if (!node)
-        return nullptr;
-    auto renderer = node->renderer();
-    if (!renderer)
-        return nullptr;
-    VisiblePosition position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
-    if (position.isNull())
-        position = firstPositionInOrBeforeNode(node);
-
-    RefPtr<Range> contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
-    if (!contextRange)
-        return nullptr;
-
     String fullPlainTextString = plainText(contextRange.get());
     int hitLocation = TextIterator::rangeLength(makeRange(contextRange->startPosition(), position).get());
 
@@ -102,6 +86,50 @@ RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const Hi
     detectedDataRange = mainResultRange;
     
     return actionContext;
+}
+
+RetainPtr<DDActionContext> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange)
+{
+    if (!DataDetectorsLibrary())
+        return nullptr;
+
+    Node* node = hitTestResult.innerNonSharedNode();
+    if (!node)
+        return nullptr;
+    auto renderer = node->renderer();
+    if (!renderer)
+        return nullptr;
+
+    VisiblePosition position;
+    RefPtr<Range> contextRange;
+
+    if (!is<HTMLTextFormControlElement>(*node)) {
+        position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);
+        if (position.isNull())
+            position = firstPositionInOrBeforeNode(node);
+
+        contextRange = rangeExpandedAroundPositionByCharacters(position, 250);
+        if (!contextRange)
+            return nullptr;
+    } else {
+        Frame* frame = node->document().frame();
+        if (!frame)
+            return nullptr;
+
+        IntPoint framePoint = hitTestResult.roundedPointInInnerNodeFrame();
+        if (!frame->rangeForPoint(framePoint))
+            return nullptr;
+
+        VisiblePosition position = frame->visiblePositionForPoint(framePoint);
+        if (position.isNull())
+            return nullptr;
+
+        contextRange = enclosingTextUnitOfGranularity(position, LineGranularity, DirectionForward);
+        if (!contextRange)
+            return nullptr;
+    }
+
+    return detectItemAtPositionWithRange(position, contextRange, detectedDataBoundingBox, detectedDataRange);
 }
 
 } // namespace WebCore
