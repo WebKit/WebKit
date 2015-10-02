@@ -1026,6 +1026,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (NSArray *)webSelectionRects
 {
+    if (_page->editorState().selectionIsNone)
+        return nil;
     const auto& selectionRects = _page->editorState().postLayoutData().selectionRects;
     unsigned size = selectionRects.size();
     if (!size)
@@ -2301,6 +2303,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UITextRange *)selectedTextRange
 {
+    if (_page->editorState().selectionIsNone)
+        return nil;
     auto& postLayoutEditorStateData = _page->editorState().postLayoutData();
     FloatRect startRect = postLayoutEditorStateData.caretRectAtStart;
     FloatRect endRect = postLayoutEditorStateData.caretRectAtEnd;

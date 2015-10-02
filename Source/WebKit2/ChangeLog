@@ -1,3 +1,30 @@
+2015-10-02  Enrica Casucci  <enrica@apple.com>
+
+        Text selection is inaccurate in Wikipedia pages when starting navigation from wikipedia.org.
+        https://bugs.webkit.org/show_bug.cgi?id=149756
+        rdar://problem/22332409
+
+        Reviewed by Tim Horton.
+
+        When loading a new document into the same WebPage object, we need
+        to clear the assisted node, since there is no guarantee that the
+        node will be blurred. The bug is caused by the use of a stale
+        assisted node to constrain the point where the gesture occurs.
+        A fix for this problem was landed in http://trac.webkit.org/changeset/179885
+        where the cleanup was added when FrameLoaderClient::detach2 was called.
+        This method doesn't seem to be called any longer for the main frame,
+        so the correct solution is to add the cleanup to didCommitLoad in WebPage.
+        I've also added some checks to webSelectionsRects and selectedTextRange to avoid
+        the use of postLayoutData when the selection is none.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView webSelectionRects]):
+        (-[WKContentView selectedTextRange]):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2): Removed call to resetAssistedNodeForFrame.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad): Added call to resetAssistedNodeForFrame.
+
 2015-10-02  Alex Christensen  <achristensen@webkit.org>
 
         Reloading without content blockers doesn't apply to resource loads after the main frame finishes
