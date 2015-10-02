@@ -1,5 +1,21 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187994.
+
+    2015-08-05  Zalan Bujtas  <zalan@apple.com>
+
+            [Frame flattening] Return early when child RenderView is not available.
+            https://bugs.webkit.org/show_bug.cgi?id=147697
+
+            Reviewed by Simon Fraser.
+
+            No change in functionality.
+
+            * rendering/RenderFrameBase.cpp:
+            (WebCore::RenderFrameBase::peformLayoutWithFlattening):
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187921.
 
     2015-08-04  Chris Dumez  <cdumez@apple.com>
