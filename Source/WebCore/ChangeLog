@@ -1,3 +1,19 @@
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187145.
+
+    2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Node highlights are wrong when the page is zoomed
+            https://bugs.webkit.org/show_bug.cgi?id=147177
+
+            Reviewed by Simon Fraser.
+
+            * inspector/InspectorOverlay.cpp:
+            (WebCore::InspectorOverlay::update):
+            Remove scaling that appears to no longer be needed, it was double
+            scaling the overlay content and misplacing it in the process.
+
 2015-10-01  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r188298.
