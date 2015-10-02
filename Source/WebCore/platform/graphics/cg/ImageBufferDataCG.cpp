@@ -106,7 +106,11 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
 
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
     unsigned char* resultData = result->data();
-    
+    if (!resultData) {
+        WTFLogAlways("ImageBufferData: Unable to create buffer. Requested size was %d x %d = %u\n", rect.width(), rect.height(), area.unsafeGet());
+        return nullptr;
+    }
+
     Checked<int> endx = rect.maxX();
     endx *= ceilf(resolutionScale);
     Checked<int> endy = rect.maxY();
