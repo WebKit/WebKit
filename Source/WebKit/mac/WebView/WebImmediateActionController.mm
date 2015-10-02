@@ -159,12 +159,17 @@ using namespace WebCore;
     if (!_webView)
         return;
 
+    NSView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]]) {
+        [self _cancelImmediateAction];
+        return;
+    }
+
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
     [_webView _setMaintainsInactiveSelection:YES];
 
-    WebHTMLView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
     NSPoint locationInDocumentView = [immediateActionRecognizer locationInView:documentView];
     [self performHitTestAtPoint:locationInDocumentView];
     [self _updateImmediateActionItem];
@@ -209,7 +214,11 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
+    NSView *documentView = [[[_webView _selectedOrMainFrame] frameView] documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return;
+
+    Frame* coreFrame = core([(WebHTMLView *)documentView _frame]);
     if (coreFrame) {
         ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
         if (lastStage == ImmediateActionStage::ActionUpdated)
