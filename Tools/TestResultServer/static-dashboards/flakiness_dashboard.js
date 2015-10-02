@@ -354,7 +354,7 @@ function determineBuilderPlatform(builderNameUpperCase)
     if (string.contains(builderNameUpperCase, 'WIN XP'))
         return 'APPLE_WIN_XP';
 
-    if (string.contains(builderNameUpperCase, 'ELCAPITAN'))
+    if (string.contains(builderNameUpperCase, 'EL CAPITAN'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_ELCAPITAN');
     if (string.contains(builderNameUpperCase, 'YOSEMITE'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_YOSEMITE');

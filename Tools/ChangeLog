@@ -1,3 +1,12 @@
+2015-10-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Flakiness dashboard should support OS X El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=149648
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js: Fix the broken dashboard for ElCapitan.
+
 2015-10-02  Daniel Bates  <dabates@apple.com>
 
         Fix run-webkit-tests --ios-simulator after <http://trac.webkit.org/changeset/190515>
