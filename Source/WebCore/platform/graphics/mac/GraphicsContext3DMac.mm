@@ -40,6 +40,7 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
+#include "Logging.h"
 #if PLATFORM(IOS)
 #import "OpenGLESSPI.h"
 #import <OpenGLES/ES2/glext.h>
@@ -373,25 +374,27 @@ bool GraphicsContext3D::makeContextCurrent()
 void GraphicsContext3D::checkGPUStatusIfNecessary()
 {
 #if USE_GPU_STATUS_CHECK
+    bool needsCheck = !GPUCheckCounter;
     GPUCheckCounter = (GPUCheckCounter + 1) % GPUStatusCheckThreshold;
-    if (GPUCheckCounter)
+
+    if (!needsCheck)
         return;
-#if PLATFORM(MAC)
+
     GLint restartStatus = 0;
+#if PLATFORM(MAC)
     CGLGetParameter(platformGraphicsContext3D(), kCGLCPGPURestartStatus, &restartStatus);
     if (restartStatus == kCGLCPGPURestartStatusCaused || restartStatus == kCGLCPGPURestartStatusBlacklisted) {
-        CGLSetCurrentContext(0);
-        CGLDestroyContext(platformGraphicsContext3D());
+        LOG(WebGL, "The GPU has either reset or blacklisted us. Lose the context.");
         forceContextLost();
+        CGLSetCurrentContext(0);
     }
 #elif PLATFORM(IOS)
-    GLint restartStatus = 0;
     EAGLContext* currentContext = static_cast<EAGLContext*>(PlatformGraphicsContext3D());
     [currentContext getParameter:kEAGLCPGPURestartStatus to:&restartStatus];
     if (restartStatus == kEAGLCPGPURestartStatusCaused || restartStatus == kEAGLCPGPURestartStatusBlacklisted) {
-        [EAGLContext setCurrentContext:0];
-        [static_cast<EAGLContext*>(currentContext) release];
+        LOG(WebGL, "The GPU has either reset or blacklisted us. Lose the context.");
         forceContextLost();
+        [EAGLContext setCurrentContext:0];
     }
 #endif
 #endif

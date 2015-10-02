@@ -1,5 +1,36 @@
 2015-10-02  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190380. rdar://problem/22888962
+
+    2015-09-30  Dean Jackson  <dino@apple.com>
+
+            Crash in gleLookupHashObject when context is lost
+            https://bugs.webkit.org/show_bug.cgi?id=149690
+            <rdar://problem/22751585>
+            <rdar://problem/22465495>
+
+            Reviewed by Simon Fraser.
+
+            When we received notification that the GPU has reset,
+            we were nulling out and deleting our OpenGL contexts
+            and then trying to do it all over again. The fix was
+            to flip the order of operations.
+
+            While there I added some logging, and changed the
+            way we check GPU status to make sure we do a check
+            after the first draw call.
+
+            Unfortunately we can't test automatically because it
+            involves resetting the GPU which can possibly cause
+            concurrent tests to fail.
+
+            * platform/graphics/mac/GraphicsContext3DMac.mm:
+            (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary): Move forceContextLost()
+            to be the first thing we do after we've realised we need to
+            bail.
+
+2015-10-02  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190252. rdar://problem/22867962
 
     2015-09-25  Beth Dakin  <bdakin@apple.com>
