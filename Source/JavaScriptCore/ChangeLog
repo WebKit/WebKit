@@ -1,3 +1,33 @@
+2015-10-02  Filip Pizlo <fpizlo@apple.com> and Mark Lam <mark.lam@apple.com>
+
+        We should not add InferredTypeTables to old Structures
+        https://bugs.webkit.org/show_bug.cgi?id=149767
+        rdar://problem/22825526
+
+        Reviewed by Saam Barati.
+
+        Our property type inference has an optimization where the absence of an InferredTypeTable is
+        taken to mean that all properties are TOP. This is great because most Structures come into
+        existence through reflective stores, and we don't want to waste time inferring types for
+        those.
+
+        But our code was not obeying this rule properly. If we were doing a transition, we would
+        assume that this meant that we were creating a new structure, and so we would give it an
+        InferredTypeTable if we were doing a non-reflective store (i.e. context = PutById). But that
+        same structure could already have been in use prior to us giving it an InferredTypeTable. At
+        that point bad things will start to happen because the objects created before we created the
+        table, and the inline caches compiled before then, will have types that disagree with the new
+        objects and inline caches despite them sharing the same structure and property names.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/Structure.h:
+        * tests/stress/add-inferred-type-table-to-existing-structure.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, rolling out r190520, some tests assert / crash.

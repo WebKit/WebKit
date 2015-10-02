@@ -1232,7 +1232,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(
         structure, propertyName, attributes, offset);
     if (newStructure) {
-        newStructure->willStoreValueForTransition(
+        newStructure->willStoreValueForExistingTransition(
             vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
         
         DeferGC deferGC(vm.heap);
@@ -1283,7 +1283,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     
     newStructure = Structure::addPropertyTransition(
         vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
-    newStructure->willStoreValueForTransition(
+    newStructure->willStoreValueForNewTransition(
         vm, propertyName, value, slot.context() == PutPropertySlot::PutById);
     
     validateOffset(offset);
@@ -1354,7 +1354,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     Structure* structure = this->structure();
     PropertyOffset offset = structure->addPropertyWithoutTransition(vm, propertyName, attributes);
     bool shouldOptimize = false;
-    structure->willStoreValueForTransition(vm, propertyName, value, shouldOptimize);
+    structure->willStoreValueForNewTransition(vm, propertyName, value, shouldOptimize);
     setStructureAndButterfly(vm, structure, newButterfly);
     putDirect(vm, offset, value);
 }

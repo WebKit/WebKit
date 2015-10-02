@@ -505,13 +505,28 @@ public:
         return InferredType::Top;
     }
 
-    ALWAYS_INLINE void willStoreValueForTransition(
+    // Call this when we know that this is a brand new property. Note that it's not enough for the
+    // property to be brand new to some object. It has to be brand new to the Structure.
+    ALWAYS_INLINE void willStoreValueForNewTransition(
         VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
     {
         if (hasBeenDictionary() || (!shouldOptimize && !m_inferredTypeTable))
             return;
         willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::NewProperty);
     }
+
+    // Call this when we know that this is a new property for the object, but not new for the
+    // structure. Therefore, under the InferredTypeTable's rules, absence of the property from the
+    // table means Top rather than Bottom.
+    ALWAYS_INLINE void willStoreValueForExistingTransition(
+        VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
+    {
+        if (hasBeenDictionary() || !m_inferredTypeTable)
+            return;
+        willStoreValueSlow(vm, propertyName, value, shouldOptimize, InferredTypeTable::NewProperty);
+    }
+
+    // Call this when we know that the inferred type table exists and has an entry for this property.
     ALWAYS_INLINE void willStoreValueForReplace(
         VM& vm, PropertyName propertyName, JSValue value, bool shouldOptimize)
     {
