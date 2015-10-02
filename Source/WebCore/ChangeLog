@@ -1,5 +1,27 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188768.
+
+    2015-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: REGRESSION(173684): Edit as HTML not working
+            https://bugs.webkit.org/show_bug.cgi?id=148268
+
+            Reviewed by Chris Dumez.
+
+            Tests: inspector/dom/getOuterHTML.html
+                   inspector/dom/setOuterHTML.html
+
+            * inspector/DOMPatchSupport.cpp:
+            (WebCore::DOMPatchSupport::innerPatchChildren):
+            Revert the optimization change made in r173684. The optimization changes
+            had a few issues. It changed the logic to potentially drop out of the
+            loop before all new items were processed and using a node reference
+            to track an index did not account for the modifications insertBefore
+            may have made to that node's index in the list.
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188690.
 
     2015-08-20  Chris Dumez  <cdumez@apple.com>
