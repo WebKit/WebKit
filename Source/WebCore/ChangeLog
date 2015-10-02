@@ -1,5 +1,39 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188634.
+
+    2015-08-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] Punctuation near Hindi text is garbled when styled with the system font
+            https://bugs.webkit.org/show_bug.cgi?id=148164
+
+            Reviewed by Brian Burg.
+
+            Fonts cache whether or not they are the system font. This caching took place at the end of Font::platformInit().
+            However, in the middle of Font::platformInit(), we look up a glyph, which calls GlyphPage::fill() which consults
+            with this cache. However, at this point, the cache has not been constructed yet. The solution is just to
+            construct the cache earlier (at the beginning of the function).
+
+            Consulting with the cache before it is populated causes it to erroneously say that no fonts are system fonts.
+            Then, we use Core Graphics to ask for glyphs instead of Core Text. Core Graphics, however, is incapable of
+            handling the system font, and returns us garbled results. In particular, when the system language is set to
+            Japanese, the system font does not support punctuation, and Core Text tells us so. However, Core Graphics
+            erroneously tells us that the system font does support punctuation.
+
+            Then, if text is near the punctuation which causes us to take the complex text codepath (such as Hindi text),
+            we tell Core Text to explicitly lay out the punctuation using the system font (which does not support
+            punctuation). Core Text then replies that the provided font doesn't support the punctuation, and that we should
+            use LastResort with some other glyphs instead. WebKit then disregards the font CoreText told us to use (because
+            we are oh-so-sure that the font in question supports punctuation) and uses the LastResort glyph IDs with our
+            font, which causes arbitrary glyphs to be shown.
+
+            Test: fast/text/hindi-system-font-punctuation.html
+
+            * platform/graphics/cocoa/FontCocoa.mm:
+            (WebCore::Font::platformInit):
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188622.
 
     2015-08-18  Dean Jackson  <dino@apple.com>

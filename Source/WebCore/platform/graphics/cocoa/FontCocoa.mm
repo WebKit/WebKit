@@ -93,6 +93,7 @@ bool fontFamilyShouldNotBeUsedForArabic(CFStringRef fontFamilyName)
 
 void Font::platformInit()
 {
+    // FIXME: Unify these two codepaths
 #if USE(APPKIT)
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? 1.0f : 0.f;
 
@@ -148,6 +149,8 @@ void Font::platformInit()
         m_platformData.setNSFont([NSFont systemFontOfSize:[m_platformData.nsFont() pointSize]]);
         LOG_ERROR("failed to set up font, using system font %s", m_platformData.font());
     }
+
+    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
 
     // Work around <rdar://problem/19433490>
     CGGlyph dummyGlyphs[] = {0, 0};
@@ -215,7 +218,10 @@ void Font::platformInit()
     m_fontMetrics.setCapHeight(capHeight);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setXHeight(xHeight);
+
 #else
+
+    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
     m_spaceGlyph = 0;
     m_spaceWidth = 0;
@@ -238,6 +244,7 @@ void Font::platformInit()
         unitsPerEm = fontService.unitsPerEm();
         familyName = adoptCF(CTFontCopyFamilyName(ctFont));
     } else {
+        // FIXME: This else block is dead code. Remove it.
         CGFontRef cgFont = m_platformData.cgFont();
 
         unitsPerEm = CGFontGetUnitsPerEm(cgFont);
@@ -272,8 +279,6 @@ void Font::platformInit()
         m_fontMetrics.setLineGap(thirdOfSize);
     }
 #endif
-
-    m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_platformData.font())).get());
 }
 
 void Font::platformCharWidthInit()
