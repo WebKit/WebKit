@@ -1,5 +1,20 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r188016.
+
+    2015-08-05  Zalan Bujtas  <zalan@apple.com>
+
+            Add missing test case (r187994).
+
+            Unreviewed.
+
+            * fast/frames/flattening/crash-when-sibling-iframe-is-destroyed-with-subtree-layoutroot-expected.txt: Added.
+            * fast/frames/flattening/crash-when-sibling-iframe-is-destroyed-with-subtree-layoutroot.html: Added.
+            * fast/frames/flattening/resources/childframe1.html: Added.
+            * fast/frames/flattening/resources/childframe2.html: Added.
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187921.
 
     2015-08-04  Chris Dumez  <cdumez@apple.com>

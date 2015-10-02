@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests if subtree layout crashes when the tree is mutated while the document is being destroyed.</title>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  if (window.internals)
+    internals.settings.setFrameFlatteningEnabled(true);
+
+  window.onload = function() {
+    if (location.hash == "#1") {
+	  document.body.innerHTML = "PASSED";
+      if (window.testRunner)
+        testRunner.notifyDone();
+    } else {
+      location.hash = "#1";
+	  setTimeout( function() { window.location.reload(); }, 0 );
+    }
+  }
+
+  window.onpagehide = function () {
+    var frame2 = document.getElementById("frame2"); 
+    frame2.style.padding = "20px"; 
+    frame2.contentDocument.getElementById("frame2textcontrol").innerText = "new text";
+  }
+</script>
+</head>
+<body>
+<iframe id=frame1 src="./resources/childframe1.html"></iframe>
+<iframe id=frame2 src="./resources/childframe2.html"></iframe>
+<div id=mainframediv></div>
+</body>
+</html>
