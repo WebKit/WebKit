@@ -40,6 +40,7 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <mach-o/dyld.h>
@@ -122,6 +123,11 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
         doneCompiling = true;
     }];
     platformRunUntil(doneCompiling, 0);
+
+    // This is for http/tests/contentextensions/disable-blocker.html
+    if (!test.urlContains("disable-blocker"))
+        return;
+    mainWebView()->platformView()._userContentExtensionsEnabled = false;
 #endif
 }
 

@@ -1,3 +1,17 @@
+2015-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Reloading without content blockers doesn't apply to resource loads after the main frame finishes
+        https://bugs.webkit.org/show_bug.cgi?id=149430
+        rdar://problem/22742222
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+        Test what happens when you disable content blockers from the SPI.
+
 2015-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix for run-api-tests

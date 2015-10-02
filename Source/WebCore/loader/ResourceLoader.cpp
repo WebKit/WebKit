@@ -342,7 +342,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
         if (page && m_documentLoader) {
             auto* userContentController = page->userContentController();
             if (userContentController)
-                userContentController->processContentExtensionRulesForLoad(*page, request, m_resourceType, *m_documentLoader);
+                userContentController->processContentExtensionRulesForLoad(request, m_resourceType, *m_documentLoader);
         }
     }
 #endif

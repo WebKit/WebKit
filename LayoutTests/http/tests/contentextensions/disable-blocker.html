@@ -1,0 +1,25 @@
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function sendRequest()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        console.log("status: " + xhr.status + ", readyState:" + xhr.readyState + ", responseText: " + xhr.responseText);
+        if (xhr.readyState == 4) {
+            testRunner.notifyDone();
+        }
+    }
+    
+    xhr.open("GET", "resources/should-load.html", true);
+	xhr.send();
+}
+</script>
+</head>
+<body onload="sendRequest()">
+This page should load successfully.  The content blocker is disabled in WebKitTestRunner before loading the page.
+</body>

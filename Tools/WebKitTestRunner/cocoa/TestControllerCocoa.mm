@@ -39,6 +39,7 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
@@ -119,8 +120,10 @@ void TestController::cocoaResetStateToConsistentValues()
     platformRunUntil(doneRemoving, 0);
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
-    if (PlatformWebView* webView = mainWebView())
+    if (PlatformWebView* webView = mainWebView()) {
         [webView->platformView().configuration.userContentController _removeAllUserContentFilters];
+        webView->platformView()._userContentExtensionsEnabled = true;
+    }
 #endif
 }
 

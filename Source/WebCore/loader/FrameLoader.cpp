@@ -2710,7 +2710,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         if (m_documentLoader) {
             if (auto* page = m_frame.page()) {
                 if (auto* controller = page->userContentController())
-                    controller->processContentExtensionRulesForLoad(*page, newRequest, ResourceType::Raw, *m_documentLoader);
+                    controller->processContentExtensionRulesForLoad(newRequest, ResourceType::Raw, *m_documentLoader);
             }
         }
         

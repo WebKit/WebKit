@@ -1226,7 +1226,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     DocumentLoader* documentLoader = frame->loader().documentLoader();
 
     if (page->userContentController() && documentLoader)
-        page->userContentController()->processContentExtensionRulesForLoad(*page, request, ResourceType::Media, *documentLoader);
+        page->userContentController()->processContentExtensionRulesForLoad(request, ResourceType::Media, *documentLoader);
 
     if (request.isNull()) {
         mediaLoadingFailed(MediaPlayer::FormatError);
