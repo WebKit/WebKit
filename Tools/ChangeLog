@@ -1,3 +1,14 @@
+2015-10-01  Daniel Bates  <dabates@apple.com>
+
+        Another attempt to fix the Windows builders after <https://trac.webkit.org/changeset/190387>
+        (https://bugs.webkit.org/show_bug.cgi?id=149695)
+
+        Following r190424 we can now rely on webkit-build-directory to return the path to
+        the correct configuration-specific build directory on Windows.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
 2015-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Fix TestWebKitAPI build under CMake.
