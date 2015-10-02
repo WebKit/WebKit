@@ -157,7 +157,9 @@ class IOSSimulatorPort(Port):
         env = environment.to_dictionary()
 
         try:
-            self._run_script("build-layouttestrelay", env=env)
+            # FIXME: We should be passing _arguments_for_configuration(), which respects build configuration and port,
+            # instead of hardcoding --ios-simulator.
+            self._run_script("build-layouttestrelay", args=["--ios-simulator"], env=env)
         except ScriptError, e:
             _log.error(e.message_with_output(output_limit=None))
             return False

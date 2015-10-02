@@ -1,3 +1,13 @@
+2015-10-02  Daniel Bates  <dabates@apple.com>
+
+        Fix run-webkit-tests --ios-simulator after <http://trac.webkit.org/changeset/190515>
+        (https://bugs.webkit.org/show_bug.cgi?id=149753)
+
+        For now, pass --ios-simulator.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._build_relay):
+
 2015-10-02  Simon Fraser  <simon.fraser@apple.com>
 
         Remove a "nullable" that breaks the iOS 8 build.
