@@ -1,5 +1,51 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190434.
+
+    2015-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] AirPlay should not stop when the screen locks
+            https://bugs.webkit.org/show_bug.cgi?id=148315
+            <rdar://problem/22770703>
+
+            Reviewed by Jer Noble.
+
+            Tested by media/video-interruption-with-resume-allowing-play.html
+                      media/video-interruption-with-resume-not-allowing-play.html
+
+            * Modules/webaudio/AudioContext.h: overrideBackgroundPlaybackRestriction -> 
+              shouldOverrideBackgroundPlaybackRestriction.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::suspendPlayback): Fix a typo in the logging.
+            (WebCore::HTMLMediaElement::mayResumePlayback): Ditto.
+            (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction): Renamed from
+              overrideBackgroundPlaybackRestriction.
+            (WebCore::HTMLMediaElement::overrideBackgroundPlaybackRestriction): Deleted.
+            * html/HTMLMediaElement.h:
+
+            * platform/audio/PlatformMediaSession.cpp:
+            (WebCore::stateName):
+            (WebCore::interruptionName): New, log the name of the interruption.
+            (WebCore::PlatformMediaSession::beginInterruption): Log the interruption type. Don't
+              increment the interruption counter if we are going to ignore it. Incorporate logic
+              from doInterruption.
+            (WebCore::PlatformMediaSession::doInterruption): Deleted.
+            (WebCore::PlatformMediaSession::shouldDoInterruption): Deleted.
+            (WebCore::PlatformMediaSession::forceInterruption): Deleted.
+
+            * platform/audio/PlatformMediaSession.h: Add SuspendedUnderLock interruption type.
+            * platform/audio/PlatformMediaSessionManager.cpp:
+            (WebCore::PlatformMediaSessionManager::applicationDidEnterBackground): Deleted.
+            * platform/audio/PlatformMediaSessionManager.h:
+
+            * platform/audio/ios/MediaSessionManagerIOS.h:
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            (WebCore::MediaSessionManageriOS::applicationDidEnterBackground): Call beginInterruption
+              when appropriate.
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r190380.
 
     2015-09-30  Dean Jackson  <dino@apple.com>

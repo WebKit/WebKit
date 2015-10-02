@@ -1,5 +1,20 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190434.
+
+    2015-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] AirPlay should not stop when the screen locks
+            https://bugs.webkit.org/show_bug.cgi?id=148315
+            <rdar://problem/22770703>
+
+            Reviewed by Jer Noble.
+
+            * media/video-interruption-with-resume-allowing-play.html:
+            * media/video-interruption-with-resume-not-allowing-play.html:
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r190375.
 
     2015-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
