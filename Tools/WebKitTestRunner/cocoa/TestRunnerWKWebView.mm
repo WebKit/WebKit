@@ -94,7 +94,7 @@
         self.didHideKeyboardCallback();
 }
 
-- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
     [super scrollViewWillBeginZooming:scrollView withView:view];
 

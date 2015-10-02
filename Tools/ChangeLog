@@ -1,3 +1,10 @@
+2015-10-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove a "nullable" that breaks the iOS 8 build.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView scrollViewWillBeginZooming:withView:]):
+
 2015-10-02  Daniel Bates  <dabates@apple.com>
 
         LayoutTestRelay is not built and archived when building for iOS Simulator
