@@ -286,7 +286,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
             ASSERT(input == AnimationStateInput::StartTimeSet || input == AnimationStateInput::PlayStatePaused);
 
             if (input == AnimationStateInput::StartTimeSet) {
-                ASSERT(param >= 0);
+                ASSERT(param > -0.001); // Sometimes Core Animation gives us a beginTime slightly into the future.
                 LOG(Animations, "%p AnimationState %s -> StartTimeSet (time is %f)", this, nameForState(m_animationState), param);
 
                 // We have a start time, set it, unless the startTime is already set
