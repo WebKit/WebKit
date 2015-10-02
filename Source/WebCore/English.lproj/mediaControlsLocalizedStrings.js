@@ -27,6 +27,7 @@ var UIStringTable = {
     'Remaining': 'Remaining',
     'Rewind': 'Rewind',
     'Rewind ##sec## Seconds': 'Rewind ##sec## Seconds',
+    'Show Controls': 'Show Controls',
     'Stalled': 'Stalled',
     'Start Playback': 'Start Playback',
     'Subtitles': 'Subtitles',

@@ -1,0 +1,42 @@
+<body>
+<p>
+    This tests that, after the video controls fade out, they can be shown when VoiceOver or a keyboard user clicks the hidden "Show Controls" button.
+</p>
+<p id="result">
+    FAIL: Test did not run.<br>
+</p>
+<video id="video" controls autoplay onplaying="playing()" src="content/long-test.mp4"></video><br>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function playing() {
+
+        // Mouse over the video then mouse out to hide controls more quickly.
+        eventSender.mouseMoveTo(100,100);
+        eventSender.mouseMoveTo(1,1);
+
+        setTimeout(function() {
+            var result = document.getElementById("result");
+            result.innerHTML = "";
+            var root = internals.shadowRoot(document.getElementById("video"))
+            
+            var button = root.firstChild.querySelector('button');
+            if (button) {
+                button.focus();
+                eventSender.keyDown(' '); // Use keyboard to press the selected button.
+            } else {
+                result.innerHTML += 'FAIL: "Show Controls" button is not available.<br>';	
+            }
+
+            // Verifies the toolbar is back in the DOM.
+            var controls = root.firstChild.querySelector('[role="toolbar"]');
+            result.innerHTML += controls ? 'PASS': 'FAIL: Test ending, but toolbar is not visible.';
+
+            testRunner.notifyDone();
+        }, 300) // Wait for video toolbar to hide.
+    }
+</script>
+</body>

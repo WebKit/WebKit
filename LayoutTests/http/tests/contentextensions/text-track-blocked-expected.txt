@@ -14,3 +14,5 @@ layer at (8,26) size 320x240
   RenderVideo {VIDEO} at (0,18) size 320x240
 layer at (8,26) size 320x240
   RenderFlexibleBox {DIV} at (0,0) size 320x240
+layer at (8,256) size 320x10
+  RenderButton {BUTTON} at (0,230) size 320x10 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

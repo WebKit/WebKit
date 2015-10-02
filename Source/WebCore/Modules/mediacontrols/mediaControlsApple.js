@@ -495,6 +495,14 @@ Controller.prototype = {
         wirelessTargetPicker.setAttribute('aria-label', this.UIString('Choose Wireless Display'));
         this.listenFor(wirelessTargetPicker, 'click', this.handleWirelessPickerButtonClicked);
 
+        // Show controls button is an accessibility workaround since the controls are now removed from the DOM. http://webkit.org/b/145684
+        var showControlsButton = this.showControlsButton = document.createElement('button');
+        showControlsButton.setAttribute('pseudo', '-webkit-media-show-controls');
+        showControlsButton.hidden = true;
+        showControlsButton.setAttribute('aria-label', this.UIString('Show Controls'));
+        this.listenFor(showControlsButton, 'click', this.handleShowControlsClick);
+        this.base.appendChild(showControlsButton);
+
         if (!Controller.gSimulateWirelessPlaybackTarget)
             wirelessTargetPicker.classList.add(this.ClassNames.hidden);
     },
@@ -791,6 +799,15 @@ Controller.prototype = {
             this.controls.fullscreenButton.setAttribute('aria-label', this.UIString('Display Full Screen'));
             this.host.exitedFullscreen();
         }
+    },
+
+    handleShowControlsClick: function(event)
+    {
+        if (!this.video.controls && !this.isFullScreen())
+            return;
+
+        if (this.controlsAreHidden())
+            this.showControls(true);
     },
 
     handleWrapperMouseMove: function(event)
@@ -1404,7 +1421,7 @@ Controller.prototype = {
         }
     },
 
-    showControls: function()
+    showControls: function(focusControls)
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         if (!this.video.controls && !this.isFullScreen())
@@ -1414,7 +1431,10 @@ Controller.prototype = {
         if (this.shouldHaveControls() && !this.controls.panel.parentElement) {
             this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
             this.base.appendChild(this.controls.panel);
+            if (focusControls)
+                this.controls.playButton.focus();
         }
+        this.showControlsButton.hidden = true;
     },
 
     hideControls: function()
@@ -1427,6 +1447,7 @@ Controller.prototype = {
         this.controls.panel.classList.remove(this.ClassNames.show);
         if (this.controls.panelBackground)
             this.controls.panelBackground.classList.remove(this.ClassNames.show);
+        this.showControlsButton.hidden = false;
     },
 
     setNeedsUpdateForDisplayedWidth: function()

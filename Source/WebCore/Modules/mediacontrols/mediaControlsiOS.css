@@ -132,6 +132,22 @@ video::-webkit-media-controls-panel-background.paused {
     opacity: 1;
 }
 
+audio::-webkit-media-show-controls {
+    display: none !important;
+}
+video::-webkit-media-show-controls {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 10px;
+    opacity: 0;
+    -webkit-appearance: none;
+}
+
 audio::-webkit-media-controls-panel,
 video::-webkit-media-controls-panel {
     box-sizing: border-box;
