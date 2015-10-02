@@ -68,6 +68,8 @@ WebInspector.loaded = function()
         InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
     if (InspectorBackend.registerDebuggerDispatcher)
         InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
+    if (InspectorBackend.registerHeapDispatcher)
+        InspectorBackend.registerHeapDispatcher(new WebInspector.HeapObserver);
     if (InspectorBackend.registerDatabaseDispatcher)
         InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseObserver);
     if (InspectorBackend.registerDOMStorageDispatcher)
@@ -108,6 +110,7 @@ WebInspector.loaded = function()
     this.issueManager = new WebInspector.IssueManager;
     this.analyzerManager = new WebInspector.AnalyzerManager;
     this.runtimeManager = new WebInspector.RuntimeManager;
+    this.heapManager = new WebInspector.HeapManager;
     this.applicationCacheManager = new WebInspector.ApplicationCacheManager;
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;

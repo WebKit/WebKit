@@ -73,7 +73,11 @@ WebInspector.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph ext
             ++recordBarIndex;
         }
 
-        WebInspector.TimelineRecordBar.createCombinedBars(this._scriptTimeline.records, secondsPerPixel, this, createBar.bind(this));
+        // Create bars for non-GC records and GC records.
+        let [gcRecords, nonGCRecords] = this._scriptTimeline.records.partition((x) => x.isGarbageCollection());
+        let boundCreateBar = createBar.bind(this);
+        WebInspector.TimelineRecordBar.createCombinedBars(nonGCRecords, secondsPerPixel, this, boundCreateBar);
+        WebInspector.TimelineRecordBar.createCombinedBars(gcRecords, secondsPerPixel, this, boundCreateBar);
 
         // Remove the remaining unused TimelineRecordBars.
         for (; recordBarIndex < this._timelineRecordBars.length; ++recordBarIndex) {

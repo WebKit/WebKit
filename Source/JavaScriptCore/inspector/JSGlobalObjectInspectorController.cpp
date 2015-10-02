@@ -36,6 +36,7 @@
 #include "InspectorBackendDispatcher.h"
 #include "InspectorFrontendChannel.h"
 #include "InspectorFrontendRouter.h"
+#include "InspectorHeapAgent.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectConsoleAgent.h"
 #include "JSGlobalObjectConsoleClient.h"
@@ -62,13 +63,11 @@ using namespace JSC;
 namespace Inspector {
 
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject)
-    : m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
+    : m_globalObject(globalObject)
+    , m_injectedScriptManager(std::make_unique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
     , m_executionStopwatch(Stopwatch::create())
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
-#if ENABLE(REMOTE_INSPECTOR)
-    , m_globalObject(globalObject)
-#endif
 {
     AgentContext baseContext = {
         *this,
@@ -86,9 +85,11 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
     auto consoleAgent = std::make_unique<JSGlobalObjectConsoleAgent>(context);
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, consoleAgent.get());
+    auto heapAgent = std::make_unique<InspectorHeapAgent>(context);
 
     m_inspectorAgent = inspectorAgent.get();
     m_debuggerAgent = debuggerAgent.get();
+    m_heapAgent = heapAgent.get();
     m_consoleAgent = consoleAgent.get();
     m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
 
@@ -98,6 +99,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     m_agents.append(WTF::move(runtimeAgent));
     m_agents.append(WTF::move(consoleAgent));
     m_agents.append(WTF::move(debuggerAgent));
+    m_agents.append(WTF::move(heapAgent));
 
     m_executionStopwatch->start();
 }
@@ -281,6 +283,11 @@ void JSGlobalObjectInspectorController::frontendInitialized()
 Ref<Stopwatch> JSGlobalObjectInspectorController::executionStopwatch()
 {
     return m_executionStopwatch.copyRef();
+}
+
+VM& JSGlobalObjectInspectorController::vm()
+{
+    return m_globalObject.vm();
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

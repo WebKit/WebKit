@@ -28,6 +28,7 @@
 #include "GCIncomingRefCountedSet.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
+#include "HeapObserver.h"
 #include "HeapOperation.h"
 #include "JITStubRoutineSet.h"
 #include "ListableHandler.h"
@@ -49,28 +50,24 @@
 
 namespace JSC {
 
-class CopiedSpace;
 class CodeBlock;
-class ExecutableBase;
+class CopiedSpace;
 class EdenGCActivityCallback;
+class ExecutableBase;
 class FullGCActivityCallback;
 class GCActivityCallback;
 class GCAwareJITStubRoutine;
-class GlobalCodeBlock;
 class Heap;
 class HeapRootVisitor;
 class HeapVerifier;
 class IncrementalSweeper;
 class JITStubRoutine;
 class JSCell;
-class VM;
 class JSStack;
 class JSValue;
-class LiveObjectIterator;
 class LLIntOffsetsExtractor;
 class MarkedArgumentBuffer;
-class WeakGCHandlePool;
-class SlotVisitor;
+class VM;
 
 namespace DFG {
 class Worklist;
@@ -132,6 +129,9 @@ public:
 
     JS_EXPORT_PRIVATE IncrementalSweeper* sweeper();
     JS_EXPORT_PRIVATE void setIncrementalSweeper(std::unique_ptr<IncrementalSweeper>);
+
+    void addObserver(HeapObserver* observer) { m_observers.append(observer); }
+    void removeObserver(HeapObserver* observer) { m_observers.removeFirst(observer); }
 
     // true if collection is in progress
     bool isCollecting();
@@ -411,7 +411,9 @@ private:
     RefPtr<GCActivityCallback> m_edenActivityCallback;
     std::unique_ptr<IncrementalSweeper> m_sweeper;
     Vector<MarkedBlock*> m_blockSnapshot;
-    
+
+    Vector<HeapObserver*> m_observers;
+
     unsigned m_deferralDepth;
     Vector<DFG::Worklist*> m_suspendedCompilerWorklists;
 

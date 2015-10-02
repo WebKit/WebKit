@@ -134,21 +134,23 @@ WebInspector.TimelineRecordBar = class TimelineRecordBar extends WebInspector.Ob
         var startTimeProperty = usesActiveStartTime ? "activeStartTime" : "startTime";
 
         for (var record of visibleRecords) {
+            var startTime = record[startTimeProperty];
+
             // Check if the previous record is far enough away to create the active bar. We also create it now if the current record has no active state time.
-            if (!isNaN(activeStartTime) && (activeStartTime + Math.max(activeEndTime - activeStartTime, minimumDuration) + minimumMargin <= record[startTimeProperty]
-                || (isNaN(record[startTimeProperty]) && !isNaN(activeEndTime)))) {
+            if (!isNaN(activeStartTime) && (activeStartTime + Math.max(activeEndTime - activeStartTime, minimumDuration) + minimumMargin <= startTime
+                || (isNaN(startTime) && !isNaN(activeEndTime)))) {
                 createBarCallback(activeRecords, WebInspector.TimelineRecordBar.RenderMode.ActiveOnly);
                 activeRecords = [];
                 activeStartTime = NaN;
                 activeEndTime = NaN;
             }
 
-            if (isNaN(record[startTimeProperty]))
+            if (isNaN(startTime))
                 continue;
 
             // If this is a new bar, peg the start time.
             if (isNaN(activeStartTime))
-                activeStartTime = record[startTimeProperty];
+                activeStartTime = startTime;
 
             // Update the end time to be the maximum we encounter. activeEndTime might be NaN, so "|| 0" to prevent Math.max from returning NaN.
             if (!isNaN(record.endTime))

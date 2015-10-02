@@ -1,0 +1,39 @@
+{
+    "domain": "Heap",
+    "description": "Heap domain exposes JavaScript heap attributes and capabilities.",
+    "types": [
+        {
+            "id": "GarbageCollection",
+            "description": "Information about a garbage collection.",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["full", "partial"], "description": "The type of garbage collection." },
+                { "name": "startTime", "type": "number" },
+                { "name": "endTime", "type": "number" }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables Heap domain events."
+        },
+        {
+            "name": "disable",
+            "description": "Disables Heap domain events."
+        },
+        {
+            "name": "gc",
+            "description": "Trigger a full garbage collection."
+        }
+    ],
+    "events": [
+        {
+            "name": "garbageCollected",
+            "description": "Information about the garbage collection.",
+            "parameters": [
+                { "name": "collection", "type": "GarbageCollection" }
+            ]
+        }
+    ]
+}

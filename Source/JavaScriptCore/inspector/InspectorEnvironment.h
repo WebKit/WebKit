@@ -35,6 +35,7 @@ class Stopwatch;
 namespace JSC {
 class Exception;
 class SourceCode;
+class VM;
 }
 
 namespace Inspector {
@@ -53,6 +54,7 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) = 0;
     virtual void frontendInitialized() = 0;
     virtual Ref<WTF::Stopwatch> executionStopwatch() = 0;
+    virtual JSC::VM& vm() = 0;
 };
 
 } // namespace Inspector

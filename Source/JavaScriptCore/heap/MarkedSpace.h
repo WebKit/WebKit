@@ -39,7 +39,6 @@ namespace JSC {
 class Heap;
 class HeapIterationScope;
 class JSCell;
-class LiveObjectIterator;
 class LLIntOffsetsExtractor;
 class WeakGCHandle;
 class SlotVisitor;

@@ -224,6 +224,10 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         if (!this._pendingRecords.length)
             return;
 
+        var zeroTime = this.zeroTime;
+        var startTime = this.startTime;
+        var endTime = this.endTime;
+
         for (var scriptTimelineRecord of this._pendingRecords) {
             var rootNodes = [];
             if (scriptTimelineRecord.profile) {
@@ -231,14 +235,10 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
                 rootNodes = scriptTimelineRecord.profile.topDownRootNodes;
             }
 
-            var zeroTime = this.zeroTime;
-            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short, rootNodes.length);
+            var treeElement = new WebInspector.TimelineRecordTreeElement(scriptTimelineRecord, WebInspector.SourceCodeLocation.NameStyle.Short, true);
             var dataGridNode = new WebInspector.ScriptTimelineDataGridNode(scriptTimelineRecord, zeroTime);
 
             this._dataGrid.addRowInSortOrder(treeElement, dataGridNode);
-
-            var startTime = this.startTime;
-            var endTime = this.endTime;
 
             for (var profileNode of rootNodes) {
                 var profileNodeTreeElement = new WebInspector.ProfileNodeTreeElement(profileNode, this);

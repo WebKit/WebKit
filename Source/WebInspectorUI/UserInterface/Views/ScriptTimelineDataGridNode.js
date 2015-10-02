@@ -77,8 +77,15 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
             }
         }
 
-        return {eventType: this._record.eventType, startTime, selfTime: duration, totalTime: duration,
-            averageTime: duration, callCount: 1, location: callFrameOrSourceCodeLocation};
+        return {
+            eventType: this._record.eventType,
+            startTime,
+            selfTime: duration,
+            totalTime: duration,
+            averageTime: duration,
+            callCount: NaN,
+            location: callFrameOrSourceCodeLocation
+        };
     }
 
     updateRangeTimes(startTime, endTime)
@@ -124,6 +131,9 @@ WebInspector.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode exten
         case "totalTime":
         case "averageTime":
             return isNaN(value) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
+
+        case "callCount":
+            return isNaN(value) ? emptyValuePlaceholderString : value;
         }
 
         return super.createCellContent(columnIdentifier, cell);

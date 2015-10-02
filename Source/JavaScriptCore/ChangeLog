@@ -1,3 +1,45 @@
+2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include Garbage Collection Event in Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=142510
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        * heap/HeapObserver.h:        
+        * heap/Heap.cpp:
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::didFinishCollection):
+        * heap/Heap.h:
+        (JSC::Heap::addObserver):
+        (JSC::Heap::removeObserver):
+        Allow observers on heap to add hooks for starting / ending garbage collection.
+
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::vm):
+        * inspector/JSGlobalObjectInspectorController.h:
+        Access the VM through the InspectorEnvironment as it won't change.
+
+        * inspector/agents/InspectorHeapAgent.cpp: Added.
+        (Inspector::InspectorHeapAgent::InspectorHeapAgent):
+        (Inspector::InspectorHeapAgent::~InspectorHeapAgent):
+        (Inspector::InspectorHeapAgent::didCreateFrontendAndBackend):
+        (Inspector::InspectorHeapAgent::willDestroyFrontendAndBackend):
+        (Inspector::InspectorHeapAgent::enable):
+        (Inspector::InspectorHeapAgent::disable):
+        (Inspector::InspectorHeapAgent::gc):
+        (Inspector::protocolTypeForHeapOperation):
+        (Inspector::InspectorHeapAgent::willGarbageCollect):
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+        * inspector/agents/InspectorHeapAgent.h: Added.
+        * inspector/protocol/Heap.json: Added.
+        New domain and agent to handle tasks related to the JavaScriptCore heap.
+
 2015-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling out r190450
