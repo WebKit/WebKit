@@ -33,6 +33,8 @@ function makeHeaderValue(value)
         return (new Date(new Date().getTime() + serverClientTimeDelta)).toUTCString();
     if (value == 'now(100)')
         return (new Date(new Date().getTime() + serverClientTimeDelta + 100 * 1000)).toUTCString();
+    if (value == 'now(-1000)')
+        return (new Date(new Date().getTime() - serverClientTimeDelta - 1000 * 1000)).toUTCString()
     if (value == 'unique()')
         return "" + uniqueIdCounter++;
     return value;

@@ -425,6 +425,13 @@ Optional<std::chrono::system_clock::time_point> ResourceResponseBase::lastModifi
 
     if (!m_haveParsedLastModifiedHeader) {
         m_lastModified = parseDateValueInHeader(m_httpHeaderFields, HTTPHeaderName::LastModified);
+#if PLATFORM(COCOA)
+        // CFNetwork converts malformed dates into Epoch so we need to treat Epoch as
+        // an invalid value (rdar://problem/22352838).
+        const std::chrono::system_clock::time_point epoch;
+        if (m_lastModified && m_lastModified.value() == epoch)
+            m_lastModified = Nullopt;
+#endif
         m_haveParsedLastModifiedHeader = true;
     }
     return m_lastModified;
