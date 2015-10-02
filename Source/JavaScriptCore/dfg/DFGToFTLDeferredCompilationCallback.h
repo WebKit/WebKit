@@ -40,18 +40,15 @@ namespace DFG {
 
 class ToFTLDeferredCompilationCallback : public DeferredCompilationCallback {
 protected:
-    ToFTLDeferredCompilationCallback(PassRefPtr<CodeBlock> dfgCodeBlock);
+    ToFTLDeferredCompilationCallback();
 
 public:
     virtual ~ToFTLDeferredCompilationCallback();
 
-    static Ref<ToFTLDeferredCompilationCallback> create(PassRefPtr<CodeBlock> dfgCodeBlock);
+    static Ref<ToFTLDeferredCompilationCallback> create();
     
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*);
-    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
-
-private:
-    RefPtr<CodeBlock> m_dfgCodeBlock;
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock);
+    virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult);
 };
 
 } } // namespace JSC::DFG

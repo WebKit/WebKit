@@ -62,7 +62,7 @@ MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
     Vector<std::unique_ptr<AccessCase>> accessCases;
     
     std::unique_ptr<AccessCase> previousCase =
-        AccessCase::fromStructureStubInfo(vm, codeBlock->ownerExecutable(), *this);
+        AccessCase::fromStructureStubInfo(vm, codeBlock, *this);
     if (previousCase)
         accessCases.append(WTF::move(previousCase));
 

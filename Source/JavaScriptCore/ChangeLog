@@ -1,3 +1,316 @@
+2015-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        CodeBlock should be a GC object
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+
+        Reviewed by Filip Pizlo.
+
+        We want CodeBlock to be a GC object:
+
+        (1) Sane write barriers. Because CodeBlock wasn't a GC object, we couldn't
+        execute a write barrier on it. This caused us to do weird things that
+        were hard to reason about, like executing a barrier on a related executable
+        (even though the executable might stop pointing to the CodeBlock before
+        the next GC), or pretending that an object had written to itself. Now,
+        when we write to a CodeBlock, we barrier the CodeBlock, and that's that.
+
+        (2) Simpler marking and destruction logic. There's no need to have a
+        custom remembered set or a destruction fixpoint if we just obey normal
+        GC rules.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::FunctionCodeBlock::destroy):
+        (JSC::WebAssemblyCodeBlock::destroy):
+        (JSC::ProgramCodeBlock::destroy):
+        (JSC::ModuleProgramCodeBlock::destroy):
+        (JSC::EvalCodeBlock::destroy): Add ClassInfo and destroy functions
+        because our GC object model requires them.
+
+        Note that we do not set the needsDestruction flag. Since CodeBlock needs
+        eager destruction, it runs its destructors through CodeBlockSet,
+        and not through normal object sweeping.
+
+        (JSC::CodeBlock::finishCreation): Factor out finishCreation from the
+        constructor because our GC object model requires it. Change write
+        barriers to note the CodeBlock as the owner.
+
+        (JSC::CodeBlock::~CodeBlock): Refactor to use the shared
+        unlinkIncomingCalls() function instead of rolling a copy by hand.
+
+        (JSC::CodeBlock::visitWeakly): New helper function for owner executables
+        to do weak marking that might jettison a CodeBlock. Our new GC logic
+        says that a CodeBlock pointer is a strong reference by default, and
+        clients need to opt in if they want to allow a CodeBlock to jettison.
+        This is easier to get right because it means that only those
+        specific owners that want jettison behavior need to worry about it,
+        while all other pointers are valid by default.
+
+        (JSC::CodeBlock::visitChildren): The default visit function keeps
+        everything alive.
+
+        (JSC::CodeBlock::shouldVisitStrongly):
+        (JSC::CodeBlock::isKnownToBeLiveDuringGC): No need to keep special state
+        anymore. If we're marked, we're live -- just like any other object.
+
+        (JSC::timeToLive): Move this code into CodeBlock.cpp so you can mess
+        with it without recompiling, and also because it's really a CodeBlock
+        policy.
+
+        (JSC::CodeBlock::WeakReferenceHarvester::visitWeakReferences):
+        (JSC::CodeBlock::UnconditionalFinalizer::finalizeUnconditionally): Use
+        internal objects for virtual callbacks because GC objects can't have
+        vtables.
+
+        (JSC::CodeBlock::unlinkIncomingCalls): Remove a fast path check that does
+        not exist in the copy of this code in ~CodeBlock because it is not
+        actually an optimization.
+
+        (JSC::CodeBlock::replacement):
+        (JSC::CodeBlock::computeCapabilityLevel): Make these functions generic
+        instead of virtual because GC objects can't have vtables.
+
+        (JSC::CodeBlock::visitStrongly): Deleted.
+        (JSC::CodeBlock::visitAggregate): Deleted.
+        (JSC::CodeBlock::visitWeakReferences): Deleted.
+        (JSC::CodeBlock::finalizeUnconditionally): Deleted.
+        (JSC::ProgramCodeBlock::replacement): Deleted.
+        (JSC::ModuleProgramCodeBlock::replacement): Deleted.
+        (JSC::EvalCodeBlock::replacement): Deleted.
+        (JSC::FunctionCodeBlock::replacement): Deleted.
+        (JSC::ProgramCodeBlock::capabilityLevelInternal): Deleted.
+        (JSC::ModuleProgramCodeBlock::capabilityLevelInternal): Deleted.
+        (JSC::EvalCodeBlock::capabilityLevelInternal): Deleted.
+        (JSC::FunctionCodeBlock::capabilityLevelInternal): Deleted.
+        (JSC::WebAssemblyCodeBlock::replacement): Deleted.
+        (JSC::WebAssemblyCodeBlock::capabilityLevelInternal): Deleted.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::unlinkedCodeBlock):
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::offsetOfNumParameters):
+        (JSC::CodeBlock::alternative):
+        (JSC::CodeBlock::forEachRelatedCodeBlock):
+        (JSC::CodeBlock::specializationKind):
+        (JSC::CodeBlock::instructionCount):
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::hasBaselineJITProfiling):
+        (JSC::CodeBlock::capabilityLevelState):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::appendExceptionHandler):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::replaceConstant):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::create):
+        (JSC::ProgramCodeBlock::createStructure):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::ModuleProgramCodeBlock::create):
+        (JSC::ModuleProgramCodeBlock::createStructure):
+        (JSC::ModuleProgramCodeBlock::ModuleProgramCodeBlock):
+        (JSC::EvalCodeBlock::create):
+        (JSC::EvalCodeBlock::createStructure):
+        (JSC::EvalCodeBlock::variable):
+        (JSC::EvalCodeBlock::numVariables):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::EvalCodeBlock::unlinkedEvalCodeBlock):
+        (JSC::FunctionCodeBlock::create):
+        (JSC::FunctionCodeBlock::createStructure):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::WebAssemblyCodeBlock::create):
+        (JSC::WebAssemblyCodeBlock::createStructure):
+        (JSC::WebAssemblyCodeBlock::WebAssemblyCodeBlock):
+        (JSC::ExecState::uncheckedR):
+        (JSC::CodeBlock::clearVisitWeaklyHasBeenCalled):
+        (JSC::CodeBlockSet::mark):
+        (JSC::ScriptExecutable::forEachCodeBlock):
+        (JSC::CodeBlock::setAlternative): Deleted.
+        (JSC::CodeBlock::clearMarks): Deleted. Lots of mechanical changes to
+        match the logic changes above.
+
+        * bytecode/DeferredCompilationCallback.cpp:
+        (JSC::DeferredCompilationCallback::DeferredCompilationCallback):
+        (JSC::DeferredCompilationCallback::~DeferredCompilationCallback):
+        (JSC::DeferredCompilationCallback::compilationDidComplete):
+        * bytecode/DeferredCompilationCallback.h: Provide a profiledDFGCodeBlock
+        to all compilation callbacks instead of requiring the callback to
+        store the profiledDFGCodeBlock. This is how the rest of compilation
+        around the callback works anyway, and it is easier to do things this
+        way than to think about how a non-GC malloc'd object should keep its
+        CodeBlock alive.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase): Change the owner for write
+        barrier purposes to CodeBlock.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::reallyAdd):
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph): Ditto.
+
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::osrEntryBlock):
+        (JSC::DFG::JITCode::setOSREntryBlock):
+        (JSC::DFG::JITCode::clearOSREntryBlock): Use helper functions for 
+        accessing osrEntryBlock to help with write barrier stuff.
+
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::adjustAndJumpToTarget): Use CodeBlock as owner instead of
+        executable.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::notifyReady):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::finalizeAndNotifyCallback):
+        (JSC::DFG::Plan::key):
+        (JSC::DFG::Plan::rememberCodeBlocks):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::clearCodeBlockMarks): Deleted.
+        * dfg/DFGPlan.h: Use normal GC write barrier concepts to model the fact
+        that the compiler writes to CodeBlocks.
+
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::~ToFTLDeferredCompilationCallback):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLDeferredCompilationCallback.h:
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h: We always have
+        a profiledDFGCodeBlock passed to use -- see above.
+
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllPlansForVM):
+        (JSC::DFG::Worklist::rememberCodeBlocks):
+        (JSC::DFG::completeAllPlansForVM):
+        (JSC::DFG::rememberCodeBlocks):
+        (JSC::DFG::Worklist::clearCodeBlockMarks): Deleted.
+        (JSC::DFG::clearCodeBlockMarks): Deleted.
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::worklistForIndexOrNull): Renamed to use remembered set terminology.
+
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::~CodeBlockSet):
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced): No need for a fixpoint
+        anymore since the GC can tell us if we are live.
+
+        (JSC::CodeBlockSet::remove):
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        (JSC::CodeBlockSet::dump):
+        (JSC::CodeBlockSet::clearMarksForEdenCollection): Deleted. No need for
+        this logic anymore since the GC will clear our mark bit.
+
+        (JSC::CodeBlockSet::traceMarked): Deleted. No need for this marking
+        fixpoint anymore either.
+
+        * heap/CodeBlockSet.h:
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots): Moved some of this logic around to make the
+        algorithm clearer. 
+
+        (JSC::Heap::deleteAllCodeBlocks): Deleting CodeBlocks can only clear
+        pointers immediately; they won't fully delete until the next GC and sweep.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * jit/GCAwareJITStubRoutine.h: CodeBlock is owner now.
+
+        * jit/JITCode.h:
+        (JSC::JITCode::isJIT):
+        (JSC::JITCode::isLowerTier):
+        (JSC::JITCode::timeToLive): Deleted.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter): CodeBlock is owner now.
+
+        * jit/JITOperations.cpp:
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::create):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITToDFGDeferredCompilationCallback.h:
+
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL): 
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal): CodeBlock is owner now.
+
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode): Provide a generic clearCode() so that
+        it can be used on any Executable. This fixes a very subtle bug where
+        deleteAllCode() does not remove CodeBlocks from non-function executables
+        that have been saved in stack traces.
+
+        (JSC::ScriptExecutable::installCode): WriteBarrier requires special
+        handling for pointers that may be null.
+
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::newReplacementCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl): Update for interface
+        changes.
+
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::ModuleProgramExecutable::visitChildren):
+        (JSC::FunctionExecutable::visitChildren):
+        (JSC::WebAssemblyExecutable::visitChildren): Visit weakly because we want
+        to participate in jettisoning.
+
+        (JSC::WebAssemblyExecutable::prepareForExecution):
+        (JSC::EvalExecutable::clearCode): Deleted.
+        (JSC::ProgramExecutable::clearCode): Deleted.
+        (JSC::ModuleProgramExecutable::clearCode): Deleted.
+        (JSC::FunctionExecutable::clearCode): Deleted.
+        (JSC::WebAssemblyExecutable::clearCode): Deleted.
+
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::generatedJITCodeForCall):
+        (JSC::ScriptExecutable::prepareForExecution):
+        (JSC::ExecutableBase::clearCodeVirtual): Deleted.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h: Provide structures because our GC requires it.
+
 2015-10-01  Mark Lam  <mark.lam@apple.com>
 
         Remove unnecessary SpecialFastCaseProfiles.

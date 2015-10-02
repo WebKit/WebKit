@@ -46,7 +46,7 @@ void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
 {
     common->transitions.append(
         WeakReferenceTransition(
-            vm, m_codeBlock->ownerExecutable(),
+            vm, m_codeBlock,
             m_codeOriginOwner,
             m_oldStructure, m_newStructure));
 }
