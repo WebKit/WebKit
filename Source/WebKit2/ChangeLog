@@ -1,5 +1,20 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r189366.
+
+    2015-09-04  Dan Bernstein  <mitz@apple.com>
+
+            [iOS] Disable backspace key navigation by default
+            https://bugs.webkit.org/show_bug.cgi?id=148808
+
+            Reviewed by Tim Horton.
+
+            * Shared/WebPreferencesDefinitions.h: Defined DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED as
+              false on iOS, true elsewhere, and made it the default value of the
+              backspaceKeyNavigationEnabled preference key.
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188755.
 
     2015-08-21  Chris Dumez  <cdumez@apple.com>
