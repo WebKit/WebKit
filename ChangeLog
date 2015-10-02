@@ -1,3 +1,14 @@
+2015-10-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Convert focused-input-should-assist-on-touch.html into an automated test
+        https://bugs.webkit.org/show_bug.cgi?id=149724
+
+        Reviewed by Simon Fraser.
+
+        Remove a manual test that can now be rewritten as an automated test.
+
+        * ManualTests/ios/focused-input-should-assist-on-touch.html: Removed.
+
 2015-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed CMake build fix.
