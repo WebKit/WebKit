@@ -142,11 +142,6 @@ list(APPEND WebCore_SOURCES
     platform/win/WebCoreBundleWin.cpp
     platform/win/WebCoreTextRenderer.cpp
     platform/win/WindowMessageBroadcaster.cpp
-
-    rendering/RenderLayerBacking.cpp
-    rendering/RenderLayerCompositor.cpp
-    rendering/RenderThemeSafari.cpp
-    rendering/RenderThemeWin.cpp
 )
 
 list(APPEND WebCore_LIBRARIES
