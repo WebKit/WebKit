@@ -43,7 +43,6 @@ bool applicationIsMASH();
 WEBCORE_EXPORT bool applicationIsTheEconomistOnIPhone();
 bool applicationIsWebProcess();
 bool applicationIsIBooksOnIOS();
-WEBCORE_EXPORT bool applicationIsGmailAddAccountOnIOS();
 
 } // namespace WebCore
 
