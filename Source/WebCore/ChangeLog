@@ -1,5 +1,26 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187210.
+
+    2015-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Coordinates-based snap offsets don't update correctly when container is scrolled
+            https://bugs.webkit.org/show_bug.cgi?id=147215
+
+            Reviewed by Brent Fulgham.
+
+            Fixes the way we append the snap offsets of child elements with coordinates. We
+            now consider the scroll offset of the parent scroll snapping container, so snap
+            offset recomputations don't fail on scroll snapping containers.
+
+            Test: css3/scroll-snap/scroll-snap-coordinate-overflow-resize.html
+
+            * page/scrolling/AxisScrollSnapOffsets.cpp:
+            (WebCore::appendChildSnapOffsets): Fixed to consider the scroll offset of the
+                parent container.
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187145.
 
     2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
