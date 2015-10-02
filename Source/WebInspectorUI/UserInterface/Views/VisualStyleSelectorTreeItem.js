@@ -144,8 +144,7 @@ WebInspector.VisualStyleSelectorTreeItem = class VisualStyleSelectorTreeItem ext
         }
 
         contextMenu.appendItem(WebInspector.UIString("Copy Rule"), function() {
-            let selectorText = !this.representedObject.ownerRule ? this.representedObject.node.appropriateSelectorFor(true) : null;
-            InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString(selectorText));
+            InspectorFrontendHost.copyText(this.representedObject.generateCSSRuleString());
         }.bind(this));
 
         contextMenu.appendItem(WebInspector.UIString("Reset"), function() {

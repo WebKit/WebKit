@@ -1,3 +1,28 @@
+2015-10-02  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Copying inline style text puts "undefined" in the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=149155
+
+        Reviewed by Brian Burg.
+
+        CSSStyleDeclarations for inline styles do not have a owner CSSRule, which means
+        that they do not have a selector or media list. CSS strings must have a selector
+        and, for inline styles without an owner rule and selector, this was a problem.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.get mediaList):
+        (WebInspector.CSSStyleDeclaration.prototype.get selectorText):
+        (WebInspector.CSSStyleDeclaration.prototype.generateCSSRuleString):
+        Added getters for the list of media queries and selector text with fallbacks
+        for CSSStyleDeclarations that do not have an owner CSSRule (inline styles).
+
+        * UserInterface/Test.html:
+        Added CSSMedia include for new inspector/css/generate-css-rule-string.html test.
+
+        * UserInterface/Views/VisualStyleSelectorTreeItem.js:
+        (WebInspector.VisualStyleSelectorTreeItem.prototype._handleContextMenuEvent):
+        Removed parameter that no longer exists.
+
 2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, rolling out r190520, some tests assert / crash.
