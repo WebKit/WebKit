@@ -348,6 +348,9 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
                 loader->send(Messages::NetworkProcessConnection::DidCacheResource(loader->originalRequest(), mappedBody.shareableResourceHandle, loader->sessionID()));
 #endif
             });
+        } else if (!hasCacheableRedirect) {
+            // Make sure we don't keep a stale entry in the cache.
+            NetworkCache::singleton().remove(originalRequest());
         }
     }
 #endif

@@ -99,6 +99,7 @@ public:
 
     void traverse(std::function<void (const Entry*)>&&);
     void remove(const Key&);
+    void remove(const WebCore::ResourceRequest&);
 
     void clear();
     void clear(std::chrono::system_clock::time_point modifiedSince, std::function<void ()>&& completionHandler);
