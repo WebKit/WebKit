@@ -155,8 +155,8 @@ static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& 
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::httpsNoStoreKey());
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
     }
-    if (!frame.loader().history().currentItem()) {
-        PCLOG("   -No current history item");
+    if (frame.isMainFrame() && !frame.loader().history().currentItem()) {
+        PCLOG("   -Main frame has no current history item");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::noCurrentHistoryItemKey());
         rejectReasons |= 1 << NoHistoryItem;
     }
@@ -318,7 +318,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame.page()->settings().pageCacheSupportsPlugins())
         && !(frame.isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
-        && frameLoader.history().currentItem()
+        && (!frame.isMainFrame() || frameLoader.history().currentItem())
         && !frameLoader.quickRedirectComing()
         && !documentLoader->isLoading()
         && !documentLoader->isStopping()

@@ -1,5 +1,31 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187921.
+
+    2015-08-04  Chris Dumez  <cdumez@apple.com>
+
+            Subframes with no current HistoryItem should not prevent page-caching
+            https://bugs.webkit.org/show_bug.cgi?id=147649
+            <rdar://problem/21614832>
+
+            Reviewed by Andreas Kling.
+
+            Subframes with no current HistoryItem should not prevent page-caching.
+            We need one for the main frame as this is the key in the PageCache.
+            However, there is no reason to require one for subframes.
+
+            This is a common reason for page-caching failures nowadays.
+
+            Frames do no have a current HistoryItem until something has been loaded in them.
+
+            Test: http/tests/navigation/page-cache-iframe-no-current-historyItem.html
+
+            * history/PageCache.cpp:
+            (WebCore::logCanCacheFrameDecision):
+            (WebCore::PageCache::canCachePageContainingThisFrame):
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187210.
 
     2015-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
