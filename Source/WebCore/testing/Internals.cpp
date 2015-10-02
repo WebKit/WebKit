@@ -2717,7 +2717,7 @@ void Internals::beginMediaSessionInterruption(const String& interruptionString, 
         return;
     }
 
-    PlatformMediaSessionManager::sharedManager().beginInterruption(PlatformMediaSession::SystemInterruption);
+    PlatformMediaSessionManager::sharedManager().beginInterruption(interruption);
 }
 
 void Internals::endMediaSessionInterruption(const String& flagsString)
