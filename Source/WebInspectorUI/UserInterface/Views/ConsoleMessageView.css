@@ -128,13 +128,15 @@
     overflow: hidden;
     -webkit-user-select: text;
     cursor: default;
-    padding: 2px 0;
+    padding: 2px 0 2px 15px;
 }
 
 .console-message .console-message-extra-parameters-container > li::before {
     display: inline-block;
+    width: 15px;
+    margin-left: -15px;
+    text-align: center;
 
-    width: 13px;
     height: 13px;
     content: "•";
 
@@ -143,7 +145,6 @@
     color: hsla(0, 0%, 0%, 0.33);
 
     vertical-align: top;
-    margin-left: 3px;
 }
 
 .console-error-level {

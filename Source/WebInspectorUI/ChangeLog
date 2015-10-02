@@ -1,3 +1,14 @@
+2015-10-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Fix indentation of console message parameters
+        https://bugs.webkit.org/show_bug.cgi?id=149740
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message .console-message-stack-trace-container > li):
+        (.console-message .console-message-extra-parameters-container > li::before):
+
 2015-10-02  Andres Gomez  <agomez@igalia.com>
 
         [GTK] Web Inspector: Add GTK+ icons for new plus icons in the style sidebar
