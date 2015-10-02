@@ -60,7 +60,7 @@ static void appendChildSnapOffsets(HTMLElement& parent, bool shouldAddHorizontal
             continue;
         
         LayoutRect viewSize = box->contentBoxRect();
-        FloatPoint position = box->localToContainerPoint(FloatPoint(), parent.renderBox());
+        FloatPoint position = box->localToContainerPoint(FloatPoint(parent.renderBox()->scrollLeft(), parent.renderBox()->scrollTop()), parent.renderBox());
         for (auto& coordinate : scrollSnapCoordinates) {
             LayoutUnit lastPotentialSnapPositionX = position.x() + valueForLength(coordinate.width(), viewSize.width());
             if (shouldAddHorizontalChildOffsets && lastPotentialSnapPositionX > 0)
