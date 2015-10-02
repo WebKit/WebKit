@@ -47,24 +47,17 @@ JSFunction* InlineCallFrame::calleeForCallFrame(ExecState* exec) const
 
 CodeBlockHash InlineCallFrame::hash() const
 {
-    return jsCast<FunctionExecutable*>(executable.get())->codeBlockFor(
-        specializationKind())->hash();
+    return baselineCodeBlock->hash();
 }
 
 CString InlineCallFrame::hashAsStringIfPossible() const
 {
-    return jsCast<FunctionExecutable*>(executable.get())->codeBlockFor(
-        specializationKind())->hashAsStringIfPossible();
+    return baselineCodeBlock->hashAsStringIfPossible();
 }
 
 CString InlineCallFrame::inferredName() const
 {
-    return jsCast<FunctionExecutable*>(executable.get())->inferredName().utf8();
-}
-
-CodeBlock* InlineCallFrame::baselineCodeBlock() const
-{
-    return jsCast<FunctionExecutable*>(executable.get())->baselineCodeBlockFor(specializationKind());
+    return jsCast<FunctionExecutable*>(baselineCodeBlock->ownerExecutable())->inferredName().utf8();
 }
 
 void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
@@ -74,8 +67,8 @@ void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
 
 void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) const
 {
-    out.print(briefFunctionInformation(), ":<", RawPointer(executable.get()));
-    if (executable->isStrictMode())
+    out.print(briefFunctionInformation(), ":<", RawPointer(baselineCodeBlock.get()));
+    if (isStrictMode())
         out.print(" (StrictMode)");
     out.print(", bc#", directCaller.bytecodeIndex, ", ", static_cast<Kind>(kind));
     if (isClosureCall)

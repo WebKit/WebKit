@@ -170,7 +170,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
             m_frame.m_argumentCountIncludingThis = callFrame->r(inlineCallFrame->argumentCountRegister.offset()).unboxedInt32();
         else
             m_frame.m_argumentCountIncludingThis = inlineCallFrame->arguments.size();
-        m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock();
+        m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock.get();
         m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex;
 
         JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);

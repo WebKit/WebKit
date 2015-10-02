@@ -1273,15 +1273,13 @@ SlowPathReturnType JIT_OPERATION operationOptimize(ExecState* exec, int32_t byte
             mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
         }
 
-        RefPtr<CodeBlock> replacementCodeBlock = codeBlock->newReplacement();
+        CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
         CompilationResult result = DFG::compile(
-            vm, replacementCodeBlock.get(), 0, DFG::DFGMode, bytecodeIndex,
+            vm, replacementCodeBlock, nullptr, DFG::DFGMode, bytecodeIndex,
             mustHandleValues, JITToDFGDeferredCompilationCallback::create());
         
-        if (result != CompilationSuccessful) {
-            ASSERT(result == CompilationDeferred || replacementCodeBlock->hasOneRef());
+        if (result != CompilationSuccessful)
             return encodeResult(0, 0);
-        }
     }
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();

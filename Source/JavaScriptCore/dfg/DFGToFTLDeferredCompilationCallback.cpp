@@ -35,46 +35,44 @@
 
 namespace JSC { namespace DFG {
 
-ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback(
-    PassRefPtr<CodeBlock> dfgCodeBlock)
-    : m_dfgCodeBlock(dfgCodeBlock)
+ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback()
 {
 }
 
 ToFTLDeferredCompilationCallback::~ToFTLDeferredCompilationCallback() { }
 
-Ref<ToFTLDeferredCompilationCallback> ToFTLDeferredCompilationCallback::create(PassRefPtr<CodeBlock> dfgCodeBlock)
+Ref<ToFTLDeferredCompilationCallback> ToFTLDeferredCompilationCallback::create()
 {
-    return adoptRef(*new ToFTLDeferredCompilationCallback(dfgCodeBlock));
+    return adoptRef(*new ToFTLDeferredCompilationCallback());
 }
 
 void ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(
-    CodeBlock* codeBlock)
+    CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock)
 {
     if (Options::verboseOSR()) {
         dataLog(
-            "Optimizing compilation of ", *codeBlock, " (for ", *m_dfgCodeBlock,
+            "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
             ") did become ready.\n");
     }
     
-    m_dfgCodeBlock->jitCode()->dfg()->forceOptimizationSlowPathConcurrently(
-        m_dfgCodeBlock.get());
+    profiledDFGCodeBlock->jitCode()->dfg()->forceOptimizationSlowPathConcurrently(
+        profiledDFGCodeBlock);
 }
 
 void ToFTLDeferredCompilationCallback::compilationDidComplete(
-    CodeBlock* codeBlock, CompilationResult result)
+    CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationResult result)
 {
     if (Options::verboseOSR()) {
         dataLog(
-            "Optimizing compilation of ", *codeBlock, " (for ", *m_dfgCodeBlock,
+            "Optimizing compilation of ", *codeBlock, " (for ", *profiledDFGCodeBlock,
             ") result: ", result, "\n");
     }
     
-    if (m_dfgCodeBlock->replacement() != m_dfgCodeBlock) {
+    if (profiledDFGCodeBlock->replacement() != profiledDFGCodeBlock) {
         if (Options::verboseOSR()) {
             dataLog(
                 "Dropping FTL code block ", *codeBlock, " on the floor because the "
-                "DFG code block ", *m_dfgCodeBlock, " was jettisoned.\n");
+                "DFG code block ", *profiledDFGCodeBlock, " was jettisoned.\n");
         }
         return;
     }
@@ -82,10 +80,10 @@ void ToFTLDeferredCompilationCallback::compilationDidComplete(
     if (result == CompilationSuccessful)
         codeBlock->ownerScriptExecutable()->installCode(codeBlock);
     
-    m_dfgCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(
-        m_dfgCodeBlock.get(), result);
+    profiledDFGCodeBlock->jitCode()->dfg()->setOptimizationThresholdBasedOnCompilationResult(
+        profiledDFGCodeBlock, result);
 
-    DeferredCompilationCallback::compilationDidComplete(codeBlock, result);
+    DeferredCompilationCallback::compilationDidComplete(codeBlock, profiledDFGCodeBlock, result);
 }
 
 } } // JSC::DFG

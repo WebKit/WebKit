@@ -53,11 +53,8 @@ public:
     ~CodeBlockSet();
     
     // Add a CodeBlock. This is only called by CodeBlock constructors.
-    void add(PassRefPtr<CodeBlock>);
+    void add(CodeBlock*);
     
-    // Clear mark bits for certain CodeBlocks depending on the type of collection.
-    void clearMarksForEdenCollection(const Vector<const JSCell*>&);
-
     // Clear all mark bits for all CodeBlocks.
     void clearMarksForFullCollection();
 
@@ -72,10 +69,6 @@ public:
     
     void remove(CodeBlock*);
     
-    // Trace all marked code blocks. The CodeBlock is free to make use of
-    // mayBeExecuting.
-    void traceMarked(SlotVisitor&);
-
     // Add all currently executing CodeBlocks to the remembered set to be 
     // re-scanned during the next collection.
     void rememberCurrentlyExecutingCodeBlocks(Heap*);
@@ -104,13 +97,9 @@ private:
     void clearMarksForCodeBlocksInRememberedExecutables(const Vector<const JSCell*>&);
     void promoteYoungCodeBlocks();
 
-    // This is not a set of RefPtr<CodeBlock> because we need to be able to find
-    // arbitrary bogus pointers. I could have written a thingy that had peek types
-    // and all, but that seemed like overkill.
     HashSet<CodeBlock*> m_oldCodeBlocks;
     HashSet<CodeBlock*> m_newCodeBlocks;
-    HashSet<RefPtr<CodeBlock>> m_currentlyExecuting;
-    HashSet<RefPtr<CodeBlock>> m_remembered;
+    HashSet<CodeBlock*> m_currentlyExecuting;
 };
 
 } // namespace JSC

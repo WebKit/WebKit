@@ -1,3 +1,25 @@
+2015-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in r190450
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+
+        The cause of the crash was a CodeBlock, after surviving a call to
+        deleteAllCode by virtue of being in the remembered set, trying to mark
+        its inlined CodeBlocks via pointers from its inlined executables.
+        Since deleteAllCode clears those pointers, the CodeBlock would ASSERT.
+        (Any other choice to retain a CodeBlock after deleteAllCode -- for
+        example, conservative marking -- could trigger the same bug.)
+
+        The fix is for InlineCallFrame to point directly to its inlined CodeBlock
+        instead of pointing indirectly via an executable. This guarantees that
+        CodeBlocks are GC safe regardless of whether we've called deleteAllCode.
+
+        Restored changesets:
+
+        "CodeBlock should be a GC object"
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+        http://trac.webkit.org/changeset/190450
+
 2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include Garbage Collection Event in Timeline

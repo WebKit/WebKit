@@ -38,7 +38,7 @@ ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
     if (!codeOrigin.inlineCallFrame)
         return m_codeBlock->ownerExecutable();
     
-    return codeOrigin.inlineCallFrame->executable.get();
+    return codeOrigin.inlineCallFrame->baselineCodeBlock->ownerExecutable();
 }
 
 Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* codeBlock)
