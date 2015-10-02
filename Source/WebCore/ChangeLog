@@ -1,5 +1,43 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r189322.
+
+    2015-09-03  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Playback does not pause when deselecting route and locking screen.
+            https://bugs.webkit.org/show_bug.cgi?id=148724
+
+            Reviewed by Eric Carlson.
+
+            When deselecting a route, the route change notification can be delayed for some amount
+            of time. If the screen is locked before the notification is fired, the PlatformMediaSessionManager
+            can refuse to pause the video when entering the background due to a wireless playback route
+            still being active.
+
+            When the media element transitions from having an active route to not having one (or vice versa),
+            re-run the interruption check. In order to correctly determine, when that occurs, whether
+            we are in an 'application background' state, cache that value to an ivar when handling
+            application{Will,Did}Enter{Background,Foreground}.
+
+            Because we only want to run this step during an actual transition between playing to a route ->
+            playing locally, cache the value of isPlayingToWirelessPlayback to another ivar, and only
+            inform the PlatformMediaSessionManager when that value actually changes.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged):
+            * platform/audio/PlatformMediaSession.cpp:
+            (WebCore::PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged): Set or clear m_isPlayingToWirelessPlaybackTarget.
+            * platform/audio/PlatformMediaSession.h:
+            (WebCore::PlatformMediaSession::isPlayingToWirelessPlaybackTarget): Simple getter.
+            * platform/audio/PlatformMediaSessionManager.cpp:
+            (WebCore::PlatformMediaSessionManager::applicationWillEnterBackground): Set m_isApplicationInBackground.
+            (WebCore::PlatformMediaSessionManager::applicationDidEnterBackground): Ditto.
+            (WebCore::PlatformMediaSessionManager::applicationWillEnterForeground): Clear m_isApplicationInBackground.
+            (WebCore::PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChanged): Run interruption
+                if application is in background.
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r188768.
 
     2015-08-21  Joseph Pecoraro  <pecoraro@apple.com>

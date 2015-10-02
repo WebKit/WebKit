@@ -125,7 +125,8 @@ public:
     bool isHidden() const;
 
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
-    virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
+    virtual bool isPlayingToWirelessPlaybackTarget() const { return m_isPlayingToWirelessPlaybackTarget; }
+    void isPlayingToWirelessPlaybackTargetChanged(bool);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     // MediaPlaybackTargetClient
@@ -151,6 +152,7 @@ private:
     State m_stateToRestore;
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
+    bool m_isPlayingToWirelessPlaybackTarget { false };
 
     friend class PlatformMediaSessionManager;
 };
