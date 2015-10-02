@@ -133,6 +133,7 @@ loader/navigation-policy [ Skip ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Timeout ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Timeout ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html [ Pass Timeout ]
+[ Mavericks Debug ] fast/canvas/webgl/oes-texture-half-float.html [ Pass Timeout ]
 
 [ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 

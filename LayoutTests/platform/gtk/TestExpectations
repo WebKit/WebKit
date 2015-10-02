@@ -851,7 +851,6 @@ webkit.org/b/124511 media/video-played-reset.html [ Failure Pass ]
 webkit.org/b/125407 plugins/plugin-clip-subframe.html [ Failure Pass ]
 
 webkit.org/b/126420 fast/table/dynamic-caption-add-before-child.xhtml [ Failure Pass ]
-webkit.org/b/126420 svg/custom/resource-invalidation-crash.svg [ Failure Pass ]
 
 webkit.org/b/126432 fast/css/acid2-pixel.html [ Failure Pass ]
 webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]

@@ -220,53 +220,6 @@ webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
 # window.requestAnimationFrame() broken in iOS Simulator
 webkit.org/b/137588 fast/animation
 
-# <rdar://problem/19017465> ASSERTION FAILED: param >= 0 in AnimationBase::updateStateMachine()
-animations/3d/change-transform-in-end-event.html [ Skip ] # Also flaky: Pass, Timeout, Missing
-animations/3d/transform-perspective.html [ Skip ] # Also flaky: Pass, Timeout, Missing
-animations/animation-controller-drt-api.html [ Skip ]
-animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ]
-animations/change-transform-style-during-animation.html [ Skip ]
-animations/dynamic-stylesheet-loading.html [ Skip ]
-animations/fill-mode-transform.html [ Skip ]
-animations/pause-crash.html [ Skip ]
-animations/resume-after-page-cache.html [ Skip ]
-animations/stop-animation-on-suspend.html [ Skip ]
-compositing/animation/keyframe-order.html
-compositing/animation/layer-for-filling-animation.html
-compositing/animation/matrix-animation.html
-compositing/animation/state-at-end-event-transform-layer.html
-compositing/geometry/limit-layer-bounds-opacity-transition.html
-compositing/layer-creation/overlap-animation-clipping.html
-compositing/layer-creation/overlap-animation-container.html
-compositing/layer-creation/overlap-animation.html
-compositing/layers-inside-overflow-scroll.html
-compositing/reflections/animation-inside-reflection.html
-compositing/reflections/nested-reflection-animated.html
-compositing/reflections/nested-reflection-transition.html
-compositing/repaint/become-overlay-composited-layer.html
-compositing/repaint/layer-repaint-rects.html
-compositing/repaint/opacity-between-absolute.html
-compositing/repaint/opacity-between-absolute2.html
-compositing/transitions/scale-transition-no-start.html
-compositing/transitions/singular-scale-transition.html
-compositing/visible-rect/animated-from-none.html
-compositing/visible-rect/animated.html
-css3/filters/animation-from-initial-values-with-color-matrix.html
-css3/filters/composited-during-animation-layertree.html
-css3/filters/composited-during-transition-layertree.html
-css3/filters/filter-animation-from-none-multi-hw.html
-transitions/cancel-transition.html
-transitions/default-timing-function.html
-transitions/interrupted-accelerated-transition.html
-transitions/change-values-during-transition.html
-transitions/suspend-transform-transition.html
-transitions/blendmode-transitions.html
-transitions/3d/interrupted-transition.html
-fast/regions/layers/region-removed-during-animation.html
-fast/events/media-focus-in-standalone-media-document.html
-fast/css/getComputedStyle/getComputedStyle-with-pseudo-element.html
-fast/layers/no-clipping-overflow-hidden-added-after-transform.html
-
 # Animation tests that fail:
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/cross-fade-webkit-mask-box-image.html [ Failure ]

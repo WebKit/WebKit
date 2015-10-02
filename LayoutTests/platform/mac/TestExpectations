@@ -967,6 +967,7 @@ webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Fai
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Pass Timeout Crash ]
 webkit.org/b/139789 media/media-controls-timeline-updates.html [ Pass Failure ]
 webkit.org/b/139825 media/video-seek-past-end-paused.html [ Pass Timeout ]
+webkit.org/b/139825 [ Mavericks ] media/video-double.html [ Pass Timeout ]
 webkit.org/b/141084 [ Yosemite ] http/tests/media/video-preload.html [ Pass Timeout ]
 webkit.org/b/141294 compositing/reflections/masked-reflection-on-composited.html [ Pass Crash ]
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
@@ -1296,6 +1297,7 @@ webkit.org/b/148636 inspector/model/parse-script-syntax-tree.html [ Pass Timeout
 webkit.org/b/148636 inspector/model/remote-object-get-properties.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/model/remote-object.html [ Pass Timeout ]
 webkit.org/b/148636 inspector/page/main-frame-resource.html [ Pass Timeout ]
+webkit.org/b/148636 inspector/model/remote-object-weak-collection.html [ Pass Failure ]
 
 # Resource priorities are not enabled.
 webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Skip ]
