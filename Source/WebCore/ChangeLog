@@ -1,5 +1,27 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r189560.
+
+    2015-09-09  Benjamin Poulain  <bpoulain@apple.com>
+
+            CSS general sibling selectors does not work without CSS JIT
+            https://bugs.webkit.org/show_bug.cgi?id=148987
+            rdar://problem/22559860
+
+            Reviewed by Andreas Kling.
+
+            When traversing with the indirect adjacent combinator, SelectorChecker
+            was not setting the style invalidation flag on the right element.
+
+            Tests: fast/css/indirect-adjacent-style-invalidation-1.html
+                   fast/css/indirect-adjacent-style-invalidation-2.html
+                   fast/css/indirect-adjacent-style-invalidation-3.html
+
+            * css/SelectorChecker.cpp:
+            (WebCore::SelectorChecker::matchRecursively):
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r189322.
 
     2015-09-03  Jer Noble  <jer.noble@apple.com>

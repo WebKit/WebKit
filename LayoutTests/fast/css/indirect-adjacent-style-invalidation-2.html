@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: black;
+}
+:checked:first-of-type ~ target {
+    color: rgb(0, 1, 2);
+}
+</style>
+</head>
+<body>
+    <div>
+        <!-- With renderer -->
+        <input class="activator" type="checkbox">
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <target></target>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <input class="activator" type="radio">
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <padding></padding>
+        <target></target>
+    </div>
+</body>
+<script>
+
+description('Test the style invalidation of elements affected by an indirect adjacent.');
+
+function shouldNeedStyleRecalc(expected) {
+    var testFunction = expected ? shouldBeTrue : shouldBeFalse;
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\".activator\")[0])");
+    testFunction("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\".activator\")[1])");
+    shouldBeFalse("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[0])");
+    shouldBeFalse("window.internals.nodeNeedsStyleRecalc(document.querySelectorAll(\"target\")[1])");
+}
+
+function setId(name) {
+    var allTargets = document.querySelectorAll("target");
+    allTargets[0].id = name;
+    allTargets[1].id = name;
+}
+
+function checkStyle(expectedColor) {
+    var allTargets = document.querySelectorAll("target");
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[0]).color', expectedColor);
+    shouldBeEqualToString('getComputedStyle(document.querySelectorAll("target")[1]).color', expectedColor);
+}
+// Force a layout to ensure we don't have dirty styles.
+var offsetTop = document.documentElement.offsetTop;
+
+// Initial state.
+shouldNeedStyleRecalc(false);
+checkStyle("rgb(0, 0, 0)");
+
+// Check the input fields.
+var allActivators = document.querySelectorAll("input.activator:matches([type=checkbox], [type=radio])");
+for (let i = 0; i < allActivators.length; ++i) {
+    allActivators[i].checked = true;
+}
+shouldNeedStyleRecalc(true);
+checkStyle("rgb(0, 1, 2)");
+shouldNeedStyleRecalc(false);
+
+// Uncheck the input fields.
+var allActivators = document.querySelectorAll("input.activator:matches([type=checkbox], [type=radio])");
+for (let i = 0; i < allActivators.length; ++i) {
+    allActivators[i].checked = false;
+}
+shouldNeedStyleRecalc(true);
+checkStyle("rgb(0, 0, 0)");
+shouldNeedStyleRecalc(false);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
