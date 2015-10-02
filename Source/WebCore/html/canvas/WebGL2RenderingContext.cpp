@@ -1021,18 +1021,20 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
         }
         return m_webglDepthTexture.get();
     }
-    if (equalIgnoringCase(name, "WEBGL_debug_renderer_info")) {
-        if (!m_webglDebugRendererInfo)
-            m_webglDebugRendererInfo = std::make_unique<WebGLDebugRendererInfo>(this);
-        return m_webglDebugRendererInfo.get();
+    if (allowPrivilegedExtensions()) {
+        if (equalIgnoringCase(name, "WEBGL_debug_renderer_info")) {
+            if (!m_webglDebugRendererInfo)
+                m_webglDebugRendererInfo = std::make_unique<WebGLDebugRendererInfo>(this);
+            return m_webglDebugRendererInfo.get();
+        }
+        if (equalIgnoringCase(name, "WEBGL_debug_shaders")
+            && m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source")) {
+            if (!m_webglDebugShaders)
+                m_webglDebugShaders = std::make_unique<WebGLDebugShaders>(this);
+            return m_webglDebugShaders.get();
+        }
     }
-    if (equalIgnoringCase(name, "WEBGL_debug_shaders")
-        && m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source")) {
-        if (!m_webglDebugShaders)
-            m_webglDebugShaders = std::make_unique<WebGLDebugShaders>(this);
-        return m_webglDebugShaders.get();
-    }
-
+    
     return nullptr;
 }
 
@@ -1062,10 +1064,12 @@ Vector<String> WebGL2RenderingContext::getSupportedExtensions()
     if (WebGLDepthTexture::supported(graphicsContext3D()))
         result.append("WEBGL_depth_texture");
     result.append("WEBGL_lose_context");
-    if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
-        result.append("WEBGL_debug_shaders");
-    result.append("WEBGL_debug_renderer_info");
-
+    if (allowPrivilegedExtensions()) {
+        if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
+            result.append("WEBGL_debug_shaders");
+        result.append("WEBGL_debug_renderer_info");
+    }
+    
     return result;
 }
 

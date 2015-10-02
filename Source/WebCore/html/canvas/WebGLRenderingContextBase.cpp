@@ -576,6 +576,13 @@ void WebGLRenderingContextBase::setupFlags()
     m_isRobustnessEXTSupported = m_context->getExtensions()->isEnabled("GL_EXT_robustness");
 }
 
+bool WebGLRenderingContextBase::allowPrivilegedExtensions() const
+{
+    if (Page* page = canvas()->document().page())
+        return page->settings().privilegedWebGLExtensionsEnabled();
+    return false;
+}
+
 void WebGLRenderingContextBase::addCompressedTextureFormat(GC3Denum format)
 {
     if (!m_compressedTextureFormats.contains(format))
