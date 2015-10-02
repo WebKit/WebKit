@@ -1,5 +1,24 @@
 2015-10-01  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Simplify filterableData processing
+        https://bugs.webkit.org/show_bug.cgi?id=149730
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.get filterableData):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.applyFiltersToTreeElement.matchTextFilter):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype.get filterableData):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype.matchTreeElementAgainstCustomFilters): Deleted.
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WebInspector.SearchResultTreeElement.prototype.get filterableData):
+        (WebInspector.SearchResultTreeElement):
+
+2015-10-01  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Do not immediately create all ProfileNodeTreeElements when showing JavaScript and Events timeline
         https://bugs.webkit.org/show_bug.cgi?id=149726
 

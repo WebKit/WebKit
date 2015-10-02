@@ -152,11 +152,6 @@ WebInspector.ScriptTimelineView = class ScriptTimelineView extends WebInspector.
         return pathComponents;
     }
 
-    matchTreeElementAgainstCustomFilters(treeElement)
-    {
-        return this._dataGrid.treeElementMatchesActiveScopeFilters(treeElement);
-    }
-
     reset()
     {
         super.reset();

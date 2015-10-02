@@ -73,7 +73,7 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
 
     get filterableData()
     {
-        return {text: this.breakpoint.url};
+        return {text: [this.breakpoint.url]};
     }
 
     ondelete()
