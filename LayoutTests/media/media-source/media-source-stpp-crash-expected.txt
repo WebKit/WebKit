@@ -1,0 +1,12 @@
+
+Tests that an unsupported media file (e.g., containing sttp track) does not cause a crash in appendBuffer().
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mp4"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EXPECTED (sourceBuffer.updating == 'true') OK
+EVENT(updatestart)
+EVENT(updateend)
+EXPECTED (sourceBuffer.updating == 'false') OK
+END OF TEST
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    function runTest() {
+        consoleWrite('Tests that an unsupported media file (e.g., containing sttp track) does not cause a crash in appendBuffer().');
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mp4")');
+
+        waitForEventOn(sourceBuffer, 'updatestart');
+        waitForEventOn(sourceBuffer, 'update');
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd);
+
+        var request = new XMLHttpRequest();
+        request.responseType = 'arraybuffer';
+        request.open('GET', '../content/stpp.mp4', false);
+        request.send();
+
+        initSegment = request.response;
+        run('sourceBuffer.appendBuffer(initSegment)');
+        testExpected('sourceBuffer.updating', true);
+    }
+    
+    function updateEnd() {
+        testExpected('sourceBuffer.updating', false);
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>
