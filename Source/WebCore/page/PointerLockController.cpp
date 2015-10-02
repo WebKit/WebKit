@@ -25,6 +25,8 @@
 #include "config.h"
 #include "PointerLockController.h"
 
+#if ENABLE(POINTER_LOCK)
+
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Element.h"
@@ -33,7 +35,6 @@
 #include "PlatformMouseEvent.h"
 #include "VoidCallback.h"
 
-#if ENABLE(POINTER_LOCK)
 
 namespace WebCore {
 
