@@ -10,17 +10,8 @@
 <script>
 description('Tests that popstate events fire when going back, even when there are resource requests pending.');
 
-onpopstate = function(event)
+window.onload = function(event)
 {
-    if (event.state) {
-        shouldBe('event.state', '"newState1"');
-        // Stop the pending image request, otherwise the DRT doesn't consider the
-        // test over.
-        window.stop();
-        finishJSTest();
-        return;
-    }
-    
     debug('Starting slow image request');
       
     var slowImage = document.createElement('img');
@@ -43,6 +34,13 @@ onpopstate = function(event)
     }, 0);
 }
 
+window.onpopstate = function(event) {
+    shouldBe('event.state', '"newState1"');
+    // Stop the pending image request, otherwise the DRT doesn't consider the
+    // test over.
+    window.stop();
+    finishJSTest();
+}
 
 var jsTestIsAsync = true;
 </script> 
