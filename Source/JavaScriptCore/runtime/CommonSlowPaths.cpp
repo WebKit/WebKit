@@ -231,7 +231,7 @@ SLOW_PATH_DECL(slow_path_create_this)
 
     auto& cacheWriteBarrier = pc[4].u.jsCell;
     if (!cacheWriteBarrier)
-        cacheWriteBarrier.set(exec->vm(), exec->codeBlock(), constructor);
+        cacheWriteBarrier.set(exec->vm(), exec->codeBlock()->ownerExecutable(), constructor);
     else if (cacheWriteBarrier.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cacheWriteBarrier.get() != constructor)
         cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
@@ -250,7 +250,7 @@ SLOW_PATH_DECL(slow_path_to_this)
         if (myStructure != otherStructure) {
             if (otherStructure)
                 pc[3].u.toThisStatus = ToThisConflicted;
-            pc[2].u.structure.set(vm, exec->codeBlock(), myStructure);
+            pc[2].u.structure.set(vm, exec->codeBlock()->ownerExecutable(), myStructure);
         }
     } else {
         pc[3].u.toThisStatus = ToThisConflicted;
@@ -526,8 +526,8 @@ SLOW_PATH_DECL(slow_path_to_primitive)
 SLOW_PATH_DECL(slow_path_enter)
 {
     BEGIN();
-    CodeBlock* codeBlock = exec->codeBlock();
-    Heap::heap(codeBlock)->writeBarrier(codeBlock);
+    ExecutableBase* ownerExecutable = exec->codeBlock()->ownerExecutable();
+    Heap::heap(ownerExecutable)->writeBarrier(ownerExecutable);
     END();
 }
 

@@ -268,14 +268,13 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isExitingToOpCatch)
 {
-    CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
-    jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), GPRInfo::argumentGPR1);
+    jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()->ownerExecutable()), GPRInfo::argumentGPR1);
     osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
     InlineCallFrameSet* inlineCallFrames = jit.codeBlock()->jitCode()->dfgCommon()->inlineCallFrames.get();
     if (inlineCallFrames) {
         for (InlineCallFrame* inlineCallFrame : *inlineCallFrames) {
-            CodeBlock* baselineCodeBlock = inlineCallFrame->baselineCodeBlock();
-            jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), GPRInfo::argumentGPR1);
+            ScriptExecutable* ownerExecutable = inlineCallFrame->executable.get();
+            jit.move(AssemblyHelpers::TrustedImmPtr(ownerExecutable), GPRInfo::argumentGPR1);
             osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
         }
     }
@@ -283,6 +282,7 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isEx
     if (exit.m_codeOrigin.inlineCallFrame)
         jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 
+    CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
     Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(baselineCodeBlock);
     
     BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);

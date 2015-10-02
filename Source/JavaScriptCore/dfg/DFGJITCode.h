@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
 #include "CompilationResult.h"
 #include "DFGCommonData.h"
 #include "DFGMinifiedGraph.h"
@@ -115,12 +114,6 @@ public:
     void validateReferences(const TrackedReferences&) override;
     
     void shrinkToFit();
-
-#if ENABLE(FTL_JIT)
-    CodeBlock* osrEntryBlock() { return m_osrEntryBlock.get(); }
-    void setOSREntryBlock(VM& vm, const JSCell* owner, CodeBlock* osrEntryBlock) { m_osrEntryBlock.set(vm, owner, osrEntryBlock); }
-    void clearOSREntryBlock() { m_osrEntryBlock.clear(); }
-#endif
     
 private:
     friend class JITCompiler; // Allow JITCompiler to call setCodeRef().
@@ -135,7 +128,7 @@ public:
 #if ENABLE(FTL_JIT)
     uint8_t nestedTriggerIsSet { 0 };
     UpperTierExecutionCounter tierUpCounter;
-    WriteBarrier<CodeBlock> m_osrEntryBlock;
+    RefPtr<CodeBlock> osrEntryBlock;
     unsigned osrEntryRetry;
     bool abandonOSREntry;
 #endif // ENABLE(FTL_JIT)

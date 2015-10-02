@@ -1377,8 +1377,8 @@ static void triggerFTLReplacementCompile(VM* vm, CodeBlock* codeBlock, JITCode* 
 
     // We need to compile the code.
     compile(
-        *vm, codeBlock->newReplacement(), codeBlock, FTLMode, UINT_MAX,
-        Operands<JSValue>(), ToFTLDeferredCompilationCallback::create());
+        *vm, codeBlock->newReplacement().get(), codeBlock, FTLMode, UINT_MAX,
+        Operands<JSValue>(), ToFTLDeferredCompilationCallback::create(codeBlock));
 }
 
 static void triggerTierUpNowCommon(ExecState* exec, bool inLoop)
@@ -1463,7 +1463,7 @@ char* JIT_OPERATION triggerOSREntryNow(
     if (worklistState == Worklist::Compiling)
         return 0;
     
-    if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
+    if (CodeBlock* entryBlock = jitCode->osrEntryBlock.get()) {
         void* address = FTL::prepareOSREntry(
             exec, codeBlock, entryBlock, bytecodeIndex, streamIndex);
         if (address)
@@ -1477,7 +1477,7 @@ char* JIT_OPERATION triggerOSREntryNow(
         
         // OSR entry failed. Oh no! This implies that we need to retry. We retry
         // without exponential backoff and we only do this for the entry code block.
-        jitCode->clearOSREntryBlock();
+        jitCode->osrEntryBlock = nullptr;
         jitCode->osrEntryRetry = 0;
         return 0;
     }
@@ -1494,19 +1494,21 @@ char* JIT_OPERATION triggerOSREntryNow(
     Operands<JSValue> mustHandleValues;
     jitCode->reconstruct(
         exec, codeBlock, CodeOrigin(bytecodeIndex), streamIndex, mustHandleValues);
-    CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
+    RefPtr<CodeBlock> replacementCodeBlock = codeBlock->newReplacement();
     CompilationResult forEntryResult = compile(
-        *vm, replacementCodeBlock, codeBlock, FTLForOSREntryMode, bytecodeIndex,
-        mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create());
+        *vm, replacementCodeBlock.get(), codeBlock, FTLForOSREntryMode, bytecodeIndex,
+        mustHandleValues, ToFTLForOSREntryDeferredCompilationCallback::create(codeBlock));
     
-    if (forEntryResult != CompilationSuccessful)
+    if (forEntryResult != CompilationSuccessful) {
+        ASSERT(forEntryResult == CompilationDeferred || replacementCodeBlock->hasOneRef());
         return 0;
+    }
 
     // It's possible that the for-entry compile already succeeded. In that case OSR
     // entry will succeed unless we ran out of stack. It's not clear what we should do.
     // We signal to try again after a while if that happens.
     void* address = FTL::prepareOSREntry(
-        exec, codeBlock, jitCode->osrEntryBlock(), bytecodeIndex, streamIndex);
+        exec, codeBlock, jitCode->osrEntryBlock.get(), bytecodeIndex, streamIndex);
     return static_cast<char*>(address);
 }
 #endif // ENABLE(FTL_JIT)

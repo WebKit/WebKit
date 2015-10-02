@@ -4828,7 +4828,7 @@ bool ByteCodeParser::parse()
     if (Options::verboseDFGByteCodeParsing())
         dataLog("Parsing ", *m_codeBlock, "\n");
     
-    m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock;
+    m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock.get();
     if (isFTL(m_graph.m_plan.mode) && m_dfgCodeBlock
         && Options::enablePolyvariantDevirtualization()) {
         if (Options::enablePolyvariantCallInlining())

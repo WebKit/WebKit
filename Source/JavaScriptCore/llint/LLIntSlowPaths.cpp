@@ -576,7 +576,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         if (!structure->isUncacheableDictionary()
             && !structure->typeInfo().prohibitsPropertyCaching()
             && !structure->typeInfo().newImpurePropertyFiresWatchpoints()) {
-            vm.heap.writeBarrier(codeBlock);
+            vm.heap.writeBarrier(codeBlock->ownerExecutable());
             
             ConcurrentJITLocker locker(codeBlock->m_lock);
 
@@ -641,7 +641,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
             && !structure->typeInfo().prohibitsPropertyCaching()
             && baseCell == slot.base()) {
 
-            vm.heap.writeBarrier(codeBlock);
+            vm.heap.writeBarrier(codeBlock->ownerExecutable());
             
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJITLocker locker(codeBlock->m_lock, vm.heap);
@@ -658,7 +658,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                             StructureChain* chain = structure->prototypeChain(exec);
                             ASSERT(chain);
                             pc[7].u.structureChain.set(
-                                vm, codeBlock, chain);
+                                vm, codeBlock->ownerExecutable(), chain);
                         }
                         pc[8].u.putByIdFlags = static_cast<PutByIdFlags>(
                             pc[8].u.putByIdFlags |
@@ -1190,8 +1190,8 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         
         if (callLinkInfo->isOnList())
             callLinkInfo->remove();
-        callLinkInfo->callee.set(vm, callerCodeBlock, callee);
-        callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock, callee);
+        callLinkInfo->callee.set(vm, callerCodeBlock->ownerExecutable(), callee);
+        callLinkInfo->lastSeenCallee.set(vm, callerCodeBlock->ownerExecutable(), callee);
         callLinkInfo->machineCodeTarget = codePtr;
         if (codeBlock)
             codeBlock->linkIncomingCall(exec, callLinkInfo);

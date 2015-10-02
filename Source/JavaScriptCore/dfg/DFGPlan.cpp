@@ -131,7 +131,7 @@ Profiler::CompilationKind profilerCompilationKindForMode(CompilationMode mode)
 
 } // anonymous namespace
 
-Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
+Plan::Plan(PassRefPtr<CodeBlock> passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     CompilationMode mode, unsigned osrEntryBytecodeIndex,
     const Operands<JSValue>& mustHandleValues)
     : vm(*passedCodeBlock->vm())
@@ -140,10 +140,10 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , mode(mode)
     , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , mustHandleValues(mustHandleValues)
-    , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), profilerCompilationKindForMode(mode))) : 0)
+    , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get()), profilerCompilationKindForMode(mode))) : 0)
     , inlineCallFrames(adoptRef(new InlineCallFrameSet()))
-    , identifiers(codeBlock)
-    , weakReferences(codeBlock)
+    , identifiers(codeBlock.get())
+    , weakReferences(codeBlock.get())
     , willTryToTierUp(false)
     , stage(Preparing)
 {
@@ -535,7 +535,7 @@ bool Plan::isStillValid()
 
 void Plan::reallyAdd(CommonData* commonData)
 {
-    watchpoints.reallyAdd(codeBlock, *commonData);
+    watchpoints.reallyAdd(codeBlock.get(), *commonData);
     identifiers.reallyAdd(vm, commonData);
     weakReferences.reallyAdd(vm, commonData);
     transitions.reallyAdd(vm, commonData);
@@ -553,14 +553,14 @@ void Plan::notifyCompiled()
 
 void Plan::notifyReady()
 {
-    callback->compilationDidBecomeReadyAsynchronously(codeBlock, profiledDFGCodeBlock);
+    callback->compilationDidBecomeReadyAsynchronously(codeBlock.get());
     stage = Ready;
 }
 
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
     // We will establish new references from the code block to things. So, we need a barrier.
-    vm.heap.writeBarrier(codeBlock);
+    vm.heap.writeBarrier(codeBlock->ownerExecutable());
     
     if (!isStillValid())
         return CompilationInvalidated;
@@ -596,7 +596,7 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
 
 void Plan::finalizeAndNotifyCallback()
 {
-    callback->compilationDidComplete(codeBlock, profiledDFGCodeBlock, finalizeWithoutNotifyingCallback());
+    callback->compilationDidComplete(codeBlock.get(), finalizeWithoutNotifyingCallback());
 }
 
 CompilationKey Plan::key()
@@ -604,15 +604,16 @@ CompilationKey Plan::key()
     return CompilationKey(codeBlock->alternative(), mode);
 }
 
-void Plan::rememberCodeBlocks()
+void Plan::clearCodeBlockMarks()
 {
     // Compilation writes lots of values to a CodeBlock without performing
     // an explicit barrier. So, we need to be pessimistic and assume that
     // all our CodeBlocks must be visited during GC.
 
-    Heap::heap(codeBlock)->writeBarrier(codeBlock);
+    codeBlock->clearMarks();
+    codeBlock->alternative()->clearMarks();
     if (profiledDFGCodeBlock)
-        Heap::heap(profiledDFGCodeBlock)->writeBarrier(profiledDFGCodeBlock);
+        profiledDFGCodeBlock->clearMarks();
 }
 
 void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
@@ -623,13 +624,15 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
     for (unsigned i = mustHandleValues.size(); i--;)
         visitor.appendUnbarrieredValue(&mustHandleValues[i]);
 
-    visitor.appendUnbarrieredReadOnlyPointer(codeBlock);
-    visitor.appendUnbarrieredReadOnlyPointer(profiledDFGCodeBlock);
+    codeBlock->visitStrongly(visitor);
+    codeBlock->alternative()->visitStrongly(visitor);
+    if (profiledDFGCodeBlock)
+        profiledDFGCodeBlock->visitStrongly(visitor);
 
     if (inlineCallFrames) {
         for (auto* inlineCallFrame : *inlineCallFrames) {
             ASSERT(inlineCallFrame->baselineCodeBlock());
-            visitor.appendUnbarrieredReadOnlyPointer(inlineCallFrame->baselineCodeBlock());
+            inlineCallFrame->baselineCodeBlock()->visitStrongly(visitor);
         }
     }
 

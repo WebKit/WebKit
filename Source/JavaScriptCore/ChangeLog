@@ -1,5 +1,252 @@
 2015-10-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed, rolling out r190450
+        https://bugs.webkit.org/show_bug.cgi?id=148560
+
+        Crashes seen on el cap wk1 bots.
+
+        Reverted changesets:
+
+        "CodeBlock should be a GC object"
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+        http://trac.webkit.org/changeset/190450
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::inferredName):
+        (JSC::CodeBlock::dumpAssumingJITType):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::specialOSREntryBlockOrNull):
+        (JSC::CodeBlock::visitStrongly):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::shouldVisitStrongly):
+        (JSC::CodeBlock::isKnownToBeLiveDuringGC):
+        (JSC::CodeBlock::shouldJettisonDueToWeakReference):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::visitWeakReferences):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::finalizeBaselineJITInlineCaches):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::visitOSRExitTargets):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::newReplacement):
+        (JSC::ProgramCodeBlock::replacement):
+        (JSC::ModuleProgramCodeBlock::replacement):
+        (JSC::EvalCodeBlock::replacement):
+        (JSC::FunctionCodeBlock::replacement):
+        (JSC::ProgramCodeBlock::capabilityLevelInternal):
+        (JSC::ModuleProgramCodeBlock::capabilityLevelInternal):
+        (JSC::EvalCodeBlock::capabilityLevelInternal):
+        (JSC::FunctionCodeBlock::capabilityLevelInternal):
+        (JSC::WebAssemblyCodeBlock::replacement):
+        (JSC::WebAssemblyCodeBlock::capabilityLevelInternal):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::capabilityLevel):
+        (JSC::FunctionCodeBlock::destroy): Deleted.
+        (JSC::WebAssemblyCodeBlock::destroy): Deleted.
+        (JSC::ProgramCodeBlock::destroy): Deleted.
+        (JSC::ModuleProgramCodeBlock::destroy): Deleted.
+        (JSC::EvalCodeBlock::destroy): Deleted.
+        (JSC::CodeBlock::finishCreation): Deleted.
+        (JSC::CodeBlock::setAlternative): Deleted.
+        (JSC::CodeBlock::visitWeakly): Deleted.
+        (JSC::CodeBlock::visitChildren): Deleted.
+        (JSC::timeToLive): Deleted.
+        (JSC::CodeBlock::WeakReferenceHarvester::visitWeakReferences): Deleted.
+        (JSC::CodeBlock::UnconditionalFinalizer::finalizeUnconditionally): Deleted.
+        (JSC::CodeBlock::replacement): Deleted.
+        (JSC::CodeBlock::computeCapabilityLevel): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::unlinkedCodeBlock):
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::offsetOfNumParameters):
+        (JSC::CodeBlock::alternative):
+        (JSC::CodeBlock::setAlternative):
+        (JSC::CodeBlock::forEachRelatedCodeBlock):
+        (JSC::CodeBlock::specializationKind):
+        (JSC::CodeBlock::instructionCount):
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::hasBaselineJITProfiling):
+        (JSC::CodeBlock::capabilityLevelState):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::appendExceptionHandler):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::replaceConstant):
+        (JSC::GlobalCodeBlock::GlobalCodeBlock):
+        (JSC::ProgramCodeBlock::ProgramCodeBlock):
+        (JSC::ModuleProgramCodeBlock::ModuleProgramCodeBlock):
+        (JSC::EvalCodeBlock::EvalCodeBlock):
+        (JSC::EvalCodeBlock::variable):
+        (JSC::EvalCodeBlock::numVariables):
+        (JSC::EvalCodeBlock::unlinkedEvalCodeBlock):
+        (JSC::FunctionCodeBlock::FunctionCodeBlock):
+        (JSC::WebAssemblyCodeBlock::WebAssemblyCodeBlock):
+        (JSC::ExecState::uncheckedR):
+        (JSC::CodeBlock::clearMarks):
+        (JSC::CodeBlockSet::mark):
+        (JSC::ScriptExecutable::forEachCodeBlock):
+        (JSC::ProgramCodeBlock::create): Deleted.
+        (JSC::ProgramCodeBlock::createStructure): Deleted.
+        (JSC::ModuleProgramCodeBlock::create): Deleted.
+        (JSC::ModuleProgramCodeBlock::createStructure): Deleted.
+        (JSC::EvalCodeBlock::create): Deleted.
+        (JSC::EvalCodeBlock::createStructure): Deleted.
+        (JSC::FunctionCodeBlock::create): Deleted.
+        (JSC::FunctionCodeBlock::createStructure): Deleted.
+        (JSC::WebAssemblyCodeBlock::create): Deleted.
+        (JSC::WebAssemblyCodeBlock::createStructure): Deleted.
+        (JSC::CodeBlock::clearVisitWeaklyHasBeenCalled): Deleted.
+        * bytecode/DeferredCompilationCallback.cpp:
+        (JSC::DeferredCompilationCallback::DeferredCompilationCallback):
+        (JSC::DeferredCompilationCallback::~DeferredCompilationCallback):
+        (JSC::DeferredCompilationCallback::compilationDidComplete):
+        * bytecode/DeferredCompilationCallback.h:
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::reallyAdd):
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::osrEntryBlock): Deleted.
+        (JSC::DFG::JITCode::setOSREntryBlock): Deleted.
+        (JSC::DFG::JITCode::clearOSREntryBlock): Deleted.
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::notifyReady):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::finalizeAndNotifyCallback):
+        (JSC::DFG::Plan::key):
+        (JSC::DFG::Plan::clearCodeBlockMarks):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::rememberCodeBlocks): Deleted.
+        * dfg/DFGPlan.h:
+        * dfg/DFGToFTLDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLDeferredCompilationCallback::ToFTLDeferredCompilationCallback):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::~ToFTLDeferredCompilationCallback):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLDeferredCompilationCallback.h:
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp:
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilationCallback):
+        (JSC::DFG::Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::DFG::ToFTLForOSREntryDeferredCompilationCallback::compilationDidComplete):
+        * dfg/DFGToFTLForOSREntryDeferredCompilationCallback.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllPlansForVM):
+        (JSC::DFG::Worklist::clearCodeBlockMarks):
+        (JSC::DFG::completeAllPlansForVM):
+        (JSC::DFG::clearCodeBlockMarks):
+        (JSC::DFG::Worklist::rememberCodeBlocks): Deleted.
+        (JSC::DFG::rememberCodeBlocks): Deleted.
+        * dfg/DFGWorklist.h:
+        (JSC::DFG::worklistForIndexOrNull):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::~CodeBlockSet):
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::clearMarksForEdenCollection):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        (JSC::CodeBlockSet::remove):
+        (JSC::CodeBlockSet::traceMarked):
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        (JSC::CodeBlockSet::dump):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::clearLivenessData):
+        (JSC::Heap::traceCodeBlocksAndJITStubRoutines):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteAllUnlinkedCodeBlocks):
+        (JSC::Heap::clearUnmarkedExecutables):
+        (JSC::Heap::willStartCollection):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JITCode.h:
+        (JSC::JITCode::isJIT):
+        (JSC::JITCode::timeToLive):
+        (JSC::JITCode::isLowerTier):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/JITOperations.cpp:
+        * jit/JITToDFGDeferredCompilationCallback.cpp:
+        (JSC::JITToDFGDeferredCompilationCallback::create):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITToDFGDeferredCompilationCallback.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryRepatchIn):
+        (JSC::linkFor):
+        (JSC::linkPolymorphicCall):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::newReplacementCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        (JSC::EvalExecutable::visitChildren):
+        (JSC::EvalExecutable::clearCode):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::visitChildren):
+        (JSC::ProgramExecutable::clearCode):
+        (JSC::ModuleProgramExecutable::visitChildren):
+        (JSC::ModuleProgramExecutable::clearCode):
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::visitChildren):
+        (JSC::FunctionExecutable::clearCode):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        (JSC::WebAssemblyExecutable::visitChildren):
+        (JSC::WebAssemblyExecutable::clearCode):
+        (JSC::WebAssemblyExecutable::prepareForExecution):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::generatedJITCodeForCall):
+        (JSC::ScriptExecutable::prepareForExecution):
+        (JSC::ExecutableBase::clearCodeVirtual):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
+2015-10-01  Geoffrey Garen  <ggaren@apple.com>
+
         CodeBlock should be a GC object
         https://bugs.webkit.org/show_bug.cgi?id=149727
 
