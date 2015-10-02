@@ -364,9 +364,10 @@ sub testToolPaths()
     my $path = File::Spec->catfile(productDir(), "TestWebKitAPI");
     return ($path) unless isAppleWinWebKit();
 
-    my $pathWTF = File::Spec->catfile(productDir(), "TestWTF");
-    my $pathWebCore = File::Spec->catfile(productDir(), "TestWebCore");
-    my $pathWebKit = File::Spec->catfile(productDir(), "TestWebKit");
+    my $binDir = isWin64() ? "bin64" : "bin32";
+    my $pathWTF = File::Spec->catfile(productDir(), $binDir, "TestWTF");
+    my $pathWebCore = File::Spec->catfile(productDir(), $binDir, "TestWebCore");
+    my $pathWebKit = File::Spec->catfile(productDir(), $binDir, "TestWebKit");
 
     my $suffix;
     if (configuration() eq "Debug_All") {

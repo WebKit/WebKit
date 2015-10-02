@@ -1,3 +1,10 @@
+2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix for run-api-tests
+
+        * Scripts/run-api-tests:
+        (testToolPaths): Windows run needs to specify the binary path.
+
 2015-10-01  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the Windows builders after <https://trac.webkit.org/changeset/190387>
