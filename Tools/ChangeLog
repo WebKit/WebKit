@@ -1,3 +1,17 @@
+2015-10-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide "--no-ninja" option to avoid using Ninja
+        https://bugs.webkit.org/show_bug.cgi?id=149757
+
+        Reviewed by Alex Christensen.
+
+        Add a new command line argument understood by webkitdirs.pm so
+        that we can conditionally avoid using Ninja. This is an
+        'opt-out' argument, so no existing Ninja users should be affected.
+        
+        * Scripts/webkitdirs.pm:
+        (canUseNinja): Check for option and block ninja if present.
+
 2015-10-02  Aakash Jain  <aakash_jain@apple.com>
 
         Flakiness dashboard should support OS X El Capitan

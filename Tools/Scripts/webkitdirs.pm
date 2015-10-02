@@ -120,6 +120,7 @@ my $isInspectorFrontend;
 my $shouldTargetWebProcess;
 my $shouldUseXPCServiceForWebProcess;
 my $shouldUseGuardMalloc;
+my $shouldNotUseNinja;
 my $xcodeVersion;
 
 # Variables for Win32 support
@@ -1809,6 +1810,14 @@ sub removeCMakeCache(@)
 
 sub canUseNinja(@)
 {
+    if (!defined($shouldNotUseNinja)) {
+        $shouldNotUseNinja = checkForArgumentAndRemoveFromARGV("--no-ninja");
+    }
+
+    if ($shouldNotUseNinja) {
+        return 0;
+    }
+
     # Test both ninja and ninja-build. Fedora uses ninja-build and has patched CMake to also call ninja-build.
     return commandExists("ninja") || commandExists("ninja-build");
 }
