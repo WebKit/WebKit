@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<style>
+.parent {
+   display: -webkit-flex;
+   justify-items: flex-end true;
+   align-items: flex-start safe;
+}
+.parent .child {
+   display: -webkit-flex;
+   justify-self: flex-end true;
+   align-self: flex-start safe;
+}
+#parentId {
+   justify-items: center;
+   align-items: stretch;
+}
+#parentId .child {
+   justify-self: center;
+   align-self: stretch;
+}
+</style>
+<script src="../resources/js-test.js"></script>
+<div class="parent">
+    <div id="childOfDefaultParent" class="child"></div>
+</div>
+<div id="parentId" class="parent">
+    <div id="childOfParentId" class="child"></div>
+</div>
+<script src="resources/alignment-parsing-utils.js"></script>
+<script>
+description('Test overwriting justify-self and align-self works as expected');
+
+var parent = document.getElementById("parentId");
+shouldBeEqualToString("getComputedStyle(parent, '').getPropertyValue('justify-items')", "center");
+shouldBeEqualToString("getComputedStyle(parent, '').getPropertyValue('align-items')", "stretch");
+
+var childOfDefaultParent = document.getElementById("childOfDefaultParent");
+shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-self')", "flex-end true");
+shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('align-self')", "flex-start safe");
+
+var childOfParentId = document.getElementById("childOfParentId");
+shouldBeEqualToString("getComputedStyle(childOfParentId, '').getPropertyValue('justify-self')", "center");
+shouldBeEqualToString("getComputedStyle(childOfParentId, '').getPropertyValue('align-self')", "stretch");
+</script>

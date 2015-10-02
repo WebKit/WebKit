@@ -1093,9 +1093,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 {
     ASSERT(childSizes.size() == children.size());
 
-    ContentPosition position = style().justifyContentPosition();
-    ContentDistributionType distribution = style().justifyContentDistribution();
-    RenderStyle::resolveContentJustification(style(), position);
+    ContentPosition position = style().resolvedJustifyContentPosition();
+    ContentDistributionType distribution = style().resolvedJustifyContentDistribution();
 
     size_t numberOfChildrenForJustifyContent = numberOfInFlowPositionedChildren(children);
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
@@ -1178,9 +1177,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 
 void RenderFlexibleBox::layoutColumnReverse(const OrderedFlexItemList& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
 {
-    ContentPosition position = style().justifyContentPosition();
-    ContentDistributionType distribution = style().justifyContentDistribution();
-    RenderStyle::resolveContentJustification(style(), position);
+    ContentPosition position = style().resolvedJustifyContentPosition();
+    ContentDistributionType distribution = style().resolvedJustifyContentDistribution();
 
     // This is similar to the logic in layoutAndPlaceChildren, except we place the children
     // starting from the end of the flexbox. We also don't need to layout anything since we're
@@ -1237,9 +1235,8 @@ static LayoutUnit alignContentSpaceBetweenChildren(LayoutUnit availableFreeSpace
 
 void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts)
 {
-    ContentPosition position = style().alignContentPosition();
-    ContentDistributionType distribution = style().alignContentDistribution();
-    RenderStyle::resolveContentAlignment(style(), position, distribution);
+    ContentPosition position = style().resolvedAlignContentPosition();
+    ContentDistributionType distribution = style().resolvedAlignContentDistribution();
 
     if (!isMultiline() || position == ContentPositionFlexStart)
         return;

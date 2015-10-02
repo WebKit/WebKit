@@ -209,26 +209,36 @@ OverflowAlignment RenderStyle::resolveJustificationOverflow(const RenderStyle& p
     return resolveJustificationData(parentStyle, childStyle, ItemPositionStretch).overflow();
 }
 
-void RenderStyle::resolveContentAlignment(const RenderStyle& style, ContentPosition& position, ContentDistributionType& distribution)
+ContentPosition RenderStyle::resolvedAlignContentPosition() const
 {
-    if (position != ContentPositionAuto || distribution != ContentDistributionDefault)
-        return;
-
-    if (style.isDisplayFlexibleBox())
-        distribution = ContentDistributionStretch;
-    else
-        position = ContentPositionStart;
+    const StyleContentAlignmentData& align = alignContent();
+    if (align.position() != ContentPositionAuto || align.distribution() != ContentDistributionDefault)
+        return align.position();
+    // 'auto' computes to 'stretch' for flexbox, hence it's managed by distribution().
+    return isDisplayFlexibleBox() ? ContentPositionAuto : ContentPositionStart;
 }
 
-void RenderStyle::resolveContentJustification(const RenderStyle& style, ContentPosition& position)
+ContentDistributionType RenderStyle::resolvedAlignContentDistribution() const
 {
-    if (position != ContentPositionAuto || style.justifyContentDistribution() != ContentDistributionDefault)
-        return;
+    const StyleContentAlignmentData& align = alignContent();
+    if (align.position() != ContentPositionAuto || align.distribution() != ContentDistributionDefault)
+        return align.distribution();
+    return isDisplayFlexibleBox() ? ContentDistributionStretch : ContentDistributionDefault;
+}
 
-    if (style.isDisplayFlexibleBox())
-        position = ContentPositionFlexStart;
-    else
-        position = ContentPositionStart;
+ContentPosition RenderStyle::resolvedJustifyContentPosition() const
+{
+    const StyleContentAlignmentData& justify = justifyContent();
+    if (justify.position() != ContentPositionAuto || justify.distribution() != ContentDistributionDefault)
+        return justify.position();
+    // 'auto' computes to 'stretch' for flexbox, but since flexing in the main axis is controlled by flex, it behaves as flex-start.
+    return isDisplayFlexibleBox() ? ContentPositionFlexStart : ContentPositionStart;
+}
+
+ContentDistributionType RenderStyle::resolvedJustifyContentDistribution() const
+{
+    // even that 'auto' computes to 'stretch' for flexbox it behaves as flex-start, hence it's managed by position().
+    return justifyContentDistribution();
 }
 
 void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)

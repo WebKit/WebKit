@@ -27,6 +27,18 @@
     -webkit-grid-row: 1;
 }
 
+.firstRowThirdColumn {
+    background-color: magenta;
+    -webkit-grid-column: 3;
+    -webkit-grid-row: 1;
+}
+
+.firstRowFourthColumn {
+    background-color: green;
+    -webkit-grid-column: 4;
+    -webkit-grid-row: 1;
+}
+
 .secondRowFirstColumn {
     background-color: purple;
     -webkit-grid-column: 1;
@@ -37,6 +49,48 @@
     background-color: orange;
     -webkit-grid-column: 2;
     -webkit-grid-row: 2;
+}
+
+.secondRowThirdColumn {
+    background-color: navy;
+    -webkit-grid-column: 3;
+    -webkit-grid-row: 2;
+}
+
+.secondRowFourthColumn {
+    background-color: pink;
+    -webkit-grid-column: 4;
+    -webkitgrid-row: 2;
+}
+
+.thirdRowFirstColumn {
+    background-color: olive;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 3;
+}
+
+.thirdRowSecondColumn {
+    background-color: maroon;
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 3;
+}
+
+.thirdRowThirdColumn {
+    background-color: yellow;
+    -webkit-grid-column: 3;
+    -webkit-grid-row: 3;
+}
+
+.fourthRowFirstColumn {
+    background-color: red;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 4;
+}
+
+.fourthRowSecondColumn {
+    background-color: aqua;
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 4;
 }
 
 .firstAutoRowSecondAutoColumn {

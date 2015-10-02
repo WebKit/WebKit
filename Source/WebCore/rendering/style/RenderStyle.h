@@ -489,8 +489,10 @@ public:
     // Create a RenderStyle for generated content by inheriting from a pseudo style.
     static Ref<RenderStyle> createStyleInheritingFromPseudoStyle(const RenderStyle& pseudoStyle);
 
-    static void resolveContentAlignment(const RenderStyle&, ContentPosition&, ContentDistributionType&);
-    static void resolveContentJustification(const RenderStyle&, ContentPosition&);
+    ContentPosition resolvedAlignContentPosition() const;
+    ContentDistributionType resolvedAlignContentDistribution() const;
+    ContentPosition resolvedJustifyContentPosition() const;
+    ContentDistributionType resolvedJustifyContentDistribution() const;
     static ItemPosition resolveAlignment(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer);
     static OverflowAlignment resolveAlignmentOverflow(const RenderStyle& parentStyle, const RenderStyle& childStyle);
     static ItemPosition resolveJustification(const RenderStyle& parentStyle, const RenderStyle& childStyle, ItemPosition resolvedAutoPositionForRenderer);
