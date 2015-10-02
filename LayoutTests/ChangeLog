@@ -1,5 +1,23 @@
 2015-10-02  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187593. rdar://problem/22801973
+
+    2015-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+            Selecting in an iframe can cause main page scrolling
+            https://bugs.webkit.org/show_bug.cgi?id=147431
+            rdar://problem/19244589
+
+            Reviewed by Zalan Bujtas.
+
+            Test that uses eventSender to select in an iframe after scrolling the
+            main page.
+
+            * fast/events/autoscroll-in-iframe-expected.txt: Added.
+            * fast/events/autoscroll-in-iframe.html: Added.
+
+2015-10-02  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187210. rdar://problem/22801995
 
     2015-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
