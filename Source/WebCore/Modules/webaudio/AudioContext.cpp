@@ -1002,7 +1002,7 @@ void AudioContext::nodeWillBeginPlayback()
 bool AudioContext::willBeginPlayback()
 {
     if (userGestureRequiredForAudioStart()) {
-        if (!ScriptController::processingUserGesture())
+        if (!ScriptController::processingUserGestureForMedia())
             return false;
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
     }
@@ -1022,7 +1022,7 @@ bool AudioContext::willBeginPlayback()
 bool AudioContext::willPausePlayback()
 {
     if (userGestureRequiredForAudioStart()) {
-        if (!ScriptController::processingUserGesture())
+        if (!ScriptController::processingUserGestureForMedia())
             return false;
         removeBehaviorRestriction(AudioContext::RequireUserGestureForAudioStartRestriction);
     }

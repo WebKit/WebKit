@@ -1,5 +1,28 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190327.
+
+    2015-09-29  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION: WebAudio user-gesture restriction is no longer lifted by touchstart event
+            https://bugs.webkit.org/show_bug.cgi?id=149367
+
+            Reviewed by Eric Carlson.
+
+            Use processingUserGestureForMedia() rather than processingUserGesture(),
+            as the former includes touchstart and the latter does not.
+
+            * Modules/webaudio/AudioContext.cpp:
+            (WebCore::AudioContext::willBeginPlayback):
+            (WebCore::AudioContext::willPausePlayback):
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::playbackPermitted):
+            (WebCore::MediaElementSession::dataLoadingPermitted):
+            (WebCore::MediaElementSession::fullscreenPermitted):
+            (WebCore::MediaElementSession::showPlaybackTargetPicker):
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r189560.
 
     2015-09-09  Benjamin Poulain  <bpoulain@apple.com>
