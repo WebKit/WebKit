@@ -741,9 +741,34 @@ void Node::derefEventTarget()
     deref();
 }
 
+// FIXME: Factor into iterator.
+static ContainerNode* traverseStyleParent(Node& node)
+{
+    auto* parent = node.parentNode();
+    if (!parent) {
+        if (is<ShadowRoot>(node))
+            return downcast<ShadowRoot>(node).host();
+        return nullptr;
+    }
+#if ENABLE(SHADOW_DOM)
+    if (auto* shadowRoot = parent->shadowRoot()) {
+        if (auto* assignedSlot = shadowRoot->findAssignedSlot(node))
+            return assignedSlot;
+    }
+#endif
+    return parent;
+}
+
+static ContainerNode* traverseFirstStyleParent(Node& node)
+{
+    if (is<PseudoElement>(node))
+        return downcast<PseudoElement>(node).hostElement();
+    return traverseStyleParent(node);
+}
+
 inline void Node::updateAncestorsForStyleRecalc()
 {
-    if (ContainerNode* ancestor = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentOrShadowHostNode()) {
+    if (auto* ancestor = traverseFirstStyleParent(*this)) {
         ancestor->setDirectChildNeedsStyleRecalc();
 
         if (is<Element>(*ancestor) && downcast<Element>(*ancestor).childrenAffectedByPropertyBasedBackwardPositionalRules()) {
@@ -751,8 +776,11 @@ inline void Node::updateAncestorsForStyleRecalc()
                 ancestor->setStyleChange(FullStyleChange);
         }
 
-        for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
+        for (; ancestor; ancestor = traverseStyleParent(*ancestor)) {
+            if (ancestor->childNeedsStyleRecalc())
+                break;
             ancestor->setChildNeedsStyleRecalc();
+        }
     }
 
     Document& document = this->document();
