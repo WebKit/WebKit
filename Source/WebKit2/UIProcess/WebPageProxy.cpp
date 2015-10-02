@@ -4254,27 +4254,9 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
             continue;
         }
 
-        // Create the real Share menu item
-        URL absoluteLinkURL;
-        if (!contextMenuContextData.webHitTestResultData().absoluteLinkURL.isEmpty())
-            absoluteLinkURL = URL(ParsedURLString, contextMenuContextData.webHitTestResultData().absoluteLinkURL);
-
-        URL downloadableMediaURL;
-        if (!contextMenuContextData.webHitTestResultData().absoluteMediaURL.isEmpty() && contextMenuContextData.webHitTestResultData().isDownloadableMedia)
-            downloadableMediaURL = URL(ParsedURLString, contextMenuContextData.webHitTestResultData().absoluteMediaURL);
-
-        RefPtr<Image> image;
-        if (contextMenuContextData.webHitTestResultData().imageSharedMemory && contextMenuContextData.webHitTestResultData().imageSize) {
-            image = BitmapImage::create();
-            RefPtr<SharedBuffer> imageData = SharedBuffer::create((unsigned char*)contextMenuContextData.webHitTestResultData().imageSharedMemory->data(), contextMenuContextData.webHitTestResultData().imageSize);
-            image->setData(imageData.release(), true);
-        }
-
-        ContextMenuItem coreItem = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), contextMenuContextData.selectedText());
-        if (!coreItem.isNull()) {
-            platformInitializeShareMenuItem(coreItem);
+        ContextMenuItem coreItem = platformInitializeShareMenuItem(contextMenuContextData);
+        if (!coreItem.isNull())
             proposedAPIItems.append(WebContextMenuItem::create(coreItem));
-        }
     }
 
     Vector<RefPtr<WebContextMenuItem>> clientItems;
@@ -4290,9 +4272,10 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     m_contextMenuClient->contextMenuDismissed(*this);
 }
 
-#if !PLATFORM(MAC)
-void WebPageProxy::platformInitializeShareMenuItem(ContextMenuItem&)
+#if !ENABLE(SERVICE_CONTROLS)
+ContextMenuItem WebPageProxy::platformInitializeShareMenuItem(const ContextMenuContextData&)
 {
+    return ContextMenuItem();
 }
 #endif
 

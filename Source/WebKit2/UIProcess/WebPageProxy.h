@@ -1287,8 +1287,7 @@ private:
     };
     void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, const UserData&);
     void internalShowContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, ContextMenuClientEligibility, const UserData&);
-
-    void platformInitializeShareMenuItem(WebCore::ContextMenuItem&);
+    WebCore::ContextMenuItem platformInitializeShareMenuItem(const ContextMenuContextData&);
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
