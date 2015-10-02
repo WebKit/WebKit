@@ -210,8 +210,13 @@ using namespace WebCore;
         return;
 
     Frame* coreFrame = core([[[[_webView _selectedOrMainFrame] frameView] documentView] _frame]);
-    if (coreFrame)
-        coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelled);
+    if (coreFrame) {
+        ImmediateActionStage lastStage = coreFrame->eventHandler().immediateActionStage();
+        if (lastStage == ImmediateActionStage::ActionUpdated)
+            coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
+        else
+            coreFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
+    }
 
     [_webView _setTextIndicatorAnimationProgress:0];
     [self _clearImmediateActionState];
