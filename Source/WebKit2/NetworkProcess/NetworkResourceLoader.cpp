@@ -554,6 +554,14 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         m_synchronousLoadData->response = entry->response();
         sendReplyToSynchronousRequest(*m_synchronousLoadData, entry->buffer());
     } else {
+        if (entry->response().url() != originalRequest().url()) {
+            // This is a cached redirect. Synthesize a minimal redirect so we get things like referer header right.
+            // FIXME: We should cache the actual redirects.
+            ResourceRequest syntheticRedirectRequest(entry->response().url());
+            ResourceResponse syntheticRedirectResponse(originalRequest().url(), { }, 0, { });
+            sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(syntheticRedirectRequest, syntheticRedirectResponse));
+        }
+
         bool needsContinueDidReceiveResponseMessage = originalRequest().requester() == ResourceRequest::Requester::Main;
         sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(entry->response(), needsContinueDidReceiveResponseMessage));
 
