@@ -966,11 +966,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         } else if (this._delegate.cssStyleDeclarationTextEditorShouldAddPropertyGoToArrows
                 && !property.implicit && typeof this._delegate.cssStyleDeclarationTextEditorShowProperty === "function") {
 
-            var arrowElement = WebInspector.createGoToArrowButton();
+            let arrowElement = WebInspector.createGoToArrowButton();
+            arrowElement.title = "Option-click to show source";
 
-            var delegate = this._delegate;
-            arrowElement.addEventListener("click", function() {
-                delegate.cssStyleDeclarationTextEditorShowProperty(property);
+            let delegate = this._delegate;
+            arrowElement.addEventListener("click", function(event) {
+                delegate.cssStyleDeclarationTextEditorShowProperty(property, event.altKey);
             });
 
             this._codeMirror.setUniqueBookmark(to, arrowElement);

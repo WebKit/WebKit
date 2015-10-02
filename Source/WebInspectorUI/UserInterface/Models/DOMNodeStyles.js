@@ -306,7 +306,11 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
 
     effectivePropertyForName(name)
     {
-        var canonicalName = WebInspector.cssStyleManager.canonicalNameForPropertyName(name);
+        let property = this._propertyNameToEffectivePropertyMap[name];
+        if (property)
+            return property;
+
+        let canonicalName = WebInspector.cssStyleManager.canonicalNameForPropertyName(name);
         return this._propertyNameToEffectivePropertyMap[canonicalName] || null;
     }
 

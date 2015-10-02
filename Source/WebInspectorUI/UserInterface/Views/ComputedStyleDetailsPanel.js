@@ -148,10 +148,37 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
         this._containerRegionsFlowSection.element.classList.remove("hidden");
     }
 
-    cssStyleDeclarationTextEditorShowProperty(property)
+    cssStyleDeclarationTextEditorShowProperty(property, showSource)
     {
-        if (typeof this._delegate.computedStyleDetailsPanelShowProperty === "function")
-            this._delegate.computedStyleDetailsPanelShowProperty(property);
+        function delegateShowProperty() {
+            if (typeof this._delegate.computedStyleDetailsPanelShowProperty === "function")
+                this._delegate.computedStyleDetailsPanelShowProperty(property);
+        }
+
+        if (!showSource) {
+            delegateShowProperty.call(this);
+            return;
+        }
+
+        let effectiveProperty = this._nodeStyles.effectivePropertyForName(property.name);
+        if (!effectiveProperty || !effectiveProperty.styleSheetTextRange) {
+            if (!effectiveProperty.relatedShorthandProperty) {
+                delegateShowProperty.call(this);
+                return;
+            }
+            effectiveProperty = effectiveProperty.relatedShorthandProperty;
+        }
+
+        let ownerRule = effectiveProperty.ownerStyle.ownerRule;
+        if (!ownerRule) {
+            delegateShowProperty.call(this);
+            return;
+        }
+
+        let sourceCode = ownerRule.sourceCodeLocation.sourceCode;
+        let {startLine, startColumn} = effectiveProperty.styleSheetTextRange;
+        let sourceCodeLocation = sourceCode.createSourceCodeLocation(startLine, startColumn);
+        WebInspector.showSourceCodeLocation(sourceCodeLocation);
     }
 
     refresh(significantChange)

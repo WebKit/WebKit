@@ -1,3 +1,26 @@
+2015-10-02  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Option-Click on a property name in the Computed view should jump to resource view
+        https://bugs.webkit.org/show_bug.cgi?id=149521
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.effectivePropertyForName):
+        Now tries to search for a non-canonical property before falling back to
+        the canonical version.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded):
+        If the user option-clicks the goto arrow, it shows the source for the
+        property instead.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty.delegateShowProperty):
+        (WebInspector.ComputedStyleDetailsPanel.prototype.cssStyleDeclarationTextEditorShowProperty):
+        Attempts to show the source of the given property. Will fallback to
+        highlighting the property in the rules panel.
+
 2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include Garbage Collection Event in Timeline
