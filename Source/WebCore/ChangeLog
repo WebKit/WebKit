@@ -1,5 +1,32 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190375.
+
+    2015-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Crash when using an SVG font with > 390 glyphs
+            https://bugs.webkit.org/show_bug.cgi?id=149677
+            <rdar://problem/21676402>
+
+            Reviewed by Simon Fraser.
+
+            The "Charset Index" in OTF are indices into a collection of strings. There are
+            390 predefined strings in this collection. We were currently assigning each
+            glyph to one of these strings. However, if there are more glyphs than strings,
+            we will be using invalid indices.
+
+            The values of the strings themselves are not necessary for SVG fonts. Therefore,
+            the solution is to create a single dummy string, and have all glyphs target it.
+
+            Tests: svg/custom/many-glyphs.svg
+
+            * css/CSSFontFaceSource.cpp:
+            (WebCore::CSSFontFaceSource::font):
+            * svg/SVGToOTFFontConversion.cpp:
+            (WebCore::SVGToOTFFontConverter::appendCFFTable):
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r190327.
 
     2015-09-29  Jer Noble  <jer.noble@apple.com>

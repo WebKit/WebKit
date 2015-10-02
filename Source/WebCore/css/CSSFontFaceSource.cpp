@@ -150,7 +150,9 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
                 m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont);
                 if (!m_generatedOTFBuffer)
                     return nullptr;
-                std::unique_ptr<FontCustomPlatformData> customPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
+                auto customPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
+                if (!customPlatformData)
+                    return nullptr;
                 font = Font::create(customPlatformData->fontPlatformData(static_cast<int>(fontDescription.computedPixelSize()), syntheticBold, syntheticItalic, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
 #else
                 font = Font::create(std::make_unique<SVGFontData>(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
