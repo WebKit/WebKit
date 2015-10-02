@@ -14,5 +14,7 @@
     <ClInclude Include="..\..\API\tests\CustomGlobalObjectClassTest.h" />
     <ClCompile Include="..\..\API\tests\GlobalContextWithFinalizerTest.cpp" />
     <ClInclude Include="..\..\API\tests\GlobalContextWithFinalizerTest.h" />
+    <ClCompile Include="..\..\API\tests\PingPongStackOverflowTest.cpp" />
+    <ClInclude Include="..\..\API\tests\PingPongStackOverflowTest.h" />
   </ItemGroup>
 </Project>
