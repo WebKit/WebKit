@@ -1,5 +1,19 @@
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r190438.
+
+    2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed test fix after r190434.
+
+            One test was not updated to pass the new required interruption type
+            argument to 'internals.beginMediaSessionInterruption'.
+
+            * webaudio/audiocontext-state-interrupted-expected.txt:
+            * webaudio/audiocontext-state-interrupted.html:
+
+2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r190434.
 
     2015-10-01  Eric Carlson  <eric.carlson@apple.com>
