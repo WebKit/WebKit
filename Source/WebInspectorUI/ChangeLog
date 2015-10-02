@@ -1,3 +1,45 @@
+2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, rolling out r190520, some tests assert / crash.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded): Deleted.
+        * UserInterface/Base/Utilities.js:
+        (value): Deleted.
+        * UserInterface/Controllers/HeapManager.js: Removed.
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager): Deleted.
+        (WebInspector.TimelineManager.prototype._garbageCollected): Deleted.
+        * UserInterface/Images/TimelineRecordGarbageCollection.svg: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Models/GarbageCollection.js: Removed.
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.EventType.displayName):
+        (WebInspector.ScriptTimelineRecord.prototype.isGarbageCollection): Deleted.
+        * UserInterface/Protocol/HeapObserver.js: Removed.
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded): Deleted.
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get data):
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent): Deleted.
+        (WebInspector.ScriptTimelineDataGridNode): Deleted.
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WebInspector.ScriptTimelineOverviewGraph.prototype.updateLayout):
+        * UserInterface/Views/ScriptTimelineView.js:
+        (WebInspector.ScriptTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/SourceCodeTimelineTreeElement.js:
+        (WebInspector.SourceCodeTimelineTreeElement):
+        * UserInterface/Views/TimelineIcons.css:
+        (.garbage-collection-profile-record .icon): Deleted.
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-script.script-timeline-record-garbage-collected > .segment): Deleted.
+        * UserInterface/Views/TimelineRecordBar.js:
+        (WebInspector.TimelineRecordBar.createCombinedBars):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+
 2015-10-02  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Option-Click on a property name in the Computed view should jump to resource view

@@ -25,13 +25,13 @@
 
 WebInspector.SourceCodeTimelineTreeElement = class SourceCodeTimelineTreeElement extends WebInspector.TimelineRecordTreeElement
 {
-    constructor(sourceCodeTimeline, subtitleNameStyle, includeDetailsInformationInMainTitle)
+    constructor(sourceCodeTimeline, subtitleNameStyle, includeTimerIdentifierInMainTitle)
     {
         console.assert(sourceCodeTimeline);
 
         subtitleNameStyle = subtitleNameStyle || WebInspector.SourceCodeLocation.NameStyle.None;
 
-        super(sourceCodeTimeline.records[0], subtitleNameStyle, includeDetailsInformationInMainTitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
+        super(sourceCodeTimeline.records[0], subtitleNameStyle, includeTimerIdentifierInMainTitle, sourceCodeTimeline.sourceCodeLocation, sourceCodeTimeline);
 
         this._sourceCodeTimeline = sourceCodeTimeline;
     }

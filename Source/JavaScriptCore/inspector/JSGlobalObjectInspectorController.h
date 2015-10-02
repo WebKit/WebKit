@@ -41,6 +41,7 @@ namespace WTF {
 class Stopwatch;
 }
 
+
 namespace JSC {
 class ConsoleClient;
 class Exception;
@@ -57,7 +58,6 @@ class InjectedScriptManager;
 class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDebuggerAgent;
-class InspectorHeapAgent;
 class JSGlobalObjectConsoleClient;
 class ScriptCallStack;
 
@@ -97,7 +97,6 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
     virtual void frontendInitialized() override;
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
-    virtual JSC::VM& vm() override;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     virtual AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const override { return m_augmentingClient; } 
@@ -111,7 +110,6 @@ public:
 private:
     void appendAPIBacktrace(ScriptCallStack* callStack);
 
-    JSC::JSGlobalObject& m_globalObject;
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     Ref<WTF::Stopwatch> m_executionStopwatch;
@@ -120,13 +118,16 @@ private:
     InspectorAgent* m_inspectorAgent { nullptr };
     InspectorConsoleAgent* m_consoleAgent { nullptr };
     InspectorDebuggerAgent* m_debuggerAgent { nullptr };
-    InspectorHeapAgent* m_heapAgent { nullptr };
 
     Ref<FrontendRouter> m_frontendRouter;
     Ref<BackendDispatcher> m_backendDispatcher;
 
     bool m_includeNativeCallStackWithExceptions { false };
     bool m_isAutomaticInspection { false };
+
+#if ENABLE(REMOTE_INSPECTOR)
+    JSC::JSGlobalObject& m_globalObject;
+#endif
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     AugmentableInspectorControllerClient* m_augmentingClient { nullptr };

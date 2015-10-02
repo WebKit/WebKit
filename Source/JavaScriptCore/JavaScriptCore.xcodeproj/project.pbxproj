@@ -1290,9 +1290,6 @@
 		A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = A532438618568317002ED692 /* InspectorProtocolObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A532439418569709002ED692 /* generate-combined-inspector-json.py in Headers */ = {isa = PBXBuildFile; fileRef = A5324391185696E6002ED692 /* generate-combined-inspector-json.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53243981856A489002ED692 /* CombinedDomains.json in Headers */ = {isa = PBXBuildFile; fileRef = A53243951856A475002ED692 /* CombinedDomains.json */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5339EC51BB399900054F005 /* InspectorHeapAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A5339EC71BB399A90054F005 /* InspectorHeapAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5339EC41BB399900054F005 /* InspectorHeapAgent.cpp */; };
-		A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = A5339EC81BB4B4510054F005 /* HeapObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */; };
 		A53CE08618BC1A5600BEDF76 /* ConsolePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */; };
 		A53CE08718BC1A5600BEDF76 /* JSConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */; };
@@ -3191,9 +3188,6 @@
 		A5324391185696E6002ED692 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-combined-inspector-json.py"; sourceTree = "<group>"; };
 		A53243951856A475002ED692 /* CombinedDomains.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CombinedDomains.json; sourceTree = "<group>"; };
 		A53243961856A475002ED692 /* InspectorBackendCommands.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorBackendCommands.js; sourceTree = "<group>"; };
-		A5339EC41BB399900054F005 /* InspectorHeapAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorHeapAgent.cpp; sourceTree = "<group>"; };
-		A5339EC51BB399900054F005 /* InspectorHeapAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorHeapAgent.h; sourceTree = "<group>"; };
-		A5339EC81BB4B4510054F005 /* HeapObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapObserver.h; sourceTree = "<group>"; };
 		A53CE08118BC1A5600BEDF76 /* ConsolePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsolePrototype.cpp; sourceTree = "<group>"; };
 		A53CE08218BC1A5600BEDF76 /* ConsolePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsolePrototype.h; sourceTree = "<group>"; };
 		A53CE08318BC1A5600BEDF76 /* JSConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConsole.cpp; sourceTree = "<group>"; };
@@ -4282,7 +4276,6 @@
 				0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */,
 				C2DA778218E259990066FCB6 /* HeapInlines.h */,
 				2AD8932917E3868F00668276 /* HeapIterationScope.h */,
-				A5339EC81BB4B4510054F005 /* HeapObserver.h */,
 				2A6F462517E959CE00C45C98 /* HeapOperation.h */,
 				14F97446138C853E00DA1C67 /* HeapRootVisitor.h */,
 				C24D31E0161CD695002AA4DB /* HeapStatistics.cpp */,
@@ -5749,8 +5742,6 @@
 				A5FD0080189B191A00633231 /* InspectorConsoleAgent.h */,
 				A57D23E31890CEBF0031C7FA /* InspectorDebuggerAgent.cpp */,
 				A57D23E41890CEBF0031C7FA /* InspectorDebuggerAgent.h */,
-				A5339EC41BB399900054F005 /* InspectorHeapAgent.cpp */,
-				A5339EC51BB399900054F005 /* InspectorHeapAgent.h */,
 				A50E4B5D18809DD50068A46D /* InspectorRuntimeAgent.cpp */,
 				A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */,
 				A5FD0083189B1B7E00633231 /* JSGlobalObjectConsoleAgent.cpp */,
@@ -6429,7 +6420,6 @@
 				14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
-				A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */,
 				2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */,
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				C24D31E3161CD695002AA4DB /* HeapStatistics.h in Headers */,
@@ -6472,7 +6462,6 @@
 				A5945595182479EB00CC3843 /* InspectorFrontendChannel.h in Headers */,
 				A532438A18568335002ED692 /* InspectorFrontendDispatchers.h in Headers */,
 				99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */,
-				A5339EC61BB399A60054F005 /* InspectorHeapAgent.h in Headers */,
 				E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */,
 				E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */,
 				A532438C18568335002ED692 /* InspectorProtocolObjects.h in Headers */,
@@ -7784,7 +7773,6 @@
 				A57D23E51890CEBF0031C7FA /* InspectorDebuggerAgent.cpp in Sources */,
 				A532438918568335002ED692 /* InspectorFrontendDispatchers.cpp in Sources */,
 				99F1A6FE1B8E6D9400463B26 /* InspectorFrontendRouter.cpp in Sources */,
-				A5339EC71BB399A90054F005 /* InspectorHeapAgent.cpp in Sources */,
 				E35E035F1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp in Sources */,
 				A532438B18568335002ED692 /* InspectorProtocolObjects.cpp in Sources */,
 				A50E4B6118809DD50068A46D /* InspectorRuntimeAgent.cpp in Sources */,

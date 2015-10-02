@@ -75,7 +75,6 @@ public:
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
     virtual void frontendInitialized() override { }
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
-    virtual JSC::VM& vm() override;
 
 private:
     friend class InspectorInstrumentation;

@@ -452,23 +452,6 @@ Object.defineProperty(Array.prototype, "keySet",
     }
 });
 
-Object.defineProperty(Array.prototype, "partition",
-{
-    value: function(callback)
-    {
-        let positive = [];
-        let negative = [];
-        for (let i = 0; i < this.length; ++i) {
-            let value = this[i];
-            if (callback(value))
-                positive.push(value);
-            else
-                negative.push(value);
-        }
-        return [positive, negative];
-    }
-});
-
 Object.defineProperty(String.prototype, "trimMiddle",
 {
     value: function(maxLength)

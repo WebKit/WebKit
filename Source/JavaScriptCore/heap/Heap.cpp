@@ -38,10 +38,10 @@
 #include "HeapVerifier.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
-#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSONObject.h"
+#include "JSCInlines.h"
 #include "JSVirtualMachineInternal.h"
 #include "RecursiveAllocationScope.h"
 #include "RegExpCache.h"
@@ -51,12 +51,13 @@
 #include "VM.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
+#include <wtf/RAMSize.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ParallelVectorIterator.h>
 #include <wtf/ProcessID.h>
-#include <wtf/RAMSize.h>
 
 using namespace std;
+using namespace JSC;
 
 namespace JSC {
 
@@ -1167,9 +1168,6 @@ void Heap::willStartCollection(HeapOperation collectionType)
 
     if (m_edenActivityCallback)
         m_edenActivityCallback->willCollect();
-
-    for (auto* observer : m_observers)
-        observer->willGarbageCollect();
 }
 
 void Heap::flushOldStructureIDTables()
@@ -1318,7 +1316,6 @@ void Heap::didFinishCollection(double gcStartTime)
 {
     GCPHASE(FinishingCollection);
     double gcEndTime = WTF::monotonicallyIncreasingTime();
-    HeapOperation operation = m_operationInProgress;
     if (m_operationInProgress == FullCollection)
         m_lastFullGCLength = gcEndTime - gcStartTime;
     else
@@ -1342,9 +1339,6 @@ void Heap::didFinishCollection(double gcStartTime)
     RELEASE_ASSERT(m_operationInProgress == EdenCollection || m_operationInProgress == FullCollection);
     m_operationInProgress = NoOperation;
     JAVASCRIPTCORE_GC_END();
-
-    for (auto* observer : m_observers)
-        observer->didGarbageCollect(operation);
 }
 
 void Heap::resumeCompilerThreads()

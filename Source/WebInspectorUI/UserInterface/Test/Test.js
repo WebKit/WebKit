@@ -41,7 +41,6 @@ WebInspector.loaded = function()
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);
     InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerObserver);
-    InspectorBackend.registerHeapDispatcher(new WebInspector.HeapObserver);
     InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
@@ -55,7 +54,6 @@ WebInspector.loaded = function()
     this.logManager = new WebInspector.LogManager;
     this.issueManager = new WebInspector.IssueManager;
     this.runtimeManager = new WebInspector.RuntimeManager;
-    this.heapManager = new WebInspector.HeapManager;
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;

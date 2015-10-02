@@ -1,3 +1,27 @@
+2015-10-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, rolling out r190520, some tests assert / crash.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::willStartCollection): Deleted.
+        (JSC::Heap::didFinishCollection): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::addObserver): Deleted.
+        (JSC::Heap::removeObserver): Deleted.
+        * heap/HeapObserver.h: Removed.
+        * heap/MarkedSpace.h:
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::vm): Deleted.
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/agents/InspectorHeapAgent.cpp: Removed.
+        * inspector/agents/InspectorHeapAgent.h: Removed.
+        * inspector/protocol/Heap.json: Removed.
+
 2015-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in r190450
