@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="resources/animometer.css">
+    <script src="../resources/statistics.js" defer></script>
+    <script src="../resources/sampler.js" defer></script>
+    <script src="../resources/extensions.js" defer></script>
+    <script src="resources/tests.js" defer=""></script>
+    <script src="resources/benchmark-runner.js" defer></script>
+    <script src="resources/animometer.js" defer></script>
+    <script src="resources/d3.min.js" defer></script>
+    <script src="resources/graph.js" defer></script>
+</head>
+<body>
+    <main>
+        <section id="home" class="selected">
+            <p>
+                Animometer is a browser benchmark that measures the complexity of an animation for
+                which a browser can achieve 50 FPS (frame per second). It uses adaptive animations
+                to tune their complexities to stay close to 50 FPS.
+            </p>
+            <div class="options">
+                <div class="column">
+                    <label><input id="html-suite" type="checkbox" checked> HTML elements suite</label><br>
+                    <label><input id="canvas-suite" type="checkbox" checked> Canvas drawings suite</label><br>
+                    <label><input id="svg-suite" type="checkbox" checked> SVG elements suite</label><br>
+                    <label><input id="template-suite" type="checkbox"> Template suite</label>
+                </div>
+                <div>
+                    <label>Test interval: <input id="test-interval" type="number" value="30"> seconds</label><br>
+                    <label>Frame rate: <input id="frame-rate" type="number" value="50"> fps</label><br>
+                    <label><input id="estimated-frame-rate" type="checkbox" checked> Estimated Frame Rate</label><br>
+                    <label><input id="fix-test-complexity" type="checkbox"> Fix test complexity after warmup</label>
+                </div>
+            </div>
+            <div class="buttons">
+                <button onclick="startTest()">Start Test</button>
+            </div>
+        </section>
+        <section id="running">
+            <div id="testContainer"></div>
+            <div id="progress">
+                <div id="progress-completed"></div>
+            </div>
+            <div id="record">
+                <table class="record-table"></table>
+            </div>
+        </section>
+        <section id="results">
+            <h1>Results</h1>
+            <table class="results-table"></table>
+            <div class="buttons">
+                <button onclick="startTest()">Test Again</button>
+            </div>
+        </section>  
+        <section id="graph">
+            <h1>Graph</h1>
+            <div id="graphContainer"></div>
+            <div class="buttons">
+                <button onclick="showResults()">Results</button>
+                <button onclick="startTest()">Test Again</button>        
+            </div>
+        </section>  
+    </main>
+</body>
+</html>

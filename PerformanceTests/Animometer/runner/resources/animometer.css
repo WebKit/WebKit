@@ -1,0 +1,221 @@
+body {
+    background-color: rgb(96, 96, 96);
+    color: rgb(235, 235, 235);
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+}
+
+main {
+    display: block;
+    position: absolute;
+    width: 800px;
+    height: 600px;
+    top: 50%;
+    left: 50%;
+    margin-top: -321px;
+    margin-left: -421px;
+    padding: 15px;
+    border: 6px solid rgb(235, 235, 235);
+    border-radius: 20px;
+}
+
+iframe {
+    width: 800px;
+    height: 600px;
+    border: 0px none;
+    position: absolute;
+}
+
+label, p {
+    font-size: 16px;
+    line-height: 21px;
+}
+
+section {
+    display: none;
+}
+
+section > p {
+    margin: 10px 20px;
+}
+
+section#home > p {
+    margin: 0 auto;
+    width: 70%;
+    text-align: center;
+}
+
+section#home > p:first-child {
+    margin-top: 160px;
+    text-align: center;
+}
+
+section.selected {
+    display: block;
+}
+
+#testContainer {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 800px;
+    height: 600px;
+}
+
+section#running > #progress {
+    position: absolute;
+    bottom: -6px;
+    left: 60px;
+    right: 60px;
+    height: 6px;
+    background-color: rgb(128, 128, 128);
+    border-left: 6px solid rgb(46, 51, 55);
+    border-right: 6px solid rgb(46, 51, 55);
+}
+
+section#running #progress-completed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 6px;
+    width: 0;
+    background-color: rgb(235, 235, 235);
+}
+
+section#running > #record {
+    position: absolute;
+    bottom: -130px;
+    left: 0px;
+    right: 0px;
+    height: 75px;
+    color: rgb(128, 128, 128);
+    padding: 15px;
+    border: 6px solid rgb(235, 235, 235);
+    border-radius: 20px;
+}
+
+section#running > #record > table,
+section#results > table {
+    width: 100%;
+}
+
+section#running > #record > table td, th,
+section#results > table td, th {
+    font-size: 11px;
+    border: 1px solid #98bf21;
+    padding: 3px 4px 2px 4px;
+}
+                                           
+section#running > #record > table tr.alt, td
+section#results > table tr.alt, td {
+    color: #000000;
+    background-color: #EAF2D3;
+}
+                                             
+section#running > #record > table th,
+section#results > table th {
+    background-color: #A7C942; 
+    text-align: center;
+}
+
+.options {
+    margin:0 auto;    
+    margin-top: 30px;
+    width: 500px;
+    align: center;
+}
+
+.column {
+    width: 45%;
+    float:left;
+    height: 120px;
+    padding:5px;
+}
+
+input[type="number"] {
+   width:50px;
+}
+
+.buttons {
+    margin-top: 10px;
+    text-align: center;
+    clear: both;
+}
+
+button {
+    -webkit-appearance: none;
+    border: 3px solid rgb(235, 235, 235);
+    border-radius: 10px;
+    min-width: 200px;
+    padding: 5px 20px;
+    margin: 0 40px;
+    font-size: 25px;
+    color: rgb(235, 235, 235);
+    background-color: transparent;
+
+    -webkit-user-select: none;
+}
+
+button:active {
+    background-color: rgb(235, 235, 235);
+    color: rgb(46, 51, 55);
+    border-color: rgb(235, 235, 235) !important;
+}
+
+button:focus {
+    outline: none;
+    border-color: rgb(232, 79, 79);
+}
+
+.small-button {
+    -webkit-appearance: none;
+    border: 1px solid rgb(96, 96, 96);
+    border-radius: 2px;
+    padding: 1px 4px;
+    margin: 0 4px;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: center;
+    -webkit-user-select: none;
+}
+
+#graphContainer {
+  font: 10px sans-serif;
+  color: rgb(235, 235, 235);  
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: rgb(235, 235, 235);
+  shape-rendering: crispEdges;
+}
+
+.left-samples {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.right-samples {
+    fill: none;
+    stroke: red;
+    stroke-width: 1.5px;
+}
+
+.smaple-time {
+    fill: none;
+    stroke: green;
+    stroke-width: 1.5px;
+}
+
+.left-mean {
+    fill: none;
+    stroke: yellow;
+    stroke-width: 1.5px;
+}
+
+.right-mean {
+    fill: none;
+    stroke: magenta;
+    stroke-width: 1.5px;
+}

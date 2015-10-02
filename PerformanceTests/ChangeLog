@@ -1,3 +1,78 @@
+2015-10-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add the test runner for a new a graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=149683
+
+        Reviewed by Ryosuke Niwa.
+
+        The test runner collects the selected test suites and the running options
+        from its home page. It loops through all the tests, runs them and collects
+        their running results. At the end, it shows summary results and a final
+        score. It can also show a chart for a test sampled data.
+
+        * Animometer: Added.
+        * Animometer/runner: Added.
+        * Animometer/runner/resources: Added.
+        
+        * Animometer/runner/animometer.html: Added.
+        * Animometer/runner/resources/animometer.css: Added.
+        The benchmark runner page and css.
+
+        * Animometer/runner/resources/animometer.js: Added.
+        (window.benchmarkRunnerClient.willAddTestFrame): Called after the test <iframe> is created.
+        (window.benchmarkRunnerClient.didRunTest): Called after running a test is finished.
+        (window.benchmarkRunnerClient.willStartFirstIteration): Called at the beginning before running any test.
+        (window.benchmarkRunnerClient.didRunSuites): Called after running all tests of a suite.
+        (window.benchmarkRunnerClient.didFinishLastIteration): Called after running the last test.
+        
+        (showSection): Shows a section in the animometer.html page.
+        (startTest): Called when the "Start Test" button is clicked.
+        (showResults): Called after finishing all the tests.
+        (showGraph): Called when "Click..." button in the "Samples" column of the results table is clicked
+        
+        * Animometer/runner/resources/benchmark-runner.js: Copied from PerformanceTests/Speedometer/resources/benchmark-runner.js.
+        (BenchmarkRunnerState): Tracks the current running <suite, test>
+        (BenchmarkRunnerState.prototype.currentSuite): Returns the current running suite.
+        (BenchmarkRunnerState.prototype.currentTest): Returns the current running test.
+        (BenchmarkRunnerState.prototype.isFirstTest): Returns true if we are running the first test in the current suite.
+        (BenchmarkRunnerState.prototype.next): Advances to the next test.
+        (BenchmarkRunnerState.prototype.prepareCurrentTest): Creates a new <iframe> and waits for it to load a test.
+        
+        (BenchmarkRunner): Manages running the tests and communicating with the benchmarkRunnerClient.
+        (BenchmarkRunner.prototype.waitForElement): Waits for an element to be created.
+        (BenchmarkRunner.prototype._appendFrame): Creates a new <iframe> element.
+        (BenchmarkRunner.prototype._removeFrame): Removed the current <iframe> element.
+        (BenchmarkRunner.prototype._runTestAndRecordResults): Runs the current test and saves its results.
+        (BenchmarkRunner.prototype.step): Either runs the current test if there is or start a new iteration.
+        (BenchmarkRunner.prototype.runAllSteps): Loops to run all the tests and move to the next iteration.
+        (this._runNextIteration): Starts a new iteration or show the results.
+        (BenchmarkRunner.prototype.runMultipleIterations): Loops to run all the iterations and show the results
+        (BenchmarkRunner.prototype._finalize): Finalizes the current iteration and starts a new one.
+
+        (SimplePromise): Deleted.
+        (SimplePromise.prototype.then): Deleted.
+        (SimplePromise.prototype.resolve): Deleted.
+        (BenchmarkTestStep): Deleted.
+        (Fibonacci): Deleted.
+        SimplePromise was moved t Animometer/resources/extensions.js because it is used by the runner and the tests.
+        
+        (BenchmarkRunner.prototype._waitAndWarmUp): Deleted.
+        (BenchmarkRunner.prototype._runTest): Deleted.
+        (BenchmarkState.prototype.currentSuite): Deleted.
+        (BenchmarkState.prototype.currentTest): Deleted.
+        (BenchmarkState.prototype.next): Deleted.
+        (BenchmarkState.prototype.isFirstTest): Deleted.
+        (BenchmarkState.prototype.prepareCurrentSuite): Deleted.
+        BenchmarkState was renamed to BenchmarkRunnerState to not be confused with the tests BenchmarkState.
+        
+        * Animometer/runner/resources/d3.min.js: Copied from Websites/perf.webkit.org/public/v2/js/d3/d3.min.js.
+        Needed for drawing charts for the sampled scores and frame rates.
+        
+        * Animometer/runner/resources/graph.js: Added.
+        (graph): Draws a chart for a test sampled data. It shows two y-axes: one for the animated items and the second for FPS.
+                
+        * Skipped: Skip the Animometer benchmark for now.
+
 2015-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] REGRESSION(r188793): It made 200 layout tests and Bindings/event-target-wrapper.html performance test fail
