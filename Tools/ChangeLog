@@ -1,3 +1,38 @@
+2015-10-02  Daniel Bates  <dabates@apple.com>
+
+        LayoutTestRelay is not built and archived when building for iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=149753
+
+        Reviewed by Alexey Proskuryakov and Andy Estes.
+
+        Towards running layout tests on the iOS Simulator test bots, we need to teach scripts build-webkit
+        and built-product-archive to build the Mac tool LayoutTestRelay and include this tool in the built
+        product archive when building for iOS Simulator, respectively.
+
+        * BuildSlaveSupport/built-product-archive:
+        (main): Pass the full platform name (options.platform) to archiveBuiltProduct() so that it can
+        differentiate between iOS device and iOS Simulator platforms.
+        (webkitBuildDirectoryForConfigurationAndPlatform): Extracted logic to run the script webkit-build-directory
+        from determineWebKitBuildDirectories() into this function so that it can be used by both
+        determineWebKitBuildDirectories() and archiveBuiltProduct().
+        (determineWebKitBuildDirectories): Moved logic to execute the script webkit-build-directory from here to
+        webkitBuildDirectoryForConfigurationAndPlatform().
+        (createZip): Added parameter embedParentDirectoryNameOnDarwin (defaults to False) to specify whether
+        we should call ditto(1) with --keepParent to embed the parent directory name in the zip archive. This
+        argument is only applicable when building on Darwin. We only pass embedParentDirectoryNameOnDarwin=True
+        when making an archive for a Mac or iOS device build. For iOS Simulator builds we archive two directories
+        and we do not want to keep the parent directory because it is a placeholder directory used as a workaround
+        for the limitation that ditto(1) can only accept a single directory to archive on its command line.
+        (archiveBuiltProduct): Modified to take the full platform name as an argument. Added logic for iOS.
+        For iOS device builds we use the same logic as for a Mac build and archive the configuration-specific
+        build directory. For iOS Simulator builds we archive the configuration-specific iOS build directory,
+        LayoutTestRelay and LayoutTestRelay.dSYM (if it exists) from the configuration-specific Mac build.
+        * Scripts/build-layouttestrelay:
+            - Remove unnecessary include of Perl module POSIX.
+            - Only build LayoutTestRelay when building for iOS Simulator (i.e. --ios-simulator is passed).
+        * Scripts/build-webkit:
+            - Invoke script build-layouttestrelay when building for iOS Simulator.
+
 2015-10-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix.

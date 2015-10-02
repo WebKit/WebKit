@@ -62,21 +62,29 @@ def main():
         return 1
 
     if action == 'archive':
-        return archiveBuiltProduct(options.configuration, genericPlatform)
+        return archiveBuiltProduct(options.configuration, genericPlatform, options.platform)
     else:
         return extractBuiltProduct(options.configuration, genericPlatform)
 
 
-def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
-    global _configurationBuildDirectory
-    global _topLevelBuildDirectory
+def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False):
     if fullPlatform.startswith('ios-simulator'):
         platform = 'ios-simulator'
     elif platform == 'ios':
         platform = 'device'
     command = ['perl', os.path.join(os.path.dirname(__file__), '..', 'Scripts', 'webkit-build-directory'), '--' + platform, '--' + configuration]
-    _configurationBuildDirectory = subprocess.Popen(command + ['--configuration'], stdout=subprocess.PIPE).communicate()[0].strip()
-    _topLevelBuildDirectory = subprocess.Popen(command + ['--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
+    if returnTopLevelDirectory:
+        command += ['--top-level']
+    else:
+        command += ['--configuration']
+    return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip()
+
+
+def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
+    global _configurationBuildDirectory
+    global _topLevelBuildDirectory
+    _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform)
+    _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True)
     return _topLevelBuildDirectory
 
 
@@ -100,7 +108,7 @@ def createZipManually(directoryToZip, archiveFile):
     archiveZip.close()
 
 
-def createZip(directoryToZip, configuration):
+def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=False):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
     archiveFile = os.path.join(archiveDir, configuration + ".zip")
 
@@ -111,7 +119,11 @@ def createZip(directoryToZip, configuration):
             raise
 
     if sys.platform == 'darwin':
-        return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", directoryToZip, archiveFile])
+        command = ['ditto', '-c', '-k', '--sequesterRsrc']
+        if embedParentDirectoryNameOnDarwin:
+            command += ['--keepParent']
+        command += [directoryToZip, archiveFile]
+        return subprocess.call(command)
     elif sys.platform == 'cygwin':
         return subprocess.call(["zip", "-r", archiveFile, "bin32"], cwd=directoryToZip)
     elif sys.platform == 'win32':
@@ -121,11 +133,33 @@ def createZip(directoryToZip, configuration):
         return subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=directoryToZip)
 
 
-def archiveBuiltProduct(configuration, platform):
+def archiveBuiltProduct(configuration, platform, fullPlatform):
     assert platform in ('mac', 'win', 'gtk', 'efl', 'ios')
 
-    if platform in ('mac', 'ios'):
-        return createZip(_configurationBuildDirectory, configuration)
+    if fullPlatform.startswith('ios-simulator'):
+        # We need to include in the archive the Mac tool, LayoutTestRelay, to run layout tests in the iOS simulator.
+        combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-ios')
+        removeDirectoryIfExists(combinedDirectory)
+        os.makedirs(combinedDirectory)
+
+        if subprocess.call(['/bin/cp', '-pR', _configurationBuildDirectory, combinedDirectory]):
+            return 1
+
+        macBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
+        destinationDirectory = os.path.join(combinedDirectory, os.path.relpath(macBuildDirectory, _topLevelBuildDirectory))
+        os.makedirs(destinationDirectory)
+        for filename in ['LayoutTestRelay', 'LayoutTestRelay.dSYM']:
+            sourceFile = os.path.join(macBuildDirectory, filename)
+            if not os.path.exists(sourceFile):
+                continue
+            if subprocess.call(['/bin/cp', '-pR', sourceFile, destinationDirectory]):
+                return 1
+
+        if createZip(combinedDirectory, configuration):
+            return 1
+        shutil.rmtree(combinedDirectory)
+    elif platform in ('mac', 'ios'):
+        return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True)
     elif platform == 'win':
         # FIXME: We shouldn't hardcode the assumption of a 32-bit build. See <https://bugs.webkit.org/show_bug.cgi?id=149715>.
         binDirectory = os.path.join(_configurationBuildDirectory, 'bin32')
