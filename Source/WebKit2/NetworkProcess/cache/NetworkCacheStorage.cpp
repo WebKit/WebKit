@@ -458,13 +458,30 @@ Data Storage::encodeRecord(const Record& record, Optional<BlobStorage::Blob> blo
     return { headerData };
 }
 
+bool Storage::removeFromPendingWriteOperations(const Key& key)
+{
+    auto end = m_pendingWriteOperations.end();
+    for (auto it = m_pendingWriteOperations.begin(); it != end; ++it) {
+        if ((*it)->record.key == key) {
+            m_pendingWriteOperations.remove(it);
+            return true;
+        }
+    }
+    return false;
+}
+
 void Storage::remove(const Key& key)
 {
     ASSERT(RunLoop::isMain());
 
+    if (!mayContain(key))
+        return;
+
     // We can't remove the key from the Bloom filter (but some false positives are expected anyway).
     // For simplicity we also don't reduce m_approximateSize on removals.
     // The next synchronization will update everything.
+
+    removeFromPendingWriteOperations(key);
 
     serialBackgroundIOQueue().dispatch([this, key] {
         WebCore::deleteFile(recordPathForKey(key));

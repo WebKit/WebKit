@@ -119,6 +119,7 @@ private:
     void readRecord(ReadOperation&, const Data&);
 
     void updateFileModificationTime(const String& path);
+    bool removeFromPendingWriteOperations(const Key&);
 
     WorkQueue& ioQueue() { return m_ioQueue.get(); }
     WorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
