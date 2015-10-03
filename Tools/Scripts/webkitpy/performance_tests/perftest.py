@@ -266,6 +266,7 @@ class PerfTest(object):
         re.compile(re.escape("CONSOLE MESSAGE: line 125: You can configure event logging with DEBUG.events.logAll()/logNone()/logByName()/logByAction()")),
         re.compile(re.escape("CONSOLE MESSAGE: line 3285: Ember Views require jQuery 1.7, 1.8, 1.9, 1.10, or 2.0")),
         re.compile(re.escape("CONSOLE MESSAGE: line 3285: DEPRECATION: Namespaces should not begin with lowercase.")),
+        re.compile(re.escape("CONSOLE MESSAGE: line 208: Miss the info bar? Run TodoMVC from a server to avoid a cross-origin error."))
     ]
 
     def _filter_output(self, output):

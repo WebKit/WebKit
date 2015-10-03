@@ -1,3 +1,13 @@
+2015-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r190370): Speedometer spits out an extra console message
+        https://bugs.webkit.org/show_bug.cgi?id=149720
+
+        Unreviewed. Temporarily ignore the console error message.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._filter_output):
+
 2015-10-02  Brent Fulgham  <bfulgham@apple.com>
 
         Provide "--no-ninja" option to avoid using Ninja
