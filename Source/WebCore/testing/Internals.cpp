@@ -2620,7 +2620,7 @@ Vector<String> Internals::bufferedSamplesForTrackID(SourceBuffer* buffer, const 
 #if ENABLE(VIDEO)
 void Internals::beginMediaSessionInterruption()
 {
-    PlatformMediaSessionManager::sharedManager().beginInterruption(interruption);
+    PlatformMediaSessionManager::sharedManager().beginInterruption(PlatformMediaSession::SystemInterruption);
 }
 
 void Internals::endMediaSessionInterruption(const String& flagsString)
