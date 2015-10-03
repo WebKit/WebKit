@@ -1,3 +1,28 @@
+2015-10-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cleanup DebuggerManager, reduce `delete` and use Maps instead of objects
+        https://bugs.webkit.org/show_bug.cgi?id=149760
+
+        Reviewed by Joseph Pecoraro.
+
+        Replaced objects used as hashmaps with Map.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.breakpointsForSourceCode):
+        (WebInspector.DebuggerManager.prototype.breakpointForIdentifier):
+        (WebInspector.DebuggerManager.prototype.scriptForIdentifier):
+        (WebInspector.DebuggerManager.prototype.scriptsForURL):
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        (WebInspector.DebuggerManager.prototype.removeBreakpoint):
+        (WebInspector.DebuggerManager.prototype.breakpointResolved):
+        (WebInspector.DebuggerManager.prototype.reset):
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        (WebInspector.DebuggerManager.prototype._sourceCodeLocationFromPayload):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        (WebInspector.DebuggerManager.prototype._removeBreakpoint.didRemoveBreakpoint):
+        (WebInspector.DebuggerManager.prototype._removeBreakpoint):
+
 2015-10-02  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Copying inline style text puts "undefined" in the pasteboard
