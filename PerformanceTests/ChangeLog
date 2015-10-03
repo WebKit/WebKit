@@ -1,5 +1,95 @@
 2015-10-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Add shared code for a new a graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=149691
+
+        Reviewed by Ryosuke Niwa.
+
+        This set of classes will be shared and used by the tests and the runner
+        of a new graphics benchmark.
+
+        * Animometer/resources: Added.
+        * Animometer/resources/algorithm.js: Added.
+        (Array.prototype.swap): Swaps two elements in an array.
+        (Heap): Binary Min/Max Heap object
+        (Heap.prototype._parentIndex): Given the child node index, it returns the parent index.
+        (Heap.prototype._leftIndex): Given the parent node index, it returns the left node index.
+        (Heap.prototype._rightIndex): Given the parent node index, it returns the right node index.
+        (Heap.prototype._childIndex): Given the parent node index, it returns the child index that may violate the heap property.
+        (Heap.prototype.init): Initializes the heap state.
+        (Heap.prototype.top): Returns the value stored at the top of the heap.
+        (Heap.prototype.push): Pushes a new node at the top of the heap.
+        (Heap.prototype.pop): Extracts the top node of the heap.
+        (Heap.prototype._bubble): Fixes the heap property by moving upward.
+        (Heap.prototype._sink): Fixes the heap property by moving downward.
+        (Heap.prototype.str): Prints the nodes of the heap to a string.
+        (Heap.prototype.values): Returns the last "size" heap elements values.
+
+        (Algorithm.createMinHeap): Creates a size-bounded min-heap object.
+        (Algorithm.createMaxHeap): Creates a size-bounded max-heap object.
+        
+        * Animometer/resources/extensions.js: Added.
+        (Point): Point object but can be used as size also.
+        (Point.pointOnCircle): Given, the radius of the circle and the angle of the point, it returns a point object.
+        (Point.pointOnEllipse): Given, the radiuses of the ellipse and the angle of the point, it returns a point object.
+        (Point.prototype.get width): Should be called when the point is used as size.
+        (Point.prototype.get height): Should be called when the point is used as size.
+        (Point.prototype.get center): Should be called when the point is used as size.
+        (Point.prototype.add): Returns a new point = this + other.
+        (Point.prototype.subtract): Returns a new point = this - other.
+        (Point.prototype.multiply): Returns a new point = this * other.
+        (Point.prototype.move): Moves the point in a given direction, velocity, time period.
+
+        (Insets): Represents borders of a container.
+        (Insets.prototype.get width): Returns left + right.
+        (Insets.prototype.get height): Returns top + bottom.
+
+        (SimplePromise):
+        (SimplePromise.prototype.then):
+        (SimplePromise.prototype.resolve):
+        Moved from Animometer/runner/resources/benchmark-runner.js since tests also need it.
+
+        (Options): Benchmark running options as they are set by the user.
+
+        (ProgressBar): Manages a progress bar element. The progress bar is divided into equal length ranges.
+        (ProgressBar.prototype._progressToPercent): Converts the progress into a percentage.
+        (ProgressBar.prototype.incRange): Moves to the next range (a range is the running time of a single test).
+        (ProgressBar.prototype.setPos): Draws the current progress in the current range.
+
+        (RecordTable): Shows the results of running a benchmark in a tabular form.
+        (RecordTable.prototype.clear): Clears the results table.
+        (RecordTable.prototype._showTitles): Shows the header titles and appends the sub-titles to a queue.
+        (RecordTable.prototype._showHeader): Shows the table header titles.
+        (RecordTable.prototype._showEmpty): Shows an empty table cell.
+        (RecordTable.prototype._showValue): Shows a number value in the results table.
+        (RecordTable.prototype._showSamples): Shows a button for the sampled data graph.
+        (RecordTable.prototype._showTest): Shows the results of a single test.
+        (RecordTable.prototype._showSuite): Shows the results of a single suite.
+        (RecordTable.prototype.showRecord): Shows a single iteration for a single test.
+        (RecordTable.prototype.showIterations): Shows the results of all the suites of the iterations. 
+
+        * Animometer/resources/sampler.js: Added.
+        (Statistics.sampleMean): Returns the sample mean.
+        (Statistics.unbiasedSampleStandardDeviation): Returns the unbiased sample variance (i.e. with Bessel's correction)
+        (Statistics.geometricMean): Returns the geometric mean.
+
+        (Experiment): Represents a sampling experiment. 
+        (Experiment.prototype._init): Called when the object is created and when startSampling() is called.
+        (Experiment.prototype.startSampling): Called after warmup period. Restarts collecting sampled data points.
+        (Experiment.prototype.sample): Add a new data point.
+        (Experiment.prototype.mean): Returns the sample mean for the current sampled data points.
+        (Experiment.prototype.standardDeviation): Returns the sample standard deviation for the current sampled data points.
+        (Experiment.prototype.percentage): Returns the percentage of the standard deviation divided to the mean.
+        (Experiment.prototype.confidenceIntervalDelta): Calculates the confidence delta for the current sampled data given a confidence level.
+        (Experiment.prototype.concern): Returns the average of the worst given percentage from the sampled data.
+        (Experiment.prototype.score): Returns a score for the sampled data. It is the geometric mean of sampleMean and concern.
+
+        (Sampler): Represents a compound experiment. It manages sampling multiple data points at the same time offset.
+        (Sampler.prototype.startSampling): Called after warming up period. Restarts collecting sampled data points.
+        (Sampler.prototype.sample): Add a new data vector at a given time offset.
+        
+2015-10-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Add the test runner for a new a graphics benchmark
         https://bugs.webkit.org/show_bug.cgi?id=149683
 
