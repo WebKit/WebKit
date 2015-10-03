@@ -48,7 +48,6 @@ public:
 
     void externalOutputDeviceAvailableDidChange();
     virtual bool hasWirelessTargetsAvailable() override;
-    void applicationDidEnterBackground(bool isSuspendedUnderLock);
 
 private:
     friend class PlatformMediaSessionManager;

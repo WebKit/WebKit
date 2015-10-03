@@ -382,7 +382,7 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    void beginMediaSessionInterruption(const String&, ExceptionCode&);
+    void beginMediaSessionInterruption();
     void endMediaSessionInterruption(const String&);
     void applicationWillEnterForeground() const;
     void applicationWillEnterBackground() const;

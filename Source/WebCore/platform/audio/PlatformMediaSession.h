@@ -74,14 +74,16 @@ public:
         SystemSleep,
         EnteringBackground,
         SystemInterruption,
-        SuspendedUnderLock,
     };
     enum EndInterruptionFlags {
         NoFlags = 0,
         MayResumePlaying = 1 << 0,
     };
 
+    void doInterruption();
+    bool shouldDoInterruption(InterruptionType);
     void beginInterruption(InterruptionType);
+    void forceInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
     void applicationWillEnterForeground() const;
@@ -177,7 +179,7 @@ public:
     virtual void setShouldBufferData(bool) { }
     virtual bool elementIsHidden() const { return false; }
 
-    virtual bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const = 0;
+    virtual bool overrideBackgroundPlaybackRestriction() const = 0;
 
     virtual void wirelessRoutesAvailableDidChange() { }
     virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) { }

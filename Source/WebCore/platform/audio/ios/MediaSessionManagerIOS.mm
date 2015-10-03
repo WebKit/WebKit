@@ -248,21 +248,6 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
         session->externalOutputDeviceAvailableDidChange(haveTargets);
 }
 
-void MediaSessionManageriOS::applicationDidEnterBackground(bool isSuspendedUnderLock)
-{
-    LOG(Media, "MediaSessionManageriOS::applicationDidEnterBackground");
-
-    if (!isSuspendedUnderLock)
-        return;
-
-    Vector<PlatformMediaSession*> sessions = this->sessions();
-    for (auto* session : sessions) {
-        if (restrictions(session->mediaType()) & BackgroundProcessPlaybackRestricted)
-            session->beginInterruption(PlatformMediaSession::SuspendedUnderLock);
-    }
-}
-
-
 } // namespace WebCore
 
 @implementation WebMediaSessionHelper

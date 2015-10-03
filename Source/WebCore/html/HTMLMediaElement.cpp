@@ -6327,14 +6327,14 @@ size_t HTMLMediaElement::maximumSourceBufferSize(const SourceBuffer& buffer) con
 
 void HTMLMediaElement::suspendPlayback()
 {
-    LOG(Media, "HTMLMediaElement::suspendPlayback(%p) - paused = %s", this, boolString(paused()));
+    LOG(Media, "HTMLMediaElement::pausePlayback(%p) - paused = %s", this, boolString(paused()));
     if (!paused())
         pause();
 }
 
 void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 {
-    LOG(Media, "HTMLMediaElement::mayResumePlayback(%p) - paused = %s", this, boolString(paused()));
+    LOG(Media, "HTMLMediaElement::resumePlayback(%p) - paused = %s", this, boolString(paused()));
     if (paused() && shouldResume)
         play();
 }
@@ -6376,11 +6376,8 @@ void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::Remo
     }
 }
 
-bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType type) const
+bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
 {
-    if (type != PlatformMediaSession::EnteringBackground)
-        return false;
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_player && m_player->isCurrentPlaybackTargetWireless())
         return true;
