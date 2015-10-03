@@ -60,6 +60,11 @@
     width: 100%;
 }
 
+#edit-breakpoint-popover-ignore {
+    width: 40px;
+    margin-right: 4px;
+}
+
 #edit-breakpoint-popoover-auto-continue {
     margin-left: 0;
     margin-right: 4px;

@@ -1,3 +1,38 @@
+2015-10-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Add breakpoint option to ignore n times before stopping
+        https://bugs.webkit.org/show_bug.cgi?id=147664
+
+        Reviewed by Timothy Hatcher.
+
+        * debugger/Breakpoint.h:
+        (JSC::Breakpoint::Breakpoint):
+        Added ignoreCount and hitCount fields. Cleaned up initializers.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::hasBreakpoint):
+        If a breakpoint matches the current text position, increment breakpoint hit count and
+        compare with ignore count before testing the breakpoint condition.
+
+        * inspector/ScriptBreakpoint.h:
+        (Inspector::ScriptBreakpoint::ScriptBreakpoint):
+        Added ignoreCount field. Cleaned up initializers.
+
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::setBreakpoint):
+        Added ignoreCount field.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::buildObjectForBreakpointCookie):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        Plumbing for ignoreCount property.
+
+        * inspector/protocol/Debugger.json:
+        Added optional ignoreCount property to BreakpointOptions object.
+
 2015-10-02  Filip Pizlo <fpizlo@apple.com> and Mark Lam <mark.lam@apple.com>
 
         We should not add InferredTypeTables to old Structures

@@ -61,7 +61,7 @@ JSC::BreakpointID ScriptDebugServer::setBreakpoint(JSC::SourceID sourceID, const
     if (!sourceID)
         return JSC::noBreakpointID;
 
-    JSC::Breakpoint breakpoint(sourceID, scriptBreakpoint.lineNumber, scriptBreakpoint.columnNumber, scriptBreakpoint.condition, scriptBreakpoint.autoContinue);
+    JSC::Breakpoint breakpoint(sourceID, scriptBreakpoint.lineNumber, scriptBreakpoint.columnNumber, scriptBreakpoint.condition, scriptBreakpoint.autoContinue, scriptBreakpoint.ignoreCount);
     JSC::BreakpointID id = Debugger::setBreakpoint(breakpoint, *actualLineNumber, *actualColumnNumber);
     if (id != JSC::noBreakpointID && !scriptBreakpoint.actions.isEmpty()) {
 #ifndef NDEBUG

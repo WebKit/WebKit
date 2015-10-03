@@ -420,6 +420,10 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
     if (hitBreakpoint)
         *hitBreakpoint = *breakpoint;
 
+    breakpoint->hitCount++;
+    if (breakpoint->ignoreCount >= breakpoint->hitCount)
+        return false;
+
     if (breakpoint->condition.isEmpty())
         return true;
 

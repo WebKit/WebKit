@@ -39,6 +39,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
             var lineNumber = sourceCodeLocationOrInfo.lineNumber || 0;
             var columnNumber = sourceCodeLocationOrInfo.columnNumber || 0;
             var location = new WebInspector.SourceCodeLocation(null, lineNumber, columnNumber);
+            var ignoreCount = sourceCodeLocationOrInfo.ignoreCount || 0;
             var autoContinue = sourceCodeLocationOrInfo.autoContinue || false;
             var actions = sourceCodeLocationOrInfo.actions || [];
             for (var i = 0; i < actions.length; ++i)
@@ -53,6 +54,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         this._scriptIdentifier = scriptIdentifier || null;
         this._disabled = disabled || false;
         this._condition = condition || "";
+        this._ignoreCount = ignoreCount || 0;
         this._autoContinue = autoContinue || false;
         this._actions = actions || [];
         this._resolved = false;
@@ -141,6 +143,25 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ConditionDidChange);
     }
 
+    get ignoreCount()
+    {
+        return this._ignoreCount;
+    }
+
+    set ignoreCount(ignoreCount)
+    {
+        console.assert(ignoreCount >= 0, "Ignore count cannot be negative.");
+        if (ignoreCount < 0)
+            return;
+
+        if (this._ignoreCount === ignoreCount)
+            return;
+
+        this._ignoreCount = ignoreCount;
+
+        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.IgnoreCountDidChange);
+    }
+
     get autoContinue()
     {
         return this._autoContinue;
@@ -165,6 +186,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
     {
         return {
             condition: this._condition,
+            ignoreCount: this._ignoreCount,
             actions: this._serializableActions(),
             autoContinue: this._autoContinue
         };
@@ -179,6 +201,7 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
             columnNumber: this._sourceCodeLocation.columnNumber,
             disabled: this._disabled,
             condition: this._condition,
+            ignoreCount: this._ignoreCount,
             actions: this._serializableActions(),
             autoContinue: this._autoContinue
         };
@@ -325,6 +348,7 @@ WebInspector.Breakpoint.Event = {
     DisabledStateDidChange: "breakpoint-disabled-state-did-change",
     ResolvedStateDidChange: "breakpoint-resolved-state-did-change",
     ConditionDidChange: "breakpoint-condition-did-change",
+    IgnoreCountDidChange: "breakpoint-ignore-count-did-change",
     ActionsDidChange: "breakpoint-actions-did-change",
     AutoContinueDidChange: "breakpoint-auto-continue-did-change",
     LocationDidChange: "breakpoint-location-did-change",

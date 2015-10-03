@@ -1,5 +1,39 @@
 2015-10-02  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Add breakpoint option to ignore n times before stopping
+        https://bugs.webkit.org/show_bug.cgi?id=147664
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings for breakpoint popover labels.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WebInspector.BreakpointPopoverController.prototype._createPopoverContent):
+        Add ignoreCount UI to popover, if backend support exists. UI based on same
+        feature in Xcode's breakpoint editing dialog.
+        (WebInspector.BreakpointPopoverController.prototype._popoverIgnoreInputChanged):
+        User input sanity checks on numeric input.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        Listen for changes to breakpoint ignoreCount property.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.get ignoreCount):
+        (WebInspector.Breakpoint.prototype.set ignoreCount):
+        New property for ignoreCount.
+        (WebInspector.Breakpoint.prototype.get options):
+        Added ignoreCount to options object.
+        (WebInspector.Breakpoint.prototype.get info):
+        Added ignoreCount to info object.
+
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (#edit-breakpoint-popover-ignore):
+        New styles for breakpoint popover.
+
+2015-10-02  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Cleanup DebuggerManager, reduce `delete` and use Maps instead of objects
         https://bugs.webkit.org/show_bug.cgi?id=149760
 

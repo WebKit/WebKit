@@ -144,6 +144,27 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
 
         // COMPATIBILITY (iOS 7): Debugger.setBreakpoint did not support options.
         if (DebuggerAgent.setBreakpoint.supports("options")) {
+            // COMPATIBILITY (iOS 9): Legacy backends don't support breakpoint ignore count. Since support
+            // can't be tested directly, check for CSS.getSupportedSystemFontFamilyNames.
+            // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
+            if (CSSAgent.getSupportedSystemFontFamilyNames) {
+                let ignoreCountRow = table.appendChild(document.createElement("tr"));
+                let ignoreCountHeader = ignoreCountRow.appendChild(document.createElement("th"));
+                let ignoreCountLabel = ignoreCountHeader.appendChild(document.createElement("label"));
+                let ignoreCountData = ignoreCountRow.appendChild(document.createElement("td"));
+                this._ignoreCountInput = ignoreCountData.appendChild(document.createElement("input"));
+                this._ignoreCountInput.id = "edit-breakpoint-popover-ignore";
+                this._ignoreCountInput.type = "number";
+                this._ignoreCountInput.min = 0;
+                this._ignoreCountInput.value = this._ignoreCount || 0;
+                this._ignoreCountInput.addEventListener("change", this._popoverIgnoreInputChanged.bind(this));
+
+                let ignoreCountText = ignoreCountData.appendChild(document.createElement("span"));
+                ignoreCountLabel.setAttribute("for", this._ignoreCountInput.id);
+                ignoreCountLabel.textContent = WebInspector.UIString("Ignore");
+                ignoreCountText.textContent = WebInspector.UIString("times before stopping");
+            }
+
             let actionRow = table.appendChild(document.createElement("tr"));
             let actionHeader = actionRow.appendChild(document.createElement("th"));
             let actionData = this._actionsContainer = actionRow.appendChild(document.createElement("td"));
@@ -189,6 +210,19 @@ WebInspector.BreakpointPopoverController = class BreakpointPopoverController ext
     _popoverConditionInputChanged(event)
     {
         this._breakpoint.condition = event.target.value;
+    }
+
+    _popoverIgnoreInputChanged(event)
+    {
+        let ignoreCount = 0;
+        if (event.target.value) {
+            ignoreCount = parseInt(event.target.value, 10);
+            if (isNaN(ignoreCount) || ignoreCount < 0)
+                ignoreCount = 0;
+        }
+
+        this._ignoreCountInput.value = ignoreCount;
+        this._breakpoint.ignoreCount = ignoreCount;
     }
 
     _popoverToggleAutoContinueCheckboxChanged(event)
