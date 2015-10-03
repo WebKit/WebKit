@@ -168,6 +168,10 @@ table.queue-grid td.logo img.logo {
     left: 26px;
 }
 
+table.queue-grid tr.platform.ios-simulator-9 img.logo {
+    content: -webkit-image-set(url(../Images/IOS9Simulator@2x.png) 2x, url(../Images/IOS9Simulator.png) 1x);
+}
+
 table.queue-grid tr.platform.ios-8 img.logo {
     content: -webkit-image-set(url(../Images/IOSDevice@2x.png) 2x, url(../Images/IOSDevice.png) 1x);
 }
