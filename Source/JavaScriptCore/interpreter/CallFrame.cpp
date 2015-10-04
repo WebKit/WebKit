@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CallFrame.h"
 
-#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
@@ -36,6 +35,68 @@
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
+
+bool CallFrame::callSiteBitsAreBytecodeOffset() const
+{
+    ASSERT(codeBlock());
+    switch (codeBlock()->jitType()) {
+    case JITCode::InterpreterThunk:
+    case JITCode::BaselineJIT:
+        return true;
+    case JITCode::None:
+    case JITCode::HostCallThunk:
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    default:
+        return false;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool CallFrame::callSiteBitsAreCodeOriginIndex() const
+{
+    ASSERT(codeBlock());
+    switch (codeBlock()->jitType()) {
+    case JITCode::DFGJIT:
+    case JITCode::FTLJIT:
+        return true;
+    case JITCode::None:
+    case JITCode::HostCallThunk:
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    default:
+        return false;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+unsigned CallFrame::callSiteAsRawBits() const
+{
+    return this[JSStack::ArgumentCount].tag();
+}
+
+CallSiteIndex CallFrame::callSiteIndex() const
+{
+    return CallSiteIndex(callSiteAsRawBits());
+}
+
+bool CallFrame::hasActivation() const
+{
+    JSValue activation = uncheckedActivation();
+    return !!activation && activation.isCell();
+}
+
+JSValue CallFrame::uncheckedActivation() const
+{
+    CodeBlock* codeBlock = this->codeBlock();
+    RELEASE_ASSERT(codeBlock->needsActivation());
+    VirtualRegister activationRegister = codeBlock->activationRegister();
+    return registers()[activationRegister.offset()].jsValue();
+}
 
 #ifndef NDEBUG
 JSStack* CallFrame::stack()

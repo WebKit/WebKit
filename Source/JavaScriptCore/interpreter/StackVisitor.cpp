@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StackVisitor.h"
 
-#include "CallFrameInlines.h"
 #include "ClonedArguments.h"
 #include "Executable.h"
 #include "InlineCallFrame.h"

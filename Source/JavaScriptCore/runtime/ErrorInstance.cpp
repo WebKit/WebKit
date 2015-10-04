@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ErrorInstance.h"
 
+#include "CodeBlock.h"
 #include "JSScope.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"

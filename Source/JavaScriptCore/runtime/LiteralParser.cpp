@@ -28,6 +28,7 @@
 #include "LiteralParser.h"
 
 #include "ButterflyInlines.h"
+#include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
 #include "JSArray.h"
 #include "JSString.h"

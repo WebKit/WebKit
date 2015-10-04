@@ -26,6 +26,7 @@
 #include "ArrayPrototype.h"
 #include "ButterflyInlines.h"
 #include "CachedCall.h"
+#include "CodeBlock.h"
 #include "CopiedSpace.h"
 #include "Error.h"
 #include "Executable.h"

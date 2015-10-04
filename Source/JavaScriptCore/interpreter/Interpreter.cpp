@@ -32,7 +32,6 @@
 
 #include "BatchedTransitionOptimizer.h"
 #include "CallFrameClosure.h"
-#include "CallFrameInlines.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "DirectArguments.h"
