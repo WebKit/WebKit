@@ -1,3 +1,16 @@
+2015-10-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Wrong column numbers in error object views
+        https://bugs.webkit.org/show_bug.cgi?id=149795
+
+        Convert columnNumber and lineNumber properties from strings to numbers
+        to prevent accidental string concatenations.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace._parseStackTrace):
+
 2015-10-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Add breakpoint option to ignore n times before stopping

@@ -66,12 +66,12 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
 
                 var columnIndex = url.lastIndexOf(":");
                 if (columnIndex !== -1) {
-                    columnNumber = url.slice(columnIndex + 1);
+                    columnNumber = parseInt(url.slice(columnIndex + 1));
 
                     url = url.slice(0, columnIndex);
                     var lineIndex = url.lastIndexOf(":", columnIndex);
                     if (lineIndex !== -1) {
-                        lineNumber = url.slice(lineIndex + 1, columnIndex);
+                        lineNumber = parseInt(url.slice(lineIndex + 1, columnIndex));
                         url = url.slice(0, lineIndex);
                     }
                 }
