@@ -221,6 +221,10 @@ webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeou
 
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
 
+webkit.org/b/148890 http/tests/contentfiltering/load-substitute-data-from-appcache.html [ Pass Crash ]
+# One the bug is fixed, the below test will need a Pass expectation, because it's skipped in root TestExpectations.
+webkit.org/b/148890 http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass Crash ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -721,8 +725,6 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin
 # DumpRenderTree does not allow GIFs to animate, thus animated GIF tests don't work in WebKit1.
 fast/images/animated-gif-no-layout.html [ Pass ]
 fast/images/gif-loop-count.html [ Pass ]
-
-http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
