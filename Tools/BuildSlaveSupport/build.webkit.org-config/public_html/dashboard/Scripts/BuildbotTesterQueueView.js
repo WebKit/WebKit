@@ -82,7 +82,11 @@ BuildbotTesterQueueView.prototype = {
                     // A crashes-only queue is a queue where we are only interested in crashes, e.g. a GuardMalloc or an ASan one.
                     // Currently, only layout tests are supported in such.
                     var layoutTestResults = iteration.layoutTestResults;
-                    if (layoutTestResults.tooManyFailures) {
+                    if (!layoutTestResults) {
+                        // Tests did not run.
+                        var url = iteration.queue.buildbot.buildPageURLForIteration(iteration);
+                        var status = new StatusLineView(messageElement, StatusLineView.Status.Danger, iteration.text, undefined, url);
+                    } else if (layoutTestResults.tooManyFailures) {
                         var status = new StatusLineView(messageElement, StatusLineView.Status.Bad, "failure limit exceeded", undefined, iteration.queue.buildbot.layoutTestResultsURLForIteration(iteration));
                         new PopoverTracker(status.statusBubbleElement, this._presentPopoverForLayoutTestRegressions.bind(this), iteration);
                     } else if (layoutTestResults.errorOccurred) {
