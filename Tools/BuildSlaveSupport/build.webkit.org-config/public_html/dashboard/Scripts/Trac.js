@@ -90,7 +90,14 @@ Trac.prototype = {
     _convertCommitInfoElementToObject: function(doc, commitElement)
     {
         var link = doc.evaluate("./link", commitElement, null, XPathResult.STRING_TYPE).stringValue;
-        var revisionNumber = parseInt(/\d+$/.exec(link))
+
+        // There are multiple link formats for Trac that we support:
+        // https://trac.webkit.org/changeset/190497
+        // http://trac.foobar.com/repository/changeset/75388/project
+        var linkComponents = link.split("/");
+        var revisionNumber = parseInt(linkComponents.pop());
+        if (!revisionNumber)
+            var revisionNumber = parseInt(linkComponents.pop());
 
         function tracNSResolver(prefix)
         {
