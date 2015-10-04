@@ -121,6 +121,28 @@ public:
         }
     }
 
+    static std::chrono::milliseconds timeToLive(JITType jitType)
+    {
+        switch (jitType) {
+        case InterpreterThunk:
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(5));
+        case BaselineJIT:
+            // Effectively 10 additional seconds, since BaselineJIT and
+            // InterpreterThunk share a CodeBlock.
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(15));
+        case DFGJIT:
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(20));
+        case FTLJIT:
+            return std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::seconds(60));
+        default:
+            return std::chrono::milliseconds::max();
+        }
+    }
+
     static bool isLowerTier(JITType expectedLower, JITType expectedHigher)
     {
         RELEASE_ASSERT(isExecutableScript(expectedLower));
