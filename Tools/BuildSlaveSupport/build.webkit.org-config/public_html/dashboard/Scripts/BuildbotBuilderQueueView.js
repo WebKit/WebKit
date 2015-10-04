@@ -75,7 +75,7 @@ BuildbotBuilderQueueView.prototype = {
                 && mostRecentFinishedIteration && mostRecentFinishedIteration.loaded) {
                 console.assert(!mostRecentFinishedIteration.successful);
                 var message = this.revisionContentForIteration(mostRecentFinishedIteration, mostRecentFinishedIteration.productive ? mostRecentSuccessfulIteration : null);
-                if (mostRecentFinishedIteration.failed) {
+                if (mostRecentFinishedIteration.failed && mostRecentFinishedIteration.productive) {
                     // Assume it was a build step that failed, and link directly to output.
                     var url = mostRecentFinishedIteration.failureLogURL("build log");
                     if (!url)
