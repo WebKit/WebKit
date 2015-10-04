@@ -8,6 +8,8 @@
     function mouseOver(event)
     {
         passed = true;
+        clearTimeout(timeoutID);
+        finish();
     }
 
     function finish()
@@ -27,7 +29,7 @@
         {
             eventSender.mouseMoveTo(50, 100);
             document.getElementById("target").scrollTop = 250;
-            setTimeout(finish, 200);
+            timeoutID = setTimeout(finish, 20000);
         }, 200);
     }
 </script>
