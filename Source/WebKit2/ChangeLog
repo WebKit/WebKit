@@ -1,3 +1,21 @@
+2015-10-03  Ricky Mondello  <rmondello@apple.com>
+
+        "Plug-in is blocked" message doesn't draw correctly
+        https://bugs.webkit.org/show_bug.cgi?id=149741
+        <rdar://problem/22920949>
+
+        Patch by Conrad Shultz and Ricky Mondello.
+
+        Reviewed by Anders Carlsson.
+
+        If a WebKit client sets plug-in X to not be visible to the web, that doesn't mean we shouldn't consult
+        that plug-in when determining what kind of object type an object is. Properly classifying a non-web-visible
+        Netscape plug-in as such allows its bounds to properly measured, allowing it to be drawn properly.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType): Use PluginData's supportsMimeType, rather than its
+            supportsWebVisibleMimeType, when determining the ObjectContentType for a MIME type on a url.
+
 2015-10-02  Enrica Casucci  <enrica@apple.com>
 
         Text selection is inaccurate in Wikipedia pages when starting navigation from wikipedia.org.

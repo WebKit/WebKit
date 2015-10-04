@@ -100,12 +100,16 @@ public:
     String pluginNameForWebVisibleMimeType(const String& mimeType) const;
     String pluginFileForWebVisibleMimeType(const String& mimeType) const;
 
+    WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
+
     static void refresh();
 
 private:
     explicit PluginData(const Page*);
     void initPlugins();
     bool getPluginInfoForWebVisibleMimeType(const String& mimeType, PluginInfo&) const;
+    void getMimesAndPluginIndices(Vector<MimeClassInfo>&, Vector<size_t>&) const;
+    void getMimesAndPluginIndiciesForPlugins(const Vector<PluginInfo>&, Vector<MimeClassInfo>&, Vector<size_t>&) const;
 
 protected:
 #if defined ENABLE_WEB_REPLAY && ENABLE_WEB_REPLAY
