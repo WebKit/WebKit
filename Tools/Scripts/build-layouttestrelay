@@ -56,8 +56,11 @@ chdirWebKit();
 
 chdir "Tools/LayoutTestRelay" or die;
 
-if (isIOSWebKit() && willUseIOSSimulatorSDKWhenBuilding()) {
-    setXcodeSDK(undef); # Force use of Mac SDK
+# FIXME: This tool is only useful when building WebKit for iOS Simulator. For now,
+#        to avoid breaking some Apple Internal tools we support calling this script
+#        without --ios-simulator so long as we are building on a Mac.
+if (isAppleMacWebKit() && !willUseIOSDeviceSDKWhenBuilding()) {
+    setXcodeSDK(undef); # Force use of Mac SDK if --ios-simulator was passed
     exit exitStatus(buildXCodeProject("LayoutTestRelay", $clean, XcodeOptions(), @ARGV));
 }
 

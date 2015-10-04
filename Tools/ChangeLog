@@ -1,3 +1,13 @@
+2015-10-04  Daniel Bates  <dabates@apple.com>
+
+        Fix the Apple Internal iOS build after <http://trac.webkit.org/changeset/190515>
+        (https://bugs.webkit.org/show_bug.cgi?id=149753)
+
+        For now, support calling build-layouttestrelay without --ios-simulator so long
+        as we are building on a Mac.
+
+        * Scripts/build-layouttestrelay:
+
 2015-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Support Trac 1.0.x XML timeline link format
