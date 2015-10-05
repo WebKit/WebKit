@@ -1,3 +1,28 @@
+2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(189668?): http/tests/notifications/events.html flakily asserts or times out
+        https://bugs.webkit.org/show_bug.cgi?id=149218
+
+        Reviewed by Alexey Proskuryakov.
+
+        Because of r189668, WebKitTestRunner now tears down and recreates its WKNotificationManagerRef
+        when the TestOptions change. Previously, WebNotificationProvider only could handle a single
+        WKNotificationManagerRef. Because the ower of the WKNotificationManagerRef is reference counted,
+        and AppKit internally retains some objects which end up retaining the WKNotificationManagerRef,
+        the old WKNotificationManager may not be destroyed before the new one is created. Therefore,
+        WebNotificationProvider must be updated to appropriately handle multiple
+        WKNotificationManagerRefs in flight at the same time.
+
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::~WebNotificationProvider):
+        (WTR::WebNotificationProvider::showWebNotification):
+        (WTR::WebNotificationProvider::closeWebNotification):
+        (WTR::WebNotificationProvider::addNotificationManager):
+        (WTR::WebNotificationProvider::removeNotificationManager):
+        (WTR::WebNotificationProvider::simulateWebNotificationClick):
+        (WTR::WebNotificationProvider::reset):
+        * WebKitTestRunner/WebNotificationProvider.h:
+
 2015-10-05  Daniel Bates  <dabates@apple.com>
 
         Disable Bitcode when building for iOS device
