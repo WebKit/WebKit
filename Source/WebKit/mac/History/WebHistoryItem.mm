@@ -290,11 +290,6 @@ WebHistoryItem *kit(HistoryItem* item)
     return [[[self alloc] initWithURL:URL title:nil] autorelease];
 }
 
-- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
-{
-    return [self initWithWebCoreHistoryItem:HistoryItem::create(URL, target, parent, title)];
-}
-
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
     WebHistoryItem *item = [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle)];

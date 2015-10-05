@@ -1,3 +1,16 @@
+2015-10-05  Andreas Kling  <akling@apple.com>
+
+        Remove unused HistoryItem::parent
+        <https://webkit.org/b/149803>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the only (unused) client of HistoryItem's with-parent constructor.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initWithURL:target:parent:title:]): Deleted.
+        * History/WebHistoryItemInternal.h:
+
 2015-09-30  Timothy Horton  <timothy_horton@apple.com>
 
         Compute document marker rects at use time instead of paint time

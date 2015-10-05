@@ -109,27 +109,6 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     iconDatabase().retainIconForPageURL(m_urlString);
 }
 
-HistoryItem::HistoryItem(const URL& url, const String& target, const String& parent, const String& title)
-    : m_urlString(url.string())
-    , m_originalURLString(url.string())
-    , m_target(target)
-    , m_parent(parent)
-    , m_title(title)
-    , m_pageScaleFactor(0)
-    , m_lastVisitWasFailure(false)
-    , m_isTargetItem(false)
-    , m_itemSequenceNumber(generateSequenceNumber())
-    , m_documentSequenceNumber(generateSequenceNumber())
-    , m_pruningReason(PruningReason::None)
-#if PLATFORM(IOS)
-    , m_scale(0)
-    , m_scaleIsInitial(false)
-    , m_bookmarkID(0)
-#endif
-{    
-    iconDatabase().retainIconForPageURL(m_urlString);
-}
-
 HistoryItem::~HistoryItem()
 {
     ASSERT(!m_cachedPage);
@@ -142,7 +121,6 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_originalURLString(item.m_originalURLString)
     , m_referrer(item.m_referrer)
     , m_target(item.m_target)
-    , m_parent(item.m_parent)
     , m_title(item.m_title)
     , m_displayTitle(item.m_displayTitle)
     , m_scrollPoint(item.m_scrollPoint)
@@ -185,7 +163,6 @@ void HistoryItem::reset()
     m_originalURLString = String();
     m_referrer = String();
     m_target = String();
-    m_parent = String();
     m_title = String();
     m_displayTitle = String();
 
@@ -252,11 +229,6 @@ const String& HistoryItem::target() const
     return m_target;
 }
 
-const String& HistoryItem::parent() const
-{
-    return m_parent;
-}
-
 void HistoryItem::setAlternateTitle(const String& alternateTitle)
 {
     m_displayTitle = alternateTitle;
@@ -303,11 +275,6 @@ void HistoryItem::setTarget(const String& target)
 {
     m_target = target;
     notifyHistoryItemChanged(this);
-}
-
-void HistoryItem::setParent(const String& parent)
-{
-    m_parent = parent;
 }
 
 const IntPoint& HistoryItem::scrollPoint() const

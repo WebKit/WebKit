@@ -44,7 +44,6 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
 
-- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title;
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time;
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<WebCore::HistoryItem>)item;

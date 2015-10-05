@@ -639,13 +639,10 @@ void HistoryController::initializeItem(HistoryItem& item)
     if (originalURL.isEmpty())
         originalURL = blankURL();
     
-    Frame* parentFrame = m_frame.tree().parent();
-    String parent = parentFrame ? parentFrame->tree().uniqueName() : "";
     StringWithDirection title = documentLoader->title();
 
     item.setURL(url);
     item.setTarget(m_frame.tree().uniqueName());
-    item.setParent(parent);
     // FIXME: should store title directionality in history as well.
     item.setTitle(title.string());
     item.setOriginalURLString(originalURL.string());
