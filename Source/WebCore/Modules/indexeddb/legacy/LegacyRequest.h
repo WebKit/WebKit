@@ -119,7 +119,7 @@ protected:
     RefPtr<DOMError> m_error;
     bool m_contextStopped;
     RefPtr<LegacyTransaction> m_transaction;
-    ReadyState m_readyState;
+    IDBRequestReadyState m_readyState;
     bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
 
 private:

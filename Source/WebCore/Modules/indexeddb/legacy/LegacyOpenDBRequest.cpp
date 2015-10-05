@@ -132,7 +132,7 @@ bool LegacyOpenDBRequest::shouldEnqueueEvent() const
 {
     if (m_contextStopped || !scriptExecutionContext())
         return false;
-    ASSERT(m_readyState == PENDING || m_readyState == DONE);
+    ASSERT(m_readyState == IDBRequestReadyState::Pending || m_readyState == IDBRequestReadyState::Done);
     if (m_requestAborted)
         return false;
     return true;

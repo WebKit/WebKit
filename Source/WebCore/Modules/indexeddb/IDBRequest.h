@@ -44,6 +44,13 @@ class IDBTransaction;
 
 typedef int ExceptionCode;
 
+// Defined in the IDL
+enum class IDBRequestReadyState {
+    Pending = 1,
+    Done = 2,
+    DeprecatedEarlyDeath = 3, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=149117 - Remove this when removing LegacyIDB
+};
+
 class IDBRequest : public ScriptWrappable, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     virtual ~IDBRequest() { }
@@ -53,13 +60,6 @@ public:
     virtual RefPtr<DOMError> error(ExceptionCode&) const = 0;
     virtual RefPtr<IDBAny> source() const = 0;
     virtual RefPtr<IDBTransaction> transaction() const = 0;
-
-    // Defined in the IDL
-    enum ReadyState {
-        PENDING = 1,
-        DONE = 2,
-        EarlyDeath = 3
-    };
 
     virtual const String& readyState() const = 0;
 
