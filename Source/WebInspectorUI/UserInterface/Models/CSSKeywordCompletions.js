@@ -101,7 +101,7 @@ WebInspector.CSSKeywordCompletions.InheritedProperties = [
     "stroke-width", "tab-size", "text-align", "text-anchor", "text-decoration", "text-indent", "text-rendering",
     "text-shadow", "text-transform", "visibility", "voice-family", "volume", "white-space", "widows", "word-break",
     "word-spacing", "word-wrap", "writing-mode", "-webkit-aspect-ratio", "-webkit-border-horizontal-spacing",
-    "-webkit-border-vertical-spacing", "-webkit-box-direction", "-webkit-color-correction", "-webkit-font-feature-settings",
+    "-webkit-border-vertical-spacing", "-webkit-box-direction", "-webkit-color-correction", "font-feature-settings",
     "-webkit-font-kerning", "-webkit-font-smoothing", "-webkit-font-variant-ligatures",
     "-webkit-hyphenate-character", "-webkit-hyphenate-limit-after", "-webkit-hyphenate-limit-before",
     "-webkit-hyphenate-limit-lines", "-webkit-hyphens", "-webkit-line-align", "-webkit-line-box-contain",
@@ -958,7 +958,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-line-box-contain": [
         "block", "inline", "font", "glyphs", "replaced", "inline-box", "none", "initial"
     ],
-    "-webkit-font-feature-settings": [
+    "font-feature-settings": [
         "normal"
     ],
     "-webkit-font-variant-ligatures": [

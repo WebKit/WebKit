@@ -1,3 +1,12 @@
+2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unprefix -webkit-font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=149722
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2015-10-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Wrong column numbers in error object views

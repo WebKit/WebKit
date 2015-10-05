@@ -2530,7 +2530,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return fontWeightFromStyle(style.get());
         case CSSPropertyFontSynthesis:
             return fontSynthesisFromStyle(*style);
-        case CSSPropertyWebkitFontFeatureSettings: {
+        case CSSPropertyFontFeatureSettings: {
             const FontFeatureSettings& featureSettings = style->fontDescription().featureSettings();
             if (!featureSettings.size())
                 return cssValuePool.createIdentifierValue(CSSValueNormal);

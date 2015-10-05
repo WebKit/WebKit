@@ -3055,7 +3055,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             return parseLineBoxContain(important);
         break;
-    case CSSPropertyWebkitFontFeatureSettings:
+    case CSSPropertyFontFeatureSettings:
         if (id == CSSValueNormal)
             validPrimitive = true;
         else
@@ -10486,7 +10486,7 @@ bool CSSParser::parseFontFeatureSettings(bool important)
     if (m_valueList->size() == 1 && m_valueList->current()->id == CSSValueNormal) {
         RefPtr<CSSPrimitiveValue> normalValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
         m_valueList->next();
-        addProperty(CSSPropertyWebkitFontFeatureSettings, normalValue.release(), important);
+        addProperty(CSSPropertyFontFeatureSettings, normalValue.release(), important);
         return true;
     }
 
@@ -10501,7 +10501,7 @@ bool CSSParser::parseFontFeatureSettings(bool important)
             return false;
     }
     if (settings->length()) {
-        addProperty(CSSPropertyWebkitFontFeatureSettings, settings.release(), important);
+        addProperty(CSSPropertyFontFeatureSettings, settings.release(), important);
         return true;
     }
     return false;

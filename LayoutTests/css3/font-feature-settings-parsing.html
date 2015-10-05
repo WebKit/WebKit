@@ -2,128 +2,128 @@
 <head>
 <style>
 #valid_normal {
-    -webkit-font-feature-settings: normal;
+    font-feature-settings: normal;
 }
 
 #valid_value_1 {
-    -webkit-font-feature-settings: "dlig" 1;
+    font-feature-settings: "dlig" 1;
 }
 
 #valid_value_2 {
-    -webkit-font-feature-settings: "swsh" 2;
+    font-feature-settings: "swsh" 2;
 }
 
 #valid_value_on {
-    -webkit-font-feature-settings: "smcp" on;
+    font-feature-settings: "smcp" on;
 }
 
 #valid_value_off {
-    -webkit-font-feature-settings: "liga" off;
+    font-feature-settings: "liga" off;
 }
 
 #valid_value_omit {
-    -webkit-font-feature-settings: "c2sc";
+    font-feature-settings: "c2sc";
 }
 
 #valid_valuelist {
-    -webkit-font-feature-settings: "tnum", 'hist';
+    font-feature-settings: "tnum", 'hist';
 }
 
 #valid_singlequote {
-    -webkit-font-feature-settings: 'PKRN';
+    font-feature-settings: 'PKRN';
 }
 
 #valid_unusual_tag {
-    -webkit-font-feature-settings: "!@#$";
+    font-feature-settings: "!@#$";
 }
 
 #valid_tag_space {
-    -webkit-font-feature-settings: "a bc";
+    font-feature-settings: "a bc";
 }
 
 #valid_composite {
-    -webkit-font-feature-settings: "dlig" 1, 'smcp' on, 'lig ' off;
+    font-feature-settings: "dlig" 1, 'smcp' on, 'lig ' off;
 }
 
 #invalid_ident {
-    -webkit-font-feature-settings: dlig;
+    font-feature-settings: dlig;
 }
 
 #invalid_cases {
-    -webkit-font-feature-settings: dlig, DLIG, DLig;
+    font-feature-settings: dlig, DLIG, DLig;
 }
 
 #invalid_1 {
-    -webkit-font-feature-settings: 1;
+    font-feature-settings: 1;
 }
 
 #invalid_off {
-    -webkit-font-feature-settings: off;
+    font-feature-settings: off;
 }
 
 #invalid_normal_duplicate {
-    -webkit-font-feature-settings: normal, normal;
+    font-feature-settings: normal, normal;
 }
 
 #invalid_normal_list {
-    -webkit-font-feature-settings: normal, aaaa;
+    font-feature-settings: normal, aaaa;
 }
 
 #invalid_longer_ident {
-    -webkit-font-feature-settings: aaaaa;
+    font-feature-settings: aaaaa;
 }
 
 #invalid_longer_quote {
-    -webkit-font-feature-settings: "aaaaa";
+    font-feature-settings: "aaaaa";
 }
 
 #invalid_negative {
-    -webkit-font-feature-settings: aaaa -1;
+    font-feature-settings: aaaa -1;
 }
 
 #invalid_float {
-    -webkit-font-feature-settings: aaaa 1.5;
+    font-feature-settings: aaaa 1.5;
 }
 
 #invalid_missing_comma {
-    -webkit-font-feature-settings: aaaa "bbbb";
+    font-feature-settings: aaaa "bbbb";
 }
 
 #invalid_missing_comma_ident {
-    -webkit-font-feature-settings: aaaa bbbb;
+    font-feature-settings: aaaa bbbb;
 }
 
 #invalid_comma {
-    -webkit-font-feature-settings: ,;
+    font-feature-settings: ,;
 }
 
 #invalid_ending_comma {
-    -webkit-font-feature-settings: aaaa,;
+    font-feature-settings: aaaa,;
 }
 
 #invalid_beginning_comma {
-    -webkit-font-feature-settings: ,aaaa;
+    font-feature-settings: ,aaaa;
 }
 
 #invalid_on {
-    -webkit-font-feature-settings: aaaa, on;
+    font-feature-settings: aaaa, on;
 }
 
 #invalid_0 {
-    -webkit-font-feature-settings: "aaaa" 1, "bbbb", 0;
+    font-feature-settings: "aaaa" 1, "bbbb", 0;
 }
 
 #invalid_composite {
-    -webkit-font-feature-settings: aaaaa on, dlig on, PKRN -1;
+    font-feature-settings: aaaaa on, dlig on, PKRN -1;
 }
 </style>
 <style>
 @font-face {
-    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
 }
 
 @font-face {
-    -webkit-font-feature-settings: aaaaa;
+    font-feature-settings: aaaaa;
 }
 </style>
 <script src="../resources/js-test-pre.js"></script>
@@ -159,7 +159,7 @@
 <div id="invalid_on"></div>
 <div id="invalid_0"></div>
 
-<div id="outer" style="-webkit-font-feature-settings: 'dlig';">
+<div id="outer" style="font-feature-settings: 'dlig';">
   <div id="inner"></div>
 </div>
 
@@ -179,7 +179,7 @@ function canonicalize(fontFeatureSettingsString) {
 
 function parseResultOf(id) {
     var element = document.getElementById(id);
-    return window.getComputedStyle(element)['-webkit-font-feature-settings'];
+    return window.getComputedStyle(element)['font-feature-settings'];
 }
 
 debug('- Tests valid inputs.');
@@ -219,8 +219,8 @@ shouldBeEqualToString('canonicalize(parseResultOf("outer"))', canonicalize("'dli
 shouldBeEqualToString('canonicalize(parseResultOf("inner"))', canonicalize("'dlig' 1"));
 
 debug('- Tests @font-face.');
-var fontFaceRuleValid = document.styleSheets[1].cssRules[0].style['-webkit-font-feature-settings'];
-var fontFaceRuleInvalid = document.styleSheets[1].cssRules[1].style['-webkit-font-feature-settings'];
+var fontFaceRuleValid = document.styleSheets[1].cssRules[0].style['font-feature-settings'];
+var fontFaceRuleInvalid = document.styleSheets[1].cssRules[1].style['font-feature-settings'];
 shouldBeEqualToString('canonicalize(fontFaceRuleValid)', canonicalize("'liga' 1"));
 shouldBeEqualToString('fontFaceRuleInvalid', "");
 
