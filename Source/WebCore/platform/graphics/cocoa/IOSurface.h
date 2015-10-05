@@ -40,9 +40,7 @@ class IOSurface final {
 public:
     enum class Format {
         RGBA,
-#if PLATFORM(IOS)
         YUV422
-#endif
     };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, ColorSpace, Format = Format::RGBA);
@@ -80,7 +78,7 @@ public:
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }
     ColorSpace colorSpace() const { return m_colorSpace; }
-    Format format() const { return m_format; }
+    Format format() const;
 
     WEBCORE_EXPORT bool isInUse() const;
 
@@ -102,7 +100,6 @@ private:
     void setContextSize(IntSize);
 
     ColorSpace m_colorSpace;
-    Format m_format;
     IntSize m_size;
     IntSize m_contextSize;
     size_t m_totalBytes;

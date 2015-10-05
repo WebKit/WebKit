@@ -68,6 +68,7 @@ size_t IOSurfaceGetBytesPerRow(IOSurfaceRef buffer);
 size_t IOSurfaceGetHeight(IOSurfaceRef buffer);
 size_t IOSurfaceGetPropertyMaximum(CFStringRef property);
 size_t IOSurfaceGetWidth(IOSurfaceRef buffer);
+OSType IOSurfaceGetPixelFormat(IOSurfaceRef buffer);
 Boolean IOSurfaceIsInUse(IOSurfaceRef buffer);
 IOReturn IOSurfaceLock(IOSurfaceRef buffer, uint32_t options, uint32_t *seed);
 IOSurfaceRef IOSurfaceLookupFromMachPort(mach_port_t);
