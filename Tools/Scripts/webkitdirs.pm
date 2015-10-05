@@ -690,6 +690,7 @@ sub XcodeOptions
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
     if (willUseIOSDeviceSDKWhenBuilding()) {
+        push @options, "ENABLE_BITCODE=NO";
         if (hasIOSDevelopmentCertificate()) {
             # FIXME: May match more than one installed development certificate.
             push @options, "CODE_SIGN_IDENTITY=" . IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX;
