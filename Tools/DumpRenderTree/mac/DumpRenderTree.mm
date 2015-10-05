@@ -1192,7 +1192,6 @@ static void prepareConsistentTestingEnvironment()
 
     [[WebPreferences standardPreferences] setAutosaves:NO];
 
-#if !PLATFORM(IOS)
     // +[WebPreferences _switchNetworkLoaderToNewTestingSession] calls +[NSURLCache sharedURLCache], which initializes a default cache on disk.
     // Making the shared cache memory-only avoids touching the file system.
     RetainPtr<NSURLCache> sharedCache =
@@ -1203,6 +1202,7 @@ static void prepareConsistentTestingEnvironment()
 
     [WebPreferences _switchNetworkLoaderToNewTestingSession];
 
+#if !PLATFORM(IOS)
     adjustFonts();
     registerMockScrollbars();
 

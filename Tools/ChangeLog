@@ -1,3 +1,29 @@
+2015-10-05  Daniel Bates  <dabates@apple.com>
+
+        DumpRenderTree built with public iOS SDK crashes under -[WebPreferences(WebPrivate) _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]
+        https://bugs.webkit.org/show_bug.cgi?id=149766
+
+        Reviewed by Alexey Proskuryakov.
+
+        Create network storage testing session on iOS.
+
+        Currently we do not create a network storage testing session on iOS. A network storage testing session always
+        has an associated cookie store. When WebKit is built without USE(CFNETWORK), NetworkStorageSession::defaultStorageSession().cookieStorage()
+        returns nullptr because the caller is expected to interact with NSHTTPCookieStorage instead of querying
+        NetworkStorageSession for the cookie store. When WebKit is built with USE(CFNETWORK) accessing
+        NetworkStorageSession::defaultStorageSession().cookieStorage() returns a valid cookie store (creating one if
+        it does not exist). Instead we should make use of NetworkStorageSession::switchToNewTestingSession() to
+        create a network storage testing session when building DumpRenderTree for iOS so as to ensure a consistent
+        testing environment regardless of whether we built with USE(CFNETWORK). This will also make the behavior of
+        DumpRenderTree on iOS more consistent with the behavior of DumpRenderTree on Mac.
+
+        As a side effect of this change DumpRenderTree no longer crashes in -[WebPreferences(WebPrivate) _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]
+        when WebKit is built without USE(CFNETWORK) because NetworkStorageSession::defaultStorageSession().cookieStorage()
+        returns a non-null pointer to a cookie store.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (prepareConsistentTestingEnvironment):
+
 2015-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS 8 build again, where -[UIApplication _enqueueHIDEvent:] is not
