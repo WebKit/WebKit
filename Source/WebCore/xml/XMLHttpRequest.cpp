@@ -499,12 +499,7 @@ void XMLHttpRequest::open(const String& method, const URL& url, bool async, Exce
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    bool shouldBypassMainWorldContentSecurityPolicy = false;
-    if (is<Document>(*scriptExecutionContext())) {
-        Document& document = downcast<Document>(*scriptExecutionContext());
-        if (document.frame())
-            shouldBypassMainWorldContentSecurityPolicy = document.frame()->script().shouldBypassMainWorldContentSecurityPolicy();
-    }
+    bool shouldBypassMainWorldContentSecurityPolicy = ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy(*scriptExecutionContext());
     if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(url, shouldBypassMainWorldContentSecurityPolicy)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;

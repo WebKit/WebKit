@@ -130,6 +130,7 @@ public:
     String evalDisabledErrorMessage() const;
 
     bool experimentalFeaturesEnabled() const;
+    static bool shouldBypassMainWorldContentSecurityPolicy(ScriptExecutionContext&);
 
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
