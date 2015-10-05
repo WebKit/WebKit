@@ -383,27 +383,6 @@ HistoryItem* HistoryItem::childItemWithDocumentSequenceNumber(long long number)
     return nullptr;
 }
 
-// <rdar://problem/4895849> HistoryItem::findTargetItem() should be replaced with a non-recursive method.
-HistoryItem* HistoryItem::findTargetItem()
-{
-    if (m_isTargetItem)
-        return this;
-    unsigned size = m_children.size();
-    for (unsigned i = 0; i < size; ++i) {
-        // FIXME: targetItem() cannot return null currently, which is wrong.
-        if (HistoryItem* match = m_children[i]->targetItem())
-            return match;
-    }
-    return nullptr;
-}
-
-HistoryItem* HistoryItem::targetItem()
-{
-    HistoryItem* foundItem = findTargetItem();
-    // FIXME: This should probably not fall back to |this|.
-    return foundItem ? foundItem : this;
-}
-
 const HistoryItemVector& HistoryItem::children() const
 {
     return m_children;

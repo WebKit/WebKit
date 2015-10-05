@@ -543,11 +543,6 @@ WebHistoryItem *kit(HistoryItem* item)
     return url;
 }
 
-- (WebHistoryItem *)targetItem
-{    
-    return kit(core(_private)->targetItem());
-}
-
 #if !PLATFORM(IOS)
 + (void)_releaseAllPendingPageCaches
 {

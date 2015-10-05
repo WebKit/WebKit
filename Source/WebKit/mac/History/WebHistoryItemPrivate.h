@@ -54,7 +54,6 @@ extern NSString *WebViewportHeightKey;
 
 - (NSArray *)_redirectURLs;
 
-- (WebHistoryItem *)targetItem;
 - (NSString *)target;
 - (BOOL)isTargetItem;
 - (NSArray *)children;

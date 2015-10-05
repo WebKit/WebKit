@@ -1,5 +1,17 @@
 2015-10-05  Andreas Kling  <akling@apple.com>
 
+        Remove unused HistoryItem::targetItem()
+        <https://webkit.org/b/149803>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the only (unused) client of HistoryItem::targetItem().
+
+        * History/WebHistoryItem.mm:
+        * History/WebHistoryItemPrivate.h:
+
+2015-10-05  Andreas Kling  <akling@apple.com>
+
         Remove unused HistoryItem::parent
         <https://webkit.org/b/149803>
 
