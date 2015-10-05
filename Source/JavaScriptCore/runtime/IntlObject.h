@@ -57,8 +57,8 @@ private:
     IntlObject(VM&, Structure*);
 };
 
-JSArray* canonicalizeLocaleList(ExecState*, JSValue locales);
-JSValue supportedLocales(ExecState*, const HashSet<String>& availableLocales, JSArray* requestedLocales, JSValue options);
+Vector<String> canonicalizeLocaleList(ExecState*, JSValue locales);
+JSValue supportedLocales(ExecState*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
 
 } // namespace JSC
 

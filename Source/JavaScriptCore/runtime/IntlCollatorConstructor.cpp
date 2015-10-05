@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "config.h"
 #include "IntlCollatorConstructor.h"
 
@@ -150,7 +149,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecS
     // 10.2.2 Intl.Collator.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let requestedLocales be CanonicalizeLocaleList(locales).
-    JSArray* requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
+    Vector<String> requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
 
     // 2. ReturnIfAbrupt(requestedLocales).
     if (exec->hadException())

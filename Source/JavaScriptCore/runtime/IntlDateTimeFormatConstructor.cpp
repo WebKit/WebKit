@@ -154,7 +154,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf
     const HashSet<String> availableLocales = globalObject->intlDateTimeFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
-    JSArray* requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
+    Vector<String> requestedLocales = canonicalizeLocaleList(exec, exec->argument(0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

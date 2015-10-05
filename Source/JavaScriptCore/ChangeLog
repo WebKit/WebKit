@@ -1,3 +1,30 @@
+2015-10-05  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [Intl] Change the return type of canonicalizeLocaleList() from JSArray* to Vector<String>
+        https://bugs.webkit.org/show_bug.cgi?id=149807
+
+        Reviewed by Benjamin Poulain.
+
+        From ECMA-402, 9.2.1, the abstract operation CanonicalizeLocaleList
+        returns a List of Strings. From the spec, we never modify the result
+        from CanonicalizeLocaleList(). We never expose it to the user either.
+        This patch changes the return type of canonicalizeLocaleList() from
+        JSArray* to Vector<String>. This should ease the workload of the GC and
+        make the code a bit easier to read.
+
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        (JSC::lookupSupportedLocales):
+        (JSC::bestFitSupportedLocales):
+        (JSC::supportedLocales):
+        * runtime/IntlObject.h:
+
 2015-10-01  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in r190450

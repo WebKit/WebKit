@@ -427,16 +427,12 @@ static String canonicalizeLanguageTag(const String& locale)
     return String();
 }
 
-JSArray* canonicalizeLocaleList(ExecState* exec, JSValue locales)
+Vector<String> canonicalizeLocaleList(ExecState* exec, JSValue locales)
 {
     // 9.2.1 CanonicalizeLocaleList (locales)
     VM& vm = exec->vm();
     JSGlobalObject* globalObject = exec->callee()->globalObject();
-    JSArray* seen = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
-    if (!seen) {
-        throwOutOfMemoryError(exec);
-        return nullptr;
-    }
+    Vector<String> seen;
 
     // 1. If locales is undefined, then a. Return a new empty List.
     if (locales.isUndefined())
@@ -460,16 +456,16 @@ JSArray* canonicalizeLocaleList(ExecState* exec, JSValue locales)
 
     // 5. ReturnIfAbrupt(O).
     if (exec->hadException())
-        return nullptr;
+        return Vector<String>();
 
     // 6. Let len be ToLength(Get(O, "length")).
     JSValue lengthProperty = localesObject->get(exec, vm.propertyNames->length);
     if (exec->hadException())
-        return nullptr;
+        return Vector<String>();
 
     double length = lengthProperty.toLength(exec);
     if (exec->hadException())
-        return nullptr;
+        return Vector<String>();
 
     // Keep track of locales that have been added to the list.
     HashSet<String> seenSet;
@@ -485,7 +481,7 @@ JSArray* canonicalizeLocaleList(ExecState* exec, JSValue locales)
 
         // c. ReturnIfAbrupt(kPresent).
         if (exec->hadException())
-            return nullptr;
+            return Vector<String>();
 
         // d. If kPresent is true, then
         if (kPresent) {
@@ -494,12 +490,12 @@ JSArray* canonicalizeLocaleList(ExecState* exec, JSValue locales)
 
             // ii. ReturnIfAbrupt(kValue).
             if (exec->hadException())
-                return nullptr;
+                return Vector<String>();
 
             // iii. If Type(kValue) is not String or Object, throw a TypeError exception.
             if (!kValue.isString() && !kValue.isObject()) {
                 throwTypeError(exec, ASCIILiteral("locale value must be a string or object"));
-                return nullptr;
+                return Vector<String>();
             }
 
             // iv. Let tag be ToString(kValue).
@@ -507,19 +503,19 @@ JSArray* canonicalizeLocaleList(ExecState* exec, JSValue locales)
 
             // v. ReturnIfAbrupt(tag).
             if (exec->hadException())
-                return nullptr;
+                return Vector<String>();
 
             // vi. If IsStructurallyValidLanguageTag(tag) is false, throw a RangeError exception.
             // vii. Let canonicalizedTag be CanonicalizeLanguageTag(tag).
             String canonicalizedTag = canonicalizeLanguageTag(tag->value(exec));
             if (canonicalizedTag.isNull()) {
                 exec->vm().throwException(exec, createRangeError(exec, String::format("invalid language tag: %s", tag->value(exec).utf8().data())));
-                return nullptr;
+                return Vector<String>();
             }
 
             // viii. If canonicalizedTag is not an element of seen, append canonicalizedTag as the last element of seen.
             if (seenSet.add(canonicalizedTag).isNewEntry)
-                seen->push(exec, jsString(exec, canonicalizedTag));
+                seen.append(canonicalizedTag);
         }
         // e. Increase k by 1.
     }
@@ -555,7 +551,7 @@ static String bestAvailableLocale(const HashSet<String>& availableLocales, const
     return String();
 }
 
-static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, JSArray* requestedLocales)
+static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.6 LookupSupportedLocales (availableLocales, requestedLocales)
 
@@ -563,7 +559,7 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
     // Already an array.
 
     // 2. Let len be ToLength(Get(rLocales, "length")).
-    unsigned len = requestedLocales->length();
+    size_t len = requestedLocales.size();
 
     // 3. Let subset be an empty List.
     VM& vm = exec->vm();
@@ -576,23 +572,15 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
 
     // 4. Let k be 0.
     // 5. Repeat while k < len
-    for (unsigned k = 0; k < len; ++k) {
+    for (size_t k = 0; k < len; ++k) {
         // a. Let Pk be ToString(k).
         // b. Let locale be Get(rLocales, Pk).
-        JSValue locale = requestedLocales->get(exec, k);
-
         // c. ReturnIfAbrupt(locale).
-        if (exec->hadException())
-            return nullptr;
+        String locale = requestedLocales[k];
 
         // d. Let noExtensionsLocale be the String value that is locale with all Unicode locale extension sequences removed.
-        JSString* jsLocale = locale.toString(exec);
-        if (exec->hadException())
-            return nullptr;
-
-        String sLocale = jsLocale->value(exec);
         Vector<String> parts;
-        sLocale.split('-', parts);
+        locale.split('-', parts);
         StringBuilder builder;
         size_t partsSize = parts.size();
         if (partsSize > 0)
@@ -615,7 +603,7 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
 
         // f. If availableLocale is not undefined, then append locale to the end of subset.
         if (!availableLocale.isNull())
-            subset->push(exec, locale);
+            subset->push(exec, jsString(exec, locale));
 
         // g. Increment k by 1.
     }
@@ -624,14 +612,14 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
     return subset;
 }
 
-static JSArray* bestFitSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, JSArray* requestedLocales)
+static JSArray* bestFitSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.7 BestFitSupportedLocales (availableLocales, requestedLocales)
     // FIXME: Implement something better than lookup.
     return lookupSupportedLocales(exec, availableLocales, requestedLocales);
 }
 
-JSValue supportedLocales(ExecState* exec, const HashSet<String>& availableLocales, JSArray* requestedLocales, JSValue options)
+JSValue supportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options)
 {
     // 9.2.8 SupportedLocales (availableLocales, requestedLocales, options)
     VM& vm = exec->vm();
