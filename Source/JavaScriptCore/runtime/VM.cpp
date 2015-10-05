@@ -166,7 +166,6 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(REGEXP_TRACING)
     , m_rtTraceList(new RTTraceList())
 #endif
-    , m_newStringsSinceLastHashCons(0)
 #if ENABLE(ASSEMBLER)
     , m_canUseAssembler(enableAssembler(executableAllocator))
 #endif

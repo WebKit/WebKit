@@ -1,3 +1,141 @@
+2015-10-05  Geoffrey Garen  <ggaren@apple.com>
+
+        JSC::SlotVisitor should not be a hot mess
+        https://bugs.webkit.org/show_bug.cgi?id=149798
+
+        Reviewed by Andreas Kling.
+
+        I had to debug JSC::SlotVisitor the other day. It was hard to follow.
+        Let's make it easy to follow.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::resetVisitors):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::collectAndSweep):
+        * heap/Heap.h: Deleted the string hash-consing code. It
+        was dead code.
+
+        Since no benchmark noticed the commit that broke this feature, perhaps
+        it's not worth having.
+
+        Either way, the best thing to do with dead code is to delete it.
+        It's still there in svn if we ever want to pick it up again.
+
+        * heap/HeapRootVisitor.h:
+        (JSC::HeapRootVisitor::visit):
+        (JSC::HeapRootVisitor::visitor): Removed the private append functions
+        for unsafe pointers and switched HeapRootVisitor over to the public
+        specially named functions for unsafe pointers.
+
+        In future, we should either remove the public specially named functions
+        or remove HeapRootVisitor, since they serve the same purpose. At least
+        for now we don't have pairs of functions on SlotVisitor that do the
+        exact same thing.
+
+        * heap/SlotVisitor.cpp:
+        (JSC::validate): Moved this static function to the top of the file.
+
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::didStartMarking):
+        (JSC::SlotVisitor::reset): More hash cons removal.
+
+        (JSC::SlotVisitor::append):
+
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendToMarkStack): Renamed these functions to 
+        distinguish them from the up-front helper functions that just do type
+        conversions. These are the functions that actually do stuff.
+
+        Moved these functions out of line to make it easier to set breakpoints,
+        and to enable code changes for debugging, like printf and synchronous
+        marking, without recompiling the world.
+
+        setMarkedAndAppendToMarkStack is roughly 258 bytes long (not including
+        function prologue and epilogue), so inlining it was probably not a
+        great idea in the first place.
+
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared): Removed some stack probing code.
+        It was also dead.
+
+        (JSC::SlotVisitor::addOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRoot):
+        (JSC::SlotVisitor::containsOpaqueRootTriState):
+        (JSC::SlotVisitor::opaqueRootCount):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfProfitable):
+        (JSC::SlotVisitor::donate):
+        (JSC::SlotVisitor::donateAndDrain):
+        (JSC::SlotVisitor::copyLater):
+        (JSC::SlotVisitor::mergeOpaqueRoots):
+        (JSC::SlotVisitor::harvestWeakReferences):
+        (JSC::SlotVisitor::finalizeUnconditionalFinalizers):
+        (JSC::SlotVisitor::dump): Moved more code out-of-line. These code paths
+        are not hot and/or not small, so we need more evidence before we inline
+        them. The SlotVisitor headers are included everywhere, so we should
+        make them include less.
+
+        Removed "internal" from all function names because it wasn't applied in
+        any consistent way that would mean anything.
+
+        (JSC::JSString::tryHashConsLock): Deleted.
+        (JSC::JSString::releaseHashConsLock): Deleted.
+        (JSC::JSString::shouldTryHashCons): Deleted.
+        (JSC::SlotVisitor::internalAppend): Deleted.
+        (JSC::SlotVisitor::validate): Deleted.
+
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::resetChildCount): Deleted.
+        (JSC::SlotVisitor::childCount): Deleted.
+        (JSC::SlotVisitor::incrementChildCount): Deleted. Removed this child
+        count thing. It was dead code.
+
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendUnbarrieredPointer):
+        (JSC::SlotVisitor::appendUnbarrieredReadOnlyPointer):
+        (JSC::SlotVisitor::appendUnbarrieredValue):
+        (JSC::SlotVisitor::appendUnbarrieredReadOnlyValue): Some renaming and un-inlining.
+
+        (JSC::SlotVisitor::appendUnbarrieredWeak): Don't null check our input.
+        The one true place where null checking happens is our out-of-line
+        code. All inline functions do only type conversions.
+
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendValues):
+        (JSC::SlotVisitor::addWeakReferenceHarvester):
+        (JSC::SlotVisitor::addUnconditionalFinalizer):
+        (JSC::SlotVisitor::reportExtraMemoryVisited): Some renaming and un-inlining.
+
+        (JSC::SlotVisitor::internalAppend): Deleted.
+        (JSC::SlotVisitor::unconditionallyAppend): Deleted.
+        (JSC::SlotVisitor::addOpaqueRoot): Deleted.
+        (JSC::SlotVisitor::containsOpaqueRoot): Deleted.
+        (JSC::SlotVisitor::containsOpaqueRootTriState): Deleted.
+        (JSC::SlotVisitor::opaqueRootCount): Deleted.
+        (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary): Deleted.
+        (JSC::SlotVisitor::mergeOpaqueRootsIfProfitable): Deleted.
+        (JSC::SlotVisitor::donate): Deleted.
+        (JSC::SlotVisitor::donateAndDrain): Deleted.
+        (JSC::SlotVisitor::copyLater): Deleted.
+
+        * runtime/JSString.h:
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::setIs8Bit):
+        (JSC::JSString::isHashConsSingleton): Deleted.
+        (JSC::JSString::clearHashConsSingleton): Deleted.
+        (JSC::JSString::setHashConsSingleton): Deleted. More hash cons removal.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::currentThreadIsHoldingAPILock):
+        (JSC::VM::apiLock):
+        (JSC::VM::haveEnoughNewStringsToHashCons): Deleted.
+        (JSC::VM::resetNewStringsSinceLastHashCons): Deleted. More hash cons removal.
+
 2015-10-04  Filip Pizlo  <fpizlo@apple.com>
 
         Inline cache repatching should be throttled if it happens a lot

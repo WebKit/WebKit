@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSSet.h"
 
+#include "CopiedBlockInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSSetIterator.h"
 #include "MapDataInlines.h"

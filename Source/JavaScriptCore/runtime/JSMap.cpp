@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSMap.h"
 
+#include "CopiedBlockInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSMapIterator.h"
 #include "MapDataInlines.h"

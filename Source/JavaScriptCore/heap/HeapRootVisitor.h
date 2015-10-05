@@ -58,22 +58,23 @@ namespace JSC {
 
     inline void HeapRootVisitor::visit(JSValue* slot)
     {
-        m_visitor.append(slot);
+        m_visitor.appendUnbarrieredValue(slot);
     }
 
     inline void HeapRootVisitor::visit(JSValue* slot, size_t count)
     {
-        m_visitor.append(slot, count);
+        for (size_t i = 0; i < count; ++i)
+            m_visitor.appendUnbarrieredValue(&slot[i]);
     }
 
     inline void HeapRootVisitor::visit(JSString** slot)
     {
-        m_visitor.append(reinterpret_cast<JSCell**>(slot));
+        m_visitor.appendUnbarrieredPointer(slot);
     }
 
     inline void HeapRootVisitor::visit(JSCell** slot)
     {
-        m_visitor.append(slot);
+        m_visitor.appendUnbarrieredPointer(slot);
     }
 
     inline SlotVisitor& HeapRootVisitor::visitor()

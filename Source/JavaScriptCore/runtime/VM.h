@@ -538,13 +538,6 @@ public:
     void setInitializingObjectClass(const ClassInfo*);
 #endif
 
-    unsigned m_newStringsSinceLastHashCons;
-
-    static const unsigned s_minNumberOfNewStringsToHashCons = 100;
-
-    bool haveEnoughNewStringsToHashCons() { return m_newStringsSinceLastHashCons > s_minNumberOfNewStringsToHashCons; }
-    void resetNewStringsSinceLastHashCons() { m_newStringsSinceLastHashCons = 0; }
-
     bool currentThreadIsHoldingAPILock() const { return m_apiLock->currentThreadIsHoldingLock(); }
 
     JSLock& apiLock() { return *m_apiLock; }

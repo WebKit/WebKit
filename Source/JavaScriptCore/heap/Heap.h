@@ -423,8 +423,6 @@ private:
 
     HashMap<void*, std::function<void()>> m_weakGCMaps;
 
-    bool m_shouldHashCons { false };
-
     Lock m_markingMutex;
     Condition m_markingConditionVariable;
     MarkStackArray m_sharedMarkStack;

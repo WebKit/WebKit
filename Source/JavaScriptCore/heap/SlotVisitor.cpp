@@ -28,6 +28,7 @@
 #include "SlotVisitorInlines.h"
 
 #include "ConservativeRoots.h"
+#include "CopiedBlockInlines.h"
 #include "CopiedSpace.h"
 #include "CopiedSpaceInlines.h"
 #include "JSArray.h"
@@ -37,9 +38,38 @@
 #include "JSString.h"
 #include "JSCInlines.h"
 #include <wtf/Lock.h>
-#include <wtf/StackStats.h>
 
 namespace JSC {
+
+#if ENABLE(GC_VALIDATION)
+static void validate(JSCell* cell)
+{
+    RELEASE_ASSERT(cell);
+
+    if (!cell->structure()) {
+        dataLogF("cell at %p has a null structure\n" , cell);
+        CRASH();
+    }
+
+    // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
+    // I hate this sentence.
+    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo()) {
+        const char* parentClassName = 0;
+        const char* ourClassName = 0;
+        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo())
+            parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
+        if (cell->structure()->JSCell::classInfo())
+            ourClassName = cell->structure()->JSCell::classInfo()->className;
+        dataLogF("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
+            cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
+        CRASH();
+    }
+
+    // Make sure we can walk the ClassInfo chain
+    const ClassInfo* info = cell->classInfo();
+    do { } while ((info = info->parentClass));
+}
+#endif
 
 SlotVisitor::SlotVisitor(Heap& heap)
     : m_stack()
@@ -48,7 +78,6 @@ SlotVisitor::SlotVisitor(Heap& heap)
     , m_visitCount(0)
     , m_isInParallelMode(false)
     , m_heap(heap)
-    , m_shouldHashCons(false)
 #if !ASSERT_DISABLED
     , m_isCheckingForDefaultMarkViolation(false)
     , m_isDraining(false)
@@ -65,8 +94,6 @@ void SlotVisitor::didStartMarking()
 {
     if (heap()->operationInProgress() == FullCollection)
         ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
-
-    m_shouldHashCons = m_heap.m_shouldHashCons;
 }
 
 void SlotVisitor::reset()
@@ -75,10 +102,6 @@ void SlotVisitor::reset()
     m_bytesCopied = 0;
     m_visitCount = 0;
     ASSERT(m_stack.isEmpty());
-    if (m_shouldHashCons) {
-        m_uniqueStrings.clear();
-        m_shouldHashCons = false;
-    }
 }
 
 void SlotVisitor::clearMarkStack()
@@ -88,17 +111,50 @@ void SlotVisitor::clearMarkStack()
 
 void SlotVisitor::append(ConservativeRoots& conservativeRoots)
 {
-    StackStats::probe();
     JSCell** roots = conservativeRoots.roots();
     size_t size = conservativeRoots.size();
     for (size_t i = 0; i < size; ++i)
-        internalAppend(0, roots[i]);
+        append(roots[i]);
+}
+
+void SlotVisitor::append(JSValue value)
+{
+    if (!value || !value.isCell())
+        return;
+    setMarkedAndAppendToMarkStack(value.asCell());
+}
+
+void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
+{
+    ASSERT(!m_isCheckingForDefaultMarkViolation);
+    if (!cell)
+        return;
+
+#if ENABLE(GC_VALIDATION)
+    validate(cell);
+#endif
+
+    if (Heap::testAndSetMarked(cell) || !cell->structure()) {
+        ASSERT(cell->structure());
+        return;
+    }
+
+    cell->setMarked();
+    appendToMarkStack(cell);
+}
+
+void SlotVisitor::appendToMarkStack(JSCell* cell)
+{
+    ASSERT(Heap::isMarked(cell));
+    ASSERT(!cell->isZapped());
+
+    m_visitCount++;
+    m_bytesVisited += MarkedBlock::blockFor(cell)->cellSize();
+    m_stack.append(cell);
 }
 
 ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell)
 {
-    StackStats::probe();
-
     ASSERT(Heap::isMarked(cell));
     
     if (isJSString(cell)) {
@@ -121,7 +177,6 @@ ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell
 
 void SlotVisitor::donateKnownParallel()
 {
-    StackStats::probe();
     // NOTE: Because we re-try often, we can afford to be conservative, and
     // assume that donating is not profitable.
 
@@ -148,7 +203,6 @@ void SlotVisitor::donateKnownParallel()
 
 void SlotVisitor::drain()
 {
-    StackStats::probe();
     ASSERT(m_isInParallelMode);
    
     while (!m_stack.isEmpty()) {
@@ -163,7 +217,6 @@ void SlotVisitor::drain()
 
 void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
 {
-    StackStats::probe();
     ASSERT(m_isInParallelMode);
     
     ASSERT(Options::numberOfGCMarkers());
@@ -228,9 +281,97 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
     }
 }
 
+void SlotVisitor::addOpaqueRoot(void* root)
+{
+    if (Options::numberOfGCMarkers() == 1) {
+        // Put directly into the shared HashSet.
+        m_heap.m_opaqueRoots.add(root);
+        return;
+    }
+    // Put into the local set, but merge with the shared one every once in
+    // a while to make sure that the local sets don't grow too large.
+    mergeOpaqueRootsIfProfitable();
+    m_opaqueRoots.add(root);
+}
+
+bool SlotVisitor::containsOpaqueRoot(void* root) const
+{
+    ASSERT(!m_isInParallelMode);
+    ASSERT(m_opaqueRoots.isEmpty());
+    return m_heap.m_opaqueRoots.contains(root);
+}
+
+TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
+{
+    if (m_opaqueRoots.contains(root))
+        return TrueTriState;
+    std::lock_guard<Lock> lock(m_heap.m_opaqueRootsMutex);
+    if (m_heap.m_opaqueRoots.contains(root))
+        return TrueTriState;
+    return MixedTriState;
+}
+
+int SlotVisitor::opaqueRootCount()
+{
+    ASSERT(!m_isInParallelMode);
+    ASSERT(m_opaqueRoots.isEmpty());
+    return m_heap.m_opaqueRoots.size();
+}
+
+void SlotVisitor::mergeOpaqueRootsIfNecessary()
+{
+    if (m_opaqueRoots.isEmpty())
+        return;
+    mergeOpaqueRoots();
+}
+    
+void SlotVisitor::mergeOpaqueRootsIfProfitable()
+{
+    if (static_cast<unsigned>(m_opaqueRoots.size()) < Options::opaqueRootMergeThreshold())
+        return;
+    mergeOpaqueRoots();
+}
+    
+void SlotVisitor::donate()
+{
+    ASSERT(m_isInParallelMode);
+    if (Options::numberOfGCMarkers() == 1)
+        return;
+    
+    donateKnownParallel();
+}
+
+void SlotVisitor::donateAndDrain()
+{
+    donate();
+    drain();
+}
+
+void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, size_t bytes)
+{
+    ASSERT(bytes);
+    CopiedBlock* block = CopiedSpace::blockFor(ptr);
+    if (block->isOversize()) {
+        ASSERT(bytes <= block->size());
+        // FIXME: We should be able to shrink the allocation if bytes went below the block size.
+        // For now, we just make sure that our accounting of how much memory we are actually using
+        // is correct.
+        // https://bugs.webkit.org/show_bug.cgi?id=144749
+        bytes = block->size();
+        m_heap.m_storageSpace.pin(block);
+    }
+
+    ASSERT(heap()->m_storageSpace.contains(block));
+
+    LockHolder locker(&block->workListLock());
+    if (heap()->operationInProgress() == FullCollection || block->shouldReportLiveBytes(locker, owner)) {
+        m_bytesCopied += bytes;
+        block->reportLiveBytes(locker, owner, token, bytes);
+    }
+}
+    
 void SlotVisitor::mergeOpaqueRoots()
 {
-    StackStats::probe();
     ASSERT(!m_opaqueRoots.isEmpty()); // Should only be called when opaque roots are non-empty.
     {
         std::lock_guard<Lock> lock(m_heap.m_opaqueRootsMutex);
@@ -240,120 +381,17 @@ void SlotVisitor::mergeOpaqueRoots()
     m_opaqueRoots.clear();
 }
 
-ALWAYS_INLINE bool JSString::tryHashConsLock()
-{
-    unsigned currentFlags = m_flags;
-
-    if (currentFlags & HashConsLock)
-        return false;
-
-    unsigned newFlags = currentFlags | HashConsLock;
-
-    if (!WTF::weakCompareAndSwap(&m_flags, currentFlags, newFlags))
-        return false;
-
-    WTF::memoryBarrierAfterLock();
-    return true;
-}
-
-ALWAYS_INLINE void JSString::releaseHashConsLock()
-{
-    WTF::memoryBarrierBeforeUnlock();
-    m_flags &= ~HashConsLock;
-}
-
-ALWAYS_INLINE bool JSString::shouldTryHashCons()
-{
-    return ((length() > 1) && !isRope() && !isHashConsSingleton());
-}
-
-ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSValue* slot)
-{
-    // This internalAppend is only intended for visits to object and array backing stores.
-    // as it can change the JSValue pointed to be the argument when the original JSValue
-    // is a string that contains the same contents as another string.
-
-    StackStats::probe();
-    ASSERT(slot);
-    JSValue value = *slot;
-    ASSERT(value);
-    if (!value.isCell())
-        return;
-
-    JSCell* cell = value.asCell();
-    if (!cell)
-        return;
-
-    validate(cell);
-
-    if (m_shouldHashCons && cell->isString()) {
-        JSString* string = jsCast<JSString*>(cell);
-        if (string->shouldTryHashCons() && string->tryHashConsLock()) {
-            UniqueStringMap::AddResult addResult = m_uniqueStrings.add(string->string().impl(), value);
-            if (addResult.isNewEntry)
-                string->setHashConsSingleton();
-            else {
-                JSValue existingJSValue = addResult.iterator->value;
-                if (value != existingJSValue)
-                    jsCast<JSString*>(existingJSValue.asCell())->clearHashConsSingleton();
-                *slot = existingJSValue;
-                string->releaseHashConsLock();
-                return;
-            }
-            string->releaseHashConsLock();
-        }
-    }
-
-    internalAppend(from, cell);
-}
-
 void SlotVisitor::harvestWeakReferences()
 {
-    StackStats::probe();
     for (WeakReferenceHarvester* current = m_heap.m_weakReferenceHarvesters.head(); current; current = current->next())
         current->visitWeakReferences(*this);
 }
 
 void SlotVisitor::finalizeUnconditionalFinalizers()
 {
-    StackStats::probe();
     while (m_heap.m_unconditionalFinalizers.hasNext())
         m_heap.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
 }
-
-#if ENABLE(GC_VALIDATION)
-void SlotVisitor::validate(JSCell* cell)
-{
-    RELEASE_ASSERT(cell);
-
-    if (!cell->structure()) {
-        dataLogF("cell at %p has a null structure\n" , cell);
-        CRASH();
-    }
-
-    // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
-    // I hate this sentence.
-    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo()) {
-        const char* parentClassName = 0;
-        const char* ourClassName = 0;
-        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo())
-            parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
-        if (cell->structure()->JSCell::classInfo())
-            ourClassName = cell->structure()->JSCell::classInfo()->className;
-        dataLogF("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
-                cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
-        CRASH();
-    }
-
-    // Make sure we can walk the ClassInfo chain
-    const ClassInfo* info = cell->classInfo();
-    do { } while ((info = info->parentClass));
-}
-#else
-void SlotVisitor::validate(JSCell*)
-{
-}
-#endif
 
 void SlotVisitor::dump(PrintStream&) const
 {
