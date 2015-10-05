@@ -1,3 +1,27 @@
+2015-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Error displayed as an object when passed as a second argument to console.log
+        https://bugs.webkit.org/show_bug.cgi?id=149799
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendExtraParameters):
+        Don't format errors as objects.
+
+        (WebInspector.ConsoleMessageView.prototype._formatParameter):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsValue):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsString):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsError):
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsArray):
+        Replace an unnecessary span element with a document fragment.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object):
+        Display an error object on the same line as a list bullet.
+
 2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unprefix -webkit-font-feature-settings

@@ -363,9 +363,9 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
         for (var parameter of this._extraParameters) {
             var listItemElement = this._extraElementsList.appendChild(document.createElement("li"));
-            var forceObjectExpansion = parameter.type === "object" && (parameter.subtype !== "null" && parameter.subtype !== "regexp" && parameter.subtype !== "node");
+            const forceObjectFormat = parameter.type === "object" && (parameter.subtype !== "null" && parameter.subtype !== "regexp" && parameter.subtype !== "node" && parameter.subtype !== "error");
             listItemElement.classList.add("console-message-extra-parameter");
-            listItemElement.appendChild(this._formatParameter(parameter, forceObjectExpansion));
+            listItemElement.appendChild(this._formatParameter(parameter, forceObjectFormat));
         }
     }
 
@@ -503,43 +503,43 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
         var formatter = formatters[type] || this._formatParameterAsValue;
 
-        var span = document.createElement("span");
-        formatter.call(this, parameter, span, forceObjectFormat);
-        return span;
+        const fragment = document.createDocumentFragment();
+        formatter.call(this, parameter, fragment);
+        return fragment;
     }
 
-    _formatParameterAsValue(value, element)
+    _formatParameterAsValue(value, fragment)
     {
-        element.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(value));
+        fragment.appendChild(WebInspector.FormattedValue.createElementForRemoteObject(value));
     }
 
-    _formatParameterAsString(object, element)
+    _formatParameterAsString(object, fragment)
     {
-        element.appendChild(WebInspector.FormattedValue.createLinkifiedElementString(object.description));
+        fragment.appendChild(WebInspector.FormattedValue.createLinkifiedElementString(object.description));
     }
 
-    _formatParameterAsNode(object, element)
+    _formatParameterAsNode(object, fragment)
     {
-        element.appendChild(WebInspector.FormattedValue.createElementForNode(object));
+        fragment.appendChild(WebInspector.FormattedValue.createElementForNode(object));
     }
 
-    _formatParameterAsObject(object, element, forceExpansion)
+    _formatParameterAsObject(object, fragment, forceExpansion)
     {
         // FIXME: Should have a better ObjectTreeView mode for classes (static methods and methods).
         this._objectTree = new WebInspector.ObjectTreeView(object, null, this._rootPropertyPathForObject(object), forceExpansion);
-        element.appendChild(this._objectTree.element);
+        fragment.appendChild(this._objectTree.element);
     }
 
-    _formatParameterAsError(object, element)
+    _formatParameterAsError(object, fragment)
     {
-        var errorObjectView = new WebInspector.ErrorObjectView(object);
-        element.appendChild(errorObjectView.element);
+        this._objectTree = new WebInspector.ErrorObjectView(object);
+        fragment.appendChild(this._objectTree.element);
     }
 
-    _formatParameterAsArray(array, element)
+    _formatParameterAsArray(array, fragment)
     {
         this._objectTree = new WebInspector.ObjectTreeView(array, WebInspector.ObjectTreeView.Mode.Properties, this._rootPropertyPathForObject(array));
-        element.appendChild(this._objectTree.element);
+        fragment.appendChild(this._objectTree.element);
     }
 
     _rootPropertyPathForObject(object)
