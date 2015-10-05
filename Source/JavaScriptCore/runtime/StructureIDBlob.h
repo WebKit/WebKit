@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef StructureIDBlob_h
 #define StructureIDBlob_h
 
+#include "CellState.h"
 #include "IndexingType.h"
 #include "JSTypeInfo.h"
 #include "StructureIDTable.h"
@@ -46,7 +47,7 @@ public:
         u.fields.indexingType = indexingType;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
-        u.fields.defaultGCData = JSCell::NotMarked;
+        u.fields.defaultCellState = CellState::NewWhite;
     }
 
     void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }
@@ -79,7 +80,7 @@ private:
             IndexingType indexingType;
             JSType type;
             TypeInfo::InlineTypeFlags inlineTypeFlags;
-            JSCell::GCData defaultGCData;
+            CellState defaultCellState;
         } fields;
         struct {
             int32_t word1;

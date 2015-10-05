@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ void WeakMapData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     // Rough approximation of the external storage needed for the hashtable.
     // This isn't exact, but it is close enough, and proportional to the actual
     // external mermory usage.
-    visitor.reportExtraMemoryVisited(thisObj, thisObj->m_map.capacity() * (sizeof(JSObject*) + sizeof(WriteBarrier<Unknown>)));
+    visitor.reportExtraMemoryVisited(thisObj->m_map.capacity() * (sizeof(JSObject*) + sizeof(WriteBarrier<Unknown>)));
 }
 
 void WeakMapData::set(VM& vm, JSObject* key, JSValue value)

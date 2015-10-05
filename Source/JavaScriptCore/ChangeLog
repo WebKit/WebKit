@@ -1,3 +1,221 @@
+2015-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Allow an object's marking state to track The Three Colors
+        https://bugs.webkit.org/show_bug.cgi?id=149654
+
+        Reviewed by Geoffrey Garen.
+
+        I want to make GC marking concurrent (see https://bugs.webkit.org/show_bug.cgi?id=149432).
+        Concurrent GC require barriers to be executed during certain heap operations. We already have a
+        generational GC. Generational GCs also need barriers, and we already have those. The generational
+        GC barrier that we use is the "sticky mark bit" barrier. Ordinarily, mark bits get reset after a
+        collection. In our collector, there is a secondary mark bit that "sticks" - i.e. it does not get
+        reset. If the sticky mark bit is set in between two collections, then we know that the object is in
+        old space. This is sufficient to determine when to put things into remembered sets. Additionally,
+        the sticky mark bit is actually a tri-state that can also tell us if the object has been placed on
+        a remembered set.
+
+        This is awfully similar to what you want in a concurrent GC. Concurrent GCs typically want writes
+        to the heap that change the object graph to do different things depending on an object's marking
+        state, which is usually referred to as its color. White means that the object has never been seen
+        by the collector. All white objects are presumed dead at the flip. Grey objects are those that are
+        known to the collector but have not been scanned. Black objects are those that have been scanned,
+        and will not be scanned again. White is exactly just "not being marked", and both grey and black
+        mean "marked" - with "black" meaning "marked but not on any worklist". That's quite a bit like the
+        current "Marked" and "MarkedAndRemembered" states that we have for generational GC.
+        "MarkedAndRemembered" is a lot like "grey", and "Marked" is a lot like "black".
+
+        I want to make a concurrent GC that unifies the generational and concurrent barriers into a single
+        fast path check. Even better if the two barriers are entirely identical. You can do this using
+        Pirinen's technique #2 [1], originally due to Guy Steele [2]: when doing o.f=v where o is black and
+        v is white, turn o grey again. This is like remembering an object, in the sense that our gen GC
+        "rememberes" o when o is old and v is new. It remembers objects by putting them on the mark stack,
+        setting the generational state to MarkedAndRemembered, and doing nothing to the primary mark bit.
+
+        This makes our concurrent GC approach pretty obvious. We want to use one barrier for concurrent and
+        generational, and we want to basically keep our current barriers unchanged. The only things missing
+        are just some small changes to allow the concurrent GC to know precisely when an object is black,
+        and to know during object visiting if we are visiting the object for the first time during a
+        collection or a subsequent time due to barrier re-greying (concurrent GC) or barrier remembering
+        (generational GC). So, this patch does the following:
+
+        - Changes the terminology used for the gcData header byte in JSCell. This changes the name of this
+          to cellState, and introduces a new enumeration called CellState. This new enumeration behaves a
+          lot like the old GCData did. It has the following members, with the following correspondence to
+          the old GCData:
+
+          OldBlack: this is like Marked, with the exception that we ensure that an object becomes OldBlack
+              as soon as the object starts to be scanned. Previously, an object might be
+              MarkedAndRemembered during scanning and we'd turn all MarkedAndRemembered objects into Marked
+              objects during a post-processing step at the end of GC. This patch gets rid of that
+              post-processing. The act of visiting an object unconditionally makes it OldBlack. Note that
+              our definition of "black" is not that the object is done being scanned, but that it is either
+              being scanned right now or it has already been scanned. This is like a combination of
+              Siebert's anthracite and black states [3].
+
+          NewWhite: this is exactly NotMarked. It's the state that objects get when they are allocated.
+              It's impossible for an object to return to this state.
+
+          OldGrey: the object is on the mark stack and will be scanned at some point in the future. This
+              also means that this isn't the first time in this cycle that the object has been grey. In an
+              eden collection, an old object that has been remembered is thought of as being OldGrey, even
+              if this is the first time during this eden collection that it is grey. That's because an eden
+              collection must behave "as if" the grey->black transition for old objects magically happened
+              at the start of GC. Remembered objects are like old objects that underwent a concurrent
+              barrier re-greying just after the magical old object grey->black transition at the start of
+              GC. This state is almost exactly like MarkedAndRemembered, except that an object now
+              transitions from OldGrey to OldBlack at the beginning of visiting, rather than how previously
+              we transitioned from MarkedAndRemembered to Marked at the bitter end of GC.
+
+          NewGray: the object is on the mark stack and will be scanned at some point in the future. This
+              state has no clear relative in the old state system. It means that the object became grey due
+              to ordinary marking. Previously, ordinary marking would make the object Marked.
+
+        - Removal of the post-processing phase that "clears" the remembered set by moving all remembered
+          objects to the Marked state. This now happens magically during visiting, as described above.
+
+        - SlotVisitor now remembers the state that the object did have just before visiting. While visiting
+          that object, it's possible to query what the state was. This is used for copy space decisions and
+          for extra memory usage accounting. We don't want to put the backing store on the copy worklist,
+          and we don't want to count extra memory usage, if the object was OldGrey at the start of
+          visiting. Previously, we would be able to just ask if the object was MarkedAndRemembered since
+          that state wouldn't get cleared until after all marking finished. This change also simplifies
+          some APIs, because there is no need to pass the JSCell* pointer, since these SlotVisitor methods
+          no longer ask the cell for its state - instead they use the saved pre-visiting state.
+
+        - Removal of a bunch of helpers and abstractions. Previously we had various methods for asking if
+          an object was "marked" and if an object was "remembered". We had helpers for adjusting these
+          states, and those helpers would assert that they were being used the right way. This is not very
+          useful for concurrent GC, since now the set of possible state transitions is much larger. Also,
+          the previous use of the word "marked" was pretty bad - for example in Heap, "marked" refers to
+          the primary mark bit (that gets cleared at the flip), while in JSCell, "marked" refers to the
+          sticky mark bit (that does not get cleared, ever). This change gets rid of a lot of those helpers
+          and inlines their logic. This actually makes the code easier and more fun to read, since you can
+          now look at the marking and barrier code and see how that code uses the four CellStates. For
+          example, it's fun to see that the barrier gets fired for o.f=v exactly when o is OldBlack and v
+          is NewWhite.
+
+        This change shouldn't have any effect on performance or GC behavior. It does put our code in a
+        weird state where we now have states and comments referencing a concurrent GC that doesn't exist
+        yet.
+
+        Finally, some thoughts about the concurrent GC barrier and its implications for performance. This
+        barrier exhibits very poor guarantees about collector progress, but maximizes throughput by just
+        reusing the existing barrier code we already emit and optimize. I believe that even our epoch-based
+        barrier insertion DFG phase is correct for the concurrent interpretation of our existing barrier.
+        But, the barrier can regress the progress that the collector has made for two reasons:
+
+        Incremental update: you don't want to use this barrier with a black stack, since that would mean
+        that heap loads of white objects will have to explicitly re-grey the stack. The way you implement
+        this kind of collector is that collector termination will rescan the stack. Termination is reached
+        only if the at-termination re-scan greys no objects. This means that the collector is a fixpoint.
+        Luckily, our collector is already a fixpoint because of opaque roots and structure transitions.
+
+        Marking ain't monotonic: normally, once an object is black, it stays that way. In this collector,
+        black objects may become grey again. I don't have personal experience with such concurrent GCs, but
+        I suspect that this will basically be fine. Concurrent collections finish pretty quickly, and the
+        mutator usually touches only a subset of the heap. Only that subset of the heap that the mutator is
+        touching could be re-greyed. Probably, the GC will have to be hybrid incremental and concurrent,
+        and towards the end of GC when we do the termination stack re-scan, we can ensure that the
+        collector does some minimal amount of marking. If the minimal amount of marking done by the
+        collector is large enough, we can ensure that we reach termination before the mutator can regress
+        progress. The barrier cannot un-terminate the collector; if the collector reaches termination and
+        the barrier re-greys an object then it's actually doing a generational remembering rather than a
+        concurrent re-greying.
+
+        That's sort of the cute thing about the barrier - it is exactly a re-greying barrier during GC and
+        it is exactly a remembering barrier in between GCs.
+
+        [1] http://www.cs.utexas.edu/ftp/garbage/submit/readable/ppirinen11.ps
+        [2] http://dl.acm.org/citation.cfm?id=361005
+        [3] http://www.aicas.com/papers/ISMM132-siebert.pdf
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::AbstractHeapRepository):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadCellState):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadMarkByte): Deleted.
+        * heap/CellState.h: Added.
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::rememberCurrentlyExecutingCodeBlocks):
+        * heap/CopiedBlock.h:
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes):
+        (JSC::CopiedBlock::shouldReportLiveBytes): Deleted.
+        * heap/GCLogging.cpp:
+        (JSC::LoggingFunctor::reviveCells):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::visitWeakHandles):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::clearRememberedSet): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::isLive):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::writeBarrier):
+        (JSC::Heap::reportExtraMemoryAllocated):
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::isRemembered): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::donateKnownParallel):
+        (JSC::SlotVisitor::drain):
+        (JSC::visitChildren): Deleted.
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::childCount):
+        (JSC::SlotVisitor::incrementChildCount):
+        (JSC::SlotVisitor::dataBeforeVisitingCurrentObject):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::internalAppend):
+        (JSC::SlotVisitor::copyLater):
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::heap):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jumpIfIsRememberedOrInEden):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCell.h:
+        (JSC::JSCell::cellState):
+        (JSC::JSCell::setCellState):
+        (JSC::JSCell::structureIDOffset):
+        (JSC::JSCell::indexingTypeOffset):
+        (JSC::JSCell::cellStateOffset):
+        (JSC::JSCell::setMarked): Deleted.
+        (JSC::JSCell::setRemembered): Deleted.
+        (JSC::JSCell::isMarked): Deleted.
+        (JSC::JSCell::isRemembered): Deleted.
+        (JSC::JSCell::gcDataOffset): Deleted.
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyBackingStore):
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren):
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::StructureIDBlob):
+        (JSC::StructureIDBlob::operator=):
+        * runtime/WeakMapData.cpp:
+        (JSC::WeakMapData::visitChildren):
+        (JSC::WeakMapData::set):
+        * tests/stress/basic-eden-gc-test.js: Added.
+            Hilariously, an earlier version of this patch that didn't have the NewGrey/OldGrey distinction
+            would only crash super-big tests that GCd twice but it didn't crash any small focused test. All
+            it took to show the need for the NewGrey/OldGrey distinction was this super simple test.
+
 2015-10-05  Geoffrey Garen  <ggaren@apple.com>
 
         JSC::SlotVisitor should not be a hot mess

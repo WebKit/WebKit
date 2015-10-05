@@ -497,8 +497,8 @@ macro writeBarrierOnOperand(cellOperand)
     loadisFromInstruction(cellOperand, t1)
     loadConstantOrVariablePayload(t1, CellTag, t2, .writeBarrierDone)
     skipIfIsRememberedOrInEden(t2, t1, t3, 
-        macro(gcData)
-            btbnz gcData, .writeBarrierDone
+        macro(cellState)
+            btbnz cellState, .writeBarrierDone
             push cfr, PC
             # We make two extra slots because cCall2 will poke.
             subp 8, sp

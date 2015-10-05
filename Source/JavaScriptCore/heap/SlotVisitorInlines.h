@@ -92,9 +92,9 @@ inline void SlotVisitor::addUnconditionalFinalizer(UnconditionalFinalizer* uncon
     m_heap.m_unconditionalFinalizers.addThreadSafe(unconditionalFinalizer);
 }
 
-inline void SlotVisitor::reportExtraMemoryVisited(JSCell* owner, size_t size)
+inline void SlotVisitor::reportExtraMemoryVisited(size_t size)
 {
-    heap()->reportExtraMemoryVisited(owner, size);
+    heap()->reportExtraMemoryVisited(m_currentObjectCellStateBeforeVisiting, size);
 }
 
 inline Heap* SlotVisitor::heap() const

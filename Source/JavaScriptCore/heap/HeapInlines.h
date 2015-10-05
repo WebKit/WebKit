@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,14 +70,6 @@ inline bool Heap::isLive(const void* cell)
     return MarkedBlock::blockFor(cell)->isLiveCell(cell);
 }
 
-inline bool Heap::isRemembered(const void* ptr)
-{
-    const JSCell* cell = static_cast<const JSCell*>(ptr);
-    ASSERT(cell);
-    ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
-    return cell->isRemembered();
-}
-
 inline bool Heap::isMarked(const void* cell)
 {
     return MarkedBlock::blockFor(cell)->isMarked(cell);
@@ -113,25 +105,18 @@ inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
 #if ENABLE(WRITE_BARRIER_PROFILING)
     WriteBarrierCounters::countWriteBarrier();
 #endif
-    if (!from || !from->isMarked()) {
-        ASSERT(!from || !isMarked(from));
+    if (!from || from->cellState() != CellState::OldBlack)
         return;
-    }
-    if (!to || to->isMarked()) {
-        ASSERT(!to || isMarked(to));
+    if (!to || to->cellState() != CellState::NewWhite)
         return;
-    }
     addToRememberedSet(from);
 }
 
 inline void Heap::writeBarrier(const JSCell* from)
 {
     ASSERT_GC_OBJECT_LOOKS_VALID(const_cast<JSCell*>(from));
-    if (!from || !from->isMarked()) {
-        ASSERT(!from || !isMarked(from));
+    if (!from || from->cellState() != CellState::OldBlack)
         return;
-    }
-    ASSERT(isMarked(from));
     addToRememberedSet(from);
 }
 
@@ -141,10 +126,10 @@ inline void Heap::reportExtraMemoryAllocated(size_t size)
         reportExtraMemoryAllocatedSlowCase(size);
 }
 
-inline void Heap::reportExtraMemoryVisited(JSCell* owner, size_t size)
+inline void Heap::reportExtraMemoryVisited(CellState dataBeforeVisiting, size_t size)
 {
     // We don't want to double-count the extra memory that was reported in previous collections.
-    if (operationInProgress() == EdenCollection && Heap::isRemembered(owner))
+    if (operationInProgress() == EdenCollection && dataBeforeVisiting == CellState::OldGrey)
         return;
 
     size_t* counter = &m_extraMemorySize;

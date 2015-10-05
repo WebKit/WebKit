@@ -52,12 +52,12 @@ namespace JSC { namespace FTL {
     macro(JSArrayBufferView_length, JSArrayBufferView::offsetOfLength()) \
     macro(JSArrayBufferView_mode, JSArrayBufferView::offsetOfMode()) \
     macro(JSArrayBufferView_vector, JSArrayBufferView::offsetOfVector()) \
+    macro(JSCell_cellState, JSCell::cellStateOffset()) \
+    macro(JSCell_indexingType, JSCell::indexingTypeOffset()) \
     macro(JSCell_structureID, JSCell::structureIDOffset()) \
-    macro(JSCell_usefulBytes, JSCell::indexingTypeOffset()) \
     macro(JSCell_typeInfoFlags, JSCell::typeInfoFlagsOffset()) \
     macro(JSCell_typeInfoType, JSCell::typeInfoTypeOffset()) \
-    macro(JSCell_indexingType, JSCell::indexingTypeOffset()) \
-    macro(JSCell_gcData, JSCell::gcDataOffset()) \
+    macro(JSCell_usefulBytes, JSCell::indexingTypeOffset()) \
     macro(JSFunction_executable, JSFunction::offsetOfExecutable()) \
     macro(JSFunction_scope, JSFunction::offsetOfScopeChain()) \
     macro(JSFunction_rareData, JSFunction::offsetOfRareData()) \

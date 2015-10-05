@@ -1165,12 +1165,12 @@ public:
 
     Jump jumpIfIsRememberedOrInEden(GPRReg cell)
     {
-        return branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(cell, JSCell::gcDataOffset()));
+        return branchTest8(MacroAssembler::NonZero, MacroAssembler::Address(cell, JSCell::cellStateOffset()));
     }
 
     Jump jumpIfIsRememberedOrInEden(JSCell* cell)
     {
-        uint8_t* address = reinterpret_cast<uint8_t*>(cell) + JSCell::gcDataOffset();
+        uint8_t* address = reinterpret_cast<uint8_t*>(cell) + JSCell::cellStateOffset();
         return branchTest8(MacroAssembler::NonZero, MacroAssembler::AbsoluteAddress(address));
     }
     

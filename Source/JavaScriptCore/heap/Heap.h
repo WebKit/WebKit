@@ -101,9 +101,7 @@ public:
     static bool isMarked(const void*);
     static bool testAndSetMarked(const void*);
     static void setMarked(const void*);
-    static bool isRemembered(const void*);
 
-    JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
     static bool isWriteBarrierEnabled();
     void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);
@@ -167,7 +165,7 @@ public:
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
     void reportExtraMemoryAllocated(size_t);
-    void reportExtraMemoryVisited(JSCell*, size_t);
+    void reportExtraMemoryVisited(CellState cellStateBeforeVisiting, size_t);
 
     // Use this API to report non-GC memory if you can't use the better API above.
     void deprecatedReportExtraMemory(size_t);
@@ -306,7 +304,6 @@ private:
     void traceCodeBlocksAndJITStubRoutines();
     void converge();
     void visitWeakHandles(HeapRootVisitor&);
-    void clearRememberedSet(Vector<const JSCell*>&);
     void updateObjectCounts(double gcStartTime);
     void resetVisitors();
 
@@ -323,6 +320,7 @@ private:
     void finalizeUnconditionalFinalizers();
     void clearUnmarkedExecutables();
     void deleteUnmarkedCompiledCode();
+    JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
     void updateAllocationLimits();
     void didFinishCollection(double gcStartTime);
     void resumeCompilerThreads();

@@ -8260,9 +8260,9 @@ private:
         return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(m_node->origin.semantic);
     }
     
-    LValue loadMarkByte(LValue base)
+    LValue loadCellState(LValue base)
     {
-        return m_out.load8(base, m_heaps.JSCell_gcData);
+        return m_out.load8(base, m_heaps.JSCell_cellState);
     }
 
     void emitStoreBarrier(LValue base)
@@ -8274,7 +8274,7 @@ private:
 
         // Check the mark byte. 
         m_out.branch(
-            m_out.notZero8(loadMarkByte(base)), usually(continuation), rarely(isMarkedAndNotRemembered));
+            m_out.notZero8(loadCellState(base)), usually(continuation), rarely(isMarkedAndNotRemembered));
 
         // Append to the write barrier buffer.
         LBasicBlock lastNext = m_out.appendTo(isMarkedAndNotRemembered, bufferHasSpace);

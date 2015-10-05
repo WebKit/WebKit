@@ -91,7 +91,7 @@ public:
 
         for (const JSCell* cell : m_savedMarkStack) {
             m_slotVisitor.markStack().append(cell);
-            const_cast<JSCell*>(cell)->setRemembered(true);
+            cell->setCellState(CellState::OldGrey);
         }
     }
 

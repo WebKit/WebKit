@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -151,7 +151,7 @@ void CodeBlockSet::rememberCurrentlyExecutingCodeBlocks(Heap* heap)
     if (verbose)
         dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
     for (const RefPtr<CodeBlock>& codeBlock : m_currentlyExecuting)
-        heap->addToRememberedSet(codeBlock->ownerExecutable());
+        heap->writeBarrier(codeBlock->ownerExecutable());
 
     // It's safe to clear these RefPtr sets because we won't delete the CodeBlocks
     // in them until the next GC, and we'll recompute them at that time.

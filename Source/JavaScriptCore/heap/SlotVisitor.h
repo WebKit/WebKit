@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef SlotVisitor_h
 #define SlotVisitor_h
 
+#include "CellState.h"
 #include "CopyToken.h"
 #include "HandleTypes.h"
 #include "MarkStack.h"
@@ -103,7 +104,7 @@ public:
 
     void copyLater(JSCell*, CopyToken, void*, size_t);
     
-    void reportExtraMemoryVisited(JSCell* owner, size_t);
+    void reportExtraMemoryVisited(size_t);
     
     void addWeakReferenceHarvester(WeakReferenceHarvester*);
     void addUnconditionalFinalizer(UnconditionalFinalizer*);
@@ -121,6 +122,8 @@ private:
     JS_EXPORT_PRIVATE void mergeOpaqueRoots();
     void mergeOpaqueRootsIfNecessary();
     void mergeOpaqueRootsIfProfitable();
+
+    void visitChildren(const JSCell*);
     
     void donateKnownParallel();
 
@@ -133,6 +136,8 @@ private:
     bool m_isInParallelMode;
     
     Heap& m_heap;
+
+    CellState m_currentObjectCellStateBeforeVisiting { CellState::NewWhite };
 
 public:
 #if !ASSERT_DISABLED

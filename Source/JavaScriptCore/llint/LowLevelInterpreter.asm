@@ -799,7 +799,7 @@ macro arrayProfile(cellAndIndexingType, profile, scratch)
 end
 
 macro skipIfIsRememberedOrInEden(cell, scratch1, scratch2, continuation)
-    loadb JSCell::m_gcData[cell], scratch1
+    loadb JSCell::m_cellState[cell], scratch1
     continuation(scratch1)
 end
 

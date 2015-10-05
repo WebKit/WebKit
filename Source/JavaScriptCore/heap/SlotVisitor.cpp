@@ -139,7 +139,11 @@ void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
         return;
     }
 
-    cell->setMarked();
+    // Indicate that the object is grey and that:
+    // In case of concurrent GC: it's the first time it is grey in this GC cycle.
+    // In case of eden collection: it's a new object that became grey rather than an old remembered object.
+    cell->setCellState(CellState::NewGrey);
+
     appendToMarkStack(cell);
 }
 
@@ -153,26 +157,29 @@ void SlotVisitor::appendToMarkStack(JSCell* cell)
     m_stack.append(cell);
 }
 
-ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell)
+ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
 {
     ASSERT(Heap::isMarked(cell));
+
+    m_currentObjectCellStateBeforeVisiting = cell->cellState();
+    cell->setCellState(CellState::OldBlack);
     
     if (isJSString(cell)) {
-        JSString::visitChildren(const_cast<JSCell*>(cell), visitor);
+        JSString::visitChildren(const_cast<JSCell*>(cell), *this);
         return;
     }
 
     if (isJSFinalObject(cell)) {
-        JSFinalObject::visitChildren(const_cast<JSCell*>(cell), visitor);
+        JSFinalObject::visitChildren(const_cast<JSCell*>(cell), *this);
         return;
     }
 
     if (isJSArray(cell)) {
-        JSArray::visitChildren(const_cast<JSCell*>(cell), visitor);
+        JSArray::visitChildren(const_cast<JSCell*>(cell), *this);
         return;
     }
 
-    cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), visitor);
+    cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
 }
 
 void SlotVisitor::donateKnownParallel()
@@ -208,7 +215,7 @@ void SlotVisitor::drain()
     while (!m_stack.isEmpty()) {
         m_stack.refill();
         for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_stack.canRemoveLast() && countdown--;)
-            visitChildren(*this, m_stack.removeLast());
+            visitChildren(m_stack.removeLast());
         donateKnownParallel();
     }
     
@@ -364,7 +371,14 @@ void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, size_t by
     ASSERT(heap()->m_storageSpace.contains(block));
 
     LockHolder locker(&block->workListLock());
-    if (heap()->operationInProgress() == FullCollection || block->shouldReportLiveBytes(locker, owner)) {
+    // We always report live bytes, except if during an eden collection we see an old object pointing to an
+    // old backing store and the old object is being marked because of the remembered set. Note that if we
+    // ask the object itself, it will always tell us that it's an old black object - because even during an
+    // eden collection we have already indicated that the object is old. That's why we use the
+    // SlotVisitor's cache of the object's old state.
+    if (heap()->operationInProgress() == FullCollection
+        || !block->isOld()
+        || m_currentObjectCellStateBeforeVisiting != CellState::OldGrey) {
         m_bytesCopied += bytes;
         block->reportLiveBytes(locker, owner, token, bytes);
     }

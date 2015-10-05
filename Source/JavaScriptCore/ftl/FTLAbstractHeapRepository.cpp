@@ -69,12 +69,12 @@ AbstractHeapRepository::AbstractHeapRepository(LContext context)
     RELEASE_ASSERT(!(JSCell_indexingType.offset() & (sizeof(int32_t) - 1)));
     RELEASE_ASSERT(JSCell_indexingType.offset() + 1 == JSCell_typeInfoType.offset());
     RELEASE_ASSERT(JSCell_indexingType.offset() + 2 == JSCell_typeInfoFlags.offset());
-    RELEASE_ASSERT(JSCell_indexingType.offset() + 3 == JSCell_gcData.offset());
+    RELEASE_ASSERT(JSCell_indexingType.offset() + 3 == JSCell_cellState.offset());
 
     JSCell_indexingType.changeParent(&JSCell_usefulBytes);
     JSCell_typeInfoType.changeParent(&JSCell_usefulBytes);
     JSCell_typeInfoFlags.changeParent(&JSCell_usefulBytes);
-    JSCell_gcData.changeParent(&JSCell_usefulBytes);
+    JSCell_cellState.changeParent(&JSCell_usefulBytes);
     
     root.m_tbaaMetadata = mdNode(m_context, mdString(m_context, root.m_heapName));
     

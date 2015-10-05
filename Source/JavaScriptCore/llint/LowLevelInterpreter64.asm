@@ -401,8 +401,8 @@ macro writeBarrierOnOperand(cellOperand)
     loadisFromInstruction(cellOperand, t1)
     loadConstantOrVariableCell(t1, t2, .writeBarrierDone)
     skipIfIsRememberedOrInEden(t2, t1, t3, 
-        macro(gcData)
-            btbnz gcData, .writeBarrierDone
+        macro(cellState)
+            btbnz cellState, .writeBarrierDone
             push PB, PC
             move t2, a1 # t2 can be a0 (not on 64 bits, but better safe than sorry)
             move cfr, a0
