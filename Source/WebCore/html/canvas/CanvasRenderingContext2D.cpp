@@ -2591,7 +2591,7 @@ void CanvasRenderingContext2D::setImageSmoothingQuality(const String& smoothingQ
     realizeSaves();
     modifiableState().imageSmoothingQuality = quality;
 
-    if (!modifiableState().imageSmoothingEnabled)
+    if (!state().imageSmoothingEnabled)
         return;
 
     if (auto* context = drawingContext())
