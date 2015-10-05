@@ -63,12 +63,12 @@ namespace JSC {
     class MarkedAllocator;
     class Register;
     class StructureChain;
+    class StructureStubInfo;
 
     struct Instruction;
     struct OperandTypes;
     struct SimpleJumpTable;
     struct StringJumpTable;
-    struct StructureStubInfo;
 
     struct CallRecord {
         MacroAssembler::Call from;

@@ -184,10 +184,8 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
     PropertySlot slot(baseValue);
     
     bool hasResult = baseValue.getPropertySlot(exec, ident, slot);
-    if (stubInfo->seen)
+    if (stubInfo->considerCaching())
         repatchGetByID(exec, baseValue, ident, slot, *stubInfo);
-    else
-        stubInfo->seen = true;
     
     return JSValue::encode(hasResult? slot.getValue(exec, ident) : jsUndefined());
 }
@@ -210,10 +208,8 @@ EncodedJSValue JIT_OPERATION operationInOptimize(ExecState* exec, StructureStubI
     
     RELEASE_ASSERT(accessType == stubInfo->accessType);
     
-    if (stubInfo->seen)
+    if (stubInfo->considerCaching())
         repatchIn(exec, base, ident, result, slot, *stubInfo);
-    else
-        stubInfo->seen = true;
     
     return JSValue::encode(jsBoolean(result));
 }
@@ -308,10 +304,8 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->seen)
+    if (stubInfo->considerCaching())
         repatchPutByID(exec, baseValue, structure, ident, slot, *stubInfo, NotDirect);
-    else
-        stubInfo->seen = true;
 }
 
 void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -332,10 +326,8 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->seen)
+    if (stubInfo->considerCaching())
         repatchPutByID(exec, baseValue, structure, ident, slot, *stubInfo, NotDirect);
-    else
-        stubInfo->seen = true;
 }
 
 void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -356,10 +348,8 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->seen)
+    if (stubInfo->considerCaching())
         repatchPutByID(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
-    else
-        stubInfo->seen = true;
 }
 
 void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -380,10 +370,8 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
-    if (stubInfo->seen)
+    if (stubInfo->considerCaching())
         repatchPutByID(exec, baseObject, structure, ident, slot, *stubInfo, Direct);
-    else
-        stubInfo->seen = true;
 }
 
 void JIT_OPERATION operationReallocateStorageAndFinishPut(ExecState* exec, JSObject* base, Structure* structure, PropertyOffset offset, EncodedJSValue value)

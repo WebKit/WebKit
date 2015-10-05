@@ -341,39 +341,37 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
         if (stubInfo.resetByGC)
             out.print(" (Reset By GC)");
         
-        if (stubInfo.seen) {
-            out.printf(" jit(");
+        out.printf(" jit(");
             
-            Structure* baseStructure = nullptr;
-            PolymorphicAccess* stub = nullptr;
+        Structure* baseStructure = nullptr;
+        PolymorphicAccess* stub = nullptr;
             
-            switch (stubInfo.cacheType) {
-            case CacheType::GetByIdSelf:
-                out.printf("self");
-                baseStructure = stubInfo.u.byIdSelf.baseObjectStructure.get();
-                break;
-            case CacheType::Stub:
-                out.printf("stub");
-                stub = stubInfo.u.stub;
-                break;
-            case CacheType::Unset:
-                out.printf("unset");
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            
-            if (baseStructure) {
-                out.printf(", ");
-                dumpStructure(out, "struct", baseStructure, ident);
-            }
-
-            if (stub)
-                out.print(", ", *stub);
-
-            out.printf(")");
+        switch (stubInfo.cacheType) {
+        case CacheType::GetByIdSelf:
+            out.printf("self");
+            baseStructure = stubInfo.u.byIdSelf.baseObjectStructure.get();
+            break;
+        case CacheType::Stub:
+            out.printf("stub");
+            stub = stubInfo.u.stub;
+            break;
+        case CacheType::Unset:
+            out.printf("unset");
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
+            
+        if (baseStructure) {
+            out.printf(", ");
+            dumpStructure(out, "struct", baseStructure, ident);
+        }
+
+        if (stub)
+            out.print(", ", *stub);
+
+        out.printf(")");
     }
 #else
     UNUSED_PARAM(map);
@@ -413,27 +411,25 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, int location, const St
         if (stubInfo.resetByGC)
             out.print(" (Reset By GC)");
         
-        if (stubInfo.seen) {
-            out.printf(" jit(");
-            
-            switch (stubInfo.cacheType) {
-            case CacheType::PutByIdReplace:
-                out.print("replace, ");
-                dumpStructure(out, "struct", stubInfo.u.byIdSelf.baseObjectStructure.get(), ident);
-                break;
-            case CacheType::Stub: {
-                out.print("stub, ", *stubInfo.u.stub);
-                break;
-            }
-            case CacheType::Unset:
-                out.printf("unset");
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            out.printf(")");
+        out.printf(" jit(");
+        
+        switch (stubInfo.cacheType) {
+        case CacheType::PutByIdReplace:
+            out.print("replace, ");
+            dumpStructure(out, "struct", stubInfo.u.byIdSelf.baseObjectStructure.get(), ident);
+            break;
+        case CacheType::Stub: {
+            out.print("stub, ", *stubInfo.u.stub);
+            break;
         }
+        case CacheType::Unset:
+            out.printf("unset");
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        out.printf(")");
     }
 #else
     UNUSED_PARAM(map);

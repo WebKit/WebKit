@@ -1127,13 +1127,17 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         state.failAndRepatch.append(binarySwitch.fallThrough());
     }
 
-    state.failAndIgnore.link(&jit);
-
-    // Make sure that the inline cache optimization code knows that we are taking slow path because
-    // of something that isn't patchable. "seen" being false means that we bypass patching. This is
-    // pretty gross but it means that we don't need to have two slow path entrypoints - one for
-    // patching and one for normal slow stuff.
-    jit.store8(CCallHelpers::TrustedImm32(false), &stubInfo.seen);
+    if (!state.failAndIgnore.empty()) {
+        state.failAndIgnore.link(&jit);
+        
+        // Make sure that the inline cache optimization code knows that we are taking slow path because
+        // of something that isn't patchable. The slow path will decrement "countdown" and will only
+        // patch things if the countdown reaches zero. We increment the slow path count here to ensure
+        // that the slow path does not try to patch.
+        jit.load8(&stubInfo.countdown, state.scratchGPR);
+        jit.add32(CCallHelpers::TrustedImm32(1), state.scratchGPR);
+        jit.store8(state.scratchGPR, &stubInfo.countdown);
+    }
 
     CCallHelpers::JumpList failure;
     if (allocator.didReuseRegisters()) {
@@ -1161,6 +1165,9 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     
     for (auto callback : state.callbacks)
         callback(linkBuffer);
+
+    if (verbose)
+        dataLog(*codeBlock, " ", stubInfo.codeOrigin, ": Generating polymorphic access stub for ", listDump(cases), "\n");
     
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
         codeBlock, linkBuffer,

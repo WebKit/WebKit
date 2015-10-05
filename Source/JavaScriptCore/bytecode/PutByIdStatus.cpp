@@ -144,18 +144,15 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo,
     UniquedStringImpl* uid, CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    if (!stubInfo)
+    if (!stubInfo || !stubInfo->everConsidered)
         return PutByIdStatus();
     
     if (stubInfo->tookSlowPath)
         return PutByIdStatus(TakesSlowPath);
     
-    if (!stubInfo->seen)
-        return PutByIdStatus();
-    
     switch (stubInfo->cacheType) {
     case CacheType::Unset:
-        // If the JIT saw it but didn't optimize it, then assume that this takes slow path.
+        // This means that we attempted to cache but failed for some reason.
         return PutByIdStatus(TakesSlowPath);
         
     case CacheType::PutByIdReplace: {

@@ -39,8 +39,8 @@ namespace JSC {
 
 class CodeBlock;
 class PolymorphicAccess;
+class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
-struct StructureStubInfo;
 
 struct AccessGenerationState;
 

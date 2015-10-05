@@ -37,8 +37,8 @@
 namespace JSC {
 
 class CodeBlock;
+class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
-struct StructureStubInfo;
 
 class StructureStubClearingWatchpoint : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureStubClearingWatchpoint);

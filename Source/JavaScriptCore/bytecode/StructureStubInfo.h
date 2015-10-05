@@ -32,6 +32,7 @@
 #include "MacroAssembler.h"
 #include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
+#include "Options.h"
 #include "PolymorphicAccess.h"
 #include "RegisterSet.h"
 #include "SpillRegistersMode.h"
@@ -57,41 +58,19 @@ enum class CacheType : int8_t {
     Stub
 };
 
-struct StructureStubInfo {
-    StructureStubInfo(AccessType accessType)
-        : accessType(accessType)
-        , cacheType(CacheType::Unset)
-        , seen(false)
-        , resetByGC(false)
-        , tookSlowPath(false)
-        , callSiteIndex(UINT_MAX)
-    {
-    }
+class StructureStubInfo {
+    WTF_MAKE_NONCOPYABLE(StructureStubInfo);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    StructureStubInfo(AccessType);
+    ~StructureStubInfo();
 
-    void initGetByIdSelf(VM& vm, JSCell* owner, Structure* baseObjectStructure, PropertyOffset offset)
-    {
-        cacheType = CacheType::GetByIdSelf;
-
-        u.byIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
-        u.byIdSelf.offset = offset;
-    }
-
-    void initPutByIdReplace(VM& vm, JSCell* owner, Structure* baseObjectStructure, PropertyOffset offset)
-    {
-        cacheType = CacheType::PutByIdReplace;
-
-        u.byIdSelf.baseObjectStructure.set(vm, owner, baseObjectStructure);
-        u.byIdSelf.offset = offset;
-    }
-
-    void initStub(std::unique_ptr<PolymorphicAccess> stub)
-    {
-        cacheType = CacheType::Stub;
-        u.stub = stub.release();
-    }
+    void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
+    void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
+    void initStub(CodeBlock*, std::unique_ptr<PolymorphicAccess>);
 
     MacroAssemblerCodePtr addAccessCase(
-        VM&, CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
+        CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
 
     void reset(CodeBlock*);
 
@@ -101,24 +80,55 @@ struct StructureStubInfo {
     // either entirely or just enough to ensure that those dead pointers don't get used anymore.
     void visitWeakReferences(CodeBlock*);
         
-    bool seenOnce()
+    ALWAYS_INLINE bool considerCaching()
     {
-        return seen;
+        everConsidered = true;
+        if (!countdown) {
+            // Check if we have been doing repatching too frequently. If so, then we should cool off
+            // for a while.
+            willRepatch();
+            if (repatchCount > Options::repatchCountForCoolDown()) {
+                // We've been repatching too much, so don't do it now.
+                repatchCount = 0;
+                // The amount of time we require for cool-down depends on the number of times we've
+                // had to cool down in the past. The relationship is exponential. The max value we
+                // allow here is 2^256 - 2, since the slow paths may increment the count to indicate
+                // that they'd like to temporarily skip patching just this once.
+                countdown = WTF::leftShiftWithSaturation(
+                    static_cast<uint8_t>(Options::initialCoolDownCount()),
+                    numberOfCoolDowns,
+                    static_cast<uint8_t>(std::numeric_limits<uint8_t>::max() - 1));
+                willCoolDown();
+                return false;
+            }
+            return true;
+        }
+        countdown--;
+        return false;
     }
 
-    void setSeen()
+    ALWAYS_INLINE void willRepatch()
     {
-        seen = true;
+        WTF::incrementWithSaturation(repatchCount);
     }
-        
-    AccessType accessType;
-    CacheType cacheType;
-    bool seen;
-    bool resetByGC : 1;
-    bool tookSlowPath : 1;
+
+    ALWAYS_INLINE void willCoolDown()
+    {
+        WTF::incrementWithSaturation(numberOfCoolDowns);
+    }
+
+    CodeLocationCall callReturnLocation;
 
     CodeOrigin codeOrigin;
     CallSiteIndex callSiteIndex;
+
+    union {
+        struct {
+            WriteBarrierBase<Structure> baseObjectStructure;
+            PropertyOffset offset;
+        } byIdSelf;
+        PolymorphicAccess* stub;
+    } u;
 
     struct {
         unsigned spillMode : 8;
@@ -141,15 +151,14 @@ struct StructureStubInfo {
 #endif
     } patch;
 
-    union {
-        struct {
-            WriteBarrierBase<Structure> baseObjectStructure;
-            PropertyOffset offset;
-        } byIdSelf;
-        PolymorphicAccess* stub;
-    } u;
-
-    CodeLocationCall callReturnLocation;
+    AccessType accessType;
+    CacheType cacheType;
+    uint8_t countdown; // We repatch only when this is zero. If not zero, we decrement.
+    uint8_t repatchCount;
+    uint8_t numberOfCoolDowns;
+    bool resetByGC : 1;
+    bool tookSlowPath : 1;
+    bool everConsidered : 1;
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)

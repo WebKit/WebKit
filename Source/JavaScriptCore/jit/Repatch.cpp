@@ -266,7 +266,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             && !loadTargetFromProxy) {
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
             repatchByIdSelfAccess(codeBlock, stubInfo, structure, slot.cachedOffset(), operationGetByIdOptimize, true);
-            stubInfo.initGetByIdSelf(vm, codeBlock->ownerExecutable(), structure, slot.cachedOffset());
+            stubInfo.initGetByIdSelf(codeBlock, structure, slot.cachedOffset());
             return RetryCacheLater;
         }
 
@@ -308,8 +308,8 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             slot.isCacheableCustom() ? slot.slotBase() : nullptr);
     }
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(
-        vm, codeBlock, propertyName, WTF::move(newCase));
+    MacroAssemblerCodePtr codePtr =
+        stubInfo.addAccessCase(codeBlock, propertyName, WTF::move(newCase));
 
     if (!codePtr)
         return GiveUpOnCache;
@@ -384,8 +384,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 repatchByIdSelfAccess(
                     codeBlock, stubInfo, structure, slot.cachedOffset(),
                     appropriateOptimizingPutByIdFunction(slot, putKind), false);
-                stubInfo.initPutByIdReplace(
-                    vm, codeBlock->ownerExecutable(), structure, slot.cachedOffset());
+                stubInfo.initPutByIdReplace(codeBlock, structure, slot.cachedOffset());
                 return RetryCacheLater;
             }
 
@@ -452,8 +451,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         }
     }
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(
-        vm, codeBlock, ident, WTF::move(newCase));
+    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTF::move(newCase));
     
     if (!codePtr)
         return GiveUpOnCache;
@@ -511,7 +509,7 @@ static InlineCacheAction tryRepatchIn(
     std::unique_ptr<AccessCase> newCase = AccessCase::in(
         vm, owner, wasFound ? AccessCase::InHit : AccessCase::InMiss, structure, conditionSet);
 
-    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(vm, codeBlock, ident, WTF::move(newCase));
+    MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTF::move(newCase));
     if (!codePtr)
         return GiveUpOnCache;
 

@@ -33,6 +33,47 @@
 namespace JSC {
 
 #if ENABLE(JIT)
+StructureStubInfo::StructureStubInfo(AccessType accessType)
+    : callSiteIndex(UINT_MAX)
+    , accessType(accessType)
+    , cacheType(CacheType::Unset)
+    , countdown(1) // For a totally clear stub, we'll patch it after the first execution.
+    , repatchCount(0)
+    , numberOfCoolDowns(0)
+    , resetByGC(false)
+    , tookSlowPath(false)
+    , everConsidered(false)
+{
+}
+
+StructureStubInfo::~StructureStubInfo()
+{
+}
+
+void StructureStubInfo::initGetByIdSelf(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset)
+{
+    cacheType = CacheType::GetByIdSelf;
+    
+    u.byIdSelf.baseObjectStructure.set(
+        *codeBlock->vm(), codeBlock->ownerExecutable(), baseObjectStructure);
+    u.byIdSelf.offset = offset;
+}
+
+void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* baseObjectStructure, PropertyOffset offset)
+{
+    cacheType = CacheType::PutByIdReplace;
+    
+    u.byIdSelf.baseObjectStructure.set(
+        *codeBlock->vm(), codeBlock->ownerExecutable(), baseObjectStructure);
+    u.byIdSelf.offset = offset;
+}
+
+void StructureStubInfo::initStub(CodeBlock*, std::unique_ptr<PolymorphicAccess> stub)
+{
+    cacheType = CacheType::Stub;
+    u.stub = stub.release();
+}
+
 void StructureStubInfo::deref()
 {
     switch (cacheType) {
@@ -49,8 +90,10 @@ void StructureStubInfo::deref()
 }
 
 MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
-    VM& vm, CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
+    CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
 {
+    VM& vm = *codeBlock->vm();
+    
     if (!accessCase)
         return MacroAssemblerCodePtr();
     
@@ -74,8 +117,7 @@ MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
     if (!result)
         return MacroAssemblerCodePtr();
 
-    cacheType = CacheType::Stub;
-    u.stub = access.release();
+    initStub(codeBlock, WTF::move(access));
     return result;
 }
 

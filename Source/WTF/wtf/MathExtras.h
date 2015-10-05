@@ -400,6 +400,25 @@ inline bool isIntegral(float value)
     return static_cast<int>(value) == value;
 }
 
+template<typename T>
+inline void incrementWithSaturation(T& value)
+{
+    if (value != std::numeric_limits<T>::max())
+        value++;
+}
+
+template<typename T>
+inline T leftShiftWithSaturation(T value, unsigned shiftAmount, T max = std::numeric_limits<T>::max())
+{
+    T result = value << shiftAmount;
+    // We will have saturated if shifting right doesn't recover the original value.
+    if (result >> shiftAmount != value)
+        return max;
+    if (result > max)
+        return max;
+    return result;
+}
+
 } // namespace WTF
 
 #endif // #ifndef WTF_MathExtras_h

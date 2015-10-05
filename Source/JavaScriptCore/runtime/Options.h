@@ -121,6 +121,9 @@ typedef const char* optionString;
     v(bool, forceCodeBlockLiveness, false, nullptr) \
     v(bool, forceICFailure, false, nullptr) \
     \
+    v(unsigned, repatchCountForCoolDown, 10, nullptr) \
+    v(unsigned, initialCoolDownCount, 20, nullptr) \
+    \
     v(bool, dumpGeneratedBytecodes, false, nullptr) \
     v(bool, dumpBytecodeLivenessResults, false, nullptr) \
     v(bool, validateBytecode, false, nullptr) \

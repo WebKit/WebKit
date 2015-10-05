@@ -1,3 +1,17 @@
+2015-10-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Inline cache repatching should be throttled if it happens a lot
+        https://bugs.webkit.org/show_bug.cgi?id=149796
+        rdar://problem/22674436
+
+        Reviewed by Saam Barati.
+
+        Add some helpers for saturated math.
+
+        * wtf/MathExtras.h:
+        (WTF::incrementWithSaturation):
+        (WTF::leftShiftWithSaturation):
+
 2015-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed CMake build fixes.

@@ -137,12 +137,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
     const ConcurrentJITLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, UniquedStringImpl* uid,
     CallLinkStatus::ExitSiteData callExitSiteData)
 {
-    if (!stubInfo)
+    if (!stubInfo || !stubInfo->everConsidered)
         return GetByIdStatus(NoInformation);
-    
-    if (!stubInfo->seen)
-        return GetByIdStatus(NoInformation);
-    
+
     PolymorphicAccess* list = 0;
     State slowPathState = TakesSlowPath;
     if (stubInfo->cacheType == CacheType::Stub) {
@@ -269,7 +266,7 @@ GetByIdStatus GetByIdStatus::computeFor(
             result = computeForStubInfoWithoutExitSiteFeedback(
                 locker, dfgBlock, dfgMap.get(codeOrigin), uid, exitSiteData);
         }
-        
+
         if (result.takesSlowPath())
             return result;
     
