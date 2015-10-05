@@ -1,3 +1,15 @@
+2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow WKRetainPtrs to be used as keys in hashing data structures
+        https://bugs.webkit.org/show_bug.cgi?id=149762
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKRetainPtr.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2015-10-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS 8 build, where -[UIApplication _enqueueHIDEvent:] is not

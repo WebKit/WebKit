@@ -1,3 +1,19 @@
+2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow WKRetainPtrs to be used as keys in hashing data structures
+        https://bugs.webkit.org/show_bug.cgi?id=149762
+
+        Reviewed by Anders Carlsson.
+
+        Use RefPtr as a model.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::WKRetainPtr::WKRetainPtr):
+        (WebKit::WKRetainPtr::isHashTableDeletedValue):
+        (WebKit::WKRetainPtr::hashTableDeletedValue):
+        (WTF::HashTraits<WKRetainPtr<P>>::emptyValue):
+        (WTF::HashTraits<WKRetainPtr<P>>::peek):
+
 2015-10-05  Enrica Casucci  <enrica@apple.com>
 
         Cannot select certain text on Wikipedia homepage even when zoomed in.
