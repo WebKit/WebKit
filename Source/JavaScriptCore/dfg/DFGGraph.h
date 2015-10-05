@@ -348,7 +348,7 @@ public:
         if (!inlineCallFrame)
             return m_codeBlock->ownerScriptExecutable();
         
-        return inlineCallFrame->executable.get();
+        return inlineCallFrame->baselineCodeBlock->ownerScriptExecutable();
     }
     
     ScriptExecutable* executableFor(const CodeOrigin& codeOrigin)
@@ -372,7 +372,7 @@ public:
     {
         if (!codeOrigin.inlineCallFrame)
             return m_codeBlock->isStrictMode();
-        return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->isStrictMode();
+        return codeOrigin.inlineCallFrame->isStrictMode();
     }
     
     ECMAMode ecmaModeFor(CodeOrigin codeOrigin)

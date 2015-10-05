@@ -33,7 +33,7 @@ namespace JSC {
 DeferredCompilationCallback::DeferredCompilationCallback() { }
 DeferredCompilationCallback::~DeferredCompilationCallback() { }
 
-void DeferredCompilationCallback::compilationDidComplete(CodeBlock* codeBlock, CompilationResult result)
+void DeferredCompilationCallback::compilationDidComplete(CodeBlock* codeBlock, CodeBlock*, CompilationResult result)
 {
     dumpCompiledSourcesIfNeeded();
 

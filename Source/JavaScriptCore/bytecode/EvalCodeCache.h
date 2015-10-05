@@ -51,7 +51,7 @@ namespace JSC {
             return 0;
         }
         
-        EvalExecutable* getSlow(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const String& evalSource, JSScope* scope)
+        EvalExecutable* getSlow(ExecState* exec, JSCell* owner, bool inStrictContext, ThisTDZMode thisTDZMode, const String& evalSource, JSScope* scope)
         {
             VariableEnvironment variablesUnderTDZ;
             JSScope::collectVariablesUnderTDZ(scope, variablesUnderTDZ);

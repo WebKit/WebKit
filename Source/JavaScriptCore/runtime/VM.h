@@ -309,6 +309,12 @@ public:
     Strong<Structure> promiseDeferredStructure;
     Strong<Structure> internalPromiseDeferredStructure;
     Strong<Structure> nativeStdFunctionCellStructure;
+    Strong<Structure> programCodeBlockStructure;
+    Strong<Structure> moduleProgramCodeBlockStructure;
+    Strong<Structure> evalCodeBlockStructure;
+    Strong<Structure> functionCodeBlockStructure;
+    Strong<Structure> webAssemblyCodeBlockStructure;
+
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
 

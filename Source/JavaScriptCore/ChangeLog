@@ -1,3 +1,21 @@
+2015-10-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in r190450
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+
+        The cause of the leak was VM shutdown, which happens in workers.
+
+        The fix is for CodeBlockSet to participate in lastChanceToFinalize,
+        since it's responsible for running CodeBlock destructors.
+
+        I ran the leaks tests locally and did not see any CodeBlock-related leaks.
+
+        Restored changesets:
+
+        "CodeBlock should be a GC object"
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+        http://trac.webkit.org/changeset/190450
+
 2015-10-03  Filip Pizlo  <fpizlo@apple.com>
 
         Allow an object's marking state to track The Three Colors
