@@ -1,3 +1,11 @@
+2015-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS 8 build again, where -[UIApplication _enqueueHIDEvent:] is not
+        available.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator _sendMarkerHIDEventWithCompletionBlock:]):
+
 2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow WKRetainPtrs to be used as keys in hashing data structures
