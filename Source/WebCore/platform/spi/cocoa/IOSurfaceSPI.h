@@ -57,6 +57,7 @@ extern const CFStringRef kIOSurfaceHeight;
 extern const CFStringRef kIOSurfacePixelFormat;
 extern const CFStringRef kIOSurfaceWidth;
 extern const CFStringRef kIOSurfaceElementWidth;
+extern const CFStringRef kIOSurfaceElementHeight;
 
 size_t IOSurfaceAlignProperty(CFStringRef property, size_t value);
 IOSurfaceRef IOSurfaceCreate(CFDictionaryRef properties);
