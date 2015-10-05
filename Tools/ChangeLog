@@ -1,5 +1,24 @@
 2015-10-05  Daniel Bates  <dabates@apple.com>
 
+        [iOS] Make it possible to build WebKit using iphoneos SDK without a developer certificate installed
+        https://bugs.webkit.org/show_bug.cgi?id=140828
+        <rdar://problem/19520599>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Support building WebKit for iOS device without an iOS Developer certificate installed. Otherwise,
+        we will pass CODE_SIGN_IDENTITY="iPhone Developer: " to Xcode to find a iOS Developer certificate
+        to use. To use a specific installed iOS Developer certificate, explicitly pass CODE_SIGN_IDENTITY
+        to build-webkit.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions): Cleaned up code. When building for iOS device, pass to Xcode CODE_SIGN_IDENTITY="iPhone Developer: "
+        to code sign using the installed iOS development certificate (if it exists - we assume there is only one such certificate).
+        Otherwise, pass CODE_SIGN_IDENTITY="" and CODE_SIGNING_REQUIRED=NO to Xcode to disable code signing.
+        (hasIOSDevelopmentCertificate): Added.
+
+2015-10-05  Daniel Bates  <dabates@apple.com>
+
         DumpRenderTree built with public iOS SDK crashes under -[WebPreferences(WebPrivate) _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]
         https://bugs.webkit.org/show_bug.cgi?id=149766
 

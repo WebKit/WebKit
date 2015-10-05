@@ -93,6 +93,9 @@ use constant SIMULATOR_DEVICE_STATE_SHUTDOWN => "1";
 use constant SIMULATOR_DEVICE_STATE_BOOTED => "3";
 use constant SIMULATOR_DEVICE_SUFFIX_FOR_WEBKIT_DEVELOPMENT  => "For WebKit Development";
 
+# See table "Certificate types and names" on <https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/MaintainingCertificates/MaintainingCertificates.html#//apple_ref/doc/uid/TP40012582-CH31-SW41>.
+use constant IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX => "iPhone Developer: ";
+
 our @EXPORT_OK;
 
 my $architecture;
@@ -659,6 +662,11 @@ sub determineGenerateDsym()
     $generateDsym = checkForArgumentAndRemoveFromARGV("--dsym");
 }
 
+sub hasIOSDevelopmentCertificate()
+{
+    return !exitStatus(system("security find-identity -p codesigning | grep '" . IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX . "' > /dev/null 2>&1"));
+}
+
 sub argumentsForXcode()
 {
     my @args = ();
@@ -674,11 +682,24 @@ sub XcodeOptions
     determineASanIsEnabled();
     determineXcodeSDK();
 
-    my @sdkOption = ($xcodeSDK ? "SDKROOT=$xcodeSDK" : ());
-    my @architectureOption = ($architecture ? "ARCHS=$architecture" : ());
-    my @asanOption = ($asanIsEnabled ? ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") : ());
-
-    return ("-UseSanitizedBuildSystemEnvironment=YES", @baseProductDirOption, "-configuration", $configuration, @architectureOption, @sdkOption, @asanOption, argumentsForXcode());
+    my @options;
+    push @options, "-UseSanitizedBuildSystemEnvironment=YES";
+    push @options, ("-configuration", $configuration);
+    push @options, ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") if $asanIsEnabled;
+    push @options, @baseProductDirOption;
+    push @options, "ARCHS=$architecture" if $architecture;
+    push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
+    if (willUseIOSDeviceSDKWhenBuilding()) {
+        if (hasIOSDevelopmentCertificate()) {
+            # FIXME: May match more than one installed development certificate.
+            push @options, "CODE_SIGN_IDENTITY=" . IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX;
+        } else {
+            push @options, "CODE_SIGN_IDENTITY="; # No identity
+            push @options, "CODE_SIGNING_REQUIRED=NO";
+        }
+    }
+    push @options, argumentsForXcode();
+    return @options;
 }
 
 sub XcodeOptionString
