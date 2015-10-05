@@ -1126,7 +1126,12 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpaceDeviceRGB);
     CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform);
 
-    return WebKit::ViewSnapshot::create(WTF::move(surface));
+    RefPtr<WebKit::ViewSnapshot> viewSnapshot = WebKit::ViewSnapshot::create(nullptr);
+    WebCore::IOSurface::convertToFormat(WTF::move(surface), WebCore::IOSurface::Format::YUV422, [viewSnapshot](std::unique_ptr<WebCore::IOSurface> convertedSurface) {
+        viewSnapshot->setSurface(WTF::move(convertedSurface));
+    });
+
+    return viewSnapshot;
 #else
     uint32_t slotID = [WebKit::ViewSnapshotStore::snapshottingContext() createImageSlot:snapshotSize hasAlpha:YES];
 

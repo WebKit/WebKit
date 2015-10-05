@@ -1,3 +1,22 @@
+2015-10-05  Beth Dakin  <bdakin@apple.com>
+
+        Compress snapshots on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=149814
+        -and corresponding-
+        rdar://problem/22976230
+
+        Reviewed by Simon Fraser.
+
+        Compress the snapshot.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]):
+
+        Since the snapshots are converted to YUV asynchronously, it is possible to 
+        get here and have a snapshot that does not yet have an image, so we have to 
+        relax this constraint.
+        * UIProcess/mac/ViewSnapshotStore.mm:
+        (WebKit::ViewSnapshotStore::recordSnapshot):
+
 2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow WKRetainPtrs to be used as keys in hashing data structures
