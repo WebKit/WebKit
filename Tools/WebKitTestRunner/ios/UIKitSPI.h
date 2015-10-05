@@ -23,6 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef UIKitSPI_h
+#define UIKitSPI_h
+
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS)
+
 #import <UIKit/UIKit.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -35,7 +42,9 @@
 #import "IOKitSPI.h"
 
 @interface UIApplication ()
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
+#endif
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
 @end
 
@@ -43,4 +52,8 @@
 - (uint32_t)_contextId;
 @end
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // PLATFORM(IOS)
+
+#endif // UIKitSPI_h

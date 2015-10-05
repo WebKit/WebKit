@@ -231,7 +231,9 @@ static void delayBetweenMove(int eventIndex, double elapsed)
             uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextID, false, false, NULL, 0, 0);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
             [[UIApplication sharedApplication] _enqueueHIDEvent:strongEvent.get()];
+#endif
         });
     }
     return YES;

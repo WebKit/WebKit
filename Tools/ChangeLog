@@ -1,3 +1,12 @@
+2015-10-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the iOS 8 build, where -[UIApplication _enqueueHIDEvent:] is not
+        available, and tidy up the #ifdefs in the UIKitSPI header.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator _sendHIDEvent:]):
+        * WebKitTestRunner/ios/UIKitSPI.h:
+
 2015-10-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Remove duplicate entries in WebKitTestRunner_SOURCES
