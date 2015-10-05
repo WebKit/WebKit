@@ -258,5 +258,47 @@ template<> void derefGPtr<GstToc>(GstToc* ptr)
     if (ptr)
         gst_toc_unref(ptr);
 }
+
+template <> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr)
+{
+    ASSERT(!ptr || !g_object_is_floating(G_OBJECT(ptr)));
+    return GRefPtr<WebKitVideoSink>(ptr, GRefPtrAdopt);
 }
+
+template <> WebKitVideoSink* refGPtr<WebKitVideoSink>(WebKitVideoSink* ptr)
+{
+    if (ptr)
+        gst_object_ref_sink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template <> void derefGPtr<WebKitVideoSink>(WebKitVideoSink* ptr)
+{
+    if (ptr)
+        gst_object_unref(GST_OBJECT(ptr));
+}
+
+template <> GRefPtr<WebKitWebSrc> adoptGRef(WebKitWebSrc* ptr)
+{
+    ASSERT(!ptr || !g_object_is_floating(G_OBJECT(ptr)));
+    return GRefPtr<WebKitWebSrc>(ptr, GRefPtrAdopt);
+}
+
+template <> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr)
+{
+    if (ptr)
+        gst_object_ref_sink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template <> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr)
+{
+    if (ptr)
+        gst_object_unref(GST_OBJECT(ptr));
+}
+
+} // namespace WTF
+
 #endif // USE(GSTREAMER)
