@@ -1,3 +1,19 @@
+2015-10-05  Antti Koivisto  <antti@apple.com>
+
+        Remove CancelResourceLoader message
+        https://bugs.webkit.org/show_bug.cgi?id=149801
+
+        Reviewed by Andreas Kling.
+
+        It has no clients.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderDestinationID):
+        (WebKit::WebResourceLoader::detachFromCoreLoader):
+        (WebKit::WebResourceLoader::cancelResourceLoader): Deleted.
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2015-10-03  Ricky Mondello  <rmondello@apple.com>
 
         "Plug-in is blocked" message doesn't draw correctly

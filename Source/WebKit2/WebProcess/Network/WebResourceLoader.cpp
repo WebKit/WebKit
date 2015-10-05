@@ -70,11 +70,6 @@ uint64_t WebResourceLoader::messageSenderDestinationID()
     return m_coreLoader->identifier();
 }
 
-void WebResourceLoader::cancelResourceLoader()
-{
-    m_coreLoader->cancel();
-}
-
 void WebResourceLoader::detachFromCoreLoader()
 {
     m_coreLoader = nullptr;

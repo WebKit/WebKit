@@ -75,8 +75,6 @@ private:
     virtual IPC::Connection* messageSenderConnection() override;
     virtual uint64_t messageSenderDestinationID() override;
 
-    void cancelResourceLoader();
-
     void willSendRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
     void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);

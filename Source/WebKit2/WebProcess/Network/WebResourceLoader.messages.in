@@ -23,9 +23,6 @@
 #if ENABLE(NETWORK_PROCESS)
 
 messages -> WebResourceLoader LegacyReceiver {
-
-    CancelResourceLoader()
-
     WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
