@@ -1,3 +1,13 @@
+2015-10-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Remove duplicate entries in WebKitTestRunner_SOURCES
+        https://bugs.webkit.org/show_bug.cgi?id=149792
+
+        Reviewed by Martin Robinson.
+
+        * WebKitTestRunner/PlatformGTK.cmake: Don't list build targets
+        for WebKitTestRunner multiple times.
+
 2015-10-04  Daniel Bates  <dabates@apple.com>
 
         Fix the Apple Internal iOS build after <http://trac.webkit.org/changeset/190515>
