@@ -1,3 +1,51 @@
+2015-10-05  Enrica Casucci  <enrica@apple.com>
+
+        Cannot select certain text on Wikipedia homepage even when zoomed in.
+        https://bugs.webkit.org/show_bug.cgi?id=149758
+        rdar://problem/22407947
+
+        Reviewed by Dan Bernstein.
+
+        Several functions that handle gestures for text selection are used for both
+        editable and non editable content. When used on editable content, the point
+        where the gesture occurs needs to be constrained within the boundaries of the
+        editable element. In the WebProcess we decide whether to constrain the point or not only based
+        on the presence of the assisted node.
+        That unfortunately does not guarantee that the user is actually editing the element,
+        but only that the element is focused. Since the knowledge about the interaction exists reliably
+        in the UI process, this patch adds a parameter to each gesture handler that tries to clip
+        the point, to indicate whether the user is actually interacting with the element so that
+        in the WebProcess the assisted node information can be used to constrain the point.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::deviceOrientation):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _isInteractingWithAssistedNode]):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:]):
+        (-[WKContentView selectPositionAtPoint:completionHandler:]):
+        (-[WKContentView selectPositionAtBoundary:inDirection:fromPoint:completionHandler:]):
+        (-[WKContentView selectTextWithGranularity:atPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPointAndBoundary):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::visiblePositionInFocusedNodeForPoint):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::rangeForGranularityAtPoint):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+
 2015-10-05  Antti Koivisto  <antti@apple.com>
 
         Remove CancelResourceLoader message

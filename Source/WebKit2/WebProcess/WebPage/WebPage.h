@@ -503,20 +503,20 @@ public:
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
 
     void blurAssistedNode();
-    void selectWithGesture(const WebCore::IntPoint&, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID);
+    void selectWithGesture(const WebCore::IntPoint&, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, uint64_t callbackID);
     void updateSelectionWithTouches(const WebCore::IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID);
     void updateBlockSelectionWithTouch(const WebCore::IntPoint&, uint32_t touch, uint32_t handlePosition);
     void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID);
     void extendSelection(uint32_t granularity);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, uint64_t callbackID);
-    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, uint64_t callbackID);
-    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, uint64_t callbackID);
+    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID);
+    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, uint64_t callbackID);
     void moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, uint64_t callbackID);
-    void selectPositionAtPoint(const WebCore::IntPoint&, uint64_t callbackID);
+    void selectPositionAtPoint(const WebCore::IntPoint&, bool isInteractingWithAssistedNode, uint64_t callbackID);
     void beginSelectionInDirection(uint32_t direction, uint64_t callbackID);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, uint64_t callbackID);
-    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, uint64_t callbackID);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithAssistedNode, uint64_t callbackID);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID);
 
     void elementDidFocus(WebCore::Node*);
     void elementDidBlur(WebCore::Node*);
@@ -953,8 +953,8 @@ private:
     void completeSyntheticClick(WebCore::Node* nodeRespondingToClick, const WebCore::FloatPoint& location);
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
     void resetTextAutosizingBeforeLayoutIfNeeded(const WebCore::FloatSize& oldSize, const WebCore::FloatSize& newSize);
-    WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&);
-    PassRefPtr<WebCore::Range> rangeForGranularityAtPoint(const WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity);
+    WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&, bool isInteractingWithAssistedNode);
+    PassRefPtr<WebCore::Range> rangeForGranularityAtPoint(const WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode);
     void volatilityTimerFired();
 #endif
 #if !PLATFORM(COCOA)

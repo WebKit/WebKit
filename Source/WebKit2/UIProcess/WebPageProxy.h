@@ -464,20 +464,20 @@ public:
     int32_t deviceOrientation() const { return m_deviceOrientation; }
     void willCommitLayerTree(uint64_t transactionID);
 
-    void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
+    void selectWithGesture(const WebCore::IntPoint, WebCore::TextGranularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
     void updateSelectionWithTouches(const WebCore::IntPoint, uint32_t touches, bool baseIsStart, std::function<void (const WebCore::IntPoint&, uint32_t, CallbackBase::Error)>);
     void selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, std::function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>);
     void updateBlockSelectionWithTouch(const WebCore::IntPoint, uint32_t touch, uint32_t handlePosition);
     void extendSelection(WebCore::TextGranularity);
     void selectWordBackward();
     void moveSelectionByOffset(int32_t offset, std::function<void (CallbackBase::Error)>);
-    void selectTextWithGranularityAtPoint(const WebCore::IntPoint, WebCore::TextGranularity, std::function<void (CallbackBase::Error)>);
-    void selectPositionAtPoint(const WebCore::IntPoint, std::function<void (CallbackBase::Error)>);
-    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint, WebCore::TextGranularity, WebCore::SelectionDirection, std::function<void (CallbackBase::Error)>);
+    void selectTextWithGranularityAtPoint(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithAssistedNode, std::function<void (CallbackBase::Error)>);
+    void selectPositionAtPoint(const WebCore::IntPoint, bool isInteractingWithAssistedNode, std::function<void (CallbackBase::Error)>);
+    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint, WebCore::TextGranularity, WebCore::SelectionDirection, bool isInteractingWithAssistedNode, std::function<void (CallbackBase::Error)>);
     void moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity, WebCore::SelectionDirection, std::function<void(CallbackBase::Error)>);
     void beginSelectionInDirection(WebCore::SelectionDirection, std::function<void (uint64_t, CallbackBase::Error)>);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint, std::function<void (uint64_t, CallbackBase::Error)>);
-    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, std::function<void(uint64_t, CallbackBase::Error)>);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint, bool isInteractingWithAssistedNode, std::function<void (uint64_t, CallbackBase::Error)>);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint, WebCore::TextGranularity, bool isInteractingWithAssistedNode, std::function<void(uint64_t, CallbackBase::Error)>);
     void requestAutocorrectionData(const String& textForAutocorrection, std::function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>);
     void applyAutocorrection(const String& correction, const String& originalText, std::function<void (const String&, CallbackBase::Error)>);
     bool applyAutocorrection(const String& correction, const String& originalText);
