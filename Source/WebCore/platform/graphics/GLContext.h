@@ -79,6 +79,14 @@ public:
 #if ENABLE(GRAPHICS_CONTEXT_3D)
     virtual PlatformGraphicsContext3D platformContext() = 0;
 #endif
+
+    class Data {
+    public:
+        virtual ~Data() = default;
+    };
+
+protected:
+    std::unique_ptr<Data> m_contextData;
 };
 
 } // namespace WebCore

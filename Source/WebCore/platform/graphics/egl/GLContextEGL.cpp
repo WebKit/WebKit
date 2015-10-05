@@ -95,7 +95,7 @@ static bool getEGLConfig(EGLConfig* config, GLContextEGL::EGLSurfaceType surface
     return eglChooseConfig(sharedEGLDisplay(), attributeList, config, 1, &numberConfigsReturned) && numberConfigsReturned;
 }
 
-std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType window, GLContext* sharingContext)
+std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowType window, GLContext* sharingContext, std::unique_ptr<GLContext::Data>&& contextData)
 {
     EGLContext eglSharingContext = sharingContext ? static_cast<GLContextEGL*>(sharingContext)->m_context : 0;
 
@@ -117,7 +117,9 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(EGLNativeWindowT
         return nullptr;
     }
 
-    return std::make_unique<GLContextEGL>(context, surface, WindowSurface);
+    auto glContext = std::make_unique<GLContextEGL>(context, surface, WindowSurface);
+    glContext->m_contextData = WTF::move(contextData);
+    return glContext;
 }
 
 std::unique_ptr<GLContextEGL> GLContextEGL::createPbufferContext(EGLContext sharingContext)
