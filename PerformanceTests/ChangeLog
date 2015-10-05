@@ -1,3 +1,374 @@
+2015-10-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add a graphics benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=149053
+        <rdar://problem/18984169>
+
+        Reviewed by Dean Jackson.
+
+        Instead of measuring the FPS of the animation, this benchmark measures the
+        test complexity when rendering at a set-point FPS which should be lower
+        than 60 FPS. This benchmark tries to stay at the set-point FPS by using
+        a closed loop control system PID function. The gain of the system is passed
+        as a parameter when running the test. Measuring the FPS faithfully results
+        very fluctuating values. A Kalman filter is used to give a better estimate
+        for the current FPS.
+
+        The animation of the tests is done manually. requestAnimationFrame() is
+        called with a callback. Inside this callback, the test is animating by
+        changing the positions of the elements inside the page. The test complexity
+        may change also if the current FPS is not equal to the desired FPS.
+
+        In this patch, the benchmark and the tests are included. The shared code
+        and the tests runner are included in separate patches.
+
+        * Animometer/runner/animometer.html:
+        * Animometer/runner/resources/animometer.js:
+        Add two new examples for more complex animation techniques.
+        Add an option to show/hide the test running results which is off by default.
+
+        * Animometer/runner/resources/tests.js: Added.
+        (suiteFromName): Returns a suite given its name.
+        (testFromName): Returns a test given its suite and name.
+
+        * Animometer/tests: Added.
+        This directory includes all the test suites to be run by the benchmark.
+        runner. All the tests should try to run on three stages: CSS, canvas and
+        SVG.
+        
+        * Animometer/tests/bouncing-particles: Added.
+        * Animometer/tests/bouncing-particles/resources: Added.
+        The bouncing particles test is an example of a simple animation technique.
+        
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html: Added.
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html: Added.
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html: Added.
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html: Added.
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html: Added.
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html: Added.
+        Bouncing particles test pages.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js: Added.
+        (BouncingParticle): Base class for a bouncing particle.
+        (BouncingParticle.prototype.center): Returns the center point or the particle.
+        (BouncingParticle.prototype.animate): Moves the particle based on its current position, angle and velocity.
+        
+        (BouncingParticlesAnimator): A sub class of Animator.
+        
+        (BouncingParticlesStage): Represents the container of all the bouncing particles.
+        (BouncingParticlesStage.prototype.parseShapeParamters): Gets the shape parameters for shape animating tests.
+        (BouncingParticlesStage.prototype.randomRotater): Creates a rotater for the particles.
+        (BouncingParticlesStage.prototype.animate): Animates all the particles.
+        (BouncingParticlesStage.prototype.tune): Changes the test by adding or removing particles.
+        
+        (BouncingParticlesBenchmark): Runs the benchmark for bouncing particles test.
+        (BouncingParticlesBenchmark.prototype.createAnimator): Creates an animator of type BouncingParticlesAnimator.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js: Added.
+        (BouncingCssShape): A sub class of BouncingParticle for animating CSS shapes.
+        (BouncingCssShape.prototype._createSpan): Creates a <span> element and takes the shape and clipping classes into consideration.
+        (BouncingCssShape.prototype._move): Moves the particle to a new location. Apply transform since it does not require layout.
+        (BouncingCssShape.prototype.animate): Rotates and moves the shape to a new location.
+        
+        (BouncingCssShapesStage): A sub class of BouncingParticlesStage for animating CSS shapes.
+        (BouncingCssShapesStage.prototype.createParticle): Creates a particle of type BouncingCssShape.
+        (BouncingCssShapesStage.prototype.particleWillBeRemoved): Removes the corresponding element form the parent children list.
+        
+        (BouncingCssShapesBenchmark): A sub class of BouncingParticlesBenchmark for animating CSS shapes.
+        (BouncingCssShapesBenchmark.prototype.createStage): Creates a stage of type BouncingCssShapesStage.
+        (window.benchmarkClient.create): Creates a benchmark of type BouncingCssShapesBenchmark.
+        
+        * Animometer/tests/bouncing-particles/resources/bouncing-css-images.js: Added.
+        (BouncingCssImage): A sub class of BouncingParticle for animating CSS images.
+        (BouncingCssImage.prototype._move): Move the particle to a new location. Apply transform since it does not require layout.
+        (BouncingCssImage.prototype.animate): Rotates and moves the shape to a new location.
+        
+        (BouncingCssImagesStage): A sub class of BouncingParticlesStage for animating CSS images.
+        (BouncingCssImagesStage.prototype.createParticle): Creates a particle of type BouncingCssImage.
+        (BouncingCssImagesStage.prototype.particleWillBeRemoved): Removes the corresponding element form the parent children list.
+        
+        (BouncingCssImagesBenchmark): A sub class of BouncingParticlesBenchmark for animating CSS images.
+        (BouncingCssImagesBenchmark.prototype.createStage): Creates a stage of type BouncingCssImagesStage.
+        (window.benchmarkClient.create): Creates a benchmark of type BouncingCssImagesBenchmark.
+        
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js: Added.
+        (BouncingCanvasParticle): A base sub-class of BouncingParticle for animating canvas particles.
+        (BouncingCanvasParticle.prototype._applyRotation): Apply the particle rotation-around-center transform to the canvas context.
+        (BouncingCanvasParticle.prototype._applyClipping): Apply the particle clipping to the canvas context.
+        (BouncingCanvasParticle.prototype._draw): A non-implemented version of the drawing function.
+        (BouncingCanvasParticle.prototype.animate): Carries out all the steps to redraw the canvas particle.
+        
+        (BouncingCanvasParticlesStage): A base sub-class of BouncingParticlesStage for animating canvas particles.
+        
+        (BouncingCanvasParticlesAnimator): A concrete sub-class of BouncingParticlesAnimator for animating canvas particles.
+        (BouncingCanvasParticlesAnimator.prototype.animate): Overrides the base class method to clear the canvas before redrawing the stage.
+        
+        (BouncingCanvasParticlesBenchmark): A base sub-class of StageBenchmark for animating canvas particles.
+        (BouncingCanvasParticlesBenchmark.prototype.createAnimator): Creates the canvas particles animator.
+        
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Added.
+        (BouncingCanvasShape): A concrete sub-class of BouncingCanvasParticle for animating canvas shapes.
+        (BouncingCanvasShape.prototype._applyFill): Sets the fillStyle in the canvas context.
+        (BouncingCanvasShape.prototype._drawShape): Carries out the actual drawing.
+        (BouncingCanvasShape.prototype._draw): Carries out all the steps to draw the shape.
+        
+        (BouncingCanvasShapesStage): A concrete sub-class of BouncingCanvasParticle for animating canvas shapes.
+        (BouncingCanvasShapesStage.prototype.createParticle): Creates a particle of type BouncingCanvasShape.
+        
+        (BouncingCanvasShapesBenchmark): A concrete sub-class of BouncingCanvasParticlesBenchmark for animating canvas shapes.
+        (BouncingCanvasShapesBenchmark.prototype.createStage): Creates a stage of type BouncingCanvasShapesStage.
+        (window.benchmarkClient.create): Creates a benchmark of type BouncingCanvasShapesBenchmark.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js: Added.
+        (BouncingCanvasImage): A concrete sub-class of BouncingCanvasParticle for animating canvas images.
+        (BouncingCanvasImage.prototype._draw): Draws an image on the context of a canvas.
+        
+        (BouncingCanvasImagesStage): A concrete sub-class of BouncingCanvasParticlesBenchmark for animating canvas images.
+        (BouncingCanvasImagesStage.prototype.createParticle): Creates a particle of type BouncingCanvasImage.
+        
+        (BouncingCanvasImagesBenchmark): A concrete sub-class of BouncingCanvasParticlesBenchmark for animating canvas images.
+        (BouncingCanvasImagesBenchmark.prototype.createStage): Creates a stage of type BouncingCanvasImagesStage.
+        (window.benchmarkClient.create): Creates a benchmark of type BouncingCanvasImagesBenchmark.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-particles.js: Added.
+        (BouncingSvgParticle): A base sub-class of BouncingParticle for animating SVG particles.
+        (BouncingSvgParticle.prototype._applyClipping): Apply the particle clipping by setting the 'clip-path' attribute of the SVGElement.
+        (BouncingSvgParticle.prototype._move): Moves the particle to a new location. Apply transform since it does not require layout.
+        (BouncingSvgParticle.prototype.animate): Rotates and moves the shape to a new location.
+        (BouncingSvgParticlesStage): A sub class of BouncingParticlesStage for animating SVGElements.
+        (BouncingSvgParticlesStage.prototype._createDefs): Creates an SVGDefsElement.
+        (BouncingSvgParticlesStage.prototype._ensureDefsIsCreated): Ensures there is only one SVGDefsElement is created.
+        (BouncingSvgParticlesStage.prototype._createClipStar): Creates an SVGClipPathElement and sets its 'd' attribute to a star like shape.
+        (BouncingSvgParticlesStage.prototype.ensureClipStarIsCreated): Ensure there is only one star SVGClipPathElement is created.
+        (BouncingSvgParticlesStage.prototype.particleWillBeRemoved): Remove the corresponding element form the parent children list.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js: Added.
+        (BouncingSvgShape): A concrete sub-class of BouncingSVGParticle for animating SVG shapes.
+        (BouncingSvgShape.prototype._createShape): Creates an SVG shape.
+        (BouncingSvgShape.prototype._applyFill): Applies the selected fill style to the SVG shape.
+        
+        (BouncingSvgShapesStage): A concrete sub-class of BouncingSvgParticlesStage for animating SVG shapes.
+        (BouncingSvgShapesStage.prototype.createGradient): Creates an SVGLinearGradientElement.
+        (BouncingSvgShapesStage.prototype.createParticle): Creates a particle of type BouncingSvgShape.
+        (BouncingSvgShapesStage.prototype.particleWillBeRemoved): Ensures the attached SVGLinearGradientElement is removed from the SVGDefsElement.
+        
+        (BouncingSvgShapesBenchmark): A concrete sub-class of BouncingParticlesBenchmark for animating SVG images.
+        (BouncingSvgShapesBenchmark.prototype.createStage): Creates a stage of type BouncingSvgShapesStage.
+        (window.benchmarkClient.create): Creates a benchmark of type BouncingSvgShapesBenchmark.
+        
+        * Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js: Added.
+        (BouncingSvgImage): A concrete sub-class of BouncingSVGParticle for animating SVG images.
+        
+        (BouncingSvgImagesStage): A concrete sub-class of BouncingSVGParticlesBenchmark for animating SVG images.
+        (BouncingSvgImagesStage.prototype.createParticle): Creates a particle of type BouncingSvgImage.
+        
+        (BouncingSvgImagesBenchmark): A concrete sub-class of BouncingParticlesBenchmark for animating SVG images.
+        (BouncingSvgImagesBenchmark.prototype.createStage): Creates a stage of type BouncingSvgImagesStage.
+        (window.benchmarkClient.create): Creates a benchmark of type BouncingSvgImagesBenchmark.
+
+        * Animometer/tests/examples: Added.
+        * Animometer/tests/examples/canvas-electrons.html: Added.
+        * Animometer/tests/examples/canvas-stars.html: Added.
+        Examples test pages. 
+        
+        * Animometer/tests/examples/resources: Added.
+        * Animometer/tests/examples/resources/canvas-electrons.js: Added.
+        (CanvasElectron): An object which draws and animate a electron object on a canvas stage.
+        (CanvasElectron.prototype._draw): Draws the electron object.
+        (CanvasElectron.prototype.animate): Animates the electron object.
+        
+        (CanvasElectronsStage): A concrete sub-class of Stage for animating electrons.
+        (CanvasElectronsStage.prototype.tune): Changes the test by adding or removing elements.
+        (CanvasElectronsStage.prototype.animate): Animates the test elements.
+        
+        (CanvasElectronsAnimator): A concrete sub-class of StageAnimator for animating canvas electrons.
+        (CanvasElectronsAnimator.prototype.animate): Overrides the base class method to clear the canvas before redrawing the stage.
+        
+        (CanvasElectronsBenchmark): A concrete sub-class of StageBenchmark for animating electrons.
+        (CanvasElectronsBenchmark.prototype.createStage): Creates a stage of CanvasElectronsStage.
+        (CanvasElectronsBenchmark.prototype.createAnimator): Creates an animator of type CanvasElectronsAnimator.
+        (window.benchmarkClient.create): Creates a benchmark of type CanvasElectronsBenchmark.
+        
+        * Animometer/tests/examples/resources/canvas-stars.js: Added.
+        (CanvasStar): An object which draws and animate a star object on a canvas stage.
+        (CanvasStar.prototype._draw): Draws the star object.
+        (CanvasStar.prototype.animate): Animates the star object.
+        
+        (CanvasStarsStage): A concrete sub-class of Stage for animating stars.
+        (CanvasStarsStage.prototype.tune): Changes the test by adding or removing elements.
+        (CanvasStarsStage.prototype.animate): Animates the test elements.
+        
+        (CanvasStarsAnimator): A concrete sub-class of StageAnimator for animating canvas stars.
+        (CanvasStarsAnimator.prototype.animate): Overrides the base class method to clear the canvas before redrawing the stage.
+        
+        (CanvasStarsBenchmark): A concrete sub-class of Benchmark for animating stars.
+        (CanvasStarsBenchmark.prototype.createStage): Creates a stage of CanvasStarsStage.
+        (CanvasStarsBenchmark.prototype.createAnimator): Creates an animator of type CanvasStarsAnimator.
+        (window.benchmarkClient.create): Creates a benchmark of type CanvasStarsBenchmark.
+
+        * Animometer/tests/resources: Added.
+        This directory includes the script which is required to run an adaptive 
+        graphics benchmark. From an empty test page, the set of classes in this
+        directory are responsible for measuring the current frame rate and
+        changing the test to reach a desired FPS. It keeps asking the test page
+        to tune itself by a certain value to increase or decrease the frame rate.
+        It's also responsible for sampling the test state and the corresponding
+        frame rate.
+        
+        * Animometer/tests/resources/main.js: Added.
+        (BenchmarkState): Tracks the state of the benchmark test.
+        (BenchmarkState.prototype._timeOffset): Returns the timeOffset of a stage.
+        (BenchmarkState.prototype._message): Returns the message of a stage.
+        (BenchmarkState.prototype.update): Sets the currentTimeOffset to a new value.
+        (BenchmarkState.prototype.samplingTimeOffset): Returns the timeOffset of the sampling stage.
+        (BenchmarkState.prototype.currentStage): Returns the current stage of the benchmark.
+        (BenchmarkState.prototype.currentMessage): Returns the message of the current stage and timeOffset.
+        (BenchmarkState.prototype.currentProgress): Returns a percentage of how much the benchmark is running.
+        
+        (Animator): Manages animating the test.
+        (Animator.prototype.start): Called if animating using setInterval is requested.
+        (Animator.prototype.timeDelta): Returns the current timeDelta 
+        (Animator.prototype.animate): Manages the test animation.
+        (Animator.prototype.animateLoop): Called if animating using requestAnimationFrame is requested. 
+
+        (Benchmark): Manages running the test benchmark and recording the sampled data.
+        (Benchmark.prototype.start): Starts the benchmark.
+        (Benchmark.prototype.update): Called from the animator.animate() to change the complexity of the test.
+        (Benchmark.prototype.record): Shows the current (not final) results of the benchmark.
+        (Benchmark.prototype.resolveWhenFinished): Spins until the benchmark is finished and returns its results.
+        (Benchmark.prototype.run): Starts the test, runs it, waits until it is finished and return its results.
+        (window.runBenchmark): Called from the benchmark runner through the suite controller run-callback.
+
+        * Animometer/tests/resources/math.js: Added.
+        (Matrix): A matrix object.
+        (Vector3): A vector of size 3 object.
+        (Matrix3): A matrix of size 3x3 object.
+        
+        (PIDController): Closed-loop controller for a set-point y.
+        (PIDController.prototype._sat): Limits the output to a certain range.
+        (PIDController.prototype.tune): Given the current output of a system, it produces a new pid value for tuning it.
+        
+        (KalmanEstimator): Implement Kalman filter to get an estimate for a sampled data point.
+        (KalmanEstimator.prototype.estimate): Returns an estimate for for a sampled data point.
+
+        * Animometer/tests/resources/utilities.js: Added.
+        (window.Utilities._parse): Given a separator character, it pareses a string to a set of <key, value> pairs.
+        (window.Utilities.parseParameters): Parses a test parameters.
+        (window.Utilities.parseArguments): Parses a tag arguments.
+        (window.Utilities.extendObject): Adds the attributes and their values of an object to another object.
+        (window.Utilities.copyObject): Copies the attributes and their values of an object to a new object.
+        (window.Utilities.mergeObjects): Copies the attributes and their values of two objects to a new object.
+        (window.Utilities.createSvgElement): Creates an SVGElement given its name and its attributes.
+        
+        * Animometer/tests/resources/stage.css: Added.
+        * Animometer/tests/resources/stage.js: Added.
+        (Rotater): Manages rotating an angle within a fixed time interval.
+        (Rotater.prototype.get interval): Returns the time interval which is required to rotate 360 degrees.
+        (Rotater.prototype.next): Moves the current time by a delta.
+        (Rotater.prototype.degree): Returns the current rotating degree.
+        (Rotater.prototype.rotateZ): Returns CSS formatted transform rotateZ() string for the current degree.
+        (Rotater.prototype.rotate): Returns SVG formatted transform rotate() string for the current degree.
+        
+        (Stage): A base class for managing the test complexity and test animation.
+        (Stage.prototype.get size): Returns the size of the stage excluding the CSS padding.
+        (Stage.prototype.random): Returns a random float.
+        (Stage.prototype.randomInt): Returns a random integer.
+        (Stage.prototype.randomPosition): Returns a random position.
+        (Stage.prototype.randomSquareSize): Returns a square size.
+        (Stage.prototype.randomVelocity): Returns a random velocity.
+        (Stage.prototype.randomAngle): Returns a random angle.
+        (Stage.prototype.randomColor): Returns a random color not too dark and not too light.
+        (Stage.prototype.randomRotater): Creates a random rotater. Its velocity depends on choosing a random rotation time interval.
+        (Stage.prototype.tune): A not-implemented version of this function.
+        (Stage.prototype.animate): A not-implemented version of this function.
+        (Stage.prototype.clear): Clears the stage from all its animation elements.
+        
+        (StageAnimator): A base class for the stage-based animators.
+        (StageAnimator.prototype.animate): Calls Animator.animate() which updates the test page and then calls Stage.animate() to force redraw.
+        
+        (StageBenchmark): A base class for the stage-based benchmarks.
+        (StageBenchmark.prototype.createStage): Creates the default stage.
+        (StageBenchmark.prototype.createAnimator): Creates the default animator.
+        (StageBenchmark.prototype.tune): Delegates the call to stage.
+        (StageBenchmark.prototype.clear): Delegates the call to stage.
+        (StageBenchmark.prototype.showResults): Shows the results/progress through its recordTable and progressBar.
+        
+        * Animometer/tests/resources/yin-yang.png: Added.
+        * Animometer/tests/resources/yin-yang.svg: Added.
+        These images are shared among all the tests.
+        
+        * Animometer/tests/template: Added.
+        * Animometer/tests/template/resources: Added.
+        This directory includes template tests which do nothing. They can be used
+        to author new tests. Animated items can be created, moved and redrawn by
+        removing the TODO comments in the script files and writing actual code.
+
+        * Animometer/tests/template/template-css.html: Added.
+        * Animometer/tests/template/template-canvas.html: Added.
+        * Animometer/tests/template/template-svg.html: Added.
+        Template test pages. They can be used as they are. CSS attributes or hidden
+        elements can be added to these derived test pages if needed.
+        
+        * Animometer/tests/template/resources/template-css.js: Added.
+        
+        (TemplateCssStage): A stage to create and animate HTMLElements.
+        (TemplateCssStage.prototype.tune): Changes the test by adding or removing elements.
+        (TemplateCssStage.prototype.animate): Animates the test elements.
+        (TemplateCssBenchmark): 
+        (TemplateCssBenchmark.prototype.createStage): Creates the test stage.
+        (window.benchmarkClient.create): Creates a benchmark of type TemplateCssBenchmark.
+        
+        * Animometer/tests/template/resources/template-canvas.js: Added.
+        (TemplateCanvasObject):
+        (TemplateCanvasObject.prototype._draw): Draws the objects on the canvas context.
+        (TemplateCanvasObject.prototype.animate): Moves and redraws the object.
+        (TemplateCanvasStage): A stage to create and animate drawing elements.
+        (TemplateCanvasStage.prototype.tune): hanges the test by adding or removing elements.
+        (TemplateCanvasStage.prototype.animate):  Animates the test elements.
+        (TemplateCanvasAnimator.prototype.animate): Starts the animation every frame.
+        (TemplateCanvasBenchmark): 
+        (TemplateCanvasBenchmark.prototype.createStage): Creates a stage of type TemplateCanvasStage.
+        (TemplateCanvasBenchmark.prototype.createAnimator): Creates a animator of type TemplateCanvasAnimator.
+        (window.benchmarkClient.create): Creates a benchmark of type TemplateCanvasBenchmark.
+        
+        * Animometer/tests/template/resources/template-svg.js: Added.
+        (TemplateSvgStage): A stage to create and animate SVGElements.
+        (TemplateSvgStage.prototype.tune): Changes the test by adding or removing elements.
+        (TemplateSvgStage.prototype.animate): Animates the test elements.
+        (TemplateSvgBenchmark.prototype.createStage): Creates a stage of type TemplateSvgStage.
+        (window.benchmarkClient.create): Creates a benchmark of type TemplateSvgBenchmark.
+        
+        * Animometer/tests/text: Added.
+        * Animometer/tests/text/resources: Added.
+        This directory includes the text animating tests which currently runs
+        on CSS stage only.
+        
+        * Animometer/tests/text/layering-text.html: Added.
+        Text test page.
+        
+        * Animometer/tests/text/resources/layering-text.js: Added.
+        (LayeringTextStage): Represents the container of all the stacked text layers.
+        (LayeringTextStage.parseTextItem): Parses a textItem which may be an opening tag, a closing tag or a self-closing tag.
+        (LayeringTextStage.isOpeningTextItem): Returns true if the textItem is an opening tag e.g. '<ol>'.
+        (LayeringTextStage.isClosingTextItem): Returns true if  the textItem is an closing tag e.g. '</ol>.
+        (LayeringTextStage.textItemsFlags.LayeringTextStage.textItems.map): Calculates and stores isOpening and isClosing flags for each textItem.
+        (LayeringTextStage.isColorableTextItem): Returns true if the textItem is self-closing tag e.g. '<p>...</p>'.
+        (LayeringTextStage.isInsertableTextItem): Returns true if the textItems causes a new element to be added to the text layers.
+        (LayeringTextStage.colorableTextItems.LayeringTextStage.textItemsFlags.filter): Number of colorable textItems.
+        (LayeringTextStage.insertableTextItems.LayeringTextStage.textItemsFlags.filter): Number of insertable textItems.
+        (LayeringTextStage.colorIndexToTextElementIndex): Maps from colorIndex [0..colorableTextItems-1] to textElementIndex [0..insertableTextItems-1].
+        (LayeringTextStage.prototype._nextTextItem): Moves the _textItemIndex one step forward in a loop [0..LayeringTextStage.textItems.length-1].
+        (LayeringTextStage.prototype._previousTextItem): Moves the _textItemIndex one step backward in a loop.
+        (LayeringTextStage.prototype._pushTextElement): Creates a new textItemElement and adds it to the topmost container <div>.
+        (LayeringTextStage.prototype._popTextElement): Removes the last textItemElement from the topmost container <div>.
+        (LayeringTextStage.prototype._colorTextItem): Changes the background color of a single colorable textElement. The index advances in a circle [0..colorableTextItems-1].
+        (LayeringTextStage.prototype.animate): Changes the background color and the text color of the textElements such that a redraw is enforced.
+        (LayeringTextStage.prototype.tune): Adds or removes textElements to the stage.
+
+        (LayeringTextBenchmark): Runs the benchmark for the layering text test.
+        (LayeringTextBenchmark.prototype.createStage): Creates a stage of type LayeringTextStage.
+        (window.benchmarkClient.create): Creates a benchmark of type LayeringTextBenchmark.
+
 2015-10-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add shared code for a new a graphics benchmark

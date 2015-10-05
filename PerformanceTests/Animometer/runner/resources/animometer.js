@@ -63,6 +63,7 @@ function startBenchmark()
         document.getElementById("html-suite"), 
         document.getElementById("canvas-suite"), 
         document.getElementById("svg-suite"),
+        document.getElementById("examples-suite"),
         document.getElementById("template-suite"),
     ];
     var enabledSuites = Suites.filter(function (suite, index) { return !suite.disabled && checkboxes[index].checked; });
@@ -72,6 +73,11 @@ function startBenchmark()
     benchmarkRunnerClient.options["frameRate"] = parseInt(document.getElementById("frame-rate").value);
     benchmarkRunnerClient.options["estimatedFrameRate"] = document.getElementById("estimated-frame-rate").checked;    
     benchmarkRunnerClient.options["fixTestComplexity"] = document.getElementById("fix-test-complexity").checked;
+    benchmarkRunnerClient.options["showRunningResults"] = document.getElementById("show-running-results").checked;
+    
+    if (!benchmarkRunnerClient.options["showRunningResults"])
+        document.getElementById("record").style.display = "none";
+
     var runner = new BenchmarkRunner(enabledSuites, benchmarkRunnerClient);
     runner.runMultipleIterations(benchmarkRunnerClient.iterationCount);
 }
