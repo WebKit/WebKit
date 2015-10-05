@@ -248,7 +248,7 @@ xsltStylesheetPtr XSLStyleSheet::compileStyleSheet()
     // Certain libxslt versions are corrupting the xmlDoc on compilation
     // failures - hence attempting to recompile after a failure is unsafe.
     if (m_compilationFailed)
-        return 0;
+        return nullptr;
 
     // xsltParseStylesheetDoc makes the document part of the stylesheet
     // so we have to release our pointer to it.
