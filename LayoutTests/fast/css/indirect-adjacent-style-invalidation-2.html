@@ -73,7 +73,7 @@ checkStyle("rgb(0, 0, 0)");
 
 // Check the input fields.
 var allActivators = document.querySelectorAll("input.activator:matches([type=checkbox], [type=radio])");
-for (let i = 0; i < allActivators.length; ++i) {
+for (var i = 0; i < allActivators.length; ++i) {
     allActivators[i].checked = true;
 }
 shouldNeedStyleRecalc(true);
@@ -82,7 +82,7 @@ shouldNeedStyleRecalc(false);
 
 // Uncheck the input fields.
 var allActivators = document.querySelectorAll("input.activator:matches([type=checkbox], [type=radio])");
-for (let i = 0; i < allActivators.length; ++i) {
+for (var i = 0; i < allActivators.length; ++i) {
     allActivators[i].checked = false;
 }
 shouldNeedStyleRecalc(true);
