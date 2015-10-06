@@ -28,6 +28,7 @@
 
 #include <WebKit/WKType.h>
 #include <algorithm>
+#include <wtf/GetPtr.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/RefPtr.h>
