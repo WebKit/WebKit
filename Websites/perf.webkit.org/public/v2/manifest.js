@@ -304,7 +304,7 @@ App.Manifest = Ember.Controller.extend({
 
         this.set('bugTrackers', store.all('bugTracker').sortBy('name'));
 
-        var dashboards = store.all('dashboard').sortBy('name');
+        var dashboards = store.all('dashboard').toArray();
         this.set('dashboards', dashboards);
         dashboards.forEach(function (dashboard) { self._dashboardByName[dashboard.get('name')] = dashboard; });
         this._defaultDashboardName = dashboards.length ? dashboards[0].get('name') : null;

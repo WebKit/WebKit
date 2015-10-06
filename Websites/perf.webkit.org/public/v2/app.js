@@ -61,7 +61,7 @@ App.IndexRoute = Ember.Route.extend({
     {
         var self = this;
         App.Manifest.fetch(this.store).then(function () {
-            self.transitionTo('dashboard', App.Manifest.defaultDashboardName());
+            self.transitionTo('dashboard', App.Manifest.defaultDashboardName() || '');
         });
     },
 });
