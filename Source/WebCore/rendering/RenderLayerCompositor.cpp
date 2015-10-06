@@ -2579,7 +2579,7 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     RenderWidget& pluginRenderer = downcast<RenderWidget>(renderer);
     // If we can't reliably know the size of the plugin yet, don't change compositing state.
     if (pluginRenderer.needsLayout())
-        return pluginRenderer.hasLayer() && pluginRenderer.layer()->isComposited();
+        return pluginRenderer.isComposited();
 
     // Don't go into compositing mode if height or width are zero, or size is 1x1.
     IntRect contentBox = snappedIntRect(pluginRenderer.contentBoxRect());
@@ -2599,7 +2599,7 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& 
 
     // If we can't reliably know the size of the iframe yet, don't change compositing state.
     if (!frameRenderer.parent() || frameRenderer.needsLayout())
-        return frameRenderer.hasLayer() && frameRenderer.layer()->isComposited();
+        return frameRenderer.isComposited();
     
     // Don't go into compositing mode if height or width are zero.
     return !snappedIntRect(frameRenderer.contentBoxRect()).isEmpty();

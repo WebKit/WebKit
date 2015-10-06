@@ -1891,7 +1891,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer,
     // We could draw the snapshot with that coordinates, but we need to make sure there
     // isn't a composited layer between us and the plugInRenderer.
     for (auto* renderBox = &downcast<RenderBox>(renderer); renderBox != &plugInRenderer; renderBox = renderBox->parentBox()) {
-        if (renderBox->hasLayer() && renderBox->layer() && renderBox->layer()->isComposited()) {
+        if (renderBox->isComposited()) {
             snapshotAbsPos = -renderBox->location();
             break;
         }

@@ -522,11 +522,6 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintObject(paintInfo, paintOffset);
 }
 
-static inline bool isComposited(RenderElement* object)
-{
-    return object->hasLayer() && downcast<RenderLayerModelObject>(*object).layer()->isComposited();
-}
-
 static inline bool rendererObscuresBackground(RenderElement* rootObject)
 {
     if (!rootObject)
@@ -538,7 +533,7 @@ static inline bool rendererObscuresBackground(RenderElement* rootObject)
         || style.hasTransform())
         return false;
     
-    if (isComposited(rootObject))
+    if (rootObject->isComposited())
         return false;
 
     if (rootObject->rendererForRootBackground().style().backgroundClip() == TextFillBox)
