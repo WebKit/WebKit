@@ -1,3 +1,11 @@
+2015-10-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Post-review cleanup after r190572.
+
+        Unreviewed.
+
+        * TestWebKitAPI/Tests/WebKit2/WKRetainPtr.cpp:
+
 2015-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build correction.
