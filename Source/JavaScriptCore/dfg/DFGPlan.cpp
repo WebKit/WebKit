@@ -641,12 +641,26 @@ bool Plan::isKnownToBeLiveDuringGC()
 {
     if (stage == Cancelled)
         return false;
+
+    // NOTE: From here on, this method can return anything and still be sound. It's sound to return
+    // false because then we'll just cancel the compilation. It's always sound to do that. It's sound
+    // to return true because then we'll just keep alive everything that the compilation needs to
+    // have live. The only thing you have to worry about is performance. The goal of returning false
+    // is to try to minimize the likelihood that we expend effort compiling something that will be
+    // DOA - that is, the code being compiled is only reachable from the compilation worklist itself
+    // or the code being compiled is going to have weak references to things that are otherwise dead.
+    // If you return false too often, then you'll regress performance because you might be killing a
+    // compilation that wouldn't have been DOA, and so you're losing opportunities to run faster
+    // code. If you return true too often, then you'll regress performance because you might expend
+    // too much effort compiling something that will be DOA.
+    
     if (!Heap::isMarked(codeBlock->ownerExecutable()))
         return false;
-    if (!codeBlock->alternative()->isKnownToBeLiveDuringGC())
-        return false;
-    if (!!profiledDFGCodeBlock && !profiledDFGCodeBlock->isKnownToBeLiveDuringGC())
-        return false;
+
+    // FIXME: We could detect if the alternate CodeBlock or the profiled DFG CodeBlock have
+    // experienced troubles and may be jettisoned.
+    // https://bugs.webkit.org/show_bug.cgi?id=149823
+
     return true;
 }
 

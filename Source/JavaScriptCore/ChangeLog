@@ -1,3 +1,34 @@
+2015-10-05  Filip Pizlo  <fpizlo@apple.com>
+
+        GC shouldn't cancel every FTL compilation
+        https://bugs.webkit.org/show_bug.cgi?id=149821
+
+        Reviewed by Saam Barati.
+
+        During one of the CodeBlock GC refactorings, we messed up the GC's compilation cancellation
+        code. The GC should be able to cancel compilation plans if it determines that the plan will
+        be DOA. But, prior to this fix, that code was killing every FTL compilation. This happened
+        because the meaning of CodeBlock::isKnownToBeLiveDuringGC() changed.
+
+        It's funny that this didn't show up as a bigger slow-down. Basically, those benchmarks that
+        GC a lot usually don't rely on good compilation, while those benchmarks that do rely on good
+        compilation usually don't GC a lot. That's probably why this wasn't super obvious when we
+        broke it.
+
+        This change just changes the cancellation logic so that it only cancels plans if the owning
+        executable is dead. This is safe; in fact the relevant method would be correct even if it
+        always returned true. It would also be correct if it always returned false. So, compared to
+        what we had before we changed isKnownToBeLiveDuringGC(), this new code will cancel fewer
+        compilations. But, that's better than cancelling every compilation. I've filed a bug and
+        written a FIXME for investigating ways to resurrect the old behavior:
+        https://bugs.webkit.org/show_bug.cgi?id=149823
+
+        Nonetheless, this change looks like it might be a 1% speed-up on Octane. It improves earley
+        and gbemu.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::isKnownToBeLiveDuringGC):
+
 2015-10-05  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [Intl] Change the return type of canonicalizeLocaleList() from JSArray* to Vector<String>
