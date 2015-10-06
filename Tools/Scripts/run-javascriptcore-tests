@@ -59,6 +59,8 @@ my $runJSCStress = 1;
 my $runJITStressTests = 1;
 my $runQuickMode = 0;
 my $envVars = "";
+my $gmallocPath = undef;
+my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
 
 my $enableFTL = isAppleMacWebKit();
 my $createTarball = 0;
@@ -97,6 +99,7 @@ Usage: $programName [options] [options to pass to build system]
   --env-vars                    Pass a list of environment variables to set before running tests.
                                 Each environment variable should be separated by a space.
                                 e.g. \"foo=bar x=y\" (no quotes).
+  --gmalloc:                    Run tests with Guard Malloc enabled (if no path is given: $gmallocDefaultPath is used)
 
 EOF
 
@@ -117,7 +120,8 @@ GetOptions(
     'make-runner' => \$makeRunner,
     'filter=s' => \$filter,
     'help' => \$showHelp,
-    'env-vars=s' => \$envVars
+    'env-vars=s' => \$envVars,
+    'gmalloc:s' => \$gmallocPath
 );
 
 # Assume any arguments left over from GetOptions are assumed to be build arguments
@@ -148,6 +152,13 @@ if (!defined($root) && $buildJSC) {
     }
 }
 
+if (defined($gmallocPath)) {
+    if ($gmallocPath eq "") {
+        $envVars .= " DYLD_INSERT_LIBRARIES=" . $gmallocDefaultPath;
+    } else {
+        $envVars .= " DYLD_INSERT_LIBRARIES=" . $gmallocPath;
+    }
+}
 
 my $productDir = jscProductDir();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
