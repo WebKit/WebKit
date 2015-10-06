@@ -83,6 +83,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/jsc"
+    "${WEBCORE_DIR}/contentextensions"
     "${WEBCORE_DIR}/css"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
