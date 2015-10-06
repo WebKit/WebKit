@@ -1,5 +1,18 @@
 2015-10-05  Commit Queue  <commit-queue@webkit.org>
 
+        Unreviewed, rolling out r190599.
+        https://bugs.webkit.org/show_bug.cgi?id=149836
+
+        Made perf tests randomly crash (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "GC shouldn't cancel every FTL compilation"
+        https://bugs.webkit.org/show_bug.cgi?id=149821
+        http://trac.webkit.org/changeset/190599
+
+2015-10-05  Commit Queue  <commit-queue@webkit.org>
+
         Unreviewed, rolling out r190589.
         https://bugs.webkit.org/show_bug.cgi?id=149833
 
