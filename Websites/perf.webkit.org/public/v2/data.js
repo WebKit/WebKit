@@ -477,7 +477,7 @@ TimeSeries.prototype.findPointAfterTime = function (time)
 
 TimeSeries.prototype.seriesBetweenPoints = function (startPoint, endPoint)
 {
-    if (!startPoint.seriesIndex || !endPoint.seriesIndex)
+    if (typeof(startPoint.seriesIndex) != "number" || typeof(endPoint.seriesIndex) != "number")
         return null;
     return this._series.slice(startPoint.seriesIndex, endPoint.seriesIndex + 1);
 }

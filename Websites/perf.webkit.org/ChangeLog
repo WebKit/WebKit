@@ -1,5 +1,18 @@
 2015-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
+        V2 UI fails to show the data for the very first point in charts
+        https://bugs.webkit.org/show_bug.cgi?id=149857
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by seriesBetweenPoints returning null for when point.seriesIndex is 0.
+        Explicitly check the type of this property instead.
+
+        * public/v2/data.js:
+        (TimeSeries.prototype.seriesBetweenPoints):
+
+2015-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard should have the capability to test local UI with production data
         https://bugs.webkit.org/show_bug.cgi?id=149834
 
