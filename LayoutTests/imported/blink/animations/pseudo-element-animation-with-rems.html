@@ -1,0 +1,22 @@
+<html>
+<head>
+  <script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+  }
+  </script>
+  <style>
+  @-webkit-keyframes anim {
+    42% {
+      -webkit-border-horizontal-spacing: 42rem;
+    }
+  }
+  body::first-letter {
+    -webkit-animation-name: anim;
+  }
+  </style>
+</head>
+<body>
+This test passes if it does not crash.
+</body>
+</html>

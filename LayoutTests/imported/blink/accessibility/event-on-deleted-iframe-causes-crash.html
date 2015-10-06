@@ -1,0 +1,35 @@
+<div contenteditable="true">
+   <span id="item1">Lorem
+   <br/>
+   more Lorem!
+   <blockquote>
+      ipsum
+   <span id="item2">
+</div>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var s = window.getSelection();
+    var p1 = document.getElementById("item1");
+    var p2 = document.getElementById("item2");
+    s.setBaseAndExtent(p1, 0, p2);
+    document.execCommand("Indent");
+
+    // This code doesn't do anything initially, but the code below creates an iframe
+    // with the same url as this one, and that time it will delete itself.
+    var frame = window.parent.document.querySelector('iframe');
+    if (frame)
+        frame.remove();
+</script>
+<script>
+    // This creates an iframe with the same url as this one, which triggers
+    // the code above that deletes this iframe, and then triggers a possible crash
+    // when the execCommand fires accessibility notifications that trigger creation
+    // of the AXScrollArea corresponding to the frame that's in the process of
+    // being deleted.
+    var iframe = document.createElement('iframe');
+    iframe.src = window.location;
+    document.body.appendChild(iframe);
+</script>

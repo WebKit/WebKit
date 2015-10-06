@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<style>
+#child {
+  width: 50px;
+  height: 50px;
+  background: red;
+  -webkit-animation: flash 0.2s infinite;
+}
+
+.hideMe {
+  display: none;
+}
+
+@-webkit-keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+</style>
+<div id='container'>
+  <div id='child' class='hideMe'></div>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+var firstCall = true;
+child.addEventListener('webkitAnimationStart', function(e) {
+    if (firstCall) {
+        container.classList.add('hideMe');
+        container.offsetTop;
+        container.classList.remove('hideMe');
+        firstCall = false;
+        return;
+    }
+    document.documentElement.textContent = 'PASS';
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+});
+child.classList.remove('hideMe');
+</script>
+

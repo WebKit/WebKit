@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var n = document.createElement('fieldset');
+document.documentElement.appendChild(n);
+try { n.createShadowRoot(); } catch(e) {}
+n.appendChild(document.createElement('div'));
+
+onload = function() {
+    document.execCommand("selectall");
+};
+</script>This test passes if it does not crash

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<style>
+    @import url('../../resources/opensans/OpenSans-Regular.woff') format('woff');
+    @font-face {
+        font-family: "testFreeSansSvg";
+        src: url("resources/SVGFreeSans.svg") format("svg");
+    }
+    #test1SvgFontFirstNoFallback {
+        font-family: "testFreeSansSvg";
+    }
+    #test2SvgFontSecondNoFallback {
+        font-family: "doesnotexistfont", "testFreeSansSvg";
+    }
+    #test3SvgFontSecondWithFallback {
+        font-family: "doesnotexistfont", "testFreeSansSvg", "doesnotexistfont2", Verdana;
+    }
+    #test4SvgFontWithFallback {
+        font-family: "testFreeSansSvg", "test2SVGFreeSansASCII", "doesnotexistfont2", "Open Sans";
+    }
+</style>
+crbug.com/242735: This test passes if no SVG fonts are used.
+
+<p>
+    <div>This text should use the default font.</div>
+    <div id="test1SvgFontFirstNoFallback">This text should use the default font.</div>
+</p>
+
+<p>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="12pt">
+        <text y="12pt">This text should use the default font.</text>
+    </svg><br>
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="12pt">
+        <defs>
+            <font-face font-family="test2SVGFreeSansASCII" unicode-range="U+0-7F">
+                <font-face-src>
+                    <font-face-uri xlink:href="resources/SVGFreeSans.svg#ascii"/>
+                </font-face-src>
+            </font-face>
+        </defs>
+        <text y="12pt" font-family="test2SVGFreeSansASCII">This text should use the default font.</text>
+    </svg>
+</p>
+
+<p>
+    <div>This text should use the default font.</div>
+    <div id="test2SvgFontSecondNoFallback">This text should use the default font.</div>
+</p>
+
+<p>
+    <div style="font-family: Verdana;">This text should use Verdana.</div>
+    <div id="test3SvgFontSecondWithFallback">This text should use Verdana.</div>
+</p>
+
+<p>
+    <div style="font-family: Open Sans;">This text should use Open Sans.</div>
+    <div id="test4SvgFontWithFallback">This text should use Open Sans.</div>
+</p>

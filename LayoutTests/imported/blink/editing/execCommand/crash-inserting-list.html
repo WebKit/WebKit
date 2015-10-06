@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- It is a minimized testcase for a Clusterfuzz test. See crbug.com/345373 -->
+<html>
+<head>
+<style>
+* { float:left; }
+.class0 { content: url(); }
+</style>
+</head>
+<body>
+<ul class="class0">
+    <li id="r0"></li>
+    <li id="r1"></li>
+</ul>
+<hr/>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var domNodeRemovedFireCount = 0;
+    document.addEventListener("DOMNodeRemoved", function () {
+        if (domNodeRemovedFireCount >= 1)
+	    return;
+        domNodeRemovedFireCount++;
+        var element = event.srcElement;
+        document.execCommand('InsertOrderedList', false, false);
+
+        var parentElement = document.getElementById('r1');
+        var childElement = parentElement.childNodes[0];
+        parentElement.insertBefore(element, childElement);
+
+        document.execCommand('Undo', false, false);
+        document.execCommand('Redo', false, false);
+        document.execCommand('Outdent', false, false);
+    }, false);
+
+    document.designMode = 'on';
+    var selection = window.getSelection();
+    document.execCommand('SelectAll', false);
+    var range = selection.getRangeAt(0);
+    var insertedElement = document.getElementById('r0');
+    range.insertNode(insertedElement);
+    document.write('This test passes if the page does not crash.');
+</script>
+</body>
+</html>

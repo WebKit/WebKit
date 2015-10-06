@@ -1,0 +1,3 @@
+Tests that an animation does not run when it specifies an incorrect name.
+PASS
+

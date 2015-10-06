@@ -1,0 +1,4 @@
+
+This tests that the parser parses 'image' as img and constructs a HTMLImageElement.
+
+TEST PASSED

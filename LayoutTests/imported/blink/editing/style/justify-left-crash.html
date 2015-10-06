@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html hidden>
+<head>
+<style>
+html, head, style {
+    display: block;
+}
+</style>
+</head>
+<script>
+    document.designMode = "on";
+    document.execCommand("selectAll");
+    document.execCommand("italic");
+    document.execCommand("justifyLeft");
+    document.documentElement.removeAttribute("hidden");
+</script>
+<body>
+This test passes if it does not crash.
+</body>
+</html>

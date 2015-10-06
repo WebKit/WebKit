@@ -1,0 +1,40 @@
+<html>
+<body>
+This tests that NPP_URLNotify gets called exactly once for canceled streams on plugin removal.
+<div id="result">FAILURE</div>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<script>
+    var callbackRun = false;
+    function callback()
+    {
+        if (callbackRun) {
+            result.textContent = "FAILURE - callback run twice";
+            return;
+        }
+
+        callbackRun = true;
+        result.textContent = "SUCCESS";
+        // Force the plugin to spin a nested event loop.
+        alert("Request completed");
+        // Don't stop the test until a small delay, in case callback is called again.
+        setTimeout(notify, 50);
+    }
+    function notify()
+    {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    plg.getURLNotify("resources/slow-resource.pl", null, "callback");
+    // Remove the plugin after a short delay (to give the resource time to
+    // propagate through the system to the browser).
+    setTimeout(function() {
+        plg.parentNode.removeChild(plg);
+    }, 50);
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = setTimeout(function() {
+    window.addEventListener('hashchange', function() {
+        document.body.appendChild(document.createTextNode(history.state == "FAIL" ? "FAIL" : "PASS"));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+
+    history.replaceState("FAIL", null);
+    location.href = "#test";
+}, 0);
+</script>

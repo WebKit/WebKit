@@ -1337,3 +1337,20 @@ http/tests/incremental/slow-utf8-text.pl [ Skip ]
 
 # Changing system language is not supported in DumpRenderTree.
 fast/text/international/system-language [ Skip ]
+
+# Imported Blink tests. (Oct 1, 2015)
+imported/blink/compositing/repaint/end-of-opacity-transition.html [ ImageOnlyFailure Pass ]
+imported/blink/compositing/squashing/invalidate-on-grouped-mapping-reorder.html [ ImageOnlyFailure Pass ]
+imported/blink/compositing/squashing/squash-overflow-hidden-scrolltop.html [ ImageOnlyFailure Pass ]
+imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
+imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
+imported/blink/css3/blending/svg-isolation-add-opacity.html [ ImageOnlyFailure ]
+imported/blink/css3/blending/svg-isolation-remove-isolation.html [ ImageOnlyFailure ]
+imported/blink/fast/canvas/canvas-state-persistence-no-dirty.html [ ImageOnlyFailure ]
+imported/blink/fast/canvas/canvas-unbalanced-save.html [ ImageOnlyFailure ]
+imported/blink/fast/forms/relayout-shifts-inner-editor.html [ ImageOnlyFailure ]
+imported/blink/fast/multicol/dynamic/relayout-spanner-parent-inside-overflow-hidden.html [ ImageOnlyFailure ]
+imported/blink/fast/text-autosizing/print-autosizing.html [ ImageOnlyFailure Pass ]
+imported/blink/fast/text-autosizing/subtree-relayout-input.html [ ImageOnlyFailure ]
+imported/blink/fast/text-autosizing/subtree-relayout.html [ ImageOnlyFailure ]
+imported/blink/fast/text/international/repaint-glyph-bounds.html [ ImageOnlyFailure Pass ]

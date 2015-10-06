@@ -1,0 +1,24 @@
+<style>
+.c0 {
+    display: list-item;
+}
+.c7 {
+    -webkit-wrap-flow: auto;
+    display: run-in;
+}
+</style>
+<script>
+// This test requires ASAN to detect a regression.
+onload = function() {
+    document.body.innerHTML += '<nav class="c0"></nav>';
+    document.designMode = 'on';
+    window.getSelection().setBaseAndExtent(document.createElement('q'), 1, document.querySelector('nav'), 6);
+    document.designMode = 'off';
+    document.querySelector('nav').classList.add('c7');
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.body.innerHTML += 'PASS if not crash.';
+}
+</script>
+<body><rp class="c7"><input type="file"></rp></body>

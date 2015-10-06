@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    #target {
+      position: relative;
+      height: 50px;
+      width: 50px;
+      background-color: blue;
+    }
+    .animated {
+      -webkit-animation: test 1s linear;
+      animation: test 1s linear;
+    }
+    @-webkit-keyframes test {
+        from { left: 100px; }
+        to   { left: 200px; }
+    }
+    @keyframes test {
+        from { left: 100px; }
+        to   { left: 200px; }
+    }
+  </style>
+  <script type="text/javascript">
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    function log(message) {
+      var div = document.createElement('div');
+      div.textContent = message;
+      document.body.appendChild(div);
+    }
+
+    var target;
+    function go() {
+      target = document.getElementById('target');
+      target.addEventListener('webkitAnimationStart', onStart);
+      target.classList.add('animated');
+    }
+
+    function onStart(e) {
+      log('INFO: Start event fired');
+      target.removeEventListener('webkitAnimationStart', onStart);
+      requestAnimationFrame(function() {
+        setTimeout(setDisplayNone, 100);
+      });
+    }
+
+    var leftPropertyWhenSetDisplayNone;
+    function setDisplayNone() {
+      leftPropertyWhenSetDisplayNone = getComputedStyle(target).left;
+      target.style.display = 'none';
+      requestAnimationFrame(function() {
+        setTimeout(setDisplayBlock, 100);
+      });
+    }
+
+    function setDisplayBlock() {
+      target.addEventListener('webkitAnimationStart', onRestart);
+      target.style.display = 'block';
+    }
+
+    function onRestart(e) {
+      log('INFO: Start event fired again');
+      var pass = leftPropertyWhenSetDisplayNone > getComputedStyle(target).left;
+      log((pass ? 'PASS' : 'FAIL') + ': Left property was ' + (pass ? '' : 'not ') + 'reset correctly');
+      if (window.testRunner) {
+        testRunner.notifyDone();
+      }
+    }
+  </script>
+</head>
+<body onload="go()">
+  <p>
+    Tests that setting the display property of a running animation to 'none'
+    terminates the animation, and that setting it a value other than 'none'
+    causes it to re-start from the start.
+  </p>
+  <div id="target"></div>
+</body>
+</html>

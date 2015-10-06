@@ -1,0 +1,6 @@
+This text should only appear once. 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

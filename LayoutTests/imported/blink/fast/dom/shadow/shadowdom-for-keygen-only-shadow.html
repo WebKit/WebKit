@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>When the AuthorShadowDOM has only a shadow element, this should be rendered like no Shadow DOM is added.</p>
+<form>
+    <keygen id="host"></keygen>
+</form>
+
+<script>
+var shadowRoot = host.createShadowRoot();
+var shadow = document.createElement('shadow');
+shadowRoot.appendChild(shadow);
+</script>
+</body>
+</html>

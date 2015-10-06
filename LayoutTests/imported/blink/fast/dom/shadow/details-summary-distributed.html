@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<p>Tests distributed &lt;summary> elements are not recognized as children of &lt;details> elements.
+<p>Note in the current build, &lt;details> cannot show toggle buttons if &lt;summary> elements are distributed.
+    The expected file simulates this behavior.
+<div id=host>
+    <summary id=summary>Distributed summary</summary>
+</div>
+<template id=template>
+    <details>
+        <content></content>
+        <div>Details text</div>
+    </details>
+</template>
+<script>
+runTests();
+function runTests() {
+    var shadowRoot = host.createShadowRoot();
+    shadowRoot.appendChild(document.importNode(template.content, true));
+}
+</script>

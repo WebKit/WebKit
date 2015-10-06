@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<title>CSS Reference</title>
+<link rel="author" title="Elika J. Etemad" href="http://fantasai.inkedblade.net/contact">
+
+<style>
+  table {
+    border-spacing: 0;
+    margin: 1em;
+  }
+  td {
+    width: 1em;
+    height: 1em;
+    border: solid gray;
+  }
+
+  .a { background: navy}
+  .b { background: blue }
+  .c { background: aqua }
+  .d { background: teal }
+  .e { background: purple }
+  .f { background: fuchsia }
+  .g { background: yellow }
+  .h { background: orange }
+  caption { background: green; }
+</style>
+
+<p>Test passes if the following three tables look identical.
+
+<table>
+  <caption></caption>
+  <tr>
+    <td rowspan=2>
+    <td class="h">
+    <td colspan=3">
+    <td class="a">
+  <tr>
+    <td rowspan=3">
+    <td class="g">
+    <td class="f">
+    <td rowspan=2">
+    <td class="b">
+  <tr>
+    <td class="c">
+    <td rowspan=2 colspan=2>
+    <td rowspan=2>
+  <tr>
+    <td class="d">
+    <td class="e">
+</table>
+
+<table>
+  <tr>
+    <td rowspan=2>
+    <td class="h">
+    <td colspan=3">
+    <td class="a">
+  <tr>
+    <td rowspan=3">
+    <td class="g">
+    <td class="f">
+    <td rowspan=2">
+    <td class="b">
+  <tr>
+    <td class="c">
+    <td rowspan=2 colspan=2>
+    <td rowspan=2>
+  <tr>
+    <td class="d">
+    <td class="e">
+</table>
+
+<table>
+  <tr>
+    <td rowspan=2>
+    <td class="h">
+    <td colspan=3">
+    <td class="a">
+  <tr>
+    <td rowspan=3">
+    <td class="g">
+    <td class="f">
+    <td rowspan=2">
+    <td class="b">
+  <tr>
+    <td class="c">
+    <td rowspan=2 colspan=2>
+    <td rowspan=2>
+  <tr>
+    <td class="d">
+    <td class="e">
+</table>
+

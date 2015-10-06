@@ -1,0 +1,3 @@
+This test checks that setting grid-template shorthand from JavaScript doesn't cause an infinite loop.
+
+

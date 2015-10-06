@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<p>Trigger layout inside a clipped box inside a multicol container that has a spanner. Then trigger
+    layout outside the clipped box, but still inside the multicol container. This tests that we
+    don't perform any optimized subtree layout operations incompatible with multicol (which would
+    typically cause assertion failures).</p>
+<p>You should see a blue square below, and nothing else (no red, no "FAIL").</p>
+<div id="multicol" style="-webkit-columns:2; line-height:2em;">
+    <div style="width:5em; height:2em; overflow:hidden;">
+        <div id="block" style="-webkit-column-break-inside:avoid; width:3em; height:2em; background:blue;"></div>
+        <div style="-webkit-column-span:all; width:4em; height:2em; background:blue;"></div>
+        <div style="background:red;">FAIL</div>
+    </div>
+</div>
+<script>
+    document.body.offsetTop;
+    document.getElementById("block").style.width = "4em";
+    document.body.offsetTop;
+    document.getElementById("multicol").style.width = "50%";
+</script>
