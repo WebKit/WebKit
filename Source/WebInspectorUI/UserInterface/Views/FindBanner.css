@@ -143,17 +143,11 @@ body.window-inactive .find-banner {
 .find-banner > button.segmented.left {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-
     margin-right: 0;
-
-    padding-left: 6px;
-    padding-right: 6px;
 }
 
 .find-banner > button.segmented.left > .glyph {
     background-image: -webkit-canvas(find-banner-previous-arrow-normal);
-    background-size: 7px 11px;
-    background-repeat: no-repeat;
 }
 
 .find-banner > button.segmented.left:active:not(:disabled) > .glyph {
@@ -163,17 +157,12 @@ body.window-inactive .find-banner {
 .find-banner > button.segmented.right {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-
     margin-left: -1px;
-
-    padding-left: 5px;
-    padding-right: 7px;
 }
 
 .find-banner > button.segmented.right > .glyph {
     background-image: -webkit-canvas(find-banner-next-arrow-normal);
-    background-size: 7px 11px;
-    background-repeat: no-repeat;
+    margin-left: 1px;
 }
 
 .find-banner > button.segmented.right:active:not(:disabled) > .glyph {
@@ -182,8 +171,12 @@ body.window-inactive .find-banner {
 
 .find-banner > button.segmented {
     min-width: 22px;
-    padding-top: 3px;
-    padding-bottom: 2px;
+    padding: 3px 6px 2px;
+}
+
+.find-banner > button.segmented > .glyph {
+    background-size: 7px 11px;
+    background-repeat: no-repeat;
 }
 
 .find-banner > button.segmented:active {
