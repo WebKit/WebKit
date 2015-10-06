@@ -1,3 +1,18 @@
+2015-10-06  Daniel Bates  <dbates@webkit.org>
+
+        Enable XSLT when building WebKit for iOS using the public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=149827
+
+        Reviewed by Alexey Proskuryakov.
+
+        Teach script configure-xcode-for-ios-development to copy the OS X XSLT headers to the iPhoneOS
+        and iPhoneSimulator SDKs so as to support building WebKit for iOS with XSLT. A person must
+        run this script before building WebKit for iOS or the build will fail because one or more XSLT
+        headers cannot be found.
+
+        * Scripts/configure-xcode-for-ios-development:
+        (copyMissingXSLTHeadersToSDKIfNeeded): Added.
+
 2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(189668?): http/tests/notifications/events.html flakily asserts or times out

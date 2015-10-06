@@ -215,11 +215,7 @@ ENABLE_WEB_TIMING_macosx_101000 = ENABLE_WEB_TIMING;
 ENABLE_WEB_TIMING_macosx_101100 = ENABLE_WEB_TIMING;
 ENABLE_WEB_TIMING_macosx_101200 = ENABLE_WEB_TIMING;
 
-// FIXME: Remove the USE_INTERNAL_SDK condition once we support XSLT when building for iOS with the
-// public SDK. We will also need to update FeatureDefines.h.
-ENABLE_XSLT[sdk=macosx*] = ENABLE_XSLT;
-ENABLE_XSLT[sdk=iphone*] = $(ENABLE_XSLT_ios_WITH_INTERNAL_SDK_$(USE_INTERNAL_SDK));
-ENABLE_XSLT_ios_WITH_INTERNAL_SDK_YES = ENABLE_XSLT;
+ENABLE_XSLT = ENABLE_XSLT;
 
 ENABLE_FTL_JIT[sdk=macosx*] = ENABLE_FTL_JIT;
 ENABLE_FTL_JIT[sdk=iphoneos*] = ENABLE_FTL_JIT;

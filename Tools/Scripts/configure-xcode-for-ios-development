@@ -41,6 +41,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 sub copyMissingHeadersToIPhoneOSSDKIfNeeded();
+sub copyMissingXSLTHeadersToSDKIfNeeded($);
 sub createLegacyXcodeSpecificationFilesForSDKIfNeeded($);
 sub mergeXcodeSpecificationWithSpecificationAndId($$$);
 sub readXcodeSpecificationById($$);
@@ -64,6 +65,7 @@ if ($EFFECTIVE_USER_ID) {
 
 for my $sdk (qw(iphoneos iphonesimulator)) {
     updateXcodeSpecificationFilesForSDKIfNeeded($sdk);
+    copyMissingXSLTHeadersToSDKIfNeeded($sdk);
 }
 
 copyMissingHeadersToIPhoneOSSDKIfNeeded();
@@ -98,6 +100,18 @@ sub copyMissingHeadersToIPhoneOSSDKIfNeeded()
         die "Could not copy $iphonesimulatorSDKPath to $iphoneosSDKPath: $!" if exitStatus($?);
         print "Successfully copied $iphonesimulatorSDKPath to $iphoneosSDKPath.\n";
     }
+}
+
+sub copyMissingXSLTHeadersToSDKIfNeeded($)
+{
+    my ($sdkName) = @_;
+    my $sdkXSLTHeaderDirectory = File::Spec->canonpath(File::Spec->catdir(sdkDirectory($sdkName), "usr", "include", "libxslt"));
+    return if -d $sdkXSLTHeaderDirectory;
+
+    my $macosxXSLTHeaderDirectory = File::Spec->canonpath(File::Spec->catdir(sdkDirectory("macosx"), "usr", "include", "libxslt"));
+    system("/usr/bin/ditto", $macosxXSLTHeaderDirectory, $sdkXSLTHeaderDirectory);
+    die "Could not copy $macosxXSLTHeaderDirectory to $sdkXSLTHeaderDirectory: $!" if exitStatus($?);
+    print "Successfully copied $macosxXSLTHeaderDirectory to $sdkXSLTHeaderDirectory.\n";
 }
 
 sub updateXcodeSpecificationFilesForSDKIfNeeded($)
