@@ -2844,12 +2844,12 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
     m_volatilityTimer.startRepeating(std::chrono::milliseconds(200));
 }
 
-void WebPage::applicationWillEnterForeground()
+void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 {
     m_volatilityTimer.stop();
     setLayerTreeStateIsFrozen(false);
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
 }
 
 void WebPage::applicationDidBecomeActive()

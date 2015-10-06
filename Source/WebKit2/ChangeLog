@@ -1,3 +1,21 @@
+2015-10-05  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] REGRESSION(r190434): Media continues to play when locking screen
+        https://bugs.webkit.org/show_bug.cgi?id=149822
+
+        Reviewed by Brent Fulgham.
+
+        Pass through isSuspendedUnderLock when notifying the WebPage that the
+        applicationWillEnterForeground, and pass that boolean in the userInfo of the
+        WebUIApplicationWillEnterForegroundNotification.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationWillEnterForeground):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillEnterForeground):
+
 2015-10-05  Anders Carlsson  <andersca@apple.com>
 
         Get rid of some dead code

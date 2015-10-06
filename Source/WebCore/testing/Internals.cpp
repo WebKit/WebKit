@@ -2730,9 +2730,9 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
     PlatformMediaSessionManager::sharedManager().endInterruption(flags);
 }
 
-void Internals::applicationWillEnterForeground() const
+void Internals::applicationDidEnterForeground() const
 {
-    PlatformMediaSessionManager::sharedManager().applicationWillEnterForeground();
+    PlatformMediaSessionManager::sharedManager().applicationDidEnterForeground();
 }
 
 void Internals::applicationWillEnterBackground() const
