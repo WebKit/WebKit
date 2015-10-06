@@ -83,14 +83,14 @@ private:
 class JSTestNondeterministicConstructor : public DOMConstructorObject {
 private:
     JSTestNondeterministicConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestNondeterministicConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestNondeterministicConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNondeterministicConstructor>(vm.heap)) JSTestNondeterministicConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -108,7 +108,7 @@ JSTestNondeterministicConstructor::JSTestNondeterministicConstructor(Structure* 
 {
 }
 
-void JSTestNondeterministicConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestNondeterministicConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));

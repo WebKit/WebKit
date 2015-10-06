@@ -76,14 +76,14 @@ private:
 class JSTestEventTargetConstructor : public DOMConstructorObject {
 private:
     JSTestEventTargetConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestEventTargetConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestEventTargetConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventTargetConstructor>(vm.heap)) JSTestEventTargetConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -115,7 +115,7 @@ JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure,
 {
 }
 
-void JSTestEventTargetConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestEventTargetConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));

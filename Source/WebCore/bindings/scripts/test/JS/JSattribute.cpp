@@ -63,14 +63,14 @@ private:
 class JSattributeConstructor : public DOMConstructorObject {
 private:
     JSattributeConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSattributeConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSattributeConstructor* ptr = new (NotNull, JSC::allocateCell<JSattributeConstructor>(vm.heap)) JSattributeConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -88,7 +88,7 @@ JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobal
 {
 }
 
-void JSattributeConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSattributeConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));

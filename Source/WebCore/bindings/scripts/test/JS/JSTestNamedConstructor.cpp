@@ -63,14 +63,14 @@ private:
 class JSTestNamedConstructorConstructor : public DOMConstructorObject {
 private:
     JSTestNamedConstructorConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestNamedConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestNamedConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNamedConstructorConstructor>(vm.heap)) JSTestNamedConstructorConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -88,7 +88,7 @@ public:
     static JSTestNamedConstructorNamedConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestNamedConstructorNamedConstructor* constructor = new (NotNull, JSC::allocateCell<JSTestNamedConstructorNamedConstructor>(vm.heap)) JSTestNamedConstructorNamedConstructor(structure, globalObject);
-        constructor->finishCreation(vm, globalObject);
+        constructor->finishCreation(vm, *globalObject);
         return constructor;
     }
 
@@ -103,7 +103,7 @@ private:
     JSTestNamedConstructorNamedConstructor(JSC::Structure*, JSDOMGlobalObject*);
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestNamedConstructor(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 };
 
 const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
@@ -113,7 +113,7 @@ JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* 
 {
 }
 
-void JSTestNamedConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestNamedConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
@@ -152,9 +152,9 @@ JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(S
 {
 }
 
-void JSTestNamedConstructorNamedConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestNamedConstructorNamedConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    Base::finishCreation(globalObject);
+    Base::finishCreation(&globalObject);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Audio"))), ReadOnly | DontEnum);
