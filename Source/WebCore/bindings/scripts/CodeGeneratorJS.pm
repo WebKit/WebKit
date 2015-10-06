@@ -5115,6 +5115,11 @@ sub AddIncludesForJSBuiltinMethods()
 {
     my $interface = shift;
 
+    if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
+        AddToImplIncludes($interface->name . "Builtins.h");
+        return 1;
+    }
+
     foreach my $function (@{$interface->functions}) {
         next unless ($function->signature->extendedAttributes->{"JSBuiltin"});
         my $scopeName = $function->signature->extendedAttributes->{"ImplementedBy"};

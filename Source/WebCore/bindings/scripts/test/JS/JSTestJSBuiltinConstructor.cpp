@@ -22,6 +22,7 @@
 #include "JSTestJSBuiltinConstructor.h"
 
 #include "JSDOMBinding.h"
+#include "TestJSBuiltinConstructorBuiltins.h"
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
