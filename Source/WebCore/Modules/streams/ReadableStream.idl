@@ -28,16 +28,14 @@
  */
 
 [
-    ConstructorCallWith=ScriptState,
-    Constructor([Default=Undefined] optional any source, [Default=Undefined] optional Dictionary strategy),
     Conditional=STREAMS_API,
-    SkipVTableValidation
+    JSBuiltinConstructor
 ] interface ReadableStream {
-    [RaisesException] Promise cancel([Default=Undefined] optional any reason);
-    [RaisesException] ReadableStreamReader getReader();
-    [Custom] Promise pipeTo(any streams, any options);
+    [JSBuiltin] Promise cancel([Default=Undefined] optional any reason);
+    [JSBuiltin] Object getReader();
+    [JSBuiltin] Promise pipeTo(any streams, any options);
     [JSBuiltin] Object pipeThrough(any dest, any options);
     [JSBuiltin] Object tee();
 
-    readonly attribute boolean locked;
+    [JSBuiltin] readonly attribute boolean locked;
 };

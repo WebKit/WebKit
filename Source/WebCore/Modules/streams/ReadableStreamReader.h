@@ -32,37 +32,18 @@
 
 #if ENABLE(STREAMS_API)
 
-#include "ActiveDOMObject.h"
-#include "ReadableStream.h"
-#include "ScriptWrappable.h"
-#include <functional>
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
-// ReadableStreamReader implements access to ReadableStream from JavaScript.
-// It basically allows access to the ReadableStream iff the ReadableStreamReader instance is the active reader
-// of the ReadableStream.
-// Most of this handling is happening in the custom JS binding of ReadableStreamReader.
-// See https://streams.spec.whatwg.org/#reader-class for more information.
-class ReadableStreamReader {
+// This is a dummy class needed as we cannot yet use JSBuiltinConstructor with NoInterfaceObject.
+// Implementation of ReadableStreamReader functionality is done in ReadableStreamReader.js
+// FIXME: Find a way to remove that class.
+class ReadableStreamReader final : public RefCounted<ReadableStreamReader> {
 public:
-    ReadableStreamReader(ReadableStream& stream)
-        : m_stream(stream) { }
-
-    void cancel(JSC::JSValue, ReadableStream::CancelPromise&&);
-    void closed(ReadableStream::ClosedPromise&&);
-    void read(ReadableStream::ReadPromise&&);
-    void releaseLock(ExceptionCode&);
-
-    void ref() { m_stream.ref(); }
-    void deref() { m_stream.deref(); }
-
+    static Ref<ReadableStreamReader> create() { return adoptRef(* new ReadableStreamReader); }
 private:
-    ReadableStream& m_stream;
+    ReadableStreamReader() { }
 };
 
 }

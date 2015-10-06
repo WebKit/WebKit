@@ -23,6 +23,7 @@
 #define WebCoreJSClientData_h
 
 #include "DOMWrapperWorld.h"
+#include "WebCoreBuiltinNames.h"
 #include "WebCoreTypedArrayController.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -31,7 +32,9 @@
 #include "ByteLengthQueuingStrategyBuiltinsWrapper.h"
 #include "CountQueuingStrategyBuiltinsWrapper.h"
 #include "ReadableStreamBuiltinsWrapper.h"
+#include "ReadableStreamControllerBuiltinsWrapper.h"
 #include "ReadableStreamInternalsBuiltinsWrapper.h"
+#include "ReadableStreamReaderBuiltinsWrapper.h"
 #endif
 
 namespace WebCore {
@@ -42,14 +45,15 @@ class WebCoreJSClientData : public JSC::VM::ClientData {
     friend void initNormalWorldClientData(JSC::VM*);
 
 public:
-#if ENABLE(STREAMS_API)
     explicit WebCoreJSClientData(JSC::VM& vm)
-        : m_readableStreamBuiltins(&vm)
+        : m_builtinNames(&vm)
+#if ENABLE(STREAMS_API)
+        , m_readableStreamBuiltins(&vm)
+        , m_readableStreamControllerBuiltins(&vm)
         , m_readableStreamInternalsBuiltins(&vm)
+        , m_readableStreamReaderBuiltins(&vm)
         , m_byteLengthQueuingStrategyBuiltins(&vm)
         , m_countQueuingStrategyBuiltins(&vm)
-#else
-    WebCoreJSClientData(JSC::VM&)
 #endif
     {
 #if ENABLE(STREAMS_API)
@@ -89,9 +93,13 @@ public:
         m_worldSet.remove(&world);
     }
 
+    WebCoreBuiltinNames& builtinNames() { return m_builtinNames; }
+
 #if ENABLE(STREAMS_API)
     ReadableStreamBuiltinsWrapper& readableStreamBuiltins() { return m_readableStreamBuiltins; }
+    ReadableStreamControllerBuiltinsWrapper& readableStreamControllerBuiltins() { return m_readableStreamControllerBuiltins; }
     ReadableStreamInternalsBuiltinsWrapper& readableStreamInternalsBuiltins() { return m_readableStreamInternalsBuiltins; }
+    ReadableStreamReaderBuiltinsWrapper& readableStreamReaderBuiltins() { return m_readableStreamReaderBuiltins; }
     ByteLengthQueuingStrategyBuiltinsWrapper& byteLengthQueuingStrategyBuiltins() { return m_byteLengthQueuingStrategyBuiltins; }
     CountQueuingStrategyBuiltinsWrapper& countQueuingStrategyBuiltins() { return m_countQueuingStrategyBuiltins; }
 #endif
@@ -100,9 +108,13 @@ private:
     HashSet<DOMWrapperWorld*> m_worldSet;
     RefPtr<DOMWrapperWorld> m_normalWorld;
 
+    WebCoreBuiltinNames m_builtinNames;
+
 #if ENABLE(STREAMS_API)
     ReadableStreamBuiltinsWrapper m_readableStreamBuiltins;
+    ReadableStreamControllerBuiltinsWrapper m_readableStreamControllerBuiltins;
     ReadableStreamInternalsBuiltinsWrapper m_readableStreamInternalsBuiltins;
+    ReadableStreamReaderBuiltinsWrapper m_readableStreamReaderBuiltins;
     ByteLengthQueuingStrategyBuiltinsWrapper m_byteLengthQueuingStrategyBuiltins;
     CountQueuingStrategyBuiltinsWrapper m_countQueuingStrategyBuiltins;
 #endif

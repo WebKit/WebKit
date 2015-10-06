@@ -1,7 +1,7 @@
 
 PASS Can get the ReadableStreamReader constructor indirectly 
 PASS ReadableStreamReader constructor should get a ReadableStream object as argument 
-FAIL ReadableStreamReader instances should have the correct list of properties assert_array_equals: lengths differ, expected 5 got 4
+FAIL ReadableStreamReader instances should have the correct list of properties assert_equals: method should be non-enumerable expected false but got true
 PASS ReadableStreamReader closed should always return the same promise object 
 PASS Constructing a ReadableStreamReader directly should fail if the stream is already locked (via direct construction) 
 PASS Getting a ReadableStreamReader via getReader should fail if the stream is already locked (via direct construction) 

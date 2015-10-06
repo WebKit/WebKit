@@ -23,6 +23,80 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+function initializeReadableStream(underlyingSource, strategy)
+{
+    "use strict";
+
+     if (typeof underlyingSource === "undefined")
+         underlyingSource = { };
+     if (typeof strategy === "undefined")
+         strategy = { highWaterMark: 1, size: function() { return 1; } };
+
+    if (!@isObject(underlyingSource))
+        throw new @TypeError("ReadableStream constructor takes an object as first argument");
+
+    if (strategy !== undefined && !@isObject(strategy))
+        throw new @TypeError("ReadableStream constructor takes an object as second argument, if any");
+
+    this.@underlyingSource = underlyingSource;
+
+    this.@queue = [];
+    this.@queueSize = 0;
+    this.@state = @readableStreamReadable;
+    this.@started = false;
+    this.@closeRequested = false;
+    this.@pullAgain = false;
+    this.@pulling = false;
+    this.@reader = undefined;
+    this.@storedError = undefined;
+    this.@controller = new @ReadableStreamController(this);
+    this.@strategySize = strategy.size;
+    this.@highWaterMark = Number(strategy.highWaterMark);
+
+    if (Number.isNaN(this.@highWaterMark))
+        throw new TypeError("highWaterMark parameter is not correct");
+    if (this.@highWaterMark < 0)
+        throw new RangeError("highWaterMark is negative");
+
+    var result = @invokeOrNoop(underlyingSource, "start", [this.@controller]);
+    var _this = this;
+    Promise.resolve(result).then(function() {
+        _this.@started = true;
+        @requestReadableStreamPull(_this);
+    }, function(error) {
+        if (_this.@state === @readableStreamReadable)
+            @errorReadableStream(_this, error);
+    });
+
+    return this;
+}
+
+function cancel(reason)
+{
+    "use strict";
+
+    if (!@isReadableStream(this))
+        return Promise.reject(new @TypeError("Function should be called on a ReadableStream"));
+
+    if (@isReadableStreamLocked(this))
+        return Promise.reject(new @TypeError("ReadableStream is locked"));
+
+    return @cancelReadableStream(this, reason);
+}
+
+function getReader()
+{
+    "use strict";
+
+    if (!@isReadableStream(this))
+        throw new @TypeError("Function should be called on a ReadableStream");
+
+    if (@isReadableStreamLocked(this))
+        throw new @TypeError("ReadableStream is locked");
+
+    return new @ReadableStreamReader(this);
+}
+
 function pipeThrough(streams, options)
 {
     "use strict";
@@ -31,10 +105,29 @@ function pipeThrough(streams, options)
     return streams.readable;
 }
 
+function pipeTo(dest)
+{
+    "use strict";
+
+    throw new @TypeError("pipeTo is not implemented");
+}
+
 function tee()
 {
     "use strict";
 
-    // TODO: check this is a ReadableStream
-    return @teeReadableStream(this, false)
+    if (!@isReadableStream(this))
+        throw new @TypeError("Function should be called on a ReadableStream");
+
+    throw new @TypeError("tee is not implemented");
+}
+
+function locked()
+{
+    "use strict";
+
+    if (!@isReadableStream(this))
+        throw new @TypeError("Function should be called on a ReadableStream");
+
+    return @isReadableStreamLocked(this);
 }

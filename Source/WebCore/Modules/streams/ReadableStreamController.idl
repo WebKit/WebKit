@@ -33,9 +33,9 @@
     ImplementationLacksVTable,
     NoInterfaceObject
 ] interface ReadableStreamController {
-    [CallWith=ScriptState] void enqueue([Default=Undefined] optional any chunk);
-    [RaisesException] void close();
-    [CallWith=ScriptState, RaisesException] void error([Default=Undefined] optional any error);
+    [JSBuiltin] void enqueue([Default=Undefined] optional any chunk);
+    [JSBuiltin] void close();
+    [JSBuiltin] void error([Default=Undefined] optional any error);
 
-    readonly attribute double desiredSize;
+    [JSBuiltin] readonly attribute double desiredSize;
 };

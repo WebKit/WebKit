@@ -48,6 +48,7 @@
 #endif
 
 #if ENABLE(STREAMS_API)
+#include "JSReadableStreamPrivateConstructors.h"
 #include "ReadableStreamInternalsBuiltins.h"
 #endif
 
@@ -88,6 +89,11 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
 #if ENABLE(STREAMS_API)
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().readableStreamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().readableStreamErroredPrivateName(), jsNumber(2), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().readableStreamReadablePrivateName(), jsNumber(3), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
 #define DECLARE_GLOBAL_STATIC(name)\
         GlobalPropertyInfo(\
             static_cast<WebCoreJSClientData*>(vm.clientData)->readableStreamInternalsBuiltins().name##PrivateName(),\

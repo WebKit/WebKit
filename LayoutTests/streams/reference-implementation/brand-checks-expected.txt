@@ -4,10 +4,10 @@ PASS Can get the ReadableStreamController constructor indirectly
 FAIL ReadableStream.prototype.cancel enforces a brand check Can't find variable: WritableStream
 FAIL ReadableStream.prototype.getReader enforces a brand check Can't find variable: WritableStream
 PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments 
-FAIL ReadableStream.prototype.pipeTo works generically on its this and its arguments Can only call ReadableStream.pipeTo on instances of ReadableStream
+FAIL ReadableStream.prototype.pipeTo works generically on its this and its arguments pipeTo is not implemented
 FAIL ReadableStream.prototype.tee enforces a brand check Can't find variable: WritableStream
 PASS ReadableStreamReader enforces a brand check on its argument 
-FAIL ReadableStreamReader.prototype.closed enforces a brand check undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, getterName).get')
+PASS ReadableStreamReader.prototype.closed enforces a brand check 
 PASS ReadableStreamReader.prototype.cancel enforces a brand check 
 PASS ReadableStreamReader.prototype.read enforces a brand check 
 PASS ReadableStreamReader.prototype.read enforces a brand check 

@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?> <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
       <UniqueIdentifier>{955487e8-94ad-45c1-9cc8-cb88911e9d7c}</UniqueIdentifier>
@@ -467,12 +466,6 @@
     </ClCompile>
     <ClCompile Include="..\Modules\notifications\WorkerGlobalScopeNotifications.cpp">
       <Filter>Modules\notifications</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\streams\ReadableStream.cpp">
-      <Filter>Modules\streams</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\streams\ReadableStreamReader.cpp">
-      <Filter>Modules\streams</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\ChangeVersionWrapper.cpp">
       <Filter>Modules\webdatabase</Filter>
@@ -4404,16 +4397,7 @@
     <ClCompile Include="..\bindings\js\JSPluginElementFunctions.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSReadableStreamCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\JSReadableStreamControllerCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\JSReadableStreamReaderCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\ReadableJSStream.cpp">
+    <ClCompile Include="..\bindings\js\JSReadableStreamPrivateConstructors.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSSQLResultSetRowListCustom.cpp">
