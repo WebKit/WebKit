@@ -87,8 +87,6 @@ void WebTiledBackingLayerWin::displayCallback(CACFLayerRef caLayer, CGContextRef
     PlatformCALayerClient* client = owner()->owner();
     GraphicsLayer::CompositingCoordinatesOrientation orientation = client->platformCALayerContentsOrientation();
 
-    PlatformCALayer::flipContext(context, layerBounds.size.height);
-
     GraphicsContext graphicsContext(context);
 
     // It's important to get the clip from the context, because it may be significantly
