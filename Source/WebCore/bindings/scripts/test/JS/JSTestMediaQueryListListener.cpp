@@ -67,14 +67,14 @@ private:
 class JSTestMediaQueryListListenerConstructor : public DOMConstructorObject {
 private:
     JSTestMediaQueryListListenerConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestMediaQueryListListenerConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestMediaQueryListListenerConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListenerConstructor>(vm.heap)) JSTestMediaQueryListListenerConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -92,11 +92,11 @@ JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor
 {
 }
 
-void JSTestMediaQueryListListenerConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestMediaQueryListListenerConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestMediaQueryListListener::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestMediaQueryListListener"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }

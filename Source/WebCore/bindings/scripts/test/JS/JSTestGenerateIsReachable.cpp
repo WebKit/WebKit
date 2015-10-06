@@ -60,14 +60,14 @@ private:
 class JSTestGenerateIsReachableConstructor : public DOMConstructorObject {
 private:
     JSTestGenerateIsReachableConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestGenerateIsReachableConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestGenerateIsReachableConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachableConstructor>(vm.heap)) JSTestGenerateIsReachableConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -85,11 +85,11 @@ JSTestGenerateIsReachableConstructor::JSTestGenerateIsReachableConstructor(Struc
 {
 }
 
-void JSTestGenerateIsReachableConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestGenerateIsReachableConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestGenerateIsReachable::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestGenerateIsReachable"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }

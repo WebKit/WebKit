@@ -66,14 +66,14 @@ private:
 class JSTestEventConstructorConstructor : public DOMConstructorObject {
 private:
     JSTestEventConstructorConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestEventConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestEventConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorConstructor>(vm.heap)) JSTestEventConstructorConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -135,11 +135,11 @@ JSTestEventConstructorConstructor::JSTestEventConstructorConstructor(Structure* 
 {
 }
 
-void JSTestEventConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestEventConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestEventConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestEventConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
 }

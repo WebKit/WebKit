@@ -69,14 +69,14 @@ private:
 class JSTestOverrideBuiltinsConstructor : public DOMConstructorObject {
 private:
     JSTestOverrideBuiltinsConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestOverrideBuiltinsConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestOverrideBuiltinsConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltinsConstructor>(vm.heap)) JSTestOverrideBuiltinsConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
+        ptr->finishCreation(vm, *globalObject);
         return ptr;
     }
 
@@ -108,11 +108,11 @@ JSTestOverrideBuiltinsConstructor::JSTestOverrideBuiltinsConstructor(Structure* 
 {
 }
 
-void JSTestOverrideBuiltinsConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSTestOverrideBuiltinsConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSTestOverrideBuiltins::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestOverrideBuiltins"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
