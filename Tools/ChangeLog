@@ -1,3 +1,10 @@
+2015-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build correction.
+
+        * TestWebKitAPI/PlatformWin.cmake: We don't need to link to all of these libraries. Most
+        are soft-linked at runtime.
+
 2015-10-06  Keith Miller  <keith_miller@apple.com>
 
         Fix run-javascriptcore-tests/run-jsc-stress-tests to work with rootless, add a --quick option and deprecate the Mozilla driver.
