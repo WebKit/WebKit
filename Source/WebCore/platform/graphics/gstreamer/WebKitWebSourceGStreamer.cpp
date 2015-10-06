@@ -666,7 +666,10 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
         priv->pendingStart = TRUE;
         GRefPtr<WebKitWebSrc> protector(src);
         priv->startSource.schedule("[WebKit] webKitWebSrcStart",
-            [protector] { webKitWebSrcStart(protector.get()); }, G_PRIORITY_DEFAULT);
+            std::function<void()>(
+                [protector] {
+                    webKitWebSrcStart(protector.get());
+                }));
         break;
     }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
@@ -677,7 +680,10 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
         removeTimeoutSources(src);
         GRefPtr<WebKitWebSrc> protector(src);
         priv->stopSource.schedule("[WebKit] webKitWebSrcStop",
-            [protector] { webKitWebSrcStop(protector.get()); }, G_PRIORITY_DEFAULT);
+            std::function<void()>(
+                [protector] {
+                    webKitWebSrcStop(protector.get());
+                }));
         break;
     }
     default:
@@ -833,7 +839,10 @@ static void webKitWebSrcNeedDataCb(GstAppSrc*, guint length, gpointer userData)
 
     GRefPtr<WebKitWebSrc> protector(src);
     priv->needDataSource.schedule("[WebKit] webKitWebSrcNeedDataMainCb",
-        [protector] { webKitWebSrcNeedDataMainCb(protector.get()); }, G_PRIORITY_DEFAULT);
+        std::function<void()>(
+            [protector] {
+                webKitWebSrcNeedDataMainCb(protector.get());
+            }));
 }
 
 static void webKitWebSrcEnoughDataMainCb(WebKitWebSrc* src)
@@ -865,7 +874,10 @@ static void webKitWebSrcEnoughDataCb(GstAppSrc*, gpointer userData)
 
     GRefPtr<WebKitWebSrc> protector(src);
     priv->enoughDataSource.schedule("[WebKit] webKitWebSrcEnoughDataMainCb",
-        [protector] { webKitWebSrcEnoughDataMainCb(protector.get()); }, G_PRIORITY_DEFAULT);
+        std::function<void()>(
+            [protector] {
+                webKitWebSrcEnoughDataMainCb(protector.get());
+            }));
 }
 
 static void webKitWebSrcSeekMainCb(WebKitWebSrc* src)
@@ -894,7 +906,10 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer user
 
     GRefPtr<WebKitWebSrc> protector(src);
     priv->seekSource.schedule("[WebKit] webKitWebSrcSeekMainCb",
-        [protector] { webKitWebSrcSeekMainCb(WEBKIT_WEB_SRC(protector.get())); }, G_PRIORITY_DEFAULT);
+        std::function<void()>(
+            [protector] {
+                webKitWebSrcSeekMainCb(WEBKIT_WEB_SRC(protector.get()));
+            }));
     return TRUE;
 }
 

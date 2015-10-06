@@ -570,7 +570,7 @@ public:
     static void resetMediaEngines();
 
 #if USE(GSTREAMER)
-    void simulateAudioInterruption();
+    WEBCORE_EXPORT void simulateAudioInterruption();
 #endif
 
     String languageOfPrimaryAudioTrack() const;

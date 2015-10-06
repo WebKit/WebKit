@@ -651,13 +651,19 @@ bool MediaPlayerPrivateGStreamer::seeking() const
 void MediaPlayerPrivateGStreamer::videoChanged()
 {
     m_videoTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::videoChanged",
-        [this] { notifyPlayerOfVideo(); });
+        std::function<void()>(
+            [this] {
+                notifyPlayerOfVideo();
+            }));
 }
 
 void MediaPlayerPrivateGStreamer::videoCapsChanged()
 {
     m_videoCapsTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::videoCapsChanged",
-        [this] { notifyPlayerOfVideoCaps(); });
+        std::function<void()>(
+            [this] {
+                notifyPlayerOfVideoCaps();
+            }));
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
@@ -706,7 +712,10 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
 void MediaPlayerPrivateGStreamer::audioChanged()
 {
     m_audioTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::audioChanged",
-        [this] { notifyPlayerOfAudio(); });
+        std::function<void()>(
+            [this] {
+                notifyPlayerOfAudio();
+            }));
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
@@ -750,7 +759,10 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 void MediaPlayerPrivateGStreamer::textChanged()
 {
     m_textTimerHandler.schedule("[WebKit] MediaPlayerPrivateGStreamer::textChanged",
-        [this] { notifyPlayerOfText(); });
+        std::function<void()>(
+            [this] {
+                notifyPlayerOfText();
+            }));
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
