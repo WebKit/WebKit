@@ -121,7 +121,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_extShaderTextureLOD.get();
     }
-    if (equalIgnoringCase(name, "WEBKIT_EXT_texture_filter_anisotropic")
+    if ((equalIgnoringCase(name, "EXT_texture_filter_anisotropic") || equalIgnoringCase(name, "WEBKIT_EXT_texture_filter_anisotropic"))
         && m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic")) {
         if (!m_extTextureFilterAnisotropic) {
             m_context->getExtensions()->ensureEnabled("GL_EXT_texture_filter_anisotropic");
@@ -271,7 +271,7 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_context->getExtensions()->supports("GL_EXT_shader_texture_lod") || m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))
         result.append("EXT_shader_texture_lod");
     if (m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic"))
-        result.append("WEBKIT_EXT_texture_filter_anisotropic");
+        result.append("EXT_texture_filter_anisotropic");
     if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
         result.append("OES_vertex_array_object");
     if (m_context->getExtensions()->supports("GL_OES_element_index_uint"))
