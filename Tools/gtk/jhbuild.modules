@@ -38,24 +38,23 @@
 
   <include href="jhbuild-optional.modules"/>
 
+  <!-- Please use http/https to access repositories to be friendly to users stuck behind firewalls. -->
   <repository type="git" name="github.com"
-      href="git://github.com"/>
+      href="https://github.com"/>
   <repository type="tarball" name="sourceware.org-mirror"
       href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
   <repository type="git" name="git.gnome.org"
-      href="git://git.gnome.org/"/>
+      href="https://git.gnome.org/browse/"/>
   <repository type="tarball" name="cairographics.org"
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
   <repository type="tarball" name="xorg"
       href="http://xorg.freedesktop.org"/>
-  <repository type="tarball" name="ftp.freedesktop.org"
-      href="ftp://ftp.freedesktop.org"/>
   <repository type="tarball" name="xmlsoft.org"
-      href="ftp://xmlsoft.org"/>
+      href="http://xmlsoft.org"/>
   <repository type="tarball" name="gstreamer"
       href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="savannah.gnu.org"
@@ -274,9 +273,8 @@
   </autotools>
 
   <autotools id="libxml2"
-             autogen-sh="configure"
-             autogenargs="--without-python">
-    <branch module="/libxml2/libxml2-2.9.1.tar.gz" version="2.9.1"
+             autogen-sh="./autogen.sh; ./configure --with-python=no">
+    <branch module="/sources/libxml2-2.9.1.tar.gz" version="2.9.1"
             repo="xmlsoft.org"
             hash="sha256:fd3c64cb66f2c4ea27e934d275904d92cec494a8e8405613780cbc8a71680fdb"
             md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
@@ -362,10 +360,9 @@
   <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri --with-gallium-drivers=swrast" skip-install="true">
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
-    <branch module="/pub/mesa/10.5.4/mesa-10.5.4.tar.xz" version="10.5.4"
+    <branch module="git/mesa/mesa.git" version="10.5.4" tag="mesa-10.5.4"
             checkoutdir="Mesa"
-            repo="ftp.freedesktop.org"
-            hash="sha256:b51e723f3a20d842c88a92d809435b229fc4744ca0dbec0317d9d4a3ac4c6803">
+            repo="freedesktop-git">
     </branch>
   </autotools>
 

@@ -1,3 +1,25 @@
+2015-10-06  Mark Salisbury  <mark.salisbury@hp.com>
+
+        [GTK] Make update-webkitgtk-libs work behind firewall
+
+        update-webkitgtk-libs can work behind a firewall with changes to
+        a few packages.  Where outbound git and active FTP connections
+        fail, using http protocol succeeds.  Most packages are
+        already accessed using http.
+
+        https://bugs.webkit.org/show_bug.cgi?id=148941
+
+        Reviewed by Martin Robinson.
+
+        Tools
+        * gtk/jhbuild.modules:
+            Replace git URLs with http.  Remove no longer used ftp repositories.
+            Update argument for libxml2's autogen.sh script (--without-python
+            is ignored; --with-python=no is correct).
+        * jhbuild/jhbuild-wrapper:
+            Instead of connecting to git://git.gnome.org/jhbuild, connect to
+            http://git.gnome.org/browse/jhbuild.
+
 2015-10-06  Daniel Bates  <dbates@webkit.org>
 
         Enable XSLT when building WebKit for iOS using the public iOS SDK
