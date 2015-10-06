@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "JITInlines.h"
 #include "JITOperations.h"
 #include "JITStubs.h"
+#include "JITSubGenerator.h"
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
@@ -668,8 +669,6 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, int, int op1, int op2, Operand
     emitJumpSlowCaseIfNotInt(regT1);
     if (opcodeID == op_add)
         addSlowCase(branchAdd32(Overflow, regT1, regT0));
-    else if (opcodeID == op_sub)
-        addSlowCase(branchSub32(Overflow, regT1, regT0));
     else {
         ASSERT(opcodeID == op_mul);
         if (shouldEmitProfiling()) {
@@ -721,7 +720,7 @@ void JIT::compileBinaryArithOpSlowCase(Instruction* currentInstruction, OpcodeID
 
     Label stubFunctionCall(this);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, opcodeID == op_add ? slow_path_add : opcodeID == op_sub ? slow_path_sub : slow_path_mul);
+    JITSlowPathCall slowPathCall(this, currentInstruction, opcodeID == op_add ? slow_path_add : slow_path_mul);
     slowPathCall.call();
     Jump end = jump();
 
@@ -767,8 +766,6 @@ void JIT::compileBinaryArithOpSlowCase(Instruction* currentInstruction, OpcodeID
 
     if (opcodeID == op_add)
         addDouble(fpRegT2, fpRegT1);
-    else if (opcodeID == op_sub)
-        subDouble(fpRegT2, fpRegT1);
     else if (opcodeID == op_mul)
         mulDouble(fpRegT2, fpRegT1);
     else {
@@ -961,6 +958,8 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
     slowPathCall.call();
 }
 
+#endif // USE(JSVALUE64)
+
 void JIT::emit_op_sub(Instruction* currentInstruction)
 {
     int result = currentInstruction[1].u.operand;
@@ -968,23 +967,41 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     int op2 = currentInstruction[3].u.operand;
     OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
 
-    compileBinaryArithOp(op_sub, result, op1, op2, types);
-    emitPutVirtualRegister(result);
+#if USE(JSVALUE64)
+    JSValueRegs leftRegs = JSValueRegs(regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT1);
+    JSValueRegs resultRegs = leftRegs;
+    GPRReg scratchGPR = InvalidGPRReg;
+    FPRReg scratchFPR = InvalidFPRReg;
+#else
+    JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
+    JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
+    JSValueRegs resultRegs = leftRegs;
+    GPRReg scratchGPR = regT4;
+    FPRReg scratchFPR = fpRegT2;
+#endif
+
+    emitGetVirtualRegister(op1, leftRegs);
+    emitGetVirtualRegister(op2, rightRegs);
+
+    JITSubGenerator gen(resultRegs, leftRegs, rightRegs, types.first(), types.second(),
+        fpRegT0, fpRegT1, scratchGPR, scratchFPR);
+
+    gen.generateFastPath(*this);
+    emitPutVirtualRegister(result, resultRegs);
+
+    addSlowCase(gen.slowPathJumpList());
 }
 
 void JIT::emitSlow_op_sub(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    int result = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
+    linkAllSlowCasesForBytecodeOffset(m_slowCases, iter, m_bytecodeOffset);
 
-    compileBinaryArithOpSlowCase(currentInstruction, op_sub, iter, result, op1, op2, types, false, false);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_sub);
+    slowPathCall.call();
 }
 
 /* ------------------------------ END: OP_ADD, OP_SUB, OP_MUL ------------------------------ */
-
-#endif // USE(JSVALUE64)
 
 } // namespace JSC
 

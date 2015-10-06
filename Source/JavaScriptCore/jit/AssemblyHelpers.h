@@ -964,7 +964,11 @@ public:
     {
         boxDouble(fpr, regs.gpr());
     }
-    
+    void unboxDouble(JSValueRegs regs, FPRReg destFPR, FPRReg)
+    {
+        unboxDouble(regs.payloadGPR(), destFPR);
+    }
+
     // Here are possible arrangements of source, target, scratch:
     // - source, target, scratch can all be separate registers.
     // - source and target can be the same but scratch is separate.
@@ -1001,6 +1005,10 @@ public:
     void boxDouble(FPRReg fpr, JSValueRegs regs)
     {
         boxDouble(fpr, regs.tagGPR(), regs.payloadGPR());
+    }
+    void unboxDouble(JSValueRegs regs, FPRReg fpr, FPRReg scratchFPR)
+    {
+        unboxDouble(regs.tagGPR(), regs.payloadGPR(), fpr, scratchFPR);
     }
 #endif
     

@@ -769,6 +769,14 @@ ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&
         linkSlowCase(iter);
 }
 
+ALWAYS_INLINE void JIT::linkAllSlowCasesForBytecodeOffset(Vector<SlowCaseEntry>& slowCases, Vector<SlowCaseEntry>::iterator& iter, unsigned bytecodeOffset)
+{
+    while (iter != slowCases.end() && iter->to == bytecodeOffset) {
+        iter->from.link(this);
+        ++iter;
+    }
+}
+
 ALWAYS_INLINE void JIT::addSlowCase(Jump jump)
 {
     ASSERT(m_bytecodeOffset != std::numeric_limits<unsigned>::max()); // This method should only be called during hot/cold path generation, so that m_bytecodeOffset is set.
@@ -998,6 +1006,16 @@ inline void JIT::emitLoad(const JSValue& v, RegisterID tag, RegisterID payload)
     move(Imm32(v.tag()), tag);
 }
 
+ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, JSValueRegs dst)
+{
+    emitLoad(src, dst.tagGPR(), dst.payloadGPR());
+}
+
+ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, JSValueRegs from)
+{
+    emitStore(dst, from.tagGPR(), from.payloadGPR());
+}
+
 inline void JIT::emitLoad(int index, RegisterID tag, RegisterID payload, RegisterID base)
 {
     RELEASE_ASSERT(tag != payload);
@@ -1156,6 +1174,11 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
     load64(Address(callFrameRegister, src * sizeof(Register)), dst);
 }
 
+ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, JSValueRegs dst)
+{
+    emitGetVirtualRegister(src, dst.payloadGPR());
+}
+
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
 {
     emitGetVirtualRegister(src.offset(), dst);
@@ -1185,6 +1208,11 @@ ALWAYS_INLINE bool JIT::isOperandConstantInt(int src)
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, RegisterID from)
 {
     store64(from, Address(callFrameRegister, dst * sizeof(Register)));
+}
+
+ALWAYS_INLINE void JIT::emitPutVirtualRegister(int dst, JSValueRegs from)
+{
+    emitPutVirtualRegister(dst, from.payloadGPR());
 }
 
 ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, RegisterID from)

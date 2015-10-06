@@ -400,6 +400,9 @@ namespace JSC {
 
         enum FinalObjectMode { MayBeFinal, KnownNotFinal };
 
+        void emitGetVirtualRegister(int src, JSValueRegs dst);
+        void emitPutVirtualRegister(int dst, JSValueRegs src);
+
 #if USE(JSVALUE32_64)
         bool getOperandConstantInt(int op1, int op2, int& op, int32_t& constant);
 
@@ -708,6 +711,8 @@ namespace JSC {
             ++iter;
         }
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int virtualRegisterIndex);
+        void linkAllSlowCasesForBytecodeOffset(Vector<SlowCaseEntry>& slowCases,
+            Vector<SlowCaseEntry>::iterator&, unsigned bytecodeOffset);
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr&);
 #if OS(WINDOWS) && CPU(X86_64)

@@ -1,3 +1,64 @@
+2015-10-06  Mark Lam  <mark.lam@apple.com>
+
+        Factoring out op_sub baseline code generation into JITSubGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=149600
+
+        Reviewed by Geoffrey Garen.
+
+        We're going to factor out baseline code generation into snippet generators so
+        that we can later use them in the DFG and FTL to emit code for to perform the
+        JS operations where the operand types are predicted to be polymorphic.
+        We are starting in this patch with the implementation of op_sub.
+
+        What was done in this patch:
+        1. Created JITSubGenerator based on the baseline implementation of op_sub as
+           expressed in compileBinaryArithOp() and compileBinaryArithOpSlowCase().
+           I did not attempt to do write a more optimal version of op_sub.  I'll
+           leave that to a later patch.
+
+        2. Convert the 32-bit op_sub baseline implementation to use the same
+           JITSubGenerator which was based on the 64-bit implementation.  The
+           pre-existing 32-bit baseline op_sub had handling for more optimization cases.
+           However, a benchmark run shows that simply going with the 64-bit version
+           (foregoing those extra optimizations) did not change the performance.
+
+           Also, previously, the 32-bit version was able to move double results directly
+           into the result location on the stack directly.  By using JITSubGenerator,
+           we now always move that result into a pair of GPRs before storing it into
+           the stack location.
+
+        3. Add some needed emitters to AssemblyHelpers that play nice with JSValueRegs.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxDouble):
+        (JSC::AssemblyHelpers::unboxDouble):
+        (JSC::AssemblyHelpers::boxBooleanPayload):
+        * jit/JIT.h:
+        (JSC::JIT::linkDummySlowCase):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        (JSC::JIT::emitSlow_op_div):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSlow_op_sub):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_sub): Deleted.
+        (JSC::JIT::emitSub32Constant): Deleted.
+        (JSC::JIT::emitSlow_op_sub): Deleted.
+        * jit/JITInlines.h:
+        (JSC::JIT::linkSlowCaseIfNotJSCell):
+        (JSC::JIT::linkAllSlowCasesForBytecodeOffset):
+        (JSC::JIT::addSlowCase):
+        (JSC::JIT::emitLoad):
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::emitPutVirtualRegister):
+        * jit/JITSubGenerator.h: Added.
+        (JSC::JITSubGenerator::JITSubGenerator):
+        (JSC::JITSubGenerator::generateFastPath):
+        (JSC::JITSubGenerator::slowPathJumpList):
+
 2015-10-06  Daniel Bates  <dbates@webkit.org>
 
         Enable XSLT when building WebKit for iOS using the public iOS SDK
