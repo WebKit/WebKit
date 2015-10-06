@@ -49,7 +49,8 @@ enum PolicyError {
     PolicyErrorCannotShowMimeType = 100,
     PolicyErrorCannotShowURL = 101,
     PolicyErrorFrameLoadInterruptedByPolicyChange = 102,
-    PolicyErrorCannotUseRestrictedPort = 103
+    PolicyErrorCannotUseRestrictedPort = 103,
+    PolicyErrorBlockedByContentBlocker = 104,
 };
 
 enum PluginError {
@@ -75,6 +76,7 @@ enum PrintError {
 
 ResourceError cancelledError(const ResourceRequest&);
 ResourceError blockedError(const ResourceRequest&);
+ResourceError blockedByContentBlockerError(const ResourceRequest&);
 ResourceError cannotShowURLError(const ResourceRequest&);
 ResourceError interruptedForPolicyChangeError(const ResourceRequest&);
 ResourceError cannotShowMIMETypeError(const ResourceResponse&);

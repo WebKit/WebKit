@@ -228,6 +228,7 @@ namespace WebCore {
 
         virtual ResourceError cancelledError(const ResourceRequest&) = 0;
         virtual ResourceError blockedError(const ResourceRequest&) = 0;
+        virtual ResourceError blockedByContentBlockerError(const ResourceRequest&) = 0;
         virtual ResourceError cannotShowURLError(const ResourceRequest&) = 0;
         virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) = 0;
 

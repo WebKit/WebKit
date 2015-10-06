@@ -322,6 +322,7 @@ public:
 
     virtual ResourceError cancelledError(const ResourceRequest&) override { ResourceError error("", 0, "", ""); error.setIsCancellation(true); return error; }
     virtual ResourceError blockedError(const ResourceRequest&) override { return ResourceError("", 0, "", ""); }
+    virtual ResourceError blockedByContentBlockerError(const ResourceRequest&) override { return ResourceError("", 0, "", ""); }
     virtual ResourceError cannotShowURLError(const ResourceRequest&) override { return ResourceError("", 0, "", ""); }
     virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) override { return ResourceError("", 0, "", ""); }
 

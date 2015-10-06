@@ -145,7 +145,7 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
@@ -198,8 +198,9 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
     if (willBlockLoad) {
         if (currentDocument)
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", request.url().string()));
-        request = ResourceRequest();
+        return BlockedStatus::Blocked;
     }
+    return BlockedStatus::NotBlocked;
 }
 
 const String& ContentExtensionsBackend::displayNoneCSSRule()

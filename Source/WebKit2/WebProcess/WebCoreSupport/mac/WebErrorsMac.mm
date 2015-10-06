@@ -67,6 +67,11 @@ ResourceError blockedError(const ResourceRequest& request)
     return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeCannotUseRestrictedPort, request.url(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
 }
 
+ResourceError blockedByContentBlockerError(const ResourceRequest& request)
+{
+    return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeFrameLoadBlockedByContentBlocker, request.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description"));
+}
+
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
     return ResourceError(API::Error::webKitErrorDomain(), kWKErrorCodeCannotShowURL, request.url(), WEB_UI_STRING("The URL can’t be shown", "WebKitErrorCannotShowURL description"));

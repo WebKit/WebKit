@@ -43,6 +43,11 @@ enum class ActionType : uint8_t {
     InvalidAction,
 };
 
+enum class BlockedStatus {
+    Blocked,
+    NotBlocked,
+};
+    
 } // namespace ContentExtensions
     
 } // namespace WebCore

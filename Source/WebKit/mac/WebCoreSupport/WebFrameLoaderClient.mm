@@ -1147,6 +1147,11 @@ ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotUseRestrictedPort URL:request.url()];
 }
 
+ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest& request)
+{
+    RELEASE_ASSERT_NOT_REACHED(); // Content blockers are not enabled in WebKit1.
+}
+
 ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:request.url()];

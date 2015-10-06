@@ -170,6 +170,7 @@ public:
     void handleFallbackContent();
 
     WEBCORE_EXPORT ResourceError cancelledError(const ResourceRequest&) const;
+    WEBCORE_EXPORT ResourceError blockedByContentBlockerError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;
 

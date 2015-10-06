@@ -34,6 +34,8 @@
 namespace WebCore {
 namespace ContentExtensions {
 
+const char* WebKitContentBlockerDomain = "WebKitContentBlockerDomain";
+
 const std::error_category& contentExtensionErrorCategory()
 {
     class ContentExtensionErrorCategory : public std::error_category {

@@ -208,15 +208,15 @@ void UserContentController::removeAllUserContentExtensions()
     m_contentExtensionBackend->removeAllContentExtensions();
 }
 
-void UserContentController::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentExtensions::BlockedStatus UserContentController::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (!m_contentExtensionBackend)
-        return;
+        return ContentExtensions::BlockedStatus::NotBlocked;
 
     if (!initiatingDocumentLoader.userContentExtensionsEnabled())
-        return;
+        return ContentExtensions::BlockedStatus::NotBlocked;
 
-    m_contentExtensionBackend->processContentExtensionRulesForLoad(request, resourceType, initiatingDocumentLoader);
+    return m_contentExtensionBackend->processContentExtensionRulesForLoad(request, resourceType, initiatingDocumentLoader);
 }
 
 Vector<ContentExtensions::Action> UserContentController::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo, DocumentLoader& initiatingDocumentLoader)

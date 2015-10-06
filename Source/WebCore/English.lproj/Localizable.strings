@@ -592,6 +592,9 @@
 /* WebKitErrorCannotShowURL description */
 "The URL can’t be shown" = "The URL can’t be shown";
 
+/* WebKitErrorBlockedByContentBlocker description */
+"The URL was blocked by a content blocker" = "The URL was blocked by a content blocker";
+
 /* WKErrorWebViewInvalidated description */
 "The WKWebView was invalidated" = "The WKWebView was invalidated";
 

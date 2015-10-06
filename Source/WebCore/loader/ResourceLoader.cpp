@@ -341,8 +341,8 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
         Page* page = frameLoader()->frame().page();
         if (page && m_documentLoader) {
             auto* userContentController = page->userContentController();
-            if (userContentController)
-                userContentController->processContentExtensionRulesForLoad(request, m_resourceType, *m_documentLoader);
+            if (userContentController && userContentController->processContentExtensionRulesForLoad(request, m_resourceType, *m_documentLoader) == ContentExtensions::BlockedStatus::Blocked)
+                request = { };
         }
     }
 #endif

@@ -50,6 +50,11 @@ ResourceError blockedError(const ResourceRequest& request)
     return WebCore::blockedError(request);
 }
 
+ResourceError blockedByContentBlockerError(const ResourceRequest& request)
+{
+    return WebCore::blockedByContentBlockerError(request);
+}
+
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
     return WebCore::cannotShowURLError(request);

@@ -35,6 +35,7 @@
 #include "CachedPage.h"
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
+#include "ContentExtensionError.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentParser.h"
@@ -1425,7 +1426,7 @@ void DocumentLoader::startLoadingMainResource()
 
     m_applicationCacheHost->maybeLoadMainResource(m_request, m_substituteData);
 
-    if (m_substituteData.isValid()) {
+    if (m_substituteData.isValid() && m_frame->page()) {
         m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
         frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, m_request);
         frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse());
@@ -1442,6 +1443,16 @@ void DocumentLoader::startLoadingMainResource()
     CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
     cachedResourceRequest.setInitiator(*this);
     m_mainResource = m_cachedResourceLoader->requestMainResource(cachedResourceRequest);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (m_mainResource && m_mainResource->errorOccurred() && m_frame->page() && m_mainResource->resourceError().domain() == ContentExtensions::WebKitContentBlockerDomain) {
+        m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
+        frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, request);
+        frameLoader()->notifier().dispatchDidFailLoading(this, m_identifierForLoadWithoutResourceLoader, frameLoader()->blockedByContentBlockerError(m_request));
+        m_mainResource = nullptr;
+    }
+#endif
+
     if (!m_mainResource) {
         setRequest(ResourceRequest());
         // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost

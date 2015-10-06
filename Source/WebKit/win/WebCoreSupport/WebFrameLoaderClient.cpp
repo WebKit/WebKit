@@ -858,6 +858,11 @@ ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
     return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotUseRestrictedPort, request.url().string(), WEB_UI_STRING("Not allowed to use restricted network port", "WebKitErrorCannotUseRestrictedPort description"));
 }
 
+ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest& request)
+{
+    RELEASE_ASSERT_NOT_REACHED(); // Content Blockers are not enabled for WK1.
+}
+
 ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
     return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), WEB_UI_STRING("The URL can\xE2\x80\x99t be shown", "WebKitErrorCannotShowURL description"));

@@ -38,6 +38,7 @@
 #include "CachedXSLStyleSheet.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
@@ -51,6 +52,7 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LoaderStrategy.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
@@ -513,11 +515,18 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (frame() && frame()->mainFrame().page() && frame()->mainFrame().page()->userContentController() && m_documentLoader)
-        frame()->mainFrame().page()->userContentController()->processContentExtensionRulesForLoad(request.mutableResourceRequest(), toResourceType(type), *m_documentLoader);
-
-    if (request.mutableResourceRequest().isNull())
-        return nullptr;
+    if (frame() && frame()->mainFrame().page() && frame()->mainFrame().page()->userContentController() && m_documentLoader) {
+        if (frame()->mainFrame().page()->userContentController()->processContentExtensionRulesForLoad(request.mutableResourceRequest(), toResourceType(type), *m_documentLoader) == ContentExtensions::BlockedStatus::Blocked) {
+            if (type == CachedResource::Type::MainResource) {
+                auto resource = createResource(type, request.mutableResourceRequest(), request.charset(), sessionID());
+                ASSERT(resource);
+                resource->error(CachedResource::Status::LoadError);
+                resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, request.resourceRequest().url().string(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
+                return resource;
+            }
+            return nullptr;
+        }
+    }
 #endif
 
     auto& memoryCache = MemoryCache::singleton();

@@ -39,6 +39,11 @@ ResourceError blockedError(const ResourceRequest& request)
                          request.url().string(), _("Not allowed to use restricted network port"));
 }
 
+ResourceError blockedByContentBlockerError(const ResourceRequest& request)
+{
+    return ResourceError(errorDomainPolicy, PolicyErrorBlockedByContentBlocker, request.url().string(), _("Blocked by content blocker"));
+}
+
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
     return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL,

@@ -37,6 +37,7 @@ enum {
     kWKErrorCodeCannotShowURL =                                  101,
     kWKErrorCodeFrameLoadInterruptedByPolicyChange =             102,
     kWKErrorCodeCannotUseRestrictedPort =                        103,
+    kWKErrorCodeFrameLoadBlockedByContentBlocker =               104,
     kWKErrorCodeCannotFindPlugIn =                               200,
     kWKErrorCodeCannotLoadPlugIn =                               201,
     kWKErrorCodeJavaUnavailable =                                202,

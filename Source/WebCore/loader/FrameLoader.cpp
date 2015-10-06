@@ -2707,17 +2707,15 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (error.isNull()) {
-        if (m_documentLoader) {
-            if (auto* page = m_frame.page()) {
-                if (auto* controller = page->userContentController())
-                    controller->processContentExtensionRulesForLoad(newRequest, ResourceType::Raw, *m_documentLoader);
+        if (auto* page = m_frame.page()) {
+            if (auto* controller = page->userContentController()) {
+                if (m_documentLoader && controller->processContentExtensionRulesForLoad(newRequest, ResourceType::Raw, *m_documentLoader) == ContentExtensions::BlockedStatus::Blocked) {
+                    newRequest = { };
+                    error = ResourceError(errorDomainWebKitInternal, 0, initialRequest.url().string(), emptyString());
+                    response = { };
+                    data = nullptr;
+                }
             }
-        }
-        
-        if (newRequest.isNull()) {
-            error = ResourceError(errorDomainWebKitInternal, 0, initialRequest.url().string(), emptyString());
-            response = ResourceResponse();
-            data = nullptr;
         }
     }
 #endif
@@ -3322,6 +3320,11 @@ ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
     ResourceError error = m_client.cancelledError(request);
     error.setIsCancellation(true);
     return error;
+}
+
+ResourceError FrameLoader::blockedByContentBlockerError(const ResourceRequest& request) const
+{
+    return m_client.blockedByContentBlockerError(request);
 }
 
 #if PLATFORM(IOS)

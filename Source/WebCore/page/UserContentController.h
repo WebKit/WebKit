@@ -26,6 +26,7 @@
 #ifndef UserContentController_h
 #define UserContentController_h
 
+#include "ContentExtensionActions.h"
 #include "UserScriptTypes.h"
 #include "UserStyleSheetTypes.h"
 #include <wtf/HashSet.h>
@@ -92,7 +93,7 @@ public:
     WEBCORE_EXPORT void removeUserContentExtension(const String& name);
     WEBCORE_EXPORT void removeAllUserContentExtensions();
 
-    void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
+    ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
     Vector<ContentExtensions::Action> actionsForResourceLoad(const ResourceLoadInfo&, DocumentLoader& initiatingDocumentLoader);
 #endif
 

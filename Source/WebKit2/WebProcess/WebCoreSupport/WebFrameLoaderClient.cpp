@@ -1103,6 +1103,11 @@ ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
     return WebKit::blockedError(request);
 }
 
+ResourceError WebFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest& request)
+{
+    return WebKit::blockedByContentBlockerError(request);
+}
+
 ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
     return WebKit::cannotShowURLError(request);

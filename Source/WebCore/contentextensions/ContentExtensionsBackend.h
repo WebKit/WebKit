@@ -65,7 +65,7 @@ public:
     WEBCORE_EXPORT Vector<Action> actionsForResourceLoad(const ResourceLoadInfo&) const;
     WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
-    void processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
+    BlockedStatus processContentExtensionRulesForLoad(ResourceRequest&, ResourceType, DocumentLoader& initiatingDocumentLoader);
 
     static const String& displayNoneCSSRule();
 

@@ -1,3 +1,18 @@
+2015-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        Report error when main resource is blocked by content blocker
+        https://bugs.webkit.org/show_bug.cgi?id=149719
+        rdar://problem/21970595
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::blockedError):
+        (WebFrameLoaderClient::blockedByContentBlockerError):
+        (WebFrameLoaderClient::cannotShowURLError):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        Added stub that should never be used.
+
 2015-09-30  Timothy Horton  <timothy_horton@apple.com>
 
         Compute document marker rects at use time instead of paint time
