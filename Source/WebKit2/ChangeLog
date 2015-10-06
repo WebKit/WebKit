@@ -1,5 +1,11 @@
 2015-10-06  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the 32-bit build.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+
+2015-10-06  Anders Carlsson  <andersca@apple.com>
+
         WKPage needs to expose a KVO-compliant object, similar to WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=149851
         rdar://problem/22382022

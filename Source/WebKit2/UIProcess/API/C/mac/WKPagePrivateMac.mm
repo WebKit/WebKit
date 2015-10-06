@@ -36,13 +36,14 @@
 
 using namespace WebKit;
 
-@interface WKObservablePageState : NSObject <_WKObservablePageState>
-@end
-
-@implementation WKObservablePageState {
+@interface WKObservablePageState : NSObject <_WKObservablePageState> {
     RefPtr<WebPageProxy> _page;
     std::unique_ptr<PageLoadStateObserver> _observer;
-};
+}
+
+@end
+
+@implementation WKObservablePageState
 
 - (id)initWithPage:(RefPtr<WebPageProxy>&&)page
 {
