@@ -78,6 +78,7 @@ compositing/overflow/fixed-position-ancestor-clip.html [ Failure ]
 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
 compositing/reflections/nested-reflection-on-overflow.html [ Failure ]
 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
+compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 
 # Compositing test that time out:
 compositing/animation/animation-compositing.html
@@ -187,7 +188,7 @@ mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 # MathML tests that fail:
 mathml/presentation/mo-stretch.html [ Failure ]
 
-# SVG tests that time out:
+# SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
 svg/animations/animate-calcMode-spline-from-by.html
