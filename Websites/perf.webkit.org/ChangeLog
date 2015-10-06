@@ -1,3 +1,28 @@
+2015-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard should have the capability to test local UI with production data
+        https://bugs.webkit.org/show_bug.cgi?id=149834
+
+        Reviewed by Chris Dumez.
+
+        Added tools/run-with-remote-server.py which runs a local httpd server and pulls data from a remote server.
+
+        * Install.md: Added the instruction on how to use the script. Also updated the remaining instructions
+        for El Capitan.
+        * config.json: Added remote server configurations.
+        * public/admin/fetch-from-remote.php: Added. This script fetches JSON from the remote server specified in
+        config.json and caches the results in the location specified as "cacheDirectory" in config.json.
+        (main):
+        (fetch_remote):
+        * public/include/db.php:
+        (config_path): Extracted from generate_data_file.
+        (generate_data_file):
+        * tools/remote-server-relay.conf: Added. Apache 2.4 configuration file for a local http server launched by
+        run-with-remote-server.py.
+        * tools/run-with-remote-server.py: Added. Launches Apache with the right set of directives.
+        (main):
+        (abspath_from_root):
+
 2015-07-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo.

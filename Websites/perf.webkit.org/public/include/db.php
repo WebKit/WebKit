@@ -36,10 +36,14 @@ function config($key) {
     return $_config[$key];
 }
 
+function config_path($key, $path) {
+    return CONFIG_DIR . config($key) . '/' . $path;
+}
+
 function generate_data_file($filename, $content) {
     if (!assert(ctype_alnum(str_replace(array('-', '_', '.'), '', $filename))))
         return FALSE;
-    return file_put_contents(CONFIG_DIR . config('dataDirectory') . '/' . $filename, $content);
+    return file_put_contents(config_path('dataDirectory'. $filename), $content);
 }
 
 if (config('debug')) {
