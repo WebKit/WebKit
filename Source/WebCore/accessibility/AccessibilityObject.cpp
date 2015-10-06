@@ -1877,8 +1877,7 @@ AccessibilityOrientation AccessibilityObject::orientation() const
     if (bounds.size().height() > bounds.size().width())
         return AccessibilityOrientationVertical;
 
-    // A tie goes to horizontal.
-    return AccessibilityOrientationHorizontal;
+    return AccessibilityOrientationUndefined;
 }    
 
 bool AccessibilityObject::isDescendantOfObject(const AccessibilityObject* axObject) const

@@ -2717,9 +2717,16 @@ AccessibilityOrientation AccessibilityRenderObject::orientation() const
         return AccessibilityOrientationHorizontal;
     if (equalIgnoringCase(ariaOrientation, "vertical"))
         return AccessibilityOrientationVertical;
+    if (equalIgnoringCase(ariaOrientation, "undefined"))
+        return AccessibilityOrientationUndefined;
 
-    if (isScrollbar())
+    // ARIA 1.1 Implicit defaults are defined on some roles.
+    // http://www.w3.org/TR/wai-aria-1.1/#aria-orientation
+    if (isScrollbar() || isComboBox() || isListBox() || isMenu() || isTree())
         return AccessibilityOrientationVertical;
+    
+    if (isMenuBar() || isSplitter() || isTabList() || isToolbar())
+        return AccessibilityOrientationHorizontal;
     
     return AccessibilityObject::orientation();
 }

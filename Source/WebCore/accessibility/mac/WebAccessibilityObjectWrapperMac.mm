@@ -1236,7 +1236,10 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
     if (m_object->supportsExpanded())
         [additional addObject:NSAccessibilityExpandedAttribute];
     
-    if (m_object->isScrollbar())
+    if (m_object->isScrollbar()
+        || m_object->isRadioGroup()
+        || m_object->isSplitter()
+        || m_object->isToolbar())
         [additional addObject:NSAccessibilityOrientationAttribute];
     
     if (m_object->supportsARIADragging())
@@ -1439,6 +1442,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
         [tempArray addObject:NSAccessibilityRequiredAttribute];
         [tempArray addObject:NSAccessibilityInvalidAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1457,6 +1461,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         menuBarAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1465,6 +1470,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         [tempArray addObject:NSAccessibilitySelectedChildrenAttribute];
         [tempArray addObject:NSAccessibilityVisibleChildrenAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         menuAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1529,6 +1535,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
     if (comboBoxAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:controlAttrs];
         [tempArray addObject:NSAccessibilityExpandedAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         comboBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1597,6 +1604,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityTabsAttribute];
         [tempArray addObject:NSAccessibilityContentsAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         tabListAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1605,6 +1613,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         [tempArray addObject:NSAccessibilitySelectedRowsAttribute];
         [tempArray addObject:NSAccessibilityRowsAttribute];
         [tempArray addObject:NSAccessibilityColumnsAttribute];
+        [tempArray addObject:NSAccessibilityOrientationAttribute];
         outlineAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -2927,6 +2936,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return NSAccessibilityVerticalOrientationValue;
         if (elementOrientation == AccessibilityOrientationHorizontal)
             return NSAccessibilityHorizontalOrientationValue;
+        if (elementOrientation == AccessibilityOrientationUndefined)
+            return NSAccessibilityUnknownOrientationValue;
         return nil;
     }
     

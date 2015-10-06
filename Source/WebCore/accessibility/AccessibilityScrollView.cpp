@@ -64,6 +64,8 @@ AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation
     updateScrollbars();
     
     switch (orientation) {
+    // ARIA 1.1 Elements with the role scrollbar have an implicit aria-orientation value of vertical.
+    case AccessibilityOrientationUndefined:
     case AccessibilityOrientationVertical:
         return m_verticalScrollbar ? m_verticalScrollbar.get() : nullptr;
     case AccessibilityOrientationHorizontal:

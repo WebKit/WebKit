@@ -279,6 +279,7 @@ struct AccessibilityTextUnderElementMode {
 enum AccessibilityOrientation {
     AccessibilityOrientationVertical,
     AccessibilityOrientationHorizontal,
+    AccessibilityOrientationUndefined,
 };
     
 enum AccessibilityObjectInclusion {
@@ -536,6 +537,8 @@ public:
     bool isColorWell() const { return roleValue() == ColorWellRole; }
     bool isRangeControl() const;
     bool isMeter() const;
+    bool isSplitter() const { return roleValue() == SplitterRole; }
+    bool isToolbar() const { return roleValue() == ToolbarRole; }
 
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }

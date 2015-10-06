@@ -65,15 +65,16 @@ Document* AccessibilityScrollbar::document() const
 
 AccessibilityOrientation AccessibilityScrollbar::orientation() const
 {
+    // ARIA 1.1 Elements with the role scrollbar have an implicit aria-orientation value of vertical.
     if (!m_scrollbar)
-        return AccessibilityOrientationHorizontal;
+        return AccessibilityOrientationVertical;
 
     if (m_scrollbar->orientation() == HorizontalScrollbar)
         return AccessibilityOrientationHorizontal;
     if (m_scrollbar->orientation() == VerticalScrollbar)
         return AccessibilityOrientationVertical;
 
-    return AccessibilityOrientationHorizontal;
+    return AccessibilityOrientationVertical;
 }
 
 bool AccessibilityScrollbar::isEnabled() const
