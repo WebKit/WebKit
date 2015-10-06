@@ -80,9 +80,6 @@ fast/text/arabic-times-new-roman.html [ Skip ]
 css3/font-feature-settings-preinstalled-fonts.html [ Skip ]
 css3/font-feature-settings-rendering-2.html [ Skip ]
 
-# No support system font punctuation in EFL yet. This test was added by r188377.
-fast/text/system-font-punctuation.html [ Skip ]
-
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------
@@ -778,7 +775,6 @@ webkit.org/b/108340 fast/layers/no-clipping-overflow-hidden-hardware-acceleratio
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-child-property-removal.html [ Failure Pass ]
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-columns-child-removal.html [ Failure Pass ]
 
-webkit.org/b/93213 fast/text/international/text-spliced-font.html [ Failure Pass ]
 webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Crash Pass Timeout ]
 webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 
@@ -1927,7 +1923,7 @@ webkit.org/b/124657 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure
 
 webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
 
-webkit.org/b/124890 platform/efl/accessibility/media-emits-object-replacement.html [ Failure ]
+webkit.org/b/124890 accessibility/media-emits-object-replacement.html [ Failure ]
 
 webkit.org/b/125506 accessibility/alt-tag-on-image-with-nonimage-role.html [ Failure ]
 
@@ -2525,13 +2521,6 @@ webkit.org/b/148470 imported/w3c/web-platform-tests/dom/nodes/Document-createEve
 webkit.org/b/148470 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.html [ Failure ]
 webkit.org/b/148470 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/document.getElementsByName-newelements.xhtml [ Failure ]
 webkit.org/b/148470 imported/w3c/web-platform-tests/html/dom/interfaces.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
-webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
 webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
 webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
 webkit.org/b/148470 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Failure ]
