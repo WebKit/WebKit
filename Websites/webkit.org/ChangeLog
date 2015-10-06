@@ -1,5 +1,11 @@
 2015-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Modify the image to fit the width of the blog.
+
+        * blog-files/web-inspector-keyboard-shortcuts/debugger-shortcuts.png:
+
+2015-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Add more assets for Web Inspector Keyboard Shortcuts blog post.
 
         * blog-files/web-inspector-keyboard-shortcuts/icon-disable.png: Added.
