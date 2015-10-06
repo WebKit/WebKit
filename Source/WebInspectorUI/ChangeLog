@@ -1,3 +1,20 @@
+2015-10-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Clicking on a stack trace link does not navigate to the corresponding line
+        https://bugs.webkit.org/show_bug.cgi?id=149405
+
+        lineNumber should be a number type but it was a string.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.openURL):
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+        Keep lineNumber undefined when it isn't present in the string.
+        WebInspector.linkifyStringAsFragmentWithCustomLinkifier is only used by
+        WebInspector.linkifyStringAsFragment and it expects lineNumber to be undefined
+        when it wasn't found in the parsed string.
+
 2015-10-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Fix spacing of FindBanner prev/next buttons

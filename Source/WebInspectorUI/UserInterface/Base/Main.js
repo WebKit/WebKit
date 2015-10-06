@@ -666,6 +666,8 @@ WebInspector.openURL = function(url, frame, alwaysOpenExternally, lineNumber)
     if (!url)
         return;
 
+    console.assert(typeof lineNumber === "undefined" || typeof lineNumber === "number", "lineNumber should be a number.");
+
     // If alwaysOpenExternally is not defined, base it off the command/meta key for the current event.
     if (alwaysOpenExternally === undefined || alwaysOpenExternally === null)
         alwaysOpenExternally = window.event ? window.event.metaKey : false;
@@ -2034,7 +2036,11 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
         if (lineColumnMatch)
             realURL = realURL.substring(0, realURL.length - lineColumnMatch[0].length);
 
-        var linkNode = linkifier(title, realURL, lineColumnMatch ? lineColumnMatch[1] : undefined);
+        var lineNumber;
+        if (lineColumnMatch)
+            lineNumber = parseInt(lineColumnMatch[1]) - 1;
+
+        var linkNode = linkifier(title, realURL, lineNumber);
         container.appendChild(linkNode);
         string = string.substring(linkIndex + linkString.length, string.length);
     }
