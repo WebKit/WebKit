@@ -70,7 +70,7 @@ TileController::TileController(PlatformCALayer* rootPlatformLayer)
     , m_tilesAreOpaque(false)
     , m_hasTilesWithTemporaryScaleFactor(false)
     , m_tileDebugBorderWidth(0)
-    , m_indicatorMode(AsyncScrollingIndication)
+    , m_indicatorMode(SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication)
     , m_topContentInset(0)
 {
 }

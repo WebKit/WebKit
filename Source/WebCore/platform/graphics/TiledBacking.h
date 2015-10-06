@@ -35,6 +35,7 @@ class IntRect;
 class PlatformCALayer;
 
 enum ScrollingModeIndication {
+    SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication,
     SynchronousScrollingBecauseOfStyleIndication,
     SynchronousScrollingBecauseOfEventHandlersIndication,
     AsyncScrollingIndication

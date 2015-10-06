@@ -101,6 +101,9 @@ void TileCoverageMap::update()
 
     Color visibleRectIndicatorColor;
     switch (m_controller.indicatorMode()) {
+    case SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication:
+        visibleRectIndicatorColor = Color(200, 80, 255);
+        break;
     case SynchronousScrollingBecauseOfStyleIndication:
         visibleRectIndicatorColor = Color(255, 0, 0);
         break;
