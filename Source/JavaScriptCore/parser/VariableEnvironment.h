@@ -28,7 +28,6 @@
 
 #include "Identifier.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 

@@ -173,10 +173,7 @@ public:
     bool canGetIndex(unsigned i) { return i < m_length; }
     JSString* getIndex(ExecState*, unsigned);
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
-    {
-        return Structure::create(vm, globalObject, proto, TypeInfo(StringType, StructureFlags), info());
-    }
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
     static size_t offsetOfFlags() { return OBJECT_OFFSETOF(JSString, m_flags); }
