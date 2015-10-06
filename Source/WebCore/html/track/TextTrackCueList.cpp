@@ -54,9 +54,9 @@ TextTrackCue* TextTrackCueList::item(unsigned index) const
 
 TextTrackCue* TextTrackCueList::getCueById(const String& id) const
 {
-    for (size_t i = 0; i < m_list.size(); ++i) {
-        if (m_list[i]->id() == id)
-            return m_list[i].get();
+    for (auto& cue : m_list) {
+        if (cue->id() == id)
+            return cue.get();
     }
     return 0;
 }
@@ -67,8 +67,7 @@ TextTrackCueList* TextTrackCueList::activeCues()
         m_activeCues = create();
 
     m_activeCues->clear();
-    for (size_t i = 0; i < m_list.size(); ++i) {
-        RefPtr<TextTrackCue> cue = m_list[i];
+    for (auto& cue : m_list) {
         if (cue->isActive())
             m_activeCues->add(cue);
     }

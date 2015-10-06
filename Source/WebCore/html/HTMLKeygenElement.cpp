@@ -74,10 +74,10 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     getSupportedKeySizes(keys);
 
     Ref<HTMLSelectElement> select = KeygenSelectElement::create(document);
-    for (size_t i = 0; i < keys.size(); ++i) {
+    for (auto& key : keys) {
         Ref<HTMLOptionElement> option = HTMLOptionElement::create(document);
         select->appendChild(option.copyRef(), IGNORE_EXCEPTION);
-        option->appendChild(Text::create(document, keys[i]), IGNORE_EXCEPTION);
+        option->appendChild(Text::create(document, key), IGNORE_EXCEPTION);
     }
 
     ensureUserAgentShadowRoot().appendChild(WTF::move(select), IGNORE_EXCEPTION);

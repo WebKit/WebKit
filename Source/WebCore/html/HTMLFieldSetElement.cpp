@@ -193,8 +193,8 @@ unsigned HTMLFieldSetElement::length() const
 {
     refreshElementsIfNeeded();
     unsigned length = 0;
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (m_associatedElements[i]->isEnumeratable())
+    for (auto& element : m_associatedElements) {
+        if (element->isEnumeratable())
             ++length;
     }
     return length;

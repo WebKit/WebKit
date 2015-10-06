@@ -68,8 +68,7 @@ void WebGLVertexArrayObject::deleteObjectImpl(GraphicsContext3D* context3d, Plat
     if (m_boundElementArrayBuffer)
         m_boundElementArrayBuffer->onDetached(context3d);
     
-    for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
-        VertexAttribState& state = m_vertexAttribState[i];
+    for (auto& state : m_vertexAttribState) {
         if (state.bufferBinding)
             state.bufferBinding->onDetached(context3d);
     }

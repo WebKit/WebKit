@@ -78,13 +78,11 @@ void ContentDistributor::distribute(Element* host)
     m_validity = Valid;
 
     if (ShadowRoot* root = host->shadowRoot()) {
-        const Vector<RefPtr<InsertionPoint>>& insertionPoints = ensureInsertionPointList(root);
-        for (size_t i = 0; i < insertionPoints.size(); ++i) {
-            InsertionPoint* point = insertionPoints[i].get();
+        for (auto& point : ensureInsertionPointList(root)) {
             if (!point->isActive())
                 continue;
 
-            distributeSelectionsTo(point, host);
+            distributeSelectionsTo(point.get(), host);
         }
     }
 }
@@ -95,10 +93,9 @@ bool ContentDistributor::invalidate(Element* host)
     bool needsReattach = (m_validity == Undetermined) || !m_nodeToInsertionPoint.isEmpty();
 
     if (ShadowRoot* root = host->shadowRoot()) {
-        const Vector<RefPtr<InsertionPoint>>& insertionPoints = ensureInsertionPointList(root);
-        for (size_t i = 0; i < insertionPoints.size(); ++i) {
+        for (auto& point : ensureInsertionPointList(root)) {
             needsReattach = true;
-            insertionPoints[i]->clearDistribution();
+            point->clearDistribution();
         }
     }
 

@@ -103,9 +103,9 @@ public:
         if (m_tagId >= TagId::Unknown)
             return;
 
-        for (HTMLToken::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter) {
-            AtomicString attributeName(iter->name);
-            String attributeValue = StringImpl::create8BitIfPossible(iter->value);
+        for (auto& attribute : attributes) {
+            AtomicString attributeName(attribute.name);
+            String attributeValue = StringImpl::create8BitIfPossible(attribute.value);
             processAttribute(attributeName, attributeValue);
         }
 

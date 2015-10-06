@@ -371,10 +371,10 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(WebGLSharedObject* a
     bool checkMore = true;
     do {
         checkMore = false;
-        for (AttachmentMap::iterator it = m_attachments.begin(); it != m_attachments.end(); ++it) {
-            WebGLAttachment* attachmentObject = it->value.get();
+        for (auto& entry : m_attachments) {
+            WebGLAttachment* attachmentObject = entry.value.get();
             if (attachmentObject->isSharedObject(attachment)) {
-                GC3Denum attachmentType = it->key;
+                GC3Denum attachmentType = entry.key;
                 attachmentObject->unattach(context()->graphicsContext3D(), attachmentType);
                 removeAttachmentFromBoundFramebuffer(attachmentType);
                 checkMore = true;
@@ -423,9 +423,9 @@ GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
     bool haveDepth = false;
     bool haveStencil = false;
     bool haveDepthStencil = false;
-    for (AttachmentMap::const_iterator it = m_attachments.begin(); it != m_attachments.end(); ++it) {
-        WebGLAttachment* attachment = it->value.get();
-        if (!isAttachmentComplete(attachment, it->key, reason))
+    for (auto& entry : m_attachments) {
+        WebGLAttachment* attachment = entry.value.get();
+        if (!isAttachmentComplete(attachment, entry.key, reason))
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
         if (!attachment->isValid()) {
             *reason = "attachment is not valid";
@@ -441,7 +441,7 @@ GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
             *reason = "attachment is an unsupported format";
             return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
         }
-        switch (it->key) {
+        switch (entry.key) {
         case GraphicsContext3D::DEPTH_ATTACHMENT:
             haveDepth = true;
             break;
@@ -498,8 +498,8 @@ bool WebGLFramebuffer::hasStencilBuffer() const
 
 void WebGLFramebuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
 {
-    for (AttachmentMap::iterator it = m_attachments.begin(); it != m_attachments.end(); ++it)
-        it->value->onDetached(context3d);
+    for (auto& attachment : m_attachments.values())
+        attachment->onDetached(context3d);
 
     context3d->deleteFramebuffer(object);
 }
@@ -509,9 +509,9 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContext3D* g3d, const char*
     ASSERT(object());
     GC3Dbitfield mask = 0;
 
-    for (AttachmentMap::iterator it = m_attachments.begin(); it != m_attachments.end(); ++it) {
-        GC3Denum attachmentType = it->key;
-        WebGLAttachment* attachment = it->value.get();
+    for (auto& entry : m_attachments) {
+        GC3Denum attachmentType = entry.key;
+        WebGLAttachment* attachment = entry.value.get();
         if (!attachment->isInitialized())
            mask |= GraphicsContext3D::getClearBitsByAttachmentType(attachmentType);
     }
@@ -600,8 +600,8 @@ void WebGLFramebuffer::drawBuffers(const Vector<GC3Denum>& bufs)
 {
     m_drawBuffers = bufs;
     m_filteredDrawBuffers.resize(m_drawBuffers.size());
-    for (size_t i = 0; i < m_filteredDrawBuffers.size(); ++i)
-        m_filteredDrawBuffers[i] = GraphicsContext3D::NONE;
+    for (auto& buffer : m_filteredDrawBuffers)
+        buffer = GraphicsContext3D::NONE;
     drawBuffersIfNecessary(true);
 }
 

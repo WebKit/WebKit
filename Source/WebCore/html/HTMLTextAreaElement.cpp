@@ -410,9 +410,8 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
     for (Text* textNode = TextNodeTraversal::firstChild(*this); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
         textNodes.append(*textNode);
 
-    size_t size = textNodes.size();
-    for (size_t i = 0; i < size; ++i)
-        removeChild(textNodes[i].get(), IGNORE_EXCEPTION);
+    for (auto& textNode : textNodes)
+        removeChild(textNode.get(), IGNORE_EXCEPTION);
 
     // Normalize line endings.
     String value = defaultValue;

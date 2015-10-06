@@ -399,8 +399,8 @@ bool FileInputType::receiveDroppedFiles(const DragData& dragData)
     HTMLInputElement* input = &element();
 
     Vector<FileChooserFileInfo> files;
-    for (unsigned i = 0; i < paths.size(); ++i)
-        files.append(FileChooserFileInfo(paths[i]));
+    for (auto& path : paths)
+        files.append(FileChooserFileInfo(path));
 
     if (input->fastHasAttribute(multipleAttr))
         filesChosen(files);

@@ -173,8 +173,8 @@ bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase* web
         context->deleteTexture(depth);
     if (supportsDepthStencil)
         context->deleteTexture(depthStencil);
-    for (size_t i = 0; i < colors.size(); ++i)
-        context->deleteTexture(colors[i]);
+    for (auto& color : colors)
+        context->deleteTexture(color);
     return ok;
 }
 

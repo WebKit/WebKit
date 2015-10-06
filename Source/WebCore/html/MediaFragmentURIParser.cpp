@@ -161,9 +161,7 @@ void MediaFragmentURIParser::parseTimeFragment()
 
     m_timeFormat = Invalid;
 
-    for (unsigned i = 0; i < m_fragments.size(); ++i) {
-        std::pair<String, String>& fragment = m_fragments[i];
-
+    for (auto& fragment : m_fragments) {
         ASSERT(fragment.first.is8Bit());
         ASSERT(fragment.second.is8Bit());
 

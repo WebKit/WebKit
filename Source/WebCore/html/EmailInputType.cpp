@@ -65,8 +65,8 @@ bool EmailInputType::typeMismatchFor(const String& value) const
         return !isValidEmailAddress(value);
     Vector<String> addresses;
     value.split(',', true, addresses);
-    for (unsigned i = 0; i < addresses.size(); ++i) {
-        if (!isValidEmailAddress(stripLeadingAndTrailingHTMLSpaces(addresses[i])))
+    for (auto& address : addresses) {
+        if (!isValidEmailAddress(stripLeadingAndTrailingHTMLSpaces(address)))
             return true;
     }
     return false;

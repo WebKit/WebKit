@@ -74,8 +74,8 @@ AudioTrack* AudioTrackList::item(unsigned index) const
 
 AudioTrack* AudioTrackList::getTrackById(const AtomicString& id) const
 {
-    for (size_t i = 0; i < m_inbandTracks.size(); ++i) {
-        AudioTrack* track = toAudioTrack(m_inbandTracks[i].get());
+    for (auto& inbandTrack : m_inbandTracks) {
+        AudioTrack* track = toAudioTrack(inbandTrack.get());
         if (track->id() == id)
             return track;
     }

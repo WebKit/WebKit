@@ -156,12 +156,10 @@ int HTMLOptionElement::index() const
 
     int optionIndex = 0;
 
-    const Vector<HTMLElement*>& items = selectElement->listItems();
-    size_t length = items.size();
-    for (size_t i = 0; i < length; ++i) {
-        if (!is<HTMLOptionElement>(*items[i]))
+    for (auto& item : selectElement->listItems()) {
+        if (!is<HTMLOptionElement>(*item))
             continue;
-        if (items[i] == this)
+        if (item == this)
             return optionIndex;
         ++optionIndex;
     }

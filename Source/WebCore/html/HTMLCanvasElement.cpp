@@ -99,8 +99,8 @@ Ref<HTMLCanvasElement> HTMLCanvasElement::create(const QualifiedName& tagName, D
 
 HTMLCanvasElement::~HTMLCanvasElement()
 {
-    for (auto it = m_observers.begin(), end = m_observers.end(); it != end; ++it)
-        (*it)->canvasDestroyed(*this);
+    for (auto& observer : m_observers)
+        observer->canvasDestroyed(*this);
 
     m_context = nullptr; // Ensure this goes away before the ImageBuffer.
 }
@@ -284,8 +284,8 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
 
 void HTMLCanvasElement::notifyObserversCanvasChanged(const FloatRect& rect)
 {
-    for (auto it = m_observers.begin(), end = m_observers.end(); it != end; ++it)
-        (*it)->canvasChanged(*this, rect);
+    for (auto& observer : m_observers)
+        observer->canvasChanged(*this, rect);
 }
 
 void HTMLCanvasElement::reset()
@@ -344,8 +344,8 @@ void HTMLCanvasElement::reset()
         }
     }
 
-    for (auto it = m_observers.begin(), end = m_observers.end(); it != end; ++it)
-        (*it)->canvasResized(*this);
+    for (auto& observer : m_observers)
+        observer->canvasResized(*this);
 }
 
 bool HTMLCanvasElement::paintsIntoCanvasBuffer() const

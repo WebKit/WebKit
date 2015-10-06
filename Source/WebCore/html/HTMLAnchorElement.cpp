@@ -121,9 +121,8 @@ static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
     // pass in 0,0 for the layout point instead of calling localToAbsolute?
     Vector<IntRect> rects;
     renderer->absoluteRects(rects, flooredLayoutPoint(renderer->localToAbsolute()));
-    size_t size = rects.size();
-    for (size_t i = 0; i < size; ++i) {
-        if (!rects[i].isEmpty())
+    for (auto& rect : rects) {
+        if (!rect.isEmpty())
             return true;
     }
 

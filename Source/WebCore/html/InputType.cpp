@@ -140,10 +140,10 @@ static void populateInputTypeFactoryMap(InputTypeFactoryMap& map)
         // No need to register "text" because it is the default type.
     };
 
-    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(inputTypes); ++i) {
-        auto conditionalFunction = inputTypes[i].conditionalFunction;
+    for (auto& inputType : inputTypes) {
+        auto conditionalFunction = inputType.conditionalFunction;
         if (!conditionalFunction || (RuntimeEnabledFeatures::sharedFeatures().*conditionalFunction)())
-            map.add(inputTypes[i].nameFunction(), inputTypes[i].factoryFunction);
+            map.add(inputType.nameFunction(), inputType.factoryFunction);
     }
 }
 

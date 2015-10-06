@@ -743,9 +743,7 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     RefPtr<Element> offMenuItem;
     bool trackMenuItemSelected = false;
 
-    for (unsigned i = 0, length = m_menuItems.size(); i < length; ++i) {
-        RefPtr<Element> trackItem = m_menuItems[i];
-
+    for (auto& trackItem : m_menuItems) {
         RefPtr<TextTrack> textTrack;
         MenuItemToTrackMap::iterator iter = m_menuToTrackMap.find(trackItem.get());
         if (iter == m_menuToTrackMap.end())
@@ -812,8 +810,7 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     appendChild(WTF::move(captionsHeader));
     Ref<Element> captionsMenuList = document().createElement(ulTag, ASSERT_NO_EXCEPTION);
 
-    for (unsigned i = 0, length = tracksForMenu.size(); i < length; ++i) {
-        RefPtr<TextTrack> textTrack = tracksForMenu[i];
+    for (auto& textTrack : tracksForMenu) {
         Ref<Element> menuItem = document().createElement(liTag, ASSERT_NO_EXCEPTION);
         menuItem->appendChild(document().createTextNode(captionPreferences->displayNameForTrack(textTrack.get())));
         captionsMenuList->appendChild(menuItem.copyRef());
@@ -1224,10 +1221,9 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
     float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
     float fontScale = document().page()->group().captionPreferences()->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
     m_fontSize = lroundf(smallestDimension * fontScale);
-    
-    CueList activeCues = mediaElement->currentlyActiveCues();
-    for (size_t i = 0; i < activeCues.size(); ++i) {
-        TextTrackCue* cue = activeCues[i].data();
+
+    for (auto& activeCue : mediaElement->currentlyActiveCues()) {
+        TextTrackCue* cue = activeCue.data();
         if (!cue->isRenderable())
             continue;
 

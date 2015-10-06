@@ -86,10 +86,10 @@ HTMLFormElement::~HTMLFormElement()
     if (!shouldAutocomplete())
         document().unregisterForPageCacheSuspensionCallbacks(this);
 
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
-        m_associatedElements[i]->formWillBeDestroyed();
-    for (unsigned i = 0; i < m_imageElements.size(); ++i)
-        m_imageElements[i]->m_form = 0;
+    for (auto& associatedElement : m_associatedElements)
+        associatedElement->formWillBeDestroyed();
+    for (auto& imageElement : m_imageElements)
+        imageElement->m_form = nullptr;
 }
 
 bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
@@ -147,8 +147,8 @@ void HTMLFormElement::removedFrom(ContainerNode& insertionPoint)
 {
     Node* root = findRoot(this);
     Vector<FormAssociatedElement*> associatedElements(m_associatedElements);
-    for (unsigned i = 0; i < associatedElements.size(); ++i)
-        associatedElements[i]->formRemovedFromTree(root);
+    for (auto& associatedElement : associatedElements)
+        associatedElement->formRemovedFromTree(root);
     HTMLElement::removedFrom(insertionPoint);
 }
 
@@ -165,9 +165,10 @@ void HTMLFormElement::handleLocalEvents(Event& event)
 unsigned HTMLFormElement::length() const
 {
     unsigned len = 0;
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
-        if (m_associatedElements[i]->isEnumeratable())
+    for (auto& associatedElement : m_associatedElements) {
+        if (associatedElement->isEnumeratable())
             ++len;
+    }
     return len;
 }
 
@@ -179,8 +180,7 @@ Node* HTMLFormElement::item(unsigned index)
 void HTMLFormElement::submitImplicitly(Event* event, bool fromImplicitSubmissionTrigger)
 {
     unsigned submissionTriggerCount = 0;
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        FormAssociatedElement* formAssociatedElement = m_associatedElements[i];
+    for (auto& formAssociatedElement : m_associatedElements) {
         if (!is<HTMLFormControlElement>(*formAssociatedElement))
             continue;
         HTMLFormControlElement& formElement = downcast<HTMLFormControlElement>(*formAssociatedElement);
@@ -221,9 +221,9 @@ bool HTMLFormElement::validateInteractively(Event* event)
     if (submitElement && submitElement->formNoValidate())
         return true;
 
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (is<HTMLFormControlElement>(*m_associatedElements[i]))
-            downcast<HTMLFormControlElement>(*m_associatedElements[i]).hideVisibleValidationMessage();
+    for (auto& associatedElement : m_associatedElements) {
+        if (is<HTMLFormControlElement>(*associatedElement))
+            downcast<HTMLFormControlElement>(*associatedElement).hideVisibleValidationMessage();
     }
 
     Vector<RefPtr<FormAssociatedElement>> unhandledInvalidControls;
@@ -239,8 +239,8 @@ bool HTMLFormElement::validateInteractively(Event* event)
     Ref<HTMLFormElement> protect(*this);
 
     // Focus on the first focusable control and show a validation message.
-    for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
-        HTMLElement& element = unhandledInvalidControls[i]->asHTMLElement();
+    for (auto& control : unhandledInvalidControls) {
+        HTMLElement& element = control->asHTMLElement();
         if (element.inDocument() && element.isFocusable()) {
             element.scrollIntoViewIfNeeded(false);
             element.focus();
@@ -252,13 +252,12 @@ bool HTMLFormElement::validateInteractively(Event* event)
 
     // Warn about all of unfocusable controls.
     if (document().frame()) {
-        for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
-            FormAssociatedElement& control = *unhandledInvalidControls[i];
-            HTMLElement& element = control.asHTMLElement();
+        for (auto& control : unhandledInvalidControls) {
+            HTMLElement& element = control->asHTMLElement();
             if (element.inDocument() && element.isFocusable())
                 continue;
             String message("An invalid form control with name='%name' is not focusable.");
-            message.replace("%name", control.name());
+            message.replace("%name", control->name());
             document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
         }
     }
@@ -312,9 +311,8 @@ void HTMLFormElement::getTextFieldValues(StringPairVector& fieldNamesAndValues) 
     ASSERT_ARG(fieldNamesAndValues, fieldNamesAndValues.isEmpty());
 
     fieldNamesAndValues.reserveCapacity(m_associatedElements.size());
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        FormAssociatedElement& control = *m_associatedElements[i];
-        HTMLElement& element = control.asHTMLElement();
+    for (auto& associatedElement : m_associatedElements) {
+        HTMLElement& element = associatedElement->asHTMLElement();
         if (!is<HTMLInputElement>(element))
             continue;
         HTMLInputElement& input = downcast<HTMLInputElement>(element);
@@ -342,8 +340,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     RefPtr<HTMLFormControlElement> firstSuccessfulSubmitButton;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
 
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        FormAssociatedElement* associatedElement = m_associatedElements[i];
+    for (auto& associatedElement : m_associatedElements) {
         if (!is<HTMLFormControlElement>(*associatedElement))
             continue;
         if (needButtonActivation) {
@@ -382,9 +379,9 @@ void HTMLFormElement::reset()
         return;
     }
 
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (is<HTMLFormControlElement>(*m_associatedElements[i]))
-            downcast<HTMLFormControlElement>(*m_associatedElements[i]).reset();
+    for (auto& associatedElement : m_associatedElements) {
+        if (is<HTMLFormControlElement>(*associatedElement))
+            downcast<HTMLFormControlElement>(*associatedElement).reset();
     }
 
     m_isInResetFunction = false;
@@ -692,10 +689,10 @@ bool HTMLFormElement::wasUserSubmitted() const
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const
 {
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (!is<HTMLFormControlElement>(*m_associatedElements[i]))
+    for (auto& associatedElement : m_associatedElements) {
+        if (!is<HTMLFormControlElement>(*associatedElement))
             continue;
-        HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*m_associatedElements[i]);
+        HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
         if (control.isSuccessfulSubmitButton())
             return &control;
     }
@@ -716,12 +713,12 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<Form
     // HTMLFormControlElement::checkValidity() might change m_associatedElements.
     Vector<RefPtr<FormAssociatedElement>> elements;
     elements.reserveCapacity(m_associatedElements.size());
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
-        elements.append(m_associatedElements[i]);
+    for (auto& associatedElement : m_associatedElements)
+        elements.append(associatedElement);
     bool hasInvalidControls = false;
-    for (unsigned i = 0; i < elements.size(); ++i) {
-        if (elements[i]->form() == this && is<HTMLFormControlElement>(*elements[i])) {
-            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*elements[i]);
+    for (auto& element : elements) {
+        if (element->form() == this && is<HTMLFormControlElement>(*element)) {
+            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*element);
             if (!control.checkValidity(&unhandledInvalidControls) && control.form() == this)
                 hasInvalidControls = true;
         }
@@ -777,10 +774,9 @@ void HTMLFormElement::removeFromPastNamesMap(FormNamedItem* item)
     if (!m_pastNamesMap)
         return;
 
-    PastNamesMap::iterator end = m_pastNamesMap->end();
-    for (PastNamesMap::iterator it = m_pastNamesMap->begin(); it != end; ++it) {
-        if (it->value == item)
-            it->value = 0; // Keep looping. Single element can have multiple names.
+    for (auto& pastName : m_pastNamesMap->values()) {
+        if (pastName == item)
+            pastName = nullptr; // Keep looping. Single element can have multiple names.
     }
 }
 
@@ -813,9 +809,9 @@ void HTMLFormElement::documentDidResumeFromPageCache()
 {
     ASSERT(!shouldAutocomplete());
 
-    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
-        if (is<HTMLFormControlElement>(*m_associatedElements[i]))
-            downcast<HTMLFormControlElement>(*m_associatedElements[i]).reset();
+    for (auto& associatedElement : m_associatedElements) {
+        if (is<HTMLFormControlElement>(*associatedElement))
+            downcast<HTMLFormControlElement>(*associatedElement).reset();
     }
 }
 

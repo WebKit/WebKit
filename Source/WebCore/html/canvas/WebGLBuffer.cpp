@@ -166,23 +166,24 @@ GC3Dsizeiptr WebGLBuffer::byteLength() const
 
 int WebGLBuffer::getCachedMaxIndex(GC3Denum type)
 {
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(m_maxIndexCache); ++i)
-        if (m_maxIndexCache[i].type == type)
-            return m_maxIndexCache[i].maxIndex;
+    for (auto& cache : m_maxIndexCache) {
+        if (cache.type == type)
+            return cache.maxIndex;
+    }
     return -1;
 }
 
 void WebGLBuffer::setCachedMaxIndex(GC3Denum type, int value)
 {
-    size_t numEntries = WTF_ARRAY_LENGTH(m_maxIndexCache);
-    for (size_t i = 0; i < numEntries; ++i)
-        if (m_maxIndexCache[i].type == type) {
-            m_maxIndexCache[i].maxIndex = value;
+    for (auto& cache : m_maxIndexCache) {
+        if (cache.type == type) {
+            cache.maxIndex = value;
             return;
         }
+    }
     m_maxIndexCache[m_nextAvailableCacheEntry].type = type;
     m_maxIndexCache[m_nextAvailableCacheEntry].maxIndex = value;
-    m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % numEntries;
+    m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % WTF_ARRAY_LENGTH(m_maxIndexCache);
 }
 
 void WebGLBuffer::setTarget(GC3Denum target)

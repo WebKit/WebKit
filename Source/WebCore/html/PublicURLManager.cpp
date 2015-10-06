@@ -57,10 +57,10 @@ void PublicURLManager::registerURL(SecurityOrigin* origin, const URL& url, URLRe
 
 void PublicURLManager::revoke(const URL& url)
 {
-    for (RegistryURLMap::iterator i = m_registryToURL.begin(); i != m_registryToURL.end(); ++i) {
-        if (i->value.contains(url.string())) {
-            i->key->unregisterURL(url);
-            i->value.remove(url.string());
+    for (auto& registry : m_registryToURL) {
+        if (registry.value.contains(url.string())) {
+            registry.key->unregisterURL(url);
+            registry.value.remove(url.string());
             break;
         }
     }
@@ -72,9 +72,9 @@ void PublicURLManager::stop()
         return;
 
     m_isStopped = true;
-    for (RegistryURLMap::iterator i = m_registryToURL.begin(); i != m_registryToURL.end(); ++i) {
-        for (URLSet::iterator j = i->value.begin(); j != i->value.end(); ++j)
-            i->key->unregisterURL(URL(ParsedURLString, *j));
+    for (auto& registry : m_registryToURL) {
+        for (auto& url : registry.value)
+            registry.key->unregisterURL(URL(ParsedURLString, url));
     }
 
     m_registryToURL.clear();

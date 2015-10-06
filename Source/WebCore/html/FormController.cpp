@@ -55,8 +55,8 @@ void FormControlState::serializeTo(Vector<String>& stateVector) const
 {
     ASSERT(!isFailure());
     stateVector.append(String::number(m_values.size()));
-    for (size_t i = 0; i < m_values.size(); ++i)
-        stateVector.append(m_values[i].isNull() ? emptyString() : m_values[i]);
+    for (auto& value : m_values)
+        stateVector.append(value.isNull() ? emptyString() : value);
 }
 
 FormControlState FormControlState::deserialize(const Vector<String>& stateVector, size_t& index)
@@ -222,13 +222,12 @@ std::unique_ptr<SavedFormState> SavedFormState::deserialize(const Vector<String>
 void SavedFormState::serializeTo(Vector<String>& stateVector) const
 {
     stateVector.append(String::number(m_controlStateCount));
-    for (FormElementStateMap::const_iterator it = m_stateForNewFormElements.begin(); it != m_stateForNewFormElements.end(); ++it) {
-        const FormElementKey& key = it->key;
-        const Deque<FormControlState>& queue = it->value;
-        for (Deque<FormControlState>::const_iterator queIterator = queue.begin(); queIterator != queue.end(); ++queIterator) {
+    for (auto& element : m_stateForNewFormElements) {
+        const FormElementKey& key = element.key;
+        for (auto& state : element.value) {
             stateVector.append(key.name());
             stateVector.append(key.type());
-            queIterator->serializeTo(stateVector);
+            state.serializeTo(stateVector);
         }
     }
 }
@@ -265,15 +264,12 @@ FormControlState SavedFormState::takeControlState(const AtomicString& name, cons
 Vector<String> SavedFormState::getReferencedFilePaths() const
 {
     Vector<String> toReturn;
-    for (FormElementStateMap::const_iterator it = m_stateForNewFormElements.begin(); it != m_stateForNewFormElements.end(); ++it) {
-        const FormElementKey& key = it->key;
-        if (!equal(key.type(), "file", 4))
+    for (auto& element : m_stateForNewFormElements) {
+        if (!equal(element.key.type(), "file", 4))
             continue;
-        const Deque<FormControlState>& queue = it->value;
-        for (Deque<FormControlState>::const_iterator queIterator = queue.begin(); queIterator != queue.end(); ++queIterator) {
-            const Vector<FileChooserFileInfo>& selectedFiles = HTMLInputElement::filesFromFileInputFormControlState(*queIterator);
-            for (size_t i = 0; i < selectedFiles.size(); ++i)
-                toReturn.append(selectedFiles[i].path);
+        for (auto& state : element.value) {
+            for (auto& file : HTMLInputElement::filesFromFileInputFormControlState(state))
+                toReturn.append(file.path);
         }
     }
     return toReturn;
@@ -398,8 +394,7 @@ std::unique_ptr<FormController::SavedFormStateMap> FormController::createSavedFo
 {
     FormKeyGenerator keyGenerator;
     auto stateMap = std::make_unique<SavedFormStateMap>();
-    for (FormElementListHashSet::const_iterator it = controlList.begin(); it != controlList.end(); ++it) {
-        HTMLFormControlElementWithState* control = it->get();
+    for (auto& control : controlList) {
         if (!control->shouldSaveAndRestoreFormControlState())
             continue;
         auto& formState = stateMap->add(keyGenerator.formKey(*control).impl(), nullptr).iterator->value;
@@ -416,9 +411,9 @@ Vector<String> FormController::formElementsState() const
     Vector<String> stateVector;
     stateVector.reserveInitialCapacity(m_formElementsWithState.size() * 4);
     stateVector.append(formStateSignature());
-    for (SavedFormStateMap::const_iterator it = stateMap->begin(); it != stateMap->end(); ++it) {
-        stateVector.append(it->key.get());
-        it->value->serializeTo(stateVector);
+    for (auto& state : *stateMap) {
+        stateVector.append(state.key.get());
+        state.value->serializeTo(stateVector);
     }
     bool hasOnlySignature = stateVector.size() == 1;
     if (hasOnlySignature)
@@ -489,11 +484,10 @@ void FormController::restoreControlStateFor(HTMLFormControlElementWithState& con
 
 void FormController::restoreControlStateIn(HTMLFormElement& form)
 {
-    const Vector<FormAssociatedElement*>& elements = form.associatedElements();
-    for (size_t i = 0; i < elements.size(); ++i) {
-        if (!elements[i]->isFormControlElementWithState())
+    for (auto& element : form.associatedElements()) {
+        if (!element->isFormControlElementWithState())
             continue;
-        HTMLFormControlElementWithState* control = static_cast<HTMLFormControlElementWithState*>(elements[i]);
+        HTMLFormControlElementWithState* control = static_cast<HTMLFormControlElementWithState*>(element);
         if (!control->shouldSaveAndRestoreFormControlState())
             continue;
         if (ownerFormForState(*control) != &form)
@@ -509,8 +503,8 @@ Vector<String> FormController::getReferencedFilePaths(const Vector<String>& stat
     Vector<String> toReturn;
     SavedFormStateMap map;
     formStatesFromStateVector(stateVector, map);
-    for (SavedFormStateMap::const_iterator it = map.begin(), end = map.end(); it != end; ++it)
-        toReturn.appendVector(it->value->getReferencedFilePaths());
+    for (auto& state : map.values())
+        toReturn.appendVector(state->getReferencedFilePaths());
     return toReturn;
 }
 

@@ -103,19 +103,18 @@ static HTMLElement* firstNamedItem(const Vector<FormAssociatedElement*>& element
 {
     ASSERT(attrName == idAttr || attrName == nameAttr);
 
-    for (unsigned i = 0; i < elementsArray.size(); ++i) {
-        HTMLElement& element = elementsArray[i]->asHTMLElement();
-        if (elementsArray[i]->isEnumeratable() && element.fastGetAttribute(attrName) == name)
+    for (auto& entry : elementsArray) {
+        HTMLElement& element = entry->asHTMLElement();
+        if (entry->isEnumeratable() && element.fastGetAttribute(attrName) == name)
             return &element;
     }
 
     if (!imageElementsArray)
         return 0;
 
-    for (unsigned i = 0; i < imageElementsArray->size(); ++i) {
-        HTMLImageElement& element = *(*imageElementsArray)[i];
-        if (element.fastGetAttribute(attrName) == name)
-            return &element;
+    for (auto& element : *imageElementsArray) {
+        if (element->fastGetAttribute(attrName) == name)
+            return element;
     }
 
     return nullptr;

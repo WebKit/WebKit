@@ -170,13 +170,8 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
     Vector<HTMLStackItem*> remainingCandidates;
     remainingCandidates.reserveInitialCapacity(candidates.size());
 
-    const Vector<Attribute>& attributes = newItem->attributes();
-    for (size_t i = 0; i < attributes.size(); ++i) {
-        const Attribute& attribute = attributes[i];
-
-        for (size_t j = 0; j < candidates.size(); ++j) {
-            HTMLStackItem* candidate = candidates[j];
-
+    for (auto& attribute : newItem->attributes()) {
+        for (auto& candidate : candidates) {
             // These properties should already have been checked by tryToEnsureNoahsArkConditionQuickly.
             ASSERT(newItem->attributes().size() == candidate->attributes().size());
             ASSERT(newItem->localName() == candidate->localName() && newItem->namespaceURI() == candidate->namespaceURI());

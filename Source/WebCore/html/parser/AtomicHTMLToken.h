@@ -186,8 +186,7 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
         return;
 
     m_attributes.reserveInitialCapacity(size);
-    for (unsigned i = 0; i < size; ++i) {
-        const HTMLToken::Attribute& attribute = attributes[i];
+    for (auto& attribute : attributes) {
         if (attribute.name.isEmpty())
             continue;
 

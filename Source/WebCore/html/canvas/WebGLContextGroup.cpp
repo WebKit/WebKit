@@ -90,8 +90,8 @@ void WebGLContextGroup::detachAndRemoveAllObjects()
 
 void WebGLContextGroup::loseContextGroup(WebGLRenderingContextBase::LostContextMode mode)
 {
-    for (HashSet<WebGLRenderingContextBase*>::iterator it = m_contexts.begin(); it != m_contexts.end(); ++it)
-        (*it)->loseContextImpl(mode);
+    for (auto& context : m_contexts)
+        context->loseContextImpl(mode);
 
     detachAndRemoveAllObjects();
 }

@@ -72,29 +72,29 @@ int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack *textTrack)
     // Calculate the "Let n be the number of text tracks whose text track mode is showing and that are in the media element's list of text tracks before track."
     int trackIndex = 0;
 
-    for (size_t i = 0; i < m_elementTracks.size(); ++i) {
-        if (!toTextTrack(m_elementTracks[i].get())->isRendered())
+    for (auto& elementTrack : m_elementTracks) {
+        if (!toTextTrack(elementTrack.get())->isRendered())
             continue;
 
-        if (m_elementTracks[i] == textTrack)
+        if (elementTrack == textTrack)
             return trackIndex;
         ++trackIndex;
     }
 
-    for (size_t i = 0; i < m_addTrackTracks.size(); ++i) {
-        if (!toTextTrack(m_addTrackTracks[i].get())->isRendered())
+    for (auto& addTrack : m_addTrackTracks) {
+        if (!toTextTrack(addTrack.get())->isRendered())
             continue;
 
-        if (m_addTrackTracks[i] == textTrack)
+        if (addTrack == textTrack)
             return trackIndex;
         ++trackIndex;
     }
 
-    for (size_t i = 0; i < m_inbandTracks.size(); ++i) {
-        if (!toTextTrack(m_inbandTracks[i].get())->isRendered())
+    for (auto& inbandTrack : m_inbandTracks) {
+        if (!toTextTrack(inbandTrack.get())->isRendered())
             continue;
 
-        if (m_inbandTracks[i] == textTrack)
+        if (inbandTrack == textTrack)
             return trackIndex;
         ++trackIndex;
     }
@@ -149,14 +149,14 @@ void TextTrackList::invalidateTrackIndexesAfterTrack(TextTrack* track)
 
     if (track->trackType() == TextTrack::TrackElement) {
         tracks = &m_elementTracks;
-        for (size_t i = 0; i < m_addTrackTracks.size(); ++i)
-            toTextTrack(m_addTrackTracks[i].get())->invalidateTrackIndex();
-        for (size_t i = 0; i < m_inbandTracks.size(); ++i)
-            toTextTrack(m_inbandTracks[i].get())->invalidateTrackIndex();
+        for (auto& addTrack : m_addTrackTracks)
+            toTextTrack(addTrack.get())->invalidateTrackIndex();
+        for (auto& inbandTrack : m_inbandTracks)
+            toTextTrack(inbandTrack.get())->invalidateTrackIndex();
     } else if (track->trackType() == TextTrack::AddTrack) {
         tracks = &m_addTrackTracks;
-        for (size_t i = 0; i < m_inbandTracks.size(); ++i)
-            toTextTrack(m_inbandTracks[i].get())->invalidateTrackIndex();
+        for (auto& inbandTrack : m_inbandTracks)
+            toTextTrack(inbandTrack.get())->invalidateTrackIndex();
     } else if (track->trackType() == TextTrack::InBand)
         tracks = &m_inbandTracks;
     else

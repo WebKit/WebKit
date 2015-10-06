@@ -73,8 +73,8 @@ VideoTrack* VideoTrackList::item(unsigned index) const
 
 VideoTrack* VideoTrackList::getTrackById(const AtomicString& id) const
 {
-    for (size_t i = 0; i < length(); ++i) {
-        VideoTrack* track = toVideoTrack(m_inbandTracks[i].get());
+    for (auto& inbandTracks : m_inbandTracks) {
+        VideoTrack* track = toVideoTrack(inbandTracks.get());
         if (track->id() == id)
             return track;
     }
