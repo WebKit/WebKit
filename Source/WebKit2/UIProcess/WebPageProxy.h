@@ -809,8 +809,6 @@ public:
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
     
-    void didDraw();
-
     enum UndoOrRedo { Undo, Redo };
     void addEditCommand(WebEditCommandProxy*);
     void removeEditCommand(WebEditCommandProxy*);

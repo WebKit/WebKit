@@ -116,7 +116,6 @@ public:
     virtual bool canRunBeforeUnloadConfirmPanel() const { return false; }
     virtual bool runBeforeUnloadConfirmPanel(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*) { return true; }
 
-    virtual void didDraw(WebKit::WebPageProxy*) { }
     virtual void pageDidScroll(WebKit::WebPageProxy*) { }
 
     virtual void exceededDatabaseQuota(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, SecurityOrigin*, const WTF::String&, const WTF::String&, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, std::function<void (unsigned long long)> completionHandler)

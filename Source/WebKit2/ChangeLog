@@ -1,3 +1,18 @@
+2015-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of some dead code
+        https://bugs.webkit.org/show_bug.cgi?id=149825
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didDraw): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDraw): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2015-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Prospective Mavericks build fix.

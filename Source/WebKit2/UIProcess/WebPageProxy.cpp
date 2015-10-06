@@ -3928,11 +3928,6 @@ void WebPageProxy::didEndColorPicker()
 }
 #endif
 
-void WebPageProxy::didDraw()
-{
-    m_uiClient->didDraw(this);
-}
-
 // Inspector
 WebInspectorProxy* WebPageProxy::inspector()
 {

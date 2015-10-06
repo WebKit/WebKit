@@ -1794,14 +1794,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return m_client.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
         }
 
-        virtual void didDraw(WebPageProxy* page) override
-        {
-            if (!m_client.didDraw)
-                return;
-
-            m_client.didDraw(toAPI(page), m_client.base.clientInfo);
-        }
-
         virtual void pageDidScroll(WebPageProxy* page) override
         {
             if (!m_client.pageDidScroll)
