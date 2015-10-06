@@ -44,7 +44,7 @@ class CommonData;
 
 class DesiredTransition {
 public:
-    DesiredTransition(CodeBlock*, CodeBlock* codeOriginOwner, Structure*, Structure*);
+    DesiredTransition(CodeBlock*, ScriptExecutable*, Structure*, Structure*);
 
     void reallyAdd(VM&, CommonData*);
     
@@ -52,7 +52,7 @@ public:
 
 private:
     CodeBlock* m_codeBlock;
-    CodeBlock* m_codeOriginOwner;
+    ScriptExecutable* m_codeOriginOwner;
     Structure* m_oldStructure;
     Structure* m_newStructure;
 };
@@ -62,7 +62,7 @@ public:
     DesiredTransitions();
     ~DesiredTransitions();
 
-    void addLazily(CodeBlock*, CodeBlock* codeOriginOwner, Structure*, Structure*);
+    void addLazily(CodeBlock*, ScriptExecutable*, Structure*, Structure*);
     void reallyAdd(VM&, CommonData*);
     void visitChildren(SlotVisitor&);
 

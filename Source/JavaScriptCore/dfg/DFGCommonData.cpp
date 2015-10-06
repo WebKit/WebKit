@@ -89,8 +89,8 @@ void CommonData::validateReferences(const TrackedReferences& trackedReferences)
                     trackedReferences.check(recovery.constant());
             }
             
-            if (CodeBlock* baselineCodeBlock = inlineCallFrame->baselineCodeBlock.get())
-                trackedReferences.check(baselineCodeBlock);
+            if (ScriptExecutable* executable = inlineCallFrame->executable.get())
+                trackedReferences.check(executable);
             
             if (inlineCallFrame->calleeRecovery.isConstant())
                 trackedReferences.check(inlineCallFrame->calleeRecovery.constant());

@@ -115,7 +115,7 @@ PassRefPtr<JITStubRoutine> createJITStubRoutine(
 // Helper for the creation of simple stub routines that need no help from the GC. Note
 // that codeBlock gets "executed" more than once.
 #define FINALIZE_CODE_FOR_GC_AWARE_STUB(codeBlock, patchBuffer, makesCalls, cell, dataLogFArguments) \
-    (createJITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), dataLogFArguments), *(codeBlock)->vm(), (codeBlock), (makesCalls), (cell)))
+    (createJITStubRoutine(FINALIZE_CODE_FOR((codeBlock), (patchBuffer), dataLogFArguments), *(codeBlock)->vm(), (codeBlock)->ownerExecutable(), (makesCalls), (cell)))
 
 } // namespace JSC
 

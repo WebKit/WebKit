@@ -43,9 +43,8 @@ Ref<JITToDFGDeferredCompilationCallback> JITToDFGDeferredCompilationCallback::cr
 }
 
 void JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(
-    CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock)
+    CodeBlock* codeBlock)
 {
-    ASSERT_UNUSED(profiledDFGCodeBlock, !profiledDFGCodeBlock);
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     
     if (Options::verboseOSR())
@@ -55,9 +54,8 @@ void JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronousl
 }
 
 void JITToDFGDeferredCompilationCallback::compilationDidComplete(
-    CodeBlock* codeBlock, CodeBlock* profiledDFGCodeBlock, CompilationResult result)
+    CodeBlock* codeBlock, CompilationResult result)
 {
-    ASSERT(!profiledDFGCodeBlock);
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     
     if (Options::verboseOSR())
@@ -68,7 +66,7 @@ void JITToDFGDeferredCompilationCallback::compilationDidComplete(
     
     codeBlock->alternative()->setOptimizationThresholdBasedOnCompilationResult(result);
 
-    DeferredCompilationCallback::compilationDidComplete(codeBlock, profiledDFGCodeBlock, result);
+    DeferredCompilationCallback::compilationDidComplete(codeBlock, result);
 }
 
 } // JSC

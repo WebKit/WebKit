@@ -42,7 +42,7 @@ void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
     DeferGC deferGC(vm.heap);
     
     for (; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->directCaller) {
-        CodeBlock* codeBlock = codeOrigin.inlineCallFrame->baselineCodeBlock.get();
+        CodeBlock* codeBlock = codeOrigin.inlineCallFrame->baselineCodeBlock();
         if (codeBlock->jitType() == JSC::JITCode::BaselineJIT)
             continue;
 

@@ -29,6 +29,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockHash.h"
 #include "CodeOrigin.h"
+#include "Executable.h"
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
@@ -41,6 +42,7 @@ namespace JSC {
 
 struct InlineCallFrame;
 class ExecState;
+class ScriptExecutable;
 class JSFunction;
 
 struct InlineCallFrame {
@@ -172,7 +174,7 @@ struct InlineCallFrame {
     }
     
     Vector<ValueRecovery> arguments; // Includes 'this'.
-    WriteBarrier<CodeBlock> baselineCodeBlock;
+    WriteBarrier<ScriptExecutable> executable;
     ValueRecovery calleeRecovery;
     CodeOrigin directCaller;
 
@@ -207,6 +209,8 @@ struct InlineCallFrame {
     CodeBlockHash hash() const;
     CString hashAsStringIfPossible() const;
     
+    CodeBlock* baselineCodeBlock() const;
+    
     void setStackOffset(signed offset)
     {
         stackOffset = offset;
@@ -215,8 +219,6 @@ struct InlineCallFrame {
 
     ptrdiff_t callerFrameOffset() const { return stackOffset * sizeof(Register) + CallFrame::callerFrameOffset(); }
     ptrdiff_t returnPCOffset() const { return stackOffset * sizeof(Register) + CallFrame::returnPCOffset(); }
-
-    bool isStrictMode() const { return baselineCodeBlock->isStrictMode(); }
 
     void dumpBriefFunctionInformation(PrintStream&) const;
     void dump(PrintStream&) const;
@@ -229,7 +231,9 @@ struct InlineCallFrame {
 inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCallFrame)
 {
     RELEASE_ASSERT(inlineCallFrame);
-    return inlineCallFrame->baselineCodeBlock.get();
+    ScriptExecutable* executable = inlineCallFrame->executable.get();
+    RELEASE_ASSERT(executable->structure()->classInfo() == FunctionExecutable::info());
+    return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(inlineCallFrame->specializationKind());
 }
 
 inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)

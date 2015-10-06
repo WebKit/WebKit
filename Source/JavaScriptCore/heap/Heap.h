@@ -313,7 +313,7 @@ private:
     void snapshotMarkedSpace();
     void deleteSourceProviderCaches();
     void notifyIncrementalSweeper();
-    void writeBarrierCurrentlyExecutingCodeBlocks();
+    void rememberCurrentlyExecutingCodeBlocks();
     void resetAllocators();
     void copyBackingStores();
     void harvestWeakReferences();

@@ -61,7 +61,7 @@ static const char* dfgOpNames[] = {
 Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     : m_vm(vm)
     , m_plan(plan)
-    , m_codeBlock(m_plan.codeBlock)
+    , m_codeBlock(m_plan.codeBlock.get())
     , m_profiledBlock(m_codeBlock->alternative())
     , m_allocator(longLivedState.m_allocator)
     , m_nextMachineLocal(0)
