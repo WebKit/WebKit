@@ -33,6 +33,22 @@
 extern "C" {
 #endif
 
+#ifdef __OBJC__
+
+@protocol _WKObservablePageState
+
+@property (nonatomic, readonly, copy) NSString *title;
+@property (nonatomic, readonly, copy) NSURL *URL;
+@property (nonatomic, readonly, getter=isLoading) BOOL loading;
+@property (nonatomic, readonly) double estimatedProgress;
+@property (nonatomic, readonly) BOOL hasOnlySecureContent;
+
+@end
+
+WK_EXPORT id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef page) NS_RETURNS_RETAINED;
+
+#endif
+
 WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
 WK_EXPORT bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url);
 

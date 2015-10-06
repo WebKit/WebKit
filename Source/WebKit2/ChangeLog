@@ -1,3 +1,32 @@
+2015-10-06  Anders Carlsson  <andersca@apple.com>
+
+        WKPage needs to expose a KVO-compliant object, similar to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=149851
+        rdar://problem/22382022
+
+        Reviewed by Dan Bernstein.
+
+        Move the PageLoadStateObserver object from WKBrowsingContextController out into a separate file and make it
+        work with any Objective-C object. Use it in WKObservablePageState and add a WKPageCreateObservableState function.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm: Renamed from Source/WebKit2/UIProcess/API/C/mac/WKPagePrivateMac.cpp.
+        (-[WKObservablePageState initWithPage:]):
+        (-[WKObservablePageState dealloc]):
+        (-[WKObservablePageState isLoading]):
+        (-[WKObservablePageState title]):
+        (-[WKObservablePageState URL]):
+        (-[WKObservablePageState hasOnlySecureContent]):
+        (-[WKObservablePageState estimatedProgress]):
+        (WKPageCreateObservableState):
+        (WKPageGetProcessIdentifier):
+        (WKPageIsURLKnownHSTSHost):
+        * UIProcess/API/Cocoa/PageLoadStateObserver.h: Added.
+        (WebKit::PageLoadStateObserver::PageLoadStateObserver):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (PageLoadStateObserver::PageLoadStateObserver): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-10-06  Daniel Bates  <dbates@webkit.org>
 
         Enable XSLT when building WebKit for iOS using the public iOS SDK

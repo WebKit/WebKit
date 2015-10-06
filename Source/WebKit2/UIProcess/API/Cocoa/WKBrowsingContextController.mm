@@ -30,6 +30,7 @@
 
 #import "APIData.h"
 #import "ObjCObjectGraph.h"
+#import "PageLoadStateObserver.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "WKBackForwardListInternal.h"
@@ -60,76 +61,6 @@
 
 using namespace WebCore;
 using namespace WebKit;
-
-class PageLoadStateObserver : public PageLoadState::Observer {
-public:
-    PageLoadStateObserver(WKBrowsingContextController *controller)
-        : m_controller(controller)
-    {
-    }
-
-private:
-    virtual void willChangeIsLoading() override
-    {
-        [m_controller willChangeValueForKey:@"loading"];
-    }
-
-    virtual void didChangeIsLoading() override
-    {
-        [m_controller didChangeValueForKey:@"loading"];
-    }
-
-    virtual void willChangeTitle() override
-    {
-        [m_controller willChangeValueForKey:@"title"];
-    }
-
-    virtual void didChangeTitle() override
-    {
-        [m_controller didChangeValueForKey:@"title"];
-    }
-
-    virtual void willChangeActiveURL() override
-    {
-        [m_controller willChangeValueForKey:@"activeURL"];
-    }
-
-    virtual void didChangeActiveURL() override
-    {
-        [m_controller didChangeValueForKey:@"activeURL"];
-    }
-
-    virtual void willChangeHasOnlySecureContent() override
-    {
-        [m_controller willChangeValueForKey:@"hasOnlySecureContent"];
-    }
-
-    virtual void didChangeHasOnlySecureContent() override
-    {
-        [m_controller didChangeValueForKey:@"hasOnlySecureContent"];
-    }
-
-    virtual void willChangeEstimatedProgress() override
-    {
-        [m_controller willChangeValueForKey:@"estimatedProgress"];
-    }
-
-    virtual void didChangeEstimatedProgress() override
-    {
-        [m_controller didChangeValueForKey:@"estimatedProgress"];
-    }
-
-    virtual void willChangeCanGoBack() override { }
-    virtual void didChangeCanGoBack() override { }
-    virtual void willChangeCanGoForward() override { }
-    virtual void didChangeCanGoForward() override { }
-    virtual void willChangeNetworkRequestsInProgress() override { }
-    virtual void didChangeNetworkRequestsInProgress() override { }
-    virtual void willChangeCertificateInfo() override { }
-    virtual void didChangeCertificateInfo() override { }
-
-    WKBrowsingContextController *m_controller;
-};
 
 NSString * const WKActionIsMainFrameKey = @"WKActionIsMainFrameKey";
 NSString * const WKActionNavigationTypeKey = @"WKActionNavigationTypeKey";

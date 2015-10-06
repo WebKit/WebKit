@@ -23,16 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKPagePrivateMac.h"
+#import "config.h"
+#import "WKPagePrivateMac.h"
 
-#include "WKAPICast.h"
-#include "WebPageGroup.h"
-#include "WebPageProxy.h"
-#include "WebPreferences.h"
-#include "WebProcessPool.h"
+#import "PageLoadStateObserver.h"
+#import "WKAPICast.h"
+#import "WKNSURLExtras.h"
+#import "WebPageGroup.h"
+#import "WebPageProxy.h"
+#import "WebPreferences.h"
+#import "WebProcessPool.h"
 
 using namespace WebKit;
+
+@interface WKObservablePageState : NSObject <_WKObservablePageState>
+@end
+
+@implementation WKObservablePageState {
+    RefPtr<WebPageProxy> _page;
+    std::unique_ptr<PageLoadStateObserver> _observer;
+};
+
+- (id)initWithPage:(RefPtr<WebPageProxy>&&)page
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _page = WTF::move(page);
+    _observer = std::make_unique<PageLoadStateObserver>(self, @"URL");
+    _page->pageLoadState().addObserver(*_observer);
+
+    return self;
+}
+
+- (void)dealloc
+{
+    _page->pageLoadState().removeObserver(*_observer);
+
+    [super dealloc];
+}
+
+- (BOOL)isLoading
+{
+    return _page->pageLoadState().isLoading();
+}
+
+- (NSString *)title
+{
+    return _page->pageLoadState().title();
+}
+
+- (NSURL *)URL
+{
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().activeURL()];
+}
+
+- (BOOL)hasOnlySecureContent
+{
+    return _page->pageLoadState().hasOnlySecureContent();
+}
+
+- (double)estimatedProgress
+{
+    return _page->estimatedProgress();
+}
+
+@end
+
+id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
+{
+    return [[WKObservablePageState alloc] initWithPage:toImpl(pageRef)];
+}
 
 pid_t WKPageGetProcessIdentifier(WKPageRef pageRef)
 {
