@@ -118,10 +118,10 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     [CustomBinding] void customBindingMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
 
     // 'JSBuiltin' extended attribute
-    [JSBuiltin] void jsBuiltinMethod();
-    [JSBuiltin] void jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
-    [JSBuiltin] attribute TestObj jsBuiltinAttribute;
-    [JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
+    [Conditional=Condition3, JSBuiltin] void jsBuiltinMethod();
+    [Conditional=Condition3, JSBuiltin] void jsBuiltinMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [Conditional=Condition4, JSBuiltin] attribute TestObj jsBuiltinAttribute;
+    [Conditional=Condition4, JSBuiltin] readonly attribute TestObj jsBuiltinReadOnlyAttribute;
 
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);
     void removeEventListener(DOMString type, EventListener listener, optional boolean useCapture);

@@ -450,6 +450,7 @@
     IMPL->setCustomAttr(newCustomAttr);
 }
 
+#if ENABLE(Condition4)
 - (DOMTestObj *)jsBuiltinAttribute
 {
     WebCore::JSMainThreadNullState state;
@@ -463,12 +464,15 @@
 
     IMPL->setJsBuiltinAttribute(core(newJsBuiltinAttribute));
 }
+#endif
 
+#if ENABLE(Condition4)
 - (DOMTestObj *)jsBuiltinReadOnlyAttribute
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->jsBuiltinReadOnlyAttribute()));
 }
+#endif
 
 - (int)withScriptStateAttribute
 {
@@ -975,17 +979,25 @@
     IMPL->customMethodWithArgs(longArg, strArg, core(objArg));
 }
 
+
+#if ENABLE(Condition3)
 - (void)jsBuiltinMethod
 {
     WebCore::JSMainThreadNullState state;
     IMPL->jsBuiltinMethod();
 }
 
+#endif
+
+
+#if ENABLE(Condition3)
 - (void)jsBuiltinMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg
 {
     WebCore::JSMainThreadNullState state;
     IMPL->jsBuiltinMethodWithArgs(longArg, strArg, core(objArg));
 }
+
+#endif
 
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {

@@ -1794,7 +1794,7 @@ sub GenerateImplementation
 
     my $implType = GetImplClassName($interfaceName);
 
-    AddIncludesForJSBuiltinMethods($interface);
+    AddJSBuiltinIncludesIfNeeded($interface);
 
     @implContent = ();
 
@@ -5100,35 +5100,23 @@ sub ComputeFunctionSpecial
     return (@specials > 0) ? join(" | ", @specials) : "0";
 }
 
-sub UseJSBuiltins
+sub AddJSBuiltinIncludesIfNeeded()
 {
     my $interface = shift;
-    foreach my $function (@{$interface->functions}) {
-        if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
-            return 1;
-        }
-    }
-    return 0
-}
 
-sub AddIncludesForJSBuiltinMethods()
-{
-    my $interface = shift;
+    my $include = $interface->name . "Builtins.h";
 
     if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
-        AddToImplIncludes($interface->name . "Builtins.h");
-        return 1;
+        AddToImplIncludes($include);
+        return;
     }
 
     foreach my $function (@{$interface->functions}) {
-        next unless ($function->signature->extendedAttributes->{"JSBuiltin"});
-        my $scopeName = $function->signature->extendedAttributes->{"ImplementedBy"};
-        if (!$scopeName) {
-            $scopeName = $interface->name;
-        }
-        AddToImplIncludes($scopeName . "Builtins.h", $function->signature->extendedAttributes->{"Conditional"});
+        AddToImplIncludes($include, $function->signature->extendedAttributes->{"Conditional"}) if $function->signature->extendedAttributes->{"JSBuiltin"};
+    }
 
-        return 1;
+    foreach my $attribute (@{$interface->attributes}) {
+        AddToImplIncludes($include, $attribute->signature->extendedAttributes->{"Conditional"}) if $attribute->signature->extendedAttributes->{"JSBuiltin"};
     }
 
 }
