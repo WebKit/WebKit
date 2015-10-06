@@ -28,6 +28,9 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "CSSParser.h"
+#include "CSSParserMode.h"
+#include "CSSSelectorList.h"
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
@@ -173,8 +176,18 @@ static std::error_code loadTrigger(ExecState& exec, const JSObject& ruleObject, 
     return { };
 }
 
-static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, Action& action)
+static bool isValidSelector(const String& selector)
 {
+    CSSParserContext context(CSSQuirksMode);
+    CSSParser parser(context);
+    CSSSelectorList selectorList;
+    parser.parseSelector(selector, selectorList);
+    return selectorList.isValid();
+}
+
+static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, Action& action, bool& validSelector)
+{
+    validSelector = true;
     const JSValue actionObject = ruleObject.get(&exec, Identifier::fromString(&exec, "action"));
     if (!actionObject || exec.hadException() || !actionObject.isObject())
         return ContentExtensionError::JSONInvalidAction;
@@ -196,7 +209,13 @@ static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, A
         if (!selector || exec.hadException() || !selector.isString())
             return ContentExtensionError::JSONInvalidCSSDisplayNoneActionType;
 
-        action = Action(ActionType::CSSDisplayNoneSelector, selector.toWTFString(&exec));
+        String s = selector.toWTFString(&exec);
+        if (!isValidSelector(s)) {
+            // Skip rules with invalid selectors to be backwards-compatible.
+            validSelector = false;
+            return { };
+        }
+        action = Action(ActionType::CSSDisplayNoneSelector, s);
     } else
         return ContentExtensionError::JSONInvalidActionType;
 
@@ -211,11 +230,13 @@ static std::error_code loadRule(ExecState& exec, const JSObject& ruleObject, Vec
         return triggerError;
 
     Action action;
-    auto actionError = loadAction(exec, ruleObject, action);
+    bool validSelector;
+    auto actionError = loadAction(exec, ruleObject, action, validSelector);
     if (actionError)
         return actionError;
 
-    ruleList.append(ContentExtensionRule(trigger, action));
+    if (validSelector)
+        ruleList.append(ContentExtensionRule(trigger, action));
     return { };
 }
 
