@@ -1487,7 +1487,7 @@ sub GetFunctionLength
   foreach my $parameter (@{$function->parameters}) {
     # Abort as soon as we find the first optional parameter as no mandatory
     # parameter can follow an optional one.
-    last if $parameter->isOptional;
+    last if $parameter->isOptional || $parameter->isVariadic;
     $numMandatoryParams++;
   }
   return $numMandatoryParams;

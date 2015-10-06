@@ -1,3 +1,16 @@
+2015-10-06  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] 'length' property is wrong for variadic operations
+        https://bugs.webkit.org/show_bug.cgi?id=149714
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C DOM test as our behavior changed. The new failures are
+        temporary and are due to the test being wrong. The test will be fixed
+        via Bug 149645 and we will pass those checks again.
+
+        * web-platform-tests/dom/interfaces-expected.txt:
+
 2015-09-29  Chris Dumez  <cdumez@apple.com>
 
         sectionRowIndex must return -1 when its parent is not a table, tbody, thead, or tfoot

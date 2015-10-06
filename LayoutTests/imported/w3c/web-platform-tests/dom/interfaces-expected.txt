@@ -470,8 +470,8 @@ FAIL Document interface: attribute lastElementChild assert_throws: getting prope
 FAIL Document interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-PASS Document interface: operation prepend([object Object],[object Object]) 
-PASS Document interface: operation append([object Object],[object Object]) 
+FAIL Document interface: operation prepend([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Document interface: operation append([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Document interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
 FAIL Document interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
 PASS Document interface: operation querySelector(DOMString) 
@@ -695,8 +695,8 @@ FAIL DocumentFragment interface: attribute lastElementChild assert_throws: getti
 FAIL DocumentFragment interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-PASS DocumentFragment interface: operation prepend([object Object],[object Object]) 
-PASS DocumentFragment interface: operation append([object Object],[object Object]) 
+FAIL DocumentFragment interface: operation prepend([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL DocumentFragment interface: operation append([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
 FAIL DocumentFragment interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
 FAIL DocumentFragment interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
 PASS DocumentFragment interface: operation querySelector(DOMString) 
@@ -821,9 +821,9 @@ FAIL DocumentType interface: attribute publicId assert_throws: getting property 
 FAIL DocumentType interface: attribute systemId assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-PASS DocumentType interface: operation before([object Object],[object Object]) 
-PASS DocumentType interface: operation after([object Object],[object Object]) 
-PASS DocumentType interface: operation replaceWith([object Object],[object Object]) 
+FAIL DocumentType interface: operation before([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL DocumentType interface: operation after([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL DocumentType interface: operation replaceWith([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
 PASS DocumentType interface: operation remove() 
 PASS DocumentType must be primary interface of document.doctype 
 PASS Stringification of document.doctype 
@@ -983,8 +983,8 @@ FAIL Element interface: attribute lastElementChild assert_throws: getting proper
 FAIL Element interface: attribute childElementCount assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-PASS Element interface: operation prepend([object Object],[object Object]) 
-PASS Element interface: operation append([object Object],[object Object]) 
+FAIL Element interface: operation prepend([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation append([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
 FAIL Element interface: operation query(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "query" missing
 FAIL Element interface: operation queryAll(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "queryAll" missing
 PASS Element interface: operation querySelector(DOMString) 
@@ -995,9 +995,9 @@ FAIL Element interface: attribute previousElementSibling assert_throws: getting 
 FAIL Element interface: attribute nextElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-PASS Element interface: operation before([object Object],[object Object]) 
-PASS Element interface: operation after([object Object],[object Object]) 
-PASS Element interface: operation replaceWith([object Object],[object Object]) 
+FAIL Element interface: operation before([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation after([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL Element interface: operation replaceWith([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
 PASS Element interface: operation remove() 
 PASS Element must be primary interface of element 
 PASS Stringification of element 
@@ -1269,9 +1269,9 @@ FAIL CharacterData interface: attribute previousElementSibling assert_throws: ge
 FAIL CharacterData interface: attribute nextElementSibling assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
-PASS CharacterData interface: operation before([object Object],[object Object]) 
-PASS CharacterData interface: operation after([object Object],[object Object]) 
-PASS CharacterData interface: operation replaceWith([object Object],[object Object]) 
+FAIL CharacterData interface: operation before([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL CharacterData interface: operation after([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
+FAIL CharacterData interface: operation replaceWith([object Object],[object Object]) assert_equals: property has wrong .length expected 1 but got 0
 PASS CharacterData interface: operation remove() 
 FAIL Text interface: existence and properties of interface object assert_equals: prototype of self's property "Text" is not Function.prototype expected (function) function "function () {
     [native code]
@@ -1870,8 +1870,8 @@ FAIL DOMTokenList interface: existence and properties of interface prototype obj
 FAIL DOMTokenList interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
 PASS DOMTokenList interface: operation item(unsigned long) 
 PASS DOMTokenList interface: operation contains(DOMString) 
-PASS DOMTokenList interface: operation add(DOMString) 
-PASS DOMTokenList interface: operation remove(DOMString) 
+FAIL DOMTokenList interface: operation add(DOMString) assert_equals: property has wrong .length expected 1 but got 0
+FAIL DOMTokenList interface: operation remove(DOMString) assert_equals: property has wrong .length expected 1 but got 0
 PASS DOMTokenList interface: operation toggle(DOMString,boolean) 
 FAIL DOMTokenList interface: stringifier assert_true: property is not enumerable expected true got false
 PASS DOMTokenList must be primary interface of document.body.classList 

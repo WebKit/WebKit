@@ -179,7 +179,7 @@ void JSTestOverloadedConstructorsConstructor::finishCreation(VM& vm, JSDOMGlobal
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestOverloadedConstructors::getPrototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestOverloadedConstructors"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
 ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*, ConstructData& constructData)
