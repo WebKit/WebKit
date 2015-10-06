@@ -1270,8 +1270,6 @@ void RenderGrid::layoutGridItems()
             || ((!oldOverrideContainingBlockContentLogicalHeight || oldOverrideContainingBlockContentLogicalHeight.value() != overrideContainingBlockContentLogicalHeight)
                 && child->hasRelativeLogicalHeight()))
             child->setNeedsLayout(MarkOnlyThis);
-        else
-            resetAutoMarginsAndLogicalTopInColumnAxis(*child);
 
         child->setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
         child->setOverrideContainingBlockContentLogicalHeight(overrideContainingBlockContentLogicalHeight);
@@ -1412,9 +1410,24 @@ LayoutUnit RenderGrid::marginLogicalHeightForChild(const RenderBox& child) const
     return isHorizontalWritingMode() ? child.verticalMarginExtent() : child.horizontalMarginExtent();
 }
 
+LayoutUnit RenderGrid::computeMarginLogicalHeightForChild(const RenderBox& child) const
+{
+    if (!child.style().hasMargin())
+        return 0;
+
+    LayoutUnit marginBefore;
+    LayoutUnit marginAfter;
+    child.computeBlockDirectionMargins(this, marginBefore, marginAfter);
+
+    return marginBefore + marginAfter;
+}
+
 LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox& child) const
 {
-    return gridAreaBreadthForChild - marginLogicalHeightForChild(child);
+    // Because we want to avoid multiple layouts, stretching logic might be performed before
+    // children are laid out, so we can't use the child cached values. Hence, we need to
+    // compute margins in order to determine the available height before stretching.
+    return gridAreaBreadthForChild - (child.needsLayout() ? computeMarginLogicalHeightForChild(child) : marginLogicalHeightForChild(child));
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
@@ -1481,57 +1494,24 @@ bool RenderGrid::hasAutoMarginsInRowAxis(const RenderBox& child) const
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
-void RenderGrid::resetAutoMarginsAndLogicalTopInColumnAxis(RenderBox& child)
-{
-    if (hasAutoMarginsInColumnAxis(child) || child.needsLayout()) {
-        child.clearOverrideLogicalContentHeight();
-        child.updateLogicalHeight();
-        if (isHorizontalWritingMode()) {
-            if (child.style().marginTop().isAuto())
-                child.setMarginTop(0);
-            if (child.style().marginBottom().isAuto())
-                child.setMarginBottom(0);
-        } else {
-            if (child.style().marginLeft().isAuto())
-                child.setMarginLeft(0);
-            if (child.style().marginRight().isAuto())
-                child.setMarginRight(0);
-        }
-
-    }
-}
-
-// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& child)
 {
     ASSERT(!child.isOutOfFlowPositioned());
-    ASSERT(child.overrideContainingBlockContentLogicalWidth());
 
     LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalWidth().value() - child.logicalWidth();
     if (availableAlignmentSpace <= 0)
         return;
 
-    bool isHorizontal = isHorizontalWritingMode();
-    Length topOrLeft = isHorizontal ? child.style().marginLeft() : child.style().marginTop();
-    Length bottomOrRight = isHorizontal ? child.style().marginRight() : child.style().marginBottom();
-    if (topOrLeft.isAuto() && bottomOrRight.isAuto()) {
-        if (isHorizontal) {
-            child.setMarginLeft(availableAlignmentSpace / 2);
-            child.setMarginRight(availableAlignmentSpace / 2);
-        } else {
-            child.setMarginTop(availableAlignmentSpace / 2);
-            child.setMarginBottom(availableAlignmentSpace / 2);
-        }
-    } else if (topOrLeft.isAuto()) {
-        if (isHorizontal)
-            child.setMarginLeft(availableAlignmentSpace);
-        else
-            child.setMarginTop(availableAlignmentSpace);
-    } else if (bottomOrRight.isAuto()) {
-        if (isHorizontal)
-            child.setMarginRight(availableAlignmentSpace);
-        else
-            child.setMarginBottom(availableAlignmentSpace);
+    const RenderStyle& parentStyle = style();
+    Length marginStart = child.style().marginStartUsing(&parentStyle);
+    Length marginEnd = child.style().marginEndUsing(&parentStyle);
+    if (marginStart.isAuto() && marginEnd.isAuto()) {
+        child.setMarginStart(availableAlignmentSpace / 2, &parentStyle);
+        child.setMarginEnd(availableAlignmentSpace / 2, &parentStyle);
+    } else if (marginStart.isAuto()) {
+        child.setMarginStart(availableAlignmentSpace, &parentStyle);
+    } else if (marginEnd.isAuto()) {
+        child.setMarginEnd(availableAlignmentSpace, &parentStyle);
     }
 }
 
@@ -1539,33 +1519,21 @@ void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& child)
 void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
 {
     ASSERT(!child.isOutOfFlowPositioned());
-    ASSERT(child.overrideContainingBlockContentLogicalHeight());
 
     LayoutUnit availableAlignmentSpace = child.overrideContainingBlockContentLogicalHeight().value() - child.logicalHeight();
     if (availableAlignmentSpace <= 0)
         return;
 
-    bool isHorizontal = isHorizontalWritingMode();
-    Length topOrLeft = isHorizontal ? child.style().marginTop() : child.style().marginLeft();
-    Length bottomOrRight = isHorizontal ? child.style().marginBottom() : child.style().marginRight();
-    if (topOrLeft.isAuto() && bottomOrRight.isAuto()) {
-        if (isHorizontal) {
-            child.setMarginTop(availableAlignmentSpace / 2);
-            child.setMarginBottom(availableAlignmentSpace / 2);
-        } else {
-            child.setMarginLeft(availableAlignmentSpace / 2);
-            child.setMarginRight(availableAlignmentSpace / 2);
-        }
-    } else if (topOrLeft.isAuto()) {
-        if (isHorizontal)
-            child.setMarginTop(availableAlignmentSpace);
-        else
-            child.setMarginLeft(availableAlignmentSpace);
-    } else if (bottomOrRight.isAuto()) {
-        if (isHorizontal)
-            child.setMarginBottom(availableAlignmentSpace);
-        else
-            child.setMarginRight(availableAlignmentSpace);
+    const RenderStyle& parentStyle = style();
+    Length marginBefore = child.style().marginBeforeUsing(&parentStyle);
+    Length marginAfter = child.style().marginAfterUsing(&parentStyle);
+    if (marginBefore.isAuto() && marginAfter.isAuto()) {
+        child.setMarginBefore(availableAlignmentSpace / 2, &parentStyle);
+        child.setMarginAfter(availableAlignmentSpace / 2, &parentStyle);
+    } else if (marginBefore.isAuto()) {
+        child.setMarginBefore(availableAlignmentSpace, &parentStyle);
+    } else if (marginAfter.isAuto()) {
+        child.setMarginAfter(availableAlignmentSpace, &parentStyle);
     }
 }
 
@@ -1681,6 +1649,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
         unsigned childEndLine = coordinate.rows.resolvedFinalPosition.next().toInt();
         LayoutUnit endOfRow = m_rowPositions[childEndLine];
         LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
+        // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_rowPositions.size() - 1)
             endOfRow -= offsetBetweenTracks(style().resolvedAlignContentDistribution(), m_rowPositions, childBreadth);
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveAlignmentOverflow(style(), child.style()), endOfRow - startOfRow, childBreadth);
@@ -1710,6 +1679,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
         unsigned childEndLine = coordinate.columns.resolvedFinalPosition.next().toInt();
         LayoutUnit endOfColumn = m_columnPositions[childEndLine];
         LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
+        // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_columnPositions.size() - 1)
             endOfColumn -= offsetBetweenTracks(style().resolvedJustifyContentDistribution(), m_columnPositions, childBreadth);
         LayoutUnit offsetFromStartPosition = computeOverflowAlignmentOffset(RenderStyle::resolveJustificationOverflow(style(), child.style()), endOfColumn - startOfColumn, childBreadth);

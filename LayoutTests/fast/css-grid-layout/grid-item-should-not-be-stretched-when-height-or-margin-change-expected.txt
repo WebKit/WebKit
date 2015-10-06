@@ -1,4 +1,0 @@
-The grids below had initially 'stretched' items, but we have changed 'height' and 'margin' to values which don't allow stretch. This test verifies that the layout algorithm properly detects such changes and clear the override height accordingly.
-
-PASS
-PASS
