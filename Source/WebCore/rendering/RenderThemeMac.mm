@@ -1581,7 +1581,11 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
         paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [sliderThumbCell drawKnob:unzoomedRect];
+    bool shouldDrawCell = true;
+    bool shouldDrawFocusRing = false;
+    float deviceScaleFactor = o.document().page()->deviceScaleFactor();
+    bool shouldUseImageBuffer = deviceScaleFactor != 1 || zoomLevel != 1;
+    ThemeMac::drawCellOrFocusRingWithViewIntoContext(sliderThumbCell, paintInfo.context(), unzoomedRect, view, shouldDrawCell, shouldDrawFocusRing, shouldUseImageBuffer, deviceScaleFactor);
     [sliderThumbCell setControlView:nil];
 
     return false;

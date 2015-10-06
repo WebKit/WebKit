@@ -664,29 +664,37 @@ void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
 
 const float buttonFocusRectOutlineWidth = 3.0f;
 
-bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell* cell, GraphicsContext& context, const FloatRect& inflatedRect, NSView* view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
+static inline bool drawCellOrFocusRingIntoRectWithView(NSCell *cell, NSRect rect, NSView *view, bool drawButtonCell, bool drawFocusRing)
+{
+    if (drawButtonCell) {
+        if ([cell isKindOfClass:[NSSliderCell class]]) {
+            // For slider cells, draw only the knob.
+            [(NSSliderCell *)cell drawKnob:rect];
+        } else
+            [cell drawWithFrame:rect inView:view];
+    }
+    if (drawFocusRing)
+        return drawCellFocusRing(cell, rect, view);
+
+    return false;
+}
+
+bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsContext& context, const FloatRect& rect, NSView *view, bool drawButtonCell, bool drawFocusRing, bool useImageBuffer, float deviceScaleFactor)
 {
     ASSERT(drawButtonCell || drawFocusRing);
     bool needsRepaint = false;
     if (useImageBuffer) {
-        NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, inflatedRect.width(), inflatedRect.height()));
-        std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, ColorSpaceSRGB, context, false);
+        NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
+        auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, ColorSpaceSRGB, context, false);
         {
             LocalCurrentGraphicsContext localContext(imageBuffer->context());
-            if (drawButtonCell)
-                [cell drawWithFrame:imageBufferDrawRect inView:view];
-            
-            if (drawFocusRing)
-                needsRepaint = drawCellFocusRing(cell, imageBufferDrawRect, view);
+            needsRepaint = drawCellOrFocusRingIntoRectWithView(cell, imageBufferDrawRect, view, drawButtonCell, drawFocusRing);
         }
-        context.drawImageBuffer(imageBuffer.get(), ColorSpaceSRGB, inflatedRect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
+        context.drawImageBuffer(imageBuffer.get(), ColorSpaceSRGB, rect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
         return needsRepaint;
     }
     if (drawButtonCell)
-        [cell drawWithFrame:NSRect(inflatedRect) inView:view];
-    
-    if (drawFocusRing)
-        needsRepaint = drawCellFocusRing(cell, NSRect(inflatedRect), view);
+        needsRepaint = drawCellOrFocusRingIntoRectWithView(cell, NSRect(rect), view, drawButtonCell, drawFocusRing);
     
     return needsRepaint;
 }
