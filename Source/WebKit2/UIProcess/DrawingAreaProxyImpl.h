@@ -48,7 +48,7 @@ public:
 
     bool hasReceivedFirstUpdate() const { return m_hasReceivedFirstUpdate; }
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
     void setNativeSurfaceHandleForCompositing(uint64_t);
 #endif
 

@@ -92,7 +92,7 @@ public:
     virtual void scheduleAnimation() = 0;
 #endif
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
     virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
 #endif
 

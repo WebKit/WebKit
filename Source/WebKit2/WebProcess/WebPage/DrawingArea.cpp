@@ -76,7 +76,7 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
 DrawingArea::DrawingArea(DrawingAreaType type, WebPage& webPage)
     : m_type(type)
     , m_webPage(webPage)
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+#if USE(TEXTURE_MAPPER) && PLATFORM(GTK)
     , m_nativeSurfaceHandleForCompositing(0)
 #endif
 {

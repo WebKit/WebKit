@@ -43,6 +43,9 @@ void WebPreferences::platformInitializeStore()
         setPluginsEnabled(false);
     }
 #endif
+#if !ENABLE(OPEN_GL)
+    setAcceleratedCompositingEnabled(false);
+#endif
 }
 
 void WebPreferences::platformUpdateStringValueForKey(const String&, const String&)

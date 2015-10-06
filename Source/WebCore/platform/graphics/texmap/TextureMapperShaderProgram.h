@@ -21,7 +21,7 @@
 #ifndef TextureMapperShaderProgram_h
 #define TextureMapperShaderProgram_h
 
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER_GL)
 #include "GraphicsContext3D.h"
 #include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
@@ -96,6 +96,6 @@ private:
 };
 
 }
-#endif
+#endif // USE(TEXTURE_MAPPER_GL)
 
 #endif // TextureMapperShaderProgram_h

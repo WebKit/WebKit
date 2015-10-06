@@ -326,7 +326,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
     drawingArea->setNativeSurfaceHandleForCompositing(GDK_WINDOW_XID(window));
 #endif
@@ -472,7 +472,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->authenticationDialog = 0;
 }
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* webViewBase, DrawingAreaProxyImpl* drawingArea, cairo_t* cr, GdkRectangle* clipRect)
 {
     ASSERT(drawingArea);
@@ -518,7 +518,7 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
     if (webkitWebViewRenderAcceleratedCompositingResults(webViewBase, drawingArea, cr, &clipRect))
         return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
 #endif
@@ -1369,7 +1369,7 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     // Queue a resize to ensure the new DrawingAreaProxy is resized.
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webkitWebViewBase));
 
-#if PLATFORM(X11)
+#if PLATFORM(X11) && USE(TEXTURE_MAPPER)
     if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
         return;
 
@@ -1379,12 +1379,13 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
 #if USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (!priv->redirectedWindow)
         return;
-    drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
+    uint64_t windowID = priv->redirectedWindow->windowID();
 #else
     if (!gtk_widget_get_realized(GTK_WIDGET(webkitWebViewBase)))
         return;
-    drawingArea->setNativeSurfaceHandleForCompositing(GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(webkitWebViewBase))));
+    uint64_t windowID = GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(webkitWebViewBase)));
 #endif
+    drawingArea->setNativeSurfaceHandleForCompositing(windowID);
 #else
     UNUSED_PARAM(webkitWebViewBase);
 #endif

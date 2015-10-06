@@ -22,6 +22,8 @@
 #include "config.h"
 #include "BitmapTextureGL.h"
 
+#if USE(TEXTURE_MAPPER_GL)
+
 #include "Extensions3D.h"
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
@@ -377,3 +379,5 @@ IntSize BitmapTextureGL::size() const
 }
 
 }; // namespace WebCore
+
+#endif // USE(TEXTURE_MAPPER_GL)

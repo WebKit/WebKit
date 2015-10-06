@@ -1,3 +1,40 @@
+2015-10-06  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Fix ENABLE_OPENGL=OFF builds
+        https://bugs.webkit.org/show_bug.cgi?id=146511
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseDraw):
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        Replace USE(TEXTURE_MAPPER_GL) with USE(TEXTURE_MAPPER) around
+        webkitWebViewRenderAcceleratedCompositingResults()
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        Replace USE(TEXTURE_MAPPER_GL) with USE(TEXTURE_MAPPER) around
+        setNativeSurfaceHandleForCompositing().
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+        Default to no AC if no GL support has been built.
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Replace USE(TEXTURE_MAPPER_GL) with USE(TEXTURE_MAPPER) around
+        SetNativeSurfaceHandleForCompositing.
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+        Replace USE(TEXTURE_MAPPER_GL) with USE(TEXTURE_MAPPER) around
+        setNativeSurfaceHandleForCompositing().
+        (WebKit::DrawingAreaImpl::setNativeSurfaceHandleForCompositing):
+        Force setAcceleratedCompositingEnabled() only if a LayerTreeHost
+        implementation is available, to avoid crashing when building without
+        any GL support.
+
 2015-10-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r190611.

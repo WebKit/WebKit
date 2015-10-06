@@ -22,6 +22,8 @@
 #include "config.h"
 #include "TextureMapperGL.h"
 
+#if USE(TEXTURE_MAPPER_GL)
+
 #include "BitmapTextureGL.h"
 #include "BitmapTexturePool.h"
 #include "Extensions3D.h"
@@ -51,8 +53,6 @@
 #define GL_UNPACK_SKIP_PIXELS 0x0CF4
 #define GL_UNPACK_SKIP_ROWS 0x0CF3
 #endif
-
-#if USE(TEXTURE_MAPPER)
 
 namespace WebCore {
 struct TextureMapperGLData {
@@ -798,12 +798,11 @@ PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
     return adoptRef(texture);
 }
 
-#if USE(TEXTURE_MAPPER_GL)
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
 {
     return std::make_unique<TextureMapperGL>();
 }
-#endif
 
 };
-#endif
+
+#endif // USE(TEXTURE_MAPPER_GL)

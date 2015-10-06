@@ -21,7 +21,7 @@
 #ifndef TextureMapperGL_h
 #define TextureMapperGL_h
 
-#if USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER_GL)
 
 #include "FilterOperation.h"
 #include "FloatQuad.h"
@@ -138,6 +138,6 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER)
+#endif // USE(TEXTURE_MAPPER_GL)
 
 #endif // TextureMapperGL_h
