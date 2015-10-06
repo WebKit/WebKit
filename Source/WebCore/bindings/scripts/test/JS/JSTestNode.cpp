@@ -66,14 +66,14 @@ private:
 class JSTestNodeConstructor : public DOMConstructorObject {
 private:
     JSTestNodeConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestNodeConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestNodeConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNodeConstructor>(vm.heap)) JSTestNodeConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
@@ -101,7 +101,7 @@ JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalOb
 {
 }
 
-void JSTestNodeConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
+void JSTestNodeConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));

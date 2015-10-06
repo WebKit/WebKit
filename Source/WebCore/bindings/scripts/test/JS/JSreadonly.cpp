@@ -60,14 +60,14 @@ private:
 class JSreadonlyConstructor : public DOMConstructorObject {
 private:
     JSreadonlyConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
     static JSreadonlyConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSreadonlyConstructor* ptr = new (NotNull, JSC::allocateCell<JSreadonlyConstructor>(vm.heap)) JSreadonlyConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
@@ -85,7 +85,7 @@ JSreadonlyConstructor::JSreadonlyConstructor(Structure* structure, JSDOMGlobalOb
 {
 }
 
-void JSreadonlyConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
+void JSreadonlyConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));

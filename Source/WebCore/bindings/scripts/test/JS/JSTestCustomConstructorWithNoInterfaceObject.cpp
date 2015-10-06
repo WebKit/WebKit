@@ -60,14 +60,14 @@ private:
 class JSTestCustomConstructorWithNoInterfaceObjectConstructor : public DOMConstructorObject {
 private:
     JSTestCustomConstructorWithNoInterfaceObjectConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorObject Base;
     static JSTestCustomConstructorWithNoInterfaceObjectConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestCustomConstructorWithNoInterfaceObjectConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObjectConstructor>(vm.heap)) JSTestCustomConstructorWithNoInterfaceObjectConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
@@ -86,7 +86,7 @@ JSTestCustomConstructorWithNoInterfaceObjectConstructor::JSTestCustomConstructor
 {
 }
 
-void JSTestCustomConstructorWithNoInterfaceObjectConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
+void JSTestCustomConstructorWithNoInterfaceObjectConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));

@@ -61,14 +61,14 @@ private:
 class JSTestJSBuiltinConstructorConstructor : public DOMConstructorJSBuiltinObject {
 private:
     JSTestJSBuiltinConstructorConstructor(JSC::Structure*, JSDOMGlobalObject*);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
+    void finishCreation(JSC::VM&, JSDOMGlobalObject*);
 
 public:
     typedef DOMConstructorJSBuiltinObject Base;
     static JSTestJSBuiltinConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         JSTestJSBuiltinConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructorConstructor>(vm.heap)) JSTestJSBuiltinConstructorConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
@@ -95,7 +95,7 @@ JSTestJSBuiltinConstructorConstructor::JSTestJSBuiltinConstructorConstructor(Str
 {
 }
 
-void JSTestJSBuiltinConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
+void JSTestJSBuiltinConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
