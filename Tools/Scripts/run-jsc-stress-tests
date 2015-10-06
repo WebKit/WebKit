@@ -107,6 +107,8 @@ $remoteDirectory = nil
 $architecture = nil
 $hostOS = nil
 $filter = nil
+$envVars = []
+$quickMode = false
 
 
 def usage
@@ -135,6 +137,11 @@ def usage
     puts "--child-processes    (-c)   Specify the number of child processes."
     puts "--filter                    Only run tests whose name matches the given regular expression."
     puts "--help               (-h)   Print this message."
+    puts "--env-vars                  Add a list of environment variables to set before running jsc."
+    puts "                            Each environment variable should be separated by a space."
+    puts "                            e.g. \"foo=bar x=y\" (no quotes). Note, if you pass DYLD_FRAMEWORK_PATH"
+    puts "                            it will override the default value."
+    puts "--quick              (-q)   Only run with the default and no-cjit-validate modes."
     exit 1
 end
 
@@ -158,7 +165,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
                ['--child-processes', '-c', GetoptLong::REQUIRED_ARGUMENT],
                ['--filter', GetoptLong::REQUIRED_ARGUMENT],
-               ['--verbose', '-v', GetoptLong::NO_ARGUMENT]).each {
+               ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+               ['--env-vars', GetoptLong::REQUIRED_ARGUMENT],
+               ['--quick', '-q', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
     when '--help'
@@ -205,6 +214,10 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $architecture = arg
     when '--os'
         $hostOS = arg
+    when '--env-vars'
+        $envVars = arg.gsub(/\s+/, ' ').split(' ')
+    when '--quick'
+        $quickMode = true
     end
 }
 
@@ -575,7 +588,10 @@ class Plan
         # It's important to remember that the test is actually run in a subshell, so if we change directory
         # in the subshell when we return we will be in our original directory. This is nice because we don't
         # have to bend over backwards to do things relative to the root.
-        "(cd ../#{Shellwords.shellescape(@directory.to_s)} && \"$@\" " + escapeAll(@arguments) + ")"
+        script = "(cd ../#{Shellwords.shellescape(@directory.to_s)} && ("
+        $envVars.each { |var| script += "export " << var << "; " }
+        script += "\"$@\" " + escapeAll(@arguments) + "))"
+        return script
     end
     
     def reproScriptCommand
@@ -591,6 +607,7 @@ class Plan
 
         script += "export DYLD_FRAMEWORK_PATH=$(cd #{$testingFrameworkPath.dirname}; pwd)\n"
         script += "export JSC_timeout=#{Shellwords.shellescape(ENV['JSC_timeout'])}\n"
+        $envVars.each { |var| script += "export " << var << "\n" }
         script += "#{shellCommand} || exit 1"
         "echo #{Shellwords.shellescape(script)} > #{Shellwords.shellescape((Pathname.new("..") + @name).to_s)}"
     end
@@ -794,25 +811,29 @@ def runDFGMaximalFlushPhase
 end
 
 def defaultRun
-    runDefault
-    runAlwaysTriggerCopyPhase
-    if $jitTests
-        runNoLLInt
-        runNoCJITValidatePhases
-        runDFGEager
-        runDFGEagerNoCJITValidate
-        runDefaultFTL
-        runFTLNoCJITValidate
-        runFTLNoCJITNoInlineValidate
-        runFTLEager
-        runFTLEagerNoCJITValidate
-        runFTLNoCJITSmallPool
-        runDFGMaximalFlushPhase
+    if $quickMode
+        defaultQuickRun
+    else
+        runDefault
+        runAlwaysTriggerCopyPhase
+        if $jitTests
+            runNoLLInt
+            runNoCJITValidatePhases
+            runDFGEager
+            runDFGEagerNoCJITValidate
+            runDefaultFTL
+            runFTLNoCJITValidate
+            runFTLNoCJITNoInlineValidate
+            runFTLEager
+            runFTLEagerNoCJITValidate
+            runFTLNoCJITSmallPool
+            runDFGMaximalFlushPhase
+        end
     end
 end
 
 def defaultQuickRun
-    if $enableFTL
+    if $enableFTL and $jitTests
         runDefaultFTL
         runFTLNoCJITValidate
     else
@@ -992,13 +1013,25 @@ def noFTLRunLayoutTest
     runLayoutTestDFGEagerNoCJIT
 end
 
-def defaultRunLayoutTest
+def defaultQuickRunLayoutTest
     runLayoutTestDefault
     if $jitTests
-        noFTLRunLayoutTest
-        runLayoutTestDefaultFTL
         runLayoutTestFTLNoCJIT
         runLayoutTestFTLEagerNoCJIT
+    end
+end
+
+def defaultRunLayoutTest
+    if $quickMode
+        defaultQuickRunLayoutTest
+    else
+        runLayoutTestDefault
+        if $jitTests
+            noFTLRunLayoutTest
+            runLayoutTestDefaultFTL
+            runLayoutTestFTLNoCJIT
+            runLayoutTestFTLEagerNoCJIT
+        end
     end
 end
 
@@ -1086,14 +1119,30 @@ def runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
     runMozillaTest("ftl-eager-no-cjit-validate-phases", mode, extraFiles, "--validateBytecode=true", "--validateGraphAtEachPhase=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS)) if $enableFTL
 end
 
-def defaultRunMozillaTest(mode, *extraFiles)
-    runMozillaTestDefault(mode, *extraFiles)
-    if $jitTests
-        runMozillaTestLLInt(mode, *extraFiles)
-        runMozillaTestBaselineJIT(mode, *extraFiles)
-        runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+def defaultQuickRunMozillaTest(mode, *extraFiles)
+    if $enableFTL and $jitTests
         runMozillaTestDefaultFTL(mode, *extraFiles)
         runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+    else
+        runMozillaTestDefault(mode, *extraFiles)
+        if $jitTests
+            runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+        end
+    end
+end
+
+def defaultRunMozillaTest(mode, *extraFiles)
+    if $quickMode
+        defaultQuickRunMozillaTest(mode, *extraFiles)
+    else
+        runMozillaTestDefault(mode, *extraFiles)
+        if $jitTests
+            runMozillaTestLLInt(mode, *extraFiles)
+            runMozillaTestBaselineJIT(mode, *extraFiles)
+            runMozillaTestDFGEagerNoCJITValidatePhases(mode, *extraFiles)
+            runMozillaTestDefaultFTL(mode, *extraFiles)
+            runMozillaTestFTLEagerNoCJITValidatePhases(mode, *extraFiles)
+        end
     end
 end
 
@@ -1518,9 +1567,6 @@ def prepareMakeTestRunner
     }
 end
 
-    
-puts
-
 def cleanRunnerDirectory
     raise unless $bundle
     Dir.foreach($runnerDir) {
@@ -1665,6 +1711,7 @@ def runTestRunner
         remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
         remoteScript += "export LD_LIBRARY_PATH=#{$remoteDirectory}/#{$outputDir.basename}/#{$jscPath.dirname} && "
         remoteScript += "export JSC_timeout=#{Shellwords.shellescape(ENV['JSC_timeout'])} && "
+        $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunnerCommand}\""
         runAndMonitorTestRunnerCommand("ssh", "-p", $remotePort.to_s, "#{$remoteUser}@#{$remoteHost}", remoteScript)
     else
@@ -1772,6 +1819,7 @@ def runRemote
     detectFailures
 end
 
+puts
 if $bundle
     runBundle
 elsif $remote

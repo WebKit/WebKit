@@ -1,3 +1,22 @@
+2015-10-06  Keith Miller  <keith_miller@apple.com>
+
+        Fix run-javascriptcore-tests/run-jsc-stress-tests to work with rootless, add a --quick option and deprecate the Mozilla driver.
+        https://bugs.webkit.org/show_bug.cgi?id=149815
+
+        Reviewed by Filip Pizlo.
+
+        Rootless has an issue where it will strip any environment variables that start with DYLD starting a perl/ruby/python script.
+        Now, run-jsc-stress-tests takes an new argument, --env-vars, that will set the specified environment variables before
+        running tests. Additionally, I added a quick option that only runs default and the NoCJITValidate versions of each test.
+        Finally, I removed the calls to the mozilla jsDriver.pl since the run-jsc-stress-tests runner runs the same test suite
+        so should just use one test runner.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        (runMozillaTests): Deleted.
+        (defaultJsDriverArgsForMozillaTests): Deleted.
+        * Scripts/run-jsc-stress-tests:
+
 2015-10-06  Mark Salisbury  <mark.salisbury@hp.com>
 
         [GTK] Make update-webkitgtk-libs work behind firewall
