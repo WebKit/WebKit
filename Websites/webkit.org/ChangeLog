@@ -1,3 +1,15 @@
+2015-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Add assets for Web Inspector Keyboard Shortcuts blog post.
+
+        * blog-files/web-inspector-keyboard-shortcuts/clear-console.png: Added.
+        * blog-files/web-inspector-keyboard-shortcuts/console-filters.m4v: Added.
+        * blog-files/web-inspector-keyboard-shortcuts/debugger-shortcuts.png: Added.
+        * blog-files/web-inspector-keyboard-shortcuts/hide-element.m4v: Added.
+        * blog-files/web-inspector-keyboard-shortcuts/select-next-and-previous-tabs.m4v: Added.
+        * blog-files/web-inspector-keyboard-shortcuts/toggle-split-console.m4v: Added.
+        * blog-files/web-inspector-keyboard-shortcuts/tooltips.gif: Added.
+
 2015-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add anchor tags for scroll snapping examples.
