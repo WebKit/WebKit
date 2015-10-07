@@ -1,5 +1,35 @@
 2015-10-07  Filip Pizlo  <fpizlo@apple.com>
 
+        JIT::emitGetGlobalProperty/emitPutGlobalProperty are only called from one place
+        https://bugs.webkit.org/show_bug.cgi?id=149879
+
+        Reviewed by Saam Barati.
+
+        To simplify my work to insert barriers on loads of the butterfly, I want to reduce the amount
+        of abstraction we have around code that loads the butterfly.
+
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitLoadWithStructureCheck):
+        (JSC::JIT::emitGetVarFromPointer):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalVariable):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitGetGlobalProperty): Deleted.
+        (JSC::JIT::emitPutGlobalProperty): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitLoadWithStructureCheck):
+        (JSC::JIT::emitGetVarFromPointer):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalVariable):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitGetGlobalProperty): Deleted.
+        (JSC::JIT::emitPutGlobalProperty): Deleted.
+
+2015-10-07  Filip Pizlo  <fpizlo@apple.com>
+
         JIT::compileGetDirectOffset is useless
         https://bugs.webkit.org/show_bug.cgi?id=149878
 

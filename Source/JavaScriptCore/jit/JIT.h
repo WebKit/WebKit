@@ -668,7 +668,6 @@ namespace JSC {
         void emitVarInjectionCheck(bool needsVarInjectionChecks);
         void emitResolveClosure(int dst, int scope, bool needsVarInjectionChecks, unsigned depth);
         void emitLoadWithStructureCheck(int scope, Structure** structureSlot);
-        void emitGetGlobalProperty(uintptr_t* operandSlot);
 #if USE(JSVALUE64)
         void emitGetVarFromPointer(JSValue* operand, GPRReg);
         void emitGetVarFromIndirectPointer(JSValue** operand, GPRReg);
@@ -677,7 +676,6 @@ namespace JSC {
         void emitGetVarFromPointer(JSValue* operand, GPRReg tag, GPRReg payload);
 #endif
         void emitGetClosureVar(int scope, uintptr_t operand);
-        void emitPutGlobalProperty(uintptr_t* operandSlot, int value);
         void emitNotifyWrite(WatchpointSet*);
         void emitNotifyWrite(GPRReg pointerToSet);
         void emitPutGlobalVariable(JSValue* operand, int value, WatchpointSet*);

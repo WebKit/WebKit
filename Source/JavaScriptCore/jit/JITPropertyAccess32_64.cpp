@@ -780,26 +780,6 @@ void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
     addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureIDOffset()), regT2));
 }
 
-void JIT::emitGetGlobalProperty(uintptr_t* operandSlot)
-{
-    GPRReg base = regT2;
-    GPRReg resultTag = regT1;
-    GPRReg resultPayload = regT0;
-    GPRReg offset = regT3;
-    
-    move(regT0, base);
-    load32(operandSlot, offset);
-    if (!ASSERT_DISABLED) {
-        Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
-        abortWithReason(JITOffsetIsNotOutOfLine);
-        isOutOfLine.link(this);
-    }
-    loadPtr(Address(base, JSObject::butterflyOffset()), base);
-    neg32(offset);
-    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultPayload);
-    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultTag);
-}
-
 void JIT::emitGetVarFromPointer(JSValue* operand, GPRReg tag, GPRReg payload)
 {
     uintptr_t rawAddress = bitwise_cast<uintptr_t>(operand);
@@ -831,10 +811,26 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
     auto emitCode = [&] (ResolveType resolveType, bool indirectLoadForOperand) {
         switch (resolveType) {
         case GlobalProperty:
-        case GlobalPropertyWithVarInjectionChecks:
+        case GlobalPropertyWithVarInjectionChecks: {
             emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
-            emitGetGlobalProperty(operandSlot);
+            GPRReg base = regT2;
+            GPRReg resultTag = regT1;
+            GPRReg resultPayload = regT0;
+            GPRReg offset = regT3;
+            
+            move(regT0, base);
+            load32(operandSlot, offset);
+            if (!ASSERT_DISABLED) {
+                Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
+                abortWithReason(JITOffsetIsNotOutOfLine);
+                isOutOfLine.link(this);
+            }
+            loadPtr(Address(base, JSObject::butterflyOffset()), base);
+            neg32(offset);
+            load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultPayload);
+            load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultTag);
             break;
+        }
         case GlobalVar:
         case GlobalVarWithVarInjectionChecks:
         case GlobalLexicalVar:
@@ -926,17 +922,6 @@ void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<Slo
     callOperation(WithProfile, operationGetFromScope, dst, currentInstruction);
 }
 
-void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, int value)
-{
-    emitLoad(value, regT3, regT2);
-    
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
-    loadPtr(operandSlot, regT1);
-    negPtr(regT1);
-    store32(regT3, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
-    store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-}
-
 void JIT::emitPutGlobalVariable(JSValue* operand, int value, WatchpointSet* set)
 {
     emitLoad(value, regT1, regT0);
@@ -977,11 +962,18 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
     auto emitCode = [&] (ResolveType resolveType, bool indirectLoadForOperand) {
         switch (resolveType) {
         case GlobalProperty:
-        case GlobalPropertyWithVarInjectionChecks:
+        case GlobalPropertyWithVarInjectionChecks: {
             emitWriteBarrier(m_codeBlock->globalObject(), value, ShouldFilterValue);
             emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
-            emitPutGlobalProperty(operandSlot, value);
+            emitLoad(value, regT3, regT2);
+            
+            loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
+            loadPtr(operandSlot, regT1);
+            negPtr(regT1);
+            store32(regT3, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+            store32(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
             break;
+        }
         case GlobalVar:
         case GlobalVarWithVarInjectionChecks:
         case GlobalLexicalVar:
