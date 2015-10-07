@@ -89,6 +89,11 @@ using namespace WebKit;
     return _page->estimatedProgress();
 }
 
+- (NSURL *)unreachableURL
+{
+    return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
+}
+
 @end
 
 id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
