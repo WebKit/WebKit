@@ -1113,7 +1113,7 @@ void MediaPlayerPrivateQTKit::timeChanged()
     // It may not be possible to seek to a specific time in a streamed movie. When seeking in a 
     // stream QuickTime sets the movie time to closest time possible and posts a timechanged 
     // notification. Update m_seekTo so we can detect when the seek completes.
-    if (!m_seekTo.isValid())
+    if (m_seekTo.isValid())
         m_seekTo = currentMediaTime();
 
     m_timeToRestore = MediaTime::invalidTime();
