@@ -676,3 +676,5 @@ webkit.org/b/148695 fast/shadow-dom [ Failure ImageOnlyFailure ]
 # Marks as flaky (see also https://bugs.webkit.org/show_bug.cgi?id=132388)
 
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overrides.html [ Failure Pass ]
+
+webkit.org/b/149218 http/tests/notifications/events.html [ Pass Crash Timeout ]

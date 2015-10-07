@@ -1,3 +1,29 @@
+2015-10-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r190572, r190593, r190594, and
+        r190639.
+        https://bugs.webkit.org/show_bug.cgi?id=149897
+
+        Breaks Mavericks build (Requested by litherum on #webkit).
+
+        Reverted changesets:
+
+        "Allow WKRetainPtrs to be used as keys in hashing data
+        structures"
+        https://bugs.webkit.org/show_bug.cgi?id=149762
+        http://trac.webkit.org/changeset/190572
+
+        "REGRESSION(189668?): http/tests/notifications/events.html
+        flakily asserts or times out"
+        https://bugs.webkit.org/show_bug.cgi?id=149218
+        http://trac.webkit.org/changeset/190593
+
+        "Prospective Mavericks build fix."
+        http://trac.webkit.org/changeset/190594
+
+        "Post-review cleanup after r190572."
+        http://trac.webkit.org/changeset/190639
+
 2015-10-07  Anders Carlsson  <andersca@apple.com>
 
         Provide a way to get a WKFrameInfoRef from a WKFrameRef
