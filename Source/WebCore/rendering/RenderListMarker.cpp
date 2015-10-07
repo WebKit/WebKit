@@ -1894,11 +1894,8 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
     LayoutRect rect(0, rootBox.selectionTop() - y(), width(), rootBox.selectionHeight());
             
     if (clipToVisibleContent)
-        computeRectForRepaint(repaintContainer, rect);
-    else
-        rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
-    
-    return rect;
+        return computeRectForRepaint(rect, repaintContainer);
+    return localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
 }
 
 } // namespace WebCore

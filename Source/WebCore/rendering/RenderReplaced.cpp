@@ -551,11 +551,8 @@ LayoutRect RenderReplaced::selectionRectForRepaint(const RenderLayerModelObject*
     
     LayoutRect rect = localSelectionRect();
     if (clipToVisibleContent)
-        computeRectForRepaint(repaintContainer, rect);
-    else
-        rect = localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
-    
-    return rect;
+        return computeRectForRepaint(rect, repaintContainer);
+    return localToContainerQuad(FloatRect(rect), repaintContainer).enclosingBoundingBox();
 }
 
 LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
@@ -614,15 +611,11 @@ LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelO
     // The selectionRect can project outside of the overflowRect, so take their union
     // for repainting to avoid selection painting glitches.
     LayoutRect r = unionRect(localSelectionRect(false), visualOverflowRect());
-
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().layoutDelta());
-
     r.inflate(style().outlineSize());
-
-    computeRectForRepaint(repaintContainer, r);
-    return r;
+    return computeRectForRepaint(r, repaintContainer);
 }
 
 }

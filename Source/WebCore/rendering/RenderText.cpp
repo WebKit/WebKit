@@ -1321,11 +1321,8 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
     }
 
     if (clipToVisibleContent)
-        computeRectForRepaint(repaintContainer, resultRect);
-    else
-        resultRect = localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
-
-    return resultRect;
+        return computeRectForRepaint(resultRect, repaintContainer);
+    return localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
 }
 
 LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>& rects)

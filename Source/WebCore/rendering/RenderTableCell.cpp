@@ -384,18 +384,17 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     r.move(view().layoutDelta());
 
-    computeRectForRepaint(repaintContainer, r);
-    return r;
+    return computeRectForRepaint(r, repaintContainer);
 }
 
-void RenderTableCell::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& r, bool fixed) const
+LayoutRect RenderTableCell::computeRectForRepaint(const LayoutRect& r, const RenderLayerModelObject* repaintContainer, bool fixed) const
 {
     if (repaintContainer == this)
-        return;
-    r.setY(r.y());
+        return r;
+    LayoutRect adjustedRect = r;
     if ((!view().layoutStateEnabled() || repaintContainer) && parent())
-        r.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
-    RenderBlockFlow::computeRectForRepaint(repaintContainer, r, fixed);
+        adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
+    return RenderBlockFlow::computeRectForRepaint(adjustedRect, repaintContainer, fixed);
 }
 
 LayoutUnit RenderTableCell::cellBaselinePosition() const

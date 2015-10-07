@@ -2141,9 +2141,7 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(const RenderLayerModelObject
     // that projects outside of our overflowRect.
     ASSERT(style().outlineSize() <= view().maximalOutlineSize());
     r.inflate(view().maximalOutlineSize());
-    
-    computeRectForRepaint(repaintContainer, r);
-    return r;
+    return computeRectForRepaint(r, repaintContainer);
 }
 
 static inline bool shouldApplyContainersClipAndOffset(const RenderLayerModelObject* repaintContainer, RenderBox* containerBox)
@@ -2160,7 +2158,7 @@ static inline bool shouldApplyContainersClipAndOffset(const RenderLayerModelObje
 #endif
 }
 
-void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
+LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
@@ -2170,38 +2168,39 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
     // RenderView::computeRectForRepaint then converts the rect to physical coordinates.  We also convert to
     // physical when we hit a repaintContainer boundary.  Therefore the final rect returned is always in the
     // physical coordinate space of the repaintContainer.
+    LayoutRect adjustedRect = rect;
     const RenderStyle& styleToUse = style();
     // LayoutState is only valid for root-relative, non-fixed position repainting
     if (view().layoutStateEnabled() && !repaintContainer && styleToUse.position() != FixedPosition) {
         LayoutState* layoutState = view().layoutState();
 
         if (layer() && layer()->transform())
-            rect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(rect), document().deviceScaleFactor()));
+            adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
 
         // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
         if (styleToUse.hasInFlowPosition() && layer())
-            rect.move(layer()->offsetForInFlowPosition());
+            adjustedRect.move(layer()->offsetForInFlowPosition());
 
-        rect.moveBy(location());
-        rect.move(layoutState->m_paintOffset);
+        adjustedRect.moveBy(location());
+        adjustedRect.move(layoutState->m_paintOffset);
         if (layoutState->m_clipped)
-            rect.intersect(layoutState->m_clipRect);
-        return;
+            adjustedRect.intersect(layoutState->m_clipRect);
+        return adjustedRect;
     }
 
     if (hasReflection())
-        rect.unite(reflectedRect(rect));
+        adjustedRect.unite(reflectedRect(adjustedRect));
 
     if (repaintContainer == this) {
         if (repaintContainer->style().isFlippedBlocksWritingMode())
-            flipForWritingMode(rect);
-        return;
+            flipForWritingMode(adjustedRect);
+        return adjustedRect;
     }
 
     bool containerSkipped;
     auto* renderer = container(repaintContainer, &containerSkipped);
     if (!renderer)
-        return;
+        return adjustedRect;
     
     EPosition position = styleToUse.position();
 
@@ -2216,28 +2215,28 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
         RenderRegion* firstRegion = nullptr;
         RenderRegion* lastRegion = nullptr;
         if (downcast<RenderFlowThread>(*renderer).getRegionRangeForBox(this, firstRegion, lastRegion))
-            rect.moveBy(firstRegion->flowThreadPortionRect().location());
+            adjustedRect.moveBy(firstRegion->flowThreadPortionRect().location());
     }
 
     if (isWritingModeRoot() && !isOutOfFlowPositioned())
-        flipForWritingMode(rect);
+        flipForWritingMode(adjustedRect);
 
     LayoutSize locationOffset = this->locationOffset();
     // FIXME: This is needed as long as RenderWidget snaps to integral size/position.
     if (isRenderReplaced() && isWidget()) {
         LayoutSize flooredLocationOffset = toIntSize(flooredIntPoint(locationOffset));
-        rect.expand(locationOffset - flooredLocationOffset);
+        adjustedRect.expand(locationOffset - flooredLocationOffset);
         locationOffset = flooredLocationOffset;
     }
-    LayoutPoint topLeft = rect.location();
+    LayoutPoint topLeft = adjustedRect.location();
     topLeft.move(locationOffset);
 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
     if (hasLayer() && layer()->transform()) {
         fixed = position == FixedPosition;
-        rect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(rect), document().deviceScaleFactor()));
-        topLeft = rect.location();
+        adjustedRect = LayoutRect(encloseRectToDevicePixels(layer()->transform()->mapRect(adjustedRect), document().deviceScaleFactor()));
+        topLeft = adjustedRect.location();
         topLeft.move(locationOffset);
     } else if (position == FixedPosition)
         fixed = true;
@@ -2254,24 +2253,23 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
 
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
     // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
-    rect.setLocation(topLeft);
+    adjustedRect.setLocation(topLeft);
     if (renderer->hasOverflowClip()) {
         RenderBox& containerBox = downcast<RenderBox>(*renderer);
         if (shouldApplyContainersClipAndOffset(repaintContainer, &containerBox)) {
-            containerBox.applyCachedClipAndScrollOffsetForRepaint(rect);
-            if (rect.isEmpty())
-                return;
+            containerBox.applyCachedClipAndScrollOffsetForRepaint(adjustedRect);
+            if (adjustedRect.isEmpty())
+                return adjustedRect;
         }
     }
 
     if (containerSkipped) {
         // If the repaintContainer is below o, then we need to map the rect into repaintContainer's coordinates.
         LayoutSize containerOffset = repaintContainer->offsetFromAncestorContainer(*renderer);
-        rect.move(-containerOffset);
-        return;
+        adjustedRect.move(-containerOffset);
+        return adjustedRect;
     }
-
-    renderer->computeRectForRepaint(repaintContainer, rect, fixed);
+    return renderer->computeRectForRepaint(adjustedRect, repaintContainer, fixed);
 }
 
 void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)

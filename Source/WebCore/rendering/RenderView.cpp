@@ -696,35 +696,37 @@ LayoutRect RenderView::visualOverflowRect() const
     return RenderBlockFlow::visualOverflowRect();
 }
 
-void RenderView::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
+LayoutRect RenderView::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
 {
     // If a container was specified, and was not nullptr or the RenderView,
     // then we should have found it by now.
     ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
 
     if (printing())
-        return;
-
+        return rect;
+    
+    LayoutRect adjustedRect = rect;
     if (style().isFlippedBlocksWritingMode()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
         if (style().isHorizontalWritingMode())
-            rect.setY(viewHeight() - rect.maxY());
+            adjustedRect.setY(viewHeight() - adjustedRect.maxY());
         else
-            rect.setX(viewWidth() - rect.maxX());
+            adjustedRect.setX(viewWidth() - adjustedRect.maxX());
     }
 
     if (fixed) {
 #if PLATFORM(IOS)
-        rect.move(fixedPositionOffset(frameView()));
+        adjustedRect.move(fixedPositionOffset(frameView()));
 #else
-        rect.move(frameView().scrollOffsetForFixedPosition());
+        adjustedRect.move(frameView().scrollOffsetForFixedPosition());
 #endif
     }
         
     // Apply our transform if we have one (because of full page zooming).
     if (!repaintContainer && layer() && layer()->transform())
-        rect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(rect, document().deviceScaleFactor())));
+        adjustedRect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(adjustedRect, document().deviceScaleFactor())));
+    return adjustedRect;
 }
 
 bool RenderView::isScrollableOrRubberbandableBox() const

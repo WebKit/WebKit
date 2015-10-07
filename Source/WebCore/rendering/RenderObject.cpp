@@ -943,8 +943,7 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer)
     dirtyRect.move(view.layoutDelta());
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
-    computeRectForRepaint(repaintContainer, dirtyRect);
-    repaintUsingContainer(repaintContainer ? repaintContainer : &view, dirtyRect, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer ? repaintContainer : &view, computeRectForRepaint(dirtyRect, repaintContainer), shouldClipToLayer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
@@ -997,25 +996,28 @@ LayoutRect RenderObject::clippedOverflowRectForRepaint(const RenderLayerModelObj
     return LayoutRect();
 }
 
-void RenderObject::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
+LayoutRect RenderObject::computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, bool fixed) const
 {
     if (repaintContainer == this)
-        return;
+        return rect;
 
-    if (auto* parent = this->parent()) {
-        if (parent->hasOverflowClip()) {
-            downcast<RenderBox>(*parent).applyCachedClipAndScrollOffsetForRepaint(rect);
-            if (rect.isEmpty())
-                return;
-        }
+    auto* parent = this->parent();
+    if (!parent)
+        return rect;
 
-        parent->computeRectForRepaint(repaintContainer, rect, fixed);
+    LayoutRect adjustedRect = rect;
+    if (parent->hasOverflowClip()) {
+        downcast<RenderBox>(*parent).applyCachedClipAndScrollOffsetForRepaint(adjustedRect);
+        if (adjustedRect.isEmpty())
+            return adjustedRect;
     }
+    return parent->computeRectForRepaint(adjustedRect, repaintContainer, fixed);
 }
 
-void RenderObject::computeFloatRectForRepaint(const RenderLayerModelObject*, FloatRect&, bool) const
+FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject*, bool) const
 {
     ASSERT_NOT_REACHED();
+    return FloatRect();
 }
 
 #if ENABLE(TREE_DEBUGGING)
