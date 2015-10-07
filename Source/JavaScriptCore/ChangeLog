@@ -1,3 +1,14 @@
+2015-10-07  Mark Lam  <mark.lam@apple.com>
+
+        Disable tail calls because it is breaking some sites.
+        https://bugs.webkit.org/show_bug.cgi?id=149900
+
+        Reviewed by Saam Barati.
+
+        This is until we fix whatever the breakage is.
+
+        * runtime/Options.h:
+
 2015-10-07  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add an LLVM IR generator for WebAssembly
