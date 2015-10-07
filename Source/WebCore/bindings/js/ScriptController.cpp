@@ -194,7 +194,7 @@ Vector<JSC::Strong<JSDOMWindowShell>> ScriptController::windowShells()
 
 void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 {
-    static_cast<JSClientData*>(JSDOMWindow::commonVM().clientData)->getAllWorlds(worlds);
+    static_cast<WebCoreJSClientData*>(JSDOMWindow::commonVM().clientData)->getAllWorlds(worlds);
 }
 
 void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache)

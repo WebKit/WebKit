@@ -1260,12 +1260,9 @@ WEBCORE_JS_BUILTINS = \
     $(WebCore)/Modules/streams/ReadableStreamReader.js \
 #
 
-all : WebCoreJSBuiltins.cpp $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
+all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
 
-WebCoreJSBuiltins.cpp: $(WEBCORE_JS_BUILTINS) $(WebCore)/generate-js-builtins-allinone
-	$(PYTHON) $(WebCore)/generate-js-builtins-allinone $(WEBCORE_JS_BUILTINS)  --output_dir .
-
-%Builtins.cpp: %.js $(WebCore)/generate-js-builtins
+%Builtins.cpp: %.js
 	$(PYTHON) $(WebCore)/generate-js-builtins --input $< --generate_js_builtins_path $(GenerateJSBuiltinsScripts)
 
 # ------------------------

@@ -1,3 +1,17 @@
+2015-10-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r190664.
+        https://bugs.webkit.org/show_bug.cgi?id=149877
+
+        mac build is sometimes borken due to missing generated header
+        file (Requested by youenn on #webkit).
+
+        Reverted changeset:
+
+        "Automate WebCore JS builtins generation and build system"
+        https://bugs.webkit.org/show_bug.cgi?id=149751
+        http://trac.webkit.org/changeset/190664
+
 2015-10-07  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Automate WebCore JS builtins generation and build system
