@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>WebKit Perf Monitor</title>
+<title>Perf Monitor is Loading...</title>
 <script src="js/jquery.js" defer></script>
 <script src="js/jquery.flot.js" defer></script>
 <script src="js/jquery.flot.crosshair.js" defer></script>
@@ -1220,6 +1220,9 @@ function init() {
         builders = manifest.builders;
         bugTrackers = manifest.bugTrackers;
 
+        document.title = manifest.siteTitle;
+        document.getElementById('siteTitle').textContent = manifest.siteTitle;
+
         setMode(URLState.get('mode', 'dashboard'));
     });
 }
@@ -1231,7 +1234,7 @@ window.addEventListener('DOMContentLoaded', init, false);
 <body>
 
 <header id="title">
-<h1><a href="/">WebKit Perf Monitor</a></h1>
+<h1><a id="siteTitle" href="/">Perf Monitor</a></h1>
 <ul>
     <li id="numberOfDaysPicker"><input id="numberOfDays" type="range" min="1" max="5.9" step="0.001" value="2.3"><span class="output"></span></li>
     <li><a href="javascript:setMode('dashboard');">Dashboard</a></li>

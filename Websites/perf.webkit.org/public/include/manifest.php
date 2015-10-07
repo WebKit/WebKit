@@ -27,6 +27,7 @@ class ManifestGenerator {
             $row = $row['commit_repository'];
 
         $this->manifest = array(
+            'siteTitle' => config('siteTitle', 'Performance Dashboard'),
             'tests' => (object)$this->tests(),
             'metrics' => (object)$this->metrics(),
             'all' => (object)$this->platforms($config_table, $platform_table, false),

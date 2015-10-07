@@ -214,6 +214,12 @@ App.MetricSerializer = App.PlatformSerializer = DS.RESTSerializer.extend({
             id++;
         }
 
+        var siteTitle = payload['siteTitle'];
+        if (siteTitle) {
+            App.Manifest.set('siteTitle', siteTitle);
+            document.title = siteTitle;
+        }
+
         return results;
     },
     _normalizeIdMap: function (idMap)
