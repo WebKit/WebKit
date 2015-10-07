@@ -1,5 +1,16 @@
 2015-10-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of LLInt inline/out-of-line storage helpers, they are unused
+        https://bugs.webkit.org/show_bug.cgi?id=149892
+
+        Reviewed by Mark Lam.
+
+        Just killing dead code.
+
+        * llint/LowLevelInterpreter.asm:
+
+2015-10-07  Filip Pizlo  <fpizlo@apple.com>
+
         Don't setOutOfBounds in JIT code for PutByVal, since the C++ slow path already does it
         https://bugs.webkit.org/show_bug.cgi?id=149885
 

@@ -1298,20 +1298,6 @@ _llint_op_in:
     callSlowPath(_slow_path_in)
     dispatch(4)
 
-macro withInlineStorage(object, propertyStorage, continuation)
-    # Indicate that the object is the property storage, and that the
-    # property storage register is unused.
-    continuation(object, propertyStorage)
-end
-
-macro withOutOfLineStorage(object, propertyStorage, continuation)
-    loadp JSObject::m_butterfly[object], propertyStorage
-    # Indicate that the propertyStorage register now points to the
-    # property storage, and that the object register may be reused
-    # if the object pointer is not needed anymore.
-    continuation(propertyStorage, object)
-end
-
 
 _llint_op_del_by_id:
     traceExecution()
