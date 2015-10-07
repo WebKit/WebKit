@@ -530,3 +530,9 @@ webkit.org/b/146400 http/tests/contentextensions/character-set-basic-support.htm
 
 # WebKit1-only failure.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Pass ]
+
+# Imported Blink tests
+imported/blink/fast/multicol/basic-rtl.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/multicol/dynamic/add-spanner-inside-overflow-hidden.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/multicol/vertical-lr/float-big-line.html  [ Pass ImageOnlyFailure ]
+imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout ]
