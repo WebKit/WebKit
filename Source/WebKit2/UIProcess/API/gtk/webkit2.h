@@ -77,6 +77,8 @@
 #include <webkit2/WebKitWebsiteDataManager.h>
 #include <webkit2/WebKitWindowProperties.h>
 
+#include <webkit2/WebKitAutocleanups.h>
+
 #undef __WEBKIT2_H_INSIDE__
 
 #endif /* __WEBKIT2_H__ */

@@ -559,6 +559,8 @@ list(APPEND GObjectDOMBindings_SOURCES
     bindings/gobject/WebKitDOMObject.cpp
     bindings/gobject/WebKitDOMPrivate.cpp
     bindings/gobject/WebKitDOMXPathNSResolver.cpp
+    ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups.h
+    ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups-unstable.h
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
@@ -774,6 +776,7 @@ set(GObjectDOMBindings_STATIC_CLASS_LIST Custom Deprecated EventTarget NodeFilte
 
 set(GObjectDOMBindingsStable_CLASS_LIST ${GObjectDOMBindings_STATIC_CLASS_LIST})
 set(GObjectDOMBindingsStable_INSTALLED_HEADERS
+     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustom.h
@@ -785,6 +788,7 @@ set(GObjectDOMBindingsStable_INSTALLED_HEADERS
 )
 
 set(GObjectDOMBindingsUnstable_INSTALLED_HEADERS
+     ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups-unstable.h
      ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomdefines-unstable.h
      ${WEBCORE_DIR}/bindings/gobject/WebKitDOMCustomUnstable.h
 )
@@ -824,6 +828,18 @@ add_custom_command(
     OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
     DEPENDS ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl
     COMMAND echo ${GObjectDOMBindingsStable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl gdom > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdom.h
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups.h
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl
+    COMMAND echo ${GObjectDOMBindingsStable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl autocleanups > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups.h
+)
+
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups-unstable.h
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl
+    COMMAND echo ${GObjectDOMBindingsUnstable_CLASS_LIST} | ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/gobject-generate-headers.pl autocleanups > ${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}/webkitdomautocleanups-unstable.h
 )
 
 # Some of the static headers are included by generated public headers with include <webkitdom/WebKitDOMFoo.h>.

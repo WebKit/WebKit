@@ -39,6 +39,8 @@
 #include <webkit2/WebKitWebHitTestResult.h>
 #include <webkit2/WebKitWebPage.h>
 
+#include <webkit2/WebKitWebExtensionAutocleanups.h>
+
 #undef __WEBKIT_WEB_EXTENSION_H_INSIDE__
 
 #endif

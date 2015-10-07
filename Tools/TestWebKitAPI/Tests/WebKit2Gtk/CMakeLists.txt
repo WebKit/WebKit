@@ -90,10 +90,11 @@ macro(ADD_WK2_TEST test_name)
 endmacro()
 
 ADD_WK2_TEST_WEB_EXTENSION(WebExtensionTest WebExtensionTest.cpp)
-ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest DOMNodeTest.cpp DOMNodeFilterTest.cpp DOMXPathNSResolverTest.cpp FrameTest.cpp WebProcessTest.cpp EditorTest.cpp)
+ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest AutocleanupsTest.cpp DOMNodeTest.cpp DOMNodeFilterTest.cpp DOMXPathNSResolverTest.cpp FrameTest.cpp WebProcessTest.cpp EditorTest.cpp)
 
 ADD_WK2_TEST(InspectorTestServer InspectorTestServer.cpp)
 ADD_WK2_TEST(TestAuthentication TestAuthentication.cpp)
+ADD_WK2_TEST(TestAutocleanups TestAutocleanups.cpp)
 ADD_WK2_TEST(TestBackForwardList TestBackForwardList.cpp)
 ADD_WK2_TEST(TestContextMenu TestContextMenu.cpp)
 ADD_WK2_TEST(TestCookieManager TestCookieManager.cpp)

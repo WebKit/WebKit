@@ -108,6 +108,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitAuthenticationDialog.h
     UIProcess/API/gtk/WebKitAuthenticationRequest.cpp
     UIProcess/API/gtk/WebKitAuthenticationRequest.h
+    UIProcess/API/gtk/WebKitAutocleanups.h
     UIProcess/API/gtk/WebKitBackForwardList.cpp
     UIProcess/API/gtk/WebKitBackForwardList.h
     UIProcess/API/gtk/WebKitBackForwardListItem.cpp
@@ -375,6 +376,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitEnumTypes.h
     ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}/WebKitVersion.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAuthenticationRequest.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitAutocleanups.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitBackForwardList.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitBackForwardListItem.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitColorChooserRequest.h
@@ -431,6 +433,7 @@ set(WebKit2WebExtension_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionAutocleanups.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h

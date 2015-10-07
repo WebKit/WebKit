@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 #
 # Copyright (C) 2009 Adam Dingle <adam@yorba.org>
+# Copyright (C) 2015 Igalia S.L.
 #
 # This file is part of WebKit
 # 
@@ -55,6 +56,8 @@ if ($outType eq "defines") {
     $header = "webkitdomdefines_unstable_h";
 } elsif ($outType eq "gdom") {
     $header = "webkitdom_h";
+} elsif ($outType eq "autocleanups") {
+    $header = "webkitdomautocleanups_h";
 } else {
     die "unknown output type";
 }
@@ -92,6 +95,7 @@ if ($outType eq "defines") {
             print "\n";
         }
     }
+    print "#include <webkitdom/webkitdomautocleanups.h>\n";
 } elsif ($outType eq "defines-unstable") {
     print "#include <webkitdom/webkitdomdefines.h>\n\n";
     print "#ifdef WEBKIT_DOM_USE_UNSTABLE_API\n\n";
@@ -102,6 +106,7 @@ if ($outType eq "defines") {
         print "\n";
     }
 
+    print "#include <webkitdom/webkitdomautocleanups-unstable.h>\n\n";
     print "#endif /* WEBKIT_DOM_USE_UNSTABLE_API */\n\n";
 } elsif ($outType eq "gdom") {
     print "#define __WEBKITDOM_H_INSIDE__\n\n";
@@ -109,6 +114,17 @@ if ($outType eq "defines") {
         print "#include <webkitdom/WebKitDOM${class}.h>\n";
     }
     print "\n#undef __WEBKITDOM_H_INSIDE__\n";
+} elsif ($outType eq "autocleanups") {
+    print "#include <glib-object.h>\n\n";
+    print "#ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC\n";
+    print "#ifndef __GI_SCANNER__\n\n";
+    foreach my $class (@classes) {
+        if ($class ne "Deprecated" && $class ne "Custom") {
+            print "G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitDOM${class}, g_object_unref)\n";
+        }
+    }
+    print "\n#endif\n";
+    print "#endif\n";
 }
 
 print "\n";

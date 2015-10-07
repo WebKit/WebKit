@@ -1,3 +1,21 @@
+2015-10-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add autocleanups
+        https://bugs.webkit.org/show_bug.cgi?id=149588
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/AutocleanupsTest.cpp: Added.
+        (AutocleanupsTest::create):
+        (AutocleanupsTest::testWebProcessAutocleanups):
+        (registerTests):
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAutocleanups.cpp: Added.
+        (testUIProcessAutocleanups):
+        (testWebProcessAutocleanups):
+        (beforeAll):
+        (afterAll):
+
 2015-10-06  Brian Burg  <bburg@apple.com>
 
         Unreviewed, try to fix the iOS 8 build after r190368.
