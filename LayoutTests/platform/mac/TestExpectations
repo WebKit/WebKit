@@ -1306,6 +1306,7 @@ webkit.org/b/143258 [ Mavericks ] http/tests/cache/disk-cache/disk-cache-validat
 [ Mavericks ] compositing/media-controls-bar-appearance.html [ Skip ]
 [ Mavericks ] compositing/media-controls-bar-appearance-big.html [ Skip ]
 [ Mavericks ] fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+[ Mavericks ] fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
 
 # Reftests have different expected results in Mavericks and Yosemite
 [ Mavericks ] fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
