@@ -1,5 +1,44 @@
 2015-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard doesn't show analysis tasks anchored at outliers
+        https://bugs.webkit.org/show_bug.cgi?id=149870
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by the computation of start and end times of analysis tasks being dependent on
+        time series provided to the interactive chart component even though they are already filtered.
+
+        Since the interactive chart component shouldn't be messing with the underlying data models, moved
+        the code to compute start and end times to App.Pane, to where it belongs, and made the moved code use
+        the unfiltered time series newly exposed on ChartData.
+
+        Also fixed a bug in fetch-from-remote.php which resulted in Ember endlessly fetching same JSON files.
+
+        * public/admin/fetch-from-remote.php:
+        (.): Use the full request URI for HTTP requests and caching. Otherwise, we're going to mix up caches
+        and Ember can start hanging browsers (took me three hours to debug this).
+
+        * public/v2/app.js:
+        (App.Pane._showOutlierChanged): Added. Resets chartData when showOutlier flag has been changed.
+        (App.Pane.fetchAnalyticRanges): The old code wasn't filtering analysis tasks by platforms and metrics
+        at all since it relied on the server-side REST API to do the filtering, which I haven't implemented yet.
+        Filter the results manually instead.
+        (App.Pane.ranges): Moved the logic to compute startTime and endTime here from InteractiveChartComponent.
+        (App.PaneController.toggleShowOutlier): Now that App.Pane responds to showOutlier changes, we don't
+        need to call a private method on it.
+        (App.AnalysisTaskController._chartDataChanged): When end points are not found, try showing outliers.
+        This will cause chartData to be modified so just exit early and wait for getting called again.
+
+        * public/v2/interactive-chart.js:
+        (App.InteractiveChartComponent._rangesChanged): The code to compute start and end time has been moved
+        to App.Pane.ranges.
+
+        * public/v2/manifest.js:
+        (App.Manifest._formatFetchedData): Added unfiltered time series as new properties as they are now used
+        to compute the end points of analysis tasks when their end points are outliers.
+
+2015-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed. Fix a typo in r190645.
 
         * public/include/db.php:

@@ -38,6 +38,6 @@ function fetch_remote($remote_server, $remote_url)
     return @file_get_contents($remote_url, false, $context);
 }
 
-main(array_get($_SERVER, 'PATH_INFO', ''));
+main(array_get($_SERVER, 'REQUEST_URI', ''));
 
 ?>

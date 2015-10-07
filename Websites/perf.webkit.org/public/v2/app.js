@@ -378,6 +378,12 @@ App.Pane = Ember.Object.extend({
         this.set('metric', result.metric);
         this._setNewChartData(result.data);
     },
+    _showOutlierChanged: function ()
+    {
+        var chartData = this.get('chartData');
+        if (chartData)
+            this._setNewChartData(chartData);
+    }.observes('showOutlier'),
     _setNewChartData: function (chartData)
     {
         var newChartData = {};
@@ -420,15 +426,43 @@ App.Pane = Ember.Object.extend({
         var metricId = this.get('metricId');
         var self = this;
         this.get('store')
-            .find('analysisTask', {platform: platformId, metric: metricId})
+            .findAll('analysisTask') // FIXME: Fetch only analysis tasks relevant for this pane.
             .then(function (tasks) {
-                self.set('analyticRanges', tasks.filter(function (task) { return task.get('startRun') && task.get('endRun'); }));
+                self.set('analyticRanges', tasks.filter(function (task) {
+                    return task.get('platform').get('id') == platformId
+                        && task.get('metric').get('id') == metricId
+                        && task.get('startRun') && task.get('endRun');
+                }));
             });
     },
     ranges: function ()
     {
-        return this.getWithDefault('analyticRanges', []).concat(this.getWithDefault('testRangeCandidates', []));
-    }.property('analyticRanges', 'testRangeCandidates'),
+        var chartData = this.get('chartData');
+        if (!chartData || !chartData.unfilteredCurrentTimeSeries)
+            return [];
+
+        function midPoint(firstPoint, secondPoint) {
+            if (firstPoint && secondPoint)
+                return (+firstPoint.time + +secondPoint.time) / 2;
+            if (firstPoint)
+                return firstPoint.time;
+            return secondPoint.time;
+        }
+
+        var timeSeries = chartData.unfilteredCurrentTimeSeries;
+        var ranges = this.getWithDefault('analyticRanges', []);
+        var testranges = this.getWithDefault('testRangeCandidates', []);
+        return this.getWithDefault('analyticRanges', []).concat(this.getWithDefault('testRangeCandidates', [])).map(function (range) {
+            var start = timeSeries.findPointByMeasurementId(range.get('startRun'));
+            var end = timeSeries.findPointByMeasurementId(range.get('endRun'));
+
+            return Ember.ObjectProxy.create({
+                content: range,
+                startTime: start ? midPoint(timeSeries.previousPoint(start), start) : null,
+                endTime: end ? midPoint(end, timeSeries.nextPoint(end)) : null,
+            });
+        });
+    }.property('chartData', 'analyticRanges', 'testRangeCandidates'),
     _isValidId: function (id)
     {
         if (typeof(id) == "number")
@@ -1013,12 +1047,7 @@ App.PaneController = Ember.ObjectController.extend({
         },
         toggleShowOutlier: function ()
         {
-            var pane = this.get('model');
-            pane.toggleProperty('showOutlier');
-            var chartData = pane.get('chartData');
-            if (!chartData)
-                return;
-            pane._setNewChartData(chartData);
+            this.get('model').toggleProperty('showOutlier');
         },
         createAnalysisTask: function ()
         {
@@ -1285,13 +1314,15 @@ App.AnalysisTaskController = Ember.Controller.extend({
             return null;
 
         var currentTimeSeries = chartData.current;
-        if (!currentTimeSeries)
-            return null; // FIXME: Report an error.
+        Ember.assert('chartData.current should always be defined', currentTimeSeries);
 
         var start = currentTimeSeries.findPointByMeasurementId(this.get('model').get('startRun'));
         var end = currentTimeSeries.findPointByMeasurementId(this.get('model').get('endRun'));
-        if (!start || !end)
-            return null; // FIXME: Report an error.
+        if (!start || !end) {
+            if (!pane.get('showOutlier'))
+                pane.set('showOutlier', true);
+            return;
+        }
 
         var highlightedItems = {};
         highlightedItems[start.measurement.id()] = true;

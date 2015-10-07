@@ -618,24 +618,11 @@ App.InteractiveChartComponent = Ember.Component.extend({
     }.observes('highlightedItems'),
     _rangesChanged: function ()
     {
-        if (!this._currentTimeSeries)
-            return;
-
-        function midPoint(firstPoint, secondPoint) {
-            if (firstPoint && secondPoint)
-                return (+firstPoint.time + +secondPoint.time) / 2;
-            if (firstPoint)
-                return firstPoint.time;
-            return secondPoint.time;
-        }
-        var currentTimeSeries = this._currentTimeSeries;
         var linkRoute = this.get('rangeRoute');
         this.set('rangeBars', (this.get('ranges') || []).map(function (range) {
-            var start = currentTimeSeries.findPointByMeasurementId(range.get('startRun'));
-            var end = currentTimeSeries.findPointByMeasurementId(range.get('endRun'));
             return Ember.Object.create({
-                startTime: midPoint(currentTimeSeries.previousPoint(start), start),
-                endTime: midPoint(end, currentTimeSeries.nextPoint(end)),
+                startTime: range.get('startTime'),
+                endTime: range.get('endTime'),
                 range: range,
                 left: null,
                 right: null,
