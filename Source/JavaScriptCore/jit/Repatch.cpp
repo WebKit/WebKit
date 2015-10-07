@@ -104,23 +104,18 @@ static void repatchByIdSelfAccess(
     MacroAssembler::repatchInt32(
         stubInfo.callReturnLocation.dataLabel32AtOffset(-(intptr_t)stubInfo.patch.deltaCheckImmToCall),
         bitwise_cast<int32_t>(structure->id()));
-    CodeLocationConvertibleLoad convertibleLoad = stubInfo.callReturnLocation.convertibleLoadAtOffset(stubInfo.patch.deltaCallToStorageLoad);
-    if (isOutOfLineOffset(offset))
-        MacroAssembler::replaceWithLoad(convertibleLoad);
-    else
-        MacroAssembler::replaceWithAddressComputation(convertibleLoad);
 #if USE(JSVALUE64)
     if (compact)
-        MacroAssembler::repatchCompact(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.deltaCallToLoadOrStore), offsetRelativeToPatchedStorage(offset));
+        MacroAssembler::repatchCompact(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.deltaCallToLoadOrStore), offsetRelativeToBase(offset));
     else
-        MacroAssembler::repatchInt32(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.deltaCallToLoadOrStore), offsetRelativeToPatchedStorage(offset));
+        MacroAssembler::repatchInt32(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.deltaCallToLoadOrStore), offsetRelativeToBase(offset));
 #elif USE(JSVALUE32_64)
     if (compact) {
-        MacroAssembler::repatchCompact(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.deltaCallToTagLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-        MacroAssembler::repatchCompact(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.deltaCallToPayloadLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        MacroAssembler::repatchCompact(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.deltaCallToTagLoadOrStore), offsetRelativeToBase(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        MacroAssembler::repatchCompact(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.deltaCallToPayloadLoadOrStore), offsetRelativeToBase(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     } else {
-        MacroAssembler::repatchInt32(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.deltaCallToTagLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-        MacroAssembler::repatchInt32(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.deltaCallToPayloadLoadOrStore), offsetRelativeToPatchedStorage(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        MacroAssembler::repatchInt32(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.deltaCallToTagLoadOrStore), offsetRelativeToBase(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        MacroAssembler::repatchInt32(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.deltaCallToPayloadLoadOrStore), offsetRelativeToBase(offset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 #endif
 }
@@ -260,7 +255,8 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             && slot.isCacheableValue()
             && slot.slotBase() == baseValue
             && !slot.watchpointSet()
-            && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))
+            && isInlineOffset(slot.cachedOffset())
+            && MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToBase(slot.cachedOffset()))
             && action == AttemptToCache
             && !structure->needImpurePropertyWatchpoint()
             && !loadTargetFromProxy) {
@@ -375,9 +371,9 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         if (slot.type() == PutPropertySlot::ExistingProperty) {
             structure->didCachePropertyReplacement(vm, slot.cachedOffset());
         
-            ptrdiff_t offsetToPatchedStorage = offsetRelativeToPatchedStorage(slot.cachedOffset());
             if (stubInfo.cacheType == CacheType::Unset
-                && MacroAssembler::isPtrAlignedAddressOffset(offsetToPatchedStorage)
+                && isInlineOffset(slot.cachedOffset())
+                && MacroAssembler::isPtrAlignedAddressOffset(maxOffsetRelativeToBase(slot.cachedOffset()))
                 && !structure->needImpurePropertyWatchpoint()
                 && !structure->inferredTypeFor(ident.impl())) {
 

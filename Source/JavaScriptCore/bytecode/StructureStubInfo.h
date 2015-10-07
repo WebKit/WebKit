@@ -139,7 +139,6 @@ public:
         int8_t valueGPR;
         RegisterSet usedRegisters;
         int32_t deltaCallToDone;
-        int32_t deltaCallToStorageLoad;
         int32_t deltaCallToJump;
         int32_t deltaCallToSlowCase;
         int32_t deltaCheckImmToCall;

@@ -1406,28 +1406,6 @@ inline size_t JSObject::butterflyTotalSize()
     return Butterfly::totalSize(preCapacity, structure->outOfLineCapacity(), hasIndexingHeader, indexingPayloadSizeInBytes);
 }
 
-// Helpers for patching code where you want to emit a load or store and
-// the base is:
-// For inline offsets: a pointer to the out-of-line storage pointer.
-// For out-of-line offsets: the base of the out-of-line storage.
-inline size_t offsetRelativeToPatchedStorage(PropertyOffset offset)
-{
-    if (isOutOfLineOffset(offset))
-        return sizeof(EncodedJSValue) * offsetInButterfly(offset);
-    return JSObject::offsetOfInlineStorage() - JSObject::butterflyOffset() + sizeof(EncodedJSValue) * offsetInInlineStorage(offset);
-}
-
-// Returns the maximum offset (away from zero) a load instruction will encode.
-inline size_t maxOffsetRelativeToPatchedStorage(PropertyOffset offset)
-{
-    ptrdiff_t addressOffset = static_cast<ptrdiff_t>(offsetRelativeToPatchedStorage(offset));
-#if USE(JSVALUE32_64)
-    if (addressOffset >= 0)
-        return static_cast<size_t>(addressOffset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag);
-#endif
-    return static_cast<size_t>(addressOffset);
-}
-
 inline int indexRelativeToBase(PropertyOffset offset)
 {
     if (isOutOfLineOffset(offset))
@@ -1441,6 +1419,17 @@ inline int offsetRelativeToBase(PropertyOffset offset)
     if (isOutOfLineOffset(offset))
         return offsetInOutOfLineStorage(offset) * sizeof(EncodedJSValue) + Butterfly::offsetOfPropertyStorage();
     return JSObject::offsetOfInlineStorage() + offsetInInlineStorage(offset) * sizeof(EncodedJSValue);
+}
+
+// Returns the maximum offset (away from zero) a load instruction will encode.
+inline size_t maxOffsetRelativeToBase(PropertyOffset offset)
+{
+    ptrdiff_t addressOffset = offsetRelativeToBase(offset);
+#if USE(JSVALUE32_64)
+    if (addressOffset >= 0)
+        return static_cast<size_t>(addressOffset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag);
+#endif
+    return static_cast<size_t>(addressOffset);
 }
 
 COMPILE_ASSERT(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), JSObject_inline_storage_has_correct_alignment);

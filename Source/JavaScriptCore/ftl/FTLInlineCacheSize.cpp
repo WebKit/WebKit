@@ -49,18 +49,18 @@ using namespace DFG;
 size_t sizeOfGetById()
 {
 #if CPU(ARM64)
-    return 36;
+    return 32;
 #else
-    return 30;
+    return 27;
 #endif
 }
 
 size_t sizeOfPutById()
 {
 #if CPU(ARM64)
-    return 44;
+    return 40;
 #else
-    return 32;
+    return 29;
 #endif
 }
 

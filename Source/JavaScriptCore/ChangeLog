@@ -1,3 +1,46 @@
+2015-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Inline caches should handle out-of-line offsets out-of-line
+        https://bugs.webkit.org/show_bug.cgi?id=149869
+
+        Reviewed by Saam Barati.
+
+        If we want to have a concurrent copying GC, then we need a read barrier on copied space
+        pointers. That makes the convertible load portion of the get_by_id/put_by_id inline caches
+        rather challenging. Currently we have a load instruction that we can turn into an add
+        instruction - the add case is when we have an inline offset, and the load case is when we
+        have an out-of-line offset and we need to load a copied space pointer. But if the load from
+        copied space requires a barrier, then there is no easy way to convert that back to the inline
+        case.
+
+        This patch removes the convertible load. The inline path of get_by_id/put_by_id only handles
+        the inline offsets. Out-of-line offsets are now handled using out-of-line stubs.
+
+        * bytecode/StructureStubInfo.h:
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfGetById):
+        (JSC::FTL::sizeOfPutById):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::finalize):
+        (JSC::JITByIdGenerator::generateFastPathChecks):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITGetByIdGenerator::generateFastPath):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITPutByIdGenerator::generateFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/Repatch.cpp:
+        (JSC::repatchByIdSelfAccess):
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        * runtime/JSObject.h:
+        (JSC::JSObject::butterflyTotalSize):
+        (JSC::indexRelativeToBase):
+        (JSC::offsetRelativeToBase):
+        (JSC::maxOffsetRelativeToBase):
+        (JSC::makeIdentifier):
+        (JSC::offsetRelativeToPatchedStorage): Deleted.
+        (JSC::maxOffsetRelativeToPatchedStorage): Deleted.
+
 2015-10-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r190664.
