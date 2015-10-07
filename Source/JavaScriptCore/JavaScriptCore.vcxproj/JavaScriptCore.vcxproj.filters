@@ -4515,6 +4515,9 @@
     <ClInclude Include="..\wasm\WASMFunctionCompiler.h">
       <Filter>wasm</Filter>
     </ClInclude>
+    <ClInclude Include="..\wasm\WASMFunctionLLVMIRGenerator.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
     <ClInclude Include="..\wasm\WASMFunctionParser.h">
       <Filter>wasm</Filter>
     </ClInclude>

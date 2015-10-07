@@ -1,3 +1,64 @@
+2015-10-07  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Add an LLVM IR generator for WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=149486
+
+        Reviewed by Mark Lam.
+
+        This patch adds initial support for an LLVM IR generator in WebAssembly
+        (polyfill-prototype-1 format). All the methods will be implemented in
+        subsequent patches.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/WASMFunctionLLVMIRGenerator.h: Added.
+        (JSC::WASMFunctionLLVMIRGenerator::MemoryAddress::MemoryAddress):
+        (JSC::WASMFunctionLLVMIRGenerator::startFunction):
+        (JSC::WASMFunctionLLVMIRGenerator::endFunction):
+        (JSC::WASMFunctionLLVMIRGenerator::buildSetLocal):
+        (JSC::WASMFunctionLLVMIRGenerator::buildSetGlobal):
+        (JSC::WASMFunctionLLVMIRGenerator::buildReturn):
+        (JSC::WASMFunctionLLVMIRGenerator::buildImmediateI32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildImmediateF32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildImmediateF64):
+        (JSC::WASMFunctionLLVMIRGenerator::buildGetLocal):
+        (JSC::WASMFunctionLLVMIRGenerator::buildGetGlobal):
+        (JSC::WASMFunctionLLVMIRGenerator::buildConvertType):
+        (JSC::WASMFunctionLLVMIRGenerator::buildLoad):
+        (JSC::WASMFunctionLLVMIRGenerator::buildStore):
+        (JSC::WASMFunctionLLVMIRGenerator::buildUnaryI32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildUnaryF32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildUnaryF64):
+        (JSC::WASMFunctionLLVMIRGenerator::buildBinaryI32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildBinaryF32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildBinaryF64):
+        (JSC::WASMFunctionLLVMIRGenerator::buildRelationalI32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildRelationalF32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildRelationalF64):
+        (JSC::WASMFunctionLLVMIRGenerator::buildMinOrMaxI32):
+        (JSC::WASMFunctionLLVMIRGenerator::buildMinOrMaxF64):
+        (JSC::WASMFunctionLLVMIRGenerator::buildCallInternal):
+        (JSC::WASMFunctionLLVMIRGenerator::buildCallIndirect):
+        (JSC::WASMFunctionLLVMIRGenerator::buildCallImport):
+        (JSC::WASMFunctionLLVMIRGenerator::appendExpressionList):
+        (JSC::WASMFunctionLLVMIRGenerator::discard):
+        (JSC::WASMFunctionLLVMIRGenerator::linkTarget):
+        (JSC::WASMFunctionLLVMIRGenerator::jumpToTarget):
+        (JSC::WASMFunctionLLVMIRGenerator::jumpToTargetIf):
+        (JSC::WASMFunctionLLVMIRGenerator::startLoop):
+        (JSC::WASMFunctionLLVMIRGenerator::endLoop):
+        (JSC::WASMFunctionLLVMIRGenerator::startSwitch):
+        (JSC::WASMFunctionLLVMIRGenerator::endSwitch):
+        (JSC::WASMFunctionLLVMIRGenerator::startLabel):
+        (JSC::WASMFunctionLLVMIRGenerator::endLabel):
+        (JSC::WASMFunctionLLVMIRGenerator::breakTarget):
+        (JSC::WASMFunctionLLVMIRGenerator::continueTarget):
+        (JSC::WASMFunctionLLVMIRGenerator::breakLabelTarget):
+        (JSC::WASMFunctionLLVMIRGenerator::continueLabelTarget):
+        (JSC::WASMFunctionLLVMIRGenerator::buildSwitch):
+        * wasm/WASMFunctionParser.cpp:
+
 2015-10-07  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of LLInt inline/out-of-line storage helpers, they are unused

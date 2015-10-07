@@ -1830,6 +1830,7 @@
     <ClInclude Include="..\wasm\WASMConstants.h" />
     <ClInclude Include="..\wasm\WASMFormat.h" />
     <ClInclude Include="..\wasm\WASMFunctionCompiler.h" />
+    <ClInclude Include="..\wasm\WASMFunctionLLVMIRGenerator.h" />
     <ClInclude Include="..\wasm\WASMFunctionParser.h" />
     <ClInclude Include="..\wasm\WASMFunctionSyntaxChecker.h" />
     <ClInclude Include="..\wasm\WASMModuleParser.h" />
