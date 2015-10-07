@@ -663,66 +663,6 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
-// Compile a store into an object's property storage.  May overwrite base.
-void JIT::compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterID valuePayload, PropertyOffset cachedOffset)
-{
-    if (isOutOfLineOffset(cachedOffset))
-        loadPtr(Address(base, JSObject::butterflyOffset()), base);
-    emitStore(indexRelativeToBase(cachedOffset), valueTag, valuePayload, base);
-}
-
-// Compile a load from an object's property storage.  May overwrite base.
-void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, PropertyOffset cachedOffset)
-{
-    if (isInlineOffset(cachedOffset)) {
-        emitLoad(indexRelativeToBase(cachedOffset), resultTag, resultPayload, base);
-        return;
-    }
-    
-    RegisterID temp = resultPayload;
-    loadPtr(Address(base, JSObject::butterflyOffset()), temp);
-    emitLoad(indexRelativeToBase(cachedOffset), resultTag, resultPayload, temp);
-}
-
-void JIT::compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, PropertyOffset cachedOffset)
-{
-    if (isInlineOffset(cachedOffset)) {
-        move(TrustedImmPtr(base->locationForOffset(cachedOffset)), resultTag);
-        load32(Address(resultTag, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload);
-        load32(Address(resultTag, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag);
-        return;
-    }
-    
-    loadPtr(base->butterflyAddress(), resultTag);
-    load32(Address(resultTag, offsetInButterfly(cachedOffset) * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload);
-    load32(Address(resultTag, offsetInButterfly(cachedOffset) * sizeof(WriteBarrier<Unknown>) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag);
-}
-
-void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset, FinalObjectMode finalObjectMode)
-{
-    ASSERT(sizeof(JSValue) == 8);
-    
-    if (finalObjectMode == MayBeFinal) {
-        Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
-        loadPtr(Address(base, JSObject::butterflyOffset()), base);
-        neg32(offset);
-        Jump done = jump();
-        isInline.link(this);
-        addPtr(TrustedImmPtr(JSObject::offsetOfInlineStorage() - (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), base);
-        done.link(this);
-    } else {
-        if (!ASSERT_DISABLED) {
-            Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
-            abortWithReason(JITOffsetIsNotOutOfLine);
-            isOutOfLine.link(this);
-        }
-        loadPtr(Address(base, JSObject::butterflyOffset()), base);
-        neg32(offset);
-    }
-    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultPayload);
-    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultTag);
-}
-
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
 {
     if (!needsVarInjectionChecks)
@@ -842,9 +782,22 @@ void JIT::emitLoadWithStructureCheck(int scope, Structure** structureSlot)
 
 void JIT::emitGetGlobalProperty(uintptr_t* operandSlot)
 {
-    move(regT0, regT2);
-    load32(operandSlot, regT3);
-    compileGetDirectOffset(regT2, regT1, regT0, regT3, KnownNotFinal);
+    GPRReg base = regT2;
+    GPRReg resultTag = regT1;
+    GPRReg resultPayload = regT0;
+    GPRReg offset = regT3;
+    
+    move(regT0, base);
+    load32(operandSlot, offset);
+    if (!ASSERT_DISABLED) {
+        Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
+        abortWithReason(JITOffsetIsNotOutOfLine);
+        isOutOfLine.link(this);
+    }
+    loadPtr(Address(base, JSObject::butterflyOffset()), base);
+    neg32(offset);
+    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultPayload);
+    load32(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultTag);
 }
 
 void JIT::emitGetVarFromPointer(JSValue* operand, GPRReg tag, GPRReg payload)
