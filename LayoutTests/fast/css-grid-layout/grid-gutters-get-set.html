@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.gridGap { -webkit-grid-gap: 25px; }
+.gridColumnGap { -webkit-grid-column-gap: 2vw; }
+.gridRowGap { -webkit-grid-row-gap: 2em; }
+.gridRowColumnGaps {
+    -webkit-grid-row-gap: 12px;
+    -webkit-grid-column-gap: 1rem;
+}
+.gridRowColumnInheritGaps {
+    -webkit-grid-row-gap: inherit;
+    -webkit-grid-column-gap: inherit;
+}
+.gridRowColumnInitialGaps {
+    -webkit-grid-row-gap: initial;
+    -webkit-grid-column-gap: initial;
+}
+.gridCalcGaps {
+    -webkit-grid-row-gap: calc(10px + 3px);
+    -webkit-grid-column-gap: calc(2px + 1vw);
+}
+.gridInvalidRowGap { -webkit-grid-row-gap: 10%; }
+.gridInvalidColumnGap { -webkit-grid-column-gap: -webkit-max-content; }
+.gridInvalidMultipleRowColumnGaps {
+    -webkit-grid-row-gap: 10px 1px;
+    -webkit-grid-column-gap: 0px 0px 0px;
+}
+.gridInvalidLengthRowColumnGaps {
+    -webkit-grid-row-gap: 2dpi;
+    -webkit-grid-column-gap: 3rad;
+}
+.gridInvalidGridGap { -webkit-grid-gap: 20px 20px 10px; }
+.gridInvalidNoneGap { -webkit-grid-gap: none; }
+.gridInvalidImplicitGridGap { -webkit-grid-gap: -webkit-fit-content; }
+
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div class="grid" id="defaultGrid"></div>
+<div class="grid gridGap" id="gridGap"></div>
+<div class="grid gridColumnGap" id="gridColumnGap"></div>
+<div class="grid gridRowGap" id="gridRowGap"></div>
+<div class="grid gridCalcGaps" id="gridCalcGaps"></div>
+<div class="grid gridRowColumnGaps" id="gridRowColumnGaps"></div>
+<div class="grid gridGap">
+    <div class="grid gridRowColumnInheritGaps" id="gridRowColumnInheritGaps"></div>
+</div>
+<div class="grid gridGap">
+    <div class="grid gridRowColumnInitialGaps" id="gridRowColumnInitialGaps"></div>
+</div>
+<div class="grid gridInvalidRowGap" id="gridInvalidRowGap"></div>
+<div class="grid gridInvalidColumnGap" id="gridInvalidColumnGap"></div>
+<div class="grid gridInvalidMultipleRowColumnGaps" id="gridInvalidMultipleRowColumnGaps"></div>
+<div class="grid gridInvalidGridGap" id="gridInvalidGridGap"></div>
+<div class="grid gridInvalidNoneGap" id="gridInvalidNoneGap"></div>
+<div class="grid gridInvalidImplicitGridGap" id="gridInvalidImplicitGridGap"></div>
+<div class="grid gridInvalidLengthRowColumnGaps" id="gridInvalidLengthRowColumnGaps"></div>
+
+<script src="resources/grid-definitions-parsing-utils.js"></script>
+<script>
+
+description('Test that setting and getting grid-column-gap and grid-row-gap works as expected');
+
+debug("Test getting grid-column-gap and grid-row-gap set through CSS");
+
+testGridGapDefinitionsValues("defaultGrid", "0px", "0px");
+testGridGapDefinitionsValues("gridGap", "25px", "25px");
+testGridGapDefinitionsValues("gridColumnGap", "0px", "16px");
+testGridGapDefinitionsValues("gridRowGap", "32px", "0px");
+testGridGapDefinitionsValues("gridCalcGaps", "13px", "10px");
+testGridGapDefinitionsValues("gridRowColumnGaps", "12px", "16px");
+testGridGapDefinitionsValues("gridRowColumnGaps", "12px", "16px");
+testGridGapDefinitionsValues("gridRowColumnInheritGaps", "25px", "25px");
+testGridGapDefinitionsValues("gridRowColumnInitialGaps", "0px", "0px");
+
+debug("");
+debug("Test getting wrong values for grid-column-gap and grid-row-gap set through CSS");
+testGridGapDefinitionsValues("gridInvalidRowGap", "0px", "0px");
+testGridGapDefinitionsValues("gridInvalidColumnGap", "0px", "0px");
+testGridGapDefinitionsValues("gridInvalidMultipleRowColumnGaps", "0px", "0px");
+testGridGapDefinitionsValues("gridInvalidGridGap", "0px", "0px");
+testGridGapDefinitionsValues("gridInvalidNoneGap", "0px", "0px");
+testGridGapDefinitionsValues("gridInvalidImplicitGridGap", "0px", "0px");
+testGridGapDefinitionsValues("gridInvalidLengthRowColumnGaps", "0px", "0px");
+
+</script>
+</body>
+</html>

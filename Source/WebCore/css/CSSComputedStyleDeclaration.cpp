@@ -337,6 +337,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridTemplateRows,
     CSSPropertyWebkitGridRowEnd,
     CSSPropertyWebkitGridRowStart,
+    CSSPropertyWebkitGridColumnGap,
+    CSSPropertyWebkitGridRowGap,
 #endif
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
@@ -1073,10 +1075,15 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
         // so we'll have more trackPositions than trackSizes as the latter only contain the explicit grid.
         ASSERT(trackPositions.size() - 1 >= trackSizes.size());
 
-        for (unsigned i = 0; i < trackPositions.size() - 1; ++i) {
+        unsigned i = 0;
+        LayoutUnit gutterSize = downcast<RenderGrid>(*renderer).guttersSize(direction, 2);
+        for (; i < trackPositions.size() - 2; ++i) {
             addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
-            list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i], style));
+            list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i] - gutterSize, style));
         }
+        // Last track line does not have any gutter.
+        addValuesForNamedGridLinesAtIndex(orderedNamedGridLines, i, list.get());
+        list.get().append(zoomAdjustedPixelValue(trackPositions[i + 1] - trackPositions[i], style));
         insertionIndex = trackPositions.size() - 1;
     } else {
         for (unsigned i = 0; i < trackSizes.size(); ++i) {
@@ -2595,6 +2602,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             }
 
             return CSSGridTemplateAreasValue::create(style->namedGridArea(), style->namedGridAreaRowCount(), style->namedGridAreaColumnCount());
+        case CSSPropertyWebkitGridColumnGap:
+            return zoomAdjustedPixelValueForLength(style->gridColumnGap(), *style);
+        case CSSPropertyWebkitGridRowGap:
+            return zoomAdjustedPixelValueForLength(style->gridRowGap(), *style);
+        case CSSPropertyWebkitGridGap:
+            return getCSSPropertyValuesForGridShorthand(webkitGridGapShorthand());
 #endif /* ENABLE(CSS_GRID_LAYOUT) */
         case CSSPropertyHeight:
             if (renderer && !renderer->isRenderSVGModelObject()) {

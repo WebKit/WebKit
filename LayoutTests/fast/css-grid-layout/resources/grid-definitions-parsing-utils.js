@@ -67,3 +67,9 @@ function testGridAutoDefinitionsValues(element, computedRowValue, computedColumn
     shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-auto-rows')", computedRowValue);
     shouldBeEqualToString("window.getComputedStyle(" + elementID + ", '').getPropertyValue('-webkit-grid-auto-columns')", computedColumnValue);
 }
+
+function testGridGapDefinitionsValues(element, computedRowGap, computedColumnGap)
+{
+    shouldBeEqualToString("window.getComputedStyle(" + element + ", '').getPropertyValue('-webkit-grid-row-gap')", computedRowGap);
+    shouldBeEqualToString("window.getComputedStyle(" + element + ", '').getPropertyValue('-webkit-grid-column-gap')", computedColumnGap);
+}

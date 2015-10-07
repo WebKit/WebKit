@@ -1,0 +1,74 @@
+/* align-self */
+.alignSelfAuto { align-self: auto; }
+.alignSelfStretch { align-self: stretch; }
+.alignSelfStart { align-self: start; }
+.alignSelfEnd { align-self: end; }
+.alignSelfCenter { align-self: center; }
+.alignSelfRight { align-self: right; }
+.alignSelfLeft { align-self: left; }
+
+.alignSelfFlexStart { align-self: flex-start; }
+.alignSelfFlexEnd { align-self: flex-end; }
+
+.alignSelfSelfStart { align-self: self-start; }
+.alignSelfSelfEnd { align-self: self-end; }
+
+/* align-items */
+.alignItemsCenter { align-items: center; }
+
+/* align-content */
+.alignContentBaseline { align-content: baseline; }
+.alignContentLastBaseline { align-content: last-baseline; }
+.alignContentStart { align-content: start; }
+.alignContentEnd { align-content: end; }
+.alignContentCenter { align-content: center; }
+.alignContentLeft { align-content: left; }
+.alignContentRight { align-content: right; }
+.alignContentFlexStart { align-content: flex-start; }
+.alignContentFlexEnd { align-content: flex-end; }
+
+/* justify-content */
+.justifyContentBaseline { justify-content: baseline; }
+.justifyContentLastBaseline { justify-content: last-baseline; }
+.justifyContentStart { justify-content: start; }
+.justifyContentEnd { justify-content: end; }
+.justifyContentCenter { justify-content: center; }
+.justifyContentLeft { justify-content: left; }
+.justifyContentRight { justify-content: right; }
+.justifyContentFlexStart { justify-content: flex-start; }
+.justifyContentFlexEnd { justify-content: flex-end; }
+.justifyContentSpaceBetween { justify-content: space-between; }
+.justifyContentSpaceAround { justify-content: space-around; }
+.justifyContentSpaceEvenly { justify-content: space-evenly; }
+.justifyContentStretch { justify-content: stretch; }
+
+/* Both align-items and justify-items */
+.itemsCenter {
+    align-items: center;
+    justify-items: center;
+}
+
+.itemsEnd {
+    align-items: end;
+    justify-items: end;
+}
+
+.itemsLeft {
+    align-items: left;
+    justify-items: left;
+}
+
+.itemsRight {
+    align-items: right;
+    justify-items: right;
+}
+
+.itemsSelfStart {
+    align-items: self-start;
+    justify-items: self-start;
+}
+
+.itemsSelfEnd {
+    align-items: self-end;
+    justify-items: self-end;
+}

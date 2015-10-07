@@ -49,7 +49,13 @@ public:
     bool operator==(const StyleGridData& o) const
     {
         // FIXME: comparing two hashes doesn't look great for performance. Something to keep in mind going forward.
-        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns && m_namedGridColumnLines == o.m_namedGridColumnLines && m_namedGridRowLines == o.m_namedGridRowLines && m_namedGridArea == o.m_namedGridArea && m_namedGridArea == o.m_namedGridArea && m_namedGridAreaRowCount == o.m_namedGridAreaRowCount && m_namedGridAreaColumnCount == o.m_namedGridAreaColumnCount && m_orderedNamedGridRowLines == o.m_orderedNamedGridRowLines && m_orderedNamedGridColumnLines == o.m_orderedNamedGridColumnLines;
+        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows
+            && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns
+            && m_namedGridColumnLines == o.m_namedGridColumnLines && m_namedGridRowLines == o.m_namedGridRowLines
+            && m_namedGridArea == o.m_namedGridArea && m_namedGridArea == o.m_namedGridArea
+            && m_namedGridAreaRowCount == o.m_namedGridAreaRowCount && m_namedGridAreaColumnCount == o.m_namedGridAreaColumnCount
+            && m_orderedNamedGridRowLines == o.m_orderedNamedGridRowLines && m_orderedNamedGridColumnLines == o.m_orderedNamedGridColumnLines
+            && m_gridColumnGap == o.m_gridColumnGap && m_gridRowGap == o.m_gridRowGap;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -77,6 +83,9 @@ public:
     // of the explicit grid size defined by both named and unnamed grid areas.
     unsigned m_namedGridAreaRowCount;
     unsigned m_namedGridAreaColumnCount;
+
+    Length m_gridColumnGap;
+    Length m_gridRowGap;
 
 private:
     StyleGridData();

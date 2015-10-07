@@ -93,6 +93,30 @@
     -webkit-grid-row: 4;
 }
 
+.firstRowThirdColumn {
+    background-color: magenta;
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.secondRowThirdColumn {
+    background-color: navy;
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.firstRowFourthColumn {
+    background-color: green;
+    grid-column: 4;
+    grid-row: 1;
+}
+
+.secondRowFourthColumn {
+    background-color: pink;
+    grid-column: 4;
+    grid-row: 2;
+}
+
 .firstAutoRowSecondAutoColumn {
     -webkit-grid-row: 1 / auto;
     -webkit-grid-column: 2 / auto;

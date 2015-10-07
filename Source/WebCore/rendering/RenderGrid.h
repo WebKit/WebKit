@@ -60,6 +60,8 @@ public:
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }
 
+    LayoutUnit guttersSize(GridTrackSizingDirection, size_t span) const;
+
 private:
     virtual const char* renderName() const override;
     virtual bool isRenderGrid() const override { return true; }

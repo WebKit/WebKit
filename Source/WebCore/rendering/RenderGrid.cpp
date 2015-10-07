@@ -329,6 +329,17 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
+LayoutUnit RenderGrid::guttersSize(GridTrackSizingDirection direction, size_t span) const
+{
+    ASSERT(span >= 1);
+
+    if (span == 1)
+        return { };
+
+    const Length& trackGap = direction == ForColumns ? style().gridColumnGap() : style().gridRowGap();
+    return valueForLength(trackGap, 0) * (span - 1);
+}
+
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     bool wasPopulated = gridWasPopulated();
@@ -346,6 +357,10 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         minLogicalWidth += minTrackBreadth;
         maxLogicalWidth += maxTrackBreadth;
     }
+
+    LayoutUnit totalGuttersSize = guttersSize(ForColumns, sizingData.columnTracks.size());
+    minLogicalWidth += totalGuttersSize;
+    maxLogicalWidth += totalGuttersSize;
 
     LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
     minLogicalWidth += scrollbarWidth;
@@ -913,6 +928,8 @@ void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(GridTrackSizing
         if (sizingData.filteredTracks.isEmpty())
             continue;
 
+        spanningTracksSize += guttersSize(direction, itemSpan.integerSpan());
+
         LayoutUnit extraSpace = currentItemSizeForTrackSizeComputationPhase(phase, gridItemWithSpan.gridItem(), direction, sizingData.columnTracks) - spanningTracksSize;
         extraSpace = std::max<LayoutUnit>(extraSpace, 0);
         auto& tracksToGrowBeyondGrowthLimits = sizingData.growBeyondGrowthLimitsTracks.isEmpty() ? sizingData.filteredTracks : sizingData.growBeyondGrowthLimitsTracks;
@@ -1247,6 +1264,11 @@ void RenderGrid::layoutGridItems()
 
     LayoutUnit availableSpaceForColumns = availableLogicalWidth();
     LayoutUnit availableSpaceForRows = availableLogicalHeight(IncludeMarginBorderPadding);
+
+    // Remove space consumed by gutters from the available logical space.
+    availableSpaceForColumns -= guttersSize(ForColumns, gridColumnCount());
+    availableSpaceForRows -= guttersSize(ForRows, gridRowCount());
+
     GridSizingData sizingData(gridColumnCount(), gridRowCount());
     computeUsedBreadthOfGridTracks(ForColumns, sizingData, availableSpaceForColumns);
     ASSERT(tracksAreWiderThanMinTrackBreadth(ForColumns, sizingData.columnTracks));
@@ -1296,18 +1318,19 @@ void RenderGrid::layoutGridItems()
             child->repaintDuringLayoutIfMoved(oldChildRect);
     }
 
+    LayoutUnit height = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
     for (auto& row : sizingData.rowTracks)
-        setLogicalHeight(logicalHeight() + row.baseSize());
+        height += row.baseSize();
 
+    height += guttersSize(ForRows, sizingData.rowTracks.size());
     // min / max logical height is handled in updateLogicalHeight().
-    setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
     if (hasLineIfEmpty()) {
         LayoutUnit minHeight = borderAndPaddingLogicalHeight()
             + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes)
             + scrollbarLogicalHeight();
-        if (height() < minHeight)
-            setLogicalHeight(minHeight);
+        height = std::max(height, minHeight);
     }
+    setLogicalHeight(height);
 
     clearGrid();
 }
@@ -1325,6 +1348,9 @@ LayoutUnit RenderGrid::gridAreaBreadthForChild(const RenderBox& child, GridTrack
     LayoutUnit gridAreaBreadth = 0;
     for (auto& trackPosition : span)
         gridAreaBreadth += tracks[trackPosition.toInt()].baseSize();
+
+    gridAreaBreadth += guttersSize(direction, span.integerSpan());
+
     return gridAreaBreadth;
 }
 
@@ -1346,7 +1372,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const Re
 
 void RenderGrid::populateGridPositions(GridSizingData& sizingData, LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows)
 {
-    // Since we add alignment offsets, grid lines are not always adjacent. Hence we will have to
+    // Since we add alignment offsets and track gutters, grid lines are not always adjacent. Hence we will have to
     // assume from now on that we just store positions of the initial grid lines of each track,
     // except the last one, which is the only one considered as a final grid line of a track.
     // FIXME: This will affect the computed style value of grid tracks size, since we are
@@ -1357,10 +1383,11 @@ void RenderGrid::populateGridPositions(GridSizingData& sizingData, LayoutUnit av
     unsigned lastLine = numberOfLines - 1;
     unsigned nextToLastLine = numberOfLines - 2;
     ContentAlignmentData offset = computeContentPositionAndDistributionOffset(ForColumns, availableSpaceForColumns, numberOfTracks);
+    LayoutUnit trackGap = guttersSize(ForColumns, 2);
     m_columnPositions.resize(numberOfLines);
     m_columnPositions[0] = borderAndPaddingStart() + offset.positionOffset;
     for (unsigned i = 0; i < lastLine; ++i)
-        m_columnPositions[i + 1] = m_columnPositions[i] + offset.distributionOffset + sizingData.columnTracks[i].baseSize();
+        m_columnPositions[i + 1] = m_columnPositions[i] + offset.distributionOffset + sizingData.columnTracks[i].baseSize() + trackGap;
     m_columnPositions[lastLine] = m_columnPositions[nextToLastLine] + sizingData.columnTracks[nextToLastLine].baseSize();
 
     numberOfTracks = sizingData.rowTracks.size();
@@ -1368,10 +1395,11 @@ void RenderGrid::populateGridPositions(GridSizingData& sizingData, LayoutUnit av
     lastLine = numberOfLines - 1;
     nextToLastLine = numberOfLines - 2;
     offset = computeContentPositionAndDistributionOffset(ForRows, availableSpaceForRows, numberOfTracks);
+    trackGap = guttersSize(ForRows, 2);
     m_rowPositions.resize(numberOfLines);
     m_rowPositions[0] = borderAndPaddingBefore() + offset.positionOffset;
     for (unsigned i = 0; i < lastLine; ++i)
-        m_rowPositions[i + 1] = m_rowPositions[i] + offset.distributionOffset + sizingData.rowTracks[i].baseSize();
+        m_rowPositions[i + 1] = m_rowPositions[i] + offset.distributionOffset + sizingData.rowTracks[i].baseSize() + trackGap;
     m_rowPositions[lastLine] = m_rowPositions[nextToLastLine] + sizingData.rowTracks[nextToLastLine].baseSize();
 }
 
@@ -1648,6 +1676,10 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
     case GridAxisCenter: {
         unsigned childEndLine = coordinate.rows.resolvedFinalPosition.next().toInt();
         LayoutUnit endOfRow = m_rowPositions[childEndLine];
+        // m_rowPositions include gutters so we need to substract them to get the actual end position for a given
+        // row (this does not have to be done for the last track as there are no more m_rowPositions after it)
+        if (childEndLine < m_rowPositions.size() - 1)
+            endOfRow -= guttersSize(ForRows, 2);
         LayoutUnit childBreadth = child.logicalHeight() + child.marginLogicalHeight();
         // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_rowPositions.size() - 1)
@@ -1678,6 +1710,10 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     case GridAxisCenter: {
         unsigned childEndLine = coordinate.columns.resolvedFinalPosition.next().toInt();
         LayoutUnit endOfColumn = m_columnPositions[childEndLine];
+        // m_columnPositions include gutters so we need to substract them to get the actual end position for a given
+        // column (this does not have to be done for the last track as there are no more m_columnPositions after it)
+        if (childEndLine < m_columnPositions.size() - 1)
+            endOfColumn -= guttersSize(ForColumns, 2);
         LayoutUnit childBreadth = child.logicalWidth() + child.marginLogicalWidth();
         // In order to properly adjust the Self Alignment values we need to consider the offset between tracks.
         if (childEndLine - childStartLine > 1 && childEndLine < m_columnPositions.size() - 1)

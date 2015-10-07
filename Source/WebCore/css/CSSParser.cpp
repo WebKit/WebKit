@@ -571,6 +571,10 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyWebkitPaddingBefore:
     case CSSPropertyWebkitPaddingEnd:
     case CSSPropertyWebkitPaddingStart:
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitGridColumnGap:
+    case CSSPropertyWebkitGridRowGap:
+#endif
         acceptsNegativeNumbers = false;
         return true;
 #if ENABLE(CSS_SHAPES)
@@ -2771,6 +2775,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitGridRowEnd:
         parsedValue = parseGridPosition();
         break;
+
+    case CSSPropertyWebkitGridColumnGap:
+    case CSSPropertyWebkitGridRowGap:
+        validPrimitive = validateUnit(valueWithCalculation, FLength | FNonNeg);
+        break;
+
+    case CSSPropertyWebkitGridGap:
+        return parseGridGapShorthand(important);
 
     case CSSPropertyWebkitGridColumn:
     case CSSPropertyWebkitGridRow: {
@@ -5436,6 +5448,43 @@ bool CSSParser::parseGridItemPositionShorthand(CSSPropertyID shorthandId, bool i
 
     addProperty(shorthand.properties()[0], startValue, important);
     addProperty(shorthand.properties()[1], endValue, important);
+    return true;
+}
+
+bool CSSParser::parseGridGapShorthand(bool important)
+{
+    ShorthandScope scope(this, CSSPropertyWebkitGridGap);
+    ASSERT(shorthandForProperty(CSSPropertyWebkitGridGap).length() == 2);
+
+    CSSParserValue* value = m_valueList->current();
+    if (!value)
+        return false;
+
+    ValueWithCalculation columnValueWithCalculation(*value);
+    if (!validateUnit(columnValueWithCalculation, FLength | FNonNeg))
+        return false;
+
+    RefPtr<CSSPrimitiveValue> columnGap = createPrimitiveNumericValue(columnValueWithCalculation);
+
+    value = m_valueList->next();
+    if (!value) {
+        addProperty(CSSPropertyWebkitGridColumnGap, columnGap, important);
+        addProperty(CSSPropertyWebkitGridRowGap, columnGap, important);
+        return true;
+    }
+
+    ValueWithCalculation rowValueWithCalculation(*value);
+    if (!validateUnit(rowValueWithCalculation, FLength | FNonNeg))
+        return false;
+
+    if (m_valueList->next())
+        return false;
+
+    RefPtr<CSSPrimitiveValue> rowGap = createPrimitiveNumericValue(rowValueWithCalculation);
+
+    addProperty(CSSPropertyWebkitGridColumnGap, columnGap, important);
+    addProperty(CSSPropertyWebkitGridRowGap, rowGap, important);
+
     return true;
 }
 

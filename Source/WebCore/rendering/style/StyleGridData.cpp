@@ -45,6 +45,8 @@ StyleGridData::StyleGridData()
     , m_namedGridArea(RenderStyle::initialNamedGridArea())
     , m_namedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount())
     , m_namedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount())
+    , m_gridColumnGap(RenderStyle::initialGridColumnGap())
+    , m_gridRowGap(RenderStyle::initialGridRowGap())
 {
 }
 
@@ -62,6 +64,8 @@ inline StyleGridData::StyleGridData(const StyleGridData& o)
     , m_namedGridArea(o.m_namedGridArea)
     , m_namedGridAreaRowCount(o.m_namedGridAreaRowCount)
     , m_namedGridAreaColumnCount(o.m_namedGridAreaColumnCount)
+    , m_gridColumnGap(o.m_gridColumnGap)
+    , m_gridRowGap(o.m_gridRowGap)
 {
 }
 
