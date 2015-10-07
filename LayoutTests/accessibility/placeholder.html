@@ -9,6 +9,9 @@
 
     <input id="password" class="field" type="password" name="sc1798" value="" placeholder="Password" spellcheck="true" maxlength="5096">
     
+    <span id="label">Birthday:</span>
+    <div id="search" role="searchbox" aria-labelledby="label" aria-placeholder="MM-DD-YYYY">03-14-1879</div>
+    
     <p id="description"></p>
     <div id="console"></div>
      
@@ -23,6 +26,9 @@
             document.getElementById("password").focus();
             var pass = accessibilityController.focusedElement;
             shouldBe("pass.stringAttributeValue('AXPlaceholderValue')", "'Password'");
+            
+            var search = accessibilityController.accessibleElementById("search");
+            shouldBe("search.stringAttributeValue('AXPlaceholderValue')", "'MM-DD-YYYY'");
 
         }
     </script>

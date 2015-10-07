@@ -1,4 +1,5 @@
-  
+   Birthday:
+03-14-1879
 This test makes sure that the placeholder is returned as the correct attribute
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,6 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS fieldElement.stringAttributeValue('AXPlaceholderValue') is 'search'
 PASS pass.stringAttributeValue('AXPlaceholderValue') is 'Password'
+PASS search.stringAttributeValue('AXPlaceholderValue') is 'MM-DD-YYYY'
 PASS successfullyParsed is true
 
 TEST COMPLETE

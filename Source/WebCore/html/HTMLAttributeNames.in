@@ -38,6 +38,7 @@ aria-multiline
 aria-multiselectable
 aria-orientation
 aria-owns
+aria-placeholder
 aria-posinset
 aria-pressed
 aria-readonly
