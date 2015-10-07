@@ -62,4 +62,8 @@ void InjectedBundle::setBundleParameter(const String& /*key*/, const IPC::DataRe
 {
 }
 
+void InjectedBundle::setBundleParameters(const IPC::DataReference&)
+{
+}
+
 } // namespace WebKit
