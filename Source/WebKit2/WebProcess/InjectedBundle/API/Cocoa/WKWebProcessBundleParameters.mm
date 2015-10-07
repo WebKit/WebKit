@@ -57,11 +57,15 @@
 - (void)setParameter:(id)parameter forKey:(NSString *)key
 {
     [self willChangeValueForKey:key];
-    if (parameter)
-        [_parameters setValue:parameter forKey:key];
-    else
-        [_parameters removeObjectForKey:key];
+    [_parameters setValue:parameter forKey:key];
     [self didChangeValueForKey:key];
+}
+
+- (void)setParametersForKeyWithDictionary:(NSDictionary *)dictionary
+{
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id parameter, BOOL*) {
+        [self setParameter:key forKey:parameter];
+    }];
 }
 
 @end

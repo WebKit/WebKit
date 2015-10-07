@@ -32,6 +32,7 @@
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 
 - (void)setParameter:(id)parameter forKey:(NSString *)key;
+- (void)setParametersForKeyWithDictionary:(NSDictionary *)dictionary;
 
 @end
 

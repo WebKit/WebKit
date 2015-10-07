@@ -1011,6 +1011,15 @@ void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataRe
     injectedBundle->setBundleParameter(key, value);
 }
 
+void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
+{
+    InjectedBundle* injectedBundle = WebProcess::singleton().injectedBundle();
+    if (!injectedBundle)
+        return;
+
+    injectedBundle->setBundleParameters(value);
+}
+
 bool WebProcess::usesNetworkProcess() const
 {
 #if ENABLE(NETWORK_PROCESS)

@@ -287,6 +287,7 @@ private:
 
     void handleInjectedBundleMessage(const String& messageName, const UserData& messageBody);
     void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
+    void setInjectedBundleParameters(const IPC::DataReference&);
 
     enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
     void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);

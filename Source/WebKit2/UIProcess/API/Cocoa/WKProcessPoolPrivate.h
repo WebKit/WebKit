@@ -44,6 +44,8 @@
 
 - (id)_objectForBundleParameter:(NSString *)parameter;
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
+// FIXME: This should be NSDictionary<NSString *, id <NSCopying, NSSecureCoding>>
+- (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
 

@@ -1,3 +1,41 @@
+2015-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Add -[WKProcessPool _setObjectsForBundleParametersWithDictionary:]
+        https://bugs.webkit.org/show_bug.cgi?id=149887
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setObjectsForBundleParametersWithDictionary:]):
+        Copy the dictionary, archive it, and set the values on the UI side bundle parameter data struct.
+
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        Add new SPI.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm:
+        (-[WKWebProcessBundleParameters setParameter:forKey:]):
+        We can just call setValue:forKey: on the dictionary; it will do the right thing if value is nil.
+
+        (-[WKWebProcessBundleParameters setParametersForKeyWithDictionary:]):
+        Enumerate the dictionary and call setValue:forKey: on each key/value pair.
+
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::setBundleParameter):
+        If we fail to unarchive a parameter, don't set it to null.
+
+        (WebKit::InjectedBundle::setBundleParameters):
+        Unarchive the dictionary and update the bundle parameters.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setInjectedBundleParameters):
+        Call the injected bundle.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Add new message.
+
 2015-10-06  Anders Carlsson  <andersca@apple.com>
 
         Expose the bundle parameter object on WKBundleRef

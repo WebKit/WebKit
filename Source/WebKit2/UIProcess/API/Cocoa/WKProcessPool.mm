@@ -188,6 +188,27 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
+- (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
+{
+    auto copy = adoptNS([[NSDictionary alloc] initWithDictionary:dictionary copyItems:YES]);
+
+    auto data = adoptNS([[NSMutableData alloc] init]);
+    auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
+    [keyedArchiver setRequiresSecureCoding:YES];
+
+    @try {
+        [keyedArchiver encodeObject:copy.get() forKey:@"parameters"];
+        [keyedArchiver finishEncoding];
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to encode bundle parameters: %@", exception);
+    }
+
+    [_processPool->ensureBundleParameters() setValuesForKeysWithDictionary:copy.get()];
+
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
+}
+
+
 - (id <_WKDownloadDelegate>)_downloadDelegate
 {
     return _downloadDelegate.getAutoreleased();

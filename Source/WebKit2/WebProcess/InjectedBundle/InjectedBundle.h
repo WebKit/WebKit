@@ -87,7 +87,8 @@ public:
 
     bool initialize(const WebProcessCreationParameters&, API::Object* initializationUserData);
 
-    void setBundleParameter(const String& key, const IPC::DataReference&);
+    void setBundleParameter(const String&, const IPC::DataReference&);
+    void setBundleParameters(const IPC::DataReference&);
 
     // API
     void initializeClient(const WKBundleClientBase*);
