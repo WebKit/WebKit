@@ -159,6 +159,9 @@ namespace WebCore {
             PseudoClassDir,
             PseudoClassRole,
 #endif
+#if ENABLE(SHADOW_DOM)
+            PseudoClassHost,
+#endif
         };
 
         enum PseudoElementType {

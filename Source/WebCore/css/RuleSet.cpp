@@ -70,6 +70,10 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
     }
     if (SelectorChecker::isCommonPseudoClassSelector(&selector))
         return MatchBasedOnRuleHash::ClassB;
+#if ENABLE(SHADOW_DOM)
+    if (selector.match() == CSSSelector::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassHost)
+        return MatchBasedOnRuleHash::ClassB;
+#endif
     if (selector.match() == CSSSelector::Id)
         return MatchBasedOnRuleHash::ClassA;
     if (selector.match() == CSSSelector::Class)
@@ -258,6 +262,12 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             }
         }
 
+#if ENABLE(SHADOW_DOM)
+        if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHost) {
+            m_hostPseudoClassRules.append(ruleData);
+            return;
+        }
+#endif
         if (selector->relation() != CSSSelector::SubSelector)
             break;
         selector = selector->tagHistory();

@@ -188,6 +188,11 @@ void ElementRuleCollector::sortAndTransferMatchedRules()
 
 void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 {
+#if ENABLE(SHADOW_DOM)
+    if (m_element.shadowRoot())
+        matchHostPseudoClassRules(includeEmptyRules);
+#endif
+
     clearMatchedRules();
     m_result.ranges.lastAuthorRule = m_result.matchedProperties().size() - 1;
 
@@ -199,6 +204,29 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
 
     sortAndTransferMatchedRules();
 }
+
+#if ENABLE(SHADOW_DOM)
+void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules)
+{
+    ASSERT(m_element.shadowRoot());
+    auto& shadowAuthorStyle = *m_element.shadowRoot()->styleResolver().ruleSets().authorStyle();
+    auto& shadowHostRules = shadowAuthorStyle.hostPseudoClassRules();
+    if (shadowHostRules.isEmpty())
+        return;
+
+    clearMatchedRules();
+    m_result.ranges.lastAuthorRule = m_result.matchedProperties().size() - 1;
+
+    auto ruleRange = m_result.ranges.authorRuleRange();
+    MatchRequest matchRequest(&shadowAuthorStyle, includeEmptyRules);
+    collectMatchingRulesForList(&shadowHostRules, matchRequest, ruleRange);
+
+    // We just sort the host rules before other author rules. This matches the current vague spec language
+    // but is not necessarily exactly what is needed.
+    // FIXME: Match the spec when it is finalized.
+    sortAndTransferMatchedRules();
+}
+#endif
 
 void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
 {

@@ -77,6 +77,9 @@ private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);
+#if ENABLE(SHADOW_DOM)
+    void matchHostPseudoClassRules(bool includeEmptyRules);
+#endif
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForRegion(const MatchRequest&, StyleResolver::RuleRange&);

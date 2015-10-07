@@ -632,6 +632,11 @@ String CSSSelector::selectorText(const String& rightSide) const
             case CSSSelector::PseudoClassWindowInactive:
                 str.appendLiteral(":window-inactive");
                 break;
+#if ENABLE(SHADOW_DOM)
+            case CSSSelector::PseudoClassHost:
+                str.appendLiteral(":host");
+                break;
+#endif
             case CSSSelector::PseudoClassUnknown:
                 ASSERT_NOT_REACHED();
             }

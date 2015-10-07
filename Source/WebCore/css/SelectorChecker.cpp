@@ -1013,7 +1013,11 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                     return true;
                 break;
             }
-
+#if ENABLE(SHADOW_DOM)
+        case CSSSelector::PseudoClassHost:
+            // :host matches based on context. Cases that reach selector checker don't match.
+            return false;
+#endif
         case CSSSelector::PseudoClassWindowInactive:
             return isWindowInactive(element);
 

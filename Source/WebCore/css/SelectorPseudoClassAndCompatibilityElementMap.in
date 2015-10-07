@@ -74,3 +74,7 @@ window-inactive
 future
 past
 #endif
+
+#if ENABLE(SHADOW_DOM)
+host
+#endif
