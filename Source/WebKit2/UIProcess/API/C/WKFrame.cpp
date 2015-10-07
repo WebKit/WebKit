@@ -27,6 +27,7 @@
 #include "WKFrame.h"
 
 #include "APIData.h"
+#include "APIFrameInfo.h"
 #include "WKAPICast.h"
 #include "WebCertificateInfo.h"
 #include "WebFrameProxy.h"
@@ -123,6 +124,11 @@ bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frameRef)
 bool WKFrameIsFrameSet(WKFrameRef frameRef)
 {
     return toImpl(frameRef)->isFrameSet();
+}
+
+WKFrameInfoRef WKFrameCreateFrameInfo(WKFrameRef frameRef)
+{
+    return toAPI(&API::FrameInfo::create(*toImpl(frameRef), WebCore::SecurityOrigin::createFromString(toImpl(frameRef)->url())).leakRef());
 }
 
 void WKFrameGetMainResourceData(WKFrameRef frameRef, WKFrameGetResourceDataFunction callback, void* context)
