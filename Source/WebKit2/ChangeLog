@@ -1,3 +1,14 @@
+2015-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Add API for getting a group identifier from a bundle page
+        https://bugs.webkit.org/show_bug.cgi?id=149902
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyGroupIdentifier):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2015-10-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r190678 to fix GTK and EFL builds.

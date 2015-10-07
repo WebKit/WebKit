@@ -630,3 +630,8 @@ void WKBundlePageRemoveAllUserContent(WKBundlePageRef pageRef)
 {
     toImpl(pageRef)->removeAllUserContent();
 }
+
+WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
+{
+    return toCopiedAPI(toImpl(pageRef)->pageGroup()->identifier());
+}

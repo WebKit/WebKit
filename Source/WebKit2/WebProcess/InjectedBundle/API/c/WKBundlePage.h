@@ -109,7 +109,9 @@ WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
 
 WK_EXPORT bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef page);
 
-WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef);
+WK_EXPORT void WKBundlePageStartMonitoringScrollOperations(WKBundlePageRef page);
+
+WK_EXPORT WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef page);
 
 typedef void (*WKBundlePageTestNotificationCallback)(void* context);
 WK_EXPORT void WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef, WKBundlePageTestNotificationCallback, void* context);
