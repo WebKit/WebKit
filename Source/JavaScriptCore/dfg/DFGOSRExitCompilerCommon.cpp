@@ -69,7 +69,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
             jit.branchTest8(
                 AssemblyHelpers::NonZero,
                 AssemblyHelpers::AbsoluteAddress(
-                    inlineCallFrame->executable->addressOfDidTryToEnterInLoop())));
+                    inlineCallFrame->baselineCodeBlock->ownerScriptExecutable()->addressOfDidTryToEnterInLoop())));
     }
     
     jit.move(
@@ -268,13 +268,14 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isExitingToOpCatch)
 {
-    jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()->ownerExecutable()), GPRInfo::argumentGPR1);
+    CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
+    jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), GPRInfo::argumentGPR1);
     osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
     InlineCallFrameSet* inlineCallFrames = jit.codeBlock()->jitCode()->dfgCommon()->inlineCallFrames.get();
     if (inlineCallFrames) {
         for (InlineCallFrame* inlineCallFrame : *inlineCallFrames) {
-            ScriptExecutable* ownerExecutable = inlineCallFrame->executable.get();
-            jit.move(AssemblyHelpers::TrustedImmPtr(ownerExecutable), GPRInfo::argumentGPR1);
+            CodeBlock* baselineCodeBlock = inlineCallFrame->baselineCodeBlock.get();
+            jit.move(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), GPRInfo::argumentGPR1);
             osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
         }
     }
@@ -282,7 +283,6 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isEx
     if (exit.m_codeOrigin.inlineCallFrame)
         jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 
-    CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
     Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(baselineCodeBlock);
     
     BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);

@@ -222,15 +222,14 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         return GiveUpOnCache;
 
     CodeBlock* codeBlock = exec->codeBlock();
-    ScriptExecutable* owner = codeBlock->ownerScriptExecutable();
     VM& vm = exec->vm();
 
     std::unique_ptr<AccessCase> newCase;
 
     if (isJSArray(baseValue) && propertyName == exec->propertyNames().length)
-        newCase = AccessCase::getLength(vm, owner, AccessCase::ArrayLength);
+        newCase = AccessCase::getLength(vm, codeBlock, AccessCase::ArrayLength);
     else if (isJSString(baseValue) && propertyName == exec->propertyNames().length)
-        newCase = AccessCase::getLength(vm, owner, AccessCase::StringLength);
+        newCase = AccessCase::getLength(vm, codeBlock, AccessCase::StringLength);
     else {
         if (!slot.isCacheable() && !slot.isUnset())
             return GiveUpOnCache;
@@ -275,10 +274,10 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             
             if (slot.isUnset()) {
                 conditionSet = generateConditionsForPropertyMiss(
-                    vm, codeBlock->ownerExecutable(), exec, structure, propertyName.impl());
+                    vm, codeBlock, exec, structure, propertyName.impl());
             } else {
                 conditionSet = generateConditionsForPrototypePropertyHit(
-                    vm, codeBlock->ownerExecutable(), exec, structure, slot.slotBase(),
+                    vm, codeBlock, exec, structure, slot.slotBase(),
                     propertyName.impl());
             }
             
@@ -299,7 +298,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             type = AccessCase::CustomGetter;
 
         newCase = AccessCase::get(
-            vm, owner, type, offset, structure, conditionSet, loadTargetFromProxy,
+            vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
             slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
             slot.isCacheableCustom() ? slot.slotBase() : nullptr);
     }
@@ -353,7 +352,6 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         return GiveUpOnCache;
     
     CodeBlock* codeBlock = exec->codeBlock();
-    ScriptExecutable* owner = codeBlock->ownerScriptExecutable();
     VM& vm = exec->vm();
 
     if (!baseValue.isCell())
@@ -384,7 +382,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 return RetryCacheLater;
             }
 
-            newCase = AccessCase::replace(vm, owner, structure, slot.cachedOffset());
+            newCase = AccessCase::replace(vm, codeBlock, structure, slot.cachedOffset());
         } else {
             ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
@@ -406,12 +404,12 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             if (putKind == NotDirect) {
                 conditionSet =
                     generateConditionsForPropertySetterMiss(
-                        vm, owner, exec, newStructure, ident.impl());
+                        vm, codeBlock, exec, newStructure, ident.impl());
                 if (!conditionSet.isValid())
                     return GiveUpOnCache;
             }
 
-            newCase = AccessCase::transition(vm, owner, structure, newStructure, offset, conditionSet);
+            newCase = AccessCase::transition(vm, codeBlock, structure, newStructure, offset, conditionSet);
         }
     } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
         if (slot.isCacheableCustom()) {
@@ -420,13 +418,13 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             if (slot.base() != baseValue) {
                 conditionSet =
                     generateConditionsForPrototypePropertyHitCustom(
-                        vm, owner, exec, structure, slot.base(), ident.impl());
+                        vm, codeBlock, exec, structure, slot.base(), ident.impl());
                 if (!conditionSet.isValid())
                     return GiveUpOnCache;
             }
 
             newCase = AccessCase::setter(
-                vm, owner, AccessCase::CustomSetter, structure, invalidOffset, conditionSet,
+                vm, codeBlock, AccessCase::CustomSetter, structure, invalidOffset, conditionSet,
                 slot.customSetter(), slot.base());
         } else {
             ObjectPropertyConditionSet conditionSet;
@@ -435,7 +433,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             if (slot.base() != baseValue) {
                 conditionSet =
                     generateConditionsForPrototypePropertyHit(
-                        vm, owner, exec, structure, slot.base(), ident.impl());
+                        vm, codeBlock, exec, structure, slot.base(), ident.impl());
                 if (!conditionSet.isValid())
                     return GiveUpOnCache;
                 offset = conditionSet.slotBaseCondition().offset();
@@ -443,7 +441,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 offset = slot.cachedOffset();
 
             newCase = AccessCase::setter(
-                vm, owner, AccessCase::Setter, structure, offset, conditionSet);
+                vm, codeBlock, AccessCase::Setter, structure, offset, conditionSet);
         }
     }
 
@@ -485,7 +483,6 @@ static InlineCacheAction tryRepatchIn(
     }
     
     CodeBlock* codeBlock = exec->codeBlock();
-    ScriptExecutable* owner = codeBlock->ownerScriptExecutable();
     VM& vm = exec->vm();
     Structure* structure = base->structure(vm);
     
@@ -493,17 +490,17 @@ static InlineCacheAction tryRepatchIn(
     if (wasFound) {
         if (slot.slotBase() != base) {
             conditionSet = generateConditionsForPrototypePropertyHit(
-                vm, codeBlock->ownerExecutable(), exec, structure, slot.slotBase(), ident.impl());
+                vm, codeBlock, exec, structure, slot.slotBase(), ident.impl());
         }
     } else {
         conditionSet = generateConditionsForPropertyMiss(
-            vm, codeBlock->ownerExecutable(), exec, structure, ident.impl());
+            vm, codeBlock, exec, structure, ident.impl());
     }
     if (!conditionSet.isValid())
         return GiveUpOnCache;
 
     std::unique_ptr<AccessCase> newCase = AccessCase::in(
-        vm, owner, wasFound ? AccessCase::InHit : AccessCase::InMiss, structure, conditionSet);
+        vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, structure, conditionSet);
 
     MacroAssemblerCodePtr codePtr = stubInfo.addAccessCase(codeBlock, ident, WTF::move(newCase));
     if (!codePtr)
@@ -552,8 +549,8 @@ void linkFor(
     VM* vm = callerCodeBlock->vm();
     
     ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setCallee(exec->callerFrame()->vm(), callLinkInfo.hotPathBegin(), callerCodeBlock->ownerExecutable(), callee);
-    callLinkInfo.setLastSeenCallee(exec->callerFrame()->vm(), callerCodeBlock->ownerExecutable(), callee);
+    callLinkInfo.setCallee(exec->callerFrame()->vm(), callLinkInfo.hotPathBegin(), callerCodeBlock, callee);
+    callLinkInfo.setLastSeenCallee(exec->callerFrame()->vm(), callerCodeBlock, callee);
     if (shouldShowDisassemblyFor(callerCodeBlock))
         dataLog("Linking call in ", *callerCodeBlock, " at ", callLinkInfo.codeOrigin(), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
     MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), CodeLocationLabel(codePtr));
@@ -870,7 +867,7 @@ void linkPolymorphicCall(
             ("Polymorphic call stub for %s, return point %p, targets %s",
                 toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
                 toCString(listDump(callCases)).data())),
-        *vm, callerCodeBlock->ownerExecutable(), exec->callerFrame(), callLinkInfo, callCases,
+        *vm, callerCodeBlock, exec->callerFrame(), callLinkInfo, callCases,
         WTF::move(fastCounts)));
     
     MacroAssembler::replaceWithJump(

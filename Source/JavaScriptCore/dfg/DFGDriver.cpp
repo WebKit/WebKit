@@ -121,7 +121,7 @@ CompilationResult compile(
         vm, codeBlock, profiledDFGCodeBlock, mode, osrEntryBytecodeIndex, mustHandleValues,
         callback);
     if (result != CompilationDeferred)
-        callback->compilationDidComplete(codeBlock, result);
+        callback->compilationDidComplete(codeBlock, profiledDFGCodeBlock, result);
     return result;
 }
 

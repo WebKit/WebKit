@@ -99,7 +99,7 @@ bool JITFinalizer::finalizeFunction()
         jitCode->initializeExitThunks(
             FINALIZE_DFG_CODE(
                 *exitThunksLinkBuffer,
-                ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data())));
+                ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
     } // else this function had no OSR exits, so no exit thunks.
     
     if (sideCodeLinkBuffer) {
@@ -116,7 +116,7 @@ bool JITFinalizer::finalizeFunction()
         jitCode->addHandle(FINALIZE_DFG_CODE(
             *sideCodeLinkBuffer,
             ("FTL side code for %s",
-                toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data()))
+                toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data()))
             .executableMemory());
     }
     
@@ -124,7 +124,7 @@ bool JITFinalizer::finalizeFunction()
         jitCode->addHandle(FINALIZE_DFG_CODE(
             *handleExceptionsLinkBuffer,
             ("FTL exception handler for %s",
-                toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data()))
+                toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data()))
             .executableMemory());
     }
 
@@ -137,7 +137,7 @@ bool JITFinalizer::finalizeFunction()
     jitCode->initializeArityCheckEntrypoint(
         FINALIZE_DFG_CODE(
             *entrypointLinkBuffer,
-            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data(), function)));
+            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function)));
     
     m_plan.codeBlock->setJITCode(jitCode);
 

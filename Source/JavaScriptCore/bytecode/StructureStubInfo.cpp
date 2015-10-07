@@ -55,7 +55,7 @@ void StructureStubInfo::initGetByIdSelf(CodeBlock* codeBlock, Structure* baseObj
     cacheType = CacheType::GetByIdSelf;
     
     u.byIdSelf.baseObjectStructure.set(
-        *codeBlock->vm(), codeBlock->ownerExecutable(), baseObjectStructure);
+        *codeBlock->vm(), codeBlock, baseObjectStructure);
     u.byIdSelf.offset = offset;
 }
 
@@ -64,7 +64,7 @@ void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* base
     cacheType = CacheType::PutByIdReplace;
     
     u.byIdSelf.baseObjectStructure.set(
-        *codeBlock->vm(), codeBlock->ownerExecutable(), baseObjectStructure);
+        *codeBlock->vm(), codeBlock, baseObjectStructure);
     u.byIdSelf.offset = offset;
 }
 
@@ -105,7 +105,7 @@ MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
     Vector<std::unique_ptr<AccessCase>> accessCases;
     
     std::unique_ptr<AccessCase> previousCase =
-        AccessCase::fromStructureStubInfo(vm, codeBlock->ownerExecutable(), *this);
+        AccessCase::fromStructureStubInfo(vm, codeBlock, *this);
     if (previousCase)
         accessCases.append(WTF::move(previousCase));
 

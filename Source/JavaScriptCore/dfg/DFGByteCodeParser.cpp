@@ -4633,10 +4633,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(callsiteBlockHead);
         
         m_inlineCallFrame = byteCodeParser->m_graph.m_plan.inlineCallFrames->add();
-        byteCodeParser->m_graph.freeze(codeBlock->ownerExecutable());
+        byteCodeParser->m_graph.freeze(codeBlock->baselineVersion());
         // The owner is the machine code block, and we already have a barrier on that when the
         // plan finishes.
-        m_inlineCallFrame->executable.setWithoutWriteBarrier(codeBlock->ownerScriptExecutable());
+        m_inlineCallFrame->baselineCodeBlock.setWithoutWriteBarrier(codeBlock->baselineVersion());
         m_inlineCallFrame->setStackOffset(inlineCallFrameStart.offset() - JSStack::CallFrameHeaderSize);
         if (callee) {
             m_inlineCallFrame->calleeRecovery = ValueRecovery::constant(callee);
@@ -4828,7 +4828,7 @@ bool ByteCodeParser::parse()
     if (Options::verboseDFGByteCodeParsing())
         dataLog("Parsing ", *m_codeBlock, "\n");
     
-    m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock.get();
+    m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock;
     if (isFTL(m_graph.m_plan.mode) && m_dfgCodeBlock
         && Options::enablePolyvariantDevirtualization()) {
         if (Options::enablePolyvariantCallInlining())

@@ -1,3 +1,28 @@
+2015-10-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in r190450
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+
+        This time for sure?
+
+        The cause of the leak was an invalidated compilation.
+
+        There was vestigial manual memory management code that eagerly removed
+        a CodeBlock from the set of CodeBlocks if compilation was invalidated.
+        That's not cool since we rely on the set of CodeBlocks when we run
+        destructors.
+
+        The fix is to remove the vestigial code.
+
+        I ran the leaks, correctness, and performance tests locally and did not
+        see any problems.
+
+        Restored changesets:
+
+        "CodeBlock should be a GC object"
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+        http://trac.webkit.org/changeset/190450
+
 2015-10-07  Mark Lam  <mark.lam@apple.com>
 
         Disable tail calls because it is breaking some sites.

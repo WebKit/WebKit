@@ -1082,7 +1082,7 @@ public:
     {
         if (!codeOrigin.inlineCallFrame)
             return codeBlock()->isStrictMode();
-        return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->isStrictMode();
+        return codeOrigin.inlineCallFrame->isStrictMode();
     }
     
     ECMAMode ecmaModeFor(CodeOrigin codeOrigin)

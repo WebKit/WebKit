@@ -57,7 +57,7 @@ size_t JITFinalizer::codeSize()
 bool JITFinalizer::finalize()
 {
     m_jitCode->initializeCodeRef(
-        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::DFGJIT)).data())),
+        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data())),
         MacroAssemblerCodePtr());
     
     m_plan.codeBlock->setJITCode(m_jitCode);
@@ -71,7 +71,7 @@ bool JITFinalizer::finalizeFunction()
 {
     RELEASE_ASSERT(!m_withArityCheck.isEmptyValue());
     m_jitCode->initializeCodeRef(
-        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::DFGJIT)).data())),
+        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data())),
         m_withArityCheck);
     m_plan.codeBlock->setJITCode(m_jitCode);
     
@@ -83,7 +83,7 @@ bool JITFinalizer::finalizeFunction()
 void JITFinalizer::finalizeCommon()
 {
 #if ENABLE(FTL_JIT)
-    m_jitCode->optimizeAfterWarmUp(m_plan.codeBlock.get());
+    m_jitCode->optimizeAfterWarmUp(m_plan.codeBlock);
 #endif // ENABLE(FTL_JIT)
     
     if (m_plan.compilation)
