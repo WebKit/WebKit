@@ -590,11 +590,12 @@ LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox& child, Vector<Gri
 {
     Optional<LayoutUnit> oldOverrideContainingBlockContentLogicalWidth = child.hasOverrideContainingBlockLogicalWidth() ? child.overrideContainingBlockContentLogicalWidth() : LayoutUnit();
     LayoutUnit overrideContainingBlockContentLogicalWidth = gridAreaBreadthForChild(child, ForColumns, columnTracks);
-    if (child.hasRelativeLogicalHeight() || !oldOverrideContainingBlockContentLogicalWidth || oldOverrideContainingBlockContentLogicalWidth.value() != overrideContainingBlockContentLogicalWidth) {
+    if (child.hasRelativeLogicalHeight() || !oldOverrideContainingBlockContentLogicalWidth || oldOverrideContainingBlockContentLogicalWidth.value() != overrideContainingBlockContentLogicalWidth)
         child.setNeedsLayout(MarkOnlyThis);
-        // We need to clear the stretched height to properly compute logical height during layout.
+
+    // We need to clear the stretched height to properly compute logical height during layout.
+    if (child.needsLayout())
         child.clearOverrideLogicalContentHeight();
-    }
 
     child.setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
     // If |child| has a relative logical height, we shouldn't let it override its intrinsic height, which is
