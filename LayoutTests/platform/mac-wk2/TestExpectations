@@ -536,3 +536,6 @@ imported/blink/fast/multicol/basic-rtl.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/dynamic/add-spanner-inside-overflow-hidden.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/vertical-lr/float-big-line.html  [ Pass ImageOnlyFailure ]
 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Pass Timeout ]
+
+[ Debug ] imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass ImageOnlyFailure ]
+[ Mavericks Debug ] imported/blink/fast/pagination/viewport-x-horizontal-bt-ltr.html [ Pass ImageOnlyFailure ]
