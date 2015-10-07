@@ -147,5 +147,11 @@ http/tests/contentfiltering/load-substitute-data-from-appcache.html
 fast/text/international/system-language [ Pass Failure ImageOnlyFailure ]
 
 # Imported Blink tests
-imported/blink/svg/hittest/rect-miterlimit.html [ Pass Timeout ]
+imported/blink/css3/calc/transition-asan-crash.html [ Pass Timeout ]
+imported/blink/fast/canvas/bug382588.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/text-autosizing/print-autosizing.html  [ Pass Timeout ]
+imported/blink/svg/custom/marker-layout-invalidation.html [ Pass Timeout ]
+imported/blink/svg/filters/feColorMatrix-setAttribute-crash1.html [ Pass Timeout ]
+imported/blink/svg/hittest/rect-miterlimit.html [ Pass Timeout ]
+
+[ Yosemite Release ] imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeout ]
