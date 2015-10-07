@@ -401,6 +401,9 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
             if (object->canSetIndexQuickly(i))
                 object->setIndexQuickly(callFrame->vm(), i, value);
             else {
+                // FIXME: This will make us think that in-bounds typed array accesses are actually
+                // out-of-bounds.
+                // https://bugs.webkit.org/show_bug.cgi?id=149886
                 byValInfo->arrayProfile->setOutOfBounds();
                 object->methodTable(vm)->putByIndex(object, callFrame, i, value, callFrame->codeBlock()->isStrictMode());
             }
@@ -434,6 +437,9 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
             return;
         }
 
+        // FIXME: This will make us think that in-bounds typed array accesses are actually
+        // out-of-bounds.
+        // https://bugs.webkit.org/show_bug.cgi?id=149886
         byValInfo->arrayProfile->setOutOfBounds();
         baseObject->putDirectIndex(callFrame, index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         return;
@@ -1588,8 +1594,12 @@ static JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript, B
             if (object->canGetIndexQuickly(i))
                 return object->getIndexQuickly(i);
 
-            if (!canAccessArgumentIndexQuickly(*object, i))
+            if (!canAccessArgumentIndexQuickly(*object, i)) {
+                // FIXME: This will make us think that in-bounds typed array accesses are actually
+                // out-of-bounds.
+                // https://bugs.webkit.org/show_bug.cgi?id=149886
                 byValInfo->arrayProfile->setOutOfBounds();
+            }
         }
 
         return baseValue.get(exec, i);
@@ -1750,8 +1760,12 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
-    if (!canAccessArgumentIndexQuickly(*object, index))
+    if (!canAccessArgumentIndexQuickly(*object, index)) {
+        // FIXME: This will make us think that in-bounds typed array accesses are actually
+        // out-of-bounds.
+        // https://bugs.webkit.org/show_bug.cgi?id=149886
         byValInfo->arrayProfile->setOutOfBounds();
+    }
     return JSValue::encode(jsBoolean(object->hasProperty(exec, index)));
 }
     
@@ -1770,8 +1784,12 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(ExecState* exec,
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
-    if (!canAccessArgumentIndexQuickly(*object, index))
+    if (!canAccessArgumentIndexQuickly(*object, index)) {
+        // FIXME: This will make us think that in-bounds typed array accesses are actually
+        // out-of-bounds.
+        // https://bugs.webkit.org/show_bug.cgi?id=149886
         byValInfo->arrayProfile->setOutOfBounds();
+    }
     return JSValue::encode(jsBoolean(object->hasProperty(exec, subscript.asUInt32())));
 }
     

@@ -1,5 +1,20 @@
 2015-10-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Don't setOutOfBounds in JIT code for PutByVal, since the C++ slow path already does it
+        https://bugs.webkit.org/show_bug.cgi?id=149885
+
+        Reviewed by Geoffrey Garen.
+
+        This simplifies the slow path code, which will make it easier to put read barriers on all of
+        the butterflies.
+
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+
+2015-10-07  Filip Pizlo  <fpizlo@apple.com>
+
         Get rid of JIT::compilePutDirectOffset
         https://bugs.webkit.org/show_bug.cgi?id=149884
 

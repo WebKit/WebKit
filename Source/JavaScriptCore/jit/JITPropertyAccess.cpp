@@ -448,6 +448,8 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     linkSlowCase(iter); // property int32 check
     linkSlowCase(iter); // base not array check
     
+    linkSlowCase(iter); // out of bounds
+
     JITArrayMode mode = chooseArrayMode(profile);
     switch (mode) {
     case JITInt32:
@@ -457,11 +459,6 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     default:
         break;
     }
-    
-    Jump skipProfiling = jump();
-    linkSlowCase(iter); // out of bounds
-    emitArrayProfileOutOfBoundsSpecialCase(profile);
-    skipProfiling.link(this);
     
     Label slowPath = label();
 
