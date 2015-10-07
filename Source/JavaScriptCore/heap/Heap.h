@@ -102,7 +102,6 @@ public:
     static bool testAndSetMarked(const void*);
     static void setMarked(const void*);
 
-    static bool isWriteBarrierEnabled();
     void writeBarrier(const JSCell*);
     void writeBarrier(const JSCell*, JSValue);
     void writeBarrier(const JSCell*, JSCell*);

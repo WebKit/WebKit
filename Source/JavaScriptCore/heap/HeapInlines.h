@@ -85,11 +85,6 @@ inline void Heap::setMarked(const void* cell)
     MarkedBlock::blockFor(cell)->setMarked(cell);
 }
 
-inline bool Heap::isWriteBarrierEnabled()
-{
-    return true;
-}
-
 inline void Heap::writeBarrier(const JSCell* from, JSValue to)
 {
 #if ENABLE(WRITE_BARRIER_PROFILING)
