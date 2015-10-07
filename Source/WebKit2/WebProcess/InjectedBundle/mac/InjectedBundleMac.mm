@@ -81,13 +81,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         return false;
     }
 
-    // First check to see if the bundle has a WKBundleInitialize function.
-    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
-    if (initializeFunction) {
-        initializeFunction(toAPI(this), toAPI(initializationUserData));
-        return true;
-    }
-    
 #if WK_API_ENABLED
     if (parameters.bundleParameterData) {
         auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(parameters.bundleParameterData->bytes())) length:parameters.bundleParameterData->size() freeWhenDone:NO]);
@@ -103,9 +96,19 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
             LOG_ERROR("Failed to decode bundle parameters: %@", exception);
         }
 
+        ASSERT(!m_bundleParameters);
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
     }
+#endif
 
+    // First check to see if the bundle has a WKBundleInitialize function.
+    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName([m_platformBundle _cfBundle], CFSTR("WKBundleInitialize")));
+    if (initializeFunction) {
+        initializeFunction(toAPI(this), toAPI(initializationUserData));
+        return true;
+    }
+
+#if WK_API_ENABLED
     // Otherwise, look to see if the bundle has a principal class
     Class principalClass = [m_platformBundle principalClass];
     if (!principalClass) {

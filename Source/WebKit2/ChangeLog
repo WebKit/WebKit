@@ -1,3 +1,24 @@
+2015-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Expose the bundle parameter object on WKBundleRef
+        https://bugs.webkit.org/show_bug.cgi?id=149860
+
+        Reviewed by Tim Horton.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm:
+        (-[WKWebProcessBundleParameters description]):
+        Add a description that includes the parameters.
+
+        * WebProcess/InjectedBundle/API/c/mac/WKBundleMac.h:
+        * WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm:
+        (WKBundleGetParameters):
+        Add getter.
+
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WebKit::InjectedBundle::initialize):
+        Make sure to decode the bundle parameters before calling out to the bundle.
+
 2015-10-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add autocleanups

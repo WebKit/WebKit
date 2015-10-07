@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,16 @@
  */
 
 #import "config.h"
-#import "WKWebProcessBundleParameters.h"
+#import "WKBundleMac.h"
 
+#import "InjectedBundle.h"
+#import "WKBundleAPICast.h"
+
+id WKBundleGetParameters(WKBundleRef bundle)
+{
 #if WK_API_ENABLED
-
-#import <wtf/RetainPtr.h>
-
-@implementation WKWebProcessBundleParameters {
-    RetainPtr<NSMutableDictionary> _parameters;
-}
-
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _parameters = adoptNS([[NSMutableDictionary alloc] initWithDictionary:dictionary]);
-
-    return self;
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; parameters = %@>", NSStringFromClass(self.class), self, _parameters.get()];
-}
-
-- (NSString *)valueForKey:(NSString *)key
-{
-    return [_parameters valueForKey:key];
-}
-
-- (void)setParameter:(id)parameter forKey:(NSString *)key
-{
-    [self willChangeValueForKey:key];
-    if (parameter)
-        [_parameters setValue:parameter forKey:key];
-    else
-        [_parameters removeObjectForKey:key];
-    [self didChangeValueForKey:key];
-}
-
-@end
-
+    return WebKit::toImpl(bundle)->bundleParameters();
+#else
+    return nil;
 #endif
+}

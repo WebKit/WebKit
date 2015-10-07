@@ -44,6 +44,7 @@
 
 - (id)_objectForBundleParameter:(NSString *)parameter;
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
+- (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *) WK_AVAILABLE(
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
 

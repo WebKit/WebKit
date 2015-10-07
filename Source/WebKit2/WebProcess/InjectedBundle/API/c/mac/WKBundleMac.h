@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKWebProcessBundleParameters.h"
+#ifndef WKBundleMac_h
+#define WKBundleMac_h
 
-#if WK_API_ENABLED
+#include <WebKit/WKBase.h>
 
-#import <wtf/RetainPtr.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-@implementation WKWebProcessBundleParameters {
-    RetainPtr<NSMutableDictionary> _parameters;
-}
+#ifdef __OBJC__
 
-- (instancetype)initWithDictionary:(NSDictionary *)dictionary
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _parameters = adoptNS([[NSMutableDictionary alloc] initWithDictionary:dictionary]);
-
-    return self;
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; parameters = %@>", NSStringFromClass(self.class), self, _parameters.get()];
-}
-
-- (NSString *)valueForKey:(NSString *)key
-{
-    return [_parameters valueForKey:key];
-}
-
-- (void)setParameter:(id)parameter forKey:(NSString *)key
-{
-    [self willChangeValueForKey:key];
-    if (parameter)
-        [_parameters setValue:parameter forKey:key];
-    else
-        [_parameters removeObjectForKey:key];
-    [self didChangeValueForKey:key];
-}
-
-@end
+WK_EXPORT id WKBundleGetParameters(WKBundleRef bundle);
 
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // WKBundleMac_h

@@ -315,6 +315,8 @@
 		1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */; };
 		1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66AE1BC43C860082DF77 /* PageLoadStateObserver.h */; settings = {ASSET_TAGS = (); }; };
+		1A8B66B31BC45B010082DF77 /* WKBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */; settings = {ASSET_TAGS = (); }; };
+		1A8B66B41BC45B010082DF77 /* WKBundleMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66B21BC45B010082DF77 /* WKBundleMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */; };
 		1A8C728D1738477C000A6554 /* LocalStorageDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */; };
 		1A8E7D3C18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8E7D3A18C15149005A702A /* VisitedLinkTableControllerMessageReceiver.cpp */; };
@@ -2421,6 +2423,8 @@
 		1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKVisitedLinkStore.h; sourceTree = "<group>"; };
 		1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKVisitedLinkStoreInternal.h; sourceTree = "<group>"; };
 		1A8B66AE1BC43C860082DF77 /* PageLoadStateObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageLoadStateObserver.h; sourceTree = "<group>"; };
+		1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundleMac.mm; sourceTree = "<group>"; };
+		1A8B66B21BC45B010082DF77 /* WKBundleMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleMac.h; sourceTree = "<group>"; };
 		1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageDatabaseTracker.cpp; sourceTree = "<group>"; };
 		1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabaseTracker.h; sourceTree = "<group>"; };
 		1A8E7D3818C150BF005A702A /* VisitedLinkTableController.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VisitedLinkTableController.messages.in; sourceTree = "<group>"; };
@@ -5870,6 +5874,8 @@
 			children = (
 				7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */,
 				7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */,
+				1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */,
+				1A8B66B21BC45B010082DF77 /* WKBundleMac.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -7641,6 +7647,7 @@
 				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
 				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
 				BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */,
+				1A8B66B41BC45B010082DF77 /* WKBundleMac.h in Headers */,
 				0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */,
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
@@ -9735,6 +9742,7 @@
 				BC09B8F8147460F7005F5625 /* WebContextConnectionClient.cpp in Sources */,
 				BCDE059C11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp in Sources */,
 				51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */,
+				1A8B66B31BC45B010082DF77 /* WKBundleMac.mm in Sources */,
 				BC111A5B112F4FBB00337BAB /* WebContextMenuClient.cpp in Sources */,
 				51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */,
 				512935D71288D19400A4B695 /* WebContextMenuItem.cpp in Sources */,
