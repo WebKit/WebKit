@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-IDBResultData::IDBResultData(const IDBRequestIdentifier& requestIdentifier, const IDBError& error)
+IDBResultData::IDBResultData(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
     : m_requestIdentifier(requestIdentifier)
     , m_error(error)
 {

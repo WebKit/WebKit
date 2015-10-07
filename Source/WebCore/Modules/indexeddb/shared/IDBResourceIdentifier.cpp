@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "IDBRequestIdentifier.h"
+#include "IDBResourceIdentifier.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -34,50 +34,50 @@
 
 namespace WebCore {
 
-static uint64_t nextRequestNumber()
+static uint64_t nextResourceNumber()
 {
     ASSERT(isMainThread());
     static uint64_t currentNumber = 0;
     return ++currentNumber;
 }
 
-IDBRequestIdentifier::IDBRequestIdentifier()
-    : m_requestNumber(nextRequestNumber())
+IDBResourceIdentifier::IDBResourceIdentifier()
+    : m_resourceNumber(nextResourceNumber())
 {
 }
 
-IDBRequestIdentifier::IDBRequestIdentifier(const IDBClient::IDBConnectionToServer& connection)
-    : m_idbClientServerConnectionNumber(connection.identifier())
-    , m_requestNumber(nextRequestNumber())
+IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection)
+    : m_idbConnectionIdentifier(connection.identifier())
+    , m_resourceNumber(nextResourceNumber())
 {
 }
 
-IDBRequestIdentifier::IDBRequestIdentifier(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBRequest& request)
-    : m_idbClientServerConnectionNumber(connection.identifier())
-    , m_requestNumber(request.requestIdentifier().m_requestNumber)
+IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBRequest& request)
+    : m_idbConnectionIdentifier(connection.identifier())
+    , m_resourceNumber(request.resourceIdentifier().m_resourceNumber)
 {
 }
 
-IDBRequestIdentifier IDBRequestIdentifier::emptyValue()
+IDBResourceIdentifier IDBResourceIdentifier::emptyValue()
 {
-    IDBRequestIdentifier result;
-    result.m_idbClientServerConnectionNumber = 0;
-    result.m_requestNumber = 0;
+    IDBResourceIdentifier result;
+    result.m_idbConnectionIdentifier = 0;
+    result.m_resourceNumber = 0;
     return WTF::move(result);
 }
 
-IDBRequestIdentifier IDBRequestIdentifier::deletedValue()
+IDBResourceIdentifier IDBResourceIdentifier::deletedValue()
 {
-    IDBRequestIdentifier result;
-    result.m_idbClientServerConnectionNumber = std::numeric_limits<int64_t>::max();
-    result.m_requestNumber = std::numeric_limits<int64_t>::max();
+    IDBResourceIdentifier result;
+    result.m_idbConnectionIdentifier = std::numeric_limits<uint64_t>::max();
+    result.m_resourceNumber = std::numeric_limits<uint64_t>::max();
     return WTF::move(result);
 }
 
-bool IDBRequestIdentifier::isHashTableDeletedValue() const
+bool IDBResourceIdentifier::isHashTableDeletedValue() const
 {
-    return m_idbClientServerConnectionNumber == std::numeric_limits<int64_t>::max()
-        && m_requestNumber == std::numeric_limits<int64_t>::max();
+    return m_idbConnectionIdentifier == std::numeric_limits<uint64_t>::max()
+        && m_resourceNumber == std::numeric_limits<uint64_t>::max();
 }
 
 } // namespace WebCore

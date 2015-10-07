@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBRequestIdentifier_h
-#define IDBRequestIdentifier_h
+#ifndef IDBResourceIdentifier_h
+#define IDBResourceIdentifier_h
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -37,66 +37,66 @@ class IDBConnectionToServer;
 class IDBRequest;
 }
 
-class IDBRequestIdentifier {
+class IDBResourceIdentifier {
 public:
-    IDBRequestIdentifier(const IDBClient::IDBConnectionToServer&);
-    IDBRequestIdentifier(const IDBClient::IDBConnectionToServer&, const IDBClient::IDBRequest&);
+    IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&);
+    IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&, const IDBClient::IDBRequest&);
 
-    static IDBRequestIdentifier deletedValue();
+    static IDBResourceIdentifier deletedValue();
     bool isHashTableDeletedValue() const;
 
-    static IDBRequestIdentifier emptyValue();
+    static IDBResourceIdentifier emptyValue();
     bool isEmpty() const
     {
-        return !m_requestNumber && !m_idbClientServerConnectionNumber;
+        return !m_resourceNumber && !m_idbConnectionIdentifier;
     }
 
     unsigned hash() const
     {
-        uint64_t hashCodes[2] = { reinterpret_cast<uint64_t>(m_idbClientServerConnectionNumber), static_cast<uint64_t>(m_requestNumber) };
+        uint64_t hashCodes[2] = { m_idbConnectionIdentifier, m_resourceNumber };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
     
-    bool operator==(const IDBRequestIdentifier& other) const
+    bool operator==(const IDBResourceIdentifier& other) const
     {
-        return m_idbClientServerConnectionNumber == other.m_idbClientServerConnectionNumber
-            && m_requestNumber == other.m_requestNumber;
+        return m_idbConnectionIdentifier == other.m_idbConnectionIdentifier
+            && m_resourceNumber == other.m_resourceNumber;
     }
     
-    uint64_t connectionIdentifier() const { return m_idbClientServerConnectionNumber; }
+    uint64_t connectionIdentifier() const { return m_idbConnectionIdentifier; }
     
 private:
-    IDBRequestIdentifier();
-    uint64_t m_idbClientServerConnectionNumber { 0 };
-    uint64_t m_requestNumber;
+    IDBResourceIdentifier();
+    uint64_t m_idbConnectionIdentifier { 0 };
+    uint64_t m_resourceNumber;
 };
 
-struct IDBRequestIdentifierHash {
-    static unsigned hash(const IDBRequestIdentifier& a) { return a.hash(); }
-    static bool equal(const IDBRequestIdentifier& a, const IDBRequestIdentifier& b) { return a == b; }
+struct IDBResourceIdentifierHash {
+    static unsigned hash(const IDBResourceIdentifier& a) { return a.hash(); }
+    static bool equal(const IDBResourceIdentifier& a, const IDBResourceIdentifier& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-struct IDBRequestIdentifierHashTraits : WTF::CustomHashTraits<IDBRequestIdentifier> {
+struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdentifier> {
     static const bool hasIsEmptyValueFunction = true;
     static const bool emptyValueIsZero = false;
 
-    static IDBRequestIdentifier emptyValue()
+    static IDBResourceIdentifier emptyValue()
     {
-        return IDBRequestIdentifier::emptyValue();
+        return IDBResourceIdentifier::emptyValue();
     }
 
-    static bool isEmptyValue(const IDBRequestIdentifier& identifier)
+    static bool isEmptyValue(const IDBResourceIdentifier& identifier)
     {
         return identifier.isEmpty();
     }
 
-    static void constructDeletedValue(IDBRequestIdentifier& identifier)
+    static void constructDeletedValue(IDBResourceIdentifier& identifier)
     {
-        identifier = IDBRequestIdentifier::deletedValue();
+        identifier = IDBResourceIdentifier::deletedValue();
     }
 
-    static bool isDeletedValue(const IDBRequestIdentifier& identifier)
+    static bool isDeletedValue(const IDBResourceIdentifier& identifier)
     {
         return identifier.isHashTableDeletedValue();
     }
@@ -106,12 +106,12 @@ struct IDBRequestIdentifierHashTraits : WTF::CustomHashTraits<IDBRequestIdentifi
 
 namespace WTF {
 
-template<> struct HashTraits<WebCore::IDBRequestIdentifier> : WebCore::IDBRequestIdentifierHashTraits { };
-template<> struct DefaultHash<WebCore::IDBRequestIdentifier> {
-    typedef WebCore::IDBRequestIdentifierHash Hash;
+template<> struct HashTraits<WebCore::IDBResourceIdentifier> : WebCore::IDBResourceIdentifierHashTraits { };
+template<> struct DefaultHash<WebCore::IDBResourceIdentifier> {
+    typedef WebCore::IDBResourceIdentifierHash Hash;
 };
 
 } // namespace WTF
 
 #endif // ENABLE(INDEXED_DATABASE)
-#endif // IDBRequestIdentifier_h
+#endif // IDBResourceIdentifier_h

@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseIdentifier.h"
-#include "IDBRequestIdentifier.h"
+#include "IDBResourceIdentifier.h"
 
 namespace WebCore {
 
@@ -42,11 +42,11 @@ class IDBRequestData {
 public:
     IDBRequestData(const IDBClient::IDBConnectionToServer&, const IDBClient::IDBOpenDBRequest&);
 
-    IDBRequestIdentifier requestIdentifier() const { return m_requestIdentifier; }
+    IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
 
 private:
-    IDBRequestIdentifier m_requestIdentifier;
+    IDBResourceIdentifier m_requestIdentifier;
     IDBDatabaseIdentifier m_databaseIdentifier;
 };
 

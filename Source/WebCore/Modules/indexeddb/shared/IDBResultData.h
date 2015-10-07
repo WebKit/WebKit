@@ -29,22 +29,22 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBError.h"
-#include "IDBRequestIdentifier.h"
+#include "IDBResourceIdentifier.h"
 
 namespace WebCore {
 
-class IDBRequestIdentifier;
+class IDBResourceIdentifier;
 
 class IDBResultData {
 public:
-    IDBResultData(const IDBRequestIdentifier&, const IDBError&);
+    IDBResultData(const IDBResourceIdentifier&, const IDBError&);
 
-    IDBRequestIdentifier requestIdentifier() const { return m_requestIdentifier; }
+    IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
     
     const IDBError& error() const { return m_error; }
     
 private:
-    IDBRequestIdentifier m_requestIdentifier;
+    IDBResourceIdentifier m_requestIdentifier;
     IDBError m_error;
 };
 

@@ -37,7 +37,7 @@ namespace IDBClient {
 
 IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context)
     : IDBOpenDBRequest(context)
-    , m_requestIdentifier(connection)
+    , m_resourceIdentifier(connection)
 {
 }
 

@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBOpenDBRequest.h"
-#include "IDBRequestIdentifier.h"
+#include "IDBResourceIdentifier.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class IDBConnectionToServer;
 
 class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBRequest> {
 public:
-    const IDBRequestIdentifier& requestIdentifier() const { return m_requestIdentifier; }
+    const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
     virtual RefPtr<IDBAny> result(ExceptionCode&) const override;
     virtual unsigned short errorCode(ExceptionCode&) const override;
@@ -72,7 +72,7 @@ protected:
     virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
     virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
 
-    IDBRequestIdentifier m_requestIdentifier;
+    IDBResourceIdentifier m_resourceIdentifier;
 };
 
 } // namespace IDBClient

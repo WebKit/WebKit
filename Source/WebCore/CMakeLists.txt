@@ -906,7 +906,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/shared/IDBDatabaseInfo.cpp
     Modules/indexeddb/shared/IDBError.cpp
     Modules/indexeddb/shared/IDBRequestData.cpp
-    Modules/indexeddb/shared/IDBRequestIdentifier.cpp
+    Modules/indexeddb/shared/IDBResourceIdentifier.cpp
     Modules/indexeddb/shared/IDBResultData.cpp
     Modules/indexeddb/shared/InProcessIDBServer.cpp
 
