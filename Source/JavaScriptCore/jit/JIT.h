@@ -467,10 +467,6 @@ namespace JSC {
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, int dst, int src1, int src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
         void compileGetByIdHotPath(int baseVReg, const Identifier*);
-        void compileGetDirectOffset(RegisterID base, RegisterID result, PropertyOffset cachedOffset);
-        void compileGetDirectOffset(JSObject* base, RegisterID result, PropertyOffset cachedOffset);
-        void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch, FinalObjectMode = MayBeFinal);
-        void compilePutDirectOffset(RegisterID base, RegisterID value, PropertyOffset cachedOffset);
 
 #endif // USE(JSVALUE32_64)
 

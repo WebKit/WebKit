@@ -623,19 +623,6 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
-// Compile a store into an object's property storage.  May overwrite the
-// value in objectReg.
-void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, PropertyOffset cachedOffset)
-{
-    if (isInlineOffset(cachedOffset)) {
-        store64(value, Address(base, JSObject::offsetOfInlineStorage() + sizeof(JSValue) * offsetInInlineStorage(cachedOffset)));
-        return;
-    }
-    
-    loadPtr(Address(base, JSObject::butterflyOffset()), base);
-    store64(value, Address(base, sizeof(JSValue) * offsetInButterfly(cachedOffset)));
-}
-
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
 {
     if (!needsVarInjectionChecks)
