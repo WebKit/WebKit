@@ -205,6 +205,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         IOHIDEventAppendEvent(eventRef.get(), subEvent.get(), 0);
     }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     if (_activePointCount) {
         IOHIDFloat progress = _activePoints[0].pathPressure;
         RetainPtr<IOHIDEventRef> forceEvent = adoptCF(IOHIDEventCreateForceEvent(kCFAllocatorDefault,
@@ -216,6 +217,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
             kIOHIDEventOptionNone));
         IOHIDEventAppendEvent(eventRef.get(), forceEvent.get(), 0);
     }
+#endif
 
     return eventRef.leakRef();
 }
