@@ -1,3 +1,12 @@
+2015-10-07  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Automate WebCore JS builtins generation and build system
+        https://bugs.webkit.org/show_bug.cgi?id=149751
+
+        Reviewed by Darin Adler.
+
+        * generate-js-builtins: updating the part related to WebCore JS binding.
+
 2015-10-06  Mark Lam  <mark.lam@apple.com>
 
         Factoring out op_sub baseline code generation into JITSubGenerator.

@@ -1242,7 +1242,6 @@ set(WebCore_SOURCES
     bindings/js/ScriptGlobalObject.cpp
     bindings/js/ScriptState.cpp
     bindings/js/SerializedScriptValue.cpp
-    bindings/js/WebCoreJSBuiltins.cpp
     bindings/js/WebCoreTypedArrayController.cpp
     bindings/js/WorkerScriptController.cpp
     bindings/js/WorkerScriptDebugServer.cpp
@@ -3593,6 +3592,17 @@ foreach (_builtinjs ${WEBCORE_JS_BUILTINS})
     )
     ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/bindings/js/WebCoreJSBuiltins.cpp ${_name}Builtins.cpp)
 endforeach ()
+add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/PrivateWebCoreJSBuiltins.h ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.h ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.cpp
+    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins-allinone
+    DEPENDS ${WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR}/generate-js-builtins
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins-allinone ${WEBCORE_JS_BUILTINS} --output_dir ${DERIVED_SOURCES_WEBCORE_DIR}
+    VERBATIM)
+list(APPEND WebCore_SOURCES
+    ${DERIVED_SOURCES_WEBCORE_DIR}/PrivateWebCoreJSBuiltins.h
+    ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.h
+    ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.cpp
+)
 
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 

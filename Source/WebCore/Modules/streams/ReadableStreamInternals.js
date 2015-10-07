@@ -71,6 +71,9 @@ function privateInitializeReadableStreamController(stream)
     return this;
 }
 
+// @optional=STREAMS_API
+// @internals
+
 function teeReadableStream(stream, shouldClone)
 {
     "use strict";

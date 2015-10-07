@@ -97,6 +97,8 @@ function getReader()
     return new @ReadableStreamReader(this);
 }
 
+// @optional=STREAMS_API
+
 function pipeThrough(streams, options)
 {
     "use strict";
