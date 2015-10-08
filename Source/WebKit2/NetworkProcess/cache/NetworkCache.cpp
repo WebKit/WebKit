@@ -334,7 +334,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
     ASSERT(isEnabled());
     ASSERT(originalRequest.url().protocolIsInHTTPFamily());
 
-    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %u", originalRequest.url().string().ascii().data(), originalRequest.priority());
+    LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", originalRequest.url().string().ascii().data(), static_cast<int>(originalRequest.priority()));
 
     if (m_statistics)
         m_statistics->recordRetrievalRequest(webPageID);
@@ -380,7 +380,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& originalRequest, uint64_t w
 
 #if !LOG_DISABLED
         auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%u time=%" PRIi64 "ms", useDecision, originalRequest.priority(), elapsedMS);
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(originalRequest.priority()), elapsedMS);
 #endif
         completionHandler(WTF::move(entry));
 
@@ -406,7 +406,7 @@ void Cache::store(const WebCore::ResourceRequest& originalRequest, const WebCore
 
     StoreDecision storeDecision = makeStoreDecision(originalRequest, response);
     if (storeDecision != StoreDecision::Yes) {
-        LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", storeDecision);
+        LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
         auto key = makeCacheKey(originalRequest);
 
         auto isSuccessfulRevalidation = response.httpStatusCode() == 304;

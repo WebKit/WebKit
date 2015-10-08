@@ -1,5 +1,18 @@
 2015-10-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Format string issues in NetworkCache.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=149867
+
+        Reviewed by Csaba Osztrogonác.
+
+        Cast enums to ints before printing them to placate GCC's -Wformat.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+
+2015-10-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Format string issue in WebResourceLoadScheduler.cpp
         https://bugs.webkit.org/show_bug.cgi?id=149868
 
