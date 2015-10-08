@@ -116,6 +116,7 @@ namespace WebCore {
     macro(hashchange) \
     macro(icecandidate) \
     macro(iceconnectionstatechange) \
+    macro(icegatheringstatechange) \
     macro(inactive) \
     macro(input) \
     macro(invalid) \
@@ -205,6 +206,7 @@ namespace WebCore {
     macro(touchend) \
     macro(touchmove) \
     macro(touchstart) \
+    macro(track) \
     macro(transitionend) \
     macro(unload) \
     macro(unmute) \
