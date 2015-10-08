@@ -1221,6 +1221,25 @@ webkit.org/b/119264 transitions/created-while-suspended.html [ Pass Slow ]
 
 Bug(GTK) http/tests/media/hls/video-cookie.html [ Pass Slow ]
 
+webkit.org/b/149916 inspector/codemirror/prettyprinting-css-rules.html [ Pass Slow ]
+webkit.org/b/149916 inspector/codemirror/prettyprinting-css.html [ Pass Slow ]
+webkit.org/b/149916 inspector/codemirror/prettyprinting-javascript.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/addInspectedNode.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/clearMessages.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/command-line-api.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/console-api.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/messageRepeatCountUpdated.html [ Pass Slow ]
+webkit.org/b/149916 inspector/console/messagesCleared.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/matched-style-properties.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/stylesheet-events-basic.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/stylesheet-events-imports.html [ Pass Slow ]
+webkit.org/b/149916 inspector/indexeddb/requestDatabaseNames.html [ Pass Slow ]
+webkit.org/b/149916 inspector/protocol/inspector-backend-invocation-return-value.html [ Pass Slow ]
+webkit.org/b/149916 inspector/runtime/parse.html [ Pass Slow ]
+webkit.org/b/149916 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
 #////////////////////////////////////////////////////////////////////////////////////////
