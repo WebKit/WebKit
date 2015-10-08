@@ -75,6 +75,7 @@ struct FontDescriptionKey {
         : m_size(description.computedPixelSize())
         , m_weight(description.weight())
         , m_flags(makeFlagsKey(description))
+        , m_locale(description.locale())
         , m_featureSettings(description.featureSettings())
     { }
 
@@ -84,7 +85,7 @@ struct FontDescriptionKey {
 
     bool operator==(const FontDescriptionKey& other) const
     {
-        return m_size == other.m_size && m_weight == other.m_weight && m_flags == other.m_flags
+        return m_size == other.m_size && m_weight == other.m_weight && m_flags == other.m_flags && m_locale == other.m_locale
             && m_featureSettings == other.m_featureSettings;
     }
 
@@ -102,6 +103,7 @@ struct FontDescriptionKey {
         hasher.add(m_weight);
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);
+        hasher.add(m_locale.isNull() ? 0 : m_locale.impl()->existingHash());
         hasher.add(m_featureSettings.hash());
         return hasher.hash();
     }
@@ -142,6 +144,7 @@ private:
     unsigned m_size { 0 };
     unsigned m_weight { 0 };
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
+    AtomicString m_locale;
     FontFeatureSettings m_featureSettings;
 };
 
