@@ -94,6 +94,8 @@ static size_t sizeOfMemoryType(WASMMemoryType memoryType)
     default:
         ASSERT_NOT_REACHED();
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 class WASMFunctionCompiler : private CCallHelpers {

@@ -26,7 +26,7 @@
 #ifndef WASMFunctionLLVMIRGenerator_h
 #define WASMFunctionLLVMIRGenerator_h
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ENABLE(FTL_JIT)
 
 #include "FTLAbbreviatedTypes.h"
 
