@@ -1,3 +1,16 @@
+2015-10-07  Keith Rollin  <krollin@apple.com>
+
+        script.text shouldn't include text from non-direct children of the script element
+        https://bugs.webkit.org/show_bug.cgi?id=148851
+        <rdar://problem/22587759>
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline several W3C HTML tests now that new checks are passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-text-xhtml-expected.txt:
+
 2015-10-06  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] 'length' property is wrong for variadic operations
