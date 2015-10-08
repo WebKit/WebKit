@@ -84,6 +84,8 @@ namespace WebCore {
         Frame* scopedChild(const AtomicString& name) const;
         unsigned scopedChildCount() const;
 
+        unsigned indexInParent() const;
+
     private:
         Frame* deepLastChild() const;
         void actuallyAppendChild(PassRefPtr<Frame>);
