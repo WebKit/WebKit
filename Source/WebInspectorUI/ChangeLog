@@ -1,3 +1,16 @@
+2015-10-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: An error view doesn't get expanded by clicking on the expand arrow
+        https://bugs.webkit.org/show_bug.cgi?id=149917
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object > .formatted-error::before):
+        (.error-object.expanded > .formatted-error::before):
+        (.error-object::before): Deleted.
+        (.error-object.expanded::before): Deleted.
+
 2015-10-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Clicking on a stack trace link does not navigate to the corresponding line
