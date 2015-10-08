@@ -66,28 +66,28 @@ private:
 
 class JSTestMediaQueryListListenerConstructor : public DOMConstructorObject {
 private:
-    JSTestMediaQueryListListenerConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestMediaQueryListListenerConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestMediaQueryListListenerConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestMediaQueryListListenerConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestMediaQueryListListenerConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListenerConstructor>(vm.heap)) JSTestMediaQueryListListenerConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
 const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListenerConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListenerConstructor) };
 
-JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -119,7 +119,7 @@ void JSTestMediaQueryListListenerPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
-JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
+JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMediaQueryListListener>&& impl)
     : JSDOMWrapperWithImplementation<TestMediaQueryListListener>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -150,7 +150,7 @@ EncodedJSValue jsTestMediaQueryListListenerConstructor(ExecState* state, JSObjec
 
 JSValue JSTestMediaQueryListListener::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* state)

@@ -33,7 +33,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestException> Base;
     static JSTestException* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
     {
-        JSTestException* ptr = new (NotNull, JSC::allocateCell<JSTestException>(globalObject->vm().heap)) JSTestException(structure, globalObject, WTF::move(impl));
+        JSTestException* ptr = new (NotNull, JSC::allocateCell<JSTestException>(globalObject->vm().heap)) JSTestException(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -55,7 +55,7 @@ public:
 public:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
-    JSTestException(JSC::Structure*, JSDOMGlobalObject*, Ref<TestException>&&);
+    JSTestException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestException>&&);
 
     void finishCreation(JSC::VM& vm)
     {

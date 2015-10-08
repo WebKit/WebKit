@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestCustomNamedGetter> Base;
     static JSTestCustomNamedGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomNamedGetter>&& impl)
     {
-        JSTestCustomNamedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetter>(globalObject->vm().heap)) JSTestCustomNamedGetter(structure, globalObject, WTF::move(impl));
+        JSTestCustomNamedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetter>(globalObject->vm().heap)) JSTestCustomNamedGetter(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -55,7 +55,7 @@ public:
 public:
     static const unsigned StructureFlags = JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
-    JSTestCustomNamedGetter(JSC::Structure*, JSDOMGlobalObject*, Ref<TestCustomNamedGetter>&&);
+    JSTestCustomNamedGetter(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCustomNamedGetter>&&);
 
     void finishCreation(JSC::VM& vm)
     {

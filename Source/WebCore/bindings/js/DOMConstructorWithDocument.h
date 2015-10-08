@@ -36,15 +36,15 @@ public:
     }
 
 protected:
-    DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
         : DOMConstructorObject(structure, globalObject)
     {
     }
 
-    void finishCreation(JSDOMGlobalObject* globalObject)
+    void finishCreation(JSDOMGlobalObject& globalObject)
     {
-        Base::finishCreation(globalObject->vm());
-        ASSERT(globalObject->scriptExecutionContext()->isDocument());
+        Base::finishCreation(globalObject.vm());
+        ASSERT(globalObject.scriptExecutionContext()->isDocument());
     }
 };
 

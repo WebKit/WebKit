@@ -59,29 +59,29 @@ private:
 
 class JSTestCustomConstructorWithNoInterfaceObjectConstructor : public DOMConstructorObject {
 private:
-    JSTestCustomConstructorWithNoInterfaceObjectConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestCustomConstructorWithNoInterfaceObjectConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestCustomConstructorWithNoInterfaceObjectConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestCustomConstructorWithNoInterfaceObjectConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestCustomConstructorWithNoInterfaceObjectConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObjectConstructor>(vm.heap)) JSTestCustomConstructorWithNoInterfaceObjectConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
 const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectConstructor::s_info = { "TestCustomConstructorWithNoInterfaceObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObjectConstructor) };
 
-JSTestCustomConstructorWithNoInterfaceObjectConstructor::JSTestCustomConstructorWithNoInterfaceObjectConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestCustomConstructorWithNoInterfaceObjectConstructor::JSTestCustomConstructorWithNoInterfaceObjectConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -118,7 +118,7 @@ void JSTestCustomConstructorWithNoInterfaceObjectPrototype::finishCreation(VM& v
 
 const ClassInfo JSTestCustomConstructorWithNoInterfaceObject::s_info = { "TestCustomConstructorWithNoInterfaceObject", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObject) };
 
-JSTestCustomConstructorWithNoInterfaceObject::JSTestCustomConstructorWithNoInterfaceObject(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomConstructorWithNoInterfaceObject>&& impl)
+JSTestCustomConstructorWithNoInterfaceObject::JSTestCustomConstructorWithNoInterfaceObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCustomConstructorWithNoInterfaceObject>&& impl)
     : JSDOMWrapperWithImplementation<TestCustomConstructorWithNoInterfaceObject>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -144,7 +144,7 @@ EncodedJSValue jsTestCustomConstructorWithNoInterfaceObjectConstructor(ExecState
     JSTestCustomConstructorWithNoInterfaceObjectPrototype* domObject = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObjectPrototype*>(baseValue);
     if (!domObject)
         return throwVMTypeError(state);
-    JSValue constructor = JSTestCustomConstructorWithNoInterfaceObjectConstructor::create(state->vm(), JSTestCustomConstructorWithNoInterfaceObjectConstructor::createStructure(state->vm(), domObject->globalObject(), domObject->globalObject()->objectPrototype()), jsCast<JSDOMGlobalObject*>(domObject->globalObject()));
+    JSValue constructor = JSTestCustomConstructorWithNoInterfaceObjectConstructor::create(state->vm(), JSTestCustomConstructorWithNoInterfaceObjectConstructor::createStructure(state->vm(), *domObject->globalObject(), domObject->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(domObject->globalObject()));
     // Shadowing constructor property to ensure reusing the same constructor object
     domObject->putDirect(state->vm(), state->propertyNames().constructor, constructor, DontEnum | ReadOnly);
     return JSValue::encode(constructor);

@@ -65,12 +65,12 @@ template<> const ClassInfo JSBuiltinReadableStreamControllerPrivateConstructor::
 
 template<> JSObject* JSBuiltinReadableStreamReaderPrivateConstructor::createJSObject()
 {
-    return JSReadableStreamReader::create(getDOMStructure<JSReadableStreamReader>(globalObject()->vm(), globalObject()), globalObject(), ReadableStreamReader::create());
+    return JSReadableStreamReader::create(getDOMStructure<JSReadableStreamReader>(globalObject()->vm(), *globalObject()), globalObject(), ReadableStreamReader::create());
 }
 
 template<> JSObject* JSBuiltinReadableStreamControllerPrivateConstructor::createJSObject()
 {
-    return JSReadableStreamController::create(getDOMStructure<JSReadableStreamController>(globalObject()->vm(), globalObject()), globalObject(), ReadableStreamController::create());
+    return JSReadableStreamController::create(getDOMStructure<JSReadableStreamController>(globalObject()->vm(), *globalObject()), globalObject(), ReadableStreamController::create());
 }
 
 template<> JSFunction* JSBuiltinReadableStreamReaderPrivateConstructor::createInitializeFunction(JSC::VM& vm, JSC::JSGlobalObject& globalObject)

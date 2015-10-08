@@ -68,22 +68,22 @@ private:
 
 class JSTestActiveDOMObjectConstructor : public DOMConstructorObject {
 private:
-    JSTestActiveDOMObjectConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestActiveDOMObjectConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestActiveDOMObjectConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestActiveDOMObjectConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestActiveDOMObjectConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestActiveDOMObjectConstructor>(vm.heap)) JSTestActiveDOMObjectConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
@@ -106,7 +106,7 @@ static const HashTableValue JSTestActiveDOMObjectTableValues[] =
 static const HashTable JSTestActiveDOMObjectTable = { 2, 3, true, JSTestActiveDOMObjectTableValues, JSTestActiveDOMObjectTableIndex };
 const ClassInfo JSTestActiveDOMObjectConstructor::s_info = { "TestActiveDOMObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestActiveDOMObjectConstructor) };
 
-JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -138,7 +138,7 @@ void JSTestActiveDOMObjectPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestActiveDOMObject::s_info = { "TestActiveDOMObject", &Base::s_info, &JSTestActiveDOMObjectTable, CREATE_METHOD_TABLE(JSTestActiveDOMObject) };
 
-JSTestActiveDOMObject::JSTestActiveDOMObject(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestActiveDOMObject>&& impl)
+JSTestActiveDOMObject::JSTestActiveDOMObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestActiveDOMObject>&& impl)
     : JSDOMWrapperWithImplementation<TestActiveDOMObject>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -194,7 +194,7 @@ EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, JSObject*, Enc
 
 JSValue JSTestActiveDOMObject::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestActiveDOMObjectConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestActiveDOMObjectConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* state)

@@ -30,23 +30,23 @@ namespace WebCore {
     public:
         typedef DOMConstructorWithDocument Base;
 
-        static JSImageConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+        static JSImageConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
         {
             JSImageConstructor* constructor = new (NotNull, JSC::allocateCell<JSImageConstructor>(vm.heap)) JSImageConstructor(structure, globalObject);
             constructor->finishCreation(vm, globalObject);
             return constructor;
         }
 
-        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+            return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
         }
 
         DECLARE_INFO;
 
     private:
-        JSImageConstructor(JSC::Structure*, JSDOMGlobalObject*);
-        void finishCreation(JSC::VM&, JSDOMGlobalObject*);
+        JSImageConstructor(JSC::Structure*, JSDOMGlobalObject&);
+        void finishCreation(JSC::VM&, JSDOMGlobalObject&);
         static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     };
 

@@ -62,22 +62,22 @@ private:
 
 class JSTestOverloadedConstructorsConstructor : public DOMConstructorObject {
 private:
-    JSTestOverloadedConstructorsConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestOverloadedConstructorsConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestOverloadedConstructorsConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestOverloadedConstructorsConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestOverloadedConstructorsConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsConstructor>(vm.heap)) JSTestOverloadedConstructorsConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors(JSC::ExecState*);
@@ -168,7 +168,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
 
 const ClassInfo JSTestOverloadedConstructorsConstructor::s_info = { "TestOverloadedConstructorsConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructorsConstructor) };
 
-JSTestOverloadedConstructorsConstructor::JSTestOverloadedConstructorsConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestOverloadedConstructorsConstructor::JSTestOverloadedConstructorsConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -205,7 +205,7 @@ void JSTestOverloadedConstructorsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
 
-JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
+JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructors>&& impl)
     : JSDOMWrapperWithImplementation<TestOverloadedConstructors>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -236,7 +236,7 @@ EncodedJSValue jsTestOverloadedConstructorsConstructor(ExecState* state, JSObjec
 
 JSValue JSTestOverloadedConstructors::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestOverloadedConstructorsConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestOverloadedConstructorsConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

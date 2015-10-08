@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<readonly> Base;
     static JSreadonly* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<readonly>&& impl)
     {
-        JSreadonly* ptr = new (NotNull, JSC::allocateCell<JSreadonly>(globalObject->vm().heap)) JSreadonly(structure, globalObject, WTF::move(impl));
+        JSreadonly* ptr = new (NotNull, JSC::allocateCell<JSreadonly>(globalObject->vm().heap)) JSreadonly(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -51,7 +51,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
 protected:
-    JSreadonly(JSC::Structure*, JSDOMGlobalObject*, Ref<readonly>&&);
+    JSreadonly(JSC::Structure*, JSDOMGlobalObject&, Ref<readonly>&&);
 
     void finishCreation(JSC::VM& vm)
     {

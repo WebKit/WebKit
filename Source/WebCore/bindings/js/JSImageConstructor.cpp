@@ -34,16 +34,16 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSImageConstructor);
 
 const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
 
-JSImageConstructor::JSImageConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSImageConstructor::JSImageConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : DOMConstructorWithDocument(structure, globalObject)
 {
 }
 
-void JSImageConstructor::finishCreation(VM& vm, JSDOMGlobalObject* globalObject)
+void JSImageConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(globalObject);
     ASSERT(inherits(info()));
-    putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElement::getPrototype(vm, globalObject), None);
+    putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElement::getPrototype(vm, &globalObject), None);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)

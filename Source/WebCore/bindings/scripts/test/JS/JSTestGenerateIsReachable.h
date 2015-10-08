@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestGenerateIsReachable> Base;
     static JSTestGenerateIsReachable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
     {
-        JSTestGenerateIsReachable* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachable>(globalObject->vm().heap)) JSTestGenerateIsReachable(structure, globalObject, WTF::move(impl));
+        JSTestGenerateIsReachable* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachable>(globalObject->vm().heap)) JSTestGenerateIsReachable(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -51,7 +51,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
 protected:
-    JSTestGenerateIsReachable(JSC::Structure*, JSDOMGlobalObject*, Ref<TestGenerateIsReachable>&&);
+    JSTestGenerateIsReachable(JSC::Structure*, JSDOMGlobalObject&, Ref<TestGenerateIsReachable>&&);
 
     void finishCreation(JSC::VM& vm)
     {

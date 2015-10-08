@@ -73,28 +73,28 @@ private:
 
 class JSTestSerializedScriptValueInterfaceConstructor : public DOMConstructorObject {
 private:
-    JSTestSerializedScriptValueInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestSerializedScriptValueInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestSerializedScriptValueInterfaceConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestSerializedScriptValueInterfaceConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestSerializedScriptValueInterfaceConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(vm.heap)) JSTestSerializedScriptValueInterfaceConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
 const ClassInfo JSTestSerializedScriptValueInterfaceConstructor::s_info = { "TestSerializedScriptValueInterfaceConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterfaceConstructor) };
 
-JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -130,7 +130,7 @@ void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
 
-JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
+JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
     : JSDOMWrapperWithImplementation<TestSerializedScriptValueInterface>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -292,7 +292,7 @@ void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, JSObje
 
 JSValue JSTestSerializedScriptValueInterface::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSerializedScriptValueInterfaceConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSerializedScriptValueInterfaceConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestSerializedScriptValueInterface::visitChildren(JSCell* cell, SlotVisitor& visitor)

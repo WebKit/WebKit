@@ -145,22 +145,22 @@ private:
 
 class JSTestInterfaceConstructor : public DOMConstructorObject {
 private:
-    JSTestInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestInterfaceConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestInterfaceConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestInterfaceConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestInterfaceConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceConstructor>(vm.heap)) JSTestInterfaceConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestInterface(JSC::ExecState*);
@@ -289,7 +289,7 @@ EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterfac
 
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
-JSTestInterfaceConstructor::JSTestInterfaceConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestInterfaceConstructor::JSTestInterfaceConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -409,7 +409,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, CREATE_METHOD_TABLE(JSTestInterface) };
 
-JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
+JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestInterface>&& impl)
     : JSDOMWrapperWithImplementation<TestInterface>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -797,7 +797,7 @@ void setJSTestInterfaceSupplementalNode(ExecState* state, JSObject* baseObject, 
 
 JSValue JSTestInterface::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)

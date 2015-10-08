@@ -295,17 +295,17 @@ EncodedJSValue objectToStringFunctionGetter(ExecState* exec, JSObject*, EncodedJ
     return JSValue::encode(JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), 0, propertyName.publicName(), objectProtoFuncToString));
 }
 
-Structure* getCachedDOMStructure(JSDOMGlobalObject* globalObject, const ClassInfo* classInfo)
+Structure* getCachedDOMStructure(JSDOMGlobalObject& globalObject, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = globalObject->structures();
+    JSDOMStructureMap& structures = globalObject.structures();
     return structures.get(classInfo).get();
 }
 
-Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structure, const ClassInfo* classInfo)
+Structure* cacheDOMStructure(JSDOMGlobalObject& globalObject, Structure* structure, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = globalObject->structures();
+    JSDOMStructureMap& structures = globalObject.structures();
     ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, WriteBarrier<Structure>(globalObject->vm(), globalObject, structure)).iterator->value.get();
+    return structures.set(classInfo, WriteBarrier<Structure>(globalObject.vm(), &globalObject, structure)).iterator->value.get();
 }
 
 static const int32_t kMaxInt32 = 0x7fffffff;

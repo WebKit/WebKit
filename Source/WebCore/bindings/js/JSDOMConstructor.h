@@ -42,7 +42,7 @@ public:
     DECLARE_INFO;
 
 private:
-    JSBuiltinConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject): Base(structure, &globalObject) { }
+    JSBuiltinConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject) : Base(structure, globalObject) { }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
     void initializeProperties(JSC::VM&, JSDOMGlobalObject&) { }

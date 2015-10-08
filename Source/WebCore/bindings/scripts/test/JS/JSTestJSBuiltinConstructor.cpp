@@ -60,22 +60,22 @@ private:
 
 class JSTestJSBuiltinConstructorConstructor : public DOMConstructorJSBuiltinObject {
 private:
-    JSTestJSBuiltinConstructorConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestJSBuiltinConstructorConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorJSBuiltinObject Base;
-    static JSTestJSBuiltinConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestJSBuiltinConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestJSBuiltinConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructorConstructor>(vm.heap)) JSTestJSBuiltinConstructorConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestJSBuiltinConstructor(JSC::ExecState*);
@@ -90,7 +90,7 @@ JSC::EncodedJSValue JSC_HOST_CALL JSTestJSBuiltinConstructorConstructor::constru
 
 const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "TestJSBuiltinConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorConstructor) };
 
-JSTestJSBuiltinConstructorConstructor::JSTestJSBuiltinConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestJSBuiltinConstructorConstructor::JSTestJSBuiltinConstructorConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -128,7 +128,7 @@ void JSTestJSBuiltinConstructorPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestJSBuiltinConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructor) };
 
-JSTestJSBuiltinConstructor::JSTestJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestJSBuiltinConstructor::JSTestJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMWrapper(structure, globalObject) { }
 
 JSObject* JSTestJSBuiltinConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
@@ -157,7 +157,7 @@ EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, JSObject*
 
 JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestJSBuiltinConstructorConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestJSBuiltinConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestJSBuiltinConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

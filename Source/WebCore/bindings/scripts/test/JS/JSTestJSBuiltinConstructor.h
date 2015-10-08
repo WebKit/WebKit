@@ -30,7 +30,7 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructor>(globalObject->vm().heap)) JSTestJSBuiltinConstructor(structure, globalObject);
+        JSTestJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructor>(globalObject->vm().heap)) JSTestJSBuiltinConstructor(structure, *globalObject);
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -50,7 +50,7 @@ public:
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
 protected:
-    JSTestJSBuiltinConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestJSBuiltinConstructor(JSC::Structure*, JSDOMGlobalObject&);
 
 };
 

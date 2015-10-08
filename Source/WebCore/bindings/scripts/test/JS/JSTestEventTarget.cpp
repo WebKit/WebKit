@@ -75,22 +75,22 @@ private:
 
 class JSTestEventTargetConstructor : public DOMConstructorObject {
 private:
-    JSTestEventTargetConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestEventTargetConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestEventTargetConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestEventTargetConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestEventTargetConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventTargetConstructor>(vm.heap)) JSTestEventTargetConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
@@ -110,7 +110,7 @@ static const HashTableValue JSTestEventTargetTableValues[] =
 static const HashTable JSTestEventTargetTable = { 1, 1, true, JSTestEventTargetTableValues, JSTestEventTargetTableIndex };
 const ClassInfo JSTestEventTargetConstructor::s_info = { "TestEventTargetConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventTargetConstructor) };
 
-JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestEventTargetConstructor::JSTestEventTargetConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -144,7 +144,7 @@ void JSTestEventTargetPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, CREATE_METHOD_TABLE(JSTestEventTarget) };
 
-JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
+JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventTarget>&& impl)
     : JSDOMWrapperWithImplementation<TestEventTarget>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -235,7 +235,7 @@ void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, 
 
 JSValue JSTestEventTarget::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventTargetConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventTargetConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* state)

@@ -501,18 +501,18 @@ JSValue JSDOMWindow::event(ExecState& state) const
 
 JSValue JSDOMWindow::image(ExecState& state) const
 {
-    return getDOMConstructor<JSImageConstructor>(state.vm(), this);
+    return getDOMConstructor<JSImageConstructor>(state.vm(), *this);
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 JSValue JSDOMWindow::touch(ExecState& state) const
 {
-    return getDOMConstructor<JSTouchConstructor>(state.vm(), this);
+    return getDOMConstructor<JSTouchConstructor>(state.vm(), *this);
 }
 
 JSValue JSDOMWindow::touchList(ExecState& state) const
 {
-    return getDOMConstructor<JSTouchListConstructor>(state.vm(), this);
+    return getDOMConstructor<JSTouchListConstructor>(state.vm(), *this);
 }
 #endif
 

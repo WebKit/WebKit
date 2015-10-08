@@ -62,28 +62,28 @@ private:
 
 class JSattributeConstructor : public DOMConstructorObject {
 private:
-    JSattributeConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSattributeConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSattributeConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSattributeConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSattributeConstructor* ptr = new (NotNull, JSC::allocateCell<JSattributeConstructor>(vm.heap)) JSattributeConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
 const ClassInfo JSattributeConstructor::s_info = { "attributeConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattributeConstructor) };
 
-JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSattributeConstructor::JSattributeConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -115,7 +115,7 @@ void JSattributePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattribute) };
 
-JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject* globalObject, Ref<attribute>&& impl)
+JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<attribute>&& impl)
     : JSDOMWrapperWithImplementation<attribute>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -163,7 +163,7 @@ EncodedJSValue jsattributeConstructor(ExecState* state, JSObject* baseValue, Enc
 
 JSValue JSattribute::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSattributeConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSattributeConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSattributeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

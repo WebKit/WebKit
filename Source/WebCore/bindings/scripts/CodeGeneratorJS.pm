@@ -938,14 +938,14 @@ sub GenerateHeader
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(\"Allocated masquerading object\");\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, globalObject, WTF::move(impl));\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTF::move(impl));\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->vm());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif (!NeedsImplementationClass($interface)) {
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, globalObject);\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject);\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->vm());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");  
@@ -953,7 +953,7 @@ sub GenerateHeader
         AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, globalObject, WTF::move(impl));\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTF::move(impl));\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->vm());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
@@ -1216,9 +1216,9 @@ sub GenerateHeader
     } elsif ($codeGenerator->InheritsInterface($interface, "WorkerGlobalScope")) {
         push(@headerContent, "    $className(JSC::VM&, JSC::Structure*, Ref<$implType>&&);\n");
     } elsif (!NeedsImplementationClass($interface)) {
-        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*);\n\n");
+        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&);\n\n");
      } else {
-        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*, Ref<$implType>&&);\n\n");
+        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&, Ref<$implType>&&);\n\n");
         push(@headerContent, "    void finishCreation(JSC::VM& vm)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        Base::finishCreation(vm);\n");
@@ -2154,10 +2154,10 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
     } elsif (!NeedsImplementationClass($interface)) {
-        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject* globalObject)\n");
+        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject)\n");
         push(@implContent, "    : $parentClassName(structure, globalObject) { }\n\n");
-     }else {
-        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
+    } else {
+        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject, Ref<$implType>&& impl)\n");
         push(@implContent, "    : $parentClassName(structure, globalObject, WTF::move(impl))\n");
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
@@ -2518,7 +2518,7 @@ sub GenerateImplementation
             if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
                 push(@implContent, "    return JSValue::encode(${className}::getConstructor(state->vm(), domObject->globalObject()));\n");
             } else {
-                push(@implContent, "    JSValue constructor = ${className}Constructor::create(state->vm(), ${className}Constructor::createStructure(state->vm(), domObject->globalObject(), domObject->globalObject()->objectPrototype()), jsCast<JSDOMGlobalObject*>(domObject->globalObject()));\n");
+                push(@implContent, "    JSValue constructor = ${className}Constructor::create(state->vm(), ${className}Constructor::createStructure(state->vm(), *domObject->globalObject(), domObject->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(domObject->globalObject()));\n");
                 push(@implContent, "    // Shadowing constructor property to ensure reusing the same constructor object\n");
                 push(@implContent, "    domObject->putDirect(state->vm(), state->propertyNames().constructor, constructor, DontEnum | ReadOnly);\n");
                 push(@implContent, "    return JSValue::encode(constructor);\n");
@@ -2833,11 +2833,11 @@ sub GenerateImplementation
 
     if (!$interface->extendedAttributes->{"NoInterfaceObject"}) {
         push(@implContent, "JSValue ${className}::getConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
-        push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+        push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
         if ($interface->extendedAttributes->{"NamedConstructor"}) {
             push(@implContent, "JSValue ${className}::getNamedConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
-            push(@implContent, "    return getDOMConstructor<${className}NamedConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+            push(@implContent, "    return getDOMConstructor<${className}NamedConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
             push(@implContent, "}\n\n");
         }
     }
@@ -3730,7 +3730,7 @@ sub GenerateCallbackImplementation
        GenerateConstructorDefinitions(\@implContent, $className, "", $interfaceName, $visibleInterfaceName, $interface);
 
        push(@implContent, "JSValue ${className}::getConstructor(VM& vm, JSGlobalObject* globalObject)\n{\n");
-       push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));\n");
+       push(@implContent, "    return getDOMConstructor<${className}Constructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
        push(@implContent, "}\n\n");
     }
 
@@ -4606,23 +4606,23 @@ sub GenerateConstructorDeclaration
 
     push(@$outputArray, "class ${constructorClassName} : public " . $parentClassName . " {\n");
     push(@$outputArray, "private:\n");
-    push(@$outputArray, "    ${constructorClassName}(JSC::Structure*, JSDOMGlobalObject*);\n");
+    push(@$outputArray, "    ${constructorClassName}(JSC::Structure*, JSDOMGlobalObject&);\n");
     push(@$outputArray, "    void finishCreation(JSC::VM&, JSDOMGlobalObject&);\n\n");
 
     push(@$outputArray, "public:\n");
     push(@$outputArray, "    typedef " . $parentClassName . " Base;\n");
-    push(@$outputArray, "    static $constructorClassName* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "    static $constructorClassName* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        $constructorClassName* ptr = new (NotNull, JSC::allocateCell<$constructorClassName>(vm.heap)) $constructorClassName(structure, globalObject);\n");
-    push(@$outputArray, "        ptr->finishCreation(vm, *globalObject);\n");
+    push(@$outputArray, "        ptr->finishCreation(vm, globalObject);\n");
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
 
     push(@$outputArray, "    DECLARE_INFO;\n");
 
-    push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
+    push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
+    push(@$outputArray, "        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
     push(@$outputArray, "    }\n");
 
     if (IsConstructable($interface) && !$interface->extendedAttributes->{"NamedConstructor"}) {
@@ -4651,22 +4651,22 @@ class JS${interfaceName}NamedConstructor : public DOMConstructorWithDocument {
 public:
     typedef DOMConstructorWithDocument Base;
 
-    static JS${interfaceName}NamedConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JS${interfaceName}NamedConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JS${interfaceName}NamedConstructor* constructor = new (NotNull, JSC::allocateCell<JS${interfaceName}NamedConstructor>(vm.heap)) JS${interfaceName}NamedConstructor(structure, globalObject);
-        constructor->finishCreation(vm, *globalObject);
+        constructor->finishCreation(vm, globalObject);
         return constructor;
     }
 
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
     DECLARE_INFO;
 
 private:
-    JS${interfaceName}NamedConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JS${interfaceName}NamedConstructor(JSC::Structure*, JSDOMGlobalObject&);
     static JSC::EncodedJSValue JSC_HOST_CALL constructJS${interfaceName}(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
@@ -4971,7 +4971,7 @@ sub GenerateConstructorHelperMethods
 
     push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
 
-    push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject& globalObject)\n");
     push(@$outputArray, "    : Base(structure, globalObject)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "}\n\n");
@@ -4980,7 +4980,7 @@ sub GenerateConstructorHelperMethods
     push(@$outputArray, "{\n");
 
     if ($generatingNamedConstructor) {
-        push(@$outputArray, "    Base::finishCreation(&globalObject);\n");
+        push(@$outputArray, "    Base::finishCreation(globalObject);\n");
     } else {
         push(@$outputArray, "    Base::finishCreation(vm);\n");
     }

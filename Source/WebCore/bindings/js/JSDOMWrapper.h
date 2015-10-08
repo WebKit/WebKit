@@ -41,8 +41,8 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
 protected:
-    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
-        : Base(globalObject->vm(), structure)
+    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject) 
+        : Base(globalObject.vm(), structure)
     {
         ASSERT(scriptExecutionContext());
     }
@@ -56,7 +56,7 @@ public:
     ~JSDOMWrapperWithImplementation() { std::exchange(m_impl, nullptr)->deref(); }
 
 protected:
-    JSDOMWrapperWithImplementation(JSC::Structure* structure, JSC::JSGlobalObject* globalObject, Ref<ImplementationClass>&& impl)
+    JSDOMWrapperWithImplementation(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(structure, globalObject)
         , m_impl(&impl.leakRef()) { }
 

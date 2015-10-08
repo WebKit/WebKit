@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestOverrideBuiltins> Base;
     static JSTestOverrideBuiltins* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverrideBuiltins>&& impl)
     {
-        JSTestOverrideBuiltins* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltins>(globalObject->vm().heap)) JSTestOverrideBuiltins(structure, globalObject, WTF::move(impl));
+        JSTestOverrideBuiltins* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltins>(globalObject->vm().heap)) JSTestOverrideBuiltins(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -56,7 +56,7 @@ public:
 public:
     static const unsigned StructureFlags = JSC::HasImpureGetOwnPropertySlot | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertySlot | JSC::OverridesGetPropertyNames | Base::StructureFlags;
 protected:
-    JSTestOverrideBuiltins(JSC::Structure*, JSDOMGlobalObject*, Ref<TestOverrideBuiltins>&&);
+    JSTestOverrideBuiltins(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOverrideBuiltins>&&);
 
     void finishCreation(JSC::VM& vm)
     {

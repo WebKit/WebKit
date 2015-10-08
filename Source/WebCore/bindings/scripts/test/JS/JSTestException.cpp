@@ -62,22 +62,22 @@ private:
 
 class JSTestExceptionConstructor : public DOMConstructorObject {
 private:
-    JSTestExceptionConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestExceptionConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestExceptionConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestExceptionConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestExceptionConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestExceptionConstructor>(vm.heap)) JSTestExceptionConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
@@ -97,7 +97,7 @@ static const HashTableValue JSTestExceptionTableValues[] =
 static const HashTable JSTestExceptionTable = { 1, 1, true, JSTestExceptionTableValues, JSTestExceptionTableIndex };
 const ClassInfo JSTestExceptionConstructor::s_info = { "TestExceptionConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestExceptionConstructor) };
 
-JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -128,7 +128,7 @@ void JSTestExceptionPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestException::s_info = { "TestException", &Base::s_info, &JSTestExceptionTable, CREATE_METHOD_TABLE(JSTestException) };
 
-JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
+JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestException>&& impl)
     : JSDOMWrapperWithImplementation<TestException>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -180,7 +180,7 @@ EncodedJSValue jsTestExceptionConstructor(ExecState* state, JSObject* baseValue,
 
 JSValue JSTestException::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestExceptionConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestExceptionConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestExceptionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

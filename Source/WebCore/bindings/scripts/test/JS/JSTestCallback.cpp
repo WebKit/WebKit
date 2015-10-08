@@ -61,22 +61,22 @@ JSTestCallback::~JSTestCallback()
 
 class JSTestCallbackConstructor : public DOMConstructorObject {
 private:
-    JSTestCallbackConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestCallbackConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestCallbackConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestCallbackConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestCallbackConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestCallbackConstructor>(vm.heap)) JSTestCallbackConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
@@ -94,7 +94,7 @@ COMPILE_ASSERT(2 == TestCallback::CONSTANT2, TestCallbackEnumCONSTANT2IsWrongUse
 
 const ClassInfo JSTestCallbackConstructor::s_info = { "TestCallbackConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCallbackConstructor) };
 
-JSTestCallbackConstructor::JSTestCallbackConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestCallbackConstructor::JSTestCallbackConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -111,7 +111,7 @@ void JSTestCallbackConstructor::finishCreation(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestCallback::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallbackConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallbackConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 

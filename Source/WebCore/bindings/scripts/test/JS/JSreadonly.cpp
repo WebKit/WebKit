@@ -59,28 +59,28 @@ private:
 
 class JSreadonlyConstructor : public DOMConstructorObject {
 private:
-    JSreadonlyConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSreadonlyConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSreadonlyConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSreadonlyConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSreadonlyConstructor* ptr = new (NotNull, JSC::allocateCell<JSreadonlyConstructor>(vm.heap)) JSreadonlyConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
 const ClassInfo JSreadonlyConstructor::s_info = { "readonlyConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonlyConstructor) };
 
-JSreadonlyConstructor::JSreadonlyConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSreadonlyConstructor::JSreadonlyConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -111,7 +111,7 @@ void JSreadonlyPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSreadonly::s_info = { "readonly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSreadonly) };
 
-JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject* globalObject, Ref<readonly>&& impl)
+JSreadonly::JSreadonly(Structure* structure, JSDOMGlobalObject& globalObject, Ref<readonly>&& impl)
     : JSDOMWrapperWithImplementation<readonly>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -142,7 +142,7 @@ EncodedJSValue jsreadonlyConstructor(ExecState* state, JSObject* baseValue, Enco
 
 JSValue JSreadonly::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSreadonlyConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSreadonlyConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSreadonlyOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

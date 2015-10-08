@@ -66,22 +66,22 @@ private:
 
 class JSTestCustomNamedGetterConstructor : public DOMConstructorObject {
 private:
-    JSTestCustomNamedGetterConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestCustomNamedGetterConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestCustomNamedGetterConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestCustomNamedGetterConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestCustomNamedGetterConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetterConstructor>(vm.heap)) JSTestCustomNamedGetterConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
@@ -101,7 +101,7 @@ static const HashTableValue JSTestCustomNamedGetterTableValues[] =
 static const HashTable JSTestCustomNamedGetterTable = { 1, 1, true, JSTestCustomNamedGetterTableValues, JSTestCustomNamedGetterTableIndex };
 const ClassInfo JSTestCustomNamedGetterConstructor::s_info = { "TestCustomNamedGetterConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomNamedGetterConstructor) };
 
-JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -132,7 +132,7 @@ void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, &JSTestCustomNamedGetterTable, CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };
 
-JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomNamedGetter>&& impl)
+JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCustomNamedGetter>&& impl)
     : JSDOMWrapperWithImplementation<TestCustomNamedGetter>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -198,7 +198,7 @@ EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* state, JSObject*, E
 
 JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* state)

@@ -59,28 +59,28 @@ private:
 
 class JSTestGenerateIsReachableConstructor : public DOMConstructorObject {
 private:
-    JSTestGenerateIsReachableConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestGenerateIsReachableConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestGenerateIsReachableConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestGenerateIsReachableConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestGenerateIsReachableConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachableConstructor>(vm.heap)) JSTestGenerateIsReachableConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
 const ClassInfo JSTestGenerateIsReachableConstructor::s_info = { "TestGenerateIsReachableConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachableConstructor) };
 
-JSTestGenerateIsReachableConstructor::JSTestGenerateIsReachableConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestGenerateIsReachableConstructor::JSTestGenerateIsReachableConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -111,7 +111,7 @@ void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestGenerateIsReachable::s_info = { "TestGenerateIsReachable", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestGenerateIsReachable) };
 
-JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
+JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGenerateIsReachable>&& impl)
     : JSDOMWrapperWithImplementation<TestGenerateIsReachable>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -142,7 +142,7 @@ EncodedJSValue jsTestGenerateIsReachableConstructor(ExecState* state, JSObject* 
 
 JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGenerateIsReachableConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

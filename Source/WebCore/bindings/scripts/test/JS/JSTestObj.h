@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestObj> Base;
     static JSTestObj* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
     {
-        JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(globalObject->vm().heap)) JSTestObj(structure, globalObject, WTF::move(impl));
+        JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(globalObject->vm().heap)) JSTestObj(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -67,7 +67,7 @@ public:
 public:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
-    JSTestObj(JSC::Structure*, JSDOMGlobalObject*, Ref<TestObj>&&);
+    JSTestObj(JSC::Structure*, JSDOMGlobalObject&, Ref<TestObj>&&);
 
     void finishCreation(JSC::VM& vm)
     {

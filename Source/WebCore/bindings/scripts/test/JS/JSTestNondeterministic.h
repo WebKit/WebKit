@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestNondeterministic> Base;
     static JSTestNondeterministic* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNondeterministic>&& impl)
     {
-        JSTestNondeterministic* ptr = new (NotNull, JSC::allocateCell<JSTestNondeterministic>(globalObject->vm().heap)) JSTestNondeterministic(structure, globalObject, WTF::move(impl));
+        JSTestNondeterministic* ptr = new (NotNull, JSC::allocateCell<JSTestNondeterministic>(globalObject->vm().heap)) JSTestNondeterministic(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -51,7 +51,7 @@ public:
 
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
 protected:
-    JSTestNondeterministic(JSC::Structure*, JSDOMGlobalObject*, Ref<TestNondeterministic>&&);
+    JSTestNondeterministic(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNondeterministic>&&);
 
     void finishCreation(JSC::VM& vm)
     {

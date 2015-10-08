@@ -62,22 +62,22 @@ private:
 
 class JSTestNamedConstructorConstructor : public DOMConstructorObject {
 private:
-    JSTestNamedConstructorConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestNamedConstructorConstructor(JSC::Structure*, JSDOMGlobalObject&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 
 public:
     typedef DOMConstructorObject Base;
-    static JSTestNamedConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestNamedConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestNamedConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNamedConstructorConstructor>(vm.heap)) JSTestNamedConstructorConstructor(structure, globalObject);
-        ptr->finishCreation(vm, *globalObject);
+        ptr->finishCreation(vm, globalObject);
         return ptr;
     }
 
     DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 };
 
@@ -85,22 +85,22 @@ class JSTestNamedConstructorNamedConstructor : public DOMConstructorWithDocument
 public:
     typedef DOMConstructorWithDocument Base;
 
-    static JSTestNamedConstructorNamedConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    static JSTestNamedConstructorNamedConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
     {
         JSTestNamedConstructorNamedConstructor* constructor = new (NotNull, JSC::allocateCell<JSTestNamedConstructorNamedConstructor>(vm.heap)) JSTestNamedConstructorNamedConstructor(structure, globalObject);
-        constructor->finishCreation(vm, *globalObject);
+        constructor->finishCreation(vm, globalObject);
         return constructor;
     }
 
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
     DECLARE_INFO;
 
 private:
-    JSTestNamedConstructorNamedConstructor(JSC::Structure*, JSDOMGlobalObject*);
+    JSTestNamedConstructorNamedConstructor(JSC::Structure*, JSDOMGlobalObject&);
     static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestNamedConstructor(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
@@ -108,7 +108,7 @@ private:
 
 const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
-JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
@@ -147,14 +147,14 @@ EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJS
 
 const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "AudioConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
 
-JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
+JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : Base(structure, globalObject)
 {
 }
 
 void JSTestNamedConstructorNamedConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    Base::finishCreation(&globalObject);
+    Base::finishCreation(globalObject);
     ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestNamedConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("Audio"))), ReadOnly | DontEnum);
@@ -184,7 +184,7 @@ void JSTestNamedConstructorPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructor) };
 
-JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedConstructor>&& impl)
+JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedConstructor>&& impl)
     : JSDOMWrapperWithImplementation<TestNamedConstructor>(structure, globalObject, WTF::move(impl))
 {
 }
@@ -215,12 +215,12 @@ EncodedJSValue jsTestNamedConstructorConstructor(ExecState* state, JSObject* bas
 
 JSValue JSTestNamedConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedConstructorConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 JSValue JSTestNamedConstructor::getNamedConstructor(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedConstructorNamedConstructor>(vm, jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedConstructorNamedConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

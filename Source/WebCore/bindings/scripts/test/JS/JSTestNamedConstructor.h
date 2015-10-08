@@ -32,7 +32,7 @@ public:
     typedef JSDOMWrapperWithImplementation<TestNamedConstructor> Base;
     static JSTestNamedConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedConstructor>&& impl)
     {
-        JSTestNamedConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNamedConstructor>(globalObject->vm().heap)) JSTestNamedConstructor(structure, globalObject, WTF::move(impl));
+        JSTestNamedConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestNamedConstructor>(globalObject->vm().heap)) JSTestNamedConstructor(structure, *globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -52,7 +52,7 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSValue getNamedConstructor(JSC::VM&, JSC::JSGlobalObject*);
 protected:
-    JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject*, Ref<TestNamedConstructor>&&);
+    JSTestNamedConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedConstructor>&&);
 
     void finishCreation(JSC::VM& vm)
     {
