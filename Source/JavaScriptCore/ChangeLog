@@ -1,3 +1,26 @@
+2015-10-07  Mark Lam  <mark.lam@apple.com>
+
+        [Follow up 2] Disable tail calls because it is breaking some sites.
+        https://bugs.webkit.org/show_bug.cgi?id=149900
+
+        Rubber stamped by Saam Barati.
+
+        Also need to surpress JSC tail call tests.
+
+        * tests/es6.yaml:
+        * tests/stress/dfg-tail-calls.js:
+        (nonInlinedTailCall.callee):
+        * tests/stress/mutual-tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-in-inline-cache.js:
+        (tail):
+        * tests/stress/tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-recognize.js:
+        (callerMustBeRun):
+        * tests/stress/tail-call-varargs-no-stack-overflow.js:
+        (shouldThrow):
+
 2015-10-07  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in r190450

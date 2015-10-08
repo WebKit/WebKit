@@ -1,3 +1,4 @@
+//@ skip
 "use strict";
 
 function tail() { }

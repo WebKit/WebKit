@@ -1,3 +1,4 @@
+//@ skip
 (function nonInlinedTailCall() {
     function callee() { if (callee.caller != nonInlinedTailCall) throw new Error(); }
     noInline(callee);
