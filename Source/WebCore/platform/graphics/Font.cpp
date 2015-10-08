@@ -393,9 +393,8 @@ public:
     {
     }
 
-    CharacterFallbackMapKey(const AtomicString& locale, UChar32 character, bool isForPlatformFont)
-        : locale(locale)
-        , character(character)
+    CharacterFallbackMapKey(UChar32 character, bool isForPlatformFont)
+        : character(character)
         , isForPlatformFont(isForPlatformFont)
     {
     }
@@ -409,7 +408,7 @@ public:
 
     bool operator==(const CharacterFallbackMapKey& other) const
     {
-        return locale == other.locale && character == other.character && isForPlatformFont == other.isForPlatformFont;
+        return character == other.character && isForPlatformFont == other.isForPlatformFont;
     }
 
     static const bool emptyValueIsZero = true;
@@ -417,7 +416,6 @@ public:
 private:
     friend struct CharacterFallbackMapKeyHash;
 
-    AtomicString locale;
     UChar32 character { 0 };
     bool isForPlatformFont { false };
 };
@@ -425,7 +423,7 @@ private:
 struct CharacterFallbackMapKeyHash {
     static unsigned hash(const CharacterFallbackMapKey& key)
     {
-        return WTF::pairIntHash(key.locale.isNull() ? 0 : WTF::AtomicStringHash::hash(key.locale), WTF::pairIntHash(key.character, key.isForPlatformFont));
+        return WTF::pairIntHash(key.character, key.isForPlatformFont);
     }
 
     static bool equal(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b)
@@ -456,7 +454,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
         return FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, &codeUnit, 1);
     }
 
-    auto key = CharacterFallbackMapKey(description.locale(), character, isForPlatformFont);
+    auto key = CharacterFallbackMapKey(character, isForPlatformFont);
     auto characterAddResult = fontAddResult.iterator->value.add(WTF::move(key), nullptr);
 
     Font*& fallbackFont = characterAddResult.iterator->value;

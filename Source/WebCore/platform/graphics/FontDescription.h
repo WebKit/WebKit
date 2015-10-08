@@ -55,7 +55,6 @@ public:
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
-    const AtomicString& locale() const { return m_locale; }
 
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
@@ -107,7 +106,7 @@ public:
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
     void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = orientation; }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
-    void setLocale(const AtomicString&);
+    void setScript(UScriptCode s) { m_script = s; }
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTF::move(settings); }
     void setFontSynthesis(FontSynthesis fontSynthesis) { m_fontSynthesis = fontSynthesis; }
     void setVariantCommonLigatures(FontVariantLigatures variant) { m_variantCommonLigatures = static_cast<unsigned>(variant); }
@@ -130,7 +129,6 @@ public:
 
 private:
     FontFeatureSettings m_featureSettings;
-    AtomicString m_locale;
 
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
@@ -171,7 +169,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_orientation == other.m_orientation
         && m_nonCJKGlyphOrientation == other.m_nonCJKGlyphOrientation
         && m_widthVariant == other.m_widthVariant
-        && m_locale == other.m_locale
+        && m_script == other.m_script
         && m_featureSettings == other.m_featureSettings
         && m_fontSynthesis == other.m_fontSynthesis
         && m_variantCommonLigatures == other.m_variantCommonLigatures
@@ -265,7 +263,6 @@ public:
     static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
     static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
     static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle; }
-    static const AtomicString& initialLocale() { return nullAtom; }
     static FontVariantPosition initialVariantPosition() { return FontVariantPosition::Normal; }
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }

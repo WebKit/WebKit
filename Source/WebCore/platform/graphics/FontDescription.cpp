@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
  * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
@@ -30,13 +29,11 @@
 
 #include "config.h"
 #include "FontDescription.h"
-#include "LocaleToScriptMapping.h"
 
 namespace WebCore {
 
 struct SameSizeAsFontCascadeDescription {
     Vector<void*> vector;
-    void* string;
     float size;
     unsigned bitfields1;
     unsigned bitfields2 : 22;
@@ -56,7 +53,7 @@ FontDescription::FontDescription()
     , m_weight(FontWeightNormal)
     , m_renderingMode(NormalRenderingMode)
     , m_textRendering(AutoTextRendering)
-    , m_script(localeToScriptCodeForFontSelection(m_locale))
+    , m_script(USCRIPT_COMMON)
     , m_fontSynthesis(FontSynthesisWeight | FontSynthesisStyle)
     , m_variantCommonLigatures(static_cast<unsigned>(FontVariantLigatures::Normal))
     , m_variantDiscretionaryLigatures(static_cast<unsigned>(FontVariantLigatures::Normal))
@@ -74,12 +71,6 @@ FontDescription::FontDescription()
     , m_variantEastAsianWidth(static_cast<unsigned>(FontVariantEastAsianWidth::Normal))
     , m_variantEastAsianRuby(static_cast<unsigned>(FontVariantEastAsianRuby::Normal))
 {
-}
-
-void FontDescription::setLocale(const AtomicString& locale)
-{
-    m_locale = locale;
-    m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
 FontTraitsMask FontDescription::traitsMask() const
