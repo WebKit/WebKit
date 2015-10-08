@@ -1,5 +1,26 @@
 2015-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Allow custom revisions to be specified in A/B testing
+        https://bugs.webkit.org/show_bug.cgi?id=149905
+
+        Reviewed by Chris Dumez.
+
+        Allow custom revision number on each "repository" when creating a test group.
+
+        * public/v2/app.css:
+        (form .analysis-group [name=customValue]): Added.
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController._createConfiguration): Added "Custom" as a revision option.
+        Also added point labels such as (point 3) on "None" for when some points are missing revision info.
+        (App.AnalysisTaskController._labelForPoints): Extracted from _createConfiguration.
+        (App.AnalysisTaskController.actions.createTestGroup): Respect the custom revision number when custom
+        revision option is selected.
+
+        * public/v2/index.html: Added a text field for specifying a custom revision number.
+
+2015-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make the site name configurable in perf dashboard
         https://bugs.webkit.org/show_bug.cgi?id=149894
 

@@ -437,6 +437,10 @@ form .analysis-group > * {
     margin: 0.5rem;
 }
 
+form .analysis-group [name=customValue] {
+    display: block;
+}
+
 #analysis-tasks,
 .analysis-group table {
     border: solid 0px #999;

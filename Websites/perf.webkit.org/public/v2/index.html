@@ -726,9 +726,14 @@
                             <tr>
                                 <th>{{name}}</th>
                                 {{#each sets}}
-                                    <td>{{view Ember.Select name=name content=options
-                                        optionValuePath="content.value" optionLabelPath="content.label"
-                                        selection=selection}}</td>
+                                    <td>
+                                        {{view Ember.Select name=name content=options
+                                            optionValuePath="content.value" optionLabelPath="content.label"
+                                            selection=selection}}
+                                        {{#if selection.isCustom}}
+                                            {{input name="customValue" type=text value=customValue}}
+                                        {{/if}}
+                                        </td>
                                 {{/each}}
                             </tr>
                         {{/each}}
