@@ -63,22 +63,26 @@ public:
     {
         return m_numberOfReusedRegisters;
     }
+
+    RegisterSet usedRegisters() const { return m_usedRegisters; }
     
     // preserveReusedRegistersByPushing() returns the number of padding bytes used to keep the stack
     // pointer properly aligned and to reserve room for calling a C helper. This number of padding
     // bytes must be provided to restoreReusedRegistersByPopping() in order to reverse the work done
     // by preserveReusedRegistersByPushing().
-    size_t preserveReusedRegistersByPushing(MacroAssembler& jit);
-    void restoreReusedRegistersByPopping(MacroAssembler& jit, size_t numberOfPaddingBytes);
+    unsigned preserveReusedRegistersByPushing(MacroAssembler& jit);
+    void restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters);
     
     RegisterSet usedRegistersForCall() const;
     
     unsigned desiredScratchBufferSizeForCall() const;
     
     void preserveUsedRegistersToScratchBufferForCall(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
-    
     void restoreUsedRegistersFromScratchBufferForCall(MacroAssembler& jit, ScratchBuffer* scratchBuffer, GPRReg scratchGPR = InvalidGPRReg);
-    
+
+    static unsigned preserveRegistersToStackForCall(MacroAssembler& jit, const RegisterSet& usedRegisters, unsigned extraPaddingInBytes);
+    static void restoreRegistersFromStackForCall(MacroAssembler& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraPaddingInBytes);
+
 private:
     RegisterSet m_usedRegisters;
     TempRegisterSet m_lockedRegisters;

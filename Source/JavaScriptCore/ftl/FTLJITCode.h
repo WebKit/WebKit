@@ -72,6 +72,8 @@ public:
     void initializeAddressForCall(CodePtr);
     
     void validateReferences(const TrackedReferences&) override;
+
+    RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
     
     const Vector<RefPtr<ExecutableMemoryHandle>>& handles() const { return m_handles; }
     const Vector<RefPtr<DataSection>>& dataSections() const { return m_dataSections; }

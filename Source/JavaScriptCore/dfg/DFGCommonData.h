@@ -80,7 +80,9 @@ public:
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     CallSiteIndex addCodeOrigin(CodeOrigin);
+    CallSiteIndex addCodeOriginUnconditionally(CodeOrigin);
     CallSiteIndex lastCallSite() const;
+    void removeCallSiteIndex(CallSiteIndex);
     
     void shrinkToFit();
     
@@ -116,6 +118,10 @@ public:
     
     unsigned frameRegisterCount;
     unsigned requiredRegisterCountForExit;
+
+private:
+    HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> callSiteIndexFreeList;
+
 };
 
 } } // namespace JSC::DFG

@@ -960,7 +960,6 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->patch.valueTagGPR = static_cast<int8_t>(InvalidGPRReg);
 #endif
             stubInfo->patch.usedRegisters = usedRegisters();
-            stubInfo->patch.spillMode = NeedToSpill;
 
             m_jit.addIn(InRecord(jump, done, slowPath.get(), stubInfo));
             addSlowPathGenerator(WTF::move(slowPath));

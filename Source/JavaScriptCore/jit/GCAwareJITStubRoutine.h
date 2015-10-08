@@ -89,6 +89,22 @@ private:
     WriteBarrier<JSCell> m_object;
 };
 
+
+// The stub has exception handlers in it. So it clears itself from exception
+// handling table when it dies. It also frees space in CodeOrigin table
+// for new exception handlers to use the same CallSiteIndex.
+class GCAwareJITStubRoutineWithExceptionHandler : public GCAwareJITStubRoutine {
+public:
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef&, VM&, CodeBlock*, CallSiteIndex);
+    ~GCAwareJITStubRoutineWithExceptionHandler() override;
+
+    void aboutToDie() override;
+
+private:
+    CodeBlock* m_codeBlockWithExceptionHandler;
+    CallSiteIndex m_exceptionHandlerCallSiteIndex;
+};
+
 // Helper for easily creating a GC-aware JIT stub routine. For the varargs,
 // pass zero or more JSCell*'s. This will either create a JITStubRoutine, a
 // GCAwareJITStubRoutine, or an ObjectMarkingGCAwareJITStubRoutine as
@@ -110,7 +126,8 @@ private:
 
 PassRefPtr<JITStubRoutine> createJITStubRoutine(
     const MacroAssemblerCodeRef&, VM&, const JSCell* owner, bool makesCalls,
-    JSCell* = nullptr);
+    JSCell* = nullptr, 
+    CodeBlock* codeBlockForExceptionHandlers = nullptr, CallSiteIndex exceptionHandlingCallSiteIndex = CallSiteIndex(std::numeric_limits<unsigned>::max()));
 
 // Helper for the creation of simple stub routines that need no help from the GC. Note
 // that codeBlock gets "executed" more than once.

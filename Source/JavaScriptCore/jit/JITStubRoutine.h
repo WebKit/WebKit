@@ -66,6 +66,7 @@ public:
     }
     
     virtual ~JITStubRoutine();
+    virtual void aboutToDie() { }
     
     // MacroAssemblerCodeRef is copyable, but at the cost of reference
     // counting churn. Returning a reference is a good way of reducing

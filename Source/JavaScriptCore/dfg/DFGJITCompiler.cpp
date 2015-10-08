@@ -555,6 +555,7 @@ void JITCompiler::appendExceptionHandlingOSRExit(unsigned eventStreamIndex, Code
     exit.m_willArriveAtOSRExitFromGenericUnwind = jumpsToFail.empty(); // If jumps are empty, we're going to jump here from genericUnwind from a child call frame.
     exit.m_isExceptionHandler = true;
     exit.m_codeOrigin = opCatchOrigin;
+    exit.m_exceptionHandlerCallSiteIndex = callSite;
     OSRExitCompilationInfo& exitInfo = appendExitInfo(jumpsToFail);
     jitCode()->appendOSRExit(exit);
     m_exceptionHandlerOSRExitCallSites.append(ExceptionHandlingOSRExitInfo { exitInfo, *exceptionHandler, callSite });

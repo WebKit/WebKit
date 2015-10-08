@@ -144,6 +144,13 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
         exit.validateReferences(trackedReferences);
 }
 
+RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex)
+{
+    // FIXME: implement this when FTL implements try/catch.
+    // https://bugs.webkit.org/show_bug.cgi?id=149409
+    return RegisterSet();
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

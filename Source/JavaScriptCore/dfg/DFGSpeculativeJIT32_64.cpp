@@ -183,11 +183,18 @@ void SpeculativeJIT::cachedGetById(
         basePayloadGPR = resultPayloadGPR;
     }
     
+    RegisterSet usedRegisters = this->usedRegisters();
+    if (spillMode == DontSpill) {
+        // We've already flushed registers to the stack, we don't need to spill these.
+        usedRegisters.set(JSValueRegs(baseTagGPROrNone, basePayloadGPR), false);
+        usedRegisters.set(JSValueRegs(resultTagGPR, resultPayloadGPR), false);
+    }
+    
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITGetByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters(),
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
         JSValueRegs(baseTagGPROrNone, basePayloadGPR),
-        JSValueRegs(resultTagGPR, resultPayloadGPR), spillMode);
+        JSValueRegs(resultTagGPR, resultPayloadGPR));
     
     gen.generateFastPath(m_jit);
     
@@ -216,11 +223,17 @@ void SpeculativeJIT::cachedGetById(
 
 void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode)
 {
+    RegisterSet usedRegisters = this->usedRegisters();
+    if (spillMode == DontSpill) {
+        // We've already flushed registers to the stack, we don't need to spill these.
+        usedRegisters.set(basePayloadGPR, false);
+        usedRegisters.set(JSValueRegs(valueTagGPR, valuePayloadGPR), false);
+    }
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     JITPutByIdGenerator gen(
-        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters(),
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
         JSValueRegs::payloadOnly(basePayloadGPR), JSValueRegs(valueTagGPR, valuePayloadGPR),
-        scratchGPR, spillMode, m_jit.ecmaModeFor(codeOrigin), putKind);
+        scratchGPR, m_jit.ecmaModeFor(codeOrigin), putKind);
     
     gen.generateFastPath(m_jit);
     

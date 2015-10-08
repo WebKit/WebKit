@@ -2263,8 +2263,11 @@ CodeBlock::~CodeBlock()
     // destructors.
 
 #if ENABLE(JIT)
-    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter)
-        (*iter)->deref();
+    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+        StructureStubInfo* stub = *iter;
+        stub->aboutToDie();
+        stub->deref();
+    }
 #endif // ENABLE(JIT)
 }
 
@@ -2980,6 +2983,38 @@ HandlerInfo* CodeBlock::handlerForIndex(unsigned index, RequiredHandler required
     }
 
     return 0;
+}
+
+CallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite)
+{
+#if ENABLE(DFG_JIT)
+    RELEASE_ASSERT(jitType() == JITCode::DFGJIT); // FIXME: When implementing FTL try/catch we should include that JITType here as well: https://bugs.webkit.org/show_bug.cgi?id=149409
+    RELEASE_ASSERT(canGetCodeOrigin(originalCallSite));
+    ASSERT(!!handlerForIndex(originalCallSite.bits()));
+    CodeOrigin originalOrigin = codeOrigin(originalCallSite);
+    return m_jitCode->dfgCommon()->addCodeOriginUnconditionally(originalOrigin);
+#else
+    // We never create new on-the-fly exception handling
+    // call sites outside the DFG/FTL inline caches.
+    RELEASE_ASSERT_NOT_REACHED();
+    return CallSiteIndex(0);
+#endif
+}
+
+void CodeBlock::removeExceptionHandlerForCallSite(CallSiteIndex callSiteIndex)
+{
+    RELEASE_ASSERT(m_rareData);
+    Vector<HandlerInfo>& exceptionHandlers = m_rareData->m_exceptionHandlers;
+    unsigned index = callSiteIndex.bits();
+    for (size_t i = 0; i < exceptionHandlers.size(); ++i) {
+        HandlerInfo& handler = exceptionHandlers[i];
+        if (handler.start <= index && handler.end > index) {
+            exceptionHandlers.remove(i);
+            return;
+        }
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 unsigned CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)

@@ -217,6 +217,7 @@ public:
     };
     HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset, RequiredHandler = RequiredHandler::AnyHandler);
     HandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
+    void removeExceptionHandlerForCallSite(CallSiteIndex);
     unsigned lineNumberForBytecodeOffset(unsigned bytecodeOffset);
     unsigned columnNumberForBytecodeOffset(unsigned bytecodeOffset);
     void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot,
@@ -915,6 +916,8 @@ public:
         createRareDataIfNecessary(); // We may be handling the exception of an inlined call frame.
         m_rareData->m_exceptionHandlers.append(handler);
     }
+
+    CallSiteIndex newExceptionHandlingCallSiteIndex(CallSiteIndex originalCallSite);
 
 protected:
     void finalizeLLIntInlineCaches();

@@ -314,6 +314,52 @@ private:
     WriteBarrier<JSObject> m_delegate;
 };
 
+class CustomGetter : public JSNonFinalObject {
+public:
+    CustomGetter(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    DECLARE_INFO;
+    typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | JSC::OverridesGetOwnPropertySlot;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static CustomGetter* create(VM& vm, Structure* structure)
+    {
+        CustomGetter* getter = new (NotNull, allocateCell<CustomGetter>(vm.heap, sizeof(CustomGetter))) CustomGetter(vm, structure);
+        getter->finishCreation(vm);
+        return getter;
+    }
+
+    static bool getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+    {
+        CustomGetter* thisObject = jsCast<CustomGetter*>(object);
+        if (propertyName == PropertyName(Identifier::fromString(exec, "customGetter"))) {
+            slot.setCacheableCustom(thisObject, DontDelete | ReadOnly | DontEnum, thisObject->customGetter);
+            return true;
+        }
+        return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
+    }
+
+private:
+    static EncodedJSValue customGetter(ExecState* exec, JSObject*, EncodedJSValue thisValue, PropertyName)
+    {
+        CustomGetter* thisObject = jsDynamicCast<CustomGetter*>(JSValue::decode(thisValue));
+        if (!thisObject)
+            return throwVMTypeError(exec);
+        bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
+        if (shouldThrow)
+            return throwVMTypeError(exec);
+        return JSValue::encode(jsNumber(100));
+    }
+};
+
 class RuntimeArray : public JSArray {
 public:
     typedef JSArray Base;
@@ -422,6 +468,7 @@ const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, CREATE_METHOD_T
 const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, CREATE_METHOD_TABLE(Masquerader) };
 const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, CREATE_METHOD_TABLE(Root) };
 const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(ImpureGetter) };
+const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(CustomGetter) };
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 
 ElementHandleOwner* Element::handleOwner()
@@ -446,6 +493,7 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
 static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRuntimeArray(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateCustomGetterObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState*);
 
 static EncodedJSValue JSC_HOST_CALL functionSetElementRoot(ExecState*);
@@ -663,6 +711,7 @@ protected:
         addFunction(vm, "createRuntimeArray", functionCreateRuntimeArray, 0);
 
         addFunction(vm, "createImpureGetter", functionCreateImpureGetter, 1);
+        addFunction(vm, "createCustomGetterObject", functionCreateCustomGetterObject, 0);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
 
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
@@ -1089,6 +1138,14 @@ EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState* exec)
         delegate = asObject(target.asCell());
     Structure* structure = ImpureGetter::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
     ImpureGetter* result = ImpureGetter::create(exec->vm(), structure, delegate);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateCustomGetterObject(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Structure* structure = CustomGetter::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
+    CustomGetter* result = CustomGetter::create(exec->vm(), structure);
     return JSValue::encode(result);
 }
 

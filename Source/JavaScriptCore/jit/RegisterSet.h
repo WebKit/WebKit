@@ -61,6 +61,8 @@ public:
     static RegisterSet allGPRs();
     static RegisterSet allFPRs();
     static RegisterSet allRegisters();
+
+    static RegisterSet registersToNotSaveForCall();
     
     void set(Reg reg, bool value = true)
     {
@@ -68,11 +70,11 @@ public:
         m_vector.set(reg.index(), value);
     }
     
-    void set(JSValueRegs regs)
+    void set(JSValueRegs regs, bool value = true)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            set(regs.tagGPR());
-        set(regs.payloadGPR());
+            set(regs.tagGPR(), value);
+        set(regs.payloadGPR(), value);
     }
     
     void clear(Reg reg)

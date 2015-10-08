@@ -467,7 +467,7 @@ static void fixFunctionBasedOnStackMaps(
                 
                 JITGetByIdGenerator gen(
                     codeBlock, codeOrigin, getById.callSiteIndex(), usedRegisters, JSValueRegs(base),
-                    JSValueRegs(result), NeedToSpill);
+                    JSValueRegs(result));
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
 
@@ -505,8 +505,7 @@ static void fixFunctionBasedOnStackMaps(
                 
                 JITPutByIdGenerator gen(
                     codeBlock, codeOrigin, putById.callSiteIndex(), usedRegisters, JSValueRegs(base),
-                    JSValueRegs(value), GPRInfo::patchpointScratchRegister, NeedToSpill,
-                    putById.ecmaMode(), putById.putKind());
+                    JSValueRegs(value), GPRInfo::patchpointScratchRegister, putById.ecmaMode(), putById.putKind());
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
                 
@@ -545,7 +544,6 @@ static void fixFunctionBasedOnStackMaps(
                 stubInfo->patch.baseGPR = static_cast<int8_t>(obj);
                 stubInfo->patch.valueGPR = static_cast<int8_t>(result);
                 stubInfo->patch.usedRegisters = usedRegisters;
-                stubInfo->patch.spillMode = NeedToSpill;
 
                 MacroAssembler::Label begin = slowPathJIT.label();
 

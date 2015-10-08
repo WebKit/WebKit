@@ -87,6 +87,38 @@ void JITCode::reconstruct(
         result[i] = recoveries[i].recover(exec);
 }
 
+RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
+{
+    for (OSRExit& exit : osrExit) {
+        if (exit.m_isExceptionHandler && exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
+            Operands<ValueRecovery> valueRecoveries;
+            reconstruct(codeBlock, exit.m_codeOrigin, exit.m_streamIndex, valueRecoveries);
+            RegisterSet liveAtOSRExit;
+            for (size_t index = 0; index < valueRecoveries.size(); ++index) {
+                const ValueRecovery& recovery = valueRecoveries[index];
+                if (recovery.isInRegisters()) {
+                    if (recovery.isInGPR())
+                        liveAtOSRExit.set(recovery.gpr());
+                    else if (recovery.isInFPR())
+                        liveAtOSRExit.set(recovery.fpr());
+#if USE(JSVALUE32_64)
+                    else if (recovery.isInJSValueRegs()) {
+                        liveAtOSRExit.set(recovery.payloadGPR());
+                        liveAtOSRExit.set(recovery.tagGPR());
+                    }
+#endif
+                    else
+                        RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+
+            return liveAtOSRExit;
+        }
+    }
+
+    return RegisterSet();
+}
+
 #if ENABLE(FTL_JIT)
 bool JITCode::checkIfOptimizationThresholdReached(CodeBlock* codeBlock)
 {

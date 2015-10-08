@@ -326,7 +326,7 @@ public:
     {
         return isInGPR();
     }
-#endif
+#endif // USE(JSVALUE32_64)
     
     MacroAssembler::FPRegisterID fpr() const
     {

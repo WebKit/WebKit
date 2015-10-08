@@ -36,6 +36,7 @@
 #include "JITOperations.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
@@ -47,9 +48,15 @@ namespace JSC {
 static const bool verbose = false;
 
 struct AccessGenerationState {
+    AccessGenerationState() 
+        : m_calculatedRegistersForCallAndExceptionHandling(false)
+        , m_needsToRestoreRegistersIfException(false)
+        , m_calculatedCallSiteIndex(false)
+    {
+    }
     CCallHelpers* jit { nullptr };
     ScratchRegisterAllocator* allocator;
-    size_t numberOfPaddingBytes { 0 };
+    unsigned numberOfBytesUsedToPreserveReusedRegisters { 0 };
     PolymorphicAccess* access { nullptr };
     StructureStubInfo* stubInfo { nullptr };
     CCallHelpers::JumpList success;
@@ -71,7 +78,7 @@ struct AccessGenerationState {
 
     void restoreScratch()
     {
-        allocator->restoreReusedRegistersByPopping(*jit, numberOfPaddingBytes);
+        allocator->restoreReusedRegistersByPopping(*jit, numberOfBytesUsedToPreserveReusedRegisters);
     }
 
     void succeed()
@@ -79,6 +86,127 @@ struct AccessGenerationState {
         restoreScratch();
         success.append(jit->jump());
     }
+
+    void calculateLiveRegistersForCallAndExceptionHandling()
+    {
+        if (!m_calculatedRegistersForCallAndExceptionHandling) {
+            m_calculatedRegistersForCallAndExceptionHandling = true;
+
+            m_liveRegistersToPreserveAtExceptionHandlingCallSite = jit->codeBlock()->jitCode()->liveRegistersToPreserveAtExceptionHandlingCallSite(jit->codeBlock(), stubInfo->callSiteIndex);
+            m_needsToRestoreRegistersIfException = m_liveRegistersToPreserveAtExceptionHandlingCallSite.numberOfSetRegisters() > 0;
+            if (m_needsToRestoreRegistersIfException)
+                RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
+
+            m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
+            m_liveRegistersForCall.exclude(RegisterSet::registersToNotSaveForCall());
+        }
+    }
+
+    void preserveLiveRegistersToStackForCall()
+    {
+        unsigned extraStackPadding = 0;
+        unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegistersForCall(), extraStackPadding);
+        if (m_numberOfStackBytesUsedForRegisterPreservation != std::numeric_limits<unsigned>::max())
+            RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == m_numberOfStackBytesUsedForRegisterPreservation);
+        m_numberOfStackBytesUsedForRegisterPreservation = numberOfStackBytesUsedForRegisterPreservation;
+    }
+
+    void restoreLiveRegistersFromStackForCall(bool isGetter)
+    {
+        RegisterSet dontRestore;
+        if (isGetter) {
+            // This is the result value. We don't want to overwrite the result with what we stored to the stack.
+            // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
+            dontRestore.set(valueRegs); 
+        }
+        restoreLiveRegistersFromStackForCall(dontRestore);
+    }
+
+    void restoreLiveRegistersFromStackForCallWithThrownException()
+    {
+        // Even if we're a getter, we don't want to ignore the result value like we normally do 
+        // because the getter threw, and therefore, didn't return a value that means anything. 
+        // Instead, we want to restore that register to what it was upon entering the getter 
+        // inline cache. The subtlety here is if the base and the result are the same register, 
+        // and the getter threw, we want OSR exit to see the original base value, not the result 
+        // of the getter call.
+        RegisterSet dontRestore = liveRegistersForCall();
+        // As an optimization here, we only need to restore what is live for exception handling.
+        // We can construct the dontRestore set to accomplish this goal by having it contain only
+        // what is live for call but not live for exception handling. By ignoring things that are 
+        // only live at the call but not the exception handler, we will only restore things live 
+        // at the exception handler.
+        dontRestore.exclude(liveRegistersToPreserveAtExceptionHandlingCallSite());
+        restoreLiveRegistersFromStackForCall(dontRestore);
+    }
+
+    void restoreLiveRegistersFromStackForCall(const RegisterSet& dontRestore)
+    {
+        unsigned extraStackPadding = 0;
+        ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, liveRegistersForCall(), dontRestore, m_numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
+    }
+
+    const RegisterSet& liveRegistersForCall()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        return m_liveRegistersForCall;
+    }
+
+    CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+
+        if (!m_calculatedCallSiteIndex) {
+            m_calculatedCallSiteIndex = true;
+
+            if (m_needsToRestoreRegistersIfException)
+                m_callSiteIndex = jit->codeBlock()->newExceptionHandlingCallSiteIndex(stubInfo->callSiteIndex);
+            else
+                m_callSiteIndex = originalCallSiteIndex();
+        }
+
+        return m_callSiteIndex;
+    }
+
+    CallSiteIndex callSiteIndexForExceptionHandling()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        RELEASE_ASSERT(m_needsToRestoreRegistersIfException);
+        RELEASE_ASSERT(m_calculatedCallSiteIndex);
+        return m_callSiteIndex;
+    }
+
+    const HandlerInfo& originalExceptionHandler() const
+    { 
+        RELEASE_ASSERT(m_needsToRestoreRegistersIfException);
+        HandlerInfo* exceptionHandler = jit->codeBlock()->handlerForIndex(stubInfo->callSiteIndex.bits());
+        RELEASE_ASSERT(exceptionHandler);
+        return *exceptionHandler;
+    }
+
+    unsigned numberOfStackBytesUsedForRegisterPreservation() const 
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        return m_numberOfStackBytesUsedForRegisterPreservation; 
+    }
+
+    bool needsToRestoreRegistersIfException() const { return m_needsToRestoreRegistersIfException; }
+    CallSiteIndex originalCallSiteIndex() const { return stubInfo->callSiteIndex; }
+
+private:
+    const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        return m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    }
+    
+    RegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    RegisterSet m_liveRegistersForCall;
+    CallSiteIndex m_callSiteIndex { CallSiteIndex(std::numeric_limits<unsigned>::max()) };
+    unsigned m_numberOfStackBytesUsedForRegisterPreservation { std::numeric_limits<unsigned>::max() };
+    bool m_calculatedRegistersForCallAndExceptionHandling : 1;
+    bool m_needsToRestoreRegistersIfException : 1;
+    bool m_calculatedCallSiteIndex : 1;
 };
 
 AccessCase::AccessCase()
@@ -497,208 +625,250 @@ void AccessCase::generate(AccessGenerationState& state)
 #endif
         }
 
-        // Stuff for custom getters.
-        CCallHelpers::Call operationCall;
-        CCallHelpers::Call handlerCall;
+        if (m_type == Load) {
+            state.succeed();
+            return;
+        }
 
-        // Stuff for JS getters.
+        // Stuff for custom getters/setters.
+        CCallHelpers::Call operationCall;
+        CCallHelpers::Call lookupExceptionHandlerCall;
+
+        // Stuff for JS getters/setters.
         CCallHelpers::DataLabelPtr addressOfLinkFunctionCheck;
         CCallHelpers::Call fastPathCall;
         CCallHelpers::Call slowPathCall;
 
         CCallHelpers::Jump success;
         CCallHelpers::Jump fail;
-        if (m_type != Load && m_type != Miss) {
-            // Need to make sure that whenever this call is made in the future, we remember the
-            // place that we made it from.
-            jit.store32(
-                CCallHelpers::TrustedImm32(stubInfo.callSiteIndex.bits()),
-                CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 
-            if (m_type == Getter || m_type == Setter) {
-                // Create a JS call using a JS call inline cache. Assume that:
-                //
-                // - SP is aligned and represents the extent of the calling compiler's stack usage.
-                //
-                // - FP is set correctly (i.e. it points to the caller's call frame header).
-                //
-                // - SP - FP is an aligned difference.
-                //
-                // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
-                //   code.
-                //
-                // Therefore, we temporarily grow the stack for the purpose of the call and then
-                // shrink it after.
+        // This also does the necessary calculations of whether or not we're an
+        // exception handling call site.
+        state.calculateLiveRegistersForCallAndExceptionHandling();
+        state.preserveLiveRegistersToStackForCall();
 
-                RELEASE_ASSERT(!m_rareData->callLinkInfo);
-                m_rareData->callLinkInfo = std::make_unique<CallLinkInfo>();
-                
-                // FIXME: If we generated a polymorphic call stub that jumped back to the getter
-                // stub, which then jumped back to the main code, then we'd have a reachability
-                // situation that the GC doesn't know about. The GC would ensure that the polymorphic
-                // call stub stayed alive, and it would ensure that the main code stayed alive, but
-                // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
-                // be GC objects, and then we'd be able to say that the polymorphic call stub has a
-                // reference to the getter stub.
-                // https://bugs.webkit.org/show_bug.cgi?id=148914
-                m_rareData->callLinkInfo->disallowStubs();
-                
-                m_rareData->callLinkInfo->setUpCall(
-                    CallLinkInfo::Call, stubInfo.codeOrigin, loadedValueGPR);
+        // Need to make sure that whenever this call is made in the future, we remember the
+        // place that we made it from.
+        jit.store32(
+            CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
+            CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
 
-                CCallHelpers::JumpList done;
+        if (m_type == Getter || m_type == Setter) {
+            // Create a JS call using a JS call inline cache. Assume that:
+            //
+            // - SP is aligned and represents the extent of the calling compiler's stack usage.
+            //
+            // - FP is set correctly (i.e. it points to the caller's call frame header).
+            //
+            // - SP - FP is an aligned difference.
+            //
+            // - Any byte between FP (exclusive) and SP (inclusive) could be live in the calling
+            //   code.
+            //
+            // Therefore, we temporarily grow the stack for the purpose of the call and then
+            // shrink it after.
 
-                // There is a "this" argument.
-                unsigned numberOfParameters = 1;
-                // ... and a value argument if we're calling a setter.
-                if (m_type == Setter)
-                    numberOfParameters++;
-
-                // Get the accessor; if there ain't one then the result is jsUndefined().
-                if (m_type == Setter) {
-                    jit.loadPtr(
-                        CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfSetter()),
-                        loadedValueGPR);
-                } else {
-                    jit.loadPtr(
-                        CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfGetter()),
-                        loadedValueGPR);
-                }
-
-                CCallHelpers::Jump returnUndefined = jit.branchTestPtr(
-                    CCallHelpers::Zero, loadedValueGPR);
-
-                unsigned numberOfRegsForCall = JSStack::CallFrameHeaderSize + numberOfParameters;
-
-                unsigned numberOfBytesForCall =
-                    numberOfRegsForCall * sizeof(Register) + sizeof(CallerFrameAndPC);
-
-                unsigned alignedNumberOfBytesForCall =
-                    WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
-
-                jit.subPtr(
-                    CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-                    CCallHelpers::stackPointerRegister);
-
-                CCallHelpers::Address calleeFrame = CCallHelpers::Address(
-                    CCallHelpers::stackPointerRegister,
-                    -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
-
-                jit.store32(
-                    CCallHelpers::TrustedImm32(numberOfParameters),
-                    calleeFrame.withOffset(JSStack::ArgumentCount * sizeof(Register) + PayloadOffset));
-
-                jit.storeCell(
-                    loadedValueGPR, calleeFrame.withOffset(JSStack::Callee * sizeof(Register)));
-
-                jit.storeCell(
-                    baseForGetGPR,
-                    calleeFrame.withOffset(virtualRegisterForArgument(0).offset() * sizeof(Register)));
-
-                if (m_type == Setter) {
-                    jit.storeValue(
-                        valueRegs,
-                        calleeFrame.withOffset(
-                            virtualRegisterForArgument(1).offset() * sizeof(Register)));
-                }
-
-                CCallHelpers::Jump slowCase = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, loadedValueGPR, addressOfLinkFunctionCheck,
-                    CCallHelpers::TrustedImmPtr(0));
-
-                fastPathCall = jit.nearCall();
-
-                jit.addPtr(
-                    CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-                    CCallHelpers::stackPointerRegister);
-                if (m_type == Getter)
-                    jit.setupResults(valueRegs);
-
-                done.append(jit.jump());
-                slowCase.link(&jit);
-
-                jit.move(loadedValueGPR, GPRInfo::regT0);
-#if USE(JSVALUE32_64)
-                // We *always* know that the getter/setter, if non-null, is a cell.
-                jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
-#endif
-                jit.move(CCallHelpers::TrustedImmPtr(m_rareData->callLinkInfo.get()), GPRInfo::regT2);
-                slowPathCall = jit.nearCall();
-
-                jit.addPtr(
-                    CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall),
-                    CCallHelpers::stackPointerRegister);
-                if (m_type == Getter)
-                    jit.setupResults(valueRegs);
-
-                done.append(jit.jump());
-                returnUndefined.link(&jit);
-
-                if (m_type == Getter)
-                    jit.moveTrustedValue(jsUndefined(), valueRegs);
-
-                done.link(&jit);
-
-                jit.addPtr(
-                    CCallHelpers::TrustedImm32(
-                        jit.codeBlock()->stackPointerOffset() * sizeof(Register)),
-                    GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-
-                state.callbacks.append(
-                    [=, &vm] (LinkBuffer& linkBuffer) {
-                        m_rareData->callLinkInfo->setCallLocations(
-                            linkBuffer.locationOfNearCall(slowPathCall),
-                            linkBuffer.locationOf(addressOfLinkFunctionCheck),
-                            linkBuffer.locationOfNearCall(fastPathCall));
-
-                        linkBuffer.link(
-                            slowPathCall,
-                            CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
-                    });
-            } else {
-                // getter: EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
-                // setter: void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
-#if USE(JSVALUE64)
-                if (m_type == CustomGetter) {
-                    jit.setupArgumentsWithExecState(
-                        baseForAccessGPR, baseForGetGPR,
-                        CCallHelpers::TrustedImmPtr(ident.impl()));
-                } else
-                    jit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, valueRegs.gpr());
-#else
-                if (m_type == CustomGetter) {
-                    jit.setupArgumentsWithExecState(
-                        baseForAccessGPR, baseForGetGPR,
-                        CCallHelpers::TrustedImm32(JSValue::CellTag),
-                        CCallHelpers::TrustedImmPtr(ident.impl()));
-                } else {
-                    jit.setupArgumentsWithExecState(
-                        baseForAccessGPR, baseForGetGPR,
-                        CCallHelpers::TrustedImm32(JSValue::CellTag),
-                        valueRegs.payloadGPR(), valueRegs.tagGPR());
-                }
-#endif
-                jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-
-                operationCall = jit.call();
-                if (m_type == CustomGetter)
-                    jit.setupResults(valueRegs);
-                CCallHelpers::Jump noException =
-                    jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
-
-                jit.copyCalleeSavesToVMCalleeSavesBuffer();
-                jit.setupArguments(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::callFrameRegister);
-                handlerCall = jit.call();
-                jit.jumpToExceptionHandler();
+            RELEASE_ASSERT(!m_rareData->callLinkInfo);
+            m_rareData->callLinkInfo = std::make_unique<CallLinkInfo>();
             
-                noException.link(&jit);
+            // FIXME: If we generated a polymorphic call stub that jumped back to the getter
+            // stub, which then jumped back to the main code, then we'd have a reachability
+            // situation that the GC doesn't know about. The GC would ensure that the polymorphic
+            // call stub stayed alive, and it would ensure that the main code stayed alive, but
+            // it wouldn't know that the getter stub was alive. Ideally JIT stub routines would
+            // be GC objects, and then we'd be able to say that the polymorphic call stub has a
+            // reference to the getter stub.
+            // https://bugs.webkit.org/show_bug.cgi?id=148914
+            m_rareData->callLinkInfo->disallowStubs();
+            
+            m_rareData->callLinkInfo->setUpCall(
+                CallLinkInfo::Call, stubInfo.codeOrigin, loadedValueGPR);
 
+            CCallHelpers::JumpList done;
+
+            // There is a "this" argument.
+            unsigned numberOfParameters = 1;
+            // ... and a value argument if we're calling a setter.
+            if (m_type == Setter)
+                numberOfParameters++;
+
+            // Get the accessor; if there ain't one then the result is jsUndefined().
+            if (m_type == Setter) {
+                jit.loadPtr(
+                    CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfSetter()),
+                    loadedValueGPR);
+            } else {
+                jit.loadPtr(
+                    CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfGetter()),
+                    loadedValueGPR);
+            }
+
+            CCallHelpers::Jump returnUndefined = jit.branchTestPtr(
+                CCallHelpers::Zero, loadedValueGPR);
+
+            unsigned numberOfRegsForCall = JSStack::CallFrameHeaderSize + numberOfParameters;
+
+            unsigned numberOfBytesForCall =
+                numberOfRegsForCall * sizeof(Register) + sizeof(CallerFrameAndPC);
+
+            unsigned alignedNumberOfBytesForCall =
+                WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
+
+            jit.subPtr(
+                CCallHelpers::TrustedImm32(alignedNumberOfBytesForCall),
+                CCallHelpers::stackPointerRegister);
+
+            CCallHelpers::Address calleeFrame = CCallHelpers::Address(
+                CCallHelpers::stackPointerRegister,
+                -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
+
+            jit.store32(
+                CCallHelpers::TrustedImm32(numberOfParameters),
+                calleeFrame.withOffset(JSStack::ArgumentCount * sizeof(Register) + PayloadOffset));
+
+            jit.storeCell(
+                loadedValueGPR, calleeFrame.withOffset(JSStack::Callee * sizeof(Register)));
+
+            jit.storeCell(
+                baseForGetGPR,
+                calleeFrame.withOffset(virtualRegisterForArgument(0).offset() * sizeof(Register)));
+
+            if (m_type == Setter) {
+                jit.storeValue(
+                    valueRegs,
+                    calleeFrame.withOffset(
+                        virtualRegisterForArgument(1).offset() * sizeof(Register)));
+            }
+
+            CCallHelpers::Jump slowCase = jit.branchPtrWithPatch(
+                CCallHelpers::NotEqual, loadedValueGPR, addressOfLinkFunctionCheck,
+                CCallHelpers::TrustedImmPtr(0));
+
+            fastPathCall = jit.nearCall();
+            if (m_type == Getter)
+                jit.setupResults(valueRegs);
+            done.append(jit.jump());
+
+            slowCase.link(&jit);
+            jit.move(loadedValueGPR, GPRInfo::regT0);
+#if USE(JSVALUE32_64)
+            // We *always* know that the getter/setter, if non-null, is a cell.
+            jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
+#endif
+            jit.move(CCallHelpers::TrustedImmPtr(m_rareData->callLinkInfo.get()), GPRInfo::regT2);
+            slowPathCall = jit.nearCall();
+            if (m_type == Getter)
+                jit.setupResults(valueRegs);
+            done.append(jit.jump());
+
+            returnUndefined.link(&jit);
+            if (m_type == Getter)
+                jit.moveTrustedValue(jsUndefined(), valueRegs);
+
+            done.link(&jit);
+
+            jit.addPtr(CCallHelpers::TrustedImm32((jit.codeBlock()->stackPointerOffset() * sizeof(Register)) - state.numberOfBytesUsedToPreserveReusedRegisters - state.numberOfStackBytesUsedForRegisterPreservation()),
+                GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            state.restoreLiveRegistersFromStackForCall(isGetter());
+
+            state.callbacks.append(
+                [=, &vm] (LinkBuffer& linkBuffer) {
+                    m_rareData->callLinkInfo->setCallLocations(
+                        linkBuffer.locationOfNearCall(slowPathCall),
+                        linkBuffer.locationOf(addressOfLinkFunctionCheck),
+                        linkBuffer.locationOfNearCall(fastPathCall));
+
+                    linkBuffer.link(
+                        slowPathCall,
+                        CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
+                });
+        } else {
+            unsigned stackOffset = 0;
+            // Need to make room for the C call so our spillage isn't overwritten.
+            if (state.numberOfStackBytesUsedForRegisterPreservation()) {
+                if (maxFrameExtentForSlowPathCall)
+                    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
+            }
+            if (stackOffset) {
+                jit.subPtr(
+                    CCallHelpers::TrustedImm32(stackOffset),
+                    CCallHelpers::stackPointerRegister);
+            }
+
+            // getter: EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
+            // setter: void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
+#if USE(JSVALUE64)
+            if (m_type == CustomGetter) {
+                jit.setupArgumentsWithExecState(
+                    baseForAccessGPR, baseForGetGPR,
+                    CCallHelpers::TrustedImmPtr(ident.impl()));
+            } else
+                jit.setupArgumentsWithExecState(baseForAccessGPR, baseForGetGPR, valueRegs.gpr());
+#else
+            if (m_type == CustomGetter) {
+                jit.setupArgumentsWithExecState(
+                    baseForAccessGPR, baseForGetGPR,
+                    CCallHelpers::TrustedImm32(JSValue::CellTag),
+                    CCallHelpers::TrustedImmPtr(ident.impl()));
+            } else {
+                jit.setupArgumentsWithExecState(
+                    baseForAccessGPR, baseForGetGPR,
+                    CCallHelpers::TrustedImm32(JSValue::CellTag),
+                    valueRegs.payloadGPR(), valueRegs.tagGPR());
+            }
+#endif
+            jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
+
+            operationCall = jit.call();
+            if (m_type == CustomGetter)
+                jit.setupResults(valueRegs);
+
+            if (stackOffset) {
+                jit.addPtr(
+                    CCallHelpers::TrustedImm32(stackOffset),
+                    CCallHelpers::stackPointerRegister);
+            }
+
+            CCallHelpers::Jump noException =
+                jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
+
+            bool didSetLookupExceptionHandler = false;
+            state.restoreLiveRegistersFromStackForCallWithThrownException();
+            state.restoreScratch();
+            jit.copyCalleeSavesToVMCalleeSavesBuffer();
+            if (state.needsToRestoreRegistersIfException()) {
+                // To the JIT that produces the original exception handling
+                // call site, they will expect the OSR exit to be arrived
+                // at from genericUnwind. Therefore we must model what genericUnwind
+                // does here. I.e, set callFrameForCatch and copy callee saves.
+
+                jit.storePtr(GPRInfo::callFrameRegister, vm.addressOfCallFrameForCatch());
+                CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit.jump();
+
+                // We don't need to insert a new exception handler in the table
+                // because we're doing a manual exception check here. i.e, we'll
+                // never arrive here from genericUnwind().
+                HandlerInfo originalHandler = state.originalExceptionHandler();
                 state.callbacks.append(
                     [=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link(operationCall, FunctionPtr(m_rareData->customAccessor.opaque));
-                        linkBuffer.link(handlerCall, lookupExceptionHandler);
+                        linkBuffer.link(jumpToOSRExitExceptionHandler, originalHandler.nativeCode);
                     });
+            } else {
+                jit.setupArguments(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::callFrameRegister);
+                lookupExceptionHandlerCall = jit.call();
+                didSetLookupExceptionHandler = true;
+                jit.jumpToExceptionHandler();
             }
+        
+            noException.link(&jit);
+            state.restoreLiveRegistersFromStackForCall(isGetter());
+
+            state.callbacks.append(
+                [=] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(operationCall, FunctionPtr(m_rareData->customAccessor.opaque));
+                    if (didSetLookupExceptionHandler)
+                        linkBuffer.link(lookupExceptionHandlerCall, lookupExceptionHandler);
+                });
         }
         state.succeed();
         return;
@@ -761,7 +931,7 @@ void AccessCase::generate(AccessGenerationState& state)
         else
             scratchGPR3 = InvalidGPRReg;
 
-        size_t numberOfPaddingBytes = allocator.preserveReusedRegistersByPushing(jit);
+        size_t numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit);
 
         ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
 
@@ -883,12 +1053,12 @@ void AccessCase::generate(AccessGenerationState& state)
                 });
         }
         
-        allocator.restoreReusedRegistersByPopping(jit, numberOfPaddingBytes);
+        allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters);
         state.succeed();
 
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
             slowPath.link(&jit);
-            allocator.restoreReusedRegistersByPopping(jit, numberOfPaddingBytes);
+            allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters);
             allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR);
 #if USE(JSVALUE64)
             jit.setupArgumentsWithExecState(
@@ -971,9 +1141,6 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerateWithCases(
         if (found)
             continue;
         
-        if (myCase->doesCalls() && stubInfo.patch.spillMode == NeedToSpill)
-            return MacroAssemblerCodePtr();
-
         casesToAdd.append(WTF::move(myCase));
     }
 
@@ -1091,11 +1258,15 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     CCallHelpers jit(&vm, codeBlock);
     state.jit = &jit;
 
-    state.numberOfPaddingBytes = allocator.preserveReusedRegistersByPushing(jit);
+    state.numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit);
 
     bool allGuardedByStructureCheck = true;
-    for (auto& entry : cases)
+    bool hasJSGetterSetterCall = false;
+    for (auto& entry : cases) {
         allGuardedByStructureCheck &= entry->guardedByStructureCheck();
+        if (entry->type() == AccessCase::Getter || entry->type() == AccessCase::Setter)
+            hasJSGetterSetterCall = true;
+    }
 
     if (cases.isEmpty()) {
         // This is super unlikely, but we make it legal anyway.
@@ -1147,6 +1318,38 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         failure = state.failAndRepatch;
     failure.append(jit.jump());
 
+    if (state.needsToRestoreRegistersIfException() && hasJSGetterSetterCall) {
+        // Emit the exception handler.
+        // Note that this code is only reachable when doing genericUnwind from a pure JS getter/setter .
+        // Note also that this is not reachable from custom getter/setter. Custom getter/setters will have 
+        // their own exception handling logic that doesn't go through genericUnwind.
+        MacroAssembler::Label makeshiftCatchHandler = jit.label();
+
+        int stackPointerOffset = codeBlock->stackPointerOffset() * sizeof(EncodedJSValue);
+        stackPointerOffset -= state.numberOfBytesUsedToPreserveReusedRegisters;
+        stackPointerOffset -= state.numberOfStackBytesUsedForRegisterPreservation();
+
+        jit.loadPtr(vm.addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
+        jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+
+        state.restoreLiveRegistersFromStackForCallWithThrownException();
+        state.restoreScratch();
+        CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit.jump();
+
+        HandlerInfo oldHandler = state.originalExceptionHandler();
+        CallSiteIndex newExceptionHandlingCallSite = state.callSiteIndexForExceptionHandling();
+        state.callbacks.append(
+            [=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(jumpToOSRExitExceptionHandler, oldHandler.nativeCode);
+
+                HandlerInfo handlerToRegister = oldHandler;
+                handlerToRegister.nativeCode = linkBuffer.locationOf(makeshiftCatchHandler);
+                handlerToRegister.start = newExceptionHandlingCallSite.bits();
+                handlerToRegister.end = newExceptionHandlingCallSite.bits() + 1;
+                codeBlock->appendExceptionHandler(handlerToRegister);
+            });
+    }
+
     LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate()) {
         if (verbose)
@@ -1168,7 +1371,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
 
     if (verbose)
         dataLog(*codeBlock, " ", stubInfo.codeOrigin, ": Generating polymorphic access stub for ", listDump(cases), "\n");
-    
+
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
         codeBlock, linkBuffer,
         ("%s", toCString("Access stub for ", *codeBlock, " ", stubInfo.codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data()));
@@ -1177,13 +1380,26 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     for (auto& entry : cases)
         doesCalls |= entry->doesCalls();
     
-    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls);
+    CodeBlock* codeBlockThatOwnsExceptionHandlers = nullptr;
+    CallSiteIndex callSiteIndexForExceptionHandling = state.originalCallSiteIndex();
+    if (state.needsToRestoreRegistersIfException()) {
+        codeBlockThatOwnsExceptionHandlers = codeBlock;
+        ASSERT(JITCode::isOptimizingJIT(codeBlockThatOwnsExceptionHandlers->jitType()));
+        callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
+    }
+
+    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, nullptr, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTF::move(state.watchpoints);
     if (!state.weakReferences.isEmpty())
         m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTF::move(state.weakReferences));
     if (verbose)
         dataLog("Returning: ", code.code(), "\n");
     return code.code();
+}
+
+void PolymorphicAccess::aboutToDie()
+{
+    m_stubRoutine->aboutToDie();
 }
 
 } // namespace JSC

@@ -199,6 +199,17 @@ public:
         }
     }
 
+    bool isGetter() const
+    {
+        switch (type()) {
+        case Getter:
+        case CustomGetter:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     CallLinkInfo* callLinkInfo() const
     {
         if (!m_rareData)
@@ -288,6 +299,8 @@ public:
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
     bool visitWeak(VM&) const;
+
+    void aboutToDie();
 
     void dump(PrintStream& out) const;
 

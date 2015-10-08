@@ -89,6 +89,21 @@ void StructureStubInfo::deref()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void StructureStubInfo::aboutToDie()
+{
+    switch (cacheType) {
+    case CacheType::Stub:
+        u.stub->aboutToDie();
+        return;
+    case CacheType::Unset:
+    case CacheType::GetByIdSelf:
+    case CacheType::PutByIdReplace:
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 MacroAssemblerCodePtr StructureStubInfo::addAccessCase(
     CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
 {

@@ -218,6 +218,11 @@ JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode)
     return m_ref.code();
 }
 
+RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex)
+{
+    return RegisterSet();
+}
+
 } // namespace JSC
 
 namespace WTF {

@@ -58,7 +58,7 @@ protected:
 
     JITByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet&, JSValueRegs base,
-        JSValueRegs value, SpillRegistersMode spillMode);
+        JSValueRegs value);
     
 public:
     void reportSlowPathCall(MacroAssembler::Label slowPathBegin, MacroAssembler::Call call)
@@ -96,7 +96,7 @@ public:
 
     JITGetByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
-        JSValueRegs value, SpillRegistersMode spillMode);
+        JSValueRegs value);
     
     void generateFastPath(MacroAssembler&);
 };
@@ -107,7 +107,7 @@ public:
 
     JITPutByIdGenerator(
         CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base,
-        JSValueRegs, GPRReg scratch, SpillRegistersMode spillMode, ECMAMode, PutKind);
+        JSValueRegs, GPRReg scratch, ECMAMode, PutKind);
     
     void generateFastPath(MacroAssembler&);
     

@@ -100,6 +100,7 @@ struct OSRExit : public OSRExitBase {
     void correctJump(LinkBuffer&);
 
     unsigned m_streamIndex;
+    CallSiteIndex m_exceptionHandlerCallSiteIndex;
 
     bool m_willArriveAtOSRExitFromGenericUnwind : 1;
     bool m_isExceptionHandler : 1;

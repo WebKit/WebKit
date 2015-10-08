@@ -32,6 +32,7 @@
 #include "JITStubs.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
+#include "RegisterSet.h"
 
 namespace JSC {
 
@@ -192,6 +193,8 @@ public:
     void* end() { return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(start()) + size()); }
     
     virtual bool contains(void*) = 0;
+
+    virtual RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex);
 
 private:
     JITType m_jitType;

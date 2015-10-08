@@ -102,64 +102,55 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
 GPRReg ScratchRegisterAllocator::allocateScratchGPR() { return allocateScratch<GPRInfo>(); }
 FPRReg ScratchRegisterAllocator::allocateScratchFPR() { return allocateScratch<FPRInfo>(); }
 
-size_t ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit)
+unsigned ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit)
 {
     if (!didReuseRegisters())
         return 0;
 
-    size_t numberOfBytesPushed = 0;
-
+    RegisterSet registersToSpill;
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
-        if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg)) {
-            jit.pushToSave(reg);
-            numberOfBytesPushed += sizeof(double);
-        }
+        if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg))
+            registersToSpill.set(reg);
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg)) {
-            jit.pushToSave(reg);
-            numberOfBytesPushed += sizeof(uintptr_t);
-        }
+        if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg))
+            registersToSpill.set(reg);
     }
 
-    size_t totalStackAdjustmentBytes = numberOfBytesPushed + maxFrameExtentForSlowPathCall;
-    totalStackAdjustmentBytes = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalStackAdjustmentBytes);
+    unsigned extraStackBytesAtTopOfStack = maxFrameExtentForSlowPathCall;
+    unsigned stackAdjustmentSize = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraStackBytesAtTopOfStack);
 
-    // FIXME: We shouldn't have to do this.
-    // https://bugs.webkit.org/show_bug.cgi?id=149030
-    size_t numberOfPaddingBytes = totalStackAdjustmentBytes - numberOfBytesPushed;
-    jit.subPtr(MacroAssembler::TrustedImm32(numberOfPaddingBytes), MacroAssembler::stackPointerRegister);
-
-    return numberOfPaddingBytes;
+    return stackAdjustmentSize;
 }
 
-void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, size_t numberOfPaddingBytes)
+void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters)
 {
     if (!didReuseRegisters())
         return;
 
-    jit.addPtr(MacroAssembler::TrustedImm32(numberOfPaddingBytes), MacroAssembler::stackPointerRegister);
-
+    RegisterSet registersToFill;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
         if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg))
-            jit.popToRestore(reg);
+            registersToFill.set(reg);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg reg = FPRInfo::toRegister(i);
         if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg))
-            jit.popToRestore(reg);
+            registersToFill.set(reg);
     }
+
+    unsigned extraStackBytesAtTopOfStack = maxFrameExtentForSlowPathCall;
+    RegisterSet dontRestore; // Empty set. We want to restore everything.
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToFill, dontRestore, numberOfBytesUsedToPreserveReusedRegisters, extraStackBytesAtTopOfStack);
 }
 
 RegisterSet ScratchRegisterAllocator::usedRegistersForCall() const
 {
     RegisterSet result = m_usedRegisters;
-    result.exclude(RegisterSet::calleeSaveRegisters());
-    result.exclude(RegisterSet::stackRegisters());
-    result.exclude(RegisterSet::reservedHardwareRegisters());
+    result.exclude(RegisterSet::registersToNotSaveForCall());
     return result;
 }
 
@@ -176,8 +167,10 @@ void ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall(Macro
     
     unsigned count = 0;
     for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
-        if (usedRegisters.get(reg))
-            jit.storePtr(reg, static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++));
+        if (usedRegisters.get(reg)) {
+            jit.storePtr(reg, static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + count);
+            count++;
+        }
         if (GPRInfo::toIndex(reg) != GPRInfo::InvalidIndex
             && scratchGPR == InvalidGPRReg
             && !m_lockedRegisters.get(reg) && !m_scratchRegisters.get(reg))
@@ -186,7 +179,8 @@ void ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall(Macro
     RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (usedRegisters.get(reg)) {
-            jit.move(MacroAssembler::TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++)), scratchGPR);
+            jit.move(MacroAssembler::TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + count), scratchGPR);
+            count++;
             jit.storeDouble(reg, scratchGPR);
         }
     }
@@ -230,6 +224,74 @@ void ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall(Macr
         if (usedRegisters.get(reg))
             jit.loadPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) + (count++), reg);
     }
+}
+
+unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(MacroAssembler& jit, const RegisterSet& usedRegisters, unsigned extraBytesAtTopOfStack)
+{
+    RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
+    if (!usedRegisters.numberOfSetRegisters())
+        return 0;
+    
+    unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
+    stackOffset += extraBytesAtTopOfStack;
+    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
+    jit.subPtr(
+        MacroAssembler::TrustedImm32(stackOffset),
+        MacroAssembler::stackPointerRegister);
+
+    unsigned count = 0;
+    for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
+        if (usedRegisters.get(reg)) {
+            jit.storePtr(reg, MacroAssembler::Address(MacroAssembler::stackPointerRegister, extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))));
+            count++;
+        }
+    }
+    for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
+        if (usedRegisters.get(reg)) {
+            jit.storeDouble(reg, MacroAssembler::Address(MacroAssembler::stackPointerRegister, extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))));
+            count++;
+        }
+    }
+
+    RELEASE_ASSERT(count == usedRegisters.numberOfSetRegisters());
+
+    return stackOffset;
+}
+
+void ScratchRegisterAllocator::restoreRegistersFromStackForCall(MacroAssembler& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraBytesAtTopOfStack)
+{
+    RELEASE_ASSERT(extraBytesAtTopOfStack % sizeof(void*) == 0);
+    if (!usedRegisters.numberOfSetRegisters()) {
+        RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == 0);
+        return;
+    }
+
+    unsigned count = 0;
+    for (GPRReg reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
+        if (usedRegisters.get(reg)) {
+            if (!ignore.get(reg))
+                jit.loadPtr(MacroAssembler::Address(MacroAssembler::stackPointerRegister, extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)), reg);
+            count++;
+        }
+    }
+    for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
+        if (usedRegisters.get(reg)) {
+            if (!ignore.get(reg))
+                jit.loadDouble(MacroAssembler::Address(MacroAssembler::stackPointerRegister, extraBytesAtTopOfStack + (sizeof(EncodedJSValue) * count)), reg);
+            count++;
+        }
+    }
+
+    unsigned stackOffset = (usedRegisters.numberOfSetRegisters()) * sizeof(EncodedJSValue);
+    stackOffset += extraBytesAtTopOfStack;
+    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), stackOffset);
+
+    RELEASE_ASSERT(count == usedRegisters.numberOfSetRegisters());
+    RELEASE_ASSERT(stackOffset == numberOfStackBytesUsedForRegisterPreservation);
+
+    jit.addPtr(
+        MacroAssembler::TrustedImm32(stackOffset),
+        MacroAssembler::stackPointerRegister);
 }
 
 } // namespace JSC

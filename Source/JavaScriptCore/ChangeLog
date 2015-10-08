@@ -1,3 +1,196 @@
+2015-10-08  Saam barati  <sbarati@apple.com>
+
+        We should be able to inline getter/setter calls inside an inline cache even when the SpillRegistersMode is NeedsToSpill
+        https://bugs.webkit.org/show_bug.cgi?id=149601
+
+        Reviewed by Filip Pizlo.
+
+        Before, if we had a PolymorphicAccess with and a StructureStubInfo
+        with a NeedToSpill spillMode, we wouldn't generate getter/setter
+        calls. This patch changes it such that we will generate the
+        getter/setter call and do the necessary register spilling/filling
+        around the getter/setter call to preserve any "usedRegisters".
+
+        This has an interesting story with how it relates to exception handling 
+        inside the DFG. Because the GetById variants are considered a throwing call 
+        site, we must make sure that we properly restore the registers spilled to the stack 
+        in case of an exception being thrown inside the getter/setter call. We do 
+        this by having the inline cache register itself as a new exception handling 
+        call site. When the inline cache "catches" the exception (i.e, genericUnwind 
+        will jump to this code), it will restore the registers it spilled that are 
+        live inside the original catch handler, and then jump to the original catch 
+        handler. We make sure to only generate this makeshift catch handler when we 
+        actually need to do any cleanup. If we determine that we don't need to restore 
+        any registers, we don't bother generating this makeshift catch handler.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::handlerForIndex):
+        (JSC::CodeBlock::newExceptionHandlingCallSiteIndex):
+        (JSC::CodeBlock::removeExceptionHandlerForCallSite):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::appendExceptionHandler):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::AccessGenerationState):
+        (JSC::AccessGenerationState::restoreScratch):
+        (JSC::AccessGenerationState::succeed):
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCall):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCall):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownException):
+        (JSC::AccessGenerationState::liveRegistersForCall):
+        (JSC::AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal):
+        (JSC::AccessGenerationState::callSiteIndexForExceptionHandling):
+        (JSC::AccessGenerationState::originalExceptionHandler):
+        (JSC::AccessGenerationState::numberOfStackBytesUsedForRegisterPreservation):
+        (JSC::AccessGenerationState::needsToRestoreRegistersIfException):
+        (JSC::AccessGenerationState::originalCallSiteIndex):
+        (JSC::AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerateWithCases):
+        (JSC::PolymorphicAccess::regenerate):
+        (JSC::PolymorphicAccess::aboutToDie):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::doesCalls):
+        (JSC::AccessCase::isGetter):
+        (JSC::AccessCase::callLinkInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::aboutToDie):
+        (JSC::StructureStubInfo::addAccessCase):
+        * bytecode/StructureStubInfo.h:
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::isInJSValueRegs):
+        (JSC::ValueRecovery::fpr):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::addCodeOrigin):
+        (JSC::DFG::CommonData::addCodeOriginUnconditionally):
+        (JSC::DFG::CommonData::lastCallSite):
+        (JSC::DFG::CommonData::removeCallSiteIndex):
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::reconstruct):
+        (JSC::DFG::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::DFG::JITCode::checkIfOptimizationThresholdReached):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::osrEntryBlock):
+        (JSC::DFG::JITCode::setOSREntryBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::validateReferences):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::handles):
+        (JSC::FTL::JITCode::dataSections):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutine::~GCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        (JSC::MarkingGCAwareJITStubRoutineWithOneObject::markRequiredObjectsInternal):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::aboutToDie):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::createJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JITCode.cpp:
+        (JSC::NativeJITCode::addressForCall):
+        (JSC::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * jit/JITCode.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITByIdGenerator::reportSlowPathCall):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetByValWithCachedId):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::createSelfManagedRoutine):
+        (JSC::JITStubRoutine::aboutToDie):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::webAssemblyCalleeSaveRegisters):
+        (JSC::RegisterSet::registersToNotSaveForCall):
+        (JSC::RegisterSet::allGPRs):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::set):
+        (JSC::RegisterSet::clear):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        (JSC::ScratchRegisterAllocator::usedRegistersForCall):
+        (JSC::ScratchRegisterAllocator::preserveUsedRegistersToScratchBufferForCall):
+        (JSC::ScratchRegisterAllocator::restoreUsedRegistersFromScratchBufferForCall):
+        (JSC::ScratchRegisterAllocator::preserveRegistersToStackForCall):
+        (JSC::ScratchRegisterAllocator::restoreRegistersFromStackForCall):
+        * jit/ScratchRegisterAllocator.h:
+        (JSC::ScratchRegisterAllocator::numberOfReusedRegisters):
+        (JSC::ScratchRegisterAllocator::usedRegisters):
+        * jsc.cpp:
+        (WTF::CustomGetter::CustomGetter):
+        (WTF::CustomGetter::createStructure):
+        (WTF::CustomGetter::create):
+        (WTF::CustomGetter::getOwnPropertySlot):
+        (WTF::CustomGetter::customGetter):
+        (WTF::Element::handleOwner):
+        (GlobalObject::finishCreation):
+        (functionCreateImpureGetter):
+        (functionCreateCustomGetterObject):
+        (functionSetImpureGetterDelegate):
+        * tests/stress/try-catch-custom-getter-as-get-by-id.js: Added.
+        (assert):
+        (bar):
+        (foo):
+        * tests/stress/try-catch-getter-as-get-by-id-register-restoration.js: Added.
+        (assert):
+        (o1.get f):
+        (bar):
+        (foo):
+        * tests/stress/try-catch-getter-as-get-by-id.js: Added.
+        (assert):
+        (o1.get f):
+        (bar):
+        (foo):
+        * tests/stress/try-catch-setter-as-put-by-id.js: Added.
+        (assert):
+        (o1.set f):
+        (bar):
+        (foo):
+        * tests/stress/try-catch-stub-routine-replaced.js: Added.
+        (assert):
+        (arr):
+        (hello):
+        (foo):
+        (objChain.get f):
+        (fakeOut.get f):
+        (o.get f):
+
 2015-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r190716.
