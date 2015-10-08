@@ -1,3 +1,18 @@
+2015-10-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r190749.
+        https://bugs.webkit.org/show_bug.cgi?id=149938
+
+        Caused 50+ layout test failures
+        https://build.webkit.org/results/Apple%20El%20Capitan%20Debug%20WK1%20(Tests)/r190749%20(213)/results.html
+        (Requested by litherum1 on #webkit).
+
+        Reverted changeset:
+
+        "DFG SSA should remove unreachable code"
+        https://bugs.webkit.org/show_bug.cgi?id=149931
+        http://trac.webkit.org/changeset/190749
+
 2015-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SSA should remove unreachable code
