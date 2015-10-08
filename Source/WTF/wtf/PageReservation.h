@@ -65,14 +65,7 @@ public:
 
     using PageBlock::base;
     using PageBlock::size;
-
-#ifndef __clang__
     using PageBlock::operator bool;
-#else
-    // FIXME: This is a workaround for <rdar://problem/8876150>, wherein Clang incorrectly emits an access
-    // control warning when a client tries to use operator bool exposed above via "using PageBlock::operator bool".
-    operator bool() const { return PageBlock::operator bool(); }
-#endif
 
     void commit(void* start, size_t size)
     {
