@@ -51,19 +51,5 @@ void resetIn(CodeBlock*, StructureStubInfo&);
 
 } // namespace JSC
 
-#else // ENABLE(JIT)
-
-#include <wtf/Assertions.h>
-
-namespace JSC {
-
-struct StructureStubInfo;
-
-inline NO_RETURN_DUE_TO_CRASH void resetGetByID(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }
-inline NO_RETURN_DUE_TO_CRASH void resetPutByID(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }
-inline NO_RETURN void resetIn(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }
-
-} // namespace JSC
-
 #endif // ENABLE(JIT)
 #endif // Repatch_h
