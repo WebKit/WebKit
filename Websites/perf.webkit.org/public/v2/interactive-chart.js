@@ -645,6 +645,8 @@ App.InteractiveChartComponent = Ember.Component.extend({
 
         var xScale = this._x;
         var yScale = this._y;
+        if (!xScale || !yScale)
+            return;
 
         // Expand the width of each range as needed and sort ranges by the left-edge of ranges.
         var minWidth = 3;
