@@ -42,7 +42,6 @@ WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy
     : WebPopupMenuProxy(client)
     , m_webView(webView)
     , m_popup(gtk_menu_new())
-    , m_activeItem(-1)
     , m_previousKeyEventCharacter(0)
     , m_previousKeyEventTimestamp(0)
     , m_currentlySelectedMenuItem(nullptr)
@@ -52,11 +51,7 @@ WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy
 
 WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk()
 {
-    if (m_popup) {
-        g_signal_handlers_disconnect_matched(m_popup, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
-        hidePopupMenu();
-        gtk_widget_destroy(m_popup);
-    }
+    cancelTracking();
 }
 
 GtkAction* WebPopupMenuProxyGtk::createGtkActionForMenuItem(const WebPopupItem& item, int itemIndex)
@@ -127,8 +122,6 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
         menuPosition.setY(menuPosition.y() - rect.height() / 2);
     }
 
-    gulong unmapHandler = g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmapped), this);
-
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
     gtk_menu_popup_for_device(GTK_MENU(m_popup), event ? gdk_event_get_device(event) : nullptr, nullptr, nullptr,
         [](GtkMenu*, gint* x, gint* y, gboolean* pushIn, gpointer userData) {
@@ -149,33 +142,23 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
        m_client->failedToShowPopupMenu();
        return;
     }
-
-    // WebPageProxy expects the menu to run in a nested run loop, since it invalidates the
-    // menu right after calling WebPopupMenuProxy::showPopupMenu().
-    m_runLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
-
-// This is to suppress warnings about gdk_threads_leave and gdk_threads_enter.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    gdk_threads_leave();
-    g_main_loop_run(m_runLoop.get());
-    gdk_threads_enter();
-#pragma GCC diagnostic pop
-
-    m_runLoop.clear();
-
-    g_signal_handler_disconnect(m_popup, unmapHandler);
-
-    if (!m_client)
-        return;
-
-    m_client->valueChangedForPopupMenu(this, m_activeItem);
 }
 
 void WebPopupMenuProxyGtk::hidePopupMenu()
 {
     gtk_menu_popdown(GTK_MENU(m_popup));
     resetTypeAheadFindState();
+}
+
+void WebPopupMenuProxyGtk::cancelTracking()
+{
+    if (!m_popup)
+        return;
+
+    g_signal_handlers_disconnect_matched(m_popup, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+    hidePopupMenu();
+    gtk_widget_destroy(m_popup);
+    m_popup = nullptr;
 }
 
 bool WebPopupMenuProxyGtk::typeAheadFind(GdkEventKey* event)
@@ -256,21 +239,10 @@ void WebPopupMenuProxyGtk::resetTypeAheadFindState()
     m_currentSearchString = emptyString();
 }
 
-void WebPopupMenuProxyGtk::shutdownRunLoop()
-{
-    if (g_main_loop_is_running(m_runLoop.get()))
-        g_main_loop_quit(m_runLoop.get());
-}
-
 void WebPopupMenuProxyGtk::menuItemActivated(GtkAction* action, WebPopupMenuProxyGtk* popupMenu)
 {
-    popupMenu->setActiveItem(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(action), "popup-menu-action-index")));
-    popupMenu->shutdownRunLoop();
-}
-
-void WebPopupMenuProxyGtk::menuUnmapped(GtkWidget*, WebPopupMenuProxyGtk* popupMenu)
-{
-    popupMenu->shutdownRunLoop();
+    if (popupMenu->m_client)
+        popupMenu->m_client->valueChangedForPopupMenu(popupMenu, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(action), "popup-menu-action-index")));
 }
 
 void WebPopupMenuProxyGtk::selectItemCallback(GtkWidget* item, WebPopupMenuProxyGtk* popupMenu)

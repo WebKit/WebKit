@@ -1,3 +1,26 @@
+2015-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Stop using a nested main loop for popup menus
+        https://bugs.webkit.org/show_bug.cgi?id=149920
+
+        Reviewed by Sergio Villar Senin.
+
+        WebPageProxy used to expect the popup menus to run in a nested
+        main loop and invalidated the menu right after showing it. But
+        this is no longer the case, so there's no reason to keep using
+        the nested main loop.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::cancelTracking):
+        (WebKit::WebPopupMenuProxyGtk::menuItemActivated):
+        (WebKit::WebPopupMenuProxyGtk::WebPopupMenuProxyGtk): Deleted.
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu): Deleted.
+        (WebKit::WebPopupMenuProxyGtk::shutdownRunLoop): Deleted.
+        (WebKit::WebPopupMenuProxyGtk::menuUnmapped): Deleted.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        (WebKit::WebPopupMenuProxyGtk::setActiveItem): Deleted.
+
 2015-10-07  Anders Carlsson  <andersca@apple.com>
 
         Add API for getting a group identifier from a bundle page
