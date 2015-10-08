@@ -70,7 +70,9 @@ JSDOMWindowBase::JSDOMWindowBase(VM& vm, Structure* structure, PassRefPtr<DOMWin
     , m_windowCloseWatchpoints((window && window->frame()) ? IsWatched : IsInvalidated)
     , m_impl(window)
     , m_shell(shell)
-    , m_privateFunctions(vm)
+#if ENABLE(STREAMS_API)
+    , m_readableStreamFunctions(vm)
+#endif
 {
 }
 
@@ -79,21 +81,23 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
     Base::finishCreation(vm, shell);
     ASSERT(inherits(info()));
 
-    m_privateFunctions.init(*this);
+#if ENABLE(STREAMS_API)
+    m_readableStreamFunctions.init(*this);
+#endif
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
 #if ENABLE(STREAMS_API)
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().readableStreamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().readableStreamErroredPrivateName(), jsNumber(2), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().readableStreamReadablePrivateName(), jsNumber(3), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().readableStreamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().readableStreamErroredPrivateName(), jsNumber(2), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().readableStreamReadablePrivateName(), jsNumber(3), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<WebCoreJSClientData*>(vm.clientData)->builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
 #define DECLARE_GLOBAL_STATIC(name)\
         GlobalPropertyInfo(\
-            static_cast<JSVMClientData*>(vm.clientData)->builtinFunctions().readableStreamInternalsBuiltins().name##PrivateName(), \
-            m_privateFunctions.readableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+            static_cast<WebCoreJSClientData*>(vm.clientData)->readableStreamInternalsBuiltins().name##PrivateName(),\
+            m_readableStreamFunctions.m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCOREREADABLESTREAMINTERNALS_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef EXPORT_FUNCTION
 #endif
@@ -107,7 +111,9 @@ void JSDOMWindowBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSDOMWindowBase* thisObject = jsCast<JSDOMWindowBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    thisObject->m_privateFunctions.visit(visitor);
+#if ENABLE(STREAMS_API)
+    thisObject->m_readableStreamFunctions.visit(visitor);
+#endif
 }
 
 void JSDOMWindowBase::destroy(JSCell* cell)
@@ -291,7 +297,7 @@ JSDOMWindow* toJSDOMWindow(JSValue value)
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
 {
     JSC::VM& vm = JSDOMWindowBase::commonVM();
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData);
+    WebCoreJSClientData* clientData = static_cast<WebCoreJSClientData*>(vm.clientData);
     Vector<Ref<DOMWrapperWorld>> wrapperWorlds;
     clientData->getAllWorlds(wrapperWorlds);
     for (unsigned i = 0; i < wrapperWorlds.size(); ++i) {

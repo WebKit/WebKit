@@ -36,14 +36,14 @@ DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, bool isNormal)
 {
     VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
-    static_cast<JSVMClientData*>(clientData)->rememberWorld(*this);
+    static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(*this);
 }
 
 DOMWrapperWorld::~DOMWrapperWorld()
 {
     VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
-    static_cast<JSVMClientData*>(clientData)->forgetWorld(*this);
+    static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(*this);
 
     // These items are created lazily.
     while (!m_scriptControllersWithWindowShells.isEmpty())
@@ -63,7 +63,7 @@ DOMWrapperWorld& normalWorld(JSC::VM& vm)
 {
     VM::ClientData* clientData = vm.clientData;
     ASSERT(clientData);
-    return static_cast<JSVMClientData*>(clientData)->normalWorld();
+    return static_cast<WebCoreJSClientData*>(clientData)->normalWorld();
 }
 
 DOMWrapperWorld& mainThreadNormalWorld()

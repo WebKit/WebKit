@@ -2634,7 +2634,7 @@ std::unique_ptr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScrip
 
     auto contents = std::make_unique<ArrayBufferContentsArray>(arrayBuffers.size());
     Vector<Ref<DOMWrapperWorld>> worlds;
-    static_cast<JSVMClientData*>(exec->vm().clientData)->getAllWorlds(worlds);
+    static_cast<WebCoreJSClientData*>(exec->vm().clientData)->getAllWorlds(worlds);
 
     HashSet<JSC::ArrayBuffer*> visited;
     for (size_t arrayBufferIndex = 0; arrayBufferIndex < arrayBuffers.size(); arrayBufferIndex++) {

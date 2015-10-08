@@ -314,8 +314,8 @@ if (namespace == "JSC"):
 else:
     builtinName = scopeName[0].lower() + scopeName[1:]
     builtinsImplementation.write("""{\\
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
-    return clientData->builtinFunctions().%s().codeName##Executable()->link(vm, clientData->builtinFunctions().%s().codeName##Source()); \\
+    WebCoreJSClientData* clientData = static_cast<WebCoreJSClientData*>(vm.clientData); \\
+    return clientData->%s().codeName##Executable()->link(vm, clientData->%s().codeName##Source()); \\
 """% (builtinName, builtinName))
 
 builtinsImplementation.write("""}

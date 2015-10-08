@@ -1,3 +1,17 @@
+2015-10-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r190716.
+        https://bugs.webkit.org/show_bug.cgi?id=149924
+
+        broke mac build from time to time (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "Automate WebCore JS builtins generation and build system"
+        https://bugs.webkit.org/show_bug.cgi?id=149751
+        http://trac.webkit.org/changeset/190716
+
 2015-10-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the WASM build on Linux
