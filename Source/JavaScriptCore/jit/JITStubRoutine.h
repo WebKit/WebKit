@@ -36,7 +36,6 @@
 namespace JSC {
 
 class JITStubRoutineSet;
-class RepatchBuffer;
 
 // This is a base-class for JIT stub routines, and also the class you want
 // to instantiate directly if you have a routine that does not need any

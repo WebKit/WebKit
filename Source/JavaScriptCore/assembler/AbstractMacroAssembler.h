@@ -82,7 +82,6 @@ inline bool optimizeForX86()
 }
 
 class LinkBuffer;
-class RepatchBuffer;
 class Watchpoint;
 namespace DFG {
 struct OSRExit;

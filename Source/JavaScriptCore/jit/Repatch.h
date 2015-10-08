@@ -57,7 +57,6 @@ void resetIn(CodeBlock*, StructureStubInfo&);
 
 namespace JSC {
 
-class RepatchBuffer;
 struct StructureStubInfo;
 
 inline NO_RETURN_DUE_TO_CRASH void resetGetByID(RepatchBuffer&, StructureStubInfo&) { RELEASE_ASSERT_NOT_REACHED(); }

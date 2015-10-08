@@ -1480,7 +1480,6 @@ protected:
 
 private:
     friend class LinkBuffer;
-    friend class RepatchBuffer;
 
     void internalCompare32(RegisterID left, TrustedImm32 right)
     {

@@ -2806,7 +2806,6 @@ private:
     bool m_fixedWidth;
 
     friend class LinkBuffer;
-    friend class RepatchBuffer;
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
