@@ -194,7 +194,9 @@ public:
     
     virtual bool contains(void*) = 0;
 
+#if ENABLE(JIT)
     virtual RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex);
+#endif
 
 private:
     JITType m_jitType;

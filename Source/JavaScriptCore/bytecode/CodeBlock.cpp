@@ -2996,6 +2996,7 @@ CallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteIndex origina
 #else
     // We never create new on-the-fly exception handling
     // call sites outside the DFG/FTL inline caches.
+    UNUSED_PARAM(originalCallSite);
     RELEASE_ASSERT_NOT_REACHED();
     return CallSiteIndex(0);
 #endif
