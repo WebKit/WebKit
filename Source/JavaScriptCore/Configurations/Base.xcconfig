@@ -85,8 +85,10 @@ PREBINDING = NO;
 WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough;
 
 LLVM_LOCAL_HEADER_PATH[sdk=macosx*] = "$(BUILT_PRODUCTS_DIR)/usr/local/LLVMForJavaScriptCore/include";
+LLVM_LOCAL_HEADER_PATH[sdk=iphoneos*] = "$(BUILT_PRODUCTS_DIR)/usr/local/include";
 
 LLVM_SYSTEM_HEADER_PATH[sdk=macosx*] = /usr/local/LLVMForJavaScriptCore/include;
+LLVM_SYSTEM_HEADER_PATH[sdk=iphoneos*] = /usr/local/include;
 
 HEADER_SEARCH_PATHS = . icu $(LLVM_LOCAL_HEADER_PATH) "${BUILT_PRODUCTS_DIR}/ExtraIncludesForLocalLLVMBuild" $(LLVM_SYSTEM_HEADER_PATH) "${BUILT_PRODUCTS_DIR}/usr/local/include" $(HEADER_SEARCH_PATHS);
 

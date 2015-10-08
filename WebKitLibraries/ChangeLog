@@ -1,3 +1,28 @@
+2015-10-08  Daniel Bates  <dabates@apple.com>
+
+        Add LLVM binaries for iOS 9 device
+        https://bugs.webkit.org/show_bug.cgi?id=149913
+
+        Rubber-stamped by Filip Pizlo.
+
+        Add LLVM 3.6.2 binaries for ARM64-based iOS devices. We make use of LLVM for the FTL,
+        which is enabled for 64-bit iOS devices.
+
+        I built these binaries by performing the following:
+
+        1) Check out WebKit to a directory like /some/path/OpenSource.
+
+        2) Download and expand the archive <http://llvm.org/releases/3.6.2/llvm-3.6.2.src.tar.xz> into /some/path/OpenSource/llvm.
+
+        3) In /some/path/OpenSource, delete the WebKitBuild directory to ensure a clean build.
+
+        4) Run `Tools/Scripts/build-jsc --release --device ARCHS=arm64 ONLY_ACTIVE_ARCH=NO` to build both LLVM and JavaScriptCore.
+
+        5) Run `Tools/Scripts/export-llvm-build -i WebKitLibraries/LLVMIncludesIOSDevice9.tar.bz2 -l WebKitLibraries/LLVMLibrariesIOSDevice9.tar.bz2 -b llvm/wkLLVMBuild -B llvm/wkLLVMBuild/Release+Asserts -s llvm` to produce files LLVM{Includes, Libraries}IOS9.tar.bz2.
+
+        * LLVMIncludesIOS9.tar.bz2: Added.
+        * LLVMLibrariesIOS9.tar.bz2: Added.
+
 2015-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Prepare internal AppleWin build for CMake

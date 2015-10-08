@@ -30,6 +30,9 @@ use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;
 use webkitdirs;
 
+sub buildLLVM($);
+sub symlinkLLVMLibrariesIfNeeded($$);
+
 my $showHelp = 0;
 my $llvm = 0;
 my $wksi = 0;
@@ -39,7 +42,7 @@ my $llvmLibraryPackage = "";
 my $useFullLibPaths = 0;
 my $preferSystemLLVMOverDrops = 0;
 my $llvmSubdirectoryName = "llvm";
-my $llvmPrefix = "/usr/local/LLVMForJavaScriptCore";
+my $llvmPrefix = willUseIOSDeviceSDKWhenBuilding() ? "/usr/local" : "/usr/local/LLVMForJavaScriptCore";
 my $osxVersion;
 my $force = 0;
 
@@ -83,8 +86,6 @@ if ($showHelp) {
    exit 1;
 }
 
-determineXcodeSDK();
-
 my $productDir = shift @ARGV;
 if ($productDir) {
     $productDir = File::Spec->rel2abs($productDir);
@@ -92,7 +93,7 @@ if ($productDir) {
     $productDir = $ENV{BUILT_PRODUCTS_DIR} || productDir();
 }
 
-if (!$osxVersion) {
+if (!isIOSWebKit() && !$osxVersion) {
     $osxVersion = `sw_vers -productVersion | cut -d. -f-2`;
     chomp($osxVersion);
 }
@@ -134,6 +135,19 @@ sub dittoHeaders
         print "Updating $header\n";
         (system("ditto", $srcHeader, $header) == 0) or die;
     }
+}
+
+if ($clean) {
+    print "Cleaning.\n";    
+    (system("rm", "-rf", File::Spec->catfile($productDir, "usr", "local", "include", "WebKitSystemInterface.h")) == 0) or die;
+    if (isIOSWebKit()) {
+        (system("rm", "-rf", File::Spec->catfile($productDir, "usr", "local", "include", "WebKitSystemInterfaceIOS.h")) == 0) or die;
+    }
+    (system("rm", "-rf", "$productDir$llvmPrefix") == 0) or die;
+    unlink glob "$productDir/libWebKitSystemInterface*" or die if glob "$productDir/libWebKitSystemInterface*";
+    unlink glob "$productDir/usr/local/lib/libWebKitSystemInterface*" or die if glob "$productDir/usr/local/lib/libWebKitSystemInterface*";
+    unlink glob "$productDir/libLLVM*" or die if glob "$productDir/libLLVM*";
+    unlink glob "$productDir/libLTO*" or die if glob "$productDir/libLTO*";
 }
 
 if ($wksi) {
@@ -185,171 +199,201 @@ if ($llvm) {
     # Always create a directory at the full library path, because the JavaScriptCore build emits a warning if it's not there.
     (system("mkdir", "-p", "$productDir$llvmPrefix/lib") == 0) or die;
 
-    # Determine where to get LLVM binaries and headers.
-    my $useOwnLLVM = 0;
-    my $ownLLVMDirectory;
-    if (defined($ENV{LLVM_SOURCE_PATH})) {
-        print "Using LLVM from \$LLVM_SOURCE_PATH: " . $ENV{LLVM_SOURCE_PATH} . "\n";
-        $useOwnLLVM = 1;
-        $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
-    } elsif (-d $llvmSubdirectoryName && -e "$llvmSubdirectoryName/LLVMBuild.txt") {
-        print "Using LLVM from $llvmSubdirectoryName subdirectory.\n";
-        $useOwnLLVM = 1;
-        $ownLLVMDirectory = sourceDir() . "/$llvmSubdirectoryName";
-    } elsif ($llvmLibraryPackage ne "" && $llvmIncludePackage ne "") {
-        # Command-line arguments override our other ways of finding the packages.
-        print "Using LLVM binary drops specified on command-line: $llvmLibraryPackage and $llvmIncludePackage.\n";
-    } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
-        $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
-        $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
-        print "Using LLVM binary drops specified by \$LLVM_LIBRARY_PACKAGE and \$LLVM_INCLUDE_PACKAGE: $llvmLibraryPackage and $llvmIncludePackage.\n";
-    } elsif ($preferSystemLLVMOverDrops) {
-        # Don't fall through to drop detection.
+    (system("rm", "-f", File::Spec->catfile($productDir, "ExtraIncludesForLocalLLVMBuild")) == 0) or die;
+
+    if ($preferSystemLLVMOverDrops) {
         print "Using system LLVM.\n";
-    } elsif ($osxVersion eq "10.9") {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
-    } elsif ($osxVersion eq "10.10") {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesYosemite.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesYosemite.tar.bz2";
-    } elsif ($osxVersion eq "10.11") {
-        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesElCapitan.tar.bz2";
-        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesElCapitan.tar.bz2";
-    } else {
-        print "Don't know where to find LLVM!\n";
-        print "\n";
-        print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE or setting the\n";
-        print "--use-llvm-includes and --use-llvm-libraries options.\n";
-        print "\n";
-        print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
-        print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
+        exit 0;
+    }
+
+    my $llvmSourceDirectory = $ENV{LLVM_SOURCE_PATH};
+    $llvmSourceDirectory = File::Spec->catdir(sourceDir(), $llvmSubdirectoryName) unless $llvmSourceDirectory;
+    if (-d $llvmSourceDirectory) {
+        my $llvmBuildFile = File::Spec->catfile($llvmSourceDirectory, "LLVMBuild.txt");
+        if (-f $llvmBuildFile) {
+            print "Using LLVM source from $llvmSourceDirectory.\n";
+            buildLLVM($llvmSourceDirectory);
+            if (symlinkLLVMLibrariesIfNeeded($llvmSourceDirectory, $libraryDir)) {
+                # LLVM libraries changed; make JavaScriptCore relink against the new LLVM the next time it is built.
+                (system("touch", "Source/JavaScriptCore/llvm/library/LLVMAnchor.cpp") == 0) or die;
+            }
+            exit 0;
+        }
+        print STDERR "*************************************************************\n";
+        print STDERR "Cannot find file '$llvmBuildFile'.\n";
+        print STDERR "Please ensure that you have a complete LLVM distribution.\n";
+        print STDERR "You can check out LLVM trunk into the WebKit directory by running:\n";
+        print STDERR "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
+        print STDERR "*************************************************************\n";
         exit 1;
     }
 
-    sub fileContains
-    {
-        my ($filename, $string) = @_;
-        open my $fileHandle, '<', $filename or die;
-        while (<$fileHandle>) {
-            return 1 if /^$string$/;
-        }
-        return 0;
-    }
-
-    sub fileContentsEquals
-    {
-        my ($filename, $string) = @_;
-        open my $fileHandle, '<', $filename or die;
-        binmode $fileHandle;
-        my $contents = <$fileHandle>;
-        return $contents eq $string;
-    }
-
-    my $shouldUpdateLLVMLibraryToken = 0;
-
-    if ($useOwnLLVM) {
-        my $sdkArg;
-        if (xcodeSDK()) {
-            $sdkArg = "--sdk " . xcodeSDK();
-        } else {
-            $sdkArg = "";
-        }
-        my $sdkRoot = `xcrun $sdkArg --show-sdk-path`;
-        chomp $sdkRoot;
-    
-        if (!-e "$ownLLVMDirectory/wkLLVMBuild/Makefile.config") {
-            print("Configuring LLVM.\n");
-            (system("mkdir -p $ownLLVMDirectory/wkLLVMBuild"));
-            my $flags = "--enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no";
-            (system("(cd $ownLLVMDirectory/wkLLVMBuild && SDKROOT=$sdkRoot ../configure $flags)") == 0) or die;
-        }
-
-        print("Building LLVM.\n");
-        my $oldPath = $ENV{"PATH"};
-        chdir "$ownLLVMDirectory/wkLLVMBuild";
-        my $binariesDirectory = "binariesForLLVMBuild";
-        my $pathCommand = "";
-        if (-e $binariesDirectory) {
-            my $binariesPath = File::Spec->rel2abs($binariesDirectory);
-            print "Detected binaries directory; prepending to path: $binariesPath\n";
-            $pathCommand = "PATH=\\\$PWD/$binariesDirectory:\\\$PATH";
-        }
-        my $makeCommand = "env -i bash -l -c \"$pathCommand SDKROOT=$sdkRoot make -j `sysctl -n hw.activecpu`\"";
-        print $makeCommand . "\n";
-        (system($makeCommand) == 0) or die;
-        $ENV{"PATH"} = $oldPath;
-        chdirWebKit();
-        
-        my $ownLLVMBuildMode = "";
-        if (fileContains($ownLLVMDirectory . "/wkLLVMBuild/Makefile.config", "ENABLE_OPTIMIZED=1")) {
-            $ownLLVMBuildMode .= "Release";
-        } else {
-            $ownLLVMBuildMode .= "Debug";
-        }
-        
-        if (fileContains($ownLLVMDirectory . "/wkLLVMBuild/Makefile.config", "DISABLE_ASSERTIONS=1")) {
-            # Nothing to do.
-        } else {
-            $ownLLVMBuildMode .= "+Asserts";
-        }
-        
-        my $librarySourceDirectory = "$ownLLVMDirectory/wkLLVMBuild/$ownLLVMBuildMode/lib";
-        my $libraryTargetDirectory = $libraryDir;
-        $shouldUpdateLLVMLibraryToken = 0;
-        print("Symlinking libraries from $librarySourceDirectory to $libraryTargetDirectory\n");
-        opendir (my $dirHandle, $librarySourceDirectory);
-        while (my $filename = readdir($dirHandle)) {
-            next if $filename !~ /\.a$/;
-            next if $filename =~ /libgtest/;
-            print "   Symlink $filename\n";
-            my $sourceLibrary = "$librarySourceDirectory/$filename";
-            my $targetLibrary = "$libraryTargetDirectory/$filename";
-            my $ranlibToken = "$libraryTargetDirectory/.ranlibToken-$filename";
-            unlink($targetLibrary);
-            symlink($sourceLibrary, $targetLibrary);
-            if ($force
-                || !-e $ranlibToken
-                || !fileContentsEquals($ranlibToken, $sourceLibrary)
-                || -M $ranlibToken > -M $sourceLibrary) {
-                print "   Ranlib $filename\n";
-                executeRanlib($targetLibrary);
-                (open my $fileHandle, ">", $ranlibToken) or die;
-                print {$fileHandle} "$sourceLibrary";
-                close $fileHandle;
-                $shouldUpdateLLVMLibraryToken = 1;
+    $llvmIncludePackage = $ENV{LLVM_LIBRARY_PACKAGE} unless $llvmIncludePackage;
+    $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE} unless $llvmIncludePackage;
+    if (!$llvmLibraryPackage || !$llvmIncludePackage) {
+        if (isIOSWebKit()) {
+            my $majorSDKVersion = $1 if xcodeSDKVersion() =~ /^(\d+)/;
+            $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesIOS$majorSDKVersion.tar.bz2";
+            $llvmIncludePackage = "WebKitLibraries/LLVMIncludesIOS$majorSDKVersion.tar.bz2";
+        } elsif (isAppleMacWebKit()) {
+            if ($osxVersion eq "10.9") {
+                $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
+                $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
+            } elsif ($osxVersion eq "10.10") {
+                $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesYosemite.tar.bz2";
+                $llvmIncludePackage = "WebKitLibraries/LLVMIncludesYosemite.tar.bz2";
+            } elsif ($osxVersion eq "10.11") {
+                $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesElCapitan.tar.bz2";
+                $llvmIncludePackage = "WebKitLibraries/LLVMIncludesElCapitan.tar.bz2";
             }
         }
-        closedir $dirHandle;
-    } elsif (!$preferSystemLLVMOverDrops) {
-        $shouldUpdateLLVMLibraryToken =
-            unpackIfNecessary($libraryDir, "$libraryDir/libLLVMCore.a", $llvmLibraryPackage, 1);
+    }
+    if ($llvmLibraryPackage && $llvmIncludePackage) {
+        print "Using LLVM binary drops $llvmLibraryPackage and $llvmIncludePackage.\n";
+        if (unpackIfNecessary($libraryDir, "$libraryDir/libLLVMCore.a", $llvmLibraryPackage, 1)) {
+            # LLVM libraries changed; make JavaScriptCore relink against the new LLVM the next time it is built.
+            (system("touch", "Source/JavaScriptCore/llvm/library/LLVMAnchor.cpp") == 0) or die;
+        }
+        unpackIfNecessary(File::Spec->catdir("$productDir$llvmPrefix", "include"), File::Spec->catfile("$productDir$llvmPrefix", "include", "llvm-c", "Core.h"), $llvmIncludePackage, 0);
+        exit 0;
     }
 
-    (system("rm", "-f", "$productDir/ExtraIncludesForLocalLLVMBuild") == 0) or die;
-    if ($useOwnLLVM) {
-        (system("rm", "-rf", "$productDir$llvmPrefix/include/llvm") == 0) or die;
-        (system("rm", "-rf", "$productDir$llvmPrefix/include/llvm-c") == 0) or die;
-        symlink("$ownLLVMDirectory/include/llvm", "$productDir$llvmPrefix/include/llvm") or die;
-        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir$llvmPrefix/include/llvm-c") or die;
-        symlink("$ownLLVMDirectory/wkLLVMBuild/include", "$productDir/ExtraIncludesForLocalLLVMBuild") or die;
-    } elsif (!$preferSystemLLVMOverDrops) {
-        unpackIfNecessary("$productDir$llvmPrefix/include", "$productDir$llvmPrefix/include/llvm-c/Core.h", $llvmIncludePackage, 0);
-    }
-
-    if ($shouldUpdateLLVMLibraryToken) {
-        (system("touch", "Source/JavaScriptCore/llvm/library/LLVMAnchor.cpp") == 0) or die;
-    }
+    print STDERR "*************************************************************\n";
+    print STDERR "Don't know where to find LLVM!\n";
+    print STDERR "\n";
+    print STDERR "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE or setting the\n";
+    print STDERR "--use-llvm-includes and --use-llvm-libraries options.\n";
+    print STDERR "\n";
+    print STDERR "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
+    print STDERR "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
+    print STDERR "*************************************************************\n";
+    exit 1;
 }
 
-if ($clean) {
-    print "Cleaning.\n";    
-    (system("rm", "-rf", "$productDir/usr/local/include/WebKitSystemInterface.h") == 0) or die;
-    if (isIOSWebKit()) {
-        (system("rm", "-rf", "$productDir/usr/local/include/WebKitSystemInterfaceIOS.h") == 0) or die;
+sub fileContains
+{
+    my ($filename, $string) = @_;
+    open my $fileHandle, '<', $filename or die;
+    while (<$fileHandle>) {
+        return 1 if /^$string$/;
     }
-    (system("rm", "-rf", "$productDir$llvmPrefix") == 0) or die;
-    unlink glob "$productDir/libWebKitSystemInterface*" or die if glob "$productDir/libWebKitSystemInterface*";
-    unlink glob "$productDir/usr/local/lib/libWebKitSystemInterface*" or die if glob "$productDir/usr/local/lib/libWebKitSystemInterface*";
-    unlink glob "$productDir/libLLVM*" or die if glob "$productDir/libLLVM*";
-    unlink glob "$productDir/libLTO*" or die if glob "$productDir/libLTO*";
+    return 0;
+}
+
+sub isContentOfFileEqualToString($$)
+{
+    my ($filename, $string) = @_;
+    open my $fileHandle, '<', $filename or die;
+    binmode $fileHandle;
+    my $contents = <$fileHandle>;
+    return $contents eq $string;
+}
+
+sub buildLLVM($)
+{
+    my ($llvmSourceDirectory) = @_;
+
+    my $savedWorkingDirectory = getcwd();
+    chomp(my $sdkRootEnvironmentVariable = `xcrun @{[xcodeSDK() ? "--sdk " . xcodeSDK() : ""]} --show-sdk-path`);
+    $sdkRootEnvironmentVariable = "SDKROOT=$sdkRootEnvironmentVariable";
+
+    my $llvmBaseProductDirectory = File::Spec->catdir($llvmSourceDirectory, "wkLLVMBuild");
+    if (!-e File::Spec->catfile($llvmBaseProductDirectory, "Makefile.config")) {
+        system("mkdir", "-p", $llvmBaseProductDirectory);
+        chdir($llvmBaseProductDirectory) or die;
+        my @args = qw(
+            --enable-optimized=yes
+            --enable-backtraces=no
+            --enable-libcpp=yes
+            --enable-zlib=no
+            --enable-terminfo=no
+            --enable-crash-overrides=no
+        );
+        my $targetArchitecture;
+        if (isIOSWebKit()) {
+            $targetArchitecture = "arm64";
+            push @args, "--host=arm-apple-darwin";
+            push @args, "--enable-targets=$targetArchitecture";
+        } else {
+            $targetArchitecture = "x86_64";
+            push @args, "--enable-targets=$targetArchitecture";
+        }
+
+        # Environment variables are explicitly appended after command line options so that
+        # the script configure caches them in file config.status for automatic reconfiguration.
+        if (isIOSWebKit()) {
+            # We must explicitly specify the target architecture to the compiler/preprocessor
+            # since we are cross-compiling LLVM.
+            for my $environmentVariableName (qw(CFLAGS CXXFLAGS CPPFLAGS)) {
+                push @args, "$environmentVariableName=-arch $targetArchitecture";
+            }
+        }
+        push @args, $sdkRootEnvironmentVariable;
+        (system("../configure", @args) == 0) or die;
+    }
+
+    chdir($llvmBaseProductDirectory) or die;
+    my $savedPath = $ENV{"PATH"};
+
+    my $binariesDirectory = "binariesForLLVMBuild";
+    my $pathEnvironmentVariable = "";
+    if (-e $binariesDirectory) {
+        my $binariesPath = File::Spec->rel2abs($binariesDirectory);
+        $pathEnvironmentVariable = "PATH=" . join(":", $binariesPath, '$PATH');
+    }
+    my $makeCommand = "env -i bash -l -c \"$pathEnvironmentVariable $sdkRootEnvironmentVariable make -j `sysctl -n hw.activecpu`\"";
+    print $makeCommand . "\n";
+    (system($makeCommand) == 0) or die;
+
+    $ENV{"PATH"} = $savedPath;
+    chdir($savedWorkingDirectory);
+}
+
+sub symlinkLLVMLibrariesIfNeeded($$)
+{
+    my ($llvmSourceDirectory, $libraryTargetDirectory) = @_;
+
+    my $llvmMakefileConfig = File::Spec->catfile($llvmSourceDirectory, "wkLLVMBuild", "Makefile.config");
+    my $configurationDirectoryName = "";
+    if (fileContains($llvmMakefileConfig, "ENABLE_OPTIMIZED=1")) {
+        $configurationDirectoryName .= "Release";
+    } else {
+        $configurationDirectoryName .= "Debug";
+    }
+    $configurationDirectoryName .= "+Asserts" unless fileContains($llvmMakefileConfig, "DISABLE_ASSERTIONS=1");
+    my $librarySourceDirectory = File::Spec->catdir($llvmSourceDirectory, "wkLLVMBuild", $configurationDirectoryName, "lib");
+
+    my $shouldUpdateLLVMLibraryToken = 0;
+    print("Symlinking libraries from $librarySourceDirectory to $libraryTargetDirectory\n");
+    opendir(my $dirHandle, $librarySourceDirectory);
+    while (my $filename = readdir($dirHandle)) {
+        next if $filename !~ /\.a$/;
+        next if $filename =~ /libgtest/;
+
+        print "   Symlink $filename\n";
+        my $sourceLibrary = File::Spec->catfile($librarySourceDirectory, $filename);
+        my $targetLibrary = File::Spec->catfile($libraryTargetDirectory, $filename);
+        my $ranlibToken = File::Spec->catfile($libraryTargetDirectory, ".ranlibToken-$filename");
+        unlink($targetLibrary);
+        symlink($sourceLibrary, $targetLibrary);
+        if ($force || !-e $ranlibToken || !isContentOfFileEqualToString($ranlibToken, $sourceLibrary) || -M $ranlibToken > -M $sourceLibrary) {
+            print "   Ranlib $filename\n";
+            executeRanlib($targetLibrary);
+            open(RANLIB_TOKEN, ">", $ranlibToken) or die "Failed to open $ranlibToken: $!";
+            print RANLIB_TOKEN $sourceLibrary;
+            close(RANLIB_TOKEN);
+            $shouldUpdateLLVMLibraryToken = 1;
+        }
+    }
+    closedir($dirHandle);
+
+    my $targetIncludeLLVMDirectory = File::Spec->catdir("$productDir$llvmPrefix", "include", "llvm");
+    my $targetIncludeLLVMCDirectory = File::Spec->catdir("$productDir$llvmPrefix", "include", "llvm-c");
+    (system("rm", "-rf", $targetIncludeLLVMDirectory) == 0) or die;
+    (system("rm", "-rf", $targetIncludeLLVMCDirectory) == 0) or die;
+    symlink(File::Spec->catdir($llvmSourceDirectory, "include", "llvm"), $targetIncludeLLVMDirectory) or die;
+    symlink(File::Spec->catdir($llvmSourceDirectory, "include", "llvm-c"), $targetIncludeLLVMCDirectory) or die;
+    symlink(File::Spec->catdir($llvmSourceDirectory, "wkLLVMBuild", "include"), File::Spec->catfile($productDir, "ExtraIncludesForLocalLLVMBuild")) or die;
+
+    return $shouldUpdateLLVMLibraryToken;
 }

@@ -40,7 +40,7 @@ sub writeCongrats();
 my $shouldRunStaticAnalyzer = 0;
 my $coverageSupport = 0;
 my $showHelp = 0;
-my $ftlJIT = isAppleWebKit();
+my $ftlJIT = int(isAppleMacWebKit() && !willUseIOSSimulatorSDKWhenBuilding());
 my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
@@ -112,6 +112,7 @@ if (isAppleMacWebKit()) {
 
     if ($copyLibraries) {
         my @copyLibrariesArgs = ("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory");
+        push @copyLibrariesArgs, "--device" if willUseIOSDeviceSDKWhenBuilding();
         if ($ftlJIT) {
             push @copyLibrariesArgs, "--llvm";
         }

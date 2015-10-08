@@ -1,3 +1,20 @@
+2015-10-08  Daniel Bates  <dabates@apple.com>
+
+        Add LLVM binaries for iOS 9 device
+        https://bugs.webkit.org/show_bug.cgi?id=149913
+
+        Reviewed by Filip Pizlo.
+
+        Look for locally built/binary dropped LLVM headers and libraries when building for iOS device
+        in WebKitBuild/usr/local.
+
+        Currently Mac and iOS look for the locally built/binary dropped LLVM in different directories:
+        WebKitBuild/usr/local and /usr/local/LLVMForJavaScriptCore, respectively. This difference is
+        due to dependencies with the Apple internal build system. We should look to resolve the
+        Apple internal dependencies and standardize on one location for both platforms.
+
+        * Configurations/Base.xcconfig:
+
 2015-10-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r190749.
