@@ -45,4 +45,3 @@ ParallelHelperPool& heapHelperPool()
 }
 
 } // namespace JSC
-

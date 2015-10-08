@@ -26,11 +26,8 @@
 #ifndef CopyVisitorInlines_h
 #define CopyVisitorInlines_h
 
-#include "ClassInfo.h"
 #include "CopyVisitor.h"
 #include "Heap.h"
-#include "JSCell.h"
-#include "JSDestructibleObject.h"
 
 namespace JSC {
 
@@ -77,4 +74,3 @@ inline void CopyVisitor::didCopy(void* ptr, size_t bytes)
 } // namespace JSC
 
 #endif // CopyVisitorInlines_h
-

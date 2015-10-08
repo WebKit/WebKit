@@ -29,7 +29,6 @@
 #include "CopiedSpaceInlines.h"
 #include "GCActivityCallback.h"
 #include "JSCInlines.h"
-#include "Options.h"
 
 namespace JSC {
 

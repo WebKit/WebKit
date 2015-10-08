@@ -38,4 +38,3 @@ enum CopyToken {
 } // namespace JSC
 
 #endif // CopyToken_h
-

@@ -30,7 +30,6 @@
 
 namespace JSC {
 
-class DeadBlock;
 class HandleSet;
 class HandleNode;
 

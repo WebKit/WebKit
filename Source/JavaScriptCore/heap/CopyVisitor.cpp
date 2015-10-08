@@ -28,11 +28,6 @@
 
 #include "CopiedSpaceInlines.h"
 #include "CopyVisitorInlines.h"
-#include "CopyWorkList.h"
-#include "JSCell.h"
-#include "JSObject.h"
-#include "JSCInlines.h"
-#include <wtf/Threading.h>
 
 namespace JSC {
 

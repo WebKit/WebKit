@@ -26,13 +26,11 @@
 #ifndef CopiedBlockInlines_h
 #define CopiedBlockInlines_h
 
-#include "ClassInfo.h"
 #include "CopiedBlock.h"
 #include "Heap.h"
-#include "MarkedBlock.h"
 
 namespace JSC {
-    
+
 inline void CopiedBlock::reportLiveBytes(LockHolder&, JSCell* owner, CopyToken token, unsigned bytes)
 {
     checkConsistency();

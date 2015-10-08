@@ -35,12 +35,10 @@
 
 namespace JSC {
 
-class HandleBlock;
 class HandleSet;
 class HeapRootVisitor;
 class VM;
 class JSValue;
-class SlotVisitor;
 
 class HandleNode {
 public:

@@ -29,7 +29,6 @@
 #include "CopyWorkList.h"
 #include "JSCJSValue.h"
 #include "Options.h"
-#include <wtf/Atomics.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Lock.h>
 

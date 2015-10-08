@@ -32,7 +32,6 @@
 namespace JSC {
 
 class Heap;
-class JSCell;
 
 class CopyVisitor {
     WTF_MAKE_NONCOPYABLE(CopyVisitor);

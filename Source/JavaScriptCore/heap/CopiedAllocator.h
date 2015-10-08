@@ -28,7 +28,6 @@
 
 #include "CopiedBlock.h"
 #include <wtf/CheckedBoolean.h>
-#include <wtf/DataLog.h>
 
 namespace JSC {
 
@@ -45,7 +44,7 @@ public:
     void setCurrentBlock(CopiedBlock*);
     size_t currentCapacity();
     
-    bool isValid() { return !!m_currentBlock; }
+    bool isValid() const { return !!m_currentBlock; }
 
     CopiedBlock* currentBlock() { return m_currentBlock; }
 

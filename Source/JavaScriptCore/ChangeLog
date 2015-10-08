@@ -1,3 +1,29 @@
+2015-10-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Clean up Copied classes
+        https://bugs.webkit.org/show_bug.cgi?id=149863
+
+        Reviewed by Saam Barati.
+
+        * heap/CopiedAllocator.h:
+        (JSC::CopiedAllocator::isValid):
+        * heap/CopiedBlock.h:
+        * heap/CopiedBlockInlines.h:
+        * heap/CopiedSpace.cpp:
+        * heap/CopiedSpace.h:
+        (JSC::CopiedSpace::isInCopyPhase):
+        (JSC::CopiedSpace::shouldDoCopyPhase):
+        * heap/CopiedSpaceInlines.h:
+        * heap/CopyToken.h:
+        * heap/CopyVisitor.cpp:
+        * heap/CopyVisitor.h:
+        * heap/CopyVisitorInlines.h:
+        * heap/CopyWorkList.h:
+        * heap/HandleBlock.h:
+        * heap/HandleSet.h:
+        * heap/HeapHelperPool.cpp:
+        * heap/HeapHelperPool.h:
+
 2015-10-07  Mark Lam  <mark.lam@apple.com>
 
         [Follow up 2] Disable tail calls because it is breaking some sites.

@@ -30,7 +30,6 @@
 #include "CopiedSpace.h"
 #include "Heap.h"
 #include "VM.h"
-#include <wtf/CheckedBoolean.h>
 
 namespace JSC {
 
@@ -257,4 +256,3 @@ inline void CopiedSpace::startedCopying()
 } // namespace JSC
 
 #endif // CopiedSpaceInlines_h
-
