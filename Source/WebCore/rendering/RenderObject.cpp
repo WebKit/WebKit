@@ -882,10 +882,8 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     if (r.isEmpty())
         return;
 
-    if (!repaintContainer) {
-        view().repaintViewRectangle(r);
-        return;
-    }
+    if (!repaintContainer)
+        repaintContainer = &view();
 
     if (is<RenderFlowThread>(*repaintContainer)) {
         downcast<RenderFlowThread>(*repaintContainer).repaintRectangleInRegions(r);
@@ -897,17 +895,21 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         return;
     }
 
-    RenderView& v = view();
     if (repaintContainer->isRenderView()) {
-        ASSERT(repaintContainer == &v);
-        bool viewHasCompositedLayer = v.isComposited();
-        if (!viewHasCompositedLayer || v.layer()->backing()->paintsIntoWindow()) {
-            v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? LayoutRect(v.layer()->transform()->mapRect(snapRectToDevicePixels(r, document().deviceScaleFactor()))) : r);
+        RenderView& view = this->view();
+        ASSERT(repaintContainer == &view);
+        bool viewHasCompositedLayer = view.isComposited();
+        if (!viewHasCompositedLayer || view.layer()->backing()->paintsIntoWindow()) {
+            LayoutRect rect = r;
+            if (viewHasCompositedLayer && view.layer()->transform())
+                rect = LayoutRect(view.layer()->transform()->mapRect(snapRectToDevicePixels(rect, document().deviceScaleFactor())));
+            view.repaintViewRectangle(rect);
             return;
         }
     }
     
-    if (v.usesCompositing()) {
+
+    if (view().usesCompositing()) {
         ASSERT(repaintContainer->isComposited());
         repaintContainer->layer()->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
     }
@@ -924,7 +926,7 @@ void RenderObject::repaint() const
         return;
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer ? repaintContainer : &view, clippedOverflowRectForRepaint(repaintContainer));
+    repaintUsingContainer(repaintContainer, clippedOverflowRectForRepaint(repaintContainer));
 }
 
 void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer) const
@@ -943,7 +945,7 @@ void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer)
     dirtyRect.move(view.layoutDelta());
 
     RenderLayerModelObject* repaintContainer = containerForRepaint();
-    repaintUsingContainer(repaintContainer ? repaintContainer : &view, computeRectForRepaint(dirtyRect, repaintContainer), shouldClipToLayer);
+    repaintUsingContainer(repaintContainer, computeRectForRepaint(dirtyRect, repaintContainer), shouldClipToLayer);
 }
 
 void RenderObject::repaintSlowRepaintObject() const
