@@ -475,7 +475,7 @@ bool LegacyRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(m_enqueuedEvents.size());
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
-    ASSERT_WITH_MESSAGE(m_readyState < IDBRequestReadyState::Done, "When dispatching event %s, m_readyState < DONE(%d), was %d", event->type().string().utf8().data(), IDBRequestReadyState::Done, m_readyState);
+    ASSERT_WITH_MESSAGE(m_readyState < IDBRequestReadyState::Done, "When dispatching event %s, m_readyState < DONE(%d), was %d", event->type().string().utf8().data(), static_cast<int>(IDBRequestReadyState::Done), static_cast<int>(m_readyState));
 
     DOMRequestState::Scope scope(m_requestState);
 
@@ -572,7 +572,7 @@ void LegacyRequest::enqueueEvent(PassRefPtr<Event> event)
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
-    ASSERT_WITH_MESSAGE(m_readyState == IDBRequestReadyState::Pending || m_didFireUpgradeNeededEvent, "When queueing event %s, m_readyState was %d", event->type().string().utf8().data(), m_readyState);
+    ASSERT_WITH_MESSAGE(m_readyState == IDBRequestReadyState::Pending || m_didFireUpgradeNeededEvent, "When queueing event %s, m_readyState was %d", event->type().string().utf8().data(), static_cast<int>(m_readyState));
 
     event->setTarget(this);
 
