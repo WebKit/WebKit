@@ -28,9 +28,9 @@
 
 #include "Heap.h"
 #include "HeapRootVisitor.h"
-#include "JSObject.h"
 #include "JSCInlines.h"
-#include "Structure.h"
+#include "JSObject.h"
+#include "WeakHandleOwner.h"
 
 namespace JSC {
 

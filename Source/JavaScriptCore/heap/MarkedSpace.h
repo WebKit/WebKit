@@ -22,13 +22,10 @@
 #ifndef MarkedSpace_h
 #define MarkedSpace_h
 
-#include "MachineStackMarker.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include <array>
-#include <wtf/Bitmap.h>
-#include <wtf/DoublyLinkedList.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -38,11 +35,8 @@ namespace JSC {
 
 class Heap;
 class HeapIterationScope;
-class JSCell;
 class LiveObjectIterator;
 class LLIntOffsetsExtractor;
-class WeakGCHandle;
-class SlotVisitor;
 
 struct ClearMarks : MarkedBlock::VoidFunctor {
     void operator()(MarkedBlock* block)
@@ -74,12 +68,12 @@ struct Size : MarkedBlock::CountFunctor {
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
-    // [ 32... 128 ]
+    // [ 16 ... 128 ]
     static const size_t preciseStep = MarkedBlock::atomSize;
     static const size_t preciseCutoff = 128;
     static const size_t preciseCount = preciseCutoff / preciseStep;
 
-    // [ 1024... blockSize ]
+    // [ 256 ... blockSize/2 ]
     static const size_t impreciseStep = 2 * preciseCutoff;
     static const size_t impreciseCutoff = MarkedBlock::blockSize / 2;
     static const size_t impreciseCount = impreciseCutoff / impreciseStep;
@@ -110,21 +104,21 @@ public:
     MarkedBlockSet& blocks() { return m_blocks; }
 
     void willStartIterating();
-    bool isIterating() { return m_isIterating; }
+    bool isIterating() const { return m_isIterating; }
     void didFinishIterating();
 
     void stopAllocating();
     void resumeAllocating(); // If we just stopped allocation but we didn't do a collection, we need to resume allocation.
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
-    
+
     template<typename Functor> typename Functor::ReturnType forEachLiveCell(HeapIterationScope&, Functor&);
     template<typename Functor> typename Functor::ReturnType forEachLiveCell(HeapIterationScope&);
     template<typename Functor> typename Functor::ReturnType forEachDeadCell(HeapIterationScope&, Functor&);
     template<typename Functor> typename Functor::ReturnType forEachDeadCell(HeapIterationScope&);
     template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
     template<typename Functor> typename Functor::ReturnType forEachBlock();
-    
+
     void shrink();
     void freeBlock(MarkedBlock*);
     void freeOrShrinkBlock(MarkedBlock*);
@@ -142,10 +136,6 @@ public:
     size_t capacity();
 
     bool isPagedOut(double deadline);
-
-#if USE(CF)
-    template<typename T> void releaseSoon(RetainPtr<T>&&);
-#endif
 
     const Vector<MarkedBlock*>& blocksWithNewObjects() const { return m_blocksWithNewObjects; }
 

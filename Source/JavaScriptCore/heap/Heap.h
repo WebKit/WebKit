@@ -31,6 +31,7 @@
 #include "HeapOperation.h"
 #include "JITStubRoutineSet.h"
 #include "ListableHandler.h"
+#include "MachineStackMarker.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Options.h"
 
-#include "HeapStatistics.h"
 #include <algorithm>
 #include <limits>
 #include <math.h>
@@ -36,14 +35,9 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
-#include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
-
-#if OS(DARWIN)
-#include <sys/sysctl.h>
-#endif
 
 #if OS(WINDOWS)
 #include "MacroAssemblerX86.h"

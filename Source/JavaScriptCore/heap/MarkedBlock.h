@@ -30,7 +30,6 @@
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Vector.h>
 
 // Set to log state transitions of blocks.
 #define HEAP_LOG_BLOCK_STATE_TRANSITIONS 0
@@ -54,8 +53,6 @@ namespace JSC {
 
     typedef uintptr_t Bits;
 
-    static const size_t MB = 1024 * 1024;
-    
     bool isZapped(const JSCell*);
     
     // A marked block is a page-aligned container for heap-allocated objects.
@@ -72,14 +69,13 @@ namespace JSC {
         friend struct VerifyMarkedOrRetired;
     public:
         static const size_t atomSize = 16; // bytes
-        static const size_t atomShiftAmount = 4; // log_2(atomSize) FIXME: Change atomSize to 16.
         static const size_t blockSize = 16 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomsPerBlock = blockSize / atomSize;
-        static const size_t atomMask = atomsPerBlock - 1;
 
-        static const size_t markByteShiftAmount = 3; // log_2(word size for m_marks) FIXME: Change word size for m_marks to uint8_t.
+        static_assert(!(MarkedBlock::atomSize & (MarkedBlock::atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
+        static_assert(!(MarkedBlock::blockSize & (MarkedBlock::blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");
 
         struct FreeCell {
             FreeCell* next;
@@ -168,7 +164,7 @@ namespace JSC {
         void clearNewlyAllocated(const void*);
 
         bool isAllocated() const;
-        bool needsSweeping();
+        bool needsSweeping() const;
         void didRetireBlock(const FreeList&);
         void willRemoveBlock();
 
@@ -177,7 +173,7 @@ namespace JSC {
         template <typename Functor> IterationStatus forEachDeadCell(Functor&);
 
     private:
-        static const size_t atomAlignmentMask = atomSize - 1; // atomSize must be a power of two.
+        static const size_t atomAlignmentMask = atomSize - 1;
 
         enum BlockState { New, FreeListed, Allocated, Marked, Retired };
         template<bool callDestructors> FreeList sweepHelper(SweepMode = SweepOnly);
@@ -442,7 +438,7 @@ namespace JSC {
         return IterationStatus::Continue;
     }
 
-    inline bool MarkedBlock::needsSweeping()
+    inline bool MarkedBlock::needsSweeping() const
     {
         return m_state == Marked;
     }

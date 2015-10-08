@@ -27,7 +27,7 @@
 #define HeapStatistics_h
 
 #include "JSExportMacros.h"
-#include <wtf/Deque.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -42,10 +42,6 @@ public:
     static void recordGCPauseTime(double start, double end);
 
     static void showObjectStatistics(Heap*);
-
-    static const size_t KB = 1024;
-    static const size_t MB = 1024 * KB;
-    static const size_t GB = 1024 * MB;
 
 private:
     static void logStatistics();

@@ -369,9 +369,6 @@ const Initialization = 0
 
 const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
-# Constants for checking mark bits.
-const AtomNumberShift = 3
-const BitMapWordShift = 4
 
 # Allocation constants
 if JSVALUE64

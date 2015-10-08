@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MarkedBlock.h"
 
-#include "IncrementalSweeper.h"
 #include "JSCell.h"
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"

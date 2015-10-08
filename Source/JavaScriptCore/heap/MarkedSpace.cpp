@@ -22,49 +22,24 @@
 #include "MarkedSpace.h"
 
 #include "IncrementalSweeper.h"
-#include "JSGlobalObject.h"
-#include "JSLock.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
 
 namespace JSC {
 
-class Structure;
-
-class Free {
-public:
-    typedef MarkedBlock* ReturnType;
-
-    enum FreeMode { FreeOrShrink, FreeAll };
-
-    Free(FreeMode, MarkedSpace*);
-    void operator()(MarkedBlock*);
-    ReturnType returnValue();
-    
+struct Free : MarkedBlock::VoidFunctor {
+    Free(MarkedSpace& space) : m_markedSpace(space) { }
+    void operator()(MarkedBlock* block) { m_markedSpace.freeBlock(block); }
 private:
-    FreeMode m_freeMode;
-    MarkedSpace* m_markedSpace;
-    DoublyLinkedList<MarkedBlock> m_blocks;
+    MarkedSpace& m_markedSpace;
 };
 
-inline Free::Free(FreeMode freeMode, MarkedSpace* newSpace)
-    : m_freeMode(freeMode)
-    , m_markedSpace(newSpace)
-{
-}
-
-inline void Free::operator()(MarkedBlock* block)
-{
-    if (m_freeMode == FreeOrShrink)
-        m_markedSpace->freeOrShrinkBlock(block);
-    else
-        m_markedSpace->freeBlock(block);
-}
-
-inline Free::ReturnType Free::returnValue()
-{
-    return m_blocks.head();
-}
+struct FreeOrShrink : MarkedBlock::VoidFunctor {
+    FreeOrShrink(MarkedSpace& space) : m_markedSpace(space) { }
+    void operator()(MarkedBlock* block) { m_markedSpace.freeOrShrinkBlock(block); }
+private:
+    MarkedSpace& m_markedSpace;
+};
 
 struct VisitWeakSet : MarkedBlock::VoidFunctor {
     VisitWeakSet(HeapRootVisitor& heapRootVisitor) : m_heapRootVisitor(heapRootVisitor) { }
@@ -98,7 +73,7 @@ MarkedSpace::MarkedSpace(Heap* heap)
 
 MarkedSpace::~MarkedSpace()
 {
-    Free free(Free::FreeAll, this);
+    Free free(*this);
     forEachBlock(free);
     ASSERT(!m_blocks.set().size());
 }
@@ -247,13 +222,9 @@ void MarkedSpace::freeOrShrinkBlock(MarkedBlock* block)
     freeBlock(block);
 }
 
-struct Shrink : MarkedBlock::VoidFunctor {
-    void operator()(MarkedBlock* block) { block->shrink(); }
-};
-
 void MarkedSpace::shrink()
 {
-    Free freeOrShrink(Free::FreeOrShrink, this);
+    FreeOrShrink freeOrShrink(*this);
     forEachBlock(freeOrShrink);
 }
 
