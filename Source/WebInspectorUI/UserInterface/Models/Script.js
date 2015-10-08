@@ -149,7 +149,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         }
 
         this.requestContent().then(function(parameters) {
-            makeSyntaxTreeAndCallCallback(parameters.sourceCode.content);
+            makeSyntaxTreeAndCallCallback(parameters.content);
         }).catch(function(error) {
             makeSyntaxTreeAndCallCallback(null);
         });

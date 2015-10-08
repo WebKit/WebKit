@@ -189,11 +189,7 @@ WebInspector.SourceCode = class SourceCode extends WebInspector.Object
 
         this._ignoreRevisionContentDidChangeEvent = true;
         revision.content = content || null;
-        this._ignoreRevisionContentDidChangeEvent = false;
-
-        // FIXME: Returning the content in this promise is misleading. It may not be current content
-        // now, and it may become out-dated later on. We should drop content from this promise
-        // and require clients to ask for the current contents from the sourceCode in the result.
+        delete this._ignoreRevisionContentDidChangeEvent;
 
         return Promise.resolve({
             error,

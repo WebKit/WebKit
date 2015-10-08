@@ -451,7 +451,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             return;
 
         var sourceCode = parameters.sourceCode;
-        var content = sourceCode.content;
+        var content = parameters.content;
         var base64Encoded = parameters.base64Encoded;
 
         console.assert(sourceCode === this._sourceCode);
