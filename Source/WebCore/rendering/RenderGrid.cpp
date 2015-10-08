@@ -34,7 +34,6 @@
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -577,9 +576,9 @@ GridTrackSize RenderGrid::gridTrackSize(GridTrackSizingDirection direction, unsi
     if (minTrackBreadth.isPercentage() || maxTrackBreadth.isPercentage()) {
         if (!hasDefiniteLogicalSize(direction)) {
             if (minTrackBreadth.isPercentage())
-                minTrackBreadth = Length(MinContent);
+                minTrackBreadth = Length(Auto);
             if (maxTrackBreadth.isPercentage())
-                maxTrackBreadth = Length(MaxContent);
+                maxTrackBreadth = Length(Auto);
         }
     }
 
