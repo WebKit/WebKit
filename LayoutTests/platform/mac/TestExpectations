@@ -1334,3 +1334,6 @@ webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.htm
 
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
+
+# Flaky due to failures and timeouts
+webkit.org/b/149816 http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
