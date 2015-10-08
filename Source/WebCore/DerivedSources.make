@@ -1251,7 +1251,7 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 
 # WebCore JS Builtins
 
-WEBCORE_JS_BUILTINS = \
+WEBCORE_JS_BUILTINS_SOURCE = \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.js \
     $(WebCore)/Modules/streams/CountQueuingStrategy.js \
     $(WebCore)/Modules/streams/ReadableStream.js \
@@ -1260,9 +1260,16 @@ WEBCORE_JS_BUILTINS = \
     $(WebCore)/Modules/streams/ReadableStreamReader.js \
 #
 
-all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
+.PHONY: WebCoreJSBuiltins
+WebCoreJSBuiltins: WebCoreJSBuiltins.cpp WebCoreJSBuiltins.h WebCoreJSBuiltinInternals.h
+all : WebCoreJSBuiltins $(WEBCORE_JS_BUILTINS_SOURCE:%.js=%Builtins.h) $(WEBCORE_JS_BUILTINS_SOURCE:%.js=%BuiltinsWrapper.h) $(WEBCORE_JS_BUILTINS_SOURCE:%.js=%Builtins.cpp)
 
-%Builtins.cpp: %.js
+WebCoreJSBuiltins.cpp: WebCoreJSBuiltinInternals.h WebCoreJSBuiltins.h
+WebCoreJSBuiltins.cpp WebCoreJSBuiltins.h WebCoreJSBuiltinInternals.h: $(WEBCORE_JS_BUILTINS_SOURCE) $(WebCore)/generate-js-builtins-allinone
+	$(PYTHON) $(WebCore)/generate-js-builtins-allinone $(WEBCORE_JS_BUILTINS_SOURCE)  --output_dir .
+
+%Builtins.cpp: %Builtins.h %BuiltinsWrapper.h
+%Builtins.h %Builtins.cpp %BuiltinsWrapper.h: %.js $(WebCore)/generate-js-builtins
 	$(PYTHON) $(WebCore)/generate-js-builtins --input $< --generate_js_builtins_path $(GenerateJSBuiltinsScripts)
 
 # ------------------------

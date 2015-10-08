@@ -22,7 +22,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
-#include "ReadableStreamInternalsBuiltinsWrapper.h"
+#include "WebCoreJSBuiltinInternals.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -87,9 +87,7 @@ namespace WebCore {
         RefPtr<DOMWindow> m_impl;
         JSDOMWindowShell* m_shell;
 
-#if ENABLE(STREAMS_API)
-        ReadableStreamInternalsBuiltinFunctions m_readableStreamFunctions;
-#endif
+        JSBuiltinInternalFunctions m_privateFunctions;
     };
 
     // Returns a JSDOMWindow or jsNull()
