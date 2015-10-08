@@ -75,6 +75,8 @@ public:
             dataLog("Graph before PutStack sinking:\n");
             m_graph.dump();
         }
+
+        m_graph.m_dominators.computeIfNecessary(m_graph);
         
         SSACalculator ssaCalculator(m_graph);
         InsertionSet insertionSet(m_graph);

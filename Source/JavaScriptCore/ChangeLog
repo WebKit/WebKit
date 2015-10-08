@@ -1,3 +1,15 @@
+2015-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG SSA should remove unreachable code
+        https://bugs.webkit.org/show_bug.cgi?id=149931
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run): Remove unreachable code.
+        * dfg/DFGObjectAllocationSinkingPhase.cpp: Deal with the CFG changing.
+        * dfg/DFGPutStackSinkingPhase.cpp: Deal with the CFG changing.
+
 2015-10-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed build fix. Missing forward declaration.
