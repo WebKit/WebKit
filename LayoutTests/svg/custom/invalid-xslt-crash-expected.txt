@@ -1,2 +1,1 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
+Pass if no crash
