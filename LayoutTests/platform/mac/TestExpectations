@@ -1334,6 +1334,3 @@ webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.htm
 
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
-
-# Marking test as flaky
-webkit.org/b/149859 fast/events/scroll-after-click-on-tab-index.html [ Pass Failure ]
