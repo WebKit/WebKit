@@ -1,5 +1,30 @@
 2015-10-08  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r188148. rdar://problem/22802036
+
+    2015-08-06  Dean Jackson  <dino@apple.com>
+
+            Shadows don't draw on fillText when using a gradient fill
+            https://bugs.webkit.org/show_bug.cgi?id=147758
+            <rdar://problem/20860912>
+
+            Reviewed by Myles Maxfield.
+
+            Since we use a mask to render a pattern or gradient
+            into text, any shadow was being clipped out. Change
+            this to draw the shadow before the mask + fill operation,
+            using a technique similar to text-shadow.
+
+            Test: fast/canvas/gradient-text-with-shadow.html
+
+            * html/canvas/CanvasRenderingContext2D.cpp:
+            (WebCore::CanvasRenderingContext2D::drawTextInternal): Get the current shadow
+            style, paint the text with a transformed shadow offset so that we only
+            see the shadow and not the text, then combine with the existing pattern/gradient
+            fill.
+
+2015-10-08  Lucas Forschler  <lforschler@apple.com>
+
         Rollout r190745
 
 2015-10-08  Lucas Forschler  <lforschler@apple.com>

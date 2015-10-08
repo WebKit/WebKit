@@ -1,3 +1,23 @@
+2015-10-08  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r188148. rdar://problem/22802036
+
+    2015-08-06  Dean Jackson  <dino@apple.com>
+
+            Shadows don't draw on fillText when using a gradient fill
+            https://bugs.webkit.org/show_bug.cgi?id=147758
+            <rdar://problem/20860912>
+
+            Reviewed by Myles Maxfield.
+
+            New test that exercises shadows on gradient fills. This really
+            should be a ref test, but there is a very small rendering difference
+            caused by masking, so instead it uses JS to look for pixels of
+            the correct color.
+
+            * fast/canvas/gradient-text-with-shadow-expected.txt: Added.
+            * fast/canvas/gradient-text-with-shadow.html: Added.
+
 2015-10-06  Benjamin Poulain  <bpoulain@apple.com>
 
         We can't use let in JS on the safari-601 branch
