@@ -74,6 +74,7 @@ class WeakGCHandlePool;
 class SlotVisitor;
 
 namespace DFG {
+class SpeculativeJIT;
 class Worklist;
 }
 

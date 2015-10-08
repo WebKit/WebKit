@@ -1,3 +1,9 @@
+2015-10-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fix. Missing forward declaration.
+
+        * heap/Heap.h:
+
 2015-10-08  Saam barati  <sbarati@apple.com>
 
         Unreviewed Cloop build fix after bug: https://bugs.webkit.org/show_bug.cgi?id=149601
