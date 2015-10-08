@@ -797,7 +797,8 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
     }
 
-    exitText();
+    if (!updateLeafTextNode())
+        return;
 
     AtomicString localName = toAtomicString(xmlLocalName);
     AtomicString uri = toAtomicString(xmlURI);
@@ -877,7 +878,8 @@ void XMLDocumentParser::endElementNs()
     // before the end of this method.
     Ref<XMLDocumentParser> protect(*this);
 
-    exitText();
+    if (!updateLeafTextNode())
+        return;
 
     RefPtr<ContainerNode> node = m_currentNode;
     node->finishParsingChildren();
@@ -952,7 +954,7 @@ void XMLDocumentParser::characters(const xmlChar* s, int len)
     }
 
     if (!m_leafTextNode)
-        enterText();
+        createLeafTextNode();
     m_bufferedText.append(s, len);
 }
 
@@ -991,7 +993,8 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
         return;
     }
 
-    exitText();
+    if (!updateLeafTextNode())
+        return;
 
     // ### handle exceptions
     ExceptionCode ec = 0;
@@ -1025,7 +1028,8 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
         return;
     }
 
-    exitText();
+    if (!updateLeafTextNode())
+        return;
 
     auto newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
     m_currentNode->parserAppendChild(WTF::move(newNode));
@@ -1041,7 +1045,8 @@ void XMLDocumentParser::comment(const xmlChar* s)
         return;
     }
 
-    exitText();
+    if (!updateLeafTextNode())
+        return;
 
     auto newNode = Comment::create(m_currentNode->document(), toString(s));
     m_currentNode->parserAppendChild(WTF::move(newNode));
@@ -1073,7 +1078,7 @@ void XMLDocumentParser::startDocument(const xmlChar* version, const xmlChar* enc
 
 void XMLDocumentParser::endDocument()
 {
-    exitText();
+    updateLeafTextNode();
 }
 
 void XMLDocumentParser::internalSubset(const xmlChar* name, const xmlChar* externalID, const xmlChar* systemID)

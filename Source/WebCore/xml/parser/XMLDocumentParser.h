@@ -146,8 +146,8 @@ class Text;
 
         void insertErrorMessageBlock();
 
-        void enterText();
-        void exitText();
+        void createLeafTextNode();
+        bool updateLeafTextNode();
 
         void doWrite(const String&);
         void doEnd();
