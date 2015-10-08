@@ -34,8 +34,6 @@ body {
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
 
-    background-color: white;
-
     position: absolute;
     top: 0;
     left: 0;
@@ -55,6 +53,10 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
 
     tab-size: 4; /* FIXME: This should be controlled by a setting. <rdar://problem/10593948> */
+}
+
+body:not(.mavericks) {
+    background-color: white;
 }
 
 body.docked.bottom {
