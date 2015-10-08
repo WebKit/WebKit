@@ -93,7 +93,8 @@ WebInspector.ResourceContentView.prototype = {
 
         // Content is ready to show, call the public method now.
         console.assert(!this._hasContent());
-        this.contentAvailable(parameters.content, parameters.base64Encoded);
+        console.assert(parameters.sourceCode === this._resource);
+        this.contentAvailable(parameters.sourceCode.content, parameters.base64Encoded);
     },
 
     _contentError: function(error)
