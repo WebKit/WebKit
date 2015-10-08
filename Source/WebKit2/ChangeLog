@@ -1,3 +1,15 @@
+2015-10-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Format string issue in WebResourceLoadScheduler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=149868
+
+        Reviewed by Csaba Osztrogonác.
+
+        Cast enums to ints before printing them to placate GCC's -Wformat.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
 2015-10-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop using a nested main loop for popup menus
