@@ -192,6 +192,9 @@ BuildbotTesterQueueView.prototype = {
         for (var i = 0, end = sortedRegressions.length; i != end; ++i) {
             var test = sortedRegressions[i];
 
+            if (iteration.queue.crashesOnly && !test.crash && !iteration.layoutTestResults.tooManyFailures)
+                continue;
+
             var rowElement = document.createElement("div");
 
             var testPathElement = document.createElement("span");

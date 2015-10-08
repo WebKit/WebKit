@@ -1,3 +1,12 @@
+2015-10-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash-only queues on bot watcher's dashboard should not have non-crashing tests in popovers
+        https://bugs.webkit.org/show_bug.cgi?id=149848
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotTesterQueueView.js:
+
 2015-10-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Support 64-bit Build and Testing
