@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2007, 2010-2014 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2007, 2010-2015 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -65,6 +65,7 @@ BEGIN {
        &cmakeBasedPortName
        &currentSVNRevision
        &debugSafari
+       &executableProductDir
        &findOrCreateSimulatorForIOSDevice
        &iosSimulatorDeviceByName
        &nmPath
@@ -614,16 +615,25 @@ sub productDir
     return $configurationProductDir;
 }
 
-sub jscProductDir
+sub executableProductDir
 {
-    my $productDir = productDir();
-    $productDir .= "/bin" if (isEfl() || isGtk());
-    if (isAnyWindows()) {
-        my $binDir = isWin64() ? "bin64" : "bin32";
-        $productDir = File::Spec->catdir($productDir, $binDir);
+    my $productDirectory = productDir();
+
+    my $binaryDirectory;
+    if (isEfl() || isGtk()) {
+        $binaryDirectory = "bin";
+    } elsif (isAnyWindows()) {
+        $binaryDirectory = isWin64() ? "bin64" : "bin32";
+    } else {
+        return $productDirectory;
     }
 
-    return $productDir;
+    return File::Spec->catdir($productDirectory, $binaryDirectory);
+}
+
+sub jscProductDir
+{
+    return executableProductDir();
 }
 
 sub configuration()
@@ -2032,8 +2042,7 @@ sub setPathForRunningWebKitApp
     my ($env) = @_;
 
     if (isAnyWindows()) {
-        my $binDir = isWin64() ? "bin64" : "bin32";
-        my $productBinaryDir = File::Spec->catdir(productDir(), $binDir);
+        my $productBinaryDir = executableProductDir();
         if (isAppleWinWebKit()) {
             $env->{PATH} = join(':', $productBinaryDir, appleApplicationSupportPath(), $env->{PATH} || "");
         } elsif (isWinCairo()) {
@@ -2440,9 +2449,7 @@ sub runSafari
 
     if (isAppleWinWebKit()) {
         my $result;
-        my $productDir = productDir();
-        my $binDir = isWin64() ? "bin64" : "bin32";
-        my $webKitLauncherPath = File::Spec->catfile(productDir(), $binDir, "MiniBrowser.exe");
+        my $webKitLauncherPath = File::Spec->catfile(executableProductDir(), "MiniBrowser.exe");
         return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
 
@@ -2455,9 +2462,7 @@ sub runMiniBrowser
         return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
     } elsif (isAppleWinWebKit()) {
         my $result;
-        my $productDir = productDir();
-        my $binDir = isWin64() ? "bin64" : "bin32";
-        my $webKitLauncherPath = File::Spec->catfile(productDir(), $binDir, "MiniBrowser.exe");
+        my $webKitLauncherPath = File::Spec->catfile(executableProductDir(), "MiniBrowser.exe");
         return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
 

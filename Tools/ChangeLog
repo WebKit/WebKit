@@ -1,3 +1,37 @@
+2015-10-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Support 64-bit Build and Testing
+        https://bugs.webkit.org/show_bug.cgi?id=149904
+
+        Reviewed by Daniel Bates.
+
+        Extend our existing scripts to support 64-bit build and test operations on
+        Windows.
+
+        * Scripts/build-dumprendertree: We don't need to build DRT on its own;
+        Windows always builds the whole stack.
+        * Scripts/webkit-build-directory: Add an option to return the location of
+        the executable files produced by a specific configuration. This change is
+        actually useful for Gtk and EFL, too.
+        * Scripts/webkitdirs.pm:
+        (executableProductDir): Added. This function appends the proper binary
+        path to the productDir. This is useful for Windows, Gtk, and EFL ports.
+        (jscProductDir): Use the new 'executableProductDir' method.
+        (setPathForRunningWebKitApp): Ditto.
+        (runSafari): Ditto.
+        (runMiniBrowser): Ditto.
+        * Scripts/webkitpy/port/factory.py:
+        (configuration_options): Add a 64-bit option, used on Windows to specify
+        which binary target should be used for testing.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort._port_flag_for_scripts): Added. Supply the 64-bit flag to child
+        processes when needed.
+        (WinPort._build_path): Add the correct binary target path to _build_path.
+        (WinPort._ntsd_location): Check 32-bit paths when running 32-bit tests,
+        64-bit paths for 64-bit tests.
+        (WinPort.setup_crash_log_saving): Remove '-e %ld' argument, since the
+        NTSD debugger does not understand this argument.
+
 2015-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test font-variant-* and font-feature-settings with TrueType fonts

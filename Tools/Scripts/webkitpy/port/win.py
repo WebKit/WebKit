@@ -101,6 +101,11 @@ class WinPort(ApplePort):
     def default_child_processes(self):
         return 1
 
+    def _port_flag_for_scripts(self):
+        if self.get_option('architecture') == 'x86_64':
+            return '--64-bit'
+        return None
+
     def show_results_html_file(self, results_filename):
         self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
 
@@ -123,7 +128,10 @@ class WinPort(ApplePort):
         root_directory = self.get_option('root')
         if not root_directory:
             ApplePort._build_path(self, *comps)
-            root_directory = self._filesystem.join(self.get_option('root'), "bin32")
+            binary_directory = 'bin32'
+            if self.get_option('architecture') == 'x86_64':
+                binary_directory = 'bin64'
+            root_directory = self._filesystem.join(self.get_option('root'), binary_directory)
             self.set_option('root', root_directory)
 
         return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
@@ -155,12 +163,16 @@ class WinPort(ApplePort):
     def _ntsd_location(self):
         if 'PROGRAMFILES' not in os.environ:
             return None
-        possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x86", "ntsd.exe"),
-            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"),
-            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
-            self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe"),
-            self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe"),
-            self._filesystem.join(os.environ['SYSTEMROOT'], "system32", "ntsd.exe")]
+        if self.get_option('architecture') == 'x86_64':
+            possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "10", "Debuggers", "x64", "ntsd.exe"),
+                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x64", "ntsd.exe"),
+                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x64", "ntsd.exe")]
+        else:
+            possible_paths = [self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "10", "Debuggers", "x86", "ntsd.exe"),
+                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.1", "Debuggers", "x86", "ntsd.exe"),
+                self._filesystem.join(os.environ['PROGRAMFILES'], "Windows Kits", "8.0", "Debuggers", "x86", "ntsd.exe"),
+                self._filesystem.join(os.environ['PROGRAMFILES'], "Debugging Tools for Windows (x86)", "ntsd.exe")]
+        possible_paths.append(self._filesystem.join(os.environ['SYSTEMROOT'], "system32", "ntsd.exe"))
         if 'ProgramW6432' in os.environ:
             possible_paths.append(self._filesystem.join(os.environ['ProgramW6432'], "Debugging Tools for Windows (x64)", "ntsd.exe"))
         for path in possible_paths:
@@ -233,7 +245,7 @@ class WinPort(ApplePort):
         command_file = self.create_debugger_command_file()
         if not command_file:
             return None
-        debugger_options = '"{0}" -p %ld -e %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
+        debugger_options = '"{0}" -p %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
         registry_settings = {'Debugger': debugger_options, 'Auto': "1"}
         for key in registry_settings:
             for arch in ["--wow32", "--wow64"]:

@@ -63,6 +63,8 @@ def configuration_options():
             help='Set the configuration to Debug'),
         optparse.make_option('--release', action='store_const', const='Release', dest="configuration",
             help='Set the configuration to Release'),
+        optparse.make_option('--64-bit', action='store_const', const='x86_64', default=None, dest="architecture",
+            help='use 64-bit binaries by default (x86_64 instead of x86)'),
         optparse.make_option('--32-bit', action='store_const', const='x86', default=None, dest="architecture",
             help='use 32-bit binaries by default (x86 instead of x86_64)'),
         ]
