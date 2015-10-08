@@ -1,3 +1,98 @@
+2015-10-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test font-variant-* and font-feature-settings with TrueType fonts
+        https://bugs.webkit.org/show_bug.cgi?id=149776
+
+        Reviewed by Simon Fraser.
+
+        This test extends our existing FontWithFeatures project to be able to generate a
+        TrueType font. This font is conceptually similar as the existing OpenType font,
+        except the feature -> character mapping is different.
+
+        The font itself only supports the following characters:
+        ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+        However, the shape of these letters are either an X or a check mark.
+        The letter "A" always is a check mark.
+        The letter "B" always is an X.
+        Each font feature has an letter associated with it. When the font feature is enabled,
+        that letter is shown as a check mark. For example, when
+        "kLowerCaseType / kLowerCaseSmallCapsSelector" is enabled, "S" is shown as a check
+        mark.
+
+        Here are the mappings of font features to letters:
+        kLigaturesType / kCommonLigaturesOnSelector: C
+        kLigaturesType / kContextualLigaturesOnSelector: D
+        kLigaturesType / kRareLigaturesOnSelector: G
+        kLigaturesType / kHistoricalLigaturesOnSelector: I
+        kContextualAlternatesType / kContextualAlternatesOnSelector: L
+        kVerticalPositionType / kInferiorsSelector: O
+        kVerticalPositionType / kSuperiorsSelector: P
+        kLowerCaseType / kLowerCaseSmallCapsSelector: S
+        kUpperCaseType / kUpperCaseSmallCapsSelector: V
+        kLowerCaseType / kLowerCasePetiteCapsSelector: T
+        kUpperCaseType / kUpperCasePetiteCapsSelector: W
+        kLetterCaseType / 14: Y
+        kStyleOptionsType / kTitlingCapsSelector: a
+        kNumberCaseType / kUpperCaseNumbersSelector: c
+        kNumberCaseType / kLowerCaseNumbersSelector: d
+        kNumberSpacingType / kProportionalNumbersSelector: f
+        kNumberSpacingType / kMonospacedNumbersSelector: g
+        kFractionsType / kDiagonalFractionsSelector: i
+        kFractionsType / kVerticalFractionsSelector: j
+        kVerticalPositionType / kOrdinalsSelector: Q
+        kTypographicExtrasType / kSlashedZeroOnSelector: k
+        kLigaturesType / kHistoricalLigaturesOnSelector: K
+        kCharacterShapeType / kJIS1978CharactersSelector: m
+        kCharacterShapeType / kJIS1983CharactersSelector: n
+        kCharacterShapeType / kJIS1990CharactersSelector: o
+        kCharacterShapeType / kJIS2004CharactersSelector: p
+        kCharacterShapeType / kSimplifiedCharactersSelector: q
+        kCharacterShapeType / kTraditionalCharactersSelector: r
+        kTextSpacingType / kMonospacedTextSelector: t
+        kTextSpacingType / kProportionalTextSelector: u
+        kRubyKanaType / kRubyKanaOnSelector: v
+
+        * FontWithFeatures/FontWithFeatures.xcodeproj/project.pbxproj:
+        * FontWithFeatures/FontWithFeatures/FontCreator.cpp:
+        (CFFBuilder::moveTo):
+        (CFFBuilder::lineTo):
+        (GLYFBuilder::GLYFBuilder):
+        (GLYFBuilder::takeResult):
+        (GLYFBuilder::moveTo):
+        (GLYFBuilder::lineTo):
+        (GLYFBuilder::closePath):
+        (GLYFBuilder::writePoint):
+        (GLYFBuilder::append16):
+        (generateBoxCharString):
+        (generateCheckCharString):
+        (generateXCharString):
+        (itemForGlyph):
+        (Generator::generate):
+        (Generator::insertSelector):
+        (Generator::insertFeature):
+        (Generator::generateFeatureDescription):
+        (Generator::appendCFFTable):
+        (Generator::appendGLYFTable):
+        (Generator::appendLOCATable):
+        (Generator::appendFEATTable):
+        (Generator::appendMetamorphosisChain):
+        (Generator::appendMORXTable):
+        (Generator::appendHEADTable):
+        (Generator::appendHMTXTable):
+        (Generator::appendNameSubtable):
+        (Generator::append2ByteASCIIString):
+        (Generator::appendNAMETable):
+        (generateFont):
+        (CFFBuilder::curveToCubic): Deleted.
+        (charStringForGlyph): Deleted.
+        * FontWithFeatures/FontWithFeatures/FontCreator.h:
+        * FontWithFeatures/FontWithFeatures/main.cpp:
+        (constructFontWithTrueTypeFeature):
+        (constructFontWithOpenTypeFeature):
+        (drawText):
+        (main):
+        (drawTextWithFeature): Deleted.
+
 2015-10-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r190572, r190593, r190594, and
