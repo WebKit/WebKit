@@ -232,9 +232,13 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                 break;
 
             case WebInspector.ConsoleMessage.MessageType.Assert:
-                var args = [WebInspector.UIString("Assertion failed:")];
-                if (this._message.parameters)
-                    args.concat(this._message.parameters);
+                var args = [WebInspector.UIString("Assertion Failed")];
+                if (this._message.parameters) {
+                    if (this._message.parameters[0].type === "string")
+                        args = [WebInspector.UIString("Assertion Failed: %s")].concat(this._message.parameters);
+                    else
+                        args = args.concat(this._message.parameters);
+                }
                 this._appendFormattedArguments(element, args);
                 break;
 
