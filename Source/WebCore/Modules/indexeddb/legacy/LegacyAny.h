@@ -84,6 +84,10 @@ public:
     }
     ~LegacyAny();
 
+    // FIXME: This is a temporary hack to allow casts in WebInspector code while Modern IDB and Legacy IDB live side-by-side.
+    // It should be removed when the legacy implementation is removed as part of https://bugs.webkit.org/show_bug.cgi?id=149117
+    virtual bool isLegacy() const override final { return true; }
+
     virtual Type type() const override final { return m_type; }
     // Use type() to figure out which one of these you're allowed to call.
     virtual RefPtr<DOMStringList> domStringList() override final;

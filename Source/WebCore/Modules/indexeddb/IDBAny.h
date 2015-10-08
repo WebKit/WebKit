@@ -68,6 +68,10 @@ public:
         KeyPath,
     };
 
+    // FIXME: This is a temporary hack to allow casts in WebInspector code while Modern IDB and Legacy IDB live side-by-side.
+    // It should be removed when the legacy implementation is removed as part of https://bugs.webkit.org/show_bug.cgi?id=149117
+    virtual bool isLegacy() const { return false; }
+
     virtual Type type() const = 0;
     virtual RefPtr<DOMStringList> domStringList() = 0;
     virtual RefPtr<IDBCursor> idbCursor() = 0;

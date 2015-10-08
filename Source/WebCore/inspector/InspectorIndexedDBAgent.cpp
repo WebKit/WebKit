@@ -61,6 +61,7 @@
 #include "IDBTransaction.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "LegacyDatabase.h"
 #include "SecurityOrigin.h"
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
@@ -149,7 +150,7 @@ public:
         : m_context(context) { }
     virtual ~ExecutableWithDatabase() { };
     void start(IDBFactory*, SecurityOrigin*, const String& databaseName);
-    virtual void execute(RefPtr<IDBDatabase>&&) = 0;
+    virtual void execute(RefPtr<LegacyDatabase>&&) = 0;
     virtual RequestCallback& requestCallback() = 0;
     ScriptExecutionContext* context() { return m_context; };
 private:
@@ -188,8 +189,12 @@ public:
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
+        if (!requestResult->isLegacy()) {
+            m_executableWithDatabase->requestCallback().sendFailure("Only Legacy IDB is supported right now.");
+            return;
+        }
 
-        RefPtr<IDBDatabase> idbDatabase = requestResult->idbDatabase();
+        RefPtr<LegacyDatabase> idbDatabase = adoptRef(static_cast<LegacyDatabase*>(requestResult->idbDatabase().leakRef()));
         m_executableWithDatabase->execute(WTF::move(idbDatabase));
         IDBPendingTransactionMonitor::deactivateNewTransactions();
         idbDatabase->close();
@@ -283,7 +288,7 @@ public:
 
     virtual ~DatabaseLoader() { }
 
-    virtual void execute(RefPtr<IDBDatabase>&& database) override
+    virtual void execute(RefPtr<LegacyDatabase>&& database) override
     {
         if (!requestCallback().isActive())
             return;
@@ -512,7 +517,7 @@ public:
 
     virtual ~DataLoader() { }
 
-    virtual void execute(RefPtr<IDBDatabase>&& database) override
+    virtual void execute(RefPtr<LegacyDatabase>&& database) override
     {
         if (!requestCallback().isActive())
             return;
@@ -728,7 +733,7 @@ public:
     {
     }
 
-    virtual void execute(RefPtr<IDBDatabase>&& database) override
+    virtual void execute(RefPtr<LegacyDatabase>&& database) override
     {
         if (!requestCallback().isActive())
             return;
