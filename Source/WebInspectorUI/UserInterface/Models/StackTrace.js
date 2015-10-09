@@ -58,28 +58,38 @@ WebInspector.StackTrace = class StackTrace extends WebInspector.Object
             var url = "";
             var lineNumber = 0;
             var columnNumber = 0;
+            var atIndex = line.indexOf("@");
 
-            var index = line.indexOf("@");
-            if (index !== -1) {
-                functionName = line.slice(0, index);
-                url = line.slice(index + 1);
-
-                var columnIndex = url.lastIndexOf(":");
-                if (columnIndex !== -1) {
-                    columnNumber = parseInt(url.slice(columnIndex + 1));
-
-                    url = url.slice(0, columnIndex);
-                    var lineIndex = url.lastIndexOf(":", columnIndex);
-                    if (lineIndex !== -1) {
-                        lineNumber = parseInt(url.slice(lineIndex + 1, columnIndex));
-                        url = url.slice(0, lineIndex);
-                    }
-                }
-            } else
+            if (atIndex !== -1) {
+                functionName = line.slice(0, atIndex);
+                ({url, lineNumber, columnNumber} = WebInspector.StackTrace._parseLocation(line.slice(atIndex + 1)));
+            } else if (line.includes("/"))
+                ({url, lineNumber, columnNumber} = WebInspector.StackTrace._parseLocation(line));
+            else
                 functionName = line;
 
             result.push({functionName, url, lineNumber, columnNumber});
         }
+
+        return result;
+    }
+
+    static _parseLocation(locationString)
+    {
+        var result = {url: "", lineNumber: 0, columnNumber: 0};
+        var locationRegEx = /(.+?)(?::(\d+)(?::(\d+))?)?$/;
+        var matched = locationString.match(locationRegEx);
+
+        if (!matched)
+            return result;
+
+        result.url = matched[1];
+
+        if (matched[2])
+            result.lineNumber = parseInt(matched[2]);
+
+        if (matched[3])
+            result.columnNumber = parseInt(matched[3]);
 
         return result;
     }

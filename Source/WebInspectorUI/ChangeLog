@@ -1,5 +1,16 @@
 2015-10-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Stack trace view doesn't properly display lines without function names
+        https://bugs.webkit.org/show_bug.cgi?id=149922
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/StackTrace.js:
+        (WebInspector.StackTrace._parseStackTrace):
+        (WebInspector.StackTrace._parseLocation): Added.
+
+2015-10-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: An error view doesn't get expanded by clicking on the expand arrow
         https://bugs.webkit.org/show_bug.cgi?id=149917
 

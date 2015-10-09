@@ -71,8 +71,24 @@ Error object:
     {
         "functionName": "testWithNativeCallInBetween",
         "url": "/inspector/debugger/js-stacktrace.html",
-        "lineNumber": "23",
-        "columnNumber": "20"
+        "lineNumber": 23,
+        "columnNumber": 20
+    }
+]
+
+Error object:
+[
+    {
+        "functionName": "",
+        "url": "/inspector/debugger/js-stacktrace.html",
+        "lineNumber": 31,
+        "columnNumber": 33
+    },
+    {
+        "functionName": "global code",
+        "url": "/inspector/debugger/js-stacktrace.html",
+        "lineNumber": 35,
+        "columnNumber": 3
     }
 ]
 

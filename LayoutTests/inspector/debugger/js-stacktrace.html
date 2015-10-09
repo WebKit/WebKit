@@ -23,6 +23,21 @@ function testWithNativeCallInBetween()
     return [42].map(typeError)[0];
 }
 
+var _anonymousFunctionError = null;
+
+(function() {
+    var object = {};
+    try {
+        object.methodDoesntExist();
+    } catch (e) {
+        _anonymousFunctionError = e.stack;
+    }
+})();
+
+function getAnonymousFunctionError() {
+    return _anonymousFunctionError;
+}
+
 
 function test()
 {
@@ -59,6 +74,19 @@ function test()
     });
 
     InspectorTest.evaluateInPage("testWithNativeCallInBetween()", function(error, result) {
+        InspectorTest.log("\nError object:");
+
+        if (error)
+            InspectorTest.log(error);
+
+        var stackTrace = stripPayloadAfterEval(WebInspector.StackTrace._parseStackTrace(result.value));
+        stackTrace = stripFilePaths(stackTrace);
+
+        InspectorTest.log(JSON.stringify(stackTrace, null, 4));
+        InspectorTest.completeTest();
+    });
+
+    InspectorTest.evaluateInPage("getAnonymousFunctionError()", function(error, result) {
         InspectorTest.log("\nError object:");
 
         if (error)
