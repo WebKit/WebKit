@@ -1,3 +1,29 @@
+2015-10-08  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend run-benchmark script to support human-readable results conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=149944
+
+        Reviewed by Ryosuke Niwa.
+
+        Add '--read-results-json' and '--no-adjust-unit' options.
+        '--read-results-json' option converts result file to human readable format.
+        '--no-adjust-unit' option skips scientific notation convertion.
+        '--platform' defaults to 'osx' and '--browser' defaults to 'safari'.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults.format):
+        (BenchmarkResults._format_tests):
+        (BenchmarkResults._format_values):
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner._run_benchmark):
+        (BenchmarkRunner._dump):
+        (BenchmarkRunner.show_results):
+        (BenchmarkRunner._show_results): Deleted.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (parse_args):
+        (start):
+
 2015-10-08  Daniel Bates  <dabates@apple.com>
 
         Add iOS 9 device builder to WebKit Bot Watcher's Dashboard

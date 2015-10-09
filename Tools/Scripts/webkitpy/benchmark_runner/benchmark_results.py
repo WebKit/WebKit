@@ -48,11 +48,11 @@ class BenchmarkResults(object):
         self._lint_results(results)
         self._results = self._aggregate_results(results)
 
-    def format(self):
-        return self._format_tests(self._results)
+    def format(self, scale_unit):
+        return self._format_tests(self._results, scale_unit)
 
     @classmethod
-    def _format_tests(self, tests, indent=''):
+    def _format_tests(cls, tests, scale_unit, indent=''):
         output = ''
         config_name = 'current'
         for test_name in sorted(tests.keys()):
@@ -71,13 +71,13 @@ class BenchmarkResults(object):
                     output += ':' + metric_name + ':'
                     if aggregator_name:
                         output += aggregator_name + ':'
-                    output += ' ' + self._format_values(metric_name, metric[aggregator_name][config_name]) + '\n'
+                    output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit) + '\n'
             if 'tests' in test:
-                output += self._format_tests(test['tests'], indent=(indent + ' ' * len(test_name)))
+                output += cls._format_tests(test['tests'], scale_unit, indent=(indent + ' ' * len(test_name)))
         return output
 
     @classmethod
-    def _format_values(cls, metric_name, values):
+    def _format_values(cls, metric_name, values, scale_unit):
         values = map(float, values)
         total = sum(values)
         mean = total / len(values)
@@ -92,6 +92,9 @@ class BenchmarkResults(object):
             sample_stdev = math.sqrt(square_sum / (sample_count - 1) - total * total / (sample_count - 1) / sample_count)
 
         unit = cls._unit_from_metric(metric_name)
+
+        if not scale_unit:
+            return ('{mean:.3f}{unit} stdev={delta:.1%}').format(mean=mean, delta=sample_stdev / mean, unit=unit)
 
         if unit == 'ms':
             unit = 's'

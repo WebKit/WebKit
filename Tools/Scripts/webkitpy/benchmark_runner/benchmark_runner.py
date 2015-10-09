@@ -24,7 +24,7 @@ _log = logging.getLogger(__name__)
 
 class BenchmarkRunner(object):
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, device_id=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit=True, device_id=None):
         try:
             plan_file = self._find_plan_file(plan_file)
             with open(plan_file, 'r') as fp:
@@ -39,6 +39,7 @@ class BenchmarkRunner(object):
                 self._http_server_driver.set_device_id(device_id)
                 self._build_dir = os.path.abspath(build_dir) if build_dir else None
                 self._output_file = output_file
+                self._scale_unit = scale_unit
                 self._device_id = device_id
         except IOError as error:
             _log.error('Can not open plan file: {plan_file} - Error {error}'.format(plan_file=plan_file, error=error))
@@ -80,7 +81,7 @@ class BenchmarkRunner(object):
             _log.info('End of {current_iteration} iteration of current benchmark'.format(current_iteration=iteration))
         results = self._wrap(results)
         self._dump(results, self._output_file if self._output_file else self._plan['output_file'])
-        self._show_results(results)
+        self.show_results(results, self._scale_unit)
 
     def execute(self):
         with BenchmarkBuilder(self._plan_name, self._plan) as web_root:
@@ -94,7 +95,7 @@ class BenchmarkRunner(object):
                 json.dump(results, fp)
         except IOError as error:
             _log.error('Cannot open output file: {output_file} - Error: {error}'.format(output_file=output_file, error=error))
-            _log.error('Results are:\n {result}'.format(json.dumps(results)))
+            _log.error('Results are:\n {result}'.format(result=json.dumps(results)))
 
     @classmethod
     def _wrap(cls, dicts):
@@ -129,6 +130,6 @@ class BenchmarkRunner(object):
         return a + b
 
     @classmethod
-    def _show_results(cls, results):
+    def show_results(cls, results, scale_unit=True):
         results = BenchmarkResults(results)
-        print results.format()
+        print results.format(scale_unit)
