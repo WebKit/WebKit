@@ -338,9 +338,10 @@ namespace WebCore {
         void clearMainResource();
 
         void cancelPolicyCheckIfNeeded();
+        void becomeMainResourceClient();
 
 #if ENABLE(CONTENT_FILTERING)
-        void becomeMainResourceClientIfFilterAllows();
+        friend class ContentFilter;
         void installContentFilterUnblockHandler(ContentFilter&);
         void contentFilterDidDecide();
 #endif

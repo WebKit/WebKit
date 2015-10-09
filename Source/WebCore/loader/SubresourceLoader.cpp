@@ -207,8 +207,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     // anything including removing the last reference to this object; one example of this is 3266216.
     Ref<SubresourceLoader> protect(*this);
 
-    TemporaryChange<bool> callingDidReceiveResponse(m_callingDidReceiveResponse, true);
-
     if (shouldIncludeCertificateInfo())
         response.includeCertificateInfo();
 

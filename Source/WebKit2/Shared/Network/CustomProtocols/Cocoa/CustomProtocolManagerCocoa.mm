@@ -259,6 +259,20 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
     removeCustomProtocol(protocol.get());
 }
 
+void CustomProtocolManager::wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
+{
+    RetainPtr<WKCustomProtocol> protocol = protocolForID(customProtocolID);
+    if (!protocol)
+        return;
+
+    RetainPtr<NSURLRequest> nsRequest = request.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+    RetainPtr<NSURLResponse> nsRedirectResponse = redirectResponse.nsURLResponse();
+
+    dispatchOnResourceLoaderRunLoop([protocol, nsRequest, nsRedirectResponse]() {
+        [[protocol client] URLProtocol:protocol.get() wasRedirectedToRequest:nsRequest.get() redirectResponse:nsRedirectResponse.get()];
+    });
+}
+
 RetainPtr<WKCustomProtocol> CustomProtocolManager::protocolForID(uint64_t customProtocolID)
 {
     MutexLocker locker(m_customProtocolMapMutex);

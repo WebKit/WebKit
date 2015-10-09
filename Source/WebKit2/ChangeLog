@@ -1,3 +1,40 @@
+2015-10-08  Andy Estes  <aestes@apple.com>
+
+        Merge r188150, r188517, r188844, r188845, r188851, r188852, r188880, r188881, r188988, r189193, r189289, and r190133.
+
+    2015-08-26  Andy Estes  <aestes@apple.com>
+
+            [Content Filtering] Determine navigation and content policy before continuing to filter a load
+            https://bugs.webkit.org/show_bug.cgi?id=148506
+
+            Reviewed by Brady Eidson.
+
+            Deleted parts of r188486 and r188851.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+            * WebProcess/WebPage/WebFrame.cpp:
+            (WebKit::WebFrame::convertMainResourceLoadToDownload):
+
+    2015-08-11  Andy Estes  <aestes@apple.com>
+
+            [Cocoa] Add redirect support to CustomProtocolManager
+            https://bugs.webkit.org/show_bug.cgi?id=147871
+
+            Reviewed by Dan Bernstein.
+            
+            NSURLProtocols have the ability to generate redirect responses. This change teaches CustomProtocolManager how to handle them.
+
+            * Shared/Network/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm:
+            (WebKit::CustomProtocolManager::wasRedirectedToRequest): Called -URLProtocol:wasRedirectedToRequest:redirectResponse: on the NSURLProtocolClient.
+            * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+            * Shared/Network/CustomProtocols/CustomProtocolManager.messages.in: Defined WasRedirectedToRequest.
+            * Shared/Network/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+            (WebKit::CustomProtocolManager::wasRedirectedToRequest): Defined empty function.
+            * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+            (-[WKCustomProtocolLoader connection:willSendRequest:redirectResponse:]): If a redirect response is received, send WasRedirectedToRequest and return nil to ignore the redirect.
+
 2015-10-08  Lucas Forschler  <lforschler@apple.com>
 
         Rollout r190745

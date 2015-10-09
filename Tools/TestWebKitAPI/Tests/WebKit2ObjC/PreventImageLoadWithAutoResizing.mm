@@ -57,6 +57,8 @@ TEST(WebKit2, PreventImageLoadWithAutoResizingTest)
     [webView.platformView().browsingContextController loadHTMLString:@"<html><body style='background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFZJREFUeF59z4EJADEIQ1F36k7u5E7ZKXeUQPACJ3wK7UNokVxVk9kHnQH7bY9hbDyDhNXgjpRLqFlo4M2GgfyJHhjq8V4agfrgPQX3JtJQGbofmCHgA/nAKks+JAjFAAAAAElFTkSuQmCC);'></body></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&testFinished);
+    [NSURLProtocol unregisterClass:[TestProtocol class]];
+    [WKBrowsingContextController unregisterSchemeForCustomProtocol:[TestProtocol scheme]];
 }
 
 } // namespace TestWebKitAPI

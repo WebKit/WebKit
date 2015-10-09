@@ -49,6 +49,7 @@ class DataReference;
 
 namespace WebCore {
 class ResourceError;
+class ResourceRequest;
 class ResourceResponse;
 } // namespace WebCore
 
@@ -94,6 +95,7 @@ private:
     void didLoadData(uint64_t customProtocolID, const IPC::DataReference&);
     void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
     void didFinishLoading(uint64_t customProtocolID);
+    void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
 
     ChildProcess* m_childProcess;
     RefPtr<WorkQueue> m_messageQueue;

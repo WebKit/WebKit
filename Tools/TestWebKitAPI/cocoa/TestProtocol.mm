@@ -26,13 +26,17 @@
 #import "config.h"
 #import "TestProtocol.h"
 
-static NSString *testScheme = @"test";
+#import <wtf/RetainPtr.h>
+
+// Even though NSURLProtocol is capable of generating redirect responses for any protocol, WebCore asserts if a redirect is not in the http family.
+// See http://webkit.org/b/147870 for details.
+static NSString *testScheme = @"http";
 
 @implementation TestProtocol
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    return [[[request URL] scheme] caseInsensitiveCompare:testScheme] == NSOrderedSame;
+    return [request.URL.scheme caseInsensitiveCompare:testScheme] == NSOrderedSame;
 }
 
 + (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request
@@ -52,14 +56,21 @@ static NSString *testScheme = @"test";
 
 - (void)startLoading
 {
-    EXPECT_TRUE([[[[self request] URL] scheme] isEqualToString:testScheme]);
-    
+    NSURL *requestURL = self.request.URL;
+    EXPECT_TRUE([requestURL.scheme isEqualToString:testScheme]);
+
     NSData *data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[[self request] URL] MIMEType:@"text/html" expectedContentLength:[data length] textEncodingName:nil];
-    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-    [[self client] URLProtocol:self didLoadData:data];
-    [[self client] URLProtocolDidFinishLoading:self];
-    [response release];
+    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]);
+
+    if ([requestURL.host isEqualToString:@"redirect"]) {
+        NSURL *redirectURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", testScheme, requestURL.query]];
+        [self.client URLProtocol:self wasRedirectedToRequest:[NSURLRequest requestWithURL:redirectURL] redirectResponse:response.get()];
+        return;
+    }
+
+    [self.client URLProtocol:self didReceiveResponse:response.get() cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+    [self.client URLProtocol:self didLoadData:data];
+    [self.client URLProtocolDidFinishLoading:self];
 }
 
 - (void)stopLoading

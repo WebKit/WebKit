@@ -183,7 +183,7 @@
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-#include "MockContentFilter.h"
+#include "MockContentFilterSettings.h"
 #endif
 
 #if ENABLE(WEB_AUDIO)
@@ -350,10 +350,6 @@ Internals::Internals(Document* document)
     MockRealtimeMediaSourceCenter::registerMockRealtimeMediaSourceCenter();
     enableMockRTCPeerConnectionHandler();
     WebCore::provideUserMediaTo(document->page(), new UserMediaClientMock());
-#endif
-
-#if ENABLE(CONTENT_FILTERING)
-    MockContentFilter::ensureInstalled();
 #endif
 }
 

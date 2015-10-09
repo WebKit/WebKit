@@ -283,7 +283,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         // This can happen if there is no loader because the main resource is in the WebCore memory cache,
         // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
         uint64_t mainResourceLoadIdentifier;
-        if (mainResourceLoader && mainResourceLoader->callingDidReceiveResponse())
+        if (mainResourceLoader)
             mainResourceLoadIdentifier = mainResourceLoader->identifier();
         else
             mainResourceLoadIdentifier = 0;
@@ -293,7 +293,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     }
 #endif
 
-    if (!mainResourceLoader || !mainResourceLoader->callingDidReceiveResponse()) {
+    if (!mainResourceLoader) {
         // The main resource has already been loaded. Start a new download instead.
         webProcess.downloadManager().startDownload(policyDownloadID, request);
         return;

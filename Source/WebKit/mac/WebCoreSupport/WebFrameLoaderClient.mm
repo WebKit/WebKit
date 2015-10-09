@@ -288,7 +288,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
     WebView *webView = getWebView(m_webFrame.get());
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
-    if (!mainResourceLoader || !mainResourceLoader->callingDidReceiveResponse()) {
+    if (!mainResourceLoader) {
         // The resource has already been cached, or the conversion is being attmpted when not calling SubresourceLoader::didReceiveResponse().
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

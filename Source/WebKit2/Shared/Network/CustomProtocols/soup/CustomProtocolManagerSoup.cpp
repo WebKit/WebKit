@@ -106,4 +106,9 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
     m_impl->didFinishLoading(customProtocolID);
 }
 
+void CustomProtocolManager::wasRedirectedToRequest(uint64_t, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
