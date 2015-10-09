@@ -207,14 +207,14 @@ void Worklist::completeAllPlansForVM(VM& vm)
     completeAllReadyPlansForVM(vm);
 }
 
-void Worklist::clearCodeBlockMarks(VM& vm)
+void Worklist::rememberCodeBlocks(VM& vm)
 {
     LockHolder locker(m_lock);
     for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
         Plan* plan = iter->value.get();
         if (&plan->vm != &vm)
             continue;
-        plan->clearCodeBlockMarks();
+        plan->rememberCodeBlocks();
     }
 }
 
@@ -467,11 +467,11 @@ void completeAllPlansForVM(VM& vm)
     }
 }
 
-void clearCodeBlockMarks(VM& vm)
+void rememberCodeBlocks(VM& vm)
 {
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))
-            worklist->clearCodeBlockMarks(vm);
+            worklist->rememberCodeBlocks(vm);
     }
 }
 

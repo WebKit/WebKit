@@ -55,7 +55,7 @@ class ThreadData;
 
 struct Plan : public ThreadSafeRefCounted<Plan> {
     Plan(
-        PassRefPtr<CodeBlock> codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
+        CodeBlock* codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
         CompilationMode, unsigned osrEntryBytecodeIndex,
         const Operands<JSValue>& mustHandleValues);
     ~Plan();
@@ -71,14 +71,17 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     
     CompilationKey key();
     
-    void clearCodeBlockMarks();
+    void rememberCodeBlocks();
     void checkLivenessAndVisitChildren(SlotVisitor&);
     bool isKnownToBeLiveDuringGC();
     void cancel();
     
     VM& vm;
-    RefPtr<CodeBlock> codeBlock;
-    RefPtr<CodeBlock> profiledDFGCodeBlock;
+
+    // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
+    CodeBlock* codeBlock;
+    CodeBlock* profiledDFGCodeBlock;
+
     CompilationMode mode;
     const unsigned osrEntryBytecodeIndex;
     Operands<JSValue> mustHandleValues;

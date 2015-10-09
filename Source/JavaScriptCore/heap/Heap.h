@@ -227,8 +227,6 @@ public:
         template<typename T> void releaseSoon(RetainPtr<T>&&);
 #endif
 
-    void removeCodeBlock(CodeBlock* cb) { m_codeBlocks.remove(cb); }
-
     static bool isZombified(JSCell* cell) { return *(void**)cell == zombifiedBits; }
 
     void registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback);
@@ -313,7 +311,7 @@ private:
     void snapshotMarkedSpace();
     void deleteSourceProviderCaches();
     void notifyIncrementalSweeper();
-    void rememberCurrentlyExecutingCodeBlocks();
+    void writeBarrierCurrentlyExecutingCodeBlocks();
     void resetAllocators();
     void copyBackingStores();
     void harvestWeakReferences();

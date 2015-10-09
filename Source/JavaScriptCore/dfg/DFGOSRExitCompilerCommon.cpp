@@ -69,7 +69,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
             jit.branchTest8(
                 AssemblyHelpers::NonZero,
                 AssemblyHelpers::AbsoluteAddress(
-                    inlineCallFrame->executable->addressOfDidTryToEnterInLoop())));
+                    inlineCallFrame->baselineCodeBlock->ownerScriptExecutable()->addressOfDidTryToEnterInLoop())));
     }
     
     jit.move(
@@ -268,13 +268,24 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isExitingToOpCatch)
 {
-    jit.move(AssemblyHelpers::TrustedImmPtr(jit.codeBlock()->ownerExecutable()), GPRInfo::argumentGPR1);
+    jit.move(
+        AssemblyHelpers::TrustedImmPtr(
+            jit.codeBlock()->baselineAlternative()), GPRInfo::argumentGPR1);
     osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
+
+    // We barrier all inlined frames -- and not just the current inline stack --
+    // because we don't know which inlined function owns the value profile that
+    // we'll update when we exit. In the case of "f() { a(); b(); }", if both
+    // a and b are inlined, we might exit inside b due to a bad value loaded
+    // from a.
+    // FIXME: MethodOfGettingAValueProfile should remember which CodeBlock owns
+    // the value profile.
     InlineCallFrameSet* inlineCallFrames = jit.codeBlock()->jitCode()->dfgCommon()->inlineCallFrames.get();
     if (inlineCallFrames) {
         for (InlineCallFrame* inlineCallFrame : *inlineCallFrames) {
-            ScriptExecutable* ownerExecutable = inlineCallFrame->executable.get();
-            jit.move(AssemblyHelpers::TrustedImmPtr(ownerExecutable), GPRInfo::argumentGPR1);
+            jit.move(
+                AssemblyHelpers::TrustedImmPtr(
+                    inlineCallFrame->baselineCodeBlock.get()), GPRInfo::argumentGPR1);
             osrWriteBarrier(jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
         }
     }
@@ -282,17 +293,17 @@ void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit, bool isEx
     if (exit.m_codeOrigin.inlineCallFrame)
         jit.addPtr(AssemblyHelpers::TrustedImm32(exit.m_codeOrigin.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister);
 
-    CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
-    Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(baselineCodeBlock);
+    CodeBlock* codeBlockForExit = jit.baselineCodeBlockFor(exit.m_codeOrigin);
+    Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(codeBlockForExit);
     
     BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), exit.m_codeOrigin.bytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
     
     ASSERT(mapping);
     ASSERT(mapping->m_bytecodeIndex == exit.m_codeOrigin.bytecodeIndex);
     
-    void* jumpTarget = baselineCodeBlock->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+    void* jumpTarget = codeBlockForExit->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
 
-    jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(baselineCodeBlock) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
+    jit.addPtr(AssemblyHelpers::TrustedImm32(JIT::stackPointerOffsetFor(codeBlockForExit) * sizeof(Register)), GPRInfo::callFrameRegister, AssemblyHelpers::stackPointerRegister);
     if (isExitingToOpCatch) {
         // Since we're jumping to op_catch, we need to set callFrameForCatch.
         jit.storePtr(GPRInfo::callFrameRegister, jit.vm()->addressOfCallFrameForCatch());

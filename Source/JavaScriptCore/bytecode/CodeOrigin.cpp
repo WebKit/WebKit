@@ -75,7 +75,7 @@ bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other) const
         if (!a.inlineCallFrame)
             return true;
         
-        if (a.inlineCallFrame->executable.get() != b.inlineCallFrame->executable.get())
+        if (a.inlineCallFrame->baselineCodeBlock.get() != b.inlineCallFrame->baselineCodeBlock.get())
             return false;
         
         a = a.inlineCallFrame->directCaller;
@@ -98,7 +98,7 @@ unsigned CodeOrigin::approximateHash() const
         if (!codeOrigin.inlineCallFrame)
             return result;
         
-        result += WTF::PtrHash<JSCell*>::hash(codeOrigin.inlineCallFrame->executable.get());
+        result += WTF::PtrHash<JSCell*>::hash(codeOrigin.inlineCallFrame->baselineCodeBlock.get());
         
         codeOrigin = codeOrigin.inlineCallFrame->directCaller;
     }
@@ -115,11 +115,11 @@ Vector<CodeOrigin> CodeOrigin::inlineStack() const
     return result;
 }
 
-ScriptExecutable* CodeOrigin::codeOriginOwner() const
+CodeBlock* CodeOrigin::codeOriginOwner() const
 {
     if (!inlineCallFrame)
         return 0;
-    return inlineCallFrame->executable.get();
+    return inlineCallFrame->baselineCodeBlock.get();
 }
 
 int CodeOrigin::stackOffset() const
@@ -143,7 +143,7 @@ void CodeOrigin::dump(PrintStream& out) const
             out.print(" --> ");
         
         if (InlineCallFrame* frame = stack[i].inlineCallFrame) {
-            out.print(frame->briefFunctionInformation(), ":<", RawPointer(frame->executable.get()), "> ");
+            out.print(frame->briefFunctionInformation(), ":<", RawPointer(frame->baselineCodeBlock.get()), "> ");
             if (frame->isClosureCall)
                 out.print("(closure) ");
         }

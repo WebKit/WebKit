@@ -381,6 +381,7 @@ void Heap::lastChanceToFinalize()
     RELEASE_ASSERT(!m_vm->entryScope);
     RELEASE_ASSERT(m_operationInProgress == NoOperation);
 
+    m_codeBlocks.lastChanceToFinalize();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
 
@@ -519,17 +520,6 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     GCPHASE(MarkRoots);
     ASSERT(isValidThreadState(m_vm));
 
-    Vector<const JSCell*> rememberedSet(m_slotVisitor.markStack().size());
-    m_slotVisitor.markStack().fillVector(rememberedSet);
-
-#if ENABLE(DFG_JIT)
-    DFG::clearCodeBlockMarks(*m_vm);
-#endif
-    if (m_operationInProgress == EdenCollection)
-        m_codeBlocks.clearMarksForEdenCollection(rememberedSet);
-    else
-        m_codeBlocks.clearMarksForFullCollection();
-
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
     ConservativeRoots conservativeRoots(&m_objectSpace.blocks(), &m_storageSpace);
@@ -537,10 +527,16 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     gatherJSStackRoots(conservativeRoots);
     gatherScratchBufferRoots(conservativeRoots);
 
-    clearLivenessData();
+#if ENABLE(DFG_JIT)
+    DFG::rememberCodeBlocks(*m_vm);
+#endif
 
-    if (m_operationInProgress == FullCollection)
+    if (m_operationInProgress == FullCollection) {
         m_opaqueRoots.clear();
+        m_slotVisitor.clearMarkStack();
+    }
+
+    clearLivenessData();
 
     m_parallelMarkersShouldExit = false;
 
@@ -579,6 +575,7 @@ void Heap::markRoots(double gcStartTime, void* stackOrigin, void* stackTop, Mach
     {
         ParallelModeEnabler enabler(m_slotVisitor);
 
+        m_slotVisitor.donateAndDrain();
         visitExternalRememberedSet();
         visitSmallStrings();
         visitConservativeRoots(conservativeRoots);
@@ -693,6 +690,9 @@ void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 void Heap::clearLivenessData()
 {
     GCPHASE(ClearLivenessData);
+    if (m_operationInProgress == FullCollection)
+        m_codeBlocks.clearMarksForFullCollection();
+
     m_objectSpace.clearNewlyAllocated();
     m_objectSpace.clearMarks();
 }
@@ -814,7 +814,6 @@ void Heap::visitHandleStack(HeapRootVisitor& visitor)
 void Heap::traceCodeBlocksAndJITStubRoutines()
 {
     GCPHASE(TraceCodeBlocksAndJITStubRoutines);
-    m_codeBlocks.traceMarked(m_slotVisitor);
     m_jitStubRoutines.traceMarkedStubRoutines(m_slotVisitor);
 
     if (Options::logGC() == GCLogging::Verbose)
@@ -948,18 +947,12 @@ void Heap::deleteAllCodeBlocks()
     // If JavaScript is running, it's not safe to delete all JavaScript code, since
     // we'll end up returning to deleted code.
     RELEASE_ASSERT(!m_vm->entryScope);
+    ASSERT(m_operationInProgress == NoOperation);
 
     completeAllDFGPlans();
 
-    for (ExecutableBase* current : m_executables) {
-        if (!current->isFunctionExecutable())
-            continue;
-        static_cast<FunctionExecutable*>(current)->clearCode();
-    }
-
-    ASSERT(m_operationInProgress == FullCollection || m_operationInProgress == NoOperation);
-    m_codeBlocks.clearMarksForFullCollection();
-    m_codeBlocks.deleteUnmarkedAndUnreferenced(FullCollection);
+    for (ExecutableBase* executable : m_executables)
+        executable->clearCode();
 }
 
 void Heap::deleteAllUnlinkedCodeBlocks()
@@ -979,9 +972,9 @@ void Heap::clearUnmarkedExecutables()
         if (isMarked(current))
             continue;
 
-        // We do this because executable memory is limited on some platforms and because
-        // CodeBlock requires eager finalization.
-        ExecutableBase::clearCodeVirtual(current);
+        // Eagerly dereference the Executable's JITCode in order to run watchpoint
+        // destructors. Otherwise, watchpoints might fire for deleted CodeBlocks.
+        current->clearCode();
         std::swap(m_executables[i], m_executables.last());
         m_executables.removeLast();
     }
@@ -1102,7 +1095,7 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     deleteUnmarkedCompiledCode();
     deleteSourceProviderCaches();
     notifyIncrementalSweeper();
-    rememberCurrentlyExecutingCodeBlocks();
+    writeBarrierCurrentlyExecutingCodeBlocks();
 
     resetAllocators();
     updateAllocationLimits();
@@ -1139,7 +1132,6 @@ void Heap::willStartCollection(HeapOperation collectionType)
     GCPHASE(StartingCollection);
     if (shouldDoFullCollection(collectionType)) {
         m_operationInProgress = FullCollection;
-        m_slotVisitor.clearMarkStack();
         m_shouldDoFullCollection = false;
         if (Options::logGC())
             dataLog("FullCollection, ");
@@ -1256,10 +1248,10 @@ void Heap::notifyIncrementalSweeper()
     m_sweeper->startSweeping();
 }
 
-void Heap::rememberCurrentlyExecutingCodeBlocks()
+void Heap::writeBarrierCurrentlyExecutingCodeBlocks()
 {
-    GCPHASE(RememberCurrentlyExecutingCodeBlocks);
-    m_codeBlocks.rememberCurrentlyExecutingCodeBlocks(this);
+    GCPHASE(WriteBarrierCurrentlyExecutingCodeBlocks);
+    m_codeBlocks.writeBarrierCurrentlyExecutingCodeBlocks(this);
 }
 
 void Heap::resetAllocators()

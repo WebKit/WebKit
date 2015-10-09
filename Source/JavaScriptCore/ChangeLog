@@ -1,3 +1,21 @@
+2015-10-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling back in r190694
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+
+        This time for double sure?
+
+        The cause of the crash was an incorrect write barrier.
+
+        OSR exit was barriering the baseline codeblock for the top of the stack
+        twice, missing the baseline codeblock for the bottom of the stack.
+
+        Restored changesets:
+
+        "CodeBlock should be a GC object"
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+        http://trac.webkit.org/changeset/r190694
+
 2015-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused RecursiveAllocationScope

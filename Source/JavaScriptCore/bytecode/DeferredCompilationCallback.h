@@ -42,8 +42,8 @@ protected:
 public:
     virtual ~DeferredCompilationCallback();
 
-    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) = 0;
-    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*, CodeBlock* profiledDFGCodeBlock) = 0;
+    virtual void compilationDidComplete(CodeBlock*, CodeBlock* profiledDFGCodeBlock, CompilationResult);
 
     Vector<DeferredSourceDump>& ensureDeferredSourceDump();
 

@@ -34,7 +34,7 @@
 
 namespace JSC { namespace DFG {
 
-DesiredTransition::DesiredTransition(CodeBlock* codeBlock, ScriptExecutable* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
+DesiredTransition::DesiredTransition(CodeBlock* codeBlock, CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
     : m_codeBlock(codeBlock)
     , m_codeOriginOwner(codeOriginOwner)
     , m_oldStructure(oldStructure)
@@ -46,7 +46,7 @@ void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
 {
     common->transitions.append(
         WeakReferenceTransition(
-            vm, m_codeBlock->ownerExecutable(),
+            vm, m_codeBlock,
             m_codeOriginOwner,
             m_oldStructure, m_newStructure));
 }
@@ -66,7 +66,7 @@ DesiredTransitions::~DesiredTransitions()
 {
 }
 
-void DesiredTransitions::addLazily(CodeBlock* codeBlock, ScriptExecutable* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
+void DesiredTransitions::addLazily(CodeBlock* codeBlock, CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
 {
     m_transitions.append(DesiredTransition(codeBlock, codeOriginOwner, oldStructure, newStructure));
 }
