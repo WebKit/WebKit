@@ -1,3 +1,15 @@
+2015-10-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove two unused WKFrame functions
+        https://bugs.webkit.org/show_bug.cgi?id=149958
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyChildFrames): Deleted.
+        (WKFrameGetParentFrame): Deleted.
+        * UIProcess/API/C/WKFrame.h:
+
 2015-10-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Format string issues in NetworkCache.cpp

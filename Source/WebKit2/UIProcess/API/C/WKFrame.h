@@ -77,11 +77,6 @@ WK_EXPORT void WKFrameGetResourceData(WKFrameRef frame, WKURLRef resourceURL, WK
 typedef void (*WKFrameGetWebArchiveFunction)(WKDataRef archiveData, WKErrorRef error, void* functionContext);
 WK_EXPORT void WKFrameGetWebArchive(WKFrameRef frame, WKFrameGetWebArchiveFunction function, void* functionContext);
 
-// NOTE: These are deprecated and should be removed. They currently do nothing.
-
-WK_EXPORT WKArrayRef WKFrameCopyChildFrames(WKFrameRef frame);
-WK_EXPORT WKFrameRef WKFrameGetParentFrame(WKFrameRef frame);
-
 #ifdef __cplusplus
 }
 #endif

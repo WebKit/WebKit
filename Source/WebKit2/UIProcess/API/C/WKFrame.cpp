@@ -145,15 +145,3 @@ void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction call
 {
     toImpl(frameRef)->getWebArchive(toGenericCallbackFunction(context, callback));
 }
-
-// NOTE: These are deprecated and should be removed. They currently do nothing.
-
-WKArrayRef WKFrameCopyChildFrames(WKFrameRef)
-{
-    return 0;
-}
-
-WKFrameRef WKFrameGetParentFrame(WKFrameRef)
-{
-    return 0;
-}
