@@ -67,6 +67,7 @@ WebKitBuildbot = function()
             "Apple Yosemite Debug JSC (Tests)": {heading: "Debug JSC (Tests)"},
             "Apple Yosemite Release JSC (Tests)": {heading: "Release JSC (Tests)"},
         }},
+        "Apple iOS 9 Release (Build)": {platform: Dashboard.Platform.iOS9Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.Universal},
         "Apple iOS 9 Simulator Release (Build)": {platform: Dashboard.Platform.iOS9Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple iOS 9 Simulator Release WK1 (Tests)": {platform: Dashboard.Platform.iOS9Simulator, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
         "Apple iOS 9 Simulator Release WK2 (Tests)": {platform: Dashboard.Platform.iOS9Simulator, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
