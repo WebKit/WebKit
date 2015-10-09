@@ -129,7 +129,7 @@ inline void tryCachePutToScopeGlobal(
         scope->structure()->didCachePropertyReplacement(exec->vm(), slot.cachedOffset());
 
         ConcurrentJITLocker locker(codeBlock->m_lock);
-        pc[5].u.structure.set(exec->vm(), codeBlock, scope->structure());
+        pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
         pc[6].u.operand = slot.cachedOffset();
     }
 }
@@ -162,7 +162,7 @@ inline void tryCacheGetFromScopeGlobal(
             Structure* structure = scope->structure(vm);
             {
                 ConcurrentJITLocker locker(codeBlock->m_lock);
-                pc[5].u.structure.set(exec->vm(), codeBlock, structure);
+                pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), structure);
                 pc[6].u.operand = slot.cachedOffset();
             }
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());

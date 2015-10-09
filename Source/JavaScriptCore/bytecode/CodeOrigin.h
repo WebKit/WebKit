@@ -87,7 +87,7 @@ struct CodeOrigin {
     
     // If the code origin corresponds to inlined code, gives you the heap object that
     // would have owned the code if it had not been inlined. Otherwise returns 0.
-    CodeBlock* codeOriginOwner() const;
+    ScriptExecutable* codeOriginOwner() const;
     
     int stackOffset() const;
     

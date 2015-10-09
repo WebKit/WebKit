@@ -139,6 +139,8 @@ protected:
     int m_numParametersForConstruct;
 
 public:
+    static void clearCodeVirtual(ExecutableBase*);
+
     PassRefPtr<JITCode> generatedJITCodeForCall()
     {
         ASSERT(m_jitCodeForCall);
@@ -304,8 +306,6 @@ protected:
     }
 
 private:
-    friend class ExecutableBase;
-
     NativeExecutable(VM& vm, NativeFunction function, NativeFunction constructor)
         : ExecutableBase(vm, vm.nativeExecutableStructure.get(), NUM_PARAMETERS_IS_HOST)
         , m_function(function)
@@ -376,8 +376,8 @@ public:
 
     void installCode(CodeBlock*);
     void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind);
-    CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, JSObject*& exception);
-    CodeBlock* newReplacementCodeBlockFor(CodeSpecializationKind);
+    RefPtr<CodeBlock> newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, JSObject*& exception);
+    PassRefPtr<CodeBlock> newReplacementCodeBlockFor(CodeSpecializationKind);
     
     JSObject* prepareForExecution(ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind)
     {
@@ -389,7 +389,6 @@ public:
     template <typename Functor> void forEachCodeBlock(Functor&&);
 
 private:
-    friend class ExecutableBase;
     JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind);
 
 protected:
@@ -448,19 +447,20 @@ public:
         
     DECLARE_INFO;
 
+    void clearCode();
+
     ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, false); }
 
     unsigned numVariables() { return m_unlinkedEvalCodeBlock->numVariables(); }
     unsigned numberOfFunctionDecls() { return m_unlinkedEvalCodeBlock->numberOfFunctionDecls(); }
 
 private:
-    friend class ExecutableBase;
     friend class ScriptExecutable;
     EvalExecutable(ExecState*, const SourceCode&, bool);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<EvalCodeBlock> m_evalCodeBlock;
+    RefPtr<EvalCodeBlock> m_evalCodeBlock;
     WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
 };
 
@@ -501,10 +501,11 @@ public:
         
     DECLARE_INFO;
 
+    void clearCode();
+
     ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, false); }
 
 private:
-    friend class ExecutableBase;
     friend class ScriptExecutable;
 
     ProgramExecutable(ExecState*, const SourceCode&);
@@ -512,7 +513,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<UnlinkedProgramCodeBlock> m_unlinkedProgramCodeBlock;
-    WriteBarrier<ProgramCodeBlock> m_programCodeBlock;
+    RefPtr<ProgramCodeBlock> m_programCodeBlock;
 };
 
 class ModuleProgramExecutable final : public ScriptExecutable {
@@ -542,13 +543,14 @@ public:
 
     DECLARE_INFO;
 
+    void clearCode();
+
     ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false, false, ConstructorKind::None, false); }
     UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock() { return m_unlinkedModuleProgramCodeBlock.get(); }
 
     SymbolTable* moduleEnvironmentSymbolTable() { return m_moduleEnvironmentSymbolTable.get(); }
 
 private:
-    friend class ExecutableBase;
     friend class ScriptExecutable;
 
     ModuleProgramExecutable(ExecState*, const SourceCode&);
@@ -557,7 +559,7 @@ private:
 
     WriteBarrier<UnlinkedModuleProgramCodeBlock> m_unlinkedModuleProgramCodeBlock;
     WriteBarrier<SymbolTable> m_moduleEnvironmentSymbolTable;
-    WriteBarrier<ModuleProgramCodeBlock> m_moduleProgramCodeBlock;
+    RefPtr<ModuleProgramCodeBlock> m_moduleProgramCodeBlock;
 };
 
 class FunctionExecutable final : public ScriptExecutable {
@@ -598,7 +600,7 @@ public:
         
     bool isGeneratedForCall() const
     {
-        return !!m_codeBlockForCall;
+        return m_codeBlockForCall;
     }
 
     FunctionCodeBlock* codeBlockForCall()
@@ -608,7 +610,7 @@ public:
 
     bool isGeneratedForConstruct() const
     {
-        return m_codeBlockForConstruct.get();
+        return m_codeBlockForConstruct;
     }
 
     FunctionCodeBlock* codeBlockForConstruct()
@@ -674,10 +676,11 @@ public:
 
     DECLARE_INFO;
 
+    void clearCode();
+    
     InferredValue* singletonFunction() { return m_singletonFunction.get(); }
 
 private:
-    friend class ExecutableBase;
     FunctionExecutable(
         VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, 
         unsigned lastLine, unsigned startColumn, unsigned endColumn);
@@ -687,8 +690,8 @@ private:
     friend class ScriptExecutable;
     
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
-    WriteBarrier<FunctionCodeBlock> m_codeBlockForCall;
-    WriteBarrier<FunctionCodeBlock> m_codeBlockForConstruct;
+    RefPtr<FunctionCodeBlock> m_codeBlockForCall;
+    RefPtr<FunctionCodeBlock> m_codeBlockForConstruct;
     RefPtr<TypeSet> m_returnStatementTypeSet;
     unsigned m_parametersStartOffset;
     WriteBarrier<InferredValue> m_singletonFunction;
@@ -716,6 +719,8 @@ public:
 
     DECLARE_INFO;
 
+    void clearCode();
+
     void prepareForExecution(ExecState*);
 
     WebAssemblyCodeBlock* codeBlockForCall()
@@ -724,7 +729,6 @@ public:
     }
 
 private:
-    friend class ExecutableBase;
     WebAssemblyExecutable(VM&, const SourceCode&, JSWASMModule*, unsigned functionIndex);
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -733,10 +737,30 @@ private:
     WriteBarrier<JSWASMModule> m_module;
     unsigned m_functionIndex;
 
-    WriteBarrier<WebAssemblyCodeBlock> m_codeBlockForCall;
+    RefPtr<WebAssemblyCodeBlock> m_codeBlockForCall;
 };
 #endif
 
-} // namespace JSC
+inline void ExecutableBase::clearCodeVirtual(ExecutableBase* executable)
+{
+    switch (executable->type()) {
+    case EvalExecutableType:
+        return jsCast<EvalExecutable*>(executable)->clearCode();
+    case ProgramExecutableType:
+        return jsCast<ProgramExecutable*>(executable)->clearCode();
+    case FunctionExecutableType:
+        return jsCast<FunctionExecutable*>(executable)->clearCode();
+#if ENABLE(WEBASSEMBLY)
+    case WebAssemblyExecutableType:
+        return jsCast<WebAssemblyExecutable*>(executable)->clearCode();
+#endif
+    case ModuleProgramExecutableType:
+        return jsCast<ModuleProgramExecutable*>(executable)->clearCode();
+    default:
+        return jsCast<NativeExecutable*>(executable)->clearCode();
+    }
+}
 
-#endif // Executable_h
+}
+
+#endif

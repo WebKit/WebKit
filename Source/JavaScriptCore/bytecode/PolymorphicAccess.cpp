@@ -539,7 +539,7 @@ void AccessCase::generate(AccessGenerationState& state)
         }
 
         // We will emit code that has a weak reference that isn't otherwise listed anywhere.
-        state.weakReferences.append(WriteBarrier<JSCell>(vm, codeBlock, structure));
+        state.weakReferences.append(WriteBarrier<JSCell>(vm, codeBlock->ownerExecutable(), structure));
         
         jit.move(CCallHelpers::TrustedImmPtr(condition.object()), scratchGPR);
         state.failAndRepatch.append(
@@ -1379,7 +1379,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     bool doesCalls = false;
     for (auto& entry : cases)
         doesCalls |= entry->doesCalls();
-    
+
     CodeBlock* codeBlockThatOwnsExceptionHandlers = nullptr;
     CallSiteIndex callSiteIndexForExceptionHandling = state.originalCallSiteIndex();
     if (state.needsToRestoreRegistersIfException()) {
@@ -1388,7 +1388,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
     }
 
-    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, nullptr, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock->ownerExecutable(), doesCalls, nullptr, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTF::move(state.watchpoints);
     if (!state.weakReferences.isEmpty())
         m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTF::move(state.weakReferences));

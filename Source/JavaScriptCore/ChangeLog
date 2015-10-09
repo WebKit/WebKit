@@ -1,3 +1,16 @@
+2015-10-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r190694
+        https://bugs.webkit.org/show_bug.cgi?id=148560
+
+        Crashes seen on PLT bots and facebook.com.
+
+        Reverted changesets:
+
+        "CodeBlock should be a GC object"
+        https://bugs.webkit.org/show_bug.cgi?id=149727
+        http://trac.webkit.org/changeset/190694
+
 2015-10-09  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Automate WebCore JS builtins generation and build system

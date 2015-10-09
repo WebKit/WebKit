@@ -666,7 +666,7 @@ void JIT::emit_op_enter(Instruction*)
     for (size_t j = CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters(); j < count; ++j)
         emitInitRegister(virtualRegisterForLocal(j).offset());
 
-    emitWriteBarrier(m_codeBlock);
+    emitWriteBarrier(m_codeBlock->ownerExecutable());
 
     emitEnterOptimizationCheck();
 }

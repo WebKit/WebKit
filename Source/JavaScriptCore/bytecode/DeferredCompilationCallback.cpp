@@ -33,13 +33,15 @@ namespace JSC {
 DeferredCompilationCallback::DeferredCompilationCallback() { }
 DeferredCompilationCallback::~DeferredCompilationCallback() { }
 
-void DeferredCompilationCallback::compilationDidComplete(CodeBlock*, CodeBlock*, CompilationResult result)
+void DeferredCompilationCallback::compilationDidComplete(CodeBlock* codeBlock, CompilationResult result)
 {
     dumpCompiledSourcesIfNeeded();
 
     switch (result) {
     case CompilationFailed:
     case CompilationInvalidated:
+        codeBlock->heap()->removeCodeBlock(codeBlock);
+        break;
     case CompilationSuccessful:
         break;
     case CompilationDeferred:
