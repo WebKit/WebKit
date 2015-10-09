@@ -28,6 +28,9 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "CSSParser.h"
+#include "CSSParserMode.h"
+#include "CSSSelectorList.h"
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
@@ -46,7 +49,7 @@ using namespace JSC;
 namespace WebCore {
 
 namespace ContentExtensions {
-    
+
 static bool containsOnlyASCIIWithNoUppercase(const String& domain)
 {
     for (unsigned i = 0; i < domain.length(); ++i) {
@@ -56,21 +59,21 @@ static bool containsOnlyASCIIWithNoUppercase(const String& domain)
     }
     return true;
 }
-    
+
 static std::error_code getDomainList(ExecState& exec, JSObject* arrayObject, Vector<String>& vector)
 {
     ASSERT(vector.isEmpty());
     if (!arrayObject || !isJSArray(arrayObject))
         return ContentExtensionError::JSONInvalidDomainList;
     JSArray* array = jsCast<JSArray*>(arrayObject);
-    
+
     unsigned length = array->length();
     for (unsigned i = 0; i < length; ++i) {
         // FIXME: JSObject::getIndex should be marked as const.
         JSValue value = array->getIndex(&exec, i);
         if (exec.hadException() || !value.isString())
             return ContentExtensionError::JSONInvalidDomainList;
-        
+
         // Domains should be punycode encoded lower case.
         const String& domain = jsCast<JSString*>(value)->value(&exec);
         if (domain.isEmpty())
@@ -92,13 +95,13 @@ static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, R
         return ContentExtensionError::JSONInvalidTriggerFlagsArray;
 
     JSArray* array = jsCast<JSArray*>(object);
-    
+
     unsigned length = array->length();
     for (unsigned i = 0; i < length; ++i) {
         JSValue value = array->getIndex(&exec, i);
         if (exec.hadException() || !value)
             return ContentExtensionError::JSONInvalidObjectInTriggerFlagsArray;
-        
+
         String name = value.toWTFString(&exec);
         uint16_t type = stringToType(name);
         if (!type)
@@ -109,13 +112,13 @@ static std::error_code getTypeFlags(ExecState& exec, const JSValue& typeValue, R
 
     return { };
 }
-    
+
 static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigger& trigger)
 {
     JSValue triggerObject = ruleObject.get(&exec, Identifier::fromString(&exec, "trigger"));
     if (!triggerObject || exec.hadException() || !triggerObject.isObject())
         return ContentExtensionError::JSONInvalidTrigger;
-    
+
     JSValue urlFilterObject = triggerObject.get(&exec, Identifier::fromString(&exec, "url-filter"));
     if (!urlFilterObject || exec.hadException() || !urlFilterObject.isString())
         return ContentExtensionError::JSONInvalidURLFilterInTrigger;
@@ -157,7 +160,7 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
         trigger.domainCondition = Trigger::DomainCondition::IfDomain;
     } else if (!ifDomain.isUndefined())
         return ContentExtensionError::JSONInvalidDomainList;
-    
+
     JSValue unlessDomain = triggerObject.get(&exec, Identifier::fromString(&exec, "unless-domain"));
     if (!exec.hadException() && unlessDomain.isObject()) {
         if (trigger.domainCondition != Trigger::DomainCondition::None)
@@ -174,8 +177,18 @@ static std::error_code loadTrigger(ExecState& exec, JSObject& ruleObject, Trigge
     return { };
 }
 
-static std::error_code loadAction(ExecState& exec, JSObject& ruleObject, Action& action)
+static bool isValidSelector(const String& selector)
 {
+    CSSParserContext context(CSSQuirksMode);
+    CSSParser parser(context);
+    CSSSelectorList selectorList;
+    parser.parseSelector(selector, selectorList);
+    return selectorList.isValid();
+}
+
+static std::error_code loadAction(ExecState& exec, JSObject& ruleObject, Action& action, bool& validSelector)
+{
+    validSelector = true;
     JSValue actionObject = ruleObject.get(&exec, Identifier::fromString(&exec, "action"));
     if (!actionObject || exec.hadException() || !actionObject.isObject())
         return ContentExtensionError::JSONInvalidAction;
@@ -197,7 +210,13 @@ static std::error_code loadAction(ExecState& exec, JSObject& ruleObject, Action&
         if (!selector || exec.hadException() || !selector.isString())
             return ContentExtensionError::JSONInvalidCSSDisplayNoneActionType;
 
-        action = Action(ActionType::CSSDisplayNoneSelector, selector.toWTFString(&exec));
+        String s = selector.toWTFString(&exec);
+        if (!isValidSelector(s)) {
+            // Skip rules with invalid selectors to be backwards-compatible.
+            validSelector = false;
+            return { };
+        }
+        action = Action(ActionType::CSSDisplayNoneSelector, s);
     } else
         return ContentExtensionError::JSONInvalidActionType;
 
@@ -212,11 +231,13 @@ static std::error_code loadRule(ExecState& exec, JSObject& ruleObject, Vector<Co
         return triggerError;
 
     Action action;
-    auto actionError = loadAction(exec, ruleObject, action);
+    bool validSelector;
+    auto actionError = loadAction(exec, ruleObject, action, validSelector);
     if (actionError)
         return actionError;
 
-    ruleList.append(ContentExtensionRule(trigger, action));
+    if (validSelector)
+        ruleList.append(ContentExtensionRule(trigger, action));
     return { };
 }
 
@@ -234,7 +255,7 @@ static std::error_code loadEncodedRules(ExecState& exec, const String& rules, Ve
     JSObject* topLevelObject = decodedRules.toObject(&exec);
     if (!topLevelObject || exec.hadException())
         return ContentExtensionError::JSONTopLevelStructureNotAnObject;
-    
+
     if (!isJSArray(topLevelObject))
         return ContentExtensionError::JSONTopLevelStructureNotAnArray;
 
