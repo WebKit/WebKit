@@ -39,11 +39,15 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
     void visit(JSC::SlotVisitor& visitor) {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsFunctions.visit(visitor);
+#else
+        UNUSED_PARAM(visitor);
 #endif
     }
     void init(JSC::JSGlobalObject& globalObject) {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsFunctions.init(globalObject);
+#else
+        UNUSED_PARAM(globalObject);
 #endif
     }
 
