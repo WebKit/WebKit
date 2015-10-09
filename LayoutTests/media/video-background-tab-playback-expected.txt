@@ -16,7 +16,7 @@ RUN(testRunner.setPageVisibility('hidden'))
 EXPECTED (video.paused == 'true') OK
 
 ** Simulate switch back to foreground, video should remain paused.
-RUN(internals.applicationWillEnterForeground())
+RUN(internals.applicationDidEnterForeground())
 
 
 ** 100ms timer fired...
