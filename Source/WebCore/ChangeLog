@@ -1,5 +1,18 @@
 2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190447. rdar://problem/22865007
+
+    2015-10-01  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+            Unreviewed, fix build warning after r190434
+
+            Fix error: variable ‘interruption’ set but not used [-Werror=unused-but-set-variable]
+
+            * testing/Internals.cpp:
+            (WebCore::Internals::beginMediaSessionInterruption):
+
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190434. rdar://problem/22865007
 
     2015-10-01  Eric Carlson  <eric.carlson@apple.com>
@@ -275,18 +288,22 @@
 
         Roll out r190434.
 
-2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
-        Merge r190447.
+        Merge r190480. rdar://problem/22865007
 
-    2015-10-01  Jaehun Lim  <ljaehun.lim@samsung.com>
+    2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
-            Unreviewed, fix build warning after r190434
+            Merge r190447.
 
-            Fix error: variable ‘interruption’ set but not used [-Werror=unused-but-set-variable]
+        2015-10-01  Jaehun Lim  <ljaehun.lim@samsung.com>
 
-            * testing/Internals.cpp:
-            (WebCore::Internals::beginMediaSessionInterruption):
+                Unreviewed, fix build warning after r190434
+
+                Fix error: variable ‘interruption’ set but not used [-Werror=unused-but-set-variable]
+
+                * testing/Internals.cpp:
+                (WebCore::Internals::beginMediaSessionInterruption):
 
 2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
