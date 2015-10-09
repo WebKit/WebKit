@@ -1,3 +1,17 @@
+2015-10-09  Daniel Bates  <dabates@apple.com>
+
+        Make iOS builders generate debug information in a separate dSYM file
+        https://bugs.webkit.org/show_bug.cgi?id=149696
+
+        Reviewed by Darin Adler.
+
+        Similar to the Mac builders, the iOS builders should write debug information
+        into a separate dSYM file instead of including such information in the binary
+        itself (default Xcode behavior)
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
 2015-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix webkitpy tests after r190779
