@@ -13,7 +13,7 @@
                     testExpected("video.paused", true);
                     state = "foreground";
                     consoleWrite("<br>** Simulate switch back to foreground, video should remain paused.");
-                    run("internals.applicationDidEnterForeground()");
+                    run("internals.applicationWillEnterForeground()");
                     setTimeout(checkState, 100);
                     consoleWrite("");
                     break;

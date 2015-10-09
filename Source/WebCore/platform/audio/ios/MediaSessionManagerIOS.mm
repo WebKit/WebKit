@@ -252,10 +252,6 @@ void MediaSessionManageriOS::applicationDidEnterBackground(bool isSuspendedUnder
 {
     LOG(Media, "MediaSessionManageriOS::applicationDidEnterBackground");
 
-    if (m_isInBackground)
-        return;
-    m_isInBackground = true;
-
     if (!isSuspendedUnderLock)
         return;
 
@@ -266,23 +262,6 @@ void MediaSessionManageriOS::applicationDidEnterBackground(bool isSuspendedUnder
     }
 }
 
-void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnderLock)
-{
-    LOG(Media, "MediaSessionManageriOS::applicationWillEnterForeground");
-
-    if (!m_isInBackground)
-        return;
-    m_isInBackground = false;
-
-    if (!isSuspendedUnderLock)
-        return;
-
-    Vector<PlatformMediaSession*> sessions = this->sessions();
-    for (auto* session : sessions) {
-        if (restrictions(session->mediaType()) & BackgroundProcessPlaybackRestricted)
-            session->endInterruption(PlatformMediaSession::MayResumePlaying);
-    }
-}
 
 } // namespace WebCore
 
@@ -453,13 +432,11 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
 
     LOG(Media, "-[WebMediaSessionHelper applicationWillEnterForeground]");
 
-    BOOL isSuspendedUnderLock = [[[notification userInfo] objectForKey:@"isSuspendedUnderLock"] boolValue];
-
     WebThreadRun(^{
         if (!_callback)
             return;
 
-        _callback->applicationWillEnterForeground(isSuspendedUnderLock);
+        _callback->applicationWillEnterForeground();
     });
 }
 
@@ -476,7 +453,7 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
         if (!_callback)
             return;
 
-        _callback->applicationDidEnterForeground();
+        _callback->applicationWillEnterForeground();
     });
 }
 

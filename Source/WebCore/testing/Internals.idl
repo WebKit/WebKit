@@ -351,13 +351,13 @@ enum ResourceLoadPriority {
 
     [Conditional=VIDEO, RaisesException] void beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] void endMediaSessionInterruption(DOMString flags);
-    [Conditional=VIDEO] void applicationDidEnterForeground();
+    [Conditional=VIDEO] void applicationWillEnterForeground();
     [Conditional=VIDEO] void applicationWillEnterBackground();
     [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
     [Conditional=VIDEO, RaisesException] void setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
     [Conditional=WEB_AUDIO, RaisesException] void setAudioContextRestrictions(AudioContext context, DOMString restrictions);
     [Conditional=VIDEO, RaisesException] void postRemoteControlCommand(DOMString command);
-
+    
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
     [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(Element element);
@@ -367,7 +367,7 @@ enum ResourceLoadPriority {
 
     void setPageMuted(boolean muted);
     boolean isPagePlayingAudio();
-
+    
     File createFile(DOMString url);
     void queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
