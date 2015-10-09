@@ -861,12 +861,32 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
     logString.append(logReasonsForCompositing(layer));
     logString.appendLiteral(") ");
 
-    if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor()) {
+    if (backing->graphicsLayer()->contentsOpaque() || backing->paintsIntoCompositedAncestor() || backing->foregroundLayer() || backing->backgroundLayer()) {
         logString.append('[');
-        if (backing->graphicsLayer()->contentsOpaque())
+        bool prependSpace = false;
+        if (backing->graphicsLayer()->contentsOpaque()) {
             logString.appendLiteral("opaque");
-        if (backing->paintsIntoCompositedAncestor())
+            prependSpace = true;
+        }
+
+        if (backing->paintsIntoCompositedAncestor()) {
+            if (prependSpace)
+                logString.appendLiteral(", ");
             logString.appendLiteral("paints into ancestor");
+            prependSpace = true;
+        }
+
+        if (backing->foregroundLayer() || backing->backgroundLayer()) {
+            if (prependSpace)
+                logString.appendLiteral(", ");
+            if (backing->foregroundLayer() && backing->backgroundLayer())
+                logString.appendLiteral("foreground+background");
+            else if (backing->foregroundLayer())
+                logString.appendLiteral("foreground");
+            else
+                logString.appendLiteral("background");
+        }
+
         logString.appendLiteral("] ");
     }
 
