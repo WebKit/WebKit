@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// @optional=STREAMS_API
+// @internals
+
 function privateInitializeReadableStreamReader(stream)
 {
     "use strict";

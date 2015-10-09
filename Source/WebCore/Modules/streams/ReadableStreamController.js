@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// @optional=STREAMS_API
+
 function enqueue(chunk)
 {
     "use strict";

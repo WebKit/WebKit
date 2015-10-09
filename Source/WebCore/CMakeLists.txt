@@ -3582,7 +3582,7 @@ foreach (_builtinjs ${WEBCORE_JS_BUILTINS})
     get_filename_component(_name ${_builtinjs} NAME_WE)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}BuiltinsWrapper.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.cpp
-        MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins
+        MAIN_DEPENDENCY ${WEBCORE_DIR}/generate-js-builtins
         DEPENDS ${WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR}/generate-js-builtins
         DEPENDS ${_builtinjs}
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins --input ${_builtinjs} --output_dir ${DERIVED_SOURCES_WEBCORE_DIR} --generate_js_builtins_path ${WebCore_GENERATE_JS_BUILTINS_SCRIPTS_DIR}
