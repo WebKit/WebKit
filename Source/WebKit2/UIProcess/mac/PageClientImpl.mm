@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APIHitTestResult.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
