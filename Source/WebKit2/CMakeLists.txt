@@ -274,7 +274,6 @@ set(WebKit2_SOURCES
     Shared/API/APIError.cpp
     Shared/API/APIFrameHandle.cpp
     Shared/API/APIGeometry.cpp
-    Shared/API/APIHitTestResult.cpp
     Shared/API/APIObject.cpp
     Shared/API/APIPageGroupHandle.cpp
     Shared/API/APIPageHandle.cpp
@@ -393,6 +392,7 @@ set(WebKit2_SOURCES
     UIProcess/WebViewportAttributes.cpp
 
     UIProcess/API/APIFrameInfo.cpp
+    UIProcess/API/APIHitTestResult.cpp
     UIProcess/API/APINavigation.cpp
     UIProcess/API/APINavigationData.cpp
     UIProcess/API/APIPageConfiguration.cpp

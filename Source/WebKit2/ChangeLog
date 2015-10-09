@@ -2,6 +2,15 @@
 
         Build fix.
 
+        * CMakeLists.txt:
+        * Shared/API/APIHitTestResult.cpp: Removed.
+        * Shared/API/APIHitTestResult.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2015-10-09  Beth Dakin  <bdakin@apple.com>
+
+        Build fix.
+
         * UIProcess/API/APIHitTestResult.cpp: Copied from Shared/API/APIHitTestResult.cpp.
         * UIProcess/API/APIHitTestResult.h: Copied from Shared/API/APIHitTestResult.h.
         * UIProcess/mac/PageClientImpl.mm:
