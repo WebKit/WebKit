@@ -8,7 +8,7 @@ EVENT statechange
 PASS context.state is "running"
 
 Test 1: resume() while interrupted is resolved after the interruption ends.
-internals.beginMediaSessionInterruption()
+internals.beginMediaSessionInterruption("System")
 EVENT statechange
 PASS context.state is "interrupted"
 internals.setMediaSessionRestrictions("WebAudio", "InterruptedPlaybackNotPermitted")
@@ -20,7 +20,7 @@ PASS context.resume() promise resolved
 PASS context.state is "running"
 
 Test 2: resume() while interrupted will cause interruption to end.
-internals.beginMediaSessionInterruption()
+internals.beginMediaSessionInterruption("System")
 EVENT statechange
 PASS context.state is "interrupted"
 internals.setMediaSessionRestrictions("WebAudio", "")
@@ -29,7 +29,7 @@ PASS context.resume() promise resolved
 PASS context.state is "running"
 
 Test 3: running AudioContexts will not resume after an interruption ends.
-internals.beginMediaSessionInterruption()
+internals.beginMediaSessionInterruption("System")
 EVENT statechange
 PASS context.state is "interrupted"
 internals.endMediaSessionInterruption("")
@@ -37,7 +37,7 @@ EVENT statechange
 PASS context.state is "suspended"
 
 Test 4: resume() while interrupted will not resume playback after an interruption.
-internals.beginMediaSessionInterruption()
+internals.beginMediaSessionInterruption("System")
 EVENT statechange
 PASS context.state is "interrupted"
 Calling context.resume()
