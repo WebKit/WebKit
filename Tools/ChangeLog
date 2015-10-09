@@ -1,3 +1,211 @@
+2015-10-08  Andy Estes  <aestes@apple.com>
+
+        Merge r188486, r188517, r188531, r188844, r188845, r188851, r188852, r188880, r188881, r188988, r189193, r189289, and r190133.
+        rdar://problem/22846460
+
+    2015-09-22  Andy Estes  <aestes@apple.com>
+
+            ContentFiltering.AllowDownloadAfterAddData is very flaky
+            https://bugs.webkit.org/show_bug.cgi?id=148885
+            <rdar://problem/22729563>
+
+            Reviewed by Alexey Proskuryakov.
+
+            The AllowDownload* tests were relying on -_downloadDidStart: being called before -webView:didFinishNavigation:,
+            but there is no guarantee of this. For tests that should allow a download, spin the runloop until
+            -_downloadDidStart: is called. The test will now timeout on failure, but will no longer produce false failures.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+            (downloadTest):
+
+    2015-08-26  Andy Estes  <aestes@apple.com>
+
+            [Content Filtering] Determine navigation and content policy before continuing to filter a load
+            https://bugs.webkit.org/show_bug.cgi?id=148506
+
+            Reviewed by Brady Eidson.
+
+            Added download API tests covering every decision and decision point.
+            Removed _WKDownload.AsynchronousDownloadPolicy in favor of these new tests.
+
+            * TestWebKitAPI/Configurations/Base.xcconfig: Added $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport to the header search path.
+            * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Removed it from here.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParametersPlugIn.mm:
+            (-[BundleParametersPlugIn observeValueForKeyPath:ofObject:change:context:]): Called -valueForKeyPath:, which
+            returns an id, instead of -valueForKey:, which always returns an NSString even if the object is of another type.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm: Added a class that can send a MockContentFilter
+            decision and decision point as a bundle parameter.
+            (+[MockContentFilterEnabler supportsSecureCoding]):
+            (-[MockContentFilterEnabler copyWithZone:]):
+            (-[MockContentFilterEnabler initWithCoder:]):
+            (-[MockContentFilterEnabler initWithDecision:decisionPoint:]):
+            (-[MockContentFilterEnabler encodeWithCoder:]):
+            (configurationWithContentFilterSettings): Added a helper function to create a WKWebViewConfiguration with MockConentFilter settings.
+            (TEST): Renamed ContentFiltering.ServerRedirect to ContentFiltering.URLAfterServerRedirect.
+            (-[BecomeDownloadDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]): Decided _WKNavigationResponsePolicyBecomeDownload.
+            (-[BecomeDownloadDelegate webView:didFailProvisionalNavigation:withError:]): Set isDone to true.
+            (-[BecomeDownloadDelegate webView:didFinishNavigation:]): Ditto.
+            (-[ContentFilteringDownloadDelegate _downloadDidStart:]): Set downloadDidStart to true.
+            (downloadTest): Added a helper function to test downloads with a given decision and decision point.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm: Added a corresponding bundle class that decodes
+            the MockContentFilter decision and decision point, and sets these values in the MockContentFilterSettings
+            singleton. This class is duplicated in the bundle to prevent TestWebKitAPI from having to link to WebCoreTestSupport.
+            (+[MockContentFilterEnabler supportsSecureCoding]):
+            (-[MockContentFilterEnabler copyWithZone:]):
+            (-[MockContentFilterEnabler initWithCoder:]):
+            (-[MockContentFilterEnabler dealloc]):
+            (-[MockContentFilterEnabler encodeWithCoder:]):
+            (-[ContentFilteringPlugIn webProcessPlugIn:initializeWithObject:]): Start observing changes to the MockContentFilterEnabler key path.
+            (-[ContentFilteringPlugIn dealloc]): Stop observing.
+            (-[ContentFilteringPlugIn observeValueForKeyPath:ofObject:change:context:]): Store a MockContentFilterEnabler in _contentFilterEnabler.
+            (+[ServerRedirectPlugIn initialize]): Deleted.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+            (-[AsynchronousDownloadNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]): Deleted.
+            (-[AsynchronousDownloadDelegate _downloadDidStart:]): Deleted.
+            (TEST): Deleted.
+
+    2015-08-26  Andy Estes  <aestes@apple.com>
+
+            Crash when following a Google search link to Twitter with Limit Adult Content enabled
+            https://bugs.webkit.org/show_bug.cgi?id=147651
+
+            Rubber-stamped by Brady Eidson.
+
+            Taught TestRunner how to decide the navigation policy after a delay.
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+            (WTR::InjectedBundlePage::decidePolicyForNavigationAction):
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::setShouldDecideNavigationPolicyAfterDelay):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            (WTR::TestRunner::shouldDecideNavigationPolicyAfterDelay):
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::initialize):
+            (WTR::TestController::resetStateToConsistentValues):
+            (WTR::TestController::decidePolicyForNavigationAction):
+            * WebKitTestRunner/TestController.h:
+            (WTR::TestController::setShouldDecideNavigationPolicyAfterDelay):
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
+    2015-08-24  Andy Estes  <aestes@apple.com>
+
+            REGRESSION (r188851): WebKit2.BundleParameters fails on iOS
+
+            * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Specify LD_RUNPATH_SEARCH_PATHS correctly for iOS.
+
+    2015-08-23  Andy Estes  <aestes@apple.com>
+
+            Addressed a missed piece of review feedback from r188851.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm:
+
+    2015-08-23  Andy Estes  <aestes@apple.com>
+
+            [Content Filtering] REGRESSION (r182356): Provisional URL is incorrect in didReceiveServerRedirectForProvisionalLoadForFrame when Content Filtering is enabled
+            https://bugs.webkit.org/show_bug.cgi?id=147872
+            rdar://problem/22044000
+
+            Reviewed by Dan Bernstein.
+            
+            Added an API test.
+
+            * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Linked libWebCoreTestSupport in order to use MockContentFilter.
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFiltering.mm: Added.
+            (-[ServerRedirectNavigationDelegate webView:didStartProvisionalNavigation:]): Expect the initial request URL.
+            (-[ServerRedirectNavigationDelegate webView:didReceiveServerRedirectForProvisionalNavigation:]): Expect the redirect URL.
+            (-[ServerRedirectNavigationDelegate webView:didCommitNavigation:]):
+            (TEST): Tested that -[WKWebView URL] is updated after a redirect when content filtering is enabled.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/ContentFilteringPlugIn.mm: Added.
+            (+[ServerRedirectPlugIn initialize]): Enable MockContentFilter.
+            * TestWebKitAPI/cocoa/TestProtocol.h: Renamed from Tools/TestWebKitAPI/mac/TestProtocol.h.
+            * TestWebKitAPI/cocoa/TestProtocol.mm: Renamed from Tools/TestWebKitAPI/mac/TestProtocol.mm.
+
+    2015-08-23  Andy Estes  <aestes@apple.com>
+
+            Fixed the 32-bit Mac build after r188844.
+
+            * TestWebKitAPI/WKWebViewConfigurationExtras.h:
+            * TestWebKitAPI/WKWebViewConfigurationExtras.mm:
+
+    2015-08-22  Andy Estes  <aestes@apple.com>
+
+            [Cocoa] API tests using the Modern WebKit API should be able to create web process plug-ins
+            https://bugs.webkit.org/show_bug.cgi?id=148317
+
+            Reviewed by Dan Bernstein.
+
+            Added the ability for Modern WebKit API tests to create WKWebProcessPlugIns. A test can create a plug-in by
+            creating a class that conforms to WKWebProcessPlugIn, adding it to the WebProcessPlugIn target, and using the
+            WKWebViewConfiguration returned by +[WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:]
+            when creating WKWebViews.
+
+            Since TestWebKitAPI relies on a bundle parameter to know which test class to instantiate in the plug-in, I also
+            added a new API test for bundle parameters.
+
+            * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Added. Named the bundle TestWebKitAPI.wkbundle and
+            named its executable TestWebKitAPI.bundle.
+            * TestWebKitAPI/PlatformUtilities.h: Declared TestPlugInClassNameParameter.
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added the WebProcessPlugIn target.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParameters.mm: Added.
+            (TEST): Tested bundle parameters by verifying that parameter changes in the UI process are observed in the bundle.
+            * TestWebKitAPI/Tests/WebKit2Cocoa/BundleParametersPlugIn.mm: Added.
+            (-[BundleParametersPlugIn webProcessPlugIn:didCreateBrowserContextController:]): Started observing changes to a
+            bundle parameter and asked for an initial notification.
+            (-[BundleParametersPlugIn dealloc]): Stopped observing changes to a bundle parameter.
+            (-[BundleParametersPlugIn observeValueForKeyPath:ofObject:change:context:]): When a bundle parameter changes,
+            mirror its value in the main frame's JSContext.
+            * TestWebKitAPI/WKWebViewConfigurationExtras.h: Added.
+            * TestWebKitAPI/WKWebViewConfigurationExtras.mm: Added.
+            (+[WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:]): Created a configuration with
+            TestWebKitAPI's bundle URL and set a bundle parameter indicating the test plug-in's class name.
+            * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm: Defined TestPlugInClassNameParameter.
+            * TestWebKitAPI/cocoa/WebProcessPlugIn/Info.plist: Added. Set the principal class to WebProcessPlugIn.
+            * TestWebKitAPI/cocoa/WebProcessPlugIn/WebProcessPlugIn.mm: Added.
+            (-[WebProcessPlugIn webProcessPlugIn:initializeWithObject:]): Forwarded to a newly-created test class instance.
+            (-[WebProcessPlugIn respondsToSelector:]): Returned YES if the test class instance response.
+            (-[WebProcessPlugIn forwardingTargetForSelector:]): Forwarded unimplemented methods to the test class instance.
+
+    2015-08-11  Andy Estes  <aestes@apple.com>
+
+            [Cocoa] Add redirect support to CustomProtocolManager
+            https://bugs.webkit.org/show_bug.cgi?id=147871
+
+            Reviewed by Dan Bernstein.
+
+            Updated WebKit2CustomProtocolsTest.MainResource to generate a redirect response.
+
+            * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+            (TestWebKitAPI::TEST): Unregesitered TestProtocol.
+            * TestWebKitAPI/Tests/WebKit2/custom-protocol-sync-xhr.html: Changed scheme to http.
+            * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+            (-[CustomProtocolsLoadDelegate browsingContextControllerDidStartProvisionalLoad:]): Expected a certain provisional URL.
+            (-[CustomProtocolsLoadDelegate browsingContextControllerDidReceiveServerRedirectForProvisionalLoad:]): Ditto.
+            (-[CustomProtocolsLoadDelegate browsingContextControllerDidCommitLoad:]): Expected a certain committed URL.
+            (-[CustomProtocolsLoadDelegate browsingContextControllerDidFinishLoad:]): Expected isLoading to be false.
+            (TestWebKitAPI::TEST): Used the new load delegate and unregistered TestProtocol.
+            * TestWebKitAPI/Tests/WebKit2ObjC/PreventImageLoadWithAutoResizing.mm:
+            (TestWebKitAPI::TEST): Unregistered TestProtocol.
+            * TestWebKitAPI/mac/TestProtocol.mm: Changed scheme to http.
+            (+[TestProtocol canInitWithRequest:]): Changed to use property syntax.
+            (-[TestProtocol startLoading]): Taught to handle redirect responses.
+
+    2015-08-13  Andy Estes  <aestes@apple.com>
+
+            [Cocoa] Downloads do not start if policy decision is made asynchronously
+            https://bugs.webkit.org/show_bug.cgi?id=147985
+
+            Reviewed by Brady Eidson.
+
+            Added a new API test.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/Download.mm:
+            (-[AsynchronousDownloadNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+            (-[AsynchronousDownloadDelegate _downloadDidStart:]):
+            (TEST):
+
 2015-09-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r189997.

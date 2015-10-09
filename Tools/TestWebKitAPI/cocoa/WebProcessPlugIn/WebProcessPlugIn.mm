@@ -23,41 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockContentFilterSettings.h"
+#import "config.h"
 
-#if ENABLE(CONTENT_FILTERING)
+#if WK_API_ENABLED
 
-#include "ContentFilter.h"
-#include "ContentFilterUnblockHandler.h"
-#include "MockContentFilter.h"
-#include <wtf/NeverDestroyed.h>
+#import "PlatformUtilities.h"
+#import <WebKit/WKWebProcessPlugIn.h>
+#import <wtf/RetainPtr.h>
 
-namespace WebCore {
+@interface WebProcessPlugIn : NSObject <WKWebProcessPlugIn>
+@end
 
-MockContentFilterSettings& MockContentFilterSettings::singleton()
-{
-    static NeverDestroyed<MockContentFilterSettings> settings;
-    return settings;
+@implementation WebProcessPlugIn {
+    RetainPtr<id <WKWebProcessPlugIn>> _testPlugIn;
 }
 
-void MockContentFilterSettings::reset()
+- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject
 {
-    singleton() = MockContentFilterSettings();
+    NSString *testPlugInClassName = [plugInController.parameters valueForKey:TestWebKitAPI::Util::TestPlugInClassNameParameter];
+    ASSERT(testPlugInClassName);
+    ASSERT([testPlugInClassName isKindOfClass:[NSString class]]);
+
+    Class testPlugInClass = NSClassFromString(testPlugInClassName);
+    ASSERT(testPlugInClass);
+    ASSERT([testPlugInClass conformsToProtocol:@protocol(WKWebProcessPlugIn)]);
+
+    ASSERT(!_testPlugIn);
+    _testPlugIn = adoptNS([[testPlugInClass alloc] init]);
+
+    if ([_testPlugIn respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)])
+        [_testPlugIn webProcessPlugIn:plugInController initializeWithObject:initializationObject];
 }
 
-void MockContentFilterSettings::setEnabled(bool enabled)
+- (BOOL)respondsToSelector:(SEL)aSelector
 {
-    MockContentFilter::ensureInstalled();
-    m_enabled = enabled;
+    if ([_testPlugIn respondsToSelector:aSelector])
+        return YES;
+    return [super respondsToSelector:aSelector];
 }
 
-const String& MockContentFilterSettings::unblockRequestURL() const
+- (id)forwardingTargetForSelector:(SEL)aSelector
 {
-    static NeverDestroyed<String> unblockRequestURL = makeString(ContentFilter::urlScheme(), "://", unblockURLHost());
-    return unblockRequestURL;
+    return _testPlugIn.get();
 }
 
-}; // namespace WebCore
+@end
 
-#endif // ENABLE(CONTENT_FILTERING)
+#endif // WK_API_ENABLED

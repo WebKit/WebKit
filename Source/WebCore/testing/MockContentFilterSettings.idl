@@ -37,6 +37,7 @@
     const octet DECISION_POINT_AFTER_RESPONSE = 2;
     const octet DECISION_POINT_AFTER_ADD_DATA = 3;
     const octet DECISION_POINT_AFTER_FINISHED_ADDING_DATA = 4;
+    const octet DECISION_POINT_NEVER = 5;
     [Custom] attribute octet decisionPoint;
 
     const octet DECISION_ALLOW = 0;

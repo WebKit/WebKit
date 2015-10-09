@@ -1,3 +1,99 @@
+2015-10-08  Andy Estes  <aestes@apple.com>
+
+        Merge r188486, r188517, r188531, r188844, r188845, r188851, r188852, r188880, r188881, r188988, r189193, r189289, and r190133.
+        rdar://problem/22846460
+
+    2015-08-26  Andy Estes  <aestes@apple.com>
+
+            [Content Filtering] Determine navigation and content policy before continuing to filter a load
+            https://bugs.webkit.org/show_bug.cgi?id=148506
+
+            Reviewed by Brady Eidson.
+
+            Prior to this change, ContentFilter would hide from DocumentLoader all CachedRawResourceClient callbacks until
+            a decision was made, then replay the missed callbacks. This approach interacted poorly with some features of
+            the loader, notably appcache and downloads. In the case of appcache, DocumentLoader might not have a chance to
+            check for substitute data until the original load has finished, wasting bandwidth, and might receive duplicate
+            or out-of-order callbacks. In the case of downloads, it would often be too late to convert the existing
+            connection to a download, leading to restarted downloads or outright failures.
+
+            Bandaids were put in place for these issues in r188150, r188486, and r188851 to fix crashes or serious
+            regressions in behavior, but these weren't complete fixes. They did not solve any of the duplicate data loading
+            problems, and they did not make downloads work reliably in all cases.
+
+            This patch rolls out the bandaids (but keeps their tests) and replaces them with a more robust fix. Instead of
+            hiding callbacks from DocumentLoader, ContentFilter now delivers willSendRequest(), redirectReceived(), and
+            responseReceived() to DocumentLoader immediately, and cancels filtering if DocumentLoader decides to ignore the
+            load, download it, or load substitute data. ContentFilter continues to buffer incoming data to prevent partial
+            rendering of blocked content.
+
+            The existing tests for r188150 and r188851 were kept, the test for r188486 was rewritten to be specific to
+            content filtering, and new tests were added to cover the case where ContentFilter is still undecided after a
+            load finishes.
+
+            Tests: contentfiltering/allow-never.html
+                   contentfiltering/block-never.html
+                   ContentFiltering.AllowDownloadAfterAddData
+                   ContentFiltering.AllowDownloadAfterFinishedAddingData
+                   ContentFiltering.AllowDownloadAfterRedirect
+                   ContentFiltering.AllowDownloadAfterResponse
+                   ContentFiltering.AllowDownloadAfterWillSendRequest
+                   ContentFiltering.AllowDownloadNever
+                   ContentFiltering.BlockDownloadAfterAddData
+                   ContentFiltering.BlockDownloadAfterFinishedAddingData
+                   ContentFiltering.BlockDownloadAfterRedirect
+                   ContentFiltering.BlockDownloadAfterResponse
+                   ContentFiltering.BlockDownloadAfterWillSendRequest
+                   ContentFiltering.BlockDownloadNever
+
+            * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+            (WebCore::JSMockContentFilterSettings::decisionPoint): Taught to handle DecisionPoint::Never, and rewrote to
+            not need a set of const uint8_ts that mirror the DecisionPoint enum.
+            (WebCore::JSMockContentFilterSettings::setDecisionPoint): Ditto.
+            (WebCore::toJSValue): Rewrote to not need a set of const uint8_ts that mirror the Decision enum.
+            (WebCore::toDecision): Ditto.
+            * loader/ContentFilter.cpp:
+            (WebCore::ContentFilter::createIfEnabled): Renamed from createIfNeeded, and changed to take a DocumentLoader&
+            instead of a DecisionFunction.
+            (WebCore::ContentFilter::ContentFilter):
+            (WebCore::ContentFilter::responseReceived): If m_state != Blocked after filtering, call DocumentLoader::responseReceived().
+            (WebCore::ContentFilter::dataReceived): If m_state == Allowed after filtering, deliver buffered data to DocumentLoader.
+            If no filtering was necessary, call DocumentLoader::dataReceived() directly.
+            (WebCore::ContentFilter::redirectReceived): If m_state != Blocked after filtering, call DocumentLoader::redirectReceived().
+            (WebCore::ContentFilter::notifyFinished): If an error occured, call DocumentLoader::notifyFinished() immediately and return.
+            If m_state != Blocked after filtering, deliver buffered data to DocumentLoader and call DocumentLoader::notifyFinished().
+            If no filtering was necessary and m_state != Blocked, call DocumentLoader::notifyFinished() directly.
+            (WebCore::ContentFilter::didDecide): Called DocumentLoader::contentFilterDidDecide() instead of m_decisionFunction().
+            (WebCore::ContentFilter::deliverResourceData): Added a helper function to deliver buffered data to DocumentLoader.
+            (WebCore::ContentFilter::createIfNeeded): Renamed to createIfEnabled().
+            * loader/ContentFilter.h:
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::DocumentLoader):
+            (WebCore::DocumentLoader::willSendRequest): Stopped asserting that redirectResponse is null and made it part of
+            the if condition instead, since willSendRequest() will now be called on redirects when there is an active ContentFilter.
+            (WebCore::DocumentLoader::startLoadingMainResource): Called becomeMainResourceClient() instead of becomeMainResourceClientIfFilterAllows().
+            (WebCore::DocumentLoader::becomeMainResourceClient): Renamed from becomeMainResourceClientIfFilterAllows().
+            Only called ContentFilter::startFilteringMainResource() if the filter state is Initialized, since ContentFilter
+            might have already made a decision in willSendRequest().
+            (WebCore::DocumentLoader::contentFilterDidDecide): Stopped deleting m_contentFilter, since it will continue to deliver callbacks
+            even after making a decision. Fixed a bug where we were creating two copies of ContentFilter's replacement data.
+            (WebCore::DocumentLoader::syntheticRedirectReceived): Deleted.
+            (WebCore::DocumentLoader::becomeMainResourceClientIfFilterAllows): Renamed to becomeMainResourceClient().
+            * loader/DocumentLoader.h:
+            * loader/EmptyClients.h:
+            * loader/FrameLoaderClient.h:
+            * loader/ResourceLoader.cpp:
+            (WebCore::ResourceLoader::willSendRequestInternal): Removed part of r188851.
+            * loader/SubresourceLoader.cpp:
+            (WebCore::SubresourceLoader::didReceiveResponse): Removed part of r188486.
+            * loader/SubresourceLoader.h:
+            * loader/cache/CachedRawResource.cpp:
+            (WebCore::CachedRawResource::didAddClient): Removed part of r188150.
+            * loader/cache/CachedRawResourceClient.h:
+            (WebCore::CachedRawResourceClient::syntheticRedirectReceived): Removed part of r188150.
+            * testing/MockContentFilterSettings.h: Defined DecisionPoint::Never.
+            * testing/MockContentFilterSettings.idl: Defined DECISION_POINT_NEVER.
+
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r190447.

@@ -5,7 +5,12 @@ function _doTest(decisionPoint, decision, decideAfterUnblockRequest)
     settings.decisionPoint = decisionPoint;
     settings.decision = (decideAfterUnblockRequest ? settings.DECISION_BLOCK : decision);
     
-    var blockedStringText = (decision === settings.DECISION_ALLOW ? "FAIL" : "PASS");
+    var blockedStringText;
+    if (decisionPoint === settings.DECISION_POINT_NEVER || decision === settings.DECISION_ALLOW)
+        blockedStringText = "FAIL";
+    else
+        blockedStringText =  "PASS";
+
     if (decideAfterUnblockRequest) {
         settings.unblockRequestDecision = decision;
         settings.blockedString = "<!DOCTYPE html><script>function unblockRequestDenied() { window.top.postMessage('unblockrequestdenied', '*'); }</script><body>" + blockedStringText;
