@@ -1339,3 +1339,6 @@ webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.htm
 
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
+
+# Imported Blink tests which have not been investigated.
+imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass ImageOnlyFailure ]
