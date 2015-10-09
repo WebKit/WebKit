@@ -1,3 +1,20 @@
+2015-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        No need to keep setting needsVisit flag in SmallStrings
+        https://bugs.webkit.org/show_bug.cgi?id=149961
+
+        Reviewed by Andreas Kling.
+
+        SmallStrings are all initialized at once privately before the VM
+        enables Garbage Collection. There is no need to keep updating
+        this flag, as it couldn't have changed.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::createEmptyString):
+        (JSC::SmallStrings::createSingleCharacterString):
+        (JSC::SmallStrings::initialize):
+        * runtime/SmallStrings.h:
+
 2015-10-09  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling back in r190694

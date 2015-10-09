@@ -48,7 +48,6 @@ class StringImpl;
 
 namespace JSC {
 
-class HeapRootVisitor;
 class VM;
 class JSString;
 class SmallStringsStorage;
@@ -123,8 +122,8 @@ public:
 private:
     static const unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
-    JS_EXPORT_PRIVATE void createEmptyString(VM*);
-    JS_EXPORT_PRIVATE void createSingleCharacterString(VM*, unsigned char);
+    void createEmptyString(VM*);
+    void createSingleCharacterString(VM*, unsigned char);
 
     void initialize(VM*, JSString*&, const char* value);
 

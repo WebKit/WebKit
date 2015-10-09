@@ -109,7 +109,7 @@ void SmallStrings::createEmptyString(VM* vm)
 {
     ASSERT(!m_emptyString);
     m_emptyString = JSString::createHasOtherOwner(*vm, StringImpl::empty());
-    m_needsToBeVisited = true;
+    ASSERT(m_needsToBeVisited);
 }
 
 void SmallStrings::createSingleCharacterString(VM* vm, unsigned char character)
@@ -118,7 +118,7 @@ void SmallStrings::createSingleCharacterString(VM* vm, unsigned char character)
         m_storage = std::make_unique<SmallStringsStorage>();
     ASSERT(!m_singleCharacterStrings[character]);
     m_singleCharacterStrings[character] = JSString::createHasOtherOwner(*vm, PassRefPtr<StringImpl>(m_storage->rep(character)));
-    m_needsToBeVisited = true;
+    ASSERT(m_needsToBeVisited);
 }
 
 StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)
@@ -131,7 +131,7 @@ StringImpl* SmallStrings::singleCharacterStringRep(unsigned char character)
 void SmallStrings::initialize(VM* vm, JSString*& string, const char* value)
 {
     string = JSString::create(*vm, Identifier::fromString(vm, value).impl());
-    m_needsToBeVisited = true;
+    ASSERT(m_needsToBeVisited);
 }
 
 } // namespace JSC
