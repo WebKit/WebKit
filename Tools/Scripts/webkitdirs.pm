@@ -77,6 +77,7 @@ BEGIN {
        &runIOSWebKitApp
        &runMacWebKitApp
        &safariPath
+       &iosVersion
        &setConfiguration
        &setupMacWebKitEnvironment
        &sharedCommandLineOptions
@@ -115,6 +116,7 @@ my $debugger;
 my $didLoadIPhoneSimulatorNotification;
 my $nmPath;
 my $osXVersion;
+my $iosVersion;
 my $generateDsym;
 my $isGtk;
 my $isWinCairo;
@@ -1260,6 +1262,18 @@ sub nmPath()
     return $nmPath;
 }
 
+sub splitVersionString
+{
+    my $versionString = shift;
+    my @splitVersion = split(/\./, $versionString);
+    @splitVersion >= 2 or die "Invalid version $versionString";
+    $osXVersion = {
+            "major" => $splitVersion[0],
+            "minor" => $splitVersion[1],
+            "subminor" => (defined($splitVersion[2]) ? $splitVersion[2] : 0),
+    };
+}
+
 sub determineOSXVersion()
 {
     return if $osXVersion;
@@ -1269,20 +1283,33 @@ sub determineOSXVersion()
         return;
     }
 
-    my $version = `sw_vers -productVersion`;
-    my @splitVersion = split(/\./, $version);
-    @splitVersion >= 2 or die "Invalid version $version";
-    $osXVersion = {
-            "major" => $splitVersion[0],
-            "minor" => $splitVersion[1],
-            "subminor" => (defined($splitVersion[2]) ? $splitVersion[2] : 0),
-    };
+    my $versionString = `sw_vers -productVersion`;
+    $osXVersion = splitVersionString($versionString);
 }
 
 sub osXVersion()
 {
     determineOSXVersion();
     return $osXVersion;
+}
+
+sub determineIOSVersion()
+{
+    return if $iosVersion;
+
+    if (!isIOSWebKit()) {
+        $iosVersion = -1;
+        return;
+    }
+
+    my $versionString = xcodeSDKVersion();
+    $iosVersion = splitVersionString($versionString);
+}
+
+sub iosVersion()
+{
+    determineIOSVersion();
+    return $iosVersion;
 }
 
 sub isWindowsNT()

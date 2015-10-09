@@ -1,3 +1,19 @@
+2015-10-09  Brian Burg  <bburg@apple.com>
+
+        Teach webkitperl how to figure out IOS versions from the SDK
+        https://bugs.webkit.org/show_bug.cgi?id=149963
+
+        Reviewed by Daniel Bates.
+
+        It should be easier to check the major and minor version of IOS SDKs.
+
+        * Scripts/copy-webkitlibraries-to-product-directory: use iosVersion().
+        * Scripts/webkitdirs.pm:
+        (splitVersionString): Added.
+        (determineOSXVersion): Use splitVersionString.
+        (determineIOSVersion): Added. Look at the SDK version and make a tuple.
+        (iosVersion): Added.
+
 2015-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix some leaks in TestRunnerWKWebView and UIScriptContext

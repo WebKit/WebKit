@@ -232,7 +232,7 @@ if ($llvm) {
     $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE} unless $llvmIncludePackage;
     if (!$llvmLibraryPackage || !$llvmIncludePackage) {
         if (isIOSWebKit()) {
-            my $majorSDKVersion = $1 if xcodeSDKVersion() =~ /^(\d+)/;
+            my $majorSDKVersion = iosVersion()->{"major"};
             $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesIOS$majorSDKVersion.tar.bz2";
             $llvmIncludePackage = "WebKitLibraries/LLVMIncludesIOS$majorSDKVersion.tar.bz2";
         } elsif (isAppleMacWebKit()) {
