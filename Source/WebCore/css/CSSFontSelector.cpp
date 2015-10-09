@@ -320,14 +320,14 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule, boo
     }
 }
 
-void CSSFontSelector::registerForInvalidationCallbacks(FontSelectorClient* client)
+void CSSFontSelector::registerForInvalidationCallbacks(FontSelectorClient& client)
 {
-    m_clients.add(client);
+    m_clients.add(&client);
 }
 
-void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient* client)
+void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient& client)
 {
-    m_clients.remove(client);
+    m_clients.remove(&client);
 }
 
 void CSSFontSelector::dispatchInvalidationCallbacks()
@@ -337,7 +337,7 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
     Vector<FontSelectorClient*> clients;
     copyToVector(m_clients, clients);
     for (size_t i = 0; i < clients.size(); ++i)
-        clients[i]->fontsNeedUpdate(this);
+        clients[i]->fontsNeedUpdate(*this);
 }
 
 void CSSFontSelector::fontLoaded()

@@ -2091,7 +2091,7 @@ void Document::createStyleResolver()
     m_styleSheetCollection.combineCSSFeatureFlags();
 }
 
-void Document::fontsNeedUpdate(FontSelector*)
+void Document::fontsNeedUpdate(FontSelector&)
 {
     if (m_styleResolver)
         m_styleResolver->invalidateMatchedPropertiesCache();
@@ -2104,7 +2104,7 @@ CSSFontSelector& Document::fontSelector()
 {
     if (!m_fontSelector) {
         m_fontSelector = CSSFontSelector::create(*this);
-        m_fontSelector->registerForInvalidationCallbacks(this);
+        m_fontSelector->registerForInvalidationCallbacks(*this);
     }
     return *m_fontSelector;
 }
@@ -2116,7 +2116,7 @@ void Document::clearStyleResolver()
     // FIXME: It would be better if the FontSelector could survive this operation.
     if (m_fontSelector) {
         m_fontSelector->clearDocument();
-        m_fontSelector->unregisterForInvalidationCallbacks(this);
+        m_fontSelector->unregisterForInvalidationCallbacks(*this);
         m_fontSelector = nullptr;
     }
 }
