@@ -1,5 +1,20 @@
 2015-10-08  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r190375. rdar://problem/22881748
+
+    2015-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Crash when using an SVG font with > 390 glyphs
+            https://bugs.webkit.org/show_bug.cgi?id=149677
+            <rdar://problem/21676402>
+
+            Reviewed by Simon Fraser.
+
+            * svg/custom/many-glyphs-expected.svg: Added.
+            * svg/custom/many-glyphs.svg: Added.
+
+2015-10-08  Lucas Forschler  <lforschler@apple.com>
+
         Merge r189976. rdar://problem/22824652
 
     2015-09-18  Chris Dumez  <cdumez@apple.com>
