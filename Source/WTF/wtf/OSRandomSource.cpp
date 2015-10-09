@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -40,8 +40,13 @@
 #include <wincrypt.h> // windows.h must be included before wincrypt.h.
 #endif
 
+#if OS(DARWIN)
+#include "CommonCryptoSPI.h"
+#endif
+
 namespace WTF {
 
+#if !OS(DARWIN) && OS(UNIX)
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashUnableToOpenURandom()
 {
     CRASH();
@@ -51,10 +56,13 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashUnableToReadFromURandom()
 {
     CRASH();
 }
-    
+#endif
+
 void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
 {
-#if OS(UNIX)
+#if OS(DARWIN)
+    RELEASE_ASSERT(!CCRandomCopyBytes(kCCRandomDefault, buffer, length));
+#elif OS(UNIX)
     int fd = open("/dev/urandom", O_RDONLY, 0);
     if (fd < 0)
         crashUnableToOpenURandom(); // We need /dev/urandom for this API to work...
@@ -70,7 +78,7 @@ void cryptographicallyRandomValuesFromOS(unsigned char* buffer, size_t length)
         } else
             amountRead += currentRead;
     }
-    
+
     close(fd);
 
 #elif OS(WINDOWS)
