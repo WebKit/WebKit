@@ -42,12 +42,10 @@ void HTMLMediaElementMediaSession::setKind(WebCore::HTMLMediaElement* element, c
     return element->setKind(kind);
 }
 
-MediaSession* HTMLMediaElementMediaSession::session(HTMLMediaElement* element, bool& isNull)
+MediaSession* HTMLMediaElementMediaSession::session(HTMLMediaElement* element)
 {
     ASSERT(element);
-    MediaSession* session = element->session();
-    isNull = !session;
-    return session;
+    return element->session();
 }
 
 void HTMLMediaElementMediaSession::setSession(HTMLMediaElement* element, MediaSession* session)

@@ -37,7 +37,7 @@ public:
     static const String& kind(HTMLMediaElement*);
     static void setKind(HTMLMediaElement*, const String&);
 
-    static MediaSession* session(HTMLMediaElement*, bool&);
+    static MediaSession* session(HTMLMediaElement*);
     static void setSession(HTMLMediaElement*, MediaSession*);
 };
 

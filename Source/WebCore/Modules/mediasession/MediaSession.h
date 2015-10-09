@@ -62,7 +62,7 @@ public:
 
     String kind() const;
     Kind kindEnum() const { return m_kind; }
-    MediaRemoteControls* controls(bool& isNull);
+    MediaRemoteControls* controls();
 
     WEBCORE_EXPORT State currentState() const { return m_currentState; }
     bool hasActiveMediaElements() const;

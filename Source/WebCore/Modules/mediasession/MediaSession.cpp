@@ -98,11 +98,9 @@ String MediaSession::kind() const
     }
 }
 
-MediaRemoteControls* MediaSession::controls(bool& isNull)
+MediaRemoteControls* MediaSession::controls()
 {
-    MediaRemoteControls* controls = m_controls.get();
-    isNull = !controls;
-    return controls;
+    return m_controls.get();
 }
 
 void MediaSession::addMediaElement(HTMLMediaElement& element)
