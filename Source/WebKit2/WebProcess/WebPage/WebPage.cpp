@@ -4618,6 +4618,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #if PLATFORM(IOS)
     frame->setFirstLayerTreeTransactionIDAfterDidCommitLoad(downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID());
     cancelPotentialTapInFrame(*frame);
+    resetAssistedNodeForFrame(frame);
 #endif
 
     if (!frame->isMainFrame())
