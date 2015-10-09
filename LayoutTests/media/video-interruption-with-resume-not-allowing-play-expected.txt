@@ -5,7 +5,7 @@ EVENT(canplaythrough)
 RUN(video.play())
 
 EVENT(playing)
-RUN(internals.beginMediaSessionInterruption())
+RUN(internals.beginMediaSessionInterruption('System'))
 
 100ms timer fired...
 EXPECTED (video.paused == 'true') OK

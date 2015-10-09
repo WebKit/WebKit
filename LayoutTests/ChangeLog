@@ -1,5 +1,20 @@
 2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190434. rdar://problem/22865007
+
+    2015-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] AirPlay should not stop when the screen locks
+            https://bugs.webkit.org/show_bug.cgi?id=148315
+            <rdar://problem/22770703>
+
+            Reviewed by Jer Noble.
+
+            * media/video-interruption-with-resume-allowing-play.html:
+            * media/video-interruption-with-resume-not-allowing-play.html:
+
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r189421. rdar://problem/22823243
 
     2015-09-04  Myles C. Maxfield  <mmaxfield@apple.com>
@@ -82,20 +97,24 @@
             * webaudio/audiocontext-state-interrupted-expected.txt:
             * webaudio/audiocontext-state-interrupted.html:
 
-2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
-        Merge r190434.
+        Merge r190478. rdar://problem/22865007
 
-    2015-10-01  Eric Carlson  <eric.carlson@apple.com>
+    2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
-            [iOS] AirPlay should not stop when the screen locks
-            https://bugs.webkit.org/show_bug.cgi?id=148315
-            <rdar://problem/22770703>
+            Merge r190434.
 
-            Reviewed by Jer Noble.
+        2015-10-01  Eric Carlson  <eric.carlson@apple.com>
 
-            * media/video-interruption-with-resume-allowing-play.html:
-            * media/video-interruption-with-resume-not-allowing-play.html:
+                [iOS] AirPlay should not stop when the screen locks
+                https://bugs.webkit.org/show_bug.cgi?id=148315
+                <rdar://problem/22770703>
+
+                Reviewed by Jer Noble.
+
+                * media/video-interruption-with-resume-allowing-play.html:
+                * media/video-interruption-with-resume-not-allowing-play.html:
 
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
@@ -125,7 +144,7 @@
             Reviewed by Andreas Kling.
 
             There are multiple variations of the same tests to test
-            cases where we JIT and cases without JIT. 
+            cases where we JIT and cases without JIT.
 
             * fast/css/indirect-adjacent-style-invalidation-1-expected.txt: Added.
             * fast/css/indirect-adjacent-style-invalidation-1.html: Added.

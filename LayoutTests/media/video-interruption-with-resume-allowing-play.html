@@ -12,7 +12,7 @@
                 case "playing":
                     testExpected("video.paused", false);
                     state = "interrupted";
-                    run("internals.beginMediaSessionInterruption()");;
+                    run("internals.beginMediaSessionInterruption('System')");;
                     setTimeout(checkState, 100);
                     consoleWrite("");
                     break;

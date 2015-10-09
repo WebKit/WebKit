@@ -1,5 +1,51 @@
 2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190434. rdar://problem/22865007
+
+    2015-10-01  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] AirPlay should not stop when the screen locks
+            https://bugs.webkit.org/show_bug.cgi?id=148315
+            <rdar://problem/22770703>
+
+            Reviewed by Jer Noble.
+
+            Tested by media/video-interruption-with-resume-allowing-play.html
+                      media/video-interruption-with-resume-not-allowing-play.html
+
+            * Modules/webaudio/AudioContext.h: overrideBackgroundPlaybackRestriction ->
+              shouldOverrideBackgroundPlaybackRestriction.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::suspendPlayback): Fix a typo in the logging.
+            (WebCore::HTMLMediaElement::mayResumePlayback): Ditto.
+            (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction): Renamed from
+              overrideBackgroundPlaybackRestriction.
+            (WebCore::HTMLMediaElement::overrideBackgroundPlaybackRestriction): Deleted.
+            * html/HTMLMediaElement.h:
+
+            * platform/audio/PlatformMediaSession.cpp:
+            (WebCore::stateName):
+            (WebCore::interruptionName): New, log the name of the interruption.
+            (WebCore::PlatformMediaSession::beginInterruption): Log the interruption type. Don't
+              increment the interruption counter if we are going to ignore it. Incorporate logic
+              from doInterruption.
+            (WebCore::PlatformMediaSession::doInterruption): Deleted.
+            (WebCore::PlatformMediaSession::shouldDoInterruption): Deleted.
+            (WebCore::PlatformMediaSession::forceInterruption): Deleted.
+
+            * platform/audio/PlatformMediaSession.h: Add SuspendedUnderLock interruption type.
+            * platform/audio/PlatformMediaSessionManager.cpp:
+            (WebCore::PlatformMediaSessionManager::applicationDidEnterBackground): Deleted.
+            * platform/audio/PlatformMediaSessionManager.h:
+
+            * platform/audio/ios/MediaSessionManagerIOS.h:
+            * platform/audio/ios/MediaSessionManagerIOS.mm:
+            (WebCore::MediaSessionManageriOS::applicationDidEnterBackground): Call beginInterruption
+              when appropriate.
+
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r189979. rdar://problem/23033080
 
     2015-09-18  Chris Dumez  <cdumez@apple.com>
@@ -242,51 +288,55 @@
             * testing/Internals.cpp:
             (WebCore::Internals::beginMediaSessionInterruption):
 
-2015-10-02  Babak Shafiei  <bshafiei@apple.com>
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
-        Merge r190434.
+        Merge r190478. rdar://problem/22865007
 
-    2015-10-01  Eric Carlson  <eric.carlson@apple.com>
+    2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
-            [iOS] AirPlay should not stop when the screen locks
-            https://bugs.webkit.org/show_bug.cgi?id=148315
-            <rdar://problem/22770703>
+            Merge r190434.
 
-            Reviewed by Jer Noble.
+        2015-10-01  Eric Carlson  <eric.carlson@apple.com>
 
-            Tested by media/video-interruption-with-resume-allowing-play.html
-                      media/video-interruption-with-resume-not-allowing-play.html
+                [iOS] AirPlay should not stop when the screen locks
+                https://bugs.webkit.org/show_bug.cgi?id=148315
+                <rdar://problem/22770703>
 
-            * Modules/webaudio/AudioContext.h: overrideBackgroundPlaybackRestriction -> 
-              shouldOverrideBackgroundPlaybackRestriction.
+                Reviewed by Jer Noble.
 
-            * html/HTMLMediaElement.cpp:
-            (WebCore::HTMLMediaElement::suspendPlayback): Fix a typo in the logging.
-            (WebCore::HTMLMediaElement::mayResumePlayback): Ditto.
-            (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction): Renamed from
-              overrideBackgroundPlaybackRestriction.
-            (WebCore::HTMLMediaElement::overrideBackgroundPlaybackRestriction): Deleted.
-            * html/HTMLMediaElement.h:
+                Tested by media/video-interruption-with-resume-allowing-play.html
+                          media/video-interruption-with-resume-not-allowing-play.html
 
-            * platform/audio/PlatformMediaSession.cpp:
-            (WebCore::stateName):
-            (WebCore::interruptionName): New, log the name of the interruption.
-            (WebCore::PlatformMediaSession::beginInterruption): Log the interruption type. Don't
-              increment the interruption counter if we are going to ignore it. Incorporate logic
-              from doInterruption.
-            (WebCore::PlatformMediaSession::doInterruption): Deleted.
-            (WebCore::PlatformMediaSession::shouldDoInterruption): Deleted.
-            (WebCore::PlatformMediaSession::forceInterruption): Deleted.
+                * Modules/webaudio/AudioContext.h: overrideBackgroundPlaybackRestriction ->
+                  shouldOverrideBackgroundPlaybackRestriction.
 
-            * platform/audio/PlatformMediaSession.h: Add SuspendedUnderLock interruption type.
-            * platform/audio/PlatformMediaSessionManager.cpp:
-            (WebCore::PlatformMediaSessionManager::applicationDidEnterBackground): Deleted.
-            * platform/audio/PlatformMediaSessionManager.h:
+                * html/HTMLMediaElement.cpp:
+                (WebCore::HTMLMediaElement::suspendPlayback): Fix a typo in the logging.
+                (WebCore::HTMLMediaElement::mayResumePlayback): Ditto.
+                (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction): Renamed from
+                  overrideBackgroundPlaybackRestriction.
+                (WebCore::HTMLMediaElement::overrideBackgroundPlaybackRestriction): Deleted.
+                * html/HTMLMediaElement.h:
 
-            * platform/audio/ios/MediaSessionManagerIOS.h:
-            * platform/audio/ios/MediaSessionManagerIOS.mm:
-            (WebCore::MediaSessionManageriOS::applicationDidEnterBackground): Call beginInterruption
-              when appropriate.
+                * platform/audio/PlatformMediaSession.cpp:
+                (WebCore::stateName):
+                (WebCore::interruptionName): New, log the name of the interruption.
+                (WebCore::PlatformMediaSession::beginInterruption): Log the interruption type. Don't
+                  increment the interruption counter if we are going to ignore it. Incorporate logic
+                  from doInterruption.
+                (WebCore::PlatformMediaSession::doInterruption): Deleted.
+                (WebCore::PlatformMediaSession::shouldDoInterruption): Deleted.
+                (WebCore::PlatformMediaSession::forceInterruption): Deleted.
+
+                * platform/audio/PlatformMediaSession.h: Add SuspendedUnderLock interruption type.
+                * platform/audio/PlatformMediaSessionManager.cpp:
+                (WebCore::PlatformMediaSessionManager::applicationDidEnterBackground): Deleted.
+                * platform/audio/PlatformMediaSessionManager.h:
+
+                * platform/audio/ios/MediaSessionManagerIOS.h:
+                * platform/audio/ios/MediaSessionManagerIOS.mm:
+                (WebCore::MediaSessionManageriOS::applicationDidEnterBackground): Call beginInterruption
+                  when appropriate.
 
 2015-10-02  Babak Shafiei  <bshafiei@apple.com>
 
@@ -576,7 +626,7 @@
 
             Reviewed by Dean Jackson.
 
-            Updated Apple Video controls to add an invisible but focusable button that allows VoiceOver 
+            Updated Apple Video controls to add an invisible but focusable button that allows VoiceOver
             users (and when unblocked, keyboard users) to re-display the video controls.
 
             Test: media/video-controls-show-on-kb-or-ax-event.html
@@ -1481,7 +1531,7 @@
             * dom/UserGestureIndicator.h:
 
             * html/HTMLMediaElement.cpp:
-            (WebCore::HTMLMediaElement::load): Use ScriptController::processingUserGestureForMedia instead of 
+            (WebCore::HTMLMediaElement::load): Use ScriptController::processingUserGestureForMedia instead of
               ScriptController::processingUserGesture
             (WebCore::HTMLMediaElement::play): Ditto.
 
@@ -1496,7 +1546,7 @@
 
             Reviewed by Eric Carlson.
 
-            Change class name AVPlayerLayerView to match change in AVKit SPI. 
+            Change class name AVPlayerLayerView to match change in AVKit SPI.
             This prevents conflicts with 3rd party apps.
 
             * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
@@ -1700,10 +1750,10 @@
 
             * platform/audio/PlatformMediaSession.h:
             * platform/audio/PlatformMediaSession.cpp:
-            (WebCore::PlatformMediaSession::doInterruption): This code was moved from 
+            (WebCore::PlatformMediaSession::doInterruption): This code was moved from
             beginInterruption().
 
-            (WebCore::PlatformMediaSession::shouldDoInterruption): Move the condition 
+            (WebCore::PlatformMediaSession::shouldDoInterruption): Move the condition
             which allows the media session interruption to a separate function.
 
             (WebCore::PlatformMediaSession::beginInterruption): Call the functions
@@ -1725,9 +1775,9 @@
             * platform/audio/ios/MediaSessionManagerIOS.h:
             * platform/audio/ios/MediaSessionManagerIOS.mm:
             (-[WebMediaSessionHelper initWithCallback:]):
-            (-[WebMediaSessionHelper applicationDidEnterBackground:]): Listen to 
+            (-[WebMediaSessionHelper applicationDidEnterBackground:]): Listen to
             UIApplicationDidEnterBackgroundNotification and make a call on the web
-            thread to PlatformMediaSessionManager::applicationDidEnterBackground() 
+            thread to PlatformMediaSessionManager::applicationDidEnterBackground()
             and pass the isSuspendedUnderLock flag which is queried on the UIProcess.
 
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
@@ -2119,7 +2169,7 @@
 
             To allow iOS Accessibility to perform by-page scrolling in overflow areas, we move
             that scrolling code into AccessibilityObject and then iterate all the possible ScrollableAreas,
-            rather than just finding the parents that are ScrollViews. 
+            rather than just finding the parents that are ScrollViews.
 
             Test: platform/ios-simulator/accessibility/scroll-in-overflow-div.html
 
