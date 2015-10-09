@@ -1,3 +1,15 @@
+2015-10-09  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r189168
+
+    2015-08-31  Alexey Proskuryakov  <ap@apple.com>
+
+            Build fix.
+
+            * page/EventHandler.h:
+            (WebCore::EventHandler::immediateActionStage): Don't export an inline function,
+            to avoid "weak external symbol" errors.
+
 2015-10-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r190602. rdar://problem/22995830
