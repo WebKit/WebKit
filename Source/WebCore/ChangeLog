@@ -18,6 +18,26 @@
             * loader/DocumentLoader.cpp:
             (WebCore::areAllLoadersPageCacheAcceptable):
 
+2015-10-08  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r189976. rdar://problem/22824652
+
+    2015-09-18  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r182449, Mavericks ONLY): Pages re-open empty after swiping back and scrolling on them
+            https://bugs.webkit.org/show_bug.cgi?id=149317
+            <rdar://problem/22521514>
+
+            Reviewed by Tim Horton.
+
+            Disable on Mavericks a PageCache optimization from r182449 which lets
+            into PageCache pages that only have certain types of pending loads
+            (images and XHR). This is because it has been determined via bisection
+            that this change is the one that introduced the bug on Mavericks.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::areAllLoadersPageCacheAcceptable):
+
 2015-10-08  Andy Estes  <aestes@apple.com>
 
         Merge r188150, r188517, r188844, r188845, r188851, r188852, r188880, r188881, r188988, r189193, r189289, and r190133.
