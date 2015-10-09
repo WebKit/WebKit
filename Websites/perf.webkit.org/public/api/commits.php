@@ -79,17 +79,11 @@ function fetch_commits_between($db, $repository_id, $first, $second, $keyword = 
         $second_commit = commit_from_revision($db, $repository_id, $second);
         $first = $first_commit['commit_time'];
         $second = $second_commit['commit_time'];
-        $column = 'commit_time';
-        if (!$first && !$second) {
-            $first = $first_commit['commit_revision'];
-            $second = $second_commit['commit_revision'];
-            $column = 'commit_revision';
-        }
         $in_order = $first < $second;
         array_push($values, $in_order ? $first : $second);
-        $statements .= ' AND ' . $column . ' >= $' . count($values);
+        $statements .= ' AND commit_time >= $' . count($values);
         array_push($values, $in_order ? $second : $first);
-        $statements .= ' AND ' . $column . ' <= $' . count($values);
+        $statements .= ' AND commit_time <= $' . count($values);
     }
 
     if ($keyword) {

@@ -1,5 +1,36 @@
 2015-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard erroneously shows an old OS build in A/B testing range
+        https://bugs.webkit.org/show_bug.cgi?id=149942
+
+        Reviewed by Darin Adler.
+
+        Ordering OS builds lexicologically turned out be a bad idea since 15A25 falls between 15A242 and 15A251.
+        Use a fake/synthetic timestamp to force the commonly understood total order instead.
+
+        Refactored pull-os-versions.py to share the server config JSON with other scripts. Also made the script
+        support pulling multiple sources; e.g. both OS X and iOS.
+
+        Also removed superfluous feature to submit results in chunks. The perf dashboard can handle thousands of
+        revisions being submitted at once just fine.
+
+        * public/api/commits.php:
+        (main): A partial revert of r185574 since we no longer need to order builds lexicologically.
+
+        * tools/pull-os-versions.py:
+        (main): Takes --os-config-json, --server-config-json, and --seconds-to-sleep as arguments instead of
+        a single --config argument to share the server config JSON with other scripts.
+        (OSBuildFetcher): Extracted out of main. This class is instantiated for each OS kind (e.g. OS X).
+        (OSBuildFetcher.__init__): Added.
+        (OSBuildFetcher._fetch_available_builds): Extracted out of main. Fetches available builds from a website
+        or custom commands.
+        (OSBuildFetcher.fetch_and_report_new_builds): Extracted out of main. Submits the fetched builds after
+        filtering out the ones we've already reported.
+        (OSBuildFetcher._assign_fake_timestamps): Creates a fake timestamp to establish a total order amongst each
+        OS X / iOS style build number such as 12A3456b.
+
+2015-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         pull-svn.py fails to sync revisions when SVN credentials is not setup
         https://bugs.webkit.org/show_bug.cgi?id=149941
 

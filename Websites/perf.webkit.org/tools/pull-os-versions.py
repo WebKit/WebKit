@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import operator
 import re
 import sys
 import subprocess
@@ -9,6 +10,7 @@ import time
 import urllib
 import urllib2
 
+from datetime import datetime
 from xml.dom.minidom import parseString as parseXmlString
 from util import submit_commits
 from util import text_content
@@ -17,45 +19,72 @@ from util import setup_auth
 
 def main(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', required=True, help='Path to a config JSON file')
+    parser.add_argument('--os-config-json', required=True, help='The path to a JSON that specifies how to fetch OS build information')
+    parser.add_argument('--server-config-json', required=True, help='The path to a JSON file that specifies the perf dashboard')
+    parser.add_argument('--seconds-to-sleep', type=float, default=43200, help='The seconds to sleep between iterations')
     args = parser.parse_args()
 
-    with open(args.config) as config_file:
-        config = json.load(config_file)
+    with open(args.os_config_json) as os_config_json:
+        os_config_list = json.load(os_config_json)
 
-    setup_auth(config['server'])
+    with open(args.server_config_json) as server_config_json:
+        server_config = json.load(server_config_json)
+        setup_auth(server_config['server'])
 
-    submission_size = config['submissionSize']
-    reported_revisions = set()
+    fetchers = [OSBuildFetcher(os_config) for os_config in os_config_list]
 
     while True:
+        for fetcher in fetchers:
+            fetcher.fetch_and_report_new_builds(server_config)
+        print "Sleeping for %d seconds" % args.seconds_to_sleep
+        time.sleep(args.seconds_to_sleep)
+
+
+# FIXME: Move other static functions into this class.
+class OSBuildFetcher:
+    def __init__(self, os_config):
+        self._os_config = os_config
+        self._reported_revisions = set()
+
+    def _fetch_available_builds(self):
+        config = self._os_config
+        repository_name = self._os_config['name']
+
         if 'customCommands' in config:
             available_builds = []
             for command in config['customCommands']:
                 print "Executing", ' '.join(command['command'])
-                available_builds += available_builds_from_command(config['repositoryName'], command['command'], command['linesToIgnore'])
-                print "Got %d builds" % len(available_builds)
+                available_builds += available_builds_from_command(repository_name, command['command'], command['linesToIgnore'])
         else:
             url = config['buildSourceURL']
             print "Fetching available builds from", url
-            available_builds = fetch_available_builds(config['repositoryName'], url, config['trainVersionMap'])
+            available_builds = fetch_available_builds(repository_name, url, config['trainVersionMap'])
+        return available_builds
+
+    def fetch_and_report_new_builds(self, server_config):
+        available_builds = self._fetch_available_builds()
+        reported_revisions = self._reported_revisions
+        print 'Found %d builds' % len(available_builds)
 
         available_builds = filter(lambda commit: commit['revision'] not in reported_revisions, available_builds)
-        print "%d builds available" % len(available_builds)
+        self._assign_fake_timestamps(available_builds)
 
-        while available_builds:
-            commits_to_submit = available_builds[:submission_size]
-            revisions_to_report = map(lambda commit: commit['revision'], commits_to_submit)
-            print "Submitting builds (%d remaining):" % len(available_builds), json.dumps(revisions_to_report)
-            available_builds = available_builds[submission_size:]
+        print "Submitting %d builds" % len(available_builds)
+        submit_commits(available_builds, server_config['server']['url'], server_config['slave']['name'], server_config['slave']['password'])
+        reported_revisions |= set(map(lambda commit: commit['revision'], available_builds))
 
-            submit_commits(commits_to_submit, config['server']['url'], config['slave']['name'], config['slave']['password'])
-            reported_revisions |= set(revisions_to_report)
-
-            time.sleep(config['submissionInterval'])
-
-        print "Sleeping for %d seconds" % config['fetchInterval']
-        time.sleep(config['fetchInterval'])
+    @staticmethod
+    def _assign_fake_timestamps(builds):
+        build_name_regex = re.compile(r'(?P<major>\d+)(?P<kind>\w)(?P<minor>\d+)(?P<variant>\w*)')
+        for commit in builds:
+            match = build_name_regex.search(commit['revision'])
+            major = int(match.group('major'))
+            kind = ord(match.group('kind').upper()) - ord('A')
+            minor = int(match.group('minor'))
+            variant = ord(match.group('variant').upper()) - ord('A') + 1 if match.group('variant') else 0
+            # These fake times won't conflict with real commit time since even 99Z9999z is still in Feb 1973
+            fake_time = datetime.utcfromtimestamp((major * 100 + kind) * 10000 + minor + float(variant) / 100)
+            commit['time'] = fake_time.isoformat()
 
 
 def available_builds_from_command(repository_name, command, lines_to_ignore):
