@@ -4626,22 +4626,9 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    }\n");
 
     if (IsConstructable($interface) && !$interface->extendedAttributes->{"NamedConstructor"}) {
-        if (!HasCustomConstructor($interface)) {
-            push(@$outputArray, "protected:\n");
-            push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
-            my @constructors = @{$interface->constructors};
-            if (@constructors > 1) {
-                foreach my $constructor (@constructors) {
-                    my $overloadedIndex = "" . $constructor->{overloadedIndex};
-                    push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}${overloadedIndex}(JSC::ExecState*);\n");
-                }
-            }
-        }
-
-        my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
-        push(@$outputArray, "#if $conditionalString\n") if $conditionalString;
+        push(@$outputArray, "protected:\n");
+        push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);\n");
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
-        push(@$outputArray, "#endif // $conditionalString\n") if $conditionalString;
     }
     push(@$outputArray, "};\n\n");
 
@@ -4667,7 +4654,7 @@ public:
 
 private:
     JS${interfaceName}NamedConstructor(JSC::Structure*, JSDOMGlobalObject&);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJS${interfaceName}(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 };
@@ -4709,13 +4696,11 @@ sub GenerateOverloadedConstructorDefinition
     my $className = shift;
     my $interface = shift;
 
-    my $functionName = "${className}Constructor::construct${className}";
-
     # FIXME: Implement support for overloaded constructors with variadic arguments.
     my $lengthOfLongestOverloadedConstructorParameterList = LengthOfLongestFunctionParameterList($interface->constructors);
 
     push(@$outputArray, <<END);
-EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* state)
+EncodedJSValue JSC_HOST_CALL ${className}Constructor::construct(ExecState* state)
 {
     size_t argsCount = std::min<size_t>($lengthOfLongestOverloadedConstructorParameterList, state->argumentCount());
 END
@@ -4725,6 +4710,7 @@ END
 
     my @constructors = @{$interface->constructors};
     foreach my $overload (@constructors) {
+        my $functionName = "construct${className}";
         my ($numMandatoryParams, $parametersCheck, @neededArguments) = GenerateFunctionParametersCheck($overload);
         $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
 
@@ -4768,7 +4754,7 @@ sub GenerateConstructorDefinition
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             push(@$outputArray, <<END);
-EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* state)
+EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecState* state)
 {
     auto* jsConstructor = jsCast<${constructorClassName}*>(state->callee());
 
@@ -4832,8 +4818,13 @@ END
 }
 
 END
-        } elsif ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
-            push(@$outputArray, "JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(JSC::ExecState* state)\n");
+         } elsif ($interface->extendedAttributes->{"CustomConstructor"}) {
+            push(@$outputArray, "JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSC::ExecState* state)\n");
+            push(@$outputArray, "{\n");
+            push(@$outputArray, "    return construct${className}(state);\n");
+            push(@$outputArray, "}\n\n");
+         } elsif ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
+            push(@$outputArray, "JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSC::ExecState* state)\n");
             push(@$outputArray, "{\n");
 
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->callee());\n");
@@ -4841,12 +4832,13 @@ END
 
             push(@$outputArray, "}\n\n");
         } elsif (!HasCustomConstructor($interface) && (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
-            my $overloadedIndexString = "";
             if ($function->{overloadedIndex} && $function->{overloadedIndex} > 0) {
-                $overloadedIndexString .= $function->{overloadedIndex};
+                push(@$outputArray, "static inline EncodedJSValue construct${className}$function->{overloadedIndex}(ExecState* state)\n");
+            }
+            else {
+                push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecState* state)\n");
             }
 
-            push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}${overloadedIndexString}(ExecState* state)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->callee());\n");
 
@@ -5017,13 +5009,20 @@ sub GenerateConstructorHelperMethods
     if (IsConstructable($interface)) {
         if (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor) {
             my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
-            push(@$outputArray, "#if $conditionalString\n") if $conditionalString;
             push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
             push(@$outputArray, "{\n");
-            push(@$outputArray, "    constructData.native.function = construct${className};\n");
-            push(@$outputArray, "    return ConstructTypeHost;\n");
+            if ($conditionalString) {
+                push(@$outputArray, "#if $conditionalString\n");
+                push(@$outputArray, "    constructData.native.function = construct;\n");
+                push(@$outputArray, "    return ConstructTypeHost;\n");
+                push(@$outputArray, "#else\n");
+                push(@$outputArray, "    return Base::getConstructData(cell, constructData);\n");
+                push(@$outputArray, "#endif\n");
+            } else {
+                push(@$outputArray, "    constructData.native.function = construct;\n");
+                push(@$outputArray, "    return ConstructTypeHost;\n");
+            }
             push(@$outputArray, "}\n");
-            push(@$outputArray, "#endif // $conditionalString\n") if $conditionalString;
             push(@$outputArray, "\n");
         }
     }

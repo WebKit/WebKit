@@ -101,7 +101,7 @@ public:
 
 private:
     JSTestNamedConstructorNamedConstructor(JSC::Structure*, JSDOMGlobalObject&);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestNamedConstructor(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
 };
@@ -122,7 +122,7 @@ void JSTestNamedConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor(ExecState* state)
+EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestNamedConstructorNamedConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
@@ -163,7 +163,7 @@ void JSTestNamedConstructorNamedConstructor::finishCreation(VM& vm, JSDOMGlobalO
 
 ConstructType JSTestNamedConstructorNamedConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestNamedConstructor;
+    constructData.native.function = construct;
     return ConstructTypeHost;
 }
 

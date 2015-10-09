@@ -163,10 +163,8 @@ public:
         return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestInterface(JSC::ExecState*);
-#if ENABLE(TEST_INTERFACE)
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
-#endif // ENABLE(TEST_INTERFACE)
 };
 
 /* Hash table */
@@ -264,7 +262,7 @@ COMPILE_ASSERT(1 == TestSupplemental::SUPPLEMENTALCONSTANT1, TestInterfaceEnumSU
 COMPILE_ASSERT(2 == TestSupplemental::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
 #endif
 
-EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* state)
+EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestInterfaceConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
@@ -304,13 +302,15 @@ void JSTestInterfaceConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globa
     reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
 }
 
-#if ENABLE(TEST_INTERFACE)
 ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestInterface;
+#if ENABLE(TEST_INTERFACE)
+    constructData.native.function = construct;
     return ConstructTypeHost;
+#else
+    return Base::getConstructData(cell, constructData);
+#endif
 }
-#endif // ENABLE(TEST_INTERFACE)
 
 /* Hash table for prototype */
 

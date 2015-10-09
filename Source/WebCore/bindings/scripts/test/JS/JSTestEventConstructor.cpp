@@ -83,11 +83,11 @@ public:
         return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestEventConstructor(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
-EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::constructJSTestEventConstructor(ExecState* state)
+EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(ExecState* state)
 {
     auto* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(state->callee());
 
@@ -146,7 +146,7 @@ void JSTestEventConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject
 
 ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestEventConstructor;
+    constructData.native.function = construct;
     return ConstructTypeHost;
 }
 

@@ -365,7 +365,7 @@ public:
         return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestObj(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
@@ -468,7 +468,7 @@ COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWro
 COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCheckConstants);
 COMPILE_ASSERT(0 == TestObj::readonly, TestObjEnumreadonlyIsWrongUseDoNotCheckConstants);
 
-EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::constructJSTestObj(ExecState* state)
+EncodedJSValue JSC_HOST_CALL JSTestObjConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestObjConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 2))
@@ -502,7 +502,7 @@ void JSTestObjConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObjec
 
 ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestObj;
+    constructData.native.function = construct;
     return ConstructTypeHost;
 }
 

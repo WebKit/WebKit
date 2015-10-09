@@ -80,16 +80,11 @@ public:
         return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors(JSC::ExecState*);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors1(JSC::ExecState*);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors2(JSC::ExecState*);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors3(JSC::ExecState*);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors4(JSC::ExecState*);
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestOverloadedConstructors5(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
-EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
@@ -101,7 +96,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
-EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors2(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
@@ -113,7 +108,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
-EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors3(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
@@ -125,7 +120,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
-EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors4(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 1))
@@ -137,7 +132,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
-EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors5(ExecState* state)
+static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     Vector<int> longArgs = toNativeArguments<int>(state, 0);
@@ -147,20 +142,20 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     return JSValue::encode(asObject(toJS(state, castedThis->globalObject(), object.get())));
 }
 
-EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors(ExecState* state)
+EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::construct(ExecState* state)
 {
     size_t argsCount = std::min<size_t>(1, state->argumentCount());
     JSValue arg0(state->argument(0));
     if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSArrayBuffer::info())))))
-        return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1(state);
+        return constructJSTestOverloadedConstructors1(state);
     if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSArrayBufferView::info())))))
-        return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors2(state);
+        return constructJSTestOverloadedConstructors2(state);
     if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSBlob::info())))))
-        return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors3(state);
+        return constructJSTestOverloadedConstructors3(state);
     if (argsCount == 1)
-        return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors4(state);
+        return constructJSTestOverloadedConstructors4(state);
     if ()
-        return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors5(state);
+        return constructJSTestOverloadedConstructors5(state);
     if (argsCount < 1)
         return throwVMError(state, createNotEnoughArgumentsError(state));
     return throwVMTypeError(state);
@@ -184,7 +179,7 @@ void JSTestOverloadedConstructorsConstructor::finishCreation(VM& vm, JSDOMGlobal
 
 ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestOverloadedConstructors;
+    constructData.native.function = construct;
     return ConstructTypeHost;
 }
 

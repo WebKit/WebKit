@@ -117,7 +117,7 @@ public:
         return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 protected:
-    static JSC::EncodedJSValue JSC_HOST_CALL constructJSTestTypedefs(JSC::ExecState*);
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
 
@@ -142,7 +142,7 @@ static const HashTableValue JSTestTypedefsConstructorTableValues[] =
     { "TestSubObj", DontDelete | ReadOnly, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTypedefsConstructorTestSubObj), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::constructJSTestTypedefs(ExecState* state)
+EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::construct(ExecState* state)
 {
     auto* castedThis = jsCast<JSTestTypedefsConstructor*>(state->callee());
     if (UNLIKELY(state->argumentCount() < 2))
@@ -176,7 +176,7 @@ void JSTestTypedefsConstructor::finishCreation(VM& vm, JSDOMGlobalObject& global
 
 ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestTypedefs;
+    constructData.native.function = construct;
     return ConstructTypeHost;
 }
 

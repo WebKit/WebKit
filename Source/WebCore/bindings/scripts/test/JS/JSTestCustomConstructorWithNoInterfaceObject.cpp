@@ -76,8 +76,15 @@ public:
     {
         return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
+protected:
+    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 };
+
+JSC::EncodedJSValue JSC_HOST_CALL JSTestCustomConstructorWithNoInterfaceObjectConstructor::construct(JSC::ExecState* state)
+{
+    return constructJSTestCustomConstructorWithNoInterfaceObject(state);
+}
 
 const ClassInfo JSTestCustomConstructorWithNoInterfaceObjectConstructor::s_info = { "TestCustomConstructorWithNoInterfaceObjectConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestCustomConstructorWithNoInterfaceObjectConstructor) };
 
@@ -97,7 +104,7 @@ void JSTestCustomConstructorWithNoInterfaceObjectConstructor::finishCreation(VM&
 
 ConstructType JSTestCustomConstructorWithNoInterfaceObjectConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructJSTestCustomConstructorWithNoInterfaceObject;
+    constructData.native.function = construct;
     return ConstructTypeHost;
 }
 
