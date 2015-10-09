@@ -1091,7 +1091,6 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] http/tests/media/media-source/ [ Skip ]
 [ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-readyState.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-removed.html [ Pass ]
-[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-addsourcebuffer.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-append-buffer.html [ Pass ]
@@ -1105,6 +1104,9 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 [ Yosemite+ ] http/tests/media/media-source/mediasource-remove.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebufferlist.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebuffer-mode.html [ Pass ]
+
+# Flaky Media Source tests
+webkit.org/b/149816 [ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
 
 # These two tests have "Error: InvalidStateError: DOM Exception 11" in output.
 [ Yosemite+ ] media/media-source/media-source-duplicate-seeked.html [ Failure ]
@@ -1334,6 +1336,3 @@ webkit.org/b/149441 fast/shadow-dom/css-scoping-shadow-slot-display-override.htm
 
 # Marking test as flaky in El Capitan
 webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ Pass Crash ]
-
-# Flaky due to failures and timeouts
-webkit.org/b/149816 http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass Timeout ]
