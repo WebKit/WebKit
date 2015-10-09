@@ -1,5 +1,18 @@
 2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r189460. rdar://problem/22823239
+
+    2015-09-06  Mark Lam  <mark.lam@apple.com>
+
+            Gardening: fix broken Windows build after r189454.
+
+            Not reviewed.
+
+            * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+            * JavaScriptCore.vcxproj/testapi/testapi.vcxproj.filters:
+
+2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r189454. rdar://problem/22823239
 
     2015-09-06  Mark Lam  <mark.lam@apple.com>
