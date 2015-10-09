@@ -1,3 +1,14 @@
+2015-10-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix webkitpy tests after r190779
+        https://bugs.webkit.org/show_bug.cgi?id=149949
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults.format):
+        (BenchmarkResults._format_values):
+
 2015-10-08  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend run-benchmark script to support human-readable results conversion.

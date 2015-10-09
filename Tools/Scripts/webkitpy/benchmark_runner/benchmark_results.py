@@ -48,7 +48,7 @@ class BenchmarkResults(object):
         self._lint_results(results)
         self._results = self._aggregate_results(results)
 
-    def format(self, scale_unit):
+    def format(self, scale_unit=True):
         return self._format_tests(self._results, scale_unit)
 
     @classmethod
@@ -77,7 +77,7 @@ class BenchmarkResults(object):
         return output
 
     @classmethod
-    def _format_values(cls, metric_name, values, scale_unit):
+    def _format_values(cls, metric_name, values, scale_unit=True):
         values = map(float, values)
         total = sum(values)
         mean = total / len(values)
