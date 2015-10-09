@@ -1,3 +1,41 @@
+2015-10-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        pull-svn.py fails to sync revisions when SVN credentials is not setup
+        https://bugs.webkit.org/show_bug.cgi?id=149941
+
+        Reviewed by Chris Dumez.
+
+        Added the support for specifying subversion credentials.
+
+        Also added the support for pulling from multiple subversion servers. Subversion servers are specified
+        in a JSON configuration file specified by --svn-config formatted as follows:
+
+        [
+            {
+                "name": "WebKit",
+                "url": "http://svn.webkit.org/repository/webkit",
+                "username": "webkitten",
+                "password": "webkitten's password",
+                "trustCertificate": true,
+                "accountNameFinderScript":
+                    ["python", "/Volumes/Data/WebKit/Tools/Scripts/webkit-patch", "find-users"]
+            },
+            ...
+        ]
+
+        In addition, refactored it to use the shared server config JSON for the dashboard access.
+
+        * tools/pull-svn.py:
+        (main): Now takes --svn-config-json, --server-config-json, --seconds-to-sleep and --max-fetch-count
+        as required options instead of seven unnamed arguments.
+        (fetch_commits_and_submit): Extracted from main. Fetches at most max_fetch_count new revisions from
+        the subversion server, and submits them in accordance with server_config.
+        (fetch_commit_and_resolve_author): Now takes a single repository dictionary instead of two separate
+        arguments for name and URL to pass down the repository's authentication info to fetch_commit.
+        (fetch_commit): Ditto. Add appropriate arguments when username and passwords are specified.
+        (resolve_author_name_from_account): Use a list argument instead of a single string argument now that
+        the argument comes from a JSON instead of sys.argv.
+
 2015-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed race condition fix. Exit early when xScale or yScale is not defined.

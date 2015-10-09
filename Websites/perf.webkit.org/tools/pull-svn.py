@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import argparse
 import json
 import re
 import subprocess
@@ -8,46 +9,58 @@ import time
 import urllib2
 
 from xml.dom.minidom import parseString as parseXmlString
+from util import setup_auth
 from util import submit_commits
 from util import text_content
 
 
 def main(argv):
-    if len(argv) < 7:
-        sys.exit('Usage: pull-svn <repository-name> <repository-URL> <dashboard-URL> <slave-name> <slave-password> <seconds-to-sleep> [<account-to-name-helper>]')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--svn-config-json', required=True, help='The path to a JSON file that specifies subversion syncing options')
+    parser.add_argument('--server-config-json', required=True, help='The path to a JSON file that specifies the perf dashboard')
+    parser.add_argument('--seconds-to-sleep', type=float, default=900, help='The seconds to sleep between iterations')
+    parser.add_argument('--max-fetch-count', type=int, default=10, help='The number of commits to fetch at once')
+    args = parser.parse_args()
 
-    repository_name = argv[1]
-    repository_url = argv[2]
-    dashboard_url = argv[3]
-    slave_name = argv[4]
-    slave_password = argv[5]
-    seconds_to_sleep = float(argv[6])
-    account_to_name_helper = argv[7] if len(argv) > 7 else None
+    with open(args.server_config_json) as server_config_json:
+        server_config = json.load(server_config_json)
+        setup_auth(server_config['server'])
 
-    print "Submitting revision logs for %s at %s to %s" % (repository_name, repository_url, dashboard_url)
-
-    revision_to_fetch = determine_first_revision_to_fetch(dashboard_url, repository_name)
-    print "Start fetching commits at r%d" % revision_to_fetch
-
-    pending_commits_to_send = []
+    with open(args.svn_config_json) as svn_config_json:
+        svn_config = json.load(svn_config_json)
 
     while True:
-        commit = fetch_commit_and_resolve_author(repository_name, repository_url, account_to_name_helper, revision_to_fetch)
+        for repository_info in svn_config:
+            fetch_commits_and_submit(repository_info, server_config, args.max_fetch_count)
+        print "Sleeping for %d seconds..." % args.seconds_to_sleep
+        time.sleep(args.seconds_to_sleep)
 
-        if commit:
-            print "Fetched r%d." % revision_to_fetch
-            pending_commits_to_send += [commit]
-            revision_to_fetch += 1
-        else:
-            print "Revision %d not found" % revision_to_fetch
 
-        if not commit or len(pending_commits_to_send) >= 10:
-            if pending_commits_to_send:
-                print "Submitting the above commits to %s..." % dashboard_url
-                submit_commits(pending_commits_to_send, dashboard_url, slave_name, slave_password)
-                print "Successfully submitted."
-            pending_commits_to_send = []
-            time.sleep(seconds_to_sleep)
+def fetch_commits_and_submit(repository, server_config, max_fetch_count):
+    assert 'name' in repository, 'The repository name should be specified'
+    assert 'url' in repository, 'The SVN repository URL should be specified'
+
+    if 'revisionToFetch' not in repository:
+        print "Determining the stating revision for %s" % repository['name']
+        repository['revisionToFecth'] = determine_first_revision_to_fetch(server_config['server']['url'], repository['name'])
+
+    pending_commits = []
+    for unused in range(max_fetch_count):
+        commit = fetch_commit_and_resolve_author(repository, repository.get('accountNameFinderScript', None), repository['revisionToFecth'])
+        if not commit:
+            break
+        pending_commits += [commit]
+        repository['revisionToFecth'] += 1
+
+    if not pending_commits:
+        print "No new revision found for %s (waiting for r%d)" % (repository['name'], repository['revisionToFecth'])
+        return
+
+    revision_list = 'r' + ', r'.join(map(lambda commit: str(commit['revision']), pending_commits))
+    print "Submitting revisions %s for %s to %s" % (revision_list, repository['name'], server_config['server']['url'])
+    submit_commits(pending_commits, server_config['server']['url'], server_config['slave']['name'], server_config['slave']['password'])
+    print "Successfully submitted."
+    print
 
 
 def determine_first_revision_to_fetch(dashboard_url, repository_name):
@@ -76,9 +89,9 @@ def fetch_revision_from_dasbhoard(dashboard_url, repository_name, filter):
     return int(commits[0]['revision']) if commits else None
 
 
-def fetch_commit_and_resolve_author(repository_name, repository_url, account_to_name_helper, revision_to_fetch):
+def fetch_commit_and_resolve_author(repository, account_to_name_helper, revision_to_fetch):
     try:
-        commit = fetch_commit(repository_name, repository_url, revision_to_fetch)
+        commit = fetch_commit(repository, revision_to_fetch)
     except Exception as error:
         sys.exit('Failed to fetch the commit %d: %s' % (revision_to_fetch, str(error)))
 
@@ -96,8 +109,13 @@ def fetch_commit_and_resolve_author(repository_name, repository_url, account_to_
     return commit
 
 
-def fetch_commit(repository_name, repository_url, revision):
-    args = ['svn', 'log', '--revision', str(revision), '--xml', repository_url]
+def fetch_commit(repository, revision):
+    args = ['svn', 'log', '--revision', str(revision), '--xml', repository['url'], '--non-interactive']
+    if 'username' in repository and 'password' in repository:
+        args += ['--no-auth-cache', '--username', repository['username'], '--password', repository['password']]
+    if repository.get('trustCertificate', False):
+        args += ['--trust-server-cert']
+
     try:
         output = subprocess.check_output(args, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as error:
@@ -109,7 +127,7 @@ def fetch_commit(repository_name, repository_url, revision):
     author_account = text_content(xml.getElementsByTagName("author")[0])
     message = text_content(xml.getElementsByTagName("msg")[0])
     return {
-        'repository': repository_name,
+        'repository': repository['name'],
         'revision': revision,
         'time': time,
         'author': {'account': author_account},
@@ -121,7 +139,7 @@ name_account_compound_regex = re.compile(r'^\s*(?P<name>(\".+\"|[^<]+?))\s*\<(?P
 
 
 def resolve_author_name_from_account(helper, account):
-    output = subprocess.check_output(helper + ' ' + account, shell=True)
+    output = subprocess.check_output(helper + [account])
     match = name_account_compound_regex.match(output)
     if match:
         return match.group('name').strip('"')
