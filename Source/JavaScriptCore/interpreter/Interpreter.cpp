@@ -613,9 +613,8 @@ private:
 
 class UnwindFunctor {
 public:
-    UnwindFunctor(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
-        : m_vmEntryFrame(vmEntryFrame)
-        , m_callFrame(callFrame)
+    UnwindFunctor(CallFrame*& callFrame, bool isTermination, CodeBlock*& codeBlock, HandlerInfo*& handler)
+        : m_callFrame(callFrame)
         , m_isTermination(isTermination)
         , m_codeBlock(codeBlock)
         , m_handler(handler)
@@ -625,7 +624,6 @@ public:
     StackVisitor::Status operator()(StackVisitor& visitor)
     {
         VM& vm = m_callFrame->vm();
-        m_vmEntryFrame = visitor->vmEntryFrame();
         m_callFrame = visitor->callFrame();
         m_codeBlock = visitor->codeBlock();
         unsigned bytecodeOffset = visitor->bytecodeOffset();
@@ -643,15 +641,22 @@ public:
     }
 
 private:
-    VMEntryFrame*& m_vmEntryFrame;
     CallFrame*& m_callFrame;
     bool m_isTermination;
     CodeBlock*& m_codeBlock;
     HandlerInfo*& m_handler;
 };
 
-NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallFrame*& callFrame, Exception* exception)
+NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception, UnwindStart unwindStart)
 {
+    if (unwindStart == UnwindFromCallerFrame) {
+        if (callFrame->callerFrameOrVMEntryFrame() == vm.topVMEntryFrame)
+            return nullptr;
+
+        callFrame = callFrame->callerFrame();
+        vm.topCallFrame = callFrame;
+    }
+
     CodeBlock* codeBlock = callFrame->codeBlock();
     bool isTermination = false;
 
@@ -666,13 +671,13 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallF
     if (exceptionValue.isObject())
         isTermination = isTerminatedExecutionException(exception);
 
-    ASSERT(callFrame->vm().exception() && callFrame->vm().exception()->stack().size());
+    ASSERT(vm.exception() && vm.exception()->stack().size());
 
     Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // We need to clear the exception here in order to see if a new exception happens.
         // Afterwards, the values are put back to continue processing this error.
-        SuspendExceptionScope scope(&callFrame->vm());
+        SuspendExceptionScope scope(&vm);
         // This code assumes that if the debugger is enabled then there is no inlining.
         // If that assumption turns out to be false then we'll ignore the inlined call
         // frames.
@@ -695,13 +700,11 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VMEntryFrame*& vmEntryFrame, CallF
     exception->setDidNotifyInspectorOfThrow();
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
-    HandlerInfo* handler = 0;
-    VM& vm = callFrame->vm();
-    ASSERT(callFrame == vm.topCallFrame);
-    UnwindFunctor functor(vmEntryFrame, callFrame, isTermination, codeBlock, handler);
+    HandlerInfo* handler = nullptr;
+    UnwindFunctor functor(callFrame, isTermination, codeBlock, handler);
     callFrame->iterate(functor);
     if (!handler)
-        return 0;
+        return nullptr;
 
     if (LegacyProfiler* profiler = vm.enabledProfiler())
         profiler->exceptionUnwind(callFrame);

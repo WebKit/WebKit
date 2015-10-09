@@ -96,6 +96,7 @@ namespace JSC  {
         CallFrame& operator=(const Register& r) { *static_cast<Register*>(this) = r; return *this; }
 
         CallFrame* callerFrame() const { return static_cast<CallFrame*>(callerFrameOrVMEntryFrame()); }
+        void* callerFrameOrVMEntryFrame() const { return callerFrameAndPC().callerFrame; }
 
         JS_EXPORT_PRIVATE CallFrame* callerFrame(VMEntryFrame*&);
 
@@ -302,8 +303,6 @@ namespace JSC  {
             size_t argIndex = offset - JSStack::FirstArgument;
             return argIndex;
         }
-
-        void* callerFrameOrVMEntryFrame() const { return callerFrameAndPC().callerFrame; }
 
         CallerFrameAndPC& callerFrameAndPC() { return *reinterpret_cast<CallerFrameAndPC*>(this); }
         const CallerFrameAndPC& callerFrameAndPC() const { return *reinterpret_cast<const CallerFrameAndPC*>(this); }
