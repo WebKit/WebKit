@@ -1677,6 +1677,7 @@
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7BA60F1A1A7CEC00F1F7B4 /* HeapVerifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE7BA60D1A1A7CEC00F1F7B4 /* HeapVerifier.cpp */; };
 		FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7BA60E1A1A7CEC00F1F7B4 /* HeapVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
@@ -3492,6 +3493,8 @@
 		FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
 		FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WatchdogMac.cpp; sourceTree = "<group>"; };
+		FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PingPongStackOverflowTest.cpp; path = API/tests/PingPongStackOverflowTest.cpp; sourceTree = "<group>"; };
+		FEDA50D51B97F4D9009A3B4F /* PingPongStackOverflowTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingPongStackOverflowTest.h; path = API/tests/PingPongStackOverflowTest.h; sourceTree = "<group>"; };
 		FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompareAndSwapTest.cpp; path = API/tests/CompareAndSwapTest.cpp; sourceTree = "<group>"; };
 		FEF040521AAEC4ED00BD28B0 /* CompareAndSwapTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompareAndSwapTest.h; path = API/tests/CompareAndSwapTest.h; sourceTree = "<group>"; };
 		FEF6835A174343CC00A32E25 /* JITStubsARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARM.h; sourceTree = "<group>"; };
@@ -3864,6 +3867,8 @@
 				FE0D4A081ABA2437002F54BF /* GlobalContextWithFinalizerTest.h */,
 				C2181FC018A948FB0025A235 /* JSExportTests.h */,
 				C2181FC118A948FB0025A235 /* JSExportTests.mm */,
+				FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */,
+				FEDA50D51B97F4D9009A3B4F /* PingPongStackOverflowTest.h */,
 				65570F581AA4C00A009B3C23 /* Regress141275.h */,
 				65570F591AA4C00A009B3C23 /* Regress141275.mm */,
 				FEB51F6A1A97B688001F921C /* Regress141809.h */,
@@ -7003,6 +7008,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */,
 				FE0D4A091ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp in Sources */,
 				65570F5A1AA4C3EA009B3C23 /* Regress141275.mm in Sources */,
 				C29ECB031804D0ED00D2CBB4 /* CurrentThisInsideBlockGetterTest.mm in Sources */,

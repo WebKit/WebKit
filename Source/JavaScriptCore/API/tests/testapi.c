@@ -42,6 +42,7 @@
 #include "CompareAndSwapTest.h"
 #include "CustomGlobalObjectClassTest.h"
 #include "GlobalContextWithFinalizerTest.h"
+#include "PingPongStackOverflowTest.h"
 
 #if OS(DARWIN)
 #include "ExecutionTimeLimitTest.h"
@@ -1875,6 +1876,7 @@ int main(int argc, char* argv[])
     failed = testExecutionTimeLimit() || failed;
 #endif /* OS(DARWIN) */
     failed = testGlobalContextWithFinalizer() || failed;
+    failed = testPingPongStackOverflow() || failed;
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;

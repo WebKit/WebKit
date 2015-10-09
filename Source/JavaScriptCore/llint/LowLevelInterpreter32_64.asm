@@ -1947,8 +1947,6 @@ _llint_op_catch:
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t3], t3
     loadp VM::callFrameForThrow[t3], cfr
-    loadp VM::vmEntryFrameForThrow[t3], t0
-    storep t0, VM::topVMEntryFrame[t3]
     restoreStackPointerAfterCall()
 
     loadi VM::targetInterpreterPCForThrow[t3], PC
