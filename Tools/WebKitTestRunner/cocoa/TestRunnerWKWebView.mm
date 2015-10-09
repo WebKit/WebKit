@@ -70,8 +70,17 @@
 
 - (void)dealloc
 {
-    [super dealloc];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    self.willBeginZoomingCallback = nil;
+    self.didEndZoomingCallback = nil;
+    self.didShowKeyboardCallback = nil;
+    self.didHideKeyboardCallback = nil;
+
+    self.zoomToScaleCompletionHandler = nil;
+    self.showKeyboardCompletionHandler = nil;
+
+    [super dealloc];
 }
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler

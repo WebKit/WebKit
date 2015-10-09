@@ -1,3 +1,17 @@
+2015-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix some leaks in TestRunnerWKWebView and UIScriptContext
+        https://bugs.webkit.org/show_bug.cgi?id=149960
+
+        Reviewed by Tim Horton.
+        
+        Use adoptWK(), and null out some members (file is not using ARC).
+
+        * WebKitTestRunner/UIScriptContext/UIScriptContext.cpp:
+        (UIScriptContext::uiScriptComplete):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+
 2015-10-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE_SUID_SANDBOX_LINUX cruft

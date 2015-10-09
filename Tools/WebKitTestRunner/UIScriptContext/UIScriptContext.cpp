@@ -138,7 +138,7 @@ void UIScriptContext::fireCallback(unsigned callbackID)
 
 void UIScriptContext::uiScriptComplete(JSStringRef result)
 {
-    WKRetainPtr<WKStringRef> uiScriptResult = WKStringCreateWithJSString(result);
+    WKRetainPtr<WKStringRef> uiScriptResult = adoptWK(WKStringCreateWithJSString(result));
     m_delegate.uiScriptDidComplete(uiScriptResult.get(), m_currentScriptCallbackID);
     m_currentScriptCallbackID = 0;
 }
