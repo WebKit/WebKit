@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,13 +17,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitHitTestResultPrivate_h
-#define WebKitHitTestResultPrivate_h
+#include "config.h"
+#include "APIHitTestResult.h"
 
-#include "WebKitHitTestResult.h"
-#include "WebKitPrivate.h"
+using namespace WebCore;
 
-WebKitHitTestResult* webkitHitTestResultCreate(const WebKit::WebHitTestResultData&);
-bool webkitHitTestResultCompare(WebKitHitTestResult*, const WebKit::WebHitTestResultData&);
+namespace API {
 
-#endif // WebKitHitTestResultPrivate_h
+PassRefPtr<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData)
+{
+    return adoptRef(new HitTestResult(hitTestResultData));
+}
+
+} // namespace API

@@ -30,7 +30,7 @@
 
 #include "Plugin.h"
 #include "WebEvent.h"
-#include "WebHitTestResult.h"
+#include "WebHitTestResultData.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/ScrollableArea.h>
@@ -104,7 +104,7 @@ public:
     
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
 
-    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResult::Data&, PDFSelection **, NSDictionary **) const;
+    String lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&, PDFSelection **, NSDictionary **) const;
     WebCore::FloatRect viewRectForSelection(PDFSelection *) const;
 
     CGFloat scaleFactor() const;

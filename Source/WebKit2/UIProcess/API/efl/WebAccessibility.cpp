@@ -30,7 +30,6 @@
 
 #include "EwkView.h"
 #include "WKViewEfl.h"
-#include "WebHitTestResult.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {

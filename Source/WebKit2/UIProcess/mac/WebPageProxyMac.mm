@@ -751,7 +751,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
 #if ENABLE(SERVICE_CONTROLS)
 ContextMenuItem WebPageProxy::platformInitializeShareMenuItem(const ContextMenuContextData& contextMenuContextData)
 {
-    const WebHitTestResult::Data& hitTestData = contextMenuContextData.webHitTestResultData();
+    const WebHitTestResultData& hitTestData = contextMenuContextData.webHitTestResultData();
 
     URL absoluteLinkURL;
     if (!hitTestData.absoluteLinkURL.isEmpty())

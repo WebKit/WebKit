@@ -29,7 +29,7 @@
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 #import "WKImmediateActionTypes.h"
-#import "WebHitTestResult.h"
+#import "WebHitTestResultData.h"
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <wtf/RetainPtr.h>
 
@@ -54,10 +54,10 @@ enum class ImmediateActionState {
     WKView *_wkView;
 
     WebKit::ImmediateActionState _state;
-    WebKit::WebHitTestResult::Data _hitTestResultData;
+    WebKit::WebHitTestResultData _hitTestResultData;
     BOOL _contentPreventsDefault;
     RefPtr<API::Object> _userData;
-    _WKImmediateActionType _type;
+    uint32_t _type;
     RetainPtr<NSImmediateActionGestureRecognizer> _immediateActionRecognizer;
 
     BOOL _hasActivatedActionContext;
@@ -69,7 +69,7 @@ enum class ImmediateActionState {
 
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
 - (void)willDestroyView:(WKView *)view;
-- (void)didPerformImmediateActionHitTest:(const WebKit::WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
+- (void)didPerformImmediateActionHitTest:(const WebKit::WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
 - (void)dismissContentRelativeChildWindows;
 - (BOOL)hasActiveImmediateAction;
 

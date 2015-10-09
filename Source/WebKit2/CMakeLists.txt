@@ -248,7 +248,7 @@ set(WebKit2_SOURCES
     Shared/WebEvent.cpp
     Shared/WebEventConversion.cpp
     Shared/WebGeolocationPosition.cpp
-    Shared/WebHitTestResult.cpp
+    Shared/WebHitTestResultData.cpp
     Shared/WebImage.cpp
     Shared/WebKeyboardEvent.cpp
     Shared/WebKit2Initialize.cpp
@@ -274,6 +274,7 @@ set(WebKit2_SOURCES
     Shared/API/APIError.cpp
     Shared/API/APIFrameHandle.cpp
     Shared/API/APIGeometry.cpp
+    Shared/API/APIHitTestResult.cpp
     Shared/API/APIObject.cpp
     Shared/API/APIPageGroupHandle.cpp
     Shared/API/APIPageHandle.cpp

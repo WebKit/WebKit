@@ -1,3 +1,205 @@
+2015-10-09  Beth Dakin  <bdakin@apple.com>
+
+        WKWebView needs SPI to customize immediate actions
+        https://bugs.webkit.org/show_bug.cgi?id=149939
+        -and corresponding-
+        rdar://problem/20016849
+
+        Reviewed by Anders Carlsson.
+
+        This patch breaks WebHitTestResult into two files. WebHiTestResultData 
+        continues to live in the WebKit namespace and contains the old 
+        WebHitTestResult::Data struct. The rest of WebHitTestResult is now 
+        API::HitTestResult. The patch also adds _WKHitTestResult as Obj-C API to wrap 
+        API::HitTestResult.
+
+        Attempt to keep other ports happy with new files.
+        * CMakeLists.txt:
+
+        WebKit::WebHitTestResult no longer contains the Data struct and is now called 
+        API::HitTestResult.
+        * Shared/API/APIHitTestResult.cpp: Copied from Shared/WebHitTestResult.cpp.
+        (API::HitTestResult::create):
+        (WebKit::WebHitTestResult::create): Deleted.
+        (WebKit::WebHitTestResult::Data::Data): Deleted.
+        (WebKit::WebHitTestResult::Data::~Data): Deleted.
+        (WebKit::WebHitTestResult::Data::encode): Deleted.
+        (WebKit::WebHitTestResult::Data::decode): Deleted.
+        (WebKit::WebHitTestResult::Data::platformEncode): Deleted.
+        (WebKit::WebHitTestResult::Data::platformDecode): Deleted.
+        (WebKit::WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates): Deleted.
+        * Shared/API/APIHitTestResult.h: Copied from Shared/WebHitTestResult.h.
+        (API::HitTestResult::absoluteImageURL):
+        (API::HitTestResult::absolutePDFURL):
+        (API::HitTestResult::absoluteLinkURL):
+        (API::HitTestResult::absoluteMediaURL):
+        (API::HitTestResult::linkLabel):
+        (API::HitTestResult::linkTitle):
+        (API::HitTestResult::lookupText):
+        (API::HitTestResult::isContentEditable):
+        (API::HitTestResult::isDownloadableMedia):
+        (API::HitTestResult::HitTestResult):
+        (WebKit::WebHitTestResult::absoluteImageURL): Deleted.
+        (WebKit::WebHitTestResult::absolutePDFURL): Deleted.
+        (WebKit::WebHitTestResult::absoluteLinkURL): Deleted.
+        (WebKit::WebHitTestResult::absoluteMediaURL): Deleted.
+        (WebKit::WebHitTestResult::linkLabel): Deleted.
+        (WebKit::WebHitTestResult::linkTitle): Deleted.
+        (WebKit::WebHitTestResult::lookupText): Deleted.
+        (WebKit::WebHitTestResult::isContentEditable): Deleted.
+        (WebKit::WebHitTestResult::isDownloadableMedia): Deleted.
+        (WebKit::WebHitTestResult::WebHitTestResult): Deleted.
+
+        This is a new obj-c object that we can use for the modern immediate action 
+        API.
+        * Shared/API/Cocoa/_WKHitTestResult.h: Added.
+        * Shared/API/Cocoa/_WKHitTestResult.mm: Added.
+        (-[_WKHitTestResult dealloc]):
+        (-[_WKHitTestResult absoluteImageURL]):
+        (-[_WKHitTestResult absolutePDFURL]):
+        (-[_WKHitTestResult absoluteLinkURL]):
+        (-[_WKHitTestResult absoluteMediaURL]):
+        (-[_WKHitTestResult linkLabel]):
+        (-[_WKHitTestResult linkTitle]):
+        (-[_WKHitTestResult lookupText]):
+        (-[_WKHitTestResult isContentEditable]):
+        (-[_WKHitTestResult elementBoundingBox]):
+        (-[_WKHitTestResult copyWithZone:]):
+        (-[_WKHitTestResult _apiObject]):
+
+        _WKHitTestResult wraps API::HitTestResult.
+        * Shared/API/Cocoa/_WKHitTestResultInternal.h: Added.
+        (API::wrapper):
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        Since we want to use the same enum name for the new enum, use a #define instead of a typedef in the old C SPI. This should keep old clients working in the meantime.
+        * Shared/API/c/WKImmediateActionTypes.h:
+
+        WebHitTestResult::Data is now WebHitTestResultData.
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::webHitTestResultData):
+        (WebKit::ContextMenuContextData::selectedText):
+
+        Remove WebHitTestResult, and add WebHitTestResultData for the Data struct.
+        * Shared/WebHitTestResult.cpp: Removed.
+        * Shared/WebHitTestResult.h: Removed.
+        * Shared/WebHitTestResultData.cpp: Added.
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        (WebKit::WebHitTestResultData::~WebHitTestResultData):
+        (WebKit::WebHitTestResultData::encode):
+        (WebKit::WebHitTestResultData::decode):
+        (WebKit::WebHitTestResultData::platformEncode):
+        (WebKit::WebHitTestResultData::platformDecode):
+        (WebKit::WebHitTestResultData::elementBoundingBoxInWindowCoordinates):
+        * Shared/WebHitTestResultData.h: Added.
+        * Shared/mac/WebHitTestResult.mm: Removed.
+        * Shared/mac/WebHitTestResultData.mm: Copied from Shared/mac/WebHitTestResult.mm.
+        (WebKit::WebHitTestResultData::platformEncode):
+        (WebKit::WebHitTestResultData::platformDecode):
+        (WebKit::WebHitTestResult::Data::platformEncode): Deleted.
+        (WebKit::WebHitTestResult::Data::platformDecode): Deleted.
+
+        WebHitTestResult::Data is now WebHitTestResultData.
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::~ContextMenuClient):
+        (API::ContextMenuClient::getContextMenuFromProposedMenu):
+        (API::ContextMenuClient::customContextMenuItemSelected):
+        (API::ContextMenuClient::contextMenuDismissed):
+        (API::ContextMenuClient::showContextMenu):
+
+        WebHitTestResult is now WebHitTestResult
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::runJavaScriptPrompt):
+        (API::UIClient::setStatusText):
+        (API::UIClient::mouseDidMoveOverElement):
+        (API::UIClient::unavailablePluginButtonClicked):
+        (API::UIClient::pinnedStateDidChange):
+        (API::UIClient::didBeginTrackingPotentialLongMousePress):
+        (API::UIClient::didRecognizeLongMousePress):
+        (API::UIClient::didCancelTrackingPotentialLongMousePress):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKHitTestResult.cpp:
+        (WKHitTestResultGetTypeID):
+        (WKHitTestResultCopyAbsoluteImageURL):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        (WKPageSetPageUIClient):
+
+        New WKWebView SPI _immediateActionAnimationControllerForHitTestResult
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Attempts to keep other ports happy with the re-name.
+        * UIProcess/API/efl/WebAccessibility.cpp:
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        (webkit_hit_test_result_class_init):
+        (webkitHitTestResultCreate):
+        (stringIsEqualToCString):
+        (webkitHitTestResultCompare):
+        * UIProcess/API/gtk/WebKitHitTestResultPrivate.h:
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewMakePermissionRequest):
+        (webkitWebViewMouseTargetChanged):
+        (contextMenuDismissed):
+        (webkitWebViewPopulateContextMenu):
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+
+        Re-name, and just use uint32_t for the old SPI.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _didPerformImmediateActionHitTest:contentPreventsDefault:userData:]):
+        (-[WKView _setDidMoveSwipeSnapshotCallback:]):
+        (-[WKView _immediateActionAnimationControllerForHitTestResult:withType:userData:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
+        PageClient will figure out whether to call into WKWebView or WKView for this 
+        SPI.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::immediateActionAnimationControllerForHitTestResult):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::immediateActionAnimationControllerForHitTestResult):
+
+        WebKit::WebHitTestResult::Data is now WebKit::WebHitTestResultData.
+        * UIProcess/WebPageProxy.messages.in:
+
+        WKImmediateActionController calls through to WebPageProxy which calls to 
+        PageClient, which figures out which API to call. Also cache the type as a 
+        uint32_t
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _updateImmediateActionItem]):
+
+        WebHitTestResult::Data is now WebHitTestResultData.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformInitializeShareMenuItem):
+
+        New files!
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Deal with the #define situation for the enum.
+        * WebKit2Prefix.h:
+
+        New names for things. WebHitTestResult::Data -> WebHitTestResultData
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::pointInLayoutSpaceForPointInWindowSpace):
+        (WebKit::PDFPlugin::lookupTextAtLocation):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        (WebKit::WebChromeClient::didBeginTrackingPotentialLongMousePress):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+
 2015-10-09  Anders Carlsson  <andersca@apple.com>
 
         Remove two unused WKFrame functions

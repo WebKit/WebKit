@@ -63,6 +63,7 @@
 #import "WKWindowFeaturesInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKHitTestResultInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentExtensionStoreInternal.h"
 #import "_WKUserContentFilterInternal.h"
@@ -152,6 +153,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::FrameInfo:
         wrapper = [WKFrameInfo alloc];
+        break;
+
+    case Type::HitTestResult:
+        wrapper = [_WKHitTestResult alloc];
         break;
 
     case Type::Navigation:

@@ -84,7 +84,7 @@ private:
         completionHandler(String::fromUTF8(result.data()));
     }
 
-    virtual void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResult::Data& data, WebEvent::Modifiers modifiers, API::Object*) override
+    virtual void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) override
     {
         webkitWebViewMouseTargetChanged(m_webView, data, toGdkModifiers(modifiers));
     }

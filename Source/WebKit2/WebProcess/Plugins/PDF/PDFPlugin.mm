@@ -1898,7 +1898,7 @@ static NSPoint pointInLayoutSpaceForPointInWindowSpace(PDFLayerController* pdfLa
     return NSPointFromCGPoint(newPoint);
 }
 
-String PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResult::Data& data, PDFSelection **selectionPtr, NSDictionary **options) const
+String PDFPlugin::lookupTextAtLocation(const WebCore::FloatPoint& locationInViewCoordinates, WebHitTestResultData& data, PDFSelection **selectionPtr, NSDictionary **options) const
 {
     PDFSelection*& selection = *selectionPtr;
 

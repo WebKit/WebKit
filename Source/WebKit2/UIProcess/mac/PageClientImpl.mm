@@ -47,6 +47,7 @@
 #import "WebPopupMenuProxyMac.h"
 #import "WindowServerConnection.h"
 #import "_WKDownloadInternal.h"
+#import "_WKHitTestResultInternal.h"
 #import "_WKThumbnailView.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/BitmapImage.h>
@@ -811,11 +812,20 @@ CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *laye
     return [windowContentLayer convertRect:layer.bounds fromLayer:layer];
 }
 
-void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResult::Data& result, bool contentPreventsDefault, API::Object* userData)
+void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, API::Object* userData)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_wkView _didPerformImmediateActionHitTest:result contentPreventsDefault:contentPreventsDefault userData:userData];
 #endif
+}
+
+void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
+{
+#if WK_API_ENABLED
+    if (m_webView)
+        return [m_webView _immediateActionAnimationControllerForHitTestResult:wrapper(*hitTestResult) withType:(_WKImmediateActionType)type userData:(id)(userData.get())];
+#endif
+    return [m_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:type userData:toAPI(userData.get())];
 }
 
 void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)

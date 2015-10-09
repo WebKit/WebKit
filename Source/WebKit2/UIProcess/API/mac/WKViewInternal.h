@@ -29,7 +29,7 @@
 #import "PluginComplexTextInputState.h"
 #import "SameDocumentNavigationType.h"
 #import "WebFindOptions.h"
-#import "WebHitTestResult.h"
+#import "WebHitTestResultData.h"
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -145,7 +145,7 @@ struct EditorState;
 - (void)_prepareForDictionaryLookup;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-- (void)_didPerformImmediateActionHitTest:(const WebKit::WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
+- (void)_didPerformImmediateActionHitTest:(const WebKit::WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100

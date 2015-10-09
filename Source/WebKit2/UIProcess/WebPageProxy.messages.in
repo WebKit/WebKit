@@ -28,9 +28,9 @@ messages -> WebPageProxy {
     RunJavaScriptAlert(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> () Delayed
     RunJavaScriptConfirm(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> (bool result) Delayed
     RunJavaScriptPrompt(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message, String defaultValue) -> (String result) Delayed
-    MouseDidMoveOverElement(WebKit::WebHitTestResult::Data hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
+    MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
 
-    DidBeginTrackingPotentialLongMousePress(WebCore::IntPoint mouseDownPosition, WebKit::WebHitTestResult::Data hitTestResultData, WebKit::UserData userData)
+    DidBeginTrackingPotentialLongMousePress(WebCore::IntPoint mouseDownPosition, struct WebKit::WebHitTestResultData hitTestResultData, WebKit::UserData userData)
     DidRecognizeLongMousePress(WebKit::UserData userData)
     DidCancelTrackingPotentialLongMousePress(WebKit::UserData userData)
 
@@ -431,7 +431,7 @@ messages -> WebPageProxy {
 #endif
 
 #if PLATFORM(MAC)
-    DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResult::Data result, bool contentPreventsDefault, WebKit::UserData userData)
+    DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData)
 #endif
     HandleMessage(String messageName, WebKit::UserData messageBody) WantsConnection
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) WantsConnection

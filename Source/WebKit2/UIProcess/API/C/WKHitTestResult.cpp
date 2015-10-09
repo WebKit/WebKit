@@ -27,14 +27,14 @@
 #include "config.h"
 #include "WKHitTestResult.h"
 
+#include "APIHitTestResult.h"
 #include "WKAPICast.h"
-#include "WebHitTestResult.h"
 
 using namespace WebKit;
 
 WKTypeID WKHitTestResultGetTypeID()
 {
-    return toAPI(WebHitTestResult::APIType);
+    return toAPI(API::HitTestResult::APIType);
 }
 
 WKURLRef WKHitTestResultCopyAbsoluteImageURL(WKHitTestResultRef hitTestResultRef)

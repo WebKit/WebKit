@@ -39,7 +39,7 @@
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
-#include "WebHitTestResult.h"
+#include "APIHitTestResult.h"
 #endif
 
 #if PLUGIN_ARCHITECTURE(X11)

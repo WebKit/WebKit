@@ -68,7 +68,7 @@
 #import "WKWebView.h"
 #import "WebBackForwardList.h"
 #import "WebEventFactory.h"
-#import "WebHitTestResult.h"
+#import "WebHitTestResultData.h"
 #import "WebInspectorProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPage.h"
@@ -3980,7 +3980,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
-- (void)_didPerformImmediateActionHitTest:(const WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
+- (void)_didPerformImmediateActionHitTest:(const WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
 {
     [_data->_immediateActionController didPerformImmediateActionHitTest:hitTestResult contentPreventsDefault:contentPreventsDefault userData:userData];
 }
@@ -4655,7 +4655,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_gestureController->setDidMoveSwipeSnapshotCallback(callback);
 }
 
-- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKImmediateActionType)type userData:(WKTypeRef)userData
+- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData
 {
     return nil;
 }

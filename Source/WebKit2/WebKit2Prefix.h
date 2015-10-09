@@ -44,6 +44,8 @@
 
 #define ENABLE_SHAREABLE_RESOURCE 1
 
+#define _WKImmediateActionType _WKImmediateActionType
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 

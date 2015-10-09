@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebHitTestResult.h"
+#import "WebHitTestResultData.h"
 
 #if PLATFORM(MAC)
 
@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-void WebHitTestResult::Data::platformEncode(IPC::ArgumentEncoder& encoder) const
+void WebHitTestResultData::platformEncode(IPC::ArgumentEncoder& encoder) const
 {
     bool hasActionContext = detectedDataActionContext;
     encoder << hasActionContext;
@@ -61,7 +61,7 @@ void WebHitTestResult::Data::platformEncode(IPC::ArgumentEncoder& encoder) const
         encoder << detectedDataTextIndicator->data();
 }
 
-bool WebHitTestResult::Data::platformDecode(IPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
+bool WebHitTestResultData::platformDecode(IPC::ArgumentDecoder& decoder, WebHitTestResultData& hitTestResultData)
 {
     bool hasActionContext;
     if (!decoder.decode(hasActionContext))

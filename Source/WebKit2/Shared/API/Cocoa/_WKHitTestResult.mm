@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKImmediateActionTypes_h
-#define WKImmediateActionTypes_h
+#import "config.h"
+#import "_WKHitTestResultInternal.h"
 
-#include <stdint.h>
+#if WK_API_ENABLED
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+@implementation _WKHitTestResult
 
-enum {
-    kWKImmediateActionNone = 0,
-    kWKImmediateActionLinkPreview,
-    kWKImmediateActionDataDetectedItem,
-    kWKImmediateActionLookupText,
-    kWKImmediateActionMailtoLink,
-    kWKImmediateActionTelLink
-};
+- (void)dealloc
+{
+    _hitTestResult->~HitTestResult();
 
-#ifndef _WKImmediateActionType 
-#define _WKImmediateActionType uint32_t
-#endif
-
-#ifdef __cplusplus
+    [super dealloc];
 }
-#endif
 
-#endif /* WKImmediateActionTypes_h */
+- (NSURL *)absoluteImageURL
+{
+    return [NSURL URLWithString:_hitTestResult->absoluteImageURL()];
+}
+
+- (NSURL *)absolutePDFURL
+{
+    return [NSURL URLWithString:_hitTestResult->absolutePDFURL()];
+}
+
+- (NSURL *)absoluteLinkURL
+{
+    return [NSURL URLWithString:_hitTestResult->absoluteLinkURL()];
+}
+
+- (NSURL *)absoluteMediaURL
+{
+    return [NSURL URLWithString:_hitTestResult->absoluteMediaURL()];
+}
+
+- (NSString *)linkLabel
+{
+    return _hitTestResult->linkLabel();
+}
+
+- (NSString *)linkTitle
+{
+    return _hitTestResult->linkTitle();
+}
+
+- (NSString *)lookupText
+{
+    return _hitTestResult->lookupText();
+}
+
+- (BOOL)isContentEditable
+{
+    return _hitTestResult->isContentEditable();
+}
+
+- (CGRect)elementBoundingBox
+{
+    return _hitTestResult->elementBoundingBox();
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_hitTestResult;
+}
+
+@end
+
+#endif

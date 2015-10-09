@@ -3079,6 +3079,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return [_wkView _overrideDeviceScaleFactor];
 }
 
+- (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData
+{
+    return nil;
+}
+
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
     [_wkView _setTopContentInset:contentInset];

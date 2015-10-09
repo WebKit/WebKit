@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitHitTestResult.h"
 
-#include "WebHitTestResult.h"
+#include "WebHitTestResultData.h"
 #include "WebKitHitTestResultPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
@@ -221,7 +221,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
                                                         paramFlags));
 }
 
-WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResult::Data& hitTestResult)
+WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResultData& hitTestResult)
 {
     unsigned context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
 
@@ -258,7 +258,7 @@ static bool stringIsEqualToCString(const String& string, const CString& cString)
     return ((string.isEmpty() && cString.isNull()) || (string.utf8() == cString));
 }
 
-bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHitTestResult::Data& webHitTestResult)
+bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHitTestResultData& webHitTestResult)
 {
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
     return webHitTestResult.isContentEditable == webkit_hit_test_result_context_is_editable(hitTestResult)

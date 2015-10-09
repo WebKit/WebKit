@@ -29,7 +29,7 @@
 
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "WebContextMenuItemData.h"
-#include "WebHitTestResult.h"
+#include "WebHitTestResultData.h"
 #include "WebImage.h"
 #include "WebKitWebView.h"
 #include <wtf/text/CString.h>
@@ -46,7 +46,7 @@ bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);
 CString webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText);
 void webkitWebViewMakePermissionRequest(WebKitWebView*, WebKitPermissionRequest*);
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
-void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResult::Data&, unsigned modifiers);
+void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, unsigned modifiers);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
 void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy*, uint64_t resourceIdentifier, WebKitURIRequest*);
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
@@ -55,7 +55,7 @@ void webKitWebViewDidReceiveSnapshot(WebKitWebView*, uint64_t callbackID, WebKit
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 bool webkitWebViewEnterFullScreen(WebKitWebView*);
 bool webkitWebViewLeaveFullScreen(WebKitWebView*);
-void webkitWebViewPopulateContextMenu(WebKitWebView*, const Vector<WebKit::WebContextMenuItemData>& proposedMenu, const WebKit::WebHitTestResult::Data&, GVariant*);
+void webkitWebViewPopulateContextMenu(WebKitWebView*, const Vector<WebKit::WebContextMenuItemData>& proposedMenu, const WebKit::WebHitTestResultData&, GVariant*);
 void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*);
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView*, WebKit::AuthenticationChallengeProxy*);
 void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentEvent);

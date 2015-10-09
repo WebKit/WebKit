@@ -53,6 +53,7 @@
 
 namespace API {
 class FrameInfo;
+class HitTestResult;
 class Navigation;
 class NavigationAction;
 class NavigationData;
@@ -89,7 +90,6 @@ class WebFrameProxy;
 class WebGeolocationManagerProxy;
 class WebGeolocationPosition;
 class WebGrammarDetail;
-class WebHitTestResult;
 class WebIconDatabase;
 class WebInspectorProxy;
 class WebMediaCacheManagerProxy;
@@ -134,7 +134,7 @@ WK_ADD_API_MAPPING(WKGeolocationManagerRef, WebGeolocationManagerProxy)
 WK_ADD_API_MAPPING(WKGeolocationPermissionRequestRef, GeolocationPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
 WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
-WK_ADD_API_MAPPING(WKHitTestResultRef, WebHitTestResult)
+WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
 WK_ADD_API_MAPPING(WKMediaCacheManagerRef, WebMediaCacheManagerProxy)

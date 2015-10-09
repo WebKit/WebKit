@@ -42,6 +42,7 @@
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
 #include "WebFullScreenManager.h"
+#include "WebHitTestResultData.h"
 #include "WebImage.h"
 #include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListener.h"
@@ -602,7 +603,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     m_page->injectedBundleUIClient().mouseDidMoveOverElement(m_page, hitTestResult, static_cast<WebEvent::Modifiers>(modifierFlags), userData);
 
     // Notify the UIProcess.
-    WebHitTestResult::Data webHitTestResultData(hitTestResult);
+    WebHitTestResultData webHitTestResultData(hitTestResult);
     m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
@@ -614,7 +615,7 @@ void WebChromeClient::didBeginTrackingPotentialLongMousePress(const IntPoint& mo
     m_page->injectedBundleUIClient().didBeginTrackingPotentialLongMousePress(m_page, mouseDownPosition, hitTestResult, userData);
     
     // Notify the UIProcess.
-    WebHitTestResult::Data webHitTestResultData(hitTestResult);
+    WebHitTestResultData webHitTestResultData(hitTestResult);
     m_page->send(Messages::WebPageProxy::DidBeginTrackingPotentialLongMousePress(mouseDownPosition, webHitTestResultData, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 

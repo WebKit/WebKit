@@ -144,7 +144,7 @@
 
 // Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to
 // do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
-- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(_WKImmediateActionType)type userData:(WKTypeRef)userData;
+- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData;
 
 - (void)_prepareForImmediateActionAnimation;
 - (void)_cancelImmediateActionAnimation;

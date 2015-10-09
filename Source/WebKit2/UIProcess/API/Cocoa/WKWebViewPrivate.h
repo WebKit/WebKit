@@ -39,7 +39,17 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
+typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
+    _WKImmediateActionNone,
+    _WKImmediateActionLinkPreview,
+    _WKImmediateActionDataDetectedItem,
+    _WKImmediateActionLookupText,
+    _WKImmediateActionMailtoLink,
+    _WKImmediateActionTelLink
+} WK_AVAILABLE(WK_MAC_TBA, NA);
+
 @class WKBrowsingContextHandle;
+@class _WKHitTestResult;
 @class _WKRemoteObjectRegistry;
 @class _WKSessionState;
 @class _WKWebViewPrintFormatter;
@@ -172,6 +182,9 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
 
 @property (nonatomic, setter=_setWindowOcclusionDetectionEnabled:) BOOL _windowOcclusionDetectionEnabled;
 
+// Clients that want to maintain default behavior can return nil. To disable the immediate action entirely, return NSNull. And to
+// do something custom, return an object that conforms to the NSImmediateActionAnimationController protocol.
+- (id)_immediateActionAnimationControllerForHitTestResult:(_WKHitTestResult *)hitTestResult withType:(_WKImmediateActionType)type userData:(id<NSSecureCoding>)userData;
 #endif
 
 - (void)_killWebContentProcessAndResetState;

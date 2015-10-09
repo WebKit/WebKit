@@ -18,32 +18,27 @@
  */
 
 #include "config.h"
-#include "WebHitTestResult.h"
+#include "WebHitTestResultData.h"
 
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/Node.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/URL.h>
-#include <WebCore/Node.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebHitTestResult> WebHitTestResult::create(const WebHitTestResult::Data& hitTestResultData)
-{
-    return adoptRef(new WebHitTestResult(hitTestResultData));
-}
-
-WebHitTestResult::Data::Data()
+WebHitTestResultData::WebHitTestResultData()
 {
 }
 
-WebHitTestResult::Data::Data(const HitTestResult& hitTestResult)
+WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult)
     : absoluteImageURL(hitTestResult.absoluteImageURL().string())
     , absolutePDFURL(hitTestResult.absolutePDFURL().string())
     , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
@@ -62,7 +57,7 @@ WebHitTestResult::Data::Data(const HitTestResult& hitTestResult)
 {
 }
 
-WebHitTestResult::Data::Data(const WebCore::HitTestResult& hitTestResult, bool includeImage)
+WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTestResult, bool includeImage)
     : absoluteImageURL(hitTestResult.absoluteImageURL().string())
     , absolutePDFURL(hitTestResult.absolutePDFURL().string())
     , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
@@ -85,18 +80,18 @@ WebHitTestResult::Data::Data(const WebCore::HitTestResult& hitTestResult, bool i
     if (Image* image = hitTestResult.image()) {
         RefPtr<SharedBuffer> buffer = image->data();
         if (buffer) {
-            imageSharedMemory = SharedMemory::allocate(buffer->size());
+            imageSharedMemory = WebKit::SharedMemory::allocate(buffer->size());
             memcpy(imageSharedMemory->data(), buffer->data(), buffer->size());
             imageSize = buffer->size();
         }
     }
 }
 
-WebHitTestResult::Data::~Data()
+WebHitTestResultData::~WebHitTestResultData()
 {
 }
 
-void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
+void WebHitTestResultData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << absoluteImageURL;
     encoder << absolutePDFURL;
@@ -115,9 +110,9 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
     encoder << lookupText;
     encoder << dictionaryPopupInfo;
 
-    SharedMemory::Handle imageHandle;
+    WebKit::SharedMemory::Handle imageHandle;
     if (imageSharedMemory && imageSharedMemory->data())
-        imageSharedMemory->createHandle(imageHandle, SharedMemory::Protection::ReadOnly);
+        imageSharedMemory->createHandle(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
     encoder << imageHandle;
     encoder << imageSize;
 
@@ -129,7 +124,7 @@ void WebHitTestResult::Data::encode(IPC::ArgumentEncoder& encoder) const
     platformEncode(encoder);
 }
 
-bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
+bool WebHitTestResultData::decode(IPC::ArgumentDecoder& decoder, WebHitTestResultData& hitTestResultData)
 {
     if (!decoder.decode(hitTestResultData.absoluteImageURL)
         || !decoder.decode(hitTestResultData.absolutePDFURL)
@@ -149,12 +144,12 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;
 
-    SharedMemory::Handle imageHandle;
+    WebKit::SharedMemory::Handle imageHandle;
     if (!decoder.decode(imageHandle))
         return false;
 
     if (!imageHandle.isNull())
-        hitTestResultData.imageSharedMemory = SharedMemory::map(imageHandle, SharedMemory::Protection::ReadOnly);
+        hitTestResultData.imageSharedMemory = WebKit::SharedMemory::map(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
 
     if (!decoder.decode(hitTestResultData.imageSize))
         return false;
@@ -175,17 +170,17 @@ bool WebHitTestResult::Data::decode(IPC::ArgumentDecoder& decoder, WebHitTestRes
 }
 
 #if !PLATFORM(MAC)
-void WebHitTestResult::Data::platformEncode(IPC::ArgumentEncoder& encoder) const
+void WebHitTestResultData::platformEncode(IPC::ArgumentEncoder& encoder) const
 {
 }
 
-bool WebHitTestResult::Data::platformDecode(IPC::ArgumentDecoder& decoder, WebHitTestResult::Data& hitTestResultData)
+bool WebHitTestResultData::platformDecode(IPC::ArgumentDecoder& decoder, WebHitTestResultData& hitTestResultData)
 {
     return true;
 }
 #endif // !PLATFORM(MAC)
 
-IntRect WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates(const HitTestResult& hitTestResult)
+IntRect WebHitTestResultData::elementBoundingBoxInWindowCoordinates(const WebCore::HitTestResult& hitTestResult)
 {
     Node* node = hitTestResult.innerNonSharedNode();
     if (!node)

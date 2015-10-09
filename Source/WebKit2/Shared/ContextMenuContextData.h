@@ -30,7 +30,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "ShareableBitmap.h"
-#include "WebHitTestResult.h"
+#include "WebHitTestResultData.h"
 
 namespace IPC {
 class ArgumentDecoder;
@@ -48,7 +48,7 @@ public:
     ContextMenuContextData();
     ContextMenuContextData(const WebCore::ContextMenuContext&);
     
-    const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
+    const WebHitTestResultData& webHitTestResultData() const { return m_webHitTestResultData; }
     const String& selectedText() const { return m_selectedText; }
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -71,7 +71,7 @@ public:
     static bool decode(IPC::ArgumentDecoder&, ContextMenuContextData&);
 
 private:
-    WebHitTestResult::Data m_webHitTestResultData;
+    WebHitTestResultData m_webHitTestResultData;
     String m_selectedText;
 
 #if ENABLE(SERVICE_CONTROLS)

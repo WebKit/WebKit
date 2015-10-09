@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKImmediateActionTypes_h
-#define WKImmediateActionTypes_h
+#import "_WKHitTestResult.h"
 
-#include <stdint.h>
+#if WK_API_ENABLED
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import "APIHitTestResult.h"
+#import "WKObject.h"
 
-enum {
-    kWKImmediateActionNone = 0,
-    kWKImmediateActionLinkPreview,
-    kWKImmediateActionDataDetectedItem,
-    kWKImmediateActionLookupText,
-    kWKImmediateActionMailtoLink,
-    kWKImmediateActionTelLink
-};
+namespace API {
 
-#ifndef _WKImmediateActionType 
-#define _WKImmediateActionType uint32_t
-#endif
+inline _WKHitTestResult *wrapper(API::HitTestResult& hitTestResult)
+{
+    ASSERT([hitTestResult.wrapper() isKindOfClass:[_WKHitTestResult class]]);
 
-#ifdef __cplusplus
+    return (_WKHitTestResult *)hitTestResult.wrapper();
 }
-#endif
 
-#endif /* WKImmediateActionTypes_h */
+}
+
+@interface _WKHitTestResult () <WKObject> {
+@package
+    API::ObjectStorage<API::HitTestResult> _hitTestResult;
+}
+@end
+
+#endif

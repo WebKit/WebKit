@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKImmediateActionTypes_h
-#define WKImmediateActionTypes_h
+#import <WebKit/WKFoundation.h>
 
-#include <stdint.h>
+#if WK_API_ENABLED
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#import <Foundation/Foundation.h>
 
-enum {
-    kWKImmediateActionNone = 0,
-    kWKImmediateActionLinkPreview,
-    kWKImmediateActionDataDetectedItem,
-    kWKImmediateActionLookupText,
-    kWKImmediateActionMailtoLink,
-    kWKImmediateActionTelLink
-};
+WK_CLASS_AVAILABLE(WK_MAC_TBA, NA)
+@interface _WKHitTestResult : NSObject <NSCopying>
 
-#ifndef _WKImmediateActionType 
-#define _WKImmediateActionType uint32_t
-#endif
+@property (nonatomic, readonly, copy) NSURL *absoluteImageURL;
+@property (nonatomic, readonly, copy) NSURL *absolutePDFURL;
+@property (nonatomic, readonly, copy) NSURL *absoluteLinkURL;
+@property (nonatomic, readonly, copy) NSURL *absoluteMediaURL;
 
-#ifdef __cplusplus
-}
-#endif
+@property (nonatomic, readonly, copy) NSString *linkLabel;
+@property (nonatomic, readonly, copy) NSString *linkTitle;
+@property (nonatomic, readonly, copy) NSString *lookupText;
 
-#endif /* WKImmediateActionTypes_h */
+@property (nonatomic, readonly, getter=isContentEditable) BOOL contentEditable;
+
+@property (nonatomic, readonly) CGRect elementBoundingBox;
+
+@end
+
+#endif // WK_API_ENABLED

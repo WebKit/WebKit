@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#import "APIHitTestResult.h"
 #import "WKNSURLExtras.h"
 #import "WKViewInternal.h"
 #import "WebPageMessages.h"
@@ -83,7 +84,7 @@ using namespace WebKit;
 {
     _page = nullptr;
     _wkView = nil;
-    _hitTestResultData = WebHitTestResult::Data();
+    _hitTestResultData = WebHitTestResultData();
     _contentPreventsDefault = NO;
     
     id animationController = [_immediateActionRecognizer animationController];
@@ -123,7 +124,7 @@ using namespace WebKit;
     }
 
     _state = ImmediateActionState::None;
-    _hitTestResultData = WebHitTestResult::Data();
+    _hitTestResultData = WebHitTestResultData();
     _contentPreventsDefault = NO;
     _type = kWKImmediateActionNone;
     _currentActionContext = nil;
@@ -132,7 +133,7 @@ using namespace WebKit;
     _hasActiveImmediateAction = NO;
 }
 
-- (void)didPerformImmediateActionHitTest:(const WebHitTestResult::Data&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
+- (void)didPerformImmediateActionHitTest:(const WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData
 {
     // If we've already given up on this gesture (either because it was canceled or the
     // willBeginAnimation timeout expired), we shouldn't build a new animationController for it.
@@ -249,11 +250,11 @@ using namespace WebKit;
     _page->setTextIndicatorAnimationProgress(1);
 }
 
-- (PassRefPtr<WebHitTestResult>)_webHitTestResult
+- (PassRefPtr<API::HitTestResult>)_webHitTestResult
 {
-    RefPtr<WebHitTestResult> hitTestResult;
+    RefPtr<API::HitTestResult> hitTestResult;
     if (_state == ImmediateActionState::Ready)
-        hitTestResult = WebHitTestResult::create(_hitTestResultData);
+        hitTestResult = API::HitTestResult::create(_hitTestResultData);
     else
         hitTestResult = _page->lastMouseMoveHitTestResult();
 
@@ -269,7 +270,7 @@ using namespace WebKit;
         return dummyController.get();
     }
 
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
 
     if (!hitTestResult)
         return nil;
@@ -327,9 +328,8 @@ using namespace WebKit;
         return;
     }
 
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    id customClientAnimationController = [_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:_type userData:toAPI(_userData.get())];
-
+    RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
+    id customClientAnimationController = (id)(_page->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData));
     if (customClientAnimationController == [NSNull null]) {
         [self _cancelImmediateAction];
         return;
@@ -353,7 +353,7 @@ using namespace WebKit;
     if (!_wkView)
         return nil;
 
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
     return [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
 }
 
@@ -372,7 +372,7 @@ using namespace WebKit;
     if (!_wkView)
         return NSZeroRect;
 
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
     return [_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil];
 }
 
@@ -445,7 +445,7 @@ using namespace WebKit;
 
     [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResultData.elementBoundingBox toView:nil]]];
 
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:_currentActionContext.get()];
 
     if (menuItems.count != 1)

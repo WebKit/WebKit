@@ -28,7 +28,7 @@
 
 #include "WKPage.h"
 #include "WebEvent.h"
-#include "WebHitTestResult.h"
+#include "WebHitTestResultData.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
 #include <functional>
@@ -90,7 +90,7 @@ public:
     virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, std::function<void (const WTF::String&)> completionHandler) { completionHandler(WTF::String()); }
 
     virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
-    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy*, const WebKit::WebHitTestResult::Data&, WebKit::WebEvent::Modifiers, API::Object*) { }
+    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy*, const WebKit::WebHitTestResultData&, WebKit::WebEvent::Modifiers, API::Object*) { }
 #if ENABLE(NETSCAPE_PLUGIN_API)
     virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy*, WKPluginUnavailabilityReason, API::Dictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
@@ -147,7 +147,7 @@ public:
 
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
-    virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPageProxy*, const WebCore::IntPoint&, const WebKit::WebHitTestResult::Data&, API::Object*) { }
+    virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPageProxy*, const WebCore::IntPoint&, const WebKit::WebHitTestResultData&, API::Object*) { }
     virtual void didRecognizeLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
     virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
 
