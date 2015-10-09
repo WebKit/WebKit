@@ -108,6 +108,9 @@ public:
     bool isPaused() const { return m_isPaused; }
     bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
 
+    bool suppressAllPauses() const { return m_suppressAllPauses; }
+    void setSuppressAllPauses(bool suppress) { m_suppressAllPauses = suppress; }
+
     virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const WTF::String& errorMessage) = 0;
 
     void exception(CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
@@ -196,6 +199,7 @@ private:
     bool m_breakpointsActivated : 1;
     bool m_hasHandlerForExceptionCallback : 1;
     bool m_isInWorkerThread : 1;
+    bool m_suppressAllPauses : 1;
     unsigned m_steppingMode : 1; // SteppingMode
 
     ReasonForPause m_reasonForPause;

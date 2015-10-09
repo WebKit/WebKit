@@ -136,6 +136,11 @@ bool InspectorDebuggerAgent::isPaused()
     return scriptDebugServer().isPaused();
 }
 
+void InspectorDebuggerAgent::setSuppressAllPauses(bool suppress)
+{
+    scriptDebugServer().setSuppressAllPauses(suppress);
+}
+
 static RefPtr<InspectorObject> buildAssertPauseReason(const String& message)
 {
     auto reason = Inspector::Protocol::Debugger::AssertPauseReason::create().release();
