@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "APIHitTestResult.h"
 #import "AttributedString.h"
 #import "DataReference.h"
 #import "EditingRange.h"
@@ -45,6 +44,7 @@
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
+#import "WebHitTestResultData.h"
 #import "WebImage.h"
 #import "WebInspector.h"
 #import "WebPageOverlay.h"

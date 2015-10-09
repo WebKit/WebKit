@@ -37,7 +37,6 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
-#include "APIHitTestResult.h"
 #include "LayerHostingContext.h"
 
 OBJC_CLASS NSDictionary;

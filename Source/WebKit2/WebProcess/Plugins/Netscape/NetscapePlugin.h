@@ -38,10 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(COCOA)
-#include "APIHitTestResult.h"
-#endif
-
 #if PLUGIN_ARCHITECTURE(X11)
 #include <WebCore/XUniqueResource.h>
 #endif

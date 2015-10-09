@@ -38,7 +38,6 @@
 #include <memory>
 
 #if PLATFORM(COCOA)
-#include "APIHitTestResult.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 #endif
