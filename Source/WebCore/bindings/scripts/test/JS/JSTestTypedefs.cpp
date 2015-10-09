@@ -174,8 +174,9 @@ void JSTestTypedefsConstructor::finishCreation(VM& vm, JSDOMGlobalObject& global
     reifyStaticProperties(vm, JSTestTypedefsConstructorTableValues, *this);
 }
 
-ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestTypedefsConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 }

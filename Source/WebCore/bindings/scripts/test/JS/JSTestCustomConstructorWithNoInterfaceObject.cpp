@@ -102,8 +102,9 @@ void JSTestCustomConstructorWithNoInterfaceObjectConstructor::finishCreation(VM&
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-ConstructType JSTestCustomConstructorWithNoInterfaceObjectConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestCustomConstructorWithNoInterfaceObjectConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 }

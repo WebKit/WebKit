@@ -302,9 +302,10 @@ void JSTestInterfaceConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globa
     reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
 }
 
-ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestInterfaceConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
 #if ENABLE(TEST_INTERFACE)
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 #else

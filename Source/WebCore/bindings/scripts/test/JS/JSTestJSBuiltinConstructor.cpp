@@ -105,8 +105,9 @@ void JSTestJSBuiltinConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalOb
     setInitializeFunction(vm, *JSC::JSFunction::createBuiltinFunction(vm, testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm), &globalObject));
 }
 
-ConstructType JSTestJSBuiltinConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestJSBuiltinConstructorConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 }

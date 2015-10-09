@@ -500,8 +500,9 @@ void JSTestObjConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObjec
     reifyStaticProperties(vm, JSTestObjConstructorTableValues, *this);
 }
 
-ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestObjConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 }

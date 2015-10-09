@@ -177,8 +177,9 @@ void JSTestOverloadedConstructorsConstructor::finishCreation(VM& vm, JSDOMGlobal
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestOverloadedConstructorsConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 }

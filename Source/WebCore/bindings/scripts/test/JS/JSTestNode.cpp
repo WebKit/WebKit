@@ -110,8 +110,9 @@ void JSTestNodeConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObje
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
 }
 
-ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType JSTestNodeConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
 {
+    UNUSED_PARAM(cell);
     constructData.native.function = construct;
     return ConstructTypeHost;
 }
