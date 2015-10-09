@@ -1,5 +1,21 @@
 2015-10-08  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r190602. rdar://problem/22995830
+
+    2015-10-05  Alex Christensen  <achristensen@webkit.org>
+
+            Invalid CSS Selector for Content Blockers invalidates others
+            https://bugs.webkit.org/show_bug.cgi?id=148446
+            rdar://problem/22918235
+
+            Reviewed by Benjamin Poulain.
+
+            * http/tests/contentextensions/invalid-selector-expected.txt: Added.
+            * http/tests/contentextensions/invalid-selector.html: Added.
+            * http/tests/contentextensions/invalid-selector.html.json: Added.
+
+2015-10-08  Lucas Forschler  <lforschler@apple.com>
+
         Merge r190375. rdar://problem/22881748
 
     2015-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
