@@ -3553,9 +3553,8 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
         if (sourceElement->isPlaying())
             state |= MediaProducer::IsSourceElementPlaying;
 
-        if (MediaSession* session = sourceElement->session()) {
-            bool isNull;
-            if (MediaRemoteControls* controls = session->controls(isNull)) {
+        if (auto* session = sourceElement->session()) {
+            if (auto* controls = session->controls()) {
                 if (controls->previousTrackEnabled())
                     state |= MediaProducer::IsPreviousTrackControlEnabled;
                 if (controls->nextTrackEnabled())
