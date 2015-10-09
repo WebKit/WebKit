@@ -6151,6 +6151,10 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (m_zOrderListsDirty || m_normalFlowListDirty)
         return false;
 
+    // Table painting is special; a table paints its sections.
+    if (renderer().isTablePart())
+        return false;
+
     // FIXME: We currently only check the immediate renderer,
     // which will miss many cases.
     if (renderer().backgroundIsKnownToBeOpaqueInRect(localRect))
