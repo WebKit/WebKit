@@ -43,7 +43,6 @@
 #include "JSONObject.h"
 #include "JSCInlines.h"
 #include "JSVirtualMachineInternal.h"
-#include "RecursiveAllocationScope.h"
 #include "RegExpCache.h"
 #include "Tracing.h"
 #include "TypeProfilerLog.h"

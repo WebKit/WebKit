@@ -944,7 +944,6 @@
 		2AABCDE718EF294200002096 /* GCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AABCDE618EF294200002096 /* GCLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2AAD964A18569417001F93BE /* RecursiveAllocationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAD964918569417001F93BE /* RecursiveAllocationScope.h */; };
 		2AC922BB18A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */; };
 		2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */; };
 		2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD2EDFA19799E38004D6478 /* EnumerationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2763,7 +2762,6 @@
 		2AABCDE618EF294200002096 /* GCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCLogging.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
-		2AAD964918569417001F93BE /* RecursiveAllocationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursiveAllocationScope.h; sourceTree = "<group>"; };
 		2AC922B918A16182003CE0FB /* FTLDWARFDebugLineInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLDWARFDebugLineInfo.cpp; path = ftl/FTLDWARFDebugLineInfo.cpp; sourceTree = "<group>"; };
 		2AC922BA18A16182003CE0FB /* FTLDWARFDebugLineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLDWARFDebugLineInfo.h; path = ftl/FTLDWARFDebugLineInfo.h; sourceTree = "<group>"; };
 		2AD2EDFA19799E38004D6478 /* EnumerationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumerationMode.h; sourceTree = "<group>"; };
@@ -4310,7 +4308,6 @@
 				142D6F0E13539A4100B02E86 /* MarkStack.cpp */,
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
 				ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */,
-				2AAD964918569417001F93BE /* RecursiveAllocationScope.h */,
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */,
@@ -6798,7 +6795,6 @@
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
-				2AAD964A18569417001F93BE /* RecursiveAllocationScope.h in Headers */,
 				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
 				E33637A61B63220200EE0840 /* ReflectObject.h in Headers */,
 				0FA7A8EC18B413C80052371D /* Reg.h in Headers */,

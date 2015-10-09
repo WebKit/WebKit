@@ -2360,9 +2360,6 @@
     <ClInclude Include="..\heap\MarkStack.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\RecursiveAllocationScope.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\heap\SlotVisitor.h">
       <Filter>heap</Filter>
     </ClInclude>

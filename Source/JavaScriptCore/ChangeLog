@@ -1,3 +1,20 @@
+2015-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unused RecursiveAllocationScope
+        https://bugs.webkit.org/show_bug.cgi?id=149967
+
+        Reviewed by Csaba Osztrogonác.
+
+        RecursiveAllocationScope has been unused since r163691.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        * heap/RecursiveAllocationScope.h: Removed.
+        * runtime/VM.h:
+
 2015-10-09  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling out r190694

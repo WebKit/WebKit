@@ -574,7 +574,6 @@ public:
 private:
     friend class LLIntOffsetsExtractor;
     friend class ClearExceptionScope;
-    friend class RecursiveAllocationScope;
 
     VM(VMType, HeapType);
     static VM*& sharedInstanceInternal();

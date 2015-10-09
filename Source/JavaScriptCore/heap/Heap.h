@@ -253,7 +253,6 @@ private:
     friend class MarkedBlock;
     friend class CopiedSpace;
     friend class CopyVisitor;
-    friend class RecursiveAllocationScope;
     friend class SlotVisitor;
     friend class SuperRegion;
     friend class IncrementalSweeper;
