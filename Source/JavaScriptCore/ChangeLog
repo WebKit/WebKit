@@ -1,5 +1,15 @@
 2015-10-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Modernize and cleanup an NSNumber constant
+        https://bugs.webkit.org/show_bug.cgi?id=149962
+
+        Reviewed by Andreas Kling.
+
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine addExternalRememberedObject:]):
+
+2015-10-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         No need to keep setting needsVisit flag in SmallStrings
         https://bugs.webkit.org/show_bug.cgi?id=149961
 

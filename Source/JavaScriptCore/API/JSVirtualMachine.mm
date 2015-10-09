@@ -156,7 +156,7 @@ static id getInternalObjcObject(id object)
 - (void)addExternalRememberedObject:(id)object
 {
     ASSERT([self isOldExternalObject:object]);
-    [m_externalRememberedSet setObject:[NSNumber numberWithBool:true] forKey:object];
+    [m_externalRememberedSet setObject:@YES forKey:object];
 }
 
 - (void)addManagedReference:(id)object withOwner:(id)owner
