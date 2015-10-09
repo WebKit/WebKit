@@ -210,9 +210,11 @@ private:
 class RenderGrid::GridSizingData {
     WTF_MAKE_NONCOPYABLE(GridSizingData);
 public:
-    GridSizingData(unsigned gridColumnCount, unsigned gridRowCount)
+    GridSizingData(unsigned gridColumnCount, unsigned gridRowCount, LayoutUnit freeSpaceForColumns, LayoutUnit freeSpaceForRows)
         : columnTracks(gridColumnCount)
         , rowTracks(gridRowCount)
+        , freeSpaceForColumns(freeSpaceForColumns)
+        , freeSpaceForRows(freeSpaceForRows)
     {
     }
 
@@ -224,6 +226,12 @@ public:
     Vector<GridTrack*> filteredTracks;
     Vector<GridTrack*> growBeyondGrowthLimitsTracks;
     Vector<GridItemWithSpan> itemsSortedByIncreasingSpan;
+
+    LayoutUnit& freeSpaceForDirection(GridTrackSizingDirection direction) { return direction == ForColumns ? freeSpaceForColumns : freeSpaceForRows; }
+
+private:
+    LayoutUnit freeSpaceForColumns;
+    LayoutUnit freeSpaceForRows;
 };
 
 RenderGrid::RenderGrid(Element& element, Ref<RenderStyle>&& style)
@@ -345,9 +353,8 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     if (!wasPopulated)
         const_cast<RenderGrid*>(this)->placeItemsOnGrid();
 
-    GridSizingData sizingData(gridColumnCount(), gridRowCount());
-    LayoutUnit availableLogicalSpace = 0;
-    const_cast<RenderGrid*>(this)->computeUsedBreadthOfGridTracks(ForColumns, sizingData, availableLogicalSpace);
+    GridSizingData sizingData(gridColumnCount(), gridRowCount(), 0, 0);
+    const_cast<RenderGrid*>(this)->computeUsedBreadthOfGridTracks(ForColumns, sizingData);
 
     for (auto& column : sizingData.columnTracks) {
         LayoutUnit minTrackBreadth = column.baseSize();
@@ -379,8 +386,9 @@ static inline double normalizedFlexFraction(const GridTrack& track, double flexF
     return track.baseSize() / std::max<double>(1, flexFactor);
 }
 
-void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection direction, GridSizingData& sizingData, LayoutUnit& availableLogicalSpace)
+void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection direction, GridSizingData& sizingData)
 {
+    LayoutUnit& availableLogicalSpace = sizingData.freeSpaceForDirection(direction);
     const LayoutUnit initialAvailableLogicalSpace = availableLogicalSpace;
     Vector<GridTrack>& tracks = (direction == ForColumns) ? sizingData.columnTracks : sizingData.rowTracks;
     Vector<unsigned> flexibleSizedTracksIndex;
@@ -1222,8 +1230,9 @@ void RenderGrid::clearGrid()
     m_gridItemCoordinate.clear();
 }
 
-void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection direction, GridSizingData& sizingData, LayoutUnit availableSpace)
+void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection direction, GridSizingData& sizingData)
 {
+    LayoutUnit& availableSpace = sizingData.freeSpaceForDirection(direction);
     if (availableSpace <= 0
         || (direction == ForColumns && style().resolvedJustifyContentDistribution() != ContentDistributionStretch)
         || (direction == ForRows && style().resolvedAlignContentDistribution() != ContentDistributionStretch))
@@ -1247,6 +1256,7 @@ void RenderGrid::applyStretchAlignmentToTracksIfNeeded(GridTrackSizingDirection 
         auto& track = tracks[trackIndex];
         track.setBaseSize(track.baseSize() + sizeToIncrease);
     }
+    availableSpace = 0;
 }
 
 void RenderGrid::layoutGridItems()
@@ -1260,16 +1270,16 @@ void RenderGrid::layoutGridItems()
     availableSpaceForColumns -= guttersSize(ForColumns, gridColumnCount());
     availableSpaceForRows -= guttersSize(ForRows, gridRowCount());
 
-    GridSizingData sizingData(gridColumnCount(), gridRowCount());
-    computeUsedBreadthOfGridTracks(ForColumns, sizingData, availableSpaceForColumns);
+    GridSizingData sizingData(gridColumnCount(), gridRowCount(), availableSpaceForColumns, availableSpaceForRows);
+    computeUsedBreadthOfGridTracks(ForColumns, sizingData);
     ASSERT(tracksAreWiderThanMinTrackBreadth(ForColumns, sizingData.columnTracks));
-    computeUsedBreadthOfGridTracks(ForRows, sizingData, availableSpaceForRows);
+    computeUsedBreadthOfGridTracks(ForRows, sizingData);
     ASSERT(tracksAreWiderThanMinTrackBreadth(ForRows, sizingData.rowTracks));
 
-    applyStretchAlignmentToTracksIfNeeded(ForColumns, sizingData, availableSpaceForColumns);
-    applyStretchAlignmentToTracksIfNeeded(ForRows, sizingData, availableSpaceForRows);
+    applyStretchAlignmentToTracksIfNeeded(ForColumns, sizingData);
+    applyStretchAlignmentToTracksIfNeeded(ForRows, sizingData);
 
-    populateGridPositions(sizingData, availableSpaceForColumns, availableSpaceForRows);
+    populateGridPositions(sizingData);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         // Because the grid area cannot be styled, we don't need to adjust
@@ -1361,7 +1371,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets(const Re
     return finalTrackPosition - initialTrackPosition + tracks[span.resolvedFinalPosition.toInt()].baseSize();
 }
 
-void RenderGrid::populateGridPositions(GridSizingData& sizingData, LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows)
+void RenderGrid::populateGridPositions(GridSizingData& sizingData)
 {
     // Since we add alignment offsets and track gutters, grid lines are not always adjacent. Hence we will have to
     // assume from now on that we just store positions of the initial grid lines of each track,
@@ -1373,7 +1383,7 @@ void RenderGrid::populateGridPositions(GridSizingData& sizingData, LayoutUnit av
     unsigned numberOfLines = numberOfTracks + 1;
     unsigned lastLine = numberOfLines - 1;
     unsigned nextToLastLine = numberOfLines - 2;
-    ContentAlignmentData offset = computeContentPositionAndDistributionOffset(ForColumns, availableSpaceForColumns, numberOfTracks);
+    ContentAlignmentData offset = computeContentPositionAndDistributionOffset(ForColumns, sizingData.freeSpaceForDirection(ForColumns), numberOfTracks);
     LayoutUnit trackGap = guttersSize(ForColumns, 2);
     m_columnPositions.resize(numberOfLines);
     m_columnPositions[0] = borderAndPaddingStart() + offset.positionOffset;
@@ -1385,7 +1395,7 @@ void RenderGrid::populateGridPositions(GridSizingData& sizingData, LayoutUnit av
     numberOfLines = numberOfTracks + 1;
     lastLine = numberOfLines - 1;
     nextToLastLine = numberOfLines - 2;
-    offset = computeContentPositionAndDistributionOffset(ForRows, availableSpaceForRows, numberOfTracks);
+    offset = computeContentPositionAndDistributionOffset(ForRows, sizingData.freeSpaceForDirection(ForRows), numberOfTracks);
     trackGap = guttersSize(ForRows, 2);
     m_rowPositions.resize(numberOfLines);
     m_rowPositions[0] = borderAndPaddingBefore() + offset.positionOffset;
@@ -1747,7 +1757,7 @@ static inline LayoutUnit offsetToEndEdge(bool isLeftToRight, LayoutUnit availabl
     return !isLeftToRight ? LayoutUnit() : availableSpace;
 }
 
-static ContentAlignmentData contentDistributionOffset(LayoutUnit availableFreeSpace, ContentPosition& fallbackPosition, ContentDistributionType distribution, unsigned numberOfGridTracks)
+static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availableFreeSpace, ContentPosition& fallbackPosition, ContentDistributionType distribution, unsigned numberOfGridTracks)
 {
     if (distribution != ContentDistributionDefault && fallbackPosition == ContentPositionAuto)
         fallbackPosition = resolveContentDistributionFallback(distribution);
@@ -1779,7 +1789,7 @@ static ContentAlignmentData contentDistributionOffset(LayoutUnit availableFreeSp
     return ContentAlignmentData::defaultOffsets();
 }
 
-ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, LayoutUnit availableFreeSpace, unsigned numberOfGridTracks) const
+ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
     bool isRowAxis = direction == ForColumns;
     ContentPosition position = isRowAxis ? style().resolvedJustifyContentPosition() : style().resolvedAlignContentPosition();
