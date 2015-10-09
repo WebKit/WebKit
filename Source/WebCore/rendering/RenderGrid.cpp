@@ -386,6 +386,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     Vector<unsigned> flexibleSizedTracksIndex;
     sizingData.contentSizedTracksIndex.shrink(0);
 
+    const LayoutUnit maxSize = direction == ForColumns ? contentLogicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt).valueOr(0);
     // 1. Initialize per Grid track variables.
     for (unsigned i = 0; i < tracks.size(); ++i) {
         GridTrack& track = tracks[i];
@@ -393,8 +394,8 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
         const GridLength& minTrackBreadth = trackSize.minTrackBreadth();
         const GridLength& maxTrackBreadth = trackSize.maxTrackBreadth();
 
-        track.setBaseSize(computeUsedBreadthOfMinLength(direction, minTrackBreadth));
-        track.setGrowthLimit(computeUsedBreadthOfMaxLength(direction, maxTrackBreadth, track.baseSize()));
+        track.setBaseSize(computeUsedBreadthOfMinLength(minTrackBreadth, maxSize));
+        track.setGrowthLimit(computeUsedBreadthOfMaxLength(maxTrackBreadth, track.baseSize(), maxSize));
         track.setInfinitelyGrowable(false);
 
         if (trackSize.isContentSized())
@@ -470,41 +471,30 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     }
 }
 
-LayoutUnit RenderGrid::computeUsedBreadthOfMinLength(GridTrackSizingDirection direction, const GridLength& gridLength) const
+LayoutUnit RenderGrid::computeUsedBreadthOfMinLength(const GridLength& gridLength, LayoutUnit maxSize) const
 {
     if (gridLength.isFlex())
         return 0;
 
     const Length& trackLength = gridLength.length();
     if (trackLength.isSpecified())
-        return computeUsedBreadthOfSpecifiedLength(direction, trackLength);
+        return valueForLength(trackLength, maxSize);
 
     ASSERT(trackLength.isMinContent() || trackLength.isAuto() || trackLength.isMaxContent());
     return 0;
 }
 
-LayoutUnit RenderGrid::computeUsedBreadthOfMaxLength(GridTrackSizingDirection direction, const GridLength& gridLength, LayoutUnit usedBreadth) const
+LayoutUnit RenderGrid::computeUsedBreadthOfMaxLength(const GridLength& gridLength, LayoutUnit usedBreadth, LayoutUnit maxSize) const
 {
     if (gridLength.isFlex())
         return usedBreadth;
 
     const Length& trackLength = gridLength.length();
-    if (trackLength.isSpecified()) {
-        LayoutUnit computedBreadth = computeUsedBreadthOfSpecifiedLength(direction, trackLength);
-        ASSERT(computedBreadth != infinity);
-        return computedBreadth;
-    }
+    if (trackLength.isSpecified())
+        return valueForLength(trackLength, maxSize);
 
     ASSERT(trackLength.isMinContent() || trackLength.isAuto() || trackLength.isMaxContent());
     return infinity;
-}
-
-LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(GridTrackSizingDirection direction, const Length& trackLength) const
-{
-    ASSERT(trackLength.isSpecified());
-    if (direction == ForColumns)
-        return valueForLength(trackLength, contentLogicalWidth());
-    return valueForLength(trackLength, computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt).valueOr(0));
 }
 
 double RenderGrid::computeFlexFactorUnitSize(const Vector<GridTrack>& tracks, GridTrackSizingDirection direction, double flexFactorSum, LayoutUnit leftOverSpace, const Vector<unsigned, 8>& flexibleTracksIndexes, std::unique_ptr<TrackIndexSet> tracksToTreatAsInflexible) const
@@ -1001,10 +991,11 @@ void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, const Vecto
 #ifndef NDEBUG
 bool RenderGrid::tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection direction, const Vector<GridTrack>& tracks)
 {
+    const LayoutUnit maxSize = direction == ForColumns ? contentLogicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), Nullopt).valueOr(0);
     for (unsigned i = 0; i < tracks.size(); ++i) {
         const GridTrackSize& trackSize = gridTrackSize(direction, i);
         const GridLength& minTrackBreadth = trackSize.minTrackBreadth();
-        if (computeUsedBreadthOfMinLength(direction, minTrackBreadth) > tracks[i].baseSize())
+        if (computeUsedBreadthOfMinLength(minTrackBreadth, maxSize) > tracks[i].baseSize())
             return false;
     }
     return true;
