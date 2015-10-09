@@ -300,6 +300,11 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 {
     if (diff == StyleDifferenceLayout)
         setNeedsBoundariesUpdate();
+
+    // Box decorations may have appeared/disappeared - recompute status.
+    if (diff == StyleDifferenceRepaint)
+        m_hasBoxDecorations = hasBoxDecorationStyle();
+
     RenderReplaced::styleDidChange(diff, oldStyle);
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
@@ -342,7 +347,17 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
 
 LayoutRect RenderSVGRoot::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
-    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
+    if (style().visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
+        return LayoutRect();
+
+    FloatRect contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates());
+    contentRepaintRect.intersect(snappedIntRect(borderBoxRect()));
+
+    LayoutRect repaintRect = enclosingLayoutRect(contentRepaintRect);
+    if (m_hasBoxDecorations || hasRenderOverflow())
+        repaintRect.unite(unionRect(localSelectionRect(false), visualOverflowRect()));
+
+    return RenderReplaced::computeRectForRepaint(enclosingIntRect(repaintRect), repaintContainer);
 }
 
 FloatRect RenderSVGRoot::computeFloatRectForRepaint(const FloatRect& repaintRect, const RenderLayerModelObject* repaintContainer, bool fixed) const
