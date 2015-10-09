@@ -30,7 +30,7 @@
 
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGArgumentsUtilities.h"
-#include "DFGBasicBlock.h"
+#include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGInferredTypeCheck.h"
@@ -55,22 +55,50 @@ public:
     bool run()
     {
         bool changed = false;
-        
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
+
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             if (block->cfaFoundConstants)
                 changed |= foldConstants(block);
         }
         
         if (changed && m_graph.m_form == SSA) {
             // It's now possible that we have Upsilons pointed at JSConstants. Fix that.
-            for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder())
                 fixUpsilons(block);
+        }
+
+        if (m_graph.m_form == SSA) {
+            // It's now possible to simplify basic blocks by placing an Unreachable terminator right
+            // after anything that invalidates AI.
+            bool didClipBlock = false;
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                m_state.beginBasicBlock(block);
+                for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                    if (block->at(nodeIndex)->isTerminal()) {
+                        // It's possible that we have something after the terminal. It could be a
+                        // no-op Check node, for example. We don't want the logic below to turn that
+                        // node into Unreachable, since then we'd have two terminators.
+                        break;
+                    }
+                    if (!m_state.isValid()) {
+                        NodeOrigin origin = block->at(nodeIndex)->origin;
+                        for (unsigned killIndex = nodeIndex; killIndex < block->size(); ++killIndex)
+                            m_graph.m_allocator.free(block->at(killIndex));
+                        block->resize(nodeIndex);
+                        block->appendNode(m_graph, SpecNone, Unreachable, origin);
+                        didClipBlock = true;
+                        break;
+                    }
+                    m_interpreter.execute(nodeIndex);
+                }
+                m_state.reset();
+            }
+
+            if (didClipBlock) {
+                changed = true;
+                m_graph.invalidateCFG();
+                m_graph.resetReachability();
+                m_graph.killUnreachableBlocks();
             }
         }
          
