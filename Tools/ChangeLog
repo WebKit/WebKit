@@ -1,5 +1,17 @@
 2015-10-08  Daniel Bates  <dabates@apple.com>
 
+        Teach build-webkit to install LLVM binaries for iOS when building for device with the public iOS SDK
+        https://bugs.webkit.org/show_bug.cgi?id=149943
+
+        Reviewed by Dan Bernstein.
+
+        Following the addition of the LLVM binaries for iOS in changeset r190759 (bug #149913) we should
+        teach build-webkit to install them when building for iOS device using the public iOS SDK. 
+
+        * Scripts/build-webkit:
+
+2015-10-08  Daniel Bates  <dabates@apple.com>
+
         Add LLVM binaries for iOS 9 device
         https://bugs.webkit.org/show_bug.cgi?id=149913
 
