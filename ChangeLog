@@ -1,3 +1,17 @@
+2015-10-09  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [CMake] Remove ENABLE_SUBPIXEL_LAYOUT macro
+        https://bugs.webkit.org/show_bug.cgi?id=149947
+
+        Reviewed by Csaba Osztrogonác.
+
+        ENABLE(SUBPIXEL_LAYOUT) was removed though, it is still alive in .cmake.
+        Removed it.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2015-10-06  Emanuele Aina  <emanuele.aina@collabora.com>
 
         Fix ENABLE_OPENGL=OFF builds
