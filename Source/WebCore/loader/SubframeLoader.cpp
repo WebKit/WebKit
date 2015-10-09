@@ -374,14 +374,6 @@ bool SubframeLoader::shouldUsePlugin(const URL& url, const String& mimeType, boo
         return true;
     }
 
-    // Allow other plug-ins to win over QuickTime because if the user has installed a plug-in that
-    // can handle TIFF (which QuickTime can also handle) they probably intended to override QT.
-    if (m_frame.page() && (mimeType == "image/tiff" || mimeType == "image/tif" || mimeType == "image/x-tiff")) {
-        String pluginName = m_frame.page()->pluginData().pluginNameForWebVisibleMimeType(mimeType);
-        if (!pluginName.isEmpty() && !pluginName.contains("QuickTime", false)) 
-            return true;
-    }
-        
     ObjectContentType objectType = m_frame.loader().client().objectContentType(url, mimeType, shouldPreferPlugInsForImages);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
