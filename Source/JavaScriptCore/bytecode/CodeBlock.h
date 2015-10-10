@@ -1000,7 +1000,7 @@ private:
             m_rareData = std::make_unique<RareData>();
     }
 
-    void insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruction, 0, UnsafeVectorOverflow>&);
+    void insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray<Instruction>&);
 
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;

@@ -1,3 +1,19 @@
+2015-10-10  Andreas Kling  <akling@apple.com>
+
+        Reduce pointless malloc traffic in CodeBlock construction.
+        <https://webkit.org/b/149999>
+
+        Reviewed by Antti Koivisto.
+
+        Create the RefCountedArray<Instruction> for CodeBlock's m_instructions directly
+        instead of first creating a Vector<Instruction> and then creating a RefCountedArray
+        from that. None of the Vector functionality is needed here anyway.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/CodeBlock.h:
+
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove unnecessary iOS version checks
