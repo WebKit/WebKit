@@ -89,16 +89,12 @@ const Vector<RefPtr<StyleRule>>& ElementRuleCollector::matchedRuleList() const
 
 inline void ElementRuleCollector::addMatchedRule(const MatchedRule& matchedRule)
 {
-    if (!m_matchedRules)
-        m_matchedRules = std::make_unique<Vector<MatchedRule, 32>>();
-    m_matchedRules->append(matchedRule);
+    m_matchedRules.append(matchedRule);
 }
 
 void ElementRuleCollector::clearMatchedRules()
 {
-    if (!m_matchedRules)
-        return;
-    m_matchedRules->clear();
+    m_matchedRules.clear();
 }
 
 inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable)
@@ -166,20 +162,19 @@ void ElementRuleCollector::collectMatchingRulesForRegion(const MatchRequest& mat
 
 void ElementRuleCollector::sortAndTransferMatchedRules()
 {
-    if (!m_matchedRules || m_matchedRules->isEmpty())
+    if (m_matchedRules.isEmpty())
         return;
 
     sortMatchedRules();
 
-    Vector<MatchedRule, 32>& matchedRules = *m_matchedRules;
     if (m_mode == SelectorChecker::Mode::CollectingRules) {
-        for (const MatchedRule& matchedRule : matchedRules)
+        for (const MatchedRule& matchedRule : m_matchedRules)
             m_matchedRuleList.append(matchedRule.ruleData->rule());
         return;
     }
 
     // Now transfer the set of matched rules over to our list of declarations.
-    for (const MatchedRule& matchedRule : matchedRules) {
+    for (const MatchedRule& matchedRule : m_matchedRules) {
         if (m_style && matchedRule.ruleData->containsUncommonAttributeSelector())
             m_style->setUnique();
         m_result.addMatchedProperties(matchedRule.ruleData->rule()->properties(), matchedRule.ruleData->rule(), matchedRule.ruleData->linkMatchType(), matchedRule.ruleData->propertyWhitelistType());
@@ -393,8 +388,7 @@ static inline bool compareRules(MatchedRule r1, MatchedRule r2)
 
 void ElementRuleCollector::sortMatchedRules()
 {
-    ASSERT(m_matchedRules);
-    std::sort(m_matchedRules->begin(), m_matchedRules->end(), compareRules);
+    std::sort(m_matchedRules.begin(), m_matchedRules.end(), compareRules);
 }
 
 void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties)
@@ -453,7 +447,7 @@ bool ElementRuleCollector::hasAnyMatchingRules(RuleSet* ruleSet)
     StyleResolver::RuleRange ruleRange(firstRuleIndex, lastRuleIndex);
     collectMatchingRules(MatchRequest(ruleSet), ruleRange);
 
-    return m_matchedRules && !m_matchedRules->isEmpty();
+    return !m_matchedRules.isEmpty();
 }
 
 } // namespace WebCore

@@ -70,7 +70,7 @@ public:
     StyleResolver::MatchResult& matchedResult();
     const Vector<RefPtr<StyleRule>>& matchedRuleList() const;
 
-    bool hasMatchedRules() const { return m_matchedRules && !m_matchedRules->isEmpty(); }
+    bool hasMatchedRules() const { return !m_matchedRules.isEmpty(); }
     void clearMatchedRules();
 
 private:
@@ -103,7 +103,7 @@ private:
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
     bool m_canUseFastReject;
 
-    std::unique_ptr<Vector<MatchedRule, 32>> m_matchedRules;
+    Vector<MatchedRule, 64> m_matchedRules;
 
     // Output.
     Vector<RefPtr<StyleRule>> m_matchedRuleList;
