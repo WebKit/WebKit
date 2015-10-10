@@ -28,8 +28,7 @@ INFOPLIST_FILE = mac/Info-WebKit2.plist;
 
 OTHER_LDFLAGS = $(inherited) -framework WebKit -sub_umbrella WebKit;
 
-INSTALL_PATH_ACTUAL = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
-INSTALL_PATH_ACTUAL[sdk=macosx*] = $(WEBKIT2_FRAMEWORKS_DIR);
+INSTALL_PATH = $(WEBKIT2_FRAMEWORKS_DIR);
 
 DYLIB_INSTALL_NAME_BASE[sdk=macosx*] = $(NORMAL_WEBKIT2_FRAMEWORKS_DIR);
 

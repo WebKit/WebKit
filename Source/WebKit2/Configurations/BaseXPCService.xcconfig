@@ -25,12 +25,12 @@
 
 GCC_ENABLE_OBJC_GC = NO;
 
-INSTALL_PATH_ACTUAL = $(INSTALL_PATH_ACTUAL_$(WK_XPC_SERVICE_VARIANT));
+INSTALL_PATH = $(INSTALL_PATH_$(WK_XPC_SERVICE_VARIANT));
 
-INSTALL_PATH_ACTUAL_Normal[sdk=iphone*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/XPCServices;
-INSTALL_PATH_ACTUAL_Normal[sdk=macosx*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/XPCServices;
+INSTALL_PATH_Normal[sdk=iphone*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/XPCServices;
+INSTALL_PATH_Normal[sdk=macosx*] = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/Versions/A/XPCServices;
 
-INSTALL_PATH_ACTUAL_Development = $(APPLE_INTERNAL_DIR)/WebKit/XPCServicesForDevelopment;
+INSTALL_PATH_Development = $(APPLE_INTERNAL_DIR)/WebKit/XPCServicesForDevelopment;
 
 APP_ICON = $(APP_ICON_$(CONFIGURATION));
 APP_ICON_Debug = WebKit.icns;

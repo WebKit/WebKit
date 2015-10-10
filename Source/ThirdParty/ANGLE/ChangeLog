@@ -1,3 +1,13 @@
+2015-10-10  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove project support for iOS 8
+        https://bugs.webkit.org/show_bug.cgi?id=149993
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/ANGLE.xcconfig:
+        * Configurations/Base.xcconfig:
+
 2015-08-20  Alex Christensen  <achristensen@webkit.org>
 
         Clean up CMake build after r188673

@@ -1,3 +1,14 @@
+2015-10-10  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove project support for iOS 8
+        https://bugs.webkit.org/show_bug.cgi?id=149993
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WTF.xcconfig:
+        * Configurations/mbmalloc.xcconfig:
+
 2015-10-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Clean up Marked classes

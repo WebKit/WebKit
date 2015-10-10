@@ -27,13 +27,11 @@
 PRIVATE_HEADERS_FOLDER_PATH = $(PRIVATE_HEADERS_FOLDER_PATH_$(CONFIGURATION));
 PRIVATE_HEADERS_FOLDER_PATH_Debug = WebCoreTestSupport;
 PRIVATE_HEADERS_FOLDER_PATH_Release = $(PRIVATE_HEADERS_FOLDER_PATH_Debug);
-PRIVATE_HEADERS_FOLDER_PATH_Production = $(INSTALL_PATH_PREFIX)/usr/local/include/WebCoreTestSupport;
+PRIVATE_HEADERS_FOLDER_PATH_Production = /usr/local/include/WebCoreTestSupport;
 
-// Use [sdk=] selectors to override settings in WebCore.xcconfig.
-INSTALL_PATH_PREFIX[sdk=iphonesimulator8.*] = $(DEVELOPER_INSTALL_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/$(SDK_DIR:file);
-INSTALL_PATH[sdk=iphone*] = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
-INSTALL_PATH[sdk=macosx*] = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
-INSTALL_PATH_ACTUAL = $(INSTALL_PATH_WebCoreTestSupport_$(CONFIGURATION));
+INSTALL_PATH = $(INSTALL_PATH_WebCoreTestSupport_$(CONFIGURATION));
+// Using [sdk=macosx*] to override the setting in WebCore.xcconfig.
+INSTALL_PATH[sdk=macosx*] = $(INSTALL_PATH_WebCoreTestSupport_$(CONFIGURATION));
 INSTALL_PATH_WebCoreTestSupport_Production = /usr/local/lib;
 
 SKIP_INSTALL = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));
@@ -43,7 +41,6 @@ SKIP_INSTALL_YES = NO;
 
 DYLIB_INSTALL_NAME_BASE = $(DYLIB_INSTALL_NAME_BASE_$(CONFIGURATION));
 DYLIB_INSTALL_NAME_BASE_Production = $(INSTALL_PATH);
-DYLIB_INSTALL_NAME_BASE_Production[sdk=iphonesimulator*] = $(INSTALL_PATH_ACTUAL);
 DYLIB_INSTALL_NAME_BASE_Debug = @rpath;
 DYLIB_INSTALL_NAME_BASE_Release = $(DYLIB_INSTALL_NAME_BASE_Debug);
 

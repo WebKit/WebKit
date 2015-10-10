@@ -1,3 +1,19 @@
+2015-10-10  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove project support for iOS 8
+        https://bugs.webkit.org/show_bug.cgi?id=149993
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseLegacyProcess.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/PluginProcessShim.xcconfig:
+        * Configurations/SecItemShim.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        * Configurations/WebKit2.xcconfig:
+        * Configurations/WebProcessShim.xcconfig:
+
 2015-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed, rolling out r190689

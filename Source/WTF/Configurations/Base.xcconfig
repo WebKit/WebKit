@@ -84,7 +84,7 @@ GCC_WARN_UNUSED_VARIABLE = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 PREBINDING = NO;
 WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough;
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(DSTROOT)/$(INSTALL_PATH_PREFIX)/usr/local/include icu $(HEADER_SEARCH_PATHS);
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(DSTROOT)/usr/local/include icu $(HEADER_SEARCH_PATHS);
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
@@ -109,9 +109,6 @@ STRIP_INSTALLED_PRODUCT_debug = NO;
 DEAD_CODE_STRIPPING_debug = NO;
 DEAD_CODE_STRIPPING_normal = YES;
 DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
-
-INSTALL_PATH_PREFIX[sdk=iphonesimulator8.*] = $(DEVELOPER_INSTALL_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/$(SDK_DIR:file);
-INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(INSTALL_PATH_ACTUAL);
 
 SDKROOT = macosx.internal;
 

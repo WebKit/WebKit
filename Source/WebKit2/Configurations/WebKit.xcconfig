@@ -30,7 +30,7 @@ DEFINES_MODULE=YES;
 MODULEMAP_FILE[sdk=macosx*]=Modules/OSX.modulemap;
 MODULEMAP_FILE[sdk=iphone*]=Modules/iOS.modulemap;
 
-INSTALL_PATH_ACTUAL = $(WEBKIT_FRAMEWORKS_DIR);
+INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR);
 DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR);
 
 FRAMEWORK_AND_LIBRARY_LDFLAGS_BASE_ios = -lobjc -framework AssertionServices -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CorePDF -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO -framework UIKit -framework OpenGLES -framework MobileCoreServices -lMobileGestalt;
@@ -51,9 +51,6 @@ SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit2.order;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *.pdf Resources/mac/* com.apple.WebKit.Databases.sb com.apple.WebKit.NetworkProcess.sb com.apple.WebProcess.sb PlugInSandboxProfiles/*.sb;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
-
-WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED[sdk=iphoneos8.*] = YES;
-WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED[sdk=iphonesimulator8.*] = YES;
 
 WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED[sdk=macosx*] = $(WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED_macosx_$(MAC_OS_X_VERSION_MAJOR));
 WK_FRAMEWORK_HEADER_POSTPROCESSING_DISABLED_macosx_1090 = YES;
