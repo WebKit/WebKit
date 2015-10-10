@@ -1,3 +1,15 @@
+2015-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed, rolling out r190689
+        https://bugs.webkit.org/show_bug.cgi?id=149992
+
+        Fixed in other repository.
+
+        Reverted changesets:
+
+        "Unreviewed, rolling out r190572, r190593, r190594, and r190639."
+        https://bugs.webkit.org/show_bug.cgi?id=149897
+
 2015-10-09  Beth Dakin  <bdakin@apple.com>
 
         Rubber-stamped by Anders Carlsson.

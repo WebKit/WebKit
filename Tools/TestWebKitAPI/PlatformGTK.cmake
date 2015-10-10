@@ -110,6 +110,7 @@ add_executable(TestWebKit2
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKPageGetScaleFactorNotZero.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKPreferences.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKRetainPtr.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKStringJSString.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKURL.cpp

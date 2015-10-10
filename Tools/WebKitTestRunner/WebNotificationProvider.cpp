@@ -65,8 +65,8 @@ WebNotificationProvider::WebNotificationProvider()
 
 WebNotificationProvider::~WebNotificationProvider()
 {
-    if (m_currentNotificationManager)
-        WKNotificationManagerSetProvider(m_currentNotificationManager.get(), nullptr);
+    for (auto& manager : m_ownedNotifications)
+        WKNotificationManagerSetProvider(manager.key.get(), nullptr);
 }
 
 WKNotificationProviderV0 WebNotificationProvider::provider()
@@ -84,38 +84,57 @@ WKNotificationProviderV0 WebNotificationProvider::provider()
     return notificationProvider;
 }
 
-void WebNotificationProvider::showWebNotification(WKPageRef, WKNotificationRef notification)
+void WebNotificationProvider::showWebNotification(WKPageRef page, WKNotificationRef notification)
 {
-    if (!m_currentNotificationManager)
-        return;
-
+    auto context = WKPageGetContext(page);
+    auto notificationManager = WKContextGetNotificationManager(context);
     uint64_t id = WKNotificationGetID(notification);
-    ASSERT(!m_shownNotifications.contains(id));
-    m_shownNotifications.add(id);
 
-    WKNotificationManagerProviderDidShowNotification(m_currentNotificationManager.get(), WKNotificationGetID(notification));
+    ASSERT(m_ownedNotifications.contains(notificationManager));
+    auto addResult = m_ownedNotifications.find(notificationManager)->value.add(id);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    auto addResult2 = m_owningManager.set(id, notificationManager);
+    ASSERT_UNUSED(addResult2, addResult2.isNewEntry);
+
+    WKNotificationManagerProviderDidShowNotification(notificationManager, id);
 }
 
 void WebNotificationProvider::closeWebNotification(WKNotificationRef notification)
 {
-    if (!m_currentNotificationManager)
-        return;
-
     uint64_t id = WKNotificationGetID(notification);
+    ASSERT(m_owningManager.contains(id));
+    auto notificationManager = m_owningManager.get(id);
+
+    ASSERT(m_ownedNotifications.contains(notificationManager));
+    bool success = m_ownedNotifications.find(notificationManager)->value.remove(id);
+    ASSERT_UNUSED(success, success);
+    m_owningManager.remove(id);
+
     WKRetainPtr<WKUInt64Ref> wkID = WKUInt64Create(id);
     WKRetainPtr<WKMutableArrayRef> array(AdoptWK, WKMutableArrayCreate());
     WKArrayAppendItem(array.get(), wkID.get());
-    m_shownNotifications.remove(id);
-    WKNotificationManagerProviderDidCloseNotifications(m_currentNotificationManager.get(), array.get());
+    WKNotificationManagerProviderDidCloseNotifications(notificationManager, array.get());
 }
 
 void WebNotificationProvider::addNotificationManager(WKNotificationManagerRef manager)
 {
-    m_currentNotificationManager = manager;
+    m_ownedNotifications.add(manager, HashSet<uint64_t>());
 }
 
 void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef manager)
 {
+    auto iterator = m_ownedNotifications.find(manager);
+    ASSERT(iterator != m_ownedNotifications.end());
+    auto toRemove = iterator->value;
+    WKRetainPtr<WKNotificationManagerRef> guard(manager);
+    m_ownedNotifications.remove(iterator);
+    WKRetainPtr<WKMutableArrayRef> array = adoptWK(WKMutableArrayCreate());
+    for (uint64_t notificationID : toRemove) {
+        bool success = m_owningManager.remove(notificationID);
+        ASSERT_UNUSED(success, success);
+        WKArrayAppendItem(array.get(), adoptWK(WKUInt64Create(notificationID)).get());
+    }
+    WKNotificationManagerProviderDidCloseNotifications(manager, array.get());
 }
 
 WKDictionaryRef WebNotificationProvider::notificationPermissions()
@@ -126,29 +145,23 @@ WKDictionaryRef WebNotificationProvider::notificationPermissions()
 
 void WebNotificationProvider::simulateWebNotificationClick(uint64_t notificationID)
 {
-    if (!m_currentNotificationManager)
-        return;
-
-    ASSERT(m_shownNotifications.contains(notificationID));
-    WKNotificationManagerProviderDidClickNotification(m_currentNotificationManager.get(), notificationID);
+    ASSERT(m_owningManager.contains(notificationID));
+    WKNotificationManagerProviderDidClickNotification(m_owningManager.get(notificationID), notificationID);
 }
 
 void WebNotificationProvider::reset()
 {
-    if (!m_currentNotificationManager) {
-        m_shownNotifications.clear();
-        return;
-    }
+    for (auto& notificationPair : m_ownedNotifications) {
+        if (notificationPair.value.isEmpty())
+            continue;
+        WKRetainPtr<WKMutableArrayRef> array = adoptWK(WKMutableArrayCreate());
+        for (uint64_t notificationID : notificationPair.value)
+            WKArrayAppendItem(array.get(), adoptWK(WKUInt64Create(notificationID)).get());
 
-    WKRetainPtr<WKMutableArrayRef> array(AdoptWK, WKMutableArrayCreate());
-    HashSet<uint64_t>::const_iterator itEnd = m_shownNotifications.end();
-    for (HashSet<uint64_t>::const_iterator it = m_shownNotifications.begin(); it != itEnd; ++it) {
-        WKRetainPtr<WKUInt64Ref> wkID = WKUInt64Create(*it);
-        WKArrayAppendItem(array.get(), wkID.get());
+        notificationPair.value.clear();
+        WKNotificationManagerProviderDidCloseNotifications(notificationPair.key.get(), array.get());
     }
-
-    m_shownNotifications.clear();
-    WKNotificationManagerProviderDidCloseNotifications(m_currentNotificationManager.get(), array.get());
+    m_owningManager.clear();
 }
 
 } // namespace WTR
