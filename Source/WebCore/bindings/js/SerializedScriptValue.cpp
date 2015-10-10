@@ -247,11 +247,15 @@ static unsigned countUsages(CryptoKeyUsage usages)
  * and EmptyStringObjectTag for serialization of Boolean, Number and String objects.
  * Version 4. added support for serializing non-index properties of arrays.
  * Version 5. added support for Map and Set types.
+ * Version 6. added support for 8-bit strings.
  */
-static const unsigned CurrentVersion = 5;
+static const unsigned CurrentVersion = 6;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
+
+// The high bit of a StringData's length determines the character size.
+static const unsigned StringDataIs8BitFlag = 0x80000000;
 
 /*
  * Object serialization is performed according to the following grammar, all tags
@@ -318,7 +322,7 @@ static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
  *
  * StringData :-
  *      StringPoolTag <cpIndex:IndexType>
- *      (not (TerminatorTag | StringPoolTag))<length:uint32_t><characters:UChar{length}> // Added to constant pool when seen, string length 0xFFFFFFFF is disallowed
+ *      (not (TerminatorTag | StringPoolTag))<is8Bit:uint32_t:1><length:uint32_t:31><characters:CharType{length}> // Added to constant pool when seen, string length 0xFFFFFFFF is disallowed
  *
  * File :-
  *    FileTag FileData
@@ -454,19 +458,6 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
     return true;
 }
 
-static bool writeLittleEndianUInt16(Vector<uint8_t>& buffer, const LChar* values, uint32_t length)
-{
-    if (length > std::numeric_limits<uint32_t>::max() / 2)
-        return false;
-
-    for (unsigned i = 0; i < length; ++i) {
-        buffer.append(values[i]);
-        buffer.append(0);
-    }
-
-    return true;
-}
-
 template <> bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, const uint8_t* values, uint32_t length)
 {
     buffer.append(values, length);
@@ -491,9 +482,11 @@ public:
             return true;
         }
         writeLittleEndian<uint8_t>(out, StringTag);
+        if (s.is8Bit()) {
+            writeLittleEndian(out, s.length() | StringDataIs8BitFlag);
+            return writeLittleEndian(out, s.characters8(), s.length());
+        }
         writeLittleEndian(out, s.length());
-        if (s.is8Bit())
-            return writeLittleEndianUInt16(out, s.characters8(), s.length());
         return writeLittleEndian(out, s.characters16(), s.length());
     }
 
@@ -993,22 +986,21 @@ private:
 
         unsigned length = str.length();
 
-        // This condition is unlikely to happen as they would imply an ~8gb
-        // string but we should guard against it anyway
-        if (length >= StringPoolTag) {
-            fail();
-            return;
-        }
-
         // Guard against overflow
         if (length > (std::numeric_limits<uint32_t>::max() - sizeof(uint32_t)) / sizeof(UChar)) {
             fail();
             return;
         }
 
-        writeLittleEndian<uint32_t>(m_buffer, length);
-        if (!length || str.is8Bit()) {
-            if (!writeLittleEndianUInt16(m_buffer, str.characters8(), length))
+        if (str.is8Bit())
+            writeLittleEndian<uint32_t>(m_buffer, length | StringDataIs8BitFlag);
+        else
+            writeLittleEndian<uint32_t>(m_buffer, length);
+
+        if (!length)
+            return;
+        if (str.is8Bit()) {
+            if (!writeLittleEndian(m_buffer, str.characters8(), length))
                 fail();
             return;
         }
@@ -1477,12 +1469,14 @@ public:
         if (!readLittleEndian(ptr, end, tag) || tag != StringTag)
             return String();
         uint32_t length;
-        if (!readLittleEndian(ptr, end, length) || length >= StringPoolTag)
+        if (!readLittleEndian(ptr, end, length))
             return String();
+        bool is8Bit = length & StringDataIs8BitFlag;
+        length &= ~StringDataIs8BitFlag;
         String str;
-        if (!readString(ptr, end, str, length))
+        if (!readString(ptr, end, str, length, is8Bit))
             return String();
-        return String(str.impl());
+        return str;
     }
 
     static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject,
@@ -1662,10 +1656,18 @@ private:
         return read(i);
     }
 
-    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length)
+    static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length, bool is8Bit)
     {
         if (length >= std::numeric_limits<int32_t>::max() / sizeof(UChar))
             return false;
+
+        if (is8Bit) {
+            if ((end - ptr) < static_cast<int>(length))
+                return false;
+            str = String(reinterpret_cast<const LChar*>(ptr), length);
+            ptr += length;
+            return true;
+        }
 
         unsigned size = length * sizeof(UChar);
         if ((end - ptr) < static_cast<int>(size))
@@ -1717,8 +1719,10 @@ private:
             cachedString = CachedStringRef(&m_constantPool, index);
             return true;
         }
+        bool is8Bit = length & StringDataIs8BitFlag;
+        length &= ~StringDataIs8BitFlag;
         String str;
-        if (!readString(m_ptr, m_end, str, length)) {
+        if (!readString(m_ptr, m_end, str, length, is8Bit)) {
             fail();
             return false;
         }
