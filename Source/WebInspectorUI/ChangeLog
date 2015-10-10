@@ -1,3 +1,16 @@
+2015-10-10  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Improve error messages for internal Inspector code
+        https://bugs.webkit.org/show_bug.cgi?id=149995
+
+        Don't log "error.stack" since the error view already includes a nicely formatted stacktrace.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype._dispatchResponseToCallback):
+        (InspectorBackendClass.prototype._dispatchEvent):
+
 2015-10-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Stack trace view doesn't properly display lines without function names

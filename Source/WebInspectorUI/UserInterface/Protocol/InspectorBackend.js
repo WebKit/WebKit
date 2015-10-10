@@ -232,7 +232,7 @@ InspectorBackendClass = class InspectorBackendClass
         try {
             callback.apply(null, callbackArguments);
         } catch (e) {
-            console.error("Uncaught exception in inspector page while dispatching callback for command " + command.qualifiedName + ": ", e, e.stack);
+            console.error("Uncaught exception in inspector page while dispatching callback for command " + command.qualifiedName, e);
         }
     }
 
@@ -280,7 +280,7 @@ InspectorBackendClass = class InspectorBackendClass
         try {
             agent.dispatchEvent(eventName, eventArguments);
         } catch (e) {
-            console.error("Uncaught exception in inspector page while handling event " + qualifiedName + ": ", e, e.stack);
+            console.error("Uncaught exception in inspector page while handling event " + qualifiedName, e);
         }
 
         let processingDuration = (timestamp() - processingStartTimestamp).toFixed(3);
