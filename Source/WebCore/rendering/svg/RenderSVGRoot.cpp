@@ -202,7 +202,7 @@ void RenderSVGRoot::layout()
     }
 
     updateLayerTransform();
-    m_hasBoxDecorations = isRoot() ? hasBoxDecorationStyle() : hasBoxDecorations();
+    m_hasBoxDecorations = isDocumentElementRenderer() ? hasBoxDecorationStyle() : hasBoxDecorations();
     invalidateBackgroundObscurationStatus();
 
     repainter.repaintAfterLayout();
@@ -218,7 +218,7 @@ bool RenderSVGRoot::shouldApplyViewportClip() const
     return style().overflowX() == OHIDDEN
         || style().overflowX() == OAUTO
         || style().overflowX() == OSCROLL
-        || this->isRoot();
+        || this->isDocumentElementRenderer();
 }
 
 void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

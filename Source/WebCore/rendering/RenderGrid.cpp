@@ -320,7 +320,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (size() != previousSize)
         relayoutChildren = true;
 
-    layoutPositionedObjects(relayoutChildren || isRoot());
+    layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
 
     computeOverflow(oldClientAfterEdge);
     statePusher.pop();

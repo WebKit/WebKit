@@ -966,7 +966,7 @@ void RenderObject::repaintSlowRepaintObject() const
     IntRect repaintRect;
     // If this is the root background, we need to check if there is an extended background rect. If
     // there is, then we should not allow painting to clip to the layer size.
-    if (isRoot() || isBody()) {
+    if (isDocumentElementRenderer() || isBody()) {
         shouldClipToLayer = !view.frameView().hasExtendedBackgroundRectForPainting();
         repaintRect = snappedIntRect(view.backgroundRect());
     } else
@@ -1915,7 +1915,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     // A is the root element.
     // A is the HTML body element.
     // The computed value of the position property for element A is fixed.
-    if (isRoot() || isBody() || (isOutOfFlowPositioned() && style().position() == FixedPosition))
+    if (isDocumentElementRenderer() || isBody() || (isOutOfFlowPositioned() && style().position() == FixedPosition))
         return nullptr;
 
     // If A is an area HTML element which has a map HTML element somewhere in the ancestor

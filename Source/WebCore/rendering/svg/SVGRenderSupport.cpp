@@ -299,7 +299,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
 {
     // RenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
-    ASSERT(!renderer.isRoot());
+    ASSERT(!renderer.isDocumentElementRenderer());
 
     return renderer.style().overflowX() == OHIDDEN || renderer.style().overflowX() == OSCROLL;
 }

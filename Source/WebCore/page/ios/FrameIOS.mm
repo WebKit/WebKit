@@ -241,7 +241,7 @@ CGRect Frame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fontSiz
 #if RECT_LOGGING
     printf("\n%f %f\n", point.x, point.y);
 #endif
-    while (renderer && !renderer->isBody() && !renderer->isRoot()) {
+    while (renderer && !renderer->isBody() && !renderer->isDocumentElementRenderer()) {
 #if RECT_LOGGING
         CGRect rect = renderer->absoluteBoundingBoxRect(true);
         if (renderer->node()) {

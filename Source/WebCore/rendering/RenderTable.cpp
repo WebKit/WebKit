@@ -658,7 +658,7 @@ void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     PaintPhase paintPhase = paintInfo.phase;
 
-    if (!isRoot()) {
+    if (!isDocumentElementRenderer()) {
         LayoutRect overflowBox = visualOverflowRect();
         adjustRectWithMaximumOutline(paintInfo.phase, overflowBox);
         flipForWritingMode(overflowBox);
