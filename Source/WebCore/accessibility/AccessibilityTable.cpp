@@ -675,4 +675,30 @@ String AccessibilityTable::title() const
     return title;
 }
 
+int AccessibilityTable::ariaColumnCount() const
+{
+    const AtomicString& colCountValue = getAttribute(aria_colcountAttr);
+    
+    int colCountInt = colCountValue.toInt();
+    // If only a portion of the columns is present in the DOM at a given moment, this attribute is needed to
+    // provide an explicit indication of the number of columns in the full table.
+    if (colCountInt > (int)m_columns.size())
+        return colCountInt;
+    
+    return -1;
+}
+
+int AccessibilityTable::ariaRowCount() const
+{
+    const AtomicString& rowCountValue = getAttribute(aria_rowcountAttr);
+    
+    int rowCountInt = rowCountValue.toInt();
+    // If only a portion of the rows is present in the DOM at a given moment, this attribute is needed to
+    // provide an explicit indication of the number of rows in the full table.
+    if (rowCountInt > (int)m_rows.size())
+        return rowCountInt;
+    
+    return -1;
+}
+
 } // namespace WebCore

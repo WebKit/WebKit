@@ -51,6 +51,11 @@ public:
     // in the row, but their col/row spans overlap into it
     void appendChild(AccessibilityObject*);
     
+    virtual void addChildren() override;
+    
+    int ariaColumnIndex() const;
+    int ariaRowIndex() const;
+    
 protected:
     explicit AccessibilityTableRow(RenderObject*);
 

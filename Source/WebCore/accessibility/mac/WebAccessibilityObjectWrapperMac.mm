@@ -252,6 +252,23 @@ using namespace HTMLNames;
 #define NSAccessibilityARIACurrentAttribute @"AXARIACurrent"
 #endif
 
+// Table/grid attributes
+#ifndef NSAccessibilityARIAColumnIndexAttribute
+#define NSAccessibilityARIAColumnIndexAttribute @"AXARIAColumnIndex"
+#endif
+
+#ifndef NSAccessibilityARIARowIndexAttribute
+#define NSAccessibilityARIARowIndexAttribute @"AXARIARowIndex"
+#endif
+
+#ifndef NSAccessibilityARIAColumnCountAttribute
+#define NSAccessibilityARIAColumnCountAttribute @"AXARIAColumnCount"
+#endif
+
+#ifndef NSAccessibilityARIARowCountAttribute
+#define NSAccessibilityARIARowCountAttribute @"AXARIARowCount"
+#endif
+
 // Search
 #ifndef NSAccessibilityImmediateDescendantsOnly
 #define NSAccessibilityImmediateDescendantsOnly @"AXImmediateDescendantsOnly"
@@ -1551,6 +1568,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         [tempArray addObject:NSAccessibilityHeaderAttribute];
         [tempArray addObject:NSAccessibilityColumnCountAttribute];
         [tempArray addObject:NSAccessibilityRowCountAttribute];
+        [tempArray addObject:NSAccessibilityARIAColumnCountAttribute];
+        [tempArray addObject:NSAccessibilityARIARowCountAttribute];
         tableAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -1575,6 +1594,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, const Visibl
         [tempArray addObject:NSAccessibilityColumnIndexRangeAttribute];
         [tempArray addObject:NSAccessibilityColumnHeaderUIElementsAttribute];
         [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
+        [tempArray addObject:NSAccessibilityARIAColumnIndexAttribute];
+        [tempArray addObject:NSAccessibilityARIARowIndexAttribute];
         tableCellAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
@@ -2730,6 +2751,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         
         if ([attributeName isEqualToString:NSAccessibilityRowCountAttribute])
             return @(table.rowCount());
+        
+        if ([attributeName isEqualToString:NSAccessibilityARIAColumnCountAttribute])
+            return @(table.ariaColumnCount());
+        
+        if ([attributeName isEqualToString:NSAccessibilityARIARowCountAttribute])
+            return @(table.ariaRowCount());
     }
     
     if (is<AccessibilityTableColumn>(*m_object)) {
@@ -2772,6 +2799,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             cell.rowHeaders(rowHeaders);
             return convertToNSArray(rowHeaders);
         }
+        if ([attributeName isEqualToString:NSAccessibilityARIAColumnIndexAttribute])
+            return @(cell.ariaColumnIndex());
+        
+        if ([attributeName isEqualToString:NSAccessibilityARIARowIndexAttribute])
+            return @(cell.ariaRowIndex());
     }
     
     if (m_object->isTree()) {

@@ -17,6 +17,9 @@ aria-activedescendant
 aria-atomic
 aria-busy
 aria-checked
+aria-colcount
+aria-colindex
+aria-colspan
 aria-controls
 aria-current
 aria-describedby
@@ -45,6 +48,9 @@ aria-readonly
 aria-relevant
 aria-required
 aria-roledescription
+aria-rowcount
+aria-rowindex
+aria-rowspan
 aria-selected
 aria-setsize
 aria-sort

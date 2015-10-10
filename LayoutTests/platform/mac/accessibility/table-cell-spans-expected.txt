@@ -36,6 +36,8 @@ AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
 
@@ -71,6 +73,8 @@ AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
 
@@ -106,6 +110,8 @@ AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
 
@@ -141,6 +147,8 @@ AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
 
@@ -176,6 +184,8 @@ AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
 AXColumnHeaderUIElements: <array of size 0>
 AXRowHeaderUIElements: <array of size 0>
+AXARIAColumnIndex: -1
+AXARIARowIndex: -1
 AXElementBusy: 0
 AXRequired: 0
 

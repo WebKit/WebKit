@@ -1975,6 +1975,7 @@ static void initializeRoleMap()
         { "radiogroup", RadioGroupRole },
         { "region", DocumentRegionRole },
         { "row", RowRole },
+        { "rowgroup", RowGroupRole },
         { "scrollbar", ScrollBarRole },
         { "search", LandmarkSearchRole },
         { "searchbox", SearchFieldRole },

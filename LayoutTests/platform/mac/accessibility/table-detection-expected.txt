@@ -35,6 +35,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 2
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -77,6 +79,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 1
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -150,6 +154,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 1
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -191,6 +197,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 1
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -232,6 +240,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 2
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -274,6 +284,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 1
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -379,6 +391,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 1
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -490,6 +504,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 1
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -531,6 +547,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 2
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -606,6 +624,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 3
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -649,6 +669,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 3
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -692,6 +714,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 2
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -734,6 +758,8 @@ AXRowHeaderUIElements: <array of size 0>
 AXHeader: <AXTable>
 AXColumnCount: 1
 AXRowCount: 24
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 
@@ -798,6 +824,8 @@ AXRowHeaderUIElements: <array of size 1>
 AXHeader: <AXTable>
 AXColumnCount: 2
 AXRowCount: 2
+AXARIAColumnCount: -1
+AXARIARowCount: -1
 AXElementBusy: 0
 
 

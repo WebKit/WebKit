@@ -800,6 +800,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case VideoRole:
         case WebAreaRole:
         case WindowRole:
+        case RowGroupRole:
             return false;
     }
     

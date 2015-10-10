@@ -32,9 +32,12 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
     
+using namespace HTMLNames;
+
 AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject* renderer)
     : AccessibilityTableCell(renderer)
 {
@@ -88,8 +91,41 @@ void AccessibilityARIAGridCell::rowIndexRange(std::pair<unsigned, unsigned>& row
         }
     }
 
-    // as far as I can tell, grid cells cannot span rows
-    rowRange.second = 1;
+    // ARIA 1.1, aria-rowspan attribute is intended for cells and gridcells which are not contained in a native table.
+    // So we should check for that attribute here.
+    rowRange.second = ariaRowSpanWithRowIndex(rowRange.first);
+}
+
+unsigned AccessibilityARIAGridCell::ariaRowSpanWithRowIndex(unsigned rowIndex) const
+{
+    unsigned rowSpan = AccessibilityTableCell::ariaRowSpan();
+    AccessibilityObject* parent = parentObjectUnignored();
+    if (!parent)
+        return 1;
+    
+    // Setting the value to 0 indicates that the cell or gridcell is to span all the remaining rows in the row group.
+    if (!rowSpan) {
+        // rowSpan defaults to 1.
+        rowSpan = 1;
+        if (AccessibilityObject* parentRowGroup = this->parentRowGroup()) {
+            // If the row group is the parent table, we use total row count to calculate the span.
+            if (is<AccessibilityTable>(*parentRowGroup))
+                rowSpan = downcast<AccessibilityTable>(*parentRowGroup).rowCount() - rowIndex;
+            // Otherwise, we have to get the index for the current row within the parent row group.
+            else if (is<AccessibilityTableRow>(*parent)) {
+                const auto& siblings = parentRowGroup->children();
+                unsigned rowCount = siblings.size();
+                for (unsigned k = 0; k < rowCount; ++k) {
+                    if (siblings[k].get() == parent) {
+                        rowSpan = rowCount - k;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return rowSpan;
 }
 
 void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& columnRange) const
@@ -111,8 +147,20 @@ void AccessibilityARIAGridCell::columnIndexRange(std::pair<unsigned, unsigned>& 
         }
     }
     
-    // as far as I can tell, grid cells cannot span columns
-    columnRange.second = 1;    
+    // ARIA 1.1, aria-colspan attribute is intended for cells and gridcells which are not contained in a native table.
+    // So we should check for that attribute here.
+    columnRange.second = ariaColumnSpan();
+}
+
+AccessibilityObject* AccessibilityARIAGridCell::parentRowGroup() const
+{
+    for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
+        if (parent->hasTagName(theadTag) || parent->hasTagName(tbodyTag) || parent->hasTagName(tfootTag) || parent->roleValue() == RowGroupRole)
+            return parent;
+    }
+    
+    // If there's no row group found, we use the parent table as the row group.
+    return parentTable();
 }
   
 } // namespace WebCore

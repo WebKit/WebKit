@@ -179,6 +179,7 @@ enum AccessibilityRole {
     RadioGroupRole,
     RowHeaderRole,
     RowRole,
+    RowGroupRole,
     RubyBaseRole,
     RubyBlockRole,
     RubyInlineRole,

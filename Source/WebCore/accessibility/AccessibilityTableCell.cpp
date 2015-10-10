@@ -44,6 +44,7 @@ using namespace HTMLNames;
 
 AccessibilityTableCell::AccessibilityTableCell(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
+    , m_ariaColIndexFromRow(-1)
 {
 }
 
@@ -368,6 +369,60 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
         return nullptr;
     
     return axObjectCache()->getOrCreate(headerCell);
+}
+    
+int AccessibilityTableCell::ariaColumnIndex() const
+{
+    const AtomicString& colIndexValue = getAttribute(aria_colindexAttr);
+    if (colIndexValue.toInt() >= 1)
+        return colIndexValue.toInt();
+    
+    // "ARIA 1.1: If the set of columns which is present in the DOM is contiguous, and if there are no cells which span more than one row
+    // or column in that set, then authors may place aria-colindex on each row, setting the value to the index of the first column of the set."
+    // Here, we let its parent row to set its index beforehand, so we don't have to go through the siblings to calculate the index.
+    AccessibilityTableRow* parentRow = this->parentRow();
+    if (parentRow && m_ariaColIndexFromRow != -1)
+        return m_ariaColIndexFromRow;
+    
+    return -1;
+}
+    
+int AccessibilityTableCell::ariaRowIndex() const
+{
+    // ARIA 1.1: Authors should place aria-rowindex on each row. Authors may also place
+    // aria-rowindex on all of the children or owned elements of each row.
+    const AtomicString& rowIndexValue = getAttribute(aria_rowindexAttr);
+    if (rowIndexValue.toInt() >= 1)
+        return rowIndexValue.toInt();
+    
+    if (AccessibilityTableRow* parentRow = this->parentRow())
+        return parentRow->ariaRowIndex();
+    
+    return -1;
+}
+
+unsigned AccessibilityTableCell::ariaColumnSpan() const
+{
+    const AtomicString& colSpanValue = getAttribute(aria_colspanAttr);
+    // ARIA 1.1: Authors must set the value of aria-colspan to an integer greater than or equal to 1.
+    if (colSpanValue.toInt() >= 1)
+        return colSpanValue.toInt();
+    
+    return 1;
+}
+
+unsigned AccessibilityTableCell::ariaRowSpan() const
+{
+    const AtomicString& rowSpanValue = getAttribute(aria_rowspanAttr);
+    
+    // ARIA 1.1: Authors must set the value of aria-rowspan to an integer greater than or equal to 0.
+    // Setting the value to 0 indicates that the cell or gridcell is to span all the remaining rows in the row group.
+    if (equalIgnoringCase(rowSpanValue, "0"))
+        return 0;
+    if (rowSpanValue.toInt() >= 1)
+        return rowSpanValue.toInt();
+    
+    return 1;
 }
     
 } // namespace WebCore

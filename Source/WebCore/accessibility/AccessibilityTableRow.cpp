@@ -137,4 +137,42 @@ AccessibilityObject* AccessibilityTableRow::headerObject()
     return cell;
 }
     
+void AccessibilityTableRow::addChildren()
+{
+    AccessibilityRenderObject::addChildren();
+    
+    // "ARIA 1.1, If the set of columns which is present in the DOM is contiguous, and if there are no cells which span more than one row or
+    // column in that set, then authors may place aria-colindex on each row, setting the value to the index of the first column of the set."
+    // Update child cells' ariaColIndex if there's an aria-colindex value set for the row. So the cell doesn't have to go through the siblings
+    // to calculate the index.
+    int colIndex = ariaColumnIndex();
+    if (colIndex == -1)
+        return;
+    
+    unsigned index = 0;
+    for (const auto& cell : children()) {
+        if (is<AccessibilityTableCell>(*cell))
+            downcast<AccessibilityTableCell>(*cell).setARIAColIndexFromRow(colIndex + index);
+        index++;
+    }
+}
+
+int AccessibilityTableRow::ariaColumnIndex() const
+{
+    const AtomicString& colIndexValue = getAttribute(aria_colindexAttr);
+    if (colIndexValue.toInt() >= 1)
+        return colIndexValue.toInt();
+    
+    return -1;
+}
+
+int AccessibilityTableRow::ariaRowIndex() const
+{
+    const AtomicString& rowIndexValue = getAttribute(aria_rowindexAttr);
+    if (rowIndexValue.toInt() >= 1)
+        return rowIndexValue.toInt();
+    
+    return -1;
+}
+    
 } // namespace WebCore
