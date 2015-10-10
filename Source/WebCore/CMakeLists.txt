@@ -1500,6 +1500,7 @@ set(WebCore_SOURCES
     dom/SecurityOriginPolicy.cpp
     dom/SelectorQuery.cpp
     dom/ShadowRoot.cpp
+    dom/SlotAssignment.cpp
     dom/SpaceSplitString.cpp
     dom/StaticNodeList.cpp
     dom/StringCallback.cpp
@@ -1700,6 +1701,7 @@ set(WebCore_SOURCES
     html/HTMLQuoteElement.cpp
     html/HTMLScriptElement.cpp
     html/HTMLSelectElement.cpp
+    html/HTMLSlotElement.cpp
     html/HTMLSourceElement.cpp
     html/HTMLSpanElement.cpp
     html/HTMLStyleElement.cpp

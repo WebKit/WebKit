@@ -26,7 +26,7 @@
 #ifndef SlotAssignment_h
 #define SlotAssignment_h
 
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -43,7 +43,13 @@ class ShadowRoot;
 class SlotAssignment {
     WTF_MAKE_NONCOPYABLE(SlotAssignment);
 public:
-    SlotAssignment() { }
+    using SlotNameFunction = std::function<AtomicString (const Node& child)>;
+
+    SlotAssignment();
+    SlotAssignment(SlotNameFunction);
+    ~SlotAssignment() { }
+
+    static const AtomicString& defaultSlotName() { return emptyAtom; }
 
     HTMLSlotElement* findAssignedSlot(const Node&, ShadowRoot&);
 
@@ -74,7 +80,11 @@ private:
 
     HTMLSlotElement* findFirstSlotElement(SlotInfo&, ShadowRoot&);
     void resolveAllSlotElements(ShadowRoot&);
+
     void assignSlots(ShadowRoot&);
+    void assignToSlot(Node& child, const AtomicString& slotName);
+
+    SlotNameFunction m_slotNameFunction;
 
     HashMap<AtomicString, std::unique_ptr<SlotInfo>> m_slots;
 

@@ -32,7 +32,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLSlotElement.h"
-#include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "MouseEvent.h"
 #include "PseudoElement.h"
@@ -403,7 +402,7 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
 EventPath::EventPath(Node& originalTarget, Event& event)
     : m_event(event)
 {
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     Vector<EventTarget*, 16> targetStack;
 #endif
 
@@ -433,7 +432,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
             parent = node->parentNode();
             if (!parent)
                 return;
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
             if (ShadowRoot* shadowRootOfParent = parent->shadowRoot()) {
                 if (auto* assignedSlot = shadowRootOfParent->findAssignedSlot(*node)) {
                     // node is assigned to a slot. Continue dispatching the event at this slot.
@@ -448,7 +447,7 @@ EventPath::EventPath(Node& originalTarget, Event& event)
 
         ShadowRoot& shadowRoot = downcast<ShadowRoot>(*node);
         // At a shadow root. Continue dispatching the event at the shadow host.
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         if (!targetStack.isEmpty()) {
             // Move target back to a descendant of the shadow host if the event did not originate in this shadow tree or its inner shadow trees.
             target = targetStack.last();

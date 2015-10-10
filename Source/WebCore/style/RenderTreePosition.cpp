@@ -37,8 +37,14 @@ void RenderTreePosition::computeNextSibling(const Node& node)
 {
     ASSERT(!node.renderer());
     if (m_hasValidNextSibling) {
-        // Stop validating at some point so the assert doesn't make us O(N^2) on debug builds.
-        ASSERT(m_parent.isRenderView() || ++m_assertionLimitCounter > 20 || nextSiblingRenderer(node, m_parent) == m_nextSibling);
+#if !ASSERT_DISABLED
+        const unsigned oNSquaredAvoidanceLimit = 20;
+        bool skipAssert = m_parent.isRenderView() || ++m_assertionLimitCounter > oNSquaredAvoidanceLimit;
+        // FIXME: Traversal needs to know about slots and this needs be removed.
+        skipAssert = skipAssert || (node.parentElement() && node.parentElement()->shadowRoot());
+
+        ASSERT(skipAssert || nextSiblingRenderer(node, m_parent) == m_nextSibling);
+#endif
         return;
     }
     m_nextSibling = nextSiblingRenderer(node, m_parent);

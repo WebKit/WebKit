@@ -31,14 +31,13 @@ class HTMLSummaryElement final : public HTMLElement {
 public:
     static Ref<HTMLSummaryElement> create(const QualifiedName&, Document&);
 
-    bool isMainSummary() const;
+    bool isActiveSummary() const;
     virtual bool willRespondToMouseClickEvents() override;
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document&);
 
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
-    virtual bool childShouldCreateRenderer(const Node&) const override;
     virtual void defaultEventHandler(Event*) override;
 
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) override;

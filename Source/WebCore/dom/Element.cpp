@@ -1860,9 +1860,7 @@ void Element::childrenChanged(const ChildChange& change)
     }
 
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
-        if (auto* distributor = shadowRoot->distributor())
-            distributor->invalidateDistribution(this);
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         switch (change.type) {
         case ElementInserted:
         case ElementRemoved:

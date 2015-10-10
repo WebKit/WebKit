@@ -31,7 +31,6 @@
 #include "AuthorStyleSheets.h"
 #include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
-#include "InsertionPoint.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SlotAssignment.h"
@@ -45,7 +44,7 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     void* styleResolver;
     void* authorStyleSheets;
     void* host;
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     void* slotAssignment;
 #endif
 };
@@ -55,11 +54,21 @@ COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_sh
 ShadowRoot::ShadowRoot(Document& document, Type type)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
-    , m_resetStyleInheritance(false)
     , m_type(type)
-    , m_host(nullptr)
 {
 }
+
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+
+ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slotAssignment)
+    : DocumentFragment(document, CreateShadowRoot)
+    , TreeScope(*this, document)
+    , m_type(Type::UserAgent)
+    , m_slotAssignment(WTF::move(slotAssignment))
+{
+}
+
+#endif
 
 ShadowRoot::~ShadowRoot()
 {
@@ -175,45 +184,45 @@ void ShadowRoot::removeAllEventListeners()
         node->removeAllEventListeners();
 }
 
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
 
 HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
 {
-    if (!m_slotAssignments)
+    if (!m_slotAssignment)
         return nullptr;
-    return m_slotAssignments->findAssignedSlot(node, *this);
+    return m_slotAssignment->findAssignedSlot(node, *this);
 }
 
 void ShadowRoot::addSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
 {
-    if (!m_slotAssignments)
-        m_slotAssignments = std::make_unique<SlotAssignment>();
+    if (!m_slotAssignment)
+        m_slotAssignment = std::make_unique<SlotAssignment>();
 
-    return m_slotAssignments->addSlotElementByName(name, slot, *this);
+    return m_slotAssignment->addSlotElementByName(name, slot, *this);
 }
 
 void ShadowRoot::removeSlotElementByName(const AtomicString& name, HTMLSlotElement& slot)
 {
-    return m_slotAssignments->removeSlotElementByName(name, slot, *this);
+    return m_slotAssignment->removeSlotElementByName(name, slot, *this);
 }
 
 void ShadowRoot::invalidateSlotAssignments()
 {
-    if (m_slotAssignments)
-        m_slotAssignments->invalidate(*this);
+    if (m_slotAssignment)
+        m_slotAssignment->invalidate(*this);
 }
 
 void ShadowRoot::invalidateDefaultSlotAssignments()
 {
-    if (m_slotAssignments)
-        m_slotAssignments->invalidateDefaultSlot(*this);
+    if (m_slotAssignment)
+        m_slotAssignment->invalidateDefaultSlot(*this);
 }
 
 const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
 {
-    if (!m_slotAssignments)
+    if (!m_slotAssignment)
         return nullptr;
-    return m_slotAssignments->assignedNodesForSlot(slot, *this);
+    return m_slotAssignment->assignedNodesForSlot(slot, *this);
 }
 
 #endif

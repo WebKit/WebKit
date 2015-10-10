@@ -138,6 +138,7 @@
 #include "SecurityOriginPolicy.cpp"
 #include "SelectorQuery.cpp"
 #include "ShadowRoot.cpp"
+#include "SlotAssignment.cpp"
 #include "SpaceSplitString.cpp"
 #include "StaticNodeList.cpp"
 #include "StringCallback.cpp"

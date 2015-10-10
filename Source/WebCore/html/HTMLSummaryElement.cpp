@@ -25,37 +25,22 @@
 #include "DetailsMarkerControl.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormControlElement.h"
-#include "InsertionPoint.h"
+#include "HTMLSlotElement.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NodeRenderingTraversal.h"
 #include "PlatformMouseEvent.h"
 #include "RenderBlockFlow.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-class SummaryContentElement final : public InsertionPoint {
-public:
-    static Ref<SummaryContentElement> create(Document&);
-
-private:
-    SummaryContentElement(Document& document)
-        : InsertionPoint(webkitShadowContentTag, document)
-    {
-    }
-};
-
-Ref<SummaryContentElement> SummaryContentElement::create(Document& document)
-{
-    return adoptRef(*new SummaryContentElement(document));
-}
-
 Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
     Ref<HTMLSummaryElement> summary = adoptRef(*new HTMLSummaryElement(tagName, document));
-    summary->addShadowRoot(ShadowRootWithInsertionPoints::create(document));
+    summary->addShadowRoot(ShadowRoot::create(document, ShadowRoot::Type::UserAgent));
     return summary;
 }
 
@@ -70,34 +55,30 @@ RenderPtr<RenderElement> HTMLSummaryElement::createElementRenderer(Ref<RenderSty
     return createRenderer<RenderBlockFlow>(*this, WTF::move(style));
 }
 
-bool HTMLSummaryElement::childShouldCreateRenderer(const Node& child) const
-{
-    if (child.isPseudoElement())
-        return HTMLElement::childShouldCreateRenderer(child);
-
-    return hasShadowRootOrActiveInsertionPointParent(child) && HTMLElement::childShouldCreateRenderer(child);
-}
-
 void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION);
-    root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION);
+    root->appendChild(HTMLSlotElement::create(slotTag, document()));
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
 {
-    Node* mayDetails = NodeRenderingTraversal::parent(this);
-    if (!mayDetails || !mayDetails->hasTagName(detailsTag))
-        return nullptr;
-    return downcast<HTMLDetailsElement>(mayDetails);
+    auto* parent = parentElement();
+    if (parent && is<HTMLDetailsElement>(*parent))
+        return downcast<HTMLDetailsElement>(parent);
+    // Fallback summary element is in the shadow tree.
+    auto* host = shadowHost();
+    if (host && is<HTMLDetailsElement>(*host))
+        return downcast<HTMLDetailsElement>(host);
+    return nullptr;
 }
 
-bool HTMLSummaryElement::isMainSummary() const
+bool HTMLSummaryElement::isActiveSummary() const
 {
-    if (HTMLDetailsElement* details = detailsElement())
-        return details->findMainSummary() == this;
-
-    return false;
+    HTMLDetailsElement* details = detailsElement();
+    if (!details)
+        return false;
+    return details->isActiveSummary(*this);
 }
 
 static bool isClickableControl(Node* node)
@@ -114,12 +95,12 @@ static bool isClickableControl(Node* node)
 
 bool HTMLSummaryElement::supportsFocus() const
 {
-    return isMainSummary();
+    return isActiveSummary();
 }
 
 void HTMLSummaryElement::defaultEventHandler(Event* event)
 {
-    if (isMainSummary() && renderer()) {
+    if (isActiveSummary() && renderer()) {
         if (event->type() == eventNames().DOMActivateEvent && !isClickableControl(event->target()->toNode())) {
             if (HTMLDetailsElement* details = detailsElement())
                 details->toggleOpen();
@@ -160,7 +141,7 @@ void HTMLSummaryElement::defaultEventHandler(Event* event)
 
 bool HTMLSummaryElement::willRespondToMouseClickEvents()
 {
-    if (isMainSummary() && renderer())
+    if (isActiveSummary() && renderer())
         return true;
 
     return HTMLElement::willRespondToMouseClickEvents();
