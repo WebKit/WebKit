@@ -173,7 +173,7 @@ struct WebProcessCreationParameters {
     HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies;
 #endif
 
-#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     RetainPtr<CFDataRef> networkATSContext;
 #endif
 };

@@ -595,9 +595,7 @@ typedef enum {
 
 @property (nonatomic, assign, getter=isNextEnabled) BOOL nextEnabled;
 @property (nonatomic, assign, getter=isPreviousEnabled) BOOL previousEnabled;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 - (id)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistantItem;
-#endif
 @end
 
 @protocol UIWebFormAccessoryDelegate
@@ -643,9 +641,7 @@ struct _UIWebTouchEvent {
     struct _UIWebTouchPoint* touchPoints;
     unsigned touchPointCount;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     bool isPotentialTap;
-#endif
 };
 
 @protocol UIWebTouchEventsGestureRecognizerDelegate

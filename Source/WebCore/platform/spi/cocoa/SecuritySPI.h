@@ -41,7 +41,7 @@ EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
 typedef uint32_t SecSignatureHashAlgorithm;
 enum {
     kSecSignatureHashAlgorithmUnknown = 0,

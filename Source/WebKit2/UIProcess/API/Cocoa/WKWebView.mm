@@ -255,7 +255,7 @@ static int32_t deviceOrientation()
 
 - (BOOL)_mayAutomaticallyShowVideoPictureInPicture
 {
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED <= 80200) || !HAVE(AVKIT)
+#if !HAVE(AVKIT)
     return false;
 #else
     if (!_page || !_page->videoFullscreenManager())
@@ -267,12 +267,8 @@ static int32_t deviceOrientation()
 
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     static bool shouldAllowPictureInPictureMediaPlayback = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
     return shouldAllowPictureInPictureMediaPlayback;
-#else
-    return false;
-#endif
 }
 
 #endif
@@ -2937,20 +2933,12 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 #if USE(IOSURFACE)
     // If we are parented and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     if (CADisplay *display = self.window.screen._display) {
-#else
-    if (self.window) {
-#endif
         auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::ColorSpaceDeviceRGB);
         CGFloat imageScaleInViewCoordinates = imageWidth / rectInViewCoordinates.size.width;
         CATransform3D transform = CATransform3DMakeScale(imageScaleInViewCoordinates, imageScaleInViewCoordinates, 1);
         transform = CATransform3DTranslate(transform, -rectInViewCoordinates.origin.x, -rectInViewCoordinates.origin.y, 0);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
         CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(MACH_PORT_NULL, (CFStringRef)display.name, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform, 0);
-#else
-        CARenderServerRenderLayerWithTransform(MACH_PORT_NULL, self.layer.context.contextId, reinterpret_cast<uint64_t>(self.layer), surface->surface(), 0, 0, &transform); 
-#endif
         completionHandler(surface->createImage().get());
         return;
     }

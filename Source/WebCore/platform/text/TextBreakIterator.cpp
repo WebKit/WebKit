@@ -30,7 +30,7 @@
 #include <wtf/text/StringView.h>
 
 // FIXME: This needs a better name
-#define ADDITIONAL_EMOJI_SUPPORT ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100))
+#define ADDITIONAL_EMOJI_SUPPORT (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100))
 
 namespace WebCore {
 

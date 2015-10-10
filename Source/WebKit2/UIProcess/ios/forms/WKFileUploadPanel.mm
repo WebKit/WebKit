@@ -71,7 +71,7 @@ SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsVersionCurrent, NSString *);
 static inline UIImage *photoLibraryIcon()
 {
     // FIXME: Remove when a new SDK is available. <rdar://problem/20150072>
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 && defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
+#if defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
     return _UIImageGetWebKitPhotoLibraryIcon();
 #else
     return nil;
@@ -81,7 +81,7 @@ static inline UIImage *photoLibraryIcon()
 static inline UIImage *cameraIcon()
 {
     // FIXME: Remove when a new SDK is available. <rdar://problem/20150072>
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 && defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
+#if defined(HAVE_WEBKIT_DOC_PICKER_ICONS)
     return _UIImageGetWebKitTakePhotoOrVideoIcon();
 #else
     return nil;
@@ -139,11 +139,7 @@ static UIImage* fallbackIconForFile(NSURL *file)
     ASSERT_ARG(file, [file isFileURL]);
 
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
-    return thumbnailSizedImageForImage(((UIImage *)interactionController.icons[0]).CGImage);
-#else
     return thumbnailSizedImageForImage(interactionController.icons[0].CGImage);
-#endif
 }
 
 static UIImage* iconForImageFile(NSURL *file)

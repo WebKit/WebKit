@@ -42,9 +42,7 @@
 #import "IOKitSPI.h"
 
 @interface UIApplication ()
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
-#endif
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
 @end
 

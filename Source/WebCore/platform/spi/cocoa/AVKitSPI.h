@@ -74,12 +74,6 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 - (void)stopRoutingVideoToPictureInPicturePlayerLayerView;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
-@protocol AVPlayerViewControllerDelegate <NSObject>
-- (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler;
-@end
-#endif
-
 @protocol AVPlayerViewControllerDelegate_WebKitOnly <AVPlayerViewControllerDelegate>
 @optional
 typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
@@ -101,20 +95,10 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 - (void)startPictureInPicture;
 - (void)stopPictureInPicture;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
-@property (nonatomic) BOOL allowsPictureInPicturePlayback;
-@property (nonatomic, weak) id <AVPlayerViewControllerDelegate> delegate;
-#endif
 @property (nonatomic, strong) AVPlayerController *playerController;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
-#if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
-
-#import <AVKit/AVValueTiming.h>
-
-#else
 
 @interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
 @end
@@ -123,8 +107,6 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 + (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
 @property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
 @end
-
-#endif
 
 #endif // PLATFORM(IOS)
 

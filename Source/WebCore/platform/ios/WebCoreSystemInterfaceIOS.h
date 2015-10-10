@@ -33,9 +33,7 @@ typedef enum {
     wkIOSSystemVersion_4_2 = __IPHONE_4_2,
     wkIOSSystemVersion_5_0 = __IPHONE_5_0,
     wkIOSSystemVersion_6_0 = __IPHONE_6_0,
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     wkIOSSystemVersion_9_0 = __IPHONE_9_0,
-#endif
 } wkIOSSystemVersion;
 
 bool iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion);

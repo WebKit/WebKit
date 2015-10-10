@@ -44,11 +44,7 @@ WEBCORE_EXPORT NSString * const WAKWindowVisibilityDidChangeNotification = @"WAK
 using namespace WebCore;
 
 @protocol OrientationProvider
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000
 - (BOOL)hasLandscapeOrientation;
-#else
-- (int)orientation;
-#endif
 @end
 
 static WAKWindow *_WAKKeyWindow = nil;        // weak
@@ -621,12 +617,7 @@ static id<OrientationProvider> gOrientationProvider;
 + (BOOL)hasLandscapeOrientation
 {
     // this should be perfectly thread safe
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000
     return [gOrientationProvider hasLandscapeOrientation];
-#else
-    int orientation = [gOrientationProvider orientation];
-    return orientation == 90 || orientation == -90;
-#endif
 }
 
 - (CALayer*)hostLayer

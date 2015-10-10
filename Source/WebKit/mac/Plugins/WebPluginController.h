@@ -47,11 +47,7 @@
     NSMutableSet *_checksInProgress;
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
-+ (id)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)plugin;
-#else
 - (NSView *)plugInViewWithArguments:(NSDictionary *)arguments fromPluginPackage:(WebPluginPackage *)plugin;
-#endif
 + (BOOL)isPlugInView:(NSView *)view;
 
 - (id)initWithDocumentView:(NSView *)view;

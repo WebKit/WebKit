@@ -82,12 +82,8 @@ static RetainPtr<CTFontRef> getSystemFontFallbackForCharacters(CTFontRef font, c
 {
     // FIXME: Unify this with platformLookupFallbackFont()
     RetainPtr<CFStringRef> localeString;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 90000
     if (!locale.isNull())
         localeString = locale.string().createCFString();
-#else
-    UNUSED_PARAM(locale);
-#endif
 
     CFIndex coveredLength = 0;
     return adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, (const UTF16Char*)characters, (CFIndex)length, localeString.get(), &coveredLength));
@@ -99,17 +95,12 @@ RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight fontW
     if (length && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
         return getSystemFontFallbackForCharacters(font, locale, characters, length);
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     RetainPtr<CFStringRef> localeString;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     if (!locale.isNull())
         localeString = locale.string().createCFString();
 #endif
     RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(font, characters, length, localeString.get(), nullptr));
-#else
-    RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, nullptr));
-    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCopyFontDescriptor(fallbackFont.get()));
-#endif
     UChar32 c = *characters;
     if (length > 1 && U16_IS_LEAD(c) && U16_IS_TRAIL(characters[1]))
         c = U16_GET_SUPPLEMENTARY(c, characters[1]);

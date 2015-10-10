@@ -116,11 +116,7 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 {
     UIScreenEdgePanGestureRecognizer *recognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:target action:action];
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     bool isLTR = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[_gestureRecognizerView.get() semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight;
-#else
-    bool isLTR = true;
-#endif
 
     switch ([self directionForTransition:transition]) {
     case WebKit::ViewGestureController::SwipeDirection::Back:

@@ -87,7 +87,7 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
         WebCore::IntPoint location = positionForCGPoint(touchPoint.locationInDocumentCoordinates);
         WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase(touchPoint.phase);
         WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
-#if ENABLE(IOS_TOUCH_EVENTS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#if ENABLE(IOS_TOUCH_EVENTS)
         platformTouchPoint.setForce(touchPoint.force);
 #endif
         touchPointList.uncheckedAppend(platformTouchPoint);
@@ -102,7 +102,7 @@ NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
         event->timestamp,
         extractWebTouchPoint(event),
         positionForCGPoint(event->locationInDocumentCoordinates),
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 && defined UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP && UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP
+#if defined UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP && UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP
         event->isPotentialTap,
 #else
         true,

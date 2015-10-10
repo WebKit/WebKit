@@ -1,3 +1,16 @@
+2015-10-10  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove unnecessary iOS version checks
+        https://bugs.webkit.org/show_bug.cgi?id=150002
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[HIDEventGenerator _createIOHIDEventType:]):
+        (-[HIDEventGenerator _sendHIDEvent:]):
+        (-[HIDEventGenerator _sendMarkerHIDEventWithCompletionBlock:]):
+        * WebKitTestRunner/ios/UIKitSPI.h:
+
 2015-10-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unreviewed, rolling out r190689

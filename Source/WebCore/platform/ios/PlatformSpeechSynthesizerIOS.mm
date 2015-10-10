@@ -249,13 +249,8 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
     for (AVSpeechSynthesisVoice *voice in [AVSpeechSynthesisVoiceClass speechVoices]) {
         NSString *language = [voice language];
         bool isDefault = true;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
         NSString *voiceURI = [voice identifier];
         NSString *name = [voice name];
-#else
-        NSString *voiceURI = language;
-        NSString *name = language;
-#endif
         m_voiceList.append(PlatformSpeechSynthesisVoice::create(voiceURI, name, language, true, isDefault));
     }
     END_BLOCK_OBJC_EXCEPTIONS

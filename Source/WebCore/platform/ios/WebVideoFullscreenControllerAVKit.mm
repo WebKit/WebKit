@@ -46,7 +46,7 @@ SOFT_LINK_CLASS(UIKit, UIView)
 
 using namespace WebCore;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED <= 80200 || !HAVE(AVKIT)
+#if !HAVE(AVKIT)
 
 @implementation WebVideoFullscreenController
 - (void)setVideoElement:(WebCore::HTMLVideoElement*)videoElement
@@ -638,6 +638,6 @@ void WebVideoFullscreenControllerContext::requestHideAndExitFullscreen()
 
 @end
 
-#endif // __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
+#endif // !HAVE(AVKIT)
 
 #endif // PLATFORM(IOS)

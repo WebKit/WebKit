@@ -851,7 +851,7 @@ static bool shouldAllowDisplayAndRunningOfInsecureContent()
 
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#if PLATFORM(IOS)
     static bool shouldAllowPictureInPictureMediaPlayback = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
     return shouldAllowPictureInPictureMediaPlayback;
 #else

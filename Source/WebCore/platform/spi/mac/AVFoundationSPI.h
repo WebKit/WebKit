@@ -64,7 +64,7 @@
 
 #endif
 
-#if !HAVE(AVKIT) || !USE(APPLE_INTERNAL_SDK) || __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
+#if !HAVE(AVKIT) || !USE(APPLE_INTERNAL_SDK)
 
 @interface AVPlayerLayer (AVPlayerLayerPictureInPictureModeSupportPrivate)
 - (void)setPIPModeEnabled:(BOOL)flag;

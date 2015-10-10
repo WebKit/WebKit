@@ -72,7 +72,7 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << nsURLCacheDiskCapacity;
     encoder << httpProxy;
     encoder << httpsProxy;
-#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     IPC::encode(encoder, networkATSContext.get());
 #endif
 #endif
@@ -138,7 +138,7 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
     if (!decoder.decode(result.httpsProxy))
         return false;
-#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
 #endif

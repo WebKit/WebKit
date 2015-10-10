@@ -1183,18 +1183,6 @@ public:
 
 @implementation WebPreferences (WebPrivate)
 
-#if PLATFORM(IOS) && !(__IPHONE_OS_VERSION_MIN_REQUIRED >= 60000)
-- (void) setWebInspectorServerEnabled:(BOOL)flag
-{
-}
-#endif
-
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
-- (void)_setAllowCompositingLayerVisualDegradation:(BOOL)flag
-{
-}
-#endif
-
 - (BOOL)isDNSPrefetchingEnabled
 {
     return [self _boolValueForKey:WebKitDNSPrefetchingEnabledPreferenceKey];

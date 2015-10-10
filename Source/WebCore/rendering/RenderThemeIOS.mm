@@ -1093,11 +1093,9 @@ FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID v
     static NeverDestroyed<FontCascadeDescription> shortFootnoteFont;
     static NeverDestroyed<FontCascadeDescription> shortCaption1Font;
     static NeverDestroyed<FontCascadeDescription> tallBodyFont;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
     static NeverDestroyed<FontCascadeDescription> title1Font;
     static NeverDestroyed<FontCascadeDescription> title2Font;
     static NeverDestroyed<FontCascadeDescription> title3Font;
-#endif
 
     static CFStringRef userTextSize = contentSizeCategory();
 
@@ -1123,14 +1121,12 @@ FontCascadeDescription& RenderThemeIOS::cachedSystemFontDescription(CSSValueID v
         return headlineFont;
     case CSSValueAppleSystemBody:
         return bodyFont;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
     case CSSValueAppleSystemTitle1:
         return title1Font;
     case CSSValueAppleSystemTitle2:
         return title2Font;
     case CSSValueAppleSystemTitle3:
         return title3Font;
-#endif
     case CSSValueAppleSystemSubheadline:
         return subheadlineFont;
     case CSSValueAppleSystemFootnote:
@@ -1171,7 +1167,6 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
         textStyle = kCTUIFontTextStyleBody;
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
         break;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     case CSSValueAppleSystemTitle1:
         textStyle = kCTUIFontTextStyleTitle1;
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
@@ -1184,7 +1179,6 @@ void RenderThemeIOS::updateCachedSystemFontDescription(CSSValueID valueID, FontC
         textStyle = kCTUIFontTextStyleTitle3;
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));
         break;
-#endif
     case CSSValueAppleSystemSubheadline:
         textStyle = kCTUIFontTextStyleSubhead;
         fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, contentSizeCategory(), 0));

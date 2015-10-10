@@ -67,7 +67,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000 || !HAVE(AVKIT)
+#if !HAVE(AVKIT)
 
 RefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy&)
 {

@@ -215,14 +215,11 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 @protocol UISelectionInteractionAssistant;
 #if HAVE(LINK_PREVIEW)
 @interface UIPreviewItemController (StagingToRemove)
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
 @end
-#endif
-
 #endif
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
@@ -342,9 +339,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _longPressGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_longPressRecognized:)]);
     [_longPressGestureRecognizer setDelay:tapAndHoldDelay];
     [_longPressGestureRecognizer setDelegate:self];
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     [_longPressGestureRecognizer _setRequiresQuietImpulse:YES];
-#endif
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
 #if HAVE(LINK_PREVIEW)
@@ -1271,11 +1266,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (_formAccessoryView)
         return;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:self.inputAssistantItem]);
-#else
-    _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
-#endif
     [_formAccessoryView setDelegate:self];
 }
 
@@ -2563,14 +2554,12 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _webSelectionAssistant.get();
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
 - (id<UISelectionInteractionAssistant>)selectionInteractionAssistant
 {
     if ([_webSelectionAssistant conformsToProtocol:@protocol(UISelectionInteractionAssistant)])
         return (id<UISelectionInteractionAssistant>)_webSelectionAssistant.get();
     return nil;
 }
-#endif
 
 // NSRange support.  Would like to deprecate to the extent possible, although some support
 // (i.e. selectionRange) has shipped as API.

@@ -243,7 +243,7 @@ class WebKit2PlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
 WebKit2PlatformTouchPoint(const WebPlatformTouchPoint& webTouchPoint)
     : PlatformTouchPoint(webTouchPoint.identifier(), webTouchPoint.location(), touchEventType(webTouchPoint)
-#if ENABLE(IOS_TOUCH_EVENTS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#if ENABLE(IOS_TOUCH_EVENTS)
     , webTouchPoint.force()
 #endif
     )

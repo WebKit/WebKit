@@ -1,5 +1,27 @@
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
+        [iOS] Remove unnecessary iOS version checks
+        https://bugs.webkit.org/show_bug.cgi?id=150002
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Plugins/WebPluginController.h:
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (+[WebPluginController addPlugInView:]):
+        (+[WebPluginController plugInViewWithArguments:fromPluginPackage:]): Deleted.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (pluginView):
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences isDNSPrefetchingEnabled]):
+        (-[WebPreferences setWebInspectorServerEnabled:]): Deleted.
+        (-[WebPreferences _setAllowCompositingLayerVisualDegradation:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback):
+
+2015-10-10  Dan Bernstein  <mitz@apple.com>
+
         [iOS] Remove project support for iOS 8
         https://bugs.webkit.org/show_bug.cgi?id=149993
 

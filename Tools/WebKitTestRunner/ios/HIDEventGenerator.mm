@@ -205,7 +205,6 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         IOHIDEventAppendEvent(eventRef.get(), subEvent.get(), 0);
     }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
     if (_activePointCount) {
         IOHIDFloat progress = _activePoints[0].pathPressure;
         RetainPtr<IOHIDEventRef> forceEvent = adoptCF(IOHIDEventCreateForceEvent(kCFAllocatorDefault,
@@ -217,7 +216,6 @@ static void delayBetweenMove(int eventIndex, double elapsed)
             kIOHIDEventOptionNone));
         IOHIDEventAppendEvent(eventRef.get(), forceEvent.get(), 0);
     }
-#endif
 
     return eventRef.leakRef();
 }
@@ -233,9 +231,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
             uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextID, false, false, NULL, 0, 0);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
             [[UIApplication sharedApplication] _enqueueHIDEvent:strongEvent.get()];
-#endif
         });
     }
     return YES;
@@ -263,9 +259,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
             uint32_t contextID = [UIApplication sharedApplication].keyWindow._contextId;
             ASSERT(contextID);
             BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextID, false, false, NULL, 0, 0);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
             [[UIApplication sharedApplication] _enqueueHIDEvent:markerEvent.get()];
-#endif
         });
     }
     return YES;
