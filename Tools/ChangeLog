@@ -1,3 +1,9 @@
+2015-10-11  Jinyoung Hur  <hur.ims@navercorp.com>
+
+        Unreviewed. Add Jinyoung Hur as a committer. 
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove unnecessary iOS version checks

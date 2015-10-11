@@ -1397,6 +1397,15 @@
             "jpu@apple.com"
          ]
       },
+      "Jinyoung Hur" : {
+         "emails" : [
+            "hur.ims@navercorp.com"
+         ],
+         "expertise" : "The WinCairo Port, WebGL, Canvas, Accelerated Compositing",
+         "nicks" : [
+            "jyhur"
+         ]
+      },
       "Jinwoo Song" : {
          "emails" : [
             "jinwoo7.song@samsung.com",
