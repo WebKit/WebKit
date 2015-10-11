@@ -1,3 +1,25 @@
+2015-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ES6 classes: When a class extends B, super() invokes B.prototype.constructor() instead of B()
+        https://bugs.webkit.org/show_bug.cgi?id=149001
+
+        Reviewed by Saam Barati.
+
+        This patch matches the `super()` call in the constructor to the latest spec.
+        Before this patch, when calling `super()`, it loads `callee.[[HomeObject]].__proto__.constructor`
+        as a super constructor. But after this patch, it loads `callee.__proto__` as a super constructor.
+        This behavior corresponds to the section 12.3.5.2[1].
+
+        [1]: http://www.ecma-international.org/ecma-262/6.0/#sec-getsuperconstructor
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::SuperNode::emitBytecode):
+        * tests/stress/super-call-does-not-look-up-constructor.js: Added.
+        (shouldBe):
+        (B):
+        (C):
+        (B.prototype):
+
 2015-10-10  Andreas Kling  <akling@apple.com>
 
         Reduce pointless malloc traffic in CodeBlock construction.

@@ -116,7 +116,7 @@ shouldThrow('new (class extends undefined { constructor () { this } })', '"TypeE
 shouldThrow('x = undefined; new (class extends x { constructor () { super(); } })', '"TypeError: The superclass is not an object."');
 shouldBeTrue ('class x {}; new (class extends null { constructor () { return new x; } }) instanceof x');
 shouldThrow('new (class extends null { constructor () { this; } })', '"ReferenceError: Cannot access uninitialized variable."');
-shouldThrow('new (class extends null { constructor () { super(); } })', '"TypeError: undefined is not an object (evaluating \'super()\')"');
+shouldThrow('new (class extends null { constructor () { super(); } })', '"TypeError: function is not a constructor (evaluating \'super()\')"');
 shouldBe('x = {}; new (class extends null { constructor () { return x } })', 'x');
 shouldThrow('y = 12; new (class extends null { constructor () { return y; } })', '"TypeError: Cannot return a non-object type in the constructor of a derived class."');
 shouldBeTrue ('class x {}; new (class extends null { constructor () { return new x; } }) instanceof x');

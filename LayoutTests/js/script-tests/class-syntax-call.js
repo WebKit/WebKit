@@ -37,7 +37,7 @@ shouldNotThrow('new B');
 shouldThrow('B()', '"TypeError: Cannot call a class constructor"');
 shouldNotThrow('new (class { constructor() {} })()');
 shouldThrow('(class { constructor() {} })()', '"TypeError: Cannot call a class constructor"');
-shouldThrow('new (class extends null { constructor() { super() } })()', '"TypeError: undefined is not an object (evaluating \'super()\')"');
+shouldThrow('new (class extends null { constructor() { super() } })()', '"TypeError: function is not a constructor (evaluating \'super()\')"');
 shouldThrow('(class extends null { constructor() { super() } })()', '"TypeError: Cannot call a class constructor"');
 
 var successfullyParsed = true;

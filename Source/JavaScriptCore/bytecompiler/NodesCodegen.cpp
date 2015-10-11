@@ -167,9 +167,7 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     RegisterID callee;
     callee.setIndex(JSStack::Callee);
 
-    RefPtr<RegisterID> homeObject = generator.emitGetById(generator.newTemporary(), &callee, generator.propertyNames().homeObjectPrivateName);
-    RefPtr<RegisterID> protoParent = generator.emitGetById(generator.newTemporary(), homeObject.get(), generator.propertyNames().underscoreProto);
-    return generator.emitGetById(generator.finalDestination(dst), protoParent.get(), generator.propertyNames().constructor);
+    return generator.emitGetById(generator.finalDestination(dst), &callee, generator.propertyNames().underscoreProto);
 }
 
 static RegisterID* emitSuperBaseForCallee(BytecodeGenerator& generator)

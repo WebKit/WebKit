@@ -9,7 +9,7 @@ PASS new B
 PASS B():::"TypeError: Cannot call a class constructor"
 PASS new (class { constructor() {} })()
 PASS (class { constructor() {} })():::"TypeError: Cannot call a class constructor"
-PASS new (class extends null { constructor() { super() } })():::"TypeError: undefined is not an object (evaluating 'super()')"
+PASS new (class extends null { constructor() { super() } })():::"TypeError: function is not a constructor (evaluating 'super()')"
 PASS (class extends null { constructor() { super() } })():::"TypeError: Cannot call a class constructor"
 PASS successfullyParsed is true
 
