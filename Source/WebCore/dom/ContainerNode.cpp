@@ -37,7 +37,6 @@
 #include "HTMLOptionsCollection.h"
 #include "HTMLTableRowsCollection.h"
 #include "InlineTextBox.h"
-#include "InsertionPoint.h"
 #include "JSLazyEventListener.h"
 #include "JSNode.h"
 #include "LabelsNodeList.h"

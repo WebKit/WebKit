@@ -1843,9 +1843,7 @@ set(WebCore_SOURCES
     html/parser/XSSAuditorDelegate.cpp
 
     html/shadow/AutoFillButtonElement.cpp
-    html/shadow/ContentDistributor.cpp
     html/shadow/DetailsMarkerControl.cpp
-    html/shadow/InsertionPoint.cpp
     html/shadow/MediaControlElementTypes.cpp
     html/shadow/MediaControlElements.cpp
     html/shadow/MediaControls.cpp

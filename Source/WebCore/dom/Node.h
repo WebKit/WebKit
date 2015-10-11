@@ -257,7 +257,6 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
-    virtual bool isInsertionPointNode() const { return false; }
 #if ENABLE(SERVICE_CONTROLS)
     virtual bool isImageControlsRootElement() const { return false; }
     virtual bool isImageControlsButtonElement() const { return false; }
@@ -267,9 +266,6 @@ public:
     bool isTreeScope() const;
     bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
     bool isShadowRoot() const { return isDocumentFragment() && isTreeScope(); }
-    bool isInsertionPoint() const { return getFlag(NeedsNodeRenderingTraversalSlowPathFlag) && isInsertionPointNode(); }
-    // Returns Node rather than InsertionPoint. Should be used only for language bindings.
-    Node* insertionParentForBinding() const;
 
     bool needsNodeRenderingTraversalSlowPath() const;
 
@@ -655,7 +651,6 @@ protected:
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag | HasCustomStyleResolveCallbacksFlag,
         CreateDocument = CreateContainer | InDocumentFlag,
-        CreateInsertionPoint = CreateHTMLElement | NeedsNodeRenderingTraversalSlowPathFlag,
         CreateEditingText = CreateText | IsEditingTextFlag,
         CreateMathMLElement = CreateStyledElement | IsMathMLFlag
     };

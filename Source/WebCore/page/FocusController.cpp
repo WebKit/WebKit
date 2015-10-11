@@ -496,10 +496,8 @@ Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node*
 
 Element* FocusController::previousFocusableElement(FocusNavigationScope scope, Node* start, KeyboardEvent* event)
 {
-    using namespace NodeRenderingTraversal;
-
     Node* last = nullptr;
-    for (Node* node = scope.rootNode(); node; node = lastChildInScope(node))
+    for (Node* node = scope.rootNode(); node; node = NodeRenderingTraversal::lastChildInScope(node))
         last = node;
     ASSERT(last);
 
@@ -508,7 +506,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
     Node* startingNode;
     int startingTabIndex;
     if (start) {
-        startingNode = previousInScope(start);
+        startingNode = NodeRenderingTraversal::previousInScope(start);
         startingTabIndex = adjustedTabIndex(*start, *event);
     } else {
         startingNode = last;
@@ -517,7 +515,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
 
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
-        for (Node* node = startingNode; node; node = previousInScope(node)) {
+        for (Node* node = startingNode; node; node = NodeRenderingTraversal::previousInScope(node)) {
             if (!is<Element>(*node))
                 continue;
             Element& element = downcast<Element>(*node);

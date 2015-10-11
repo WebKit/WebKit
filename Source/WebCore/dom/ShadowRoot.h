@@ -37,11 +37,10 @@
 namespace WebCore {
 
 class AuthorStyleSheets;
-class ContentDistributor;
 class HTMLSlotElement;
 class SlotAssignment;
 
-class ShadowRoot : public DocumentFragment, public TreeScope {
+class ShadowRoot final : public DocumentFragment, public TreeScope {
 public:
     enum class Type : uint8_t {
         UserAgent = 0,
@@ -85,8 +84,6 @@ public:
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
     virtual void removeAllEventListeners() override;
-
-    virtual ContentDistributor* distributor() { return nullptr; }
 
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     HTMLSlotElement* findAssignedSlot(const Node&);

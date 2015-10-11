@@ -45,7 +45,6 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
-#include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"

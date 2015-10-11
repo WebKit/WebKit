@@ -46,7 +46,6 @@
 #include "HTMLImageElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
-#include "InsertionPoint.h"
 #include "InspectorController.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
@@ -1131,11 +1130,6 @@ Element* Node::parentOrShadowHostElement() const
         return nullptr;
 
     return downcast<Element>(parent);
-}
-
-Node* Node::insertionParentForBinding() const
-{
-    return findInsertionPointOf(this);
 }
 
 Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPoint)

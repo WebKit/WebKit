@@ -30,6 +30,7 @@
 
 #include "ElementChildIterator.h"
 #include "HTMLNames.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 

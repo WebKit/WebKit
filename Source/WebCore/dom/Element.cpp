@@ -55,7 +55,6 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTemplateElement.h"
 #include "IdTargetObserverRegistry.h"
-#include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
@@ -1622,9 +1621,7 @@ ShadowRoot* Element::shadowRoot() const
 
 static bool shouldUseNodeRenderingTraversalSlowPath(const Element& element)
 {
-    if (element.isShadowRoot())
-        return true;
-    return element.isInsertionPoint() || element.shadowRoot();
+    return element.isShadowRoot() || element.shadowRoot();
 }
 
 void Element::resetNeedsNodeRenderingTraversalSlowPath()
