@@ -34,26 +34,26 @@ class SVGPathSegList;
 
 // String/SVGPathByteStream -> Path
 bool buildPathFromString(const String&, Path&);
-bool buildPathFromByteStream(SVGPathByteStream*, Path&);
+bool buildPathFromByteStream(const SVGPathByteStream&, Path&);
 
 // SVGPathSegList/String -> SVGPathByteStream
-bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream*, PathParsingMode);
-bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&&, SVGPathByteStream*, PathParsingMode);
-bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream*, PathParsingMode);
+bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream& result, PathParsingMode);
+bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&&, SVGPathByteStream&, PathParsingMode);
+bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream&, PathParsingMode);
 
 // SVGPathByteStream/SVGPathSegList -> String
-bool buildStringFromByteStream(SVGPathByteStream*, String&, PathParsingMode);
+bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode);
 bool buildStringFromSVGPathSegList(const SVGPathSegList&, String&, PathParsingMode);
 
 // SVGPathByteStream -> SVGPathSegList
-bool buildSVGPathSegListFromByteStream(SVGPathByteStream*, SVGPathElement*, SVGPathSegList&, PathParsingMode);
+bool buildSVGPathSegListFromByteStream(const SVGPathByteStream&, SVGPathElement&, SVGPathSegList&, PathParsingMode);
 
-bool buildAnimatedSVGPathByteStream(SVGPathByteStream*, SVGPathByteStream*, SVGPathByteStream*, float);
-bool addToSVGPathByteStream(SVGPathByteStream*, SVGPathByteStream*, unsigned repeatCount = 1);
+bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& from, const SVGPathByteStream& to, SVGPathByteStream& result, float progress);
+bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathByteStream& from, unsigned repeatCount = 1);
 
-bool getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream*, float length, unsigned& pathSeg);
-bool getTotalLengthOfSVGPathByteStream(SVGPathByteStream*, float& totalLength);
-bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream*, float length, SVGPoint&);
+bool getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream&, float length, unsigned& pathSeg);
+bool getTotalLengthOfSVGPathByteStream(const SVGPathByteStream&, float& totalLength);
+bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream&, float length, SVGPoint&);
 
 // Path -> String
 WEBCORE_EXPORT bool buildStringFromPath(const Path&, String&);

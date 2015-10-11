@@ -80,7 +80,6 @@ END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
-    , m_pathByteStream(std::make_unique<SVGPathByteStream>())
     , m_pathSegList(PathSegUnalteredRole)
     , m_isAnimValObserved(false)
 {
@@ -93,21 +92,21 @@ Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGPathElement(tagName, document));
 }
 
-float SVGPathElement::getTotalLength()
+float SVGPathElement::getTotalLength() const
 {
     float totalLength = 0;
     getTotalLengthOfSVGPathByteStream(pathByteStream(), totalLength);
     return totalLength;
 }
 
-SVGPoint SVGPathElement::getPointAtLength(float length)
+SVGPoint SVGPathElement::getPointAtLength(float length) const
 {
     SVGPoint point;
     getPointAtLengthOfSVGPathByteStream(pathByteStream(), length, point);
     return point;
 }
 
-unsigned SVGPathElement::getPathSegAtLength(float length)
+unsigned SVGPathElement::getPathSegAtLength(float length) const
 {
     unsigned pathSeg = 0;
     getSVGPathSegAtLengthFromSVGPathByteStream(pathByteStream(), length, pathSeg);
@@ -224,7 +223,7 @@ bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::dAttr) {
-        if (!buildSVGPathByteStreamFromString(value, m_pathByteStream.get(), UnalteredParsing))
+        if (!buildSVGPathByteStreamFromString(value, m_pathByteStream, UnalteredParsing))
             document().accessSVGExtensions().reportError("Problem parsing d=\"" + value + "\"");
         return;
     }
@@ -254,7 +253,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::dAttr) {
         if (m_pathSegList.shouldSynchronize && !SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo())->isAnimating()) {
             SVGPathSegList newList(PathSegUnalteredRole);
-            buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);
+            buildSVGPathSegListFromByteStream(m_pathByteStream, *this, newList, UnalteredParsing);
             m_pathSegList.value = newList;
         }
 
@@ -293,12 +292,17 @@ void SVGPathElement::removedFrom(ContainerNode& rootParent)
     invalidateMPathDependencies();
 }
 
-SVGPathByteStream* SVGPathElement::pathByteStream() const
+const SVGPathByteStream& SVGPathElement::pathByteStream() const
 {
     SVGAnimatedProperty* property = SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo());
     if (!property || !property->isAnimating())
-        return m_pathByteStream.get();
-    return static_cast<SVGAnimatedPathSegListPropertyTearOff*>(property)->animatedPathByteStream();
+        return m_pathByteStream;
+    
+    SVGPathByteStream* animatedPathByteStream = static_cast<SVGAnimatedPathSegListPropertyTearOff*>(property)->animatedPathByteStream();
+    if (!animatedPathByteStream)
+        return m_pathByteStream;
+
+    return *animatedPathByteStream;
 }
 
 Ref<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
@@ -310,7 +314,7 @@ Ref<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* cont
         return *property;
 
     // Build initial SVGPathSegList.
-    buildSVGPathSegListFromByteStream(ownerType.m_pathByteStream.get(), &ownerType, ownerType.m_pathSegList.value, UnalteredParsing);
+    buildSVGPathSegListFromByteStream(ownerType.m_pathByteStream, ownerType, ownerType.m_pathSegList.value, UnalteredParsing);
 
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, SVGPathSegList>
         (&ownerType, dPropertyInfo(), ownerType.m_pathSegList.value);
@@ -359,9 +363,9 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification li
     case PathSegUnalteredRole:
         if (listModification == ListModificationAppend) {
             ASSERT(!m_pathSegList.value.isEmpty());
-            appendSVGPathByteStreamFromSVGPathSeg(m_pathSegList.value.last().copyRef(), m_pathByteStream.get(), UnalteredParsing);
+            appendSVGPathByteStreamFromSVGPathSeg(m_pathSegList.value.last().copyRef(), m_pathByteStream, UnalteredParsing);
         } else
-            buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream.get(), UnalteredParsing);
+            buildSVGPathByteStreamFromSVGPathSegList(m_pathSegList.value, m_pathByteStream, UnalteredParsing);
         break;
     case PathSegUndefinedRole:
         return;

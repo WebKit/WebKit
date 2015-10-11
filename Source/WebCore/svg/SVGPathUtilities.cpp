@@ -37,76 +37,60 @@
 
 namespace WebCore {
 
-static SVGPathBuilder* globalSVGPathBuilder(Path& result)
+// FIXME: are all these globals warranted? Why not just make them on the stack?
+static SVGPathBuilder& globalSVGPathBuilder(Path& result)
 {
-    static SVGPathBuilder* s_builder = nullptr;
-    if (!s_builder)
-        s_builder = new SVGPathBuilder;
-
-    s_builder->setCurrentPath(&result);
-    return s_builder;
+    static NeverDestroyed<SVGPathBuilder> s_builder;
+    s_builder.get().setCurrentPath(&result);
+    return s_builder.get();
 }
 
-static SVGPathSegListBuilder* globalSVGPathSegListBuilder(SVGPathElement* element, SVGPathSegRole role, SVGPathSegList& result)
+static SVGPathSegListBuilder& globalSVGPathSegListBuilder(SVGPathElement& element, SVGPathSegRole role, SVGPathSegList& result)
 {
-    static SVGPathSegListBuilder* s_builder = nullptr;
-    if (!s_builder)
-        s_builder = new SVGPathSegListBuilder;
+    static NeverDestroyed<SVGPathSegListBuilder> s_builder;
 
-    s_builder->setCurrentSVGPathElement(element);
-    s_builder->setCurrentSVGPathSegList(result);
-    s_builder->setCurrentSVGPathSegRole(role);
-    return s_builder;
+    s_builder.get().setCurrentSVGPathElement(&element);
+    s_builder.get().setCurrentSVGPathSegList(result);
+    s_builder.get().setCurrentSVGPathSegRole(role);
+    return s_builder.get();
 }
 
-static SVGPathByteStreamBuilder* globalSVGPathByteStreamBuilder(SVGPathByteStream* result)
+static SVGPathByteStreamBuilder& globalSVGPathByteStreamBuilder(SVGPathByteStream& result)
 {
-    static SVGPathByteStreamBuilder* s_builder = nullptr;
-    if (!s_builder)
-        s_builder = new SVGPathByteStreamBuilder;
-
-    s_builder->setCurrentByteStream(result);
-    return s_builder;
+    static NeverDestroyed<SVGPathByteStreamBuilder> s_builder;
+    s_builder.get().setCurrentByteStream(&result);
+    return s_builder.get();
 }
 
-static SVGPathStringBuilder* globalSVGPathStringBuilder()
+static SVGPathStringBuilder& globalSVGPathStringBuilder()
 {
-    static SVGPathStringBuilder* s_builder = nullptr;
-    if (!s_builder)
-        s_builder = new SVGPathStringBuilder;
-
-    return s_builder;
+    static NeverDestroyed<SVGPathStringBuilder> s_builder;
+    return s_builder.get();
 }
 
-static SVGPathTraversalStateBuilder* globalSVGPathTraversalStateBuilder(PathTraversalState& traversalState, float length)
+static SVGPathTraversalStateBuilder& globalSVGPathTraversalStateBuilder(PathTraversalState& traversalState, float length)
 {
-    static SVGPathTraversalStateBuilder* s_builder = nullptr;
-    if (!s_builder)
-        s_builder = new SVGPathTraversalStateBuilder;
+    static NeverDestroyed<SVGPathTraversalStateBuilder> s_parser;
 
-    s_builder->setCurrentTraversalState(&traversalState);
-    s_builder->setDesiredLength(length);
-    return s_builder;
+    s_parser.get().setCurrentTraversalState(&traversalState);
+    s_parser.get().setDesiredLength(length);
+    return s_parser.get();
 }
 
-static SVGPathParser* globalSVGPathParser(SVGPathSource* source, SVGPathConsumer* consumer)
+// FIXME: why bother keeping a singleton around? Is it slow to allocate?
+static SVGPathParser& globalSVGPathParser(SVGPathSource& source, SVGPathConsumer& consumer)
 {
-    static SVGPathParser* s_parser = nullptr;
-    if (!s_parser)
-        s_parser = new SVGPathParser;
+    static NeverDestroyed<SVGPathParser> s_parser;
 
-    s_parser->setCurrentSource(source);
-    s_parser->setCurrentConsumer(consumer);
-    return s_parser;
+    s_parser.get().setCurrentSource(&source);
+    s_parser.get().setCurrentConsumer(&consumer);
+    return s_parser.get();
 }
 
-static SVGPathBlender* globalSVGPathBlender()
+static SVGPathBlender& globalSVGPathBlender()
 {
-    static SVGPathBlender* s_blender = nullptr;
-    if (!s_blender)
-        s_blender = new SVGPathBlender;
-
-    return s_blender;
+    static NeverDestroyed<SVGPathBlender> s_blender;
+    return s_blender.get();
 }
 
 bool buildPathFromString(const String& d, Path& result)
@@ -114,96 +98,91 @@ bool buildPathFromString(const String& d, Path& result)
     if (d.isEmpty())
         return true;
 
-    SVGPathBuilder* builder = globalSVGPathBuilder(result);
+    SVGPathBuilder& builder = globalSVGPathBuilder(result);
 
-    auto source = std::make_unique<SVGPathStringSource>(d);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
-    parser->cleanup();
+    SVGPathStringSource source(d);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(NormalizedParsing);
+    parser.cleanup();
     return ok;
 }
 
-bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPathByteStream* result, PathParsingMode parsingMode)
+bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
-    ASSERT(result);
-    result->clear();
+    result.clear();
     if (list.isEmpty())
         return true;
 
-    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
+    SVGPathByteStreamBuilder& builder = globalSVGPathByteStreamBuilder(result);
 
-    auto source = std::make_unique<SVGPathSegListSource>(list);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(parsingMode);
-    parser->cleanup();
+    SVGPathSegListSource source(list);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(parsingMode);
+    parser.cleanup();
     return ok;
 }
 
-bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&& pathSeg, SVGPathByteStream* result, PathParsingMode parsingMode)
+bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&& pathSeg, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
-    ASSERT(result);
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
     ASSERT(parsingMode == UnalteredParsing);
 
     SVGPathSegList appendedItemList(PathSegUnalteredRole);
     appendedItemList.append(WTF::move(pathSeg));
-    auto appendedByteStream = std::make_unique<SVGPathByteStream>();
 
-    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(appendedByteStream.get());
-    auto source = std::make_unique<SVGPathSegListSource>(appendedItemList);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(parsingMode, false);
-    parser->cleanup();
+    SVGPathByteStream appendedByteStream;
+    SVGPathByteStreamBuilder& builder = globalSVGPathByteStreamBuilder(appendedByteStream);
+    SVGPathSegListSource source(appendedItemList);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(parsingMode, false);
+    parser.cleanup();
 
     if (ok)
-        result->append(*appendedByteStream);
+        result.append(appendedByteStream);
 
     return ok;
 }
 
-bool buildPathFromByteStream(SVGPathByteStream* stream, Path& result)
+bool buildPathFromByteStream(const SVGPathByteStream& stream, Path& result)
 {
-    ASSERT(stream);
-    if (stream->isEmpty())
+    if (stream.isEmpty())
         return true;
 
-    SVGPathBuilder* builder = globalSVGPathBuilder(result);
+    SVGPathBuilder& builder = globalSVGPathBuilder(result);
 
-    auto source = std::make_unique<SVGPathByteStreamSource>(stream);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
-    parser->cleanup();
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(NormalizedParsing);
+    parser.cleanup();
     return ok;
 }
 
-bool buildSVGPathSegListFromByteStream(SVGPathByteStream* stream, SVGPathElement* element, SVGPathSegList& result, PathParsingMode parsingMode)
+bool buildSVGPathSegListFromByteStream(const SVGPathByteStream& stream, SVGPathElement& element, SVGPathSegList& result, PathParsingMode parsingMode)
 {
-    ASSERT(stream);
-    if (stream->isEmpty())
+    if (stream.isEmpty())
         return true;
 
-    SVGPathSegListBuilder* builder = globalSVGPathSegListBuilder(element, parsingMode == NormalizedParsing ? PathSegNormalizedRole : PathSegUnalteredRole, result);
+    SVGPathSegListBuilder& builder = globalSVGPathSegListBuilder(element, parsingMode == NormalizedParsing ? PathSegNormalizedRole : PathSegUnalteredRole, result);
 
-    auto source = std::make_unique<SVGPathByteStreamSource>(stream);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(parsingMode);
-    parser->cleanup();
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(parsingMode);
+    parser.cleanup();
     return ok;
 }
 
-bool buildStringFromByteStream(SVGPathByteStream* stream, String& result, PathParsingMode parsingMode)
+bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, PathParsingMode parsingMode)
 {
-    ASSERT(stream);
-    if (stream->isEmpty())
+    if (stream.isEmpty())
         return true;
 
-    SVGPathStringBuilder* builder = globalSVGPathStringBuilder();
+    SVGPathStringBuilder& builder = globalSVGPathStringBuilder();
 
-    auto source = std::make_unique<SVGPathByteStreamSource>(stream);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(parsingMode);
-    result = builder->result();
-    parser->cleanup();
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(parsingMode);
+    result = builder.result();
+    parser.cleanup();
     return ok;
 }
 
@@ -213,121 +192,113 @@ bool buildStringFromSVGPathSegList(const SVGPathSegList& list, String& result, P
     if (list.isEmpty())
         return true;
 
-    SVGPathStringBuilder* builder = globalSVGPathStringBuilder();
+    SVGPathStringBuilder& builder = globalSVGPathStringBuilder();
 
-    auto source = std::make_unique<SVGPathSegListSource>(list);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(parsingMode);
-    result = builder->result();
-    parser->cleanup();
+    SVGPathSegListSource source(list);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(parsingMode);
+    result = builder.result();
+    parser.cleanup();
     return ok;
 }
 
-bool buildSVGPathByteStreamFromString(const String& d, SVGPathByteStream* result, PathParsingMode parsingMode)
+bool buildSVGPathByteStreamFromString(const String& d, SVGPathByteStream& result, PathParsingMode parsingMode)
 {
-    ASSERT(result);
-    result->clear();
+    result.clear();
     if (d.isEmpty())
         return true;
 
-    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
+    SVGPathByteStreamBuilder& builder = globalSVGPathByteStreamBuilder(result);
 
-    auto source = std::make_unique<SVGPathStringSource>(d);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(parsingMode);
-    parser->cleanup();
+    SVGPathStringSource source(d);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(parsingMode);
+    parser.cleanup();
     return ok;
 }
 
-bool buildAnimatedSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteStream* toStream, SVGPathByteStream* result, float progress)
+bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& fromStream, const SVGPathByteStream& toStream, SVGPathByteStream& result, float progress)
 {
-    ASSERT(fromStream);
-    ASSERT(toStream);
-    ASSERT(result);
-    ASSERT(toStream != result);
-
-    result->clear();
-    if (toStream->isEmpty())
+    ASSERT(&toStream != &result);
+    result.clear();
+    if (toStream.isEmpty())
         return true;
 
-    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
+    SVGPathByteStreamBuilder& builder = globalSVGPathByteStreamBuilder(result);
 
-    auto fromSource = std::make_unique<SVGPathByteStreamSource>(fromStream);
-    auto toSource = std::make_unique<SVGPathByteStreamSource>(toStream);
-    SVGPathBlender* blender = globalSVGPathBlender();
-    bool ok = blender->blendAnimatedPath(progress, fromSource.get(), toSource.get(), builder);
-    blender->cleanup();
+    SVGPathByteStreamSource fromSource(fromStream);
+    SVGPathByteStreamSource toSource(toStream);
+    SVGPathBlender& blender = globalSVGPathBlender();
+    bool ok = blender.blendAnimatedPath(progress, &fromSource, &toSource, &builder);
+    blender.cleanup();
     return ok;
 }
 
-bool addToSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteStream* byStream, unsigned repeatCount)
+bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathByteStream& byStream, unsigned repeatCount)
 {
-    ASSERT(fromStream);
-    ASSERT(byStream);
-    if (fromStream->isEmpty() || byStream->isEmpty())
+    // Why return when streamToAppendTo is empty? Don't we still need to append?
+    if (streamToAppendTo.isEmpty() || byStream.isEmpty())
         return true;
 
-    SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(fromStream);
+    // Is it OK to make the SVGPathByteStreamBuilder from a stream, and then clear that stream?
+    SVGPathByteStreamBuilder& builder = globalSVGPathByteStreamBuilder(streamToAppendTo);
 
-    auto fromStreamCopy = fromStream->copy();
-    fromStream->clear();
+    SVGPathByteStream fromStreamCopy = streamToAppendTo;
+    streamToAppendTo.clear();
 
-    auto fromSource = std::make_unique<SVGPathByteStreamSource>(fromStreamCopy.get());
-    auto bySource = std::make_unique<SVGPathByteStreamSource>(byStream);
-    SVGPathBlender* blender = globalSVGPathBlender();
-    bool ok = blender->addAnimatedPath(fromSource.get(), bySource.get(), builder, repeatCount);
-    blender->cleanup();
+    SVGPathByteStreamSource fromSource(fromStreamCopy);
+    SVGPathByteStreamSource bySource(byStream);
+    SVGPathBlender& blender = globalSVGPathBlender();
+    bool ok = blender.addAnimatedPath(&fromSource, &bySource, &builder, repeatCount);
+    blender.cleanup();
     return ok;
 }
 
-bool getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream* stream, float length, unsigned& pathSeg)
+bool getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream& stream, float length, unsigned& pathSeg)
 {
-    ASSERT(stream);
-    if (stream->isEmpty())
+    if (stream.isEmpty())
         return false;
 
     PathTraversalState traversalState(PathTraversalState::Action::SegmentAtLength);
-    SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, length);
+    SVGPathTraversalStateBuilder& builder = globalSVGPathTraversalStateBuilder(traversalState, length);
 
-    auto source = std::make_unique<SVGPathByteStreamSource>(stream);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
-    pathSeg = builder->pathSegmentIndex();
-    parser->cleanup();
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(NormalizedParsing);
+    pathSeg = builder.pathSegmentIndex();
+    parser.cleanup();
     return ok;
 }
 
-bool getTotalLengthOfSVGPathByteStream(SVGPathByteStream* stream, float& totalLength)
+bool getTotalLengthOfSVGPathByteStream(const SVGPathByteStream& stream, float& totalLength)
 {
-    ASSERT(stream);
-    if (stream->isEmpty())
+    if (stream.isEmpty())
         return false;
 
     PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
-    SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, 0);
+    SVGPathTraversalStateBuilder& builder = globalSVGPathTraversalStateBuilder(traversalState, 0);
 
-    auto source = std::make_unique<SVGPathByteStreamSource>(stream);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
-    totalLength = builder->totalLength();
-    parser->cleanup();
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(NormalizedParsing);
+    totalLength = builder.totalLength();
+    parser.cleanup();
     return ok;
 }
 
-bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length, SVGPoint& point)
+bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream& stream, float length, SVGPoint& point)
 {
-    ASSERT(stream);
-    if (stream->isEmpty())
+    if (stream.isEmpty())
         return false;
 
     PathTraversalState traversalState(PathTraversalState::Action::VectorAtLength);
-    SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, length);
+    SVGPathTraversalStateBuilder& builder = globalSVGPathTraversalStateBuilder(traversalState, length);
 
-    auto source = std::make_unique<SVGPathByteStreamSource>(stream);
-    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
-    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
-    point = builder->currentPoint();
-    parser->cleanup();
+    SVGPathByteStreamSource source(stream);
+    SVGPathParser& parser = globalSVGPathParser(source, builder);
+    bool ok = parser.parsePathDataFromSource(NormalizedParsing);
+    point = builder.currentPoint();
+    parser.cleanup();
     return ok;
 }
 
@@ -361,12 +332,12 @@ bool buildStringFromPath(const Path& path, String& string)
     // Ideally we would have a SVGPathPlatformPathSource, but it's not possible to manually iterate
     // a path, only apply a function to all path elements at once.
 
-    SVGPathStringBuilder* builder = globalSVGPathStringBuilder();
-    path.apply([builder](const PathElement& pathElement) {
-        pathIteratorForBuildingString(*builder, pathElement);
+    SVGPathStringBuilder& builder = globalSVGPathStringBuilder();
+    path.apply([&builder](const PathElement& pathElement) {
+        pathIteratorForBuildingString(builder, pathElement);
     });
-    string = builder->result();
-    static_cast<SVGPathConsumer*>(builder)->cleanup();
+    string = builder.result();
+    static_cast<SVGPathConsumer&>(builder).cleanup(); // Wat?
 
     return true;
 }

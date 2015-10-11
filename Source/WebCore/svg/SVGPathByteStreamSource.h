@@ -28,7 +28,7 @@ namespace WebCore {
 
 class SVGPathByteStreamSource : public SVGPathSource {
 public:
-    explicit SVGPathByteStreamSource(SVGPathByteStream*);
+    explicit SVGPathByteStreamSource(const SVGPathByteStream&);
 
 private:
     virtual bool hasMoreData() const override;

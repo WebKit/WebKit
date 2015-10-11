@@ -34,7 +34,7 @@ SVGAnimatedPathAnimator::SVGAnimatedPathAnimator(SVGAnimationElement* animationE
 std::unique_ptr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const String& string)
 {
     auto byteStream = std::make_unique<SVGPathByteStream>();
-    buildSVGPathByteStreamFromString(string, byteStream.get(), UnalteredParsing);
+    buildSVGPathByteStreamFromString(string, *byteStream, UnalteredParsing);
     return SVGAnimatedType::createPath(WTF::move(byteStream));
 }
 
@@ -58,7 +58,7 @@ void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedProp
     SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
     const SVGPathSegList& baseValue = property->currentBaseValue();
 
-    buildSVGPathByteStreamFromSVGPathSegList(baseValue, byteStream, UnalteredParsing);
+    buildSVGPathByteStreamFromSVGPathSegList(baseValue, *byteStream, UnalteredParsing);
 
     Vector<RefPtr<SVGAnimatedPathSegListPropertyTearOff>> result;
 
@@ -104,7 +104,7 @@ void SVGAnimatedPathAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGAnimate
     unsigned fromPathSize = fromPath->size();
     if (!fromPathSize || fromPathSize != toPath->size())
         return;
-    addToSVGPathByteStream(toPath, fromPath);
+    addToSVGPathByteStream(*toPath, *fromPath);
 }
 
 void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType* from, SVGAnimatedType* to, SVGAnimatedType* toAtEndOfDuration, SVGAnimatedType* animated)
@@ -133,15 +133,15 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned 
     if (!m_animationElement->adjustFromToListValues<SVGPathByteStream>(*fromPath, *toPath, *animatedPath, percentage, false))
         return;
 
-    buildAnimatedSVGPathByteStream(fromPath, toPath, animatedPath, percentage);
+    buildAnimatedSVGPathByteStream(*fromPath, *toPath, *animatedPath, percentage);
 
     // Handle additive='sum'.
     if (lastAnimatedPath)
-        addToSVGPathByteStream(animatedPath, lastAnimatedPath.get());
+        addToSVGPathByteStream(*animatedPath, *lastAnimatedPath);
 
     // Handle accumulate='sum'.
     if (m_animationElement->isAccumulated() && repeatCount)
-        addToSVGPathByteStream(animatedPath, toAtEndOfDurationPath, repeatCount);
+        addToSVGPathByteStream(*animatedPath, *toAtEndOfDurationPath, repeatCount);
 }
 
 float SVGAnimatedPathAnimator::calculateDistance(const String&, const String&)

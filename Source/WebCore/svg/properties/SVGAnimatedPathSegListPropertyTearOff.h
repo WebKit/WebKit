@@ -95,7 +95,7 @@ public:
         if (pathElement->isAnimValObserved()) {
             SVGPathSegList& animatedList = currentAnimatedValue();
             animatedList.clear();
-            buildSVGPathSegListFromByteStream(m_animatedPathByteStream, pathElement, animatedList, UnalteredParsing);
+            buildSVGPathSegListFromByteStream(*m_animatedPathByteStream, *pathElement, animatedList, UnalteredParsing);
         }
 
         SVGAnimatedListPropertyTearOff<SVGPathSegList>::animValDidChange();
