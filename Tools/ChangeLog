@@ -1,3 +1,32 @@
+2015-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test font-variant-* and font-feature-settings with mocked preinstalled fonts
+        https://bugs.webkit.org/show_bug.cgi?id=149777
+
+        Reviewed by Simon Fraser.
+
+        Include FontWithFeatures in DumpRenderTree and WebKitTestRunner. Add it
+        to the list of tests to preinstall at startup time.
+
+        Also, update the generation of the 'name' table in the FontWithFeatures font.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        (activateTestingFonts):
+        (activateFontsIOS):
+        * FontWithFeatures/FontWithFeatures/FontCreator.cpp:
+        (Generator::generate):
+        (Generator::appendCFFTable):
+        (Generator::appendNameSubtable):
+        (Generator::appendNAMETable):
+        * FontWithFeatures/FontWithFeatures/main.cpp:
+        (main):
+        * WebKitTestRunner/InjectedBundle/cocoa/ActivateFontsCocoa.mm:
+        (WTR::allowedFontFamilySet):
+        (WTR::activateFonts):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+
 2015-10-11  Jinyoung Hur  <hur.ims@navercorp.com>
 
         Unreviewed. Add Jinyoung Hur as a committer. 

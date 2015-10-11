@@ -77,8 +77,7 @@ fast/text/emoji.html [ Skip ]
 fast/text/arabic-times-new-roman.html [ Skip ]
 
 # Need to implement font feature seeting for EFL port since r188146.
-css3/font-feature-settings-preinstalled-fonts.html [ Skip ]
-css3/font-feature-settings-rendering-2.html [ Skip ]
+css3/font-feature-settings-rendering.html [ Skip ]
 
 # ----------------------------------------
 # Tests which also fail in other platforms

@@ -295,6 +295,11 @@ class Generator {
 public:
     std::vector<uint8_t> generate(Type type)
     {
+        if (type == Type::OpenType)
+            name = "FontWithFeaturesOTF";
+        else
+            name = "FontWithFeaturesTTF";
+
         featureDescription = generateFeatureDescription();
 
         uint16_t numTables = type == Type::OpenType ? 10 : 12;
@@ -572,7 +577,7 @@ private:
         result.push_back(4); // Offsets within CFF table are 4 bytes long
 
         // Name INDEX
-        std::string fontName = "MylesFont";
+        std::string fontName = name;
         append16(1); // INDEX contains 1 element
         result.push_back(4); // Offsets in this INDEX are 4 bytes long
         append32(1); // 1-index offset of name data
@@ -1082,8 +1087,8 @@ private:
         append16(0); // Unicode
         append16(3); // Unicode version 2.0 or later
         append16(0); // Language
-        append16(m_baseStringIndex + nameIdentifier); // Name identifier
-        append16(s.length());
+        append16(nameIdentifier); // Name identifier
+        append16(s.length() * 2); // Code units get 2 bytes each
         append16(m_nameOffset); // Offset into name data
         m_nameOffset += s.size() * 2; // Code units get 2 bytes each
     }
@@ -1096,20 +1101,31 @@ private:
 
     void appendNAMETable()
     {
-        std::string familyName = "MylesFont"; // 1: Font Family
+        std::string familyName = name; // 1: Font Family
+        std::string version = "1.0";
 
-        uint16_t numberOfRecords = m_stringIndex + 1;
+        uint16_t numberOfRecords = m_stringIndex + 6;
         append16(0); // Format selector
         append16(numberOfRecords); // Number of name records in table
         append16(6 + 12 * numberOfRecords); // Offset in bytes to the beginning of name character strings
 
-        appendNameSubtable(familyName, 1); // 1: Font Family
+        appendNameSubtable(familyName, 1); // 1: Font Family.
+        appendNameSubtable(familyName, 2); // 2: Font Subfamily.
+        appendNameSubtable(familyName, 3); // 3: Unique subfamily identification.
+        appendNameSubtable(familyName, 4); // 4: Full name of the font.
+        appendNameSubtable(version, 5); // 5: Version of the name table.
+        appendNameSubtable(familyName, 6); // 6: PostScript name of the font.
         for (FeatureType& type : featureDescription) {
-            appendNameSubtable(type.name, type.stringIndex);
+            appendNameSubtable(type.name, m_baseStringIndex + type.stringIndex);
             for (FeatureSelector& selector : type.selectors)
-                appendNameSubtable(selector.name, selector.stringIndex);
+                appendNameSubtable(selector.name, m_baseStringIndex + selector.stringIndex);
         }
 
+        append2ByteASCIIString(familyName);
+        append2ByteASCIIString(familyName);
+        append2ByteASCIIString(familyName);
+        append2ByteASCIIString(familyName);
+        append2ByteASCIIString(version);
         append2ByteASCIIString(familyName);
         for (FeatureType& type : featureDescription) {
             append2ByteASCIIString(type.name);
@@ -1171,6 +1187,7 @@ private:
     uint16_t m_stringIndex { 0 };
     std::vector<FeatureType> featureDescription;
     std::vector<uint8_t> result;
+    std::string name;
 };
 
 std::vector<uint8_t> generateFont(Type type)

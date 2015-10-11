@@ -126,7 +126,7 @@ int main(int argc, const char * argv[])
     CGColorSpaceRelease(colorSpace);
     Type type = Type::TrueType;
     const std::vector<uint8_t> fontVector = generateFont(type);
-    std::ofstream outputFile("/Volumes/Data/home/mmaxfield/tmp/output.ttf", std::ios::out | std::ios::binary);
+    std::ofstream outputFile("/Volumes/Data/home/mmaxfield/src/WebKit/OpenSource/LayoutTests/css3/resources/FontWithFeatures.ttf", std::ios::out | std::ios::binary);
     for (uint8_t b : fontVector)
         outputFile << b;
     outputFile.close();

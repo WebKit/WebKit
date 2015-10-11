@@ -128,6 +128,8 @@
 		C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */; };
 		C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */; };
 		C0EC3C9C12787F0500939164 /* NullNPPGetValuePointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */; };
+		C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */; };
+		C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
 /* End PBXBuildFile section */
 
@@ -190,6 +192,8 @@
 			dstPath = DumpRenderTree.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */,
+				C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */,
 				5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */,
 				5DB9AC980F722C3600684641 /* WebKitWeightWatcher100.ttf in Copy Font Files */,
 				5DB9AC990F722C3600684641 /* WebKitWeightWatcher200.ttf in Copy Font Files */,
@@ -370,6 +374,8 @@
 		C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PassDifferentNPPStruct.cpp; sourceTree = "<group>"; };
 		C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJSAfterRemovingPluginElement.cpp; sourceTree = "<group>"; };
 		C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullNPPGetValuePointer.cpp; sourceTree = "<group>"; };
+		C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.otf; path = fonts/FontWithFeatures.otf; sourceTree = "<group>"; };
+		C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.ttf; path = fonts/FontWithFeatures.ttf; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
 		E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockGeolocationProvider.mm; path = mac/MockGeolocationProvider.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -626,6 +632,8 @@
 				375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */,
 				375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */,
 				375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */,
+				C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */,
+				C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";

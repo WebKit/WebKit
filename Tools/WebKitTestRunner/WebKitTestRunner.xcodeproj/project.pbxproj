@@ -47,6 +47,8 @@
 		0FEB90A01905A834000FDBF3 /* InjectedBundlePageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */; };
 		0FEB90A51905C016000FDBF3 /* CrashReporterInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */; };
 		0FEBF85A1BB61DF20028722D /* HIDEventGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEBF8591BB61DF20028722D /* HIDEventGenerator.mm */; settings = {ASSET_TAGS = (); }; };
+		1CA211C91BCA107300B2101F /* FontWithFeatures.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1CA211C71BCA107300B2101F /* FontWithFeatures.otf */; };
+		1CA211CA1BCA107300B2101F /* FontWithFeatures.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */; };
 		29210EAE144CACB700835BB5 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA9144CACB200835BB5 /* AccessibilityUIElement.cpp */; };
 		29210EB0144CACBD00835BB5 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */; };
 		29210EB4144CACD500835BB5 /* AccessibilityTextMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29210EB1144CACD400835BB5 /* AccessibilityTextMarker.cpp */; };
@@ -195,6 +197,8 @@
 		0FEBF85B1BB62A370028722D /* IOKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
 		0FEBF85C1BB62D460028722D /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		1A3326051B75396500F89F62 /* TestOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestOptions.h; sourceTree = "<group>"; };
+		1CA211C71BCA107300B2101F /* FontWithFeatures.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontWithFeatures.otf; sourceTree = "<group>"; };
+		1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontWithFeatures.ttf; sourceTree = "<group>"; };
 		26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationProviderMock.cpp; sourceTree = "<group>"; };
 		26D758E6160BECDD00268472 /* GeolocationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationProviderMock.h; sourceTree = "<group>"; };
 		29210EA2144CAAA500835BB5 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
@@ -643,6 +647,8 @@
 				6510A77F11EC643800410867 /* WebKitWeightWatcher700.ttf */,
 				6510A78011EC643800410867 /* WebKitWeightWatcher800.ttf */,
 				6510A78111EC643800410867 /* WebKitWeightWatcher900.ttf */,
+				1CA211C71BCA107300B2101F /* FontWithFeatures.otf */,
+				1CA211C81BCA107300B2101F /* FontWithFeatures.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -884,6 +890,7 @@
 			files = (
 				6510A78211EC643800410867 /* AHEM____.TTF in Resources */,
 				6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */,
+				1CA211CA1BCA107300B2101F /* FontWithFeatures.ttf in Resources */,
 				6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */,
 				6510A78611EC643800410867 /* WebKitWeightWatcher300.ttf in Resources */,
 				6510A78711EC643800410867 /* WebKitWeightWatcher400.ttf in Resources */,
@@ -891,6 +898,7 @@
 				6510A78911EC643800410867 /* WebKitWeightWatcher600.ttf in Resources */,
 				6510A78A11EC643800410867 /* WebKitWeightWatcher700.ttf in Resources */,
 				6510A78B11EC643800410867 /* WebKitWeightWatcher800.ttf in Resources */,
+				1CA211C91BCA107300B2101F /* FontWithFeatures.otf in Resources */,
 				6510A78C11EC643800410867 /* WebKitWeightWatcher900.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

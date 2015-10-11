@@ -472,7 +472,6 @@ fast/css/draggable-region-parser.html [ Skip ]
 
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
-css3/font-feature-settings-rendering-2.html [ Skip ]
 
 # TODO HiDPI tests require test infrastructure enhancements (e.g. testRunner.setBackingScaleFactor)
 # https://bugs.webkit.org/show_bug.cgi?id=87919
@@ -636,7 +635,7 @@ webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-block-sibl
 webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
 
 # font-variant-* not implemented on Windows
-webkit.org/b/149630 css3/font-variant-all-webfont.html [ ImageOnlyFailure ]
+webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
 
 ################################################################################
 ###########    End Missing Functionality Prevents Testing         ##############
