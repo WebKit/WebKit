@@ -155,19 +155,6 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     }
     charactersTreatedAsSpace.clear();
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
-    // Workaround for <rdar://problem/20230073> FIXME: Please remove this when no longer needed.
-    GlyphBufferGlyph* glyphs = glyphBuffer->glyphs(0);
-    int filteredIndex = lastGlyphCount;
-    for (int i = lastGlyphCount; i < glyphBufferSize; ++i) {
-        glyphs[filteredIndex] = glyphs[i];
-        advances[filteredIndex] = advances[i];
-        if (glyphs[filteredIndex] != kCGFontIndexInvalid)
-            ++filteredIndex;
-    }
-    glyphBufferSize = filteredIndex;
-#endif
-
     for (int i = lastGlyphCount; i < glyphBufferSize; ++i)
         widthDifference += advances[i].width();
 
