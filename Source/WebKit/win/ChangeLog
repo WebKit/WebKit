@@ -1,3 +1,18 @@
+2015-10-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/23025615.
+
+    2015-10-09  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Load the proper library for JavaScriptCore symbols
+            <rdar://problem/23025615>
+
+            Rubberstamped by Jer Noble.
+
+            * WebKitDLL.cpp:
+            (bindJavaScriptTrampoline): We need to use "JavaScriptCore.dll",
+            not the LLVM library.
+
 2015-10-07  Babak Shafiei  <bshafiei@apple.com>
 
         Merge patch for rdar://problem/23025615.

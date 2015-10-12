@@ -262,7 +262,7 @@ JSValueToStringCopyFunction m_jsValueToStringCopyFunction = nullptr;
 
 void bindJavaScriptTrampoline()
 {
-    const wchar_t* libraryName = L"libllvmForJSC.dll";
+    const wchar_t* libraryName = L"JavaScriptCore.dll";
 
     HMODULE library = ::LoadLibrary(libraryName);
     if (!library)
