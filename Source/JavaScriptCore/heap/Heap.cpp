@@ -851,7 +851,7 @@ void Heap::visitWeakHandles(HeapRootVisitor& visitor)
 
 void Heap::updateObjectCounts(double gcStartTime)
 {
-    GCCOUNTER(VisitedValueCount, m_slotVisitor.visitCount());
+    GCCOUNTER(VisitedValueCount, m_slotVisitor.visitCount() + threadVisitCount());
 
     if (Options::logGC() == GCLogging::Verbose) {
         size_t visitCount = m_slotVisitor.visitCount();

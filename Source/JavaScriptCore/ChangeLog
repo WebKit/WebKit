@@ -1,3 +1,14 @@
+2015-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        VisitedValueCount GC Counter misses parallel SlotVisitors
+        https://bugs.webkit.org/show_bug.cgi?id=149980
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::updateObjectCounts):
+        Include threaded slot visitor's object counts in the debugging value.
+
 2015-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix non-FTL build for real.
