@@ -38,24 +38,27 @@ var Titles = [
     }
 ];
 
+var Suite = function(name, tests) {
+    this.name = name;
+    this.titles = Titles;
+    this.tests = tests;
+};
+Suite.prototype.prepare = function(runner, contentWindow, contentDocument)
+{
+    return runner.waitForElement("#stage").then(function (element) {
+        return element;
+    });
+};
+Suite.prototype.run = function(contentWindow, test, options, recordTable, progressBar)
+{
+    return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
+};
+
+
 var Suites = [];
 
-Suites.push({
-    name: "HTML Bouncing Particles",
-    prepare: function(runner, contentWindow, contentDocument)
-    {
-        return runner.waitForElement("#stage").then(function (element) {
-            return element;
-        });
-    },
-    
-    run: function(contentWindow, test, options, recordTable, progressBar)
-    {
-        return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
-    },
-
-    titles: Titles,
-    tests: [
+Suites.push(new Suite("HTML suite",
+    [
         { 
             url: "../tests/bouncing-particles/bouncing-css-shapes.html?gain=1&addLimit=100&removeLimit=5&particleWidth=12&particleHeight=12&shape=circle",
             name: "CSS bouncing circles"
@@ -81,24 +84,10 @@ Suites.push({
             name: "CSS layering text"
         },
     ]
-});
+));
 
-Suites.push({
-    name: "Canvas Bouncing Particles",
-    prepare: function(runner, contentWindow, contentDocument)
-    {
-        return runner.waitForElement("#stage").then(function (element) {
-            return element;
-        });
-    },  
-    
-    run: function(contentWindow, test, options, recordTable, progressBar)
-    {
-        return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
-    },
-    
-    titles: Titles,
-    tests: [
+Suites.push(new Suite("Canvas suite",
+    [
         { 
             url: "../tests/bouncing-particles/bouncing-canvas-shapes.html?gain=4&addLimit=100&removeLimit=1000&particleWidth=12&particleHeight=12&shape=circle",
             name: "canvas bouncing circles"
@@ -120,24 +109,10 @@ Suites.push({
             name: "canvas bouncing PNG images"
         },
     ]
-});
+));
 
-Suites.push({
-    name: "SVG Bouncing Particles",
-    prepare: function(runner, contentWindow, contentDocument)
-    {
-        return runner.waitForElement("#stage").then(function (element) {
-            return element;
-        });
-    },
-    
-    run: function(contentWindow, test, options, recordTable, progressBar)
-    {
-        return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
-    },
-    
-    titles: Titles,
-    tests: [
+Suites.push(new Suite("SVG suite",
+    [
         {
             url: "../tests/bouncing-particles/bouncing-svg-shapes.html?gain=6&addLimit=100&removeLimit=1000&particleWidth=12&particleHeight=12&shape=circle",
             name: "SVG bouncing circles",
@@ -159,24 +134,10 @@ Suites.push({
             name: "SVG bouncing PNG images"
         },
     ]
-});
+));
 
-Suites.push({
-    name: "More complex examples",
-    prepare: function(runner, contentWindow, contentDocument)
-    {
-        return runner.waitForElement("#stage").then(function (element) {
-            return element;
-        });
-    },
-    
-    run: function(contentWindow, test, options, recordTable, progressBar)
-    {
-        return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
-    },
-    
-    titles: Titles,
-    tests: [
+Suites.push(new Suite("Complex examples",
+    [
         {
             url: "../tests/examples/canvas-electrons.html?gain=1&addLimit=100&removeLimit=10",
             name: "canvas electrons"
@@ -186,24 +147,10 @@ Suites.push({
             name: "canvas stars"
         },
     ]
-});
+));
 
-Suites.push({
-    name: "Stage Templates (Can be used for new tests)",
-    prepare: function(runner, contentWindow, contentDocument)
-    {
-        return runner.waitForElement("#stage").then(function (element) {
-            return element;
-        });
-    },
-    
-    run: function(contentWindow, test, options, recordTable, progressBar)
-    {
-        return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
-    },
-    
-    titles: Titles,
-    tests: [
+Suites.push(new Suite("Test Templates",
+    [
         {
             url: "../tests/template/template-css.html?gain=1&addLimit=100&removeLimit=5",
             name: "CSS template"
@@ -217,7 +164,7 @@ Suites.push({
             name: "SVG template"
         },
     ]
-});
+));
 
 function suiteFromName(name)
 {

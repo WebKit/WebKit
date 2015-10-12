@@ -59,13 +59,16 @@ function showSection(sectionIdentifier, pushState)
 
 function startBenchmark()
 {
-    var checkboxes = [ 
-        document.getElementById("html-suite"), 
-        document.getElementById("canvas-suite"), 
-        document.getElementById("svg-suite"),
-        document.getElementById("examples-suite"),
-        document.getElementById("template-suite"),
-    ];
+    var enabledSuites = [];
+    var checkboxes = document.querySelectorAll("#suites input");
+    for (var i = 0; i < checkboxes.length; ++i) {
+        var checkbox = checkboxes[i];
+        if (checkbox.checked) {
+            enabledSuites.push(checkbox.suite);
+        }
+        localStorage.setItem(checkbox.suite.name, +checkbox.checked);
+    }
+
     var enabledSuites = Suites.filter(function (suite, index) { return !suite.disabled && checkboxes[index].checked; });
     var testsCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
     benchmarkRunnerClient.testsCount = benchmarkRunnerClient.iterationCount * testsCount;
@@ -110,3 +113,25 @@ function showGraph(testName, axes, samples, samplingTimeOffset)
     graph("#graphContainer", new Point(700, 400), new Insets(20, 50, 20, 50), axes, samples, samplingTimeOffset);
     showSection("graph", true);    
 }
+
+function populateSettings() {
+    var suitesDiv = document.getElementById("suites");
+    Suites.forEach(function(suite) {
+        var suiteDiv = document.createDocumentFragment();
+
+        var label = document.createElement("label");
+        var checkbox = document.createElement("input");
+        checkbox.setAttribute("type", "checkbox");
+        checkbox.suite = suite;
+        if (+localStorage.getItem(suite.name)) {
+            checkbox.checked = true;
+        }
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + suite.name));
+
+        suiteDiv.appendChild(label);
+        suiteDiv.appendChild(document.createElement("br"));
+        suitesDiv.appendChild(suiteDiv);
+    });
+}
+document.addEventListener("DOMContentLoaded", populateSettings);
