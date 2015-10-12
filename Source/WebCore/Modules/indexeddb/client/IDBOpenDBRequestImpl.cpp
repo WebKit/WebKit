@@ -28,8 +28,11 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseImpl.h"
 #include "IDBError.h"
 #include "IDBResultData.h"
+#include "IDBTransactionImpl.h"
+#include "IDBVersionChangeEventImpl.h"
 #include "Logging.h"
 
 namespace WebCore {
@@ -59,16 +62,52 @@ IDBOpenDBRequest::~IDBOpenDBRequest()
 {
 }
 
+
+void IDBOpenDBRequest::onError(const IDBResultData& data)
+{
+    m_domError = DOMError::create(data.error().name());
+    enqueueEvent(Event::create(eventNames().errorEvent, true, true));
+}
+
+void IDBOpenDBRequest::onSuccess(const IDBResultData&)
+{
+    // FIXME: Implement
+}
+
+void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
+{
+    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
+    Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo());
+
+    ASSERT(transaction->info().mode() == IndexedDB::TransactionMode::VersionChange);
+
+    uint64_t oldVersion = database->info().version();
+    uint64_t newVersion = transaction->info().newVersion();
+
+    LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %llu, new is %llu", oldVersion, newVersion);
+
+    m_result = IDBAny::create(WTF::move(database));
+    m_readyState = IDBRequestReadyState::Done;
+    m_transaction = adoptRef(&transaction.leakRef());
+
+    enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().upgradeneededEvent));
+}
+
 void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
 {
     LOG(IndexedDB, "IDBOpenDBRequest::requestCompleted");
 
-    if (!data.error().isNull()) {
-        LOG(IndexedDB, "  with error: (%s) '%s'", data.error().name().utf8().data(), data.error().message().utf8().data());
-        m_domError = DOMError::create(data.error().name());
-        enqueueEvent(Event::create(eventNames().errorEvent, true, true));
-    } else
-        enqueueEvent(Event::create(eventNames().successEvent, true, true));
+    switch (data.type()) {
+    case IDBResultType::Error:
+        onError(data);
+        break;
+    case IDBResultType::OpenDatabaseSuccess:
+        onSuccess(data);
+        break;
+    case IDBResultType::OpenDatabaseUpgradeNeeded:
+        onUpgradeNeeded(data);
+        break;
+    }
 }
 
 } // namespace IDBClient

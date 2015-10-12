@@ -28,8 +28,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBAnyImpl.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBResourceIdentifier.h"
+#include "IDBTransactionImpl.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -45,11 +47,11 @@ class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBReques
 public:
     const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
-    virtual RefPtr<IDBAny> result(ExceptionCode&) const override;
+    virtual RefPtr<WebCore::IDBAny> result(ExceptionCode&) const override;
     virtual unsigned short errorCode(ExceptionCode&) const override;
     virtual RefPtr<DOMError> error(ExceptionCode&) const override;
-    virtual RefPtr<IDBAny> source() const override;
-    virtual RefPtr<IDBTransaction> transaction() const override;
+    virtual RefPtr<WebCore::IDBAny> source() const override;
+    virtual RefPtr<WebCore::IDBTransaction> transaction() const override;
     virtual const String& readyState() const override;
 
     // EventTarget
@@ -60,7 +62,9 @@ public:
     using RefCounted<IDBRequest>::deref;
 
     void enqueueEvent(Ref<Event>&&);
-    
+
+    IDBConnectionToServer& connection() { return m_connection; }
+
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);
 
@@ -72,6 +76,12 @@ protected:
     virtual void refEventTarget() override final { RefCounted<IDBRequest>::ref(); }
     virtual void derefEventTarget() override final { RefCounted<IDBRequest>::deref(); }
 
+    IDBRequestReadyState m_readyState { IDBRequestReadyState::Pending };
+    RefPtr<IDBAny> m_result;
+    RefPtr<IDBTransaction> m_transaction;
+
+private:
+    IDBConnectionToServer& m_connection;
     IDBResourceIdentifier m_resourceIdentifier;
 };
 

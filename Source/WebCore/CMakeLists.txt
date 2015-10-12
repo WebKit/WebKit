@@ -872,10 +872,14 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
 
+    Modules/indexeddb/client/IDBAnyImpl.cpp
     Modules/indexeddb/client/IDBConnectionToServer.cpp
+    Modules/indexeddb/client/IDBDatabaseImpl.cpp
     Modules/indexeddb/client/IDBFactoryImpl.cpp
     Modules/indexeddb/client/IDBOpenDBRequestImpl.cpp
     Modules/indexeddb/client/IDBRequestImpl.cpp
+    Modules/indexeddb/client/IDBTransactionImpl.cpp
+    Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp
 
     Modules/indexeddb/legacy/IDBCursorBackend.cpp
     Modules/indexeddb/legacy/IDBCursorBackendOperations.cpp
@@ -902,12 +906,15 @@ set(WebCore_SOURCES
     Modules/indexeddb/server/IDBServerOperation.cpp
     Modules/indexeddb/server/MemoryIDBBackingStore.cpp
     Modules/indexeddb/server/UniqueIDBDatabase.cpp
+    Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp
+    Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp
 
     Modules/indexeddb/shared/IDBDatabaseInfo.cpp
     Modules/indexeddb/shared/IDBError.cpp
     Modules/indexeddb/shared/IDBRequestData.cpp
     Modules/indexeddb/shared/IDBResourceIdentifier.cpp
     Modules/indexeddb/shared/IDBResultData.cpp
+    Modules/indexeddb/shared/IDBTransactionInfo.cpp
     Modules/indexeddb/shared/InProcessIDBServer.cpp
 
     Modules/mediacontrols/MediaControlsHost.cpp

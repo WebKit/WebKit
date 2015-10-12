@@ -28,27 +28,36 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
 #include "IDBRequestImpl.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-static uint64_t nextResourceNumber()
+static uint64_t nextClientResourceNumber()
+{
+    ASSERT(isMainThread());
+    static uint64_t currentNumber = 1;
+    return currentNumber += 2;
+}
+
+static uint64_t nextServerResourceNumber()
 {
     ASSERT(isMainThread());
     static uint64_t currentNumber = 0;
-    return ++currentNumber;
+    return currentNumber += 2;
 }
 
-IDBResourceIdentifier::IDBResourceIdentifier()
-    : m_resourceNumber(nextResourceNumber())
+IDBResourceIdentifier::IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier)
+    : m_idbConnectionIdentifier(connectionIdentifier)
+    , m_resourceNumber(resourceIdentifier)
 {
 }
 
 IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToServer& connection)
     : m_idbConnectionIdentifier(connection.identifier())
-    , m_resourceNumber(nextResourceNumber())
+    , m_resourceNumber(nextClientResourceNumber())
 {
 }
 
@@ -58,20 +67,20 @@ IDBResourceIdentifier::IDBResourceIdentifier(const IDBClient::IDBConnectionToSer
 {
 }
 
+IDBResourceIdentifier::IDBResourceIdentifier(const IDBServer::IDBConnectionToClient& connection)
+    : m_idbConnectionIdentifier(connection.identifier())
+    , m_resourceNumber(nextServerResourceNumber())
+{
+}
+
 IDBResourceIdentifier IDBResourceIdentifier::emptyValue()
 {
-    IDBResourceIdentifier result;
-    result.m_idbConnectionIdentifier = 0;
-    result.m_resourceNumber = 0;
-    return WTF::move(result);
+    return IDBResourceIdentifier(0, 0);
 }
 
 IDBResourceIdentifier IDBResourceIdentifier::deletedValue()
 {
-    IDBResourceIdentifier result;
-    result.m_idbConnectionIdentifier = std::numeric_limits<uint64_t>::max();
-    result.m_resourceNumber = std::numeric_limits<uint64_t>::max();
-    return WTF::move(result);
+    return IDBResourceIdentifier(std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max());
 }
 
 bool IDBResourceIdentifier::isHashTableDeletedValue() const

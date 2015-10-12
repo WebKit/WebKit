@@ -31,7 +31,6 @@
 #include "Dictionary.h"
 #include "Event.h"
 #include "EventTarget.h"
-#include "IDBDatabaseMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
@@ -62,8 +61,6 @@ public:
     virtual RefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) = 0;
     virtual void deleteObjectStore(const String& name, ExceptionCode&) = 0;
     virtual void close() = 0;
-
-    virtual const IDBDatabaseMetadata metadata() const = 0;
 
     using RefCounted<IDBDatabase>::ref;
     using RefCounted<IDBDatabase>::deref;

@@ -93,6 +93,25 @@ void IDBConnectionToServer::didOpenDatabase(const IDBResultData& resultData)
     request->requestCompleted(resultData);
 }
 
+void IDBConnectionToServer::fireVersionChangeEvent(uint64_t /*databaseConnectionIdentifier*/ , uint64_t /*requestedVersion*/)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::fireVersionChangeEvent");
+
+    // FIXME: Implement versionchange events firing on already-open transactions.
+}
+
+void IDBConnectionToServer::registerDatabaseConnection(IDBDatabase& database)
+{
+    ASSERT(!m_databaseConnections.contains(&database));
+    m_databaseConnections.add(&database);
+}
+
+void IDBConnectionToServer::unregisterDatabaseConnection(IDBDatabase& database)
+{
+    ASSERT(m_databaseConnections.contains(&database));
+    m_databaseConnections.remove(&database);
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

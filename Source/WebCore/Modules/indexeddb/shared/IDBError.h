@@ -34,7 +34,8 @@ namespace WebCore {
 
 enum class IDBExceptionCode {
     None = 0,
-    Unknown = 1,
+    Unknown,
+    VersionError,
 };
 
 class IDBError {

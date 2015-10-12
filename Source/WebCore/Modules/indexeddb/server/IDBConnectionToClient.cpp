@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "UniqueIDBDatabaseConnection.h"
+
 namespace WebCore {
 namespace IDBServer {
 
@@ -54,6 +56,11 @@ void IDBConnectionToClient::didDeleteDatabase(const IDBResultData& result)
 void IDBConnectionToClient::didOpenDatabase(const IDBResultData& result)
 {
     m_delegate->didOpenDatabase(result);
+}
+
+void IDBConnectionToClient::fireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, uint64_t requestedVersion)
+{
+    m_delegate->fireVersionChangeEvent(connection, requestedVersion);
 }
 
 } // namespace IDBServer

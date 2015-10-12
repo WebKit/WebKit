@@ -61,6 +61,7 @@ public:
     virtual uint64_t identifier() const override;
     virtual void didDeleteDatabase(const IDBResultData&) override final;
     virtual void didOpenDatabase(const IDBResultData&) override final;
+    virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, uint64_t requestedVersion) override final;
 
     virtual void ref() override { RefCounted<InProcessIDBServer>::ref(); }
     virtual void deref() override { RefCounted<InProcessIDBServer>::deref(); }

@@ -83,7 +83,7 @@ public:
 
     bool isClosePending() const { return m_closePending; }
     void forceClose();
-    virtual const IDBDatabaseMetadata metadata() const override final { return m_metadata; }
+    const IDBDatabaseMetadata metadata() const { return m_metadata; }
     void enqueueEvent(PassRefPtr<Event>);
 
     using EventTarget::dispatchEvent;

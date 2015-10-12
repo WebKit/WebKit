@@ -32,7 +32,10 @@
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBServerOperation.h"
+#include "UniqueIDBDatabaseConnection.h"
+#include "UniqueIDBDatabaseTransaction.h"
 #include <wtf/Deque.h>
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -54,10 +57,17 @@ public:
 
     void openDatabaseConnection(IDBConnectionToClient&, const IDBRequestData&);
 
+    const IDBDatabaseInfo& info() const;
+
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
     
     void handleOpenDatabaseOperations();
+    void addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&&);
+    bool hasAnyOpenConnections() const;
+
+    void startVersionChangeTransaction();
+    void notifyConnectionsOfVersionChange();
     
     // Database thread operations
     void openBackingStore(const IDBDatabaseIdentifier&);
@@ -69,7 +79,15 @@ private:
     IDBDatabaseIdentifier m_identifier;
     
     Deque<Ref<IDBServerOperation>> m_pendingOpenDatabaseOperations;
-    
+
+    HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
+
+    RefPtr<IDBServerOperation> m_versionChangeOperation;
+    RefPtr<UniqueIDBDatabaseConnection> m_versionChangeDatabaseConnection;
+
+    RefPtr<UniqueIDBDatabaseTransaction> m_versionChangeTransaction;
+    HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
+
     std::unique_ptr<IDBBackingStore> m_backingStore;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 };

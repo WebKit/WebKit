@@ -31,6 +31,7 @@
 #include "IDBResultData.h"
 #include "IDBServer.h"
 #include "Logging.h"
+#include "UniqueIDBDatabaseConnection.h"
 #include <wtf/MainThread.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -41,6 +42,12 @@ UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentif
     : m_server(server)
     , m_identifier(identifier)
 {
+}
+
+const IDBDatabaseInfo& UniqueIDBDatabase::info() const
+{
+    RELEASE_ASSERT(m_databaseInfo);
+    return *m_databaseInfo;
 }
 
 void UniqueIDBDatabase::openDatabaseConnection(IDBConnectionToClient& connection, const IDBRequestData& requestData)
@@ -63,11 +70,103 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
 
     auto operation = m_pendingOpenDatabaseOperations.takeFirst();
 
-    // FIXME: Reporting open operations as failures for now.
-    // Creating database connections for success will be the next step.
+    // 3.3.1 Opening a database
+    // If requested version is undefined, then let requested version be 1 if db was created in the previous step,
+    // or the current version of db otherwise.
+    uint64_t requestedVersion = operation->requestData().requestedVersion();
+    if (!requestedVersion)
+        requestedVersion = m_databaseInfo->version() ? m_databaseInfo->version() : 1;
 
-    IDBResultData result(operation->requestData().requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
+    // 3.3.1 Opening a database
+    // If the database version higher than the requested version, abort these steps and return a VersionError.
+    if (requestedVersion < m_databaseInfo->version()) {
+        auto result = IDBResultData::error(operation->requestData().requestIdentifier(), IDBError(IDBExceptionCode::VersionError));
+        operation->connection().didOpenDatabase(result);
+        return;
+    }
+
+    Ref<UniqueIDBDatabaseConnection> connection = UniqueIDBDatabaseConnection::create(*this, operation->connection());
+    UniqueIDBDatabaseConnection* rawConnection = &connection.get();
+    m_server.registerDatabaseConnection(*rawConnection);
+
+    if (requestedVersion == m_databaseInfo->version()) {
+        addOpenDatabaseConnection(WTF::move(connection));
+
+        auto result = IDBResultData::openDatabaseSuccess(operation->requestData().requestIdentifier(), *rawConnection);
+        operation->connection().didOpenDatabase(result);
+        return;
+    }
+
+    ASSERT(!m_versionChangeOperation);
+    ASSERT(!m_versionChangeDatabaseConnection);
+
+    m_versionChangeOperation = adoptRef(operation.leakRef());
+    m_versionChangeDatabaseConnection = rawConnection;
+
+    // 3.3.7 "versionchange" transaction steps
+    // If there's no other open connections to this database, the version change process can begin immediately.
+    if (!hasAnyOpenConnections()) {
+        startVersionChangeTransaction();
+        return;
+    }
+
+    // Otherwise we have to notify all those open connections and wait for them to close.
+    notifyConnectionsOfVersionChange();
+}
+
+bool UniqueIDBDatabase::hasAnyOpenConnections() const
+{
+    return !m_openDatabaseConnections.isEmpty();
+}
+
+void UniqueIDBDatabase::startVersionChangeTransaction()
+{
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::startVersionChangeTransaction");
+
+    ASSERT(!m_versionChangeTransaction);
+    ASSERT(m_versionChangeOperation);
+    ASSERT(m_versionChangeDatabaseConnection);
+
+    auto operation = m_versionChangeOperation;
+    m_versionChangeOperation = nullptr;
+
+    uint64_t requestedVersion = operation->requestData().requestedVersion();
+    if (!requestedVersion)
+        requestedVersion = m_databaseInfo->version() ? m_databaseInfo->version() : 1;
+
+    addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
+
+    m_versionChangeTransaction = m_versionChangeDatabaseConnection->createVersionChangeTransaction(requestedVersion);
+    m_inProgressTransactions.set(m_versionChangeTransaction->info().identifier(), m_versionChangeTransaction);
+
+    auto result = IDBResultData::openDatabaseUpgradeNeeded(operation->requestData().requestIdentifier(), *m_versionChangeTransaction);
     operation->connection().didOpenDatabase(result);
+}
+
+void UniqueIDBDatabase::notifyConnectionsOfVersionChange()
+{
+    ASSERT(m_versionChangeOperation);
+    ASSERT(m_versionChangeDatabaseConnection);
+
+    uint64_t requestedVersion = m_versionChangeOperation->requestData().requestedVersion();
+
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::notifyConnectionsOfVersionChange - %llu", requestedVersion);
+
+    // 3.3.7 "versionchange" transaction steps
+    // Fire a versionchange event at each connection in m_openDatabaseConnections that is open.
+    // The event must not be fired on connections which has the closePending flag set.
+    for (auto connection : m_openDatabaseConnections) {
+        if (connection->closePending())
+            continue;
+
+        connection->fireVersionChangeEvent(requestedVersion);
+    }
+}
+
+void UniqueIDBDatabase::addOpenDatabaseConnection(Ref<UniqueIDBDatabaseConnection>&& connection)
+{
+    ASSERT(!m_openDatabaseConnections.contains(&connection.get()));
+    m_openDatabaseConnections.add(adoptRef(connection.leakRef()));
 }
 
 void UniqueIDBDatabase::openBackingStore(const IDBDatabaseIdentifier& identifier)

@@ -37,10 +37,15 @@ class IDBConnectionToServer;
 class IDBRequest;
 }
 
+namespace IDBServer {
+class IDBConnectionToClient;
+}
+
 class IDBResourceIdentifier {
 public:
-    IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&);
+    explicit IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&);
     IDBResourceIdentifier(const IDBClient::IDBConnectionToServer&, const IDBClient::IDBRequest&);
+    explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
     static IDBResourceIdentifier deletedValue();
     bool isHashTableDeletedValue() const;
@@ -66,9 +71,10 @@ public:
     uint64_t connectionIdentifier() const { return m_idbConnectionIdentifier; }
     
 private:
-    IDBResourceIdentifier();
+    IDBResourceIdentifier() = delete;
+    IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier);
     uint64_t m_idbConnectionIdentifier { 0 };
-    uint64_t m_resourceNumber;
+    uint64_t m_resourceNumber { 0 };
 };
 
 struct IDBResourceIdentifierHash {

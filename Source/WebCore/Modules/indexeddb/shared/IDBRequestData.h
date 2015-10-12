@@ -45,9 +45,13 @@ public:
     IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
 
+    uint64_t requestedVersion() const;
+
 private:
     IDBResourceIdentifier m_requestIdentifier;
     IDBDatabaseIdentifier m_databaseIdentifier;
+
+    uint64_t m_requestedVersion;
 };
 
 } // namespace WebCore

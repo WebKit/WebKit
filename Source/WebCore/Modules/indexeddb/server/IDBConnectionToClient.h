@@ -38,6 +38,8 @@ class IDBResultData;
 
 namespace IDBServer {
 
+class UniqueIDBDatabaseConnection;
+
 class IDBConnectionToClient : public RefCounted<IDBConnectionToClient> {
 public:
     static Ref<IDBConnectionToClient> create(IDBConnectionToClientDelegate&);
@@ -46,7 +48,9 @@ public:
 
     void didDeleteDatabase(const IDBResultData&);
     void didOpenDatabase(const IDBResultData&);
-    
+
+    void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion);
+
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);
     

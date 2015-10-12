@@ -36,7 +36,13 @@ namespace WebCore {
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBOpenDBRequest& request)
     : m_requestIdentifier(connection, request)
     , m_databaseIdentifier(request.databaseIdentifier())
+    , m_requestedVersion(request.version())
 {
+}
+
+uint64_t IDBRequestData::requestedVersion() const
+{
+    return m_requestedVersion;
 }
 
 } // namespace WebCore

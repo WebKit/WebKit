@@ -38,10 +38,11 @@ public:
 
     IDBDatabaseInfo isolatedCopy() const;
 
+    const String& name() const { return m_name; }
+    uint64_t version() const { return m_version; }
+
 private:
-    IDBDatabaseInfo()
-    {
-    }
+    IDBDatabaseInfo();
 
     String m_name;
     uint64_t m_version { 0 };

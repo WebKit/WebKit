@@ -31,6 +31,7 @@
 #include "IDBConnectionToServerDelegate.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -40,6 +41,7 @@ class IDBResultData;
 
 namespace IDBClient {
 
+class IDBDatabase;
 class IDBOpenDBRequest;
 
 class IDBConnectionToServer : public RefCounted<IDBConnectionToServer> {
@@ -54,12 +56,18 @@ public:
     void openDatabase(IDBOpenDBRequest&);
     void didOpenDatabase(const IDBResultData&);
 
+    void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, uint64_t requestedVersion);
+
+    void registerDatabaseConnection(IDBDatabase&);
+    void unregisterDatabaseConnection(IDBDatabase&);
+
 private:
     IDBConnectionToServer(IDBConnectionToServerDelegate&);
     
     Ref<IDBConnectionToServerDelegate> m_delegate;
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::IDBOpenDBRequest>> m_openDBRequestMap;
+    HashSet<RefPtr<IDBDatabase>> m_databaseConnections;
 };
 
 } // namespace IDBClient

@@ -30,6 +30,10 @@
 
 namespace WebCore {
 
+IDBDatabaseInfo::IDBDatabaseInfo()
+{
+}
+
 IDBDatabaseInfo::IDBDatabaseInfo(const String& name, uint64_t version)
     : m_name(name)
     , m_version(version)

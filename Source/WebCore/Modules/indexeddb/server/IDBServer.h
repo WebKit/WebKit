@@ -32,6 +32,7 @@
 #include "IDBConnectionToClient.h"
 #include "IDBDatabaseIdentifier.h"
 #include "UniqueIDBDatabase.h"
+#include "UniqueIDBDatabaseConnection.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MessageQueue.h>
@@ -60,6 +61,9 @@ public:
     void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);
     void postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&&);
 
+    void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
+    void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
+
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
 private:
@@ -81,6 +85,8 @@ private:
 
     MessageQueue<CrossThreadTask> m_databaseQueue;
     MessageQueue<CrossThreadTask> m_databaseReplyQueue;
+
+    HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
 };
 
 } // namespace IDBServer

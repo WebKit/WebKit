@@ -54,7 +54,11 @@ public:
 
 private:
     IDBOpenDBRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);
-    
+
+    void onError(const IDBResultData&);
+    void onSuccess(const IDBResultData&);
+    void onUpgradeNeeded(const IDBResultData&);
+
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_version;
     RefPtr<DOMError> m_domError;

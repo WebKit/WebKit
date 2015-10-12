@@ -48,6 +48,7 @@
 #include "IDBGetResult.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
+#include "IDBTransactionInfo.h"
 #endif
 
 namespace WebCore {
@@ -138,7 +139,13 @@ CrossThreadCopierBase<false, false, IDBDatabaseIdentifier>::Type CrossThreadCopi
 {
     return identifier.isolatedCopy();
 }
-#endif
+
+CrossThreadCopierBase<false, false, IDBTransactionInfo>::Type CrossThreadCopierBase<false, false, IDBTransactionInfo>::copy(const IDBTransactionInfo& info)
+{
+    return info.isolatedCopy();
+}
+
+#endif // ENABLE(INDEXED_DATABASE)
 
 // Test CrossThreadCopier using COMPILE_ASSERT.
 

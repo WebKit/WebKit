@@ -34,6 +34,8 @@ class IDBResultData;
 
 namespace IDBServer {
 
+class UniqueIDBDatabaseConnection;
+
 class IDBConnectionToClientDelegate {
 public:
     virtual ~IDBConnectionToClientDelegate() { }
@@ -42,6 +44,8 @@ public:
 
     virtual void didDeleteDatabase(const IDBResultData&) = 0;
     virtual void didOpenDatabase(const IDBResultData&) = 0;
+
+    virtual void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion) = 0;
 
     virtual void ref() = 0;
     virtual void deref() = 0;

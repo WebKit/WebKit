@@ -63,6 +63,18 @@ void IDBServer::unregisterConnection(IDBConnectionToClient& connection)
     m_connectionMap.remove(connection.identifier());
 }
 
+void IDBServer::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)
+{
+    ASSERT(!m_databaseConnections.contains(connection.identifier()));
+    m_databaseConnections.set(connection.identifier(), &connection);
+}
+
+void IDBServer::unregisterDatabaseConnection(UniqueIDBDatabaseConnection& connection)
+{
+    ASSERT(m_databaseConnections.contains(connection.identifier()));
+    m_databaseConnections.remove(connection.identifier());
+}
+
 UniqueIDBDatabase& IDBServer::getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier& identifier)
 {
     auto uniqueIDBDatabase = m_uniqueIDBDatabaseMap.add(identifier, nullptr);
@@ -112,7 +124,7 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     
     // FIXME: During bringup of modern IDB, the database deletion is a no-op, and is
     // immediately reported back to the WebProcess as failure.
-    IDBResultData result(requestData.requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
+    auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
     connection->didDeleteDatabase(result);
 }
 

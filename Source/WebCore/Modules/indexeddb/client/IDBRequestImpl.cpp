@@ -37,11 +37,12 @@ namespace IDBClient {
 
 IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext* context)
     : IDBOpenDBRequest(context)
+    , m_connection(connection)
     , m_resourceIdentifier(connection)
 {
 }
 
-RefPtr<IDBAny> IDBRequest::result(ExceptionCode&) const
+RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode&) const
 {
     return nullptr;
 }
@@ -56,14 +57,14 @@ RefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
     return nullptr;
 }
 
-RefPtr<IDBAny> IDBRequest::source() const
+RefPtr<WebCore::IDBAny> IDBRequest::source() const
 {
     return nullptr;
 }
 
-RefPtr<IDBTransaction> IDBRequest::transaction() const
+RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
 {
-    return nullptr;
+    return m_transaction;
 }
 
 const String& IDBRequest::readyState() const

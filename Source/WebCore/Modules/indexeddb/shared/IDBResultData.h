@@ -28,24 +28,52 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseInfo.h"
 #include "IDBError.h"
 #include "IDBResourceIdentifier.h"
+#include "IDBTransactionInfo.h"
 
 namespace WebCore {
 
 class IDBResourceIdentifier;
 
+namespace IDBServer {
+class UniqueIDBDatabaseConnection;
+class UniqueIDBDatabaseTransaction;
+}
+
+enum class IDBResultType {
+    Error,
+    OpenDatabaseSuccess,
+    OpenDatabaseUpgradeNeeded,
+};
+
 class IDBResultData {
 public:
-    IDBResultData(const IDBResourceIdentifier&, const IDBError&);
+    static IDBResultData error(const IDBResourceIdentifier&, const IDBError&);
+    static IDBResultData openDatabaseSuccess(const IDBResourceIdentifier&, IDBServer::UniqueIDBDatabaseConnection&);
+    static IDBResultData openDatabaseUpgradeNeeded(const IDBResourceIdentifier&, IDBServer::UniqueIDBDatabaseTransaction&);
+    IDBResultData(const IDBResultData&);
 
+    IDBResultType type() const { return m_type; }
     IDBResourceIdentifier requestIdentifier() const { return m_requestIdentifier; }
-    
+
     const IDBError& error() const { return m_error; }
-    
+    uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
+
+    const IDBDatabaseInfo& databaseInfo() const;
+    const IDBTransactionInfo& transactionInfo() const;
+
 private:
+    IDBResultData(const IDBResourceIdentifier&);
+
+    IDBResultType m_type;
     IDBResourceIdentifier m_requestIdentifier;
+
     IDBError m_error;
+    uint64_t m_databaseConnectionIdentifier { 0 };
+    std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+    std::unique_ptr<IDBTransactionInfo> m_transactionInfo;
 };
 
 } // namespace WebCore

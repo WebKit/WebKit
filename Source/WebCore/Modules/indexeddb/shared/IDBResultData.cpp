@@ -28,12 +28,67 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "UniqueIDBDatabase.h"
+#include "UniqueIDBDatabaseConnection.h"
+#include "UniqueIDBDatabaseTransaction.h"
+
 namespace WebCore {
 
-IDBResultData::IDBResultData(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
+IDBResultData::IDBResultData(const IDBResourceIdentifier& requestIdentifier)
     : m_requestIdentifier(requestIdentifier)
-    , m_error(error)
 {
+}
+
+IDBResultData::IDBResultData(const IDBResultData& other)
+    : m_type(other.m_type)
+    , m_requestIdentifier(other.m_requestIdentifier)
+    , m_error(other.m_error)
+    , m_databaseConnectionIdentifier(other.m_databaseConnectionIdentifier)
+{
+    if (other.m_databaseInfo)
+        m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*other.m_databaseInfo);
+    if (other.m_transactionInfo)
+        m_transactionInfo = std::make_unique<IDBTransactionInfo>(*other.m_transactionInfo);
+}
+
+IDBResultData IDBResultData::error(const IDBResourceIdentifier& requestIdentifier, const IDBError& error)
+{
+    IDBResultData result(requestIdentifier);
+    result.m_type = IDBResultType::Error;
+    result.m_error = error;
+    return WTF::move(result);
+}
+
+IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseConnection& connection)
+{
+    IDBResultData result(requestIdentifier);
+    result.m_type = IDBResultType::OpenDatabaseSuccess;
+    result.m_databaseConnectionIdentifier = connection.identifier();
+    result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(connection.database().info());
+    return WTF::move(result);
+}
+
+
+IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseTransaction& transaction)
+{
+    IDBResultData result(requestIdentifier);
+    result.m_type = IDBResultType::OpenDatabaseUpgradeNeeded;
+    result.m_databaseConnectionIdentifier = transaction.databaseConnection().identifier();
+    result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(transaction.databaseConnection().database().info());
+    result.m_transactionInfo = std::make_unique<IDBTransactionInfo>(transaction.info());
+    return WTF::move(result);
+}
+
+const IDBDatabaseInfo& IDBResultData::databaseInfo() const
+{
+    RELEASE_ASSERT(m_databaseInfo);
+    return *m_databaseInfo;
+}
+
+const IDBTransactionInfo& IDBResultData::transactionInfo() const
+{
+    RELEASE_ASSERT(m_transactionInfo);
+    return *m_transactionInfo;
 }
 
 } // namespace WebCore
