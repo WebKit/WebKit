@@ -245,11 +245,11 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 
     JSString* result = thisObject->structure(vm)->objectToStringValue();
     if (!result) {
-        RefPtr<StringImpl> newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
+        String newString = WTF::tryMakeString("[object ", thisObject->methodTable(exec->vm())->className(thisObject), "]");
         if (!newString)
             return JSValue::encode(throwOutOfMemoryError(exec));
 
-        result = jsNontrivialString(&vm, newString.release());
+        result = jsNontrivialString(&vm, newString);
         thisObject->structure(vm)->setObjectToStringValue(vm, result);
     }
     return JSValue::encode(result);

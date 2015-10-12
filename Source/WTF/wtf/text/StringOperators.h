@@ -35,10 +35,10 @@ public:
 
     operator String() const
     {
-        RefPtr<StringImpl> resultImpl = tryMakeString(m_string1, m_string2);
-        if (!resultImpl)
+        String result = tryMakeString(m_string1, m_string2);
+        if (!result)
             CRASH();
-        return resultImpl.release();
+        return result;
     }
 
     operator AtomicString() const
@@ -96,6 +96,8 @@ public:
 
     void writeTo(LChar* destination) { m_buffer.writeTo(destination); }
     void writeTo(UChar* destination) { m_buffer.writeTo(destination); }
+
+    String toString() const { return m_buffer; }
 
 private:
     StringAppend<StringType1, StringType2>& m_buffer;

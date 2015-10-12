@@ -1,3 +1,17 @@
+2015-10-12  Andreas Kling  <akling@apple.com>
+
+        "A + B" with strings shouldn't copy if A or B is empty.
+        <https://webkit.org/b/150034>
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        * runtime/Lookup.cpp:
+        (JSC::reifyStaticAccessor):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+
 2015-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         VisitedValueCount GC Counter misses parallel SlotVisitors

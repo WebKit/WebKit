@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,8 @@ public:
         *destination = m_character;
     }
 
+    String toString() const { return String(&m_character, 1); }
+
 private:
     char m_character;
 };
@@ -94,6 +96,8 @@ public:
         *destination = m_character;
     }
 
+    String toString() const { return String(&m_character, 1); }
+
 private:
     UChar m_character;
 };
@@ -119,6 +123,8 @@ public:
     {
         StringView(m_characters, m_length).getCharactersWithUpconvert(destination);
     }
+
+    String toString() const { return String(m_characters, 1); }
 
 private:
     const LChar* m_characters;
@@ -153,6 +159,8 @@ public:
     {
         memcpy(destination, m_characters, m_length * sizeof(UChar));
     }
+
+    String toString() const { return String(m_characters, 1); }
 
 private:
     const UChar* m_characters;
@@ -207,6 +215,8 @@ public:
         StringView(reinterpret_cast<const LChar*>(m_vector.data()), m_vector.size()).getCharactersWithUpconvert(destination);
     }
 
+    String toString() const { return String(m_vector.data(), m_vector.size()); }
+
 private:
     const Vector<char>& m_vector;
 };
@@ -234,6 +244,8 @@ public:
         WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
     }
 
+    String toString() const { return m_string; }
+
 private:
     const String& m_string;
 };
@@ -256,22 +268,27 @@ inline void sumWithOverflow(unsigned& total, unsigned addend, bool& overflow)
 }
 
 template<typename StringType1, typename StringType2>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2)
+String tryMakeString(StringType1 string1, StringType2 string2)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
+
+    if (adapter1.length() && !adapter2.length())
+        return adapter1.toString();
+    if (!adapter1.length() && adapter2.length())
+        return adapter2.toString();
 
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -284,7 +301,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2)
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -295,7 +312,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2)
 }
 
 template<typename StringType1, typename StringType2, typename StringType3>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -306,13 +323,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter2.length(), overflow);
     sumWithOverflow(length, adapter3.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -327,7 +344,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer = 0;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -340,7 +357,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -353,13 +370,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter3.length(), overflow);
     sumWithOverflow(length, adapter4.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -376,7 +393,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -391,7 +408,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -406,13 +423,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter4.length(), overflow);
     sumWithOverflow(length, adapter5.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -431,7 +448,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -448,7 +465,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -465,13 +482,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter5.length(), overflow);
     sumWithOverflow(length, adapter6.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -492,7 +509,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -511,7 +528,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -530,13 +547,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter6.length(), overflow);
     sumWithOverflow(length, adapter7.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit() && adapter7.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -559,7 +576,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -580,7 +597,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -601,13 +618,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter7.length(), overflow);
     sumWithOverflow(length, adapter8.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit() && adapter7.is8Bit() && adapter8.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -632,7 +649,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -655,7 +672,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8, typename StringType9>
-RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8, StringType9 string9)
+String tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8, StringType9 string9)
 {
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
@@ -678,13 +695,13 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     sumWithOverflow(length, adapter8.length(), overflow);
     sumWithOverflow(length, adapter9.length(), overflow);
     if (overflow)
-        return nullptr;
+        return String();
 
     if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit() && adapter7.is8Bit() && adapter8.is8Bit() && adapter9.is8Bit()) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return nullptr;
+            return String();
 
         LChar* result = buffer;
         adapter1.writeTo(result);
@@ -711,7 +728,7 @@ RefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, Strin
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return nullptr;
+        return String();
 
     UChar* result = buffer;
     adapter1.writeTo(result);
@@ -746,73 +763,73 @@ String makeString(StringType1 string1)
 template<typename StringType1, typename StringType2>
 String makeString(StringType1 string1, StringType2 string2)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3, string4);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3, string4, string5);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3, string4, string5, string6);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3, string4, string5, string6, string7);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8, typename StringType9>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8, StringType9 string9)
 {
-    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8, string9);
-    if (!resultImpl)
+    String result = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8, string9);
+    if (!result)
         CRASH();
-    return WTF::move(resultImpl);
+    return result;
 }
 
 } // namespace WTF

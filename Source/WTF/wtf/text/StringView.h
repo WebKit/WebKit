@@ -497,6 +497,8 @@ public:
     void writeTo(LChar* destination) { m_string.getCharactersWithUpconvert(destination); }
     void writeTo(UChar* destination) { m_string.getCharactersWithUpconvert(destination); }
 
+    String toString() const { return m_string.toString(); }
+
 private:
     StringView m_string;
 };

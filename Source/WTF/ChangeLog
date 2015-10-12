@@ -1,3 +1,40 @@
+2015-10-12  Andreas Kling  <akling@apple.com>
+
+        "A + B" with strings shouldn't copy if A or B is empty.
+        <https://webkit.org/b/150034>
+
+        Reviewed by Anders Carlsson.
+
+        Add a fast path to WTF's operator+ magic for concatenation of two strings where
+        one of them is empty. In that case, try to avoid allocation altogether by returning
+        the non-empty string.
+
+        Spotted this while analyzing memory peaks during page load; it turns out we were
+        duplicating whole text resources (JS, CSS) at the end of decoding, below
+        TextResourceDecoder::decodeAndFlush(). That function effectively does:
+
+            return decode() + flush();
+
+        Very often, flush() returns an empty string, so due to the naive operator+,
+        we'd allocate a new StringImpl of length (decode().length() + flush().length())
+        and copy the return value from decode() into it. So silly!
+
+        Had to make the tryMakeString() machinery use String as a return type instead of
+        RefPtr<StringImpl> to make all the right overloads gel. StringTypeAdapter templates
+        are now required to provide a toString() function.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::StringTypeAdapter<char>::toString):
+        (WTF::StringTypeAdapter<UChar>::toString):
+        (WTF::StringTypeAdapter<Vector<char>>::toString):
+        (WTF::StringTypeAdapter<String>::toString):
+        (WTF::tryMakeString):
+        (WTF::makeString):
+        * wtf/text/StringOperators.h:
+        (WTF::StringAppend::operator String):
+        * wtf/text/StringView.h:
+        (WTF::StringTypeAdapter<StringView>::toString):
+
 2015-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix style in the hopes that it fixes Windows.

@@ -127,10 +127,10 @@ inline JSValue jsMakeNontrivialString(ExecState* exec, StringType&& string)
 template<typename StringType, typename... StringTypes>
 inline JSValue jsMakeNontrivialString(ExecState* exec, const StringType& string, const StringTypes&... strings)
 {
-    RefPtr<StringImpl> result = WTF::tryMakeString(string, strings...);
+    String result = WTF::tryMakeString(string, strings...);
     if (!result)
         return throwOutOfMemoryError(exec);
-    return jsNontrivialString(exec, result.release());
+    return jsNontrivialString(exec, result);
 }
 
 }
