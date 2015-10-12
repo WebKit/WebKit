@@ -1,5 +1,16 @@
 2015-10-12  Mario Sanchez Prada  <mario@endlessm.com>
 
+        [GTK] Update jhbuild's version of harfbuzz
+        https://bugs.webkit.org/show_bug.cgi?id=149749
+
+        Reviewed by Martin Robinson.
+
+        Update harfbuzz to 0.9.35, following the lead of Debian Stable.
+
+        * gtk/jhbuild.modules: Updated details for harfbuzz.
+
+2015-10-12  Mario Sanchez Prada  <mario@endlessm.com>
+
         [GTK] Media tests crashing with gst-plugins-bad 1.4.4 and cpp 5.2
         https://bugs.webkit.org/show_bug.cgi?id=150026
 
