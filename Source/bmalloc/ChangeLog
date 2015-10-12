@@ -1,3 +1,24 @@
+2015-10-12  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Don't ASSERT that all syscalls succeed
+        https://bugs.webkit.org/show_bug.cgi?id=150047
+        <rdar://problem/22649531>
+
+        Reviewed by Mark Lam.
+
+        madvise can fail due to VM behaviors outside of our control:
+        copy-on-write, fork, mprotect, and other stuff.
+
+        Older darwin kernels sometimes return this error value, and new kernels
+        might again in future.
+
+        We haven't gained much from this ASSERT so far, so let's remove it.
+
+        Perhaps in future we can come up with a scheme that makes madvise
+        never fail, or that responds to failure.
+
+        * bmalloc/Syscall.h:
+
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove project support for iOS 8
