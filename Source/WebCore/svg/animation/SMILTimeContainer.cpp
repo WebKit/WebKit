@@ -264,6 +264,14 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
     AnimationsVector animationsToApply;
     for (auto& it : m_scheduledAnimations) {
         AnimationsVector* scheduled = it.value.get();
+        for (auto* animation : *scheduled) {
+            if (!animation->hasConditionsConnected())
+                animation->connectConditions();
+        }
+    }
+    
+    for (auto& it : m_scheduledAnimations) {
+        AnimationsVector* scheduled = it.value.get();
 
         // Sort according to priority. Elements with later begin time have higher priority.
         // In case of a tie, document order decides. 
