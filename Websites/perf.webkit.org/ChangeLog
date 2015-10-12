@@ -1,3 +1,43 @@
+2015-10-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf dashboard tools shouldn't require server credentials in multiple configuration files
+        https://bugs.webkit.org/show_bug.cgi?id=149994
+
+        Reviewed by Chris Dumez.
+
+        Made detect-changes.js and pull-svn.py pull username and passwords from the server config JSON to reduce
+        the number of JSON files that need to include credentials.
+
+        Also made each script reload the server config after sleep to allow dynamic credential updates.
+
+        In addition, change the server config JSON's format to include scheme, host, and port numbers separately
+        instead of a url since detect-changes.js needs each value separately.
+
+        This reduces the number of JSONs with credentials to two for our internal dashboard.
+
+        * tools/detect-changes.js:
+        (main): Added a property argument parsing. Now takes --server-config-json, --change-detection-config-json,
+        and --seconds-to-sleep like other scripts.
+        (parseArgument): Added.
+        (fetchManifestAndAnalyzeData): Reload the server config JSON.
+        (loadServerConfig): Added. Set settings.perfserver and settings.slave from the server config JSON. Also
+        add settings.perfserver.host to match the old format.
+        (configurationsForTesting): Fixed a bug that we throw an exception when a dashboard contains an empty cell.
+
+        * tools/pull-os-versions.py:
+        (main): Use load_server_config after each sleep.
+
+        * tools/pull-svn.py:
+        (main): Use load_server_config after each sleep.
+        (fetch_commits_and_submit): Use the perf dashboard's auth as subversion credential when useServerAuth is set.
+
+        * tools/sync-with-buildbot.py:
+        (main): Use load_server_config after each sleep.
+
+        * tools/util.py:
+        (load_server_config): Extracted from python scripts. Computes server's url from scheme, host, and port number
+        to match the old format python scripts except.
+
 2015-10-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r190817.  Now that pull-os-versions store fake timestamps, we need to bypass timestamp

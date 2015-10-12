@@ -7,30 +7,82 @@ var data = require('../public/v2/data.js');
 var RunsData = data.RunsData;
 var Statistics = require('../public/v2/js/statistics.js');
 
+// FIXME: We shouldn't use a global variable like this.
 var settings;
 function main(argv)
 {
-    if (argv.length < 3) {
-        console.error('Please specify the settings JSON path');
-        return 1;
-    }
+    var options = parseArgument(argv, [
+        {name: '--server-config-json', required: true},
+        {name: '--change-detection-config-json', required: true},
+        {name: '--seconds-to-sleep', type: parseFloat, default: 1200},
+    ]);
+    if (!options)
+        return;
 
-    settings = JSON.parse(fs.readFileSync(argv[2], 'utf8'));
+    settings = JSON.parse(fs.readFileSync(options['--change-detection-config-json'], 'utf8'));
+    settings.secondsToSleep = options['--seconds-to-sleep'];
 
-    fetchManifestAndAnalyzeData();
+    fetchManifestAndAnalyzeData(options['--server-config-json']);
 }
 
-function fetchManifestAndAnalyzeData()
+function parseArgument(argv, acceptedOptions) {
+    var args = argv.slice(2);
+    var options = {}
+    for (var i = 0; i < args.length; i += 2) {
+        var current = args[i];
+        var next = args[i + 1];
+        for (var option of acceptedOptions) {
+            if (current == option['name']) {
+                options[option['name']] = next;
+                next = null;
+                break;
+            }
+        }
+        if (next) {
+            console.error('Invalid argument:', current);
+            return null;
+        }
+    }
+    for (var option of acceptedOptions) {
+        var name = option['name'];
+        if (option['required'] && !(name in options)) {
+            console.log('Required argument', name, 'is missing');
+            return null;
+        }
+        var value = options[name] || option['default'];
+        var converter = option['type'];
+        options[name] = converter ? converter(value) : value;
+    }
+    return options;
+}
+
+function fetchManifestAndAnalyzeData(serverConfigJSON)
 {
+    loadServerConfig(serverConfigJSON);
+
     getJSON(settings.perfserver, '/data/manifest.json').then(function (manifest) {
         return mapInOrder(configurationsForTesting(manifest), analyzeConfiguration);
     }).catch(function (reason) {
-        console.error('Failed to obtain the manifest file');
+        console.error('Failed to obtain the manifest file', reason);
     }).then(function () {
         console.log('');
         console.log('Sleeing for', settings.secondsToSleep, 'seconds');
-        setTimeout(fetchManifestAndAnalyzeData, settings.secondsToSleep * 1000);
+        setTimeout(function () {
+            fetchManifestAndAnalyzeData(serverConfigJSON);
+        }, settings.secondsToSleep * 1000);
     });
+}
+
+function loadServerConfig(serverConfigJSON)
+{
+    var serverConfig = JSON.parse(fs.readFileSync(serverConfigJSON, 'utf8'));
+
+    var server = serverConfig['server'];
+    if ('auth' in server)
+        server['auth'] = server['auth']['username'] + ':' + server['auth']['password'];
+
+    settings.perfserver = server;
+    settings.slave = serverConfig['slave'];
 }
 
 function mapInOrder(array, callback, startIndex)
@@ -54,8 +106,12 @@ function configurationsForTesting(manifest)
         var dashboard = manifest.dashboards[name];
         for (var row of dashboard) {
             for (var cell of row) {
-                if (cell instanceof Array)
-                    configurations.push({platformId: parseInt(cell[0]), metricId: parseInt(cell[1])});
+                if (cell instanceof Array) {
+                    var platformId = parseInt(cell[0]);
+                    var metricId = parseInt(cell[1]);
+                    if (!isNaN(platformId) && !isNaN(metricId))
+                        configurations.push({platformId: platformId, metricId: metricId});
+                }
             }
         }
     }

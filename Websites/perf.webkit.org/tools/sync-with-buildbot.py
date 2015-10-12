@@ -9,7 +9,7 @@ import time
 import urllib
 import urllib2
 
-from util import setup_auth
+from util import load_server_config
 
 
 def main():
@@ -27,14 +27,9 @@ def main():
 
     configurations = load_config(args.builder_config_json, args.buildbot_url.strip('/'))
 
-    with open(args.server_config_json) as server_config_json:
-        server_config = json.load(server_config_json)
-        setup_auth(server_config['server'])
-
-    build_requests_url = server_config['server']['url'] + '/api/build-requests/' + args.triggerable
-
     request_updates = {}
     while True:
+        server_config = load_server_config(args.server_config_json)
         request_updates.update(find_request_updates(configurations, args.lookback_count))
         if request_updates:
             print 'Updating the build requests %s...' % ', '.join(map(str, request_updates.keys()))
@@ -45,6 +40,8 @@ def main():
             'buildRequestUpdates': request_updates,
             'slaveName': server_config['slave']['name'],
             'slavePassword': server_config['slave']['password']}
+
+        build_requests_url = server_config['server']['url'] + '/api/build-requests/' + args.triggerable
         response = update_and_fetch_build_requests(build_requests_url, payload)
         open_requests = response.get('buildRequests', [])
 

@@ -51,3 +51,12 @@ def setup_auth(server):
     password_manager.add_password(realm=auth['realm'], uri=server['url'], user=auth['username'], passwd=auth['password'])
     auth_handler = HTTP_AUTH_HANDLERS[auth['type']](password_manager)
     urllib2.install_opener(urllib2.build_opener(auth_handler))
+
+
+def load_server_config(json_path):
+    with open(json_path) as server_config_json:
+        server_config = json.load(server_config_json)
+        server = server_config['server']
+        server['url'] = server['scheme'] + '://' + server['host'] + ':' + str(server['port'])
+        setup_auth(server)
+        return server_config

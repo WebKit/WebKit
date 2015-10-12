@@ -14,7 +14,7 @@ from datetime import datetime
 from xml.dom.minidom import parseString as parseXmlString
 from util import submit_commits
 from util import text_content
-from util import setup_auth
+from util import load_server_config
 
 
 def main(argv):
@@ -27,13 +27,10 @@ def main(argv):
     with open(args.os_config_json) as os_config_json:
         os_config_list = json.load(os_config_json)
 
-    with open(args.server_config_json) as server_config_json:
-        server_config = json.load(server_config_json)
-        setup_auth(server_config['server'])
-
     fetchers = [OSBuildFetcher(os_config) for os_config in os_config_list]
 
     while True:
+        server_config = load_server_config(args.server_config_json)
         for fetcher in fetchers:
             fetcher.fetch_and_report_new_builds(server_config)
         print "Sleeping for %d seconds" % args.seconds_to_sleep

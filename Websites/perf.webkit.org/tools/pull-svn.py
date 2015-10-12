@@ -9,7 +9,7 @@ import time
 import urllib2
 
 from xml.dom.minidom import parseString as parseXmlString
-from util import setup_auth
+from util import load_server_config
 from util import submit_commits
 from util import text_content
 
@@ -22,14 +22,11 @@ def main(argv):
     parser.add_argument('--max-fetch-count', type=int, default=10, help='The number of commits to fetch at once')
     args = parser.parse_args()
 
-    with open(args.server_config_json) as server_config_json:
-        server_config = json.load(server_config_json)
-        setup_auth(server_config['server'])
-
     with open(args.svn_config_json) as svn_config_json:
         svn_config = json.load(svn_config_json)
 
     while True:
+        server_config = load_server_config(args.server_config_json)
         for repository_info in svn_config:
             fetch_commits_and_submit(repository_info, server_config, args.max_fetch_count)
         print "Sleeping for %d seconds..." % args.seconds_to_sleep
@@ -43,6 +40,10 @@ def fetch_commits_and_submit(repository, server_config, max_fetch_count):
     if 'revisionToFetch' not in repository:
         print "Determining the stating revision for %s" % repository['name']
         repository['revisionToFecth'] = determine_first_revision_to_fetch(server_config['server']['url'], repository['name'])
+
+    if 'useServerAuth' in repository:
+        repository['username'] = server_config['server']['auth']['username']
+        repository['password'] = server_config['server']['auth']['password']
 
     pending_commits = []
     for unused in range(max_fetch_count):
