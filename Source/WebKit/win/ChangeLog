@@ -1,3 +1,26 @@
+2015-10-07  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/23025615.
+
+    2015-09-10  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Re-export a few symbols for backwards compatibility
+            <rdar://problem/22633105>
+
+            Reviewed by Dean Jackson.
+
+            Check in a workaround (in a custom branch) to re-export a few JavaScriptCore
+            functions that had been erroneously exported by WebKit in older builds. This
+            is needed so that we do not break certain old software still being used.
+
+            * WebKitDLL.cpp:
+            (DllMain): Bind functions at startup.
+            (bindJavaScriptTrampoline): Find JavaScriptCore library functions and
+            re-export them from WebKit.dll.
+            * WebKitDLL.h:
+            * WebView.cpp:
+            (WebView::unused5): Work around a linker bug.
+
 2015-09-25  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r190235. rdar://problem/22852382
