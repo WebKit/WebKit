@@ -595,14 +595,13 @@ void FontCache::setFontWhitelist(const Vector<String>& inputWhitelist)
 }
 
 #if ENABLE(PLATFORM_FONT_LOOKUP)
-static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, const FontFeatureSettings& featureSettings, const FontVariantSettings& variantSettings, TextRenderingMode textRenderingMode, float size)
+static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, CTFontSymbolicTraits requestedTraits, FontWeight weight, float size)
 {
     const auto& whitelist = fontWhitelist();
     if (whitelist.size() && !whitelist.contains(family))
         return nullptr;
 
-    auto foundFont = adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
-    return preparePlatformFont(foundFont.get(), textRenderingMode, featureSettings, variantSettings);
+    return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), toCoreTextFontWeight(weight), requestedTraits, size));
 }
 #endif
 
@@ -613,12 +612,13 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, CTFontSym
     if (auto specialCase = platformFontWithFamilySpecialCase(family, weight, desiredTraits, size))
         return specialCase;
 #if ENABLE(PLATFORM_FONT_LOOKUP)
-    return platformFontLookupWithFamily(family, desiredTraits, weight, featureSettings, variantSettings, textRenderingMode, size);
+    RetainPtr<CTFontRef> foundFont = platformFontLookupWithFamily(family, desiredTraits, weight, size);
 #else
     UNUSED_PARAM(featureSettings);
     UNUSED_PARAM(variantSettings);
-    return platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
+    RetainPtr<CTFontRef> foundFont = platformFontWithFamily(family, desiredTraits, weight, textRenderingMode, size);
 #endif
+    return preparePlatformFont(foundFont.get(), textRenderingMode, featureSettings, variantSettings);
 }
 
 #if PLATFORM(MAC)
