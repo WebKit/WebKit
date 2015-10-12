@@ -113,7 +113,7 @@ bool NinePieceImage::isEmptyPieceRect(ImagePiece piece, const Vector<FloatRect>&
     return destinationRects[piece].isEmpty() || sourceRects[piece].isEmpty();
 }
 
-Vector<FloatRect> NinePieceImage::computeIntrinsicRects(const FloatRect& outer, const LayoutBoxExtent& slices, float deviceScaleFactor)
+Vector<FloatRect> NinePieceImage::computeNineRects(const FloatRect& outer, const LayoutBoxExtent& slices, float deviceScaleFactor)
 {
     FloatRect inner = outer;
     inner.move(slices.left(), slices.top());
@@ -137,20 +137,7 @@ Vector<FloatRect> NinePieceImage::computeIntrinsicRects(const FloatRect& outer, 
     return rects;
 }
 
-Vector<FloatRect> NinePieceImage::computeNonIntrinsicRects(const Vector<FloatRect>& intrinsicRects, const LayoutBoxExtent& slices)
-{
-    Vector<FloatRect> rects(MaxPiece);
-
-    for (ImagePiece piece = MinPiece; piece < MaxPiece; ++piece) {
-        if (isEmptyPieceRect(piece, slices))
-            continue;
-        rects[piece] = FloatRect(FloatPoint(), intrinsicRects[piece].size());
-    }
-
-    return rects;
-}
-
-FloatSize NinePieceImage::computeIntrinsicSideTileScale(ImagePiece piece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects)
+FloatSize NinePieceImage::computeSideTileScale(ImagePiece piece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects)
 {
     ASSERT(!isCornerPiece(piece) && !isMiddlePiece(piece));
     if (isEmptyPieceRect(piece, destinationRects, sourceRects))
@@ -165,7 +152,7 @@ FloatSize NinePieceImage::computeIntrinsicSideTileScale(ImagePiece piece, const 
     return FloatSize(scale, scale);
 }
 
-FloatSize NinePieceImage::computeIntrinsicMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule)
+FloatSize NinePieceImage::computeMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule)
 {
     FloatSize scale(1, 1);
     if (isEmptyPieceRect(MiddlePiece, destinationRects, sourceRects))
@@ -190,25 +177,20 @@ FloatSize NinePieceImage::computeIntrinsicMiddleTileScale(const Vector<FloatSize
     return scale;
 }
 
-Vector<FloatSize> NinePieceImage::computeIntrinsicTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule)
+Vector<FloatSize> NinePieceImage::computeTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule)
 {
     Vector<FloatSize> scales(MaxPiece, FloatSize(1, 1));
 
-    scales[TopPiece]    = computeIntrinsicSideTileScale(TopPiece,    destinationRects, sourceRects);
-    scales[RightPiece]  = computeIntrinsicSideTileScale(RightPiece,  destinationRects, sourceRects);
-    scales[BottomPiece] = computeIntrinsicSideTileScale(BottomPiece, destinationRects, sourceRects);
-    scales[LeftPiece]   = computeIntrinsicSideTileScale(LeftPiece,   destinationRects, sourceRects);
+    scales[TopPiece]    = computeSideTileScale(TopPiece,    destinationRects, sourceRects);
+    scales[RightPiece]  = computeSideTileScale(RightPiece,  destinationRects, sourceRects);
+    scales[BottomPiece] = computeSideTileScale(BottomPiece, destinationRects, sourceRects);
+    scales[LeftPiece]   = computeSideTileScale(LeftPiece,   destinationRects, sourceRects);
 
-    scales[MiddlePiece] = computeIntrinsicMiddleTileScale(scales, destinationRects, sourceRects, hRule, vRule);
+    scales[MiddlePiece] = computeMiddleTileScale(scales, destinationRects, sourceRects, hRule, vRule);
     return scales;
 }
 
-Vector<FloatSize> NinePieceImage::computeNonIntrinsicTileScales()
-{
-    return Vector<FloatSize>(MaxPiece, FloatSize(1, 1));
-}
-
-void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source,  bool intrinsicSource, float deviceScaleFactor, CompositeOperator op) const
+void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator op) const
 {
     StyleImage* styleImage = image();
     ASSERT(styleImage && styleImage->isLoaded());
@@ -218,17 +200,9 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* rend
 
     scaleSlicesIfNeeded(destination.size(), destinationSlices, deviceScaleFactor);
 
-    Vector<FloatRect> destinationRects = computeIntrinsicRects(destination, destinationSlices, deviceScaleFactor);
-    Vector<FloatRect> sourceRects;
-    Vector<FloatSize> tileScales;
-
-    if (intrinsicSource) {
-        sourceRects = computeIntrinsicRects(FloatRect(FloatPoint(), source), sourceSlices, deviceScaleFactor);
-        tileScales = computeIntrinsicTileScales(destinationRects, sourceRects, horizontalRule(), verticalRule());
-    } else {
-        sourceRects = computeNonIntrinsicRects(destinationRects, sourceSlices);
-        tileScales = computeNonIntrinsicTileScales();
-    }
+    Vector<FloatRect> destinationRects = computeNineRects(destination, destinationSlices, deviceScaleFactor);
+    Vector<FloatRect> sourceRects = computeNineRects(FloatRect(FloatPoint(), source), sourceSlices, deviceScaleFactor);
+    Vector<FloatSize> tileScales = computeTileScales(destinationRects, sourceRects, horizontalRule(), verticalRule());
 
     RefPtr<Image> image = styleImage->image(renderer, source);
     ColorSpace colorSpace = style.colorSpace();

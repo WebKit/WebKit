@@ -196,17 +196,15 @@ public:
     static bool isEmptyPieceRect(ImagePiece, const LayoutBoxExtent& slices);
     static bool isEmptyPieceRect(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
 
-    static Vector<FloatRect> computeIntrinsicRects(const FloatRect& outer, const LayoutBoxExtent& slices, float deviceScaleFactor);
-    static Vector<FloatRect> computeNonIntrinsicRects(const Vector<FloatRect>& intrinsicRects, const LayoutBoxExtent& slices);
+    static Vector<FloatRect> computeNineRects(const FloatRect& outer, const LayoutBoxExtent& slices, float deviceScaleFactor);
 
     static void scaleSlicesIfNeeded(const LayoutSize&, LayoutBoxExtent& slices, float deviceScaleFactor);
 
-    static FloatSize computeIntrinsicSideTileScale(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
-    static FloatSize computeIntrinsicMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
-    static Vector<FloatSize> computeIntrinsicTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
-    static Vector<FloatSize> computeNonIntrinsicTileScales();
+    static FloatSize computeSideTileScale(ImagePiece, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects);
+    static FloatSize computeMiddleTileScale(const Vector<FloatSize>& scales, const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
+    static Vector<FloatSize> computeTileScales(const Vector<FloatRect>& destinationRects, const Vector<FloatRect>& sourceRects, ENinePieceImageRule hRule, ENinePieceImageRule vRule);
 
-    void paint(GraphicsContext&, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, bool intrinsicSource, float deviceScaleFactor, CompositeOperator) const;
+    void paint(GraphicsContext&, RenderElement*, const RenderStyle&, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator) const;
 
 private:
     DataRef<NinePieceImageData> m_data;
