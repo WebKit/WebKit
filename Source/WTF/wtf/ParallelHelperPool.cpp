@@ -53,7 +53,7 @@ ParallelHelperClient::~ParallelHelperClient()
     }
 }
 
-void ParallelHelperClient::setTask(RefPtr<SharedTask<void()>> task)
+void ParallelHelperClient::setTask(RefPtr<SharedTask<void ()>> task)
 {
     LockHolder locker(m_pool->m_lock);
     RELEASE_ASSERT(!m_task);
@@ -69,7 +69,7 @@ void ParallelHelperClient::finish()
 
 void ParallelHelperClient::doSomeHelping()
 {
-    RefPtr<SharedTask<void()>> task;
+    RefPtr<SharedTask<void ()>> task;
     {
         LockHolder locker(m_pool->m_lock);
         task = claimTask(locker);
@@ -80,7 +80,7 @@ void ParallelHelperClient::doSomeHelping()
     runTask(task);
 }
 
-void ParallelHelperClient::runTaskInParallel(RefPtr<SharedTask<void()>> task)
+void ParallelHelperClient::runTaskInParallel(RefPtr<SharedTask<void ()>> task)
 {
     setTask(task);
     doSomeHelping();
@@ -94,7 +94,7 @@ void ParallelHelperClient::finish(const LockHolder&)
         m_pool->m_workCompleteCondition.wait(m_pool->m_lock);
 }
 
-RefPtr<SharedTask<void()>> ParallelHelperClient::claimTask(const LockHolder&)
+RefPtr<SharedTask<void ()>> ParallelHelperClient::claimTask(const LockHolder&)
 {
     if (!m_task)
         return nullptr;
@@ -103,7 +103,7 @@ RefPtr<SharedTask<void()>> ParallelHelperClient::claimTask(const LockHolder&)
     return m_task;
 }
 
-void ParallelHelperClient::runTask(RefPtr<SharedTask<void()>> task)
+void ParallelHelperClient::runTask(RefPtr<SharedTask<void ()>> task)
 {
     RELEASE_ASSERT(m_numActive);
     RELEASE_ASSERT(task);
@@ -153,7 +153,7 @@ void ParallelHelperPool::ensureThreads(unsigned numThreads)
 void ParallelHelperPool::doSomeHelping()
 {
     ParallelHelperClient* client;
-    RefPtr<SharedTask<void()>> task;
+    RefPtr<SharedTask<void ()>> task;
     {
         LockHolder locker(m_lock);
         client = getClientWithTask(locker);
@@ -182,7 +182,7 @@ void ParallelHelperPool::helperThreadBody()
 {
     for (;;) {
         ParallelHelperClient* client;
-        RefPtr<SharedTask<void()>> task;
+        RefPtr<SharedTask<void ()>> task;
 
         {
             LockHolder locker(m_lock);

@@ -1,3 +1,22 @@
+2015-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix style in the hopes that it fixes Windows.
+
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTaskInParallel):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::claimTask):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        (WTF::ParallelHelperPool::helperThreadBody):
+        * wtf/ParallelHelperPool.h:
+        (WTF::ParallelHelperClient::setFunction):
+        (WTF::ParallelHelperClient::runFunctionInParallel):
+        (WTF::ParallelHelperClient::pool):
+
 2015-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should generate code to call slow paths lazily
