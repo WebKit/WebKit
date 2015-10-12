@@ -3293,3 +3293,6 @@ webkit.org/b/150040 fast/events/tabindex-focus-blur-all.html [ Failure ]
 webkit.org/b/150040 imported/w3c/web-platform-tests/dom/ranges/Range-insertNode.html [ Failure ]
 webkit.org/b/150040 imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html [ Failure ]
 webkit.org/b/150040 js/dom/dfg-custom-getter.html [ Failure ]
+
+# The following tests are not relevant on the Windows platform:
+fast/forms/hidpi-textfield-background-bleeding.html [ Skip ]
