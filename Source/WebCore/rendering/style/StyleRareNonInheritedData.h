@@ -98,6 +98,10 @@ public:
     bool reflectionDataEquivalent(const StyleRareNonInheritedData&) const;
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
+    bool clipPathOperationsEquivalent(const StyleRareNonInheritedData&) const;
+#if ENABLE(CSS_SHAPES)
+    bool shapeOutsideDataEquivalent(const StyleRareNonInheritedData&) const;
+#endif
     bool hasFilters() const;
 #if ENABLE(FILTERS_LEVEL_2)
     bool hasBackdropFilters() const;

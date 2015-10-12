@@ -69,6 +69,29 @@ function parseCrossFade(s)
     return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
 }
 
+function parseClipPath(s)
+{
+    // FIXME: This only matches a subset of the shape syntax, and the polygon expects 4 points.
+    var patterns = [
+        /inset\(([\d.]+)\w+ ([\d.]+)\w+\)/,
+        /circle\(([\d.]+)\w+ at ([\d.]+)\w+ ([\d.]+)\w+\)/,
+        /ellipse\(([\d.]+)\w+ ([\d.]+)\w+ at ([\d.]+)\w+ ([\d.]+)\w+\)/,
+        /polygon\(([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\)/
+    ];
+    
+    for (pattern of patterns) {
+        if (matchResult = s.match(pattern)) {
+            var result = [];
+            for (var i = 1; i < matchResult.length; ++i)
+                result.push(parseFloat(matchResult[i]));
+            return result;
+        }
+    }
+
+    window.console.log('failed to match ' + s);
+    return null;
+}
+
 function checkExpectedValue(expected, index)
 {
     var time = expected[index][0];
@@ -135,6 +158,18 @@ function checkExpectedValue(expected, index)
             pass = false;
         } else {
             pass = isCloseEnough(computedCrossFade.percent, expectedValue, tolerance);
+        }
+    } else if (property == "-webkit-clip-path" || property == "-webkit-shape-outside") {
+        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
+
+        var expectedValues = parseClipPath(expectedValue);
+        var values = parseClipPath(computedValue);
+        
+        pass = false;
+        if (values && values.length == expectedValues.length) {
+            pass = true
+            for (var i = 0; i < values.length; ++i)
+                pass &= isCloseEnough(values[i], expectedValues[i], tolerance);
         }
     } else {
         var computedStyle = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);

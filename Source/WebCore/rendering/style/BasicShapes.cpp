@@ -88,6 +88,18 @@ bool BasicShape::canBlend(const BasicShape& other) const
         && thisEllipse.radiusY().canBlend(otherEllipse.radiusY()));
 }
 
+
+bool BasicShapeCircle::operator==(const BasicShape& other) const
+{
+    if (type() != other.type())
+        return false;
+
+    const auto& otherCircle = downcast<BasicShapeCircle>(other);
+    return m_centerX == otherCircle.m_centerX
+        && m_centerY == otherCircle.m_centerY
+        && m_radius == otherCircle.m_radius;
+}
+
 float BasicShapeCircle::floatValueForRadiusInBox(float boxWidth, float boxHeight) const
 {
     if (m_radius.type() == BasicShapeRadius::Value)
@@ -130,6 +142,18 @@ Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress
     result->setCenterY(m_centerY.blend(otherCircle.centerY(), progress));
     result->setRadius(m_radius.blend(otherCircle.radius(), progress));
     return result.releaseNonNull();
+}
+
+bool BasicShapeEllipse::operator==(const BasicShape& other) const
+{
+    if (type() != other.type())
+        return false;
+
+    const auto& otherEllipse = downcast<BasicShapeEllipse>(other);
+    return m_centerX == otherEllipse.m_centerX
+        && m_centerY == otherEllipse.m_centerY
+        && m_radiusX == otherEllipse.m_radiusX
+        && m_radiusY == otherEllipse.m_radiusY;
 }
 
 float BasicShapeEllipse::floatValueForRadiusInBox(const BasicShapeRadius& radius, float center, float boxWidthOrHeight) const
@@ -182,6 +206,16 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progres
     return result.releaseNonNull();
 }
 
+bool BasicShapePolygon::operator==(const BasicShape& other) const
+{
+    if (type() != other.type())
+        return false;
+
+    const auto& otherPolygon = downcast<BasicShapePolygon>(other);
+    return m_windRule == otherPolygon.m_windRule
+        && m_values == otherPolygon.m_values;
+}
+
 void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
@@ -221,6 +255,22 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
     }
 
     return result.releaseNonNull();
+}
+
+bool BasicShapeInset::operator==(const BasicShape& other) const
+{
+    if (type() != other.type())
+        return false;
+
+    const auto& otherInset = downcast<BasicShapeInset>(other);
+    return m_right == otherInset.m_right
+        && m_top == otherInset.m_top
+        && m_bottom == otherInset.m_bottom
+        && m_left == otherInset.m_left
+        && m_topLeftRadius == otherInset.m_topLeftRadius
+        && m_topRightRadius == otherInset.m_topRightRadius
+        && m_bottomRightRadius == otherInset.m_bottomRightRadius
+        && m_bottomLeftRadius == otherInset.m_bottomLeftRadius;
 }
 
 static FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatRect& boundingBox)

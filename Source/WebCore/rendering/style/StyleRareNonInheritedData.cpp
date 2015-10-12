@@ -243,11 +243,11 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_maskBoxImage == o.m_maskBoxImage
         && m_pageSize == o.m_pageSize
 #if ENABLE(CSS_SHAPES)
-        && m_shapeOutside == o.m_shapeOutside
+        && shapeOutsideDataEquivalent(o)
         && m_shapeMargin == o.m_shapeMargin
         && m_shapeImageThreshold == o.m_shapeImageThreshold
 #endif
-        && m_clipPath == o.m_clipPath // FIXME: This needs to compare values.
+        && clipPathOperationsEquivalent(o)
         && m_textDecorationColor == o.m_textDecorationColor
         && m_visitedLinkTextDecorationColor == o.m_visitedLinkTextDecorationColor
         && m_visitedLinkBackgroundColor == o.m_visitedLinkBackgroundColor
@@ -362,6 +362,26 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
         return false;
     return true;
 }
+
+bool StyleRareNonInheritedData::clipPathOperationsEquivalent(const StyleRareNonInheritedData& o) const
+{
+    if ((!m_clipPath && o.m_clipPath) || (m_clipPath && !o.m_clipPath))
+        return false;
+    if (m_clipPath && o.m_clipPath && (*m_clipPath != *o.m_clipPath))
+        return false;
+    return true;
+}
+
+#if ENABLE(CSS_SHAPES)
+bool StyleRareNonInheritedData::shapeOutsideDataEquivalent(const StyleRareNonInheritedData& o) const
+{
+    if ((!m_shapeOutside && o.m_shapeOutside) || (m_shapeOutside && !o.m_shapeOutside))
+        return false;
+    if (m_shapeOutside && o.m_shapeOutside && (*m_shapeOutside != *o.m_shapeOutside))
+        return false;
+    return true;
+}
+#endif
 
 bool StyleRareNonInheritedData::hasFilters() const
 {
