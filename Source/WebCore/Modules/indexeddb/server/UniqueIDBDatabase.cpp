@@ -68,6 +68,11 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::handleOpenDatabaseOperations");
 
+    // If a version change transaction is currently in progress, no new connections can be opened right now.
+    // We will try again later.
+    if (m_versionChangeDatabaseConnection)
+        return;
+
     auto operation = m_pendingOpenDatabaseOperations.takeFirst();
 
     // 3.3.1 Opening a database
