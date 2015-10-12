@@ -1084,7 +1084,7 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& URL, const String& na
     return childFrame;
 }
 
-ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
+ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeTypeIn)
 {
     String mimeType = mimeTypeIn;
 
@@ -1102,7 +1102,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     bool plugInSupportsMIMEType = PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType);
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return shouldPreferPlugInsForImages && plugInSupportsMIMEType ? WebCore::ObjectContentNetscapePlugin : WebCore::ObjectContentImage;
+        return WebCore::ObjectContentImage;
 
     if (plugInSupportsMIMEType)
         return WebCore::ObjectContentNetscapePlugin;

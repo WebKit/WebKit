@@ -1954,8 +1954,6 @@ webkit.org/b/127489 http/tests/misc/will-send-request-returns-null-on-redirect.h
 
 webkit.org/b/127725 media/video-restricted-no-preload-auto.html [ Failure ]
 
-webkit.org/b/127731 plugins/embed-prefers-plugins-for-images.html [ Failure ]
-
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 fast/block/float/016.html [ Failure ]
 webkit.org/b/128061 fast/css/bidi-override-in-anonymous-block.html [ Failure ]

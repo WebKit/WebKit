@@ -1,3 +1,14 @@
+2015-10-09  Anders Carlsson  <andersca@apple.com>
+
+        Don't allow plug-ins to override image types for <embed> elements
+        https://bugs.webkit.org/show_bug.cgi?id=149979
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::objectContentType):
+
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove unnecessary iOS version checks

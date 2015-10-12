@@ -1651,7 +1651,7 @@ RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& na
     return nullptr;
 }
 
-ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -1697,7 +1697,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     }
     
     if (MIMETypeRegistry::isSupportedImageMIMEType(type))
-        return shouldPreferPlugInsForImages && plugInType != ObjectContentNone ? plugInType : ObjectContentImage;
+        return ObjectContentImage;
 
     if (plugInType != ObjectContentNone)
         return plugInType;

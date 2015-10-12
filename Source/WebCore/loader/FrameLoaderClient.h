@@ -281,7 +281,7 @@ namespace WebCore {
 
         virtual void dispatchDidFailToStartPlugin(const PluginViewBase*) const { }
 
-        virtual ObjectContentType objectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages) = 0;
+        virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
         virtual String overrideMediaType() const = 0;
 
         virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;

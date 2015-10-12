@@ -376,7 +376,7 @@ public:
     virtual void recreatePlugin(Widget*) override;
     virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) override;
 
-    virtual ObjectContentType objectContentType(const URL&, const String&, bool) override { return ObjectContentType(); }
+    virtual ObjectContentType objectContentType(const URL&, const String&) override { return ObjectContentType(); }
     virtual String overrideMediaType() const override { return String(); }
 
     virtual void redirectDataToPlugin(Widget*) override { }

@@ -99,14 +99,13 @@ static const String subtitleText(Page* page, String mimeType)
     return subtitleText;
 };
 
-HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document, bool createdByParser, PreferPlugInsForImagesOption preferPlugInsForImagesOption)
+HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLPlugInElement(tagName, document)
     // m_needsWidgetUpdate(!createdByParser) allows HTMLObjectElement to delay
     // widget updates until after all children are parsed.  For HTMLEmbedElement
     // this delay is unnecessary, but it is simpler to make both classes share
     // the same codepath in this class.
     , m_needsWidgetUpdate(!createdByParser)
-    , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
     , m_simulatedMouseClickTimer(*this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_removeSnapshotTimer(*this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
@@ -156,7 +155,7 @@ bool HTMLPlugInImageElement::isImageType()
 
     if (Frame* frame = document().frame()) {
         URL completedURL = document().completeURL(m_url);
-        return frame->loader().client().objectContentType(completedURL, m_serviceType, shouldPreferPlugInsForImages()) == ObjectContentImage;
+        return frame->loader().client().objectContentType(completedURL, m_serviceType) == ObjectContentImage;
     }
 
     return Image::supportsType(m_serviceType);
@@ -185,7 +184,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
         completedURL = document().completeURL(url);
 
     FrameLoader& frameLoader = document().frame()->loader();
-    if (frameLoader.client().objectContentType(completedURL, serviceType, shouldPreferPlugInsForImages()) == ObjectContentNetscapePlugin)
+    if (frameLoader.client().objectContentType(completedURL, serviceType) == ObjectContentNetscapePlugin)
         return true;
     return false;
 }

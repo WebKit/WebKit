@@ -682,7 +682,6 @@ webkit.org/b/131224 [ Debug ] media/track/track-insert-after-load-crash.html [ C
 webkit.org/b/131225 [ Debug ] media/track/track-remove-quickly.html [ Crash ]
 
 webkit.org/b/131217 [ Debug ] plugins/no-mime-with-valid-extension.html [ Crash ]
-webkit.org/b/131217 [ Debug ] plugins/embed-prefers-plugins-for-images.html [ Crash ]
 
 webkit.org/b/105870 [ Debug ] webaudio/audiobuffersource-loop-points.html [ Crash ]
 webkit.org/b/105870 [ Debug ] webaudio/audionode-channel-rules.html [ Crash Pass ]

@@ -69,7 +69,7 @@ public:
 
     bool containsPlugins() const { return m_containsPlugins; }
     
-    bool resourceWillUsePlugin(const String& url, const String& mimeType, bool shouldPreferPlugInsForImages);
+    bool resourceWillUsePlugin(const String& url, const String& mimeType);
 
 private:
     bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
@@ -77,7 +77,7 @@ private:
     Frame* loadSubframe(HTMLFrameOwnerElement&, const URL&, const String& name, const String& referrer);
     bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 
-    bool shouldUsePlugin(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback);
+    bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
     bool pluginIsLoadable(HTMLPlugInImageElement&, const URL&, const String& mimeType);
 
     Document* document() const;

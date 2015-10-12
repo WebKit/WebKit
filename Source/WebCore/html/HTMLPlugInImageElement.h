@@ -61,8 +61,6 @@ public:
         return mimeType;
     }
 
-    bool shouldPreferPlugInsForImages() const { return m_shouldPreferPlugInsForImages; }
-
     // Public for FrameView::addWidgetToUpdate()
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
@@ -93,8 +91,7 @@ public:
     SnapshotDecision snapshotDecision() const { return m_snapshotDecision; }
 
 protected:
-    enum PreferPlugInsForImagesOption { ShouldPreferPlugInsForImages, ShouldNotPreferPlugInsForImages };
-    HTMLPlugInImageElement(const QualifiedName& tagName, Document&, bool createdByParser, PreferPlugInsForImagesOption);
+    HTMLPlugInImageElement(const QualifiedName& tagName, Document&, bool createdByParser);
 
     virtual void didMoveToNewDocument(Document* oldDocument) override;
     virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues) override final;
@@ -142,7 +139,6 @@ private:
 
     URL m_loadedUrl;
     bool m_needsWidgetUpdate;
-    bool m_shouldPreferPlugInsForImages;
     bool m_needsDocumentActivationCallbacks;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer m_simulatedMouseClickTimer;
