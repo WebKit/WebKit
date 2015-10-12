@@ -603,9 +603,11 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run) const
     // FIXME: This shouldn't be necessary because Font::applyTransforms() should perform all necessary shaping.
     if (m_fontDescription.featureSettings().size() > 0 || !m_fontDescription.variantSettings().isAllNormal())
         return Complex;
-    
-    if (run.length() > 1 && !WidthIterator::supportsTypesettingFeatures(*this))
+
+#if !PLATFORM(COCOA)
+    if (run.length() > 1 && typesettingFeatures())
         return Complex;
+#endif
 
     if (!run.characterScanForCodePath())
         return Simple;
