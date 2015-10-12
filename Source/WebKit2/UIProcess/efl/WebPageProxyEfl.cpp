@@ -63,7 +63,7 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
         osVersion = "Unknown";
 
     standardUserAgentString = "Mozilla/5.0 (" + platform + "; " + osVersion + ") AppleWebKit/" + version
-        + " (KHTML, like Gecko) Version/5.0 Safari/" + version;
+        + " (KHTML, like Gecko) Version/8.0 Safari/" + version;
 
     return applicationNameForUserAgent.isEmpty() ? standardUserAgentString : standardUserAgentString + ' ' + applicationNameForUserAgent;
 }

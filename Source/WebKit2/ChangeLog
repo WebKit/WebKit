@@ -1,3 +1,16 @@
+2015-10-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Bump Version/X in user agent
+        https://bugs.webkit.org/show_bug.cgi?id=150013
+
+        Reviewed by Csaba Osztrogonác.
+
+        EFL port needs to ensure maximum compatibility with existing web sites.
+        Thus version number needs to be bumped from 5.0 to 8.0 as GTK port.
+
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove unnecessary iOS version checks
