@@ -26,6 +26,8 @@
 #ifndef FTLLazySlowPath_h
 #define FTLLazySlowPath_h
 
+#if ENABLE(FTL_JIT)
+
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
 #include "CodeLocation.h"
@@ -86,6 +88,8 @@ private:
 };
 
 } } // namespace JSC::FTL
+
+#endif // ENABLE(FTL_JIT)
 
 #endif // FTLLazySlowPath_h
 
