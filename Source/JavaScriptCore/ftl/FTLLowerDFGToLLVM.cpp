@@ -7309,6 +7309,9 @@ private:
     //     },
     //     input);
     //
+    // You can basically pass as many inputs as you like, either using this varargs form, or by
+    // passing a Vector of LValues.
+    //
     // Note that if your slow path is only doing a call, you can use the createLazyCallGenerator()
     // helper. For example:
     //
@@ -7317,7 +7320,7 @@ private:
     //     [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
     //         return createLazyCallGenerator(
     //             operationDoThings, locations[0].directGPR(), locations[1].directGPR());
-    //     });
+    //     }, input);
     //
     // Finally, note that all of the lambdas - both the stage (2) lambda and the stage (3) lambda -
     // run after the function that created them returns. Hence, you should not use by-reference

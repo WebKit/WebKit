@@ -1,5 +1,11 @@
 2015-10-12  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, clarify a comment. The example code had a bug.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+
+2015-10-12  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix no-FTL build.
 
         * ftl/FTLLazySlowPath.cpp:
