@@ -41,23 +41,22 @@ class Location;
 class InlineCacheDescriptor {
 public:
     InlineCacheDescriptor() 
-        : m_callSiteIndex(UINT_MAX) 
     { }
     
-    InlineCacheDescriptor(unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid)
+    InlineCacheDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
         : m_stackmapID(stackmapID)
-        , m_callSiteIndex(callSite)
+        , m_codeOrigin(codeOrigin)
         , m_uid(uid)
     {
     }
     
     unsigned stackmapID() const { return m_stackmapID; }
-    CallSiteIndex callSiteIndex() const { return m_callSiteIndex; }
+    CodeOrigin codeOrigin() const { return m_codeOrigin; }
     UniquedStringImpl* uid() const { return m_uid; }
     
 private:
     unsigned m_stackmapID;
-    CallSiteIndex m_callSiteIndex;
+    CodeOrigin m_codeOrigin;
     UniquedStringImpl* m_uid;
     
 public:
@@ -68,8 +67,8 @@ class GetByIdDescriptor : public InlineCacheDescriptor {
 public:
     GetByIdDescriptor() { }
     
-    GetByIdDescriptor(unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid)
-        : InlineCacheDescriptor(stackmapID, callSite, uid)
+    GetByIdDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
     {
     }
     
@@ -81,9 +80,9 @@ public:
     PutByIdDescriptor() { }
     
     PutByIdDescriptor(
-        unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid,
+        unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid,
         ECMAMode ecmaMode, PutKind putKind)
-        : InlineCacheDescriptor(stackmapID, callSite, uid)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
         , m_ecmaMode(ecmaMode)
         , m_putKind(putKind)
     {
@@ -116,8 +115,8 @@ class CheckInDescriptor : public InlineCacheDescriptor {
 public:
     CheckInDescriptor() { }
     
-    CheckInDescriptor(unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid)
-        : InlineCacheDescriptor(stackmapID, callSite, uid)
+    CheckInDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, uid)
     {
     }
     
@@ -145,9 +144,9 @@ public:
     LazySlowPathDescriptor() { }
 
     LazySlowPathDescriptor(
-        unsigned stackmapID, CallSiteIndex callSite,
+        unsigned stackmapID, CodeOrigin codeOrigin,
         RefPtr<LazySlowPathLinkerTask> linker)
-        : InlineCacheDescriptor(stackmapID, callSite, nullptr)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, nullptr)
         , m_linker(linker)
     {
     }

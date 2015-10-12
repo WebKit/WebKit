@@ -459,7 +459,7 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
-            CodeOrigin codeOrigin = state.jitCode->common.codeOrigins[getById.callSiteIndex().bits()];
+            CodeOrigin codeOrigin = getById.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
             
@@ -469,7 +469,7 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg base = record.locations[1].directGPR();
                 
                 JITGetByIdGenerator gen(
-                    codeBlock, codeOrigin, getById.callSiteIndex(), usedRegisters, JSValueRegs(base),
+                    codeBlock, codeOrigin, state.jitCode->common.addUniqueCallSiteIndex(codeOrigin), usedRegisters, JSValueRegs(base),
                     JSValueRegs(result));
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
@@ -498,7 +498,7 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
-            CodeOrigin codeOrigin = state.jitCode->common.codeOrigins[putById.callSiteIndex().bits()];
+            CodeOrigin codeOrigin = putById.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 
@@ -508,7 +508,7 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg value = record.locations[1].directGPR();
                 
                 JITPutByIdGenerator gen(
-                    codeBlock, codeOrigin, putById.callSiteIndex(), usedRegisters, JSValueRegs(base),
+                    codeBlock, codeOrigin, state.jitCode->common.addUniqueCallSiteIndex(codeOrigin), usedRegisters, JSValueRegs(base),
                     JSValueRegs(value), GPRInfo::patchpointScratchRegister, putById.ecmaMode(), putById.putKind());
                 
                 MacroAssembler::Label begin = slowPathJIT.label();
@@ -538,7 +538,7 @@ static void fixFunctionBasedOnStackMaps(
                 continue;
             }
             
-            CodeOrigin codeOrigin = state.jitCode->common.codeOrigins[checkIn.callSiteIndex().bits()];
+            CodeOrigin codeOrigin = checkIn.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 RegisterSet usedRegisters = usedRegistersFor(record);
@@ -546,7 +546,7 @@ static void fixFunctionBasedOnStackMaps(
                 GPRReg obj = record.locations[1].directGPR();
                 StructureStubInfo* stubInfo = codeBlock->addStubInfo(AccessType::In); 
                 stubInfo->codeOrigin = codeOrigin;
-                stubInfo->callSiteIndex = checkIn.callSiteIndex();
+                stubInfo->callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(codeOrigin);
                 stubInfo->patch.baseGPR = static_cast<int8_t>(obj);
                 stubInfo->patch.valueGPR = static_cast<int8_t>(result);
                 stubInfo->patch.usedRegisters = usedRegisters;
@@ -575,7 +575,7 @@ static void fixFunctionBasedOnStackMaps(
                 // It was optimized out.
                 continue;
             }
-
+            CodeOrigin codeOrigin = descriptor.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
                 StackMaps::Record& record = iter->value[i];
                 RegisterSet usedRegisters = usedRegistersFor(record);
@@ -590,7 +590,7 @@ static void fixFunctionBasedOnStackMaps(
                     state.finalizer->handleExceptionsLinkBuffer->entrypoint();
 
                 std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>(
-                    patchpoint, exceptionTarget, usedRegisters, descriptor.callSiteIndex(),
+                    patchpoint, exceptionTarget, usedRegisters, state.jitCode->common.addUniqueCallSiteIndex(codeOrigin),
                     descriptor.m_linker->run(locations));
 
                 CCallHelpers::Label begin = slowPathJIT.label();

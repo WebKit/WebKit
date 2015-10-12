@@ -57,7 +57,7 @@ CallSiteIndex CommonData::addCodeOrigin(CodeOrigin codeOrigin)
     return CallSiteIndex(index);
 }
 
-CallSiteIndex CommonData::addCodeOriginUnconditionally(CodeOrigin codeOrigin)
+CallSiteIndex CommonData::addUniqueCallSiteIndex(CodeOrigin codeOrigin)
 {
     if (callSiteIndexFreeList.size())
         return CallSiteIndex(callSiteIndexFreeList.takeAny());

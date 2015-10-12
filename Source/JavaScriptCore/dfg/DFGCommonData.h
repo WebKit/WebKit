@@ -80,7 +80,7 @@ public:
     
     void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     CallSiteIndex addCodeOrigin(CodeOrigin);
-    CallSiteIndex addCodeOriginUnconditionally(CodeOrigin);
+    CallSiteIndex addUniqueCallSiteIndex(CodeOrigin);
     CallSiteIndex lastCallSite() const;
     void removeCallSiteIndex(CallSiteIndex);
     

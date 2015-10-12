@@ -1,3 +1,47 @@
+2015-10-12  Saam barati  <sbarati@apple.com>
+
+        Each *ById inline cache in the FTL must have its own CallSiteIndex
+        https://bugs.webkit.org/show_bug.cgi?id=150039
+
+        Reviewed by Geoffrey Garen and Filip Pizlo.
+
+        When lowering to LLVM, we create a patchpoint intrinsic for each
+        *ById in DFG IR. LLVM may choose to duplicate these patchpoints.
+        Therefore, we want each resulting inline cache to have a unique
+        CallSiteIndex because each inline cache will have its own set of 
+        used registers. This change is necessary when we implement try/catch 
+        in the FTL because an inline cache will ask for the set of used 
+        registers it will need to restore in the event of an exception 
+        being thrown. It asks for this set of registers by giving JITCode
+        a CallSiteIndex. Because each corresponding inline cache that results
+        from a duplicated patchpoint may all ask this for this set of registers, 
+        we must assign each inline cache a unique CallSiteIndex.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::newExceptionHandlingCallSiteIndex):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::addCodeOrigin):
+        (JSC::DFG::CommonData::addUniqueCallSiteIndex):
+        (JSC::DFG::CommonData::addCodeOriginUnconditionally): Deleted.
+        * dfg/DFGCommonData.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::InlineCacheDescriptor::InlineCacheDescriptor):
+        (JSC::FTL::InlineCacheDescriptor::stackmapID):
+        (JSC::FTL::InlineCacheDescriptor::codeOrigin):
+        (JSC::FTL::InlineCacheDescriptor::uid):
+        (JSC::FTL::GetByIdDescriptor::GetByIdDescriptor):
+        (JSC::FTL::PutByIdDescriptor::PutByIdDescriptor):
+        (JSC::FTL::CheckInDescriptor::CheckInDescriptor):
+        (JSC::FTL::LazySlowPathDescriptor::LazySlowPathDescriptor):
+        (JSC::FTL::InlineCacheDescriptor::callSiteIndex): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+
 2015-10-12  Andreas Kling  <akling@apple.com>
 
         "A + B" with strings shouldn't copy if A or B is empty.
