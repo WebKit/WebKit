@@ -41,13 +41,13 @@ namespace WTF {
 //
 // Here's an example of how SharedTask can be better than std::function. If you do:
 //
-// std::function a = b;
+// std::function<int(double)> a = b;
 //
 // Then "a" will get its own copy of all captured by-value variables. The act of copying may
 // require calls to system malloc, and it may be linear time in the total size of captured
 // variables. On the other hand, if you do:
 //
-// RefPtr<SharedTask> a = b;
+// RefPtr<SharedTask<int(double)> a = b;
 //
 // Then "a" will point to the same task as b, and the only work involved is the CAS to increase the
 // reference count.
@@ -58,18 +58,21 @@ namespace WTF {
 // createSharedTask(), below). But SharedTask also allows you to create your own subclass and put
 // state in member fields. This can be more natural if you want fine-grained control over what
 // state is shared between instances of the task.
-class SharedTask : public ThreadSafeRefCounted<SharedTask> {
+template<typename FunctionType> class SharedTask;
+template<typename ResultType, typename... ArgumentTypes>
+class SharedTask<ResultType (ArgumentTypes...)> : public ThreadSafeRefCounted<SharedTask<ResultType (ArgumentTypes...)>> {
 public:
     SharedTask() { }
     virtual ~SharedTask() { }
 
-    virtual void run() = 0;
+    virtual ResultType run(ArgumentTypes&&...) = 0;
 };
 
 // This is a utility class that allows you to create a SharedTask subclass using a lambda. Usually,
 // you don't want to use this class directly. Use createSharedTask() instead.
-template<typename Functor>
-class SharedTaskFunctor : public SharedTask {
+template<typename FunctionType, typename Functor> class SharedTaskFunctor;
+template<typename ResultType, typename... ArgumentTypes, typename Functor>
+class SharedTaskFunctor<ResultType (ArgumentTypes...), Functor> : public SharedTask<ResultType (ArgumentTypes...)> {
 public:
     SharedTaskFunctor(const Functor& functor)
         : m_functor(functor)
@@ -77,9 +80,9 @@ public:
     }
 
 private:
-    void run() override
+    ResultType run(ArgumentTypes&&... arguments) override
     {
-        m_functor();
+        return m_functor(std::forward<ArgumentTypes>(arguments)...);
     }
 
     Functor m_functor;
@@ -87,7 +90,7 @@ private:
 
 // Create a SharedTask from a functor, such as a lambda. You can use this like so:
 //
-// RefPtr<SharedTask> task = createSharedTask(
+// RefPtr<SharedTask<void()>> task = createSharedTask<void()>(
 //     [=] () {
 //         do things;
 //     });
@@ -102,10 +105,10 @@ private:
 // On the other hand, if you use something like ParallelHelperClient::runTaskInParallel() (or its
 // helper, runFunctionInParallel(), which does createSharedTask() for you), then it can be OK to
 // use [&], since the stack frame will remain live for the entire duration of the task's lifetime.
-template<typename Functor>
-Ref<SharedTask> createSharedTask(const Functor& functor)
+template<typename FunctionType, typename Functor>
+Ref<SharedTask<FunctionType>> createSharedTask(const Functor& functor)
 {
-    return adoptRef(*new SharedTaskFunctor<Functor>(functor));
+    return adoptRef(*new SharedTaskFunctor<FunctionType, Functor>(functor));
 }
 
 } // namespace WTF

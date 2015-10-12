@@ -259,6 +259,8 @@ public:
     bool wasAlreadyDisassembled() const { return m_alreadyDisassembled; }
     void didAlreadyDisassemble() { m_alreadyDisassembled = true; }
 
+    VM& vm() { return *m_vm; }
+
 private:
 #if ENABLE(BRANCH_COMPACTION)
     int executableOffsetFor(int location)
@@ -315,6 +317,7 @@ private:
     bool m_completed;
 #endif
     bool m_alreadyDisassembled { false };
+    Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
 };
 
 #define FINALIZE_CODE_IF(condition, linkBufferReference, dataLogFArgumentsForHeading)  \

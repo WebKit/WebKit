@@ -30,6 +30,8 @@
 
 #include "ClonedArguments.h"
 #include "DirectArguments.h"
+#include "FTLJITCode.h"
+#include "FTLLazySlowPath.h"
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
@@ -355,6 +357,22 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
+}
+
+extern "C" void* JIT_OPERATION compileFTLLazySlowPath(ExecState* exec, unsigned index)
+{
+    VM& vm = exec->vm();
+
+    // We cannot GC. We've got pointers in evil places.
+    DeferGCForAWhile deferGC(vm.heap);
+
+    CodeBlock* codeBlock = exec->codeBlock();
+    JITCode* jitCode = codeBlock->jitCode()->ftl();
+
+    LazySlowPath& lazySlowPath = *jitCode->lazySlowPaths[index];
+    lazySlowPath.generate(codeBlock);
+
+    return lazySlowPath.stub().code().executableAddress();
 }
 
 } } // namespace JSC::FTL

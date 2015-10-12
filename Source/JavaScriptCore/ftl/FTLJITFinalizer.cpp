@@ -106,11 +106,11 @@ bool JITFinalizer::finalizeFunction()
         // Side code is for special slow paths that we generate ourselves, like for inline
         // caches.
         
-        for (unsigned i = slowPathCalls.size(); i--;) {
-            SlowPathCall& call = slowPathCalls[i];
+        for (CCallHelpers::Jump jump : lazySlowPathGeneratorJumps) {
             sideCodeLinkBuffer->link(
-                call.call(),
-                CodeLocationLabel(m_plan.vm.ftlThunks->getSlowPathCallThunk(m_plan.vm, call.key()).code()));
+                jump,
+                CodeLocationLabel(
+                    m_plan.vm.getCTIStub(lazySlowPathGenerationThunkGenerator).code()));
         }
         
         jitCode->addHandle(FINALIZE_DFG_CODE(

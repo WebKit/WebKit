@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008, 2011, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -39,6 +39,11 @@ namespace JSC  {
     class JSScope;
 
     struct CallSiteIndex {
+        CallSiteIndex()
+            : m_bits(UINT_MAX)
+        {
+        }
+        
         explicit CallSiteIndex(uint32_t bits)
             : m_bits(bits)
         { }
@@ -47,6 +52,9 @@ namespace JSC  {
             : m_bits(bitwise_cast<uint32_t>(instruction))
         { }
 #endif
+
+        explicit operator bool() const { return m_bits != UINT_MAX; }
+        
         inline uint32_t bits() const { return m_bits; }
 
     private:

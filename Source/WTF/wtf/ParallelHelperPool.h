@@ -130,12 +130,12 @@ public:
     WTF_EXPORT_PRIVATE ParallelHelperClient(RefPtr<ParallelHelperPool>);
     WTF_EXPORT_PRIVATE ~ParallelHelperClient();
 
-    WTF_EXPORT_PRIVATE void setTask(RefPtr<SharedTask>);
+    WTF_EXPORT_PRIVATE void setTask(RefPtr<SharedTask<void()>>);
 
     template<typename Functor>
     void setFunction(const Functor& functor)
     {
-        setTask(createSharedTask(functor));
+        setTask(createSharedTask<void()>(functor));
     }
     
     WTF_EXPORT_PRIVATE void finish();
@@ -146,7 +146,7 @@ public:
     // client->setTask(task);
     // client->doSomeHelping();
     // client->finish();
-    WTF_EXPORT_PRIVATE void runTaskInParallel(RefPtr<SharedTask>);
+    WTF_EXPORT_PRIVATE void runTaskInParallel(RefPtr<SharedTask<void()>>);
 
     // Equivalent to:
     // client->setFunction(functor);
@@ -155,7 +155,7 @@ public:
     template<typename Functor>
     void runFunctionInParallel(const Functor& functor)
     {
-        runTaskInParallel(createSharedTask(functor));
+        runTaskInParallel(createSharedTask<void()>(functor));
     }
 
     ParallelHelperPool& pool() { return *m_pool; }
@@ -165,11 +165,11 @@ private:
     friend class ParallelHelperPool;
 
     void finish(const LockHolder&);
-    RefPtr<SharedTask> claimTask(const LockHolder&);
-    void runTask(RefPtr<SharedTask>);
+    RefPtr<SharedTask<void()>> claimTask(const LockHolder&);
+    void runTask(RefPtr<SharedTask<void()>>);
     
     RefPtr<ParallelHelperPool> m_pool;
-    RefPtr<SharedTask> m_task;
+    RefPtr<SharedTask<void()>> m_task;
     unsigned m_numActive { 0 };
 };
 

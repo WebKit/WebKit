@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,14 @@
 #if ENABLE(FTL_JIT)
 
 #include "CodeOrigin.h"
+#include "FTLLazySlowPath.h"
 #include "JITInlineCacheGenerator.h"
 #include "MacroAssembler.h"
 #include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC { namespace FTL {
+
+class Location;
 
 class InlineCacheDescriptor {
 public:
@@ -113,17 +116,46 @@ class CheckInDescriptor : public InlineCacheDescriptor {
 public:
     CheckInDescriptor() { }
     
-    CheckInDescriptor(unsigned stackmapID, CallSiteIndex callSite, const UniquedStringImpl* uid)
-        : InlineCacheDescriptor(stackmapID, callSite, nullptr)
-        , m_uid(uid)
+    CheckInDescriptor(unsigned stackmapID, CallSiteIndex callSite, UniquedStringImpl* uid)
+        : InlineCacheDescriptor(stackmapID, callSite, uid)
     {
     }
-
     
-    const UniquedStringImpl* m_uid;
     Vector<CheckInGenerator> m_generators;
 };
 
+// You can create a lazy slow path call in lowerDFGToLLVM by doing:
+// m_ftlState.lazySlowPaths.append(
+//     LazySlowPathDescriptor(
+//         stackmapID, callSiteIndex,
+//         createSharedTask<RefPtr<LazySlowPath::Generator>(const Vector<Location>&)>(
+//             [] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+//                 // This lambda should just record the registers that we will be using, and return
+//                 // a SharedTask that will actually generate the slow path.
+//                 return createLazyCallGenerator(
+//                     function, locations[0].directGPR(), locations[1].directGPR());
+//             })));
+//
+// Usually, you can use the LowerDFGToLLVM::lazySlowPath() helper, which takes care of the descriptor
+// for you and also creates the patchpoint.
+typedef RefPtr<LazySlowPath::Generator> LazySlowPathLinkerFunction(const Vector<Location>&);
+typedef SharedTask<LazySlowPathLinkerFunction> LazySlowPathLinkerTask;
+class LazySlowPathDescriptor : public InlineCacheDescriptor {
+public:
+    LazySlowPathDescriptor() { }
+
+    LazySlowPathDescriptor(
+        unsigned stackmapID, CallSiteIndex callSite,
+        RefPtr<LazySlowPathLinkerTask> linker)
+        : InlineCacheDescriptor(stackmapID, callSite, nullptr)
+        , m_linker(linker)
+    {
+    }
+
+    Vector<std::tuple<LazySlowPath*, CCallHelpers::Label>> m_generators;
+
+    RefPtr<LazySlowPathLinkerTask> m_linker;
+};
 
 } } // namespace JSC::FTL
 

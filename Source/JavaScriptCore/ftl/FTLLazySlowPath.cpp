@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLJITFinalizer_h
-#define FTLJITFinalizer_h
+#include "config.h"
+#include "FTLLazySlowPath.h"
 
-#if ENABLE(FTL_JIT)
-
-#include "DFGFinalizer.h"
-#include "FTLGeneratedFunction.h"
-#include "FTLJITCode.h"
-#include "FTLOSRExitCompilationInfo.h"
 #include "FTLSlowPathCall.h"
-#include "LLVMAPI.h"
 #include "LinkBuffer.h"
-#include "MacroAssembler.h"
 
 namespace JSC { namespace FTL {
 
-class OutOfLineCodeInfo {
-public:
-    OutOfLineCodeInfo(std::unique_ptr<LinkBuffer> linkBuffer, const char* codeDescription)
-        : m_linkBuffer(WTF::move(linkBuffer))
-        , m_codeDescription(codeDescription)
-    {
-    }
+LazySlowPath::LazySlowPath(
+    CodeLocationLabel patchpoint, CodeLocationLabel exceptionTarget,
+    const RegisterSet& usedRegisters, CallSiteIndex callSiteIndex, RefPtr<Generator> generator)
+    : m_patchpoint(patchpoint)
+    , m_exceptionTarget(exceptionTarget)
+    , m_usedRegisters(usedRegisters)
+    , m_callSiteIndex(callSiteIndex)
+    , m_generator(generator)
+{
+}
 
-    std::unique_ptr<LinkBuffer> m_linkBuffer;
-    const char* m_codeDescription;
-};
+LazySlowPath::~LazySlowPath()
+{
+}
 
-class JITFinalizer : public DFG::Finalizer {
-public:
-    JITFinalizer(DFG::Plan&);
-    virtual ~JITFinalizer();
+void LazySlowPath::generate(CodeBlock* codeBlock)
+{
+    RELEASE_ASSERT(!m_stub);
 
-    size_t codeSize() override;
-    bool finalize() override;
-    bool finalizeFunction() override;
+    VM& vm = *codeBlock->vm();
 
-    std::unique_ptr<LinkBuffer> exitThunksLinkBuffer;
-    std::unique_ptr<LinkBuffer> entrypointLinkBuffer;
-    std::unique_ptr<LinkBuffer> sideCodeLinkBuffer;
-    std::unique_ptr<LinkBuffer> handleExceptionsLinkBuffer;
-    Vector<OutOfLineCodeInfo> outOfLineCodeInfos;
-    Vector<OSRExitCompilationInfo> osrExit;
-    Vector<CCallHelpers::Jump> lazySlowPathGeneratorJumps;
-    GeneratedFunction function;
-    RefPtr<JITCode> jitCode;
-};
+    CCallHelpers jit(&vm, codeBlock);
+    GenerationParams params;
+    CCallHelpers::JumpList exceptionJumps;
+    params.exceptionJumps = m_exceptionTarget ? &exceptionJumps : nullptr;
+    params.lazySlowPath = this;
+    m_generator->run(jit, params);
+
+    LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationMustSucceed);
+    linkBuffer.link(
+        params.doneJumps, m_patchpoint.labelAtOffset(MacroAssembler::maxJumpReplacementSize()));
+    if (m_exceptionTarget)
+        linkBuffer.link(exceptionJumps, m_exceptionTarget);
+    m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, ("Lazy slow path call stub"));
+
+    MacroAssembler::replaceWithJump(m_patchpoint, CodeLocationLabel(m_stub.code()));
+}
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLJITFinalizer_h
 

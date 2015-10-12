@@ -1,3 +1,147 @@
+2015-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should generate code to call slow paths lazily
+        https://bugs.webkit.org/show_bug.cgi?id=149936
+
+        Reviewed by Saam Barati.
+
+        We often have complex slow paths in FTL-generated code. Those slow paths may never run. Even
+        if they do run, they don't need stellar performance. So, it doesn't make sense to have LLVM
+        worry about compiling such slow path code.
+
+        This patch enables us to use our own MacroAssembler for compiling the slow path inside FTL
+        code. It does this by using a crazy lambda thingy (see FTLLowerDFGToLLVM.cpp's lazySlowPath()
+        and its documentation). The result is quite natural to use.
+
+        Even for straight slow path calls via something like vmCall(), the lazySlowPath offers the
+        benefit that the call marshalling and the exception checking are not expressed using LLVM IR
+        and do not require LLVM to think about it. It also has the benefit that we never generate the
+        code if it never runs. That's great, since function calls usually involve ~10 instructions
+        total (move arguments to argument registers, make the call, check exception, etc.).
+
+        This patch adds the lazy slow path abstraction and uses it for some slow paths in the FTL.
+        The code we generate with lazy slow paths is worse than the code that LLVM would have
+        generated. Therefore, a lazy slow path only makes sense when we have strong evidence that
+        the slow path will execute infrequently relative to the fast path. This completely precludes
+        the use of lazy slow paths for out-of-line Nodes that unconditionally call a C++ function.
+        It also precludes their use for the GetByVal out-of-bounds handler, since when we generate
+        a GetByVal with an out-of-bounds handler it means that we only know that the out-of-bounds
+        case executed at least once. So, for all we know, it may actually be the common case. So,
+        this patch just deployed the lazy slow path for GC slow paths and masquerades-as-undefined
+        slow paths. It makes sense for GC slow paths because those have a statistical guarantee of
+        slow path frequency - probably bounded at less than 1/10. It makes sense for masquerades-as-
+        undefined because we can say quite confidently that this is an uncommon scenario on the
+        modern Web.
+
+        Something that's always been challenging about abstractions involving the MacroAssembler is
+        that linking is a separate phase, and there is no way for someone who is just given access to
+        the MacroAssembler& to emit code that requires linking, since linking happens once we have
+        emitted all code and we are creating the LinkBuffer. Moreover, the FTL requires that the
+        final parts of linking happen on the main thread. This patch ran into this issue, and solved
+        it comprehensively, by introducing MacroAssembler::addLinkTask(). This takes a lambda and
+        runs it at the bitter end of linking - when performFinalization() is called. This ensure that
+        the task added by addLinkTask() runs on the main thread. This patch doesn't replace all of
+        the previously existing idioms for dealing with this issue; we can do that later.
+
+        This shows small speed-ups on a bunch of things. No big win on any benchmark aggregate. But
+        mainly this is done for https://bugs.webkit.org/show_bug.cgi?id=149852, where we found that
+        outlining the slow path in this way was a significant speed boost.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::replaceWithAddressComputation):
+        (JSC::AbstractMacroAssembler::addLinkTask):
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::allocate):
+        (JSC::LinkBuffer::performFinalization):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::wasAlreadyDisassembled):
+        (JSC::LinkBuffer::didAlreadyDisassemble):
+        (JSC::LinkBuffer::vm):
+        (JSC::LinkBuffer::executableOffsetFor):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::isSet):
+        (JSC::CodeOrigin::operator bool):
+        (JSC::CodeOrigin::isHashTableDeletedValue):
+        (JSC::CodeOrigin::operator!): Deleted.
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::InlineCacheDescriptor::InlineCacheDescriptor):
+        (JSC::FTL::CheckInDescriptor::CheckInDescriptor):
+        (JSC::FTL::LazySlowPathDescriptor::LazySlowPathDescriptor):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * ftl/FTLLazySlowPath.cpp: Added.
+        (JSC::FTL::LazySlowPath::LazySlowPath):
+        (JSC::FTL::LazySlowPath::~LazySlowPath):
+        (JSC::FTL::LazySlowPath::generate):
+        * ftl/FTLLazySlowPath.h: Added.
+        (JSC::FTL::LazySlowPath::createGenerator):
+        (JSC::FTL::LazySlowPath::patchpoint):
+        (JSC::FTL::LazySlowPath::usedRegisters):
+        (JSC::FTL::LazySlowPath::callSiteIndex):
+        (JSC::FTL::LazySlowPath::stub):
+        * ftl/FTLLazySlowPathCall.h: Added.
+        (JSC::FTL::createLazyCallGenerator):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNotifyWrite):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIsObjectOrNull):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIsFunction):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIn):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckWatchdogTimer):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToLLVM::sensibleDoubleToInt32):
+        (JSC::FTL::DFG::LowerDFGToLLVM::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToLLVM::speculate):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        (JSC::FTL::compileFTLLazySlowPath):
+        * ftl/FTLOperations.h:
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::SlowPathCallContext):
+        (JSC::FTL::SlowPathCallContext::~SlowPathCallContext):
+        (JSC::FTL::SlowPathCallContext::keyWithTarget):
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        (JSC::FTL::callSiteIndexForCodeOrigin):
+        (JSC::FTL::storeCodeOrigin): Deleted.
+        (JSC::FTL::callOperation): Deleted.
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * ftl/FTLState.h:
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::osrExitGenerationThunkGenerator):
+        (JSC::FTL::lazySlowPathGenerationThunkGenerator):
+        (JSC::FTL::registerClobberCheck):
+        * ftl/FTLThunks.h:
+        * interpreter/CallFrame.h:
+        (JSC::CallSiteIndex::CallSiteIndex):
+        (JSC::CallSiteIndex::operator bool):
+        (JSC::CallSiteIndex::bits):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgument):
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JITOperations.cpp:
+
 2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
 
         webkit-gtk-2.3.4 fails to link JavaScriptCore, missing symbols add_history and readline

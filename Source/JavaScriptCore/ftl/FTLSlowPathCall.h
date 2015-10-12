@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,20 +55,71 @@ private:
     SlowPathCallKey m_key;
 };
 
-void storeCodeOrigin(State&, CCallHelpers&, CodeOrigin);
+// This will be an RAII thingy that will set up the necessary stack sizes and offsets and such.
+class SlowPathCallContext {
+public:
+    SlowPathCallContext(RegisterSet usedRegisters, CCallHelpers&, unsigned numArgs, GPRReg returnRegister);
+    ~SlowPathCallContext();
 
-MacroAssembler::Call callOperation(
-    State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
-    J_JITOperation_ESsiCI, GPRReg, StructureStubInfo*, GPRReg,
-    const UniquedStringImpl* uid);
-MacroAssembler::Call callOperation(
-    State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
-    J_JITOperation_ESsiJI, GPRReg result, StructureStubInfo*, GPRReg object,
-    UniquedStringImpl* uid);
-MacroAssembler::Call callOperation(
-    State&, const RegisterSet&, CCallHelpers&, CodeOrigin, CCallHelpers::JumpList*,
-    V_JITOperation_ESsiJJI, StructureStubInfo*, GPRReg value, GPRReg object,
-    UniquedStringImpl* uid);
+    // NOTE: The call that this returns is already going to be linked by the JIT using addLinkTask(),
+    // so there is no need for you to link it yourself.
+    SlowPathCall makeCall(void* callTarget);
+
+private:
+    SlowPathCallKey keyWithTarget(void* callTarget) const;
+    
+    RegisterSet m_argumentRegisters;
+    RegisterSet m_callingConventionRegisters;
+    CCallHelpers& m_jit;
+    unsigned m_numArgs;
+    GPRReg m_returnRegister;
+    size_t m_offsetToSavingArea;
+    size_t m_stackBytesNeeded;
+    RegisterSet m_thunkSaveSet;
+    ptrdiff_t m_offset;
+};
+
+template<typename... ArgumentTypes>
+SlowPathCall callOperation(
+    const RegisterSet& usedRegisters, CCallHelpers& jit, CCallHelpers::JumpList* exceptionTarget,
+    FunctionPtr function, GPRReg resultGPR, ArgumentTypes... arguments)
+{
+    SlowPathCall call;
+    {
+        SlowPathCallContext context(usedRegisters, jit, sizeof...(ArgumentTypes) + 1, resultGPR);
+        jit.setupArgumentsWithExecState(arguments...);
+        call = context.makeCall(function.value());
+    }
+    if (exceptionTarget)
+        exceptionTarget->append(jit.emitExceptionCheck());
+    return call;
+}
+
+template<typename... ArgumentTypes>
+SlowPathCall callOperation(
+    const RegisterSet& usedRegisters, CCallHelpers& jit, CallSiteIndex callSiteIndex,
+    CCallHelpers::JumpList* exceptionTarget, FunctionPtr function, GPRReg resultGPR,
+    ArgumentTypes... arguments)
+{
+    if (callSiteIndex) {
+        jit.store32(
+            CCallHelpers::TrustedImm32(callSiteIndex.bits()),
+            CCallHelpers::tagFor(JSStack::ArgumentCount));
+    }
+    return callOperation(usedRegisters, jit, exceptionTarget, function, resultGPR, arguments...);
+}
+
+CallSiteIndex callSiteIndexForCodeOrigin(State&, CodeOrigin);
+
+template<typename... ArgumentTypes>
+SlowPathCall callOperation(
+    State& state, const RegisterSet& usedRegisters, CCallHelpers& jit, CodeOrigin codeOrigin,
+    CCallHelpers::JumpList* exceptionTarget, FunctionPtr function, GPRReg result, ArgumentTypes... arguments)
+{
+    return callOperation(
+        usedRegisters, jit, callSiteIndexForCodeOrigin(state, codeOrigin), exceptionTarget, function,
+        result, arguments...);
+}
 
 } } // namespace JSC::FTL
 

@@ -31,6 +31,7 @@
 #include "AssemblyHelpers.h"
 #include "FPRInfo.h"
 #include "FTLOSRExitCompiler.h"
+#include "FTLOperations.h"
 #include "FTLSaveRestore.h"
 #include "GPRInfo.h"
 #include "LinkBuffer.h"
@@ -39,11 +40,12 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
+static MacroAssemblerCodeRef genericGenerationThunkGenerator(
+    VM* vm, FunctionPtr generationFunction, const char* name, unsigned extraPopsToRestore)
 {
     AssemblyHelpers jit(vm, 0);
     
-    // Note that the "return address" will be the OSR exit ID.
+    // Note that the "return address" will be the ID that we pass to the generation function.
     
     ptrdiff_t stackMisalignment = MacroAssembler::pushToSaveByteOffset();
     
@@ -90,11 +92,14 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     while (numberOfRequiredPops--)
         jit.popToRestore(GPRInfo::regT1);
     jit.popToRestore(MacroAssembler::framePointerRegister);
-    
-    // At this point we're sitting on the return address - so if we did a jump right now, the
-    // tail-callee would be happy. Instead we'll stash the callee in the return address and then
-    // restore all registers.
-    
+
+    // When we came in here, there was an additional thing pushed to the stack. Some clients want it
+    // popped before proceeding.
+    while (extraPopsToRestore--)
+        jit.popToRestore(GPRInfo::regT1);
+
+    // Put the return address wherever the return instruction wants it. On all platforms, this
+    // ensures that the return address is out of the way of register restoration.
     jit.restoreReturnAddressBeforeReturn(GPRInfo::regT0);
 
     restoreAllRegisters(jit, buffer);
@@ -102,8 +107,22 @@ MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
     jit.ret();
     
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-    patchBuffer.link(functionCall, compileFTLOSRExit);
-    return FINALIZE_CODE(patchBuffer, ("FTL OSR exit generation thunk"));
+    patchBuffer.link(functionCall, generationFunction);
+    return FINALIZE_CODE(patchBuffer, ("%s", name));
+}
+
+MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM* vm)
+{
+    unsigned extraPopsToRestore = 0;
+    return genericGenerationThunkGenerator(
+        vm, compileFTLOSRExit, "FTL OSR exit generation thunk", extraPopsToRestore);
+}
+
+MacroAssemblerCodeRef lazySlowPathGenerationThunkGenerator(VM* vm)
+{
+    unsigned extraPopsToRestore = 1;
+    return genericGenerationThunkGenerator(
+        vm, compileFTLLazySlowPath, "FTL lazy slow path generation thunk", extraPopsToRestore);
 }
 
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)

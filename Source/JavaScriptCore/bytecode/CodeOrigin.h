@@ -74,7 +74,7 @@ struct CodeOrigin {
     }
     
     bool isSet() const { return bytecodeIndex != invalidBytecodeIndex; }
-    bool operator!() const { return !isSet(); }
+    explicit operator bool() const { return isSet(); }
     
     bool isHashTableDeletedValue() const
     {

@@ -1,3 +1,37 @@
+2015-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        FTL should generate code to call slow paths lazily
+        https://bugs.webkit.org/show_bug.cgi?id=149936
+
+        Reviewed by Saam Barati.
+
+        Enables SharedTask to handle any function type, not just void().
+
+        It's probably better to use SharedTask instead of std::function in performance-sensitive
+        code. std::function uses the system malloc and has copy semantics. SharedTask uses FastMalloc
+        and has aliasing semantics. So, you can just trust that it will have sensible performance
+        characteristics.
+
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTaskInParallel):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::claimTask):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        (WTF::ParallelHelperPool::helperThreadBody):
+        * wtf/ParallelHelperPool.h:
+        (WTF::ParallelHelperClient::setFunction):
+        (WTF::ParallelHelperClient::runFunctionInParallel):
+        (WTF::ParallelHelperClient::pool):
+        * wtf/SharedTask.h:
+        (WTF::createSharedTask):
+        (WTF::SharedTask::SharedTask): Deleted.
+        (WTF::SharedTask::~SharedTask): Deleted.
+        (WTF::SharedTaskFunctor::SharedTaskFunctor): Deleted.
+
 2015-10-10  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove unnecessary iOS version checks

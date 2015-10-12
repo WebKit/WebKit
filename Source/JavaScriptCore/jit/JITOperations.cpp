@@ -1031,7 +1031,7 @@ JSCell* JIT_OPERATION operationNewObject(ExecState* exec, Structure* structure)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    
+
     return constructEmptyObject(exec, structure);
 }
 

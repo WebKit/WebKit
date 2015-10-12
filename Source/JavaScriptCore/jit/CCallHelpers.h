@@ -63,6 +63,8 @@ public:
         poke(GPRInfo::nonArgGPR0, POKE_ARGUMENT_OFFSET + argumentIndex - GPRInfo::numberOfArgumentRegisters);
     }
 
+    void setupArgumentsWithExecState() { setupArgumentsExecState(); }
+
     // These methods used to sort arguments into the correct registers.
     // On X86 we use cdecl calling conventions, which pass all arguments on the
     // stack. On other architectures we may need to sort values into the

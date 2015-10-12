@@ -333,7 +333,7 @@ static void fixFunctionBasedOnStackMaps(
 {
     Graph& graph = state.graph;
     VM& vm = graph.m_vm;
-    StackMaps stackmaps = jitCode->stackmaps;
+    StackMaps& stackmaps = jitCode->stackmaps;
     
     int localsOffset = offsetOfStackRegion(recordMap, state.capturedStackmapID) + graph.m_nextMachineLocal;
     int varargsSpillSlotsOffset = offsetOfStackRegion(recordMap, state.varargsSpillSlotsStackmapID);
@@ -439,7 +439,10 @@ static void fixFunctionBasedOnStackMaps(
         state.finalizer->exitThunksLinkBuffer = WTF::move(linkBuffer);
     }
 
-    if (!state.getByIds.isEmpty() || !state.putByIds.isEmpty() || !state.checkIns.isEmpty()) {
+    if (!state.getByIds.isEmpty()
+        || !state.putByIds.isEmpty()
+        || !state.checkIns.isEmpty()
+        || !state.lazySlowPaths.isEmpty()) {
         CCallHelpers slowPathJIT(&vm, codeBlock);
         
         CCallHelpers::JumpList exceptionTarget;
@@ -473,7 +476,8 @@ static void fixFunctionBasedOnStackMaps(
 
                 MacroAssembler::Call call = callOperation(
                     state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
-                    operationGetByIdOptimize, result, gen.stubInfo(), base, getById.uid());
+                    operationGetByIdOptimize, result, CCallHelpers::TrustedImmPtr(gen.stubInfo()),
+                    base, CCallHelpers::TrustedImmPtr(getById.uid())).call();
 
                 gen.reportSlowPathCall(begin, call);
 
@@ -511,7 +515,9 @@ static void fixFunctionBasedOnStackMaps(
                 
                 MacroAssembler::Call call = callOperation(
                     state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
-                    gen.slowPathFunction(), gen.stubInfo(), value, base, putById.uid());
+                    gen.slowPathFunction(), InvalidGPRReg,
+                    CCallHelpers::TrustedImmPtr(gen.stubInfo()), value, base,
+                    CCallHelpers::TrustedImmPtr(putById.uid())).call();
                 
                 gen.reportSlowPathCall(begin, call);
                 
@@ -549,11 +555,54 @@ static void fixFunctionBasedOnStackMaps(
 
                 MacroAssembler::Call slowCall = callOperation(
                     state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
-                    operationInOptimize, result, stubInfo, obj, checkIn.m_uid);
+                    operationInOptimize, result, CCallHelpers::TrustedImmPtr(stubInfo), obj,
+                    CCallHelpers::TrustedImmPtr(checkIn.uid())).call();
 
                 checkIn.m_slowPathDone.append(slowPathJIT.jump());
                 
                 checkIn.m_generators.append(CheckInGenerator(stubInfo, slowCall, begin));
+            }
+        }
+
+        for (unsigned i = state.lazySlowPaths.size(); i--;) {
+            LazySlowPathDescriptor& descriptor = state.lazySlowPaths[i];
+
+            if (verboseCompilationEnabled())
+                dataLog("Handling lazySlowPath stackmap #", descriptor.stackmapID(), "\n");
+
+            auto iter = recordMap.find(descriptor.stackmapID());
+            if (iter == recordMap.end()) {
+                // It was optimized out.
+                continue;
+            }
+
+            for (unsigned i = 0; i < iter->value.size(); ++i) {
+                StackMaps::Record& record = iter->value[i];
+                RegisterSet usedRegisters = usedRegistersFor(record);
+                Vector<Location> locations;
+                for (auto location : record.locations)
+                    locations.append(Location::forStackmaps(&stackmaps, location));
+
+                char* startOfIC =
+                    bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
+                CodeLocationLabel patchpoint((MacroAssemblerCodePtr(startOfIC)));
+                CodeLocationLabel exceptionTarget =
+                    state.finalizer->handleExceptionsLinkBuffer->entrypoint();
+
+                std::unique_ptr<LazySlowPath> lazySlowPath = std::make_unique<LazySlowPath>(
+                    patchpoint, exceptionTarget, usedRegisters, descriptor.callSiteIndex(),
+                    descriptor.m_linker->run(locations));
+
+                CCallHelpers::Label begin = slowPathJIT.label();
+
+                slowPathJIT.pushToSaveImmediateWithoutTouchingRegisters(
+                    CCallHelpers::TrustedImm32(state.jitCode->lazySlowPaths.size()));
+                CCallHelpers::Jump generatorJump = slowPathJIT.jump();
+                
+                descriptor.m_generators.append(std::make_tuple(lazySlowPath.get(), begin));
+
+                state.jitCode->lazySlowPaths.append(WTF::move(lazySlowPath));
+                state.finalizer->lazySlowPathGeneratorJumps.append(generatorJump);
             }
         }
         
@@ -578,12 +627,19 @@ static void fixFunctionBasedOnStackMaps(
                 state, codeBlock, generatedFunction, recordMap, state.putByIds[i],
                 sizeOfPutById());
         }
-
         for (unsigned i = state.checkIns.size(); i--;) {
             generateCheckInICFastPath(
                 state, codeBlock, generatedFunction, recordMap, state.checkIns[i],
                 sizeOfIn()); 
-        } 
+        }
+        for (unsigned i = state.lazySlowPaths.size(); i--;) {
+            LazySlowPathDescriptor& lazySlowPath = state.lazySlowPaths[i];
+            for (auto& tuple : lazySlowPath.m_generators) {
+                MacroAssembler::replaceWithJump(
+                    std::get<0>(tuple)->patchpoint(),
+                    state.finalizer->sideCodeLinkBuffer->locationOf(std::get<1>(tuple)));
+            }
+        }
     }
     
     adjustCallICsForStackmaps(state.jsCalls, recordMap);

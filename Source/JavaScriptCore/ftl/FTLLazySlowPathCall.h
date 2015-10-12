@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FTLOperations_h
-#define FTLOperations_h
+#ifndef FTLLazySlowPathCall_h
+#define FTLLazySlowPathCall_h
 
-#if ENABLE(FTL_JIT)
-
-#include "DFGOperations.h"
-#include "FTLExitTimeObjectMaterialization.h"
+#include "CodeBlock.h"
+#include "CodeLocation.h"
+#include "FTLLazySlowPath.h"
+#include "FTLSlowPathCall.h"
+#include "FTLThunks.h"
+#include "GPRInfo.h"
+#include "MacroAssemblerCodeRef.h"
+#include "RegisterSet.h"
 
 namespace JSC { namespace FTL {
 
-class LazySlowPath;
+template<typename ResultType, typename... ArgumentTypes>
+RefPtr<LazySlowPath::Generator> createLazyCallGenerator(
+    FunctionPtr function, ResultType result, ArgumentTypes... arguments)
+{
+    return LazySlowPath::createGenerator(
+        [=] (CCallHelpers& jit, LazySlowPath::GenerationParams& params) {
+            callOperation(
+                params.lazySlowPath->usedRegisters(), jit, params.lazySlowPath->callSiteIndex(),
+                params.exceptionJumps, function, result, arguments...);
+            params.doneJumps.append(jit.jump());
+        });
+}
 
-extern "C" {
+} } // namespace JSC::FTL
 
-JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState*, Structure*) WTF_INTERNAL;
-
-JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
-    ExecState*, ExitTimeObjectMaterialization*, EncodedJSValue*) WTF_INTERNAL;
-
-void JIT_OPERATION operationPopulateObjectInOSR(
-    ExecState*, ExitTimeObjectMaterialization*, EncodedJSValue*, EncodedJSValue*) WTF_INTERNAL;
-
-void* JIT_OPERATION compileFTLLazySlowPath(ExecState*, unsigned) WTF_INTERNAL;
-
-} // extern "C"
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(FTL_JIT)
-
-#endif // FTLOperations_h
+#endif // FTLLazySlowPathCall_h
 

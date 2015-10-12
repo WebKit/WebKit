@@ -905,6 +905,7 @@ if (ENABLE_FTL_JIT)
         ftl/FTLJSCallBase.cpp
         ftl/FTLJSCallVarargs.cpp
         ftl/FTLJSTailCall.cpp
+        ftl/FTLLazySlowPath.cpp
         ftl/FTLLink.cpp
         ftl/FTLLocation.cpp
         ftl/FTLLowerDFGToLLVM.cpp

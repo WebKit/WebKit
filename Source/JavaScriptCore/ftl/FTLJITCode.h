@@ -30,6 +30,7 @@
 
 #include "DFGCommonData.h"
 #include "FTLDataSection.h"
+#include "FTLLazySlowPath.h"
 #include "FTLOSRExit.h"
 #include "FTLStackMaps.h"
 #include "FTLUnwindInfo.h"
@@ -86,6 +87,7 @@ public:
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
     StackMaps stackmaps;
+    Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     
 private:
     Vector<RefPtr<DataSection>> m_dataSections;

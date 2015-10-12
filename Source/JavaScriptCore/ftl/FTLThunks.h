@@ -40,6 +40,7 @@ class VM;
 namespace FTL {
 
 MacroAssemblerCodeRef osrExitGenerationThunkGenerator(VM*);
+MacroAssemblerCodeRef lazySlowPathGenerationThunkGenerator(VM*);
 MacroAssemblerCodeRef slowPathCallThunkGenerator(VM&, const SlowPathCallKey&);
 
 template<typename KeyTypeArgument>
