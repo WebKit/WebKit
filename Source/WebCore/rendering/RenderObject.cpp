@@ -1625,17 +1625,18 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
         return;
     }
 
-    RenderObject* destroyRoot = this;
-    for (auto destroyRootParent = destroyRoot->parent(); destroyRootParent && destroyRootParent->isAnonymous(); destroyRoot = destroyRootParent, destroyRootParent = destroyRootParent->parent()) {
-        // Currently we only remove anonymous cells' and table sections' wrappers but we should remove all unneeded
-        // wrappers. See http://webkit.org/b/52123 as an example where this is needed.
-        if (!destroyRootParent->isTableCell() && !destroyRootParent->isTableSection())
+    auto* destroyRoot = this;
+    auto* destroyRootParent = destroyRoot->parent();
+    while (destroyRootParent && destroyRootParent->isAnonymous()) {
+        if (!destroyRootParent->isTableCell() && !destroyRootParent->isTableRow()
+            && !destroyRootParent->isTableCaption() && !destroyRootParent->isTableSection() && !destroyRootParent->isTable())
             break;
-
-        if (destroyRootParent->firstChild() != this || destroyRootParent->lastChild() != this)
+        // single child?
+        if (!(destroyRootParent->firstChild() == destroyRoot && destroyRootParent->lastChild() == destroyRoot))
             break;
+        destroyRoot = destroyRootParent;
+        destroyRootParent = destroyRootParent->parent();
     }
-
     destroyRoot->destroy();
 
     // WARNING: |this| is deleted here.
