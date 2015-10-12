@@ -52,7 +52,7 @@ class ObjCHeaderGenerator(Generator):
 
     def generate_output(self):
         headers = set([
-            '<WebInspector/RWIProtocolJSONObject.h>',
+            '<WebInspector/%sJSONObject.h>' % ObjCGenerator.OBJC_PREFIX,
         ])
 
         header_args = {

@@ -45,7 +45,7 @@ class ObjCConfigurationHeaderGenerator(Generator):
 
     def generate_output(self):
         headers = [
-            '"%s.h"' % ObjCGenerator.OBJC_PREFIX,
+            '<WebInspector/%s.h>' % ObjCGenerator.OBJC_PREFIX,
         ]
 
         header_args = {
@@ -66,7 +66,7 @@ class ObjCConfigurationHeaderGenerator(Generator):
     def _generate_configuration_interface_for_domains(self, domains):
         lines = []
         lines.append('__attribute__((visibility ("default")))')
-        lines.append('@interface RWIProtocolConfiguration : NSObject')
+        lines.append('@interface %sConfiguration : NSObject' % ObjCGenerator.OBJC_PREFIX)
         for domain in domains:
             lines.extend(self._generate_properties_for_domain(domain))
         lines.append('@end')

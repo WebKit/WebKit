@@ -71,7 +71,7 @@ class ObjCBackendDispatcherImplementationGenerator(Generator):
 
     def _generate_configuration_implementation_for_domains(self, domains):
         lines = []
-        lines.append('@implementation RWIProtocolConfiguration')
+        lines.append('@implementation %sConfiguration' % ObjCGenerator.OBJC_PREFIX)
         lines.append('{')
         lines.append('    AugmentableInspectorController* _controller;')
         lines.extend(self._generate_ivars(domains))

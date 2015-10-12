@@ -35,6 +35,7 @@
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "InspectorProtocolTypes.h"
+#include <inspector/InspectorFrontendRouter.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 
 namespace Inspector {
@@ -187,7 +188,7 @@ protected:
 
 class Network1BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<Network1BackendDispatcher> create(BackendDispatcher*, Network1BackendDispatcherHandler*);
+    static Ref<Network1BackendDispatcher> create(BackendDispatcher&, Network1BackendDispatcherHandler*);
     virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
@@ -204,7 +205,7 @@ private:
 
 class Network3BackendDispatcher final : public SupplementalBackendDispatcher {
 public:
-    static Ref<Network3BackendDispatcher> create(BackendDispatcher*, Network3BackendDispatcherHandler*);
+    static Ref<Network3BackendDispatcher> create(BackendDispatcher&, Network3BackendDispatcherHandler*);
     virtual void dispatch(long requestId, const String& method, Ref<InspectorObject>&& message) override;
 private:
     void loadResource1(long requestId, RefPtr<InspectorObject>&& parameters);
@@ -264,7 +265,7 @@ private:
 #include "config.h"
 #include "InspectorBackendDispatchers.h"
 
-#include <inspector/InspectorFrontendChannel.h>
+#include <inspector/InspectorFrontendRouter.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -278,9 +279,9 @@ namespace Inspector {
 Network1BackendDispatcherHandler::~Network1BackendDispatcherHandler() { }
 Network3BackendDispatcherHandler::~Network3BackendDispatcherHandler() { }
 
-Ref<Network1BackendDispatcher> Network1BackendDispatcher::create(BackendDispatcher* backendDispatcher, Network1BackendDispatcherHandler* agent)
+Ref<Network1BackendDispatcher> Network1BackendDispatcher::create(BackendDispatcher& backendDispatcher, Network1BackendDispatcherHandler* agent)
 {
-    return adoptRef(*new Network1BackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new Network1BackendDispatcher(backendDispatcher, agent));
 }
 
 Network1BackendDispatcher::Network1BackendDispatcher(BackendDispatcher& backendDispatcher, Network1BackendDispatcherHandler* agent)
@@ -325,9 +326,9 @@ void Network1BackendDispatcher::loadResource1(long requestId, RefPtr<InspectorOb
         m_backendDispatcher->reportProtocolError(BackendDispatcher::ServerError, WTF::move(error));
 }
 
-Ref<Network3BackendDispatcher> Network3BackendDispatcher::create(BackendDispatcher* backendDispatcher, Network3BackendDispatcherHandler* agent)
+Ref<Network3BackendDispatcher> Network3BackendDispatcher::create(BackendDispatcher& backendDispatcher, Network3BackendDispatcherHandler* agent)
 {
-    return adoptRef(*new Network3BackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(*new Network3BackendDispatcher(backendDispatcher, agent));
 }
 
 Network3BackendDispatcher::Network3BackendDispatcher(BackendDispatcher& backendDispatcher, Network3BackendDispatcherHandler* agent)
@@ -549,13 +550,12 @@ void Network3BackendDispatcher::loadResource7(long requestId, RefPtr<InspectorOb
 #define InspectorFrontendDispatchers_h
 
 #include "InspectorProtocolObjects.h"
-#include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-
+class FrontendRouter;
 
 } // namespace Inspector
 
@@ -596,6 +596,7 @@ namespace Inspector {
 #include "config.h"
 #include "InspectorFrontendDispatchers.h"
 
+#include "InspectorFrontendRouter.h"
 #include <wtf/text/CString.h>
 
 namespace Inspector {
@@ -871,7 +872,7 @@ using namespace Inspector;
     _network1Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork1BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network1BackendDispatcher, AlternateNetwork1BackendDispatcher>>(ASCIILiteral("Network1"), *_controller, WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
@@ -889,7 +890,7 @@ using namespace Inspector;
     _network3Handler = [handler retain];
 
     auto alternateDispatcher = std::make_unique<ObjCInspectorNetwork3BackendDispatcher>(handler);
-    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), WTF::move(alternateDispatcher));
+    auto alternateAgent = std::make_unique<AlternateDispatchableAgent<Network3BackendDispatcher, AlternateNetwork3BackendDispatcher>>(ASCIILiteral("Network3"), *_controller, WTF::move(alternateDispatcher));
     _controller->appendExtraAgent(WTF::move(alternateAgent));
 }
 
@@ -934,7 +935,7 @@ using namespace Inspector;
 // DO NOT EDIT THIS FILE. It is automatically generated from domains-with-varying-command-sizes.json
 // by the script: Source/JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py
 
-#import "RWIProtocol.h"
+#import <WebInspector/RWIProtocol.h>
 
 __attribute__((visibility ("default")))
 @interface RWIProtocolConfiguration : NSObject
@@ -981,7 +982,6 @@ __attribute__((visibility ("default")))
 
 #include "RWIProtocolInternal.h"
 #include "RWIProtocolEnumConversionHelpers.h"
-#include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/InspectorValues.h>
 
 namespace Inspector {
@@ -1189,7 +1189,6 @@ ObjCEnumType fromProtocolString(const String& value);
 #import "RWIProtocolInternal.h"
 
 #import "RWIProtocolEnumConversionHelpers.h"
-#import <JavaScriptCore/InspectorFrontendChannel.h>
 #import <JavaScriptCore/InspectorValues.h>
 
 using namespace Inspector;
