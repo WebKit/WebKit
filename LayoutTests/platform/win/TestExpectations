@@ -285,9 +285,6 @@ fast/dom/HTMLLinkElement/subresource.html [ Skip ]
 http/tests/misc/link-rel-prefetch-and-subresource.html [ Skip ]
 http/tests/misc/prefetch-purpose.html [ Skip ]
 
-# TODO testRunner::pageProperty is not responding to changing user style sheet.
-printing/page-rule-selection.html [ Failure ]
-
 # TODO Hyphenation is not implemented yet.
 webkit.org/b/140234 fast/text/hyphenate-character.html [ Failure ]
 webkit.org/b/140234 fast/text/hyphens.html [ Failure ]
@@ -494,7 +491,6 @@ webkit.org/b/87919 fast/borders/hidpi-simple-hairline-border-painting.html [ Ima
 webkit.org/b/87919 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ ImageOnlyFailure ]
-webkit.org/b/87919 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ ImageOnlyFailure ]
 webkit.org/b/87919 fast/repaint/hidpi-absolute-positioned-element-wrong-cliprect-after-move.html [ Failure ]
 webkit.org/b/87919 fast/repaint/hidpi-content-inside-iframe-leaves-trails.html [ Failure ]
 webkit.org/b/87919 fast/repaint/hidpi-device-pixel-based-repaint-rect-tracking.html [ Failure ]
@@ -1239,7 +1235,6 @@ webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
 ###### Command enabling
 editing/execCommand/enabling-and-selection-2.html [ Failure ]
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
-editing/execCommand/find-after-replace.html [ Failure ]
 
 ###### Inserting
 # TODO testRunner::setAutomaticLinkDetectionEnabled isn't implemented
@@ -1878,8 +1873,6 @@ webkit.org/b/97026 svg/text/bidi-tspans.svg [ Failure ]
 webkit.org/b/97026 svg/text/non-bmp-positioning-lists.svg [ Failure ]
 webkit.org/b/97026 svg/W3C-SVG-1.1/paths-data-03-f.svg	[ Failure ]
 webkit.org/b/97026 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
-webkit.org/b/97026 [ Release ] svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure ]
-webkit.org/b/97026 [ Debug ] svg/custom/composited-svg-with-opacity.html [ Skip ] # Debug Assertion
 
 webkit.org/b/97026 svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path.html [ Failure ]
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg [ Failure ]
@@ -1889,17 +1882,13 @@ svg/W3C-SVG-1.1/extend-namespace-01-f.svg [ Failure ]
 svg/text/bidi-text-anchor-direction.svg [ Failure ]
 svg/text/font-size-below-point-five.svg [ Failure ]
 svg/css/shadow-changes.svg [ Failure ]
-webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 webkit.org/b/117322 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
-webkit.org/b/144417 svg/filters/sourceAlpha-input-filter-effect.html [ ImageOnlyFailure ]
 
 # Subpixel rendering: borders are reporting float values.
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-svg-through-object-with-auto-size.html [ Failure ]
-
-dom/svg/level3/xpath/XPathEvaluator_evaluate_NOT_SUPPORTED_ERR.svg [ Pass Timeout ]
 
 webkit.org/b/131745 svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
 # <rdar://5667007> 2 SVG text tests failing (due to bad rounding?)
@@ -1964,8 +1953,6 @@ http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [
 ##################          MathML Issues                   ####################
 ################################################################################
 webkit.org/b/119002 mathml/presentation/bug97990.html [ ImageOnlyFailure ]
-webkit.org/b/119002 mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
-webkit.org/b/127495 mathml/presentation/maction-toggle.html [ ImageOnlyFailure ]
 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 webkit.org/b/130322 mathml/opentype/large-operators.html [ Failure ]
@@ -2007,7 +1994,6 @@ webkit.org/b/136484 fast/css-generated-content/initial-letter-descender.html [ F
 webkit.org/b/136484 fast/css-generated-content/initial-letter-raised.html [ Failure ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-sunken.html [ Failure ]
 fast/css/direct-adjacent-style-update-optimization.html [ Failure ]
-fast/css/indirect-adjacent-style-update-optimization.html [ Failure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
 # Newly imported W3C CSS test that is off by 1 pixel on Windows.
@@ -2107,7 +2093,6 @@ fast/forms/legend-access-key.html [ Failure ]
 webkit.org/b/143739 fast/forms/listbox-visible-size.html [ Failure ]
 
 webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
-fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
 
 # Search fields do change in size. May be correct behavior
 fast/forms/searchfield-heights.html [ Failure ]
@@ -2327,7 +2312,6 @@ http/tests/misc/acid3.html [ Failure ]
 http/tests/misc/async-script-removed.html [ Failure ]
 http/tests/misc/bad-charset-alias.html
 http/tests/misc/refresh-headers.php [ Failure ] # Easy
-http/tests/misc/submit-post-keygen.html [ Failure ]
 http/tests/multipart/load-last-non-html-frame.php [ Failure ] # Extra whitespace
 http/tests/multipart/multipart-replace-non-html-content.php [ Failure ] # Extra whitespace
 http/tests/navigation/no-referrer-reset.html [ Failure ] # Easy
@@ -2350,7 +2334,6 @@ http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure 
 http/tests/security/cross-origin-plugin.html [ Failure ]
 http/tests/security/cross-origin-websql-allowed.html [ Failure ]
 http/tests/security/cross-origin-websql.html [ Failure ]
-http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Failure ]
 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 [ Release ] http/tests/security/mixedContent/data-url-script-in-iframe.html [ Failure ]
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value.html [ Skip ]
@@ -2452,7 +2435,6 @@ webkit.org/b/48999 js/dom/exceptions-thrown-in-callbacks.html [ Skip ]
 webkit.org/b/140947 js/slow-stress/Int32Array-alloc-huge.html [ Pass Failure ]
 webkit.org/b/140947 js/slow-stress/Int32Array-alloc-huge-long-lived.html [ Pass Failure ]
 webkit.org/b/140947 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]  # Crashing
-webkit.org/b/140946 js/sort-stability.html [ Failure ]
 
 # The following fails due to DOM exception 18.
 js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
@@ -2555,10 +2537,6 @@ webkit.org/b/140866 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 # Main frame document does not match cached page document:
 webkit.org/b/140871 [ Debug ] fast/loader/non-deferred-substitute-load.html [ Skip ]
 
-webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html [ Failure ]
-webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back.html [ Failure ]
-webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failure ]
-
 [ Release ] platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] platform/win/fast/text/uniscribe-missing-glyph.html [ Skip ] # Debug assertion
 
@@ -2574,7 +2552,6 @@ webkit.org/b/149631 css3/filters/clipping-overflow-scroll-with-pixel-moving-effe
 webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure ]
 webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
 webkit.org/b/149631 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure ]
-webkit.org/b/149631 transforms/2d/preserve3d-not-fixed-container.html [ ImageOnlyFailure ]
 
 # Errors introduced by either r190209 or r190214:
 webkit.org/b/149632 fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Skip ]
@@ -2588,7 +2565,6 @@ webkit.org/b/149632 fast/forms/textarea-input-event.html [ Skip ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
-[ Debug ] inspector [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
 
@@ -2728,7 +2704,6 @@ fast/dom/MutationObserver/clear-transient-without-delivery.html [ Pass Timeout ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
 webkit.org/b/140772 fast/dom/Window/window-resize-contents.html [ Skip ]
-fast/dom/constants.html [ Failure ]
 fast/dom/navigation-with-sideeffects.html [ Failure ]
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Skip ]    # Timeout
 fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
@@ -2767,7 +2742,6 @@ imported/w3c/web-platform-tests/dom/nodes/Document-contentType/contentType/conte
 imported/w3c/web-platform-tests/dom/nodes/Document-URL.sub.html [ Skip ]
 
 # Weird black images
-fast/filter-image/filter-image.html [ ImageOnlyFailure ]
 fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 
 fast/flexbox/001.html [ Pass Failure ]
@@ -2788,8 +2762,6 @@ fast/history/history-length.html [ Skip ]
 fast/history/history-subframe-with-name.html [ Skip ]
 fast/history/location-replace-hash.html [ Skip ]
 fast/history/saves-state-after-fragment-nav.html [ Skip ]
-webkit.org/b/140871 [ Release ] fast/history/page-cache-clearing.html [ Failure ]
-webkit.org/b/140871 [ Debug ] fast/history/page-cache-clearing.html [ Skip ] # Debug Assertion
 
 fast/html/marquee-scrollamount.html [ Failure ]
 
@@ -2807,7 +2779,6 @@ fast/lists/li-style-alpha-huge-value-crash.html	 [ Pass Timeout ]
 
 [ Release ] fast/loader/file-protocol-fragment.html [ Failure ]
 [ Debug ] fast/loader/file-protocol-fragment.html [ Skip ] # Crashing
-webkit.org/b/97026 fast/loader/javascript-url-in-embed.html [ Failure ]
 fast/loader/main-document-url-for-non-http-loads.html [ Failure ]
 fast/loader/stop-provisional-loads.html [ Failure ]
 fast/loader/local-CSS-from-local.html [ Failure Timeout ]
@@ -2834,7 +2805,6 @@ fast/parser/document-write-into-initial-document.html [ Pass Failure ]
 webkit.org/b/128855 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ] 
-webkit.org/b/128855 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ] 
 webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
@@ -3058,7 +3028,6 @@ fast/regions/scrolling/wheel-scroll.html [ ImageOnlyFailure ]
 # Weird shading across image:
 fast/repaint/moving-shadow-on-container.html [ Failure ]
 fast/repaint/moving-shadow-on-path.html [ Failure ]
-webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 fast/repaint/canvas-putImageData.html [ Failure ]
 webkit.org/b/138042 fast/repaint/search-field-cancel.html [ Failure ]
 webkit.org/b/138042 fast/repaint/subtree-root-skipped.html [ Failure ]
@@ -3072,7 +3041,6 @@ fast/replaced/border-radius-clip.html [ Failure ]
 webkit.org/b/117323 fast/replaced/invalid-object-with-fallback.html [ Failure ]
 webkit.org/b/117323 fast/replaced/no-focus-ring-embed.html [ Skip ] #  [ Timeout ]
 webkit.org/b/117323 fast/replaced/no-focus-ring-object.html [ Skip ] #  [ Timeout ]
-fast/replaced/replaced-breaking.html [ Failure ]
 webkit.org/b/138025 fast/replaced/width100percent-textfield.html [ Failure ]
 webkit.org/b/138025 fast/replaced/width100percent-textarea.html [ Failure ]
 webkit.org/b/138025 fast/replaced/width100percent-searchfield.html [ Failure ]
