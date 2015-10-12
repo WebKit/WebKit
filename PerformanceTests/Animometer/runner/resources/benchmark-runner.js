@@ -46,7 +46,7 @@ BenchmarkRunnerState.prototype.prepareCurrentTest = function(runner, frame)
     frame.onload = function() {
         suite.prepare(runner, frame.contentWindow, frame.contentDocument).then(function(result) { promise.resolve(result); });
     }
-    frame.src = test.url;
+    frame.src = "../tests/" + test.url;
     return promise;
 }
 
