@@ -8,6 +8,10 @@ set(JSC_LIBRARIES
     WTF${DEBUG_SUFFIX}
 )
 
+if (WTF_OS_MAC_OS_X)
+    list(APPEND JSC_LIBRARIES edit)
+endif ()
+
 if ("${JavaScriptCore_LIBRARY_TYPE}" MATCHES "STATIC")
     add_definitions(-DSTATICALLY_LINKED_WITH_JavaScriptCore)
 endif ()

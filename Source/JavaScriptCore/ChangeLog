@@ -1,3 +1,12 @@
+2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
+
+        webkit-gtk-2.3.4 fails to link JavaScriptCore, missing symbols add_history and readline
+        https://bugs.webkit.org/show_bug.cgi?id=127059
+
+        Reviewed by Philippe Normand.
+
+        * shell/CMakeLists.txt: Link JSC with -ledit on Mac OSX.
+
 2015-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         ES6 classes: When a class extends B, super() invokes B.prototype.constructor() instead of B()
