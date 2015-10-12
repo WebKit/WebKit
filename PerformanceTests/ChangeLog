@@ -1,3 +1,11 @@
+2015-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert an unintended commit.
+
+        * JetStream/Octane2/crypto.js:
+        (montRevert):
+        (montReduce):
+
 2015-10-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add a graphics benchmark
