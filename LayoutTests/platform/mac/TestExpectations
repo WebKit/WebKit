@@ -1340,5 +1340,8 @@ webkit.org/b/149819 [ Debug ElCapitan+ ] compositing/video/video-poster.html [ P
 # Marking as flaky again, patch did not work
 webkit.org/b/149218 http/tests/notifications/events.html [ Pass Crash ]
 
+# Flaky on Mac
+webkit.org/b/148435 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
+
 # Imported Blink tests which have not been investigated.
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass ImageOnlyFailure ]
