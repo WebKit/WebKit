@@ -183,17 +183,17 @@ FloatQuad TransformState::mappedQuad(bool* wasClamped) const
     return quad;
 }
 
-std::unique_ptr<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
+Optional<FloatQuad> TransformState::mappedSecondaryQuad(bool* wasClamped) const
 {
     if (wasClamped)
         *wasClamped = false;
 
     if (!m_lastPlanarSecondaryQuad)
-        return nullptr;
+        return Optional<FloatQuad>();
 
     FloatQuad quad = *m_lastPlanarSecondaryQuad;
     mapQuad(quad, m_direction, wasClamped);
-    return std::make_unique<FloatQuad>(quad);
+    return quad;
 }
 
 void TransformState::setLastPlanarSecondaryQuad(const FloatQuad* quad)

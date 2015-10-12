@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include "LayoutSize.h"
 #include "TransformationMatrix.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -112,7 +113,7 @@ public:
     // Return the point or quad mapped through the current transform
     FloatPoint mappedPoint(bool* wasClamped = nullptr) const;
     FloatQuad mappedQuad(bool* wasClamped = nullptr) const;
-    std::unique_ptr<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
+    Optional<FloatQuad> mappedSecondaryQuad(bool* wasClamped = nullptr) const;
 
 private:
     void translateTransform(const LayoutSize&);

@@ -1240,9 +1240,9 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     }
 
     FloatRect coverageRect = clipRectForSelf;
-    std::unique_ptr<FloatQuad> quad = state.mappedSecondaryQuad(&mapWasClamped);
+    Optional<FloatQuad> quad = state.mappedSecondaryQuad(&mapWasClamped);
     if (quad && !mapWasClamped && !applyWasClamped)
-        coverageRect = quad->boundingBox();
+        coverageRect = (*quad).boundingBox();
 
     return VisibleAndCoverageRects(clipRectForSelf, coverageRect);
 }
