@@ -83,20 +83,14 @@ void InbandTextTrackPrivateGStreamer::handleSample(GRefPtr<GstSample> sample)
 
     RefPtr<InbandTextTrackPrivateGStreamer> protector(this);
     m_sampleTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfSample",
-        std::function<void()>(
-            [protector] {
-                protector->notifyTrackOfSample();
-            }));
+        std::function<void()>([protector] { protector->notifyTrackOfSample(); }));
 }
 
 void InbandTextTrackPrivateGStreamer::streamChanged()
 {
     RefPtr<InbandTextTrackPrivateGStreamer> protector(this);
     m_streamTimerHandler.schedule("[WebKit] InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged",
-        std::function<void()>(
-            [protector] {
-                protector->notifyTrackOfStreamChanged();
-            }));
+        std::function<void()>([protector] { protector->notifyTrackOfStreamChanged(); }));
 }
 
 void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()

@@ -219,10 +219,7 @@ static GstFlowReturn webkitVideoSinkRender(GstBaseSink* baseSink, GstBuffer* buf
     // See: https://bugzilla.gnome.org/show_bug.cgi?id=610830.
     GRefPtr<WebKitVideoSink> protector(sink);
     priv->timeoutSource.schedule("[WebKit] webkitVideoSinkTimeoutCallback",
-        std::function<void()>(
-            [protector] {
-                webkitVideoSinkTimeoutCallback(protector.get());
-            }));
+        std::function<void()>([protector] { webkitVideoSinkTimeoutCallback(protector.get()); }));
 
     g_cond_wait(&priv->dataCondition, &priv->sampleMutex);
     return GST_FLOW_OK;
