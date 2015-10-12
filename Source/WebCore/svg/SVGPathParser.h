@@ -2,7 +2,7 @@
  * Copyright (C) 2002, 2003 The Karbon Developers
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,20 +30,21 @@
 
 namespace WebCore {
 
+class SVGPathByteStream;
 class SVGPathSource;
 
 class SVGPathParser {
-    WTF_MAKE_NONCOPYABLE(SVGPathParser); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGPathParser();
+    static bool parse(SVGPathSource&, SVGPathConsumer&, PathParsingMode = NormalizedParsing, bool checkForInitialMoveTo = true);
 
-    bool parsePathDataFromSource(PathParsingMode, bool checkForInitialMoveTo = true);
-    void setCurrentConsumer(SVGPathConsumer* consumer) { m_consumer = consumer; }
-    void setCurrentSource(SVGPathSource* source) { m_source = source; }
-    void cleanup();
+    static bool parseToByteStream(SVGPathSource&, SVGPathByteStream&, PathParsingMode = NormalizedParsing, bool checkForInitialMoveTo = true);
+    static bool parseToString(SVGPathSource&, String& result, PathParsingMode = NormalizedParsing, bool checkForInitialMoveTo = true);
 
 private:
-    bool decomposeArcToCubic(float, float, float, FloatPoint&, FloatPoint&, bool largeArcFlag, bool sweepFlag);
+    SVGPathParser(SVGPathConsumer&, SVGPathSource&, PathParsingMode);
+    bool parsePathData(bool checkForInitialMoveTo);
+
+    bool decomposeArcToCubic(float angle, float rx, float ry, FloatPoint&, FloatPoint&, bool largeArcFlag, bool sweepFlag);
     void parseClosePathSegment();
     bool parseMoveToSegment();
     bool parseLineToSegment();
@@ -55,15 +56,15 @@ private:
     bool parseCurveToQuadraticSmoothSegment();
     bool parseArcToSegment();
 
-    SVGPathSource* m_source;
-    SVGPathConsumer* m_consumer;
-    PathCoordinateMode m_mode;
-    PathParsingMode m_pathParsingMode;
-    SVGPathSegType m_lastCommand;
-    bool m_closePath;
+    SVGPathSource& m_source;
+    SVGPathConsumer& m_consumer;
     FloatPoint m_controlPoint;
     FloatPoint m_currentPoint;
     FloatPoint m_subPathPoint;
+    PathCoordinateMode m_mode { AbsoluteCoordinates };
+    const PathParsingMode m_pathParsingMode { NormalizedParsing };
+    SVGPathSegType m_lastCommand { PathSegUnknown };
+    bool m_closePath { true };
 };
 
 } // namespace WebCore

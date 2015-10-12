@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,17 +31,14 @@ class PathTraversalState;
 
 class SVGPathTraversalStateBuilder : public SVGPathConsumer {
 public:
-    SVGPathTraversalStateBuilder();
+    SVGPathTraversalStateBuilder(PathTraversalState&, float desiredLength = 0);
 
-    unsigned pathSegmentIndex() { return m_segmentIndex; }
-    float totalLength();
-    SVGPoint currentPoint();
+    unsigned pathSegmentIndex() const { return m_segmentIndex; }
+    float totalLength() const;
+    SVGPoint currentPoint() const;
 
-    void setCurrentTraversalState(PathTraversalState* traversalState) { m_traversalState = traversalState; }
-    void setDesiredLength(float);
     virtual void incrementPathSegmentCount() override { ++m_segmentIndex; }
     virtual bool continueConsuming() override;
-    virtual void cleanup() override { m_traversalState = nullptr, m_segmentIndex = 0; }
 
 private:
     // Used in UnalteredParsing/NormalizedParsing modes.
@@ -58,8 +56,8 @@ private:
     virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
     virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
 
-    PathTraversalState* m_traversalState;
-    unsigned m_segmentIndex;
+    PathTraversalState& m_traversalState;
+    unsigned m_segmentIndex { 0 };
 };
 
 } // namespace WebCore

@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -27,59 +28,47 @@
 
 namespace WebCore {
 
-SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder()
-    : m_traversalState(nullptr)
-    , m_segmentIndex(0)
+SVGPathTraversalStateBuilder::SVGPathTraversalStateBuilder(PathTraversalState& state, float desiredLength)
+    : m_traversalState(state)
 {
+    m_traversalState.setDesiredLength(desiredLength);
 }
 
 void SVGPathTraversalStateBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode)
 {
-    ASSERT(m_traversalState);
-    m_traversalState->processPathElement(PathElementMoveToPoint, &targetPoint);
+    m_traversalState.processPathElement(PathElementMoveToPoint, &targetPoint);
 }
 
 void SVGPathTraversalStateBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode)
 {
-    ASSERT(m_traversalState);
-    m_traversalState->processPathElement(PathElementAddLineToPoint, &targetPoint);
+    m_traversalState.processPathElement(PathElementAddLineToPoint, &targetPoint);
 }
 
 void SVGPathTraversalStateBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode)
 {
     FloatPoint points[] = { point1, point2, targetPoint };
-    ASSERT(m_traversalState);
-    m_traversalState->processPathElement(PathElementAddCurveToPoint, points);
+
+    m_traversalState.processPathElement(PathElementAddCurveToPoint, points);
 }
 
 void SVGPathTraversalStateBuilder::closePath()
 {
-    ASSERT(m_traversalState);
-    m_traversalState->processPathElement(PathElementCloseSubpath, nullptr);
-}
-
-void SVGPathTraversalStateBuilder::setDesiredLength(float desiredLength)
-{
-    ASSERT(m_traversalState);
-    m_traversalState->setDesiredLength(desiredLength);
+    m_traversalState.processPathElement(PathElementCloseSubpath, nullptr);
 }
 
 bool SVGPathTraversalStateBuilder::continueConsuming()
 {
-    ASSERT(m_traversalState);    
-    return !m_traversalState->success();
+    return !m_traversalState.success();
 }
 
-float SVGPathTraversalStateBuilder::totalLength()
+float SVGPathTraversalStateBuilder::totalLength() const
 {
-    ASSERT(m_traversalState);
-    return m_traversalState->totalLength();
+    return m_traversalState.totalLength();
 }
 
-SVGPoint SVGPathTraversalStateBuilder::currentPoint()
+SVGPoint SVGPathTraversalStateBuilder::currentPoint() const
 {
-    ASSERT(m_traversalState);
-    return m_traversalState->current();
+    return m_traversalState.current();
 }
 
 }

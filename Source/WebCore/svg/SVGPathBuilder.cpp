@@ -2,7 +2,7 @@
  * Copyright (C) 2002, 2003 The Karbon Developers
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,43 +28,39 @@
 
 namespace WebCore {
 
-SVGPathBuilder::SVGPathBuilder()
-    : m_path(nullptr)
+SVGPathBuilder::SVGPathBuilder(Path& path)
+    : m_path(path)
 {
 }
 
 void SVGPathBuilder::moveTo(const FloatPoint& targetPoint, bool closed, PathCoordinateMode mode)
 {
-    ASSERT(m_path);
     m_current = mode == AbsoluteCoordinates ? targetPoint : m_current + targetPoint;
-    if (closed && !m_path->isEmpty())
-        m_path->closeSubpath();
-    m_path->moveTo(m_current);
+    if (closed && !m_path.isEmpty())
+        m_path.closeSubpath();
+    m_path.moveTo(m_current);
 }
 
 void SVGPathBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    ASSERT(m_path);
     m_current = mode == AbsoluteCoordinates ? targetPoint : m_current + targetPoint;
-    m_path->addLineTo(m_current);
+    m_path.addLineTo(m_current);
 }
 
 void SVGPathBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
-    ASSERT(m_path);
     if (mode == RelativeCoordinates) {
-        m_path->addBezierCurveTo(m_current + point1, m_current + point2, m_current + targetPoint);
+        m_path.addBezierCurveTo(m_current + point1, m_current + point2, m_current + targetPoint);
         m_current += targetPoint;
     } else {
         m_current = targetPoint;
-        m_path->addBezierCurveTo(point1, point2, m_current);
+        m_path.addBezierCurveTo(point1, point2, m_current);
     }    
 }
 
 void SVGPathBuilder::closePath()
 {
-    ASSERT(m_path);
-    m_path->closeSubpath();
+    m_path.closeSubpath();
 }
 
 }

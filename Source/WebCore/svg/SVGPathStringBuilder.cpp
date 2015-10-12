@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,11 +42,6 @@ String SVGPathStringBuilder::result()
     // Remove trailing space.
     m_stringBuilder.resize(size - 1);
     return m_stringBuilder.toString();
-}
-
-void SVGPathStringBuilder::cleanup()
-{
-    m_stringBuilder.clear();
 }
 
 void SVGPathStringBuilder::incrementPathSegmentCount()

@@ -2,7 +2,7 @@
  * Copyright (C) 2002, 2003 The Karbon Developers
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,17 +33,11 @@ class Path;
 
 class SVGPathBuilder : public SVGPathConsumer {
 public:
-    SVGPathBuilder();
-
-    void setCurrentPath(Path* path) { m_path = path; }
-
-protected:
-    FloatPoint m_current;
+    SVGPathBuilder(Path&);
 
 private:
     virtual void incrementPathSegmentCount() override { }
     virtual bool continueConsuming() override { return true; }
-    virtual void cleanup() override { m_path = nullptr; }
 
     // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;
@@ -59,7 +53,8 @@ private:
     virtual void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
     virtual void arcTo(float, float, float, bool, bool, const FloatPoint&, PathCoordinateMode) override { ASSERT_NOT_REACHED(); }
 
-    Path* m_path;
+    Path& m_path;
+    FloatPoint m_current;
 };
 
 } // namespace WebCore

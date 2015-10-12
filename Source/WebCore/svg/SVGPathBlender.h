@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,38 +35,40 @@ class SVGPathSource;
 class SVGPathBlender {
     WTF_MAKE_NONCOPYABLE(SVGPathBlender); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGPathBlender();
 
-    bool addAnimatedPath(SVGPathSource*, SVGPathSource*, SVGPathConsumer*, unsigned repeatCount);
-    bool blendAnimatedPath(float, SVGPathSource*, SVGPathSource*, SVGPathConsumer*);
-    void cleanup();
+    static bool addAnimatedPath(SVGPathSource& from, SVGPathSource& to, SVGPathConsumer&, unsigned repeatCount);
+    static bool blendAnimatedPath(SVGPathSource& from, SVGPathSource& to, SVGPathConsumer&, float);
 
 private:
-    bool blendMoveToSegment();
-    bool blendLineToSegment();
-    bool blendLineToHorizontalSegment();
-    bool blendLineToVerticalSegment();
-    bool blendCurveToCubicSegment();
-    bool blendCurveToCubicSmoothSegment();
-    bool blendCurveToQuadraticSegment();
-    bool blendCurveToQuadraticSmoothSegment();
-    bool blendArcToSegment();
+    SVGPathBlender(SVGPathSource&, SVGPathSource&, SVGPathConsumer&);
 
-    float blendAnimatedDimensonalFloat(float, float, FloatBlendMode);
-    FloatPoint blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to);
+    bool addAnimatedPath(unsigned repeatCount);
+    bool blendAnimatedPath(float progress);
 
-    SVGPathSource* m_fromSource;
-    SVGPathSource* m_toSource;
-    SVGPathConsumer* m_consumer;
+    bool blendMoveToSegment(float progress);
+    bool blendLineToSegment(float progress);
+    bool blendLineToHorizontalSegment(float progress);
+    bool blendLineToVerticalSegment(float progress);
+    bool blendCurveToCubicSegment(float progress);
+    bool blendCurveToCubicSmoothSegment(float progress);
+    bool blendCurveToQuadraticSegment(float progress);
+    bool blendCurveToQuadraticSmoothSegment(float progress);
+    bool blendArcToSegment(float progress);
+
+    float blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode, float progress);
+    FloatPoint blendAnimatedFloatPoint(const FloatPoint& from, const FloatPoint& to, float progress);
+
+    SVGPathSource& m_fromSource;
+    SVGPathSource& m_toSource;
+    SVGPathConsumer& m_consumer;
 
     FloatPoint m_fromCurrentPoint;
     FloatPoint m_toCurrentPoint;
     
-    PathCoordinateMode m_fromMode;
-    PathCoordinateMode m_toMode;
-    float m_progress;
-    unsigned m_addTypesCount;
-    bool m_isInFirstHalfOfAnimation;
+    PathCoordinateMode m_fromMode { AbsoluteCoordinates };
+    PathCoordinateMode m_toMode { AbsoluteCoordinates };
+    unsigned m_addTypesCount { 0 };
+    bool m_isInFirstHalfOfAnimation { false };
 };
 
 } // namespace WebCore

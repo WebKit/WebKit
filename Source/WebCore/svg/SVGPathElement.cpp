@@ -43,7 +43,6 @@
 #include "SVGPathSegLinetoVerticalAbs.h"
 #include "SVGPathSegLinetoVerticalRel.h"
 #include "SVGPathSegList.h"
-#include "SVGPathSegListBuilder.h"
 #include "SVGPathSegListPropertyTearOff.h"
 #include "SVGPathSegMovetoAbs.h"
 #include "SVGPathSegMovetoRel.h"

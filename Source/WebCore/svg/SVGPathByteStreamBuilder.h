@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,14 +30,11 @@ namespace WebCore {
 
 class SVGPathByteStreamBuilder : public SVGPathConsumer {
 public:
-    SVGPathByteStreamBuilder();
-
-    void setCurrentByteStream(SVGPathByteStream* byteStream) { m_byteStream = byteStream; }
+    SVGPathByteStreamBuilder(SVGPathByteStream&);
 
 private:
     virtual void incrementPathSegmentCount() override { }
     virtual bool continueConsuming() override { return true; }
-    virtual void cleanup() override { m_byteStream = nullptr; }
 
     // Used in UnalteredParsing/NormalizedParsing modes.
     virtual void moveTo(const FloatPoint&, bool closed, PathCoordinateMode) override;
@@ -57,7 +55,7 @@ private:
     {
         size_t typeSize = sizeof(ByteType);
         for (size_t i = 0; i < typeSize; ++i)
-            m_byteStream->append(type.bytes[i]);
+            m_byteStream.append(type.bytes[i]);
     }
 
     void writeFlag(bool value)
@@ -87,7 +85,7 @@ private:
         writeType(data);
     }
 
-    SVGPathByteStream* m_byteStream;
+    SVGPathByteStream& m_byteStream;
 };
 
 } // namespace WebCore
