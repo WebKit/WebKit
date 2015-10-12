@@ -33,6 +33,8 @@ namespace JSC {
 
 inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr)
 {
+    if (!oldPtr)
+        return false;
     CopiedBlock* block = CopiedSpace::blockFor(oldPtr);
     if (block->isOversize() || block->isPinned())
         return false;

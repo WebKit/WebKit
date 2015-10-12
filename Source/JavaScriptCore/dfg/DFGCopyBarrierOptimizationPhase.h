@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,67 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CopyWriteBarrier_h
-#define CopyWriteBarrier_h
+#ifndef DFGCopyBarrierOptimizationPhase_h
+#define DFGCopyBarrierOptimizationPhase_h
 
-#include "Heap.h"
+#if ENABLE(DFG_JIT)
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-template <typename T>
-class CopyWriteBarrier {
-public:
-    CopyWriteBarrier()
-        : m_value(0)
-    {
-    }
-    
-    CopyWriteBarrier(VM& vm, const JSCell* owner, T& value)
-    {
-        this->set(vm, owner, &value);
-    }
-    
-    CopyWriteBarrier(VM& vm, const JSCell* owner, T* value)
-    {
-        this->set(vm, owner, value);
-    }
-    
-    bool operator!() const { return !m_value; }
-    
-    explicit operator bool() const { return m_value; }
-    
-    T* get() const
-    {
-        return m_value;
-    }
-    
-    T* operator*() const
-    {
-        return get();
-    }
-    
-    T* operator->() const
-    {
-        return get();
-    }
-    
-    void set(VM& vm, const JSCell* owner, T* value)
-    {
-        this->m_value = value;
-        vm.heap.writeBarrier(owner);
-    }
-    
-    void setWithoutWriteBarrier(T* value)
-    {
-        this->m_value = value;
-    }
-    
-    void clear() { m_value = 0; }
+class Graph;
 
-private:
-    T* m_value;
-};
+// Converts GetButterfly nodes into GetButterflyReadOnly nodes whenever the butterfly is only used for
+// read-only operations.
+bool performCopyBarrierOptimization(Graph&);
 
-} // namespace JSC
+} } // namespace JSC::DFG
 
-#endif // CopyWriteBarrier_h
+#endif // ENABLE(DFG_JIT)
+
+#endif // DFGCopyBarrierOptimizationPhase_h
+

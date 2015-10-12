@@ -38,6 +38,7 @@
 #include "DFGCleanUpPhase.h"
 #include "DFGConstantFoldingPhase.h"
 #include "DFGConstantHoistingPhase.h"
+#include "DFGCopyBarrierOptimizationPhase.h"
 #include "DFGCriticalEdgeBreakingPhase.h"
 #include "DFGDCEPhase.h"
 #include "DFGFailedFinalizer.h"
@@ -358,6 +359,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCleanUp(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
+        if (Options::enableCopyBarrierOptimization())
+            performCopyBarrierOptimization(dfg);
         performPhantomInsertion(dfg);
         performStackLayout(dfg);
         performVirtualRegisterAllocation(dfg);
@@ -437,6 +440,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             performMovHintRemoval(dfg);
         performCleanUp(dfg);
         performDCE(dfg); // We rely on this to kill dead code that won't be recognized as dead by LLVM.
+        if (Options::enableCopyBarrierOptimization())
+            performCopyBarrierOptimization(dfg);
         performStackLayout(dfg);
         performLivenessAnalysis(dfg);
         performOSRAvailabilityAnalysis(dfg);

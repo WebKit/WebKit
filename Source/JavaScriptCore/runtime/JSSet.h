@@ -112,7 +112,7 @@ public:
 private:
     JSSet(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_setData(vm)
+        , m_setData(vm, this)
     {
     }
 

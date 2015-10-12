@@ -1065,7 +1065,8 @@ private:
         case CheckCell:
         case CheckHasInstance:
         case CreateThis:
-        case GetButterfly: {
+        case GetButterfly:
+        case GetButterflyReadOnly: {
             fixEdge<CellUse>(node->child1());
             break;
         }

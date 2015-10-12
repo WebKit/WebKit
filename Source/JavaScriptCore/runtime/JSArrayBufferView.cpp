@@ -88,10 +88,10 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     VM& vm, Structure* structure, PassRefPtr<ArrayBuffer> arrayBuffer,
     unsigned byteOffset, unsigned length)
     : m_structure(structure)
-    , m_vector(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset)
     , m_length(length)
     , m_mode(WastefulTypedArray)
 {
+    m_vector = static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset;
     IndexingHeader indexingHeader;
     indexingHeader.setArrayBuffer(arrayBuffer.get());
     m_butterfly = Butterfly::create(vm, 0, 0, 0, true, indexingHeader, 0);
@@ -101,19 +101,19 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     Structure* structure, PassRefPtr<ArrayBuffer> arrayBuffer,
     unsigned byteOffset, unsigned length, DataViewTag)
     : m_structure(structure)
-    , m_vector(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset)
     , m_length(length)
     , m_mode(DataViewMode)
     , m_butterfly(0)
 {
+    m_vector = static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset;
 }
 
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     : Base(vm, context.structure(), context.butterfly())
-    , m_vector(context.vector())
     , m_length(context.length())
     , m_mode(context.mode())
 {
+    m_vector.setWithoutBarrier(static_cast<char*>(context.vector()));
 }
 
 void JSArrayBufferView::finishCreation(VM& vm)
@@ -215,7 +215,7 @@ void JSArrayBufferView::finalize(JSCell* cell)
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);
     ASSERT(thisObject->m_mode == OversizeTypedArray || thisObject->m_mode == WastefulTypedArray);
     if (thisObject->m_mode == OversizeTypedArray)
-        fastFree(thisObject->m_vector);
+        fastFree(thisObject->m_vector.getWithoutBarrier());
 }
 
 } // namespace JSC

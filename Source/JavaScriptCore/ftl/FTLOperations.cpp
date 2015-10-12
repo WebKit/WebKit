@@ -48,7 +48,9 @@ extern "C" JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec
     Butterfly* butterfly = Butterfly::create(
         vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
     
-    return JSFinalObject::create(exec, structure, butterfly);
+    JSObject* result = JSFinalObject::create(exec, structure, butterfly);
+    result->butterfly(); // Ensure that the butterfly is in to-space.
+    return result;
 }
 
 extern "C" void JIT_OPERATION operationPopulateObjectInOSR(

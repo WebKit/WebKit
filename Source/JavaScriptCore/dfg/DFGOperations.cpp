@@ -643,7 +643,9 @@ char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
     if (UNLIKELY(size < 0))
         return bitwise_cast<char*>(exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
 
-    return bitwise_cast<char*>(JSArray::create(*vm, arrayStructure, size));
+    JSArray* result = JSArray::create(*vm, arrayStructure, size);
+    result->butterfly(); // Ensure that the backing store is in to-space.
+    return bitwise_cast<char*>(result);
 }
 
 char* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)
@@ -1174,6 +1176,24 @@ int32_t JIT_OPERATION operationSwitchStringAndGetBranchOffset(ExecState* exec, s
     NativeCallFrameTracer tracer(&vm, exec);
 
     return exec->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(string->value(exec).impl(), std::numeric_limits<int32_t>::min());
+}
+
+char* JIT_OPERATION operationGetButterfly(ExecState* exec, JSCell* cell)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    dataLog("Ran the barrier.\n");
+
+    return bitwise_cast<char*>(jsCast<JSObject*>(cell)->butterfly());
+}
+
+char* JIT_OPERATION operationGetArrayBufferVector(ExecState* exec, JSCell* cell)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return bitwise_cast<char*>(jsCast<JSArrayBufferView*>(cell)->vector());
 }
 
 void JIT_OPERATION operationNotifyWrite(ExecState* exec, WatchpointSet* set)

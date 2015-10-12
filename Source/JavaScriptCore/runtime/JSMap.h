@@ -117,7 +117,7 @@ public:
 private:
     JSMap(VM& vm, Structure* structure)
         : Base(vm, structure)
-        , m_mapData(vm)
+        , m_mapData(vm, this)
     {
     }
 

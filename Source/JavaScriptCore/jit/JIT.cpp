@@ -180,6 +180,8 @@ void JIT::privateCompileMainPass()
         
         if (Options::eagerlyUpdateTopCallFrame())
             updateTopCallFrame();
+
+        unsigned bytecodeOffset = m_bytecodeOffset;
         
         switch (opcodeID) {
         DEFINE_SLOW_OP(del_by_val)
@@ -314,6 +316,9 @@ void JIT::privateCompileMainPass()
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+
+        if (false)
+            dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
     }
 
     RELEASE_ASSERT(m_callLinkInfoIndex == m_callCompilationInfo.size());
@@ -432,6 +437,9 @@ void JIT::privateCompileSlowCases()
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+
+        if (false)
+            dataLog("At ", firstTo, " slow: ", iter - m_slowCases.begin(), "\n");
 
         RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo != iter->to, "Not enough jumps linked in slow case codegen.");
         RELEASE_ASSERT_WITH_MESSAGE(firstTo == (iter - 1)->to, "Too many jumps linked in slow case codegen.");

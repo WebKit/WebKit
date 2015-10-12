@@ -4388,6 +4388,11 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
         m_jit.loadPtr(
             MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfVector()),
             storageReg);
+
+        addSlowPathGenerator(
+            slowPathCall(
+                m_jit.branchIfNotToSpace(storageReg),
+                this, operationGetArrayBufferVector, storageReg, baseReg));
         break;
     }
     
@@ -4408,9 +4413,11 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
         MacroAssembler::NotEqual,
         MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
         TrustedImm32(WastefulTypedArray));
-    
+
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
+    m_jit.removeSpaceBits(dataGPR);
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
+    m_jit.removeSpaceBits(vectorGPR);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), dataGPR);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, ArrayBuffer::offsetOfData()), dataGPR);
     m_jit.subPtr(dataGPR, vectorGPR);
@@ -4421,7 +4428,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     m_jit.move(TrustedImmPtr(0), vectorGPR);
     
     done.link(&m_jit);
-    
+
     int32Result(vectorGPR, node);
 }
 
@@ -5487,6 +5494,36 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     m_jit.storePtr(scratchGPR1, JITCompiler::Address(baseGPR, JSObject::butterflyOffset()));
 
     storageResult(scratchGPR1, node);
+}
+
+void SpeculativeJIT::compileGetButterfly(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this, Reuse, base);
+    
+    GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+    
+    m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
+
+    switch (node->op()) {
+    case GetButterfly:
+        addSlowPathGenerator(
+            slowPathCall(
+                m_jit.branchIfNotToSpace(resultGPR),
+                this, operationGetButterfly, resultGPR, baseGPR));
+        break;
+
+    case GetButterflyReadOnly:
+        m_jit.removeSpaceBits(resultGPR);
+        break;
+
+    default:
+        DFG_CRASH(m_jit.graph(), node, "Bad node type");
+        break;
+    }
+    
+    storageResult(resultGPR, node);
 }
 
 GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, ArrayMode arrayMode)

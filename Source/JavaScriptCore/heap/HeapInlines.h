@@ -26,6 +26,7 @@
 #ifndef HeapInlines_h
 #define HeapInlines_h
 
+#include "CopyBarrier.h"
 #include "Heap.h"
 #include "JSCell.h"
 #include "Structure.h"

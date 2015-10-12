@@ -1,3 +1,309 @@
+2015-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        GC should have a Baker barrier for concurrent copying
+        https://bugs.webkit.org/show_bug.cgi?id=149852
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a Baker-style read barrier [1] to copied space accesses. This barrier incurs some
+        overhead (0%-2% depending on benchmark suite), but what it buys is the ability to make the GC copy
+        phase concurrent.
+
+        The barrier relies on copied space pointers having two "space bits" in the low pointer bits. The
+        space bits indicate whether the backing store is being copied right now or not, and if it is being
+        copied, what stage of copying it's in. Two barrier variants are supported:
+
+        Read only barrier: if you load a backing store and immediately load from it without doing anything
+        else, you can just mask off the bits. In the worst case, you'll get the old backing store while
+        some copying thread is already allocating and populating the new version of the backing store. But
+        in that case, forwarding to the new backing store will not enable you to load a more up-to-date
+        value from the backing store. So, just masking the bits is enough. The read-only barrier is only
+        used in ICs where we know that we are only reading, and opportunistically within the DFG and FTL
+        thanks to the CopyBarrierOptimizationPhase. We never explicitly emit a read-only barrier in those
+        compilers; instead the phase will turn a GetButterfly into GetButterflyReadOnly if it proves that a
+        bunch of requirements are met.
+
+        Normal barrier: if the space bits are non-zero, call a slow path. The slow path will either do
+        nothing (if the copy phase hasn't started yet), or it will copy the backing store and update the
+        pointer (if the copy phase hasn't gotten around to copying this particular backing store), or it
+        will wait for the copying thread to finish (if some thread is copying this backing store right
+        now), or it will do nothing (if by the time we called into the slow path the backing store was
+        already copied). This is just like Baker's CAR/CDR barrier, but with a lock thrown in to handle
+        concurrent execution.
+
+        This is a 1% slow-down on SunSpider, a 1.5% slow-down on Octane, a 1.5% slow-down on Kraken, and a
+        0% slow-down on AsmBench. Note that the Octane slow-down is excluding the SplayLatency benchmark.
+        That benchmark will eventually speed up a lot once we finish doing all of this stuff. Probably, the
+        JetStream splay-latency will see an even larger speed-up, since our version of the latency tests do
+        a better job of punishing bad worst-case behavior.
+
+        [1] http://dspace.mit.edu/bitstream/handle/1721.1/41976/AI_WP_139.pdf, look for the CAR and CDR
+        procedures on page 9.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCopyBarrierOptimizationPhase.cpp: Added.
+        (JSC::DFG::performCopyBarrierOptimization):
+        * dfg/DFGCopyBarrierOptimizationPhase.h: Added.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetButterfly):
+        (JSC::DFG::SpeculativeJIT::temporaryRegisterForPutByVal):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetButterfly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetButterflyReadOnly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileConstantStoragePointer):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCheckArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMultiGetByOffset):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToLLVM::storageForTransition):
+        (JSC::FTL::DFG::LowerDFGToLLVM::getById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadButterflyWithBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadVectorWithBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::copyBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadButterflyReadOnly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadVectorReadOnly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::removeSpaceBits):
+        (JSC::FTL::DFG::LowerDFGToLLVM::baseIndex):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationNewObjectWithButterfly):
+        (JSC::FTL::operationPopulateObjectInOSR):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::testNonZero32):
+        (JSC::FTL::Output::testIsZero64):
+        (JSC::FTL::Output::testNonZero64):
+        (JSC::FTL::Output::testIsZeroPtr):
+        (JSC::FTL::Output::testNonZeroPtr):
+        (JSC::FTL::Output::select):
+        (JSC::FTL::Output::extractValue):
+        * heap/CopyBarrier.h: Copied from Source/JavaScriptCore/heap/CopyWriteBarrier.h.
+        (JSC::CopyBarrierBase::CopyBarrierBase):
+        (JSC::CopyBarrierBase::operator!):
+        (JSC::CopyBarrierBase::operator bool):
+        (JSC::CopyBarrierBase::getWithoutBarrier):
+        (JSC::CopyBarrierBase::get):
+        (JSC::CopyBarrierBase::copyState):
+        (JSC::CopyBarrierBase::setCopyState):
+        (JSC::CopyBarrierBase::clear):
+        (JSC::CopyBarrierBase::set):
+        (JSC::CopyBarrierBase::setWithoutBarrier):
+        (JSC::CopyBarrierBase::weakCASWithoutBarrier):
+        (JSC::CopyBarrier::CopyBarrier):
+        (JSC::CopyBarrier::getWithoutBarrier):
+        (JSC::CopyBarrier::get):
+        (JSC::CopyBarrier::set):
+        (JSC::CopyBarrier::setWithoutBarrier):
+        (JSC::CopyBarrier::weakCASWithoutBarrier):
+        (JSC::CopyWriteBarrier::CopyWriteBarrier): Deleted.
+        (JSC::CopyWriteBarrier::operator!): Deleted.
+        (JSC::CopyWriteBarrier::operator bool): Deleted.
+        (JSC::CopyWriteBarrier::get): Deleted.
+        (JSC::CopyWriteBarrier::operator*): Deleted.
+        (JSC::CopyWriteBarrier::operator->): Deleted.
+        (JSC::CopyWriteBarrier::set): Deleted.
+        (JSC::CopyWriteBarrier::setWithoutWriteBarrier): Deleted.
+        (JSC::CopyWriteBarrier::clear): Deleted.
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::checkIfShouldCopy):
+        * heap/CopyWriteBarrier.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::copyBarrier):
+        (JSC::Heap::collectAndSweep):
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrierBuffer):
+        * heap/HeapInlines.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchStructure):
+        (JSC::AssemblyHelpers::branchIfNotToSpace):
+        (JSC::AssemblyHelpers::removeSpaceBits):
+        (JSC::AssemblyHelpers::addressForByteOffset):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_has_indexed_property):
+        (JSC::JIT::emit_op_get_direct_pname):
+        (JSC::JIT::emitSlow_op_get_direct_pname):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_direct_pname):
+        (JSC::JIT::emitSlow_op_get_direct_pname):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::copyBackingStore):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::overrideThingsIfNecessary):
+        (JSC::DirectArguments::overrideArgument):
+        (JSC::DirectArguments::copyToArguments):
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::canAccessIndexQuickly):
+        (JSC::DirectArguments::canAccessArgumentIndexQuicklyInDFG):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::fastSlice):
+        (JSC::JSArray::fastConcatWith):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        (JSC::JSArrayBufferView::finishCreation):
+        (JSC::JSArrayBufferView::finalize):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::vector):
+        (JSC::JSArrayBufferView::length):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::neuter):
+        (JSC::JSArrayBufferView::byteOffset):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::typedVector):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        (JSC::JSGenericTypedArrayView<Adaptor>::copyBackingStore):
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSMap.h:
+        (JSC::JSMap::JSMap):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::visitChildren):
+        (JSC::JSObject::copyBackingStore):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::setIndexQuicklyToUndecided):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+        (JSC::JSObject::growOutOfLineStorage):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::JSObject::getEnumerableLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuicklyForPutDirect):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::hasSparseMap):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSC::JSObject::inlineStorage):
+        (JSC::JSObject::butterfly):
+        (JSC::JSObject::outOfLineStorage):
+        (JSC::JSObject::locationForOffset):
+        (JSC::JSObject::ensureInt32):
+        (JSC::JSObject::ensureDouble):
+        (JSC::JSObject::ensureContiguous):
+        (JSC::JSObject::ensureArrayStorage):
+        (JSC::JSObject::arrayStorage):
+        (JSC::JSObject::arrayStorageOrNull):
+        (JSC::JSObject::ensureLength):
+        (JSC::JSObject::putDirectWithoutTransition):
+        * runtime/JSSet.h:
+        (JSC::JSSet::JSSet):
+        * runtime/MapData.h:
+        (JSC::JSIterator>::MapDataImpl):
+        (JSC::JSIterator>::IteratorData::next):
+        (JSC::JSIterator>::IteratorData::refreshCursor):
+        * runtime/MapDataInlines.h:
+        (JSC::JSIterator>::clear):
+        (JSC::JSIterator>::find):
+        (JSC::JSIterator>::add):
+        (JSC::JSIterator>::remove):
+        (JSC::JSIterator>::replaceAndPackBackingStore):
+        (JSC::JSIterator>::replaceBackingStore):
+        (JSC::JSIterator>::ensureSpaceForAppend):
+        (JSC::JSIterator>::visitChildren):
+        (JSC::JSIterator>::copyBackingStore):
+        * runtime/Options.h:
+
 2015-10-12  Saam barati  <sbarati@apple.com>
 
         Update JSC features.json

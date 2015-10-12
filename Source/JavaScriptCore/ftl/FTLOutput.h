@@ -362,6 +362,8 @@ public:
     LValue testNonZero32(LValue value, LValue mask) { return notZero32(bitAnd(value, mask)); }
     LValue testIsZero64(LValue value, LValue mask) { return isZero64(bitAnd(value, mask)); }
     LValue testNonZero64(LValue value, LValue mask) { return notZero64(bitAnd(value, mask)); }
+    LValue testIsZeroPtr(LValue value, LValue mask) { return isNull(bitAnd(value, mask)); }
+    LValue testNonZeroPtr(LValue value, LValue mask) { return notNull(bitAnd(value, mask)); }
     
     LValue select(LValue value, LValue taken, LValue notTaken) { return buildSelect(m_builder, value, taken, notTaken); }
     LValue extractValue(LValue aggVal, unsigned index) { return buildExtractValue(m_builder, aggVal, index); }

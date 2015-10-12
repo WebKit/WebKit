@@ -220,6 +220,8 @@ const PutByIdSecondaryTypeObject = 0x30
 const PutByIdSecondaryTypeObjectOrOther = 0x38
 const PutByIdSecondaryTypeTop = 0x40
 
+const CopyBarrierSpaceBits = 3
+
 const CallOpCodeSize = 9
 
 if X86_64 or ARM64 or C_LOOP
@@ -659,6 +661,10 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     else
         error
     end
+end
+
+macro copyBarrier(value, slow)
+    btpnz value, CopyBarrierSpaceBits, slow
 end
 
 macro functionPrologue()

@@ -1188,9 +1188,10 @@ _llint_op_is_object:
     dispatch(3)
 
 
-macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
+macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value, slow)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
+    copyBarrier(objectAndStorage, slow)
     negi propertyOffsetAsInt
     sxi2q propertyOffsetAsInt, propertyOffsetAsInt
     jmp .ready
@@ -1201,9 +1202,10 @@ macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
 end
 
 
-macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
+macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value, slow)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
+    copyBarrier(objectAndStorage, slow)
     negi propertyOffsetAsInt
     sxi2q propertyOffsetAsInt, propertyOffsetAsInt
     jmp .ready
@@ -1222,7 +1224,7 @@ _llint_op_get_by_id:
     bineq t2, t1, .opGetByIdSlow
     loadisFromInstruction(5, t1)
     loadisFromInstruction(1, t2)
-    loadPropertyAtVariableOffset(t1, t3, t0)
+    loadPropertyAtVariableOffset(t1, t3, t0, .opGetByIdSlow)
     storeq t0, [cfr, t2, 8]
     valueProfile(t0, 8, t1)
     dispatch(9)
@@ -1243,6 +1245,7 @@ _llint_op_get_array_length:
     btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
     loadisFromInstruction(1, t1)
     loadp JSObject::m_butterfly[t3], t0
+    copyBarrier(t0, .opGetArrayLengthSlow)
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
     orq tagTypeNumber, t0
@@ -1382,7 +1385,7 @@ _llint_op_put_by_id:
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
     loadisFromInstruction(5, t1)
-    storePropertyAtVariableOffset(t1, t0, t2)
+    storePropertyAtVariableOffset(t1, t0, t2, .opPutByIdSlow)
     dispatch(9)
 
 .opPutByIdSlow:
@@ -1401,6 +1404,7 @@ _llint_op_get_by_val:
     loadConstantOrVariableInt32(t3, t1, .opGetByValSlow)
     sxi2q t1, t1
     loadp JSObject::m_butterfly[t0], t3
+    copyBarrier(t3, .opGetByValSlow)
     andi IndexingShapeMask, t2
     bieq t2, Int32Shape, .opGetByValIsContiguous
     bineq t2, ContiguousShape, .opGetByValNotContiguous
@@ -1471,6 +1475,7 @@ macro putByVal(slowPath)
     loadConstantOrVariableInt32(t0, t3, .opPutByValSlow)
     sxi2q t3, t3
     loadp JSObject::m_butterfly[t1], t0
+    copyBarrier(t0, .opPutByValSlow)
     andi IndexingShapeMask, t2
     bineq t2, Int32Shape, .opPutByValNotInt32
     contiguousPutByVal(
@@ -1991,9 +1996,9 @@ macro loadWithStructureCheck(operand, slowPath)
     bpneq t2, t1, slowPath
 end
 
-macro getProperty()
+macro getProperty(slow)
     loadisFromInstruction(6, t1)
-    loadPropertyAtVariableOffset(t1, t0, t2)
+    loadPropertyAtVariableOffset(t1, t0, t2, slow)
     valueProfile(t2, 7, t0)
     loadisFromInstruction(1, t0)
     storeq t2, [cfr, t0, 8]
@@ -2024,7 +2029,7 @@ _llint_op_get_from_scope:
 #gGlobalProperty:
     bineq t0, GlobalProperty, .gGlobalVar
     loadWithStructureCheck(2, .gDynamic)
-    getProperty()
+    getProperty(.gDynamic)
     dispatch(8)
 
 .gGlobalVar:
@@ -2049,7 +2054,7 @@ _llint_op_get_from_scope:
 .gGlobalPropertyWithVarInjectionChecks:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
     loadWithStructureCheck(2, .gDynamic)
-    getProperty()
+    getProperty(.gDynamic)
     dispatch(8)
 
 .gGlobalVarWithVarInjectionChecks:
@@ -2079,11 +2084,11 @@ _llint_op_get_from_scope:
     dispatch(8)
 
 
-macro putProperty()
+macro putProperty(slow)
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
     loadisFromInstruction(6, t1)
-    storePropertyAtVariableOffset(t1, t0, t2)
+    storePropertyAtVariableOffset(t1, t0, t2, slow)
 end
 
 macro putGlobalVariable()
@@ -2141,7 +2146,7 @@ _llint_op_put_to_scope:
     bineq t0, GlobalProperty, .pGlobalVar
     writeBarrierOnOperands(1, 3)
     loadWithStructureCheck(1, .pDynamic)
-    putProperty()
+    putProperty(.pDynamic)
     dispatch(7)
 
 .pGlobalVar:
@@ -2168,7 +2173,7 @@ _llint_op_put_to_scope:
     bineq t0, GlobalPropertyWithVarInjectionChecks, .pGlobalVarWithVarInjectionChecks
     writeBarrierOnOperands(1, 3)
     loadWithStructureCheck(1, .pDynamic)
-    putProperty()
+    putProperty(.pDynamic)
     dispatch(7)
 
 .pGlobalVarWithVarInjectionChecks:

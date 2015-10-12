@@ -1000,6 +1000,12 @@ void Heap::addToRememberedSet(const JSCell* cell)
     m_slotVisitor.appendToMarkStack(const_cast<JSCell*>(cell));
 }
 
+void* Heap::copyBarrier(const JSCell*, void*& pointer)
+{
+    // Do nothing for now.
+    return pointer;
+}
+
 void Heap::collectAndSweep(HeapOperation collectionType)
 {
     if (!m_isSafeToCollect)

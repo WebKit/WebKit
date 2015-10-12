@@ -441,7 +441,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     switch (thisObject->m_mode) {
     case FastTypedArray: {
         if (thisObject->m_vector)
-            visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector, thisObject->byteSize());
+            visitor.copyLater(thisObject, TypedArrayVectorCopyToken, thisObject->m_vector.getWithoutBarrier(), thisObject->byteSize());
         break;
     }
         
@@ -468,12 +468,12 @@ void JSGenericTypedArrayView<Adaptor>::copyBackingStore(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
     if (token == TypedArrayVectorCopyToken
-        && visitor.checkIfShouldCopy(thisObject->m_vector)) {
+        && visitor.checkIfShouldCopy(thisObject->m_vector.getWithoutBarrier())) {
         ASSERT(thisObject->m_vector);
-        void* oldVector = thisObject->m_vector;
+        void* oldVector = thisObject->m_vector.get(thisObject);
         void* newVector = visitor.allocateNewSpace(thisObject->byteSize());
         memcpy(newVector, oldVector, thisObject->byteSize());
-        thisObject->m_vector = newVector;
+        thisObject->m_vector.setWithoutBarrier(static_cast<char*>(newVector));
         visitor.didCopy(oldVector, thisObject->byteSize());
     }
     
@@ -508,8 +508,8 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
         && !thisObject->butterfly() && size >= sizeof(IndexingHeader)) {
         ASSERT(thisObject->m_vector);
         // Reuse already allocated memory if at all possible.
-        thisObject->m_butterfly.setWithoutWriteBarrier(
-            static_cast<IndexingHeader*>(thisObject->m_vector)->butterfly());
+        thisObject->m_butterfly.setWithoutBarrier(
+            bitwise_cast<IndexingHeader*>(thisObject->m_vector.get(thisObject))->butterfly());
     } else {
         VM& vm = *heap->vm();
         thisObject->m_butterfly.set(vm, thisObject, Butterfly::createOrGrowArrayRight(
@@ -521,14 +521,14 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     
     switch (thisObject->m_mode) {
     case FastTypedArray:
-        buffer = ArrayBuffer::create(thisObject->m_vector, thisObject->byteLength());
+        buffer = ArrayBuffer::create(thisObject->m_vector.get(thisObject), thisObject->byteLength());
         break;
         
     case OversizeTypedArray:
         // FIXME: consider doing something like "subtracting" from extra memory
         // cost, since right now this case will cause the GC to think that we reallocated
         // the whole buffer.
-        buffer = ArrayBuffer::createAdopted(thisObject->m_vector, thisObject->byteLength());
+        buffer = ArrayBuffer::createAdopted(thisObject->m_vector.get(thisObject), thisObject->byteLength());
         break;
         
     default:
@@ -537,7 +537,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     }
 
     thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-    thisObject->m_vector = buffer->data();
+    thisObject->m_vector.setWithoutBarrier(static_cast<char*>(buffer->data()));
     thisObject->m_mode = WastefulTypedArray;
     heap->addReference(thisObject, buffer.get());
     

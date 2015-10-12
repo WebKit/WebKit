@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
+#include "CopyBarrier.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "InlineCallFrame.h"
@@ -753,6 +754,16 @@ public:
 #else
         return branchPtr(condition, leftHandSide, TrustedImmPtr(structure));
 #endif
+    }
+
+    Jump branchIfNotToSpace(GPRReg storageGPR)
+    {
+        return branchTest32(NonZero, storageGPR, TrustedImm32(CopyBarrierBase::spaceBits));
+    }
+
+    void removeSpaceBits(GPRReg storageGPR)
+    {
+        andPtr(TrustedImmPtr(~static_cast<uintptr_t>(CopyBarrierBase::spaceBits)), storageGPR);
     }
     
     static Address addressForByteOffset(ptrdiff_t byteOffset)

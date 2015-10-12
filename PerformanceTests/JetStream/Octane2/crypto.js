@@ -580,11 +580,18 @@ function montRevert(x) {
 }
 
 // x = x/R mod m (HAC 14.32)
+//var outerCounter = 0;
+//var innerCounter = 0;
+var globalThingy = 0;
 function montReduce(x) {
   var x_array = x.array;
   while(x.t <= this.mt2)	// pad x so am has enough room later
     x_array[x.t++] = 0;
+  //outerCounter++;
+  globalThingy = 665;
   for(var i = 0; i < this.m.t; ++i) {
+    //innerCounter++;
+    globalThingy = 666;
     // faster way of calculating u0 = x[i]*mp mod DV
     var j = x_array[i]&0x7fff;
     var u0 = (j*this.mpl+(((j*this.mph+(x_array[i]>>15)*this.mpl)&this.um)<<15))&BI_DM;

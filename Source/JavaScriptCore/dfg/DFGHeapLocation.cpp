@@ -92,6 +92,10 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("ButterflyLoc");
         return;
         
+    case ButterflyReadOnlyLoc:
+        out.print("ButterflyReadOnlyLoc");
+        return;
+        
     case CheckHasInstanceLoc:
         out.print("CheckHasInstanceLoc");
         return;

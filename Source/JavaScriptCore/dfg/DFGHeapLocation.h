@@ -39,6 +39,7 @@ enum LocationKind {
     
     ArrayLengthLoc,
     ButterflyLoc,
+    ButterflyReadOnlyLoc,
     CheckHasInstanceLoc,
     ClosureVariableLoc,
     DirectArgumentsLoc,

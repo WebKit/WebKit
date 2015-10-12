@@ -4023,18 +4023,10 @@ void SpeculativeJIT::compile(Node* node)
         compileReallocatePropertyStorage(node);
         break;
         
-    case GetButterfly: {
-        SpeculateCellOperand base(this, node->child1());
-        GPRTemporary result(this, Reuse, base);
-        
-        GPRReg baseGPR = base.gpr();
-        GPRReg resultGPR = result.gpr();
-        
-        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
-        
-        storageResult(resultGPR, node);
+    case GetButterfly:
+    case GetButterflyReadOnly:
+        compileGetButterfly(node);
         break;
-    }
 
     case GetIndexedPropertyStorage: {
         compileGetIndexedPropertyStorage(node);
@@ -4623,10 +4615,16 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg indexGPR = index.gpr();
         GPRReg enumeratorGPR = enumerator.gpr();
 
+        MacroAssembler::JumpList slowPath;
+
         // Check the structure
         m_jit.load32(MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()), scratchGPR);
-        MacroAssembler::Jump wrongStructure = m_jit.branch32(MacroAssembler::NotEqual, 
-            scratchGPR, MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset()));
+        slowPath.append(
+            m_jit.branch32(
+                MacroAssembler::NotEqual, 
+                scratchGPR,
+                MacroAssembler::Address(
+                    enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
         
         // Compute the offset
         // If index is less than the enumerator's cached inline storage, then it's an inline access
@@ -4648,14 +4646,15 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.signExtend32ToPtr(scratchGPR, scratchGPR);
         // We use resultPayloadGPR as a temporary here. We have to make sure clobber it after getting the 
         // value out of indexGPR and enumeratorGPR because resultPayloadGPR could reuse either of those registers.
-        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), resultPayloadGPR); 
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), resultPayloadGPR);
+        slowPath.append(m_jit.branchIfNotToSpace(resultPayloadGPR));
         int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
         m_jit.load32(MacroAssembler::BaseIndex(resultPayloadGPR, scratchGPR, MacroAssembler::TimesEight, offsetOfFirstProperty + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTagGPR);
         m_jit.load32(MacroAssembler::BaseIndex(resultPayloadGPR, scratchGPR, MacroAssembler::TimesEight, offsetOfFirstProperty + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayloadGPR);
 
         done.link(&m_jit);
 
-        addSlowPathGenerator(slowPathCall(wrongStructure, this, operationGetByValCell, resultTagGPR, resultPayloadGPR, baseGPR, propertyGPR));
+        addSlowPathGenerator(slowPathCall(slowPath, this, operationGetByValCell, resultTagGPR, resultPayloadGPR, baseGPR, propertyGPR));
 #endif
 
         jsValueResult(resultTagGPR, resultPayloadGPR, node);

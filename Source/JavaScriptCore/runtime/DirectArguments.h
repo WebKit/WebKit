@@ -73,7 +73,7 @@ public:
     
     bool canAccessIndexQuickly(uint32_t i) const
     {
-        return i < m_length && (!m_overrides || !m_overrides.get()[i]);
+        return i < m_length && (!m_overrides || !m_overrides.get(this)[i]);
     }
 
     bool canAccessArgumentIndexQuicklyInDFG(uint32_t i) const
@@ -148,7 +148,7 @@ private:
     WriteBarrier<JSFunction> m_callee;
     uint32_t m_length; // Always the actual length of captured arguments and never what was stored into the length property.
     uint32_t m_minCapacity; // The max of this and length determines the capacity of this object. It may be the actual capacity, or maybe something smaller. We arrange it this way to be kind to the JITs.
-    CopyWriteBarrier<bool> m_overrides; // If non-null, it means that length, callee, and caller are fully materialized properties.
+    CopyBarrier<bool> m_overrides; // If non-null, it means that length, callee, and caller are fully materialized properties.
 };
 
 } // namespace JSC

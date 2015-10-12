@@ -73,6 +73,11 @@ public:
         
         m_graph.m_dominators.computeIfNecessary(m_graph);
         m_graph.m_naturalLoops.computeIfNecessary(m_graph);
+
+        if (verbose) {
+            dataLog("Graph before LICM:\n");
+            m_graph.dump();
+        }
         
         m_data.resize(m_graph.m_naturalLoops.numLoops());
         
