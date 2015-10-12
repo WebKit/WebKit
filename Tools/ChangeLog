@@ -1,3 +1,17 @@
+2015-10-12  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] Media tests crashing with gst-plugins-bad 1.4.4 and cpp 5.2
+        https://bugs.webkit.org/show_bug.cgi?id=150026
+
+        Reviewed by Philippe Normand.
+
+        Backport upstream patch from gst-plugins-bad so that the right version
+        of FAAD2 can be found with newer versions of cpp, so that gst-plugins-bad
+        gets compiled properly, avoiding crashes on runtime while running tests.
+
+        * gtk/patches/gst-plugins-bad-fix-faad2-version-check.patch: Added.
+        * gtk/jhbuild.modules: Referenced the newly added patch for gst-plugins-bad.
+
 2015-10-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test font-variant-* and font-feature-settings with mocked preinstalled fonts

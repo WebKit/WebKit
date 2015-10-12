@@ -322,6 +322,7 @@
             hash="sha256:e41b36105c0a13a2cb1ff9f559714e839b82dc3841484cd664790fb7947e55c7"
             md5sum="972c6e22dd2e44fcf0b04b9d810a56be">
       <patch file="gst-plugins-bad-remove-gnustep-support.patch" strip="1"/>
+      <patch file="gst-plugins-bad-fix-faad2-version-check.patch" strip="1"/>
     </branch>
   </autotools>
 
