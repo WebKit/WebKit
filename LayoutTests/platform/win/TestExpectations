@@ -3287,3 +3287,9 @@ imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageO
 imported/blink/fast/block/float/float-mark-descendants-for-layout-crash.html [ Failure ]
 imported/blink/http/tests/security/script-crossorigin-loads-correctly-credentials.html [ Failure ]
 imported/blink/printing/print-document-without-documentElement-crash.html [ Failure ]
+
+# Failure introduced by JavaScriptCore change:
+webkit.org/b/150040 fast/events/tabindex-focus-blur-all.html [ Failure ]
+webkit.org/b/150040 imported/w3c/web-platform-tests/dom/ranges/Range-insertNode.html [ Failure ]
+webkit.org/b/150040 imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html [ Failure ]
+webkit.org/b/150040 js/dom/dfg-custom-getter.html [ Failure ]
