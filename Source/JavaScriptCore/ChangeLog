@@ -1,3 +1,14 @@
+2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
+
+        webkit-gtk 2.3.3 fails to build on OS X - Conflicting type "Fixed"
+        https://bugs.webkit.org/show_bug.cgi?id=126433
+
+        Reviewed by Philippe Normand
+
+        Don't include CoreFoundation.h when building the GTK port.
+
+        * Source/JavaScriptCore/API/WebKitAvailability.h: Add !defined(BUILDING_GTK__) to defined(__APPLE__).
+
 2015-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         FTL should generate code to call slow paths lazily
