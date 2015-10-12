@@ -1,3 +1,16 @@
+2015-10-12  Saam barati  <sbarati@apple.com>
+
+        Update JSC features.json
+        https://bugs.webkit.org/show_bug.cgi?id=150043
+
+        Reviewed by Mark Lam.
+
+        There were a lot of things implemented that weren't in
+        the list. We should be better about updating the list
+        as we land patches for new ES6 features.
+
+        * features.json:
+
 2015-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup Heap.h and some related headers
