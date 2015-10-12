@@ -43,6 +43,10 @@
 #include "Text.h"
 #include "TextPaintStyle.h"
 
+#if ENABLE(TREE_DEBUGGING)
+#include <stdio.h>
+#endif
+
 namespace WebCore {
 namespace SimpleLineLayout {
 
