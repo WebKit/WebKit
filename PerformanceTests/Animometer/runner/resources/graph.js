@@ -76,13 +76,13 @@ function graph(selector, size, margins, axes, samples, samplingTimeOffset)
     // yLeft-axis
     svg.append("g")
         .attr("class", "y axis")
-        .attr("fill", "steelblue")
+        .attr("fill", "#7ADD49")
         .call(yAxisLeft)
         .append("text")
             .attr("class", "label")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
-            .attr("fill", "steelblue")
+            .attr("fill", "#7ADD49")
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .text(axes[0]);
@@ -90,14 +90,14 @@ function graph(selector, size, margins, axes, samples, samplingTimeOffset)
     // yRight-axis
     svg.append("g")
         .attr("class", "y axis")
-        .attr("fill", "red")
+        .attr("fill", "#FA4925")
         .attr("transform", "translate(" + size.width + ", 0)")
         .call(yAxisRight)
         .append("text")
             .attr("class", "label")
             .attr("transform", "rotate(-90)")
             .attr("y", 6)
-            .attr("fill", "red")
+            .attr("fill", "#FA4925")
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .text(axes[1]);
@@ -124,7 +124,7 @@ function graph(selector, size, margins, axes, samples, samplingTimeOffset)
         .attr("x2", x(samplingTimeOffset))
         .attr("y1", yLeft(0))
         .attr("y2", yLeft(yAxisLeft.scale().domain()[1]))
-        .attr("class", "smaple-time");
+        .attr("class", "sample-time");
 
     // left-samples
     svg.append("path")

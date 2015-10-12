@@ -186,36 +186,38 @@ button:focus {
 .axis path,
 .axis line {
   fill: none;
-  stroke: rgb(235, 235, 235);
+  stroke: #999;
   shape-rendering: crispEdges;
 }
 
 .left-samples {
   fill: none;
-  stroke: steelblue;
+  stroke: #7ADD49;
   stroke-width: 1.5px;
 }
 
 .right-samples {
     fill: none;
-    stroke: red;
+    stroke: #FA4925;
     stroke-width: 1.5px;
 }
 
-.smaple-time {
+.sample-time {
     fill: none;
-    stroke: green;
-    stroke-width: 1.5px;
+    stroke: #5493D6;
+    stroke-width: 1px;
 }
 
 .left-mean {
     fill: none;
-    stroke: yellow;
-    stroke-width: 1.5px;
+    stroke: #7ADD49;
+    stroke-width: 1px;
+    opacity: .8;
 }
 
 .right-mean {
     fill: none;
-    stroke: magenta;
-    stroke-width: 1.5px;
+    stroke: #FA4925;
+    stroke-width: 1px;
+    opacity: .8;
 }
