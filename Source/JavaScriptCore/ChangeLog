@@ -1,3 +1,10 @@
+2015-10-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed build fix
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::reallocateAndShrinkButterfly):
+
 2015-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         GC should have a Baker barrier for concurrent copying

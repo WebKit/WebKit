@@ -2494,8 +2494,8 @@ void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
     ASSERT(length < MAX_ARRAY_INDEX);
     ASSERT(length < MAX_STORAGE_VECTOR_LENGTH);
     ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
-    ASSERT(m_butterfly->vectorLength() > length);
-    ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure()));
+    ASSERT(m_butterfly.get(this)->vectorLength() > length);
+    ASSERT(!m_butterfly.get(this)->indexingHeader()->preCapacity(structure()));
 
     DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = m_butterfly.get(this)->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(length));
