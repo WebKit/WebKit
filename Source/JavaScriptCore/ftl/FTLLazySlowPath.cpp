@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FTLLazySlowPath.h"
 
+#if ENABLE(FTL_JIT)
+
 #include "FTLSlowPathCall.h"
 #include "LinkBuffer.h"
 
@@ -71,4 +73,4 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 
 } } // namespace JSC::FTL
 
-
+#endif // ENABLE(FTL_JIT)

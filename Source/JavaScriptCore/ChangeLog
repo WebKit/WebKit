@@ -1,3 +1,9 @@
+2015-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix no-FTL build.
+
+        * ftl/FTLLazySlowPath.cpp:
+
 2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
 
         webkit-gtk 2.3.3 fails to build on OS X - Conflicting type "Fixed"
