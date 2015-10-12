@@ -1,3 +1,12 @@
+2015-10-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r190817.  Now that pull-os-versions store fake timestamps, we need to bypass timestamp
+        checks for OS versions when bots try to report new results. Otherwise, we fail to process the reports
+        with a MismatchingCommitTime error.
+
+        * public/include/report-processor.php:
+        (ReportProcessor::resolve_build_id):
+
 2015-10-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard erroneously shows an old OS build in A/B testing range
