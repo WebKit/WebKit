@@ -97,7 +97,6 @@ class ScriptExecutable;
 class SourceProvider;
 class SourceProviderCache;
 struct StackFrame;
-class Stringifier;
 class Structure;
 #if ENABLE(REGEXP_TRACING)
 class RegExp;

@@ -24,8 +24,6 @@
 
 namespace JSC {
 
-class MarkStack;
-class MarkStackSharedData;
 class SlotVisitor;
 
 class WeakReferenceHarvester : public ListableHandler<WeakReferenceHarvester> {

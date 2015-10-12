@@ -34,6 +34,7 @@
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "Structure.h"
+#include <wtf/OSAllocator.h>
 
 namespace JSC {
 

@@ -38,22 +38,20 @@
 #include "HeapVerifier.h"
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "JSONObject.h"
-#include "JSCInlines.h"
 #include "JSVirtualMachineInternal.h"
-#include "RegExpCache.h"
 #include "Tracing.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
 #include "VM.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
-#include <wtf/RAMSize.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ParallelVectorIterator.h>
 #include <wtf/ProcessID.h>
+#include <wtf/RAMSize.h>
 
 using namespace std;
 using namespace JSC;

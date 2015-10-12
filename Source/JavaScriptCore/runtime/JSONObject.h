@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-class Stringifier;
-
 class JSONObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;

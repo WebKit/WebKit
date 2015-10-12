@@ -113,7 +113,7 @@ public:
 
     Heap(VM*, HeapType);
     ~Heap();
-    JS_EXPORT_PRIVATE void lastChanceToFinalize();
+    void lastChanceToFinalize();
     void releaseDelayedReleasedObjects();
 
     VM* vm() const { return m_vm; }
@@ -207,7 +207,7 @@ public:
     size_t sizeBeforeLastFullCollection() const { return m_sizeBeforeLastFullCollect; }
     size_t sizeAfterLastFullCollection() const { return m_sizeAfterLastFullCollect; }
 
-    JS_EXPORT_PRIVATE void deleteAllCodeBlocks();
+    void deleteAllCodeBlocks();
     void deleteAllUnlinkedCodeBlocks();
 
     void didAllocate(size_t);
@@ -252,7 +252,6 @@ private:
     friend class CopiedSpace;
     friend class CopyVisitor;
     friend class SlotVisitor;
-    friend class SuperRegion;
     friend class IncrementalSweeper;
     friend class HeapStatistics;
     friend class VM;
@@ -340,7 +339,6 @@ private:
     size_t threadVisitCount();
     size_t threadBytesVisited();
     size_t threadBytesCopied();
-    size_t threadDupStrings();
 
     const HeapType m_heapType;
     const size_t m_ramSize;

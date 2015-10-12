@@ -41,7 +41,6 @@
 #include "LinkBuffer.h"
 #include "JSCInlines.h"
 #include "PolymorphicAccess.h"
-#include "RegExpMatchesArray.h"
 #include "ScratchRegisterAllocator.h"
 #include "StackAlignment.h"
 #include "StructureRareDataInlines.h"
