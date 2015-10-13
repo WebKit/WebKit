@@ -1,3 +1,26 @@
+2015-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        Paint artifacts when hovering on http://jsfiddle.net/Sherbrow/T87Mn/
+        https://bugs.webkit.org/show_bug.cgi?id=149535
+        rdar://problem/22874920
+
+        Reviewed by Simon Fraser.
+
+        When due to some style change, a renderer's self-painting layer is getting destroyed 
+        and the parent's overflow is no longer set to visible, we don't clean up the overflow part.
+
+        When a renderer has a self-painting layer, the parent stops tracking the child's 
+        visual overflow rect. All overflow painting is delegated to the self-painting layer.
+        However when this layer gets destroyed, no-one issues repaint to clean up
+        the overflow bits.
+        This patch ensures that we issue a repaint when the self-painting layer is destroyed
+        and the triggering style change requires full repaint.
+
+        * css3/blending/repaint/blend-mode-isolate-stacking-context-expected.txt: progression.
+        * fast/repaint/absolute-position-change-containing-block-expected.txt: progression.
+        * fast/repaint/overflow-hidden-with-self-painting-child-layer-expected.txt: Added.
+        * fast/repaint/overflow-hidden-with-self-painting-child-layer.html: Added.
+
 2015-10-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Fix crash in ApplyStyleCommand::applyRelativeFontStyleChange()
