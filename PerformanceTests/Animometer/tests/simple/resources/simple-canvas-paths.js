@@ -221,6 +221,27 @@ function CanvasLinePathStage(element, options)
 CanvasLinePathStage.prototype = Object.create(SimpleCanvasPathStrokeStage.prototype);
 CanvasLinePathStage.prototype.constructor = CanvasLinePathStage;
 
+function CanvasLineDashStage(element, options)
+{
+    SimpleCanvasStage.call(this, element, options, CanvasLinePoint);
+    this.context.setLineDash([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    this.context.lineWidth = 1;
+    this.context.strokeStyle = "#000";
+    this._step = 0;
+}
+CanvasLineDashStage.prototype = Object.create(SimpleCanvasStage.prototype);
+CanvasLineDashStage.prototype.constructor = CanvasLineDashStage;
+CanvasLineDashStage.prototype.animate = function() {
+    var context = this.context;
+    context.lineDashOffset = this._step++;
+    context.beginPath();
+    context.moveTo(0,0);
+    this._objects.forEach(function(object) {
+        object.draw(context);
+    });
+    context.stroke();
+};
+
 // === BENCHMARK ===
 
 function CanvasPathBenchmark(suite, test, options, recordTable, progressBar) {
@@ -236,6 +257,8 @@ CanvasPathBenchmark.prototype.createStage = function(element)
     case "linePath": {
         if ("lineJoin" in this._options)
             return new CanvasLinePathStage(element, this._options);
+        if ("lineDash" in this._options)
+            return new CanvasLineDashStage(element, this._options);
         break;
     }
     case "quadratic":

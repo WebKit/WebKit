@@ -163,6 +163,10 @@ Suites.push(new Suite("Basic canvas path suite",
             name: "Canvas line path, miter join"
         },
         {
+            url: "simple/simple-canvas-paths.html?pathType=linePath&lineDash=1",
+            name: "Canvas line path with dash pattern"
+        },
+        {
             url: "simple/simple-canvas-paths.html?pathType=quadratic",
             name: "Canvas quadratic segments"
         },
