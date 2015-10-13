@@ -160,7 +160,7 @@ static FloatPointGraph::Polygon walkGraphAndExtractPolygon(FloatPointGraph::Node
         // point with the greatest internal angle.
         FloatPointGraph::Node* nextNode = nullptr;
         float nextNodeAngle = 0;
-        for (auto potentialNextNode : currentNode->nextPoints()) {
+        for (auto* potentialNextNode : currentNode->nextPoints()) {
             if (potentialNextNode == currentNode)
                 continue;
 

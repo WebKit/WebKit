@@ -77,7 +77,7 @@ bool AccessibilityTree::isTreeValid() const
         return false;
     
     Deque<Node*> queue;
-    for (auto child = node->firstChild(); child; child = child->nextSibling())
+    for (auto* child = node->firstChild(); child; child = child->nextSibling())
         queue.append(child);
 
     while (!queue.isEmpty()) {
@@ -90,7 +90,7 @@ bool AccessibilityTree::isTreeValid() const
         if (!nodeHasRole(child, "group"))
             return false;
 
-        for (auto groupChild = child->firstChild(); groupChild; groupChild = groupChild->nextSibling())
+        for (auto* groupChild = child->firstChild(); groupChild; groupChild = groupChild->nextSibling())
             queue.append(groupChild);
     }
     return true;

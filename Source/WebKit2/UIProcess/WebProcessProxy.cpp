@@ -479,10 +479,10 @@ void WebProcessProxy::releaseRemainingIconsForPageURLs()
     if (!iconDatabase)
         return;
 
-    for (auto iter : m_pageURLRetainCountMap) {
-        uint64_t count = iter.value;
+    for (auto& entry : m_pageURLRetainCountMap) {
+        uint64_t count = entry.value;
         for (uint64_t i = 0; i < count; ++i)
-            iconDatabase->releaseIconForPageURL(iter.key);
+            iconDatabase->releaseIconForPageURL(entry.key);
     }
 
     m_pageURLRetainCountMap.clear();

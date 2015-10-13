@@ -332,7 +332,7 @@ void PlatformMediaSessionManager::systemWillSleep()
     if (m_interrupted)
         return;
 
-    for (auto session : m_sessions)
+    for (auto* session : m_sessions)
         session->beginInterruption(PlatformMediaSession::SystemSleep);
 }
 
@@ -341,7 +341,7 @@ void PlatformMediaSessionManager::systemDidWake()
     if (m_interrupted)
         return;
 
-    for (auto session : m_sessions)
+    for (auto* session : m_sessions)
         session->endInterruption(PlatformMediaSession::MayResumePlaying);
 }
 

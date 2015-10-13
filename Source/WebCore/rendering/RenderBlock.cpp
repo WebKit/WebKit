@@ -1039,7 +1039,7 @@ void RenderBlock::clearLayoutOverflow()
 
 void RenderBlock::addOverflowFromBlockChildren()
 {
-    for (auto child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (!child->isFloatingOrOutOfFlowPositioned())
             addOverflowFromChild(child);
     }
@@ -1192,7 +1192,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
             box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
         }
     } else {
-        for (auto box = firstChildBox(); box; box = box->nextSiblingBox()) {
+        for (auto* box = firstChildBox(); box; box = box->nextSiblingBox()) {
             if (!box->isOutOfFlowPositioned())
                 box->layoutIfNeeded();
         }
@@ -1451,7 +1451,7 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
 {
-    for (auto child = firstChildBox(); child; child = child->nextSiblingBox()) {
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (!paintChild(*child, paintInfo, paintOffset, paintInfoForChild, usePrintRect))
             return;
     }
@@ -2507,7 +2507,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
     HitTestAction childHitTest = hitTestAction;
     if (hitTestAction == HitTestChildBlockBackgrounds)
         childHitTest = HitTestChildBlockBackground;
-    for (auto child = lastChildBox(); child; child = child->previousSiblingBox()) {
+    for (auto* child = lastChildBox(); child; child = child->previousSiblingBox()) {
         LayoutPoint childPoint = flipForWritingModeForChild(child, accumulatedOffset);
         if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
             return true;
@@ -2629,7 +2629,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
             || (!blocksAreFlipped && pointInLogicalContents.y() == logicalTopForChild(*lastCandidateBox)))
             return positionForPointRespectingEditingBoundaries(*this, *lastCandidateBox, pointInContents);
 
-        for (auto childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
+        for (auto* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
             if (!isChildHitTestCandidate(*childBox, region, pointInLogicalContents))
                 continue;
             LayoutUnit childLogicalBottom = logicalTopForChild(*childBox) + logicalHeightForChild(*childBox);
@@ -2915,7 +2915,7 @@ Optional<int> RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) 
         return Optional<int>();
 
     bool haveNormalFlowChild = false;
-    for (auto box = lastChildBox(); box; box = box->previousSiblingBox()) {
+    for (auto* box = lastChildBox(); box; box = box->previousSiblingBox()) {
         if (box->isFloatingOrOutOfFlowPositioned())
             continue;
         haveNormalFlowChild = true;

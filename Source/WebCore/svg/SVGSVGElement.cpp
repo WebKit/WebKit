@@ -676,7 +676,7 @@ Element* SVGSVGElement::getElementById(const AtomicString& id)
     if (element && element->isDescendantOf(this))
         return element;
     if (treeScope().containsMultipleElementsWithId(id)) {
-        for (auto element : *treeScope().getAllElementsById(id)) {
+        for (auto* element : *treeScope().getAllElementsById(id)) {
             if (element->isDescendantOf(this))
                 return element;
         }

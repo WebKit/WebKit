@@ -293,7 +293,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderElement* renderer, Rende
     }
     
     // Now remove the animations from the list.
-    for (auto nameForRemoval : animsToBeRemoved)
+    for (auto* nameForRemoval : animsToBeRemoved)
         m_keyframeAnimations.remove(nameForRemoval);
 }
 

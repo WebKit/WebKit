@@ -649,7 +649,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         state.type = DragSourceActionNone;
 #endif
 
-    for (auto renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
+    for (auto* renderer = startElement->renderer(); renderer; renderer = renderer->parent()) {
         Element* element = renderer->nonPseudoElement();
         if (!element) {
             // Anonymous render blocks don't correspond to actual DOM elements, so we skip over them

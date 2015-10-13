@@ -161,7 +161,7 @@ void RenderBlockFlow::willBeDestroyed()
             // that will outlast this block. In the non-anonymous block case those
             // children will be destroyed by the time we return from this function.
             if (isAnonymousBlock()) {
-                for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
+                for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
                     while (auto childBox = box->firstChild())
                         childBox->removeFromParent();
                 }
@@ -2038,7 +2038,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
 void RenderBlockFlow::updateStylesForColumnChildren()
 {
-    for (auto child = firstChildBox(); child && (child->isInFlowRenderFlowThread() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox())
+    for (auto* child = firstChildBox(); child && (child->isInFlowRenderFlowThread() || child->isRenderMultiColumnSet()); child = child->nextSiblingBox())
         child->setStyle(RenderStyle::createAnonymousStyleWithDisplay(&style(), BLOCK));
 }
 
@@ -2934,7 +2934,7 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
     if (childrenInline()) {
         const_cast<RenderBlockFlow&>(*this).ensureLineBoxes();
 
-        for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
+        for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
             if (box->firstChild())
                 left = std::min(left, x + LayoutUnit(box->firstChild()->x()));
             if (box->lastChild())
@@ -3219,7 +3219,7 @@ RootInlineBox* RenderBlockFlow::lineAtIndex(int i) const
         return nullptr;
 
     if (childrenInline()) {
-        for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
+        for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
             if (!i--)
                 return box;
         }
@@ -3248,8 +3248,8 @@ int RenderBlockFlow::lineCount(const RootInlineBox* stopRootInlineBox, bool* fou
             ASSERT(!stopRootInlineBox);
             return simpleLineLayout->lineCount();
         }
-        for (auto box = firstRootBox(); box; box = box->nextRootBox()) {
-            count++;
+        for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
+            ++count;
             if (box == stopRootInlineBox) {
                 if (found)
                     *found = true;
@@ -3280,13 +3280,13 @@ static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bo
         return -1;
 
     if (block.childrenInline()) {
-        for (auto box = block.firstRootBox(); box; box = box->nextRootBox()) {
+        for (auto* box = block.firstRootBox(); box; box = box->nextRootBox()) {
             if (++count == lineCount)
                 return box->lineBottom() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : LayoutUnit());
         }
     } else {
         RenderBox* normalFlowChildWithoutLines = nullptr;
-        for (auto obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
+        for (auto* obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
             if (is<RenderBlockFlow>(*obj) && shouldCheckLines(downcast<RenderBlockFlow>(*obj))) {
                 int result = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, count);
                 if (result != -1)
@@ -3316,7 +3316,7 @@ void RenderBlockFlow::clearTruncation()
         ensureLineBoxes();
 
         setHasMarkupTruncation(false);
-        for (auto box = firstRootBox(); box; box = box->nextRootBox())
+        for (auto* box = firstRootBox(); box; box = box->nextRootBox())
             box->clearTruncation();
         return;
     }
@@ -3329,8 +3329,8 @@ void RenderBlockFlow::clearTruncation()
 
 bool RenderBlockFlow::containsNonZeroBidiLevel() const
 {
-    for (auto root = firstRootBox(); root; root = root->nextRootBox()) {
-        for (auto box = root->firstLeafChild(); box; box = box->nextLeafChild()) {
+    for (auto* root = firstRootBox(); root; root = root->nextRootBox()) {
+        for (auto* box = root->firstLeafChild(); box; box = box->nextLeafChild()) {
             if (box->bidiLevel())
                 return true;
         }

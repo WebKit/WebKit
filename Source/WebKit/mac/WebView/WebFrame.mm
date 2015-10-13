@@ -1720,7 +1720,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     
     for (Node* node = root; node; node = NodeTraversal::next(*node)) {
         auto markers = document->markers().markersFor(node);
-        for (auto marker : markers) {
+        for (auto* marker : markers) {
 
             if (marker->type() != DocumentMarker::DictationResult)
                 continue;

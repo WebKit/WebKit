@@ -3278,7 +3278,7 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     // FIXME: The static distance computation has not been patched for mixed writing modes yet.
     if (child->parent()->style().direction() == LTR) {
         LayoutUnit staticPosition = child->layer()->staticInlinePosition() - containerBlock->borderLogicalLeft();
-        for (auto current = child->parent(); current && current != containerBlock; current = current->container()) {
+        for (auto* current = child->parent(); current && current != containerBlock; current = current->container()) {
             if (is<RenderBox>(*current)) {
                 staticPosition += downcast<RenderBox>(*current).logicalLeft();
                 if (region && is<RenderBlock>(*current)) {

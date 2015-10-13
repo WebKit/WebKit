@@ -272,7 +272,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
     ASSERT(!url.hasFragmentIdentifier());
 
     // Check if an appropriate cache already exists in memory.
-    for (auto group : m_cachesInMemory.values()) {
+    for (auto* group : m_cachesInMemory.values()) {
         ASSERT(!group->isObsolete());
 
         if (ApplicationCache* cache = group->newestCache()) {
@@ -1284,7 +1284,7 @@ void ApplicationCacheStorage::empty()
     // Clear the storage IDs for the caches in memory.
     // The caches will still work, but cached resources will not be saved to disk 
     // until a cache update process has been initiated.
-    for (auto group : m_cachesInMemory.values())
+    for (auto* group : m_cachesInMemory.values())
         group->clearStorageID();
 
     checkForDeletedResources();

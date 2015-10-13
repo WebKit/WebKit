@@ -178,10 +178,10 @@ void VisitedLinkStore::pendingVisitedLinksTimerFired()
 
     Vector<WebCore::LinkHash> addedVisitedLinks;
 
-    for (auto linkHash : m_pendingVisitedLinks) {
+    for (auto& linkHash : m_pendingVisitedLinks) {
         if (m_table.addLinkHash(linkHash)) {
             addedVisitedLinks.append(linkHash);
-            m_keyCount++;
+            ++m_keyCount;
         }
     }
 
@@ -235,7 +235,7 @@ void VisitedLinkStore::resizeTable(unsigned newTableSize)
         }
     }
 
-    for (auto linkHash : m_pendingVisitedLinks) {
+    for (auto& linkHash : m_pendingVisitedLinks) {
         if (m_table.addLinkHash(linkHash))
             m_keyCount++;
     }

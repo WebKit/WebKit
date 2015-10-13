@@ -113,7 +113,7 @@ void RealtimeMediaSource::stop(Observer* callingObserver)
 
     m_stopped = true;
 
-    for (auto observer : m_observers) {
+    for (auto* observer : m_observers) {
         if (observer != callingObserver)
             observer->sourceStopped();
     }
@@ -126,7 +126,7 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     if (stopped())
         return;
 
-    for (auto observer : m_observers) {
+    for (auto* observer : m_observers) {
         if (observer->preventSourceFromStopping())
             return;
     }

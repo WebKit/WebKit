@@ -96,7 +96,7 @@ void RenderInline::willBeDestroyed()
             // not have a parent that means they are either already disconnected or
             // root lines that can just be destroyed without disconnecting.
             if (firstLineBox()->parent()) {
-                for (auto box = firstLineBox(); box; box = box->nextLineBox())
+                for (auto* box = firstLineBox(); box; box = box->nextLineBox())
                     box->removeFromParent();
             }
         } else if (parent())

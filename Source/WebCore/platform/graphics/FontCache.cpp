@@ -441,7 +441,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
         if (entry.value && !cachedFonts().contains(*entry.value))
             keysToRemove.append(entry.key);
     }
-    for (auto key : keysToRemove)
+    for (auto& key : keysToRemove)
         fontPlatformDataCache().remove(key);
 
 #if ENABLE(OPENTYPE_VERTICAL)

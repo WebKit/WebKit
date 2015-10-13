@@ -76,7 +76,7 @@ void Deallocator::processObjectLog()
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     Heap* heap = PerProcess<Heap>::getFastCase();
     
-    for (auto object : m_objectLog) {
+    for (auto* object : m_objectLog) {
         if (isSmall(object)) {
             SmallLine* line = SmallLine::get(object);
             heap->derefSmallLine(lock, line);
