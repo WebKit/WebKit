@@ -1,3 +1,20 @@
+2015-10-01  Antti Koivisto  <antti@apple.com>
+
+        Network cache: Subresource referer header wrong after cached redirect
+        https://bugs.webkit.org/show_bug.cgi?id=149709
+        rdar://problem/22917174
+
+        Reviewed by Chris Dumez.
+
+        If a main resource is loaded from a cache entry that involved redirects the document
+        will end up setting the Referer-headers of the subresources to the request URL not the redirected URL
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+
+            If a cache entry involved a redirect synthesize a minimal willSendRequest message so that WebCore side
+            runs through the same code paths as when receiving a redirect from network.
+
 2015-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Websites with invalid auth header keep loading forever
