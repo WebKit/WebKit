@@ -1,3 +1,29 @@
+2015-10-12  Geoffrey Garen  <ggaren@apple.com>
+
+        CodeBlock write barriers should be precise
+        https://bugs.webkit.org/show_bug.cgi?id=150042
+
+        Reviewed by Saam Barati.
+
+        CodeBlock performs lots of unnecessary write barriers. This wastes
+        performance and makes the code a bit harder to follow, and it might mask
+        important bugs. Now is a good time to unmask important bugs.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark): Don't write barrier all CodeBlocks on the
+        stack. Only CodeBlocks that do value profiling need write barriers, and
+        they do those themselves.
+
+        In steady state, when most of our CodeBlocks are old and FTL-compiled,
+        and we're doing eden GC's, we should almost never visit a CodeBlock.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget): Don't write barrier all inlined
+        CodeBlocks on exit. That's not necessary. Instead, write barrier the 
+        CodeBlock(s) we will exit to, along with the one we will write a value
+        profile to.
+
 2015-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION: ASSERT (impl->isAtomic()) @ facebook.com
