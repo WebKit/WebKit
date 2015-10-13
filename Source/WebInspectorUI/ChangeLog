@@ -1,3 +1,20 @@
+2015-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Web Inspector: Don't shadow global Object constructor in WebInspector.Object class definition
+        https://bugs.webkit.org/show_bug.cgi?id=150093
+
+        Reviewed by Joseph Pecoraro.
+
+        Currently, class expression does not define any variables. So even in `class Object { }`,
+        we were able to touch the global Object constructor (like `Object.keys`).
+        However, that is a bug. After https://bugs.webkit.org/show_bug.cgi?id=150089 fixes that bug,
+        the global `Object` is shadowed by the user-defined `class Object` name.
+
+        To solve this issue, we changed the `class Object` to `class WebInspectorObject`.
+        And we expose this class as a `WebInspector.Object`.
+
+        * UserInterface/Base/Object.js:
+
 2015-10-10  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Improve error messages for internal Inspector code
