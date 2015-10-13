@@ -1,3 +1,14 @@
+2015-10-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add NULL check for renderBox::layer() on applying zoom level change
+        https://bugs.webkit.org/show_bug.cgi?id=149302
+        <rdar://problem/22747292>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/zoom-on-nested-scroll-crash-expected.txt: Added.
+        * fast/css/zoom-on-nested-scroll-crash.html: Added.
+
 2015-10-08  Antti Koivisto  <antti@apple.com>
 
         CrashTracer: [USER] com.apple.WebKit.WebContent at …Core::SelectorChecker::checkScrollbarPseudoClass const + 217
