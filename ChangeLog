@@ -1,5 +1,16 @@
 2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
 
+        [GTK] OSX linker doesn't understand --whole-archive
+        https://bugs.webkit.org/show_bug.cgi?id=144557
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsGTK.cmake: Turn the macro
+        ADD_WHOLE_ARCHIVE_TO_LIBRARIES into a no-op on Darwin systems,
+        because XCode's linker doesn't have the --whole-archive option.
+
+2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
+
         [GTK] Use --version-script only on Linux
         https://bugs.webkit.org/show_bug.cgi?id=144555
 
