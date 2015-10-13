@@ -1,3 +1,16 @@
+2015-10-05  Chris Dumez  <cdumez@apple.com>
+
+        data: URLs should not be preloaded
+        https://bugs.webkit.org/show_bug.cgi?id=149829
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test to make sure that images with a data: URL do not
+        get preloaded.
+
+        * fast/preloader/image-data-url-expected.txt: Added.
+        * fast/preloader/image-data-url.html: Added.
+
 2015-10-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         CSSGradientValue should check whether gradientLength is zero or not.
