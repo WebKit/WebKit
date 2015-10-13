@@ -1,5 +1,30 @@
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
+        Add canvas path tests
+        https://bugs.webkit.org/show_bug.cgi?id=150067
+        rdar://problem/23081463
+
+        Reviewed by Dean Jackson.
+
+        * Animometer/runner/resources/tests.js: Add a quadratic and bezier path test.
+
+        * Animometer/tests/simple/resources/simple-canvas.js:
+        (SimpleCanvasStage.prototype.tune): This kind of test joins all of the segments
+        into one long path, and tries to render that one path. Random points make it
+        difficult to tell what is going on, so add a parameter to the constructor to
+        confine the area where the random coordinates can land. The more complicated the
+        case is, the larger an area the path will cover. Add an artificial minimum so
+        that the first 200 points aren't confined to a space that is too small.
+
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        (SimpleCanvasPathStrokeStage): Add a new kind of stage that inherits from
+        SimpleCanvasStage. Each time the frame animates a random line width and stroke
+        color are chosen. The path setup is done outside of each paint object.
+        (CanvasQuadraticPoint): This point just calls quadraticCurveTo.
+        (CanvasPathBenchmark.prototype.createStage): Add the tests.
+
+2015-10-12  Jon Lee  <jonlee@apple.com>
+
         Add basic canvas tests
         https://bugs.webkit.org/show_bug.cgi?id=150066
         rdar://problem/23081143

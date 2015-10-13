@@ -143,8 +143,16 @@ Suites.push(new Suite("Basic canvas path suite",
             name: "Canvas quadratic segments"
         },
         {
+            url: "simple/simple-canvas-paths.html?pathType=quadraticPath",
+            name: "Canvas quadratic path"
+        },
+        {
             url: "simple/simple-canvas-paths.html?pathType=bezier",
             name: "Canvas bezier segments"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=bezierPath",
+            name: "Canvas bezier path"
         },
         {
             url: "simple/simple-canvas-paths.html?&pathType=arcTo",

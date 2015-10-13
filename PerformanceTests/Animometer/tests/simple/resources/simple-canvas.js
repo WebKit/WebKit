@@ -14,8 +14,11 @@ SimpleCanvasStage.prototype.tune = function(count)
         return this._objects.length;
 
     if (count > 0) {
+        // For path-based tests, use the object length as a maximum coordinate value
+        // to make it easier to see what the test is doing
+        var coordinateMaximum = Math.max(this._objects.length, 200);
         for (var i = 0; i < count; ++i) {
-            this._objects.push(new this.canvasObject(this));
+            this._objects.push(new this.canvasObject(this, coordinateMaximum));
         }
         return this._objects.length;
     }

@@ -19,6 +19,15 @@ CanvasQuadraticSegment.prototype.draw = function(context) {
     context.stroke();
 };
 
+function CanvasQuadraticPoint(stage, coordinateMaximum) {
+    var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum));
+    this._point1 = stage.randomPosition(pointMaximum);
+    this._point2 = stage.randomPosition(pointMaximum);
+};
+CanvasQuadraticPoint.prototype.draw = function(context) {
+    context.quadraticCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y);
+};
+
 function CanvasBezierSegment(stage) {
     var maxSize = stage.randomInt(20, 200);
     var toCenter = stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
@@ -37,6 +46,16 @@ CanvasBezierSegment.prototype.draw = function(context) {
     context.moveTo(this._point1.x, this._point1.y);
     context.bezierCurveTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._point4.x, this._point4.y);
     context.stroke();
+};
+
+function CanvasBezierPoint(stage, coordinateMaximum) {
+    var pointMaximum = new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum));
+    this._point1 = stage.randomPosition(pointMaximum);
+    this._point2 = stage.randomPosition(pointMaximum);
+    this._point3 = stage.randomPosition(pointMaximum);
+};
+CanvasBezierPoint.prototype.draw = function(context) {
+    context.bezierCurveTo(this._point1.x, this._point1.y, this._point2.x, this._point2.y, this._point3.x, this._point3.y);
 };
 
 function CanvasArcToSegment(stage) {
@@ -104,6 +123,25 @@ CanvasRectFill.prototype.draw = function(context) {
     context.fill();
 };
 
+// === STAGES ===
+
+function SimpleCanvasPathStrokeStage(element, options, canvasObject) {
+    SimpleCanvasStage.call(this, element, options, canvasObject);
+}
+SimpleCanvasPathStrokeStage.prototype = Object.create(SimpleCanvasStage.prototype);
+SimpleCanvasPathStrokeStage.prototype.constructor = SimpleCanvasPathStrokeStage;
+SimpleCanvasPathStrokeStage.prototype.animate = function() {
+    var context = this.context;
+    context.lineWidth = this.randomInt(1, 20);
+    context.strokeStyle = this.randomColor();
+    context.beginPath();
+    context.moveTo(0,0);
+    this._objects.forEach(function(object) {
+        object.draw(context);
+    });
+    context.stroke();
+}
+
 // === BENCHMARK ===
 
 function CanvasPathBenchmark(suite, test, options, recordTable, progressBar) {
@@ -116,8 +154,12 @@ CanvasPathBenchmark.prototype.createStage = function(element)
     switch (this._options["pathType"]) {
     case "quadratic":
         return new SimpleCanvasStage(element, this._options, CanvasQuadraticSegment);
+    case "quadraticPath":
+        return new SimpleCanvasPathStrokeStage(element, this._options, CanvasQuadraticPoint);
     case "bezier":
         return new SimpleCanvasStage(element, this._options, CanvasBezierSegment);
+    case "bezierPath":
+        return new SimpleCanvasPathStrokeStage(element, this._options, CanvasBezierPoint);
     case "arcTo":
         return new SimpleCanvasStage(element, this._options, CanvasArcToSegment);
     case "arc":
