@@ -1,3 +1,16 @@
+2015-09-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] playbutton in media controls is not changed when it is clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=149113
+
+        Reviewed by Philippe Normand.
+
+        * media/media-controls-play-button-updates-expected.png: Added.
+        * media/media-controls-play-button-updates-expected.txt: Added.
+        * media/media-controls-play-button-updates.html: Added.
+        * platform/gtk/media/media-controls-play-button-updates-expected.png: Added.
+        * platform/gtk/media/media-controls-play-button-updates-expected.txt: Added.
+
 2015-09-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Event fired on a detached node does not bubble up
