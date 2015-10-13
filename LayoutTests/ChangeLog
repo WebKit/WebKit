@@ -1,3 +1,14 @@
+2015-10-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        CSSGradientValue should check whether gradientLength is zero or not.
+        https://bugs.webkit.org/show_bug.cgi?id=149373
+        <rdar://problem/22771418>
+
+        Reviewed by Darin Adler.
+
+        * fast/gradients/css3-repeating-radial-gradients-crash-expected.txt: Added.
+        * fast/gradients/css3-repeating-radial-gradients-crash.html: Added.
+
 2015-10-05  Dean Jackson  <dino@apple.com>
 
         Reference cycles during SVG dependency invalidation
