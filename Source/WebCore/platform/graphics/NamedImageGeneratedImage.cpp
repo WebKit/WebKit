@@ -77,6 +77,7 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
     UNUSED_PARAM(srcRect);
     UNUSED_PARAM(patternTransform);
     UNUSED_PARAM(phase);
+    UNUSED_PARAM(spacing);
     UNUSED_PARAM(styleColorSpace);
     UNUSED_PARAM(dstRect);
     UNUSED_PARAM(compositeOp);
