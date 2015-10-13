@@ -1,5 +1,52 @@
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
+        Add basic canvas tests
+        https://bugs.webkit.org/show_bug.cgi?id=150066
+        rdar://problem/23081143
+
+        Reviewed by Dean Jackson.
+
+        This adds a new test suite that will cover all of the path-based canvas calls.
+        The patch will be divided up to cover tests with similar techniques.
+
+        The simplest version uses a SimpleCanvasStage.
+
+        * Animometer/runner/resources/tests.js: Add tests for quadratic, bezier, arcTo,
+        arc, and rect segments. Also include arcTo, arc, and rect fills.
+        * Animometer/tests/resources/stage.js:
+        (Stage.prototype.randomBool): Added for counterclockwise property for arc segments.
+        (Stage.prototype.randomInt): Fix how values are rounded, used by randomBool. It should
+        round instead of flooring everything.
+        * Animometer/tests/simple/resources/simple-canvas.js: Added. Defines common classes
+        used by all simple canvas tests. The page reads best bottom to top.
+        (SimpleCanvasStage): Basic stage. Pass a canvasObject which will be used to create new
+        objects as needed in tune().
+        (SimpleCanvasStage.prototype.tune): Modeled on other tests. Adds and removed objects
+        as specified by the provided |count|.
+        (SimpleCanvasStage.prototype.animate): Iterate over all the objects and ask them to draw.
+        There is no "animating" of the objects; they will just paint statically on the canvas.
+        (SimpleCanvasAnimator): Basic animator clears the canvas prior to painting.
+        (SimpleCanvasBenchmark): Hard-code the feedback loop parameters instead of including
+        them in the query parameters to the test URLs.
+        (SimpleCanvasBenchmark.prototype.createAnimator):
+        * Animometer/tests/simple/simple-canvas-paths.html: Added.
+
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Added. There is no "animating"
+        of these objects--they just paint statically on the canvas.
+        (CanvasQuadraticSegment): Paint a quadratic segment stroke.
+        (CanvasBezierSegment): Paint a bezier segment stroke.
+        (CanvasArcToSegment): Paint an arcTo stroke.
+        (CanvasArcSegment): Paint an arc stroke.
+        (CanvasRect): Paint a rect.
+        (CanvasRectFill): Paint a filled rect.
+
+        (CanvasPathBenchmark):
+        (CanvasPathBenchmark.prototype.createStage): Look for the pathType and create the
+        stage using the right paint object.
+        (window.benchmarkClient.create):
+
+2015-10-12  Jon Lee  <jonlee@apple.com>
+
         Refactor tune() to pass in an integer-based count
         https://bugs.webkit.org/show_bug.cgi?id=150060
         <rdar://problem/23079425>

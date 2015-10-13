@@ -55,9 +55,14 @@ Stage.prototype =
         return (Math.random() * (max - min)) + min;
     },
     
+    randomBool: function()
+    {
+        return !!Math.round(this.random(0, 1));
+    },
+
     randomInt: function(min, max)
     {
-        return Math.floor(this.random(min, max));
+        return Math.round(this.random(min, max));
     },
     
     randomPosition: function(maxPosition)

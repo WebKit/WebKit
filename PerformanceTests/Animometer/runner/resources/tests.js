@@ -136,6 +136,43 @@ Suites.push(new Suite("SVG suite",
     ]
 ));
 
+Suites.push(new Suite("Basic canvas path suite",
+    [
+        {
+            url: "simple/simple-canvas-paths.html?pathType=quadratic",
+            name: "Canvas quadratic segments"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=bezier",
+            name: "Canvas bezier segments"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?&pathType=arcTo",
+            name: "Canvas arcTo segments"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=arc",
+            name: "Canvas arc segments"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=rect",
+            name: "Canvas rects"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?&pathType=arcToFill",
+            name: "Canvas arcTo segments, fill"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=arcFill",
+            name: "Canvas arc segments, fill"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=rectFill",
+            name: "Canvas rects, fill"
+        }
+    ]
+));
+
 Suites.push(new Suite("Complex examples",
     [
         {
