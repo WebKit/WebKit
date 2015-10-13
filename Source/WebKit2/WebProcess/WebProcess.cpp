@@ -36,7 +36,6 @@
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
 #include "Logging.h"
-#include "NetworkConnectionToWebProcessMessages.h"
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
@@ -68,7 +67,6 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
-#include <WebCore/DNS.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/Frame.h>
@@ -1452,17 +1450,5 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
     m_hasRichContentServices = hasRichContentServices;
 }
 #endif
-
-void WebProcess::prefetchDNS(const String& hostname)
-{
-    if (!usesNetworkProcess()) {
-        WebCore::prefetchDNS(hostname);
-        return;
-    }
-
-#if ENABLE(NETWORK_PROCESS)
-    networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
-#endif
-}
 
 } // namespace WebKit

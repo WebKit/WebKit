@@ -29,7 +29,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     LoadPing(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     SetDefersLoading(uint64_t resourceLoadIdentifier, bool defers)
-    PrefetchDNS(String hostname)
 
     StartDownload(WebCore::SessionID sessionID, uint64_t downloadID, WebCore::ResourceRequest request)
     ConvertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, uint64_t downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)

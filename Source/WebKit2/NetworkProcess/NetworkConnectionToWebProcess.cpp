@@ -36,7 +36,6 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
-#include <WebCore/DNS.h>
 #include <WebCore/PingHandle.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -158,11 +157,6 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
         return;
 
     loader->setDefersLoading(defers);
-}
-
-void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
-{
-    WebCore::prefetchDNS(hostname);
 }
 
 static NetworkStorageSession& storageSession(SessionID sessionID)

@@ -241,8 +241,6 @@ private:
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler) override;
 #endif
 
-    void prefetchDNS(const String&) override;
-
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;

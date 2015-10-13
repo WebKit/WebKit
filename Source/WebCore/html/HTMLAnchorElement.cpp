@@ -24,6 +24,7 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
+#include "DNS.h"
 #include "ElementIterator.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -252,9 +253,9 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
             setNeedsStyleRecalc();
         if (isLink()) {
             String parsedURL = stripLeadingAndTrailingHTMLSpaces(value);
-            if (document().isDNSPrefetchEnabled() && document().frame()) {
+            if (document().isDNSPrefetchEnabled()) {
                 if (protocolIsInHTTPFamily(parsedURL) || parsedURL.startsWith("//"))
-                    document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host());
+                    prefetchDNS(document().completeURL(parsedURL).host());
             }
         }
         invalidateCachedVisitedLinkHash();

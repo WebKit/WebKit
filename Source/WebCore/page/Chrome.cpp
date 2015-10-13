@@ -23,13 +23,13 @@
 #include "Chrome.h"
 
 #include "ChromeClient.h"
+#include "DNS.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "FileIconLoader.h"
 #include "FileChooser.h"
 #include "FileList.h"
 #include "FloatRect.h"
-#include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "Geolocation.h"
 #include "HTMLFormElement.h"
@@ -350,7 +350,7 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
-        m_page.mainFrame().loader().client().prefetchDNS(result.absoluteLinkURL().host());
+        prefetchDNS(result.absoluteLinkURL().host());
     m_client.mouseDidMoveOverElement(result, modifierFlags);
 
     InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
