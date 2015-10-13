@@ -49,10 +49,14 @@ CredentialBackingStore& credentialBackingStore()
 #if ENABLE(CREDENTIAL_STORAGE)
 static GRefPtr<GHashTable> createAttributeHashTableFromChallenge(const AuthenticationChallenge& challenge, const Credential& credential = Credential())
 {
+    const char* realm = soup_auth_get_realm(challenge.soupAuth());
+    if (!realm)
+        return nullptr;
+
     SoupURI* uri = soup_message_get_uri(challenge.soupMessage());
     GRefPtr<GHashTable> attributes = adoptGRef(secret_attributes_build(
         SECRET_SCHEMA_COMPAT_NETWORK,
-        "domain", soup_auth_get_realm(challenge.soupAuth()),
+        "domain", realm,
         "server", uri->host,
         "protocol", uri->scheme,
         "authtype", soup_auth_get_scheme_name(challenge.soupAuth()),
@@ -109,10 +113,16 @@ void CredentialBackingStore::credentialForChallenge(const AuthenticationChalleng
     callbackData->callback = callback;
     callbackData->data = data;
 
+    GRefPtr<GHashTable> attributes = createAttributeHashTableFromChallenge(challenge);
+    if (!attributes) {
+        callback(Credential(), data);
+        return;
+    }
+
     secret_service_search(
         0, // The default SecretService.
         SECRET_SCHEMA_COMPAT_NETWORK,
-        createAttributeHashTableFromChallenge(challenge).get(),
+        attributes.get(),
         searchFlags,
         0, // cancellable
         reinterpret_cast<GAsyncReadyCallback>(credentialForChallengeAsyncReadyCallback),
@@ -126,13 +136,17 @@ void CredentialBackingStore::credentialForChallenge(const AuthenticationChalleng
 void CredentialBackingStore::storeCredentialsForChallenge(const AuthenticationChallenge& challenge, const Credential& credential)
 {
 #if ENABLE(CREDENTIAL_STORAGE)
+    GRefPtr<GHashTable> attributes = createAttributeHashTableFromChallenge(challenge, credential);
+    if (!attributes)
+        return;
+
     CString utf8Password = credential.password().utf8();
     GRefPtr<SecretValue> newSecretValue = adoptGRef(secret_value_new(utf8Password.data(), utf8Password.length(), "text/plain"));
 
     secret_service_store(
         0, // The default SecretService.
         SECRET_SCHEMA_COMPAT_NETWORK,
-        createAttributeHashTableFromChallenge(challenge, credential).get(),
+        attributes.get(),
         SECRET_COLLECTION_DEFAULT,
         _("WebKitGTK+ password"),
         newSecretValue.get(),

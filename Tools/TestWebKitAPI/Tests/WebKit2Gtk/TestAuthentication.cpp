@@ -232,6 +232,22 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedSuccessTitle);
 }
 
+static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/empty-realm.html").data());
+    WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
+    WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
+    webkit_authentication_request_authenticate(request, credential);
+    webkit_credential_free(credential);
+    test->waitUntilLoadFinished();
+
+    g_assert_cmpint(test->m_loadEvents.size(), ==, 3);
+    g_assert_cmpint(test->m_loadEvents[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(test->m_loadEvents[1], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(test->m_loadEvents[2], ==, LoadTrackingTest::LoadFinished);
+    g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, authExpectedSuccessTitle);
+}
+
 static void serverCallback(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, void*)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -239,7 +255,7 @@ static void serverCallback(SoupServer*, SoupMessage* message, const char* path, 
         return;
     }
 
-    if (!strcmp(path, "/auth-test.html")) {
+    if (!strcmp(path, "/auth-test.html") || !strcmp(path, "/empty-realm.html")) {
         const char* authorization = soup_message_headers_get_one(message->request_headers, "Authorization");
         // Require authentication.
         if (!g_strcmp0(authorization, authExpectedAuthorization)) {
@@ -250,7 +266,10 @@ static void serverCallback(SoupServer*, SoupMessage* message, const char* path, 
         } else if (++AuthenticationTest::authenticationRetries < 3) {
             // No or invalid authorization header provided by the client, request authentication twice then fail.
             soup_message_set_status(message, SOUP_STATUS_UNAUTHORIZED);
-            soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic realm=\"my realm\"");
+            if (!strcmp(path, "/empty-realm.html"))
+                soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic");
+            else
+                soup_message_headers_append(message->response_headers, "WWW-Authenticate", "Basic realm=\"my realm\"");
             // Include a failure message in case the user attempts to proceed without authentication.
             soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
         } else {
@@ -276,6 +295,7 @@ void beforeAll()
     AuthenticationTest::add("WebKitWebView", "authentication-failure", testWebViewAuthenticationFailure);
     AuthenticationTest::add("WebKitWebView", "authentication-no-credential", testWebViewAuthenticationNoCredential);
     AuthenticationTest::add("WebKitWebView", "authentication-storage", testWebViewAuthenticationStorage);
+    AuthenticationTest::add("WebKitWebView", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
 }
 
 void afterAll()
