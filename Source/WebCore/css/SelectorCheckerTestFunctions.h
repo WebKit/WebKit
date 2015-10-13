@@ -117,7 +117,10 @@ ALWAYS_INLINE bool isValid(const Element* element)
 
 ALWAYS_INLINE bool isWindowInactive(const Element* element)
 {
-    return !element->document().page()->focusController().isActive();
+    auto* page = element->document().page();
+    if (!page)
+        return false;
+    return !page->focusController().isActive();
 }
 
 ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, StringView range, unsigned languageLength, unsigned& position)
