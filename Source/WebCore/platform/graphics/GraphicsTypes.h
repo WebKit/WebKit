@@ -84,6 +84,12 @@ namespace WebCore {
     
     enum TextAlign { StartTextAlign, EndTextAlign, LeftTextAlign, CenterTextAlign, RightTextAlign };
 
+    enum RenderingMode {
+        Unaccelerated,
+        UnacceleratedNonPlatformBuffer, // Use plain memory allocation rather than platform API to allocate backing store.
+        Accelerated
+    };
+
     String compositeOperatorName(CompositeOperator, BlendMode);
     bool parseBlendMode(const String&, BlendMode&);
     bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);

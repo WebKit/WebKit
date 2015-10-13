@@ -4880,7 +4880,8 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
         return buf;
     }
 
-    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, 1);
+    // FIXME (149423): Should this ImageBuffer be unconditionally unaccelerated?
+    std::unique_ptr<ImageBuffer> temp = ImageBuffer::create(size, Unaccelerated);
     if (!temp)
         return nullptr;
     i = std::min(m_capacity - 1, i);

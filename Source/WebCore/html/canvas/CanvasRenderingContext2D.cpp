@@ -1684,8 +1684,7 @@ template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRe
 
 std::unique_ptr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
 {
-    RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
-    return ImageBuffer::create(bufferRect.size(), 1, ColorSpaceDeviceRGB, renderMode);
+    return ImageBuffer::create(bufferRect.size(), isAccelerated() ? Accelerated : Unaccelerated);
 }
 
 void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRect& bufferRect, CompositeOperator op)

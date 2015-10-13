@@ -173,7 +173,8 @@ PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
     if (!m_page)
         return 0;
 
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(size(), 1);
+    // Cairo does not use the accelerated drawing flag, so it's OK to make an unconditionally unaccelerated buffer.
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(size(), Unaccelerated);
     if (!buffer) // failed to allocate image
         return 0;
 

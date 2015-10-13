@@ -276,7 +276,7 @@ ImageBuffer* FilterEffect::asImageBuffer()
     if (m_openCLImageResult)
         return openCLImageToImageBuffer();
 #endif
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.filterScale(), m_resultColorSpace, m_filter.renderingMode());
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace);
     if (!m_imageBufferResult)
         return nullptr;
 
@@ -308,7 +308,7 @@ ImageBuffer* FilterEffect::openCLImageToImageBuffer()
     if (context->isFailed(clEnqueueReadImage(context->commandQueue(), m_openCLImageResult, CL_TRUE, origin, region, 0, 0, destinationPixelArray->data(), 0, 0, 0)))
         return nullptr;
 
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size());
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.renderingMode());
     if (!m_imageBufferResult)
         return nullptr;
 
@@ -462,7 +462,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
         return nullptr;
 
     FloatSize clampedSize = ImageBuffer::clampedSize(m_absolutePaintRect.size());
-    m_imageBufferResult = ImageBuffer::create(clampedSize, m_filter.filterScale(), m_resultColorSpace, m_filter.renderingMode());
+    m_imageBufferResult = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace);
     if (!m_imageBufferResult)
         return nullptr;
 

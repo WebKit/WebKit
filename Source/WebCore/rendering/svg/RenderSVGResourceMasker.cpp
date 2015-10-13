@@ -69,6 +69,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
         const SVGRenderStyle& svgStyle = style().svgStyle();
         ColorSpace colorSpace = svgStyle.colorInterpolation() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB;
+        // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
         maskerData->maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, colorSpace, Unaccelerated);
         if (!maskerData->maskImage)
             return false;
