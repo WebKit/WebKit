@@ -21,6 +21,8 @@
 #ifndef BitmapTextureGL_h
 #define BitmapTextureGL_h
 
+#if USE(TEXTURE_MAPPER_GL)
+
 #include "BitmapTexture.h"
 #include "FilterOperation.h"
 #include "GraphicsContext3D.h"
@@ -91,5 +93,7 @@ private:
 BitmapTextureGL* toBitmapTextureGL(BitmapTexture*);
 
 }
+
+#endif // USE(TEXTURE_MAPPER_GL)
 
 #endif // BitmapTextureGL_h
