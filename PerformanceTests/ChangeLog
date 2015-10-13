@@ -1,5 +1,20 @@
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
+        Add missing paint objects for arc and arcTo fills
+        https://bugs.webkit.org/show_bug.cgi?id=150075
+        <rdar://problem/23082233>
+
+        Reviewed by Dean Jackson.
+
+        * Animometer/tests/simple/resources/simple-canvas-paths.js: Add missing paint objects
+        for arcTo and arc segment fills.
+        (CanvasArcToSegmentFill):
+        (CanvasArcToSegmentFill.prototype.draw):
+        (CanvasArcSegmentFill):
+        (CanvasArcSegmentFill.prototype.draw):
+
+2015-10-12  Jon Lee  <jonlee@apple.com>
+
         Add canvas line segment tests
         https://bugs.webkit.org/show_bug.cgi?id=150073
         <rdar://problem/23082138>

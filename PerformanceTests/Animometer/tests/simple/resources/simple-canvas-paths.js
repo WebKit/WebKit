@@ -104,6 +104,17 @@ CanvasArcToSegment.prototype.draw = function(context) {
     context.stroke();
 };
 
+function CanvasArcToSegmentFill(stage) {
+    CanvasArcToSegment.call(this, stage);
+};
+CanvasArcToSegmentFill.prototype.draw = function(context) {
+    context.fillStyle = this._color;
+    context.beginPath();
+    context.moveTo(this._point1.x, this._point1.y);
+    context.arcTo(this._point2.x, this._point2.y, this._point3.x, this._point3.y, this._radius);
+    context.fill();
+};
+
 function CanvasArcSegment(stage) {
     var maxSize = stage.randomInt(20, 200);
     var toCenter = stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
@@ -122,6 +133,16 @@ CanvasArcSegment.prototype.draw = function(context) {
     context.beginPath();
     context.arc(this._point.x, this._point.y, this._radius, this._startAngle, this._endAngle, this._counterclockwise);
     context.stroke();
+};
+
+function CanvasArcSegmentFill(stage) {
+    CanvasArcSegment.call(this, stage);
+};
+CanvasArcSegmentFill.prototype.draw = function(context) {
+    context.fillStyle = this._color;
+    context.beginPath();
+    context.arc(this._point.x, this._point.y, this._radius, this._startAngle, this._endAngle, this._counterclockwise);
+    context.fill();
 };
 
 function CanvasRect(stage) {
