@@ -1,3 +1,21 @@
+2015-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Clip-path transitions sometimes trigger endless animation timers
+        https://bugs.webkit.org/show_bug.cgi?id=150018
+
+        Reviewed by Tim Horton.
+        
+        New tests for transitions of clip-path and shape-outside.
+
+        * transitions/clip-path-transitions-expected.txt: Added.
+        * transitions/clip-path-transitions.html: Added.
+        * transitions/resources/transition-test-helpers.js:
+        (parseClipPath):
+        (checkExpectedValue):
+        * transitions/shape-outside-transitions-expected.txt: Added.
+        * transitions/shape-outside-transitions.html: Added.
+        * transitions/svg-transitions-expected.txt:
+
 2015-10-09  Simon Fraser  <simon.fraser@apple.com>
 
         Garbage texture data with composited table row

@@ -75,12 +75,12 @@ public:
     const String& fragment() const { return m_fragment; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& o) const override
+    virtual bool operator==(const ClipPathOperation& other) const override
     {
-        if (!isSameType(o))
+        if (!isSameType(other))
             return false;
-        const ReferenceClipPathOperation* other = static_cast<const ReferenceClipPathOperation*>(&o);
-        return m_url == other->m_url;
+        auto& referenceClip = downcast<ReferenceClipPathOperation>(other);
+        return m_url == referenceClip.m_url;
     }
 
     ReferenceClipPathOperation(const String& url, const String& fragment)
@@ -118,8 +118,9 @@ private:
     {
         if (!isSameType(other))
             return false;
-        const auto& shapeClip = downcast<ShapeClipPathOperation>(other);
-        return m_shape.ptr() == shapeClip.m_shape.ptr();
+        auto& shapeClip = downcast<ShapeClipPathOperation>(other);
+        return m_referenceBox == shapeClip.referenceBox()
+            && (m_shape.ptr() == shapeClip.m_shape.ptr() || m_shape.get() == shapeClip.m_shape.get());
     }
 
     explicit ShapeClipPathOperation(Ref<BasicShape>&& shape)
@@ -149,12 +150,12 @@ public:
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
-    virtual bool operator==(const ClipPathOperation& o) const override
+    virtual bool operator==(const ClipPathOperation& other) const override
     {
-        if (!isSameType(o))
+        if (!isSameType(other))
             return false;
-        const BoxClipPathOperation* other = static_cast<const BoxClipPathOperation*>(&o);
-        return m_referenceBox == other->m_referenceBox;
+        auto& boxClip = downcast<BoxClipPathOperation>(other);
+        return m_referenceBox == boxClip.m_referenceBox;
     }
 
     explicit BoxClipPathOperation(CSSBoxType referenceBox)

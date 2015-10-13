@@ -477,6 +477,24 @@ public:
         : RefCountedPropertyWrapper<ClipPathOperation>(prop, getter, setter)
     {
     }
+
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    {
+        // If the style pointers are the same, don't bother doing the test.
+        // If either is null, return false. If both are null, return true.
+        if (a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        ClipPathOperation* clipPathA = (a->*m_getter)();
+        ClipPathOperation* clipPathB = (b->*m_getter)();
+        if (clipPathA == clipPathB)
+            return true;
+        if (!clipPathA || !clipPathB)
+            return false;
+        return *clipPathA == *clipPathB;
+    }
 };
 
 #if ENABLE(CSS_SHAPES)
@@ -486,6 +504,24 @@ public:
     PropertyWrapperShape(CSSPropertyID prop, ShapeValue* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<ShapeValue>))
         : RefCountedPropertyWrapper<ShapeValue>(prop, getter, setter)
     {
+    }
+
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    {
+        // If the style pointers are the same, don't bother doing the test.
+        // If either is null, return false. If both are null, return true.
+        if (a == b)
+            return true;
+        if (!a || !b)
+            return false;
+
+        ShapeValue* shapeA = (a->*m_getter)();
+        ShapeValue* shapeB = (b->*m_getter)();
+        if (shapeA == shapeB)
+            return true;
+        if (!shapeA || !shapeB)
+            return false;
+        return *shapeA == *shapeB;
     }
 };
 #endif

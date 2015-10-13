@@ -63,6 +63,7 @@ public:
     virtual Ref<BasicShape> blend(const BasicShape&, double) const = 0;
 
     virtual Type type() const = 0;
+    virtual bool operator==(const BasicShape&) const = 0;
 };
 
 class BasicShapeCenterCoordinate {
@@ -101,6 +102,13 @@ public:
     {
         return BasicShapeCenterCoordinate(TopLeft, m_computedLength.blend(other.m_computedLength, progress));
     }
+    
+    bool operator==(const BasicShapeCenterCoordinate& other) const
+    {
+        return m_direction == other.m_direction
+            && m_length == other.m_length
+            && m_computedLength == other.m_computedLength;
+    }
 
 private:
     Direction m_direction;
@@ -138,6 +146,11 @@ public:
 
         return BasicShapeRadius(m_value.blend(other.value(), progress));
     }
+    
+    bool operator==(const BasicShapeRadius& other) const
+    {
+        return m_value == other.m_value && m_type == other.m_type;
+    }
 
 private:
     Length m_value;
@@ -162,6 +175,8 @@ public:
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual Type type() const override { return BasicShapeCircleType; }
+    virtual bool operator==(const BasicShape&) const override;
+
 private:
     BasicShapeCircle() { }
 
@@ -189,6 +204,8 @@ public:
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual Type type() const override { return BasicShapeEllipseType; }
+    virtual bool operator==(const BasicShape&) const override;
+
 private:
     BasicShapeEllipse() { }
 
@@ -215,6 +232,8 @@ public:
     virtual WindRule windRule() const override { return m_windRule; }
 
     virtual Type type() const override { return BasicShapePolygonType; }
+    virtual bool operator==(const BasicShape&) const override;
+
 private:
     BasicShapePolygon()
         : m_windRule(RULE_NONZERO)
@@ -252,6 +271,8 @@ public:
     virtual Ref<BasicShape> blend(const BasicShape&, double) const override;
 
     virtual Type type() const override { return BasicShapeInsetType; }
+    virtual bool operator==(const BasicShape&) const override;
+
 private:
     BasicShapeInset() { }
 

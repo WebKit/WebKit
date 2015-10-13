@@ -76,7 +76,11 @@ public:
             m_image = image;
     }
 
-    bool operator==(const ShapeValue& other) const { return type() == other.type(); }
+    bool operator==(const ShapeValue&) const;
+    bool operator!=(const ShapeValue& other) const
+    {
+        return !(*this == other);
+    }
 
 private:
     ShapeValue(PassRefPtr<BasicShape> shape, CSSBoxType cssBox)
@@ -87,13 +91,11 @@ private:
     }
     ShapeValue(Type type)
         : m_type(type)
-        , m_cssBox(BoxMissing)
     {
     }
     ShapeValue(PassRefPtr<StyleImage> image)
         : m_type(Type::Image)
         , m_image(image)
-        , m_cssBox(BoxMissing)
     {
     }
 
@@ -106,7 +108,7 @@ private:
     Type m_type;
     RefPtr<BasicShape> m_shape;
     RefPtr<StyleImage> m_image;
-    CSSBoxType m_cssBox;
+    CSSBoxType m_cssBox { BoxMissing };
 };
 
 }
