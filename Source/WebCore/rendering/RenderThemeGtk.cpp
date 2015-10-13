@@ -30,6 +30,7 @@
 #include "FileList.h"
 #include "FileSystem.h"
 #include "FontDescription.h"
+#include "GUniquePtrGtk.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
@@ -236,13 +237,12 @@ static GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, co
 
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
     gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(direction));
-    GtkIconInfo* info = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), symbolicIconName, iconSize,
-        static_cast<GtkIconLookupFlags>(GTK_ICON_LOOKUP_FORCE_SVG | GTK_ICON_LOOKUP_FORCE_SIZE));
-    GdkPixbuf* icon = 0;
-    if (info) {
-        icon = gtk_icon_info_load_symbolic_for_context(info, context, 0, 0);
-        gtk_icon_info_free(info);
-    }
+
+    GUniquePtr<GtkIconInfo> info(gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), symbolicIconName, iconSize,
+        static_cast<GtkIconLookupFlags>(GTK_ICON_LOOKUP_FORCE_SVG | GTK_ICON_LOOKUP_FORCE_SIZE)));
+    GdkPixbuf* icon = nullptr;
+    if (info)
+        icon = gtk_icon_info_load_symbolic_for_context(info.get(), context, nullptr, nullptr);
 
     gtk_style_context_restore(context);
 
