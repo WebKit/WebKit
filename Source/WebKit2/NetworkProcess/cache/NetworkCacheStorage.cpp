@@ -259,11 +259,11 @@ void Storage::synchronize()
             auto recordFilter = std::unique_ptr<ContentsFilter>(recordFilterPtr);
             auto bodyFilter = std::unique_ptr<ContentsFilter>(bodyFilterPtr);
 
-            for (auto hash : m_recordFilterHashesAddedDuringSynchronization)
+            for (auto& hash : m_recordFilterHashesAddedDuringSynchronization)
                 recordFilter->add(hash);
             m_recordFilterHashesAddedDuringSynchronization.clear();
 
-            for (auto hash : m_bodyFilterHashesAddedDuringSynchronization)
+            for (auto& hash : m_bodyFilterHashesAddedDuringSynchronization)
                 bodyFilter->add(hash);
             m_bodyFilterHashesAddedDuringSynchronization.clear();
 
