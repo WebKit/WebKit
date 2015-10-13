@@ -4749,6 +4749,18 @@
             "saamyjoon"
          ]
       },
+      "Sebastian Dr\u00f6ge" : {
+         "emails" : [
+            "sebastian@centricular.com",
+            "slomo@coaxion.net",
+            "sebastian.droege@collabora.co.uk",
+            "sebastian.droege@collabora.com"
+         ],
+         "expertise" : "WebKitGTK+, Media support (focused on the GStreamer implementation)",
+         "nicks" : [
+            "slomo"
+         ]
+      },
       "Sergio Villar Senin" : {
          "emails" : [
             "svillar@igalia.com",
