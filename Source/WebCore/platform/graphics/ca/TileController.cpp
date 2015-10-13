@@ -54,7 +54,6 @@ String TileController::zoomedOutTileGridContainerLayerName()
 TileController::TileController(PlatformCALayer* rootPlatformLayer)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_tileGrid(std::make_unique<TileGrid>(*this))
-    , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileRevalidationTimer(*this, &TileController::tileRevalidationTimerFired)
     , m_zoomedOutContentsScale(0)
     , m_deviceScaleFactor(owningGraphicsLayer()->platformCALayerDeviceScaleFactor())
@@ -328,8 +327,8 @@ FloatRect TileController::computeTileCoverageRect(const FloatSize& newSize, cons
     if (m_tileCoverage == CoverageForVisibleArea || MemoryPressureHandler::singleton().isUnderMemoryPressure())
         return visibleRect;
 
-    double horizontalMargin = defaultTileWidth / contentsScale;
-    double verticalMargin = defaultTileHeight / contentsScale;
+    double horizontalMargin = tileSize().width() / contentsScale;
+    double verticalMargin = tileSize().height() / contentsScale;
 
     double currentTime = monotonicallyIncreasingTime();
     double timeDelta = currentTime - m_velocity.lastUpdateTime;
@@ -426,6 +425,11 @@ bool TileController::shouldAggressivelyRetainTiles() const
 bool TileController::shouldTemporarilyRetainTileCohorts() const
 {
     return owningGraphicsLayer()->platformCALayerShouldTemporarilyRetainTileCohorts(m_tileCacheLayer);
+}
+
+IntSize TileController::tileSize() const
+{
+    return owningGraphicsLayer()->platformCALayerTileSize();
 }
 
 void TileController::clearZoomedOutTileGrid()

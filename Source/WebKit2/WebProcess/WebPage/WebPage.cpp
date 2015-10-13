@@ -2738,6 +2738,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setShowRepaintCounter(store.getBoolValueForKey(WebPreferencesKey::compositingRepaintCountersVisibleKey()));
     settings.setShowTiledScrollingIndicator(store.getBoolValueForKey(WebPreferencesKey::tiledScrollingIndicatorVisibleKey()));
     settings.setVisibleDebugOverlayRegions(store.getUInt32ValueForKey(WebPreferencesKey::visibleDebugOverlayRegionsKey()));
+    settings.setUseGiantTiles(store.getBoolValueForKey(WebPreferencesKey::useGiantTilesKey()));
     
     settings.setAggressiveTileRetentionEnabled(store.getBoolValueForKey(WebPreferencesKey::aggressiveTileRetentionEnabledKey()));
     settings.setTemporaryTileCohortRetentionEnabled(store.getBoolValueForKey(WebPreferencesKey::temporaryTileCohortRetentionEnabledKey()));

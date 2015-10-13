@@ -28,9 +28,27 @@
 
 namespace WebCore {
 
-static const int defaultTileWidth = 512;
-static const int defaultTileHeight = 512;
+enum TileSizeMode {
+    StandardTileSizeMode,
+    GiantTileSizeMode
+};
 
+inline static IntSize defaultTileSize(TileSizeMode tileSizeMode = StandardTileSizeMode)
+{
+    static const int kTiledLayerTileSize = 512;
+
+    // This is an experimental value for debugging and evaluating the overhead which may be
+    // incurred due to a large tile size.
+    static const int kGiantTiledLayerTileSize = 4096;
+
+    if (tileSizeMode == GiantTileSizeMode)
+        return IntSize(kGiantTiledLayerTileSize, kGiantTiledLayerTileSize);
+
+    return IntSize(kTiledLayerTileSize, kTiledLayerTileSize);
+}
+
+class FloatPoint;
+class FloatRect;
 class IntRect;
 class PlatformCALayer;
 

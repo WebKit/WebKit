@@ -1,3 +1,19 @@
+2015-10-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add debug settings for using giant tiles (4096x4096)
+        https://bugs.webkit.org/show_bug.cgi?id=149977
+        <rdar://problem/23017093>
+
+        Reviewed by Tim Horton.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetUseGiantTiles):
+        (WKPreferencesGetUseGiantTiles):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-10-13  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Avoid crash due to invalid screen bounds

@@ -1217,6 +1217,16 @@ bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef prefere
     return toImpl(preferencesRef)->subpixelCSSOMElementMetricsEnabled();
 }
 
+void WKPreferencesSetUseGiantTiles(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setUseGiantTiles(flag);
+}
+
+bool WKPreferencesGetUseGiantTiles(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->useGiantTiles();
+}
+
 void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setMediaStreamEnabled(enabled);

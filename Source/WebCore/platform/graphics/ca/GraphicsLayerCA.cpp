@@ -1449,6 +1449,11 @@ bool GraphicsLayerCA::platformCALayerShouldTemporarilyRetainTileCohorts(Platform
     return client().shouldTemporarilyRetainTileCohorts(this);
 }
 
+IntSize GraphicsLayerCA::platformCALayerTileSize() const
+{
+    return client().tileSize();
+}
+
 static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)
 {
     return appearance == GraphicsLayer::LightBackdropAppearance ? PlatformCALayer::LayerTypeLightSystemBackdropLayer : PlatformCALayer::LayerTypeDarkSystemBackdropLayer;

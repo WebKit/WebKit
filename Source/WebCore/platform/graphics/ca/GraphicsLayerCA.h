@@ -47,10 +47,6 @@ class TransformState;
 
 class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
 public:
-    // The width and height of a single tile in a tiled layer. Should be large enough to
-    // avoid lots of small tiles (and therefore lots of drawing callbacks), but small enough
-    // to keep the overall tile cost low.
-    static const int kTiledLayerTileSize = 512;
 
     WEBCORE_EXPORT explicit GraphicsLayerCA(Type, GraphicsLayerClient&);
     WEBCORE_EXPORT virtual ~GraphicsLayerCA();
@@ -199,6 +195,7 @@ private:
     WEBCORE_EXPORT virtual float platformCALayerContentsScaleMultiplierForNewTiles(PlatformCALayer*) const override;
     WEBCORE_EXPORT virtual bool platformCALayerShouldAggressivelyRetainTiles(PlatformCALayer*) const override;
     WEBCORE_EXPORT virtual bool platformCALayerShouldTemporarilyRetainTileCohorts(PlatformCALayer*) const override;
+    WEBCORE_EXPORT virtual IntSize platformCALayerTileSize() const override;
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 

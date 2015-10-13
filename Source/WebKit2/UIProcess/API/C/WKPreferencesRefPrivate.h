@@ -313,6 +313,10 @@ WK_EXPORT bool WKPreferencesGetNewBlockInsideInlineModelEnabled(WKPreferencesRef
 WK_EXPORT void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetUseGiantTiles(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetUseGiantTiles(WKPreferencesRef);
+
 WK_EXPORT void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef);
 
 // Defaults to false.

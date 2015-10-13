@@ -95,7 +95,7 @@ public:
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     ScrollingModeIndication indicatorMode() const { return m_indicatorMode; }
 
-    virtual IntSize tileSize() const override { return m_tileSize; }
+    virtual IntSize tileSize() const override;
     virtual IntRect bounds() const override;
     virtual IntRect boundsWithoutMargin() const override;
     virtual bool hasMargins() const override;
@@ -175,7 +175,6 @@ private:
     std::unique_ptr<TileGrid> m_tileGrid;
     std::unique_ptr<TileGrid> m_zoomedOutTileGrid;
 
-    IntSize m_tileSize;
     FloatRect m_visibleRect; // Only used for scroll performance logging.
     FloatRect m_coverageRect;
     IntRect m_boundsAtLastRevalidate;
