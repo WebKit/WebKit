@@ -1235,7 +1235,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
             elementData()->setHasNameAttribute(!newValue.isNull());
         else if (name == HTMLNames::pseudoAttr)
             shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
         else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
                 if (auto* shadowRoot = parent->shadowRoot())

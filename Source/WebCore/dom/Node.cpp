@@ -749,7 +749,7 @@ static ContainerNode* traverseStyleParent(Node& node)
             return downcast<ShadowRoot>(node).host();
         return nullptr;
     }
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
     if (auto* shadowRoot = parent->shadowRoot()) {
         if (auto* assignedSlot = shadowRoot->findAssignedSlot(node))
             return assignedSlot;
