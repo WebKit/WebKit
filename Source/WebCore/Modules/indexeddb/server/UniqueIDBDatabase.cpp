@@ -155,7 +155,7 @@ void UniqueIDBDatabase::notifyConnectionsOfVersionChange()
 
     uint64_t requestedVersion = m_versionChangeOperation->requestData().requestedVersion();
 
-    LOG(IndexedDB, "(main) UniqueIDBDatabase::notifyConnectionsOfVersionChange - %llu", requestedVersion);
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::notifyConnectionsOfVersionChange - %llu", static_cast<unsigned long long>(requestedVersion));
 
     // 3.3.7 "versionchange" transaction steps
     // Fire a versionchange event at each connection in m_openDatabaseConnections that is open.
