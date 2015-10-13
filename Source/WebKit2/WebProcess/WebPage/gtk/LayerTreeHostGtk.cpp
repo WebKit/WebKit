@@ -98,6 +98,11 @@ void LayerTreeHostGtk::initialize()
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(m_webPage->size());
 
+    m_scaleMatrix.makeIdentity();
+    m_scaleMatrix.scale(m_webPage->deviceScaleFactor() * m_webPage->pageScaleFactor());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setAnchorPoint(FloatPoint3D());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTransform(m_scaleMatrix);
+
     // The non-composited contents are a child of the root layer.
     m_nonCompositedContentLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
     m_nonCompositedContentLayer->setDrawsContent(true);
@@ -205,6 +210,10 @@ void LayerTreeHostGtk::deviceOrPageScaleFactorChanged()
 {
     // Other layers learn of the scale factor change via WebPage::setDeviceScaleFactor.
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();
+
+    m_scaleMatrix.makeIdentity();
+    m_scaleMatrix.scale(m_webPage->deviceScaleFactor() * m_webPage->pageScaleFactor());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTransform(m_scaleMatrix);
 }
 
 void LayerTreeHostGtk::forceRepaint()
@@ -216,6 +225,16 @@ void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, Graphic
 {
     if (graphicsLayer == m_nonCompositedContentLayer.get())
         m_webPage->drawRect(graphicsContext, enclosingIntRect(clipRect));
+}
+
+float LayerTreeHostGtk::deviceScaleFactor() const
+{
+    return m_webPage->deviceScaleFactor();
+}
+
+float LayerTreeHostGtk::pageScaleFactor() const
+{
+    return m_webPage->pageScaleFactor();
 }
 
 static inline bool shouldSkipNextFrameBecauseOfContinousImmediateFlushes(double current, double lastImmediateFlushTime)

@@ -300,6 +300,7 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
         if (!m_compositedImage)
             m_compositedImage = TextureMapperTiledBackingStore::create();
         m_compositedImage->setContentsToImage(image);
+        m_compositedImage->updateContentsScale(pageScaleFactor() * deviceScaleFactor());
     } else {
         m_compositedNativeImagePtr = nullptr;
         m_compositedImage = nullptr;
@@ -545,7 +546,9 @@ void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()
         return;
 
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
+    backingStore->updateContentsScale(pageScaleFactor() * deviceScaleFactor());
 
+    dirtyRect.scale(pageScaleFactor() * deviceScaleFactor());
     backingStore->updateContents(textureMapper, this, m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
 
     m_needsDisplay = false;
