@@ -1,5 +1,24 @@
 2015-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Iterator loops over key twice after delete
+        https://bugs.webkit.org/show_bug.cgi?id=149811
+
+        Reviewed by Geoffrey Garen.
+
+        When an object is the dictionary mode, JSPropertyNameEnumerator collects property names through generic property name enumeration `getPropertyNames`.
+        The result vector contains indexed property names. But in this case, `publicLength()` may not be 0.
+        So without disabling indexed names enumeration phase explicitly, JSPropertyNameEnumerator produces indexed property names twice.
+        One in indexed name enumeration phase, and another in generic property name enumeration phase.
+        This patch disables indexed names enumeration by setting `indexedLength` to 0 when collecting names through generic property name enumeration.
+
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * tests/stress/property-name-enumerator-should-not-look-into-indexed-values-when-it-is-a-dictionary.js: Added.
+        (shouldBe):
+        (col2.of.Reflect.enumerate):
+
+2015-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Introduce Symbol type for property type inference
         https://bugs.webkit.org/show_bug.cgi?id=149622
 
