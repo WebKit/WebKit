@@ -1077,6 +1077,16 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     cairo_restore(cr);
 }
 
+void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize&, ColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
+{
+    RefPtr<cairo_surface_t> surface = image.nativeImageForCurrentFrame();
+    if (!surface) // If it's too early we won't have an image yet.
+        return;
+
+    cairo_t* cr = platformContext()->cr();
+    drawPatternToCairoContext(cr, surface.get(), IntSize(image.size()), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
+}
+
 void GraphicsContext::setPlatformShouldAntialias(bool enable)
 {
     if (paintingDisabled())

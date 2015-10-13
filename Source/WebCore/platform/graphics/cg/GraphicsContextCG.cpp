@@ -243,6 +243,108 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
     CGContextDrawImage(context, adjustedDestRect, image.get());
 }
 
+static void drawPatternCallback(void* info, CGContextRef context)
+{
+    CGImageRef image = (CGImageRef)info;
+    CGFloat height = CGImageGetHeight(image);
+#if PLATFORM(IOS)
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -height);
+#endif
+    CGContextDrawImage(context, GraphicsContext(context).roundToDevicePixels(FloatRect(0, 0, CGImageGetWidth(image), height)), image);
+}
+
+static void patternReleaseCallback(void* info)
+{
+    auto image = static_cast<CGImageRef>(info);
+    callOnMainThread([image] {
+        CGImageRelease(image);
+    });
+}
+
+void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+{
+    if (!patternTransform.isInvertible())
+        return;
+
+    CGContextRef context = platformContext();
+    CGContextStateSaver stateSaver(context);
+    CGContextClipToRect(context, destRect);
+
+    setPlatformCompositeOperation(op, blendMode);
+
+    CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
+    CGContextScaleCTM(context, 1, -1);
+    
+    // Compute the scaled tile size.
+    float scaledTileHeight = tileRect.height() * narrowPrecisionToFloat(patternTransform.d());
+    
+    // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
+    // the origin).
+    float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
+    float adjustedY = destRect.height() - (phase.y() - destRect.y() + tileRect.y() * narrowPrecisionToFloat(patternTransform.d()) + scaledTileHeight);
+
+    CGImageRef tileImage = image.nativeImageForCurrentFrame();
+    float h = CGImageGetHeight(tileImage);
+
+    RetainPtr<CGImageRef> subImage;
+#if PLATFORM(IOS)
+    FloatSize imageSize = image.originalSize();
+#else
+    FloatSize imageSize = image.size();
+#endif
+    if (tileRect.size() == imageSize)
+        subImage = tileImage;
+    else {
+        // Copying a sub-image out of a partially-decoded image stops the decoding of the original image. It should never happen
+        // because sub-images are only used for border-image, which only renders when the image is fully decoded.
+        ASSERT(h == image.height());
+        subImage = adoptCF(CGImageCreateWithImageInRect(tileImage, tileRect));
+    }
+
+    // Adjust the color space.
+    subImage = Image::imageWithColorSpace(subImage.get(), styleColorSpace);
+
+    // If we need to paint gaps between tiles because we have a partially loaded image or non-zero spacing,
+    // fall back to the less efficient CGPattern-based mechanism.
+    float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
+    float w = CGImageGetWidth(tileImage);
+    if (w == image.size().width() && h == image.size().height() && !spacing.width() && !spacing.height())
+        CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
+    else {
+        static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, patternReleaseCallback };
+        CGAffineTransform matrix = CGAffineTransformMake(narrowPrecisionToCGFloat(patternTransform.a()), 0, 0, narrowPrecisionToCGFloat(patternTransform.d()), adjustedX, adjustedY);
+        matrix = CGAffineTransformConcat(matrix, CGContextGetCTM(context));
+        // The top of a partially-decoded image is drawn at the bottom of the tile. Map it to the top.
+        matrix = CGAffineTransformTranslate(matrix, 0, image.size().height() - h);
+#if PLATFORM(IOS)
+        matrix = CGAffineTransformScale(matrix, 1, -1);
+        matrix = CGAffineTransformTranslate(matrix, 0, -h);
+#endif
+        CGImageRef platformImage = CGImageRetain(subImage.get());
+        RetainPtr<CGPatternRef> pattern = adoptCF(CGPatternCreate(platformImage, CGRectMake(0, 0, tileRect.width(), tileRect.height()), matrix,
+            tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
+            tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
+            kCGPatternTilingConstantSpacing, true, &patternCallbacks));
+        
+        if (!pattern)
+            return;
+
+        RetainPtr<CGColorSpaceRef> patternSpace = adoptCF(CGColorSpaceCreatePattern(0));
+
+        CGFloat alpha = 1;
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreateWithPattern(patternSpace.get(), pattern.get(), &alpha));
+        CGContextSetFillColorSpace(context, patternSpace.get());
+
+        // FIXME: Really want a public API for this. It is just CGContextSetBaseCTM(context, CGAffineTransformIdentiy).
+        wkSetBaseCTM(context, CGAffineTransformIdentity);
+        CGContextSetPatternPhase(context, CGSizeZero);
+
+        CGContextSetFillColorWithColor(context, color.get());
+        CGContextFillRect(context, CGContextGetClipBoundingBox(context));
+    }
+}
+
 // Draws a filled rectangle with a stroked border.
 void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
 {

@@ -320,6 +320,8 @@ namespace WebCore {
         void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
         void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
+        void drawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
+
         WEBCORE_EXPORT void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;
 
