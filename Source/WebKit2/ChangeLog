@@ -1,3 +1,13 @@
+2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] OSX linker doesn't understand --whole-archive
+        https://bugs.webkit.org/show_bug.cgi?id=144557
+
+        Reviewed by Martin Robinson.
+
+        * PlatformGTK.cmake: Link with extra libraries on Darwin, since
+        we don't have the --whole-archive linker option.
+
 2015-10-09  Anders Carlsson  <andersca@apple.com>
 
         Don't allow plug-ins to override image types for <embed> elements

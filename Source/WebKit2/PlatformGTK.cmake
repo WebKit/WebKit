@@ -923,11 +923,18 @@ add_custom_command(
         ${WEBKIT2_DIR}/UIProcess/API/gtk/*.cpp
 )
 
+# Manually add some libraries on OSX because we don't have the --whole-archive flag
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(INTROSPECTION_ADDITIONAL_LIBRARIES --library=c++)
+    set(INTROSPECTION_ADDITIONAL_LDFLAGS -lGObjectDOMBindings)
+endif ()
+
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
     DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
     DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
-    COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations LDFLAGS=
+    COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
+        LDFLAGS="${INTROSPECTION_ADDITIONAL_LDFLAGS}"
         LD_LIBRARY_PATH="${INTROSPECTION_ADDITIONAL_LIBRARY_PATH}"
         ${INTROSPECTION_SCANNER}
         --quiet
@@ -942,6 +949,7 @@ add_custom_command(
         --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
         --library=webkit2gtk-${WEBKITGTK_API_VERSION}
         --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
+        ${INTROSPECTION_ADDITIONAL_LIBRARIES}
         -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
         --no-libtool
