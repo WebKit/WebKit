@@ -60,6 +60,7 @@ public:
         Int32,
         Number,
         String,
+        Symbol,
         ObjectWithStructure,
         ObjectWithStructureOrOther,
         Object,
@@ -125,6 +126,8 @@ public:
                 return value.isNumber();
             case String:
                 return value.isString();
+            case Symbol:
+                return value.isSymbol();
             case ObjectWithStructure:
                 return value.isCell() && value.asCell()->structure() == m_structure;
             case ObjectWithStructureOrOther:

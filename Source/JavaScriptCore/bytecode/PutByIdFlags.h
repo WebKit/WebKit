@@ -65,9 +65,10 @@ enum PutByIdFlags : intptr_t {
     PutByIdSecondaryTypeInt32 = 0x18,
     PutByIdSecondaryTypeNumber = 0x20,
     PutByIdSecondaryTypeString = 0x28,
-    PutByIdSecondaryTypeObject = 0x30,
-    PutByIdSecondaryTypeObjectOrOther = 0x38,
-    PutByIdSecondaryTypeTop = 0x40
+    PutByIdSecondaryTypeSymbol = 0x30,
+    PutByIdSecondaryTypeObject = 0x38,
+    PutByIdSecondaryTypeObjectOrOther = 0x40,
+    PutByIdSecondaryTypeTop = 0x48
 };
 
 inline PutByIdFlags encodeStructureID(StructureID id)

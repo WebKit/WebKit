@@ -1,3 +1,45 @@
+2015-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introduce Symbol type for property type inference
+        https://bugs.webkit.org/show_bug.cgi?id=149622
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces Symbol type into property type inference.
+        One of the use cases of ES6 Symbol is enum value. In this case,
+        we may hold different symbols as the same property of the same structure.
+        Current property type inference does not support Symbol type, so in the
+        above case, the property will be inferred as Top type.
+
+        * bytecode/PutByIdFlags.h:
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::set):
+        * dfg/DFGInferredTypeCheck.cpp:
+        (JSC::DFG::insertInferredTypeCheck):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::checkInferredType):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfNotType):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/InferredType.cpp:
+        (JSC::InferredType::kindForFlags):
+        (JSC::InferredType::Descriptor::forValue):
+        (JSC::InferredType::Descriptor::putByIdFlags):
+        (JSC::InferredType::Descriptor::merge):
+        (WTF::printInternal):
+        * runtime/InferredType.h:
+        * tests/stress/prop-type-symbol-then-object.js: Added.
+        (foo):
+        (bar):
+        (toString):
+        * tests/stress/prop-type-symbol-then-string.js: Added.
+        (foo):
+        (bar):
+
 2015-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rebaseline Inspector generator tests and make better use of RWIProtocol constant

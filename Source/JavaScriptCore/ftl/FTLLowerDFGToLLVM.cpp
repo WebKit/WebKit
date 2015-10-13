@@ -5897,6 +5897,11 @@ private:
             speculate(BadType, jsValueValue(value), edge.node(), isNotString(value, provenType(edge)));
             return;
 
+        case InferredType::Symbol:
+            speculate(BadType, jsValueValue(value), edge.node(), isNotCell(value, provenType(edge)));
+            speculate(BadType, jsValueValue(value), edge.node(), isNotSymbol(value, provenType(edge)));
+            return;
+
         case InferredType::ObjectWithStructure:
             speculate(BadType, jsValueValue(value), edge.node(), isNotCell(value, provenType(edge)));
             if (!abstractValue(edge).m_structure.isSubsetOf(StructureSet(type.structure()))) {

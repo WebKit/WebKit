@@ -1287,7 +1287,7 @@ _llint_op_put_by_id:
     andp PutByIdSecondaryTypeMask, t1
     bplt t1, PutByIdSecondaryTypeString, .opPutByIdTypeCheckLessThanString
 
-    # We are one of the following: String, Object, ObjectOrOther, Top
+    # We are one of the following: String, Symbol, Object, ObjectOrOther, Top
     bplt t1, PutByIdSecondaryTypeObjectOrOther, .opPutByIdTypeCheckLessThanObjectOrOther
 
     # We are either ObjectOrOther or Top.
@@ -1301,13 +1301,17 @@ _llint_op_put_by_id:
     jmp .opPutByIdSlow
 
 .opPutByIdTypeCheckLessThanObjectOrOther:
-    # We are either String or Object.
+    # We are either String, Symbol or Object.
     btqnz t3, tagMask, .opPutByIdSlow
     bpeq t1, PutByIdSecondaryTypeObject, .opPutByIdTypeCheckObject
+    bpeq t1, PutByIdSecondaryTypeSymbol, .opPutByIdTypeCheckSymbol
     bbeq JSCell::m_type[t3], StringType, .opPutByIdDoneCheckingTypes
     jmp .opPutByIdSlow
 .opPutByIdTypeCheckObject:
     bbaeq JSCell::m_type[t3], ObjectType, .opPutByIdDoneCheckingTypes
+    jmp .opPutByIdSlow
+.opPutByIdTypeCheckSymbol:
+    bbeq JSCell::m_type[t3], SymbolType, .opPutByIdDoneCheckingTypes
     jmp .opPutByIdSlow
 
 .opPutByIdTypeCheckLessThanString:

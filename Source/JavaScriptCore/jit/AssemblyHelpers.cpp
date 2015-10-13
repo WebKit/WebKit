@@ -86,6 +86,11 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfNotType(
         result.append(branchIfNotString(regs.payloadGPR()));
         break;
 
+    case InferredType::Symbol:
+        result.append(branchIfNotCell(regs, mode));
+        result.append(branchIfNotSymbol(regs.payloadGPR()));
+        break;
+
     case InferredType::ObjectWithStructure:
         result.append(branchIfNotCell(regs, mode));
         result.append(

@@ -111,6 +111,8 @@ InferredType::Kind InferredType::kindForFlags(PutByIdFlags flags)
             return Number;
         case PutByIdSecondaryTypeString:
             return String;
+        case PutByIdSecondaryTypeSymbol:
+            return Symbol;
         case PutByIdSecondaryTypeObject:
             return Object;
         case PutByIdSecondaryTypeObjectOrOther:
@@ -145,6 +147,8 @@ InferredType::Descriptor InferredType::Descriptor::forValue(JSValue value)
         JSCell* cell = value.asCell();
         if (cell->isString())
             return String;
+        if (cell->isSymbol())
+            return Symbol;
         if (cell->isObject()) {
             if (cell->structure()->transitionWatchpointSetIsStillValid())
                 return Descriptor(ObjectWithStructure, cell->structure());
@@ -180,6 +184,8 @@ PutByIdFlags InferredType::Descriptor::putByIdFlags() const
         return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeNumber);
     case String:
         return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeString);
+    case Symbol:
+        return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeSymbol);
     case Object:
         return static_cast<PutByIdFlags>(PutByIdPrimaryTypeSecondary | PutByIdSecondaryTypeObject);
     case ObjectOrOther:
@@ -211,6 +217,7 @@ void InferredType::Descriptor::merge(const Descriptor& other)
         return;
     case Boolean:
     case String:
+    case Symbol:
         *this = Top;
         return;
     case Other:
@@ -540,6 +547,9 @@ void printInternal(PrintStream& out, InferredType::Kind kind)
         return;
     case InferredType::String:
         out.print("String");
+        return;
+    case InferredType::Symbol:
+        out.print("Symbol");
         return;
     case InferredType::ObjectWithStructure:
         out.print("ObjectWithStructure");

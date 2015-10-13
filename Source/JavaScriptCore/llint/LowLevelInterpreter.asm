@@ -216,9 +216,10 @@ const PutByIdSecondaryTypeOther = 0x10
 const PutByIdSecondaryTypeInt32 = 0x18
 const PutByIdSecondaryTypeNumber = 0x20
 const PutByIdSecondaryTypeString = 0x28
-const PutByIdSecondaryTypeObject = 0x30
-const PutByIdSecondaryTypeObjectOrOther = 0x38
-const PutByIdSecondaryTypeTop = 0x40
+const PutByIdSecondaryTypeSymbol = 0x30
+const PutByIdSecondaryTypeObject = 0x38
+const PutByIdSecondaryTypeObjectOrOther = 0x40
+const PutByIdSecondaryTypeTop = 0x48
 
 const CopyBarrierSpaceBits = 3
 
@@ -326,6 +327,7 @@ const SlowPutArrayStorageShape = 30
 
 # Type constants.
 const StringType = 6
+const SymbolType = 7
 const ObjectType = 21
 const FinalObjectType = 22
 
