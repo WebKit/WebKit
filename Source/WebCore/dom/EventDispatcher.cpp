@@ -415,7 +415,6 @@ static Node* nodeOrHostIfPseudoElement(Node* node)
 
 EventPath::EventPath(Node& targetNode, Event& event)
 {
-    bool inDocument = targetNode.inDocument();
     bool isSVGElement = targetNode.isSVGElement();
     bool isMouseOrFocusEvent = event.isMouseEvent() || event.isFocusEvent();
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
@@ -437,8 +436,6 @@ EventPath::EventPath(Node& targetNode, Event& event)
 #endif
             else
                 m_path.append(std::make_unique<EventContext>(node, currentTarget, target));
-            if (!inDocument)
-                return;
             if (is<ShadowRoot>(*node))
                 break;
         }

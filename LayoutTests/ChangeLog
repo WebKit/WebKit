@@ -1,3 +1,18 @@
+2015-09-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Event fired on a detached node does not bubble up
+        https://bugs.webkit.org/show_bug.cgi?id=149488
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test. Also modified and rebaselined mouseout-dead-node.html added in r19897
+        since our new behavior matches that of the latest Firefox as well as Chrome.
+
+        * fast/events/event-propagation-in-detached-tree-expected.txt: Added.
+        * fast/events/event-propagation-in-detached-tree.html: Added.
+        * fast/events/mouseout-dead-node-expected.txt:
+        * fast/events/mouseout-dead-node.html:
+
 2015-09-22  sangdeug.kim  <sangdeug.kim@samsung.com>
 
         Add test for checking currentTime of mediacontroller when playback is completed.
