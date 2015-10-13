@@ -2313,7 +2313,6 @@ http/tests/misc/async-script-removed.html [ Failure ]
 http/tests/misc/bad-charset-alias.html
 http/tests/misc/refresh-headers.php [ Failure ] # Easy
 http/tests/multipart/load-last-non-html-frame.php [ Failure ] # Extra whitespace
-http/tests/multipart/multipart-replace-non-html-content.php [ Failure ] # Extra whitespace
 http/tests/navigation/no-referrer-reset.html [ Failure ] # Easy
 http/tests/navigation/no-referrer-same-window.html [ Failure ] # Easy
 http/tests/navigation/no-referrer-subframe.html [ Failure ] # Easy

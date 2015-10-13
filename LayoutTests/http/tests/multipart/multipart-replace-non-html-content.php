@@ -13,14 +13,13 @@ if (window.testRunner)
 
 <?php
 for ($i = 0; $i <= 10; $i++) {
-    echo "--boundary\r\n";
+    echo "\r\n--boundary\r\n";
     echo "Content-Type: text/plain\r\n\r\n";
     echo "This text should only appear once ";
     echo $i;
     echo str_pad('', 5000);
-    echo "\r\n\r\n";
     flush();
     usleep(100000);
-    $i++;
 }
+echo "\r\n\r\n\r\n--boundary--\r\n";
 ?>
