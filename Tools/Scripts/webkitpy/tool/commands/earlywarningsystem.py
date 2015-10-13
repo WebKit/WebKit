@@ -123,7 +123,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return self._layout_test_results_reader.archive(patch)
 
     def build_style(self):
-        return self.build_style
+        return self._build_style
 
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
@@ -149,11 +149,11 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
 
         classes = []
         for name, config in ewses.iteritems():
-            classes.append(type(str(name).translate(None, ' -'), (AbstractEarlyWarningSystem,), {
+            classes.append(type(name.encode('utf-8').translate(None, ' -'), (AbstractEarlyWarningSystem,), {
                 'name': config.get('name', config['port'] + '-ews'),
                 'port_name': config['port'],
                 'architecture': config.get('architecture', None),
-                'build_style': config.get('style', "release"),
+                '_build_style': config.get('style', "release"),
                 'watchers': config.get('watchers', []),
                 'run_tests': config.get('runTests', cls.run_tests),
             }))

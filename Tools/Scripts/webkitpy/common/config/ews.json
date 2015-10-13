@@ -39,6 +39,6 @@
         "port": "mac",
         "name": "mac-debug-32bit-ews",
         "style": "debug",
-        "architecture": "i386",
+        "architecture": "i386"
     }
 }

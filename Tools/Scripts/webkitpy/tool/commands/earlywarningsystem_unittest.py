@@ -64,6 +64,7 @@ class EarlyWarningSystemTest(QueuesTest):
             "name": ews.name,
             "port": ews.port_name,
             "architecture": " --architecture=%s" % ews.architecture if ews.architecture else "",
+            "build_style": ews.build_style(),
         }
         if ews.run_tests:
             run_tests_line = "Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=%(port)s%(architecture)s\n" % string_replacements
@@ -76,7 +77,7 @@ class EarlyWarningSystemTest(QueuesTest):
             "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com update --port=%(port)s%(architecture)s
 Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s%(architecture)s
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s%(architecture)s
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=%(build_style)s --port=%(port)s%(architecture)s
 %(run_tests_line)sMOCK: update_status: %(name)s Pass
 MOCK: release_work_item: %(name)s 10000
 """ % string_replacements,
