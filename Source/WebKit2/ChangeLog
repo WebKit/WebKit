@@ -1,3 +1,27 @@
+2015-09-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Build error with -DENABLE_SPELLCHECK=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=146904
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add ifdef guards to allow building when SPELLCHECK is not enabled.
+
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        (WebKit::TextChecker::grammarCheckingEnabledStateChanged):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::setSpellCheckingLanguages):
+        (WebKit::TextChecker::loadedSpellCheckingLanguages):
+
 2015-09-30  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Support HiDPI Properly in WebKitGtk+ with the TextureMapper
