@@ -45,6 +45,7 @@ const float kMotionUpdateInterval = 1.0f / 60.0f;
     NSTimer* m_updateTimer;
     BOOL m_gyroAvailable;
     BOOL m_headingAvailable;
+    BOOL m_initialized;
 }
 
 + (WebCoreMotionManager *)sharedManager;
