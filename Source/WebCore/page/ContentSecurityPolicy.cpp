@@ -37,6 +37,7 @@
 #include "PingLoader.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
+#include "ScriptController.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicyViolationEvent.h"
@@ -1780,4 +1781,14 @@ bool ContentSecurityPolicy::experimentalFeaturesEnabled() const
 #endif
 }
 
+bool ContentSecurityPolicy::shouldBypassMainWorldContentSecurityPolicy(ScriptExecutionContext& context)
+{
+    if (is<Document>(context)) {
+        auto& document = downcast<Document>(context);
+        return document.frame() && document.frame()->script().shouldBypassMainWorldContentSecurityPolicy();
+    }
+    
+    return false;
+}
+    
 }

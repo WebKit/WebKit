@@ -1,3 +1,15 @@
+2015-10-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Fix null pointer dereference in WebSocket::connect()        
+        https://bugs.webkit.org/show_bug.cgi?id=149311
+        <rdar://problem/22748858>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/websocket/construct-in-detached-frame-expected.txt: Added.
+        * http/tests/websocket/construct-in-detached-frame.html: Added.
+        * http/tests/websocket/resources/construct-in-detached-frame.html: Added.
+
 2015-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         ShadowRoot with leading or trailing white space cause a crash
