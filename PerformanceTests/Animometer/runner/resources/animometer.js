@@ -67,6 +67,7 @@ function startBenchmark()
             enabledSuites.push(checkbox.suite);
         }
         localStorage.setItem(checkbox.suite.name, +checkbox.checked);
+        localStorage.setItem("test-interval", document.getElementById("test-interval").value);
     }
 
     var enabledSuites = Suites.filter(function (suite, index) { return !suite.disabled && checkboxes[index].checked; });
@@ -133,5 +134,10 @@ function populateSettings() {
         suiteDiv.appendChild(document.createElement("br"));
         suitesDiv.appendChild(suiteDiv);
     });
+
+    var interval = localStorage.getItem("test-interval");
+    if (interval) {
+        document.getElementById("test-interval").value = interval;
+    }
 }
 document.addEventListener("DOMContentLoaded", populateSettings);
