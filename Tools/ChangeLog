@@ -1,3 +1,12 @@
+2015-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Fix build for ENABLE_TOUCH_EVENTS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=150085
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+
 2015-10-13  Sebastian Dröge  <sebastian@centricular.com>
 
         Unreviewed, add myself to the committers list.

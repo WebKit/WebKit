@@ -129,7 +129,9 @@ private:
     virtual void didFinishLoadForMainFrame() override;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
+#if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
+#endif
 
     virtual void didChangeBackgroundColor() override;
 

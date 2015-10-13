@@ -196,6 +196,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
         gdk_event_get_time(event));
 }
 
+#if ENABLE(TOUCH_EVENTS)
 WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
 {
 #ifndef GTK_API_VERSION_2
@@ -219,5 +220,6 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector
     return WebTouchEvent();
 #endif // GTK_API_VERSION_2
 }
+#endif
 
 } // namespace WebKit

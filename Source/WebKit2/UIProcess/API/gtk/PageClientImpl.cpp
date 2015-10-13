@@ -322,6 +322,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& /* initialFrame */, cons
 
 #endif // ENABLE(FULLSCREEN_API)
 
+#if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
     if (wasEventHandled)
@@ -377,6 +378,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
 
     gtk_widget_event(m_viewWidget, pointerEvent.get());
 }
+#endif // ENABLE(TOUCH_EVENTS)
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
 {

@@ -1,3 +1,18 @@
+2015-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] Fix build for ENABLE_TOUCH_EVENTS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=150085
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/gtk/NativeWebTouchEventGtk.cpp:
+        * Shared/gtk/WebEventFactory.cpp:
+        * Shared/gtk/WebEventFactory.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_class_init):
+
 2015-10-13  Chris Dumez  <cdumez@apple.com>
 
         Avoid useless copying of Key::HashType in loops in NetworkCache::Storage::synchronize()
