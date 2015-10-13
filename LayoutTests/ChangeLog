@@ -1,5 +1,15 @@
 2015-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Garbage texture data with composited table row
+        https://bugs.webkit.org/show_bug.cgi?id=148984
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/contents-opaque/table-parts-expected.txt: Added.
+        * compositing/contents-opaque/table-parts.html: Added.
+
+2015-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Garbage pixels on enphaseenergy.com site
         https://bugs.webkit.org/show_bug.cgi?id=149915
         rdar://problem/22976184
