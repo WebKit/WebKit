@@ -1530,7 +1530,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    auto table = new RenderTable(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), TABLE));
+    auto table = new RenderTable(parent->document(), RenderStyle::createAnonymousStyleWithDisplay(&parent->style(), parent->style().display() == INLINE ? INLINE_TABLE : TABLE));
     table->initializeStyle();
     return table;
 }
