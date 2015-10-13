@@ -1,3 +1,16 @@
+2015-10-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r189567): Web Inspector: Clipped filter icons when debugger sidebar is narrow
+        https://bugs.webkit.org/show_bug.cgi?id=150023
+
+        r189567 changed flexbox items' default min-width from 0 to auto.
+        Explicitly set it to 0 in CSS.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar > input[type="search"]):
+
 2015-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Web Inspector: Don't shadow global Object constructor in WebInspector.Object class definition
