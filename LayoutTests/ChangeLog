@@ -1,3 +1,46 @@
+2015-10-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Cleaning up after revision 190339
+        https://bugs.webkit.org/show_bug.cgi?id=149732
+
+        Reviewed by Myles C. Maxfield.
+
+        * svg/custom/invalid-xslt-crash.svg:
+        * svg/custom/invalid-xslt-crash-expected.txt:
+        Replace render tree dump test with text dump.
+
+2015-10-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Revert LayoutTests parts of r190579, which were incorrect.
+
+        * svg/custom/invalid-xslt-crash-expected.txt: Copied from LayoutTests/svg/custom/invalid-xslt-crash-expected.txt.
+        * svg/custom/invalid-xslt-crash.svg:
+
+2015-10-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Cleaning up after revision 190339
+        https://bugs.webkit.org/show_bug.cgi?id=149732
+
+        Reviewed by Myles C. Maxfield.
+
+        * svg/custom/invalid-xslt-crash.svg:
+        * svg/custom/invalid-xslt-crash-expected.txt:
+        Replace render tree dump test with text dump.
+        Pass if no crash.
+
+2015-09-29  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Avoid reparsing an XSLT stylesheet after the first failure.
+        https://bugs.webkit.org/show_bug.cgi?id=149188
+        <rdar://problem/22709912>
+
+        Reviewed by Dave Hyatt.
+
+        Patch by Jiewen Tan, jiewen_tan@apple.com.
+
+        * svg/custom/invalid-xslt-crash-expected.txt: Added.
+        * svg/custom/invalid-xslt-crash.svg: Added.
+
 2015-09-29  Chris Dumez  <cdumez@apple.com>
 
         Memory cache revalidations should refresh the network disk cache
