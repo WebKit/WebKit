@@ -1,3 +1,17 @@
+2015-10-13  Dean Jackson  <dino@apple.com>
+
+        Device motion and orientation should only be visible from the main frame's security origin
+        https://bugs.webkit.org/show_bug.cgi?id=150072
+        <rdar://problem/23082036>
+
+        Reviewed by Brent Fulgham.
+
+        Add a manual test for cross-origin device orientation events, while
+        we're waiting on the mock client to be supported everywhere.
+
+        * ManualTests/deviceorientation-child-frame.html: Added.
+        * ManualTests/deviceorientation-main-frame-only.html: Added.
+
 2015-10-12  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] OSX linker doesn't understand --whole-archive
