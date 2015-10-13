@@ -60,8 +60,6 @@ CanvasElectronsStage.prototype.constructor = CanvasElectronsStage;
 
 CanvasElectronsStage.prototype.tune = function(count)
 {
-    count = count > 0 ? Math.floor(count) : Math.ceil(count);
-
     if (count == 0)
         return this._electrons.length;
 

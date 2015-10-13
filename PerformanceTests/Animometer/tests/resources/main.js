@@ -183,6 +183,7 @@ Benchmark.prototype =
             // The relationship between frameRate and test complexity is inverse-proportional so we
             // need to use the negative of PIDController.tune() to change the complexity of the test.
             tuneValue = -this._controller.tune(currentFrameRate, timeDelta / 1000);
+            tuneValue = tuneValue > 0 ? Math.floor(tuneValue) : Math.ceil(tuneValue);
         }
 
         var currentComplexity = this.tune(tuneValue);

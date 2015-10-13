@@ -1,5 +1,30 @@
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
+        Refactor tune() to pass in an integer-based count
+        https://bugs.webkit.org/show_bug.cgi?id=150060
+        <rdar://problem/23079425>
+
+        Reviewed by Dean Jackson.
+
+        All of the tune functions do an initial step of flooring the
+        # of painting objects to add or remove. Factor that out since
+        the complexity of all of these tests is always expressed in terms
+        of countable items.
+
+        * Animometer/tests/resources/main.js:
+        (Benchmark.prototype.update): Update the tuneValue.
+
+        * Animometer/tests/bouncing-particles/resources/bouncing-particles.js:
+        (BouncingParticlesStage.prototype.tune): Remove the count adjustment.
+        * Animometer/tests/examples/resources/canvas-electrons.js:
+        (CanvasElectronsStage.prototype.tune): Ditto.
+        * Animometer/tests/examples/resources/canvas-stars.js:
+        (CanvasStarsStage.prototype.tune): Ditto.
+        * Animometer/tests/text/resources/layering-text.js:
+        (LayeringTextStage.prototype.tune): Ditto.
+
+2015-10-12  Jon Lee  <jonlee@apple.com>
+
         Store test-interval in localStorage
         https://bugs.webkit.org/show_bug.cgi?id=150055
         <rdar://problem/23078879>
