@@ -778,6 +778,7 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     return TRUE;
 }
 
+#if ENABLE(TOUCH_EVENTS)
 static void appendTouchEvent(Vector<WebPlatformTouchPoint>& touchPoints, const GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
 {
     gdouble x, y;
@@ -868,6 +869,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
 
     return TRUE;
 }
+#endif // ENABLE(TOUCH_EVENTS)
 
 #if HAVE(GTK_GESTURES)
 GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webViewBase)
@@ -1020,7 +1022,9 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->button_release_event = webkitWebViewBaseButtonReleaseEvent;
     widgetClass->scroll_event = webkitWebViewBaseScrollEvent;
     widgetClass->motion_notify_event = webkitWebViewBaseMotionNotifyEvent;
+#if ENABLE(TOUCH_EVENTS)
     widgetClass->touch_event = webkitWebViewBaseTouchEvent;
+#endif
     widgetClass->query_tooltip = webkitWebViewBaseQueryTooltip;
 #if ENABLE(DRAG_SUPPORT)
     widgetClass->drag_end = webkitWebViewBaseDragEnd;
