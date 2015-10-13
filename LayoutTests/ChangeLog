@@ -1,5 +1,19 @@
 2015-09-18  Dean Jackson  <dino@apple.com>
 
+        Null dereference loading Blink layout test svg/filters/feImage-failed-load-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=149316
+        <rdar://problem/22749532>
+
+        Reviewed by Tim Horton.
+
+        Merge Blink commit:
+        https://chromium.googlesource.com/chromium/blink/+/9cbcfd7866bbaff0c4b3c4c8508b7c97b46d6e6a
+
+        * svg/filters/feImage-failed-load-crash-expected.txt: Added.
+        * svg/filters/feImage-failed-load-crash.html: Added.
+
+2015-09-18  Dean Jackson  <dino@apple.com>
+
         Null dereference loading Blink layout test svg/custom/use-href-attr-removal-crash.html
         https://bugs.webkit.org/show_bug.cgi?id=149315
         <rdar://problem/22749358>
