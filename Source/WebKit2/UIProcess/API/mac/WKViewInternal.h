@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !TARGET_OS_IPHONE
+
 #import "WKViewPrivate.h"
 
 #import "APIObject.h"
@@ -168,3 +170,5 @@ struct EditorState;
 #endif
 
 @end
+
+#endif
