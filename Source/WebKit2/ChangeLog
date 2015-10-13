@@ -1,3 +1,25 @@
+2015-10-13  Anders Carlsson  <andersca@apple.com>
+
+        Add and implement WKPageGetObjectRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=150102
+
+        Reviewed by Tim Horton.
+
+        Put the _WKObjectRegistry used by WKPageRef and WKBrowsingContextController on the WKView for now.
+        If we decide to share more code between WKView and WKWebView, the object registry could live in an object that would be shared
+        between WKView and WKWebView.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageGetObjectRegistry):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _remoteObjectRegistry]):
+        (-[WKBrowsingContextController dealloc]): Deleted.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView _remoteObjectRegistry]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2015-10-13  Chris Dumez  <cdumez@apple.com>
 
         Avoid useless copies in range-loops that are using 'auto'

@@ -29,6 +29,7 @@
 #import "PageLoadStateObserver.h"
 #import "WKAPICast.h"
 #import "WKNSURLExtras.h"
+#import "WKViewInternal.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -99,6 +100,11 @@ using namespace WebKit;
 id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
 {
     return [[WKObservablePageState alloc] initWithPage:toImpl(pageRef)];
+}
+
+_WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->wkView()._remoteObjectRegistry;
 }
 
 pid_t WKPageGetProcessIdentifier(WKPageRef pageRef)

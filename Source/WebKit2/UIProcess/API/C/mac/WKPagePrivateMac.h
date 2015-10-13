@@ -35,6 +35,8 @@ extern "C" {
 
 #ifdef __OBJC__
 
+@class _WKRemoteObjectRegistry;
+
 @protocol _WKObservablePageState
 
 @property (nonatomic, readonly, copy) NSString *title;
@@ -49,6 +51,7 @@ extern "C" {
 @end
 
 WK_EXPORT id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef page) NS_RETURNS_RETAINED;
+WK_EXPORT _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef page);
 
 #endif
 

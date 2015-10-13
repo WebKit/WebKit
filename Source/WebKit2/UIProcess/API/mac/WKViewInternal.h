@@ -34,7 +34,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-@class WKWebViewConfiguration;
+@class _WKRemoteObjectRegistry;
 
 namespace API {
 class Object;
@@ -162,5 +162,9 @@ struct EditorState;
 - (CALayer *)_rootLayer;
 
 - (void)_updateSupportsArbitraryLayoutModes;
+
+#if WK_API_ENABLED
+@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
+#endif
 
 @end

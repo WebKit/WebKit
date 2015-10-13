@@ -48,6 +48,8 @@
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteObjectRegistry.h"
+#import "RemoteObjectRegistryMessages.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
@@ -78,6 +80,7 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
@@ -181,6 +184,8 @@ struct WKViewInterpretKeyEventsParameters {
 #if WK_API_ENABLED
     RetainPtr<WKBrowsingContextController> _browsingContextController;
     RetainPtr<NSView> _inspectorAttachmentView;
+
+    RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 #endif
 
     RetainPtr<NSTrackingArea> _primaryTrackingArea;
@@ -385,6 +390,13 @@ struct WKViewInterpretKeyEventsParameters {
     [_data->_immediateActionController willDestroyView:self];
 #endif
     [_data->_layoutStrategy willDestroyView:self];
+
+#if WK_API_ENABLED
+    if (_data->_remoteObjectRegistry) {
+        _data->_page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _data->_page->pageID());
+        [_data->_remoteObjectRegistry _invalidate];
+    }
+#endif
 
     _data->_page->close();
 
@@ -3948,6 +3960,20 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [self _setLayoutMode:_data->_lastRequestedLayoutMode];
     }
 }
+
+#if WK_API_ENABLED
+- (_WKRemoteObjectRegistry *)_remoteObjectRegistry
+{
+    if (!_data->_remoteObjectRegistry) {
+        _data->_remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_data->_page]);
+        _data->_page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _data->_page->pageID(), [_data->_remoteObjectRegistry remoteObjectRegistry]);
+    }
+
+    return _data->_remoteObjectRegistry.get();
+}
+
+#endif
+
 
 - (void)_didCommitLoadForMainFrame
 {

@@ -51,6 +51,7 @@
 #import "WKRetainPtr.h"
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
+#import "WKViewInternal.h"
 #import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
 #import "WebPageProxy.h"
@@ -79,8 +80,6 @@ NSString * const WKActionCanShowMIMETypeKey = @"WKActionCanShowMIMETypeKey";
 
     WeakObjCPtr<id <WKBrowsingContextLoadDelegate>> _loadDelegate;
     WeakObjCPtr<id <WKBrowsingContextPolicyDelegate>> _policyDelegate;
-    
-    RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 }
 
 static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextControllerMap()
@@ -95,11 +94,6 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
     browsingContextControllerMap().remove(_page.get());
 
     _page->pageLoadState().removeObserver(*_pageLoadStateObserver);
-
-    if (_remoteObjectRegistry) {
-        _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
-        [_remoteObjectRegistry _invalidate];
-    }
 
     [super dealloc];
 }
@@ -757,12 +751,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
-    if (!_remoteObjectRegistry) {
-        _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]);
-        _page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
-    }
-
-    return _remoteObjectRegistry.get();
+    return _page->wkView()._remoteObjectRegistry;
 }
 
 - (pid_t)processIdentifier
