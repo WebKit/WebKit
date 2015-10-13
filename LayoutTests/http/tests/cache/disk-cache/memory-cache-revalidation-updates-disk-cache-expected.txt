@@ -1,0 +1,18 @@
+Tests that revalidations from the memory cache update the disk cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+running 1 tests
+
+Warming up cache...
+Load trough the Memory Cache...
+Clear the memory cache and load again, it should load from the disk cache *without* revalidation.
+response headers: {"Expires":"now(0)","ETag":"match"}
+response's 'Expires' header is overriden by future date in 304 response
+response source: Disk cache
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

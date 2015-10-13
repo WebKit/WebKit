@@ -1,3 +1,17 @@
+2015-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Memory cache revalidations should refresh the network disk cache
+        https://bugs.webkit.org/show_bug.cgi?id=149606
+
+        Reviewed by Darin Adler.
+
+        Add layout test to check that revalidations requested by the memory cache
+        update the corresponding disk cache entry when the server responds with a
+        304 status code.
+
+        * http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache-expected.txt: Added.
+        * http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html: Added.
+
 2015-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ASSERTION FAILED: !m_inUpdateBackingStoreState in DrawingAreaImpl::display() after DrawingAreaImpl::forceRepaint()

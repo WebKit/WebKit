@@ -258,9 +258,13 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
 
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
-        if (validationSucceeded)
+        if (validationSucceeded) {
             NetworkCache::singleton().update(originalRequest(), m_parameters.webPageID, *m_cacheEntryForValidation, m_response);
-        else
+            // If the request was conditional then this revalidation was not triggered by the network cache and we pass the
+            // 304 response to WebCore.
+            if (originalRequest().isConditional())
+                m_cacheEntryForValidation = nullptr;
+        } else
             m_cacheEntryForValidation = nullptr;
     }
     shouldSendDidReceiveResponse = !m_cacheEntryForValidation;
@@ -590,12 +594,16 @@ void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Ent
 {
     ASSERT(!m_handle);
 
-    String eTag = entry->response().httpHeaderField(WebCore::HTTPHeaderName::ETag);
-    String lastModified = entry->response().httpHeaderField(WebCore::HTTPHeaderName::LastModified);
-    if (!eTag.isEmpty())
-        m_currentRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfNoneMatch, eTag);
-    if (!lastModified.isEmpty())
-        m_currentRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfModifiedSince, lastModified);
+    // If the request is already conditional then the revalidation was not triggered by the disk cache
+    // and we should not overwrite the existing conditional headers.
+    if (!m_currentRequest.isConditional()) {
+        String eTag = entry->response().httpHeaderField(WebCore::HTTPHeaderName::ETag);
+        String lastModified = entry->response().httpHeaderField(WebCore::HTTPHeaderName::LastModified);
+        if (!eTag.isEmpty())
+            m_currentRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfNoneMatch, eTag);
+        if (!lastModified.isEmpty())
+            m_currentRequest.setHTTPHeaderField(WebCore::HTTPHeaderName::IfModifiedSince, lastModified);
+    }
 
     m_cacheEntryForValidation = WTF::move(entry);
 
