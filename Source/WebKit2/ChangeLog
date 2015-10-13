@@ -1,3 +1,16 @@
+2015-10-02  Antoine Quint  <graouts@apple.com>
+
+        popstate is fired at the wrong time on load
+        https://bugs.webkit.org/show_bug.cgi?id=94265
+
+        Reviewed by Darin Adler.
+
+        Ensure we have a valid page before trying to get to its drawingArea as this could lead
+        to a crash as observed with fast/loader/stateobjects/pushstate-object-types.html.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+
 2015-10-01  Antti Koivisto  <antti@apple.com>
 
         Network cache: Subresource referer header wrong after cached redirect

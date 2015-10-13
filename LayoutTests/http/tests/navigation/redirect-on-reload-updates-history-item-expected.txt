@@ -1,8 +1,6 @@
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 PASS
-popstate: null
-
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/redirect-on-reload-updates-history-item.html  **nav target**
