@@ -1,5 +1,24 @@
 // === PAINT OBJECTS ===
 
+function CanvasLineSegment(stage) {
+    var radius = stage.randomInt(10, 100);
+    var center = stage.randomPosition(stage.size);
+    var delta = Point.pointOnCircle(stage.randomAngle(), radius/2);
+
+    this._point1 = center.add(delta);
+    this._point2 = center.subtract(delta);
+    this._color = stage.randomColor();
+    this._lineWidth = stage.randomInt(1, 100);
+}
+CanvasLineSegment.prototype.draw = function(context) {
+    context.strokeStyle = this._color;
+    context.lineWidth = this._lineWidth;
+    context.beginPath();
+    context.moveTo(this._point1.x, this._point1.y);
+    context.lineTo(this._point2.x, this._point2.y);
+    context.stroke();
+};
+
 function CanvasLinePoint(stage, coordinateMaximum) {
     this._point = stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum)));
 }
@@ -165,6 +184,14 @@ SimpleCanvasPathFillStage.prototype.animate = function() {
     context.fill();
 }
 
+function CanvasLineSegmentStage(element, options)
+{
+    SimpleCanvasStage.call(this, element, options, CanvasLineSegment);
+    this.context.lineCap = options["lineCap"] || "butt";
+}
+CanvasLineSegmentStage.prototype = Object.create(SimpleCanvasStage.prototype);
+CanvasLineSegmentStage.prototype.constructor = CanvasLineSegmentStage;
+
 // === BENCHMARK ===
 
 function CanvasPathBenchmark(suite, test, options, recordTable, progressBar) {
@@ -175,6 +202,8 @@ CanvasPathBenchmark.prototype.constructor = CanvasPathBenchmark;
 CanvasPathBenchmark.prototype.createStage = function(element)
 {
     switch (this._options["pathType"]) {
+    case "line":
+        return new CanvasLineSegmentStage(element, this._options);
     case "quadratic":
         return new SimpleCanvasStage(element, this._options, CanvasQuadraticSegment);
     case "quadraticPath":

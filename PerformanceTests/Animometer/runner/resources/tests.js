@@ -139,6 +139,18 @@ Suites.push(new Suite("SVG suite",
 Suites.push(new Suite("Basic canvas path suite",
     [
         {
+            url: "simple/simple-canvas-paths.html?pathType=line&lineCap=butt",
+            name: "Canvas line segments, butt caps"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=line&lineCap=round",
+            name: "Canvas line segments, round caps"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=line&lineCap=square",
+            name: "Canvas line segments, square caps"
+        },
+        {
             url: "simple/simple-canvas-paths.html?pathType=quadratic",
             name: "Canvas quadratic segments"
         },

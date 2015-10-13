@@ -1,5 +1,19 @@
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
+        Add canvas line segment tests
+        https://bugs.webkit.org/show_bug.cgi?id=150073
+        <rdar://problem/23082138>
+
+        Reviewed by Dean Jackson.
+
+        * Animometer/runner/resources/tests.js: Add new line segment tests, with different
+        line caps.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        (CanvasLineSegment): Add new line segment paint object.
+        (CanvasLineSegmentStage): Create a new stage that sets the lineCap.
+
+2015-10-12  Jon Lee  <jonlee@apple.com>
+
         Add canvas path fill tests
         https://bugs.webkit.org/show_bug.cgi?id=150071
         <rdar://problem/23082001>
