@@ -900,7 +900,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     RenderView& v = view();
     if (repaintContainer->isRenderView()) {
         ASSERT(repaintContainer == &v);
-        bool viewHasCompositedLayer = v.hasLayer() && v.layer()->isComposited();
+        bool viewHasCompositedLayer = v.isComposited();
         if (!viewHasCompositedLayer || v.layer()->backing()->paintsIntoWindow()) {
             v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? LayoutRect(v.layer()->transform()->mapRect(snapRectToDevicePixels(r, document().deviceScaleFactor()))) : r);
             return;
@@ -908,7 +908,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     }
     
     if (v.usesCompositing()) {
-        ASSERT(repaintContainer->hasLayer() && repaintContainer->layer()->isComposited());
+        ASSERT(repaintContainer->isComposited());
         repaintContainer->layer()->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ClipToLayer : GraphicsLayer::DoNotClipToLayer);
     }
 }
