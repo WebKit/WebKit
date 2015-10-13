@@ -35,7 +35,6 @@
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
 #endif
-#include "TypesettingFeatures.h"
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringHash.h>
 
@@ -193,7 +192,7 @@ public:
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
 #if PLATFORM(COCOA)
-    CFDictionaryRef getCFStringAttributes(TypesettingFeatures, FontOrientation) const;
+    CFDictionaryRef getCFStringAttributes(bool enableKerning, bool enableLigatures, FontOrientation) const;
     bool hasCustomTracking() const { return isSystemFont(); }
 #endif
 
@@ -201,7 +200,7 @@ public:
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
 
-    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, TypesettingFeatures) const;
+    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool enableLigatures) const;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }

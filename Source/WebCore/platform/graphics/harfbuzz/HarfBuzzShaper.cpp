@@ -338,15 +338,15 @@ void HarfBuzzShaper::setFontFeatures()
 
     hb_feature_t kerning = { HarfBuzzFace::kernTag, 0, 0, static_cast<unsigned>(-1) };
     switch (description.kerning()) {
-    case FontCascadeDescription::NormalKerning:
+    case Kerning::Normal:
         kerning.value = 1;
         m_features.append(kerning);
         break;
-    case FontCascadeDescription::NoneKerning:
+    case Kerning::NoShift:
         kerning.value = 0;
         m_features.append(kerning);
         break;
-    case FontCascadeDescription::AutoKerning:
+    case Kerning::Auto:
         break;
     default:
         ASSERT_NOT_REACHED();

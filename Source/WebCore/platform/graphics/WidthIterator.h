@@ -84,16 +84,17 @@ private:
 
     enum class TransformsType { None, Forced, NotForced };
     TransformsType shouldApplyFontTransforms(const GlyphBuffer*, int lastGlyphCount, UChar32 previousCharacter) const;
-    float applyFontTransforms(GlyphBuffer*, bool ltr, int& lastGlyphCount, const Font*, TypesettingFeatures, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
+    float applyFontTransforms(GlyphBuffer*, bool ltr, int& lastGlyphCount, const Font*, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
 
-    TypesettingFeatures m_typesettingFeatures;
-    HashSet<const Font*>* m_fallbackFonts;
-    bool m_accountForGlyphBounds;
-    float m_maxGlyphBoundingBoxY;
-    float m_minGlyphBoundingBoxY;
-    float m_firstGlyphOverflow;
-    float m_lastGlyphOverflow;
-    bool m_forTextEmphasis;
+    HashSet<const Font*>* m_fallbackFonts { nullptr };
+    bool m_accountForGlyphBounds { false };
+    bool m_enableKerning { false };
+    bool m_enableLigatures { false };
+    bool m_forTextEmphasis { false };
+    float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::min() };
+    float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
+    float m_firstGlyphOverflow { 0 };
+    float m_lastGlyphOverflow { 0 };
 };
 
 }

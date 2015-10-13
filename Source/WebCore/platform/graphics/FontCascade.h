@@ -31,7 +31,6 @@
 #include "FontDescription.h"
 #include "Path.h"
 #include "TextFlags.h"
-#include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
@@ -158,7 +157,8 @@ public:
     
     FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
 
-    TypesettingFeatures typesettingFeatures() const { return static_cast<TypesettingFeatures>(m_typesettingFeatures); }
+    bool enableKerning() const { return m_enableKerning; }
+    bool enableLigatures() const { return m_enableLigatures; }
 
     const AtomicString& firstFamily() const { return m_fontDescription.firstFamily(); }
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
@@ -265,9 +265,8 @@ public:
     static CodePath codePath();
     static CodePath s_codePath;
 
-    WEBCORE_EXPORT static void setDefaultTypesettingFeatures(TypesettingFeatures);
-    static TypesettingFeatures defaultTypesettingFeatures();
-
+    WEBCORE_EXPORT static void setDefaultKerning(bool);
+    WEBCORE_EXPORT static void setDefaultLigatures(bool);
     static const uint8_t s_roundingHackCharacterTable[256];
     static bool isRoundingHackCharacter(UChar32 c)
     {
@@ -300,49 +299,38 @@ public:
 private:
     bool isLoadingCustomFonts() const;
 
-    TypesettingFeatures computeTypesettingFeatures() const
+    bool advancedTextRenderingMode() const
     {
-        TextRenderingMode textRenderingMode = m_fontDescription.textRenderingMode();
-        TypesettingFeatures features = s_defaultTypesettingFeatures;
-
-        switch (textRenderingMode) {
-        case AutoTextRendering:
-            break;
-        case OptimizeSpeed:
-            features &= ~(Kerning | Ligatures);
-            break;
-        case GeometricPrecision:
-        case OptimizeLegibility:
-            features |= Kerning | Ligatures;
-            break;
-        }
-
-        switch (m_fontDescription.kerning()) {
-        case FontCascadeDescription::NoneKerning:
-            features &= ~Kerning;
-            break;
-        case FontCascadeDescription::NormalKerning:
-            features |= Kerning;
-            break;
-        case FontCascadeDescription::AutoKerning:
-            break;
-        }
-
-        switch (m_fontDescription.variantCommonLigatures()) {
-        case FontVariantLigatures::No:
-            features &= ~Ligatures;
-            break;
-        case FontVariantLigatures::Yes:
-            features |= Ligatures;
-            break;
-        default:
-            break;
-        }
-
-        return features;
+        auto textRenderingMode = m_fontDescription.textRenderingMode();
+        if (textRenderingMode == GeometricPrecision || textRenderingMode == OptimizeLegibility)
+            return true;
+        if (textRenderingMode == OptimizeSpeed)
+            return false;
+        return s_defaultKerning;
     }
 
-    static TypesettingFeatures s_defaultTypesettingFeatures;
+    bool computeEnableKerning() const
+    {
+        auto kerning = m_fontDescription.kerning();
+        if (kerning == Kerning::Normal)
+            return true;
+        if (kerning == Kerning::NoShift)
+            return false;
+        return advancedTextRenderingMode();
+    }
+
+    bool computeEnableLigatures() const
+    {
+        auto ligatures = m_fontDescription.variantCommonLigatures();
+        if (ligatures == FontVariantLigatures::Yes)
+            return true;
+        if (ligatures == FontVariantLigatures::No)
+            return false;
+        return advancedTextRenderingMode();
+    }
+
+    static bool s_defaultKerning;
+    static bool s_defaultLigatures;
 
     FontCascadeDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;
@@ -350,7 +338,8 @@ private:
     float m_letterSpacing;
     float m_wordSpacing;
     mutable bool m_useBackslashAsYenSymbol;
-    mutable unsigned m_typesettingFeatures : 2; // (TypesettingFeatures) Caches values computed from m_fontDescription.
+    mutable unsigned m_enableKerning : 1; // Computed from m_fontDescription.
+    mutable unsigned m_enableLigatures : 1; // Computed from m_fontDescription.
 };
 
 void invalidateFontCascadeCache();

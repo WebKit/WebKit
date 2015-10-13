@@ -259,6 +259,12 @@ enum FontTraitsMask {
     FontWeightMask = FontWeight100Mask | FontWeight200Mask | FontWeight300Mask | FontWeight400Mask | FontWeight500Mask | FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask
 };
 
+enum class Kerning {
+    Auto,
+    Normal,
+    NoShift
+};
+
 }
 
 #endif

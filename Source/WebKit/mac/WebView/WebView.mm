@@ -4708,7 +4708,9 @@ static Vector<String> toStringVector(NSArray* patterns)
     grammarCheckingEnabled = [defaults boolForKey:WebGrammarCheckingEnabled];
 #endif
 
-    FontCascade::setDefaultTypesettingFeatures([defaults boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey] ? Kerning | Ligatures : 0);
+    bool defaultKerningAndLigatures = [defaults boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
+    FontCascade::setDefaultKerning(defaultKerningAndLigatures);
+    FontCascade::setDefaultLigatures(defaultKerningAndLigatures);
 
 #if !PLATFORM(IOS)
     automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];

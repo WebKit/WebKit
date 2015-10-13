@@ -192,8 +192,6 @@ inline bool FontDescription::operator==(const FontDescription& other) const
 // FIXME: Move to a file of its own.
 class FontCascadeDescription : public FontDescription {
 public:
-    enum Kerning { AutoKerning, NormalKerning, NoneKerning };
-
     FontCascadeDescription();
 
     bool operator==(const FontCascadeDescription&) const;
@@ -228,7 +226,7 @@ public:
     void setFamilies(const RefCountedArray<AtomicString>& families) { m_families = families; }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
-    void setKerning(Kerning kerning) { m_kerning = kerning; }
+    void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }
     void setKeywordSize(unsigned size)
     {
         ASSERT(size <= 8);
@@ -259,7 +257,7 @@ public:
     // Initial values for font properties.
     static FontItalic initialItalic() { return FontItalicOff; }
     static FontSmallCaps initialSmallCaps() { return FontSmallCapsOff; }
-    static Kerning initialKerning() { return AutoKerning; }
+    static Kerning initialKerning() { return Kerning::Auto; }
     static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
     static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
     static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle; }

@@ -78,7 +78,7 @@ struct WordTrailingSpace {
             return m_width;
 
         const FontCascade& font = m_style.fontCascade();
-        if ((font.typesettingFeatures() & Kerning) && !m_textLayout)
+        if (font.enableKerning() && !m_textLayout)
             m_width = font.width(RenderBlock::constructTextRun(&m_renderer, font, &space, 1, m_style), &fallbackFonts) + font.wordSpacing();
         m_state = WordTrailingSpaceState::Computed;
         return m_width;

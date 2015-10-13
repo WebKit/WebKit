@@ -83,7 +83,7 @@ FontTraitsMask FontDescription::traitsMask() const
 
 FontCascadeDescription::FontCascadeDescription()
     : m_isAbsoluteSize(false)
-    , m_kerning(AutoKerning)
+    , m_kerning(static_cast<unsigned>(Kerning::Auto))
     , m_keywordSize(0)
     , m_fontSmoothing(AutoSmoothing)
     , m_isSpecifiedFont(false)
