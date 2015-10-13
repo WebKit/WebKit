@@ -140,38 +140,60 @@ public:
     }
 
 private:
-    template<typename NameType>
-    void processAttribute(const NameType& attributeName, const String& attributeValue)
+    void processImageAndScriptAttribute(const AtomicString& attributeName, const String& attributeValue)
     {
-        if (match(attributeName, charsetAttr))
+        if (match(attributeName, srcAttr))
+            setUrlToLoad(attributeValue);
+        else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
+            m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+        else if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
+    }
 
-        if (m_tagId == TagId::Script || m_tagId == TagId::Img) {
-            if (match(attributeName, srcAttr))
-                setUrlToLoad(attributeValue);
-            else if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull())
+    void processAttribute(const AtomicString& attributeName, const String& attributeValue)
+    {
+        switch (m_tagId) {
+        case TagId::Img:
+            if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull()) {
                 m_srcSetAttribute = attributeValue;
-            else if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull())
+                break;
+            }
+            if (match(attributeName, sizesAttr) && m_sizesAttribute.isNull()) {
                 m_sizesAttribute = attributeValue;
-            else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
-                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
-        } else if (m_tagId == TagId::Link) {
+                break;
+            }
+            processImageAndScriptAttribute(attributeName, attributeValue);
+            break;
+        case TagId::Script:
+            processImageAndScriptAttribute(attributeName, attributeValue);
+            break;
+        case TagId::Link:
             if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
             else if (match(attributeName, mediaAttr))
                 m_mediaAttribute = attributeValue;
-        } else if (m_tagId == TagId::Input) {
+            else if (match(attributeName, charsetAttr))
+                m_charset = attributeValue;
+            break;
+        case TagId::Input:
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, typeAttr))
                 m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
-        } else if (m_tagId == TagId::Meta) {
+            break;
+        case TagId::Meta:
             if (match(attributeName, contentAttr))
                 m_metaContent = attributeValue;
             else if (match(attributeName, nameAttr))
                 m_metaIsViewport = equalIgnoringCase(attributeValue, "viewport");
+            break;
+        case TagId::Base:
+        case TagId::Style:
+        case TagId::Template:
+        case TagId::Unknown:
+            break;
         }
     }
 
@@ -195,9 +217,6 @@ private:
 
     const String& charset() const
     {
-        // FIXME: Its not clear that this if is needed, the loader probably ignores charset for image requests anyway.
-        if (m_tagId == TagId::Img)
-            return emptyString();
         return m_charset;
     }
 
