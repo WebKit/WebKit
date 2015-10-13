@@ -6422,6 +6422,8 @@
 		E44B4BB3141650D7002B1D8B /* SelectorChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */; };
 		E44B4BB4141650D7002B1D8B /* SelectorChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = E44B4BB2141650D7002B1D8B /* SelectorChecker.h */; };
 		E44EE3A817577EBD00EEE8CF /* FontGenericFamilies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44EE3A617576E5500EEE8CF /* FontGenericFamilies.cpp */; };
+		E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */; settings = {ASSET_TAGS = (); }; };
+		E44FA1871BCA91560091B6EF /* ComposedTreeIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E44FA1861BCA91560091B6EF /* ComposedTreeIterator.cpp */; settings = {ASSET_TAGS = (); }; };
 		E45322AB140CE267005A0F92 /* SelectorQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E45322A9140CE267005A0F92 /* SelectorQuery.cpp */; };
 		E45322AC140CE267005A0F92 /* SelectorQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E45322AA140CE267005A0F92 /* SelectorQuery.h */; };
 		E453901D0EAFCACA003695C8 /* MIMETypeRegistryIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E45390180EAFCACA003695C8 /* MIMETypeRegistryIOS.mm */; };
@@ -14240,6 +14242,8 @@
 		E44B4BB2141650D7002B1D8B /* SelectorChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorChecker.h; sourceTree = "<group>"; };
 		E44EE3A617576E5500EEE8CF /* FontGenericFamilies.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontGenericFamilies.cpp; sourceTree = "<group>"; };
 		E44EE3A717576E5500EEE8CF /* FontGenericFamilies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontGenericFamilies.h; sourceTree = "<group>"; };
+		E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposedTreeIterator.h; sourceTree = "<group>"; };
+		E44FA1861BCA91560091B6EF /* ComposedTreeIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComposedTreeIterator.cpp; sourceTree = "<group>"; };
 		E45322A9140CE267005A0F92 /* SelectorQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorQuery.cpp; sourceTree = "<group>"; };
 		E45322AA140CE267005A0F92 /* SelectorQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorQuery.h; sourceTree = "<group>"; };
 		E45390180EAFCACA003695C8 /* MIMETypeRegistryIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MIMETypeRegistryIOS.mm; sourceTree = "<group>"; };
@@ -23525,6 +23529,8 @@
 				6550B697099DF0270090D781 /* Comment.cpp */,
 				6550B698099DF0270090D781 /* Comment.h */,
 				85089CC70A98C22600A275AA /* Comment.idl */,
+				E44FA1861BCA91560091B6EF /* ComposedTreeIterator.cpp */,
+				E44FA1841BCA6B5A0091B6EF /* ComposedTreeIterator.h */,
 				79F2F59E1091939A000D87CB /* CompositionEvent.cpp */,
 				79F2F59F1091939A000D87CB /* CompositionEvent.h */,
 				79F2F5A01091939A000D87CB /* CompositionEvent.idl */,
@@ -26123,6 +26129,7 @@
 				B27B28260CEF0C0700D39D54 /* JSSVGFontElement.h in Headers */,
 				A83B79050CCAFF15000B0825 /* JSSVGFontFaceElement.h in Headers */,
 				A83B79000CCAFF15000B0825 /* JSSVGFontFaceFormatElement.h in Headers */,
+				E44FA1851BCA6B5A0091B6EF /* ComposedTreeIterator.h in Headers */,
 				A83B79020CCAFF15000B0825 /* JSSVGFontFaceNameElement.h in Headers */,
 				A83B78FE0CCAFF15000B0825 /* JSSVGFontFaceSrcElement.h in Headers */,
 				A83B78FC0CCAFF15000B0825 /* JSSVGFontFaceUriElement.h in Headers */,
@@ -29980,6 +29987,7 @@
 				517A63C41B74318B00E7DCDC /* KeyedEncoderCF.cpp in Sources */,
 				A513B3D8114B166A001C429B /* KeyEventCocoa.mm in Sources */,
 				2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */,
+				E44FA1871BCA91560091B6EF /* ComposedTreeIterator.cpp in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
 				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
 				BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */,

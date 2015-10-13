@@ -95,27 +95,6 @@ ContainerNode* parentSlow(const Node* node)
     return traverseParent(node, CrossShadowRoot);
 }
 
-Node* firstChildSlow(const Node* node)
-{
-    ASSERT(!node->isShadowRoot());
-
-    return traverseFirstChild(node, DontCrossShadowRoot);
-}
-
-Node* nextSiblingSlow(const Node* node)
-{
-    ASSERT(!node->isShadowRoot());
-
-    return traverseNextSibling(node);
-}
-
-Node* previousSiblingSlow(const Node* node)
-{
-    ASSERT(!node->isShadowRoot());
-
-    return traversePreviousSibling(node);
-}
-
 Node* nextInScope(const Node* node)
 {
     if (Node* next = traverseFirstChild(node, DontCrossShadowRoot))

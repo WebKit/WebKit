@@ -42,6 +42,7 @@
 #include "ClipboardEvent.cpp"
 #include "CollectionIndexCache.cpp"
 #include "Comment.cpp"
+#include "ComposedTreeIterator.cpp"
 #include "CompositionEvent.cpp"
 #include "ContainerNode.cpp"
 #include "ContainerNodeAlgorithms.cpp"

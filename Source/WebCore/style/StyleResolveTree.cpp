@@ -30,6 +30,7 @@
 #include "AnimationController.h"
 #include "AuthorStyleSheets.h"
 #include "CSSFontSelector.h"
+#include "ComposedTreeIterator.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "FlowThreadController.h"
@@ -262,7 +263,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
 
-    RenderObject* previousRenderer = RenderTreePosition::previousSiblingRenderer(textNode);
+    RenderObject* previousRenderer = renderTreePosition.previousSiblingRenderer(textNode);
     if (previousRenderer && previousRenderer->isBR()) // <span><br/> <br/></span>
         return false;
         
@@ -277,7 +278,7 @@ static bool textRendererIsNeeded(const Text& textNode, const RenderTreePosition&
         RenderObject* first = parentRenderer.firstChild();
         while (first && first->isFloatingOrOutOfFlowPositioned())
             first = first->nextSibling();
-        RenderObject* nextRenderer = RenderTreePosition::nextSiblingRenderer(textNode, parentRenderer);
+        RenderObject* nextRenderer = renderTreePosition.nextSiblingRenderer(textNode);
         if (!first || nextRenderer == first) {
             // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
             return false;

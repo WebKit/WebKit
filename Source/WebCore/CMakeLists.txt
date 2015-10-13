@@ -1412,6 +1412,7 @@ set(WebCore_SOURCES
     dom/ClipboardEvent.cpp
     dom/CollectionIndexCache.cpp
     dom/Comment.cpp
+    dom/ComposedTreeIterator.cpp
     dom/CompositionEvent.cpp
     dom/ContainerNode.cpp
     dom/ContainerNodeAlgorithms.cpp

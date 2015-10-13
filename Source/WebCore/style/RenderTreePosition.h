@@ -61,8 +61,8 @@ public:
     void computeNextSibling(const Node&);
     void invalidateNextSibling(const RenderObject&);
 
-    static RenderObject* previousSiblingRenderer(const Text&);
-    static RenderObject* nextSiblingRenderer(const Node&, const RenderElement& parentRenderer);
+    RenderObject* previousSiblingRenderer(const Text&) const;
+    RenderObject* nextSiblingRenderer(const Node&) const;
     static bool isRendererReparented(const RenderObject&);
 
 private:
