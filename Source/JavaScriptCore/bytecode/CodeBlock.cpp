@@ -1841,7 +1841,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     unsigned instructionCount = unlinkedCodeBlock->instructions().count();
     UnlinkedInstructionStream::Reader instructionReader(unlinkedCodeBlock->instructions());
 
-    Vector<Instruction, 0, UnsafeVectorOverflow> instructions(instructionCount);
+    RefCountedArray<Instruction> instructions(instructionCount);
 
     for (unsigned i = 0; !instructionReader.atEnd(); ) {
         const UnlinkedInstruction* pc = instructionReader.next();
@@ -2125,7 +2125,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     if (vm()->controlFlowProfiler())
         insertBasicBlockBoundariesForControlFlowProfiler(instructions);
 
-    m_instructions = WTF::RefCountedArray<Instruction>(instructions);
+    m_instructions = WTF::move(instructions);
 
     // Set optimization thresholds only after m_instructions is initialized, since these
     // rely on the instruction count (and are in theory permitted to also inspect the
@@ -3906,7 +3906,7 @@ DFG::CapabilityLevel CodeBlock::capabilityLevel()
 }
 #endif
 
-void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruction, 0, UnsafeVectorOverflow>& instructions)
+void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray<Instruction>& instructions)
 {
     const Vector<size_t>& bytecodeOffsets = unlinkedCodeBlock()->opProfileControlFlowBytecodeOffsets();
     for (size_t i = 0, offsetsLength = bytecodeOffsets.size(); i < offsetsLength; i++) {
