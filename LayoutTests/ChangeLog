@@ -1,5 +1,17 @@
 2015-10-08  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Gracefully handle XMLDocumentParser being detached by mutation events.
+        https://bugs.webkit.org/show_bug.cgi?id=149485
+        <rdar://problem/22811489>
+
+        Reviewed by Darin Adler.
+
+        * fast/parser/resources/xhtml-overwrite-frame.xhtml: Added.
+        * fast/parser/xhtml-dom-character-data-modified-crash-expected.txt: Added.
+        * fast/parser/xhtml-dom-character-data-modified-crash.html: Added.
+
+2015-10-08  Jiewen Tan  <jiewen_tan@apple.com>
+
         Add NULL check for renderBox::layer() on applying zoom level change
         https://bugs.webkit.org/show_bug.cgi?id=149302
         <rdar://problem/22747292>
