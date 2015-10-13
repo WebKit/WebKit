@@ -1,3 +1,13 @@
+2015-09-22  sangdeug.kim  <sangdeug.kim@samsung.com>
+
+        Add test for checking currentTime of mediacontroller when playback is completed.
+        https://bugs.webkit.org/show_bug.cgi?id=149154
+
+        Reviewed by Eric Carlson.
+
+        * media/media-controller-time-clamp-expected.txt:
+        * media/media-controller-time-clamp.html:
+
 2015-09-21  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] media controls does not show up when playing video finishes.

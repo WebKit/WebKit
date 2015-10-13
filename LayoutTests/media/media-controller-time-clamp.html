@@ -28,6 +28,7 @@
         
         function ended() { 
             consoleWrite("EVENT(ended)");
+            testExpected("controller.currentTime", 0, ">");
             testExpected("controller.currentTime <= controller.duration", true);
             endTest();
         }
