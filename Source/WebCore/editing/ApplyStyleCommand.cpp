@@ -339,11 +339,17 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         end = endPosition();
     }
 
+    if (start.isNull() || end.isNull())
+        return;
+
     if (isValidCaretPositionInTextNode(end)) {
         splitTextAtEnd(start, end);
         start = startPosition();
         end = endPosition();
     }
+
+    if (start.isNull() || end.isNull())
+        return;
 
     // Calculate loop end point.
     // If the end node is before the start node (can only happen if the end node is
@@ -586,6 +592,9 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
         startDummySpanAncestor = dummySpanAncestorForNode(start.deprecatedNode());
     }
 
+    if (start.isNull() || end.isNull())
+        return;
+
     // split the end node and containing element if the selection ends inside of it
     bool splitEnd = isValidCaretPositionInTextNode(end);
     if (splitEnd) {
@@ -597,6 +606,9 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
         end = endPosition();
         endDummySpanAncestor = dummySpanAncestorForNode(end.deprecatedNode());
     }
+
+    if (start.isNull() || end.isNull())
+        return;
 
     // Remove style from the selection.
     // Use the upstream position of the start for removing style.
@@ -649,6 +661,9 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
         start = startPosition();
         end = endPosition();
     }
+
+    if (start.isNull() || end.isNull())
+        return;
 
     // update document layout once before running the rest of the function
     // so that we avoid the expense of updating before each and every call
