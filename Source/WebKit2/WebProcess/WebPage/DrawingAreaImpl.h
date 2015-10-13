@@ -132,6 +132,8 @@ private:
     bool m_isPaintingSuspended;
     bool m_alwaysUseCompositing;
 
+    bool m_forceRepaintAfterBackingStoreStateUpdate { false };
+
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
     RunLoop::Timer<DrawingAreaImpl> m_exitCompositingTimer;
 

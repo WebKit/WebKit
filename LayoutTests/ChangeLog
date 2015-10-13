@@ -1,3 +1,14 @@
+2015-09-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ASSERTION FAILED: !m_inUpdateBackingStoreState in DrawingAreaImpl::display() after DrawingAreaImpl::forceRepaint()
+        https://bugs.webkit.org/show_bug.cgi?id=148956
+
+        Reviewed by Žan Doberšek.
+
+        Unskip tests that should pass now.
+
+        * platform/gtk/TestExpectations:
+
 2015-09-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] playbutton in media controls is not changed when it is clicked.
