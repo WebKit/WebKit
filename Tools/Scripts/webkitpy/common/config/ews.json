@@ -35,10 +35,15 @@
         ],
         "runTests": true
     },
-    "Mac Debug 32-bit WK2 EWS": {
+    "Mac Debug EWS": {
         "port": "mac",
-        "name": "mac-debug-32bit-ews",
+        "name": "mac-debug-ews",
         "style": "debug",
+        "runTests": true
+    },
+    "Mac 32-bit EWS": {
+        "port": "mac",
+        "name": "mac-32bit-ews",
         "architecture": "i386"
     }
 }

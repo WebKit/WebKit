@@ -63,14 +63,14 @@ class Queue(object):
     def active_work_items(self):
         return ActiveWorkItems.lookup_by_queue(self._name)
 
-    def _caplitalize_after_dash(self, string):
+    def _capitalize_after_dash(self, string):
         return "-".join([word[0].upper() + word[1:] for word in string.split("-")])
 
     # For use in status bubbles or table headers
     def short_name(self):
         short_name = self._name.replace("-ews", "")
         short_name = short_name.replace("-queue", "")
-        return self._caplitalize_after_dash(short_name.capitalize())
+        return self._capitalize_after_dash(short_name.capitalize())
 
     def display_name(self):
         display_name = self._name.replace("-", " ")
