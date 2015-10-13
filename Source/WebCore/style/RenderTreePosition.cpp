@@ -62,8 +62,10 @@ RenderObject* RenderTreePosition::previousSiblingRenderer(const Text& textNode)
         if (renderer && !RenderTreePosition::isRendererReparented(*renderer))
             return renderer;
     }
-    if (PseudoElement* before = textNode.parentElement()->beforePseudoElement())
-        return before->renderer();
+    if (auto* parent = textNode.parentElement()) {
+        if (auto* before = parent->beforePseudoElement())
+            return before->renderer();
+    }
     return nullptr;
 }
 
