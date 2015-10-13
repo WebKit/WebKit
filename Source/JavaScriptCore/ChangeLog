@@ -1,5 +1,22 @@
 2015-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, register symbol structure to fix Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=149622
+
+        Since InferredTypes for String or Symbol claim that they don't have any structure,
+        `registerInferredType` does not register the structure for Symbol.
+        We take the similar way to String to fix this issue; Registering Symbol structure
+        explicitly in DFGStructureRegisterationPhase. Because,
+
+        1. InferredType::structure is only allowed for ObjectWithStructure / ObjectWithStructureOrOther.
+           It looks clear to me that only ObjectWithStructure has structure.
+        2. Symbol is similar primitive value to String. So handling its structure in similar way to String is nice.
+
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+
+2015-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Iterator loops over key twice after delete
         https://bugs.webkit.org/show_bug.cgi?id=149811
 

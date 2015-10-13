@@ -61,6 +61,7 @@ public:
         // watchable and so we will assert if they aren't watched.
         registerStructure(m_graph.m_vm.structureStructure.get());
         registerStructure(m_graph.m_vm.stringStructure.get());
+        registerStructure(m_graph.m_vm.symbolStructure.get());
         registerStructure(m_graph.m_vm.getterSetterStructure.get());
         
         for (FrozenValue* value : m_graph.m_frozenValues)
