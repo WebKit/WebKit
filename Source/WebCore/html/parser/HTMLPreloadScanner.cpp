@@ -237,7 +237,7 @@ private:
         if (m_urlToLoad.isEmpty())
             return false;
 
-        if (m_urlToLoad.startsWith("data:", false))
+        if (protocolIs(m_urlToLoad, "data"))
             return false;
 
         if (m_tagId == TagId::Link && !m_linkIsStyleSheet)
