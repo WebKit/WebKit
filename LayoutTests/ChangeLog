@@ -1,3 +1,16 @@
+2015-10-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Fix crash in ApplyStyleCommand::applyRelativeFontStyleChange()
+        https://bugs.webkit.org/show_bug.cgi?id=149300
+        <rdar://problem/22747046>
+
+        Reviewed by Chris Dumez.
+
+        * editing/style/apply-style-crash2-expected.txt: Added.
+        * editing/style/apply-style-crash2.html: Added.
+        * editing/style/apply-style-crash3-expected.txt: Added.
+        * editing/style/apply-style-crash3.html: Added.
+
 2015-10-05  Chris Dumez  <cdumez@apple.com>
 
         data: URLs should not be preloaded
