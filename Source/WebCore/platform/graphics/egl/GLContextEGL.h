@@ -36,7 +36,7 @@ class GLContextEGL : public GLContext {
 public:
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface };
     static std::unique_ptr<GLContextEGL> createContext(EGLNativeWindowType, GLContext* sharingContext = 0);
-    static std::unique_ptr<GLContextEGL> createWindowContext(EGLNativeWindowType, GLContext* sharingContext);
+    static std::unique_ptr<GLContextEGL> createWindowContext(EGLNativeWindowType, GLContext* sharingContext, std::unique_ptr<GLContext::Data>&& = nullptr);
 
     GLContextEGL(EGLContext, EGLSurface, EGLSurfaceType);
 #if PLATFORM(X11)
