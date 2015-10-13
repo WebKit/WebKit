@@ -167,6 +167,18 @@ Suites.push(new Suite("Basic canvas path suite",
             name: "Canvas rects"
         },
         {
+            url: "simple/simple-canvas-paths.html?pathType=lineFill",
+            name: "Canvas line path, fill"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=quadraticFill",
+            name: "Canvas quadratic path, fill"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=bezierFill",
+            name: "Canvas bezier path, fill"
+        },
+        {
             url: "simple/simple-canvas-paths.html?&pathType=arcToFill",
             name: "Canvas arcTo segments, fill"
         },

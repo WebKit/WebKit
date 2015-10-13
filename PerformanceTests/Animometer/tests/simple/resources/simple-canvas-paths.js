@@ -1,5 +1,12 @@
 // === PAINT OBJECTS ===
 
+function CanvasLinePoint(stage, coordinateMaximum) {
+    this._point = stage.randomPosition(new Point(Math.min(stage.size.x, coordinateMaximum), Math.min(stage.size.y, coordinateMaximum)));
+}
+CanvasLinePoint.prototype.draw = function(context) {
+    context.lineTo(this._point.x, this._point.y);
+};
+
 function CanvasQuadraticSegment(stage) {
     var maxSize = stage.randomInt(20, 200);
     var toCenter = stage.randomPosition(stage.size).subtract(new Point(maxSize/2, maxSize/2));
@@ -142,6 +149,22 @@ SimpleCanvasPathStrokeStage.prototype.animate = function() {
     context.stroke();
 }
 
+function SimpleCanvasPathFillStage(element, options, canvasObject) {
+    SimpleCanvasStage.call(this, element, options, canvasObject);
+}
+SimpleCanvasPathFillStage.prototype = Object.create(SimpleCanvasStage.prototype);
+SimpleCanvasPathFillStage.prototype.constructor = SimpleCanvasPathFillStage;
+SimpleCanvasPathFillStage.prototype.animate = function() {
+    var context = this.context;
+    context.fillStyle = this.randomColor();
+    context.beginPath();
+    context.moveTo(0,0);
+    this._objects.forEach(function(object) {
+        object.draw(context);
+    });
+    context.fill();
+}
+
 // === BENCHMARK ===
 
 function CanvasPathBenchmark(suite, test, options, recordTable, progressBar) {
@@ -166,6 +189,12 @@ CanvasPathBenchmark.prototype.createStage = function(element)
         return new SimpleCanvasStage(element, this._options, CanvasArcSegment);
     case "rect":
         return new SimpleCanvasStage(element, this._options, CanvasRect);
+    case "lineFill":
+        return new SimpleCanvasPathFillStage(element, this._options, CanvasLinePoint);
+    case "quadraticFill":
+        return new SimpleCanvasPathFillStage(element, this._options, CanvasQuadraticPoint);
+    case "bezierFill":
+        return new SimpleCanvasPathFillStage(element, this._options, CanvasBezierPoint);
     case "arcToFill":
         return new SimpleCanvasStage(element, this._options, CanvasArcToSegmentFill);
     case "arcFill":
