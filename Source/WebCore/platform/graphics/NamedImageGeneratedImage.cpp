@@ -60,7 +60,7 @@ void NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& d
 #endif
 }
 
-void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
+void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
 #if USE(NEW_THEME)
     std::unique_ptr<ImageBuffer> imageBuffer = context.createCompatibleBuffer(size(), true);
@@ -71,7 +71,7 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
     platformTheme()->drawNamedImage(m_name, graphicsContext, FloatRect(0, 0, size().width(), size().height()));
 
     // Tile the image buffer into the context.
-    imageBuffer->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, compositeOp, dstRect, blendMode);
+    imageBuffer->drawPattern(context, srcRect, patternTransform, phase, spacing, styleColorSpace, compositeOp, dstRect, blendMode);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(srcRect);

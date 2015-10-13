@@ -93,7 +93,7 @@ private:
     SVGImage(ImageObserver&, const URL&);
     virtual void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     void drawForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
-    void drawPatternForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
+    void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float zoom, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ColorSpace,
         CompositeOperator, const FloatRect&, BlendMode);
 
     SVGSVGElement* rootElement() const;

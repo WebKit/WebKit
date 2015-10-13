@@ -94,7 +94,7 @@ void Image::draw(GraphicsContext& ctx, const FloatRect& dstRect, const FloatRect
     draw(ctx, dstRect, srcRect, styleColorSpace, op, blendMode, description);
 }
 
-void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
+void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
 {    
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, destRect, solidColor(), styleColorSpace, op);
@@ -117,7 +117,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
                     scaledTileSize.height() / intrinsicTileSize.height());
 
     FloatRect oneTileRect;
-    FloatSize actualTileSize(scaledTileSize.width() + spaceSize().width(), scaledTileSize.height() + spaceSize().height());
+    FloatSize actualTileSize(scaledTileSize.width() + spacing.width(), scaledTileSize.height() + spacing.height());
     oneTileRect.setX(destRect.x() + fmodf(fmodf(-srcPoint.x(), actualTileSize.width()) - actualTileSize.width(), actualTileSize.width()));
     oneTileRect.setY(destRect.y() + fmodf(fmodf(-srcPoint.y(), actualTileSize.height()) - actualTileSize.height(), actualTileSize.height()));
     oneTileRect.setSize(scaledTileSize);
@@ -195,7 +195,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
 
     AffineTransform patternTransform = AffineTransform().scaleNonUniform(scale.width(), scale.height());
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);
-    drawPattern(ctxt, tileRect, patternTransform, oneTileRect.location(), styleColorSpace, op, destRect, blendMode);
+    drawPattern(ctxt, tileRect, patternTransform, oneTileRect.location(), spacing, styleColorSpace, op, destRect, blendMode);
 
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);
@@ -233,7 +233,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const Flo
         vPhase -= (dstRect.height() - scaledTileHeight) / 2; 
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
     
-    drawPattern(ctxt, srcRect, patternTransform, patternPhase, styleColorSpace, op, dstRect);
+    drawPattern(ctxt, srcRect, patternTransform, patternPhase, FloatSize(), styleColorSpace, op, dstRect);
 
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);

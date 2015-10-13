@@ -143,7 +143,7 @@ public:
     virtual void resetAnimation() override;
 
     virtual void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) override;
+        const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal) override;
 
     // Accessors for native image formats.
 
@@ -207,7 +207,7 @@ protected:
 
 #if USE(WINGDI)
     virtual void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+        const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
 #endif
 
     size_t currentFrame() const { return m_currentFrame; }

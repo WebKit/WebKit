@@ -87,7 +87,7 @@ static void patternReleaseCallback(void* info)
 }
 
 void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
+    const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     if (!nativeImageForCurrentFrame())
         return;
@@ -131,11 +131,11 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const 
     // Adjust the color space.
     subImage = Image::imageWithColorSpace(subImage.get(), styleColorSpace);
 
-    // If we need to paint gaps between tiles because we have a partially loaded image or non-zero spaceSize(),
+    // If we need to paint gaps between tiles because we have a partially loaded image or non-zero spacing,
     // fall back to the less efficient CGPattern-based mechanism.
     float scaledTileWidth = tileRect.width() * narrowPrecisionToFloat(patternTransform.a());
     float w = CGImageGetWidth(tileImage);
-    if (w == size().width() && h == size().height() && !spaceSize().width() && !spaceSize().height())
+    if (w == size().width() && h == size().height() && !spacing.width() && !spacing.height())
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
     else {
         static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, patternReleaseCallback };
@@ -149,8 +149,8 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& tileRect, const 
 #endif
         CGImageRef platformImage = CGImageRetain(subImage.get());
         RetainPtr<CGPatternRef> pattern = adoptCF(CGPatternCreate(platformImage, CGRectMake(0, 0, tileRect.width(), tileRect.height()), matrix,
-            tileRect.width() + spaceSize().width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
-            tileRect.height() + spaceSize().height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
+            tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
+            tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
             kCGPatternTilingConstantSpacing, true, &patternCallbacks));
         
         if (!pattern)
