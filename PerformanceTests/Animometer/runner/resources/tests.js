@@ -151,6 +151,18 @@ Suites.push(new Suite("Basic canvas path suite",
             name: "Canvas line segments, square caps"
         },
         {
+            url: "simple/simple-canvas-paths.html?pathType=linePath&lineJoin=bevel",
+            name: "Canvas line path, bevel join"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=linePath&lineJoin=round",
+            name: "Canvas line path, round join"
+        },
+        {
+            url: "simple/simple-canvas-paths.html?pathType=linePath&lineJoin=miter",
+            name: "Canvas line path, miter join"
+        },
+        {
             url: "simple/simple-canvas-paths.html?pathType=quadratic",
             name: "Canvas quadratic segments"
         },

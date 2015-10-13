@@ -1,5 +1,20 @@
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
+        Add canvas line path tests
+        https://bugs.webkit.org/show_bug.cgi?id=150076
+        <rdar://problem/23082285>
+
+        Reviewed by Dean Jackson.
+
+        * Animometer/runner/resources/tests.js: Add new line path tests, with different
+        line joins.
+        * Animometer/tests/simple/resources/simple-canvas-paths.js:
+        (CanvasLinePathStage): The stage is the same as the SimpleCanvasPathStrokeStage
+        but sets the lineJoin on the context.
+        (CanvasPathBenchmark.prototype.createStage): Add the tests.
+
+2015-10-12  Jon Lee  <jonlee@apple.com>
+
         Add missing paint objects for arc and arcTo fills
         https://bugs.webkit.org/show_bug.cgi?id=150075
         <rdar://problem/23082233>

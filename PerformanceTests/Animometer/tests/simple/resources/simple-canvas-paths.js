@@ -213,6 +213,14 @@ function CanvasLineSegmentStage(element, options)
 CanvasLineSegmentStage.prototype = Object.create(SimpleCanvasStage.prototype);
 CanvasLineSegmentStage.prototype.constructor = CanvasLineSegmentStage;
 
+function CanvasLinePathStage(element, options)
+{
+    SimpleCanvasPathStrokeStage.call(this, element, options, CanvasLinePoint);
+    this.context.lineJoin = options["lineJoin"] || "bevel";
+}
+CanvasLinePathStage.prototype = Object.create(SimpleCanvasPathStrokeStage.prototype);
+CanvasLinePathStage.prototype.constructor = CanvasLinePathStage;
+
 // === BENCHMARK ===
 
 function CanvasPathBenchmark(suite, test, options, recordTable, progressBar) {
@@ -225,6 +233,11 @@ CanvasPathBenchmark.prototype.createStage = function(element)
     switch (this._options["pathType"]) {
     case "line":
         return new CanvasLineSegmentStage(element, this._options);
+    case "linePath": {
+        if ("lineJoin" in this._options)
+            return new CanvasLinePathStage(element, this._options);
+        break;
+    }
     case "quadratic":
         return new SimpleCanvasStage(element, this._options, CanvasQuadraticSegment);
     case "quadraticPath":
