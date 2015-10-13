@@ -540,6 +540,11 @@ void WebVideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, Web
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
+    if (std::isnan(bounds.x()) || std::isnan(bounds.y()) || std::isnan(bounds.width()) || std::isnan(bounds.height())) {
+        FloatRect clientRect = clientRectForElement(model->videoElement());
+        bounds = FloatRect(0, 0, clientRect.width(), clientRect.height());
+    }
+    
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
     if (interface->layerHostingContext())

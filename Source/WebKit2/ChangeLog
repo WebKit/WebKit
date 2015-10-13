@@ -1,3 +1,17 @@
+2015-10-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Avoid crash due to invalid screen bounds
+        https://bugs.webkit.org/show_bug.cgi?id=150048
+        <rdar://problem/22112664>
+
+        Reviewed by Jer Noble.
+
+        Check for an invalid bounds, and reset it to a known state before
+        attempting to use it.
+
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced):
+
 2015-10-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Fix build for ENABLE_TOUCH_EVENTS=OFF
