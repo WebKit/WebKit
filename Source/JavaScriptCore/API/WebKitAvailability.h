@@ -26,7 +26,7 @@
 #ifndef __WebKitAvailability__
 #define __WebKitAvailability__
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(BUILDING_GTK__)
 
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CoreFoundation.h>
