@@ -127,11 +127,10 @@ ApplicationStateTracker::ApplicationStateTracker(WKContentView *view, SEL didEnt
         m_isInBackground = isBackgroundState([m_applicationStateMonitor mostElevatedApplicationStateForPID:applicationPID]);
 
         NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-        m_didEnterBackgroundObserver = [notificationCenter addObserverForName:@"_UIViewServiceHostDidEnterBackgroundNotificationName" object:serviceViewController queue:nil usingBlock:[this](NSNotification *) {
+        m_didEnterBackgroundObserver = [notificationCenter addObserverForName:@"_UIViewServiceHostDidEnterBackgroundNotification" object:serviceViewController queue:nil usingBlock:[this](NSNotification *) {
             applicationDidEnterBackground();
         }];
-
-        m_willEnterForegroundObserver = [notificationCenter addObserverForName:@"_UIViewServiceHostWillEnterForegroundNotificationName" object:serviceViewController queue:nil usingBlock:[this](NSNotification *) {
+        m_willEnterForegroundObserver = [notificationCenter addObserverForName:@"_UIViewServiceHostWillEnterForegroundNotification" object:serviceViewController queue:nil usingBlock:[this](NSNotification *) {
             applicationWillEnterForeground();
         }];
 
