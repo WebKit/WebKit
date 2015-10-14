@@ -363,11 +363,11 @@ private:
 
     template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
     std::unique_ptr<ImageBuffer> createCompositingBuffer(const IntRect&);
-    void compositeBuffer(ImageBuffer*, const IntRect&, CompositeOperator);
+    void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
 
     void inflateStrokeRect(FloatRect&) const;
 
-    template<class T> void fullCanvasCompositedDrawImage(T*, ColorSpace, const FloatRect&, const FloatRect&, CompositeOperator);
+    template<class T> void fullCanvasCompositedDrawImage(T&, ColorSpace, const FloatRect&, const FloatRect&, CompositeOperator);
 
     void prepareGradientForDashboard(CanvasGradient& gradient) const;
 

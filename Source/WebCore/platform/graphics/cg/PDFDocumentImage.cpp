@@ -190,7 +190,7 @@ void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, 
         context.setCompositeOperation(op);
 
         if (m_cachedImageBuffer)
-            context.drawImageBuffer(m_cachedImageBuffer.get(), ColorSpaceDeviceRGB, dstRect);
+            context.drawImageBuffer(*m_cachedImageBuffer, ColorSpaceDeviceRGB, dstRect);
         else {
             transformContextForPainting(context, dstRect, srcRect);
             drawPDFPage(context);

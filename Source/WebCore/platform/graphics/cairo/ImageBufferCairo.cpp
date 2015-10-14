@@ -170,7 +170,7 @@ void ImageBuffer::draw(GraphicsContext& destinationContext, ColorSpace styleColo
 {
     BackingStoreCopy copyMode = &destinationContext == &context() ? CopyBackingStore : DontCopyBackingStore;
     RefPtr<Image> image = copyImage(copyMode);
-    destinationContext.drawImage(image.get(), styleColorSpace, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription(), useLowQualityScale));
+    destinationContext.drawImage(*image, styleColorSpace, destRect, srcRect, ImagePaintingOptions(op, blendMode, ImageOrientationDescription(), useLowQualityScale));
 }
 
 void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& srcRect, const AffineTransform& patternTransform,

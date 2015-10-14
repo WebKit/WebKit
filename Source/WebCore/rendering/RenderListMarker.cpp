@@ -1197,7 +1197,8 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     GraphicsContext& context = paintInfo.context();
 
     if (isImage()) {
-        context.drawImage(m_image->image(this, marker.size()).get(), style().colorSpace(), marker);
+        if (RefPtr<Image> markerImage = m_image->image(this, marker.size()))
+            context.drawImage(*markerImage, style().colorSpace(), marker);
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);

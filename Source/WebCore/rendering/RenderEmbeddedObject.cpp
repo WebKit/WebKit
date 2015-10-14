@@ -197,7 +197,7 @@ void RenderEmbeddedObject::setUnavailablePluginIndicatorIsPressed(bool pressed)
     repaint();
 }
 
-void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Image* image)
+void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Image& image)
 {
     LayoutUnit cWidth = contentWidth();
     LayoutUnit cHeight = contentHeight();
@@ -214,7 +214,7 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
     if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return;
 
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, &image, alignedRect.size());
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
@@ -239,7 +239,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
         return;
 
     if (Image* snapshot = downcast<HTMLPlugInImageElement>(plugInElement).snapshotImage())
-        paintSnapshotImage(paintInfo, paintOffset, snapshot);
+        paintSnapshotImage(paintInfo, paintOffset, *snapshot);
 }
 
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

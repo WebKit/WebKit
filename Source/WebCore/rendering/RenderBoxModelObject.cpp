@@ -161,7 +161,7 @@ void RenderBoxModelObject::suspendAnimations(double time)
     layer()->backing()->suspendAnimations(time);
 }
 
-bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext& context, Image* image, const void* layer, const LayoutSize& size)
+bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size)
 {
     return view().imageQualityController().shouldPaintAtLowQuality(context, this, image, layer, size);
 }
@@ -830,18 +830,17 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (!baseBgColorOnly && shouldPaintBackgroundImage) {
         BackgroundImageGeometry geometry = calculateBackgroundImageGeometry(paintInfo.paintContainer, *bgLayer, rect.location(), scrolledPaintRect, backgroundObject);
         geometry.clip(LayoutRect(pixelSnappedRect));
-        if (!geometry.destRect().isEmpty()) {
+        RefPtr<Image> image;
+        if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : this, geometry.tileSize()))) {
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
-            auto clientForBackgroundImage = backgroundObject ? backgroundObject : this;
-            RefPtr<Image> image = bgImage->image(clientForBackgroundImage, geometry.tileSize());
             context.setDrawLuminanceMask(bgLayer->maskSourceType() == MaskLuminance);
-            bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
-            context.drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+            bool useLowQualityScaling = shouldPaintAtLowQuality(context, *image, bgLayer, geometry.tileSize());
+            context.drawTiledImage(*image, style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
         }
     }
 
-    if (bgLayer->clip() == TextFillBox) {
-        context.drawImageBuffer(maskImage.get(), ColorSpaceDeviceRGB, maskRect, CompositeDestinationIn);
+    if (maskImage && bgLayer->clip() == TextFillBox) {
+        context.drawImageBuffer(*maskImage, ColorSpaceDeviceRGB, maskRect, CompositeDestinationIn);
         context.endTransparencyLayer();
     }
 }

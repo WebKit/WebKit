@@ -525,8 +525,8 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
     if (!gstImage)
         return;
 
-    context.drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
-        rect, gstImage->rect(), CompositeCopy);
+    if (Image* image = reinterpret_cast<Image*>(gstImage->image().get()))
+        context.drawImage(*image, ColorSpaceSRGB, rect, gstImage->rect(), CompositeCopy);
 }
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)

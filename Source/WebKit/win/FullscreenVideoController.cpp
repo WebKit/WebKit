@@ -118,7 +118,7 @@ HUDButton::HUDButton(HUDButtonType type, const IntPoint& position)
 void HUDButton::draw(GraphicsContext& context)
 {
     Image* image = (m_showAltButton && m_buttonImageAlt) ? m_buttonImageAlt.get() : m_buttonImage.get();
-    context.drawImage(image, ColorSpaceDeviceRGB, m_rect.location());
+    context.drawImage(*image, ColorSpaceDeviceRGB, m_rect.location());
 }
 
 HUDSlider::HUDSlider(HUDSliderButtonShape shape, int buttonSize, const IntRect& rect)

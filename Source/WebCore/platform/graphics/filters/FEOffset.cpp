@@ -79,7 +79,8 @@ void FEOffset::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
 
     ImageBuffer* resultImage = createImageBufferResult();
-    if (!resultImage)
+    ImageBuffer* inBuffer = in->asImageBuffer();
+    if (!resultImage || !inBuffer)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
@@ -87,7 +88,7 @@ void FEOffset::platformApplySoftware()
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     Filter& filter = this->filter();
     drawingRegion.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
-    resultImage->context().drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegion);
+    resultImage->context().drawImageBuffer(*inBuffer, ColorSpaceDeviceRGB, drawingRegion);
 }
 
 void FEOffset::dump()

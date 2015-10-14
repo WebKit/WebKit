@@ -72,11 +72,11 @@ void FEBlend::platformApplySoftware()
 
     ImageBuffer* imageBuffer = in->asImageBuffer();
     ImageBuffer* imageBuffer2 = in2->asImageBuffer();
-    ASSERT(imageBuffer);
-    ASSERT(imageBuffer2);
+    if (!imageBuffer || !imageBuffer2)
+        return;
 
-    filterContext.drawImageBuffer(imageBuffer2, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
-    filterContext.drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), ImagePaintingOptions(CompositeSourceOver, m_mode));
+    filterContext.drawImageBuffer(*imageBuffer2, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in2->absolutePaintRect()));
+    filterContext.drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()), IntRect(IntPoint(), imageBuffer->logicalSize()), ImagePaintingOptions(CompositeSourceOver, m_mode));
 }
 #endif
 

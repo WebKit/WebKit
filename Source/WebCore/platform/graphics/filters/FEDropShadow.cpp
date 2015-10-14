@@ -88,10 +88,12 @@ void FEDropShadow::platformApplySoftware()
     drawingRegionWithOffset.move(offset);
 
     ImageBuffer* sourceImage = in->asImageBuffer();
-    ASSERT(sourceImage);
+    if (!sourceImage)
+        return;
+
     GraphicsContext& resultContext = resultImage->context();
     resultContext.setAlpha(m_shadowOpacity);
-    resultContext.drawImageBuffer(sourceImage, ColorSpaceDeviceRGB, drawingRegionWithOffset);
+    resultContext.drawImageBuffer(*sourceImage, ColorSpaceDeviceRGB, drawingRegionWithOffset);
     resultContext.setAlpha(1);
 
     ShadowBlur contextShadow(blurRadius, offset, m_shadowColor, ColorSpaceDeviceRGB);
@@ -108,7 +110,7 @@ void FEDropShadow::platformApplySoftware()
     resultContext.fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), m_shadowColor, ColorSpaceDeviceRGB);
     resultContext.setCompositeOperation(CompositeDestinationOver);
 
-    resultImage->context().drawImageBuffer(sourceImage, ColorSpaceDeviceRGB, drawingRegion);
+    resultImage->context().drawImageBuffer(*sourceImage, ColorSpaceDeviceRGB, drawingRegion);
 }
 
 void FEDropShadow::dump()

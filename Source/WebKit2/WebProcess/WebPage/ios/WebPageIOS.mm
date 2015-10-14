@@ -2218,7 +2218,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                                 FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
                                 if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), ShareableBitmap::SupportsAlpha)) {
                                     auto graphicsContext = sharedBitmap->createGraphicsContext();
-                                    graphicsContext->drawImage(image, ColorSpaceDeviceRGB, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
+                                    graphicsContext->drawImage(*image, ColorSpaceDeviceRGB, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
                                     info.image = sharedBitmap;
                                 }
                             }

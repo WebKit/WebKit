@@ -35,7 +35,7 @@ namespace WebCore {
 
 class ImageBackingSurfaceClient : public CoordinatedSurface::Client {
 public:
-    ImageBackingSurfaceClient(Image* image, const IntRect& rect)
+    ImageBackingSurfaceClient(Image& image, const IntRect& rect)
         : m_image(image)
         , m_rect(rect)
     {
@@ -47,7 +47,7 @@ public:
     }
 
 private:
-    Image* m_image;
+    Image& m_image;
     IntRect m_rect;
 };
 
@@ -128,7 +128,7 @@ void CoordinatedImageBacking::update()
 
     IntRect rect(IntPoint::zero(), IntSize(m_image->size()));
 
-    ImageBackingSurfaceClient surfaceClient(m_image.get(), rect);
+    ImageBackingSurfaceClient surfaceClient(*m_image, rect);
     m_surface->paintToSurface(rect, &surfaceClient);
 
     m_nativeImagePtr = m_image->nativeImageForCurrentFrame();

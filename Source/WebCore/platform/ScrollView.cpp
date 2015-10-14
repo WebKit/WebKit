@@ -1178,10 +1178,12 @@ void ScrollView::paintScrollbars(GraphicsContext& context, const IntRect& rect)
 void ScrollView::paintPanScrollIcon(GraphicsContext& context)
 {
     static Image* panScrollIcon = Image::loadPlatformResource("panIcon").leakRef();
+    if (!panScrollIcon)
+        return;
     IntPoint iconGCPoint = m_panScrollIconPoint;
     if (parent())
         iconGCPoint = parent()->windowToContents(iconGCPoint);
-    context.drawImage(panScrollIcon, ColorSpaceDeviceRGB, iconGCPoint);
+    context.drawImage(*panScrollIcon, ColorSpaceDeviceRGB, iconGCPoint);
 }
 
 void ScrollView::paint(GraphicsContext& context, const IntRect& rect)

@@ -3164,7 +3164,7 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-PassRefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image* image, int width, int height, int deviceScaleFactor)
+PassRefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int width, int height, int deviceScaleFactor)
 {
     IntSize size(width, height);
     size.scale(deviceScaleFactor);
@@ -3174,7 +3174,7 @@ PassRefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image* image, i
         return nullptr;
     }
 
-    FloatRect srcRect(FloatPoint(), image->size());
+    FloatRect srcRect(FloatPoint(), image.size());
     FloatRect destRect(FloatPoint(), size);
     buf->context().drawImage(image, ColorSpaceDeviceRGB, destRect, srcRect);
     return buf->copyImage(ImageBuffer::fastCopyImageMode());
@@ -3188,8 +3188,11 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
         return;
 
     RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (!imageForRender)
+        return;
+
     if (imageForRender->isSVGImage())
-        imageForRender = drawImageIntoBuffer(imageForRender.get(), image->width(), image->height(), 1);
+        imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
 
     if (!imageForRender || !validateTexFunc("texImage2D", TexImage, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
         return;

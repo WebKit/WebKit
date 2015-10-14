@@ -308,17 +308,17 @@ namespace WebCore {
 
         WEBCORE_EXPORT void strokeRect(const FloatRect&, float lineWidth);
 
-        WEBCORE_EXPORT void drawImage(Image*, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-        WEBCORE_EXPORT void drawImage(Image*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-        void drawImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
+        WEBCORE_EXPORT void drawImage(Image&, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        WEBCORE_EXPORT void drawImage(Image&, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImage(Image&, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
-        void drawTiledImage(Image*, ColorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = ImagePaintingOptions());
-        void drawTiledImage(Image*, ColorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
+        void drawTiledImage(Image&, ColorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawTiledImage(Image&, ColorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
             Image::TileRule, Image::TileRule, const ImagePaintingOptions& = ImagePaintingOptions());
 
-        WEBCORE_EXPORT void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
-        void drawImageBuffer(ImageBuffer*, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
+        WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, ColorSpace, const FloatPoint& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImageBuffer(ImageBuffer&, ColorSpace, const FloatRect& destination, const ImagePaintingOptions& = ImagePaintingOptions());
+        void drawImageBuffer(ImageBuffer&, ColorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = ImagePaintingOptions());
 
         void drawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
@@ -333,7 +333,7 @@ namespace WebCore {
         void clipOutRoundedRect(const FloatRoundedRect&);
         void clipPath(const Path&, WindRule);
         void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
-        void clipToImageBuffer(ImageBuffer*, const FloatRect&);
+        void clipToImageBuffer(ImageBuffer&, const FloatRect&);
         
         IntRect clipBounds() const;
 
@@ -443,7 +443,7 @@ namespace WebCore {
         // Create an image buffer compatible with this context, with suitable resolution
         // for drawing into the buffer and then into this context.
         std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, bool hasAlpha = true) const;
-        bool isCompatibleWithBuffer(ImageBuffer*) const;
+        bool isCompatibleWithBuffer(ImageBuffer&) const;
 
         // This function applies the device scale factor to the context, making the context capable of
         // acting as a base-level context for a HiDPI environment.

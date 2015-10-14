@@ -99,11 +99,11 @@ void ImageQualityController::restartTimer()
     m_timer.startOneShot(cLowQualityTimeThreshold);
 }
 
-bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, RenderBoxModelObject* object, Image* image, const void *layer, const LayoutSize& size)
+bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void *layer, const LayoutSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high
     // quality.
-    if (!image || !(image->isBitmapImage() || image->isPDFDocumentImage()) || context.paintingDisabled())
+    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
         return false;
 
     switch (object->style().imageRendering()) {
@@ -118,7 +118,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
 
     // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
     // is actually being scaled.
-    IntSize imageSize(image->width(), image->height());
+    IntSize imageSize(image.width(), image.height());
 
     // Look ourselves up in the hashtables.
     auto i = m_objectLayerSizeMap.find(object);
@@ -156,7 +156,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext& context, R
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
     if (m_renderView.frame().page()->inLowQualityImageInterpolationMode()) {
-        double totalPixels = static_cast<double>(image->width()) * static_cast<double>(image->height());
+        double totalPixels = static_cast<double>(image.width()) * static_cast<double>(image.height());
         if (totalPixels > cInterpolationCutoff)
             return true;
     }

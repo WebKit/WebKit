@@ -1158,7 +1158,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
         paintInfo.context().scale(FloatSize(-1, 1));
     }
 
-    paintInfo.context().drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location());
+    paintInfo.context().drawImageBuffer(*imageBuffer, ColorSpaceDeviceRGB, inflatedRect.location());
     return false;
 }
 
@@ -1912,7 +1912,7 @@ bool RenderThemeMac::paintSnapshottedPluginOverlay(const RenderObject& renderer,
     if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
         return true;
 
-    context.drawImage(snapshot, plugInRenderer.style().colorSpace(), alignedPluginRect, CompositeSourceOver);
+    context.drawImage(*snapshot, plugInRenderer.style().colorSpace(), alignedPluginRect, CompositeSourceOver);
     return false;
 }
 

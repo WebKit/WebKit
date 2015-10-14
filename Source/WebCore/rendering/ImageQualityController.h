@@ -43,7 +43,7 @@ class ImageQualityController {
 public:
     explicit ImageQualityController(const RenderView&);
 
-    bool shouldPaintAtLowQuality(GraphicsContext&, RenderBoxModelObject*, Image*, const void* layer, const LayoutSize&);
+    bool shouldPaintAtLowQuality(GraphicsContext&, RenderBoxModelObject*, Image&, const void* layer, const LayoutSize&);
     void rendererWillBeDestroyed(RenderBoxModelObject& renderer) { removeObject(&renderer); }
 
 private:

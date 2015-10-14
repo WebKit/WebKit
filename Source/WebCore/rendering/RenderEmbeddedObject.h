@@ -73,7 +73,7 @@ private:
     virtual const char* renderName() const override { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const override final { return true; }
 
-    void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image*);
+    void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image&);
     virtual void paintContents(PaintInfo&, const LayoutPoint&) override final;
 
     virtual bool requiresLayer() const override final;

@@ -426,7 +426,7 @@ protected:
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GC3Denum);
 
-    PassRefPtr<Image> drawImageIntoBuffer(Image*, int width, int height, int deviceScaleFactor);
+    PassRefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor);
 
 #if ENABLE(VIDEO)
     PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, ExceptionCode&);

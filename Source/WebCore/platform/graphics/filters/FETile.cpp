@@ -47,7 +47,8 @@ void FETile::platformApplySoftware()
     FilterEffect* in = inputEffect(0);
 
     ImageBuffer* resultImage = createImageBufferResult();
-    if (!resultImage)
+    ImageBuffer* inBuffer = in->asImageBuffer();
+    if (!resultImage || !inBuffer)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
@@ -69,7 +70,7 @@ void FETile::platformApplySoftware()
 
     GraphicsContext& tileImageContext = tileImage->context();
     tileImageContext.translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
-    tileImageContext.drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
+    tileImageContext.drawImageBuffer(*inBuffer, ColorSpaceDeviceRGB, in->absolutePaintRect().location());
 
     auto tileImageCopy = tileImage->copyImage(CopyBackingStore);
     if (!tileImageCopy)

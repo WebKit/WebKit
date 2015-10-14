@@ -368,50 +368,45 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
     bidiRuns.deleteRuns();
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawImage(Image& image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (!image)
-        return;
-    drawImage(image, colorSpace, FloatRect(destination, image->size()), FloatRect(FloatPoint(), image->size()), imagePaintingOptions);
+    drawImage(image, colorSpace, FloatRect(destination, image.size()), FloatRect(FloatPoint(), image.size()), imagePaintingOptions);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawImage(Image& image, ColorSpace colorSpace, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (!image)
-        return;
-    
 #if PLATFORM(IOS)
-    FloatRect srcRect(FloatPoint(), image->originalSize());
+    FloatRect srcRect(FloatPoint(), image.originalSize());
 #else
-    FloatRect srcRect(FloatPoint(), image->size());
+    FloatRect srcRect(FloatPoint(), image.size());
 #endif
         
     drawImage(image, colorSpace, destination, srcRect, imagePaintingOptions);
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawImage(Image& image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (paintingDisabled() || !image)
+    if (paintingDisabled())
         return;
 
     // FIXME (49002): Should be InterpolationLow
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
-    image->draw(*this, destination, source, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_orientationDescription);
+    image.draw(*this, destination, source, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_orientationDescription);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawTiledImage(Image& image, ColorSpace colorSpace, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (paintingDisabled() || !image)
+    if (paintingDisabled())
         return;
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image->drawTiled(*this, destination, source, tileSize, spacing, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
+    image.drawTiled(*this, destination, source, tileSize, spacing, colorSpace, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
+void GraphicsContext::drawTiledImage(Image& image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
     Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (paintingDisabled() || !image)
+    if (paintingDisabled())
         return;
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
@@ -421,31 +416,27 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace colorSpace, const 
     }
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationLow : imageInterpolationQuality());
-    image->drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, colorSpace, imagePaintingOptions.m_compositeOperator);
+    image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, colorSpace, imagePaintingOptions.m_compositeOperator);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawImageBuffer(ImageBuffer& image, ColorSpace colorSpace, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (!image)
-        return;
-    drawImageBuffer(image, colorSpace, FloatRect(destination, image->logicalSize()), FloatRect(FloatPoint(), image->logicalSize()), imagePaintingOptions);
+    drawImageBuffer(image, colorSpace, FloatRect(destination, image.logicalSize()), FloatRect(FloatPoint(), image.logicalSize()), imagePaintingOptions);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawImageBuffer(ImageBuffer& image, ColorSpace colorSpace, const FloatRect& destination, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (!image)
-        return;
-    drawImageBuffer(image, colorSpace, destination, FloatRect(FloatPoint(), FloatSize(image->logicalSize())), imagePaintingOptions);
+    drawImageBuffer(image, colorSpace, destination, FloatRect(FloatPoint(), FloatSize(image.logicalSize())), imagePaintingOptions);
 }
 
-void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
+void GraphicsContext::drawImageBuffer(ImageBuffer& image, ColorSpace colorSpace, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
 {
-    if (paintingDisabled() || !image)
+    if (paintingDisabled())
         return;
 
     // FIXME (49002): Should be InterpolationLow
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_useLowQualityScale ? InterpolationNone : imageInterpolationQuality());
-    image->draw(*this, colorSpace, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
+    image.draw(*this, colorSpace, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_useLowQualityScale);
 }
 
 void GraphicsContext::clip(const IntRect& rect)
@@ -478,11 +469,11 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
-void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& rect)
+void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& rect)
 {
     if (paintingDisabled())
         return;
-    buffer->clip(*this, rect);
+    buffer.clip(*this, rect);
 }
 
 #if !USE(CG) && !USE(CAIRO)
@@ -648,9 +639,9 @@ std::unique_ptr<ImageBuffer> GraphicsContext::createCompatibleBuffer(const Float
     return buffer;
 }
 
-bool GraphicsContext::isCompatibleWithBuffer(ImageBuffer* buffer) const
+bool GraphicsContext::isCompatibleWithBuffer(ImageBuffer& buffer) const
 {
-    GraphicsContext& bufferContext = buffer->context();
+    GraphicsContext& bufferContext = buffer.context();
 
     return scalesMatch(getCTM(), bufferContext.getCTM()) && isAcceleratedContext() == bufferContext.isAcceleratedContext();
 }

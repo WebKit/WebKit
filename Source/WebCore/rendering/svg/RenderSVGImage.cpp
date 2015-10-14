@@ -161,12 +161,15 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
     RefPtr<Image> image = imageResource().image();
+    if (!image)
+        return;
+
     FloatRect destRect = m_objectBoundingBox;
     FloatRect srcRect(0, 0, image->width(), image->height());
 
     imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
 
-    paintInfo.context().drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
+    paintInfo.context().drawImage(*image, ColorSpaceDeviceRGB, destRect, srcRect);
 }
 
 void RenderSVGImage::invalidateBufferedForeground()

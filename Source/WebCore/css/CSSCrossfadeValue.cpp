@@ -165,7 +165,7 @@ RefPtr<Image> CSSCrossfadeValue::image(RenderElement* renderer, const FloatSize&
     if (!fromImage || !toImage)
         return Image::nullImage();
 
-    m_generatedImage = CrossfadeGeneratedImage::create(fromImage, toImage, m_percentageValue->getFloatValue(), fixedSize(renderer), size);
+    m_generatedImage = CrossfadeGeneratedImage::create(*fromImage, *toImage, m_percentageValue->getFloatValue(), fixedSize(renderer), size);
 
     return m_generatedImage;
 }

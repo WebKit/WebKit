@@ -472,7 +472,7 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext& graphicsContext)
         // but we may not have cleared it all, so clip to the filled part first.
         graphicsContext.clip(FloatRect(m_layerOrigin, m_layerSize));
     }
-    graphicsContext.clipToImageBuffer(m_layerImage, FloatRect(m_layerOrigin, bufferSize));
+    graphicsContext.clipToImageBuffer(*m_layerImage, FloatRect(m_layerOrigin, bufferSize));
     graphicsContext.setFillColor(m_color, m_colorSpace);
 
     graphicsContext.clearShadow();
@@ -593,7 +593,7 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext& graphicsContext, c
     }
     
     drawShadowBuffer(graphicsContext);
-    m_layerImage = 0;
+    m_layerImage = nullptr;
     ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
@@ -634,7 +634,7 @@ void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext& graphicsContext, 
     }
     
     drawShadowBuffer(graphicsContext);
-    m_layerImage = 0;
+    m_layerImage = nullptr;
     ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
@@ -731,7 +731,7 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext& graphicsContext, con
     
     drawLayerPieces(graphicsContext, destHoleBounds, holeRect.radii(), edgeSize, templateSize, InnerShadow);
 
-    m_layerImage = 0;
+    m_layerImage = nullptr;
     ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
@@ -777,7 +777,7 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext& graphicsContext, cons
 
     drawLayerPieces(graphicsContext, shadowBounds, shadowedRect.radii(), edgeSize, templateSize, OuterShadow);
 
-    m_layerImage = 0;
+    m_layerImage = nullptr;
     ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
@@ -816,46 +816,46 @@ void ShadowBlur::drawLayerPieces(GraphicsContext& graphicsContext, const FloatRe
     // Top side.
     FloatRect tileRect = FloatRect(leftSlice, 0, templateSideLength, topSlice);
     FloatRect destRect = FloatRect(centerRect.x(), centerRect.y() - topSlice, centerRect.width(), topSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the bottom side.
     tileRect.setY(templateSize.height() - bottomSlice);
     tileRect.setHeight(bottomSlice);
     destRect.setY(centerRect.maxY());
     destRect.setHeight(bottomSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Left side.
     tileRect = FloatRect(0, topSlice, leftSlice, templateSideLength);
     destRect = FloatRect(centerRect.x() - leftSlice, centerRect.y(), leftSlice, centerRect.height());
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Right side.
     tileRect.setX(templateSize.width() - rightSlice);
     tileRect.setWidth(rightSlice);
     destRect.setX(centerRect.maxX());
     destRect.setWidth(rightSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Top left corner.
     tileRect = FloatRect(0, 0, leftSlice, topSlice);
     destRect = FloatRect(centerRect.x() - leftSlice, centerRect.y() - topSlice, leftSlice, topSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Top right corner.
     tileRect = FloatRect(templateSize.width() - rightSlice, 0, rightSlice, topSlice);
     destRect = FloatRect(centerRect.maxX(), centerRect.y() - topSlice, rightSlice, topSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Bottom right corner.
     tileRect = FloatRect(templateSize.width() - rightSlice, templateSize.height() - bottomSlice, rightSlice, bottomSlice);
     destRect = FloatRect(centerRect.maxX(), centerRect.maxY(), rightSlice, bottomSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Bottom left corner.
     tileRect = FloatRect(0, templateSize.height() - bottomSlice, leftSlice, bottomSlice);
     destRect = FloatRect(centerRect.x() - leftSlice, centerRect.maxY(), leftSlice, bottomSlice);
-    graphicsContext.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
+    graphicsContext.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 }
 
 
@@ -915,9 +915,9 @@ void ShadowBlur::endShadowLayer(GraphicsContext& context)
     GraphicsContextStateSaver stateSave(context);
 
     context.clearShadow();
-    context.drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, FloatRect(roundedIntPoint(m_layerOrigin), m_layerSize), FloatRect(FloatPoint(), m_layerSize), context.compositeOperation());
+    context.drawImageBuffer(*m_layerImage, ColorSpaceDeviceRGB, FloatRect(roundedIntPoint(m_layerOrigin), m_layerSize), FloatRect(FloatPoint(), m_layerSize), context.compositeOperation());
 
-    m_layerImage = 0;
+    m_layerImage = nullptr;
     ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 

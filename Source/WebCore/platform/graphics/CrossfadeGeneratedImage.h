@@ -36,7 +36,7 @@ namespace WebCore {
 
 class CrossfadeGeneratedImage final : public GeneratedImage {
 public:
-    static Ref<CrossfadeGeneratedImage> create(Image* fromImage, Image* toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
+    static Ref<CrossfadeGeneratedImage> create(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
     {
         return adoptRef(*new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
     }
@@ -52,13 +52,13 @@ protected:
     virtual void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     virtual void drawPattern(GraphicsContext&, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& dstRect, BlendMode) override;
 
-    CrossfadeGeneratedImage(Image* fromImage, Image* toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize&);
+    CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize&);
 
 private:
     void drawCrossfade(GraphicsContext&);
 
-    Image* m_fromImage;
-    Image* m_toImage;
+    Ref<Image> m_fromImage;
+    Ref<Image> m_toImage;
 
     float m_percentage;
     FloatSize m_crossfadeSize;

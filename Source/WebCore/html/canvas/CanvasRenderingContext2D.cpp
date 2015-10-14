@@ -1448,17 +1448,17 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* imageElement, const F
     }
 
     if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImage(image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(op)) {
-        fullCanvasCompositedDrawImage(image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
+        fullCanvasCompositedDrawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
         didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
         clearCanvas();
-        c->drawImage(image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDrawEntireCanvas();
     } else {
-        c->drawImage(image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
+        c->drawImage(*image, ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
         didDraw(normalizedDstRect);
     }
     
@@ -1536,17 +1536,17 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
 #endif
 
     if (rectContainsCanvas(dstRect)) {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().globalComposite)) {
-        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().globalComposite);
+        fullCanvasCompositedDrawImage(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().globalComposite);
         didDrawEntireCanvas();
     } else if (state().globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
+        c->drawImageBuffer(*buffer, ColorSpaceDeviceRGB, dstRect, srcRect, ImagePaintingOptions(state().globalComposite, state().globalBlend));
         didDraw(dstRect);
     }
 }
@@ -1709,7 +1709,7 @@ std::unique_ptr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(c
     return ImageBuffer::create(bufferRect.size(), isAccelerated() ? Accelerated : Unaccelerated);
 }
 
-void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRect& bufferRect, CompositeOperator op)
+void CanvasRenderingContext2D::compositeBuffer(ImageBuffer& buffer, const IntRect& bufferRect, CompositeOperator op)
 {
     IntRect canvasRect(0, 0, canvas()->width(), canvas()->height());
     canvasRect = canvas()->baseTransform().mapRect(canvasRect);
@@ -1730,17 +1730,17 @@ void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRec
     c->restore();
 }
 
-static void drawImageToContext(Image* image, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(Image& image, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
     context.drawImage(image, styleColorSpace, dest, src, op);
 }
 
-static void drawImageToContext(ImageBuffer* imageBuffer, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
     context.drawImageBuffer(imageBuffer, styleColorSpace, dest, src, op);
 }
 
-template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T& image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
     ASSERT(isFullCanvasCompositeMode(op));
 
@@ -1768,7 +1768,7 @@ template<class T> void  CanvasRenderingContext2D::fullCanvasCompositedDrawImage(
     buffer->context().concatCTM(effectiveTransform);
     drawImageToContext(image, buffer->context(), styleColorSpace, adjustedDest, src, CompositeSourceOver);
 
-    compositeBuffer(buffer.get(), bufferRect, op);
+    compositeBuffer(*buffer, bufferRect, op);
 }
 
 void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient& gradient) const
@@ -2419,7 +2419,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
     FloatRect textRect = FloatRect(location.x() - fontMetrics.height() / 2, location.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
-                                   width + fontMetrics.height(), fontMetrics.lineSpacing());
+        width + fontMetrics.height(), fontMetrics.lineSpacing());
     if (!fill)
         inflateStrokeRect(textRect);
 
@@ -2461,6 +2461,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         }
 
         std::unique_ptr<ImageBuffer> maskImage = c->createCompatibleBuffer(maskRect.size());
+        if (!maskImage)
+            return;
 
         GraphicsContext& maskImageContext = maskImage->context();
 
@@ -2484,7 +2486,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         }
 
         GraphicsContextStateSaver stateSaver(*c);
-        c->clipToImageBuffer(maskImage.get(), maskRect);
+        c->clipToImageBuffer(*maskImage, maskRect);
         drawStyle.applyFillColor(c);
         c->fillRect(maskRect);
         return;

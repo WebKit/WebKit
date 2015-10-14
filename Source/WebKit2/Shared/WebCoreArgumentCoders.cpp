@@ -721,9 +721,9 @@ bool ArgumentCoder<Credential>::decode(ArgumentDecoder& decoder, Credential& cre
     return true;
 }
 
-static void encodeImage(ArgumentEncoder& encoder, Image* image)
+static void encodeImage(ArgumentEncoder& encoder, Image& image)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image.size()), ShareableBitmap::SupportsAlpha);
     bitmap->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
 
     ShareableBitmap::Handle handle;
@@ -753,7 +753,7 @@ static void encodeOptionalImage(ArgumentEncoder& encoder, Image* image)
     encoder << hasImage;
 
     if (hasImage)
-        encodeImage(encoder, image);
+        encodeImage(encoder, *image);
 }
 
 static bool decodeOptionalImage(ArgumentDecoder& decoder, RefPtr<Image>& image)
@@ -784,7 +784,7 @@ void ArgumentCoder<Cursor>::encode(ArgumentEncoder& encoder, const Cursor& curso
     }
 
     encoder << true;
-    encodeImage(encoder, cursor.image());
+    encodeImage(encoder, *cursor.image());
     encoder << cursor.hotSpot();
 #if ENABLE(MOUSE_CURSOR_SCALE)
     encoder << cursor.imageScaleFactor();
@@ -1253,7 +1253,7 @@ bool ArgumentCoder<PasteboardWebContent>::decode(ArgumentDecoder& decoder, Paste
 
 void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const PasteboardImage& pasteboardImage)
 {
-    encodeImage(encoder, pasteboardImage.image.get());
+    encodeOptionalImage(encoder, pasteboardImage.image.get());
     encoder << pasteboardImage.url.url;
     encoder << pasteboardImage.url.title;
     encoder << pasteboardImage.resourceMIMEType;
@@ -1263,7 +1263,7 @@ void ArgumentCoder<PasteboardImage>::encode(ArgumentEncoder& encoder, const Past
 
 bool ArgumentCoder<PasteboardImage>::decode(ArgumentDecoder& decoder, PasteboardImage& pasteboardImage)
 {
-    if (!decodeImage(decoder, pasteboardImage.image))
+    if (!decodeOptionalImage(decoder, pasteboardImage.image))
         return false;
     if (!decoder.decode(pasteboardImage.url.url))
         return false;

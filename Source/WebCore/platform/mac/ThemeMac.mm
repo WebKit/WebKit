@@ -686,11 +686,13 @@ bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsCont
     if (useImageBuffer) {
         NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
         auto imageBuffer = ImageBuffer::createCompatibleBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor, ColorSpaceSRGB, context, false);
+        if (!imageBuffer)
+            return needsRepaint;
         {
             LocalCurrentGraphicsContext localContext(imageBuffer->context());
             needsRepaint = drawCellOrFocusRingIntoRectWithView(cell, imageBufferDrawRect, view, drawButtonCell, drawFocusRing);
         }
-        context.drawImageBuffer(imageBuffer.get(), ColorSpaceSRGB, rect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
+        context.drawImageBuffer(*imageBuffer, ColorSpaceSRGB, rect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
         return needsRepaint;
     }
     if (drawButtonCell)

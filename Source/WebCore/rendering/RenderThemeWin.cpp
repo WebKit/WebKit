@@ -892,7 +892,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(const RenderObject& o, const P
 
     static Image* cancelImage = Image::loadPlatformResource("searchCancel").leakRef();
     static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelPressed").leakRef();
-    paintInfo.context().drawImage(isPressed(o) ? cancelPressedImage : cancelImage, o.style().colorSpace(), bounds);
+    paintInfo.context().drawImage(isPressed(o) ? *cancelPressedImage : *cancelImage, o.style().colorSpace(), bounds);
     return false;
 }
 
@@ -940,7 +940,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderObject& o
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
     
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifier").leakRef();
-    paintInfo.context().drawImage(magnifierImage, o.style().colorSpace(), bounds);
+    paintInfo.context().drawImage(*magnifierImage, o.style().colorSpace(), bounds);
     return false;
 }
 
@@ -975,7 +975,7 @@ bool RenderThemeWin::paintSearchFieldResultsButton(const RenderObject& o, const 
     bounds.setY(parentBox.y() + (parentBox.height() - bounds.height() + 1) / 2);
 
     static Image* magnifierImage = Image::loadPlatformResource("searchMagnifierResults").leakRef();
-    paintInfo.context().drawImage(magnifierImage, o.style().colorSpace(), bounds);
+    paintInfo.context().drawImage(*magnifierImage, o.style().colorSpace(), bounds);
     return false;
 }
 

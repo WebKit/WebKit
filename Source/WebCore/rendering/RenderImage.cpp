@@ -424,7 +424,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 #if ENABLE(CSS_IMAGE_ORIENTATION)
                 orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-                context.drawImage(image.get(), style().colorSpace(), snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
+                context.drawImage(*image, style().colorSpace(), snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), orientationDescription);
                 errorPictureDrawn = true;
             }
 
@@ -548,12 +548,12 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
     HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
     CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
     Image* image = imageResource().image().get();
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, LayoutSize(rect.size()));
+    bool useLowQualityScaling = image && shouldPaintAtLowQuality(context, *image, image, LayoutSize(rect.size()));
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation());
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     orientationDescription.setImageOrientationEnum(style().imageOrientation());
 #endif
-    context.drawImage(imageResource().image(rect.width(), rect.height()).get(), style().colorSpace(), rect,
+    context.drawImage(*img, style().colorSpace(), rect,
         ImagePaintingOptions(compositeOperator, BlendModeNormal, orientationDescription, useLowQualityScaling));
 }
 

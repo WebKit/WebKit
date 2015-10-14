@@ -83,7 +83,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     for (const auto& path : paths)
         context.fillPath(path);
 
-    context.drawImage(indicatorImage, ColorSpaceDeviceRGB, overlay.bounds());
+    context.drawImage(*indicatorImage, ColorSpaceDeviceRGB, overlay.bounds());
 }
 
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)

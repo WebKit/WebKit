@@ -623,8 +623,11 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         return;
     
     RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (!imageForRender)
+        return;
+
     if (imageForRender->isSVGImage())
-        imageForRender = drawImageIntoBuffer(imageForRender.get(), image->width(), image->height(), 1);
+        imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
     
     if (!imageForRender || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLImageElement, target, level, format, imageForRender->width(), imageForRender->height(), 0, format, type, xoffset, yoffset))
         return;
