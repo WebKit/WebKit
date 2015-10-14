@@ -469,18 +469,23 @@ using namespace WebKit;
 
     [_wkView _prepareForDictionaryLookup];
 
+    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
+    if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
+        [_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) withLifetime:TextIndicatorLifetime::Permanent];
+        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
+
+        if ([getLULookupDefinitionModuleClass() respondsToSelector:@selector(lookupAnimationControllerForTerm:relativeToRect:ofView:options:)]) {
+            FloatRect firstTextRectInViewCoordinates = dictionaryPopupInfo.textIndicator.textRectsInBoundingRectCoordinates[0];
+            firstTextRectInViewCoordinates.moveBy(dictionaryPopupInfo.textIndicator.textBoundingRectInRootViewCoordinates.location());
+            return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() relativeToRect:firstTextRectInViewCoordinates ofView:_wkView options:mutableOptions.get()];
+        }
+    }
+
     // Convert baseline to screen coordinates.
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
     textBaselineOrigin = [_wkView convertPoint:textBaselineOrigin toView:nil];
     textBaselineOrigin = [_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
-    RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
-    if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
-        RefPtr<TextIndicator> indicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
-        [_wkView _setTextIndicator:*indicator withLifetime:TextIndicatorLifetime::Permanent];
-        [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
-        return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
-    }
     return [getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 }
 

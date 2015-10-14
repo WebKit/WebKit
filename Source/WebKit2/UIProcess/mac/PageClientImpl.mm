@@ -587,12 +587,6 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     if (!getLULookupDefinitionModuleClass())
         return;
 
-    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
-
-    // Convert to screen coordinates.
-    textBaselineOrigin = [m_wkView convertPoint:textBaselineOrigin toView:nil];
-    textBaselineOrigin = [m_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
-
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
 
     [m_wkView _prepareForDictionaryLookup];
@@ -600,9 +594,22 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
         [m_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) withLifetime:TextIndicatorLifetime::Permanent];
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
-        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
-    } else
-        [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+
+        if ([getLULookupDefinitionModuleClass() respondsToSelector:@selector(showDefinitionForTerm:relativeToRect:ofView:options:)]) {
+            FloatRect firstTextRectInViewCoordinates = dictionaryPopupInfo.textIndicator.textRectsInBoundingRectCoordinates[0];
+            firstTextRectInViewCoordinates.moveBy(dictionaryPopupInfo.textIndicator.textBoundingRectInRootViewCoordinates.location());
+            [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() relativeToRect:firstTextRectInViewCoordinates ofView:m_wkView options:mutableOptions.get()];
+            return;
+        }
+    }
+
+    NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
+
+    // Convert to screen coordinates.
+    textBaselineOrigin = [m_wkView convertPoint:textBaselineOrigin toView:nil];
+    textBaselineOrigin = [m_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 }
 
 void PageClientImpl::dismissContentRelativeChildWindows(bool withAnimation)
