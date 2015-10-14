@@ -105,6 +105,7 @@ GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHan
     , m_exceptionHandlerCallSiteIndex(exceptionHandlerCallSiteIndex)
 {
     RELEASE_ASSERT(m_codeBlockWithExceptionHandler);
+    ASSERT(!!m_codeBlockWithExceptionHandler->handlerForIndex(exceptionHandlerCallSiteIndex.bits()));
 }
 
 void GCAwareJITStubRoutineWithExceptionHandler::aboutToDie()

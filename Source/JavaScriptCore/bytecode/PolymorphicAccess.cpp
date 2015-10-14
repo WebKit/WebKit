@@ -1324,6 +1324,8 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
         failure = state.failAndRepatch;
     failure.append(jit.jump());
 
+    CodeBlock* codeBlockThatOwnsExceptionHandlers = nullptr;
+    CallSiteIndex callSiteIndexForExceptionHandling;
     if (state.needsToRestoreRegistersIfException() && hasJSGetterSetterCall) {
         // Emit the exception handler.
         // Note that this code is only reachable when doing genericUnwind from a pure JS getter/setter .
@@ -1354,6 +1356,12 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
                 handlerToRegister.end = newExceptionHandlingCallSite.bits() + 1;
                 codeBlock->appendExceptionHandler(handlerToRegister);
             });
+
+        // We set these to indicate to the stub to remove itself from the CodeBlock's
+        // exception handler table when it is deallocated.
+        codeBlockThatOwnsExceptionHandlers = codeBlock;
+        ASSERT(JITCode::isOptimizingJIT(codeBlockThatOwnsExceptionHandlers->jitType()));
+        callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
     }
 
     LinkBuffer linkBuffer(vm, jit, codeBlock, JITCompilationCanFail);
@@ -1386,14 +1394,6 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     for (auto& entry : cases)
         doesCalls |= entry->doesCalls();
     
-    CodeBlock* codeBlockThatOwnsExceptionHandlers = nullptr;
-    CallSiteIndex callSiteIndexForExceptionHandling = state.originalCallSiteIndex();
-    if (state.needsToRestoreRegistersIfException()) {
-        codeBlockThatOwnsExceptionHandlers = codeBlock;
-        ASSERT(JITCode::isOptimizingJIT(codeBlockThatOwnsExceptionHandlers->jitType()));
-        callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
-    }
-
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, nullptr, codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTF::move(state.watchpoints);
     if (!state.weakReferences.isEmpty())

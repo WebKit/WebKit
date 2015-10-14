@@ -1,3 +1,21 @@
+2015-10-13  Saam barati  <sbarati@apple.com>
+
+        We were creating a GCAwareJITStubRoutineWithExceptionHandler when we didn't actually have an exception handler in the CodeBlock's exception handler table
+        https://bugs.webkit.org/show_bug.cgi?id=150016
+
+        Reviewed by Geoffrey Garen.
+
+        There was a bug where we created a GCAwareJITStubRoutineWithExceptionHandler
+        for inline caches that were custom setters/getters (but not JS getters/setters).
+        This is wrong; we only create GCAwareJITStubRoutineWithExceptionHandler when we have
+        an inline cache with a JS getter/setter call which causes the inline cache to add itself
+        to the CodeBlock's exception handling table. The problem was that we created
+        a GCAwareJITStubRoutineWithExceptionHandler that tried to remove itself from
+        the exception handler table only to find out that it didn't have an entry in the table.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+
 2015-10-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Simplify WeakBlock visit and reap phases
