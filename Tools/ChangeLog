@@ -1,3 +1,19 @@
+2015-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        More debug queue build fixing.
+
+        Add build_style argument to derived classes as well.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (MacPort):
+        (MacPort.run_webkit_tests_command):
+        (WinPort.run_bindings_tests_command):
+        (WinPort):
+        (WinPort.run_webkit_tests_command):
+        (GtkWK2Port.build_webkit_command):
+        (GtkWK2Port):
+        (GtkWK2Port.run_webkit_tests_command):
+
 2015-10-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Build fix
