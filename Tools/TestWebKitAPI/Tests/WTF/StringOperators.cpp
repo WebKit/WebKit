@@ -29,9 +29,17 @@
 
 static int wtfStringCopyCount;
 
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
+
+static void build(StringBuilder& builder, std::vector<UChar> input)
+{
+    builder.clear();
+    for (auto codeUnit : input)
+        builder.append(codeUnit);
+}
 
 #define EXPECT_N_WTF_STRING_COPIES(count, expr) \
     do { \
@@ -182,6 +190,27 @@ TEST(WTF, StringOperators)
     EXPECT_N_WTF_STRING_COPIES(2, atomicString + (L"wide string" + string + L"wide string"));
     EXPECT_N_WTF_STRING_COPIES(2, (atomicString + L"wide string") + (string + L"wide string"));
 #endif
+}
+
+TEST(WTF, ConcatenateCharacterArrayAndEmptyString)
+{
+    StringBuilder b;
+
+    build(b, {0x9FF0, 0x868D, 'M', 'E'});
+    String sixteenBitString = b.toString();
+    EXPECT_FALSE(sixteenBitString.is8Bit());
+    String concatenation = sixteenBitString.characters16() + String();
+    ASSERT_EQ(sixteenBitString.length(), static_cast<unsigned>(4));
+    ASSERT_EQ(concatenation.length(), static_cast<unsigned>(4));
+    ASSERT_TRUE(concatenation == sixteenBitString);
+
+    build(b, {'P', 'L', 'S'});
+    String eightBitString = b.toString();
+    EXPECT_TRUE(eightBitString.is8Bit());
+    String concatenation8 = eightBitString.characters8() + String();
+    ASSERT_EQ(eightBitString.length(), static_cast<unsigned>(3));
+    ASSERT_EQ(concatenation8.length(), static_cast<unsigned>(3));
+    ASSERT_TRUE(concatenation8 == eightBitString);
 }
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,16 @@
+2015-10-14  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r190882): Concatenating a character array and an empty string is broken.
+        <https://webkit.org/b/150135>
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new WTF API test that covers this issue.
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        (TestWebKitAPI::build):
+        (TestWebKitAPI::TEST):
+
 2015-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for reloading without content blockers

@@ -124,7 +124,7 @@ public:
         StringView(m_characters, m_length).getCharactersWithUpconvert(destination);
     }
 
-    String toString() const { return String(m_characters, 1); }
+    String toString() const { return String(m_characters, m_length); }
 
 private:
     const LChar* m_characters;
@@ -160,7 +160,7 @@ public:
         memcpy(destination, m_characters, m_length * sizeof(UChar));
     }
 
-    String toString() const { return String(m_characters, 1); }
+    String toString() const { return String(m_characters, m_length); }
 
 private:
     const UChar* m_characters;

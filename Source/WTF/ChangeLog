@@ -1,3 +1,15 @@
+2015-10-14  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r190882): Concatenating a character array and an empty string is broken.
+        <https://webkit.org/b/150135>
+
+        Reviewed by Geoffrey Garen.
+
+        StringAdapter templates for raw character arrays were always using 1 as the array length
+        in toString().
+
+        * wtf/text/StringConcatenate.h:
+
 2015-10-14  Per Arne Vollan  <peavo@outlook.com>
 
         [Win64] Enable concurrent JIT.
