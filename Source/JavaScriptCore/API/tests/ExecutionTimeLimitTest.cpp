@@ -102,10 +102,10 @@ static void testResetAfterTimeout(bool& failed)
 int testExecutionTimeLimit()
 {
     static const TierOptions tierOptionsList[] = {
-        { "LLINT",    0,   "--enableConcurrentJIT=false --useLLInt=true --useJIT=false" },
-        { "Baseline", 0,   "--enableConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=false" },
-        { "DFG",      0,   "--enableConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=false" },
-        { "FTL",      200, "--enableConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=true" },
+        { "LLINT",    0,   "--useConcurrentJIT=false --useLLInt=true --useJIT=false" },
+        { "Baseline", 0,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=false" },
+        { "DFG",      0,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=false" },
+        { "FTL",      200, "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=true" },
     };
     
     bool failed = false;

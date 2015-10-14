@@ -61,7 +61,7 @@ public:
         if (level == FTL::CannotCompile)
             return false;
         
-        if (!Options::enableOSREntryToFTL())
+        if (!Options::useOSREntryToFTL())
             level = FTL::CanCompile;
 
         // First we find all the loops that contain a LoopHint for which we cannot OSR enter.

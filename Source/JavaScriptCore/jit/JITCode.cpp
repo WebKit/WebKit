@@ -118,7 +118,7 @@ JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef ref, JITType jitType)
 
 JITCodeWithCodeRef::~JITCodeWithCodeRef()
 {
-    if ((Options::showDisassembly() || (isOptimizingJIT(jitType()) && Options::showDFGDisassembly()))
+    if ((Options::dumpDisassembly() || (isOptimizingJIT(jitType()) && Options::dumpDFGDisassembly()))
         && m_ref.executableMemory())
         dataLog("Destroying JIT code at ", pointerDump(m_ref.executableMemory()), "\n");
 }

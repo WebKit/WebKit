@@ -15,7 +15,7 @@ for (var i = 0; i < 10000; ++i) {
   testCase(typeof af2, "function", "Error: Not correct type of the arrow function #2");
 
 //Fixme: Some bug in inlining typeof with following run parameters ftl-no-cjit-no-inline-validate
-// --useFTLJIT\=true --enableFunctionDotArguments\=true --enableConcurrentJIT=false --thresholdForJITAfterWarmUp=100  --validateGraph=true --maximumInliningDepth=1
+// --useFTLJIT\=true --useFunctionDotArguments\=true --useConcurrentJIT=false --thresholdForJITAfterWarmUp=100  --validateGraph=true --maximumInliningDepth=1
 //
 // for (var i = 0; i < 10000; ++i)  {
 //   if (typeof (function () {}) !== 'function')

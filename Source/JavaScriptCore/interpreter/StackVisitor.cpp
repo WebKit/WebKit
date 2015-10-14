@@ -283,7 +283,7 @@ ClonedArguments* StackVisitor::Frame::createArguments()
     CallFrame* physicalFrame = m_callFrame;
     ClonedArguments* arguments;
     ArgumentsMode mode;
-    if (Options::enableFunctionDotArguments())
+    if (Options::useFunctionDotArguments())
         mode = ArgumentsMode::Cloned;
     else
         mode = ArgumentsMode::FakeValues;

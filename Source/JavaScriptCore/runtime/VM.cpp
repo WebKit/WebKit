@@ -281,7 +281,7 @@ VM::VM(VMType vmType, HeapType heapType)
     
     LLInt::Data::performAssertions(*this);
     
-    if (Options::enableProfiler()) {
+    if (Options::useProfiler()) {
         m_perBytecodeProfiler = std::make_unique<Profiler::Database>(*this);
 
         StringPrintStream pathOut;
@@ -303,9 +303,9 @@ VM::VM(VMType vmType, HeapType heapType)
     // won't use this.
     m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 
-    if (Options::enableTypeProfiler())
+    if (Options::useTypeProfiler())
         enableTypeProfiler();
-    if (Options::enableControlFlowProfiler())
+    if (Options::useControlFlowProfiler())
         enableControlFlowProfiler();
 
     if (Options::watchdog()) {

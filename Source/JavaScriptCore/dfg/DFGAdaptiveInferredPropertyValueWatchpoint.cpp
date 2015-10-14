@@ -69,7 +69,7 @@ void AdaptiveInferredPropertyValueWatchpoint::fire(const FireDetail& detail)
         return;
     }
     
-    if (DFG::shouldShowDisassembly()) {
+    if (DFG::shouldDumpDisassembly()) {
         dataLog(
             "Firing watchpoint ", RawPointer(this), " (", m_key, ") on ", *m_codeBlock, "\n");
     }

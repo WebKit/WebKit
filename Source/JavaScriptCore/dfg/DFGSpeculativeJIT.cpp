@@ -3734,7 +3734,7 @@ void SpeculativeJIT::compileArithSqrt(Node* node)
     SpeculateDoubleOperand op1(this, node->child1());
     FPRReg op1FPR = op1.fpr();
 
-    if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::enableArchitectureSpecificOptimizations()) {
+    if (!MacroAssembler::supportsFloatingPointSqrt() || !Options::useArchitectureSpecificOptimizations()) {
         flushRegisters();
         FPRResult result(this);
         callOperation(sqrt, result.fpr(), op1FPR);

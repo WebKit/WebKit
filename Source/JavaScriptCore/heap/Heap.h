@@ -221,7 +221,7 @@ public:
     
     void addReference(JSCell*, ArrayBuffer*);
     
-    bool isDeferred() const { return !!m_deferralDepth || Options::disableGC(); }
+    bool isDeferred() const { return !!m_deferralDepth || !Options::useGC(); }
 
     StructureIDTable& structureIDTable() { return m_structureIDTable; }
 

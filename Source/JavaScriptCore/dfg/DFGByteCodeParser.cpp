@@ -1763,7 +1763,7 @@ bool ByteCodeParser::handleInlining(
     // the DFG. And by polyvariant profiling we mean polyvariant profiling of *this* call. Note that
     // we could improve that aspect of this by doing polymorphic inlining but having the profiling
     // also.
-    if (!isFTL(m_graph.m_plan.mode) || !Options::enablePolymorphicCallInlining()
+    if (!isFTL(m_graph.m_plan.mode) || !Options::usePolymorphicCallInlining()
         || InlineCallFrame::isVarargs(kind)) {
         if (verbose) {
             dataLog("Bailing inlining (hard).\n");
@@ -2743,7 +2743,7 @@ void ByteCodeParser::handleGetById(
 {
     NodeType getById = getByIdStatus.makesCalls() ? GetByIdFlush : GetById;
     
-    if (!getByIdStatus.isSimple() || !getByIdStatus.numVariants() || !Options::enableAccessInlining()) {
+    if (!getByIdStatus.isSimple() || !getByIdStatus.numVariants() || !Options::useAccessInlining()) {
         set(VirtualRegister(destinationOperand),
             addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
         return;
@@ -2751,7 +2751,7 @@ void ByteCodeParser::handleGetById(
     
     if (getByIdStatus.numVariants() > 1) {
         if (getByIdStatus.makesCalls() || !isFTL(m_graph.m_plan.mode)
-            || !Options::enablePolymorphicAccessInlining()) {
+            || !Options::usePolymorphicAccessInlining()) {
             set(VirtualRegister(destinationOperand),
                 addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
             return;
@@ -2866,7 +2866,7 @@ void ByteCodeParser::handlePutById(
     Node* base, unsigned identifierNumber, Node* value,
     const PutByIdStatus& putByIdStatus, bool isDirect)
 {
-    if (!putByIdStatus.isSimple() || !putByIdStatus.numVariants() || !Options::enableAccessInlining()) {
+    if (!putByIdStatus.isSimple() || !putByIdStatus.numVariants() || !Options::useAccessInlining()) {
         if (!putByIdStatus.isSet())
             addToGraph(ForceOSRExit);
         emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
@@ -2875,7 +2875,7 @@ void ByteCodeParser::handlePutById(
     
     if (putByIdStatus.numVariants() > 1) {
         if (!isFTL(m_graph.m_plan.mode) || putByIdStatus.makesCalls()
-            || !Options::enablePolymorphicAccessInlining()) {
+            || !Options::usePolymorphicAccessInlining()) {
             emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
             return;
         }
@@ -4830,10 +4830,10 @@ bool ByteCodeParser::parse()
     
     m_dfgCodeBlock = m_graph.m_plan.profiledDFGCodeBlock;
     if (isFTL(m_graph.m_plan.mode) && m_dfgCodeBlock
-        && Options::enablePolyvariantDevirtualization()) {
-        if (Options::enablePolyvariantCallInlining())
+        && Options::usePolyvariantDevirtualization()) {
+        if (Options::usePolyvariantCallInlining())
             CallLinkStatus::computeDFGStatuses(m_dfgCodeBlock, m_callContextMap);
-        if (Options::enablePolyvariantByIdInlining())
+        if (Options::usePolyvariantByIdInlining())
             m_dfgCodeBlock->getStubInfoMap(m_dfgStubInfos);
     }
     

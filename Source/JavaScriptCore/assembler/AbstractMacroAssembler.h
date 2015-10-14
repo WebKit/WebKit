@@ -69,17 +69,17 @@ inline bool isX86()
 
 inline bool optimizeForARMv7IDIVSupported()
 {
-    return isARMv7IDIVSupported() && Options::enableArchitectureSpecificOptimizations();
+    return isARMv7IDIVSupported() && Options::useArchitectureSpecificOptimizations();
 }
 
 inline bool optimizeForARM64()
 {
-    return isARM64() && Options::enableArchitectureSpecificOptimizations();
+    return isARM64() && Options::useArchitectureSpecificOptimizations();
 }
 
 inline bool optimizeForX86()
 {
-    return isX86() && Options::enableArchitectureSpecificOptimizations();
+    return isX86() && Options::useArchitectureSpecificOptimizations();
 }
 
 class LinkBuffer;

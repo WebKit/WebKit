@@ -40,7 +40,7 @@ unsigned numberOfExecutableAllocationFuzzChecks()
 
 ExecutableAllocationFuzzResult doExecutableAllocationFuzzing()
 {
-    ASSERT(Options::enableExecutableAllocationFuzz());
+    ASSERT(Options::useExecutableAllocationFuzz());
     
     unsigned oldValue;
     unsigned newValue;

@@ -38,7 +38,7 @@ unsigned numberOfExceptionFuzzChecks() { return s_numberOfExceptionFuzzChecks; }
 // Call this only if you know that exception fuzzing is enabled.
 void doExceptionFuzzing(ExecState* exec, const char* where, void* returnPC)
 {
-    ASSERT(Options::enableExceptionFuzz());
+    ASSERT(Options::useExceptionFuzz());
 
     DeferGCForAWhile deferGC(exec->vm().heap);
     

@@ -366,10 +366,10 @@ inline CapabilityLevel leastUpperBound(CapabilityLevel a, CapabilityLevel b)
 }
 
 // Unconditionally disable DFG disassembly support if the DFG is not compiled in.
-inline bool shouldShowDisassembly(CompilationMode mode = DFGMode)
+inline bool shouldDumpDisassembly(CompilationMode mode = DFGMode)
 {
 #if ENABLE(DFG_JIT)
-    return Options::showDisassembly() || Options::showDFGDisassembly() || (isFTL(mode) && Options::showFTLDisassembly());
+    return Options::dumpDisassembly() || Options::dumpDFGDisassembly() || (isFTL(mode) && Options::dumpFTLDisassembly());
 #else
     UNUSED_PARAM(mode);
     return false;

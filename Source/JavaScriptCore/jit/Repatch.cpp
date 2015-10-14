@@ -550,7 +550,7 @@ void linkFor(
     ASSERT(!callLinkInfo.isLinked());
     callLinkInfo.setCallee(exec->callerFrame()->vm(), callLinkInfo.hotPathBegin(), callerCodeBlock, callee);
     callLinkInfo.setLastSeenCallee(exec->callerFrame()->vm(), callerCodeBlock, callee);
-    if (shouldShowDisassemblyFor(callerCodeBlock))
+    if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking call in ", *callerCodeBlock, " at ", callLinkInfo.codeOrigin(), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
     MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), CodeLocationLabel(codePtr));
     
@@ -590,7 +590,7 @@ static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
 
 void unlinkFor(VM& vm, CallLinkInfo& callLinkInfo)
 {
-    if (Options::showDisassembly())
+    if (Options::dumpDisassembly())
         dataLog("Unlinking call from ", callLinkInfo.callReturnLocation(), "\n");
     
     revertCall(&vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator));
@@ -602,7 +602,7 @@ void linkVirtualFor(
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
 
-    if (shouldShowDisassemblyFor(callerCodeBlock))
+    if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking virtual call at ", *callerCodeBlock, " ", exec->callerFrame()->codeOrigin(), "\n");
     
     MacroAssemblerCodeRef virtualThunk = virtualThunkFor(vm, callLinkInfo);

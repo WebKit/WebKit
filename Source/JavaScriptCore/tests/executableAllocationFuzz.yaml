@@ -27,5 +27,5 @@
           skip
       else
           runExecutableAllocationFuzz("default")
-          runExecutableAllocationFuzz("no-cjit", "--enableConcurrentJIT=false")
+          runExecutableAllocationFuzz("no-cjit", "--useConcurrentJIT=false")
       end

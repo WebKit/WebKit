@@ -989,7 +989,7 @@ void Heap::deleteUnmarkedCompiledCode()
 void Heap::addToRememberedSet(const JSCell* cell)
 {
     ASSERT(cell);
-    ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
+    ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
     ASSERT(cell->cellState() == CellState::OldBlack);
     // Indicate that this object is grey and that it's one of the following:
     // - A re-greyed object during a concurrent collection.
@@ -1317,11 +1317,11 @@ void Heap::didFinishCollection(double gcStartTime)
     if (Options::useZombieMode())
         zombifyDeadObjects();
 
-    if (Options::objectsAreImmortal())
+    if (Options::useImmortalObjects())
         markDeadObjects();
 
-    if (Options::showObjectStatistics())
-        HeapStatistics::showObjectStatistics(this);
+    if (Options::dumpObjectStatistics())
+        HeapStatistics::dumpObjectStatistics(this);
 
     if (Options::logGC() == GCLogging::Verbose)
         GCLogging::dumpObjectGraph(this);
@@ -1479,7 +1479,7 @@ void Heap::flushWriteBarrierBuffer(JSCell* cell)
 
 bool Heap::shouldDoFullCollection(HeapOperation requestedCollectionType) const
 {
-    if (Options::alwaysDoFullCollection())
+    if (!Options::useGenerationalGC())
         return true;
 
     switch (requestedCollectionType) {

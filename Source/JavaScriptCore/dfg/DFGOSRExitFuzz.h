@@ -34,7 +34,7 @@ extern unsigned g_numberOfStaticOSRExitFuzzChecks;
 
 inline bool doOSRExitFuzzing()
 {
-    if (!Options::enableOSRExitFuzz())
+    if (!Options::useOSRExitFuzz())
         return false;
     
     g_numberOfStaticOSRExitFuzzChecks++;

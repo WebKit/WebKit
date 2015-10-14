@@ -44,7 +44,7 @@ PolymorphicCallNode::~PolymorphicCallNode()
 void PolymorphicCallNode::unlink(VM& vm)
 {
     if (m_callLinkInfo) {
-        if (Options::showDisassembly())
+        if (Options::dumpDisassembly())
             dataLog("Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin(), "\n");
 
         m_callLinkInfo->unlink(vm);
@@ -56,7 +56,7 @@ void PolymorphicCallNode::unlink(VM& vm)
 
 void PolymorphicCallNode::clearCallLinkInfo()
 {
-    if (Options::showDisassembly())
+    if (Options::dumpDisassembly())
         dataLog("Clearing call link info for polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin(), "\n");
 
     m_callLinkInfo = nullptr;
@@ -76,7 +76,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
 {
     for (PolymorphicCallCase callCase : cases) {
         m_variants.append(WriteBarrier<JSCell>(vm, owner, callCase.variant().rawCalleeCell()));
-        if (shouldShowDisassemblyFor(callerFrame->codeBlock()))
+        if (shouldDumpDisassemblyFor(callerFrame->codeBlock()))
             dataLog("Linking polymorphic call in ", *callerFrame->codeBlock(), " at ", callerFrame->codeOrigin(), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
         if (CodeBlock* codeBlock = callCase.codeBlock())
             codeBlock->linkIncomingPolymorphicCall(callerFrame, m_callNodes.add(&info));

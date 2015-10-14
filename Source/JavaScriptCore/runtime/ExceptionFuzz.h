@@ -38,7 +38,7 @@ void doExceptionFuzzing(ExecState* exec, const char* where, void* returnPC);
 // This is what you should call if you don't know if fuzzing is enabled.
 ALWAYS_INLINE void doExceptionFuzzingIfEnabled(ExecState* exec, const char* where, void* returnPC)
 {
-    if (LIKELY(!Options::enableExceptionFuzz()))
+    if (LIKELY(!Options::useExceptionFuzz()))
         return;
     doExceptionFuzzing(exec, where, returnPC);
 }

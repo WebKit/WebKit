@@ -216,7 +216,7 @@ inline size_t StorageStatistics::storageCapacity()
     return m_storageCapacity;
 }
 
-void HeapStatistics::showObjectStatistics(Heap* heap)
+void HeapStatistics::dumpObjectStatistics(Heap* heap)
 {
     dataLogF("\n=== Heap Statistics: ===\n");
     dataLogF("size: %ldkB\n", static_cast<long>(heap->m_sizeAfterLastCollect / KB));

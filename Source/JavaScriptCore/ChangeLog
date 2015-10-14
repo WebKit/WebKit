@@ -1,5 +1,145 @@
 2015-10-14  Mark Lam  <mark.lam@apple.com>
 
+        Rename some JSC option names to be more uniform.
+        https://bugs.webkit.org/show_bug.cgi?id=150127
+
+        Reviewed by Geoffrey Garen.
+
+        Renaming JSC_enableXXX options to JSC_useXXX, and JSC_showXXX options to JSC_dumpXXX.
+        Also will renaming a few other miscellaneous to options, to abide by this scheme.
+
+        Also renaming some functions to match the option names where relevant.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::optimizeForARMv7IDIVSupported):
+        (JSC::optimizeForARM64):
+        (JSC::optimizeForX86):
+        * assembler/LinkBuffer.cpp:
+        (JSC::shouldDumpDisassemblyFor):
+        (JSC::LinkBuffer::finalizeCodeWithoutDisassembly):
+        (JSC::shouldShowDisassemblyFor): Deleted.
+        * assembler/LinkBuffer.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * bytecode/CodeBlockJettisoningWatchpoint.cpp:
+        (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::fire):
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::fireInternal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::leastUpperBound):
+        (JSC::DFG::shouldDumpDisassembly):
+        (JSC::DFG::shouldShowDisassembly): Deleted.
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::disassemble):
+        * dfg/DFGJumpReplacement.cpp:
+        (JSC::DFG::JumpReplacement::fire):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitFuzz.h:
+        (JSC::DFG::doOSRExitFuzzing):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithSqrt):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::~JITCode):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLState.h:
+        (JSC::FTL::verboseCompilationEnabled):
+        (JSC::FTL::shouldDumpDisassembly):
+        (JSC::FTL::shouldShowDisassembly): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::shouldDoFullCollection):
+        * heap/Heap.h:
+        (JSC::Heap::isDeferred):
+        (JSC::Heap::structureIDTable):
+        * heap/HeapStatistics.cpp:
+        (JSC::StorageStatistics::storageCapacity):
+        (JSC::HeapStatistics::dumpObjectStatistics):
+        (JSC::HeapStatistics::showObjectStatistics): Deleted.
+        * heap/HeapStatistics.h:
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::callExceptionFuzz):
+        * jit/ExecutableAllocationFuzz.cpp:
+        (JSC::doExecutableAllocationFuzzing):
+        * jit/ExecutableAllocationFuzz.h:
+        (JSC::doExecutableAllocationFuzzingIfEnabled):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCode.cpp:
+        (JSC::JITCodeWithCodeRef::~JITCodeWithCodeRef):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::unlink):
+        (JSC::PolymorphicCallNode::clearCallLinkInfo):
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+        * jit/Repatch.cpp:
+        (JSC::linkFor):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        * jsc.cpp:
+        (functionEnableExceptionFuzz):
+        (jscmain):
+        * llvm/InitializeLLVM.cpp:
+        (JSC::initializeLLVMImpl):
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+        * runtime/ExceptionFuzz.h:
+        (JSC::doExceptionFuzzingIfEnabled):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        (JSC::Options::initialize):
+        (JSC::Options::dumpOptionsIfNeeded):
+        (JSC::Options::setOption):
+        (JSC::Options::dumpAllOptions):
+        (JSC::Options::dumpAllOptionsInALine):
+        (JSC::Options::dumpOption):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::exceptionFuzzingBuffer):
+        * runtime/WriteBarrierInlines.h:
+        (JSC::WriteBarrierBase<T>::set):
+        (JSC::WriteBarrierBase<Unknown>::set):
+        * tests/executableAllocationFuzz.yaml:
+        * tests/stress/arrowfunction-typeof.js:
+        * tests/stress/disable-function-dot-arguments.js:
+        (foo):
+        * tests/stress/math-sqrt-basics-disable-architecture-specific-optimizations.js:
+        (sqrtOnInteger):
+        * tests/stress/regress-148564.js:
+
+2015-10-14  Mark Lam  <mark.lam@apple.com>
+
         Speculative build fix: the CallSiteIndex constructor is explicit and requires an uint32_t.
 
         Not Reviewed.

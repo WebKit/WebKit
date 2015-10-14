@@ -98,7 +98,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     ASSERT(!codeBlock->jitCodeMap());
 
-    if (!Options::enableOSREntryToDFG())
+    if (!Options::useOSREntryToDFG())
         return 0;
 
     if (Options::verboseOSR()) {

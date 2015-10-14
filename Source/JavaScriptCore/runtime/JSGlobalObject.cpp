@@ -552,7 +552,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSConsole* consoleObject = JSConsole::create(vm, m_consoleStructure.get());
     putDirectWithoutTransition(vm, Identifier::fromString(exec, "console"), consoleObject, DontEnum);
 
-    if (UNLIKELY(Options::enableDollarVM())) {
+    if (UNLIKELY(Options::useDollarVM())) {
         JSDollarVMPrototype* dollarVMPrototype = JSDollarVMPrototype::create(vm, this, JSDollarVMPrototype::createStructure(vm, this, m_objectPrototype.get()));
         m_dollarVMStructure.set(vm, this, JSDollarVM::createStructure(vm, this, dollarVMPrototype));
         JSDollarVM* dollarVM = JSDollarVM::create(vm, m_dollarVMStructure.get());

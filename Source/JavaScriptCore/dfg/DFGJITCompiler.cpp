@@ -53,7 +53,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_jitCode(adoptRef(new JITCode()))
     , m_blockHeads(dfg.numBlocks())
 {
-    if (shouldShowDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
+    if (shouldDumpDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
         m_disassembler = std::make_unique<Disassembler>(dfg);
 }
 
@@ -473,7 +473,7 @@ void JITCompiler::compileFunction()
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)
 {
-    if (shouldShowDisassembly()) {
+    if (shouldDumpDisassembly()) {
         m_disassembler->dump(linkBuffer);
         linkBuffer.didAlreadyDisassemble();
     }

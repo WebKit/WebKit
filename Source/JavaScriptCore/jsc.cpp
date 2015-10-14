@@ -1489,7 +1489,7 @@ EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionEnableExceptionFuzz(ExecState*)
 {
-    Options::enableExceptionFuzz() = true;
+    Options::useExceptionFuzz() = true;
     return JSValue::encode(jsUndefined());
 }
 
@@ -1962,13 +1962,13 @@ int jscmain(int argc, char** argv)
         }
         
 #if ENABLE(JIT)
-        if (Options::enableExceptionFuzz())
+        if (Options::useExceptionFuzz())
             printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
         bool fireAtEnabled =
             Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
-        if (Options::enableExecutableAllocationFuzz() && (!fireAtEnabled || Options::verboseExecutableAllocationFuzz()))
+        if (Options::useExecutableAllocationFuzz() && (!fireAtEnabled || Options::verboseExecutableAllocationFuzz()))
             printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
-        if (Options::enableOSRExitFuzz()) {
+        if (Options::useOSRExitFuzz()) {
             printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
             printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
         }

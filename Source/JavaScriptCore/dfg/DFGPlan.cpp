@@ -263,7 +263,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
     performLiveCatchVariablePreservationPhase(dfg);
 
-    if (Options::enableMaximalFlushInsertionPhase())
+    if (Options::useMaximalFlushInsertionPhase())
         performMaximalFlushInsertion(dfg);
     
     performCPSRethreading(dfg);
@@ -359,7 +359,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCleanUp(dfg);
         performCPSRethreading(dfg);
         performDCE(dfg);
-        if (Options::enableCopyBarrierOptimization())
+        if (Options::useCopyBarrierOptimization())
             performCopyBarrierOptimization(dfg);
         performPhantomInsertion(dfg);
         performStackLayout(dfg);
@@ -406,7 +406,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performCleanUp(dfg); // Reduce the graph size a lot.
         changed = false;
         changed |= performStrengthReduction(dfg);
-        if (Options::enableObjectAllocationSinking()) {
+        if (Options::useObjectAllocationSinking()) {
             changed |= performCriticalEdgeBreaking(dfg);
             changed |= performObjectAllocationSinking(dfg);
         }
@@ -436,11 +436,11 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         performLivenessAnalysis(dfg);
         performCFA(dfg);
         performGlobalStoreBarrierInsertion(dfg);
-        if (Options::enableMovHintRemoval())
+        if (Options::useMovHintRemoval())
             performMovHintRemoval(dfg);
         performCleanUp(dfg);
         performDCE(dfg); // We rely on this to kill dead code that won't be recognized as dead by LLVM.
-        if (Options::enableCopyBarrierOptimization())
+        if (Options::useCopyBarrierOptimization())
             performCopyBarrierOptimization(dfg);
         performStackLayout(dfg);
         performLivenessAnalysis(dfg);
@@ -452,7 +452,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
             return FailPath;
         }
 
-        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:", shouldShowDisassembly(mode));
+        dumpAndVerifyGraph(dfg, "Graph just before FTL lowering:", shouldDumpDisassembly(mode));
         
         bool haveLLVM;
         Safepoint::Result safepointResult;

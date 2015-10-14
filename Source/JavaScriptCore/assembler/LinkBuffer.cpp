@@ -37,11 +37,11 @@
 
 namespace JSC {
 
-bool shouldShowDisassemblyFor(CodeBlock* codeBlock)
+bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
 {
-    if (JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::showDFGDisassembly())
+    if (JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
         return true;
-    return Options::showDisassembly();
+    return Options::dumpDisassembly();
 }
 
 LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithoutDisassembly()

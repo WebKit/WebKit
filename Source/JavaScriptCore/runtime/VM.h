@@ -493,7 +493,7 @@ public:
 
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {
-        ASSERT(Options::enableExceptionFuzz());
+        ASSERT(Options::useExceptionFuzz());
         if (!m_exceptionFuzzBuffer)
             m_exceptionFuzzBuffer = MallocPtr<EncodedJSValue>::malloc(size);
         return m_exceptionFuzzBuffer.get();

@@ -102,7 +102,7 @@ typedef OptionRange optionRange;
 typedef const char* optionString;
 
 #define JSC_OPTIONS(v) \
-    v(unsigned, showOptions, 0, "shows JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
+    v(unsigned, dumpOptions, 0, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
     \
     v(bool, useLLInt,  true, "allows the LLINT to be used if true") \
     v(bool, useJIT,    true, "allows the baseline JIT to be used if true") \
@@ -130,15 +130,15 @@ typedef const char* optionString;
     v(bool, forceDebuggerBytecodeGeneration, false, nullptr) \
     v(bool, forceProfilerBytecodeGeneration, false, nullptr) \
     \
-    v(bool, enableFunctionDotArguments, true, nullptr) \
-    v(bool, enableTailCalls, false, nullptr) \
+    v(bool, useFunctionDotArguments, true, nullptr) \
+    v(bool, useTailCalls, false, nullptr) \
     \
-    /* showDisassembly implies showDFGDisassembly. */ \
-    v(bool, showDisassembly, false, "dumps disassembly of all JIT compiled code upon compilation") \
+    /* dumpDisassembly implies dumpDFGDisassembly. */ \
+    v(bool, dumpDisassembly, false, "dumps disassembly of all JIT compiled code upon compilation") \
     v(bool, asyncDisassembly, false, nullptr) \
-    v(bool, showDFGDisassembly, false, "dumps disassembly of DFG function upon compilation") \
-    v(bool, showFTLDisassembly, false, "dumps disassembly of FTL function upon compilation") \
-    v(bool, showAllDFGNodes, false, nullptr) \
+    v(bool, dumpDFGDisassembly, false, "dumps disassembly of DFG function upon compilation") \
+    v(bool, dumpFTLDisassembly, false, "dumps disassembly of FTL function upon compilation") \
+    v(bool, dumpAllDFGNodes, false, nullptr) \
     v(optionRange, bytecodeRangeToDFGCompile, 0, "bytecode size range to allow DFG compilation on, e.g. 1:100") \
     v(optionString, dfgWhitelist, nullptr, "file with list of function signatures to allow DFG compilation on") \
     v(bool, dumpSourceAtDFGTime, false, "dumps source code of JS function being DFG compiled") \
@@ -166,15 +166,15 @@ typedef const char* optionString;
     v(bool, alwaysComputeHash, false, nullptr) \
     v(bool, testTheFTL, false, nullptr) \
     v(bool, verboseSanitizeStack, false, nullptr) \
-    v(bool, alwaysDoFullCollection, false, nullptr) \
+    v(bool, useGenerationalGC, true, nullptr) \
     v(bool, eagerlyUpdateTopCallFrame, false, nullptr) \
     \
-    v(bool, enableOSREntryToDFG, true, nullptr) \
-    v(bool, enableOSREntryToFTL, true, nullptr) \
+    v(bool, useOSREntryToDFG, true, nullptr) \
+    v(bool, useOSREntryToFTL, true, nullptr) \
     \
     v(bool, useFTLJIT, true, "allows the FTL JIT to be used if true") \
     v(bool, useFTLTBAA, true, nullptr) \
-    v(bool, enableLLVMFastISel, false, nullptr) \
+    v(bool, useLLVMFastISel, false, nullptr) \
     v(bool, useLLVMSmallCodeModel, false, nullptr) \
     v(bool, dumpLLVMIR, false, nullptr) \
     v(bool, validateFTLOSRExitLiveness, false, nullptr) \
@@ -190,33 +190,33 @@ typedef const char* optionString;
     v(bool, ftlCrashesIfCantInitializeLLVM, false, nullptr) \
     v(bool, clobberAllRegsInFTLICSlowPath, !ASSERT_DISABLED, nullptr) \
     v(bool, assumeAllRegsInFTLICAreLive, false, nullptr) \
-    v(bool, enableAccessInlining, true, nullptr) \
+    v(bool, useAccessInlining, true, nullptr) \
     v(unsigned, maxAccessVariantListSize, 8, nullptr) \
-    v(bool, enablePolyvariantDevirtualization, true, nullptr) \
-    v(bool, enablePolymorphicAccessInlining, true, nullptr) \
-    v(bool, enablePolymorphicCallInlining, true, nullptr) \
+    v(bool, usePolyvariantDevirtualization, true, nullptr) \
+    v(bool, usePolymorphicAccessInlining, true, nullptr) \
+    v(bool, usePolymorphicCallInlining, true, nullptr) \
     v(unsigned, maxPolymorphicCallVariantListSize, 15, nullptr) \
     v(unsigned, maxPolymorphicCallVariantListSizeForTopTier, 5, nullptr) \
     v(unsigned, maxPolymorphicCallVariantsForInlining, 5, nullptr) \
     v(unsigned, frequentCallThreshold, 2, nullptr) \
     v(double, minimumCallToKnownRate, 0.51, nullptr) \
     v(bool, createPreHeaders, true, nullptr) \
-    v(bool, enableMovHintRemoval, true, nullptr) \
-    v(bool, enableObjectAllocationSinking, true, nullptr) \
-    v(bool, enableCopyBarrierOptimization, true, nullptr) \
+    v(bool, useMovHintRemoval, true, nullptr) \
+    v(bool, useObjectAllocationSinking, true, nullptr) \
+    v(bool, useCopyBarrierOptimization, true, nullptr) \
     \
-    v(bool, enableConcurrentJIT, true, "allows the DFG / FTL compilation in threads other than the executing JS thread") \
+    v(bool, useConcurrentJIT, true, "allows the DFG / FTL compilation in threads other than the executing JS thread") \
     v(unsigned, numberOfDFGCompilerThreads, computeNumberOfWorkerThreads(2, 2) - 1, nullptr) \
     v(unsigned, numberOfFTLCompilerThreads, computeNumberOfWorkerThreads(8, 2) - 1, nullptr) \
     v(int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), nullptr) \
     v(int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), nullptr) \
     \
-    v(bool, enableProfiler, false, nullptr) \
+    v(bool, useProfiler, false, nullptr) \
     \
     v(bool, forceUDis86Disassembler, false, nullptr) \
     v(bool, forceLLVMDisassembler, false, nullptr) \
     \
-    v(bool, enableArchitectureSpecificOptimizations, true, nullptr) \
+    v(bool, useArchitectureSpecificOptimizations, true, nullptr) \
     \
     v(bool, breakOnThrow, false, nullptr) \
     \
@@ -240,10 +240,10 @@ typedef const char* optionString;
     \
     v(unsigned, maximumVarargsForInlining, 100, nullptr) \
     \
-    v(bool, enablePolyvariantCallInlining, true, nullptr) \
-    v(bool, enablePolyvariantByIdInlining, true, nullptr) \
+    v(bool, usePolyvariantCallInlining, true, nullptr) \
+    v(bool, usePolyvariantByIdInlining, true, nullptr) \
     \
-    v(bool, enableMaximalFlushInsertionPhase, false, "Setting to true enables the DFG's MaximalFlushInsertionPhase to run.") \
+    v(bool, useMaximalFlushInsertionPhase, false, "Setting to true allows the DFG's MaximalFlushInsertionPhase to run.") \
     \
     v(unsigned, maximumBinaryStringSwitchCaseLength, 50, nullptr) \
     v(unsigned, maximumBinaryStringSwitchTotalLength, 2000, nullptr) \
@@ -306,35 +306,35 @@ typedef const char* optionString;
     v(unsigned, forcedWeakRandomSeed, 0, nullptr) \
     \
     v(bool, useZombieMode, false, "debugging option to scribble over dead objects with 0xdeadbeef") \
-    v(bool, objectsAreImmortal, false, "debugging option to keep all objects alive forever") \
-    v(bool, showObjectStatistics, false, nullptr) \
+    v(bool, useImmortalObjects, false, "debugging option to keep all objects alive forever") \
+    v(bool, dumpObjectStatistics, false, nullptr) \
     \
     v(gcLogLevel, logGC, GCLogging::None, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)") \
-    v(bool, disableGC, false, nullptr) \
+    v(bool, useGC, true, nullptr) \
     v(unsigned, gcMaxHeapSize, 0, nullptr) \
     v(unsigned, forceRAMSize, 0, nullptr) \
     v(bool, recordGCPauseTimes, false, nullptr) \
     v(bool, logHeapStatisticsAtExit, false, nullptr) \
-    v(bool, enableTypeProfiler, false, nullptr) \
-    v(bool, enableControlFlowProfiler, false, nullptr) \
+    v(bool, useTypeProfiler, false, nullptr) \
+    v(bool, useControlFlowProfiler, false, nullptr) \
     \
     v(bool, verifyHeap, false, nullptr) \
     v(unsigned, numberOfGCCyclesToRecordForVerification, 3, nullptr) \
     \
-    v(bool, enableExceptionFuzz, false, nullptr) \
+    v(bool, useExceptionFuzz, false, nullptr) \
     v(unsigned, fireExceptionFuzzAt, 0, nullptr) \
     \
-    v(bool, enableExecutableAllocationFuzz, false, nullptr) \
+    v(bool, useExecutableAllocationFuzz, false, nullptr) \
     v(unsigned, fireExecutableAllocationFuzzAt, 0, nullptr) \
     v(unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, nullptr) \
     v(bool, verboseExecutableAllocationFuzz, false, nullptr) \
     \
-    v(bool, enableOSRExitFuzz, false, nullptr) \
+    v(bool, useOSRExitFuzz, false, nullptr) \
     v(unsigned, fireOSRExitFuzzAtStatic, 0, nullptr) \
     v(unsigned, fireOSRExitFuzzAt, 0, nullptr) \
     v(unsigned, fireOSRExitFuzzAtOrAfter, 0, nullptr) \
     \
-    v(bool, enableDollarVM, false, "installs the $vm debugging tool in global objects") \
+    v(bool, useDollarVM, false, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
     \
     v(unsigned, watchdog, 0, "watchdog timeout (0 = Disabled, N = a timeout period of N milliseconds)") \
@@ -419,15 +419,15 @@ private:
 
     Options();
 
-    enum ShowDefaultsOption {
-        DontShowDefaults,
-        ShowDefaults
+    enum DumpDefaultsOption {
+        DontDumpDefaults,
+        DumpDefaults
     };
     static void dumpOptionsIfNeeded();
     static void dumpAllOptions(StringBuilder&, DumpLevel, const char* title,
-        const char* separator, const char* optionHeader, const char* optionFooter, ShowDefaultsOption);
+        const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
     static void dumpOption(StringBuilder&, DumpLevel, OptionID,
-        const char* optionHeader, const char* optionFooter, ShowDefaultsOption);
+        const char* optionHeader, const char* optionFooter, DumpDefaultsOption);
 
     // Declare the singleton instance of the options store:
     JS_EXPORTDATA static Entry s_options[numberOfOptions];

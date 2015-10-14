@@ -163,7 +163,7 @@ void compileOSRExit(ExecState* exec)
         
         LinkBuffer patchBuffer(*vm, jit, codeBlock);
         exit.m_code = FINALIZE_CODE_IF(
-            shouldShowDisassembly() || Options::verboseOSR(),
+            shouldDumpDisassembly() || Options::verboseOSR(),
             patchBuffer,
             ("DFG OSR exit #%u (%s, %s) from %s, with operands = %s",
                 exitIndex, toCString(exit.m_codeOrigin).data(),

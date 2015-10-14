@@ -69,7 +69,7 @@ if (shift @ARGV) {
     die "Ignoring garbage arguments; only the first non-option argument is used as the command string.";
 }
 
-open (my $testInput, "$commandString --enableExecutableAllocationFuzz=true |") or fail("Cannot execute initial command when getting check count");
+open (my $testInput, "$commandString --useExecutableAllocationFuzz=true |") or fail("Cannot execute initial command when getting check count");
 while (my $inputLine = <$testInput>) {
     chomp($inputLine);
     my $handled = 0;
@@ -101,7 +101,7 @@ for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
     if ($verbose) {
         print "iteration($iteration) target($target) one-shot: Running.\n";
     }
-    my $result = system("$commandString --enableExecutableAllocationFuzz=true --fireExecutableAllocationFuzzAt=$target");
+    my $result = system("$commandString --useExecutableAllocationFuzz=true --fireExecutableAllocationFuzzAt=$target");
     if ($result != 0) {
         fail("Cannot execute command on iteration $iteration, status $? for target $target");
     }
@@ -115,7 +115,7 @@ for (my $iteration = 0; $iteration < $repeat; ++$iteration) {
     if ($verbose) {
         print "iteration($iteration) target($target) at-or-after: Running.\n";
     }
-    my $result = system("$commandString --enableExecutableAllocationFuzz=true --fireExecutableAllocationFuzzAtOrAfter=$target");
+    my $result = system("$commandString --useExecutableAllocationFuzz=true --fireExecutableAllocationFuzzAtOrAfter=$target");
     if ($result != 0) {
         fail("Cannot execute command on iteration $iteration, status $? for target $target");
     }

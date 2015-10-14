@@ -39,7 +39,7 @@ JITCode::JITCode()
 
 JITCode::~JITCode()
 {
-    if (FTL::shouldShowDisassembly()) {
+    if (FTL::shouldDumpDisassembly()) {
         dataLog("Destroying FTL JIT code at ");
         CommaPrinter comma;
         for (auto& handle : m_handles)

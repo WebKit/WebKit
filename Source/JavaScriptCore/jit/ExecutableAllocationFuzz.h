@@ -39,7 +39,7 @@ ExecutableAllocationFuzzResult doExecutableAllocationFuzzing();
 
 inline ExecutableAllocationFuzzResult doExecutableAllocationFuzzingIfEnabled()
 {
-    if (LIKELY(!Options::enableExecutableAllocationFuzz()))
+    if (LIKELY(!Options::useExecutableAllocationFuzz()))
         return AllowNormalExecutableAllocation;
     
     return doExecutableAllocationFuzzing();

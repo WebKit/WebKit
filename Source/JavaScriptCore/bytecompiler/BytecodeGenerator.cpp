@@ -198,7 +198,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // op_will_call / op_did_call pairs before and after a call, which are not
     // compatible with tail calls (we have no way of emitting op_did_call).
     // https://bugs.webkit.org/show_bug.cgi?id=148819
-    , m_inTailPosition(Options::enableTailCalls() && constructorKind() == ConstructorKind::None && isStrictMode() && !m_shouldEmitProfileHooks)
+    , m_inTailPosition(Options::useTailCalls() && constructorKind() == ConstructorKind::None && isStrictMode() && !m_shouldEmitProfileHooks)
 {
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;

@@ -288,7 +288,7 @@ void AssemblyHelpers::jitAssertNoException()
 
 void AssemblyHelpers::callExceptionFuzz()
 {
-    if (!Options::enableExceptionFuzz())
+    if (!Options::useExceptionFuzz())
         return;
 
     EncodedJSValue* buffer = vm()->exceptionFuzzingBuffer(sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters));

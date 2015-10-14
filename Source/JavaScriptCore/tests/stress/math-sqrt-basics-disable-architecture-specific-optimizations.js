@@ -1,5 +1,5 @@
-//@ run("no-architecture-specific-optimizations", "--enableArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
-//@ run("no-architecture-specific-optimizations-ftl", "--enableArchitectureSpecificOptimizations=false", *FTL_OPTIONS)
+//@ run("no-architecture-specific-optimizations", "--useArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
+//@ run("no-architecture-specific-optimizations-ftl", "--useArchitectureSpecificOptimizations=false", *FTL_OPTIONS)
 
 // Basic cases of Math.sqrt().
 function sqrtOnInteger(radicand) {

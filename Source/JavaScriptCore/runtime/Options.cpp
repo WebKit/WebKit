@@ -262,7 +262,7 @@ static void recomputeDependentOptions()
     Options::useRegExpJIT() = false;
 #endif
 #if !ENABLE(CONCURRENT_JIT)
-    Options::enableConcurrentJIT() = false;
+    Options::useConcurrentJIT() = false;
 #endif
 #if !ENABLE(DFG_JIT)
     Options::useDFGJIT() = false;
@@ -276,9 +276,9 @@ static void recomputeDependentOptions()
     if (!MacroAssemblerX86::supportsFloatingPoint())
         Options::useJIT() = false;
 #endif
-    if (Options::showDisassembly()
-        || Options::showDFGDisassembly()
-        || Options::showFTLDisassembly()
+    if (Options::dumpDisassembly()
+        || Options::dumpDFGDisassembly()
+        || Options::dumpFTLDisassembly()
         || Options::dumpBytecodeAtDFGTime()
         || Options::dumpGraphAtEachPhase()
         || Options::verboseCompilation()
@@ -306,11 +306,11 @@ static void recomputeDependentOptions()
         Options::thresholdForFTLOptimizeAfterWarmUp() = 20;
         Options::thresholdForFTLOptimizeSoon() = 20;
         Options::maximumEvalCacheableSourceLength() = 150000;
-        Options::enableConcurrentJIT() = false;
+        Options::useConcurrentJIT() = false;
     }
-    if (Options::enableMaximalFlushInsertionPhase()) {
-        Options::enableOSREntryToDFG() = false;
-        Options::enableOSREntryToFTL() = false;
+    if (Options::useMaximalFlushInsertionPhase()) {
+        Options::useOSREntryToDFG() = false;
+        Options::useOSREntryToFTL() = false;
     }
 
     // Compute the maximum value of the reoptimization retry counter. This is simply
@@ -342,7 +342,7 @@ void Options::initialize()
     
                 // It *probably* makes sense for other platforms to enable this.
 #if PLATFORM(IOS) && CPU(ARM64)
-                enableLLVMFastISel() = true;
+                useLLVMFastISel() = true;
 #endif
         
             // Allow environment vars to override options if applicable.
@@ -396,8 +396,8 @@ void Options::initialize()
 
 void Options::dumpOptionsIfNeeded()
 {
-    if (Options::showOptions()) {
-        DumpLevel level = static_cast<DumpLevel>(Options::showOptions());
+    if (Options::dumpOptions()) {
+        DumpLevel level = static_cast<DumpLevel>(Options::dumpOptions());
         if (level > DumpLevel::Verbose)
             level = DumpLevel::Verbose;
             
@@ -417,7 +417,7 @@ void Options::dumpOptionsIfNeeded()
         }
 
         StringBuilder builder;
-        dumpAllOptions(builder, level, title, nullptr, "   ", "\n", ShowDefaults);
+        dumpAllOptions(builder, level, title, nullptr, "   ", "\n", DumpDefaults);
         dataLog(builder.toString());
     }
 }
@@ -528,7 +528,7 @@ bool Options::setOption(const char* arg)
 }
 
 void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char* title,
-    const char* separator, const char* optionHeader, const char* optionFooter, ShowDefaultsOption showDefaultsOption)
+    const char* separator, const char* optionHeader, const char* optionFooter, DumpDefaultsOption dumpDefaultsOption)
 {
     if (title) {
         builder.append(title);
@@ -538,24 +538,24 @@ void Options::dumpAllOptions(StringBuilder& builder, DumpLevel level, const char
     for (int id = 0; id < numberOfOptions; id++) {
         if (separator && id)
             builder.append(separator);
-        dumpOption(builder, level, static_cast<OptionID>(id), optionHeader, optionFooter, showDefaultsOption);
+        dumpOption(builder, level, static_cast<OptionID>(id), optionHeader, optionFooter, dumpDefaultsOption);
     }
 }
 
 void Options::dumpAllOptionsInALine(StringBuilder& builder)
 {
-    dumpAllOptions(builder, DumpLevel::All, nullptr, " ", nullptr, nullptr, DontShowDefaults);
+    dumpAllOptions(builder, DumpLevel::All, nullptr, " ", nullptr, nullptr, DontDumpDefaults);
 }
 
 void Options::dumpAllOptions(FILE* stream, DumpLevel level, const char* title)
 {
     StringBuilder builder;
-    dumpAllOptions(builder, level, title, nullptr, "   ", "\n", ShowDefaults);
+    dumpAllOptions(builder, level, title, nullptr, "   ", "\n", DumpDefaults);
     fprintf(stream, "%s", builder.toString().ascii().data());
 }
 
 void Options::dumpOption(StringBuilder& builder, DumpLevel level, OptionID id,
-    const char* header, const char* footer, ShowDefaultsOption showDefaultsOption)
+    const char* header, const char* footer, DumpDefaultsOption dumpDefaultsOption)
 {
     if (id >= numberOfOptions)
         return; // Illegal option.
@@ -573,7 +573,7 @@ void Options::dumpOption(StringBuilder& builder, DumpLevel level, OptionID id,
     builder.append('=');
     option.dump(builder);
 
-    if (wasOverridden && (showDefaultsOption == ShowDefaults)) {
+    if (wasOverridden && (dumpDefaultsOption == DumpDefaults)) {
         builder.append(" (default: ");
         option.defaultOption().dump(builder);
         builder.append(")");

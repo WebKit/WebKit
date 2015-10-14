@@ -5,7 +5,7 @@
 // In order to manifest, the bug being tested requires all these conditions to be true:
 // 1. A put operation must not being optimized by the DFG into a PutByOffset.
 //    It needs to be a PutById node instead so that it will use the inline cache.
-//    This is satisfied by using the --enableAccessInlining=false option above.
+//    This is satisfied by using the --useAccessInlining=false option above.
 //
 // 2. The PutById's execution must go through its transition stub.
 //

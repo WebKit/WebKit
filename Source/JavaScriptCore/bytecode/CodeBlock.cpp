@@ -3142,7 +3142,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     RELEASE_ASSERT(reason != Profiler::NotJettisoned);
     
 #if ENABLE(DFG_JIT)
-    if (DFG::shouldShowDisassembly()) {
+    if (DFG::shouldDumpDisassembly()) {
         dataLog("Jettisoning ", *this);
         if (mode == CountReoptimization)
             dataLog(" and counting reoptimization");
@@ -3153,7 +3153,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     }
     
     if (reason == Profiler::JettisonDueToWeakReference) {
-        if (DFG::shouldShowDisassembly()) {
+        if (DFG::shouldDumpDisassembly()) {
             dataLog(*this, " will be jettisoned because of the following dead references:\n");
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
             for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
@@ -3195,7 +3195,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         }
     }
     
-    if (DFG::shouldShowDisassembly())
+    if (DFG::shouldDumpDisassembly())
         dataLog("    Did invalidate ", *this, "\n");
     
     // Count the reoptimization if that's what the user wanted.
@@ -3203,7 +3203,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         // FIXME: Maybe this should call alternative().
         // https://bugs.webkit.org/show_bug.cgi?id=123677
         baselineAlternative()->countReoptimization();
-        if (DFG::shouldShowDisassembly())
+        if (DFG::shouldDumpDisassembly())
             dataLog("    Did count reoptimization for ", *this, "\n");
     }
     
@@ -3225,7 +3225,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         m_globalObject->vm(), alternative(), codeType(), specializationKind());
 
 #if ENABLE(DFG_JIT)
-    if (DFG::shouldShowDisassembly())
+    if (DFG::shouldDumpDisassembly())
         dataLog("    Did install baseline version of ", *this, "\n");
 #endif // ENABLE(DFG_JIT)
 }

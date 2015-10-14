@@ -8623,7 +8623,7 @@ private:
     
     void callCheck()
     {
-        if (Options::enableExceptionFuzz())
+        if (Options::useExceptionFuzz())
             m_out.call(m_out.operation(operationExceptionFuzz), m_callFrame);
         
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));

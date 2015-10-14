@@ -492,7 +492,7 @@ static void compileStub(
     
     LinkBuffer patchBuffer(*vm, jit, codeBlock);
     exit.m_code = FINALIZE_CODE_IF(
-        shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
+        shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer,
         ("FTL OSR exit #%u (%s, %s) from %s, with operands = %s, and record = %s",
             exitID, toCString(exit.m_codeOrigin).data(),
@@ -505,7 +505,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
 {
     SamplingRegion samplingRegion("FTL OSR Exit Compilation");
 
-    if (shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
+    if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
     
     CodeBlock* codeBlock = exec->codeBlock();
@@ -522,7 +522,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     JITCode* jitCode = codeBlock->jitCode()->ftl();
     OSRExit& exit = jitCode->osrExit[exitID];
     
-    if (shouldShowDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit()) {
+    if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit()) {
         dataLog("    Owning block: ", pointerDump(codeBlock), "\n");
         dataLog("    Origin: ", exit.m_codeOrigin, "\n");
         if (exit.m_codeOriginForExitProfile != exit.m_codeOrigin)

@@ -361,9 +361,9 @@ end
 
 $numFailures = 0
 
-BASE_OPTIONS = ["--useFTLJIT=false", "--enableFunctionDotArguments=true"]
+BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000"]
-NO_CJIT_OPTIONS = ["--enableConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
+NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100"]
 FTL_OPTIONS = ["--useFTLJIT=true", "--ftlCrashesIfCantInitializeLLVM=true"]
 
 $runlist = []
@@ -779,7 +779,7 @@ def runAlwaysTriggerCopyPhase
 end
 
 def runNoCJITNoASO
-    run("no-cjit-no-aso", "--enableArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
+    run("no-cjit-no-aso", "--useArchitectureSpecificOptimizations=false", *NO_CJIT_OPTIONS)
 end
 
 def runFTLNoCJITNoSimpleOpt
@@ -787,11 +787,11 @@ def runFTLNoCJITNoSimpleOpt
 end
 
 def runNoCJITNoAccessInlining
-    run("no-cjit-no-access-inlining", "--enableAccessInlining=false", *NO_CJIT_OPTIONS)
+    run("no-cjit-no-access-inlining", "--useAccessInlining=false", *NO_CJIT_OPTIONS)
 end
 
 def runFTLNoCJITNoAccessInlining
-    run("ftl-no-cjit-no-access-inlining", "--enableAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+    run("ftl-no-cjit-no-access-inlining", "--useAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
 def runFTLNoCJITSmallPool
@@ -807,7 +807,7 @@ def runMiscFTLNoCJITTest(*options)
 end
 
 def runDFGMaximalFlushPhase
-    run("dfg-maximal-flush-validate-no-cjit", "--validateGraph=true", "--enableMaximalFlushInsertionPhase=true", *NO_CJIT_OPTIONS)
+    run("dfg-maximal-flush-validate-no-cjit", "--validateGraph=true", "--useMaximalFlushInsertionPhase=true", *NO_CJIT_OPTIONS)
 end
 
 def defaultRun
@@ -903,9 +903,9 @@ def runTypeProfiler
     end
 
     if $enableFTL
-        run("ftl-no-cjit-type-profiler", "--enableTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("ftl-no-cjit-type-profiler", "--useTypeProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     else
-        run("no-cjit-type-profiler", "--enableTypeProfiler=true", *NO_CJIT_OPTIONS)
+        run("no-cjit-type-profiler", "--useTypeProfiler=true", *NO_CJIT_OPTIONS)
     end
 end
 
@@ -915,9 +915,9 @@ def runControlFlowProfiler
     end
 
     if $enableFTL
-        run("ftl-no-cjit-type-profiler", "--enableControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+        run("ftl-no-cjit-type-profiler", "--useControlFlowProfiler=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     else
-        run("no-cjit-type-profiler", "--enableControlFlowProfiler=true", *NO_CJIT_OPTIONS)
+        run("no-cjit-type-profiler", "--useControlFlowProfiler=true", *NO_CJIT_OPTIONS)
     end
 end
 
