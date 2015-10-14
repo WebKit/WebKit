@@ -31,6 +31,8 @@
 #include "StyleImage.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
+#include <wtf/PointerComparison.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -233,21 +235,21 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_scrollSnapPoints == o.m_scrollSnapPoints
 #endif
         && contentDataEquivalent(o)
-        && counterDataEquivalent(o)
-        && shadowDataEquivalent(o)
-        && willChangeDataEquivalent(o)
-        && reflectionDataEquivalent(o)
-        && animationDataEquivalent(o)
-        && transitionDataEquivalent(o)
+        && arePointingToEqualData(m_counterDirectives, o.m_counterDirectives)
+        && arePointingToEqualData(m_boxShadow, o.m_boxShadow)
+        && arePointingToEqualData(m_willChange, o.m_willChange)
+        && arePointingToEqualData(m_boxReflect, o.m_boxReflect)
+        && arePointingToEqualData(m_animations, o.m_animations)
+        && arePointingToEqualData(m_transitions, o.m_transitions)
         && m_mask == o.m_mask
         && m_maskBoxImage == o.m_maskBoxImage
         && m_pageSize == o.m_pageSize
 #if ENABLE(CSS_SHAPES)
-        && shapeOutsideDataEquivalent(o)
+        && arePointingToEqualData(m_shapeOutside, o.m_shapeOutside)
         && m_shapeMargin == o.m_shapeMargin
         && m_shapeImageThreshold == o.m_shapeImageThreshold
 #endif
-        && clipPathOperationsEquivalent(o)
+        && arePointingToEqualData(m_clipPath, o.m_clipPath)
         && m_textDecorationColor == o.m_textDecorationColor
         && m_visitedLinkTextDecorationColor == o.m_visitedLinkTextDecorationColor
         && m_visitedLinkBackgroundColor == o.m_visitedLinkBackgroundColor
@@ -304,84 +306,6 @@ bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInherite
 
     return !a && !b;
 }
-
-bool StyleRareNonInheritedData::counterDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if (m_counterDirectives.get() == o.m_counterDirectives.get())
-        return true;
-        
-    if (m_counterDirectives && o.m_counterDirectives && *m_counterDirectives == *o.m_counterDirectives)
-        return true;
-
-    return false;
-}
-
-bool StyleRareNonInheritedData::shadowDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if ((!m_boxShadow && o.m_boxShadow) || (m_boxShadow && !o.m_boxShadow))
-        return false;
-    if (m_boxShadow && o.m_boxShadow && (*m_boxShadow != *o.m_boxShadow))
-        return false;
-    return true;
-}
-
-bool StyleRareNonInheritedData::willChangeDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if (m_willChange != o.m_willChange) {
-        if (!m_willChange || !o.m_willChange)
-            return false;
-        return *m_willChange == *o.m_willChange;
-    }
-    return true;
-}
-
-bool StyleRareNonInheritedData::reflectionDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if (m_boxReflect != o.m_boxReflect) {
-        if (!m_boxReflect || !o.m_boxReflect)
-            return false;
-        return *m_boxReflect == *o.m_boxReflect;
-    }
-    return true;
-}
-
-bool StyleRareNonInheritedData::animationDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if ((!m_animations && o.m_animations) || (m_animations && !o.m_animations))
-        return false;
-    if (m_animations && o.m_animations && (*m_animations != *o.m_animations))
-        return false;
-    return true;
-}
-
-bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if ((!m_transitions && o.m_transitions) || (m_transitions && !o.m_transitions))
-        return false;
-    if (m_transitions && o.m_transitions && (*m_transitions != *o.m_transitions))
-        return false;
-    return true;
-}
-
-bool StyleRareNonInheritedData::clipPathOperationsEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if ((!m_clipPath && o.m_clipPath) || (m_clipPath && !o.m_clipPath))
-        return false;
-    if (m_clipPath && o.m_clipPath && (*m_clipPath != *o.m_clipPath))
-        return false;
-    return true;
-}
-
-#if ENABLE(CSS_SHAPES)
-bool StyleRareNonInheritedData::shapeOutsideDataEquivalent(const StyleRareNonInheritedData& o) const
-{
-    if ((!m_shapeOutside && o.m_shapeOutside) || (m_shapeOutside && !o.m_shapeOutside))
-        return false;
-    if (m_shapeOutside && o.m_shapeOutside && (*m_shapeOutside != *o.m_shapeOutside))
-        return false;
-    return true;
-}
-#endif
 
 bool StyleRareNonInheritedData::hasFilters() const
 {

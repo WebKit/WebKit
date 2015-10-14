@@ -1,3 +1,17 @@
+2015-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Add helper funtion for checking pointer equivalency and use it
+        https://bugs.webkit.org/show_bug.cgi?id=150022
+
+        Reviewed by Darin Adler.
+        
+        Add PointerComparison.h which contains the templated pointer comparison
+        function.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/PointerComparison.h: Added.
+        (WTF::arePointingToEqualData):
+
 2015-10-12  Andreas Kling  <akling@apple.com>
 
         "A + B" with strings shouldn't copy if A or B is empty.

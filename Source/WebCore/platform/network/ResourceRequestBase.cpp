@@ -28,6 +28,7 @@
 
 #include "HTTPHeaderNames.h"
 #include "ResourceRequest.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
@@ -500,18 +501,7 @@ bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceReque
     if (a.requester() != b.requester())
         return false;
 
-    FormData* formDataA = a.httpBody();
-    FormData* formDataB = b.httpBody();
-    
-    if (!formDataA)
-        return !formDataB;
-    if (!formDataB)
-        return !formDataA;
-    
-    if (*formDataA != *formDataB)
-        return false;
-    
-    return true;
+    return arePointingToEqualData(a.httpBody(), b.httpBody());
 }
 
 bool ResourceRequestBase::compare(const ResourceRequest& a, const ResourceRequest& b)

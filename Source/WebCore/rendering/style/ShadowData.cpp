@@ -23,6 +23,7 @@
 #include "ShadowData.h"
 
 #include "LayoutRect.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
@@ -39,8 +40,7 @@ ShadowData::ShadowData(const ShadowData& o)
 
 bool ShadowData::operator==(const ShadowData& o) const
 {
-    if ((m_next && !o.m_next) || (!m_next && o.m_next)
-        || (m_next && o.m_next && *m_next != *o.m_next))
+    if (!arePointingToEqualData(m_next, o.m_next))
         return false;
     
     return m_location == o.m_location

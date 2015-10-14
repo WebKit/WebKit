@@ -28,6 +28,7 @@
 #include "LengthFunctions.h"
 #include "RenderStyle.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
@@ -252,7 +253,7 @@ Ref<NinePieceImageData> NinePieceImageData::copy() const
 
 bool NinePieceImageData::operator==(const NinePieceImageData& other) const
 {
-    return StyleImage::imagesEquivalent(image.get(), other.image.get())
+    return arePointingToEqualData(image, other.image)
         && imageSlices == other.imageSlices
         && fill == other.fill
         && borderSlices == other.borderSlices

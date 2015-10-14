@@ -42,6 +42,7 @@
 #include "StyleSelfAlignmentData.h"
 #include "WillChangeData.h"
 #include <wtf/MathExtras.h>
+#include <wtf/PointerComparison.h>
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 
@@ -310,10 +311,10 @@ bool RenderStyle::hasUniquePseudoStyle() const
 RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
     if (!m_cachedPseudoStyles || !m_cachedPseudoStyles->size())
-        return 0;
+        return nullptr;
 
     if (styleType() != NOPSEUDO) 
-        return 0;
+        return nullptr;
 
     for (size_t i = 0; i < m_cachedPseudoStyles->size(); ++i) {
         RenderStyle* pseudoStyle = m_cachedPseudoStyles->at(i).get();
@@ -321,13 +322,13 @@ RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
             return pseudoStyle;
     }
 
-    return 0;
+    return nullptr;
 }
 
 RenderStyle* RenderStyle::addCachedPseudoStyle(PassRefPtr<RenderStyle> pseudo)
 {
     if (!pseudo)
-        return 0;
+        return nullptr;
 
     ASSERT(pseudo->styleType() > NOPSEUDO);
 
@@ -459,11 +460,11 @@ static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b,
 inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) const
 {
     if (rareNonInheritedData.get() != other.rareNonInheritedData.get()
-        && !rareNonInheritedData->shadowDataEquivalent(*other.rareNonInheritedData.get()))
+        && !arePointingToEqualData(rareNonInheritedData->m_boxShadow, other.rareNonInheritedData->m_boxShadow))
         return true;
 
     if (rareInheritedData.get() != other.rareInheritedData.get()
-        && !rareInheritedData->shadowDataEquivalent(*other.rareInheritedData.get()))
+        && !arePointingToEqualData(rareInheritedData->textShadow, other.rareInheritedData->textShadow))
         return true;
 
     if (inherited_flags._text_decorations != other.inherited_flags._text_decorations
@@ -523,13 +524,12 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             return true;
 #endif
 
-        if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other.rareNonInheritedData->m_deprecatedFlexibleBox.get()
-            && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other.rareNonInheritedData->m_deprecatedFlexibleBox.get())
+        if (rareNonInheritedData->m_deprecatedFlexibleBox != other.rareNonInheritedData->m_deprecatedFlexibleBox)
             return true;
 
-        if (rareNonInheritedData->m_flexibleBox.get() != other.rareNonInheritedData->m_flexibleBox.get()
-            && *rareNonInheritedData->m_flexibleBox.get() != *other.rareNonInheritedData->m_flexibleBox.get())
+        if (rareNonInheritedData->m_flexibleBox != other.rareNonInheritedData->m_flexibleBox)
             return true;
+
         if (rareNonInheritedData->m_order != other.rareNonInheritedData->m_order
             || rareNonInheritedData->m_alignContent != other.rareNonInheritedData->m_alignContent
             || rareNonInheritedData->m_alignItems != other.rareNonInheritedData->m_alignItems
@@ -539,11 +539,10 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             || rareNonInheritedData->m_justifySelf != other.rareNonInheritedData->m_justifySelf)
             return true;
 
-        if (!rareNonInheritedData->reflectionDataEquivalent(*other.rareNonInheritedData.get()))
+        if (!arePointingToEqualData(rareNonInheritedData->m_boxReflect, other.rareNonInheritedData->m_boxReflect))
             return true;
 
-        if (rareNonInheritedData->m_multiCol.get() != other.rareNonInheritedData->m_multiCol.get()
-            && *rareNonInheritedData->m_multiCol.get() != *other.rareNonInheritedData->m_multiCol.get())
+        if (rareNonInheritedData->m_multiCol != other.rareNonInheritedData->m_multiCol)
             return true;
 
         if (rareNonInheritedData->m_transform != other.rareNonInheritedData->m_transform) {
@@ -556,8 +555,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         }
 
 #if ENABLE(CSS_GRID_LAYOUT)
-        if (rareNonInheritedData->m_grid.get() != other.rareNonInheritedData->m_grid.get()
-            || rareNonInheritedData->m_gridItem.get() != other.rareNonInheritedData->m_gridItem.get())
+        if (rareNonInheritedData->m_grid != other.rareNonInheritedData->m_grid
+            || rareNonInheritedData->m_gridItem != other.rareNonInheritedData->m_gridItem)
             return true;
 #endif
 
@@ -567,7 +566,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
             return true;
 #endif
 
-        if (!rareNonInheritedData->willChangeDataEquivalent(*other.rareNonInheritedData.get())) {
+        if (!arePointingToEqualData(rareNonInheritedData->m_willChange, other.rareNonInheritedData->m_willChange)) {
             changedContextSensitiveProperties |= ContextSensitivePropertyWillChange;
             // Don't return; keep looking for another change
         }
@@ -616,7 +615,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
             || rareInheritedData->useTouchOverflowScrolling != other.rareInheritedData->useTouchOverflowScrolling
 #endif
-            || rareInheritedData->listStyleImage != other.rareInheritedData->listStyleImage)
+            || rareInheritedData->listStyleImage != other.rareInheritedData->listStyleImage) // FIXME: needs arePointingToEqualData()?
             return true;
 
         if (textStrokeWidth() != other.textStrokeWidth())
@@ -700,9 +699,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         return true;
 
     // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
-    const CounterDirectiveMap* mapA = rareNonInheritedData->m_counterDirectives.get();
-    const CounterDirectiveMap* mapB = other.rareNonInheritedData->m_counterDirectives.get();
-    if (!(mapA == mapB || (mapA && mapB && *mapA == *mapB)))
+    if (!arePointingToEqualData(rareNonInheritedData->m_counterDirectives, other.rareNonInheritedData->m_counterDirectives))
         return true;
 
     if ((visibility() == COLLAPSE) != (other.visibility() == COLLAPSE))
@@ -725,9 +722,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
         return true;
 #endif
 
-    const QuotesData* quotesDataA = rareInheritedData->quotes.get();
-    const QuotesData* quotesDataB = other.rareInheritedData->quotes.get();
-    if (!(quotesDataA == quotesDataB || (quotesDataA && quotesDataB && *quotesDataA == *quotesDataB)))
+    if (!arePointingToEqualData(rareInheritedData->quotes, other.rareInheritedData->quotes))
         return true;
 
     if (position() != StaticPosition) {
@@ -784,8 +779,7 @@ bool RenderStyle::changeRequiresLayerRepaint(const RenderStyle& other, unsigned&
         // Don't return; keep looking for another change.
     }
 
-    if (rareNonInheritedData->m_filter.get() != other.rareNonInheritedData->m_filter.get()
-        && *rareNonInheritedData->m_filter.get() != *other.rareNonInheritedData->m_filter.get()) {
+    if (rareNonInheritedData->m_filter != other.rareNonInheritedData->m_filter) {
         changedContextSensitiveProperties |= ContextSensitivePropertyFilter;
         // Don't return; keep looking for another change.
     }
@@ -946,8 +940,7 @@ void RenderStyle::setQuotes(PassRefPtr<QuotesData> q)
 
 void RenderStyle::setWillChange(PassRefPtr<WillChangeData> willChangeData)
 {
-    if (rareNonInheritedData->m_willChange == willChangeData
-        || (rareNonInheritedData->m_willChange && willChangeData && *rareNonInheritedData->m_willChange == *willChangeData))
+    if (arePointingToEqualData(rareNonInheritedData->m_willChange.get(), willChangeData.get()))
         return;
 
     rareNonInheritedData.access()->m_willChange = WTF::move(willChangeData);

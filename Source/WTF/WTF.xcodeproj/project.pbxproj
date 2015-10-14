@@ -51,6 +51,7 @@
 		0FEB3DCF1BB5D684009D7AAD /* SharedTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */; };
 		0FEB3DD11BB7366B009D7AAD /* ParallelVectorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */; };
 		0FED67B61B22D4D80066CE15 /* TinyPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */; };
+		0FF860951BCCBD740045127F /* PointerComparison.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF860941BCCBD740045127F /* PointerComparison.h */; };
 		0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */; };
 		0FFF19DD1BB334EB00886D91 /* ParallelHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */; };
 		14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14022F4018F5C3FC007FF0EB /* libbmalloc.a */; };
@@ -344,6 +345,7 @@
 		0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTask.h; sourceTree = "<group>"; };
 		0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelVectorIterator.h; sourceTree = "<group>"; };
 		0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyPtrSet.h; sourceTree = "<group>"; };
+		0FF860941BCCBD740045127F /* PointerComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerComparison.h; sourceTree = "<group>"; };
 		0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParallelHelperPool.cpp; sourceTree = "<group>"; };
 		0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelHelperPool.h; sourceTree = "<group>"; };
 		14022F4018F5C3FC007FF0EB /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -837,6 +839,7 @@
 				0F824A651B7443A0002E345D /* ParkingLot.h */,
 				A8A472ED151A825B004123FF /* PassRefPtr.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
+				0FF860941BCCBD740045127F /* PointerComparison.h */,
 				0F9D335D165DBA73005AD387 /* PrintStream.cpp */,
 				0F9D335E165DBA73005AD387 /* PrintStream.h */,
 				0FC4488216FE9FE100844BE9 /* ProcessID.h */,
@@ -1208,6 +1211,7 @@
 				A8A47420151A825B004123FF /* SentinelLinkedList.h in Headers */,
 				A8A47422151A825B004123FF /* SHA1.h in Headers */,
 				A8A47423151A825B004123FF /* SimpleStats.h in Headers */,
+				0FF860951BCCBD740045127F /* PointerComparison.h in Headers */,
 				A8A47424151A825B004123FF /* SinglyLinkedList.h in Headers */,
 				A748745317A0BDAE00FA04CB /* SixCharacterHash.h in Headers */,
 				A8A47426151A825B004123FF /* Spectrum.h in Headers */,
