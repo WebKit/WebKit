@@ -5275,7 +5275,7 @@ FAIL CanvasRenderingContext2D interface: attribute canvas assert_throws: getting
 }" did not throw
 FAIL CanvasRenderingContext2D interface: attribute width assert_true: The prototype object must have a property "width" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute height assert_true: The prototype object must have a property "height" expected true got false
-PASS CanvasRenderingContext2D interface: operation commit()
+PASS CanvasRenderingContext2D interface: operation commit() 
 PASS CanvasRenderingContext2D interface: operation save() 
 PASS CanvasRenderingContext2D interface: operation restore() 
 FAIL CanvasRenderingContext2D interface: attribute currentTransform assert_true: The prototype object must have a property "currentTransform" expected true got false
@@ -5389,7 +5389,7 @@ PASS Stringification of document.createElement("canvas").getContext("2d")
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "canvas" with the proper type (0) 
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "width" with the proper type (1) assert_inherits: property "width" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "height" with the proper type (2) assert_inherits: property "height" not found in prototype chain
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "commit" with the proper type (3)
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "commit" with the proper type (3) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "save" with the proper type (4) 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "restore" with the proper type (5) 
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "currentTransform" with the proper type (6) assert_inherits: property "currentTransform" not found in prototype chain

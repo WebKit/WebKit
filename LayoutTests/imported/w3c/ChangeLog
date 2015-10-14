@@ -1,3 +1,12 @@
+2015-10-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fixing expectations for imported/w3c/web-platform-tests/html/dom/interfaces.html
+        https://bugs.webkit.org/show_bug.cgi?id=150144.
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2015-10-14  Dean Jackson  <dino@apple.com>
 
         Update test result for Canvas2DRenderingContext::commit.
