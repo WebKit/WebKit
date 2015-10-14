@@ -61,7 +61,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& s
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
     FloatSize adjustedSize = size();
     FloatRect adjustedSrcRect = srcRect;
-    m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
+    m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect, spacing);
 
     // Factor in the destination context's scale to generate at the best resolution
     AffineTransform destContextCTM = destContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);

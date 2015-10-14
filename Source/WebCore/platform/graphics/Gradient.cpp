@@ -69,12 +69,15 @@ Gradient::~Gradient()
     platformDestroy();
 }
 
-void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect)
+void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)
 {
     if (m_radial)
         return;
 
     if (srcRect.isEmpty())
+        return;
+
+    if (!spacing.isZero())
         return;
 
     if (m_p0.x() == m_p1.x()) {
