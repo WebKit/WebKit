@@ -23,26 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FindBanner = class FindBanner extends WebInspector.Object
+WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
 {
-    constructor(delegate, element)
+    constructor(delegate, className, fixed = false)
     {
         super();
 
         this._delegate = delegate || null;
 
-        this._element = element || document.createElement("div");
-        this._element.classList.add("find-banner");
+        this.element.classList.add("find-banner");
+
+        if (className)
+            this.element.classList.add(className);
 
         this._resultCountLabel = document.createElement("label");
-        this._element.appendChild(this._resultCountLabel);
+        this.element.appendChild(this._resultCountLabel);
 
         this._previousResultButton = document.createElement("button");
         this._previousResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
         this._previousResultButton.classList.add(WebInspector.FindBanner.LeftSegmentButtonStyleClassName);
         this._previousResultButton.disabled = true;
         this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
-        this._element.appendChild(this._previousResultButton);
+        this.element.appendChild(this._previousResultButton);
 
         var previousResultButtonGlyphElement = document.createElement("div");
         previousResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
@@ -53,7 +55,7 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         this._nextResultButton.classList.add(WebInspector.FindBanner.RightSegmentButtonStyleClassName);
         this._nextResultButton.disabled = true;
         this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
-        this._element.appendChild(this._nextResultButton);
+        this.element.appendChild(this._nextResultButton);
 
         var nextResultButtonGlyphElement = document.createElement("div");
         nextResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
@@ -68,19 +70,23 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         this._inputField.addEventListener("keydown", this._inputFieldKeyDown.bind(this), false);
         this._inputField.addEventListener("keyup", this._inputFieldKeyUp.bind(this), false);
         this._inputField.addEventListener("search", this._inputFieldSearch.bind(this), false);
-        this._element.appendChild(this._inputField);
+        this.element.appendChild(this._inputField);
 
-        this._doneButton = document.createElement("button");
-        this._doneButton.textContent = WebInspector.UIString("Done");
-        this._doneButton.addEventListener("click", this._doneButtonClicked.bind(this));
-        this._element.appendChild(this._doneButton);
+        if (fixed)
+            this._clearAndBlurKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this._clearAndBlur.bind(this), this.element);
+        else {
+            let doneButtonElement = document.createElement("button");
+            doneButtonElement.textContent = WebInspector.UIString("Done");
+            doneButtonElement.addEventListener("click", this._doneButtonClicked.bind(this));
+            this.element.appendChild(doneButtonElement);
+            this._hideKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this.hide.bind(this), this.element);
+        }
 
         this._numberOfResults = null;
         this._searchBackwards = false;
         this._searchKeyPressed = false;
         this._previousSearchValue = "";
 
-        this._hideKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this.hide.bind(this), this._element);
         this._populateFindKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "E", this._populateSearchQueryFromSelection.bind(this));
         this._populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
         this._findNextKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "G", this._nextResultButtonClicked.bind(this));
@@ -101,11 +107,6 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
     set delegate(newDelegate)
     {
         this._delegate = newDelegate || null;
-    }
-
-    get element()
-    {
-        return this._element;
     }
 
     get inputField()
@@ -157,7 +158,7 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         function delayedWork()
         {
             oldTargetElement.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
-            this._element.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
+            this.element.classList.remove(WebInspector.FindBanner.NoTransitionStyleClassName);
         }
 
         if (this._targetElement) {
@@ -167,8 +168,8 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
             this._targetElement.classList.remove(WebInspector.FindBanner.SupportsFindBannerStyleClassName);
             this._targetElement.classList.remove(WebInspector.FindBanner.ShowingFindBannerStyleClassName);
 
-            this._element.classList.add(WebInspector.FindBanner.NoTransitionStyleClassName);
-            this._element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
+            this.element.classList.add(WebInspector.FindBanner.NoTransitionStyleClassName);
+            this.element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
 
             // Delay so we can remove the no transition style class after the other style changes are committed.
             setTimeout(delayedWork.bind(this), 0);
@@ -182,7 +183,29 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
 
     get showing()
     {
-        return this._element.classList.contains(WebInspector.FindBanner.ShowingStyleClassName);
+        return this.element.classList.contains(WebInspector.FindBanner.ShowingStyleClassName);
+    }
+
+    focus()
+    {
+        // FIXME: Workaround for: <https://webkit.org/b/149504> Caret missing from <input> after clearing text and calling select()
+        if (!this._inputField.value.length)
+            this._inputField.focus();
+        else
+            this._inputField.select();
+    }
+
+    _clearAndBlur()
+    {
+        this.numberOfResults = null;
+
+        this._inputField.value = "";
+        this._previousSearchValue = "";
+
+        if (this._delegate.findBannerSearchCleared)
+            this._delegate.findBannerSearchCleared();
+        if (this._delegate.findBannerWantsToClearAndBlur)
+            this._delegate.findBannerWantsToClearAndBlur();
     }
 
     show()
@@ -195,13 +218,13 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         if (!this._targetElement.parentNode)
             return;
 
-        if (this._element.parentNode !== this._targetElement.parentNode)
-            this._targetElement.parentNode.insertBefore(this._element, this._targetElement);
+        if (this.element.parentNode !== this._targetElement.parentNode)
+            this._targetElement.parentNode.insertBefore(this.element, this._targetElement);
 
         function delayedWork()
         {
             this._targetElement.classList.add(WebInspector.FindBanner.ShowingFindBannerStyleClassName);
-            this._element.classList.add(WebInspector.FindBanner.ShowingStyleClassName);
+            this.element.classList.add(WebInspector.FindBanner.ShowingStyleClassName);
 
             this._inputField.select();
         }
@@ -222,7 +245,7 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
         this._inputField.blur();
 
         this._targetElement.classList.remove(WebInspector.FindBanner.ShowingFindBannerStyleClassName);
-        this._element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
+        this.element.classList.remove(WebInspector.FindBanner.ShowingStyleClassName);
 
         this.dispatchEventToListeners(WebInspector.FindBanner.Event.DidHide);
     }
@@ -276,7 +299,6 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.Object
             }
         } else {
             this.numberOfResults = null;
-
             if (this._delegate && typeof this._delegate.findBannerSearchCleared === "function")
                 this._delegate.findBannerSearchCleared(this);
         }

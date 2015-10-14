@@ -188,3 +188,33 @@ body.window-inactive .find-banner {
     margin: 0 6px;
     line-height: 21px;
 }
+
+.find-banner.console-find-banner {
+    position: relative;
+    top: auto;
+    border: 0;
+}
+
+.find-banner.console-find-banner > input[type="search"] {
+    padding-top: 0;
+    margin: 1px 6px;
+    outline: none;
+    -webkit-appearance: none;
+    border: 1px solid hsla(0, 0%, 0%, 0.35);
+    border-radius: 3px;
+    background-color: hsla(0, 0%, 100%, 0.2);
+    background-clip: padding-box;
+    height: 22px;    
+}
+
+.find-banner.console-find-banner > input[type="search"]::-webkit-input-placeholder {
+    color: hsla(0, 0%, 0%, 0.35);
+}
+
+.find-banner.console-find-banner > input[type="search"]::-webkit-textfield-decoration-container {
+    margin-left: 4px;
+}
+
+.find-banner.console-find-banner > input[type="search"]:focus {
+    background-color: white;
+}
