@@ -104,11 +104,13 @@ class DeprecatedPort(object):
     def run_javascriptcore_tests_command(self):
         return self.script_shell_command("run-javascriptcore-tests")
 
-    def run_webkit_unit_tests_command(self):
-        return None
-
-    def run_webkit_tests_command(self):
-        return self.script_shell_command("run-webkit-tests")
+    def run_webkit_tests_command(self, build_style=None):
+        command = self.script_shell_command("run-webkit-tests")
+        if build_style == "debug":
+            command.append("--debug")
+        if build_style == "release":
+            command.append("--release")
+        return command
 
     def run_python_unittests_command(self):
         return self.script_shell_command("test-webkitpy")

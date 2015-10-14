@@ -52,10 +52,7 @@ class MockPort(object):
     def run_javascriptcore_tests_command(self):
         return ['mock-run-javacriptcore-tests']
 
-    def run_webkit_unit_tests_command(self):
-        return ['mock-run-webkit-unit-tests']
-
-    def run_webkit_tests_command(self):
+    def run_webkit_tests_command(self, build_style=None):
         return ['mock-run-webkit-tests']
 
     def run_bindings_tests_command(self):

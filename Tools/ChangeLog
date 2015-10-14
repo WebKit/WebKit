@@ -1,3 +1,35 @@
+2015-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix for mac-debug EWS queue.
+
+        Unreviewed.
+
+        Pass --debug to run-webkit-tests.
+
+        While at it, removed unsupported run_webkit_unit_tests_command. All the test steps
+        will need to be substantially modified to work in EWS, so the dummy implementation
+        was not helpful.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_javascriptcore_tests_command):
+        (DeprecatedPort):
+        (DeprecatedPort.run_webkit_tests_command):
+        (DeprecatedPort.run_python_unittests_command):
+        (DeprecatedPort.run_webkit_unit_tests_command): Deleted.
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_javascriptcore_tests_command):
+        (MockPort):
+        (MockPort.run_webkit_tests_command):
+        (MockPort.run_bindings_tests_command):
+        (MockPort.run_webkit_unit_tests_command): Deleted.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_runtests_args):
+
 2015-10-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Generate Crash Traces

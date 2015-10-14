@@ -89,18 +89,8 @@ class RunTests(AbstractStep):
             except ScriptError, e:
                 _log.info("Error running run-bindings-tests: %s" % e.message_with_output())
 
-        webkit_unit_tests_command = self._tool.deprecated_port().run_webkit_unit_tests_command()
-        if webkit_unit_tests_command:
-            _log.info("Running WebKit unit tests")
-            args = webkit_unit_tests_command
-            try:
-                self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
-            except ScriptError, e:
-                _log.info("Error running webkit_unit_tests: %s" % e.message_with_output())
-
-
         _log.info("Running run-webkit-tests")
-        args = self._tool.deprecated_port().run_webkit_tests_command()
+        args = self._tool.deprecated_port().run_webkit_tests_command(build_style=self._options.build_style)
         if self._options.non_interactive:
             args.extend([
                 "--no-new-test-results",

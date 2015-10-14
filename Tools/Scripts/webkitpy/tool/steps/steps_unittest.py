@@ -98,6 +98,7 @@ class StepsTest(unittest.TestCase):
     def test_runtests_args(self):
         mock_options = self._step_options()
         mock_options.non_interactive = False
+        mock_options.build_style = "release"
         step = steps.RunTests(MockTool(log_executive=True), mock_options)
         tool = MockTool(log_executive=True)
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
@@ -112,6 +113,28 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/moc
 Running bindings generation tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
 Running run-webkit-tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--quiet'], cwd=/mock-checkout
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--release', '--quiet'], cwd=/mock-checkout
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+    def test_runtests_debug_args(self):
+        mock_options = self._step_options()
+        mock_options.non_interactive = False
+        mock_options.build_style = "debug"
+        step = steps.RunTests(MockTool(log_executive=True), mock_options)
+        tool = MockTool(log_executive=True)
+        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
+        tool._deprecated_port = DeprecatedPort()
+        step = steps.RunTests(tool, mock_options)
+        expected_logs = """Running Python unit tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
+Running Perl unit tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
+Running JavaScriptCore tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
+Running bindings generation tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests'], cwd=/mock-checkout
+Running run-webkit-tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--quiet'], cwd=/mock-checkout
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
