@@ -8,12 +8,28 @@
         "url_subpath": "testharness.js-2a1da264f6718db04c3925a9956b635426827aef"
     }, 
     {
-        "name": "wptserve", 
+        "name": "webidl2",
+        "path": [
+            "resources"
+        ],
+        "url": "https://github.com/darobin/webidl2.js/archive/997fb214e02980ef4c27137553857ae6da533590.tar.gz",
+        "url_subpath": "webidl2.js-997fb214e02980ef4c27137553857ae6da533590"
+    },
+    {
+        "name": "tools", 
+        "path": [
+            "."
+        ], 
+        "url": "https://github.com/w3c/wpt-tools/archive/92f14770d10d44027a1c27b72958578ddc381ce3.tar.gz", 
+        "url_subpath": "wpt-tools-92f14770d10d44027a1c27b72958578ddc381ce3"
+    },
+    {
+        "name": "html5lib", 
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wptserve/archive/91e764ffa0f587090341a26af457dfdc6762eb0d.tar.gz", 
-        "url_subpath": "wptserve-91e764ffa0f587090341a26af457dfdc6762eb0d"
+        "url": "https://github.com/html5lib/html5lib-python/archive/7cce65bbaa78411f98b8b37eeefc9db03c580097.tar.gz", 
+        "url_subpath": "html5lib-python-7cce65bbaa78411f98b8b37eeefc9db03c580097"
     }, 
     {
         "name": "pywebsocket", 
@@ -24,14 +40,6 @@
         "url_subpath": "pywebsocket-8c285d9015121e8c1c40be852439fc03b4a18112"
     }, 
     {
-        "name": "html5lib", 
-        "path": [
-            "tools"
-        ], 
-        "url": "https://github.com/html5lib/html5lib-python/archive/7cce65bbaa78411f98b8b37eeefc9db03c580097.tar.gz", 
-        "url_subpath": "html5lib-python-7cce65bbaa78411f98b8b37eeefc9db03c580097"
-    }, 
-    {
         "name": "six", 
         "path": [
             "tools"
@@ -40,11 +48,11 @@
         "url_subpath": "six-3b6173c833d217ab0186c355804f5925cbcfca47"
     },
     {
-        "name": "webidl2",
+        "name": "wptserve", 
         "path": [
-            "resources"
-        ],
-        "url": "https://github.com/darobin/webidl2.js/archive/997fb214e02980ef4c27137553857ae6da533590.tar.gz",
-        "url_subpath": "webidl2.js-997fb214e02980ef4c27137553857ae6da533590"
+            "tools"
+        ], 
+        "url": "https://github.com/w3c/wptserve/archive/b6b082fb70c592c6164c76aa167ae4dc284ebb69.tar.gz", 
+        "url_subpath": "wptserve-b6b082fb70c592c6164c76aa167ae4dc284ebb69"
     }
 ]

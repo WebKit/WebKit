@@ -1,3 +1,77 @@
+2015-10-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Update web-platform-tests tools to the latest revision
+        https://bugs.webkit.org/show_bug.cgi?id=149645
+
+        Reviewed by Darin Adler.
+
+        Removed tools folder.
+        Updated ImportExpectations and TestRepositories files to match latest wpt repo revision.
+        Updated web-platform-tests using the import tool.
+
+        * resources/ImportExpectations: Skipping new test suites.
+        * resources/TestRepositories: Updating revision of default imported web-platform-tests. Disabled conversion of git submodules information.
+        * resources/web-platform-tests-modules.json: Updated by hand the modules description to align with wpt repo.
+        * web-platform-tests/.gitignore: Marking tools folder as ignored.
+        * web-platform-tests/README.md:
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/config.default.json:
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/lint: Added.
+        * web-platform-tests/lint.whitelist: Renamed from LayoutTests/imported/w3c/web-platform-tests/tools/scripts/lint.whitelist.
+        * web-platform-tests/manifest: Added.
+        * web-platform-tests/serve: Added.
+        * web-platform-tests/serve.py:
+        (main):
+        * web-platform-tests/tools/__init__.py: Removed.
+        * web-platform-tests/tools/runner/css/bootstrap-theme.min.css: Removed.
+        * web-platform-tests/tools/runner/css/bootstrap.min.css: Removed.
+        * web-platform-tests/tools/runner/css/w3c-import.log: Removed.
+        * web-platform-tests/tools/runner/fonts/glyphicons-halflings-regular.eot: Removed.
+        * web-platform-tests/tools/runner/fonts/glyphicons-halflings-regular.svg: Removed.
+        * web-platform-tests/tools/runner/fonts/glyphicons-halflings-regular.ttf: Removed.
+        * web-platform-tests/tools/runner/fonts/glyphicons-halflings-regular.woff: Removed.
+        * web-platform-tests/tools/runner/fonts/w3c-import.log: Removed.
+        * web-platform-tests/tools/runner/logo.svg: Removed.
+        * web-platform-tests/tools/runner/report.css: Removed.
+        * web-platform-tests/tools/runner/report.py: Removed.
+        * web-platform-tests/tools/runner/runner.css: Removed.
+        * web-platform-tests/tools/runner/runner.js: Removed.
+        * web-platform-tests/tools/runner/update_manifest.py: Removed.
+        * web-platform-tests/tools/runner/w3c-import.log: Removed.
+        * web-platform-tests/tools/scripts/__init__.py: Removed.
+        * web-platform-tests/tools/scripts/_env.py: Removed.
+        * web-platform-tests/tools/scripts/html5lib_test.xml: Removed.
+        * web-platform-tests/tools/scripts/html5lib_test_fragment.xml: Removed.
+        * web-platform-tests/tools/scripts/id2path.js: Removed.
+        * web-platform-tests/tools/scripts/id2path.json: Removed.
+        * web-platform-tests/tools/scripts/lint.py: Removed.
+        * web-platform-tests/tools/scripts/manifest.js: Removed.
+        * web-platform-tests/tools/scripts/manifest.py: Removed.
+        * web-platform-tests/tools/scripts/package.json: Removed.
+        * web-platform-tests/tools/scripts/toc.js: Removed.
+        * web-platform-tests/tools/scripts/update-directory-structure.js: Removed.
+        * web-platform-tests/tools/scripts/update_html5lib_tests.py: Removed.
+        * web-platform-tests/tools/scripts/w3c-import.log: Removed.
+        * web-platform-tests/tools/sslutils/__init__.py: Removed.
+        * web-platform-tests/tools/sslutils/base.py: Removed.
+        * web-platform-tests/tools/sslutils/openssl.py: Removed.
+        * web-platform-tests/tools/sslutils/pregenerated.py: Removed.
+        * web-platform-tests/tools/sslutils/w3c-import.log: Removed.
+        * web-platform-tests/tools/w3c-import.log: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/__init__.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/alert.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/capabilities.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/command.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/driver.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/exceptions.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/keys.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/searchcontext.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/w3c-import.log: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/wait.py: Removed.
+        * web-platform-tests/tools/webdriver/webdriver/webelement.py: Removed.
+        * web-platform-tests/w3c-import.log:
+
 2015-10-07  Keith Rollin  <krollin@apple.com>
 
         script.text shouldn't include text from non-direct children of the script element

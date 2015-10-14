@@ -47,28 +47,6 @@ class TestWebPlatformTestServer(unittest.TestCase):
         server.start()
         server.stop()
 
-    def test_import_web_platform_test_modules(self):
-        fs = FileSystem()
-        current_dir, name = fs.split(fs.realpath(__file__))
-        doc_root_dir = fs.join(current_dir, "..", "..", "..", "..", "..", "LayoutTests", "imported", "w3c", "web-platform-tests")
-        tools_dir = fs.join(doc_root_dir, "tools")
-
-        sys.path.insert(0, doc_root_dir)
-        try:
-            file, pathname, description = imp.find_module("tools")
-        except ImportError, e:
-            self.fail(e)
-        self.assertEqual(pathname, tools_dir)
-        sys.path.pop(0)
-
-        sys.path.insert(0, tools_dir)
-        try:
-            file, pathname, description = imp.find_module("scripts")
-        except ImportError, e:
-            self.fail(e)
-        self.assertEqual(pathname, fs.join(tools_dir, "scripts"))
-        sys.path.pop(0)
-
     def test_corrupted_subserver_files(self):
         host = MockHost()
         port = Port(host, "test")
