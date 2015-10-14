@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestOverrideBuiltins : public JSDOMWrapperWithImplementation<TestOverrideBuiltins> {
+class JSTestOverrideBuiltins : public JSDOMWrapper<TestOverrideBuiltins> {
 public:
-    typedef JSDOMWrapperWithImplementation<TestOverrideBuiltins> Base;
+    typedef JSDOMWrapper<TestOverrideBuiltins> Base;
     static JSTestOverrideBuiltins* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverrideBuiltins>&& impl)
     {
         JSTestOverrideBuiltins* ptr = new (NotNull, JSC::allocateCell<JSTestOverrideBuiltins>(globalObject->vm().heap)) JSTestOverrideBuiltins(structure, *globalObject, WTF::move(impl));

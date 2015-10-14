@@ -29,9 +29,9 @@ namespace WebCore {
 
 class JSDictionary;
 
-class JSTestEventConstructor : public JSDOMWrapperWithImplementation<TestEventConstructor> {
+class JSTestEventConstructor : public JSDOMWrapper<TestEventConstructor> {
 public:
-    typedef JSDOMWrapperWithImplementation<TestEventConstructor> Base;
+    typedef JSDOMWrapper<TestEventConstructor> Base;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
     {
         JSTestEventConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructor>(globalObject->vm().heap)) JSTestEventConstructor(structure, *globalObject, WTF::move(impl));

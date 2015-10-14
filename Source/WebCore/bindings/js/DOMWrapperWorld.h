@@ -28,7 +28,6 @@
 namespace WebCore {
 
 class CSSValue;
-class JSDOMWrapper;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;

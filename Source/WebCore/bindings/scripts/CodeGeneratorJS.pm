@@ -180,8 +180,8 @@ sub GetParentClassName
     my $interface = shift;
 
     return $interface->extendedAttributes->{"JSLegacyParent"} if $interface->extendedAttributes->{"JSLegacyParent"};
-    return "JSDOMWrapper" unless NeedsImplementationClass($interface);
-    return "JSDOMWrapperWithImplementation<" . GetImplClassName($interface->name) . ">" unless $interface->parent;
+    return "JSDOMObject" unless NeedsImplementationClass($interface);
+    return "JSDOMWrapper<" . GetImplClassName($interface->name) . ">" unless $interface->parent;
     return "JS" . $interface->parent;
 }
 

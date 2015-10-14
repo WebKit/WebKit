@@ -116,7 +116,7 @@ void JSattributePrototype::finishCreation(VM& vm)
 const ClassInfo JSattribute::s_info = { "attribute", &Base::s_info, 0, CREATE_METHOD_TABLE(JSattribute) };
 
 JSattribute::JSattribute(Structure* structure, JSDOMGlobalObject& globalObject, Ref<attribute>&& impl)
-    : JSDOMWrapperWithImplementation<attribute>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<attribute>(structure, globalObject, WTF::move(impl))
 {
 }
 

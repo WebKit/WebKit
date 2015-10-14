@@ -28,9 +28,9 @@
 
 namespace WebCore {
 
-class JSTestException : public JSDOMWrapperWithImplementation<TestException> {
+class JSTestException : public JSDOMWrapper<TestException> {
 public:
-    typedef JSDOMWrapperWithImplementation<TestException> Base;
+    typedef JSDOMWrapper<TestException> Base;
     static JSTestException* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
     {
         JSTestException* ptr = new (NotNull, JSC::allocateCell<JSTestException>(globalObject->vm().heap)) JSTestException(structure, *globalObject, WTF::move(impl));

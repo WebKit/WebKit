@@ -131,7 +131,7 @@ void JSTestSerializedScriptValueInterfacePrototype::finishCreation(VM& vm)
 const ClassInfo JSTestSerializedScriptValueInterface::s_info = { "TestSerializedScriptValueInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestSerializedScriptValueInterface) };
 
 JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
-    : JSDOMWrapperWithImplementation<TestSerializedScriptValueInterface>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestSerializedScriptValueInterface>(structure, globalObject, WTF::move(impl))
 {
 }
 

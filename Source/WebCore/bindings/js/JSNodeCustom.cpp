@@ -168,7 +168,7 @@ static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObj
     ASSERT(node);
     ASSERT(!getCachedWrapper(globalObject->world(), node));
     
-    JSDOMWrapper* wrapper;    
+    JSDOMObject* wrapper;    
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
             if (is<HTMLElement>(*node))

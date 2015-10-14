@@ -133,7 +133,7 @@ void JSTestCustomNamedGetterPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestCustomNamedGetter::s_info = { "TestCustomNamedGetter", &Base::s_info, &JSTestCustomNamedGetterTable, CREATE_METHOD_TABLE(JSTestCustomNamedGetter) };
 
 JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestCustomNamedGetter>&& impl)
-    : JSDOMWrapperWithImplementation<TestCustomNamedGetter>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestCustomNamedGetter>(structure, globalObject, WTF::move(impl))
 {
 }
 

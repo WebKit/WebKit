@@ -33,7 +33,7 @@ static const uint8_t JSNodeType = JSC::LastJSCObjectType + 1;
 static const uint8_t JSDocumentWrapperType = JSC::LastJSCObjectType + 2;
 static const uint8_t JSElementType = JSC::LastJSCObjectType + 3;
 
-class JSDOMWrapper : public JSC::JSDestructibleObject {
+class JSDOMObject : public JSC::JSDestructibleObject {
 public:
     typedef JSC::JSDestructibleObject Base;
 
@@ -41,22 +41,22 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
 protected:
-    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject) 
+    JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject) 
         : Base(globalObject.vm(), structure)
     {
         ASSERT(scriptExecutionContext());
     }
 };
 
-template<typename ImplementationClass> class JSDOMWrapperWithImplementation : public JSDOMWrapper {
+template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
-    typedef JSDOMWrapper Base;
+    typedef JSDOMObject Base;
 
     ImplementationClass& impl() const { return *m_impl; }
-    ~JSDOMWrapperWithImplementation() { std::exchange(m_impl, nullptr)->deref(); }
+    ~JSDOMWrapper() { std::exchange(m_impl, nullptr)->deref(); }
 
 protected:
-    JSDOMWrapperWithImplementation(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
+    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(structure, globalObject)
         , m_impl(&impl.leakRef()) { }
 

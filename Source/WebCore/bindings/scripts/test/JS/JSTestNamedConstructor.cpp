@@ -186,7 +186,7 @@ void JSTestNamedConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNamedConstructor) };
 
 JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedConstructor>&& impl)
-    : JSDOMWrapperWithImplementation<TestNamedConstructor>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestNamedConstructor>(structure, globalObject, WTF::move(impl))
 {
 }
 

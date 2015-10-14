@@ -130,7 +130,7 @@ void JSTestJSBuiltinConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestJSBuiltinConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructor) };
 
 JSTestJSBuiltinConstructor::JSTestJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
-    : JSDOMWrapper(structure, globalObject) { }
+    : JSDOMObject(structure, globalObject) { }
 
 JSObject* JSTestJSBuiltinConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {

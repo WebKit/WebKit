@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSreadonly : public JSDOMWrapperWithImplementation<readonly> {
+class JSreadonly : public JSDOMWrapper<readonly> {
 public:
-    typedef JSDOMWrapperWithImplementation<readonly> Base;
+    typedef JSDOMWrapper<readonly> Base;
     static JSreadonly* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<readonly>&& impl)
     {
         JSreadonly* ptr = new (NotNull, JSC::allocateCell<JSreadonly>(globalObject->vm().heap)) JSreadonly(structure, *globalObject, WTF::move(impl));

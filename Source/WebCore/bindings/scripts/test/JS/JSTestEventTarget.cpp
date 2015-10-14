@@ -145,7 +145,7 @@ void JSTestEventTargetPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, CREATE_METHOD_TABLE(JSTestEventTarget) };
 
 JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventTarget>&& impl)
-    : JSDOMWrapperWithImplementation<TestEventTarget>(structure, globalObject, WTF::move(impl))
+    : JSDOMWrapper<TestEventTarget>(structure, globalObject, WTF::move(impl))
 {
 }
 

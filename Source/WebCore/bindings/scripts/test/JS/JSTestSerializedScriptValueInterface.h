@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
-class JSTestSerializedScriptValueInterface : public JSDOMWrapperWithImplementation<TestSerializedScriptValueInterface> {
+class JSTestSerializedScriptValueInterface : public JSDOMWrapper<TestSerializedScriptValueInterface> {
 public:
-    typedef JSDOMWrapperWithImplementation<TestSerializedScriptValueInterface> Base;
+    typedef JSDOMWrapper<TestSerializedScriptValueInterface> Base;
     static JSTestSerializedScriptValueInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSerializedScriptValueInterface>&& impl)
     {
         JSTestSerializedScriptValueInterface* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->vm().heap)) JSTestSerializedScriptValueInterface(structure, *globalObject, WTF::move(impl));

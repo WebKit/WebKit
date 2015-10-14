@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestEventTarget : public JSDOMWrapperWithImplementation<TestEventTarget> {
+class JSTestEventTarget : public JSDOMWrapper<TestEventTarget> {
 public:
-    typedef JSDOMWrapperWithImplementation<TestEventTarget> Base;
+    typedef JSDOMWrapper<TestEventTarget> Base;
     static JSTestEventTarget* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventTarget>&& impl)
     {
         globalObject->masqueradesAsUndefinedWatchpoint()->fireAll("Allocated masquerading object");
