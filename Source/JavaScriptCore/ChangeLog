@@ -1,3 +1,12 @@
+2015-10-14  Mark Lam  <mark.lam@apple.com>
+
+        Speculative build fix: the CallSiteIndex constructor is explicit and requires an uint32_t.
+
+        Not Reviewed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::newExceptionHandlingCallSiteIndex):
+
 2015-10-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r191030.
