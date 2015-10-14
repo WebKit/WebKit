@@ -64,7 +64,7 @@ void RenderTextLineBoxes::extract(InlineTextBox& box)
     if (box.prevTextBox())
         box.prevTextBox()->setNextTextBox(nullptr);
     box.setPreviousTextBox(nullptr);
-    for (auto current = &box; current; current = current->nextTextBox())
+    for (auto* current = &box; current; current = current->nextTextBox())
         current->setExtracted();
 
     checkConsistency();
@@ -80,7 +80,7 @@ void RenderTextLineBoxes::attach(InlineTextBox& box)
     } else
         m_first = &box;
     InlineTextBox* last = nullptr;
-    for (auto current = &box; current; current = current->nextTextBox()) {
+    for (auto* current = &box; current; current = current->nextTextBox()) {
         current->setExtracted(false);
         last = current;
     }
@@ -112,7 +112,7 @@ void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
             renderer.parent()->dirtyLinesFromChangedChild(renderer);
         return;
     }
-    for (auto box = m_first; box; box = box->nextTextBox())
+    for (auto* box = m_first; box; box = box->nextTextBox())
         box->removeFromParent();
 }
 
@@ -121,7 +121,7 @@ void RenderTextLineBoxes::deleteAll()
     if (!m_first)
         return;
     InlineTextBox* next;
-    for (auto current = m_first; current; current = next) {
+    for (auto* current = m_first; current; current = next) {
         next = current->nextTextBox();
         delete current;
     }
@@ -153,7 +153,7 @@ IntRect RenderTextLineBoxes::boundingBox(const RenderText& renderer) const
     // Return the width of the minimal left side and the maximal right side.
     float logicalLeftSide = 0;
     float logicalRightSide = 0;
-    for (auto current = m_first; current; current = current->nextTextBox()) {
+    for (auto* current = m_first; current; current = current->nextTextBox()) {
         if (current == m_first || current->logicalLeft() < logicalLeftSide)
             logicalLeftSide = current->logicalLeft();
         if (current == m_first || current->logicalRight() > logicalRightSide)
@@ -184,7 +184,7 @@ LayoutRect RenderTextLineBoxes::visualOverflowBoundingBox(const RenderText& rend
     // Return the width of the minimal left side and the maximal right side.
     auto logicalLeftSide = LayoutUnit::max();
     auto logicalRightSide = LayoutUnit::min();
-    for (auto current = m_first; current; current = current->nextTextBox()) {
+    for (auto* current = m_first; current; current = current->nextTextBox()) {
         logicalLeftSide = std::min(logicalLeftSide, current->logicalLeftVisualOverflow());
         logicalRightSide = std::max(logicalRightSide, current->logicalRightVisualOverflow());
     }
@@ -201,7 +201,7 @@ LayoutRect RenderTextLineBoxes::visualOverflowBoundingBox(const RenderText& rend
 
 bool RenderTextLineBoxes::hasRenderedText() const
 {
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         if (box->len())
             return true;
     }
@@ -233,7 +233,7 @@ int RenderTextLineBoxes::caretMaxOffset(const RenderText& renderer) const
 
 bool RenderTextLineBoxes::containsOffset(const RenderText& renderer, unsigned offset, OffsetType type) const
 {
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         if (offset < box->start() && !renderer.containsReversedText())
             return false;
         unsigned boxEnd = box->start() + box->len();
@@ -252,7 +252,7 @@ bool RenderTextLineBoxes::containsOffset(const RenderText& renderer, unsigned of
 unsigned RenderTextLineBoxes::countCharacterOffsetsUntil(unsigned offset) const
 {
     unsigned result = 0;
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         if (offset < box->start())
             return result;
         if (offset <= box->start() + box->len()) {
@@ -402,7 +402,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
     bool blocksAreFlipped = renderer.style().isFlippedBlocksWritingMode();
 
     InlineTextBox* lastBox = nullptr;
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         if (box->isLineBreak() && !box->prevLeafChild() && box->nextLeafChild() && !box->nextLeafChild()->isLineBreak())
             box = box->nextTextBox();
 
@@ -440,7 +440,7 @@ VisiblePosition RenderTextLineBoxes::positionForPoint(const RenderText& renderer
 void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::SelectionState state)
 {
     if (state == RenderObject::SelectionInside || state == RenderObject::SelectionNone) {
-        for (auto box = m_first; box; box = box->nextTextBox())
+        for (auto* box = m_first; box; box = box->nextTextBox())
             box->root().setHasSelectedChildren(state == RenderObject::SelectionInside);
         return;
     }
@@ -456,7 +456,7 @@ void RenderTextLineBoxes::setSelectionState(RenderText& renderer, RenderObject::
     } else if (state == RenderObject::SelectionEnd)
         start = 0;
 
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         if (box->isSelected(start, end))
             box->root().setHasSelectedChildren(true);
     }
@@ -487,7 +487,7 @@ static IntRect ellipsisRectForBox(const InlineTextBox& box, unsigned start, unsi
 LayoutRect RenderTextLineBoxes::selectionRectForRange(unsigned start, unsigned end)
 {
     LayoutRect rect;
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         rect.unite(box->localSelectionRect(start, end));
         rect.unite(ellipsisRectForBox(*box, start, end));
     }
@@ -496,7 +496,7 @@ LayoutRect RenderTextLineBoxes::selectionRectForRange(unsigned start, unsigned e
 
 void RenderTextLineBoxes::collectSelectionRectsForRange(unsigned start, unsigned end, Vector<LayoutRect>& rects)
 {
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         LayoutRect rect;
         rect.unite(box->localSelectionRect(start, end));
         rect.unite(ellipsisRectForBox(*box, start, end));
@@ -508,7 +508,7 @@ void RenderTextLineBoxes::collectSelectionRectsForRange(unsigned start, unsigned
 Vector<IntRect> RenderTextLineBoxes::absoluteRects(const LayoutPoint& accumulatedOffset) const
 {
     Vector<IntRect> rects;
-    for (auto box = m_first; box; box = box->nextTextBox())
+    for (auto* box = m_first; box; box = box->nextTextBox())
         rects.append(enclosingIntRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
     return rects;
 }
@@ -536,7 +536,7 @@ static FloatRect localQuadForTextBox(const InlineTextBox& box, unsigned start, u
 Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     Vector<IntRect> rects;
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
             FloatRect boundaries = box->calculateBoundaries();
@@ -564,7 +564,7 @@ Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& ren
 Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer, bool* wasFixed, ClippingOption option) const
 {
     Vector<FloatQuad> quads;
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         FloatRect boundaries = box->calculateBoundaries();
 
         // Shorten the width of this text box if it ends in an ellipsis.
@@ -584,7 +584,7 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuads(const RenderText& renderer,
 Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& renderer, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed) const
 {
     Vector<FloatQuad> quads;
-    for (auto box = m_first; box; box = box->nextTextBox()) {
+    for (auto* box = m_first; box; box = box->nextTextBox()) {
         // Note: box->end() returns the index of the last character, not the index past it
         if (start <= box->start() && box->end() < end) {
             FloatRect boundaries = box->calculateBoundaries();
@@ -610,7 +610,7 @@ Vector<FloatQuad> RenderTextLineBoxes::absoluteQuadsForRange(const RenderText& r
 
 void RenderTextLineBoxes::dirtyAll()
 {
-    for (auto box = m_first; box; box = box->nextTextBox())
+    for (auto* box = m_first; box; box = box->nextTextBox())
         box->dirtyLineBoxes();
 }
 
@@ -621,7 +621,7 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
 
     // Dirty all text boxes that include characters in between offset and offset+len.
     bool dirtiedLines = false;
-    for (auto current = m_first; current; current = current->nextTextBox()) {
+    for (auto* current = m_first; current; current = current->nextTextBox()) {
         // FIXME: This shouldn't rely on the end of a dirty line box. See https://bugs.webkit.org/show_bug.cgi?id=97264
         // Text run is entirely before the affected range.
         if (current->end() < start)
@@ -675,7 +675,7 @@ bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsig
         firstRootBox->markDirty();
         dirtiedLines = true;
     }
-    for (auto current = firstRootBox; current && current != lastRootBox; current = current->nextRootBox()) {
+    for (auto* current = firstRootBox; current && current != lastRootBox; current = current->nextRootBox()) {
         if (current->lineBreakObj() == &renderer && current->lineBreakPos() > end)
             current->setLineBreakPos(current->lineBreakPos() + lengthDelta);
     }
@@ -693,7 +693,7 @@ inline void RenderTextLineBoxes::checkConsistency() const
 #if !ASSERT_DISABLED
 #ifdef CHECK_CONSISTENCY
     const InlineTextBox* prev = nullptr;
-    for (auto child = m_first; child; child = child->nextTextBox()) {
+    for (auto* child = m_first; child; child = child->nextTextBox()) {
         ASSERT(child->renderer() == this);
         ASSERT(child->prevTextBox() == prev);
         prev = child;
@@ -714,7 +714,7 @@ RenderTextLineBoxes::~RenderTextLineBoxes()
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 void RenderTextLineBoxes::invalidateParentChildLists()
 {
-    for (auto box = m_first; box; box = box->nextTextBox())
+    for (auto* box = m_first; box; box = box->nextTextBox())
         box->invalidateParentChildList();
 }
 #endif

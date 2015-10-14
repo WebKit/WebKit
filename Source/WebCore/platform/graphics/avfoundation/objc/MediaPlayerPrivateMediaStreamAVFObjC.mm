@@ -145,7 +145,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& client)
         }
     }
     m_previewLayer = nullptr;
-    for (auto track : m_MediaStreamPrivate->tracks()) {
+    for (auto& track : m_MediaStreamPrivate->tracks()) {
         if (track->type() == RealtimeMediaSource::Type::Video)
             m_previewLayer = static_cast<AVVideoCaptureSource*>(track->source())->previewLayer();
     }
@@ -189,7 +189,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::playInternal()
 {
     m_playing = true;
 
-    for (auto track : m_MediaStreamPrivate->tracks())
+    for (auto& track : m_MediaStreamPrivate->tracks())
         track->source()->startProducingData();
 }
 
@@ -207,7 +207,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pauseInternal()
 {
     m_playing = false;
 
-    for (auto track : m_MediaStreamPrivate->tracks())
+    for (auto& track : m_MediaStreamPrivate->tracks())
         track->source()->stopProducingData();
 }
 
@@ -228,7 +228,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::supportsScanning() const
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
 {
-    for (auto track : m_MediaStreamPrivate->tracks()) {
+    for (auto& track : m_MediaStreamPrivate->tracks()) {
         if (track->type() == RealtimeMediaSource::Type::Audio)
             track->source()->setMuted(muted);
     }
@@ -237,7 +237,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
 FloatSize MediaPlayerPrivateMediaStreamAVFObjC::naturalSize() const
 {
     FloatSize floatSize(0, 0);
-    for (auto track : m_MediaStreamPrivate->tracks()) {
+    for (auto& track : m_MediaStreamPrivate->tracks()) {
         if (track->type() == RealtimeMediaSource::Type::Video) {
             AVVideoCaptureSource* source = (AVVideoCaptureSource*)track->source();
             if (!source->stopped() && track->enabled()) {
@@ -253,7 +253,7 @@ FloatSize MediaPlayerPrivateMediaStreamAVFObjC::naturalSize() const
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
 {
-    for (auto track : m_MediaStreamPrivate->tracks()) {
+    for (auto& track : m_MediaStreamPrivate->tracks()) {
         if (track->type() == RealtimeMediaSource::Type::Video)
             return true;
     }
@@ -262,7 +262,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
 {
-    for (auto track : m_MediaStreamPrivate->tracks()) {
+    for (auto& track : m_MediaStreamPrivate->tracks()) {
         if (track->type() == RealtimeMediaSource::Type::Audio)
             return true;
     }

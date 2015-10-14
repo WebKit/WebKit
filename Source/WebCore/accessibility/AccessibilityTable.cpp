@@ -474,7 +474,7 @@ void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection
                     addTableCellChild(obj, appendedRows, maxColumnCount);
                     continue;
                 }
-                for (auto child = obj->firstChild(); child; child = child->nextSibling())
+                for (auto* child = obj->firstChild(); child; child = child->nextSibling())
                     queue.append(child);
             }
         } else

@@ -549,7 +549,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
                 writeSimpleLine(ts, text, run.rect(), run.text());
             }
         } else {
-            for (auto box = text.firstTextBox(); box; box = box->nextTextBox()) {
+            for (auto* box = text.firstTextBox(); box; box = box->nextTextBox()) {
                 writeIndent(ts, indent + 1);
                 writeTextRun(ts, text, *box);
             }

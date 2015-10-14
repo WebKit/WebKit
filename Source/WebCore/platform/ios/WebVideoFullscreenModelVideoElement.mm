@@ -88,7 +88,7 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
         m_videoElement->setVideoFullscreenLayer(nullptr);
 
     if (m_videoElement && m_isListening) {
-        for (auto eventName : observedEventNames())
+        for (auto& eventName : observedEventNames())
             m_videoElement->removeEventListener(eventName, this, false);
     }
     m_isListening = false;
@@ -98,7 +98,7 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
     if (!m_videoElement)
         return;
 
-    for (auto eventName : observedEventNames())
+    for (auto& eventName : observedEventNames())
         m_videoElement->addEventListener(eventName, this, false);
     m_isListening = true;
 

@@ -710,7 +710,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
 
             unsigned textOffset = currentPos.offsetInLeafNode();
             auto lastTextBox = textRenderer.lastTextBox();
-            for (auto box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
+            for (auto* box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset <= box->start() + box->len()) {
                     if (textOffset > box->start())
                         return currentPos;
@@ -838,7 +838,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
             unsigned textOffset = currentPos.offsetInLeafNode();
             auto lastTextBox = textRenderer.lastTextBox();
-            for (auto box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
+            for (auto* box = textRenderer.firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset <= box->end()) {
                     if (textOffset >= box->start())
                         return currentPos;

@@ -244,7 +244,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataFetch(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        for (auto processPool : processPools()) {
+        for (auto& processPool : processPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -360,7 +360,7 @@ void WebsiteDataStore::fetchData(WebsiteDataTypes dataTypes, std::function<void 
 
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
-        for (auto processPool : processPools()) {
+        for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
             callbackAggregator->addPendingCallback();
@@ -512,7 +512,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        for (auto processPool : processPools()) {
+        for (auto& processPool : processPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -607,7 +607,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
-        for (auto processPool : processPools()) {
+        for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
             callbackAggregator->addPendingCallback();
@@ -727,7 +727,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
     auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        for (auto processPool : processPools()) {
+        for (auto& processPool : processPools()) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
                 if (!processPool->networkProcess())
@@ -843,7 +843,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, const Vector<Websi
 
 #if ENABLE(DATABASE_PROCESS)
     if (dataTypes & WebsiteDataTypeIndexedDBDatabases && isPersistent()) {
-        for (auto processPool : processPools()) {
+        for (auto& processPool : processPools()) {
             processPool->ensureDatabaseProcess();
 
             callbackAggregator->addPendingCallback();
@@ -1001,7 +1001,7 @@ Vector<PluginModuleInfo> WebsiteDataStore::plugins() const
 {
     Vector<PluginModuleInfo> plugins;
 
-    for (auto processPool : processPools()) {
+    for (auto& processPool : processPools()) {
         for (auto& plugin : processPool->pluginInfoStore().plugins())
             plugins.append(plugin);
     }

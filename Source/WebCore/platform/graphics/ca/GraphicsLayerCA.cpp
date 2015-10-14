@@ -1790,7 +1790,7 @@ void GraphicsLayerCA::updateChildrenTransform()
     primaryLayer()->setSublayerTransform(m_childrenTransform);
 
     if (LayerMap* layerCloneMap = primaryLayerClones()) {
-        for (auto & layer : layerCloneMap->values())
+        for (auto& layer : layerCloneMap->values())
             layer->setSublayerTransform(m_childrenTransform);
     }
 }
@@ -1800,7 +1800,7 @@ void GraphicsLayerCA::updateMasksToBounds()
     m_layer->setMasksToBounds(m_masksToBounds);
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
-        for (auto & layer : layerCloneMap->values())
+        for (auto& layer : layerCloneMap->values())
             layer->setMasksToBounds(m_masksToBounds);
     }
 }
@@ -1815,7 +1815,7 @@ void GraphicsLayerCA::updateContentsVisibility()
         m_layer->setContents(nullptr);
 
         if (LayerMap* layerCloneMap = m_layerClones.get()) {
-            for (auto & layer : layerCloneMap->values())
+            for (auto& layer : layerCloneMap->values())
                 layer->setContents(nullptr);
         }
     }
@@ -1833,7 +1833,7 @@ void GraphicsLayerCA::updateContentsOpaque(float pageScaleFactor)
     m_layer->setOpaque(contentsOpaque);
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
-        for (auto & layer : layerCloneMap->values())
+        for (auto& layer : layerCloneMap->values())
             layer->setOpaque(contentsOpaque);
     }
 }
