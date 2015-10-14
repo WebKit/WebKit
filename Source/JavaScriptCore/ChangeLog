@@ -1,3 +1,20 @@
+2015-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Simplify WeakBlock visit and reap phases
+        https://bugs.webkit.org/show_bug.cgi?id=150045
+
+        Reviewed by Geoffrey Garen.
+
+        WeakBlock visiting and reaping both happen after MarkedBlock marking.
+        All the MarkedBlocks we encounter should be either Marked or Retired.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isMarkedOrRetired):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit):
+        (JSC::WeakBlock::reap):
+        * heap/WeakBlock.h:
+
 2015-10-12  Geoffrey Garen  <ggaren@apple.com>
 
         CodeBlock write barriers should be precise

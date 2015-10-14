@@ -73,7 +73,6 @@ private:
     static FreeCell* asFreeCell(WeakImpl*);
 
     explicit WeakBlock(MarkedBlock&);
-    WeakImpl* firstWeakImpl();
     void finalize(WeakImpl*);
     WeakImpl* weakImpls();
     size_t weakImplCount();

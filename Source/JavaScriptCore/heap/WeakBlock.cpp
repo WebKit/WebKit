@@ -102,8 +102,8 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
     // If this WeakBlock doesn't belong to a MarkedBlock, we won't even be here.
     ASSERT(m_markedBlock);
 
-    if (m_markedBlock->isAllocated())
-        return;
+    // We only visit after marking.
+    ASSERT(m_markedBlock->isMarkedOrRetired());
 
     SlotVisitor& visitor = heapRootVisitor.visitor();
 
@@ -136,8 +136,8 @@ void WeakBlock::reap()
     // If this WeakBlock doesn't belong to a MarkedBlock, we won't even be here.
     ASSERT(m_markedBlock);
 
-    if (m_markedBlock->isAllocated())
-        return;
+    // We only reap after marking.
+    ASSERT(m_markedBlock->isMarkedOrRetired());
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];

@@ -164,6 +164,7 @@ namespace JSC {
         void clearNewlyAllocated(const void*);
 
         bool isAllocated() const;
+        bool isMarkedOrRetired() const;
         bool needsSweeping() const;
         void didRetireBlock(const FreeList&);
         void willRemoveBlock();
@@ -446,6 +447,11 @@ namespace JSC {
     inline bool MarkedBlock::isAllocated() const
     {
         return m_state == Allocated;
+    }
+
+    inline bool MarkedBlock::isMarkedOrRetired() const
+    {
+        return m_state == Marked || m_state == Retired;
     }
 
 } // namespace JSC
