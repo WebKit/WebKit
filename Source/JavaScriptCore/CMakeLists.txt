@@ -575,6 +575,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSTemplateRegistryKey.cpp
     runtime/JSTypedArrayConstructors.cpp
     runtime/JSTypedArrayPrototypes.cpp
+    runtime/JSTypedArrayViewConstructor.cpp
     runtime/JSTypedArrayViewPrototype.cpp
     runtime/JSTypedArrays.cpp
     runtime/JSWeakMap.cpp
@@ -1092,6 +1093,7 @@ set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/StringConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/StringIterator.prototype.js
     ${JAVASCRIPTCORE_DIR}/builtins/TypedArray.prototype.js
+    ${JAVASCRIPTCORE_DIR}/builtins/TypedArrayConstructor.js
 )
 
 add_custom_command(

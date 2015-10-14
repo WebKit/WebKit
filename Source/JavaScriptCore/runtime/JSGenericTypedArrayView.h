@@ -171,13 +171,7 @@ public:
         return true;
     }
 
-    static Optional<typename Adaptor::Type> toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue)
-    {
-        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
-        if (exec->hadException())
-            return Nullopt;
-        return value;
-    }
+    static ElementType toAdaptorNativeFromValue(ExecState* exec, JSValue jsValue) { return toNativeFromValue<Adaptor>(exec, jsValue); }
 
     bool setRangeToValue(ExecState* exec, unsigned start, unsigned end, JSValue jsValue)
     {

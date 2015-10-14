@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,12 @@ JSDataView* JSDataView::create(ExecState*, Structure*, unsigned)
 }
 
 bool JSDataView::set(ExecState*, JSObject*, unsigned, unsigned)
+{
+    UNREACHABLE_FOR_PLATFORM();
+    return false;
+}
+
+bool JSDataView::setIndex(ExecState*, unsigned, JSValue)
 {
     UNREACHABLE_FOR_PLATFORM();
     return false;

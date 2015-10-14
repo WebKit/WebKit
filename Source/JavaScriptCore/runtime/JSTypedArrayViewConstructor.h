@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,39 +20,37 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSGenericTypedArrayViewConstructor_h
-#define JSGenericTypedArrayViewConstructor_h
+#ifndef JSTypedArrayViewConstructor_h
+#define JSTypedArrayViewConstructor_h
 
 #include "InternalFunction.h"
 
 namespace JSC {
 
-template<typename ViewClass>
-class JSGenericTypedArrayViewConstructor : public InternalFunction {
+class JSTypedArrayViewConstructor : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
 protected:
-    JSGenericTypedArrayViewConstructor(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype, const String& name, FunctionExecutable* privateAllocator);
+    JSTypedArrayViewConstructor(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*, JSObject* prototype);
 
 public:
-    static JSGenericTypedArrayViewConstructor* create(
-        VM&, JSGlobalObject*, Structure*, JSObject* prototype, const String& name, FunctionExecutable* privateAllocator);
+    static JSTypedArrayViewConstructor* create(VM&, JSGlobalObject*, Structure*, JSObject* prototype);
 
     DECLARE_INFO;
-    
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 protected:
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
 };
 
+
+    
 } // namespace JSC
 
-#endif // JSGenericTypedArrayViewConstructor_h
-
+#endif /* JSTypedArrayViewConstructor_h */

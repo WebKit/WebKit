@@ -1,3 +1,82 @@
+2015-10-14  Keith Miller  <keith_miller@apple.com>
+
+        ES6 Fix TypedArray constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=149975
+
+        Reviewed by Geoffrey Garen.
+
+        The ES6 spec requires that any object argument passed to a TypedArray constructor that is not a TypedArray
+        and has an iterator should use the iterator to construct the TypedArray. To avoid performance regressions related
+        to iterating we check if the iterator attached to the object points to the generic array iterator and length is a value.
+        If so, we do not use the iterator since there should be no observable difference. Another other interesting note is
+        that the ES6 spec has the of and from functions on a shared constructor between all the TypedArray constructors.
+        When the TypedArray is constructed the expectation is to crawl the prototype chain of the this value
+        passed to the function. If the function finds a known TypedArray constructor (Int32Array, Float64Array,...) then
+        it creates a TypedArray of that type. This is implemented by adding a private function (@allocateTypedArray) to each
+        of the constructors that can be called in order to construct the array. By using the private functions the JIT should
+        hopefully be able to optimize this to a direct call.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/TypedArrayConstructor.js: Added.
+        (of):
+        (from):
+        (allocateInt8Array):
+        (allocateInt16Array):
+        (allocateInt32Array):
+        (allocateUint32Array):
+        (allocateUint16Array):
+        (allocateUint8Array):
+        (allocateUint8ClampedArray):
+        (allocateFloat32Array):
+        (allocateFloat64Array):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::setIndex):
+        * runtime/JSDataView.h:
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::toAdaptorNativeFromValue):
+        * runtime/JSGenericTypedArrayViewConstructor.h:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::create):
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSTypedArrayViewConstructor.cpp: Added.
+        (JSC::JSTypedArrayViewConstructor::JSTypedArrayViewConstructor):
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        (JSC::JSTypedArrayViewConstructor::create):
+        (JSC::JSTypedArrayViewConstructor::createStructure):
+        (JSC::constructTypedArrayView):
+        (JSC::JSTypedArrayViewConstructor::getConstructData):
+        (JSC::JSTypedArrayViewConstructor::getCallData):
+        * runtime/JSTypedArrayViewConstructor.h: Copied from Source/JavaScriptCore/runtime/JSGenericTypedArrayViewConstructor.h.
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::create):
+        * tests/es6.yaml:
+        * tests/stress/resources/typedarray-constructor-helper-functions.js: Added.
+        (forEachTypedArray):
+        (hasSameValues):
+        (foo):
+        (testConstructorFunction):
+        (testConstructor):
+        * tests/stress/typedarray-constructor.js: Added.
+        (A):
+        (iterator.return.next):
+        (iterator):
+        (obj.valueOf):
+        (iterator2.return.next):
+        (iterator2):
+        * tests/stress/typedarray-from.js: Added.
+        (even):
+        (isBigEnoughAndException):
+        * tests/stress/typedarray-of.js: Added.
+
 2015-10-14  Mark Lam  <mark.lam@apple.com>
 
         Rename some JSC option names to be more uniform.

@@ -310,6 +310,16 @@
     macro(InspectorInstrumentation) \
     macro(get) \
     macro(set) \
+    macro(allocateTypedArray) \
+    macro(Int8Array) \
+    macro(Int16Array) \
+    macro(Int32Array) \
+    macro(Uint8Array) \
+    macro(Uint8ClampedArray) \
+    macro(Uint16Array) \
+    macro(Uint32Array) \
+    macro(Float32Array) \
+    macro(Float64Array) \
 
 
 namespace JSC {

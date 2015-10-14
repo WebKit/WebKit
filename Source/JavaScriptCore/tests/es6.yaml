@@ -1115,9 +1115,9 @@
 - path: es6/String.prototype_methods_String.prototype.normalize.js
   cmd: runES6 :fail
 - path: es6/typed_arrays_%TypedArray%.from.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.of.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.copyWithin.js
   cmd: runES6 :normal
 - path: es6/typed_arrays_%TypedArray%.prototype.entries.js
