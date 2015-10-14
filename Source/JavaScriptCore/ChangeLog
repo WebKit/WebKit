@@ -1,3 +1,25 @@
+2015-10-13  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r189834. rdar://problem/22801966
+
+    2015-09-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Paused Debugger prevents page reload
+            https://bugs.webkit.org/show_bug.cgi?id=148174
+
+            Reviewed by Brian Burg.
+
+            * debugger/Debugger.h:
+            (JSC::Debugger::suppressAllPauses):
+            (JSC::Debugger::setSuppressAllPauses):
+            * debugger/Debugger.cpp:
+            (JSC::Debugger::Debugger):
+            (JSC::Debugger::pauseIfNeeded):
+            * inspector/agents/InspectorDebuggerAgent.h:
+            * inspector/agents/InspectorDebuggerAgent.cpp:
+            (Inspector::InspectorDebuggerAgent::setSuppressAllPauses):
+            Provide a way to suppress pauses.
+
 2015-10-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r189454. rdar://problem/22802036

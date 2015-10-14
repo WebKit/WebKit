@@ -123,8 +123,6 @@ public:
     WEBCORE_EXPORT bool profilerEnabled() const;
     WEBCORE_EXPORT void setProfilerEnabled(bool);
 
-    void resume();
-
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
@@ -150,7 +148,6 @@ private:
     InspectorDOMAgent* m_domAgent;
     InspectorResourceAgent* m_resourceAgent;
     InspectorPageAgent* m_pageAgent;
-    PageDebuggerAgent* m_debuggerAgent;
     InspectorDOMDebuggerAgent* m_domDebuggerAgent;
     InspectorTimelineAgent* m_timelineAgent;
 

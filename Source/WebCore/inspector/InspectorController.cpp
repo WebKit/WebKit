@@ -150,10 +150,10 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(WTF::move(consoleAgentPtr));
 
     auto debuggerAgentPtr = std::make_unique<PageDebuggerAgent>(m_injectedScriptManager.get(), m_instrumentingAgents.get(), pageAgent, m_overlay.get());
-    m_debuggerAgent = debuggerAgentPtr.get();
+    PageDebuggerAgent* debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(WTF::move(debuggerAgentPtr));
 
-    auto domDebuggerAgentPtr = std::make_unique<InspectorDOMDebuggerAgent>(m_instrumentingAgents.get(), m_domAgent, m_debuggerAgent);
+    auto domDebuggerAgentPtr = std::make_unique<InspectorDOMDebuggerAgent>(m_instrumentingAgents.get(), m_domAgent, debuggerAgent);
     m_domDebuggerAgent = domDebuggerAgentPtr.get();
     m_agents.append(WTF::move(domDebuggerAgentPtr));
 
@@ -171,8 +171,8 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
         );
     }
 
-    runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
-    m_timelineAgent->setPageScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
+    runtimeAgent->setScriptDebugServer(&debuggerAgent->scriptDebugServer());
+    m_timelineAgent->setPageScriptDebugServer(&debuggerAgent->scriptDebugServer());
 }
 
 InspectorController::~InspectorController()
@@ -394,14 +394,6 @@ void InspectorController::setProfilerEnabled(bool enable)
     } else {
         m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
         m_timelineAgent->stop(unused);
-    }
-}
-
-void InspectorController::resume()
-{
-    if (m_debuggerAgent) {
-        ErrorString unused;
-        m_debuggerAgent->resume(unused);
     }
 }
 
