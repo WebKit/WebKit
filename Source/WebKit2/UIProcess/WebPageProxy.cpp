@@ -3182,16 +3182,6 @@ void WebPageProxy::didLayout(uint32_t layoutMilestones)
         m_loaderClient->didLayout(*this, static_cast<LayoutMilestones>(layoutMilestones));
 }
 
-void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, const UserData& userData)
-{
-    PageClientProtector protector(m_pageClient);
-
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-
-    m_loaderClient->didRemoveFrameFromHierarchy(*this, *frame, m_process->transformHandlesToObjects(userData.object()).get());
-}
-
 void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, const UserData& userData)
 {
     PageClientProtector protector(m_pageClient);

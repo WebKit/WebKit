@@ -1,3 +1,21 @@
+2015-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Remove a message that isn't used by anyone
+        https://bugs.webkit.org/show_bug.cgi?id=150136
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didRemoveFrameFromHierarchy): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2): Deleted.
+
 2015-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for reloading without content blockers

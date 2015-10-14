@@ -144,9 +144,6 @@ void WebFrameLoaderClient::detachedFromParent2()
 
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didRemoveFrameFromHierarchy(webPage, m_frame, userData);
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidRemoveFrameFromHierarchy(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::detachedFromParent3()

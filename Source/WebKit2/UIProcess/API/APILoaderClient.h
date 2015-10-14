@@ -71,7 +71,6 @@ public:
     // FIXME: We should consider removing didFirstVisuallyNonEmptyLayoutForFrame since it is replaced by didLayout.
     virtual void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
 
-    virtual void didRemoveFrameFromHierarchy(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
     virtual void didDisplayInsecureContentForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
     virtual void didRunInsecureContentForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }
     virtual void didDetectXSSForFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Object*) { }

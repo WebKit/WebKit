@@ -1115,7 +1115,6 @@ private:
     void didReceiveTitleForFrame(uint64_t frameID, const String&, const UserData&);
     void didFirstLayoutForFrame(uint64_t frameID, const UserData&);
     void didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, const UserData&);
-    void didRemoveFrameFromHierarchy(uint64_t frameID, const UserData&);
     void didDisplayInsecureContentForFrame(uint64_t frameID, const UserData&);
     void didRunInsecureContentForFrame(uint64_t frameID, const UserData&);
     void didDetectXSSForFrame(uint64_t frameID, const UserData&);

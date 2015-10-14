@@ -137,7 +137,6 @@ messages -> WebPageProxy {
     DidFirstLayoutForFrame(uint64_t frameID, WebKit::UserData userData)
     DidFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, WebKit::UserData userData)
     DidLayout(uint32_t type)
-    DidRemoveFrameFromHierarchy(uint64_t frameID, WebKit::UserData userData)
     DidReceiveTitleForFrame(uint64_t frameID, String title, WebKit::UserData userData)
     DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(uint64_t frameID, WebKit::UserData userData)

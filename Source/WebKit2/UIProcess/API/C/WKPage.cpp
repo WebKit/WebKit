@@ -1033,14 +1033,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.didLayout(toAPI(&page), toWKLayoutMilestones(milestones), nullptr, m_client.base.clientInfo);
         }
 
-        virtual void didRemoveFrameFromHierarchy(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
-        {
-            if (!m_client.didRemoveFrameFromHierarchy)
-                return;
-
-            m_client.didRemoveFrameFromHierarchy(toAPI(&page), toAPI(&frame), toAPI(userData), m_client.base.clientInfo);
-        }
-
         virtual void didDisplayInsecureContentForFrame(WebPageProxy& page, WebFrameProxy& frame, API::Object* userData) override
         {
             if (!m_client.didDisplayInsecureContentForFrame)
