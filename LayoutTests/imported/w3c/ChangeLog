@@ -1,3 +1,9 @@
+2015-10-14  Dean Jackson  <dino@apple.com>
+
+        Update test result for Canvas2DRenderingContext::commit.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2015-10-14  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Update web-platform-tests tools to the latest revision
