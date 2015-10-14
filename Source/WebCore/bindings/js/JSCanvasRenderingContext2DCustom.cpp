@@ -59,6 +59,12 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
     return CanvasStyle();
 }
 
+JSValue JSCanvasRenderingContext2D::commit(ExecState&)
+{
+    // This is a no-op in a direct-2d canvas.
+    return jsUndefined();
+}
+
 JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState& state) const
 {
     return toJS(&state, globalObject(), impl().strokeStyle());

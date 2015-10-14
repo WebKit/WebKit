@@ -31,6 +31,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     void save();
     void restore();
 
+    [Custom] void commit();
+
     void scale(unrestricted float sx, unrestricted float sy);
     void rotate(unrestricted float angle);
     void translate(unrestricted float tx, unrestricted float ty);
