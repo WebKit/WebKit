@@ -858,7 +858,7 @@ static String generateHashedName(const String& name)
 
 String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShaderSymbolType symbolType, const String& name)
 {
-    GC3Dsizei count;
+    GC3Dsizei count = 0;
     Platform3DObject shaders[2] = { };
     getAttachedShaders(program, 2, &count, shaders);
 
