@@ -87,7 +87,7 @@ class MockCommitQueue(CommitQueueTaskDelegate):
         return archive
 
     def build_style(self):
-        return "both"
+        return "release"
 
     def did_pass_testing_ews(self, patch):
         return False
@@ -206,9 +206,9 @@ run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000
 command_passed: success_message='Applied patch' patch='10000'
 run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=release']
 command_passed: success_message='Built patch' patch='10000'
-run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive', '--build-style=release']
 command_passed: success_message='Passed tests' patch='10000'
 run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000]
 command_passed: success_message='Landed patch' patch='10000'
@@ -226,7 +226,7 @@ run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000
 command_passed: success_message='Applied patch' patch='10000'
 run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=release']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000]
 command_passed: success_message='Landed patch' patch='10000'
@@ -303,9 +303,9 @@ run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000
 command_passed: success_message='Applied patch' patch='10000'
 run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=release']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='10000'
-run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=release']
 command_passed: success_message='Able to build without patch' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs, GoldenScriptError)
@@ -327,9 +327,9 @@ run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000
 command_passed: success_message='Applied patch' patch='10000'
 run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=release']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='10000'
-run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=release']
 command_failed: failure_message='Unable to build without patch' script_error='MOCK clean build failure' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs, expect_retry=True)
@@ -352,9 +352,9 @@ run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000
 command_passed: success_message='Applied patch' patch='10000'
 run_webkit_patch: ['validate-changelog', '--check-oops', '--non-interactive', 10000]
 command_passed: success_message='ChangeLog validated' patch='10000'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=release']
 command_passed: success_message='Built patch' patch='10000'
-run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive', '--build-style=release']
 command_passed: success_message='Passed tests' patch='10000'
 run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000]
 command_failed: failure_message='Unable to land patch' script_error='MOCK land failure' patch='10000'

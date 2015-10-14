@@ -250,7 +250,7 @@ Running: webkit-patch --status-host=example.com validate-changelog --check-oops 
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=mac
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=mac
 MOCK: update_status: commit-queue Passed tests
 Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=mac
 MOCK: update_status: commit-queue Landed patch
@@ -337,7 +337,7 @@ Running: webkit-patch --status-host=example.com validate-changelog --check-oops 
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=%(port)s
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=%(port)s
 MOCK: update_status: commit-queue Passed tests
 Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=%(port)s
 MOCK: update_status: commit-queue Landed patch
@@ -420,7 +420,7 @@ Running: webkit-patch --status-host=example.com validate-changelog --check-oops 
 MOCK: update_status: commit-queue ChangeLog validated
 Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=mac
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --build-style=release --port=mac
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Error: commit-queue did not process patch.
 MOCK: release_work_item: commit-queue 10000

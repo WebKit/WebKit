@@ -2,6 +2,25 @@
 
         More debug queue build fixing.
 
+        Preserve the build style in one more place. Changed mock build_style from "both"
+        to "release", as we don't support testing both debug and release.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (MockCommitQueue.archive_last_test_results):
+        (MockCommitQueue):
+        (MockCommitQueue.build_style):
+        (MockCommitQueue.did_pass_testing_ews):
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._test):
+        (PatchAnalysisTask._build_and_test_without_patch):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSystemTest._default_expected_logs):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2015-10-13  Alexey Proskuryakov  <ap@apple.com>
+
+        More debug queue build fixing.
+
         Add build_style argument to derived classes as well.
 
         * Scripts/webkitpy/common/config/ports.py:

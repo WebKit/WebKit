@@ -146,6 +146,7 @@ class PatchAnalysisTask(object):
             # Notice that we don't pass --build, which means we won't build!
             "--test",
             "--non-interactive",
+            "--build-style=%s" % self._delegate.build_style(),
         ],
         "Passed tests",
         "Patch does not pass tests")
@@ -158,6 +159,7 @@ class PatchAnalysisTask(object):
             "--build",
             "--test",
             "--non-interactive",
+            "--build-style=%s" % self._delegate.build_style(),
         ],
         "Able to pass tests without patch",
         "Unable to pass tests without patch (tree is red?)")
