@@ -255,13 +255,18 @@ static NSURL *origin(WebPage& page)
 void WebProcess::updateActivePages()
 {
 #if PLATFORM(MAC)
-    RetainPtr<CFMutableArrayRef> activePageURLs = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    auto activePageURLs = adoptNS([[NSMutableArray alloc] init]);
+
     for (auto& page : m_pageMap.values()) {
+        if (page->usesEphemeralSession())
+            continue;
+
         if (NSURL *originAsURL = origin(*page))
-            CFArrayAppendValue(activePageURLs.get(), userVisibleString(originAsURL));
+            [activePageURLs addObject:userVisibleString(originAsURL)];
     }
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activePageURLs] {
-        WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), activePageURLs.get());
+        WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activePageURLs.get());
     });
 #endif
 }
