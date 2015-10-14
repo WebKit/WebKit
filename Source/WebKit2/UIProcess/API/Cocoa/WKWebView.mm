@@ -1006,6 +1006,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
+    [_contentView _setDoubleTapGesturesEnabled:[_scrollView isZoomEnabled] && [_scrollView minimumZoomScale] < [_scrollView maximumZoomScale]];
+
     [self _updateScrollViewBackground];
 
     if (_gestureController)

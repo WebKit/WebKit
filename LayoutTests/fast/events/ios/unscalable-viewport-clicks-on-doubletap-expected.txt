@@ -1,0 +1,5 @@
+
+Double tapping on the button should fire 2 click events.
+Click!
+Click!
+

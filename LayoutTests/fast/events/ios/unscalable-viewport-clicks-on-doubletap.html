@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<meta id="viewport-data" name="viewport" content="user-scalable=no, initial-scale=1.0">
+
+<head>
+    <script id="ui-script" type="text/plain">
+        (function() {
+            uiController.doubleTapAtPoint(50, 50, function() {});
+        })();
+    </script>
+
+    <script>
+    var clickCount = 0;
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function getUIScript() {
+        return document.getElementById("ui-script").text;
+    }
+
+    function runTest() {
+        if (testRunner.runUIScript) {
+            testRunner.runUIScript(getUIScript(), function(result) {});
+        }
+    }
+    function handleClicked() {
+        clickCount++;
+        document.body.appendChild(document.createTextNode("Click!"));
+        document.body.appendChild(document.createElement("br"));
+        if (clickCount == 2)
+            testRunner.notifyDone();
+    }
+    </script>
+
+    <style>
+    body {
+        margin: 0;
+    }
+
+    #target {
+        width: 100px;
+        height: 100px;
+    }
+    </style>
+</head>
+
+<body onload="runTest()">
+    <button id="target" onclick="handleClicked()"></button>
+    <div>Double tapping on the button should fire 2 click events.</div>
+</body>
+
+</html>

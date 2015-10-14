@@ -296,6 +296,15 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     return UIWebSelectionModeWeb;
 }
 
+- (void)_createAndConfigureDoubleTapGestureRecognizer
+{
+    _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
+    [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
+    [_doubleTapGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
+    [_singleTapGestureRecognizer requireOtherGestureToFail:_doubleTapGestureRecognizer.get()];
+}
+
 - (void)setupInteraction
 {
     if (!_interactionViewsContainerView) {
@@ -319,11 +328,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_singleTapGestureRecognizer setResetTarget:self action:@selector(_singleTapDidReset:)];
     [self addGestureRecognizer:_singleTapGestureRecognizer.get()];
 
-    _doubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
-    [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
-    [_doubleTapGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_doubleTapGestureRecognizer.get()];
-    [_singleTapGestureRecognizer requireOtherGestureToFail:_doubleTapGestureRecognizer.get()];
+    [self _createAndConfigureDoubleTapGestureRecognizer];
 
     _twoFingerDoubleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_twoFingerDoubleTapRecognized:)]);
     [_twoFingerDoubleTapGestureRecognizer setNumberOfTapsRequired:2];
@@ -2237,6 +2242,18 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         completionHandlerCopy(didBecomeFirstResponder);
         Block_release(completionHandlerCopy);
     });
+}
+
+- (void)_setDoubleTapGesturesEnabled:(BOOL)enabled
+{
+    if (enabled && ![_doubleTapGestureRecognizer isEnabled]) {
+        // The first tap recognized after re-enabling double tap gestures will not wait for the
+        // second tap before committing. To fix this, we use a new double tap gesture recognizer.
+        [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
+        [_doubleTapGestureRecognizer setDelegate:nil];
+        [self _createAndConfigureDoubleTapGestureRecognizer];
+    }
+    [_doubleTapGestureRecognizer setEnabled:enabled];
 }
 
 - (void)accessoryAutoFill

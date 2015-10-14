@@ -203,6 +203,7 @@ struct WKAutoCorrectionData {
 - (void)_enableInspectorNodeSearch;
 - (void)_disableInspectorNodeSearch;
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler;
+- (void)_setDoubleTapGesturesEnabled:(BOOL)enabled;
 @end
 
 #if HAVE(LINK_PREVIEW)
