@@ -1,3 +1,41 @@
+2015-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Change the bundle app cache APIs to take a page
+        https://bugs.webkit.org/show_bug.cgi?id=150123
+
+        Reviewed by Sam Weinig.
+
+        This is another step towards getting rid of ApplicationCacheStorage::singleton().
+        Ideally the WKTR tests that use this should be converted to API tests.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleClearApplicationCache): Deleted.
+        (WKBundleClearApplicationCacheForOrigin): Deleted.
+        (WKBundleSetAppCacheMaximumSize): Deleted.
+        (WKBundleGetAppCacheUsageForOrigin): Deleted.
+        (WKBundleSetApplicationCacheOriginQuota): Deleted.
+        (WKBundleResetApplicationCacheOriginQuota): Deleted.
+        (WKBundleCopyOriginsWithApplicationCache): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageClearApplicationCache):
+        (WKBundlePageClearApplicationCacheForOrigin):
+        (WKBundlePageSetAppCacheMaximumSize):
+        (WKBundlePageGetAppCacheUsageForOrigin):
+        (WKBundlePageSetApplicationCacheOriginQuota):
+        (WKBundlePageResetApplicationCacheOriginQuota):
+        (WKBundlePageCopyOriginsWithApplicationCache):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearApplicationCache): Deleted.
+        (WebKit::InjectedBundle::clearApplicationCacheForOrigin): Deleted.
+        (WebKit::InjectedBundle::setAppCacheMaximumSize): Deleted.
+        (WebKit::InjectedBundle::appCacheUsageForOrigin): Deleted.
+        (WebKit::InjectedBundle::setApplicationCacheOriginQuota): Deleted.
+        (WebKit::InjectedBundle::resetApplicationCacheOriginQuota): Deleted.
+        (WebKit::InjectedBundle::originsWithApplicationCache): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2015-10-14  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix the problem in which environment variable included in webprocess-cmd-prefix can't be parsed

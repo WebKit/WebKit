@@ -80,15 +80,6 @@ WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGrou
 WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
 
-// Application Cache API
-WK_EXPORT void WKBundleClearApplicationCache(WKBundleRef bundle);
-WK_EXPORT void WKBundleClearApplicationCacheForOrigin(WKBundleRef bundle, WKStringRef origin);
-WK_EXPORT void WKBundleSetAppCacheMaximumSize(WKBundleRef bundle, uint64_t size);
-WK_EXPORT uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundle, WKStringRef origin);
-WK_EXPORT void WKBundleSetApplicationCacheOriginQuota(WKBundleRef bundle, WKStringRef origin, uint64_t bytes);
-WK_EXPORT void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundle, WKStringRef origin);
-WK_EXPORT WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundle);
-
 // Garbage collection API
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundle, bool waitUntilDone);

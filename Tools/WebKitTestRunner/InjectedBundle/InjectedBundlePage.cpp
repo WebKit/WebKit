@@ -1527,7 +1527,7 @@ void InjectedBundlePage::didReachApplicationCacheOriginQuota(WKSecurityOriginRef
         return;
 
     // Reset default application cache quota.
-    WKBundleResetApplicationCacheOriginQuota(injectedBundle.bundle(), adoptWK(WKSecurityOriginCopyToString(origin)).get());
+    WKBundlePageResetApplicationCacheOriginQuota(injectedBundle.page()->page(), adoptWK(WKSecurityOriginCopyToString(origin)).get());
 }
 
 uint64_t InjectedBundlePage::didExceedDatabaseQuota(WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes)

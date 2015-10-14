@@ -208,42 +208,6 @@ void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
     toImpl(bundleRef)->setDatabaseQuota(quota);
 }
 
-void WKBundleClearApplicationCache(WKBundleRef bundleRef)
-{
-    toImpl(bundleRef)->clearApplicationCache();
-}
-
-void WKBundleClearApplicationCacheForOrigin(WKBundleRef bundleRef, WKStringRef origin)
-{
-    toImpl(bundleRef)->clearApplicationCacheForOrigin(toWTFString(origin));
-}
-
-void WKBundleSetAppCacheMaximumSize(WKBundleRef bundleRef, uint64_t size)
-{
-    toImpl(bundleRef)->setAppCacheMaximumSize(size);
-}
-
-uint64_t WKBundleGetAppCacheUsageForOrigin(WKBundleRef bundleRef, WKStringRef origin)
-{
-    return toImpl(bundleRef)->appCacheUsageForOrigin(toWTFString(origin));
-}
-
-void WKBundleSetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin, uint64_t bytes)
-{
-    toImpl(bundleRef)->setApplicationCacheOriginQuota(toWTFString(origin), bytes);
-}
-
-void WKBundleResetApplicationCacheOriginQuota(WKBundleRef bundleRef, WKStringRef origin)
-{
-    toImpl(bundleRef)->resetApplicationCacheOriginQuota(toWTFString(origin));
-}
-
-WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundleRef)
-{
-    RefPtr<API::Array> origins = toImpl(bundleRef)->originsWithApplicationCache();
-    return toAPI(origins.release().leakRef());
-}
-
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)
 {
     return toAPI(toImpl(bundle)->createWebDataFromUint8Array(context, data).leakRef());

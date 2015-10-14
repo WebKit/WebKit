@@ -137,15 +137,6 @@ public:
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
 
-    // Application Cache API
-    void clearApplicationCache();
-    void clearApplicationCacheForOrigin(const String& origin);
-    void setAppCacheMaximumSize(uint64_t);
-    uint64_t appCacheUsageForOrigin(const String& origin);
-    void setApplicationCacheOriginQuota(const String& origin, uint64_t);
-    void resetApplicationCacheOriginQuota(const String& origin);
-    PassRefPtr<API::Array> originsWithApplicationCache();
-
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
     void garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone);

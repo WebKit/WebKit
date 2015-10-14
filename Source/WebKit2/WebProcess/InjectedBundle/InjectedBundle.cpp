@@ -350,53 +350,6 @@ void InjectedBundle::setDatabaseQuota(uint64_t quota)
     WebProcess::singleton().supplement<WebDatabaseManager>()->setQuotaForOrigin("file__0", quota);
 }
 
-void InjectedBundle::clearApplicationCache()
-{
-    ApplicationCacheStorage::singleton().deleteAllEntries();
-}
-
-void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
-{
-    ApplicationCacheStorage::singleton().deleteCacheForOrigin(SecurityOrigin::createFromString(originString));
-}
-
-void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
-{
-    ApplicationCacheStorage::singleton().setMaximumSize(size);
-}
-
-uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)
-{
-    return ApplicationCacheStorage::singleton().diskUsageForOrigin(SecurityOrigin::createFromString(originString));
-}
-
-void InjectedBundle::setApplicationCacheOriginQuota(const String& originString, uint64_t bytes)
-{
-    Ref<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
-    ApplicationCacheStorage::singleton().storeUpdatedQuotaForOrigin(origin.ptr(), bytes);
-}
-
-void InjectedBundle::resetApplicationCacheOriginQuota(const String& originString)
-{
-    Ref<SecurityOrigin> origin = SecurityOrigin::createFromString(originString);
-    auto& cacheStorage = ApplicationCacheStorage::singleton();
-    cacheStorage.storeUpdatedQuotaForOrigin(origin.ptr(), cacheStorage.defaultOriginQuota());
-}
-
-PassRefPtr<API::Array> InjectedBundle::originsWithApplicationCache()
-{
-    HashSet<RefPtr<SecurityOrigin>> origins;
-    ApplicationCacheStorage::singleton().getOriginsWithCache(origins);
-
-    Vector<RefPtr<API::Object>> originIdentifiers;
-    originIdentifiers.reserveInitialCapacity(origins.size());
-
-    for (const auto& origin : origins)
-        originIdentifiers.uncheckedAppend(API::String::create(origin->databaseIdentifier()));
-
-    return API::Array::create(WTF::move(originIdentifiers));
-}
-
 int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
 {
     Frame* coreFrame = frame ? frame->coreFrame() : 0;

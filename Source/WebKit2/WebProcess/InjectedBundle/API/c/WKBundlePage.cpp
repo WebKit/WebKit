@@ -54,6 +54,7 @@
 #include "WebRenderObject.h"
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
+#include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>
@@ -634,4 +635,48 @@ void WKBundlePageRemoveAllUserContent(WKBundlePageRef pageRef)
 WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
 {
     return toCopiedAPI(toImpl(pageRef)->pageGroup()->identifier());
+}
+
+void WKBundlePageClearApplicationCache(WKBundlePageRef page)
+{
+    toImpl(page)->corePage()->applicationCacheStorage().deleteAllEntries();
+}
+
+void WKBundlePageClearApplicationCacheForOrigin(WKBundlePageRef page, WKStringRef origin)
+{
+    toImpl(page)->corePage()->applicationCacheStorage().deleteCacheForOrigin(WebCore::SecurityOrigin::createFromString(toImpl(origin)->string()));
+}
+
+void WKBundlePageSetAppCacheMaximumSize(WKBundlePageRef page, uint64_t size)
+{
+    toImpl(page)->corePage()->applicationCacheStorage().setMaximumSize(size);
+}
+
+uint64_t WKBundlePageGetAppCacheUsageForOrigin(WKBundlePageRef page, WKStringRef origin)
+{
+    return toImpl(page)->corePage()->applicationCacheStorage().diskUsageForOrigin(WebCore::SecurityOrigin::createFromString(toImpl(origin)->string()));
+}
+
+void WKBundlePageSetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin, uint64_t bytes)
+{
+    toImpl(page)->corePage()->applicationCacheStorage().storeUpdatedQuotaForOrigin(WebCore::SecurityOrigin::createFromString(toImpl(origin)->string()).ptr(), bytes);
+}
+
+void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page, WKStringRef origin)
+{
+    toImpl(page)->corePage()->applicationCacheStorage().storeUpdatedQuotaForOrigin(WebCore::SecurityOrigin::createFromString(toImpl(origin)->string()).ptr(), toImpl(page)->corePage()->applicationCacheStorage().defaultOriginQuota());
+}
+
+WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
+{
+    HashSet<RefPtr<WebCore::SecurityOrigin>> origins;
+    toImpl(page)->corePage()->applicationCacheStorage().getOriginsWithCache(origins);
+
+    Vector<RefPtr<API::Object>> originIdentifiers;
+    originIdentifiers.reserveInitialCapacity(origins.size());
+
+    for (const auto& origin : origins)
+        originIdentifiers.uncheckedAppend(API::String::create(origin->databaseIdentifier()));
+
+    return toAPI(&API::Array::create(WTF::move(originIdentifiers)).leakRef());
 }
