@@ -1,4 +1,22 @@
 =================
+WebKitGTK+ 2.10.1
+=================
+
+What's new in WebKitGTK+ 2.10.1?
+
+  - Fix rendering of accelerated content in HiDPI screens.
+  - Fix several media controls rendering issues.
+  - Fix rendering of progress element with recent versions of GTK+.
+  - Add and update some web inspector icons.
+  - Correctly handle websites sending an invalid auth header.
+  - Fix a crash when creating the UI process backing store in Wayland.
+  - Fix the build with spellchecker disabled.
+  - Fix the build with touch events disabled.
+  - Fix the build with OpenGL disabled.
+  - Several build fixes on Mac OSX.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.10.0
 =================
 
