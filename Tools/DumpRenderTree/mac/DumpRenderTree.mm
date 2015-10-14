@@ -632,8 +632,8 @@ static void activateFontsIOS()
     fontData(WeightWatcher700);
     fontData(WeightWatcher800);
     fontData(WeightWatcher900);
-    fontData(FontWithFeaturesTTF);
-    fontData(FontWithFeaturesOTF);
+    fontData(FWFTTF);
+    fontData(FWFOTF);
 }
 #endif // !PLATFORM(IOS)
 
