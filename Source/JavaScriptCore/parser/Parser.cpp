@@ -1923,6 +1923,8 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     next();
 
     AutoPopScopeRef classScope(this, pushScope());
+    classScope->setIsLexicalScope();
+    classScope->preventVarDeclarations();
     classScope->setStrictMode();
 
     const Identifier* className = nullptr;
@@ -1930,7 +1932,7 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         className = m_token.m_data.ident;
         info.className = className;
         next();
-        failIfTrue(classScope->declareVariable(className) & DeclarationResult::InvalidStrictMode, "'", className->impl(), "' is not a valid class name");
+        failIfTrue(classScope->declareLexicalVariable(className, true) & DeclarationResult::InvalidStrictMode, "'", className->impl(), "' is not a valid class name");
     } else if (requirements == FunctionNeedsName) {
         if (match(OPENBRACE))
             semanticFail("Class statements must have a name");
@@ -2047,10 +2049,11 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
         }
     }
 
-    popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
-    return context.createClassExpr(location, *className, constructor, parentClass, instanceMethods, staticMethods);
+    auto classExpression = context.createClassExpr(location, *className, classScope->finalizeLexicalEnvironment(), constructor, parentClass, instanceMethods, staticMethods);
+    popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
+    return classExpression;
 }
 #endif
 

@@ -342,10 +342,10 @@ public:
     }
 
 #if ENABLE(ES6_CLASS_SYNTAX)
-    ClassExprNode* createClassExpr(const JSTokenLocation& location, const Identifier& name, ExpressionNode* constructor,
+    ClassExprNode* createClassExpr(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructor,
         ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
     {
-        return new (m_parserArena) ClassExprNode(location, name, constructor, parentClass, instanceMethods, staticMethods);
+        return new (m_parserArena) ClassExprNode(location, name, classEnvironment, constructor, parentClass, instanceMethods, staticMethods);
     }
 #endif
 

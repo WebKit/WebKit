@@ -86,6 +86,8 @@
   cmd: runES6 :normal
 - path: es6/class_class_expression.js
   cmd: runES6 :normal
+- path: es6/class_class_name_is_lexically_scoped.js
+  cmd: runES6 :normal
 - path: es6/class_class_statement.js
   cmd: runES6 :normal
 - path: es6/class_computed_accessor_properties.js
@@ -727,8 +729,6 @@
 - path: es6/arrow_functions_no_prototype_property.js
   cmd: runES6 :normal
 - path: es6/block-level_function_declaration.js
-  cmd: runES6 :fail
-- path: es6/class_class_name_is_lexically_scoped.js
   cmd: runES6 :fail
 - path: es6/destructuring_computed_properties.js
   cmd: runES6 :fail

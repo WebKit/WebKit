@@ -1,3 +1,42 @@
+2015-10-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Class expression should have lexical environment that has itself as an imutable binding
+        https://bugs.webkit.org/show_bug.cgi?id=150089
+
+        Reviewed by Geoffrey Garen.
+
+        According to ES6 spec, class expression has its own lexical environment that holds itself
+        as an immutable binding[1] (section 14.5.14 step 2, 3, 4, 23)
+
+        As a result, even if the binding declared in the outer scope is overridden, methods inside
+        class expression can refer its class by the class name.
+
+        [1]: http://ecma-international.org/ecma-262/6.0/#sec-runtime-semantics-classdefinitionevaluation
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr):
+        * parser/NodeConstructors.h:
+        (JSC::ClassExprNode::ClassExprNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClassExpr):
+        * tests/es6.yaml:
+        * tests/stress/class-expression-generates-environment.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (prototype.method):
+        (staticMethod):
+        (A.prototype.method):
+        (A.staticMethod):
+        (A):
+        * tests/stress/class-expression-should-be-tdz-in-heritage.js: Added.
+        (shouldThrow):
+        (shouldThrow.A):
+
 2015-10-13  Saam barati  <sbarati@apple.com>
 
         We were creating a GCAwareJITStubRoutineWithExceptionHandler when we didn't actually have an exception handler in the CodeBlock's exception handler table

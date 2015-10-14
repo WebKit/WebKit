@@ -1930,9 +1930,11 @@ namespace JSC {
     };
 
 #if ENABLE(ES6_CLASS_SYNTAX)
-    class ClassExprNode final : public ExpressionNode {
+    class ClassExprNode final : public ExpressionNode, public VariableEnvironmentNode {
     public:
-        ClassExprNode(const JSTokenLocation&, const Identifier&, ExpressionNode* constructorExpresssion,
+        using ParserArenaDeletable::operator new;
+
+        ClassExprNode(const JSTokenLocation&, const Identifier&, VariableEnvironment& classEnvironment, ExpressionNode* constructorExpresssion,
             ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods);
 
         const Identifier& name() { return m_name; }
