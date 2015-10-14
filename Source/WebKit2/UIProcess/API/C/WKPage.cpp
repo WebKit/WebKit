@@ -228,12 +228,23 @@ void WKPageStopLoading(WKPageRef pageRef)
 
 void WKPageReload(WKPageRef pageRef)
 {
-    toImpl(pageRef)->reload(false);
+    const bool reloadFromOrigin = false;
+    const bool contentBlockersEnabled = true;
+    toImpl(pageRef)->reload(reloadFromOrigin, contentBlockersEnabled);
+}
+
+void WKPageReloadWithoutContentBlockers(WKPageRef pageRef)
+{
+    const bool reloadFromOrigin = false;
+    const bool contentBlockersEnabled = false;
+    toImpl(pageRef)->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
 void WKPageReloadFromOrigin(WKPageRef pageRef)
 {
-    toImpl(pageRef)->reload(true);
+    const bool reloadFromOrigin = true;
+    const bool contentBlockersEnabled = true;
+    toImpl(pageRef)->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
 bool WKPageTryClose(WKPageRef pageRef)
@@ -363,7 +374,7 @@ void WKPageSetCustomUserAgent(WKPageRef pageRef, WKStringRef userAgentRef)
 
 void WKPageSetUserContentExtensionsEnabled(WKPageRef pageRef, bool enabled)
 {
-    toImpl(pageRef)->setUserContentExtensionsEnabled(enabled);
+    // FIXME: Remove this function once it is no longer used.
 }
 
 bool WKPageSupportsTextEncoding(WKPageRef pageRef)

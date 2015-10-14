@@ -83,6 +83,7 @@ WK_EXPORT void WKPageLoadWebArchiveDataWithUserData(WKPageRef page, WKDataRef we
 
 WK_EXPORT void WKPageStopLoading(WKPageRef page);
 WK_EXPORT void WKPageReload(WKPageRef page);
+WK_EXPORT void WKPageReloadWithoutContentBlockers(WKPageRef page);
 WK_EXPORT void WKPageReloadFromOrigin(WKPageRef page);
 
 WK_EXPORT bool WKPageTryClose(WKPageRef page);

@@ -1,3 +1,16 @@
+2015-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for reloading without content blockers
+        https://bugs.webkit.org/show_bug.cgi?id=150058
+        rdar://problem/22742222
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
 2015-10-14  Mark Lam  <mark.lam@apple.com>
 
         Rename some JSC option names to be more uniform.

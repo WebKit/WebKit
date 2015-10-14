@@ -1564,7 +1564,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, 0, AllowNavigationToInvalidURL::Yes);
 }
 
-void FrameLoader::reload(bool endToEndReload)
+void FrameLoader::reload(bool endToEndReload, bool contentBlockersEnabled)
 {
     if (!m_documentLoader)
         return;
@@ -1585,6 +1585,8 @@ void FrameLoader::reload(bool endToEndReload)
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(initialRequest, defaultSubstituteDataForURL(initialRequest.url()));
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(loader, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
+    loader->setUserContentExtensionsEnabled(contentBlockersEnabled);
+    
     ResourceRequest& request = loader->request();
 
     // FIXME: We don't have a mechanism to revalidate the main resource without reloading at the moment.

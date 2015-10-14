@@ -247,8 +247,11 @@ bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const WebCore::Resou
     RefPtr<WebPageProxy> page { m_page };
     ASSERT(page);
     m_contentFilterUnblockHandler.requestUnblockAsync([page](bool unblocked) {
-        if (unblocked)
-            page->reload(false);
+        if (unblocked) {
+            const bool reloadFromOrigin = false;
+            const bool contentBlockersEnabled = true;
+            page->reload(reloadFromOrigin, contentBlockersEnabled);
+        }
     });
     return true;
 }

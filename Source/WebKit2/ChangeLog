@@ -1,3 +1,62 @@
+2015-10-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for reloading without content blockers
+        https://bugs.webkit.org/show_bug.cgi?id=150058
+        rdar://problem/22742222
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageReload):
+        (WKPageReloadWithoutContentBlockers):
+        (WKPageReloadFromOrigin):
+        (WKPageTryClose):
+        (WKPageSetUserContentExtensionsEnabled):
+        (WKPageSupportsTextEncoding):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController reload]):
+        (-[WKBrowsingContextController reloadFromOrigin]):
+        (-[WKBrowsingContextController applicationNameForUserAgent]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        (-[WKWebView _setUserContentExtensionsEnabled:]):
+        (-[WKWebView _userContentExtensionsEnabled]):
+        (-[WKWebView _webProcessIdentifier]):
+        (-[WKWebView _killWebContentProcess]):
+        (-[WKWebView _reloadWithoutContentBlockers]):
+        (-[WKWebView _killWebContentProcessAndResetState]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_reload):
+        (webkit_web_view_reload_bypass_cache):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didHandleContentFilterUnblockNavigation):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::stopLoading):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setShouldScaleViewToFitDocument):
+        (WebKit::WebPageProxy::setUserContentExtensionsEnabled): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::userContentExtensionsEnabled): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldDispatchFakeMouseMoveEvents):
+        (WebKit::WebPage::setDefersLoading):
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::goForward):
+        (WebKit::WebPage::createDocumentLoader):
+        (WebKit::WebPage::setShouldScaleViewToFitDocument):
+        (WebKit::WebPage::imageOrMediaDocumentSizeChanged):
+        (WebKit::WebPage::setUserContentExtensionsEnabled): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-10-14  Simon Fraser  <simon.fraser@apple.com>
 
         Change GraphicsContext image-drawing functions to take references

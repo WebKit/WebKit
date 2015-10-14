@@ -520,8 +520,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     if (parameters.viewScaleFactor != 1)
         scaleView(parameters.viewScaleFactor);
 
-    m_page->setUserContentExtensionsEnabled(parameters.userContentExtensionsEnabled);
-
 #if PLATFORM(IOS)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
 #endif
@@ -1164,7 +1162,7 @@ void WebPage::setDefersLoading(bool defersLoading)
     m_page->setDefersLoading(defersLoading);
 }
 
-void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, bool contentBlockersEnabled, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     SendStopResponsivenessTimer stopper(this);
 
@@ -1172,7 +1170,7 @@ void WebPage::reload(uint64_t navigationID, bool reloadFromOrigin, const Sandbox
     m_pendingNavigationID = navigationID;
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-    corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), reloadFromOrigin);
+    corePage()->userInputBridge().reloadFrame(m_mainFrame->coreFrame(), reloadFromOrigin, contentBlockersEnabled);
 }
 
 void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
@@ -4903,8 +4901,6 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
             documentLoader->setNavigationID(m_pendingNavigationID);
             m_pendingNavigationID = 0;
         }
-        if (frame.page())
-            documentLoader->setUserContentExtensionsEnabled(frame.page()->userContentExtensionsEnabled());
     }
 
     return WTF::move(documentLoader);
@@ -5003,14 +4999,6 @@ void WebPage::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
         return;
 
     m_drawingArea->setShouldScaleViewToFitDocument(shouldScaleViewToFitDocument);
-}
-
-void WebPage::setUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
-{
-    if (!m_page)
-        return;
-
-    m_page->setUserContentExtensionsEnabled(userContentExtensionsEnabled);
 }
 
 void WebPage::imageOrMediaDocumentSizeChanged(const IntSize& newSize)

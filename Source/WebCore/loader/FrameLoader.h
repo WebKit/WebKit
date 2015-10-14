@@ -123,7 +123,7 @@ public:
     WEBCORE_EXPORT void urlSelected(const URL&, const String& target, Event*, LockHistory, LockBackForwardList, ShouldSendReferrer, ShouldOpenExternalURLsPolicy);
     void submitForm(PassRefPtr<FormSubmission>);
 
-    WEBCORE_EXPORT void reload(bool endToEndReload = false);
+    WEBCORE_EXPORT void reload(bool endToEndReload = false, bool contentBlockersEnabled = true);
     WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);

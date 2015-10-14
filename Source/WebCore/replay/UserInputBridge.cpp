@@ -242,9 +242,9 @@ void UserInputBridge::loadRequest(const FrameLoadRequest& request, InputSource)
     m_page.mainFrame().loader().load(request);
 }
 
-void UserInputBridge::reloadFrame(Frame* frame, bool endToEndReload, InputSource)
+void UserInputBridge::reloadFrame(Frame* frame, bool endToEndReload, bool contentBlockersEnabled, InputSource)
 {
-    frame->loader().reload(endToEndReload);
+    frame->loader().reload(endToEndReload, contentBlockersEnabled);
 }
 
 void UserInputBridge::stopLoadingFrame(Frame* frame, InputSource)
