@@ -1,3 +1,19 @@
+2015-10-14  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix the problem in which environment variable included in webprocess-cmd-prefix can't be parsed
+        https://bugs.webkit.org/show_bug.cgi?id=148616
+
+        Reviewed by Gyuyoung Kim.
+
+        This patch fixes the problem in which environment variable in web process-cmd-prefix can't be parsed.
+        process-cmd-prefix option doesn't work in two cases.
+        1. When executing run-layout-tests,
+        2. When executing MiniBrowser with web process-cmd-prefix environment variable.
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::parseAndRemoveEnvironments):
+        (WebKit::ProcessLauncher::launchProcess):
+
 2015-10-13  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Use the correct notification strings for view service applications state change.
