@@ -1297,13 +1297,6 @@ RetainPtr<CFURLCacheRef> sharedCFURLCache()
 }
 #endif
 
-static LONG WINAPI exceptionFilter(EXCEPTION_POINTERS*)
-{
-    fputs("#CRASHED\n", stderr);
-    fflush(stderr);
-    return EXCEPTION_CONTINUE_SEARCH;
-}
-
 static Vector<const char*> initializeGlobalsFromCommandLineOptions(int argc, const char* argv[])
 {
     Vector<const char*> tests;
@@ -1413,8 +1406,6 @@ int main(int argc, const char* argv[])
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
-
-    ::SetUnhandledExceptionFilter(exceptionFilter);
 
     leakChecking = false;
 

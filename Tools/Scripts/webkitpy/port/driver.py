@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2015, Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -399,7 +400,8 @@ class Driver(object):
             return True
 
     def _check_for_driver_crash_or_unresponsiveness(self, error_line):
-        if error_line == "#CRASHED\n":
+        crashed_check = error_line.rstrip('\r\n')
+        if crashed_check == "#CRASHED":
             self._crashed_process_name = self._server_process.name()
             self._crashed_pid = self._server_process.pid()
             return True

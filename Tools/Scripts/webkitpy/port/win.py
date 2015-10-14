@@ -245,7 +245,7 @@ class WinPort(ApplePort):
         command_file = self.create_debugger_command_file()
         if not command_file:
             return None
-        debugger_options = '"{0}" -p %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
+        debugger_options = '"{0}" -p %ld -e %ld -g -noio -lines -cf "{1}"'.format(cygpath(ntsd_path), cygpath(command_file))
         registry_settings = {'Debugger': debugger_options, 'Auto': "1"}
         for key in registry_settings:
             for arch in ["--wow32", "--wow64"]:
