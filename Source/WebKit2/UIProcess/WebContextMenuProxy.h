@@ -39,7 +39,7 @@ class WebContextMenuProxy : public RefCounted<WebContextMenuProxy> {
 public:
     virtual ~WebContextMenuProxy();
 
-    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&) = 0;
+    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&) = 0;
     virtual void hideContextMenu() = 0;
     virtual void cancelTracking() { }
 

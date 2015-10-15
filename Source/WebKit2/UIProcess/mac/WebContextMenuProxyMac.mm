@@ -324,11 +324,11 @@ void WebContextMenuProxyMac::clearServicesMenu()
 }
 #endif
 
-void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& items, const ContextMenuContextData& context)
+void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& items)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (context.needsServicesMenu()) {
-        setupServicesMenu(context);
+    if (m_context.needsServicesMenu()) {
+        setupServicesMenu(m_context);
         return;
     }
 #endif
@@ -346,17 +346,17 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     populateNSMenu(menu, nsMenuItemVector(items));
 }
 
-void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items, const ContextMenuContextData& context)
+void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (items.isEmpty() && !context.needsServicesMenu())
+    if (items.isEmpty() && !m_context.needsServicesMenu())
         return;
 #else
     if (items.isEmpty())
         return;
 #endif
 
-    populate(items, context);
+    populate(items);
 
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
 
@@ -364,7 +364,7 @@ void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuI
     NSRect menuRect = NSMakeRect(menuLocation.x, menuLocation.y, 0, 0);
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (context.needsServicesMenu())
+    if (m_context.needsServicesMenu())
         [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
 
     if (!m_servicesMenu)
@@ -376,7 +376,7 @@ void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuI
     // FIXME: That API is better than WKPopupContextMenu. In the future all menus should use either it
     // or the [NSMenu popUpContextMenu:withEvent:forView:] API, depending on the menu type.
     // Then we could get rid of NSPopUpButtonCell, custom metrics, and WKPopupContextMenu.
-    if (context.needsServicesMenu()) {
+    if (m_context.needsServicesMenu()) {
         [menu popUpMenuPositioningItem:nil atLocation:menuLocation inView:m_webView];
         hideContextMenu();
         return;

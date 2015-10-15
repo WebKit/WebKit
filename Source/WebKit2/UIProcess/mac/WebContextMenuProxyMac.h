@@ -50,7 +50,7 @@ public:
     }
     ~WebContextMenuProxyMac();
 
-    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&) override;
+    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&) override;
 
     virtual void hideContextMenu() override;
     virtual void cancelTracking() override;
@@ -67,7 +67,7 @@ public:
 private:
     WebContextMenuProxyMac(WKView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
 
-    void populate(const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&);
+    void populate(const Vector<RefPtr<WebContextMenuItem>>&);
 
 #if ENABLE(SERVICE_CONTROLS)
     void setupServicesMenu(const ContextMenuContextData&);

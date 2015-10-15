@@ -4236,7 +4236,7 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
 
     const Vector<RefPtr<WebContextMenuItem>>& itemsToShow = useProposedItems ? proposedAPIItems : clientItems;
     if (!m_contextMenuClient->showContextMenu(*this, contextMenuContextData.menuLocation(), itemsToShow))
-        m_activeContextMenu->showContextMenu(itemsToShow, contextMenuContextData);
+        m_activeContextMenu->showContextMenu(itemsToShow);
 
     m_contextMenuClient->contextMenuDismissed(*this);
 }
