@@ -62,6 +62,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
+#include "CSSUnsetValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -1216,6 +1217,8 @@ static CSSParser::ParseResult parseKeywordValue(MutableStyleProperties* declarat
         value = CSSValuePool::singleton().createInheritedValue();
     else if (valueID == CSSValueInitial)
         value = CSSValuePool::singleton().createExplicitInitialValue();
+    else if (valueID == CSSValueUnset)
+        value = CSSValuePool::singleton().createUnsetValue();
     else if (isValidKeywordPropertyAndValue(propertyId, valueID, parserContext, styleSheetContents))
         value = CSSValuePool::singleton().createIdentifierValue(valueID);
     else
@@ -1956,6 +1959,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (num != 1)
             return false;
         addExpandedPropertyForValue(propId, cssValuePool.createExplicitInitialValue(), important);
+        return true;
+    } else if (id == CSSValueUnset) {
+        if (num != 1)
+            return false;
+        addExpandedPropertyForValue(propId, cssValuePool.createUnsetValue(), important);
         return true;
     }
 
@@ -4200,6 +4208,8 @@ bool CSSParser::parseCustomPropertyDeclaration(bool important, CSSValueID id)
         value = cssValuePool.createInheritedValue();
     else if (id == CSSValueInitial)
         value = cssValuePool.createExplicitInitialValue();
+    else if (id == CSSValueUnset)
+        value = cssValuePool.createUnsetValue();
     else {
         RefPtr<CSSValueList> valueList = CSSValueList::createFromParserValueList(*m_valueList);
         if (m_valueList->containsVariables())

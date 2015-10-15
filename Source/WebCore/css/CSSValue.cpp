@@ -50,10 +50,12 @@
 #include "CSSLineBoxContainValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSProperty.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
+#include "CSSUnsetValue.h"
 #include "CSSValueList.h"
 #include "CSSVariableDependentValue.h"
 #include "CSSVariableValue.h"
@@ -110,6 +112,8 @@ CSSValue::Type CSSValue::cssValueType() const
         return CSS_VALUE_LIST;
     if (isInitialValue())
         return CSS_INITIAL;
+    if (isUnsetValue())
+        return CSS_UNSET;
     return CSS_CUSTOM;
 }
 
@@ -297,6 +301,8 @@ String CSSValue::cssText() const
         return downcast<CSSInheritedValue>(*this).customCSSText();
     case InitialClass:
         return downcast<CSSInitialValue>(*this).customCSSText();
+    case UnsetClass:
+        return downcast<CSSUnsetValue>(*this).customCSSText();
 #if ENABLE(CSS_GRID_LAYOUT)
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
@@ -406,6 +412,9 @@ void CSSValue::destroy()
     case InitialClass:
         delete downcast<CSSInitialValue>(this);
         return;
+    case UnsetClass:
+        delete downcast<CSSUnsetValue>(this);
+        return;
 #if ENABLE(CSS_GRID_LAYOUT)
     case GridLineNamesClass:
         delete downcast<CSSGridLineNamesValue>(this);
@@ -513,6 +522,16 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
 bool CSSValue::isInvalidCustomPropertyValue() const
 {
     return isCustomPropertyValue() && downcast<CSSCustomPropertyValue>(*this).isInvalid();
+}
+
+bool CSSValue::treatAsInheritedValue(CSSPropertyID propertyID) const
+{
+    return classType() == InheritedClass || (classType() == UnsetClass && CSSProperty::isInheritedProperty(propertyID));
+}
+
+bool CSSValue::treatAsInitialValue(CSSPropertyID propertyID) const
+{
+    return classType() == InitialClass || (classType() == UnsetClass && !CSSProperty::isInheritedProperty(propertyID));
 }
 
 }

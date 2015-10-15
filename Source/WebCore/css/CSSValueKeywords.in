@@ -3,6 +3,8 @@
 //
 inherit
 initial
+unset
+
 //
 // CSS_PROP_OUTLINE_STYLE
 // CSS_PROP_BORDER_TOP_STYLE
