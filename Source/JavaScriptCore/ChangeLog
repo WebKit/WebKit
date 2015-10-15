@@ -1,3 +1,52 @@
+2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives
+        https://bugs.webkit.org/show_bug.cgi?id=150096
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::scriptCommentPattern): Deleted.
+        (Inspector::ContentSearchUtilities::findScriptSourceURL): Deleted.
+        (Inspector::ContentSearchUtilities::findScriptSourceMapURL): Deleted.
+        * inspector/ContentSearchUtilities.h:
+        No longer need to search script content.
+
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::dispatchDidParseSource):
+        Carry over the sourceURL and sourceMappingURL from the SourceProvider.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::sourceMapURLForScript):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        No longer do content searching.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::setCode):
+        (JSC::Lexer<T>::skipWhitespace):
+        (JSC::Lexer<T>::parseCommentDirective):
+        (JSC::Lexer<T>::parseCommentDirectiveValue):
+        (JSC::Lexer<T>::consume):
+        (JSC::Lexer<T>::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::sourceURL):
+        (JSC::Lexer::sourceMappingURL):
+        (JSC::Lexer::sourceProvider): Deleted.
+        Give lexer the ability to detect script comment directives.
+        This just consumes characters in single line comments and
+        ultimately sets the sourceURL or sourceMappingURL found.
+
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::url):
+        (JSC::SourceProvider::sourceURL):
+        (JSC::SourceProvider::sourceMappingURL):
+        (JSC::SourceProvider::setSourceURL):
+        (JSC::SourceProvider::setSourceMappingURL):
+        After parsing a script, update the Source Provider with the
+        value of directives that may have been found in the script.
+
 2015-10-15  Filip Pizlo  <fpizlo@apple.com>
 
         InferredTypeTable should ref its keys
