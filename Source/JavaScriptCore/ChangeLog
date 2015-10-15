@@ -1,3 +1,12 @@
+2015-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unimplemented methods in CopiedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=150143
+
+        Reviewed by Andreas Kling.
+
+        * heap/CopiedSpace.h:
+
 2015-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enforce launcher/library naming scheme

@@ -59,8 +59,6 @@ public:
 
     template <HeapOperation collectionType>
     void startedCopying();
-    void startedEdenCopy();
-    void startedFullCopy();
     void doneCopying();
     bool isInCopyPhase() const { return m_inCopyingPhase; }
 
