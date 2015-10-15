@@ -89,7 +89,7 @@ InspectorProtocol._sendMessage = function(messageObject)
     let messageString = typeof messageObject !== "string" ? JSON.stringify(messageObject) : messageObject;
 
     if (ProtocolTest.dumpInspectorProtocolMessages)
-        InspectorFrontendHost.unbufferedLog(`frontend: ${messageString}`);
+        console.log(`frontend: ${messageString}`);
 
     InspectorFrontendHost.sendMessageToBackend(messageString);
 }
@@ -134,7 +134,7 @@ InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
     // This matches the debug dumping in InspectorBackend, which is bypassed
     // by InspectorProtocol. Return messages should be dumped by InspectorBackend.
     if (ProtocolTest.dumpInspectorProtocolMessages)
-        InspectorFrontendHost.unbufferedLog("backend: " + JSON.stringify(messageObject));
+        console.log("backend: " + JSON.stringify(messageObject));
 
     // If the message has an id, then it is a reply to a command.
     let messageId = messageObject.id;

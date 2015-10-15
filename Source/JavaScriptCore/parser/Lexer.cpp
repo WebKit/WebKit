@@ -25,20 +25,22 @@
 #include "config.h"
 #include "Lexer.h"
 
-#include "BuiltinNames.h"
-#include "Identifier.h"
-#include "JSCInlines.h"
 #include "JSFunctionInlines.h"
+
+#include "BuiltinNames.h"
 #include "JSGlobalObjectFunctions.h"
-#include "KeywordLookup.h"
-#include "Lexer.lut.h"
+#include "Identifier.h"
 #include "Nodes.h"
-#include "Parser.h"
+#include "JSCInlines.h"
+#include <wtf/dtoa.h>
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>
-#include <wtf/dtoa.h>
+
+#include "KeywordLookup.h"
+#include "Lexer.lut.h"
+#include "Parser.h"
 
 namespace JSC {
 
@@ -563,8 +565,6 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_atLineStart = true;
     m_lineStart = m_code;
     m_lexErrorMessage = String();
-    m_sourceURL = String();
-    m_sourceMappingURL = String();
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
     m_buffer16.reserveInitialCapacity((m_codeEnd - m_code) / 2);
@@ -686,13 +686,6 @@ template <typename T>
 ALWAYS_INLINE bool Lexer<T>::lastTokenWasRestrKeyword() const
 {
     return m_lastToken == CONTINUE || m_lastToken == BREAK || m_lastToken == RETURN || m_lastToken == THROW;
-}
-
-template <typename T>
-ALWAYS_INLINE void Lexer<T>::skipWhitespace()
-{
-    while (isWhiteSpace(m_current))
-        shift();
 }
 
 static NEVER_INLINE bool isNonLatin1IdentStart(UChar c)
@@ -1712,58 +1705,6 @@ ALWAYS_INLINE bool Lexer<T>::parseMultilineComment()
 }
 
 template <typename T>
-ALWAYS_INLINE void Lexer<T>::parseCommentDirective()
-{
-    // sourceURL and sourceMappingURL directives.
-    if (!consume("source"))
-        return;
-
-    if (consume("URL=")) {
-        if (!m_sourceURL.isEmpty())
-            return;
-        m_sourceURL = parseCommentDirectiveValue();
-        return;
-    }
-
-    if (consume("MappingURL=")) {
-        if (!m_sourceMappingURL.isEmpty())
-            return;
-        m_sourceMappingURL = parseCommentDirectiveValue();
-        return;
-    }
-}
-
-template <typename T>
-ALWAYS_INLINE String Lexer<T>::parseCommentDirectiveValue()
-{
-    skipWhitespace();
-    const T* stringStart = currentSourcePtr();
-    while (!isWhiteSpace(m_current) && !isLineTerminator(m_current) && m_current != '"' && m_current != '\'' && !atEnd())
-        shift();
-    const T* stringEnd = currentSourcePtr();
-    skipWhitespace();
-
-    if (!isLineTerminator(m_current) && !atEnd())
-        return String();
-
-    append8(stringStart, stringEnd - stringStart);
-    return String(m_buffer8.data(), m_buffer8.size());
-}
-
-template <typename T>
-template <unsigned length>
-ALWAYS_INLINE bool Lexer<T>::consume(const char (&input)[length])
-{
-    unsigned lengthToCheck = length - 1; // Ignore the ending NUL byte in the string literal.
-
-    unsigned i = 0;
-    for (; i < lengthToCheck && m_current == input[i]; i++)
-        shift();
-
-    return i == lengthToCheck;
-}
-
-template <typename T>
 bool Lexer<T>::nextTokenIsColon()
 {
     const T* code = m_code;
@@ -1798,7 +1739,8 @@ JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strict
     m_terminator = false;
 
 start:
-    skipWhitespace();
+    while (isWhiteSpace(m_current))
+        shift();
 
     if (atEnd())
         return EOFTOK;
@@ -1956,7 +1898,7 @@ start:
         shift();
         if (m_current == '/') {
             shift();
-            goto inSingleLineCommentCheckForDirectives;
+            goto inSingleLineComment;
         }
         if (m_current == '*') {
             shift();
@@ -2260,15 +2202,6 @@ inNumberAfterDecimalPoint:
 
     m_atLineStart = false;
     goto returnToken;
-
-inSingleLineCommentCheckForDirectives:
-    // Script comment directives like "//# sourceURL=test.js".
-    if (UNLIKELY((m_current == '#' || m_current == '@') && isWhiteSpace(peek(1)))) {
-        shift();
-        shift();
-        parseCommentDirective();
-    }
-    // Fall through to complete single line comment parsing.
 
 inSingleLineComment:
     while (!isLineTerminator(m_current)) {

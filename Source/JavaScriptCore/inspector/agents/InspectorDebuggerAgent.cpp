@@ -604,16 +604,20 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> Inspec
 
 String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
 {
-    return script.sourceMappingURL;
+    return ContentSearchUtilities::findScriptSourceMapURL(script.source);
 }
 
-void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script& script)
+void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script& inScript)
 {
+    Script script = inScript;
+    if (script.startLine <= 0 && !script.startColumn)
+        script.sourceURL = ContentSearchUtilities::findScriptSourceURL(script.source);
+    script.sourceMappingURL = sourceMapURLForScript(script);
+
     bool hasSourceURL = !script.sourceURL.isEmpty();
     String scriptURL = hasSourceURL ? script.sourceURL : script.url;
     bool* hasSourceURLParam = hasSourceURL ? &hasSourceURL : nullptr;
-    String sourceMappingURL = sourceMapURLForScript(script);
-    String* sourceMapURLParam = sourceMappingURL.isNull() ? nullptr : &sourceMappingURL;
+    String* sourceMapURLParam = script.sourceMappingURL.isNull() ? nullptr : &script.sourceMappingURL;
     const bool* isContentScript = script.isContentScript ? &script.isContentScript : nullptr;
     String scriptIDStr = String::number(sourceID);
     m_frontendDispatcher->scriptParsed(scriptIDStr, scriptURL, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURLParam, hasSourceURLParam);

@@ -1,3 +1,18 @@
+2015-10-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r191135.
+        https://bugs.webkit.org/show_bug.cgi?id=150197
+
+        This patch causes 50+ LayoutTest crashes related to the
+        inspector (Requested by ryanhaddad on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: JavaScriptCore should parse sourceURL and
+        sourceMappingURL directives"
+        https://bugs.webkit.org/show_bug.cgi?id=150096
+        http://trac.webkit.org/changeset/191135
+
 2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives
