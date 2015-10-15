@@ -38,6 +38,7 @@
 #import "HTTPHeaderNames.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
+#import "NSURLConnectionSPI.h"
 #import "NetworkingContext.h"
 #import "Page.h"
 #import "ResourceError.h"
