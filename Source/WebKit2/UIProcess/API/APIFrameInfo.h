@@ -37,6 +37,8 @@ class WebFrameProxy;
 
 namespace API {
 
+class FrameHandle;
+
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
     static Ref<FrameInfo> create(const WebKit::WebFrameProxy& frame, const WebCore::SecurityOrigin& securityOrigin)
@@ -49,11 +51,13 @@ public:
     bool isMainFrame() const { return m_isMainFrame; }
     const WebCore::ResourceRequest& request() const { return m_request; }
     SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
+    API::FrameHandle& handle() { return m_handle.get(); }
 
 private:
     bool m_isMainFrame;
     WebCore::ResourceRequest m_request;
     Ref<SecurityOrigin> m_securityOrigin;
+    Ref<FrameHandle> m_handle;
 };
 
 } // namespace API

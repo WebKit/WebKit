@@ -1,5 +1,27 @@
 2015-10-15  Anders Carlsson  <andersca@apple.com>
 
+        Add -[WKFrameInfo _handle]
+        https://bugs.webkit.org/show_bug.cgi?id=150185
+        rdar://problem/23132371
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::FrameInfo):
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo _handle]):
+        * UIProcess/API/Cocoa/WKFrameInfoInternal.h:
+        * UIProcess/API/Cocoa/WKFrameInfoPrivate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKFrameInfoInternal.h.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPopupMenuProxy.h:
+        (WebKit::WebPopupMenuProxy::WebPopupMenuProxy):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2015-10-15  Anders Carlsson  <andersca@apple.com>
+
         The menu location and menu items should be part of ContextMenuContextData
         https://bugs.webkit.org/show_bug.cgi?id=150182
 

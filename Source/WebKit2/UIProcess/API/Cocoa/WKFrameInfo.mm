@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "WKSecurityOriginInternal.h"
+#import "_WKFrameHandleInternal.h"
 
 @implementation WKFrameInfo
 
@@ -73,5 +74,13 @@
 
 @end
 
+@implementation WKFrameInfo (WKPrivate)
+
+- (_WKFrameHandle *)_handle
+{
+    return WebKit::wrapper(_frameInfo->handle());
+}
+
+@end
 #endif
 

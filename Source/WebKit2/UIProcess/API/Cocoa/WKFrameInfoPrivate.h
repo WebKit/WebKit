@@ -23,21 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIFrameInfo.h"
+#import <WebKit/WKFrameInfo.h>
 
-#include "APIFrameHandle.h"
-#include "WebFrameProxy.h"
+#if WK_API_ENABLED
 
-namespace API {
+@class _WKFrameHandle;
 
-// FIXME: This should use the full request of the frame, not just the URL.
-FrameInfo::FrameInfo(const WebKit::WebFrameProxy& frame, const WebCore::SecurityOrigin& securityOrigin)
-    : m_isMainFrame(frame.isMainFrame())
-    , m_request(WebCore::ResourceRequest(frame.url()))
-    , m_securityOrigin(adoptRef(*SecurityOrigin::create(securityOrigin).leakRef()))
-    , m_handle(API::FrameHandle::create(frame.frameID()))
-{
-}
+@interface WKFrameInfo (WKPrivate)
 
-} // namespace API
+@property (nonatomic, readonly, strong) _WKFrameHandle *_handle WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+@end
+
+#endif

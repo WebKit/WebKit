@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKFrameInfo.h"
+#import "WKFrameInfoPrivate.h"
 
 #if WK_API_ENABLED
 
