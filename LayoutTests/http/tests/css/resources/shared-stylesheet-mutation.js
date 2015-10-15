@@ -77,9 +77,9 @@ function executeTests(createCSSOMObjectBeforeTest)
 
     mutationTest(0, '', 'red');
 
-    mutationTest(1, 'sheet.insertRule("#testdiv { background-color: green; }", 3)', 'green');
+    mutationTest(1, 'sheet.appendRule("#testdiv { background-color: green; }", 3)', 'green');
     mutationTest(2, 'sheet.deleteRule(2)');
-    mutationTest(3, 'sheet.cssRules[2].insertRule("#testdiv { background-color: green; }", 1)', 'green');
+    mutationTest(3, 'sheet.cssRules[2].appendRule("#testdiv { background-color: green; }", 1)', 'green');
     mutationTest(4, 'sheet.cssRules[2].deleteRule(0)', 'green');
     mutationTest(5, 'sheet.cssRules[2].cssRules[0].style.setProperty("background-color", "green", "")', 'green');
     mutationTest(6, 'sheet.cssRules[2].cssRules[0].style.removeProperty("background-color")', 'green');
@@ -95,7 +95,7 @@ function executeTests(createCSSOMObjectBeforeTest)
     
     var testString = '\
         sheet.deleteRule(3);\
-        sheet.insertRule("#testdiv { background-color: green; }", 1);\
+        sheet.appendRule("#testdiv { background-color: green; }", 1);\
         sheet.deleteRule(2);\
         sheet.deleteRule(0);\
         sheet.deleteRule(3);\
@@ -105,10 +105,10 @@ function executeTests(createCSSOMObjectBeforeTest)
     mutationTest(11, testString, 'green');
 
     var importRule = '@import "data:text/css;charset=utf-8,%23testdiv%7Bbackground-color%3Agreen%20!important%7D";';
-    mutationTest(12, "sheet.insertRule('"+importRule+"', 1)", 'green');
+    mutationTest(12, "sheet.appendRule('"+importRule+"', 1)", 'green');
 
     mutationTest(13, 'sheet.cssRules[3].selectorText = "foo"', 'red');
-    mutationTest(14, 'sheet.cssRules[4].insertRule("40% { left: 40px; }")', 'red');
+    mutationTest(14, 'sheet.cssRules[4].appendRule("40% { left: 40px; }")', 'red');
     mutationTest(15, 'sheet.cssRules[4].deleteRule("100%")', 'red');
     mutationTest(16, 'sheet.cssRules[5].style.setProperty("font-family", "Bar", "")', 'red');
 
