@@ -297,7 +297,7 @@ bool ResourceHandle::start()
     
     if (d->m_connection) {
         if (d->m_defersLoading)
-            wkSetNSURLConnectionDefersCallbacks(connection(), YES);
+            connection().defersCallbacks = YES;
 
         return true;
     }
@@ -321,7 +321,7 @@ void ResourceHandle::cancel()
 void ResourceHandle::platformSetDefersLoading(bool defers)
 {
     if (d->m_connection)
-        wkSetNSURLConnectionDefersCallbacks(d->m_connection.get(), defers);
+        [d->m_connection setDefersCallbacks:defers];
 }
 
 #if PLATFORM(MAC)

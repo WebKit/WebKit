@@ -1,3 +1,13 @@
+2015-10-15  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Stop using WKSetNSURLConnectionDefersCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=150189
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Removed initialization.
+
 2015-10-14  Zhuo Li  <zachli@apple.com>
 
         Augment <input type=search>’s recent search history with the time each entry was added,

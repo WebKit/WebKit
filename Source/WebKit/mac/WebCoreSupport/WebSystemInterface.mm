@@ -94,7 +94,6 @@ void InitWebCoreSystemInterface(void)
     INIT(SetHTTPRequestPriority);
     INIT(SetHTTPRequestMinimumFastLanePriority);
     INIT(HTTPRequestEnablePipelining);
-    INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);
     INIT(SetPatternPhaseInUserSpace);
     INIT(CGContextIsPDFContext);

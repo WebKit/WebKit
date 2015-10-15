@@ -31,6 +31,7 @@
 
 @interface NSURLConnection ()
 + (CFRunLoopRef)resourceLoaderRunLoop;
+- (void)setDefersCallbacks:(BOOL)defers;
 @end
 
 #endif

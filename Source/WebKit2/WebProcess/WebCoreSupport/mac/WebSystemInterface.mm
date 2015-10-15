@@ -100,7 +100,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SetHTTPRequestMaximumPriority);
         INIT(SetHTTPRequestPriority);
         INIT(SetHTTPRequestMinimumFastLanePriority);
-        INIT(SetNSURLConnectionDefersCallbacks);
         INIT(SetNSURLRequestShouldContentSniff);
         INIT(SetPatternPhaseInUserSpace);
         INIT(CreatePrivateStorageSession);
