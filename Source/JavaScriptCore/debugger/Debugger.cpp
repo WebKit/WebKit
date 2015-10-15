@@ -41,10 +41,10 @@ using namespace JSC;
 
 struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
     HashSet<SourceProvider*> sourceProviders;
-    JSC::Debugger* m_debugger;
+    JSGlobalObject* m_globalObject;
 
-    GatherSourceProviders(JSC::Debugger* debugger)
-        : m_debugger(debugger) { }
+    GatherSourceProviders(JSGlobalObject* globalObject)
+        : m_globalObject(globalObject) { }
 
     IterationStatus operator()(JSCell* cell)
     {
@@ -52,7 +52,7 @@ struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
         if (!function)
             return IterationStatus::Continue;
 
-        if (function->scope()->globalObject()->debugger() != m_debugger)
+        if (function->scope()->globalObject() != m_globalObject)
             return IterationStatus::Continue;
 
         if (!function->executable()->isFunctionExecutable())
@@ -143,8 +143,8 @@ void Debugger::attach(JSGlobalObject* globalObject)
     globalObject->setDebugger(this);
     m_globalObjects.add(globalObject);
 
-    // Call sourceParsed() because it will execute JavaScript in the inspector.
-    GatherSourceProviders gatherSourceProviders(this);
+    // Call sourceParsed because it will execute JavaScript in the inspector.
+    GatherSourceProviders gatherSourceProviders(globalObject);
     {
         HeapIterationScope iterationScope(m_vm.heap);
         m_vm.heap.objectSpace().forEachLiveCell(iterationScope, gatherSourceProviders);

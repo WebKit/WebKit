@@ -1,5 +1,22 @@
 2015-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION: Web Inspector hangs for many seconds when trying to reload page
+        https://bugs.webkit.org/show_bug.cgi?id=150065
+
+        Reviewed by Mark Lam.
+
+        When debugging Web Pages, the same Debugger (PageScriptDebugServer) is
+        attached to each of the different JSGlobalObjects on the page. This could
+        mean multiple frames or isolated scripting contexts. Therefore we should
+        only need to send sourceParsed events to the frontend for scripts within
+        this new JSGlobalObject, not any JSGlobalObject that has this debugger.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::attach):
+        Only send sourceParsed events for Scripts in this JSGlobalObject.
+
+2015-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Remove unimplemented methods in CopiedSpace
         https://bugs.webkit.org/show_bug.cgi?id=150143
 
