@@ -44,17 +44,15 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS)
+OBJC_CLASS WebEvent;
+OBJC_CLASS WAKView;
 #ifdef __OBJC__
-@class WebEvent;
-@class WAKView;
 #include "WAKAppKitStubs.h"
-#else
-class WebEvent;
 #endif
 #endif // PLATFORM(IOS)
 
-#if PLATFORM(COCOA) && !defined(__OBJC__)
-class NSView;
+#if PLATFORM(COCOA)
+OBJC_CLASS NSView;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -261,7 +259,7 @@ public:
 
     void focusDocumentView();
     
-    WEBCORE_EXPORT void sendScrollEvent(); // Ditto
+    WEBCORE_EXPORT void sendScrollEvent();
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
 #if !PLATFORM(IOS)
@@ -470,24 +468,24 @@ private:
 
     Frame& m_frame;
 
-    bool m_mousePressed;
-    bool m_capturesDragging;
+    bool m_mousePressed { false };
+    bool m_capturesDragging { false };
     RefPtr<Node> m_mousePressNode;
 
-    bool m_mouseDownMayStartSelect;
+    bool m_mouseDownMayStartSelect { false };
 #if ENABLE(DRAG_SUPPORT)
-    bool m_mouseDownMayStartDrag;
-    bool m_dragMayStartSelectionInstead;
+    bool m_mouseDownMayStartDrag { false };
+    bool m_dragMayStartSelectionInstead { false };
 #endif
-    bool m_mouseDownWasSingleClickInSelection;
+    bool m_mouseDownWasSingleClickInSelection { false };
     enum SelectionInitiationState { HaveNotStartedSelection, PlacedCaret, ExtendedSelection };
-    SelectionInitiationState m_selectionInitiationState;
+    SelectionInitiationState m_selectionInitiationState { HaveNotStartedSelection };
 
 #if ENABLE(DRAG_SUPPORT)
     LayoutPoint m_dragStartPos;
 #endif
 
-    bool m_panScrollButtonPressed;
+    bool m_panScrollButtonPressed { false };
 
     Timer m_hoverTimer;
 #if ENABLE(CURSOR_SUPPORT)
@@ -495,22 +493,22 @@ private:
 #endif
 
     Timer m_longMousePressTimer;
-    bool m_didRecognizeLongMousePress;
+    bool m_didRecognizeLongMousePress { false };
 
     std::unique_ptr<AutoscrollController> m_autoscrollController;
-    bool m_mouseDownMayStartAutoscroll;
-    bool m_mouseDownWasInSubframe;
+    bool m_mouseDownMayStartAutoscroll { false };
+    bool m_mouseDownWasInSubframe { false };
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
     Timer m_fakeMouseMoveEventTimer;
 #endif
 
-    bool m_svgPan;
+    bool m_svgPan { false };
 
-    RenderLayer* m_resizeLayer;
+    RenderLayer* m_resizeLayer { nullptr };
 
     RefPtr<Element> m_capturingMouseEventsElement;
-    bool m_eventHandlerWillResetCapturingMouseEventsElement;
+    bool m_eventHandlerWillResetCapturingMouseEventsElement { false };
     
     RefPtr<Element> m_elementUnderMouse;
     RefPtr<Element> m_lastElementUnderMouse;
@@ -518,67 +516,66 @@ private:
     WeakPtr<Scrollbar> m_lastScrollbarUnderMouse;
     Cursor m_currentMouseCursor;
 
-    int m_clickCount;
+    int m_clickCount { 0 };
     RefPtr<Node> m_clickNode;
 
 #if ENABLE(IOS_GESTURE_EVENTS)
-    float m_gestureInitialDiameter;
-    float m_gestureLastDiameter;
-    float m_gestureInitialRotation;
-    float m_gestureLastRotation;
+    float m_gestureInitialDiameter { GestureUnknown };
+    float m_gestureInitialRotation { GestureUnknown };
+    float m_gestureLastDiameter { GestureUnknown };
+    float m_gestureLastRotation { GestureUnknown };
+    EventTargetSet m_gestureTargets;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    unsigned m_firstTouchID;
+    unsigned m_firstTouchID { InvalidTouchIdentifier };
 
     TouchArray m_touches;
-    EventTargetSet m_gestureTargets;
     RefPtr<Frame> m_touchEventTargetSubframe;
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
     RefPtr<Element> m_dragTarget;
-    bool m_shouldOnlyFireDragOverEvent;
+    bool m_shouldOnlyFireDragOverEvent { false };
 #endif
     
     RefPtr<HTMLFrameSetElement> m_frameSetBeingResized;
 
     LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
-    bool m_mousePositionIsUnknown;
+    bool m_mousePositionIsUnknown { true };
     IntPoint m_lastKnownMousePosition;
     IntPoint m_lastKnownMouseGlobalPosition;
     IntPoint m_mouseDownPos; // In our view's coords.
-    double m_mouseDownTimestamp;
+    double m_mouseDownTimestamp { 0 };
     PlatformMouseEvent m_mouseDown;
 
 #if PLATFORM(COCOA)
-    NSView *m_mouseDownView;
-    bool m_sendingEventToSubview;
-    bool m_startedGestureAtScrollLimit;
+    NSView *m_mouseDownView { nullptr };
+    bool m_sendingEventToSubview { false };
 #if !PLATFORM(IOS)
-    int m_activationEventNumber;
+    int m_activationEventNumber { -1 };
 #endif
 #endif
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     typedef HashMap<int, RefPtr<EventTarget>> TouchTargetMap;
     TouchTargetMap m_originatingTouchPointTargets;
     RefPtr<Document> m_originatingTouchPointDocument;
-    unsigned m_originatingTouchPointTargetKey;
-    bool m_touchPressed;
+    unsigned m_originatingTouchPointTargetKey { 0 };
+    bool m_touchPressed { false };
 #endif
 
-    double m_maxMouseMovedDuration;
-    PlatformEvent::Type m_baseEventType;
-    bool m_didStartDrag;
-    bool m_didLongPressInvokeContextMenu;
-    bool m_isHandlingWheelEvent;
+    double m_maxMouseMovedDuration { 0 };
+    PlatformEvent::Type m_baseEventType { PlatformEvent::NoType };
+    bool m_didStartDrag { false };
+    bool m_didLongPressInvokeContextMenu { false };
+    bool m_isHandlingWheelEvent { false };
 
 #if ENABLE(CURSOR_VISIBILITY)
     Timer m_autoHideCursorTimer;
 #endif
 
-    ImmediateActionStage m_immediateActionStage;
+    ImmediateActionStage m_immediateActionStage { ImmediateActionStage::None };
 };
 
 } // namespace WebCore
