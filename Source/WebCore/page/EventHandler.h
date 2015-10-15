@@ -110,6 +110,7 @@ extern const int GeneralDragHysteresis;
 
 #if ENABLE(IOS_GESTURE_EVENTS)
 extern const float GestureUnknown;
+extern const unsigned InvalidTouchIdentifier;
 #endif
 
 enum AppendTrailingWhitespace { ShouldAppendTrailingWhitespace, DontAppendTrailingWhitespace };
