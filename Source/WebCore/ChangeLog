@@ -1,5 +1,31 @@
 2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r188416. rdar://problem/22803749
+
+    2015-08-13  Jer Noble  <jer.noble@apple.com>
+
+            Don't short circuit seeking
+            https://bugs.webkit.org/show_bug.cgi?id=147892
+
+            Reviewed by Eric Carlson.
+
+            When two seekWithTolerance() requests come in before the first is acted upon in seekTask(),
+            the second will result in a "no seek required" conditional, because the new "currentTime" is
+            assumed to be the destination time of the first seek.
+
+            When cancelling a pending seek, first replace the "now" value with the "now" value from the
+            replaced seek, thus preserving the original currentTime across all replacement seeks.
+
+            Drive-by fix: some added logging causes occasional crashes, due to the underlying object being
+            accessed having been deleted.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::seekWithTolerance):
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+
+2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188390. rdar://problem/22803749
 
     2015-08-13  Eric Carlson  <eric.carlson@apple.com>
