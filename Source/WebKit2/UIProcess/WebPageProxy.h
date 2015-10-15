@@ -71,6 +71,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/SearchPopupMenu.h>
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/ViewState.h>
@@ -1281,8 +1282,8 @@ private:
 #endif
 
     // Search popup results
-    void saveRecentSearches(const String&, const Vector<String>&);
-    void loadRecentSearches(const String&, Vector<String>&);
+    void saveRecentSearches(const String&, const Vector<WebCore::RecentSearch>&);
+    void loadRecentSearches(const String&, Vector<WebCore::RecentSearch>&);
 
 #if PLATFORM(COCOA)
     // Speech.

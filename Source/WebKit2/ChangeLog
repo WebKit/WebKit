@@ -1,3 +1,49 @@
+2015-10-14  Zhuo Li  <zachli@apple.com>
+
+        Augment <input type=search>’s recent search history with the time each entry was added,
+        in order to allow time-based clearing of search history.
+        https://bugs.webkit.org/show_bug.cgi?id=148388.
+
+        Reviewed by Darin Adler.
+
+        Replace Vector<String> with Vector<RecentSearch>, where RecentSearch is a struct
+        that consists search string and time, for recent searches in order to store additional time
+        information.
+
+        All these new RecentSearches are stored in a plist in which the structure looks like:
+        Root {
+            "items": {
+                autosave name: {
+                    "searches": [
+                        { "searchString": searchString, "date": date },
+                        ...
+                    ]
+                }
+            }
+        }
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RecentSearch>::encode): Encode the new struct RecentSearch
+        (IPC::ArgumentCoder<RecentSearch>::decode): Decode the new struct RecentSearch
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::saveRecentSearches): Call saveRecentSearches in WebCore::SearchPopupMenuCocoa.
+        (WebKit::WebPageProxy::loadRecentSearches): Call loadRecentSearches in WebCore::SearchPopupMenuCocoa.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::saveRecentSearches):
+        (WebKit::WebSearchPopupMenu::loadRecentSearches):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h:
+
 2015-10-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web pages with unscalable viewports shouldn't have a single tap delay

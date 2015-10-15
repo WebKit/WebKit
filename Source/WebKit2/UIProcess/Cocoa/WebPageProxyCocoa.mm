@@ -26,50 +26,29 @@
 #import "config.h"
 #import "WebProcessProxy.h"
 
+#import <WebCore/SearchPopupMenuCocoa.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 namespace WebKit {
 
-static RetainPtr<CFStringRef> autosaveKey(const String& name)
-{
-    return String("com.apple.WebKit.searchField:" + name).createCFString();
-}
-
-void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& searchItems)
+void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
     if (!name) {
         // FIXME: This should be a message check.
         return;
     }
 
-    RetainPtr<CFMutableArrayRef> items;
-
-    if (!searchItems.isEmpty()) {
-        items = adoptCF(CFArrayCreateMutable(0, searchItems.size(), &kCFTypeArrayCallBacks));
-
-        for (const auto& searchItem : searchItems)
-            CFArrayAppendValue(items.get(), searchItem.createCFString().get());
-    }
-
-    CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+    WebCore::saveRecentSearches(name, searchItems);
 }
 
-void WebPageProxy::loadRecentSearches(const String& name, Vector<String>& searchItems)
+void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::RecentSearch>& searchItems)
 {
     if (!name) {
         // FIXME: This should be a message check.
         return;
     }
 
-    auto items = adoptCF(dynamic_cf_cast<CFArrayRef>(CFPreferencesCopyAppValue(autosaveKey(name).get(), kCFPreferencesCurrentApplication)));
-    if (!items)
-        return;
-
-    for (size_t i = 0, size = CFArrayGetCount(items.get()); i < size; ++i) {
-        if (auto item = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(items.get(), i)))
-            searchItems.append(item);
-    }
+    searchItems = WebCore::loadRecentSearches(name);
 }
 
 #if ENABLE(CONTENT_FILTERING)

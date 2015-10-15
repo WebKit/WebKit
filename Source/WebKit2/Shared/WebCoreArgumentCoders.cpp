@@ -55,6 +55,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
@@ -472,6 +473,22 @@ bool ArgumentCoder<Path>::decode(ArgumentDecoder& decoder, Path& path)
             break;
         }
     }
+
+    return true;
+}
+
+void ArgumentCoder<RecentSearch>::encode(ArgumentEncoder& encoder, const RecentSearch& recentSearch)
+{
+    encoder << recentSearch.string << recentSearch.time;
+}
+
+bool ArgumentCoder<RecentSearch>::decode(ArgumentDecoder& decoder, RecentSearch& recentSearch)
+{
+    if (!decoder.decode(recentSearch.string))
+        return false;
+
+    if (!decoder.decode(recentSearch.time))
+        return false;
 
     return true;
 }

@@ -37,11 +37,11 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "PopupMenu.h"
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "SearchPopupMenu.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
@@ -88,8 +88,12 @@ void RenderSearchField::addSearchResult()
     if (frame().page()->usesEphemeralSession())
         return;
 
-    m_recentSearches.removeAll(value);
-    m_recentSearches.insert(0, value);
+    m_recentSearches.removeAllMatching([value] (const RecentSearch& recentSearch) {
+        return recentSearch.string == value;
+    });
+
+    RecentSearch recentSearch = { value, std::chrono::system_clock::now() };
+    m_recentSearches.insert(0, recentSearch);
     while (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults())
         m_recentSearches.removeLast();
 
@@ -228,7 +232,7 @@ String RenderSearchField::itemText(unsigned listIndex) const
     if (static_cast<int>(listIndex) == (size - 1))
         return searchMenuClearRecentSearchesText();
 #endif
-    return m_recentSearches[listIndex - 1];
+    return m_recentSearches[listIndex - 1].string;
 }
 
 String RenderSearchField::itemLabel(unsigned) const

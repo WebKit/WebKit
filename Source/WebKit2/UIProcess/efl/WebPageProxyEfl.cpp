@@ -73,12 +73,12 @@ void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& /*commandsL
     notImplemented();
 }
 
-void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
+void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::RecentSearch>&)
 {
     notImplemented();
 }
 
-void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
+void WebPageProxy::loadRecentSearches(const String&, Vector<WebCore::RecentSearch>&)
 {
     notImplemented();
 }

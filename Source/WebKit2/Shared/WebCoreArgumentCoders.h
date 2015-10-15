@@ -79,6 +79,7 @@ struct MimeClassInfo;
 struct PasteboardImage;
 struct PasteboardWebContent;
 struct PluginInfo;
+struct RecentSearch;
 struct ScrollableAreaParameters;
 struct TextCheckingResult;
 struct TextIndicatorData;
@@ -450,6 +451,11 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static bool decodePlatformData(ArgumentDecoder&, WebCore::MediaPlaybackTargetContext&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebCore::RecentSearch> {
+    static void encode(ArgumentEncoder&, const WebCore::RecentSearch&);
+    static bool decode(ArgumentDecoder&, WebCore::RecentSearch&);
+};
 
 } // namespace IPC
 
