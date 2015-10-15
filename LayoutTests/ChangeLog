@@ -1,3 +1,14 @@
+2015-10-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Postpone mutation events before invoke Editor::Command command(Document*, const String&, bool).
+        https://bugs.webkit.org/show_bug.cgi?id=149299
+        <rdar://problem/22746995>
+
+        Reviewed by Andreas Kling.
+
+        * editing/inserting/insert-with-mutation-event-expected.txt: Added.
+        * editing/inserting/insert-with-mutation-event.html: Added.
+
 2015-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Clip-path transitions sometimes trigger endless animation timers
