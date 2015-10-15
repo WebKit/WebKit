@@ -1,5 +1,33 @@
 2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190007. rdar://problem/23075843
+
+    2015-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r150187): updateIdForTreeScope may not be called inside shadow trees
+            https://bugs.webkit.org/show_bug.cgi?id=149364
+
+            Reviewed by Antti Koivisto.
+
+            Since the tree scope is set to that of Document's inside removeBetween when a node is removed from a shadow tree,
+            oldScope != &treeScope() was already true inside Element::removedFrom. This can introduce an inconsistency in
+            DocumentOrderedMap which could result in a crash. Fixed the bug by checking it against document(), which is the
+            behavior we had prior to r150187.
+
+            Also added a consistency check in DocumentOrderedMap to catch bugs like this.
+
+            No new tests. New assertions fail in existing tests without this fix.
+
+            * dom/DocumentOrderedMap.cpp:
+            (WebCore::DocumentOrderedMap::add):
+            (WebCore::DocumentOrderedMap::remove):
+            (WebCore::DocumentOrderedMap::get):
+            * dom/DocumentOrderedMap.h:
+            * dom/Element.cpp:
+            (WebCore::Element::removedFrom):
+
+2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r188531. rdar://problem/22707497
 
     2015-08-17  Andy Estes  <aestes@apple.com>
