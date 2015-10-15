@@ -44,7 +44,7 @@ private:
     virtual void shutdown() override;
 
     virtual bool hasImage() const override { return true; }
-    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const override;
+    virtual RefPtr<Image> image(int width = 0, int height = 0) const override;
     virtual bool errorOccurred() const override { return m_styleImage->errorOccurred(); }
 
     virtual void setContainerSizeForRenderer(const IntSize&) override;

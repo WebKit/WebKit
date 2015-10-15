@@ -63,7 +63,7 @@ public:
     virtual void setContainerSizeForRenderer(const RenderElement*, const FloatSize&, float) = 0;
     virtual void addClient(RenderElement*) = 0;
     virtual void removeClient(RenderElement*) = 0;
-    virtual PassRefPtr<Image> image(RenderElement*, const FloatSize&) const = 0;
+    virtual RefPtr<Image> image(RenderElement*, const FloatSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
     virtual float imageScaleFactor() const { return 1; }
     virtual bool knownToBeOpaque(const RenderElement*) const = 0;

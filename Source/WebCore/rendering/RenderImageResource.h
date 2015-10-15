@@ -50,7 +50,7 @@ public:
 
     void resetAnimation();
 
-    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const;
+    virtual RefPtr<Image> image(int width = 0, int height = 0) const;
     virtual bool errorOccurred() const;
 
     virtual void setContainerSizeForRenderer(const IntSize&);

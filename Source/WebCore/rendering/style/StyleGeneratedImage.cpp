@@ -85,7 +85,7 @@ void StyleGeneratedImage::removeClient(RenderElement* renderer)
     m_imageGeneratorValue->removeClient(renderer);
 }
 
-PassRefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const
+RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const
 {
     return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).image(renderer, size);
 }

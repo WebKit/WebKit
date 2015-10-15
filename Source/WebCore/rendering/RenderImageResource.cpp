@@ -90,7 +90,7 @@ void RenderImageResource::resetAnimation()
         m_renderer->repaint();
 }
 
-PassRefPtr<Image> RenderImageResource::image(int, int) const
+RefPtr<Image> RenderImageResource::image(int, int) const
 {
     return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : Image::nullImage();
 }

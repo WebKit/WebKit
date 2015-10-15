@@ -101,7 +101,7 @@ void StyleCachedImage::removeClient(RenderElement* renderer)
     m_image->removeClient(renderer);
 }
 
-PassRefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
+RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
 {
     return m_image->imageForRenderer(renderer);
 }

@@ -111,7 +111,7 @@ void StyleCachedImageSet::removeClient(RenderElement* renderer)
     m_bestFitImage->removeClient(renderer);
 }
 
-PassRefPtr<Image> StyleCachedImageSet::image(RenderElement* renderer, const FloatSize&) const
+RefPtr<Image> StyleCachedImageSet::image(RenderElement* renderer, const FloatSize&) const
 {
     return m_bestFitImage->imageForRenderer(renderer);
 }

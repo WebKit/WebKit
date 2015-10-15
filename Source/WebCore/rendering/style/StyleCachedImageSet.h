@@ -72,7 +72,7 @@ private:
     virtual void setContainerSizeForRenderer(const RenderElement*, const FloatSize&, float) override;
     virtual void addClient(RenderElement*) override;
     virtual void removeClient(RenderElement*) override;
-    virtual PassRefPtr<Image> image(RenderElement*, const FloatSize&) const override;
+    virtual RefPtr<Image> image(RenderElement*, const FloatSize&) const override;
     virtual float imageScaleFactor() const override { return m_imageScaleFactor; }
     virtual bool knownToBeOpaque(const RenderElement*) const override;
 

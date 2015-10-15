@@ -60,7 +60,7 @@ void RenderImageResourceStyleImage::shutdown()
     m_cachedImage = nullptr;
 }
 
-PassRefPtr<Image> RenderImageResourceStyleImage::image(int width, int height) const
+RefPtr<Image> RenderImageResourceStyleImage::image(int width, int height) const
 {
     // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
     if (m_styleImage->isPendingImage())
