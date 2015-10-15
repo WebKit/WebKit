@@ -43,7 +43,7 @@ void WebPreferences::platformInitializeStore()
         setPluginsEnabled(false);
     }
 #endif
-#if !ENABLE(OPEN_GL)
+#if !ENABLE(OPENGL)
     setAcceleratedCompositingEnabled(false);
 #endif
 }
