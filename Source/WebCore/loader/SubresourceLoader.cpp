@@ -203,11 +203,11 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     ASSERT(!response.isNull());
     ASSERT(m_state == Initialized);
 
-    TemporaryChange<bool> callingDidReceiveResponse(m_callingDidReceiveResponse, true);
-
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
     Ref<SubresourceLoader> protect(*this);
+
+    TemporaryChange<bool> callingDidReceiveResponse(m_callingDidReceiveResponse, true);
 
     if (shouldIncludeCertificateInfo())
         response.includeCertificateInfo();
