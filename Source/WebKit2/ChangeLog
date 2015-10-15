@@ -1,5 +1,14 @@
 2015-10-15  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::~FrameInfo):
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+
+2015-10-15  Anders Carlsson  <andersca@apple.com>
+
         CTTE menu proxies
         https://bugs.webkit.org/show_bug.cgi?id=150187
 

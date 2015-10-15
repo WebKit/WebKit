@@ -40,4 +40,8 @@ FrameInfo::FrameInfo(const WebKit::WebFrameProxy& frame, const WebCore::Security
 {
 }
 
+FrameInfo::~FrameInfo()
+{
+}
+
 } // namespace API
