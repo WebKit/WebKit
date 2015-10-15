@@ -1,3 +1,41 @@
+2015-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        InferredTypeTable should ref its keys
+        https://bugs.webkit.org/show_bug.cgi?id=150138
+        rdar://problem/23080555
+
+        Reviewed by Michael Saboff.
+
+        InferredTypeTable was incorrectly using a key hash traits that caused the underlying HashTable to
+        store keys as UniquedStringImpl* rather than RefPtr<UniquedStringImpl>, even though the HashMap's
+        nominal key type was RefPtr<UniquedStringImpl>. This arose because I copy-pasted the HashMap type
+        instantiation from other places and then made random changes to adapt it to my needs, rather than
+        actually thinking about what I was doing. The solution is to remove the key hash traits argument,
+        since all it accomplishes is to produce this bug.
+
+        The way this bug manifested is probably best described in http://webkit.org/b/150008. After a while
+        the InferredTypeTable would have dangling references to its strings, if some recompilation or other
+        thing caused us to drop all other references to those strings. InferredTypeTable is particularly
+        susceptible to this because it is designed to know about a superset of the property names that its
+        client Structures know about. The debug assert would then happen when we rehashed the
+        InferredTypeTable's HashMap, because we'd try to get the hashes of strings that were already
+        deleted. AFAICT, we didn't have release crashes arising from those strings' memory being returned
+        to the OS - but it's totally possible that this could have happened. So, we definitely should treat
+        this bug as more than just a debug issue.
+
+        Interestingly, we could have also solved this problem by changing the hash function to use PtrHash.
+        In all other ways, it's OK for InferredTypeTable to hold dangling references, since it uses the
+        address of the UniquedStringImpl as a way to name an abstract heap. It's fine if the name of an
+        abstract heap is a bogus memory address, and it's also fine if that name referred to an entirely
+        different UniquedStringImpl at some point in the past. That's a nice benefit of any data structure
+        that keys by abstract heap - if two of them get unified then it's no big deal. I've filed another
+        bug, http://webkit.org/b/150137 about changing all of our UniquedStringImpl* hashing to use
+        PtrHash.
+
+        * runtime/Identifier.h: Add a comment about http://webkit.org/b/150137.
+        * runtime/InferredTypeTable.h: Fix the bug.
+        * tests/stress/inferred-type-table-stale-identifiers.js: Added. I couldn't get this to cause a crash before my change, but it's an interesting test nonetheless.
+
 2015-10-15  Mark Lam  <mark.lam@apple.com>
 
         Add MASM_PROBE support for ARM64.

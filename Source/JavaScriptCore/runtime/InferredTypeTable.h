@@ -98,7 +98,7 @@ private:
     // that's bad. We avoid such confusion by ensuring that a transition always adds an entry. Hence,
     // absence-means-bottom only comes into play for properties added before the InferredTypeTable was
     // created.
-    typedef HashMap<RefPtr<UniquedStringImpl>, WriteBarrier<InferredType>, IdentifierRepHash, HashTraits<UniquedStringImpl*>> TableType;
+    typedef HashMap<RefPtr<UniquedStringImpl>, WriteBarrier<InferredType>, IdentifierRepHash> TableType;
     
     TableType m_table;
 

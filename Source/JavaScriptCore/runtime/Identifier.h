@@ -282,6 +282,10 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
     return parseIndex(*uid);
 }
 
+// FIXME: It may be better for this to just be a typedef for PtrHash, since PtrHash may be cheaper to
+// compute than loading the StringImpl's hash from memory. That change would also reduce the likelihood of
+// crashes in code that somehow dangled a StringImpl.
+// https://bugs.webkit.org/show_bug.cgi?id=150137
 struct IdentifierRepHash : PtrHash<RefPtr<UniquedStringImpl>> {
     static unsigned hash(const RefPtr<UniquedStringImpl>& key) { return key->existingSymbolAwareHash(); }
     static unsigned hash(UniquedStringImpl* key) { return key->existingSymbolAwareHash(); }
