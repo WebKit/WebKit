@@ -2108,6 +2108,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
     Node* styledNode = this->styledNode();
     if (!styledNode)
         return nullptr;
+    
+    if (updateStyleIfNeededForNode(*styledNode)) {
+        // The style recalc could have caused the styled node to be discarded or replaced
+        // if it was a PseudoElement so we need to update it.
+        styledNode = this->styledNode();
+    }
 
     RefPtr<RenderStyle> style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, CSSPropertyCustom);
     if (!style || !style->hasCustomProperty(propertyName))
@@ -3613,8 +3619,7 @@ unsigned CSSComputedStyleDeclaration::length() const
     if (!style)
         return 0;
 
-    const HashMap<AtomicString, RefPtr<CSSValue>>* customProperties = style->customProperties();
-    return numComputedProperties + (customProperties ? customProperties->size() : 0);
+    return numComputedProperties + style->customProperties().size();
 }
 
 String CSSComputedStyleDeclaration::item(unsigned i) const
@@ -3635,12 +3640,12 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     
     unsigned index = i - numComputedProperties;
     
-    const auto* customProperties = style->customProperties();
-    if (!customProperties || index >= customProperties->size())
+    const auto& customProperties = style->customProperties();
+    if (index >= customProperties.size())
         return emptyString();
     
     Vector<String, 4> results;
-    copyKeysToVector(*customProperties, results);
+    copyKeysToVector(customProperties, results);
     return results.at(index);
 }
 

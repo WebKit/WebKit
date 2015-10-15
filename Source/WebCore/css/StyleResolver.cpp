@@ -41,6 +41,8 @@
 #include "CSSFontSelector.h"
 #include "CSSFontValue.h"
 #include "CSSFunctionValue.h"
+#include "CSSInheritedValue.h"
+#include "CSSInitialValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSLineBoxContainValue.h"
@@ -56,6 +58,7 @@
 #include "CSSSupportsRule.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
+#include "CSSVariableDependentValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocument.h"
@@ -1878,15 +1881,32 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     State& state = m_state;
+    
+    RefPtr<CSSValue> valueToApply = value;
+    if (value->isVariableDependentValue()) {
+        valueToApply = resolvedVariableValue(id, *downcast<CSSVariableDependentValue>(value));
+        if (!valueToApply) {
+            if (CSSProperty::isInheritedProperty(id))
+                valueToApply = CSSInheritedValue::create();
+            else
+                valueToApply = CSSInitialValue::createExplicit();
+        }
+    }
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
         CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, state.style()->direction(), state.style()->writingMode());
         ASSERT(newId != id);
-        return applyProperty(newId, value);
+        return applyProperty(newId, valueToApply.get());
+    }
+    
+    CSSValue* valueToCheckForInheritInitial = valueToApply.get();
+    if (id == CSSPropertyCustom) {
+        CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*valueToApply);
+        valueToCheckForInheritInitial = customProperty->value().get();
     }
 
-    bool isInherit = state.parentStyle() && value->isInheritedValue();
-    bool isInitial = value->isInitialValue() || (!state.parentStyle() && value->isInheritedValue());
+    bool isInherit = state.parentStyle() && valueToCheckForInheritInitial->isInheritedValue();
+    bool isInitial = valueToCheckForInheritInitial->isInitialValue() || (!state.parentStyle() && valueToCheckForInheritInitial->isInheritedValue());
 
     ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
 
@@ -1899,13 +1919,27 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.parentStyle()->setHasExplicitlyInheritedProperties();
     
     if (id == CSSPropertyCustom) {
-        CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*value);
-        state.style()->setCustomPropertyValue(customProperty->name(), value);
+        CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*valueToApply);
+        if (isInherit) {
+            RefPtr<CSSValue> customVal = state.parentStyle()->getCustomPropertyValue(customProperty->name());
+            if (!customVal)
+                customVal = CSSCustomPropertyValue::createInvalid();
+            state.style()->setCustomPropertyValue(customProperty->name(), customVal);
+        } else if (isInitial)
+            state.style()->setCustomPropertyValue(customProperty->name(), CSSCustomPropertyValue::createInvalid());
+        else
+            state.style()->setCustomPropertyValue(customProperty->name(), customProperty->value());
         return;
     }
 
     // Use the generated StyleBuilder.
-    StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit);
+    StyleBuilder::applyProperty(id, *this, *valueToApply, isInitial, isInherit);
+}
+
+RefPtr<CSSValue> StyleResolver::resolvedVariableValue(CSSPropertyID propID, const CSSVariableDependentValue& value)
+{
+    CSSParser parser(m_state.document());
+    return parser.parseVariableDependentValue(propID, value, m_state.style()->customProperties());
 }
 
 PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& value)
@@ -2673,6 +2707,9 @@ void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int fir
         ASSERT(!shouldApplyPropertyInParseOrder(propertyID));
         property.apply(*this);
     }
+    
+    if (firstProperty == CSSPropertyCustom)
+        m_state.style()->checkVariablesInCustomProperties();
 }
 
 } // namespace WebCore

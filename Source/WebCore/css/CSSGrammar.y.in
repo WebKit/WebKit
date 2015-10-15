@@ -84,6 +84,7 @@ static inline bool isCSSTokenAString(int yytype)
     case NTHCHILDFUNCTIONS:
     case NTHCHILDSELECTORSEPARATOR:
     case LANGFUNCTION:
+    case VARFUNCTION:
 #if ENABLE_CSS_SELECTORS_LEVEL4
     case DIRFUNCTION:
     case ROLEFUNCTION:
@@ -124,9 +125,9 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %}
 
 #if ENABLE_CSS_GRID_LAYOUT
-%expect 32
+%expect 39
 #else
-%expect 31
+%expect 37
 #endif
 
 %nonassoc LOWEST_PREC
@@ -239,6 +240,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %token <string> MINFUNCTION
 %token <string> NTHCHILDFUNCTIONS
 %token <string> LANGFUNCTION
+%token <string> VARFUNCTION
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
 %token <string> DIRFUNCTION
@@ -296,8 +298,8 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 %type <value> calc_func_term key unary_term
 
 // These parser values need to be destroyed because they might be functions.
-%type <value> calc_function function min_or_max_function term
-%destructor { destroy($$); } calc_function function min_or_max_function term
+%type <value> calc_function function variable_function min_or_max_function term
+%destructor { destroy($$); } calc_function function variable_function min_or_max_function term
 
 %type <id> property
 
@@ -316,8 +318,8 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 %type <character> operator calc_func_operator
 
-%type <valueList> calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
-%destructor { delete $$; } calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr
+%type <valueList> calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr whitespace_or_expr maybe_expr
+%destructor { delete $$; } calc_func_expr calc_func_expr_list calc_func_paren_expr expr key_list maybe_media_value valid_calc_func_expr valid_expr whitespace_or_expr maybe_expr
 
 %type <string> lang_range
 %type <stringList> comma_separated_lang_ranges
@@ -765,6 +767,22 @@ supports_declaration_condition:
             int oldParsedProperties = p->m_parsedProperties.size();
             $$ = p->parseValue($3, $7);
             // We just need to know if the declaration is supported as it is written. Rollback any additions.
+            if ($$)
+                p->rollbackLastProperties(p->m_parsedProperties.size() - oldParsedProperties);
+            p->m_valueList = nullptr;
+        }
+        p->markPropertyEnd($7, false);
+    }
+    |
+    '(' maybe_space CUSTOM_PROPERTY maybe_space ':' whitespace_or_expr priority ')' maybe_space {
+        $$ = false;
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        std::unique_ptr<CSSParserValueList> propertyValue($6);
+        if (propertyValue) {
+            parser->m_valueList = WTF::move(propertyValue);
+            int oldParsedProperties = p->m_parsedProperties.size();
+            p->setCustomPropertyName($3);
+            $$ = p->parseValue(CSSPropertyCustom, $7);
             if ($$)
                 p->rollbackLastProperties(p->m_parsedProperties.size() - oldParsedProperties);
             p->m_valueList = nullptr;
@@ -1538,22 +1556,22 @@ decl_list_recovery:
     ;
 
 declaration:
-    CUSTOM_PROPERTY maybe_space ':' maybe_space expr priority {
+    CUSTOM_PROPERTY maybe_space ':' whitespace_or_expr priority {
         $$ = false;
         bool isPropertyParsed = false;
-        std::unique_ptr<CSSParserValueList> propertyValue($5);
+        std::unique_ptr<CSSParserValueList> propertyValue($4);
         if (propertyValue) {
             parser->m_valueList = WTF::move(propertyValue);
             int oldParsedProperties = parser->m_parsedProperties.size();
             parser->setCustomPropertyName($1);
-            $$ = parser->parseValue(CSSPropertyCustom, $6);
+            $$ = parser->parseValue(CSSPropertyCustom, $5);
             if (!$$)
                 parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
             else
                 isPropertyParsed = true;
             parser->m_valueList = nullptr;
         }
-        parser->markPropertyEnd($6, isPropertyParsed);
+        parser->markPropertyEnd($5, isPropertyParsed);
     }
     | property ':' maybe_space expr priority {
         $$ = false;
@@ -1624,6 +1642,24 @@ track_names_list:
 
 #endif
 
+whitespace_or_expr:
+    WHITESPACE maybe_expr {
+        if ($2)
+            $$ = $2;
+        else {
+            CSSParserValue val;
+            val.id = CSSValueInvalid;
+            val.unit = CSSPrimitiveValue::CSS_PARSER_WHITESPACE;
+            val.string.init(emptyString());
+            $$ = new CSSParserValueList;
+            $$->addValue(val);
+        }
+    }
+    | maybe_space expr { $$ = $2; }
+    ;
+
+maybe_expr: /* empty */ { $$ = nullptr; } | expr { $$ = $1; };
+
 expr: valid_expr | valid_expr expr_recovery { $$ = nullptr; delete $1; } ;
 
 valid_expr:
@@ -1667,6 +1703,7 @@ term:
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function maybe_space
   | calc_function maybe_space
+  | variable_function maybe_space
   | min_or_max_function maybe_space
   | '%' maybe_space { /* Handle width: %; */
       $$.id = CSSValueInvalid; $$.unit = 0;
@@ -1742,8 +1779,65 @@ function:
   }
   ;
 
+variable_function:
+    VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space closing_parenthesis {
+        CSSParserVariable* var = new CSSParserVariable;
+        var->name = $3;
+        var->args = nullptr;
+        $$.id = CSSValueInvalid;
+        $$.unit = CSSParserValue::Variable;
+        $$.variable = var;
+    }
+    | VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space ',' maybe_space expr closing_parenthesis {
+        CSSParserVariable* var = new CSSParserVariable;
+        var->name = $3;
+        var->args = std::unique_ptr<CSSParserValueList>($7);
+        $$.id = CSSValueInvalid;
+        $$.unit = CSSParserValue::Variable;
+        $$.variable = var;
+    }
+    | VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space ',' maybe_space closing_parenthesis {
+        CSSParserVariable* var = new CSSParserVariable;
+        var->name = $3;
+        var->args = std::unique_ptr<CSSParserValueList>(new CSSParserValueList());
+        $$.id = CSSValueInvalid;
+        $$.unit = CSSParserValue::Variable;
+        $$.variable = var;
+    }
+    // Error handling cases
+    | VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space ',' closing_parenthesis {
+        $$.id = CSSValueInvalid;
+        $$.unit = 0;
+        YYERROR;
+    }
+    | VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space ',' maybe_space invalid_var_fallback maybe_space closing_parenthesis {
+        $$.id = CSSValueInvalid;
+        $$.unit = 0;
+        YYERROR;
+    }
+    | VARFUNCTION maybe_space CUSTOM_PROPERTY maybe_space ',' maybe_space priority closing_parenthesis {
+        $$.id = CSSValueInvalid;
+        $$.unit = 0;
+        YYERROR;
+    }
+    | VARFUNCTION maybe_space expr closing_parenthesis {
+        $$.id = CSSValueInvalid;
+        $$.unit = 0;
+        YYERROR;
+    }
+    | VARFUNCTION maybe_space expr_recovery closing_parenthesis {
+        $$.id = CSSValueInvalid;
+        $$.unit = 0;
+        YYERROR;
+    }
+    ;
+
+invalid_var_fallback:
+    '!' | ';';
+
 calc_func_term:
   unary_term
+  | variable_function { $$ = $1; }
   | unary_operator unary_term { $$ = $2; $$.fValue *= $1; }
   ;
 
@@ -1893,7 +1987,7 @@ invalid_square_brackets_block: '[' error_recovery closing_bracket ;
 invalid_parentheses_block: opening_parenthesis error_recovery closing_parenthesis;
 
 opening_parenthesis:
-    '(' | FUNCTION | CALCFUNCTION | MATCHESFUNCTION | MAXFUNCTION | MINFUNCTION | ANYFUNCTION | NOTFUNCTION | LANGFUNCTION
+    '(' | FUNCTION | VARFUNCTION | CALCFUNCTION | MATCHESFUNCTION | MAXFUNCTION | MINFUNCTION | ANYFUNCTION | NOTFUNCTION | LANGFUNCTION
 #if ENABLE_CSS_SELECTORS_LEVEL4
     | DIRFUNCTION | ROLEFUNCTION
 #endif

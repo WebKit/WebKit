@@ -24,8 +24,10 @@
 #include "RenderStyle.h"
 
 #include "ContentData.h"
-#include "CursorList.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSVariableDependentValue.h"
+#include "CursorList.h"
 #include "FloatRoundedRect.h"
 #include "FontCascade.h"
 #include "FontSelector.h"
@@ -1986,5 +1988,55 @@ void RenderStyle::setScrollSnapCoordinates(Vector<LengthSize> coordinates)
 }
 
 #endif
+
+void RenderStyle::checkVariablesInCustomProperties()
+{
+    if (!rareInheritedData->m_customProperties->containsVariables())
+        return;
+    
+    // Our first pass checks the variables for validity and replaces any properties that became
+    // invalid with empty values.
+    auto& customProperties = rareInheritedData.access()->m_customProperties.access()->values();
+    HashSet<AtomicString> invalidProperties;
+    for (auto entry : customProperties) {
+        if (!entry.value->isVariableDependentValue())
+            continue;
+        HashSet<AtomicString> seenProperties;
+        downcast<CSSVariableDependentValue>(*entry.value).checkVariablesForCycles(entry.key, customProperties, seenProperties, invalidProperties);
+    }
+    
+    // Now insert invalid values.
+    if (!invalidProperties.isEmpty()) {
+        RefPtr<CSSValue> invalidValue = CSSCustomPropertyValue::createInvalid();
+        for (auto& property : invalidProperties)
+            customProperties.set(property, invalidValue);
+    }
+
+    // Now that all of the properties have been tested for validity and replaced with
+    // invalid values if they failed, we can perform variable substitution on the valid values.
+    Vector<RefPtr<CSSCustomPropertyValue>> resolvedValues;
+    for (auto entry : customProperties) {
+        if (!entry.value->isVariableDependentValue())
+            continue;
+        
+        CSSParserValueList parserList;
+        RefPtr<CSSCustomPropertyValue> result;
+        if (!downcast<CSSVariableDependentValue>(*entry.value).valueList()->buildParserValueListSubstitutingVariables(&parserList, customProperties)) {
+            RefPtr<CSSValue> invalidResult = CSSCustomPropertyValue::createInvalid();
+            result = CSSCustomPropertyValue::create(entry.key, invalidResult);
+        } else {
+            RefPtr<CSSValue> newValueList = CSSValueList::createFromParserValueList(parserList);
+            result = CSSCustomPropertyValue::create(entry.key, newValueList);
+        }
+        resolvedValues.append(result);
+    }
+    
+    // With all results computed, we can now mutate our table to eliminate the variables and
+    // hold the final values. This way when we inherit, we don't end up resubstituting variables, etc.
+    for (auto& resolvedValue : resolvedValues)
+        customProperties.set(resolvedValue->name(), resolvedValue->value());
+
+    rareInheritedData.access()->m_customProperties.access()->setContainsVariables(false);
+}
 
 } // namespace WebCore

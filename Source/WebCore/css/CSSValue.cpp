@@ -55,6 +55,8 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
+#include "CSSVariableDependentValue.h"
+#include "CSSVariableValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
 #include "WebKitCSSFilterValue.h"
@@ -239,7 +241,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSContentDistributionValue>(*this, other);
         case CustomPropertyClass:
             return compareCSSValues<CSSCustomPropertyValue>(*this, other);
-        
+        case VariableDependentClass:
+            return compareCSSValues<CSSVariableDependentValue>(*this, other);
+        case VariableClass:
+            return compareCSSValues<CSSVariableValue>(*this, other);
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -336,6 +341,10 @@ String CSSValue::cssText() const
         return downcast<CSSContentDistributionValue>(*this).customCSSText();
     case CustomPropertyClass:
         return downcast<CSSCustomPropertyValue>(*this).customCSSText();
+    case VariableDependentClass:
+        return downcast<CSSVariableDependentValue>(*this).customCSSText();
+    case VariableClass:
+        return downcast<CSSVariableValue>(*this).customCSSText();
     }
 
     ASSERT_NOT_REACHED();
@@ -463,6 +472,12 @@ void CSSValue::destroy()
     case CustomPropertyClass:
         delete downcast<CSSCustomPropertyValue>(this);
         return;
+    case VariableDependentClass:
+        delete downcast<CSSVariableDependentValue>(this);
+        return;
+    case VariableClass:
+        delete downcast<CSSVariableValue>(this);
+        return;
     }
     ASSERT_NOT_REACHED();
 }
@@ -493,6 +508,11 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
         ASSERT(!isSubtypeExposedToCSSOM());
         return TextCloneCSSValue::create(classType(), cssText());
     }
+}
+
+bool CSSValue::isInvalidCustomPropertyValue() const
+{
+    return isCustomPropertyValue() && downcast<CSSCustomPropertyValue>(*this).isInvalid();
 }
 
 }

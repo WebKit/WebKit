@@ -1352,6 +1352,8 @@ set(WebCore_SOURCES
     css/CSSValue.cpp
     css/CSSValueList.cpp
     css/CSSValuePool.cpp
+    css/CSSVariableDependentValue.cpp
+    css/CSSVariableValue.cpp
     css/DOMWindowCSS.cpp
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp

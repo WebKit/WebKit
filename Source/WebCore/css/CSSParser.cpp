@@ -65,6 +65,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "CSSVariableDependentValue.h"
 #include "Counter.h"
 #include "Document.h"
 #include "FloatConversion.h"
@@ -1602,11 +1603,13 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
             continue;
         
         if (property.id() == CSSPropertyCustom) {
-            const AtomicString& name = downcast<CSSCustomPropertyValue>(*property.value()).name();
-            if (seenCustomProperties.contains(name))
-                continue;
-            seenCustomProperties.add(name);
-            output[--unusedEntries] = property;
+            if (property.value()) {
+                const AtomicString& name = downcast<CSSCustomPropertyValue>(*property.value()).name();
+                if (seenCustomProperties.contains(name))
+                    continue;
+                seenCustomProperties.add(name);
+                output[--unusedEntries] = property;
+            }
             continue;
         }
 
@@ -1908,19 +1911,37 @@ void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, PassRefPtr<CSS
         addProperty(longhands[i], value, important);
 }
 
+RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, const CSSVariableDependentValue& dependentValue, const CustomPropertyValueMap& customProperties)
+{
+    m_valueList.reset(new CSSParserValueList());
+    if (!dependentValue.valueList()->buildParserValueListSubstitutingVariables(m_valueList.get(), customProperties))
+        return nullptr;
+    bool parsed = parseValue(dependentValue.propertyID(), false);
+    if (!parsed)
+        return nullptr;
+    for (size_t i = 0; i < m_parsedProperties.size(); ++i) {
+        if (m_parsedProperties[i].id() == propID)
+            return m_parsedProperties[i].value();
+    }
+    return nullptr;
+}
+
 bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 {
     if (!m_valueList || !m_valueList->current())
         return false;
     
-    if (propId == CSSPropertyCustom) {
-        // FIXME: For now put this ahead of inherit/initial processing.
-        // Eventually we want to support initial and inherit.
-        return parseCustomPropertyDeclaration(important);
-    }
-
     ValueWithCalculation valueWithCalculation(*m_valueList->current());
     CSSValueID id = valueWithCalculation.value().id;
+    
+    if (propId == CSSPropertyCustom)
+        return parseCustomPropertyDeclaration(important, id);
+
+    if (m_valueList->containsVariables()) {
+        RefPtr<CSSValueList> valueList = CSSValueList::createFromParserValueList(*m_valueList);
+        addExpandedPropertyForValue(propId, CSSVariableDependentValue::create(valueList, propId), important);
+        return true;
+    }
 
     auto& cssValuePool = CSSValuePool::singleton();
     unsigned num = inShorthand() ? 1 : m_valueList->size();
@@ -4168,11 +4189,26 @@ bool CSSParser::parseAlt(CSSPropertyID propID, bool important)
     return false;
 }
 
-bool CSSParser::parseCustomPropertyDeclaration(bool important)
+bool CSSParser::parseCustomPropertyDeclaration(bool important, CSSValueID id)
 {
     if (m_customPropertyName.isEmpty() || !m_valueList)
         return false;
-    addProperty(CSSPropertyCustom, CSSCustomPropertyValue::create(m_customPropertyName, m_valueList), important, false);
+    
+    auto& cssValuePool = CSSValuePool::singleton();
+    RefPtr<CSSValue> value;
+    if (id == CSSValueInherit)
+        value = cssValuePool.createInheritedValue();
+    else if (id == CSSValueInitial)
+        value = cssValuePool.createExplicitInitialValue();
+    else {
+        RefPtr<CSSValueList> valueList = CSSValueList::createFromParserValueList(*m_valueList);
+        if (m_valueList->containsVariables())
+            value = CSSVariableDependentValue::create(valueList, CSSPropertyCustom);
+        else
+            value = valueList;
+    }
+
+    addProperty(CSSPropertyCustom, CSSCustomPropertyValue::create(m_customPropertyName, value), important, false);
     return true;
 }
 
@@ -11471,6 +11507,10 @@ inline bool CSSParser::detectFunctionTypeToken(int length)
             m_token = URI;
             return true;
         }
+        if (isASCIIAlphaCaselessEqual(name[0], 'v') && isASCIIAlphaCaselessEqual(name[1], 'a') && isASCIIAlphaCaselessEqual(name[2], 'r')) {
+            m_token = VARFUNCTION;
+            return true;
+        }
 #if ENABLE(VIDEO_TRACK)
         if (isASCIIAlphaCaselessEqual(name[0], 'c') && isASCIIAlphaCaselessEqual(name[1], 'u') && isASCIIAlphaCaselessEqual(name[2], 'e')) {
             m_token = CUEFUNCTION;
@@ -12159,14 +12199,14 @@ restartAfterComment:
             }
             resultString.setLength(result - tokenStart<SrcCharacterType>());
             yylval->string = resultString;
-        } else if (currentCharacter<SrcCharacterType>()[0] == '-' && isIdentifierStartAfterDash(currentCharacter<SrcCharacterType>() + 1)) {
+        } else if (currentCharacter<SrcCharacterType>()[0] == '-' && currentCharacter<SrcCharacterType>()[1] == '>') {
+            currentCharacter<SrcCharacterType>() += 2;
+            m_token = SGML_CD;
+        } else if (currentCharacter<SrcCharacterType>()[0] == '-') {
             --currentCharacter<SrcCharacterType>();
             parseIdentifier(result, resultString, hasEscape);
             m_token = CUSTOM_PROPERTY;
             yylval->string = resultString;
-        } else if (currentCharacter<SrcCharacterType>()[0] == '-' && currentCharacter<SrcCharacterType>()[1] == '>') {
-            currentCharacter<SrcCharacterType>() += 2;
-            m_token = SGML_CD;
         } else if (UNLIKELY(m_parsingMode == NthChildMode)) {
             // "-[0-9]+n" is always an NthChild.
             if (parseNthChild<SrcCharacterType>()) {
