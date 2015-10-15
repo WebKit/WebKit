@@ -1,3 +1,12 @@
+2015-10-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Update ImportExpectations according currently imported wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=150158
+
+        Reviewed by Chris Dumez.
+
+        * resources/ImportExpectations:
+
 2015-10-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fixing expectations for imported/w3c/web-platform-tests/html/dom/interfaces.html

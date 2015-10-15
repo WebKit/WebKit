@@ -148,6 +148,8 @@ class TestDownloader(object):
             destination_path = self._filesystem.join(destination_directory, path)
             if self._filesystem.isfile(destination_path):
                 self._filesystem.remove(destination_path)
+            elif self._filesystem.isdir(destination_path):
+                self._filesystem.rmtree(destination_path)
 
     def _git_submodules_status(self, repository_directory):
         return self.git(repository_directory)._run_git(['submodule', 'status'])

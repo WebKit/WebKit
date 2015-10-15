@@ -1,3 +1,13 @@
+2015-10-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Update ImportExpectations according currently imported wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=150158
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/webkitpy/w3c/test_downloader.py:
+        (TestDownloader.copy_tests): ensuring that directories marked as [ Skip ] are not copied.
+
 2015-10-15  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Unreviewed, Update my email address.
