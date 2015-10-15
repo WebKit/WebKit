@@ -207,7 +207,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
         return 1;
 
     // Load our corresponding DLL.
-    wstring dllName = programName + L".dll";
+    wstring dllName = programName + L"Lib.dll";
     if (!::PathRemoveFileSpecW(exePath))
         return fatalError(programName, L"::PathRemoveFileSpecW failed: " + getLastErrorString(::GetLastError()));
     if (!::PathAppendW(exePath, dllName.c_str()))

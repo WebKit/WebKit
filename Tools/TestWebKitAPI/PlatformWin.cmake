@@ -82,7 +82,7 @@ add_library(TestWTFLib SHARED
     ${test_main_SOURCES}
     ${TestWTF_SOURCES}
 )
-set_target_properties(TestWTFLib PROPERTIES OUTPUT_NAME "TestWTF")
+set_target_properties(TestWTFLib PROPERTIES OUTPUT_NAME "TestWTFLib")
 target_link_libraries(TestWTFLib ${test_wtf_LIBRARIES})
 
 set(test_wtf_LIBRARIES
@@ -96,7 +96,7 @@ add_library(TestWebCoreLib SHARED
 )
 
 target_link_libraries(TestWebCoreLib ${test_webcore_LIBRARIES})
-set_target_properties(TestWebCoreLib PROPERTIES OUTPUT_NAME "TestWebCore")
+set_target_properties(TestWebCoreLib PROPERTIES OUTPUT_NAME "TestWebCoreLib")
 
 add_executable(TestWebCore
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
@@ -115,7 +115,6 @@ add_library(TestWebKitLib SHARED
 )
 
 target_link_libraries(TestWebKitLib ${test_webcore_LIBRARIES})
-set_target_properties(TestWebKitLib PROPERTIES OUTPUT_NAME "TestWebKit")
 
 add_executable(TestWebKit
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp

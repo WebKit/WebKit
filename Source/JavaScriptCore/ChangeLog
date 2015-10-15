@@ -1,3 +1,15 @@
+2015-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Enforce launcher/library naming scheme
+        https://bugs.webkit.org/show_bug.cgi?id=150124
+
+        Reviewed by Alex Christensen.
+
+        * JavaScriptCore.vcxproj/jsc/DLLLauncherMain.cpp: Look for
+        {name}Lib.dll instead of {name}.dll.
+        (wWinMain):
+        * shell/PlatformWin.cmake: Add 'Lib' suffix to DLLs.
+
 2015-10-14  Keith Miller  <keith_miller@apple.com>
 
         ES6 Fix TypedArray constructors.

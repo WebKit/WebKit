@@ -125,7 +125,6 @@ add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
 add_library(DumpRenderTreeLib SHARED ${DumpRenderTreeLib_SOURCES})
 set_target_properties(DumpRenderTreeLib PROPERTIES FOLDER "Tools")
-set_target_properties(DumpRenderTreeLib PROPERTIES OUTPUT_NAME "DumpRenderTree")
 target_link_libraries(DumpRenderTreeLib ${DumpRenderTreeLib_LIBRARIES})
 
 add_executable(ImageDiff ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp)
@@ -135,7 +134,6 @@ set_target_properties(ImageDiff PROPERTIES OUTPUT_NAME "ImageDiff")
 
 add_library(ImageDiffLib SHARED ${ImageDiff_SOURCES})
 set_target_properties(ImageDiffLib PROPERTIES FOLDER "Tools")
-set_target_properties(ImageDiffLib PROPERTIES OUTPUT_NAME "ImageDiff")
 target_link_libraries(ImageDiffLib ${ImageDiff_LIBRARIES})
 
 add_dependencies(ImageDiff ImageDiffLib)
