@@ -150,8 +150,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& page)
-    : m_webView(webView)
+WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+    : WebContextMenuProxy(context, userData)
+
+    , m_webView(webView)
     , m_page(page)
 {
 }

@@ -1,3 +1,27 @@
+2015-10-15  Anders Carlsson  <andersca@apple.com>
+
+        Store the context menu data and user data in the WebContextMenuProxy object
+        https://bugs.webkit.org/show_bug.cgi?id=150191
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContextMenuProxy.cpp:
+        (WebKit::WebContextMenuProxy::WebContextMenuProxy):
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::create):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::WebContextMenuProxyMac):
+
 2015-10-15  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Stop using WKSetNSURLConnectionDefersCallbacks

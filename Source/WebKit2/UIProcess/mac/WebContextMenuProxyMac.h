@@ -38,14 +38,15 @@ OBJC_CLASS WKView;
 namespace WebKit {
 
 class ShareableBitmap;
+class UserData;
 class WebContextMenuItemData;
 class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
 public:
-    static Ref<WebContextMenuProxyMac> create(WKView* webView, WebPageProxy& page)
+    static Ref<WebContextMenuProxyMac> create(WKView* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyMac(webView, page));
+        return adoptRef(*new WebContextMenuProxyMac(webView, page, context, userData));
     }
     ~WebContextMenuProxyMac();
 
@@ -64,7 +65,7 @@ public:
     NSWindow *window() const;
 
 private:
-    WebContextMenuProxyMac(WKView*, WebPageProxy&);
+    WebContextMenuProxyMac(WKView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
 
     void populate(const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&);
 

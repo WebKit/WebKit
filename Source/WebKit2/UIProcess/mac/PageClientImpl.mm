@@ -492,9 +492,9 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
     return WebPopupMenuProxyMac::create(m_wkView, page);
 }
 
-RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page)
+RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    return WebContextMenuProxyMac::create(m_wkView, page);
+    return WebContextMenuProxyMac::create(m_wkView, page, context, userData);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

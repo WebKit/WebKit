@@ -4202,7 +4202,7 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
         m_activeContextMenu = nullptr;
     }
 
-    m_activeContextMenu = m_pageClient.createContextMenuProxy(*this);
+    m_activeContextMenu = m_pageClient.createContextMenuProxy(*this, contextMenuContextData, userData);
     if (!m_activeContextMenu)
         return;
 

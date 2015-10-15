@@ -26,13 +26,9 @@
 #ifndef WebContextMenuProxy_h
 #define WebContextMenuProxy_h
 
-#include <wtf/PassRefPtr.h>
+#include "ContextMenuContextData.h"
+#include "UserData.h"
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-
-namespace WebCore {
-    class IntPoint;
-}
 
 namespace WebKit {
 
@@ -48,7 +44,10 @@ public:
     virtual void cancelTracking() { }
 
 protected:
-    WebContextMenuProxy();
+    WebContextMenuProxy(const ContextMenuContextData&, const UserData&);
+
+    const ContextMenuContextData m_context;
+    const UserData m_userData;
 };
 
 } // namespace WebKit
