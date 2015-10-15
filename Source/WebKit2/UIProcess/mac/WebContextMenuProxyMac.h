@@ -50,7 +50,7 @@ public:
     }
     ~WebContextMenuProxyMac();
 
-    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&) override;
+    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&) override;
 
     virtual void hideContextMenu() override;
     virtual void cancelTracking() override;

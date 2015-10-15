@@ -346,7 +346,7 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     populateNSMenu(menu, nsMenuItemVector(items));
 }
 
-void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const Vector<RefPtr<WebContextMenuItem>>& items, const ContextMenuContextData& context)
+void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items, const ContextMenuContextData& context)
 {
 #if ENABLE(SERVICE_CONTROLS)
     if (items.isEmpty() && !context.needsServicesMenu())
@@ -360,7 +360,8 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
 
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
 
-    NSRect menuRect = NSMakeRect(menuLocation.x(), menuLocation.y(), 0, 0);
+    NSPoint menuLocation = m_context.menuLocation();
+    NSRect menuRect = NSMakeRect(menuLocation.x, menuLocation.y, 0, 0);
 
 #if ENABLE(SERVICE_CONTROLS)
     if (context.needsServicesMenu())

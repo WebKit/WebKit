@@ -1,5 +1,19 @@
 2015-10-15  Anders Carlsson  <andersca@apple.com>
 
+        Use the context menu location that's stored in the context data
+        https://bugs.webkit.org/show_bug.cgi?id=150194
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
+2015-10-15  Anders Carlsson  <andersca@apple.com>
+
         Store the context menu data and user data in the WebContextMenuProxy object
         https://bugs.webkit.org/show_bug.cgi?id=150191
 
