@@ -102,6 +102,8 @@ public:
         m_dispatcher.postTask([weakThis, task] {
             if (!weakThis)
                 return;
+            ASSERT(weakThis->m_pendingTasks);
+            --weakThis->m_pendingTasks;
             task();
         });
     }

@@ -620,7 +620,7 @@ private:
     void seekInternal(const MediaTime&);
     void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM);
     void finishSeek();
-    void checkIfSeekNeeded();
+    void clearSeeking();
     void addPlayedRange(const MediaTime& start, const MediaTime& end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
@@ -782,6 +782,7 @@ private:
         MediaTime positiveTolerance;
     };
     std::unique_ptr<PendingSeek> m_pendingSeek;
+    SeekType m_pendingSeekType { NoSeek };
 
     double m_volume;
     bool m_volumeInitialized;

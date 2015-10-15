@@ -274,9 +274,6 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
     if (time > durationMediaTime())
         time = durationMediaTime();
 
-    if (currentMediaTime() == time)
-        return;
-
     if (currentTextTrack())
         currentTextTrack()->beginSeeking();
 
@@ -684,8 +681,6 @@ void MediaPlayerPrivateAVFoundation::didEnd()
 
 void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::invalidateCachedDuration(%p)", this);
-    
     m_cachedDuration = MediaTime::invalidTime();
 
     // For some media files, reported duration is estimated and updated as media is loaded

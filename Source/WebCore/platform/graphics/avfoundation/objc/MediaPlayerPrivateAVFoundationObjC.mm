@@ -1305,9 +1305,14 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
 
     auto weakThis = createWeakPtr();
 
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::seekToTime(%p) - calling seekToTime", this);
+
     [m_avPlayerItem.get() seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
-        callOnMainThread([weakThis, finished] {
+        double currentTime = CMTimeGetSeconds([m_avPlayerItem currentTime]);
+        callOnMainThread([weakThis, finished, currentTime] {
+            UNUSED_PARAM(currentTime);
             auto _this = weakThis.get();
+            LOG(Media, "MediaPlayerPrivateAVFoundationObjC::seekToTime(%p) - completion handler called, currentTime = %f", _this, currentTime);
             if (!_this)
                 return;
 

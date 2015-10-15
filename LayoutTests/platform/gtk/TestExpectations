@@ -2403,3 +2403,6 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+# This test uses an MPEG-4 video
+media/video-seek-to-current-time.html [ Skip ]

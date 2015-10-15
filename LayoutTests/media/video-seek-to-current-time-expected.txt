@@ -1,0 +1,20 @@
+
+Test that setting currentTime immediately after fastSeek() works correctly.
+
+EVENT(canplaythrough)
+
+Seek to a specific time:
+RUN(video.currentTime = 2.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '2.5') OK
+
+Set currentTime shortly after calling fastSeek():
+RUN(video.fastSeek(4.6))
+RUN(setTimeout(function() { video.currentTime = 2.5; }, 10))
+
+EVENT(seeked)
+EVENT(seeked)
+EXPECTED (video.currentTime == '2.5') OK
+
+END OF TEST
+

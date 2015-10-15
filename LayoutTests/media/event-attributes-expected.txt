@@ -5,7 +5,6 @@ EVENT(loadedmetadata)
 EVENT(loadeddata)
 EVENT(canplay)
 EVENT(canplaythrough)
-EXPECTED (progressEventCount >= '1') OK
 
 *** starting playback
 RUN(video.play())
