@@ -190,6 +190,8 @@ static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionReques
     g_assert(webkit_install_missing_media_plugins_permission_request_get_description(missingPluginsRequest));
     webkit_permission_request_deny(request);
     test->quitMainLoop();
+
+    return TRUE;
 }
 
 static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconstpointer)
