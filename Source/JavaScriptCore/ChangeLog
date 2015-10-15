@@ -1,3 +1,17 @@
+2015-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed, rolling out r191003.
+        https://bugs.webkit.org/show_bug.cgi?id=150042
+
+        We're seeing some crashes in GC beneath speculationFromCell. Maybe this
+        patch caused them?
+
+        Reverted changeset:
+
+        CodeBlock write barriers should be precise
+        https://bugs.webkit.org/show_bug.cgi?id=150042
+        http://trac.webkit.org/changeset/191003
+
 2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives

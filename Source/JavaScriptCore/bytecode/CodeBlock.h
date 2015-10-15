@@ -1376,6 +1376,11 @@ inline void CodeBlockSet::mark(CodeBlock* codeBlock)
     if (!codeBlock)
         return;
 
+    // Try to recover gracefully if we forget to execute a barrier for a
+    // CodeBlock that does value profiling. This is probably overkill, but we
+    // have always done it.
+    Heap::heap(codeBlock)->writeBarrier(codeBlock);
+
     m_currentlyExecuting.add(codeBlock);
 }
 
