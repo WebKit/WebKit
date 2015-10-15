@@ -39,6 +39,7 @@ fast/events/mouse-force-up.html [ Skip ]
 
 # Only iOS supports QuickLook
 quicklook [ Skip ]
+http/tests/quicklook [ Skip ]
 
 # This test is WebKit2-only
 http/tests/appcache/decide-navigation-policy-after-delay.html [ Skip ]

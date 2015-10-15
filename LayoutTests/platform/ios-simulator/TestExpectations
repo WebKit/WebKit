@@ -8,6 +8,7 @@
 
 accessibility/ios-simulator [ Pass ]
 quicklook [ Pass ]
+http/tests/quicklook [ Pass ]
 
 # <rdar://problem/22898927> Crashes in iWorkImport.framework
 quicklook/pages.html [ Pass Crash ]

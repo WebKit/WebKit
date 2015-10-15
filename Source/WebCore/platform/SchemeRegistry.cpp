@@ -28,6 +28,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
 
 static URLSchemesMap& localURLSchemes()
@@ -59,6 +63,9 @@ static URLSchemesMap& secureSchemes()
         secureSchemes.add("about");
         secureSchemes.add("data");
         secureSchemes.add("wss");
+#if USE(QUICK_LOOK)
+        secureSchemes.add(QLPreviewProtocol());
+#endif
     }
 
     return secureSchemes;
