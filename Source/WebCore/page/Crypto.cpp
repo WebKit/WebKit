@@ -39,15 +39,6 @@
 
 namespace WebCore {
 
-namespace {
-
-bool isIntegerArray(ArrayBufferView* array)
-{
-    return JSC::isInt(array->getType());
-}
-
-}
-
 Crypto::Crypto(Document& document)
     : ContextDestructionObserver(&document)
 {
@@ -64,7 +55,7 @@ Document* Crypto::document() const
 
 void Crypto::getRandomValues(ArrayBufferView* array, ExceptionCode& ec)
 {
-    if (!array || !isIntegerArray(array)) {
+    if (!array || !JSC::isInt(array->getType())) {
         ec = TYPE_MISMATCH_ERR;
         return;
     }
