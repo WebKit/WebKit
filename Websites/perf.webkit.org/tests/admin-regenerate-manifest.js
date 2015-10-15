@@ -9,6 +9,7 @@ describe("/admin/regenerate-manifest", function () {
                 delete manifest.defaultDashboard;
                 delete manifest.dashboards;
                 delete manifest.elapsedTime;
+                delete manifest.siteTitle;
                 assert.deepEqual(manifest, {
                     all: {},
                     bugTrackers: {},

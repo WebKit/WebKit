@@ -1,3 +1,9 @@
+2015-10-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed fix of a test after r190687.
+
+        * tests/admin-regenerate-manifest.js:
+
 2015-10-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard tools shouldn't require server credentials in multiple configuration files
