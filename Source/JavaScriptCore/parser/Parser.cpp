@@ -2015,7 +2015,6 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
             ParserFunctionInfo<TreeBuilder> methodInfo;
             bool isConstructor = !isStaticMethod && *ident == propertyNames.constructor;
             failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, SourceParseMode::MethodMode, false, isConstructor ? constructorKind : ConstructorKind::None, SuperBinding::Needed, methodStart, methodInfo, StandardFunctionParseType)), "Cannot parse this method");
-            failIfTrue(!computedPropertyName && (declareVariable(ident) & DeclarationResult::InvalidStrictMode), "Cannot declare a method named '", methodInfo.name->impl(), "'");
             methodInfo.name = isConstructor ? className : ident;
 
             TreeExpression method = context.createFunctionExpr(methodLocation, methodInfo);

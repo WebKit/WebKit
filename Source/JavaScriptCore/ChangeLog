@@ -1,3 +1,26 @@
+2015-10-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Class method should not declare any variables to upper scope.
+        https://bugs.webkit.org/show_bug.cgi?id=150115
+
+        Reviewed by Geoffrey Garen.
+
+        In the current implementation, class methods attempt to declare variables to an upper scope with their method names.
+        But this is not specified behavior in the ES6 spec.
+
+        And as a result, previously, we attempted to declare variables with invalid identifiers.
+        For example, `class A { 1() { } }` attempt to declare a variable with name `1`.
+        This (declaring variables with incorrect names) is not allowed in the lexical environment.
+        And it fires assertions in https://bugs.webkit.org/show_bug.cgi?id=150089.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass): Deleted.
+        * tests/stress/class-method-does-not-declare-variable-to-upper-scope.js: Added.
+        (shouldBe):
+        (A.prototype.method):
+        (A.staticMethod):
+        (A):
+
 2015-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: Web Inspector hangs for many seconds when trying to reload page
