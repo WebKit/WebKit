@@ -1,3 +1,20 @@
+2015-10-14  Andy Estes  <aestes@apple.com>
+
+        [iOS] build-dumprendertree does not build ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=150152
+
+        Reviewed by Tim Horton.
+
+        run-webkit-tests attempts to build the tools it requires by calling build-dumprendertree and build-webkittestrunner.
+        On iOS, build-dumprendertree builds the DumpRenderTree.app target, which does not contain the ImageDiff target
+        as a dependent. If you haven't built ImageDiff by other means (say, because you built the 'All Source' scheme in
+        WebKit.xcworkspace), tests that rely on image diffing won't work properly.
+
+        There's actually no reason to build the DumpRenderTree.app target on iOS; the default aggregate target works
+        fine on that platform, and results in ImageDiff being built.
+
+        * Scripts/build-dumprendertree:
+
 2015-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Enforce launcher/library naming scheme
