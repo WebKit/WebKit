@@ -1,3 +1,12 @@
+2015-10-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update the help message of --system-malloc
+        https://bugs.webkit.org/show_bug.cgi?id=150169
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2015-10-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Update ImportExpectations according currently imported wpt tests
