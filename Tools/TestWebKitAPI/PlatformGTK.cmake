@@ -108,6 +108,7 @@ add_executable(TestWebKit2
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMedia.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMessage.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKPageCopySessionStateWithFiltering.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKPageGetScaleFactorNotZero.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKPreferences.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WKRetainPtr.cpp

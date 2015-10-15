@@ -27,33 +27,32 @@
 #include "LegacySessionStateCoding.h"
 
 #include "APIData.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 #include "SessionState.h"
-#include <WebCore/NotImplemented.h>
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
-RefPtr<API::Data> encodeLegacySessionState(const SessionState&)
+RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 {
-    notImplemented();
-    return API::Data::create(nullptr, 0);
+    IPC::ArgumentEncoder encoder;
+    encoder << sessionState.backForwardListState;
+    encoder << sessionState.renderTreeSize;
+    encoder << sessionState.provisionalURL;
+    return API::Data::create(encoder.buffer(), encoder.bufferSize());
 }
 
-RefPtr<API::Data> encodeLegacySessionHistoryEntryData(const FrameState&)
+bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
 {
-    notImplemented();
-    return API::Data::create(nullptr, 0);
-}
-
-bool decodeLegacySessionState(const uint8_t*, size_t, SessionState&)
-{
-    notImplemented();
-    return false;
-}
-
-bool decodeLegacySessionHistoryEntryData(const uint8_t*, size_t, FrameState&)
-{
-    notImplemented();
-    return false;
+    IPC::ArgumentDecoder decoder(data, dataSize);
+    if (!decoder.decode(sessionState.backForwardListState))
+        return false;
+    if (!decoder.decode(sessionState.renderTreeSize))
+        return false;
+    if (!decoder.decode(sessionState.provisionalURL))
+        return false;
+    return true;
 }
 
 } // namespace WebKit
