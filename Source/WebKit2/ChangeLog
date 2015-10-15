@@ -1,3 +1,12 @@
+2015-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix wrong #ifdef added in r190615.
+
+        This disabled accelerated compositing unconditionally.
+
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2015-10-14  Zhuo Li  <zachli@apple.com>
 
         Augment <input type=search>’s recent search history with the time each entry was added,
