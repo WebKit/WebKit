@@ -922,8 +922,9 @@ namespace JSC {
     {
     }
 
-    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
+    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, VariableEnvironment& classEnvironment, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
         : ExpressionNode(location)
+        , VariableEnvironmentNode(classEnvironment)
         , m_name(name)
         , m_constructorExpression(constructorExpression)
         , m_classHeritage(classHeritage)
