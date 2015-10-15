@@ -265,5 +265,34 @@ TEST(_WKDownload, OriginatingWebView)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+@interface AsynchronousDownloadNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation AsynchronousDownloadNavigationDelegate
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        decisionHandler(_WKNavigationResponsePolicyBecomeDownload);
+    });
+}
+@end
+
+@interface AsynchronousDownloadDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation AsynchronousDownloadDelegate
+
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, AsynchronousDownloadPolicy)
+{
+    runTest(adoptNS([[AsynchronousDownloadNavigationDelegate alloc] init]).get(), adoptNS([[AsynchronousDownloadDelegate alloc] init]).get(), sourceURL);
+}
+
 #endif
 #endif

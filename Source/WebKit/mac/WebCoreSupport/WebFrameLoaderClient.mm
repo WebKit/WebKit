@@ -111,10 +111,10 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceHandle.h>
-#import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SubresourceLoader.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/Widget.h>
@@ -286,9 +286,10 @@ void WebFrameLoaderClient::detachedFromParent3()
 void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
     WebView *webView = getWebView(m_webFrame.get());
+    SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
-    if (!documentLoader->mainResourceLoader()) {
-        // The resource has already been cached, start a new download.
+    if (!mainResourceLoader || !mainResourceLoader->callingDidReceiveResponse()) {
+        // The resource has already been cached, or the conversion is being attmpted when not calling SubresourceLoader::didReceiveResponse().
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
         WebDownload *webDownload = [[WebDownload alloc] initWithRequest:request.nsURLRequest(UpdateHTTPBody) delegate:[webView downloadDelegate]];
@@ -297,7 +298,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
         return;
     }
 
-    ResourceHandle* handle = documentLoader->mainResourceLoader()->handle();
+    ResourceHandle* handle = mainResourceLoader->handle();
 
 #if USE(CFNETWORK)
     ASSERT([WebDownload respondsToSelector:@selector(_downloadWithLoadingCFURLConnection:request:response:delegate:proxy:)]);
