@@ -435,10 +435,12 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)
     return nullptr;
 }
 
+#if ENABLE(CONTEXT_MENUS)
 RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy&, const UserData&)
 {
     return nullptr;
 }
+#endif
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, TextIndicatorWindowLifetime)
 {

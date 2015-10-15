@@ -121,7 +121,9 @@ private:
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
     virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
+#if ENABLE(CONTEXT_MENUS)
     virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebContextMenuProxy.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 namespace WebKit {
 
 WebContextMenuProxy::WebContextMenuProxy(const ContextMenuContextData& context, const UserData& userData)
@@ -39,3 +41,5 @@ WebContextMenuProxy::~WebContextMenuProxy()
 }
 
 } // namespace WebKit
+
+#endif

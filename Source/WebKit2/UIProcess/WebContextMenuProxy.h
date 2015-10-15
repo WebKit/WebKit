@@ -26,13 +26,14 @@
 #ifndef WebContextMenuProxy_h
 #define WebContextMenuProxy_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuContextData.h"
 #include "UserData.h"
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
 
-class ContextMenuContextData;
 class WebContextMenuItem;
 
 class WebContextMenuProxy : public RefCounted<WebContextMenuProxy> {
@@ -51,5 +52,7 @@ protected:
 };
 
 } // namespace WebKit
+
+#endif
 
 #endif // WebPopupMenuProxy_h

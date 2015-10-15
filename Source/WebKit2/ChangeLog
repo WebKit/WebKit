@@ -1,3 +1,16 @@
+2015-10-15  Dean Jackson  <dino@apple.com>
+
+        Fix the iOS build. And hopefully not breaking the other builds
+        at the same time.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContextMenuProxy.cpp:
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+
 2015-10-15  Anders Carlsson  <andersca@apple.com>
 
         Use the context inside WebContextMenuProxyMac

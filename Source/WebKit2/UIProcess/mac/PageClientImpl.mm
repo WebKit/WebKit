@@ -492,10 +492,12 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
     return WebPopupMenuProxyMac::create(m_wkView, page);
 }
 
+#if ENABLE(CONTEXT_MENUS)
 RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
     return WebContextMenuProxyMac::create(m_wkView, page, context, userData);
 }
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect& rect)
