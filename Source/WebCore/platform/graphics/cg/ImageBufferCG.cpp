@@ -266,16 +266,8 @@ void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& src
 void ImageBuffer::clip(GraphicsContext& contextToClip, const FloatRect& rect) const
 {
     FloatSize backingStoreSizeInUserSpace = scaleSizeToUserSpace(rect.size(), m_data.backingStoreSize, internalSize());
-
-    CGContextRef platformContextToClip = contextToClip.platformContext();
-    // FIXME: This image needs to be grayscale to be used as an alpha mask here.
     RetainPtr<CGImageRef> image = copyNativeImage(DontCopyBackingStore);
-    CGContextTranslateCTM(platformContextToClip, rect.x(), rect.y() + backingStoreSizeInUserSpace.height());
-    CGContextScaleCTM(platformContextToClip, 1, -1);
-    CGContextClipToRect(platformContextToClip, FloatRect(FloatPoint(0, backingStoreSizeInUserSpace.height() - rect.height()), rect.size()));
-    CGContextClipToMask(platformContextToClip, FloatRect(FloatPoint(), backingStoreSizeInUserSpace), image.get());
-    CGContextScaleCTM(platformContextToClip, 1, -1);
-    CGContextTranslateCTM(platformContextToClip, -rect.x(), -rect.y() - rect.height());
+    contextToClip.clipToNativeImage(image.get(), rect, backingStoreSizeInUserSpace);
 }
 
 PassRefPtr<Uint8ClampedArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect, CoordinateSystem coordinateSystem) const

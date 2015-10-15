@@ -345,6 +345,18 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const
     }
 }
 
+void GraphicsContext::clipToNativeImage(PassNativeImagePtr image, const FloatRect& destRect, const FloatSize& bufferSize)
+{
+    CGContextRef context = platformContext();
+    // FIXME: This image needs to be grayscale to be used as an alpha mask here.
+    CGContextTranslateCTM(context, destRect.x(), destRect.y() + bufferSize.height());
+    CGContextScaleCTM(context, 1, -1);
+    CGContextClipToRect(context, FloatRect(FloatPoint(0, bufferSize.height() - destRect.height()), destRect.size()));
+    CGContextClipToMask(context, FloatRect(FloatPoint(), bufferSize), image);
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, -destRect.x(), -destRect.y() - destRect.height());
+}
+
 // Draws a filled rectangle with a stroked border.
 void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
 {
