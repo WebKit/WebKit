@@ -1,5 +1,27 @@
 2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190382. rdar://problem/22934241
+
+    2015-09-30  Dean Jackson  <dino@apple.com>
+
+            GraphicsContext3D::mappedSymbolName should initialize count variable
+            https://bugs.webkit.org/show_bug.cgi?id=149692
+            <rdar://problem/22871304>
+
+            Reviewed by Simon Fraser.
+
+            While debugging another WebGL issue, I noticed that some
+            OpenGL renderers can get into a state where they
+            drop resources (e.g. a GPU reset). If we don't detect that
+            in time, we might try to ask for the currently attached
+            resources and our in-parameter will not be set. In this
+            case, initialize it to zero so that we don't do silly things.
+
+            * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+            (WebCore::GraphicsContext3D::mappedSymbolName): Initialize count to 0.
+
+2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190339. rdar://problem/23075839
 
     2015-09-29  Jon Honeycutt  <jhoneycutt@apple.com>
