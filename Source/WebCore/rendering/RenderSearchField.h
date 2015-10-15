@@ -36,7 +36,7 @@ public:
     RenderSearchField(HTMLInputElement&, Ref<RenderStyle>&&);
     virtual ~RenderSearchField();
 
-    void updateCancelButtonVisibility() const;
+    void updateCancelButtonVisibility();
 
     void addSearchResult();
     void stopSearchEventTimer();
@@ -50,7 +50,6 @@ private:
     virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     virtual LayoutUnit computeLogicalHeightLimit() const override;
     virtual void updateFromElement() override;
-    EVisibility visibilityForCancelButton() const;
     const AtomicString& autosaveName() const;
 
     // PopupMenuClient methods
@@ -85,7 +84,8 @@ private:
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
 
-    bool m_searchPopupIsVisible;
+    bool m_searchPopupIsVisible { false };
+    bool m_isCancelButtonVisible { false };
     RefPtr<SearchPopupMenu> m_searchPopup;
     Vector<RecentSearch> m_recentSearches;
 };

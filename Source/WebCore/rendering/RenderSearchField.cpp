@@ -52,8 +52,6 @@ using namespace HTMLNames;
 
 RenderSearchField::RenderSearchField(HTMLInputElement& element, Ref<RenderStyle>&& style)
     : RenderTextControlSingleLine(element, WTF::move(style))
-    , m_searchPopupIsVisible(false)
-    , m_searchPopup(0)
 {
     ASSERT(element.isSearchField());
 }
@@ -167,25 +165,20 @@ void RenderSearchField::updateFromElement()
         m_searchPopup->popupMenu()->updateFromElement();
 }
 
-void RenderSearchField::updateCancelButtonVisibility() const
+void RenderSearchField::updateCancelButtonVisibility()
 {
     RenderElement* cancelButtonRenderer = cancelButtonElement()->renderer();
     if (!cancelButtonRenderer)
         return;
 
-    const RenderStyle& curStyle = cancelButtonRenderer->style();
-    EVisibility buttonVisibility = visibilityForCancelButton();
-    if (curStyle.visibility() == buttonVisibility)
+    bool wasCancelButtonVisible = m_isCancelButtonVisible;
+    m_isCancelButtonVisible = style().visibility() == VISIBLE && !inputElement().value().isEmpty();
+    if (wasCancelButtonVisible == m_isCancelButtonVisible)
         return;
 
-    auto cancelButtonStyle = RenderStyle::clone(&curStyle);
-    cancelButtonStyle.get().setVisibility(buttonVisibility);
+    auto cancelButtonStyle = RenderStyle::clone(&cancelButtonRenderer->style());
+    cancelButtonStyle.get().setVisibility(m_isCancelButtonVisible ? VISIBLE : HIDDEN);
     cancelButtonRenderer->setStyle(WTF::move(cancelButtonStyle));
-}
-
-EVisibility RenderSearchField::visibilityForCancelButton() const
-{
-    return (style().visibility() == HIDDEN || inputElement().value().isEmpty()) ? HIDDEN : VISIBLE;
 }
 
 const AtomicString& RenderSearchField::autosaveName() const
