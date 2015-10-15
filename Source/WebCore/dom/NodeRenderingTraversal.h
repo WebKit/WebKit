@@ -34,24 +34,10 @@ namespace WebCore {
 
 namespace NodeRenderingTraversal {
 
-ContainerNode* parent(const Node*);
-
 Node* nextInScope(const Node*);
 Node* previousInScope(const Node*);
 Node* parentInScope(const Node*);
 Node* lastChildInScope(const Node*);
-
-ContainerNode* parentSlow(const Node*);
-
-inline ContainerNode* parent(const Node* node)
-{
-    ASSERT(!node->isPseudoElement());
-    if (node->needsNodeRenderingTraversalSlowPath())
-        return parentSlow(node);
-
-    ASSERT(node->parentNode() == parentSlow(node));
-    return node->parentNodeGuaranteedHostFree();
-}
 
 }
 

@@ -228,14 +228,6 @@ inline Node* Node::highestAncestor() const
     return highest;
 }
 
-inline bool Node::needsNodeRenderingTraversalSlowPath() const
-{
-    if (getFlag(NeedsNodeRenderingTraversalSlowPathFlag))
-        return true;
-    ContainerNode* parent = parentOrShadowHostNode();
-    return parent && parent->getFlag(NeedsNodeRenderingTraversalSlowPathFlag);
-}
-
 inline bool Node::isTreeScope() const
 {
     return &treeScope().rootNode() == this;

@@ -27,7 +27,6 @@
 #include "RenderTreePosition.h"
 
 #include "ComposedTreeIterator.h"
-#include "NodeRenderingTraversal.h"
 #include "PseudoElement.h"
 #include "RenderObject.h"
 #include "ShadowRoot.h"

@@ -34,45 +34,31 @@ namespace WebCore {
 
 namespace NodeRenderingTraversal {
 
-enum ShadowRootCrossing { CrossShadowRoot, DontCrossShadowRoot };
-
-static ContainerNode* traverseParent(const Node* node, ShadowRootCrossing shadowRootCrossing)
+static ContainerNode* traverseParent(const Node* node)
 {
-    if (shadowRootCrossing == DontCrossShadowRoot  && node->isShadowRoot())
+    if (node->isShadowRoot())
         return nullptr;
 
     ContainerNode* parent = node->parentNode();
     if (parent && parent->shadowRoot())
         return nullptr;
 
-    if (!parent)
-        return nullptr;
-
-    if (is<ShadowRoot>(*parent))
-        return shadowRootCrossing == CrossShadowRoot ? downcast<ShadowRoot>(parent)->host() : parent;
-
     return parent;
 }
 
-static Node* traverseFirstChild(const Node* node, ShadowRootCrossing shadowRootCrossing)
+static Node* traverseFirstChild(const Node* node)
 {
     ASSERT(node);
-    if (node->shadowRoot()) {
-        if (shadowRootCrossing == DontCrossShadowRoot)
-            return nullptr;
-        node = node->shadowRoot();
-    }
+    if (node->shadowRoot())
+        return nullptr;
     return node->firstChild();
 }
 
-static Node* traverseLastChild(const Node* node, ShadowRootCrossing shadowRootCrossing)
+static Node* traverseLastChild(const Node* node)
 {
     ASSERT(node);
-    if (node->shadowRoot()) {
-        if (shadowRootCrossing == DontCrossShadowRoot)
-            return nullptr;
-        node = node->shadowRoot();
-    }
+    if (node->shadowRoot())
+        return nullptr;
     return node->lastChild();
 }
 
@@ -88,43 +74,36 @@ static Node* traversePreviousSibling(const Node* node)
     return node->previousSibling();
 }
 
-ContainerNode* parentSlow(const Node* node)
-{
-    ASSERT(!node->isShadowRoot());
-
-    return traverseParent(node, CrossShadowRoot);
-}
-
 Node* nextInScope(const Node* node)
 {
-    if (Node* next = traverseFirstChild(node, DontCrossShadowRoot))
+    if (Node* next = traverseFirstChild(node))
         return next;
     if (Node* next = traverseNextSibling(node))
         return next;
     const Node* current = node;
     while (current && !traverseNextSibling(current))
-        current = traverseParent(current, DontCrossShadowRoot);
+        current = traverseParent(current);
     return current ? traverseNextSibling(current) : 0;
 }
 
 Node* previousInScope(const Node* node)
 {
     if (Node* current = traversePreviousSibling(node)) {
-        while (Node* child = traverseLastChild(current, DontCrossShadowRoot))
+        while (Node* child = traverseLastChild(current))
             current = child;
         return current;
     }
-    return traverseParent(node, DontCrossShadowRoot);
+    return traverseParent(node);
 }
 
 Node* parentInScope(const Node* node)
 {
-    return traverseParent(node, DontCrossShadowRoot);
+    return traverseParent(node);
 }
 
 Node* lastChildInScope(const Node* node)
 {
-    return traverseLastChild(node, DontCrossShadowRoot);
+    return traverseLastChild(node);
 }
 
 }

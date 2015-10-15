@@ -1619,15 +1619,6 @@ ShadowRoot* Element::shadowRoot() const
     return hasRareData() ? elementRareData()->shadowRoot() : 0;
 }
 
-static bool shouldUseNodeRenderingTraversalSlowPath(const Element& element)
-{
-    return element.isShadowRoot() || element.shadowRoot();
-}
-
-void Element::resetNeedsNodeRenderingTraversalSlowPath()
-{
-    setNeedsNodeRenderingTraversalSlowPath(shouldUseNodeRenderingTraversalSlowPath(*this));
-}
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 {
@@ -1643,8 +1634,6 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     notifyChildNodeInserted(*this, shadowRoot, postInsertionNotificationTargets);
     for (auto& target : postInsertionNotificationTargets)
         target->finishedInsertingSubtree();
-
-    resetNeedsNodeRenderingTraversalSlowPath();
 
     setNeedsStyleRecalc(ReconstructRenderTree);
 

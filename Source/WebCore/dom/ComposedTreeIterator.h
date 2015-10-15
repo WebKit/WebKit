@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "HTMLSlotElement.h"
 #include "NodeTraversal.h"
 #include "ShadowRoot.h"
 

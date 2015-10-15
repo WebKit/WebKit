@@ -31,6 +31,7 @@
 #include "ChildListMutationScope.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
@@ -740,45 +741,26 @@ void Node::derefEventTarget()
     deref();
 }
 
-// FIXME: Factor into iterator.
-static ContainerNode* traverseStyleParent(Node& node)
-{
-    auto* parent = node.parentNode();
-    if (!parent) {
-        if (is<ShadowRoot>(node))
-            return downcast<ShadowRoot>(node).host();
-        return nullptr;
-    }
-#if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
-    if (auto* shadowRoot = parent->shadowRoot()) {
-        if (auto* assignedSlot = shadowRoot->findAssignedSlot(node))
-            return assignedSlot;
-    }
-#endif
-    return parent;
-}
-
-static ContainerNode* traverseFirstStyleParent(Node& node)
-{
-    if (is<PseudoElement>(node))
-        return downcast<PseudoElement>(node).hostElement();
-    return traverseStyleParent(node);
-}
-
 inline void Node::updateAncestorsForStyleRecalc()
 {
-    if (auto* ancestor = traverseFirstStyleParent(*this)) {
-        ancestor->setDirectChildNeedsStyleRecalc();
+    auto composedAncestors = composedTreeAncestors(*this);
+    auto it = composedAncestors.begin();
+    auto end = composedAncestors.end();
+    if (it != end) {
+        it->setDirectChildNeedsStyleRecalc();
 
-        if (is<Element>(*ancestor) && downcast<Element>(*ancestor).childrenAffectedByPropertyBasedBackwardPositionalRules()) {
-            if (ancestor->styleChangeType() < FullStyleChange)
-                ancestor->setStyleChange(FullStyleChange);
+        if (is<Element>(*it) && downcast<Element>(*it).childrenAffectedByPropertyBasedBackwardPositionalRules()) {
+            if (it->styleChangeType() < FullStyleChange)
+                it->setStyleChange(FullStyleChange);
         }
 
-        for (; ancestor; ancestor = traverseStyleParent(*ancestor)) {
-            if (ancestor->childNeedsStyleRecalc())
+        for (; it != end; ++it) {
+            // Iterator skips over shadow roots.
+            if (auto* shadowRoot = it->shadowRoot())
+                shadowRoot->setChildNeedsStyleRecalc();
+            if (it->childNeedsStyleRecalc())
                 break;
-            ancestor->setChildNeedsStyleRecalc();
+            it->setChildNeedsStyleRecalc();
         }
     }
 

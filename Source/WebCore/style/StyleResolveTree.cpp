@@ -30,6 +30,7 @@
 #include "AnimationController.h"
 #include "AuthorStyleSheets.h"
 #include "CSSFontSelector.h"
+#include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -39,7 +40,6 @@
 #include "LoaderStrategy.h"
 #include "MainFrame.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingTraversal.h"
 #include "NodeTraversal.h"
 #include "PlatformStrategies.h"
 #include "RenderFullScreen.h"
@@ -327,7 +327,7 @@ void detachTextRenderer(Text& textNode)
 
 void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
-    ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&textNode);
+    auto* renderingParentNode = composedTreeAncestors(textNode).first();
     if (!renderingParentNode || !renderingParentNode->renderer())
         return;
 
