@@ -253,6 +253,9 @@ private:
     Timer m_resumeTimer;
     bool m_dispatchErrorOnResuming;
 
+    Timer m_networkErrorTimer;
+    void networkErrorTimerFired();
+
     unsigned m_timeoutMilliseconds { 0 };
     std::chrono::steady_clock::time_point m_sendingTime;
     Timer m_timeoutTimer;
