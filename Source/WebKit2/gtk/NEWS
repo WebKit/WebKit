@@ -1,4 +1,13 @@
 =================
+WebKitGTK+ 2.10.2
+=================
+
+What's new in WebKitGTK+ 2.10.2?
+
+  - Fix a regression introduced in 2.10.1 that disabled accelerated compositing.
+  - Fix build with cmake 3.4.
+
+=================
 WebKitGTK+ 2.10.1
 =================
 

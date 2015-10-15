@@ -1,5 +1,11 @@
 2015-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.2 release.
+
+        * gtk/NEWS: Add release notes for 2.10.2
+
+2015-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix wrong #ifdef added in r190615.
 
         This disabled accelerated compositing unconditionally.

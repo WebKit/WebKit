@@ -1,3 +1,9 @@
+2015-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.10.2 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-10-14  Tomas Popela  <tpopela@redhat.com>
 
         [GTK][EFL] Fix build with cmake 3.4
