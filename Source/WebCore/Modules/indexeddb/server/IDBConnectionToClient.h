@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class IDBError;
+class IDBResourceIdentifier;
 class IDBResultData;
 
 namespace IDBServer {
@@ -48,6 +50,7 @@ public:
 
     void didDeleteDatabase(const IDBResultData&);
     void didOpenDatabase(const IDBResultData&);
+    void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion);
 

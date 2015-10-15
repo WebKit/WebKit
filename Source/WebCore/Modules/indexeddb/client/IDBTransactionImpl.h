@@ -28,8 +28,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBError.h"
 #include "IDBTransaction.h"
 #include "IDBTransactionInfo.h"
+#include "IndexedDB.h"
+#include "Timer.h"
+#include <heap/StrongInlines.h>
 
 namespace WebCore {
 namespace IDBClient {
@@ -44,7 +48,7 @@ public:
 
     // IDBTransaction IDL
     virtual const String& mode() const override final;
-    virtual WebCore::IDBDatabase* db() const override final;
+    virtual WebCore::IDBDatabase* db() override final;
     virtual RefPtr<DOMError> error() const override final;
     virtual RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) override final;
     virtual void abort(ExceptionCode&) override final;
@@ -53,16 +57,39 @@ public:
     virtual ScriptExecutionContext* scriptExecutionContext() const override final { return ActiveDOMObject::scriptExecutionContext(); }
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
+    using EventTarget::dispatchEvent;
+    virtual bool dispatchEvent(PassRefPtr<Event>) override final;
 
     virtual const char* activeDOMObjectName() const override final;
     virtual bool canSuspendForPageCache() const override final;
+    virtual bool hasPendingActivity() const override final;
 
     const IDBTransactionInfo info() const { return m_info; }
+    IDBDatabase& database() { return m_database.get(); }
+    const IDBDatabase& database() const { return m_database.get(); }
+
+    void didCommit(const IDBError&);
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
 
+    bool isActive() const;
+    void commit();
+
+    void scheduleOperationTimer();
+    void operationTimerFired();
+
+    void fireOnComplete();
+    void fireOnAbort();
+    void enqueueEvent(Ref<Event>);
+
+    Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
+
+    IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Unstarted };
+    IDBError m_idbError;
+
+    Timer m_operationTimer;
 };
 
 } // namespace IDBClient

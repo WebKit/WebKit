@@ -58,6 +58,11 @@ void IDBConnectionToClient::didOpenDatabase(const IDBResultData& result)
     m_delegate->didOpenDatabase(result);
 }
 
+void IDBConnectionToClient::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    m_delegate->didCommitTransaction(transactionIdentifier, error);
+}
+
 void IDBConnectionToClient::fireVersionChangeEvent(UniqueIDBDatabaseConnection& connection, uint64_t requestedVersion)
 {
     m_delegate->fireVersionChangeEvent(connection, requestedVersion);

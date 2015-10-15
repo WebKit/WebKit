@@ -59,7 +59,7 @@ void UniqueIDBDatabaseConnection::fireVersionChangeEvent(uint64_t requestedVersi
     m_connectionToClient.fireVersionChangeEvent(*this, requestedVersion);
 }
 
-Ref<UniqueIDBDatabaseTransaction> UniqueIDBDatabaseConnection::createVersionChangeTransaction(uint64_t newVersion)
+UniqueIDBDatabaseTransaction& UniqueIDBDatabaseConnection::createVersionChangeTransaction(uint64_t newVersion)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseConnection::createVersionChangeTransaction");
     ASSERT(!m_closePending);
@@ -69,7 +69,19 @@ Ref<UniqueIDBDatabaseTransaction> UniqueIDBDatabaseConnection::createVersionChan
     Ref<UniqueIDBDatabaseTransaction> transaction = UniqueIDBDatabaseTransaction::create(*this, info);
     m_transactionMap.set(transaction->info().identifier(), &transaction.get());
 
-    return WTF::move(transaction);
+    return transaction.get();
+}
+
+void UniqueIDBDatabaseConnection::didCommitTransaction(UniqueIDBDatabaseTransaction& transaction, const IDBError& error)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::didCommitTransaction");
+
+    auto transactionIdentifier = transaction.info().identifier();
+
+    ASSERT(m_transactionMap.contains(transactionIdentifier));
+    m_transactionMap.remove(transactionIdentifier);
+
+    m_connectionToClient.didCommitTransaction(transactionIdentifier, error);
 }
 
 } // namespace IDBServer

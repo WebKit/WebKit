@@ -28,6 +28,10 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBServer.h"
+#include "Logging.h"
+#include "UniqueIDBDatabase.h"
+
 namespace WebCore {
 namespace IDBServer {
 
@@ -40,6 +44,24 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     : m_databaseConnection(connection)
     , m_transactionInfo(info)
 {
+    m_databaseConnection->database().server().registerTransaction(*this);
+}
+
+UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction()
+{
+    m_databaseConnection->database().transactionDestroyed(*this);
+    m_databaseConnection->database().server().unregisterTransaction(*this);
+}
+
+void UniqueIDBDatabaseTransaction::commit()
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit");
+
+    RefPtr<UniqueIDBDatabaseTransaction> self(this);
+    m_databaseConnection->database().commitTransaction(*this, [this, self](const IDBError& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit (callback)");
+        m_databaseConnection->didCommitTransaction(*this, error);
+    });
 }
 
 } // namespace IDBServer

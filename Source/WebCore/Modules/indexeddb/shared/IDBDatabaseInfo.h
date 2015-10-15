@@ -39,6 +39,8 @@ public:
     IDBDatabaseInfo isolatedCopy() const;
 
     const String& name() const { return m_name; }
+
+    void setVersion(uint64_t version) { m_version = version; }
     uint64_t version() const { return m_version; }
 
 private:

@@ -72,15 +72,21 @@ public:
     const IDBDatabaseInfo& info() const { return m_info; }
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&);
+    void commitTransaction(IDBTransaction&);
+    void didCommitTransaction(IDBTransaction&);
+    void didAbortTransaction(IDBTransaction&);
 
 private:
     IDBDatabase(ScriptExecutionContext&, IDBConnectionToServer&, const IDBResultData&);
 
+    void didCommitOrAbortTransaction(IDBTransaction&);
+    
     Ref<IDBConnectionToServer> m_connection;
     IDBDatabaseInfo m_info;
 
     RefPtr<IDBTransaction> m_versionChangeTransaction;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
 };
 
 } // namespace IDBClient

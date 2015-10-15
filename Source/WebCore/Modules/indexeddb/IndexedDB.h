@@ -39,6 +39,13 @@ enum class TransactionMode {
 };
 const unsigned TransactionModeMaximum = 2;
 
+enum class TransactionState {
+    Unstarted,
+    Running,
+    Committing,
+    Finished,
+};
+
 enum class CursorDirection {
     Next = 0,
     NextNoDuplicate = 1,

@@ -45,9 +45,11 @@
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBDatabaseMetadata.h"
+#include "IDBError.h"
 #include "IDBGetResult.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
+#include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
 #endif
 
@@ -143,6 +145,16 @@ CrossThreadCopierBase<false, false, IDBDatabaseIdentifier>::Type CrossThreadCopi
 CrossThreadCopierBase<false, false, IDBTransactionInfo>::Type CrossThreadCopierBase<false, false, IDBTransactionInfo>::copy(const IDBTransactionInfo& info)
 {
     return info.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBResourceIdentifier>::Type CrossThreadCopierBase<false, false, IDBResourceIdentifier>::copy(const IDBResourceIdentifier& identifier)
+{
+    return identifier.isolatedCopy();
+}
+
+CrossThreadCopierBase<false, false, IDBError>::Type CrossThreadCopierBase<false, false, IDBError>::copy(const IDBError& error)
+{
+    return error.isolatedCopy();
 }
 
 #endif // ENABLE(INDEXED_DATABASE)

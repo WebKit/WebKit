@@ -1,0 +1,9 @@
+ALERT: [object IDBOpenDBRequest] (firstPhase)
+ALERT: upgradeneeded (firstPhase): old version - 0 new version - 1
+ALERT: [object IDBTransaction]
+ALERT: Version change complete (firstPhase). Database version is now - 1
+ALERT: [object IDBOpenDBRequest] (secondPhase)
+ALERT: Successfully opened database at version 1 (secondPhase)
+ALERT: Done
+This test creates a new database with the default version, commits that versionchange transaction, and then reopens it at different versions to make sure the IDBOpenDBRequests behave appropriately.
+

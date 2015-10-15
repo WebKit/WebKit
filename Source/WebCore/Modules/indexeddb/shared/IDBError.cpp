@@ -55,6 +55,11 @@ IDBError::IDBError(IDBExceptionCode code, const String& message)
 {
 }
 
+IDBError IDBError::isolatedCopy() const
+{
+    return { m_code, m_message.isolatedCopy() };
+}
+
 IDBError& IDBError::operator=(const IDBError& other)
 {
     m_code = other.m_code;

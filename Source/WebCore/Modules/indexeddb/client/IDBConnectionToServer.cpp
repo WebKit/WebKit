@@ -93,6 +93,26 @@ void IDBConnectionToServer::didOpenDatabase(const IDBResultData& resultData)
     request->requestCompleted(resultData);
 }
 
+void IDBConnectionToServer::commitTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::commitTransaction");
+    ASSERT(!m_committingTransactions.contains(transaction.info().identifier()));
+    m_committingTransactions.set(transaction.info().identifier(), &transaction);
+
+    auto identifier = transaction.info().identifier();
+    m_delegate->commitTransaction(identifier);
+}
+
+void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didCommitTransaction");
+
+    auto transaction = m_committingTransactions.take(transactionIdentifier);
+    ASSERT(transaction);
+
+    transaction->didCommit(error);
+}
+
 void IDBConnectionToServer::fireVersionChangeEvent(uint64_t /*databaseConnectionIdentifier*/ , uint64_t /*requestedVersion*/)
 {
     LOG(IndexedDB, "IDBConnectionToServer::fireVersionChangeEvent");

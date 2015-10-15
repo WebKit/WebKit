@@ -41,12 +41,15 @@
 
 namespace WebCore {
 
+class IDBError;
 class IDBRequestData;
 
 namespace IDBServer {
 
 class IDBConnectionToClient;
 class IDBServer;
+
+typedef std::function<void(const IDBError&)> ErrorCallback;
 
 class UniqueIDBDatabase : public ThreadSafeRefCounted<UniqueIDBDatabase> {
 public:
@@ -58,6 +61,10 @@ public:
     void openDatabaseConnection(IDBConnectionToClient&, const IDBRequestData&);
 
     const IDBDatabaseInfo& info() const;
+    IDBServer& server() { return m_server; }
+
+    void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
+    void transactionDestroyed(UniqueIDBDatabaseTransaction&);
 
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
@@ -68,12 +75,18 @@ private:
 
     void startVersionChangeTransaction();
     void notifyConnectionsOfVersionChange();
+
+    uint64_t storeCallback(ErrorCallback);
     
     // Database thread operations
     void openBackingStore(const IDBDatabaseIdentifier&);
+    void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
 
     // Main thread callbacks
     void didOpenBackingStore(const IDBDatabaseInfo&);
+    void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&);
+
+    void performErrorCallback(uint64_t callbackIdentifier, const IDBError&);
 
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
@@ -84,12 +97,12 @@ private:
 
     RefPtr<IDBServerOperation> m_versionChangeOperation;
     RefPtr<UniqueIDBDatabaseConnection> m_versionChangeDatabaseConnection;
-
-    RefPtr<UniqueIDBDatabaseTransaction> m_versionChangeTransaction;
-    HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_inProgressTransactions;
+    UniqueIDBDatabaseTransaction* m_versionChangeTransaction { nullptr };
 
     std::unique_ptr<IDBBackingStore> m_backingStore;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+
+    HashMap<uint64_t, ErrorCallback> m_errorCallbacks;
 };
 
 } // namespace IDBServer

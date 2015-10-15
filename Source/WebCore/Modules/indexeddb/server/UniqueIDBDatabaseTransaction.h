@@ -42,8 +42,12 @@ class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransact
 public:
     static Ref<UniqueIDBDatabaseTransaction> create(UniqueIDBDatabaseConnection&, IDBTransactionInfo&);
 
+    ~UniqueIDBDatabaseTransaction();
+
     UniqueIDBDatabaseConnection& databaseConnection() { return m_databaseConnection.get(); }
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
+
+    void commit();
 
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, IDBTransactionInfo&);

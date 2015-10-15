@@ -94,7 +94,7 @@ const String& LegacyTransaction::mode() const
     return modeToString(m_mode);
 }
 
-IDBDatabase* LegacyTransaction::db() const
+IDBDatabase* LegacyTransaction::db()
 {
     return m_database.get();
 }

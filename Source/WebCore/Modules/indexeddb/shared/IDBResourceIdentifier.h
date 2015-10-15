@@ -69,7 +69,9 @@ public:
     }
     
     uint64_t connectionIdentifier() const { return m_idbConnectionIdentifier; }
-    
+
+    IDBResourceIdentifier isolatedCopy() const;
+
 private:
     IDBResourceIdentifier() = delete;
     IDBResourceIdentifier(uint64_t connectionIdentifier, uint64_t resourceIdentifier);

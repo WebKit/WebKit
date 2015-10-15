@@ -29,8 +29,12 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMError.h"
+#include "EventQueue.h"
 #include "IDBDatabaseImpl.h"
+#include "IDBEventDispatcher.h"
 #include "IDBObjectStore.h"
+#include "Logging.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 namespace IDBClient {
@@ -42,9 +46,14 @@ Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTrans
 
 IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& info)
     : WebCore::IDBTransaction(database.scriptExecutionContext())
+    , m_database(database)
     , m_info(info)
+    , m_operationTimer(*this, &IDBTransaction::operationTimerFired)
+
 {
     suspendIfNeeded();
+    scheduleOperationTimer();
+    m_state = IndexedDB::TransactionState::Running;
 }
 
 IDBTransaction::~IDBTransaction()
@@ -65,10 +74,9 @@ const String& IDBTransaction::mode() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-WebCore::IDBDatabase* IDBTransaction::db() const
+WebCore::IDBDatabase* IDBTransaction::db()
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    return &m_database.get();
 }
 
 RefPtr<DOMError> IDBTransaction::error() const
@@ -96,6 +104,107 @@ const char* IDBTransaction::activeDOMObjectName() const
 bool IDBTransaction::canSuspendForPageCache() const
 {
     return false;
+}
+
+bool IDBTransaction::hasPendingActivity() const
+{
+    return m_state != IndexedDB::TransactionState::Finished;
+}
+
+bool IDBTransaction::isActive() const
+{
+    return m_state == IndexedDB::TransactionState::Running;
+}
+
+void IDBTransaction::scheduleOperationTimer()
+{
+    if (!m_operationTimer.isActive())
+        m_operationTimer.startOneShot(0);
+}
+
+void IDBTransaction::operationTimerFired()
+{
+    LOG(IndexedDB, "IDBTransaction::operationTimerFired");
+
+    if (m_state == IndexedDB::TransactionState::Unstarted)
+        return;
+
+    // FIXME: Once transactions can do things, like configure the database or insert data into it,
+    // those operations will be handled here, and will prevent the transaction from committing
+    // as long as outstanding operations exist.
+
+    if (isActive())
+        commit();
+}
+
+void IDBTransaction::commit()
+{
+    LOG(IndexedDB, "IDBTransaction::commit");
+
+    if (m_state != IndexedDB::TransactionState::Running) {
+        m_state = IndexedDB::TransactionState::Finished;
+        return;
+    }
+
+    m_state = IndexedDB::TransactionState::Committing;
+
+    m_database->commitTransaction(*this);
+}
+
+void IDBTransaction::didCommit(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBTransaction::didCommit");
+
+    ASSERT(m_state == IndexedDB::TransactionState::Committing);
+
+    if (error.isNull()) {
+        m_database->didCommitTransaction(*this);
+        fireOnComplete();
+    } else {
+        m_database->didAbortTransaction(*this);
+        m_idbError = error;
+        fireOnAbort();
+    }
+
+    m_state = IndexedDB::TransactionState::Finished;
+}
+
+void IDBTransaction::fireOnComplete()
+{
+    LOG(IndexedDB, "IDBTransaction::fireOnComplete");
+    enqueueEvent(Event::create(eventNames().completeEvent, false, false));
+}
+
+void IDBTransaction::fireOnAbort()
+{
+    LOG(IndexedDB, "IDBTransaction::fireOnAbort");
+    enqueueEvent(Event::create(eventNames().abortEvent, true, false));
+}
+
+void IDBTransaction::enqueueEvent(Ref<Event> event)
+{
+    ASSERT(m_state != IndexedDB::TransactionState::Finished);
+
+    if (!scriptExecutionContext())
+        return;
+
+    event->setTarget(this);
+    scriptExecutionContext()->eventQueue().enqueueEvent(&event.get());
+}
+
+bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
+{
+    LOG(IndexedDB, "IDBTransaction::dispatchEvent");
+
+    ASSERT(scriptExecutionContext());
+    ASSERT(event->target() == this);
+    ASSERT(event->type() == eventNames().completeEvent || event->type() == eventNames().abortEvent);
+
+    Vector<RefPtr<EventTarget>> targets;
+    targets.append(this);
+    targets.append(db());
+
+    return IDBEventDispatcher::dispatch(event.get(), targets);
 }
 
 } // namespace IDBClient

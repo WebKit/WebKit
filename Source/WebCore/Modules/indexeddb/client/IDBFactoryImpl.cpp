@@ -91,7 +91,7 @@ RefPtr<WebCore::IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* conte
         return nullptr;
     }
 
-    return openInternal(context, name, 0, ec).release();
+    return openInternal(context, name, version, ec).release();
 }
 
 RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)

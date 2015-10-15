@@ -128,9 +128,50 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
 
     Ref<IDBTransaction> transaction = IDBTransaction::create(*this, info);
     m_versionChangeTransaction = &transaction.get();
+
     m_activeTransactions.set(transaction->info().identifier(), &transaction.get());
 
     return WTF::move(transaction);
+}
+
+void IDBDatabase::commitTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBDatabase::commitTransaction");
+
+    auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
+    ASSERT(refTransaction);
+    m_committingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
+
+    m_connection->commitTransaction(transaction);
+}
+
+void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBDatabase::didCommitTransaction");
+
+    if (m_versionChangeTransaction == &transaction)
+        m_info.setVersion(transaction.info().newVersion());
+
+    didCommitOrAbortTransaction(transaction);
+}
+
+void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBDatabase::didAbortTransaction");
+    didCommitOrAbortTransaction(transaction);
+}
+
+void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBDatabase::didCommitOrAbortTransaction");
+
+    if (m_versionChangeTransaction == &transaction)
+        m_versionChangeTransaction = nullptr;
+    
+    ASSERT(m_activeTransactions.contains(transaction.info().identifier()) || m_committingTransactions.contains(transaction.info().identifier()));
+
+    m_activeTransactions.remove(transaction.info().identifier());
+    m_committingTransactions.remove(transaction.info().identifier());
 }
 
 } // namespace IDBClient

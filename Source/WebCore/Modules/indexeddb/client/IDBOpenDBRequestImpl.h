@@ -60,7 +60,7 @@ private:
     void onUpgradeNeeded(const IDBResultData&);
 
     IDBDatabaseIdentifier m_databaseIdentifier;
-    uint64_t m_version;
+    uint64_t m_version { 0 };
     RefPtr<DOMError> m_domError;
 };
 

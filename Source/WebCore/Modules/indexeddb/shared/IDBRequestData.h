@@ -36,6 +36,7 @@ namespace WebCore {
 namespace IDBClient {
 class IDBConnectionToServer;
 class IDBOpenDBRequest;
+class IDBTransaction;
 }
 
 class IDBRequestData {
@@ -51,7 +52,7 @@ private:
     IDBResourceIdentifier m_requestIdentifier;
     IDBDatabaseIdentifier m_databaseIdentifier;
 
-    uint64_t m_requestedVersion;
+    uint64_t m_requestedVersion { 0 };
 };
 
 } // namespace WebCore

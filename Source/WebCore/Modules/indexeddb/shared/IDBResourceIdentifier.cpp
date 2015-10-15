@@ -73,6 +73,11 @@ IDBResourceIdentifier::IDBResourceIdentifier(const IDBServer::IDBConnectionToCli
 {
 }
 
+IDBResourceIdentifier IDBResourceIdentifier::isolatedCopy() const
+{
+    return IDBResourceIdentifier(m_idbConnectionIdentifier, m_resourceNumber);
+}
+
 IDBResourceIdentifier IDBResourceIdentifier::emptyValue()
 {
     return IDBResourceIdentifier(0, 0);

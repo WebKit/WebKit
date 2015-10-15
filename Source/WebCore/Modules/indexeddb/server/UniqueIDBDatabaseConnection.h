@@ -34,6 +34,9 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class IDBError;
+
 namespace IDBServer {
 
 class IDBConnectionToClient;
@@ -51,7 +54,9 @@ public:
     bool closePending() const { return m_closePending; }
 
     void fireVersionChangeEvent(uint64_t requestedVersion);
-    Ref<UniqueIDBDatabaseTransaction> createVersionChangeTransaction(uint64_t newVersion);
+    UniqueIDBDatabaseTransaction& createVersionChangeTransaction(uint64_t newVersion);
+
+    void didCommitTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, IDBConnectionToClient&);

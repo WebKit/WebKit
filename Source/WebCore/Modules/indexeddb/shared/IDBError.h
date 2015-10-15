@@ -51,6 +51,8 @@ public:
 
     bool isNull() const { return m_code == IDBExceptionCode::None; }
 
+    IDBError isolatedCopy() const;
+
 private:
     IDBExceptionCode m_code { IDBExceptionCode::None };
     String m_message;

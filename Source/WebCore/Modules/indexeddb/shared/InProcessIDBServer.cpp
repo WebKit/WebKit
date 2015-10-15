@@ -102,6 +102,22 @@ void InProcessIDBServer::didOpenDatabase(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, transactionIdentifier, error] {
+        m_connectionToServer->didCommitTransaction(transactionIdentifier, error);
+    });
+}
+
+void InProcessIDBServer::commitTransaction(IDBResourceIdentifier& resourceIdentifier)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resourceIdentifier] {
+        m_server->commitTransaction(resourceIdentifier);
+    });
+}
+
 void InProcessIDBServer::fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection& connection, uint64_t requestedVersion)
 {
     RefPtr<InProcessIDBServer> self(this);

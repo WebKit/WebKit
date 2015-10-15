@@ -62,16 +62,24 @@ IDBOpenDBRequest::~IDBOpenDBRequest()
 {
 }
 
-
 void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
     m_domError = DOMError::create(data.error().name());
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 
-void IDBOpenDBRequest::onSuccess(const IDBResultData&)
+void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
 {
-    // FIXME: Implement
+    LOG(IndexedDB, "IDBOpenDBRequest::onSuccess()");
+
+    if (!scriptExecutionContext())
+        return;
+
+    Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connection(), resultData);
+    m_result = IDBAny::create(WTF::move(database));
+    m_readyState = IDBRequestReadyState::Done;
+
+    enqueueEvent(Event::create(eventNames().successEvent, false, false));
 }
 
 void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)

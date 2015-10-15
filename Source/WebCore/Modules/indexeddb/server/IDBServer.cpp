@@ -63,6 +63,20 @@ void IDBServer::unregisterConnection(IDBConnectionToClient& connection)
     m_connectionMap.remove(connection.identifier());
 }
 
+void IDBServer::registerTransaction(UniqueIDBDatabaseTransaction& transaction)
+{
+    ASSERT(!m_transactions.contains(transaction.info().identifier()));
+    m_transactions.set(transaction.info().identifier(), &transaction);
+}
+
+void IDBServer::unregisterTransaction(UniqueIDBDatabaseTransaction& transaction)
+{
+    ASSERT(m_transactions.contains(transaction.info().identifier()));
+    ASSERT(m_transactions.get(transaction.info().identifier()) == &transaction);
+
+    m_transactions.remove(transaction.info().identifier());
+}
+
 void IDBServer::registerDatabaseConnection(UniqueIDBDatabaseConnection& connection)
 {
     ASSERT(!m_databaseConnections.contains(connection.identifier()));
@@ -126,6 +140,20 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     // immediately reported back to the WebProcess as failure.
     auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError(IDBExceptionCode::Unknown));
     connection->didDeleteDatabase(result);
+}
+
+void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
+{
+    LOG(IndexedDB, "IDBServer::commitTransaction");
+
+    auto transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction) {
+        // If there is no transaction there is nothing to commit.
+        // We also have no access to a connection over which to message failure-to-commit.
+        return;
+    }
+
+    transaction->commit();
 }
 
 void IDBServer::postDatabaseTask(std::unique_ptr<CrossThreadTask>&& task)
