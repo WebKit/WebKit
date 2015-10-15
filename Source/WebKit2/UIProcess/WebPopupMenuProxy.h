@@ -71,8 +71,8 @@ public:
     void invalidate() { m_client = 0; }
 
 protected:
-    explicit WebPopupMenuProxy(Client* client)
-        : m_client(client)
+    explicit WebPopupMenuProxy(Client& client)
+        : m_client(&client)
     {
     }
 

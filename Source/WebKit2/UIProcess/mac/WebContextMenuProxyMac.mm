@@ -150,17 +150,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy* page)
+WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& page)
     : m_webView(webView)
     , m_page(page)
 {
-    ASSERT(m_page);
 }
 
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
 {
-    if (m_popup)
-        [m_popup setControlView:nil];
+    [m_popup setControlView:nil];
 }
 
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -169,7 +167,7 @@ void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemDat
     clearServicesMenu();
 #endif
 
-    m_page->contextMenuItemSelected(item);
+    m_page.contextMenuItemSelected(item);
 }
 
 static void populateNSMenu(NSMenu* menu, const Vector<RetainPtr<NSMenuItem>>& menuItemVector)

@@ -43,7 +43,7 @@ class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
 public:
-    static Ref<WebContextMenuProxyMac> create(WKView* webView, WebPageProxy* page)
+    static Ref<WebContextMenuProxyMac> create(WKView* webView, WebPageProxy& page)
     {
         return adoptRef(*new WebContextMenuProxyMac(webView, page));
     }
@@ -60,11 +60,11 @@ public:
     void clearServicesMenu();
 #endif
 
-    WebPageProxy& page() const { return *m_page; }
+    WebPageProxy& page() const { return m_page; }
     NSWindow *window() const;
 
 private:
-    WebContextMenuProxyMac(WKView*, WebPageProxy*);
+    WebContextMenuProxyMac(WKView*, WebPageProxy&);
 
     void populate(const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&);
 
@@ -77,7 +77,7 @@ private:
     RetainPtr<NSMenu> m_servicesMenu;
 #endif
     WKView* m_webView;
-    WebPageProxy* m_page;
+    WebPageProxy& m_page;
 };
 
 } // namespace WebKit

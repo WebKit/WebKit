@@ -40,7 +40,7 @@ class WebPageProxy;
 
 class WebPopupMenuProxyMac : public WebPopupMenuProxy {
 public:
-    static Ref<WebPopupMenuProxyMac> create(WKView *webView, WebPopupMenuProxy::Client* client)
+    static Ref<WebPopupMenuProxyMac> create(WKView *webView, WebPopupMenuProxy::Client& client)
     {
         return adoptRef(*new WebPopupMenuProxyMac(webView, client));
     }
@@ -51,7 +51,7 @@ public:
     virtual void cancelTracking() override;
 
 private:
-    WebPopupMenuProxyMac(WKView *, WebPopupMenuProxy::Client*);
+    WebPopupMenuProxyMac(WKView *, WebPopupMenuProxy::Client&);
 
     void populate(const Vector<WebPopupItem>&, NSFont *, WebCore::TextDirection);
 

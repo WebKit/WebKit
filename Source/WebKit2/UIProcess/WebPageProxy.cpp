@@ -4148,7 +4148,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
         m_activePopupMenu = nullptr;
     }
 
-    m_activePopupMenu = m_pageClient.createPopupMenuProxy(this);
+    m_activePopupMenu = m_pageClient.createPopupMenuProxy(*this);
 
     if (!m_activePopupMenu)
         return;
@@ -4202,7 +4202,7 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
         m_activeContextMenu = nullptr;
     }
 
-    m_activeContextMenu = m_pageClient.createContextMenuProxy(this);
+    m_activeContextMenu = m_pageClient.createContextMenuProxy(*this);
     if (!m_activeContextMenu)
         return;
 

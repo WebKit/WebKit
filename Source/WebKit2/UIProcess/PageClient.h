@@ -219,8 +219,8 @@ public:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) = 0;
 #endif
 
-    virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) = 0;
-    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;
+    virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) = 0;
+    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&) = 0;
 
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) = 0;

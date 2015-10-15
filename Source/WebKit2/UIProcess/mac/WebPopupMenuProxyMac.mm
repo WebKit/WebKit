@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView *webView, WebPopupMenuProxy::Client* client)
+WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView *webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
     , m_wasCanceled(false)
