@@ -1,3 +1,29 @@
+2015-10-15  Mark Lam  <mark.lam@apple.com>
+
+        Refactoring: give the MASM probe CPUState methods shorter names.
+        https://bugs.webkit.org/show_bug.cgi?id=150177
+
+        Reviewed by Michael Saboff.
+
+        The existing names are longer than they need to be.  Renaming them as follows:
+            For GPR, registerName ==> gprName
+            For GPR, registerValue ==> gpr
+            For FPR, registerName ==> fprName
+            For FPR, registerValue ==> fpr
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CPUState::gprName):
+        (JSC::AbstractMacroAssembler::CPUState::fprName):
+        (JSC::AbstractMacroAssembler::CPUState::gpr):
+        (JSC::AbstractMacroAssembler::CPUState::fpr):
+        (JSC::AbstractMacroAssembler::CPUState::registerName): Deleted.
+        (JSC::AbstractMacroAssembler::CPUState::registerValue): Deleted.
+
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::printRegister):
+        (JSC::printMemory):
+        - Updated to use the new names.
+
 2015-10-15  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Class expression should have lexical environment that has itself as an imutable binding

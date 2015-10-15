@@ -852,7 +852,7 @@ public:
         FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
         #undef DECLARE_REGISTER
 
-        static const char* registerName(RegisterID regID)
+        static const char* gprName(RegisterID regID)
         {
             switch (regID) {
                 #define DECLARE_REGISTER(_type, _regName) \
@@ -864,7 +864,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        static const char* registerName(FPRegisterID regID)
+        static const char* fprName(FPRegisterID regID)
         {
             switch (regID) {
                 #define DECLARE_REGISTER(_type, _regName) \
@@ -876,7 +876,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        void* registerValue(RegisterID regID)
+        void* gpr(RegisterID regID)
         {
             switch (regID) {
                 #define DECLARE_REGISTER(_type, _regName) \
@@ -888,7 +888,7 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        double registerValue(FPRegisterID regID)
+        double fpr(FPRegisterID regID)
         {
             switch (regID) {
                 #define DECLARE_REGISTER(_type, _regName) \

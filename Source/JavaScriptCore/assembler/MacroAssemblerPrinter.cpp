@@ -91,23 +91,23 @@ void printCPURegisters(CPUState& cpu, int indentation)
 
 void printRegister(CPUState& cpu, RegisterID regID)
 {
-    const char* name = CPUState::registerName(regID);
+    const char* name = CPUState::gprName(regID);
     union {
         void* voidPtr;
         intptr_t intptrValue;
     } u;
-    u.voidPtr = cpu.registerValue(regID);
+    u.voidPtr = cpu.gpr(regID);
     dataLogF("%s:<%p %ld>", name, u.voidPtr, u.intptrValue);
 }
 
 void printRegister(CPUState& cpu, FPRegisterID regID)
 {
-    const char* name = CPUState::registerName(regID);
+    const char* name = CPUState::fprName(regID);
     union {
         double doubleValue;
         uint64_t uint64Value;
     } u;
-    u.doubleValue = cpu.registerValue(regID);
+    u.doubleValue = cpu.fpr(regID);
     dataLogF("%s:<0x%016llx %.13g>", name, u.uint64Value, u.doubleValue);
 }
 
@@ -116,7 +116,7 @@ void printMemory(CPUState& cpu, const Memory& memory)
     uint8_t* ptr = nullptr;
     switch (memory.addressType) {
     case Memory::AddressType::Address: {
-        ptr = reinterpret_cast<uint8_t*>(cpu.registerValue(memory.u.address.base));
+        ptr = reinterpret_cast<uint8_t*>(cpu.gpr(memory.u.address.base));
         ptr += memory.u.address.offset;
         break;
     }
