@@ -1,5 +1,30 @@
 2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191008. rdar://problem/23110743
+
+    2015-10-13  Dean Jackson  <dino@apple.com>
+
+            Device motion and orientation should only be visible from the main frame's security origin
+            https://bugs.webkit.org/show_bug.cgi?id=150072
+            <rdar://problem/23082036>
+
+            Reviewed by Brent Fulgham.
+
+            There are reports that gyroscope and accelerometer information can
+            be used to detect keyboard entry. One initial step to reduce the
+            risk is to forbid device motion and orientation events from
+            being fired in frames that are a different security origin from the main page.
+
+            Manual test: deviceorientation-main-frame-only.html
+
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::isSameSecurityOriginAsMainFrame): New helper function.
+            (WebCore::DOMWindow::addEventListener): Check if we are the main frame, or the
+            same security origin as the main frame. If not, don't add the event
+            listeners.
+
+2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190570. rdar://problem/23075838
 
     2015-10-05  Zalan Bujtas  <zalan@apple.com>

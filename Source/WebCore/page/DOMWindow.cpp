@@ -1692,6 +1692,22 @@ static void didAddStorageEventListener(DOMWindow* window)
     window->sessionStorage(IGNORE_EXCEPTION);
 }
 
+bool DOMWindow::isSameSecurityOriginAsMainFrame() const
+{
+    if (!m_frame || !m_frame->page() || !document())
+        return false;
+
+    if (m_frame->isMainFrame())
+        return true;
+
+    Document* mainFrameDocument = m_frame->mainFrame().document();
+
+    if (mainFrameDocument && document()->securityOrigin()->canAccess(mainFrameDocument->securityOrigin()))
+        return true;
+
+    return false;
+}
+
 bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     if (!EventTarget::addEventListener(eventType, listener, useCapture))
@@ -1713,17 +1729,28 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
         addBeforeUnloadEventListener(this);
 #if ENABLE(DEVICE_ORIENTATION)
 #if PLATFORM(IOS)
-    else if (eventType == eventNames().devicemotionEvent && document())
-        document()->deviceMotionController()->addDeviceEventListener(this);
-    else if (eventType == eventNames().deviceorientationEvent && document())
-        document()->deviceOrientationController()->addDeviceEventListener(this);
+    else if ((eventType == eventNames().devicemotionEvent || eventType == eventNames().deviceorientationEvent) && document()) {
+        if (isSameSecurityOriginAsMainFrame()) {
+            if (eventType == eventNames().deviceorientationEvent)
+                document()->deviceOrientationController()->addDeviceEventListener(this);
+            else
+                document()->deviceMotionController()->addDeviceEventListener(this);
+        } else if (document())
+            document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Blocked attempt add device motion or orientation listener from child frame that wasn't the same security origin as the main page."));
+    }
 #else
     else if (eventType == eventNames().devicemotionEvent && RuntimeEnabledFeatures::sharedFeatures().deviceMotionEnabled()) {
-        if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-            controller->addDeviceEventListener(this);
+        if (isSameSecurityOriginAsMainFrame()) {
+            if (DeviceMotionController* controller = DeviceMotionController::from(page()))
+                controller->addDeviceEventListener(this);
+        } else if (document())
+            document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Blocked attempt add device motion listener from child frame that wasn't the same security origin as the main page."));
     } else if (eventType == eventNames().deviceorientationEvent && RuntimeEnabledFeatures::sharedFeatures().deviceOrientationEnabled()) {
-        if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-            controller->addDeviceEventListener(this);
+        if (isSameSecurityOriginAsMainFrame()) {
+            if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
+                controller->addDeviceEventListener(this);
+        } else if (document())
+            document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Blocked attempt add device orientation listener from child frame that wasn't the same security origin as the main page."));
     }
 #endif // PLATFORM(IOS)
 #endif // ENABLE(DEVICE_ORIENTATION)
