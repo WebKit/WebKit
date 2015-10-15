@@ -1845,8 +1845,8 @@ void Element::childrenChanged(const ChildChange& change)
         checkForSiblingStyleChanges(*this, checkType, change.previousSiblingElement, change.nextSiblingElement);
     }
 
-    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
 #if ENABLE(SHADOW_DOM) || ENABLE(DETAILS_ELEMENT)
+    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
         switch (change.type) {
         case ElementInserted:
         case ElementRemoved:
@@ -1861,8 +1861,8 @@ void Element::childrenChanged(const ChildChange& change)
         case NonContentsChildChanged:
             break;
         }
-#endif
     }
+#endif
 }
 
 void Element::removeAllEventListeners()

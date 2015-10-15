@@ -63,6 +63,7 @@ void ComposedTreeIterator::initializeShadowStack()
             }
             // The node is not part of the composed tree.
 #else
+            UNUSED_PARAM(shadowRoot);
             m_current = nullptr;
             return;
 #endif
