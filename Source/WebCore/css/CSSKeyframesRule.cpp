@@ -108,15 +108,6 @@ void CSSKeyframesRule::setName(const String& name)
 
 void CSSKeyframesRule::appendRule(const String& ruleText)
 {
-    if (CSSStyleSheet* parent = parentStyleSheet()) {
-        if (Document* ownerDocument = parent->ownerDocument())
-            ownerDocument->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("CSSKeyframesRule 'appendRule' function is deprecated.  Use 'insertRule' instead."));
-    }
-    insertRule(ruleText);
-}
-
-void CSSKeyframesRule::insertRule(const String& ruleText)
-{
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
     CSSParser parser(parserContext());
@@ -130,6 +121,15 @@ void CSSKeyframesRule::insertRule(const String& ruleText)
     m_keyframesRule->wrapperAppendKeyframe(keyframe);
 
     m_childRuleCSSOMWrappers.grow(length());
+}
+
+void CSSKeyframesRule::insertRule(const String& ruleText)
+{
+    if (CSSStyleSheet* parent = parentStyleSheet()) {
+        if (Document* ownerDocument = parent->ownerDocument())
+            ownerDocument->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("CSSKeyframesRule 'insertRule' function is deprecated.  Use 'appendRule' instead."));
+    }
+    appendRule(ruleText);
 }
 
 void CSSKeyframesRule::deleteRule(const String& s)

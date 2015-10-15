@@ -88,9 +88,9 @@ shouldBe("rules1.item(1).cssText", "'100% { left: 20px; }'");
 
 debug("");
 debug("Insert three new rules");
-keyframes1.insertRule("30% { left: 30px; }");
-keyframes1.insertRule("60% { left: 60px; }");
-keyframes1.insertRule("20% { left: 50px; }");
+keyframes1.appendRule("30% { left: 30px; }");
+keyframes1.appendRule("60% { left: 60px; }");
+keyframes1.appendRule("20% { left: 50px; }");
 shouldBe("rules1.length", "5");
 
 shouldBe("rules1.item(0).cssText", "'0% { left: 10px; }'");
