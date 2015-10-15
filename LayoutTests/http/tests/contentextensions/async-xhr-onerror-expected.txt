@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 30: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/async-xhr-onerror.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/url-blocking-test.js
+CONSOLE MESSAGE: line 30: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/async-xhr-onerror.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/url-blocking-test.js
+Asynchronous onreadystatechange status: 0, readyState:1, responseText: 
+Finished runTest. Waiting for callbacks
+Asynchronous onreadystatechange status: 0, readyState:1, responseText: 
+Finished runTest. Waiting for callbacks
+Asynchronous onreadystatechange status: 0, readyState:4, responseText: 
+onerror was called.
+Asynchronous onreadystatechange status: 0, readyState:4, responseText: 
+onerror was called.
+
