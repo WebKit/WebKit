@@ -1,5 +1,16 @@
 2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190097. rdar://problem/23075843
+
+    2015-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Fix release builds with security assertion after r190007.
+
+            * dom/DocumentOrderedMap.cpp:
+            * dom/DocumentOrderedMap.h:
+
+2015-10-14  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190007. rdar://problem/23075843
 
     2015-09-18  Ryosuke Niwa  <rniwa@webkit.org>
