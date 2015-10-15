@@ -336,8 +336,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const
         RetainPtr<CGColorRef> color = adoptCF(CGColorCreateWithPattern(patternSpace.get(), pattern.get(), &alpha));
         CGContextSetFillColorSpace(context, patternSpace.get());
 
-        // FIXME: Really want a public API for this. It is just CGContextSetBaseCTM(context, CGAffineTransformIdentiy).
-        wkSetBaseCTM(context, CGAffineTransformIdentity);
+        CGContextSetBaseCTM(context, CGAffineTransformIdentity);
         CGContextSetPatternPhase(context, CGSizeZero);
 
         CGContextSetFillColorWithColor(context, color.get());
@@ -1695,7 +1694,7 @@ void GraphicsContext::platformApplyDeviceScaleFactor(float deviceScaleFactor)
     // CoreGraphics expects the base CTM of a HiDPI context to have the scale factor applied to it.
     // Failing to change the base level CTM will cause certain CG features, such as focus rings,
     // to draw with a scale factor of 1 rather than the actual scale factor.
-    wkSetBaseCTM(platformContext(), CGAffineTransformScale(CGContextGetBaseCTM(platformContext()), deviceScaleFactor, deviceScaleFactor));
+    CGContextSetBaseCTM(platformContext(), CGAffineTransformScale(CGContextGetBaseCTM(platformContext()), deviceScaleFactor, deviceScaleFactor));
 }
 
 void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)

@@ -142,6 +142,7 @@ void CGContextSetBaseCTM(CGContextRef, CGAffineTransform);
 void CGContextSetCTM(CGContextRef, CGAffineTransform);
 void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);
 void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
+void CGContextResetClip(CGContextRef);
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 void CGContextSetFontDilation(CGContextRef, CGSize);
 void CGContextSetFontRenderingStyle(CGContextRef, CGFontRenderingStyle);

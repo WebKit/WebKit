@@ -325,7 +325,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
         CGContextConcatCTM(destContext, AffineTransform(wkGetUserToBaseCTM(destContext)).inverse());
     else
         CGContextConcatCTM(destContext, AffineTransform(CGContextGetCTM(destContext)).inverse());
-    wkCGContextResetClip(destContext);
+    CGContextResetClip(destContext);
     CGContextSetInterpolationQuality(destContext, kCGInterpolationNone);
     CGContextSetAlpha(destContext, 1.0);
     CGContextSetBlendMode(destContext, kCGBlendModeCopy);

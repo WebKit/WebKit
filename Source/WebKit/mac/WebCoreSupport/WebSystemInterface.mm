@@ -50,7 +50,6 @@ void InitWebCoreSystemInterface(void)
     INIT(CGContextGetShouldSmoothFonts);
 #endif
     INIT(CGPatternCreateWithImageAndTransform);
-    INIT(CGContextResetClip);
 #if !PLATFORM(IOS)
     INIT(CGContextDrawsWithCorrectShadowOffsets);
 #endif
@@ -84,7 +83,6 @@ void InitWebCoreSystemInterface(void)
     INIT(WindowSetScaledFrame);
     INIT(SetCGFontRenderingMode);
 #endif
-    INIT(SetBaseCTM);
     INIT(SetCONNECTProxyAuthorizationForStream);
     INIT(SetCONNECTProxyForStream);
 #if !PLATFORM(IOS)

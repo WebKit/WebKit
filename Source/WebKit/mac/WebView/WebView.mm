@@ -3871,7 +3871,7 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context
 {
-    WKSetBaseCTM(context, transform);
+    CGContextSetBaseCTM(context, transform);
 }
 
 - (BOOL)interactiveFormValidationEnabled

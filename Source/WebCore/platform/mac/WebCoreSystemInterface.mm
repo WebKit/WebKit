@@ -33,7 +33,6 @@
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
-void (*wkCGContextResetClip)(CGContextRef);
 bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
@@ -77,7 +76,6 @@ void (*wkQTClearMediaDownloadCache)();
 
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*, BOOL);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
-void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 bool (*wkCGContextIsPDFContext)(CGContextRef);
