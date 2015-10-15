@@ -49,7 +49,7 @@ public:
     void addClient(RenderElement*);
     void removeClient(RenderElement*);
 
-    PassRefPtr<Image> image(RenderElement*, const FloatSize&);
+    RefPtr<Image> image(RenderElement*, const FloatSize&);
 
     bool isFixedSize() const;
     FloatSize fixedSize(const RenderElement*);

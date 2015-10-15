@@ -106,7 +106,7 @@ void CSSImageGeneratorValue::CachedGeneratedImage::evictionTimerFired()
     m_owner.evictCachedGeneratedImage(m_size);
 }
 
-PassRefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const FloatSize& size)
+RefPtr<Image> CSSImageGeneratorValue::image(RenderElement* renderer, const FloatSize& size)
 {
     switch (classType()) {
     case CanvasClass:
