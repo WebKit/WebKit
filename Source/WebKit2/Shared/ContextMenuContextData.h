@@ -30,6 +30,7 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "ShareableBitmap.h"
+#include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
 
 namespace IPC {
@@ -46,14 +47,19 @@ namespace WebKit {
 class ContextMenuContextData {
 public:
     ContextMenuContextData();
-    ContextMenuContextData(const WebCore::ContextMenuContext&);
-    
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const WebCore::ContextMenuContext&);
+
+    const WebCore::IntPoint& menuLocation() const { return m_menuLocation; }
+    const Vector<WebKit::WebContextMenuItemData>& menuItems() const { return m_menuItems; }
+
     const WebHitTestResultData& webHitTestResultData() const { return m_webHitTestResultData; }
     const String& selectedText() const { return m_selectedText; }
 
 #if ENABLE(SERVICE_CONTROLS)
-    ContextMenuContextData(const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
-        : m_controlledSelectionData(selectionData)
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
+        : m_menuLocation(menuLocation)
+        , m_menuItems(menuItems)
+        , m_controlledSelectionData(selectionData)
         , m_selectedTelephoneNumbers(selectedTelephoneNumbers)
         , m_selectionIsEditable(isEditable)
     {
@@ -71,6 +77,9 @@ public:
     static bool decode(IPC::ArgumentDecoder&, ContextMenuContextData&);
 
 private:
+    WebCore::IntPoint m_menuLocation;
+    Vector<WebKit::WebContextMenuItemData> m_menuItems;
+
     WebHitTestResultData m_webHitTestResultData;
     String m_selectedText;
 

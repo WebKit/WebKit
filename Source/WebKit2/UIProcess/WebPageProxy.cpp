@@ -4182,18 +4182,18 @@ void WebPageProxy::hidePopupMenu()
 }
 
 #if ENABLE(CONTEXT_MENUS)
-void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const ContextMenuContextData& contextMenuContextData, const Vector<WebContextMenuItemData>& proposedItems, const UserData& userData)
+void WebPageProxy::showContextMenu(const ContextMenuContextData& contextMenuContextData, const UserData& userData)
 {
     // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref<WebPageProxy> protect(*this);
 
-    internalShowContextMenu(menuLocation, contextMenuContextData, proposedItems, ContextMenuClientEligibility::EligibleForClient, userData);
+    internalShowContextMenu(contextMenuContextData, ContextMenuClientEligibility::EligibleForClient, userData);
     
     // No matter the result of internalShowContextMenu, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
     m_process->send(Messages::WebPage::ContextMenuHidden(), m_pageID);
 }
 
-void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const ContextMenuContextData& contextMenuContextData, const Vector<WebContextMenuItemData>& proposedItems, ContextMenuClientEligibility clientEligibility, const UserData& userData)
+void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& contextMenuContextData, ContextMenuClientEligibility clientEligibility, const UserData& userData)
 {
     m_activeContextMenuContextData = contextMenuContextData;
 
@@ -4217,7 +4217,7 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
 #endif
 
     Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
-    for (auto& item : proposedItems) {
+    for (auto& item : contextMenuContextData.menuItems()) {
         if (item.action() != ContextMenuItemTagShareMenu) {
             proposedAPIItems.append(WebContextMenuItem::create(item));
             continue;
@@ -4235,8 +4235,8 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
         useProposedItems = false;
 
     const Vector<RefPtr<WebContextMenuItem>>& itemsToShow = useProposedItems ? proposedAPIItems : clientItems;
-    if (!m_contextMenuClient->showContextMenu(*this, menuLocation, itemsToShow))
-        m_activeContextMenu->showContextMenu(menuLocation, itemsToShow, contextMenuContextData);
+    if (!m_contextMenuClient->showContextMenu(*this, contextMenuContextData.menuLocation(), itemsToShow))
+        m_activeContextMenu->showContextMenu(contextMenuContextData.menuLocation(), itemsToShow, contextMenuContextData);
 
     m_contextMenuClient->contextMenuDismissed(*this);
 }

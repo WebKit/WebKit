@@ -44,8 +44,10 @@ ContextMenuContextData::ContextMenuContextData()
 {
 }
 
-ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
-    : m_webHitTestResultData(context.hitTestResult(), true)
+ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
+    : m_menuLocation(menuLocation)
+    , m_menuItems(menuItems)
+    , m_webHitTestResultData(context.hitTestResult(), true)
     , m_selectedText(context.selectedText())
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)
@@ -64,6 +66,8 @@ ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context
 
 void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << m_menuLocation;
+    encoder << m_menuItems;
     encoder << m_webHitTestResultData;
     encoder << m_selectedText;
 
@@ -75,12 +79,18 @@ void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 #endif
 }
 
-bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuContextData& contextMenuContextData)
+bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuContextData& result)
 {
-    if (!decoder.decode(contextMenuContextData.m_webHitTestResultData))
+    if (!decoder.decode(result.m_menuLocation))
         return false;
 
-    if (!decoder.decode(contextMenuContextData.m_selectedText))
+    if (!decoder.decode(result.m_menuItems))
+        return false;
+
+    if (!decoder.decode(result.m_webHitTestResultData))
+        return false;
+
+    if (!decoder.decode(result.m_selectedText))
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -89,7 +99,7 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
         return false;
 
     if (!handle.isNull())
-        contextMenuContextData.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
+        result.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
 #endif
 
     return true;

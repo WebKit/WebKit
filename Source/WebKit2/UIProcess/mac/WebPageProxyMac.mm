@@ -688,9 +688,9 @@ void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const 
 void WebPageProxy::showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, const Vector<String>& telephoneNumbers, bool isEditable, const IntPoint& point)
 {
     Vector<WebContextMenuItemData> items;
-    ContextMenuContextData contextData(selectionAsRTFD.vector(), telephoneNumbers, isEditable);
+    ContextMenuContextData contextData(point, items, selectionAsRTFD.vector(), telephoneNumbers, isEditable);
 
-    internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, UserData());
+    internalShowContextMenu(contextData, ContextMenuClientEligibility::NotEligibleForClient, UserData());
 }
 #endif
 

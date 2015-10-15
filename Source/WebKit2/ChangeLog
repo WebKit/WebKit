@@ -1,3 +1,28 @@
+2015-10-15  Anders Carlsson  <andersca@apple.com>
+
+        The menu location and menu items should be part of ContextMenuContextData
+        https://bugs.webkit.org/show_bug.cgi?id=150182
+
+        Reviewed by Andreas Kling.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::menuLocation):
+        (WebKit::ContextMenuContextData::menuItems):
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showSelectionServiceMenu):
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+
 2015-10-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Test WebKit2.RestoreSessionStateContainingFormData fails
