@@ -600,8 +600,6 @@ webkit.org/b/146720 http/tests/media/hls/hls-accessiblity-describes-video.html [
 webkit.org/b/146720 http/tests/media/hls/video-controller-getStartDate.html [ Failure ]
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 
-webkit.org/b/146721 fast/forms/auto-fill-button/input-readonly-auto-fill-button.html [ ImageOnlyFailure ]
-
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 
 # This tests fail since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
@@ -1290,12 +1288,10 @@ webkit.org/b/122571 inspector/page/frameStartedLoading.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/page/frameScheduledNavigation.html [ Timeout Pass Crash ]
 webkit.org/b/122571 inspector/page/setEmulatedMedia.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/css/getSupportedCSSProperties.html [ Timeout Pass ]
-webkit.org/b/122571 inspector/unit-tests/test-harness-trivially-works.html [ Timeout Crash ]
+webkit.org/b/122571 [ Debug ] inspector/unit-tests/test-harness-trivially-works.html [ Timeout Crash ]
 
 
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
-
-Bug(GTK) fast/forms/select/menulist-popup-crash.html [ Timeout ]
 
 Bug(GTK) fast/forms/select/optgroup-clicking.html [ Timeout ]
 
@@ -1381,7 +1377,6 @@ webkit.org/b/123097 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Crash Timeout ]
 
 webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
-webkit.org/b/144865 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
 webkit.org/b/145053 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeout Pass ]
 
 webkit.org/b/145168 media/track/track-cue-inline-assertion-crash.html [ Timeout Pass ]
@@ -1889,7 +1884,6 @@ webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ Im
 
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
-webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
 webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
 
@@ -1933,8 +1927,6 @@ webkit.org/b/118416 storage/websql/sql-error-codes.html [ Failure ]
 
 # May take too long on the bots.
 Bug(GTK) mathml/very-large-stretchy-operators.html [ Pass Timeout ]
-
-webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/120105 http/tests/navigation/post-frames-goback1-uncached.html [ Failure ]
 
@@ -2188,8 +2180,6 @@ webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/gly
 
 webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout Pass Crash ]
 
-webkit.org/b/132046 svg/css/svg-resource-fragment-identifier-img-src.html  [ ImageOnlyFailure ]
-
 webkit.org/b/132054 js/dom/global-constructors-attributes.html  [ Failure ]
 
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
@@ -2204,10 +2194,6 @@ webkit.org/b/132126 animations/added-while-suspended.html [ Timeout Pass ]
 webkit.org/b/132126 animations/animation-iteration-event-destroy-renderer.html [ Timeout Pass Crash ]
 webkit.org/b/132126 animations/animation-direction-normal.html [ Failure Pass ]
 webkit.org/b/132126 animations/animation-direction-reverse.html [ Crash Failure Pass ]
-webkit.org/b/132126 animations/play-state-paused.html [ Failure ]
-webkit.org/b/132126 animations/play-state-suspend.html [ Failure ]
-webkit.org/b/132126 animations/suspend-resume-animation.html [ Failure ]
-webkit.org/b/132126 animations/transform-non-accelerated.html [ Failure ]
 webkit.org/b/132126 animations/body-removal-crash.html [ Crash Pass ]
 webkit.org/b/132126 media/track/track-cues-cuechange.html [ Timeout Pass ]
 webkit.org/b/132126 media/track/track-cues-enter-exit.html [ Timeout Pass ]
@@ -2291,11 +2277,6 @@ webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
 
 webkit.org/b/136255 fast/block/float/overhanging-tall-block.html [ Failure ]
 
-webkit.org/b/136257 fast/forms/input-placeholder-visibility-1.html [ Failure ]
-webkit.org/b/136257 fast/forms/input-placeholder-visibility-3.html [ Failure ]
-webkit.org/b/136257 fast/forms/textarea-placeholder-visibility-1.html [ Failure ]
-webkit.org/b/136257 fast/forms/textarea-placeholder-visibility-2.html [ Failure ]
-
 webkit.org/b/136159 fast/borders/border-painting-dashed-at-all.html [ ImageOnlyFailure ]
 webkit.org/b/136159 fast/borders/border-painting-dotted-at-all.html [ ImageOnlyFailure ]
 webkit.org/b/136159 fast/borders/hidpi-border-painting-groove.html [ ImageOnlyFailure ]
@@ -2319,7 +2300,6 @@ webkit.org/b/138077 fast/layers/parent-clipping-overflow-is-overwritten-by-child
 # Smooth scrolling causes failure of scrolling tests
 webkit.org/b/138078 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/138078 fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
-webkit.org/b/138078 fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
 
 # Incomplete implementation of eventSender causes this test to fail
 webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
@@ -2530,7 +2510,6 @@ webkit.org/b/148935 accessibility/scroll-to-make-visible-nested.html [ Failure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html [ Failure ]
-webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Failure ]
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/parse-a-srcset-attribute.html [ Failure ]
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/select-an-image-source.html [ Failure ]
 webkit.org/b/148936 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set.html [ Failure ]
@@ -2580,9 +2559,6 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 
 # This test hardcodes the result of a platform-dependent font lookup algorithm.
 fast/text/fallback-language-han.html [ Skip ]
-
-# This test relies on iOS-specific font fallback.
-fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
 
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
