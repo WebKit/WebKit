@@ -40,12 +40,12 @@
 #include "JITStubsARM.h"
 #elif CPU(ARM_THUMB2)
 #include "JITStubsARMv7.h"
+#elif CPU(ARM64)
+#include "JITStubsARM64.h"
 #elif CPU(X86)
 #include "JITStubsX86.h"
 #elif CPU(X86_64)
 #include "JITStubsX86_64.h"
-#elif CPU(ARM64)
-// There isn't an ARM64 specific .h file
 #elif CPU(MIPS)
 // There isn't a MIPS specific .h file
 #elif CPU(SH4)

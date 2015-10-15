@@ -1,5 +1,48 @@
 2015-10-15  Mark Lam  <mark.lam@apple.com>
 
+        Add MASM_PROBE support for ARM64.
+        https://bugs.webkit.org/show_bug.cgi?id=150128
+
+        Reviewed by Michael Saboff.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARM64Assembler.h:
+        - Convert the ARM64 registers enum list into a macro list so that we can use
+          it elsewhere e.g. to declare fields in the probe CPUState.
+          Also de-tabbed the contents of the ARM64Registers namespace since the enum
+          list change touches almost all of it anyway. This reduces the amount of
+          complaints from the style checker.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CPUState::registerName):
+        (JSC::AbstractMacroAssembler::CPUState::registerValue):
+        - Change CPUState methods to allow for registers ID that do not map to one of
+          its fields. This is needed because ARM64's registers include aliases for some
+          register names. The CPUState will not allocate separate storage for the
+          aliases. 
+
+        * assembler/MacroAssemblerARM64.cpp: Added.
+        (JSC::arm64ProbeTrampoline):
+        - Unlike the probe mechanism for other CPUs, the ARM64 implementation does not
+          allow the probe function to modify the sp and pc registers.  We insert this
+          wrapper function between ctiMasmProbeTrampoline() and the user's probe function
+          so that we can check if the user tried to modify sp and pc.  If so, we will
+          print an error message so that we can alert the user that we don't support
+          that on ARM64.
+
+          See the comment in ctiMasmProbeTrampoline() in JITStubsARM64.h for details
+          on why we cannot support sp and pc modifications by the probe function.
+
+        (JSC::MacroAssemblerARM64::probe):
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::repatchCall):
+        (JSC::MacroAssemblerARM64::makeBranch):
+        * jit/JITStubs.cpp:
+        * jit/JITStubsARM64.h: Added.
+
+2015-10-15  Mark Lam  <mark.lam@apple.com>
+
         Fix some typos in comments.
         https://bugs.webkit.org/show_bug.cgi?id=150181
 

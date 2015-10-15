@@ -1792,6 +1792,8 @@
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEB137551BB0C6AD00CD5100 /* JITStubsARM64.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB137541BB0C68A00CD5100 /* JITStubsARM64.h */; settings = {ASSET_TAGS = (); }; };
+		FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */; settings = {ASSET_TAGS = (); }; };
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
 		FEB58C14187B8B160098EF0B /* ErrorHandlingScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */; };
 		FEB58C15187B8B160098EF0B /* ErrorHandlingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3725,6 +3727,8 @@
 		FE98B5B61BB9AE110073E7A6 /* JITSubGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITSubGenerator.h; sourceTree = "<group>"; };
 		FEA0861E182B7A0400F6D851 /* Breakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoint.h; sourceTree = "<group>"; };
 		FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerPrimitives.h; sourceTree = "<group>"; };
+		FEB137541BB0C68A00CD5100 /* JITStubsARM64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARM64.h; sourceTree = "<group>"; };
+		FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARM64.cpp; sourceTree = "<group>"; };
 		FEB51F6A1A97B688001F921C /* Regress141809.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Regress141809.h; path = API/tests/Regress141809.h; sourceTree = "<group>"; };
 		FEB51F6B1A97B688001F921C /* Regress141809.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Regress141809.mm; path = API/tests/Regress141809.mm; sourceTree = "<group>"; };
 		FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorHandlingScope.cpp; sourceTree = "<group>"; };
@@ -4204,6 +4208,7 @@
 				14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */,
 				14A6581A0F4E36F4000150FD /* JITStubs.h */,
 				FEF6835A174343CC00A32E25 /* JITStubsARM.h */,
+				FEB137541BB0C68A00CD5100 /* JITStubsARM64.h */,
 				FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */,
 				FEF6835D174343CC00A32E25 /* JITStubsX86.h */,
 				FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */,
@@ -5576,6 +5581,7 @@
 				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
 				86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */,
 				86D3B2C210156BDE002865E7 /* MacroAssemblerARM.h */,
+				FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */,
 				8640923C156EED3B00566CB2 /* MacroAssemblerARM64.h */,
 				A729009B17976C6000317298 /* MacroAssemblerARMv7.cpp */,
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
@@ -6358,6 +6364,7 @@
 				0FEA0A241709606900BB722C /* FTLIntrinsicRepository.h in Headers */,
 				0FEA0A0E170513DB00BB722C /* FTLJITCode.h in Headers */,
 				A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */,
+				FEB137551BB0C6AD00CD5100 /* JITStubsARM64.h in Headers */,
 				0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */,
 				0FD120301A8AED12000F5280 /* FTLJSCallBase.h in Headers */,
 				0FD120341A8C85BD000F5280 /* FTLJSCallVarargs.h in Headers */,
@@ -7487,6 +7494,7 @@
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
 				0F24E54017EA9F5900ABB217 /* AssemblyHelpers.cpp in Sources */,
+				FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */,
 				52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */,
 				0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */,
 				14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */,

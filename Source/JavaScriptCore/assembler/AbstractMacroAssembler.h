@@ -860,8 +860,9 @@ public:
                     return #_regName;
                 FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
                 #undef DECLARE_REGISTER
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
-            RELEASE_ASSERT_NOT_REACHED();
         }
 
         static const char* fprName(FPRegisterID regID)
@@ -872,8 +873,9 @@ public:
                     return #_regName;
                 FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
                 #undef DECLARE_REGISTER
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
-            RELEASE_ASSERT_NOT_REACHED();
         }
 
         void* gpr(RegisterID regID)
@@ -884,8 +886,9 @@ public:
                     return _regName;
                 FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
                 #undef DECLARE_REGISTER
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
-            RELEASE_ASSERT_NOT_REACHED();
         }
 
         double fpr(FPRegisterID regID)
@@ -896,8 +899,9 @@ public:
                     return _regName;
                 FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
                 #undef DECLARE_REGISTER
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
-            RELEASE_ASSERT_NOT_REACHED();
         }
 
     };

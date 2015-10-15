@@ -2529,6 +2529,10 @@ public:
         ARM64Assembler::repatchPointer(call.dataLabelPtrAtOffset(REPATCH_OFFSET_CALL_TO_POINTER).dataLocation(), destination.executableAddress());
     }
 
+#if ENABLE(MASM_PROBE)
+    void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
+#endif // ENABLE(MASM_PROBE)
+
 protected:
     ALWAYS_INLINE Jump makeBranch(ARM64Assembler::Condition cond)
     {
