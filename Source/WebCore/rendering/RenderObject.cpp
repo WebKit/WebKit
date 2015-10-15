@@ -58,6 +58,8 @@
 #include "RenderNamedFlowThread.h" 
 #include "RenderSVGResourceContainer.h"
 #include "RenderScrollbarPart.h"
+#include "RenderTableRow.h"
+#include "RenderTableSection.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -1617,6 +1619,45 @@ void RenderObject::invalidateFlowThreadContainingBlockIncludingDescendants(Rende
         child->invalidateFlowThreadContainingBlockIncludingDescendants(flowThread);
 }
 
+static void collapseAnonymousTableRowsIfNeeded(const RenderObject& rendererToBeDestroyed)
+{
+    if (!is<RenderTableRow>(rendererToBeDestroyed))
+        return;
+
+    auto& rowToBeDestroyed = downcast<RenderTableRow>(rendererToBeDestroyed);
+    auto* section = downcast<RenderTableSection>(rowToBeDestroyed.parent());
+    if (!section)
+        return;
+
+    // All siblings generated?
+    for (auto* current = section->firstRow(); current; current = current->nextRow()) {
+        if (current == &rendererToBeDestroyed)
+            continue;
+        if (!current->isAnonymous())
+            return;
+    }
+
+    RenderTableRow* rowToInsertInto = nullptr;
+    auto* currentRow = section->firstRow();
+    while (currentRow) {
+        if (currentRow == &rendererToBeDestroyed) {
+            currentRow = currentRow->nextRow();
+            continue;
+        }
+        if (!rowToInsertInto) {
+            rowToInsertInto = currentRow;
+            currentRow = currentRow->nextRow();
+            continue;
+        }
+        currentRow->moveAllChildrenTo(rowToInsertInto);
+        auto* destroyThis = currentRow;
+        currentRow = currentRow->nextRow();
+        destroyThis->destroy();
+    }
+    if (rowToInsertInto)
+        rowToInsertInto->setNeedsLayout();
+}
+
 void RenderObject::destroyAndCleanupAnonymousWrappers()
 {
     // If the tree is destroyed, there is no need for a clean-up phase.
@@ -1637,8 +1678,8 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
         destroyRoot = destroyRootParent;
         destroyRootParent = destroyRootParent->parent();
     }
+    collapseAnonymousTableRowsIfNeeded(*destroyRoot);
     destroyRoot->destroy();
-
     // WARNING: |this| is deleted here.
 }
 
