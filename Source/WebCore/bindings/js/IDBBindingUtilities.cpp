@@ -187,7 +187,7 @@ static RefPtr<IDBKey> internalCreateIDBKeyFromScriptValueAndKeyPath(ExecState* e
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
     IDBParseKeyPath(keyPath, keyPathElements, error);
-    ASSERT(error == IDBKeyPathParseErrorNone);
+    ASSERT(error == IDBKeyPathParseError::None);
 
     JSValue jsValue = value.jsValue();
     jsValue = getNthValueOnKeyPath(exec, jsValue, keyPathElements, keyPathElements.size());
@@ -236,12 +236,12 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState* requestState, PassRefPtr<IDBKe
 {
     LOG(StorageAPI, "injectIDBKeyIntoScriptValue");
 
-    ASSERT(keyPath.type() == IDBKeyPath::StringType);
+    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
 
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
     IDBParseKeyPath(keyPath.string(), keyPathElements, error);
-    ASSERT(error == IDBKeyPathParseErrorNone);
+    ASSERT(error == IDBKeyPathParseError::None);
 
     if (keyPathElements.isEmpty())
         return false;
@@ -263,7 +263,7 @@ RefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(ExecState* exec, const Depr
     LOG(StorageAPI, "createIDBKeyFromScriptValueAndKeyPath");
     ASSERT(!keyPath.isNull());
 
-    if (keyPath.type() == IDBKeyPath::ArrayType) {
+    if (keyPath.type() == IndexedDB::KeyPathType::Array) {
         Vector<RefPtr<IDBKey>> result;
         const Vector<String>& array = keyPath.array();
         for (size_t i = 0; i < array.size(); i++) {
@@ -275,7 +275,7 @@ RefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(ExecState* exec, const Depr
         return IDBKey::createArray(result);
     }
 
-    ASSERT(keyPath.type() == IDBKeyPath::StringType);
+    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
     return internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, keyPath.string());
 }
 
@@ -283,11 +283,11 @@ bool canInjectIDBKeyIntoScriptValue(DOMRequestState* requestState, const Depreca
 {
     LOG(StorageAPI, "canInjectIDBKeyIntoScriptValue");
 
-    ASSERT(keyPath.type() == IDBKeyPath::StringType);
+    ASSERT(keyPath.type() == IndexedDB::KeyPathType::String);
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
     IDBParseKeyPath(keyPath.string(), keyPathElements, error);
-    ASSERT(error == IDBKeyPathParseErrorNone);
+    ASSERT(error == IDBKeyPathParseError::None);
 
     if (!keyPathElements.size())
         return false;

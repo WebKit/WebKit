@@ -201,7 +201,7 @@ RefPtr<IDBObjectStore> LegacyDatabase::createObjectStore(const String& name, con
         return 0;
     }
 
-    if (autoIncrement && ((keyPath.type() == IDBKeyPath::StringType && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::ArrayType)) {
+    if (autoIncrement && ((keyPath.type() == IndexedDB::KeyPathType::String && keyPath.string().isEmpty()) || keyPath.type() == IndexedDB::KeyPathType::Array)) {
         ec = IDBDatabaseException::InvalidAccessError;
         return 0;
     }

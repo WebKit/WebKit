@@ -250,19 +250,19 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
 {
     RefPtr<KeyPath> keyPath;
     switch (idbKeyPath.type()) {
-    case IDBKeyPath::NullType:
+    case IndexedDB::KeyPathType::Null:
         keyPath = KeyPath::create()
             .setType(KeyPath::Type::Null)
             .release();
         break;
-    case IDBKeyPath::StringType:
+    case IndexedDB::KeyPathType::String:
         keyPath = KeyPath::create()
             .setType(KeyPath::Type::String)
             .release();
         keyPath->setString(idbKeyPath.string());
 
         break;
-    case IDBKeyPath::ArrayType: {
+    case IndexedDB::KeyPathType::Array: {
         auto array = Inspector::Protocol::Array<String>::create();
         for (auto& string : idbKeyPath.array())
             array->addItem(string);

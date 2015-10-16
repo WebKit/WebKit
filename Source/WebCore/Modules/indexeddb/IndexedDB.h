@@ -64,6 +64,12 @@ enum class VersionNullness {
     Null,
     NonNull,
 };
+
+enum class KeyPathType {
+    Null,
+    String,
+    Array,
+};
     
 // In order of the least to the highest precedent in terms of sort order.
 enum KeyType {

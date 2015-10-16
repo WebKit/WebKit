@@ -56,11 +56,11 @@ namespace WebCore {
 static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const IDBKeyPath& value)
 {
     switch (value.type()) {
-    case IDBKeyPath::NullType:
+    case IndexedDB::KeyPathType::Null:
         return jsNull();
-    case IDBKeyPath::StringType:
+    case IndexedDB::KeyPathType::String:
         return jsStringWithCache(exec, value.string());
-    case IDBKeyPath::ArrayType:
+    case IndexedDB::KeyPathType::Array:
         RefPtr<DOMStringList> keyPaths = DOMStringList::create();
         for (Vector<String>::const_iterator it = value.array().begin(); it != value.array().end(); ++it)
             keyPaths->append(*it);

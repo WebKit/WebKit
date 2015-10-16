@@ -125,7 +125,7 @@ static bool IDBIsValidKeyPath(const String& keyPath)
     IDBKeyPathParseError error;
     Vector<String> keyPathElements;
     IDBParseKeyPath(keyPath, keyPathElements, error);
-    return error == IDBKeyPathParseErrorNone;
+    return error == IDBKeyPathParseError::None;
 }
 
 void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPathParseError& error)
@@ -146,7 +146,7 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
     else if (tokenType == IDBKeyPathLexer::TokenEnd)
         state = End;
     else {
-        error = IDBKeyPathParseErrorStart;
+        error = IDBKeyPathParseError::Start;
         return;
     }
 
@@ -165,7 +165,7 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
             else if (tokenType == IDBKeyPathLexer::TokenEnd)
                 state = End;
             else {
-                error = IDBKeyPathParseErrorIdentifier;
+                error = IDBKeyPathParseError::Identifier;
                 return;
             }
             break;
@@ -178,13 +178,13 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
             if (tokenType == IDBKeyPathLexer::TokenIdentifier)
                 state = Identifier;
             else {
-                error = IDBKeyPathParseErrorDot;
+                error = IDBKeyPathParseError::Dot;
                 return;
             }
             break;
         }
         case End: {
-            error = IDBKeyPathParseErrorNone;
+            error = IDBKeyPathParseError::None;
             return;
         }
         }
@@ -192,14 +192,14 @@ void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPath
 }
 
 IDBKeyPath::IDBKeyPath(const String& string)
-    : m_type(StringType)
+    : m_type(IndexedDB::KeyPathType::String)
     , m_string(string)
 {
     ASSERT(!m_string.isNull());
 }
 
 IDBKeyPath::IDBKeyPath(const Vector<String>& array)
-    : m_type(ArrayType)
+    : m_type(IndexedDB::KeyPathType::Array)
     , m_array(array)
 {
 #ifndef NDEBUG
@@ -211,13 +211,13 @@ IDBKeyPath::IDBKeyPath(const Vector<String>& array)
 bool IDBKeyPath::isValid() const
 {
     switch (m_type) {
-    case NullType:
+    case IndexedDB::KeyPathType::Null:
         return false;
 
-    case StringType:
+    case IndexedDB::KeyPathType::String:
         return IDBIsValidKeyPath(m_string);
 
-    case ArrayType:
+    case IndexedDB::KeyPathType::Array:
         if (m_array.isEmpty())
             return false;
         for (auto& key : m_array) {
@@ -236,11 +236,11 @@ bool IDBKeyPath::operator==(const IDBKeyPath& other) const
         return false;
 
     switch (m_type) {
-    case NullType:
+    case IndexedDB::KeyPathType::Null:
         return true;
-    case StringType:
+    case IndexedDB::KeyPathType::String:
         return m_string == other.m_string;
-    case ArrayType:
+    case IndexedDB::KeyPathType::Array:
         return m_array == other.m_array;
     }
     ASSERT_NOT_REACHED();
@@ -264,12 +264,12 @@ void IDBKeyPath::encode(KeyedEncoder& encoder) const
 {
     encoder.encodeEnum("type", m_type);
     switch (m_type) {
-    case IDBKeyPath::NullType:
+    case IndexedDB::KeyPathType::Null:
         break;
-    case IDBKeyPath::StringType:
+    case IndexedDB::KeyPathType::String:
         encoder.encodeString("string", m_string);
         break;
-    case IDBKeyPath::ArrayType:
+    case IndexedDB::KeyPathType::Array:
         encoder.encodeObjects("array", m_array.begin(), m_array.end(), [](WebCore::KeyedEncoder& encoder, const String& string) {
             encoder.encodeString("string", string);
         });
@@ -281,20 +281,20 @@ void IDBKeyPath::encode(KeyedEncoder& encoder) const
 
 bool IDBKeyPath::decode(KeyedDecoder& decoder, IDBKeyPath& result)
 {
-    auto enumFunction = [](int64_t value) {
-        return value == NullType || value == StringType || value == ArrayType;
+    auto enumFunction = [](IndexedDB::KeyPathType value) {
+        return value == IndexedDB::KeyPathType::Null || value == IndexedDB::KeyPathType::String || value == IndexedDB::KeyPathType::Array;
     };
 
     if (!decoder.decodeEnum("type", result.m_type, enumFunction))
         return false;
 
-    if (result.m_type == NullType)
+    if (result.m_type == IndexedDB::KeyPathType::Null)
         return true;
 
-    if (result.m_type == StringType)
+    if (result.m_type == IndexedDB::KeyPathType::String)
         return decoder.decodeString("string", result.m_string);
 
-    ASSERT(result.m_type == ArrayType);
+    ASSERT(result.m_type == IndexedDB::KeyPathType::Array);
 
     auto arrayFunction = [](KeyedDecoder& decoder, String& result) {
         return decoder.decodeString("string", result);

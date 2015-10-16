@@ -385,7 +385,7 @@ RefPtr<IDBIndex> LegacyObjectStore::createIndex(ScriptExecutionContext* context,
         return 0;
     }
 
-    if (keyPath.type() == IDBKeyPath::ArrayType && multiEntry) {
+    if (keyPath.type() == IndexedDB::KeyPathType::Array && multiEntry) {
         ec = IDBDatabaseException::InvalidAccessError;
         return 0;
     }
