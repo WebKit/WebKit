@@ -1966,6 +1966,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         addExpandedPropertyForValue(propId, cssValuePool.createUnsetValue(), important);
         return true;
     }
+    
+    if (propId == CSSPropertyAll)
+        return false; // "all" doesn't allow you to specify anything other than inherit/initial/unset.
 
     if (isKeywordPropertyID(propId)) {
         if (!isValidKeywordPropertyAndValue(propId, id, m_context, m_styleSheet))
@@ -5095,7 +5098,7 @@ RefPtr<CSSValue> CSSParser::parseAnimationProperty(AnimationParseContext& contex
     if (value.unit != CSSPrimitiveValue::CSS_IDENT)
         return nullptr;
     CSSPropertyID result = cssPropertyID(value.string);
-    if (result)
+    if (result && result != CSSPropertyAll) // "all" value in animation is not equivalent to the all property.
         return CSSValuePool::singleton().createIdentifierValue(result);
     if (equalIgnoringCase(value, "all")) {
         context.sawAnimationPropertyKeyword();
