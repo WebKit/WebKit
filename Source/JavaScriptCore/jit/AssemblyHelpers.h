@@ -987,9 +987,11 @@ public:
     {
         boxDouble(fpr, regs.gpr());
     }
-    void unboxDouble(JSValueRegs regs, FPRReg destFPR, FPRReg)
+
+    void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg scratchGPR, FPRReg)
     {
-        unboxDouble(regs.payloadGPR(), destFPR);
+        move(regs.payloadGPR(), scratchGPR);
+        unboxDouble(scratchGPR, destFPR);
     }
 
     // Here are possible arrangements of source, target, scratch:
@@ -1032,6 +1034,11 @@ public:
     void unboxDouble(JSValueRegs regs, FPRReg fpr, FPRReg scratchFPR)
     {
         unboxDouble(regs.tagGPR(), regs.payloadGPR(), fpr, scratchFPR);
+    }
+
+    void unboxDoubleNonDestructive(const JSValueRegs regs, FPRReg destFPR, GPRReg, FPRReg scratchFPR)
+    {
+        unboxDouble(regs, destFPR, scratchFPR);
     }
 #endif
     

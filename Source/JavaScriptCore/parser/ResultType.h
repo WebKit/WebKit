@@ -29,6 +29,7 @@
 namespace JSC {
 
     struct ResultType {
+    private:
         friend struct OperandTypes;
 
         typedef char Type;
@@ -46,7 +47,8 @@ namespace JSC {
             : m_type(type)
         {
         }
-        
+
+    public:
         bool isInt32()
         {
             return m_type & TypeInt32;

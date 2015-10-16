@@ -527,6 +527,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 typeOfDoubleDifference(
                     forNode(node->child1()).m_type, forNode(node->child2()).m_type));
             break;
+        case UntypedUse:
+            forNode(node).setType(m_graph, SpecHeapTop);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

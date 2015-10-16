@@ -38,6 +38,7 @@
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "DirectArguments.h"
+#include "JITSubGenerator.h"
 #include "JSArrowFunction.h"
 #include "JSCInlines.h"
 #include "JSEnvironmentRecord.h"
@@ -3079,7 +3080,52 @@ void SpeculativeJIT::compileArithSub(Node* node)
         doubleResult(result.fpr(), node);
         return;
     }
-        
+
+    case UntypedUse: {
+        JSValueOperand left(this, node->child1());
+        JSValueOperand right(this, node->child2());
+
+        JSValueRegs leftRegs = left.jsValueRegs();
+        JSValueRegs rightRegs = right.jsValueRegs();
+
+        ResultType leftType = m_state.forNode(node->child1()).resultType();
+        ResultType rightType = m_state.forNode(node->child2()).resultType();
+
+        FPRTemporary leftNumber(this);
+        FPRTemporary rightNumber(this);
+        FPRReg leftFPR = leftNumber.fpr();
+        FPRReg rightFPR = rightNumber.fpr();
+
+#if USE(JSVALUE64)
+        GPRTemporary result(this);
+        JSValueRegs resultRegs = JSValueRegs(result.gpr());
+        GPRTemporary scratch(this);
+        GPRReg scratchGPR = scratch.gpr();
+        FPRReg scratchFPR = InvalidFPRReg;
+#else
+        GPRTemporary resultTag(this);
+        GPRTemporary resultPayload(this);
+        JSValueRegs resultRegs = JSValueRegs(resultPayload.gpr(), resultTag.gpr());
+        GPRReg scratchGPR = resultTag.gpr();
+        FPRTemporary fprScratch(this);
+        FPRReg scratchFPR = fprScratch.fpr();
+#endif
+
+        JITSubGenerator gen(resultRegs, leftRegs, rightRegs, leftType, rightType,
+            leftFPR, rightFPR, scratchGPR, scratchFPR);
+        gen.generateFastPath(m_jit);
+
+        gen.slowPathJumpList().link(&m_jit);
+        silentSpillAllRegisters(resultRegs);
+        callOperation(operationValueSub, resultRegs, leftRegs, rightRegs);
+        silentFillAllRegisters(resultRegs);
+        m_jit.exceptionCheck();
+
+        gen.endJumpList().link(&m_jit);
+        jsValueResult(resultRegs, node);
+        return;
+    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return;

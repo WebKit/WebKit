@@ -497,6 +497,22 @@ void AbstractValue::assertIsRegistered(Graph& graph) const
 }
 #endif
 
+ResultType AbstractValue::resultType() const
+{
+    ASSERT(isType(SpecHeapTop));
+    if (isType(SpecBoolean))
+        return ResultType::booleanType();
+    if (isType(SpecInt32))
+        return ResultType::numberTypeIsInt32();
+    if (isType(SpecBytecodeNumber))
+        return ResultType::numberType();
+    if (isType(SpecString))
+        return ResultType::stringType();
+    if (isType(SpecString | SpecBytecodeNumber))
+        return ResultType::stringOrNumberType();
+    return ResultType::unknownType();
+}
+
 void AbstractValue::dump(PrintStream& out) const
 {
     dumpInContext(out, 0);

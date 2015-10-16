@@ -183,6 +183,15 @@ private:
             
         case ArithAdd:
         case ArithSub: {
+            if (op == ArithSub
+                && (Node::shouldSpeculateUntypedForArithmetic(node->child1().node(), node->child2().node())
+                    || m_graph.hasExitSite(node->origin.semantic, BadType))) {
+
+                fixEdge<UntypedUse>(node->child1());
+                fixEdge<UntypedUse>(node->child2());
+                node->setResult(NodeResultJS);
+                break;
+            }
             if (attemptToMakeIntegerAdd(node))
                 break;
             fixDoubleOrBooleanEdge(node->child1());

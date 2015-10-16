@@ -1,3 +1,90 @@
+2015-10-16  Mark Lam  <mark.lam@apple.com>
+
+        Use JITSubGenerator to support UntypedUse operands for op_sub in the DFG.
+        https://bugs.webkit.org/show_bug.cgi?id=150038
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isUntypedSpeculationForArithmetic): Added
+        - Also fixed some comments.
+        
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::resultType):
+        * dfg/DFGAbstractValue.h:
+        - Added function to compute the ResultType of an operand from its SpeculatedType.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        - Fix up ArithSub to speculate its operands to be numbers.  But if an OSR exit
+          due to a BadType was seen at this node, we'll fix it up to expect UntypedUse
+          operands.  This gives the generated code a change to run fast if it only
+          receives numeric operands.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateUntypedForArithmetic):
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        - Add the C++ runtime function to implement op_sub when we really encounter the
+          hard types in the operands.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        - Added support for UntypedUse operands using the JITSubGenerator.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentSpillAllRegisters):
+        (JSC::DFG::SpeculativeJIT::pickCanTrample):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        - Just refuse to FTL compile functions with UntypedUse op_sub operands for now.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxDouble):
+        (JSC::AssemblyHelpers::unboxDoubleNonDestructive):
+        (JSC::AssemblyHelpers::unboxDouble):
+        (JSC::AssemblyHelpers::boxBooleanPayload):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_sub):
+
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::generateFastPath):
+        (JSC::JITSubGenerator::endJumpList):
+        - Added some asserts to document the contract that this generator expects in
+          terms of its incoming registers.
+
+          Also fixed the generated code to not be destructive with regards to incoming
+          registers.  The DFG expects this.
+
+          Also added an endJumpList so that we don't have to jump twice for the fast
+          path where both operands are ints.
+
+        * parser/ResultType.h:
+        (JSC::ResultType::ResultType):
+        - Make the internal Type bits and the constructor private.  Clients should only
+          create ResultType values using one of the provided factory methods.
+
+        * tests/stress/op_sub.js: Added.
+        (o1.valueOf):
+        (stringify):
+        (generateScenarios):
+        (printScenarios):
+        (testCases.func):
+        (func):
+        (initializeTestCases):
+        (runTest):
+        - test op_sub results by comparing one LLINT result against the output of
+          multiple LLINT, and JIT runs.  This test assume that we'll at least get the
+          right result some of the time (if not all the time), and confirms that the
+          various engines produce consistent results for all the various value pairs
+          being tested.
+
 2015-10-15  Filip Pizlo  <fpizlo@apple.com>
 
         CopyBarrier must be avoided for slow TypedArrays

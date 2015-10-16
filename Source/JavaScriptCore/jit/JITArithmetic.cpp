@@ -970,7 +970,7 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
     JSValueRegs leftRegs = JSValueRegs(regT0);
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
-    GPRReg scratchGPR = InvalidGPRReg;
+    GPRReg scratchGPR = regT2;
     FPRReg scratchFPR = InvalidFPRReg;
 #else
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
@@ -987,6 +987,7 @@ void JIT::emit_op_sub(Instruction* currentInstruction)
         fpRegT0, fpRegT1, scratchGPR, scratchFPR);
 
     gen.generateFastPath(*this);
+    gen.endJumpList().link(this);
     emitPutVirtualRegister(result, resultRegs);
 
     addSlowCase(gen.slowPathJumpList());

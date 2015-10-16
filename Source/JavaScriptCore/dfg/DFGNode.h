@@ -1977,6 +1977,16 @@ struct Node {
         return isNotCellSpeculation(prediction());
     }
     
+    bool shouldSpeculateUntypedForArithmetic()
+    {
+        return isUntypedSpeculationForArithmetic(prediction());
+    }
+
+    static bool shouldSpeculateUntypedForArithmetic(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateUntypedForArithmetic() || op2->shouldSpeculateUntypedForArithmetic();
+    }
+    
     static bool shouldSpeculateBoolean(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateBoolean() && op2->shouldSpeculateBoolean();

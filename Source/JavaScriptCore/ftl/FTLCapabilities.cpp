@@ -84,7 +84,6 @@ inline CapabilityLevel canCompile(Node* node)
     case StrCat:
     case ArithAdd:
     case ArithClz32:
-    case ArithSub:
     case ArithMul:
     case ArithDiv:
     case ArithMod:
@@ -206,6 +205,11 @@ inline CapabilityLevel canCompile(Node* node)
     case TypeOf:
         // These are OK.
         break;
+    case ArithSub:
+        if (node->result() == NodeResultJS)
+            return CannotCompile;
+        break;
+
     case Identity:
         // No backend handles this because it will be optimized out. But we may check
         // for capabilities before optimization. It would be a deep error to remove this

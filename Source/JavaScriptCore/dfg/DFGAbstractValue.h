@@ -36,6 +36,7 @@
 #include "DFGStructureClobberState.h"
 #include "InferredType.h"
 #include "JSCell.h"
+#include "ResultType.h"
 #include "SpeculatedType.h"
 #include "DumpContext.h"
 #include "StructureSet.h"
@@ -344,7 +345,9 @@ struct AbstractValue {
     void checkConsistency() const;
     void assertIsRegistered(Graph&) const;
 #endif
-    
+
+    ResultType resultType() const;
+
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
     

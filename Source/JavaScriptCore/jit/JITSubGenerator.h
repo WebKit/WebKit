@@ -27,6 +27,7 @@
 #define JITSubGenerator_h
 
 #include "CCallHelpers.h"
+#include "ResultType.h"
 
 namespace JSC {
     
@@ -49,15 +50,24 @@ public:
 
     void generateFastPath(CCallHelpers& jit)
     {
-        CCallHelpers::JumpList slowPath;
-
+        ASSERT(m_scratchGPR != InvalidGPRReg);
+        ASSERT(m_scratchGPR != m_left.payloadGPR());
+        ASSERT(m_scratchGPR != m_right.payloadGPR());
+#if ENABLE(JSVALUE32_64)
+        ASSERT(m_scratchGPR != m_left.tagGPR());x
+        ASSERT(m_scratchGPR != m_right.tagGPR());
+        ASSERT(m_scratchFPR != InvalidFPRReg);
+#endif
         CCallHelpers::Jump leftNotInt = jit.branchIfNotInt32(m_left);
         CCallHelpers::Jump rightNotInt = jit.branchIfNotInt32(m_right);
 
+        jit.move(m_left.payloadGPR(), m_result.payloadGPR());
         m_slowPathJumpList.append(
-            jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_left.payloadGPR()));
+            jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_result.payloadGPR()));
 
-        jit.boxInt32(m_left.payloadGPR(), m_result);
+        jit.boxInt32(m_result.payloadGPR(), m_result);
+
+        m_endJumpList.append(jit.jump());
 
         if (!jit.supportsFloatingPoint()) {
             m_slowPathJumpList.append(leftNotInt);
@@ -65,15 +75,13 @@ public:
             return;
         }
         
-        CCallHelpers::Jump end = jit.jump();
-
         leftNotInt.link(&jit);
         if (!m_leftType.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
         if (!m_rightType.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
 
-        jit.unboxDouble(m_left, m_leftFPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
         CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
 
         jit.convertInt32ToDouble(m_right.payloadGPR(), m_rightFPR);
@@ -86,16 +94,17 @@ public:
         jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);
 
         rightIsDouble.link(&jit);
-        jit.unboxDouble(m_right, m_rightFPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR, m_scratchFPR);
 
         rightWasInteger.link(&jit);
 
         jit.subDouble(m_rightFPR, m_leftFPR);
         jit.boxDouble(m_leftFPR, m_result);
 
-        end.link(&jit);
+        m_endJumpList.append(jit.jump());
     }
 
+    CCallHelpers::JumpList endJumpList() { return m_endJumpList; }
     CCallHelpers::JumpList slowPathJumpList() { return m_slowPathJumpList; }
 
 private:
@@ -109,6 +118,7 @@ private:
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
 
+    CCallHelpers::JumpList m_endJumpList;
     CCallHelpers::JumpList m_slowPathJumpList;
 };
 

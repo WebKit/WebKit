@@ -386,6 +386,14 @@ public:
     {
         silentSpillAllRegisters(InvalidGPRReg, InvalidGPRReg, exclude);
     }
+    void silentSpillAllRegisters(JSValueRegs exclude)
+    {
+#if USE(JSVALUE64)
+        silentSpillAllRegisters(exclude.payloadGPR());
+#else
+        silentSpillAllRegisters(exclude.payloadGPR(), exclude.tagGPR());
+#endif
+    }
     
     static GPRReg pickCanTrample(GPRReg exclude)
     {
@@ -403,7 +411,12 @@ public:
         return GPRInfo::regT0;
     }
 
-#if USE(JSVALUE32_64)
+#if USE(JSVALUE64)
+    static GPRReg pickCanTrample(JSValueRegs exclude)
+    {
+        return pickCanTrample(exclude.payloadGPR());
+    }
+#else
     static GPRReg pickCanTrample(JSValueRegs exclude)
     {
         GPRReg result = GPRInfo::regT0;
@@ -1439,6 +1452,10 @@ public:
         m_jit.setupArgumentsWithExecState(MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(imm.m_value))), arg2);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_JITOperation_EJJ operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2)
+    {
+        return callOperation(operation, result.payloadGPR(), arg1.payloadGPR(), arg2.payloadGPR());
+    }
     JITCompiler::Call callOperation(J_JITOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
@@ -1746,6 +1763,10 @@ public:
     {
         m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG imm, TrustedImm32(JSValue::Int32Tag), SH4_32BIT_DUMMY_ARG arg2Payload, arg2Tag);
         return appendCallSetResult(operation, resultPayload, resultTag);
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EJJ operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2)
+    {
+        return callOperation(operation, result.tagGPR(), result.payloadGPR(), arg1.tagGPR(), arg1.payloadGPR(), arg2.tagGPR(), arg2.payloadGPR());
     }
 
     JITCompiler::Call callOperation(J_JITOperation_ECJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload)
