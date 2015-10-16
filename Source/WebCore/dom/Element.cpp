@@ -33,6 +33,7 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
 #include "DOMTokenList.h"
 #include "Dictionary.h"
@@ -2434,44 +2435,79 @@ void Element::setMinimumSizeForResizing(const LayoutSize& size)
     ensureElementRareData().setMinimumSizeForResizing(size);
 }
 
-static PseudoElement* beforeOrAfterPseudoElement(Element* host, PseudoId pseudoElementSpecifier)
+static PseudoElement* beforeOrAfterPseudoElement(Element& host, PseudoId pseudoElementSpecifier)
 {
     switch (pseudoElementSpecifier) {
     case BEFORE:
-        return host->beforePseudoElement();
+        return host.beforePseudoElement();
     case AFTER:
-        return host->afterPseudoElement();
+        return host.afterPseudoElement();
     default:
-        return 0;
+        return nullptr;
     }
+}
+
+RenderStyle* Element::existingComputedStyle()
+{
+    if (RenderStyle* renderTreeStyle = renderStyle())
+        return renderTreeStyle;
+
+    if (hasRareData())
+        return elementRareData()->computedStyle();
+
+    return nullptr;
+}
+
+RenderStyle& Element::resolveComputedStyle()
+{
+    ASSERT(inDocument());
+    ASSERT(!existingComputedStyle());
+
+    Deque<Element*, 32> elementsRequiringComputedStyle({ this });
+    RenderStyle* previousStyle = nullptr;
+
+    // Collect ancestors until we find one that has style.
+    auto composedAncestors = composedTreeAncestors(*this);
+    for (auto& ancestor : composedAncestors) {
+        if (!is<Element>(ancestor))
+            break;
+        auto& ancestorElement = downcast<Element>(ancestor);
+        elementsRequiringComputedStyle.prepend(&ancestorElement);
+        if (auto* existingStyle = ancestorElement.existingComputedStyle()) {
+            previousStyle = existingStyle;
+            break;
+        }
+    }
+
+    // Resolve and cache styles starting from the most distant ancestor.
+    for (auto* element : elementsRequiringComputedStyle) {
+        auto style = document().styleForElementIgnoringPendingStylesheets(*element, previousStyle);
+        previousStyle = style.ptr();
+        ElementRareData& rareData = element->ensureElementRareData();
+        rareData.setComputedStyle(WTF::move(style));
+    }
+
+    return *previousStyle;
 }
 
 RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    if (PseudoElement* pseudoElement = beforeOrAfterPseudoElement(this, pseudoElementSpecifier))
+    if (PseudoElement* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementSpecifier))
         return pseudoElement->computedStyle();
 
-    // FIXME: Find and use the renderer from the pseudo element instead of the actual element so that the 'length'
-    // properties, which are only known by the renderer because it did the layout, will be correct and so that the
-    // values returned for the ":selection" pseudo-element will be correct.
-    if (RenderStyle* usedStyle = renderStyle()) {
-        if (pseudoElementSpecifier) {
-            RenderStyle* cachedPseudoStyle = usedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
-            return cachedPseudoStyle ? cachedPseudoStyle : usedStyle;
-        }
-        return usedStyle;
+    auto* style = existingComputedStyle();
+    if (!style) {
+        if (!inDocument())
+            return nullptr;
+        style = &resolveComputedStyle();
     }
 
-    if (!inDocument()) {
-        // FIXME: Try to do better than this. Ensure that styleForElement() works for elements that are not in the
-        // document tree and figure out when to destroy the computed style for such elements.
-        return nullptr;
+    if (pseudoElementSpecifier) {
+        if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementSpecifier))
+            style = cachedPseudoStyle;
     }
 
-    ElementRareData& data = ensureElementRareData();
-    if (!data.computedStyle())
-        data.setComputedStyle(document().styleForElementIgnoringPendingStylesheets(this));
-    return pseudoElementSpecifier ? data.computedStyle()->getCachedPseudoStyle(pseudoElementSpecifier) : data.computedStyle();
+    return style;
 }
 
 void Element::setStyleAffectedByEmpty()
