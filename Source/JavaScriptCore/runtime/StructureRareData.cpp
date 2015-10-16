@@ -67,7 +67,6 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_previous);
     visitor.append(&thisObject->m_objectToStringValue);
     visitor.append(&thisObject->m_cachedPropertyNameEnumerator);
-    visitor.append(&thisObject->m_cachedGenericPropertyNameEnumerator);
 }
 
 JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const

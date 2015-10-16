@@ -70,7 +70,6 @@ private:
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;
     WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
-    WriteBarrier<JSPropertyNameEnumerator> m_cachedGenericPropertyNameEnumerator;
     
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
     std::unique_ptr<PropertyWatchpointMap> m_replacementWatchpointSets;

@@ -1,3 +1,16 @@
+2015-10-16  Andreas Kling  <akling@apple.com>
+
+        Remove unused StructureRareData::m_cachedGenericPropertyNameEnumerator.
+        <https://webkit.org/b/150244>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove an unused field from StructureRareData.
+
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren): Deleted.
+        * runtime/StructureRareData.h:
+
 2015-10-16  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, rolling out r191190.
