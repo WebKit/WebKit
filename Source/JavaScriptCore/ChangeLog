@@ -1,5 +1,11 @@
 2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed. Attempted EFL build fix after r191159.
+
+        * PlatformEfl.cmake:
+
+2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed. Build fix after r191160.
 
         * inspector/agents/InspectorHeapAgent.cpp:
