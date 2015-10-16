@@ -70,6 +70,7 @@ public:
     virtual bool canSuspendForPageCache() const override final;
 
     const IDBDatabaseInfo& info() const { return m_info; }
+    uint64_t databaseConnectionIdentifier() const { return m_databaseConnectionIdentifier; }
 
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&);
     void commitTransaction(IDBTransaction&);
@@ -80,9 +81,15 @@ private:
     IDBDatabase(ScriptExecutionContext&, IDBConnectionToServer&, const IDBResultData&);
 
     void didCommitOrAbortTransaction(IDBTransaction&);
-    
-    Ref<IDBConnectionToServer> m_connection;
+
+    void maybeCloseInServer();
+
+    Ref<IDBConnectionToServer> m_serverConnection;
     IDBDatabaseInfo m_info;
+    uint64_t m_databaseConnectionIdentifier { 0 };
+
+    bool m_closePending { false };
+    bool m_closedInServer { false };
 
     RefPtr<IDBTransaction> m_versionChangeTransaction;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;

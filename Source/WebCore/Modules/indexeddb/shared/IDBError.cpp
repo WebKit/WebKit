@@ -32,16 +32,40 @@
 
 namespace WebCore {
 
-static const std::pair<String, String>& idbExceptionEntry(IDBExceptionCode code)
+static const String& idbErrorName(IDBExceptionCode code)
 {
-    NeverDestroyed<Vector<std::pair<String, String>>> entries;
-    if (entries.get().isEmpty()) {
-        entries.get().append(std::make_pair<String, String>(
-            ASCIILiteral("UnknownError"),
-            ASCIILiteral("Operation failed for reasons unrelated to the database itself and not covered by any other errors.")));
+    switch (code) {
+    case IDBExceptionCode::Unknown: {
+        static NeverDestroyed<String> entry = ASCIILiteral("UnknownError");
+        return entry;
+    }
+    case IDBExceptionCode::VersionError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("VersionError");
+        return entry;
+    }
+    case IDBExceptionCode::None:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return entries.get()[(int)code - 1];
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static const String& idbErrorDescription(IDBExceptionCode code)
+{
+    switch (code) {
+    case IDBExceptionCode::Unknown: {
+        NeverDestroyed<String> entry = ASCIILiteral("Operation failed for reasons unrelated to the database itself and not covered by any other errors.");
+        return entry.get();
+    }
+    case IDBExceptionCode::VersionError: {
+        NeverDestroyed<String> entry = ASCIILiteral("An attempt was made to open a database using a lower version than the existing version.");
+        return entry.get();
+    }
+    case IDBExceptionCode::None:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 IDBError::IDBError(IDBExceptionCode code)
@@ -69,7 +93,7 @@ IDBError& IDBError::operator=(const IDBError& other)
 
 const String& IDBError::name() const
 {
-    return idbExceptionEntry(m_code).first;
+    return idbErrorName(m_code);
 }
 
 const String& IDBError::message() const
@@ -77,7 +101,7 @@ const String& IDBError::message() const
     if (!m_message.isEmpty())
         return m_message;
 
-    return idbExceptionEntry(m_code).second;
+    return idbErrorDescription(m_code);
 }
 
 } // namespace WebCore

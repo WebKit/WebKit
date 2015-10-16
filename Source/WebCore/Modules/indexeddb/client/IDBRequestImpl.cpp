@@ -42,9 +42,13 @@ IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext
 {
 }
 
+IDBRequest::~IDBRequest()
+{
+}
+
 RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode&) const
 {
-    return nullptr;
+    return m_result;
 }
 
 unsigned short IDBRequest::errorCode(ExceptionCode&) const
@@ -54,7 +58,7 @@ unsigned short IDBRequest::errorCode(ExceptionCode&) const
 
 RefPtr<DOMError> IDBRequest::error(ExceptionCode&) const
 {
-    return nullptr;
+    return m_domError;
 }
 
 RefPtr<WebCore::IDBAny> IDBRequest::source() const

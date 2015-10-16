@@ -45,7 +45,7 @@ public:
     static Ref<IDBOpenDBRequest> createDeleteRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&);
     static Ref<IDBOpenDBRequest> createOpenRequest(IDBConnectionToServer&, ScriptExecutionContext*, const IDBDatabaseIdentifier&, uint64_t version);
 
-    virtual ~IDBOpenDBRequest();
+    virtual ~IDBOpenDBRequest() override final;
     
     const IDBDatabaseIdentifier& databaseIdentifier() const { return m_databaseIdentifier; }
     uint64_t version() const { return m_version; }
@@ -61,7 +61,6 @@ private:
 
     IDBDatabaseIdentifier m_databaseIdentifier;
     uint64_t m_version { 0 };
-    RefPtr<DOMError> m_domError;
 };
 
 } // namespace IDBClient

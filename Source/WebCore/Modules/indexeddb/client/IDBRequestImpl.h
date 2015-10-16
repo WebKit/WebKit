@@ -47,6 +47,8 @@ class IDBRequest : public WebCore::IDBOpenDBRequest, public RefCounted<IDBReques
 public:
     const IDBResourceIdentifier& resourceIdentifier() const { return m_resourceIdentifier; }
 
+    virtual ~IDBRequest() override;
+
     virtual RefPtr<WebCore::IDBAny> result(ExceptionCode&) const override;
     virtual unsigned short errorCode(ExceptionCode&) const override;
     virtual RefPtr<DOMError> error(ExceptionCode&) const override;
@@ -79,6 +81,7 @@ protected:
     IDBRequestReadyState m_readyState { IDBRequestReadyState::Pending };
     RefPtr<IDBAny> m_result;
     RefPtr<IDBTransaction> m_transaction;
+    RefPtr<DOMError> m_domError;
 
 private:
     IDBConnectionToServer& m_connection;

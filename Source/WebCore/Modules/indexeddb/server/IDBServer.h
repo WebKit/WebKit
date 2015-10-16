@@ -58,6 +58,7 @@ public:
     void openDatabase(const IDBRequestData&);
     void deleteDatabase(const IDBRequestData&);
     void commitTransaction(const IDBResourceIdentifier&);
+    void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 
     void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);
     void postDatabaseTaskReply(std::unique_ptr<CrossThreadTask>&&);

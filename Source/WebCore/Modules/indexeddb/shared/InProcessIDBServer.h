@@ -57,6 +57,7 @@ public:
     virtual void deleteDatabase(IDBRequestData&) override final;
     virtual void openDatabase(IDBRequestData&) override final;
     virtual void commitTransaction(IDBResourceIdentifier&) override final;
+    virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
 
     // IDBConnectionToClient
     virtual uint64_t identifier() const override;
