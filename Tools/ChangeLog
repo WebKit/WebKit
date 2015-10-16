@@ -1,3 +1,21 @@
+2015-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        WebKit2.AutoLayoutIntegration API test is failing on some of the bots
+        https://bugs.webkit.org/show_bug.cgi?id=150255
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/run-api-tests:
+        (runTest):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm:
+        (-[AutoLayoutWKWebView load:withWidth:expectingContentSize:]):
+        (-[AutoLayoutWKWebView layoutAtMinimumWidth:andExpectContentSizeChange:]):
+        (-[AutoLayoutWKWebView load:expectingContentSize:]): Deleted.
+        (-[AutoLayoutWKWebView expectContentSizeChange:]): Deleted.
+        Don't set the layout size until after the load finishes and we're waiting
+        for the reply, so that there is no race between the new size coming in
+        and us waiting for it.
+
 2015-10-16  Anders Carlsson  <andersca@apple.com>
 
         WebEditingDelegate should be a formal protocol

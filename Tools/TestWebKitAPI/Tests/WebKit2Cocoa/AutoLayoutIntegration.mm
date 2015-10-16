@@ -54,7 +54,7 @@ static bool didInvalidateIntrinsicContentSize;
     NSSize _expectedIntrinsicContentSize;
 }
 
-- (void)load:(NSString *)HTMLString expectingContentSize:(NSSize)size
+- (void)load:(NSString *)HTMLString withWidth:(CGFloat)width expectingContentSize:(NSSize)size
 {
     EXPECT_FALSE(_expectingIntrinsicContentSizeChange);
 
@@ -71,11 +71,13 @@ static bool didInvalidateIntrinsicContentSize;
     [self loadHTMLString:[baseHTML stringByAppendingString:HTMLString] baseURL:nil];
     TestWebKitAPI::Util::run(&didFinishNavigation);
 
-    [self expectContentSizeChange:size];
+    [self layoutAtMinimumWidth:width andExpectContentSizeChange:size];
 }
 
-- (void)expectContentSizeChange:(NSSize)size
+- (void)layoutAtMinimumWidth:(CGFloat)width andExpectContentSizeChange:(NSSize)size
 {
+    [self _setMinimumLayoutWidth:width];
+
     // NOTE: Each adjacent expected result must be different, or we'll early return and not call invalidateIntrinsicContentSize!
     EXPECT_FALSE(NSEqualSizes(size, self.intrinsicContentSize));
 
@@ -83,6 +85,8 @@ static bool didInvalidateIntrinsicContentSize;
     _expectedIntrinsicContentSize = size;
     didInvalidateIntrinsicContentSize = false;
     TestWebKitAPI::Util::run(&didInvalidateIntrinsicContentSize);
+
+    [self _setMinimumLayoutWidth:0];
 }
 
 - (void)invalidateIntrinsicContentSize
@@ -104,34 +108,30 @@ static bool didInvalidateIntrinsicContentSize;
 TEST(WebKit2, AutoLayoutIntegration)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
-    [webView _setMinimumLayoutWidth:50];
 
     AutoLayoutNavigationDelegate *delegate = [[AutoLayoutNavigationDelegate alloc] init];
     [webView setNavigationDelegate:delegate];
 
     // 10x10 rect with the constraint (width >= 50) -> 50x10
-    [webView load:@"<div class='small'></div>" expectingContentSize:NSMakeSize(50, 10)];
+    [webView load:@"<div class='small'></div>" withWidth:50 expectingContentSize:NSMakeSize(50, 10)];
 
     // 100x100 rect with the constraint (width >= 50) -> 100x100
-    [webView load:@"<div class='large'></div>" expectingContentSize:NSMakeSize(100, 100)];
+    [webView load:@"<div class='large'></div>" withWidth:50 expectingContentSize:NSMakeSize(100, 100)];
 
     // 100x10 rect with the constraint (width >= 50) -> 100x10
-    [webView load:@"<div class='veryWide'></div>" expectingContentSize:NSMakeSize(100, 10)];
+    [webView load:@"<div class='veryWide'></div>" withWidth:50 expectingContentSize:NSMakeSize(100, 10)];
 
     // Ten 10x10 rects, inline, should result in two rows of five; with the constraint (width >= 50) -> 50x20
-    [webView load:@"<div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div>" expectingContentSize:NSMakeSize(50, 20)];
+    [webView load:@"<div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div>" withWidth:50 expectingContentSize:NSMakeSize(50, 20)];
 
     // Changing the width to 10 should result in ten rows of one; with the constraint (width >= 10) -> 10x100
-    [webView _setMinimumLayoutWidth:10];
-    [webView expectContentSizeChange:NSMakeSize(10, 100)];
+    [webView layoutAtMinimumWidth:10 andExpectContentSizeChange:NSMakeSize(10, 100)];
 
     // Changing the width to 100 should result in one rows of ten; with the constraint (width >= 100) -> 100x10
-    [webView _setMinimumLayoutWidth:100];
-    [webView expectContentSizeChange:NSMakeSize(100, 10)];
+    [webView layoutAtMinimumWidth:100 andExpectContentSizeChange:NSMakeSize(100, 10)];
 
     // One 100x100 rect and ten 10x10 rects, inline; with the constraint (width >= 20) -> 100x110
-    [webView _setMinimumLayoutWidth:20];
-    [webView load:@"<div class='large'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div>" expectingContentSize:NSMakeSize(100, 110)];
+    [webView load:@"<div class='large'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div><div class='small inline'></div>" withWidth:20 expectingContentSize:NSMakeSize(100, 110)];
 }
 
 #endif

@@ -53,6 +53,7 @@ my $showHelp = 0;
 my $verbose = 0;
 my $showLeaks = 0;
 my $dumpTests = 0;
+my $disableTimeout = 0;
 my $build = 1;
 my $root;
 my $buildDefault = $build ? "build" : "do not build";
@@ -68,6 +69,7 @@ Usage: $programName [options] [suite or test prefixes]
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
   --root=               Path to the pre-built root containing TestWebKitAPI
   --show-leaks          Show leaks in the output
+  --no-timeout          Disable test timeouts
 
 Platform options:
   --ios-simulator       Run tests in the iOS Simulator
@@ -88,6 +90,7 @@ my $getOptionsResult = GetOptions(
     'help' => \$showHelp,
     'verbose|v' => \$verbose,
     'show-leaks' => \$showLeaks,
+    'no-timeout' => \$disableTimeout,
     'dump|d' => \$dumpTests,
     'build!' => \$build,
     'root=s' => \$root
@@ -203,10 +206,14 @@ sub runTest($$)
         }
 
         eval {
-            local $SIG{ALRM} = sub { die "alarm\n" };
-            alarm $timeout;
-            waitpid($pid, 0);
-            alarm 0;
+            if ($disableTimeout) {
+                waitpid($pid, 0);    
+            } else {
+                local $SIG{ALRM} = sub { die "alarm\n" };
+                alarm $timeout;
+                waitpid($pid, 0);
+                alarm 0;
+            }
             $result = $?;
         };
         if ($@) {
