@@ -63,7 +63,6 @@ public:
 
     void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, uint64_t requestedVersion);
 
-    void databaseConnectionClosed(IDBDatabase&);
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);
 

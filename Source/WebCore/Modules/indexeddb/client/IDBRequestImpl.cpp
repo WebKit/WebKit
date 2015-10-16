@@ -44,7 +44,7 @@ IDBRequest::IDBRequest(IDBConnectionToServer& connection, ScriptExecutionContext
 
 RefPtr<WebCore::IDBAny> IDBRequest::result(ExceptionCode&) const
 {
-    return m_result;
+    return nullptr;
 }
 
 unsigned short IDBRequest::errorCode(ExceptionCode&) const

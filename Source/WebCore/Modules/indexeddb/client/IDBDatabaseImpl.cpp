@@ -44,18 +44,17 @@ Ref<IDBDatabase> IDBDatabase::create(ScriptExecutionContext& context, IDBConnect
 
 IDBDatabase::IDBDatabase(ScriptExecutionContext& context, IDBConnectionToServer& connection, const IDBResultData& resultData)
     : WebCore::IDBDatabase(&context)
-    , m_serverConnection(connection)
+    , m_connection(connection)
     , m_info(resultData.databaseInfo())
-    , m_databaseConnectionIdentifier(resultData.databaseConnectionIdentifier())
 {
     suspendIfNeeded();
     relaxAdoptionRequirement();
-    m_serverConnection->registerDatabaseConnection(*this);
+    m_connection->registerDatabaseConnection(*this);
 }
 
 IDBDatabase::~IDBDatabase()
 {
-    m_serverConnection->unregisterDatabaseConnection(*this);
+    m_connection->unregisterDatabaseConnection(*this);
 }
 
 const String IDBDatabase::name() const
@@ -105,23 +104,7 @@ void IDBDatabase::deleteObjectStore(const String&, ExceptionCode&)
 
 void IDBDatabase::close()
 {
-    m_closePending = true;
-    maybeCloseInServer();
-}
-
-void IDBDatabase::maybeCloseInServer()
-{
-    if (m_closedInServer)
-        return;
-
-    // 3.3.9 Database closing steps
-    // Wait for all transactions created using this connection to complete.
-    // Once they are complete, this connection is closed.
-    if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty())
-        return;
-
-    m_closedInServer = true;
-    m_serverConnection->databaseConnectionClosed(*this);
+    ASSERT_NOT_REACHED();
 }
 
 const char* IDBDatabase::activeDOMObjectName() const
@@ -159,7 +142,7 @@ void IDBDatabase::commitTransaction(IDBTransaction& transaction)
     ASSERT(refTransaction);
     m_committingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
 
-    m_serverConnection->commitTransaction(transaction);
+    m_connection->commitTransaction(transaction);
 }
 
 void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)

@@ -65,7 +65,6 @@ public:
 
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
-    void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
 
 private:
     UniqueIDBDatabase(IDBServer&, const IDBDatabaseIdentifier&);
@@ -95,7 +94,6 @@ private:
     Deque<Ref<IDBServerOperation>> m_pendingOpenDatabaseOperations;
 
     HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_openDatabaseConnections;
-    HashSet<RefPtr<UniqueIDBDatabaseConnection>> m_closePendingDatabaseConnections;
 
     RefPtr<IDBServerOperation> m_versionChangeOperation;
     RefPtr<UniqueIDBDatabaseConnection> m_versionChangeDatabaseConnection;

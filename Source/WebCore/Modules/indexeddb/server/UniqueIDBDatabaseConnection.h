@@ -47,17 +47,11 @@ class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnectio
 public:
     static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, IDBConnectionToClient&);
 
-    ~UniqueIDBDatabaseConnection();
-
     uint64_t identifier() const { return m_identifier; }
     UniqueIDBDatabase& database() { return m_database; }
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
-    void connectionClosedFromClient();
-
     bool closePending() const { return m_closePending; }
-
-    bool hasNonFinishedTransactions() const;
 
     void fireVersionChangeEvent(uint64_t requestedVersion);
     UniqueIDBDatabaseTransaction& createVersionChangeTransaction(uint64_t newVersion);

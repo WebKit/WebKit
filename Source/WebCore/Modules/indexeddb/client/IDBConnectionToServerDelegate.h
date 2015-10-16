@@ -43,7 +43,6 @@ public:
     virtual void deleteDatabase(IDBRequestData&) = 0;
     virtual void openDatabase(IDBRequestData&) = 0;
     virtual void commitTransaction(IDBResourceIdentifier&) = 0;
-    virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;
 
     virtual void ref() = 0;
     virtual void deref() = 0;

@@ -29,10 +29,8 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBConnectionToClient.h"
-#include "IDBServer.h"
 #include "IDBTransactionInfo.h"
 #include "Logging.h"
-#include "UniqueIDBDatabase.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -53,25 +51,6 @@ UniqueIDBDatabaseConnection::UniqueIDBDatabaseConnection(UniqueIDBDatabase& data
     , m_database(database)
     , m_connectionToClient(connection)
 {
-    m_database.server().registerDatabaseConnection(*this);
-}
-
-UniqueIDBDatabaseConnection::~UniqueIDBDatabaseConnection()
-{
-    m_database.server().unregisterDatabaseConnection(*this);
-}
-
-bool UniqueIDBDatabaseConnection::hasNonFinishedTransactions() const
-{
-    return !m_transactionMap.isEmpty();
-}
-
-void UniqueIDBDatabaseConnection::connectionClosedFromClient()
-{
-    LOG(IndexedDB, "UniqueIDBDatabaseConnection::connectionClosedFromClient");
-
-    m_closePending = true;
-    m_database.connectionClosedFromClient(*this);
 }
 
 void UniqueIDBDatabaseConnection::fireVersionChangeEvent(uint64_t requestedVersion)
