@@ -33,8 +33,8 @@ WebInspector.CSSKeywordCompletions = {};
 
 WebInspector.CSSKeywordCompletions.forProperty = function(propertyName)
 {
-    var acceptedKeywords = ["initial"];
-    var isNotPrefixed = propertyName.charAt(0) !== "-";
+    let acceptedKeywords = ["initial", "unset"];
+    let isNotPrefixed = propertyName.charAt(0) !== "-";
 
     if (propertyName in WebInspector.CSSKeywordCompletions._propertyKeywordMap)
         acceptedKeywords = acceptedKeywords.concat(WebInspector.CSSKeywordCompletions._propertyKeywordMap[propertyName]);
@@ -956,7 +956,7 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
         "sideways", "sideways-right", "vertical-right", "upright"
     ],
     "-webkit-line-box-contain": [
-        "block", "inline", "font", "glyphs", "replaced", "inline-box", "none", "initial"
+        "block", "inline", "font", "glyphs", "replaced", "inline-box", "none"
     ],
     "font-feature-settings": [
         "normal"

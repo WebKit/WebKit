@@ -39,7 +39,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         this._autocompletionPropertyEditors = {};
 
         // These keywords, as well as the values below, are not localized as they must match the CSS spec.
-        this._keywords.defaults = ["Inherit", "Initial"];
+        this._keywords.defaults = ["Inherit", "Initial", "Unset"];
         this._keywords.boxModel = this._keywords.defaults.concat(["Auto"]);
         this._keywords.borderStyle = {
             basic: this._keywords.defaults.concat(["None", "Hidden", "Solid"]),
@@ -333,7 +333,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         properties.opacity = new WebInspector.VisualStyleUnitSlider("opacity", WebInspector.UIString("Opacity"));
         properties.overflow = new WebInspector.VisualStyleKeywordPicker(["overflow-x", "overflow-y"], WebInspector.UIString("Overflow"), {
-            basic: ["Initial", "Auto", "Hidden", "Scroll", "Visible"],
+            basic: ["Initial", "Unset", "Auto", "Hidden", "Scroll", "Visible"],
             advanced: ["Marquee", "Overlay", " WebKit Paged X", " WebKit Paged Y"]
         });
 
@@ -581,7 +581,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     {
         let group = this._groups.alignment;
         let properties = group.properties;
-        let alignmentKeywords = ["Initial", "Auto", "Flex Start", "Flex End", "Center", "Stretch"];
+        let alignmentKeywords = ["Initial", "Unset", "Auto", "Flex Start", "Flex End", "Center", "Stretch"];
         let advancedAlignmentKeywords = ["Start", "End", "Left", "Right", "Baseline", "Last Baseline"];
 
         let contentRow = new WebInspector.DetailsSectionRow;
