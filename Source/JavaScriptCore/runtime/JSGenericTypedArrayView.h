@@ -108,11 +108,11 @@ public:
     
     const typename Adaptor::Type* typedVector() const
     {
-        return bitwise_cast<const typename Adaptor::Type*>(m_vector.get(this));
+        return bitwise_cast<const typename Adaptor::Type*>(vector());
     }
     typename Adaptor::Type* typedVector()
     {
-        return bitwise_cast<typename Adaptor::Type*>(m_vector.get(this));
+        return bitwise_cast<typename Adaptor::Type*>(vector());
     }
 
     // These methods are meant to match indexed access methods that JSObject

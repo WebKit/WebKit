@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,14 +74,25 @@ public:
         return m_value;
     }
 
+    // Use this version of get() if you only want to execute the barrier slow path if some condition
+    // holds, and you only want to evaluate that condition after first checking the barrier's
+    // condition. Usually, you just want to use get().
+    template<typename Functor>
+    void* getPredicated(const JSCell* owner, const Functor& functor) const
+    {
+        void* result = m_value;
+        if (UNLIKELY(bitwise_cast<uintptr_t>(result) & spaceBits)) {
+            if (functor())
+                return Heap::copyBarrier(owner, m_value);
+        }
+        return result;
+    }
+
     // When we are in the concurrent copying phase, this method may lock the barrier object (i.e. the field
     // pointing to copied space) and call directly into the owning object's copyBackingStore() method.
     void* get(const JSCell* owner) const
     {
-        void* result = m_value;
-        if (UNLIKELY(bitwise_cast<uintptr_t>(result) & spaceBits))
-            return Heap::copyBarrier(owner, m_value);
-        return result;
+        return getPredicated(owner, [] () -> bool { return true; });
     }
 
     CopyState copyState() const
@@ -158,6 +169,12 @@ public:
     T* get(const JSCell* owner) const
     {
         return bitwise_cast<T*>(CopyBarrierBase::get(owner));
+    }
+
+    template<typename Functor>
+    T* getPredicated(const JSCell* owner, const Functor& functor) const
+    {
+        return bitwise_cast<T*>(CopyBarrierBase::getPredicated(owner, functor));
     }
     
     void set(VM& vm, const JSCell* owner, T* value)

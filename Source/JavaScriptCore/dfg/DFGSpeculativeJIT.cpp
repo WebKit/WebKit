@@ -4386,14 +4386,11 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
         
     default:
         ASSERT(isTypedView(node->arrayMode().typedArrayType()));
-        m_jit.loadPtr(
-            MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfVector()),
-            storageReg);
+
+        JITCompiler::Jump fail = m_jit.loadTypedArrayVector(baseReg, storageReg);
 
         addSlowPathGenerator(
-            slowPathCall(
-                m_jit.branchIfNotToSpace(storageReg),
-                this, operationGetArrayBufferVector, storageReg, baseReg));
+            slowPathCall(fail, this, operationGetArrayBufferVector, storageReg, baseReg));
         break;
     }
     
@@ -4418,7 +4415,11 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
     m_jit.removeSpaceBits(dataGPR);
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
+    JITCompiler::JumpList vectorReady;
+    vectorReady.append(m_jit.branchIfToSpace(vectorGPR));
+    vectorReady.append(m_jit.branchIfNotFastTypedArray(baseGPR));
     m_jit.removeSpaceBits(vectorGPR);
+    vectorReady.link(&m_jit);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), dataGPR);
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, ArrayBuffer::offsetOfData()), dataGPR);
     m_jit.subPtr(dataGPR, vectorGPR);

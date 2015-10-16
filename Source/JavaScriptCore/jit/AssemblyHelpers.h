@@ -756,6 +756,11 @@ public:
 #endif
     }
 
+    Jump branchIfToSpace(GPRReg storageGPR)
+    {
+        return branchTest32(Zero, storageGPR, TrustedImm32(CopyBarrierBase::spaceBits));
+    }
+
     Jump branchIfNotToSpace(GPRReg storageGPR)
     {
         return branchTest32(NonZero, storageGPR, TrustedImm32(CopyBarrierBase::spaceBits));
@@ -765,6 +770,13 @@ public:
     {
         andPtr(TrustedImmPtr(~static_cast<uintptr_t>(CopyBarrierBase::spaceBits)), storageGPR);
     }
+
+    Jump branchIfFastTypedArray(GPRReg baseGPR);
+    Jump branchIfNotFastTypedArray(GPRReg baseGPR);
+
+    // Returns a jump to slow path for when we need to execute the barrier. Note that baseGPR and
+    // resultGPR must be different.
+    Jump loadTypedArrayVector(GPRReg baseGPR, GPRReg resultGPR);
     
     static Address addressForByteOffset(ptrdiff_t byteOffset)
     {

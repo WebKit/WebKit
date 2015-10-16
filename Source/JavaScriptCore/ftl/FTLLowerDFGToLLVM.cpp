@@ -6139,33 +6139,66 @@ private:
     
     LValue loadVectorWithBarrier(LValue object)
     {
+        LValue fastResultValue = m_out.loadPtr(object, m_heaps.JSArrayBufferView_vector);
         return copyBarrier(
-            object, m_out.loadPtr(object, m_heaps.JSArrayBufferView_vector),
-            operationGetArrayBufferVector);
+            fastResultValue,
+            [&] () -> LValue {
+                LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("loadVectorWithBarrier slow path"));
+                LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("loadVectorWithBarrier continuation"));
+
+                ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+                m_out.branch(isFastTypedArray(object), rarely(slowPath), usually(continuation));
+
+                LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
+
+                LValue slowResultValue = lazySlowPath(
+                    [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                        return createLazyCallGenerator(
+                            operationGetArrayBufferVector, locations[0].directGPR(),
+                            locations[1].directGPR());
+                    }, object);
+                ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                return m_out.phi(m_out.intPtr, fastResult, slowResult);
+            });
     }
-    
+
     LValue copyBarrier(LValue object, LValue pointer, P_JITOperation_EC slowPathFunction)
     {
-        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("loadButterflyWithBarrier slow path"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("loadButterflyWithBarrier continuation"));
+        return copyBarrier(
+            pointer,
+            [&] () -> LValue {
+                return lazySlowPath(
+                    [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                        return createLazyCallGenerator(
+                            slowPathFunction, locations[0].directGPR(), locations[1].directGPR());
+                    }, object);
+            });
+    }
+
+    template<typename Functor>
+    LValue copyBarrier(LValue pointer, const Functor& functor)
+    {
+        LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("copyBarrier slow path"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("copyBarrier continuation"));
 
         ValueFromBlock fastResult = m_out.anchor(pointer);
-        m_out.branch(
-            m_out.testIsZeroPtr(pointer, m_out.constIntPtr(CopyBarrierBase::spaceBits)),
-            usually(continuation), rarely(slowPath));
+        m_out.branch(isInToSpace(pointer), usually(continuation), rarely(slowPath));
 
         LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
 
-        LValue call = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                return createLazyCallGenerator(
-                    slowPathFunction, locations[0].directGPR(), locations[1].directGPR());
-            }, object);
-        ValueFromBlock slowResult = m_out.anchor(call);
+        ValueFromBlock slowResult = m_out.anchor(functor());
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
         return m_out.phi(m_out.intPtr, fastResult, slowResult);
+    }
+
+    LValue isInToSpace(LValue pointer)
+    {
+        return m_out.testIsZeroPtr(pointer, m_out.constIntPtr(CopyBarrierBase::spaceBits));
     }
 
     LValue loadButterflyReadOnly(LValue object)
@@ -6175,13 +6208,38 @@ private:
 
     LValue loadVectorReadOnly(LValue object)
     {
-        return removeSpaceBits(m_out.loadPtr(object, m_heaps.JSArrayBufferView_vector));
+        LValue fastResultValue = m_out.loadPtr(object, m_heaps.JSArrayBufferView_vector);
+
+        LBasicBlock possiblyFromSpace = FTL_NEW_BLOCK(m_out, ("loadVectorReadOnly possibly from space"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("loadVectorReadOnly continuation"));
+
+        ValueFromBlock fastResult = m_out.anchor(fastResultValue);
+
+        m_out.branch(isInToSpace(fastResultValue), usually(continuation), rarely(possiblyFromSpace));
+
+        LBasicBlock lastNext = m_out.appendTo(possiblyFromSpace, continuation);
+
+        LValue slowResultValue = m_out.select(
+            isFastTypedArray(object), removeSpaceBits(fastResultValue), fastResultValue);
+        ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        
+        return m_out.phi(m_out.intPtr, fastResult, slowResult);
     }
 
     LValue removeSpaceBits(LValue storage)
     {
         return m_out.bitAnd(
             storage, m_out.constIntPtr(~static_cast<intptr_t>(CopyBarrierBase::spaceBits)));
+    }
+
+    LValue isFastTypedArray(LValue object)
+    {
+        return m_out.equal(
+            m_out.load32(object, m_heaps.JSArrayBufferView_mode),
+            m_out.constInt32(FastTypedArray));
     }
     
     TypedPointer baseIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)

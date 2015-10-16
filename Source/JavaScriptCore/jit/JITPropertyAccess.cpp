@@ -1455,8 +1455,7 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
-    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
-    slowCases.append(branchIfNotToSpace(scratch));
+    slowCases.append(loadTypedArrayVector(base, scratch));
     
     switch (elementSize(type)) {
     case 1:
@@ -1527,8 +1526,7 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(typeForTypedArrayType(type)));
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
-    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
-    slowCases.append(branchIfNotToSpace(scratch));
+    slowCases.append(loadTypedArrayVector(base, scratch));
     
     switch (elementSize(type)) {
     case 4:
@@ -1595,8 +1593,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Instruction* currentInstruction, Pa
     
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
-    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
-    slowCases.append(branchIfNotToSpace(lateScratch));
+    slowCases.append(loadTypedArrayVector(base, lateScratch));
     
     if (isClamped(type)) {
         ASSERT(elementSize(type) == 1);
@@ -1681,8 +1678,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
-    loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
-    slowCases.append(branchIfNotToSpace(lateScratch));
+    slowCases.append(loadTypedArrayVector(base, lateScratch));
     
     switch (elementSize(type)) {
     case 4:

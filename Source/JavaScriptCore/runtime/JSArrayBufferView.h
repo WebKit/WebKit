@@ -161,7 +161,15 @@ public:
     PassRefPtr<ArrayBufferView> impl();
     void neuter();
     
-    void* vector() { return m_vector.get(this); }
+    void* vector()
+    {
+        return m_vector.getPredicated(
+            this,
+            [this] () -> bool {
+                return mode() == FastTypedArray;
+            });
+    }
+    
     unsigned byteOffset();
     unsigned length() const { return m_length; }
 

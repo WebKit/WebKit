@@ -1,3 +1,69 @@
+2015-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        CopyBarrier must be avoided for slow TypedArrays
+        https://bugs.webkit.org/show_bug.cgi?id=150217
+        rdar://problem/23128791
+
+        Reviewed by Michael Saboff.
+
+        Change how we access array buffer views so that we don't fire the barrier slow path, and
+        don't mask off the spaceBits, if the view is not FastTypedArray. That's because in that case
+        m_vector could be misaligned and so have meaningful non-space data in the spaceBits. Also in
+        that case, m_vector does not point into copied space.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadVectorWithBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::copyBarrier):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isInToSpace):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadButterflyReadOnly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::loadVectorReadOnly):
+        (JSC::FTL::DFG::LowerDFGToLLVM::removeSpaceBits):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isFastTypedArray):
+        (JSC::FTL::DFG::LowerDFGToLLVM::baseIndex):
+        * heap/CopyBarrier.h:
+        (JSC::CopyBarrierBase::getWithoutBarrier):
+        (JSC::CopyBarrierBase::getPredicated):
+        (JSC::CopyBarrierBase::get):
+        (JSC::CopyBarrierBase::copyState):
+        (JSC::CopyBarrier::get):
+        (JSC::CopyBarrier::getPredicated):
+        (JSC::CopyBarrier::set):
+        * heap/Heap.cpp:
+        (JSC::Heap::copyBarrier):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfNotType):
+        (JSC::AssemblyHelpers::branchIfFastTypedArray):
+        (JSC::AssemblyHelpers::branchIfNotFastTypedArray):
+        (JSC::AssemblyHelpers::loadTypedArrayVector):
+        (JSC::AssemblyHelpers::purifyNaN):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchStructure):
+        (JSC::AssemblyHelpers::branchIfToSpace):
+        (JSC::AssemblyHelpers::branchIfNotToSpace):
+        (JSC::AssemblyHelpers::removeSpaceBits):
+        (JSC::AssemblyHelpers::addressForByteOffset):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::vector):
+        (JSC::JSArrayBufferView::length):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffset):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::typedVector):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::copyBackingStore):
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * tests/stress/misaligned-int8-view-byte-offset.js: Added.
+        * tests/stress/misaligned-int8-view-read.js: Added.
+        * tests/stress/misaligned-int8-view-write.js: Added.
+
 2015-10-16  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed. Build fix for 191215.
