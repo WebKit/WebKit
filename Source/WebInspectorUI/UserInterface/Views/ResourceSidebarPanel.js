@@ -311,8 +311,8 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
     _scriptsCleared(event)
     {
-        const suppressOnDeselect = true;
-        const suppressSelectSibling = true;
+        var suppressOnDeselect = true;
+        var suppressSelectSibling = true;
         
         if (this._extensionScriptsFolderTreeElement) {
             if (this._extensionScriptsFolderTreeElement.parent)
