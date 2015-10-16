@@ -25,7 +25,7 @@
 
 WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends WebInspector.GeneralTreeElement
 {
-    constructor(timelineRecord, subtitleNameStyle, includeTimerIdentifierInMainTitle, sourceCodeLocation, representedObject)
+    constructor(timelineRecord, subtitleNameStyle, includeDetailsInMainTitle, sourceCodeLocation, representedObject)
     {
         console.assert(timelineRecord);
 
@@ -72,7 +72,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             break;
 
         case WebInspector.TimelineRecord.Type.Script:
-            title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeTimerIdentifierInMainTitle);
+            title = WebInspector.ScriptTimelineRecord.EventType.displayName(timelineRecord.eventType, timelineRecord.details, includeDetailsInMainTitle);
 
             switch (timelineRecord.eventType) {
             case WebInspector.ScriptTimelineRecord.EventType.ScriptEvaluated:
@@ -86,6 +86,9 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
                 break;
             case WebInspector.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.ConsoleProfileIconStyleClass;
+                break;
+            case WebInspector.ScriptTimelineRecord.EventType.GarbageCollected:
+                iconStyleClass = WebInspector.TimelineRecordTreeElement.GarbageCollectionIconStyleClass;
                 break;
             case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
             case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
@@ -168,3 +171,4 @@ WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass = "timer-record
 WebInspector.TimelineRecordTreeElement.AnimationRecordIconStyleClass = "animation-record";
 WebInspector.TimelineRecordTreeElement.ProbeRecordIconStyleClass = "probe-record";
 WebInspector.TimelineRecordTreeElement.ConsoleProfileIconStyleClass = "console-profile-record";
+WebInspector.TimelineRecordTreeElement.GarbageCollectionIconStyleClass = "garbage-collection-profile-record";

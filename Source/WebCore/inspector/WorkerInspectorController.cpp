@@ -36,6 +36,7 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWindowBase.h"
 #include "JSMainThreadExecState.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
@@ -51,6 +52,7 @@
 #include <inspector/InspectorFrontendRouter.h>
 #include <wtf/Stopwatch.h>
 
+using namespace JSC;
 using namespace Inspector;
 
 namespace WebCore {
@@ -193,6 +195,11 @@ void WorkerInspectorController::didCallInjectedScriptFunction(JSC::ExecState* sc
 Ref<Stopwatch> WorkerInspectorController::executionStopwatch()
 {
     return m_executionStopwatch.copyRef();
+}
+
+VM& WorkerInspectorController::vm()
+{
+    return JSDOMWindowBase::commonVM();
 }
 
 } // namespace WebCore

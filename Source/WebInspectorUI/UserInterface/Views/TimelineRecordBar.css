@@ -98,3 +98,8 @@
     background-color: hsl(269, 65%, 74%);
     border-color: hsl(273, 33%, 58%);
 }
+
+.timeline-record-bar.timeline-record-type-script.script-timeline-record-garbage-collected > .segment {
+    background-color: hsl(23, 69%, 73%);
+    border-color: hsl(11, 54%, 62%);    
+}

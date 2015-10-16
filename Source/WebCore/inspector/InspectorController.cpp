@@ -70,6 +70,7 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorFrontendRouter.h>
 #include <inspector/agents/InspectorAgent.h>
+#include <inspector/agents/InspectorHeapAgent.h>
 #include <profiler/LegacyProfiler.h>
 #include <runtime/JSLock.h>
 #include <wtf/Stopwatch.h>
@@ -170,6 +171,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_domDebuggerAgent = domDebuggerAgentPtr.get();
     m_agents.append(WTF::move(domDebuggerAgentPtr));
 
+    m_agents.append(std::make_unique<InspectorHeapAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, pageAgent));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
@@ -472,6 +474,11 @@ void InspectorController::frontendInitialized()
 Ref<Stopwatch> InspectorController::executionStopwatch()
 {
     return m_executionStopwatch.copyRef();
+}
+
+JSC::VM& InspectorController::vm()
+{
+    return JSDOMWindowBase::commonVM();
 }
 
 void InspectorController::didComposite(Frame& frame)

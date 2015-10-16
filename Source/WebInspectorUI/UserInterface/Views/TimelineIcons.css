@@ -103,6 +103,10 @@
     content: url(../Images/TimelineRecordConsoleProfile.svg);
 }
 
+.garbage-collection-profile-record .icon {
+    content: url(../Images/TimelineRecordGarbageCollection.svg);
+}
+
 .timer-record .icon {
     content: url(../Images/TimelineRecordTimer.svg);
 }

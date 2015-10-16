@@ -54,7 +54,6 @@
 #include <wtf/RAMSize.h>
 
 using namespace std;
-using namespace JSC;
 
 namespace JSC {
 
@@ -1158,6 +1157,9 @@ void Heap::willStartCollection(HeapOperation collectionType)
 
     if (m_edenActivityCallback)
         m_edenActivityCallback->willCollect();
+
+    for (auto* observer : m_observers)
+        observer->willGarbageCollect();
 }
 
 void Heap::flushOldStructureIDTables()
@@ -1306,6 +1308,7 @@ void Heap::didFinishCollection(double gcStartTime)
 {
     GCPHASE(FinishingCollection);
     double gcEndTime = WTF::monotonicallyIncreasingTime();
+    HeapOperation operation = m_operationInProgress;
     if (m_operationInProgress == FullCollection)
         m_lastFullGCLength = gcEndTime - gcStartTime;
     else
@@ -1329,6 +1332,9 @@ void Heap::didFinishCollection(double gcStartTime)
     RELEASE_ASSERT(m_operationInProgress == EdenCollection || m_operationInProgress == FullCollection);
     m_operationInProgress = NoOperation;
     JAVASCRIPTCORE_GC_END();
+
+    for (auto* observer : m_observers)
+        observer->didGarbageCollect(operation);
 }
 
 void Heap::resumeCompilerThreads()

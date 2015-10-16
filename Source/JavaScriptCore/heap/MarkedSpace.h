@@ -35,7 +35,6 @@ namespace JSC {
 
 class Heap;
 class HeapIterationScope;
-class LiveObjectIterator;
 class LLIntOffsetsExtractor;
 
 struct ClearMarks : MarkedBlock::VoidFunctor {

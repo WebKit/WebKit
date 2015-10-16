@@ -11773,6 +11773,9 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorDebuggerAgent.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorHeapAgent.h">
+      <Filter>ForwardingHeaders\inspector</Filter>
+    </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorRuntimeAgent.h">
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
@@ -12051,6 +12054,9 @@
       <Filter>ForwardingHeaders\heap</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\heap\Heap.h">
+      <Filter>ForwardingHeaders\heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ForwardingHeaders\heap\HeapObserver.h">
       <Filter>ForwardingHeaders\heap</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\heap\SlotVisitor.h">

@@ -20323,6 +20323,7 @@
     <ClInclude Include="..\ForwardingHeaders\bindings\ScriptValue.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\AllocationSpace.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Heap.h" />
+    <ClInclude Include="..\ForwardingHeaders\heap\HeapObserver.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\SlotVisitor.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\StrongInlines.h" />
     <ClInclude Include="..\ForwardingHeaders\heap\Weak.h" />
@@ -20352,6 +20353,7 @@
     <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorAgent.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorConsoleAgent.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorDebuggerAgent.h" />
+    <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorHeapAgent.h" />
     <ClInclude Include="..\ForwardingHeaders\inspector\agents\InspectorRuntimeAgent.h" />
     <ClInclude Include="..\ForwardingHeaders\masm\X86Assembler.h" />
     <ClInclude Include="..\ForwardingHeaders\parser\SourceCode.h" />
