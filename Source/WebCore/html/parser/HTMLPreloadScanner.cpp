@@ -44,6 +44,8 @@ using namespace HTMLNames;
 TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVector& data)
 {
     AtomicString tagName(data);
+    if (tagName == iframeTag)
+        return TagId::Iframe;
     if (tagName == imgTag)
         return TagId::Img;
     if (tagName == inputTag)
@@ -66,6 +68,8 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
 String TokenPreloadScanner::initiatorFor(TagId tagId)
 {
     switch (tagId) {
+    case TagId::Iframe:
+        return "iframe";
     case TagId::Img:
         return "img";
     case TagId::Input:
@@ -153,6 +157,10 @@ private:
     void processAttribute(const AtomicString& attributeName, const String& attributeValue)
     {
         switch (m_tagId) {
+        case TagId::Iframe:
+            if (match(attributeName, srcAttr))
+                setUrlToLoad(attributeValue);
+            break;
         case TagId::Img:
             if (match(attributeName, srcsetAttr) && m_srcSetAttribute.isNull()) {
                 m_srcSetAttribute = attributeValue;
@@ -222,12 +230,25 @@ private:
 
     CachedResource::Type resourceType() const
     {
-        if (m_tagId == TagId::Script)
+        switch (m_tagId) {
+        case TagId::Iframe:
+            return CachedResource::MainResource;
+        case TagId::Script:
             return CachedResource::Script;
-        if (m_tagId == TagId::Img || (m_tagId == TagId::Input && m_inputIsImage))
+        case TagId::Img:
+        case TagId::Input:
+            ASSERT(m_tagId != TagId::Input || m_inputIsImage);
             return CachedResource::ImageResource;
-        if (m_tagId == TagId::Link && m_linkIsStyleSheet)
+        case TagId::Link:
+            ASSERT(m_linkIsStyleSheet);
             return CachedResource::CSSStyleSheet;
+        case TagId::Meta:
+        case TagId::Unknown:
+        case TagId::Style:
+        case TagId::Base:
+        case TagId::Template:
+            break;
+        }
         ASSERT_NOT_REACHED();
         return CachedResource::RawResource;
     }
@@ -237,7 +258,7 @@ private:
         if (m_urlToLoad.isEmpty())
             return false;
 
-        if (protocolIs(m_urlToLoad, "data"))
+        if (protocolIs(m_urlToLoad, "data") || protocolIs(m_urlToLoad, "about"))
             return false;
 
         if (m_tagId == TagId::Link && !m_linkIsStyleSheet)
