@@ -112,7 +112,6 @@ private:
     _allowsInlineMediaPlayback = WKGetDeviceClass() == WKDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
-    _canAssistOnProgrammaticFocus = NO;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -364,16 +363,6 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setMediaDataLoadsAutomatically:(BOOL)mediaDataLoadsAutomatically
 {
     _mediaDataLoadsAutomatically = mediaDataLoadsAutomatically;
-}
-
-- (BOOL)_canAssistOnProgrammaticFocus
-{
-    return _canAssistOnProgrammaticFocus;
-}
-
-- (void)_setCanAssistOnProgrammaticFocus:(BOOL)canAssistOnProgrammaticFocus
-{
-    _canAssistOnProgrammaticFocus = canAssistOnProgrammaticFocus;
 }
 #endif
 

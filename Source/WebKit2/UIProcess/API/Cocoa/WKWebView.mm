@@ -74,6 +74,7 @@
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
+#import "_WKInputDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
@@ -159,7 +160,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
-    WebKit::WeakObjCPtr<id <_WKFormDelegate>> _formDelegate;
+    WebKit::WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
 
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
@@ -212,8 +213,6 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     BOOL _pageIsPrintingToPDF;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
     Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
-
-    BOOL _canAssistOnProgrammaticFocus;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -366,8 +365,6 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     _page->contentSizeCategoryDidChange([self _contentSizeCategory]);
 
     [[_configuration _contentProviderRegistry] addPage:*_page];
-
-    [self setCanAssistOnProgrammaticFocus:[_configuration canAssistOnProgrammaticFocus]];
 #endif
 
 #if PLATFORM(MAC)
@@ -722,16 +719,6 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 - (UIScrollView *)scrollView
 {
     return _scrollView.get();
-}
-
-- (BOOL)canAssistOnProgrammaticFocus
-{
-    return _canAssistOnProgrammaticFocus;
-}
-
-- (void)setCanAssistOnProgrammaticFocus:(BOOL)canAssistOnProgrammaticFocus
-{
-    _canAssistOnProgrammaticFocus = canAssistOnProgrammaticFocus;
 }
 
 - (WKBrowsingContextController *)browsingContextController
@@ -2476,14 +2463,19 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->recordNavigationSnapshot(item._item);
 }
 
-- (id <_WKFormDelegate>)_formDelegate
+- (id <_WKInputDelegate>)_inputDelegate
 {
-    return _formDelegate.getAutoreleased();
+    return _inputDelegate.getAutoreleased();
 }
 
-- (void)_setFormDelegate:(id <_WKFormDelegate>)formDelegate
+- (id <_WKFormDelegate>)_formDelegate
 {
-    _formDelegate = formDelegate;
+    return (id <_WKFormDelegate>)[self _inputDelegate];
+}
+
+- (void)_setInputDelegate:(id <_WKInputDelegate>)inputDelegate
+{
+    _inputDelegate = inputDelegate;
 
     class FormClient : public API::FormClient {
     public:
@@ -2503,9 +2495,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
                 return;
             }
 
-            auto formDelegate = m_webView->_formDelegate.get();
+            auto inputDelegate = m_webView->_inputDelegate.get();
 
-            if (![formDelegate respondsToSelector:@selector(_webView:willSubmitFormValues:userObject:submissionHandler:)]) {
+            if (![inputDelegate respondsToSelector:@selector(_webView:willSubmitFormValues:userObject:submissionHandler:)]) {
                 listener->continueSubmission();
                 return;
             }
@@ -2527,8 +2519,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
             }
 
             RefPtr<WebKit::WebFormSubmissionListenerProxy> localListener = WTF::move(listener);
-            RefPtr<WebKit::CompletionHandlerCallChecker> checker = WebKit::CompletionHandlerCallChecker::create(formDelegate.get(), @selector(_webView:willSubmitFormValues:userObject:submissionHandler:));
-            [formDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:[localListener, checker] {
+            RefPtr<WebKit::CompletionHandlerCallChecker> checker = WebKit::CompletionHandlerCallChecker::create(inputDelegate.get(), @selector(_webView:willSubmitFormValues:userObject:submissionHandler:));
+            [inputDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:[localListener, checker] {
                 checker->didCallCompletionHandler();
                 localListener->continueSubmission();
             }];
@@ -2538,10 +2530,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         WKWebView *m_webView;
     };
 
-    if (formDelegate)
+    if (inputDelegate)
         _page->setFormClient(std::make_unique<FormClient>(self));
     else
         _page->setFormClient(nullptr);
+}
+
+- (void)_setFormDelegate:(id <_WKFormDelegate>)formDelegate
+{
+    [self _setInputDelegate:(id <_WKInputDelegate>)formDelegate];
 }
 
 - (BOOL)_isDisplayingStandaloneImageDocument

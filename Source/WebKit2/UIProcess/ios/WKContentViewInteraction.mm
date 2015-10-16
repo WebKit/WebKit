@@ -53,8 +53,9 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
-#import "_WKFormDelegate.h"
+#import "_WKFocusedElementInfo.h"
 #import "_WKFormInputSession.h"
+#import "_WKInputDelegate.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -275,6 +276,98 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     _contentView = nil;
 }
 
+@end
+
+@interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
+- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;
+@end
+
+@implementation WKFocusedElementInfo {
+    WKInputType _type;
+    RetainPtr<NSString> _value;
+    BOOL _isUserInitiated;
+}
+
+- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated
+{
+    if (!(self = [super init]))
+        return nil;
+
+    switch (information.elementType) {
+    case WebKit::InputType::ContentEditable:
+        _type = WKInputTypeContentEditable;
+        break;
+    case WebKit::InputType::Text:
+        _type = WKInputTypeText;
+        break;
+    case WebKit::InputType::Password:
+        _type = WKInputTypePassword;
+        break;
+    case WebKit::InputType::TextArea:
+        _type = WKInputTypeTextArea;
+        break;
+    case WebKit::InputType::Search:
+        _type = WKInputTypeSearch;
+        break;
+    case WebKit::InputType::Email:
+        _type = WKInputTypeEmail;
+        break;
+    case WebKit::InputType::URL:
+        _type = WKInputTypeURL;
+        break;
+    case WebKit::InputType::Phone:
+        _type = WKInputTypePhone;
+        break;
+    case WebKit::InputType::Number:
+        _type = WKInputTypeNumber;
+        break;
+    case WebKit::InputType::NumberPad:
+        _type = WKInputTypeNumberPad;
+        break;
+    case WebKit::InputType::Date:
+        _type = WKInputTypeDate;
+        break;
+    case WebKit::InputType::DateTime:
+        _type = WKInputTypeDateTime;
+        break;
+    case WebKit::InputType::DateTimeLocal:
+        _type = WKInputTypeDateTimeLocal;
+        break;
+    case WebKit::InputType::Month:
+        _type = WKInputTypeMonth;
+        break;
+    case WebKit::InputType::Week:
+        _type = WKInputTypeWeek;
+        break;
+    case WebKit::InputType::Time:
+        _type = WKInputTypeTime;
+        break;
+    case WebKit::InputType::Select:
+        _type = WKInputTypeSelect;
+        break;
+    case WebKit::InputType::None:
+        _type = WKInputTypeNone;
+        break;
+    }
+    _value = information.value;
+    _isUserInitiated = isUserInitiated;
+    return self;
+}
+
+- (WKInputType)type
+{
+    return _type;
+}
+
+- (NSString *)value
+{
+    return _value.get();
+}
+
+- (BOOL)isUserInitiated
+{
+    return _isUserInitiated;
+}
 @end
 
 @interface WKContentView (WKInteractionPrivate)
@@ -2258,9 +2351,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryAutoFill
 {
-    id <_WKFormDelegate> formDelegate = [_webView _formDelegate];
-    if ([formDelegate respondsToSelector:@selector(_webView:accessoryViewCustomButtonTappedInFormInputSession:)])
-        [formDelegate _webView:_webView accessoryViewCustomButtonTappedInFormInputSession:_formInputSession.get()];
+    id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
+    if ([inputDelegate respondsToSelector:@selector(_webView:accessoryViewCustomButtonTappedInFormInputSession:)])
+        [inputDelegate _webView:_webView accessoryViewCustomButtonTappedInFormInputSession:_formInputSession.get()];
 }
 
 - (void)accessoryClear
@@ -3028,9 +3121,16 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject
 {
-    // FIXME: This is a temporary workaround for <rdar://problem/22126518>. The real fix will involve refactoring
-    // the way we assist programmatically focused nodes.
-    if (!userIsInteracting && !_textSelectionAssistant && !_webView.canAssistOnProgrammaticFocus)
+    id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
+    BOOL shouldShowKeyboard;
+    if ([inputDelegate respondsToSelector:@selector(_webView:focusShouldStartInputSession:)]) {
+        RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting]);
+        shouldShowKeyboard = [inputDelegate _webView:_webView focusShouldStartInputSession:focusedElementInfo.get()];
+    } else {
+        // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
+        shouldShowKeyboard = userIsInteracting || _textSelectionAssistant;
+    }
+    if (!shouldShowKeyboard)
         return;
 
     if (blurPreviousNode)
@@ -3073,10 +3173,9 @@ static bool isAssistableInputType(InputType type)
     // _inputPeripheral has been initialized in inputView called by reloadInputViews.
     [_inputPeripheral beginEditing];
 
-    id <_WKFormDelegate> formDelegate = [_webView _formDelegate];
-    if ([formDelegate respondsToSelector:@selector(_webView:didStartInputSession:)]) {
+    if ([inputDelegate respondsToSelector:@selector(_webView:didStartInputSession:)]) {
         _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self userObject:userObject]);
-        [formDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
+        [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     }
 }
 

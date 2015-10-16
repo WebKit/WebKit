@@ -27,24 +27,13 @@
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+#import <WebKit/_WKInputDelegate.h>
 
-@class WKWebView;
-@protocol _WKFormInputSession;
-
-@protocol _WKFormDelegate <NSObject>
-
-@optional
-
-- (void)_webView:(WKWebView *)webView didStartInputSession:(id <_WKFormInputSession>)inputSession;
-- (void)_webView:(WKWebView *)webView willSubmitFormValues:(NSDictionary *)values userObject:(NSObject <NSSecureCoding> *)userObject submissionHandler:(void (^)(void))submissionHandler;
-
-#if TARGET_OS_IPHONE
-- (void)_webView:(WKWebView *)webView accessoryViewCustomButtonTappedInFormInputSession:(id <_WKFormInputSession>)inputSession;
-- (BOOL)_webView:(WKWebView *)webView hasSuggestionsForCurrentStringInInputSession:(id <_WKFormInputSession>)inputSession;
-- (NSArray *)_webView:(WKWebView *)webView suggestionsForString:(NSString *)string inInputSession:(id <_WKFormInputSession>)inputSession;
-#endif
-
+/**
+ * We are transitioning _WKFormDelegate to _WKInputDelegate. This header is here temporarily for source compatibility and
+ * should be removed when we are ready to make the switch.
+ */
+@protocol _WKFormDelegate <_WKInputDelegate>
 @end
 
 #endif // WK_API_ENABLED

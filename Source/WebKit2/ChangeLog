@@ -1,3 +1,50 @@
+2015-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a WKWebView input delegate SPI
+        https://bugs.webkit.org/show_bug.cgi?id=149646
+
+        Reviewed by Dan Bernstein.
+
+        Renames the existing _WKFormDelegate to _WKInputDelegate and adds a new delegate SPI method
+        -[_WKInputDelegate _webView:focusShouldStartInputSession:] that allows clients to allow or
+        disallow showing up the keyboard. To make this decision, clients are given a
+        _WKFocusedElementInfo, which contains information about the focused element prior to the
+        keyboard showing up so the client will be able to override default assistance behavior.
+
+        While the information contained in a _WKFocusedElementInfo currently seems like overkill for
+        _webView:focusShouldStartInputSession, our intentions are to give WebKit clients control over more
+        details of how node assistance works, such as being able to use a custom editor for certain
+        types of nodes.
+
+        * Shared/API/Cocoa/WebKitPrivate.h: Added new header _WKFocusedElementInfo.h.
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _inputDelegate]):
+        (-[WKWebView _formDelegate]):
+        (-[WKWebView _setInputDelegate:]):
+        (-[WKWebView _setFormDelegate:]):
+        (-[WKWebView initWithFrame:configuration:]): Deleted canAssistOnProgrammaticFocus flag.
+        (-[WKWebView canAssistOnProgrammaticFocus]): Ditto.
+        (-[WKWebView setCanAssistOnProgrammaticFocus:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Deleted.
+        (-[WKWebViewConfiguration _canAssistOnProgrammaticFocus]): Deleted canAssistOnProgrammaticFocus flag.
+        (-[WKWebViewConfiguration _setCanAssistOnProgrammaticFocus:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKFocusedElementInfo.h: Added.
+        * UIProcess/API/Cocoa/_WKFormDelegate.h:
+        * UIProcess/API/Cocoa/_WKInputDelegate.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/_WKFormDelegate.h.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFocusedElementInfo initWithAssistedNodeInformation:isInteracting:]):
+        (-[WKFocusedElementInfo type]):
+        (-[WKFocusedElementInfo value]):
+        (-[WKFocusedElementInfo isUserInitiated]):
+        (-[WKContentView accessoryAutoFill]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]): If the input delegate responds to
+            shouldStartInputSession, consult it to see if we should bring up the keyboard; otherwise, use our default behavior.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Make TextStream the canonical way to log classes in WebCore
