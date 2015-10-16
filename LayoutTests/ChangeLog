@@ -1,3 +1,9 @@
+2015-10-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Land accurate Yosemite/Mavericks results for http/tests/multipart/multipart-replace-non-html-content.html
+
+        * platform/mac-yosemite/http/tests/multipart/multipart-replace-non-html-content-expected.txt:
+
 2015-10-15  Alexey Proskuryakov  <ap@apple.com>
 
         Update test results on the branch.
