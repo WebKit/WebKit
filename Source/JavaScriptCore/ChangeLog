@@ -1,3 +1,38 @@
+2015-10-15  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r190289): Repro crash clicking back button on netflix.com
+        https://bugs.webkit.org/show_bug.cgi?id=150220
+
+        Reviewed by Geoffrey Garen.
+
+        Since constructors check for a valid new "this" object and return it, we can't make
+        a tail call to another function from within a constructor.
+
+        Re-enabled the tail calls and the related tail call tests.
+
+        Did some other miscellaneous clean up in the tail call code as part of the debugging.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::callPreflight):
+        * interpreter/Interpreter.h:
+        (JSC::calleeFrameForVarargs):
+        * runtime/Options.h:
+        * tests/es6.yaml:
+        * tests/stress/dfg-tail-calls.js:
+        (nonInlinedTailCall.callee):
+        * tests/stress/mutual-tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-in-inline-cache.js:
+        (tail):
+        * tests/stress/tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-recognize.js:
+        (callerMustBeRun):
+        * tests/stress/tail-call-varargs-no-stack-overflow.js:
+        (shouldThrow):
+
 2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed. Attempted EFL build fix 2 after r191159.

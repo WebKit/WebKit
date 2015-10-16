@@ -278,7 +278,6 @@ namespace JSC {
 
     inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis)
     {
-#if 1
         // We want the new frame to be allocated on a stack aligned offset with a stack
         // aligned size. Align the size here.
         argumentCountIncludingThis = WTF::roundUpToMultipleOf(
@@ -286,7 +285,6 @@ namespace JSC {
             argumentCountIncludingThis + JSStack::CallFrameHeaderSize) - JSStack::CallFrameHeaderSize;
 
         // Align the frame offset here.
-#endif
         unsigned paddedCalleeFrameOffset = WTF::roundUpToMultipleOf(
             stackAlignmentRegisters(),
             numUsedStackSlots + argumentCountIncludingThis + JSStack::CallFrameHeaderSize);

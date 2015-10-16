@@ -8616,7 +8616,7 @@ private:
         if (m_node->op() == TailCallInlinedCaller
             || m_node->op() == TailCallVarargsInlinedCaller
             || m_node->op() == TailCallForwardVarargsInlinedCaller)
-            codeOrigin =*codeOrigin.inlineCallFrame->getCallerSkippingDeadFrames();
+            codeOrigin = *codeOrigin.inlineCallFrame->getCallerSkippingDeadFrames();
 
         callPreflight(codeOrigin);
     }
