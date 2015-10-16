@@ -22,6 +22,7 @@
 #include "JSTestJSBuiltinConstructor.h"
 
 #include "JSDOMBinding.h"
+#include "JSDOMConstructor.h"
 #include "TestJSBuiltinConstructorBuiltins.h"
 #include <wtf/GetPtr.h>
 
@@ -58,59 +59,21 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-class JSTestJSBuiltinConstructorConstructor : public DOMConstructorJSBuiltinObject {
-private:
-    JSTestJSBuiltinConstructorConstructor(JSC::Structure*, JSDOMGlobalObject&);
-    void finishCreation(JSC::VM&, JSDOMGlobalObject&);
+typedef JSBuiltinConstructor<JSTestJSBuiltinConstructor> JSTestJSBuiltinConstructorConstructor;
 
-public:
-    typedef DOMConstructorJSBuiltinObject Base;
-    static JSTestJSBuiltinConstructorConstructor* create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-    {
-        JSTestJSBuiltinConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructorConstructor>(vm.heap)) JSTestJSBuiltinConstructorConstructor(structure, globalObject);
-        ptr->finishCreation(vm, globalObject);
-        return ptr;
-    }
-
-    DECLARE_INFO;
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
-    }
-protected:
-    static JSC::EncodedJSValue JSC_HOST_CALL construct(JSC::ExecState*);
-    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
-};
-
-JSC::EncodedJSValue JSC_HOST_CALL JSTestJSBuiltinConstructorConstructor::construct(JSC::ExecState* state)
+template<> void JSTestJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    auto* castedThis = jsCast<JSTestJSBuiltinConstructorConstructor*>(state->callee());
-    return createJSBuiltin<JSTestJSBuiltinConstructor>(*state, *castedThis->initializeFunction(), *castedThis->globalObject());
-}
-
-const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "TestJSBuiltinConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorConstructor) };
-
-JSTestJSBuiltinConstructorConstructor::JSTestJSBuiltinConstructorConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
-    : Base(structure, globalObject)
-{
-}
-
-void JSTestJSBuiltinConstructorConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
-{
-    Base::finishCreation(vm);
-    ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("TestJSBuiltinConstructor"))), ReadOnly | DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
-    setInitializeFunction(vm, *JSC::JSFunction::createBuiltinFunction(vm, testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm), &globalObject));
 }
 
-ConstructType JSTestJSBuiltinConstructorConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
+template<> FunctionExecutable* JSTestJSBuiltinConstructorConstructor::initializeExecutable(VM& vm)
 {
-    UNUSED_PARAM(cell);
-    constructData.native.function = construct;
-    return ConstructTypeHost;
+    return testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm);
 }
+
+template<> const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "TestJSBuiltinConstructorConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorConstructor) };
 
 /* Hash table for prototype */
 

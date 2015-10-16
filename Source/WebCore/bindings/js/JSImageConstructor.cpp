@@ -20,8 +20,8 @@
 #include "config.h"
 #include "JSImageConstructor.h"
 
-#include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "JSDOMConstructor.h"
 #include "JSHTMLImageElement.h"
 #include "JSNode.h"
 #include <runtime/Error.h>
@@ -30,54 +30,48 @@ using namespace JSC;
 
 namespace WebCore {
 
+typedef JSDOMNamedConstructor<JSHTMLImageElement> JSImageConstructor;
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSImageConstructor);
 
-const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
-
-JSImageConstructor::JSImageConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
-    : DOMConstructorWithDocument(structure, globalObject)
+template<> void JSImageConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-}
-
-void JSImageConstructor::finishCreation(VM& vm, JSDOMGlobalObject& globalObject)
-{
-    Base::finishCreation(globalObject);
-    ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->prototype, JSHTMLImageElement::getPrototype(vm, &globalObject), None);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructImage(ExecState* exec)
+template<> EncodedJSValue JSImageConstructor::construct(ExecState* state)
 {
-    JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(exec->callee());
+    JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(state->callee());
     Document* document = jsConstructor->document();
     if (!document)
-        return throwVMError(exec, createReferenceError(exec, "Image constructor associated document is unavailable"));
+        return throwVMError(state, createReferenceError(state, "Image constructor associated document is unavailable"));
 
     // Calling toJS on the document causes the JS document wrapper to be
     // added to the window object. This is done to ensure that JSDocument::visit
     // will be called, which will cause the image element to be marked if necessary.
-    toJS(exec, jsConstructor->globalObject(), document);
+    toJS(state, jsConstructor->globalObject(), document);
     int width;
     int height;
     int* optionalWidth = 0;
     int* optionalHeight = 0;
-    if (exec->argumentCount() > 0) {
-        width = exec->argument(0).toInt32(exec);
+    if (state->argumentCount() > 0) {
+        width = state->argument(0).toInt32(state);
         optionalWidth = &width;
     }
-    if (exec->argumentCount() > 1) {
-        height = exec->argument(1).toInt32(exec);
+    if (state->argumentCount() > 1) {
+        height = state->argument(1).toInt32(state);
         optionalHeight = &height;
     }
 
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(),
+    return JSValue::encode(asObject(toJS(state, jsConstructor->globalObject(),
         HTMLImageElement::createForJSConstructor(*document, optionalWidth, optionalHeight))));
 }
 
-ConstructType JSImageConstructor::getConstructData(JSCell*, ConstructData& constructData)
+template<> const ClassInfo JSImageConstructor::s_info = { "ImageConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSImageConstructor) };
+
+JSC::JSValue createImageConstructor(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    constructData.native.function = constructImage;
-    return ConstructTypeHost;
+    return getDOMConstructor<JSImageConstructor>(vm, globalObject);
 }
 
 } // namespace WebCore

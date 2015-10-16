@@ -501,7 +501,7 @@ JSValue JSDOMWindow::event(ExecState& state) const
 
 JSValue JSDOMWindow::image(ExecState& state) const
 {
-    return getDOMConstructor<JSImageConstructor>(state.vm(), *this);
+    return createImageConstructor(state.vm(), *this);
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
