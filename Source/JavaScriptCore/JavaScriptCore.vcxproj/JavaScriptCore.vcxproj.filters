@@ -279,9 +279,6 @@
     <ClCompile Include="..\heap\GCLogging.cpp">
       <Filter>heap</Filter>
     </ClCompile>
-    <ClCompile Include="..\heap\GCThread.cpp">
-      <Filter>heap</Filter>
-    </ClCompile>
     <ClCompile Include="..\heap\HandleSet.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -1078,6 +1075,9 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSTypedArrays.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\JSTypedArrayViewConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\JSTypedArrayViewPrototype.cpp">
@@ -2273,9 +2273,6 @@
     <ClInclude Include="..\heap\GCAssertions.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\GCThread.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\heap\Handle.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -3444,6 +3441,9 @@
     <ClInclude Include="..\runtime\JSTypedArrays.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\JSTypedArrayViewConstructor.h">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClInclude Include="..\runtime\JSTypedArrayViewPrototype.h">
       <Filter>runtime</Filter>
     </ClCompile>

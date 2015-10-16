@@ -568,7 +568,6 @@
     <ClCompile Include="..\heap\FullGCActivityCallback.cpp" />
     <ClCompile Include="..\heap\GCActivityCallback.cpp" />
     <ClCompile Include="..\heap\GCLogging.cpp" />
-    <ClCompile Include="..\heap\GCThread.cpp" />
     <ClCompile Include="..\heap\HandleSet.cpp" />
     <ClCompile Include="..\heap\HandleStack.cpp" />
     <ClCompile Include="..\heap\Heap.cpp" />
@@ -1351,7 +1350,6 @@
     <ClInclude Include="..\heap\GCSegmentedArray.h" />
     <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />
     <ClInclude Include="..\heap\GCAssertions.h" />
-    <ClInclude Include="..\heap\GCThread.h" />
     <ClInclude Include="..\heap\Handle.h" />
     <ClInclude Include="..\heap\HandleBlock.h" />
     <ClInclude Include="..\heap\HandleBlockInlines.h" />
