@@ -247,7 +247,6 @@ messages -> WebPageProxy {
     HidePopupMenu()
 
 #if ENABLE(CONTEXT_MENUS)
-    # ContextMenu messages
     ShowContextMenu(WebKit::ContextMenuContextData contextMenuContextData, WebKit::UserData userData)
 #endif
 
@@ -406,10 +405,6 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     ShowTelephoneNumberMenu(String telephoneNumber, WebCore::IntPoint point)
 #endif
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
-    ShowSelectionServiceMenu(IPC::DataReference selectionAsRTFD, Vector<String> telephoneNumbers, bool isEditable, WebCore::IntPoint point)
 #endif
 
 #if USE(QUICK_LOOK)

@@ -1262,12 +1262,8 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    enum class ContextMenuClientEligibility {
-        EligibleForClient,
-        NotEligibleForClient
-    };
     void showContextMenu(const ContextMenuContextData&, const UserData&);
-    void internalShowContextMenu(const ContextMenuContextData&, ContextMenuClientEligibility, const UserData&);
+    void internalShowContextMenu(const ContextMenuContextData&, const UserData&);
     WebCore::ContextMenuItem platformInitializeShareMenuItem(const ContextMenuContextData&);
 #endif
 
@@ -1275,10 +1271,6 @@ private:
 #if PLATFORM(MAC)
     void showTelephoneNumberMenu(const String& telephoneNumber, const WebCore::IntPoint&);
 #endif
-#endif
-
-#if ENABLE(SERVICE_CONTROLS)
-    void showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, const Vector<String>& telephoneNumbers, bool isEditable, const WebCore::IntPoint&);
 #endif
 
     // Search popup results

@@ -4187,13 +4187,13 @@ void WebPageProxy::showContextMenu(const ContextMenuContextData& contextMenuCont
     // Showing a context menu runs a nested runloop, which can handle messages that cause |this| to get closed.
     Ref<WebPageProxy> protect(*this);
 
-    internalShowContextMenu(contextMenuContextData, ContextMenuClientEligibility::EligibleForClient, userData);
+    internalShowContextMenu(contextMenuContextData, userData);
     
     // No matter the result of internalShowContextMenu, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
     m_process->send(Messages::WebPage::ContextMenuHidden(), m_pageID);
 }
 
-void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& contextMenuContextData, ContextMenuClientEligibility clientEligibility, const UserData& userData)
+void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& contextMenuContextData, const UserData& userData)
 {
     m_activeContextMenuContextData = contextMenuContextData;
 
@@ -4210,9 +4210,9 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
     m_process->responsivenessTimer()->stop();
 
     // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
-    bool askClientToChangeMenu = clientEligibility == ContextMenuClientEligibility::EligibleForClient;
+    bool askClientToChangeMenu = true;
 #if ENABLE(SERVICE_CONTROLS)
-    if (contextMenuContextData.controlledImage())
+    if (contextMenuContextData.isServicesMenu() || contextMenuContextData.controlledImage())
         askClientToChangeMenu = false;
 #endif
 

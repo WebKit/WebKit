@@ -1,3 +1,32 @@
+2015-10-15  Anders Carlsson  <andersca@apple.com>
+
+        Use the ShowContextMenu message for service menus as well
+        https://bugs.webkit.org/show_bug.cgi?id=150206
+
+        Reviewed by Tim Horton.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::type):
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::isServicesMenu):
+        (WebKit::ContextMenuContextData::needsServicesMenu): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::populate):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showSelectionServiceMenu): Deleted.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::handleSelectionServiceClick):
+
 2015-10-16  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [GTK] Try to fix the build after r191137

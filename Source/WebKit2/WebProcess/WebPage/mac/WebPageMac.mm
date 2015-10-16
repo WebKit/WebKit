@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "AttributedString.h"
+#import "ContextMenuContextData.h"
 #import "DataReference.h"
 #import "EditingRange.h"
 #import "EditorState.h"
@@ -1056,11 +1057,12 @@ void WebPage::handleSelectionServiceClick(FrameSelection& selection, const Vecto
     if (!attributedSelection)
         return;
 
-    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, [attributedSelection length]) documentAttributes:@{ }];
-    IPC::DataReference data = IPC::DataReference(reinterpret_cast<const uint8_t*>([selectionData bytes]), [selectionData length]);
-    bool isEditable = selection.selection().isContentEditable();
+    NSData *selectionData = [attributedSelection RTFDFromRange:NSMakeRange(0, attributedSelection.length) documentAttributes:@{ }];
 
-    send(Messages::WebPageProxy::ShowSelectionServiceMenu(data, phoneNumbers, isEditable, point));
+    Vector<uint8_t> selectionDataVector;
+    selectionDataVector.append(reinterpret_cast<const uint8_t*>(selectionData.bytes), selectionData.length);
+
+    send(Messages::WebPageProxy::ShowContextMenu(ContextMenuContextData(point, selectionDataVector, phoneNumbers, selection.selection().isContentEditable()), UserData()));
 }
 #endif
 

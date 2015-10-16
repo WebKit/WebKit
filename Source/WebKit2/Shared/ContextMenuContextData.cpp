@@ -38,14 +38,16 @@ using namespace WebCore;
 namespace WebKit {
 
 ContextMenuContextData::ContextMenuContextData()
+    : m_type(Type::ContextMenu)
 #if ENABLE(SERVICE_CONTROLS)
-    : m_selectionIsEditable(false)
+    , m_selectionIsEditable(false)
 #endif
 {
 }
 
 ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
-    : m_menuLocation(menuLocation)
+    : m_type(Type::ContextMenu)
+    , m_menuLocation(menuLocation)
     , m_menuItems(menuItems)
     , m_webHitTestResultData(context.hitTestResult(), true)
     , m_selectedText(context.selectedText())
@@ -66,6 +68,7 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 
 void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder.encodeEnum(m_type);
     encoder << m_menuLocation;
     encoder << m_menuItems;
     encoder << m_webHitTestResultData;
@@ -76,11 +79,17 @@ void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
     if (m_controlledImage)
         m_controlledImage->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
+    encoder << m_controlledSelectionData;
+    encoder << m_selectedTelephoneNumbers;
+    encoder << m_selectionIsEditable;
 #endif
 }
 
 bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuContextData& result)
 {
+    if (!decoder.decodeEnum(result.m_type))
+        return false;
+
     if (!decoder.decode(result.m_menuLocation))
         return false;
 
@@ -100,6 +109,13 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
 
     if (!handle.isNull())
         result.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
+
+    if (!decoder.decode(result.m_controlledSelectionData))
+        return false;
+    if (!decoder.decode(result.m_selectedTelephoneNumbers))
+        return false;
+    if (!decoder.decode(result.m_selectionIsEditable))
+        return false;
 #endif
 
     return true;

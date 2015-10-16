@@ -152,7 +152,6 @@ namespace WebKit {
 
 WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
     : WebContextMenuProxy(context, userData)
-
     , m_webView(webView)
     , m_page(page)
 {
@@ -327,7 +326,7 @@ void WebContextMenuProxyMac::clearServicesMenu()
 void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& items)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (m_context.needsServicesMenu()) {
+    if (m_context.isServicesMenu()) {
         setupServicesMenu(m_context);
         return;
     }
@@ -349,7 +348,7 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
 void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items)
 {
 #if ENABLE(SERVICE_CONTROLS)
-    if (items.isEmpty() && !m_context.needsServicesMenu())
+    if (items.isEmpty() && !m_context.isServicesMenu())
         return;
 #else
     if (items.isEmpty())
@@ -364,7 +363,7 @@ void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuI
     NSRect menuRect = NSMakeRect(menuLocation.x, menuLocation.y, 0, 0);
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (m_context.needsServicesMenu())
+    if (m_context.isServicesMenu())
         [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
 
     if (!m_servicesMenu)
@@ -376,7 +375,7 @@ void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuI
     // FIXME: That API is better than WKPopupContextMenu. In the future all menus should use either it
     // or the [NSMenu popUpContextMenu:withEvent:forView:] API, depending on the menu type.
     // Then we could get rid of NSPopUpButtonCell, custom metrics, and WKPopupContextMenu.
-    if (m_context.needsServicesMenu()) {
+    if (m_context.isServicesMenu()) {
         [menu popUpMenuPositioningItem:nil atLocation:menuLocation inView:m_webView];
         hideContextMenu();
         return;

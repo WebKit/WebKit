@@ -684,16 +684,6 @@ void WebPageProxy::showTelephoneNumberMenu(const String& telephoneNumber, const 
 }
 #endif
 
-#if ENABLE(SERVICE_CONTROLS)
-void WebPageProxy::showSelectionServiceMenu(const IPC::DataReference& selectionAsRTFD, const Vector<String>& telephoneNumbers, bool isEditable, const IntPoint& point)
-{
-    Vector<WebContextMenuItemData> items;
-    ContextMenuContextData contextData(point, items, selectionAsRTFD.vector(), telephoneNumbers, isEditable);
-
-    internalShowContextMenu(contextData, ContextMenuClientEligibility::NotEligibleForClient, UserData());
-}
-#endif
-
 CGRect WebPageProxy::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer) const
 {
     return m_pageClient.boundsOfLayerInLayerBackedWindowCoordinates(layer);
