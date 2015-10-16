@@ -113,7 +113,6 @@
 #include "NodeIterator.cpp"
 #include "NodeOrString.cpp"
 #include "NodeRareData.cpp"
-#include "NodeRenderingTraversal.cpp"
 #include "NodeTraversal.cpp"
 #include "OverflowEvent.cpp"
 #include "PageTransitionEvent.cpp"

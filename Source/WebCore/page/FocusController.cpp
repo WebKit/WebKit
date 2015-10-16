@@ -50,7 +50,6 @@
 #include "HitTestResult.h"
 #include "KeyboardEvent.h"
 #include "MainFrame.h"
-#include "NodeRenderingTraversal.h"
 #include "Page.h"
 #include "Range.h"
 #include "RenderWidget.h"
@@ -67,6 +66,57 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+// FIXME: Focus navigation should work with shadow trees that have slots.
+static Node* firstChildInScope(const Node* node)
+{
+    ASSERT(node);
+    if (node->shadowRoot())
+        return nullptr;
+    return node->firstChild();
+}
+
+static Node* lastChildInScope(const Node* node)
+{
+    ASSERT(node);
+    if (node->shadowRoot())
+        return nullptr;
+    return node->lastChild();
+}
+
+static Node* parentInScope(const Node* node)
+{
+    if (node->isShadowRoot())
+        return nullptr;
+
+    ContainerNode* parent = node->parentNode();
+    if (parent && parent->shadowRoot())
+        return nullptr;
+
+    return parent;
+}
+
+static Node* nextInScope(const Node* node)
+{
+    if (Node* next = firstChildInScope(node))
+        return next;
+    if (Node* next = node->nextSibling())
+        return next;
+    const Node* current = node;
+    while (current && !current->nextSibling())
+        current = parentInScope(current);
+    return current ? current->nextSibling() : nullptr;
+}
+
+static Node* previousInScope(const Node* node)
+{
+    if (Node* current = node->previousSibling()) {
+        while (Node* child = lastChildInScope(current))
+            current = child;
+        return current;
+    }
+    return parentInScope(node);
+}
 
 FocusNavigationScope::FocusNavigationScope(TreeScope* treeScope)
     : m_rootTreeScope(treeScope)
@@ -93,7 +143,7 @@ FocusNavigationScope FocusNavigationScope::focusNavigationScopeOf(Node* node)
 {
     ASSERT(node);
     Node* root = node;
-    for (Node* n = node; n; n = NodeRenderingTraversal::parentInScope(n))
+    for (Node* n = node; n; n = parentInScope(n))
         root = n;
     // The result is not always a ShadowRoot nor a DocumentNode since
     // a starting node is in an orphaned tree in composed shadow tree.
@@ -410,7 +460,6 @@ Element* FocusController::findFocusableElement(FocusDirection direction, FocusNa
 Element* FocusController::findElementWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event, FocusDirection direction)
 {
     // Search is inclusive of start
-    using namespace NodeRenderingTraversal;
     for (Node* node = start; node; node = direction == FocusDirectionForward ? nextInScope(node) : previousInScope(node)) {
         if (!is<Element>(*node))
             continue;
@@ -426,7 +475,7 @@ static Element* nextElementWithGreaterTabIndex(Node* start, int tabIndex, Keyboa
     // Search is inclusive of start
     int winningTabIndex = std::numeric_limits<short>::max() + 1;
     Element* winner = nullptr;
-    for (Node* node = start; node; node = NodeRenderingTraversal::nextInScope(node)) {
+    for (Node* node = start; node; node = nextInScope(node)) {
         if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
@@ -444,7 +493,7 @@ static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, Keyb
     // Search is inclusive of start
     int winningTabIndex = 0;
     Element* winner = nullptr;
-    for (Node* node = start; node; node = NodeRenderingTraversal::previousInScope(node)) {
+    for (Node* node = start; node; node = previousInScope(node)) {
         if (!is<Element>(*node))
             continue;
         Element& element = downcast<Element>(*node);
@@ -459,8 +508,6 @@ static Element* previousElementWithLowerTabIndex(Node* start, int tabIndex, Keyb
 
 Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node* start, KeyboardEvent* event)
 {
-    using namespace NodeRenderingTraversal;
-
     if (start) {
         int tabIndex = adjustedTabIndex(*start, *event);
         // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
@@ -497,7 +544,7 @@ Element* FocusController::nextFocusableElement(FocusNavigationScope scope, Node*
 Element* FocusController::previousFocusableElement(FocusNavigationScope scope, Node* start, KeyboardEvent* event)
 {
     Node* last = nullptr;
-    for (Node* node = scope.rootNode(); node; node = NodeRenderingTraversal::lastChildInScope(node))
+    for (Node* node = scope.rootNode(); node; node = lastChildInScope(node))
         last = node;
     ASSERT(last);
 
@@ -506,7 +553,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
     Node* startingNode;
     int startingTabIndex;
     if (start) {
-        startingNode = NodeRenderingTraversal::previousInScope(start);
+        startingNode = previousInScope(start);
         startingTabIndex = adjustedTabIndex(*start, *event);
     } else {
         startingNode = last;
@@ -515,7 +562,7 @@ Element* FocusController::previousFocusableElement(FocusNavigationScope scope, N
 
     // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
     if (startingTabIndex < 0) {
-        for (Node* node = startingNode; node; node = NodeRenderingTraversal::previousInScope(node)) {
+        for (Node* node = startingNode; node; node = previousInScope(node)) {
             if (!is<Element>(*node))
                 continue;
             Element& element = downcast<Element>(*node);

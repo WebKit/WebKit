@@ -1487,7 +1487,6 @@ set(WebCore_SOURCES
     dom/NodeIterator.cpp
     dom/NodeOrString.cpp
     dom/NodeRareData.cpp
-    dom/NodeRenderingTraversal.cpp
     dom/NodeTraversal.cpp
     dom/OverflowEvent.cpp
     dom/PageTransitionEvent.cpp
