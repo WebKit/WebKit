@@ -24,6 +24,7 @@
  */
 
 #include "Heap.h"
+#include "BumpAllocator.h"
 #include "LargeChunk.h"
 #include "LargeObject.h"
 #include "Line.h"
@@ -119,7 +120,7 @@ void Heap::scavengeLargeObjects(std::unique_lock<StaticMutex>& lock, std::chrono
     }
 }
 
-void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpRangeCache& rangeCache)
+void Heap::allocateSmallBumpRanges(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpAllocator& allocator, BumpRangeCache& rangeCache)
 {
     BASSERT(!rangeCache.size());
     SmallPage* page = allocateSmallPage(lock, sizeClass);
@@ -134,6 +135,12 @@ void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t 
     for (size_t lineNumber = 0; lineNumber < end; ++lineNumber) {
         if (lines[lineNumber].refCount(lock))
             continue;
+
+        // In a fragmented page, some free ranges might not fit in the cache.
+        if (rangeCache.size() == rangeCache.capacity()) {
+            m_smallPagesWithFreeLines[sizeClass].push(page);
+            return;
+        }
 
         LineMetadata& lineMetadata = m_smallLineMetadata[sizeClass][lineNumber];
         char* begin = lines[lineNumber].begin() + lineMetadata.startOffset;
@@ -152,11 +159,14 @@ void Heap::refillSmallBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t 
             page->ref(lock);
         }
 
-        rangeCache.push({ begin, objectCount });
+        if (!allocator.canAllocate())
+            allocator.refill({ begin, objectCount });
+        else
+            rangeCache.push({ begin, objectCount });
     }
 }
 
-void Heap::refillMediumBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpRangeCache& rangeCache)
+void Heap::allocateMediumBumpRanges(std::lock_guard<StaticMutex>& lock, size_t sizeClass, BumpAllocator& allocator, BumpRangeCache& rangeCache)
 {
     MediumPage* page = allocateMediumPage(lock, sizeClass);
     BASSERT(!rangeCache.size());
@@ -171,6 +181,12 @@ void Heap::refillMediumBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t
     for (size_t lineNumber = 0; lineNumber < end; ++lineNumber) {
         if (lines[lineNumber].refCount(lock))
             continue;
+
+        // In a fragmented page, some free ranges might not fit in the cache.
+        if (rangeCache.size() == rangeCache.capacity()) {
+            m_mediumPagesWithFreeLines[sizeClass].push(page);
+            return;
+        }
 
         LineMetadata& lineMetadata = m_mediumLineMetadata[sizeClass][lineNumber];
         char* begin = lines[lineNumber].begin() + lineMetadata.startOffset;
@@ -189,7 +205,10 @@ void Heap::refillMediumBumpRangeCache(std::lock_guard<StaticMutex>& lock, size_t
             page->ref(lock);
         }
 
-        rangeCache.push({ begin, objectCount });
+        if (!allocator.canAllocate())
+            allocator.refill({ begin, objectCount });
+        else
+            rangeCache.push({ begin, objectCount });
     }
 }
 

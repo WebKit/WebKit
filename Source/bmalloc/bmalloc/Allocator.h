@@ -56,8 +56,8 @@ private:
     void* allocateLarge(size_t);
     void* allocateXLarge(size_t);
     
-    BumpRange allocateBumpRange(size_t sizeClass);
-    BumpRange allocateBumpRangeSlowCase(size_t sizeClass);
+    void refillAllocator(BumpAllocator&, size_t sizeClass);
+    void refillAllocatorSlowCase(BumpAllocator&, size_t sizeClass);
     
     std::array<BumpAllocator, mediumMax / alignment> m_bumpAllocators;
     std::array<BumpRangeCache, mediumMax / alignment> m_bumpRangeCaches;
