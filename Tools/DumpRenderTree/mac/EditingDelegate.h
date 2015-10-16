@@ -27,8 +27,9 @@
  */
  
 #import <Foundation/Foundation.h>
+#import <WebKit/WebEditingDelegate.h>
 
-@interface EditingDelegate : NSObject
+@interface EditingDelegate : NSObject <WebEditingDelegate>
 {
     BOOL acceptsEditing;
 }

@@ -55,6 +55,7 @@
 @class WebViewPrivate;
 
 @protocol WebDownloadDelegate;
+@protocol WebEditingDelegate;
 @protocol WebFrameLoadDelegate;
 @protocol WebPolicyDelegate;
 @protocol WebResourceLoadDelegate;
@@ -613,7 +614,7 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 @property (nonatomic, readonly) NSInteger spellCheckerDocumentTag;
 #endif
 @property (nonatomic, readonly, strong) NSUndoManager *undoManager;
-@property (nonatomic, strong) id editingDelegate;
+@property (nonatomic, assign) id <WebEditingDelegate> editingDelegate;
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text;
 @end
 

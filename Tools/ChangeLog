@@ -1,3 +1,14 @@
+2015-10-16  Anders Carlsson  <andersca@apple.com>
+
+        WebEditingDelegate should be a formal protocol
+        https://bugs.webkit.org/show_bug.cgi?id=150254
+        <rdar://problem/23149847>
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/EditingDelegate.h:
+        Conform to the WebEditingDelegate protocol.
+
 2015-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Hook up autolayout intrinsic sizing for WKWebView
