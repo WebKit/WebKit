@@ -1954,15 +1954,15 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
     m_ignorePendingStylesheets = oldIgnore;
 }
 
-Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, RenderStyle* parentStyle)
+Ref<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element* element)
 {
-    ASSERT(&element.document() == this);
+    ASSERT_ARG(element, &element->document() == this);
 
     // On iOS request delegates called during styleForElement may result in re-entering WebKit and killing the style resolver.
     ResourceLoadScheduler::Suspender suspender(*platformStrategies()->loaderStrategy()->resourceLoadScheduler());
 
     TemporaryChange<bool> change(m_ignorePendingStylesheets, true);
-    return element.resolveStyle(parentStyle);
+    return ensureStyleResolver().styleForElement(element, element->parentNode() ? element->parentNode()->computedStyle() : nullptr);
 }
 
 bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsCheck dimensionsCheck)

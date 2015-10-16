@@ -570,7 +570,7 @@ public:
     };
     WEBCORE_EXPORT void updateLayoutIgnorePendingStylesheets(RunPostLayoutTasks = RunPostLayoutTasks::Asynchronously);
 
-    Ref<RenderStyle> styleForElementIgnoringPendingStylesheets(Element&, RenderStyle* parentStyle);
+    Ref<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     WEBCORE_EXPORT bool isPageBoxVisible(int pageIndex);

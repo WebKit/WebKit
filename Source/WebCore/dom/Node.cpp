@@ -1006,10 +1006,11 @@ Node* Node::pseudoAwareLastChild() const
 
 RenderStyle* Node::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    auto* composedParent = composedTreeAncestors(*this).first();
-    if (!composedParent)
-        return nullptr;
-    return composedParent->computedStyle(pseudoElementSpecifier);
+    for (Node* node = this; node; node = node->parentOrShadowHostNode()) {
+        if (is<Element>(*node))
+            return downcast<Element>(*node).computedStyle(pseudoElementSpecifier);
+    }
+    return nullptr;
 }
 
 int Node::maxCharacterOffset() const
