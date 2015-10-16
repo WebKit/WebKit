@@ -2213,7 +2213,9 @@ set(WebCore_SOURCES
     platform/graphics/IntPoint.cpp
     platform/graphics/IntRect.cpp
     platform/graphics/IntSize.cpp
+    platform/graphics/LayoutPoint.cpp
     platform/graphics/LayoutRect.cpp
+    platform/graphics/LayoutSize.cpp
     platform/graphics/MediaPlayer.cpp
     platform/graphics/NamedImageGeneratedImage.cpp
     platform/graphics/Path.cpp

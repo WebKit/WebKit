@@ -212,6 +212,8 @@ inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint
     return FloatSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 
+TextStream& operator<<(TextStream&, const LayoutPoint&);
+
 } // namespace WebCore
 
 #endif // LayoutPoint_h

@@ -662,7 +662,6 @@ public:
     RemoteLayerTreeTextStream& operator<<(const FloatRoundedRect&);
     RemoteLayerTreeTextStream& operator<<(FloatPoint3D);
     RemoteLayerTreeTextStream& operator<<(Color);
-    RemoteLayerTreeTextStream& operator<<(FloatRect);
     RemoteLayerTreeTextStream& operator<<(const Vector<WebCore::GraphicsLayer::PlatformLayerID>&);
     RemoteLayerTreeTextStream& operator<<(const FilterOperation&);
     RemoteLayerTreeTextStream& operator<<(const FilterOperations&);
@@ -1056,13 +1055,6 @@ RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(Color color)
 {
     RemoteLayerTreeTextStream& ts = *this;
     ts << color.serialized();
-    return ts;
-}
-
-RemoteLayerTreeTextStream& RemoteLayerTreeTextStream::operator<<(FloatRect rect)
-{
-    RemoteLayerTreeTextStream& ts = *this;
-    ts << rect.x() << " " << rect.y() << " " << rect.width() << " " << rect.height();
     return ts;
 }
 

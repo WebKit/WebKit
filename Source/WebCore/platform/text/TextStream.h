@@ -31,10 +31,8 @@
 
 namespace WebCore {
 
-class IntPoint;
-class IntRect;
 class FloatPoint;
-class FloatSize;
+class IntPoint;
 class LayoutPoint;
 class LayoutRect;
 class LayoutUnit;
@@ -60,13 +58,7 @@ public:
     WEBCORE_EXPORT TextStream& operator<<(const String&);
     TextStream& operator<<(const FormatNumberRespectingIntegers&);
 
-    WEBCORE_EXPORT TextStream& operator<<(const IntPoint&);
-    WEBCORE_EXPORT TextStream& operator<<(const IntRect&);
-    WEBCORE_EXPORT TextStream& operator<<(const FloatPoint&);
-    WEBCORE_EXPORT TextStream& operator<<(const FloatSize&);
-    TextStream& operator<<(const LayoutUnit&);
-    TextStream& operator<<(const LayoutPoint&);
-    TextStream& operator<<(const LayoutRect&);
+    TextStream& operator<<(LayoutUnit);
 
     template<typename Item>
     TextStream& operator<<(const Vector<Item>& vector)

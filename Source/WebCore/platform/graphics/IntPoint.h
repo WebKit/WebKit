@@ -56,6 +56,7 @@ typedef struct tagPOINTS POINTS;
 namespace WebCore {
 
 class FloatPoint;
+class TextStream;
 
 class IntPoint {
 public:
@@ -127,8 +128,6 @@ public:
     operator Evas_Point() const;
 #endif
 
-    void dump(WTF::PrintStream& out) const;
-
 private:
     int m_x, m_y;
 };
@@ -189,6 +188,8 @@ inline int IntPoint::distanceSquaredToPoint(const IntPoint& point) const
 {
     return ((*this) - point).diagonalLengthSquared();
 }
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const IntPoint&);
 
 } // namespace WebCore
 

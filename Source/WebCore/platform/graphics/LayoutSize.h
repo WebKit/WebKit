@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class LayoutPoint;
+class TextStream;
 
 enum AspectRatioFit {
     AspectRatioFitShrink,
@@ -187,6 +188,8 @@ inline FloatSize floorSizeToDevicePixels(const LayoutSize& size, float pixelSnap
 {
     return FloatSize(floorToDevicePixel(size.width(), pixelSnappingFactor), floorToDevicePixel(size.height(), pixelSnappingFactor));
 }
+
+TextStream& operator<<(TextStream&, const LayoutSize&);
 
 } // namespace WebCore
 

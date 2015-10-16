@@ -59,6 +59,7 @@ namespace WebCore {
 
 class FloatRect;
 class LayoutRect;
+class TextStream;
 
 class IntRect {
     WTF_MAKE_FAST_ALLOCATED;
@@ -185,8 +186,6 @@ public:
     WEBCORE_EXPORT operator NSRect() const;
 #endif
 
-    void dump(WTF::PrintStream& out) const;
-
 private:
     IntPoint m_location;
     IntSize m_size;
@@ -235,6 +234,8 @@ WEBCORE_EXPORT IntRect enclosingIntRect(const CGRect&);
 #if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
 WEBCORE_EXPORT IntRect enclosingIntRect(const NSRect&);
 #endif
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const IntRect&);
 
 } // namespace WebCore
 

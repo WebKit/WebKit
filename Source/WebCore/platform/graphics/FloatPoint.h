@@ -53,6 +53,7 @@ class AffineTransform;
 class TransformationMatrix;
 class IntPoint;
 class IntSize;
+class TextStream;
 
 class FloatPoint {
 public:
@@ -147,8 +148,6 @@ public:
 
     FloatPoint matrixTransform(const TransformationMatrix&) const;
     FloatPoint matrixTransform(const AffineTransform&) const;
-
-    void dump(WTF::PrintStream& out) const;
 
 private:
     float m_x, m_y;
@@ -258,6 +257,8 @@ inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
 {
     return WTF::areEssentiallyEqual(a.x(), b.x()) && WTF::areEssentiallyEqual(a.y(), b.y());
 }
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatPoint&);
 
 }
 

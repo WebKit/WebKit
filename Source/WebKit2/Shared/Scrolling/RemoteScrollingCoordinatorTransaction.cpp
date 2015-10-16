@@ -463,7 +463,6 @@ public:
     {
     }
 
-    RemoteScrollingTreeTextStream& operator<<(FloatRect);
     RemoteScrollingTreeTextStream& operator<<(ScrollingNodeType);
 
     RemoteScrollingTreeTextStream& operator<<(const FixedPositionViewportConstraints&);
@@ -504,13 +503,6 @@ static void dumpProperty(RemoteScrollingTreeTextStream& ts, String name, T value
     ts << "(" << name << " ";
     ts << value << ")";
     ts.decreaseIndent();
-}
-
-RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(FloatRect rect)
-{
-    RemoteScrollingTreeTextStream& ts = *this;
-    ts << rect.x() << " " << rect.y() << " " << rect.width() << " " << rect.height();
-    return ts;
 }
 
 RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(ScrollingNodeType nodeType)

@@ -27,19 +27,19 @@
 #include "IntSize.h"
 
 #include "FloatSize.h"
-#include <wtf/PrintStream.h>
+#include "TextStream.h"
 
 namespace WebCore {
-
-void IntSize::dump(PrintStream& out) const
-{
-    out.printf("(%d x %d)", width(), height());
-}
 
 IntSize::IntSize(const FloatSize& s)
     : m_width(clampToInteger(s.width()))
     , m_height(clampToInteger(s.height()))
 {
+}
+
+TextStream& operator<<(TextStream& ts, const IntSize& size)
+{
+    return ts << "width=" << size.width() << " height=" << size.height();
 }
 
 }

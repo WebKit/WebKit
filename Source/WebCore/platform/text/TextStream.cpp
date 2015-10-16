@@ -27,9 +27,7 @@
 #include "TextStream.h"
 
 #include "FloatPoint.h"
-#include "FloatRect.h"
 #include "IntPoint.h"
-#include "IntRect.h"
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
 #include <wtf/MathExtras.h>
@@ -129,43 +127,9 @@ TextStream& TextStream::operator<<(const FormatNumberRespectingIntegers& numberT
     return *this;
 }
 
-TextStream& TextStream::operator<<(const IntPoint& p)
-{
-    return *this << "(" << p.x() << "," << p.y() << ")";
-}
-
-TextStream& TextStream::operator<<(const IntRect& r)
-{
-    return *this  << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
-}
-
-TextStream& TextStream::operator<<(const FloatPoint& p)
-{
-    return *this << "(" << TextStream::FormatNumberRespectingIntegers(p.x())
-        << "," << TextStream::FormatNumberRespectingIntegers(p.y()) << ")";
-}
-
-TextStream& TextStream::operator<<(const FloatSize& s)
-{
-    return *this << "width=" << TextStream::FormatNumberRespectingIntegers(s.width())
-        << " height=" << TextStream::FormatNumberRespectingIntegers(s.height());
-}
-
-TextStream& TextStream::operator<<(const LayoutUnit& v)
+TextStream& TextStream::operator<<(LayoutUnit v)
 {
     return *this << TextStream::FormatNumberRespectingIntegers(v.toFloat());
-}
-
-TextStream& TextStream::operator<<(const LayoutPoint& p)
-{
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with pervious test expectations.
-    return *this << "(" << p.x().toInt() << "," << p.y().toInt() << ")";
-}
-
-TextStream& TextStream::operator<<(const LayoutRect& r)
-{
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
-    return *this << snappedIntRect(r);
 }
 
 String TextStream::release()

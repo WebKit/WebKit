@@ -118,15 +118,6 @@ static void writeIfNotDefault(TextStream& ts, const char* name, ValueType value,
         writeNameValuePair(ts, name, value);
 }
 
-TextStream& operator<<(TextStream& ts, const FloatRect& r)
-{
-    ts << "at (" << TextStream::FormatNumberRespectingIntegers(r.x());
-    ts << "," << TextStream::FormatNumberRespectingIntegers(r.y());
-    ts << ") size " << TextStream::FormatNumberRespectingIntegers(r.width());
-    ts << "x" << TextStream::FormatNumberRespectingIntegers(r.height());
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
 {
     if (transform.isIdentity())

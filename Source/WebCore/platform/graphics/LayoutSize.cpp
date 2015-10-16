@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,15 @@
  */
 
 #include "config.h"
-#include "IntPoint.h"
+#include "LayoutSize.h"
 
-#include "FloatPoint.h"
 #include "TextStream.h"
 
 namespace WebCore {
 
-IntPoint::IntPoint(const FloatPoint& p)
-    : m_x(clampToInteger(p.x()))
-    , m_y(clampToInteger(p.y()))
+TextStream& operator<<(TextStream& ts, const LayoutSize& size)
 {
+    return ts << "width=" << size.width().toFloat() << " height=" << size.height().toFloat();
 }
 
-TextStream& operator<<(TextStream& ts, const IntPoint& p)
-{
-    return ts << "(" << p.x() << "," << p.y() << ")";
-}
-
-}
+} // namespace WebCore

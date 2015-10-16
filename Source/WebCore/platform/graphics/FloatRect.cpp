@@ -29,10 +29,10 @@
 
 #include "FloatConversion.h"
 #include "IntRect.h"
+#include "TextStream.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/MathExtras.h>
-#include <wtf/PrintStream.h>
 
 namespace WebCore {
 
@@ -226,9 +226,10 @@ IntRect roundedIntRect(const FloatRect& rect)
     return IntRect(roundedIntPoint(rect.location()), roundedIntSize(rect.size()));
 }
 
-void FloatRect::dump(PrintStream& out) const
+TextStream& operator<<(TextStream& ts, const FloatRect &r)
 {
-    out.print(location(), " ", size());
+    return ts << "at (" << TextStream::FormatNumberRespectingIntegers(r.x()) << "," << TextStream::FormatNumberRespectingIntegers(r.y())
+        << ") size " << TextStream::FormatNumberRespectingIntegers(r.width()) << "x" << TextStream::FormatNumberRespectingIntegers(r.height());
 }
 
 }

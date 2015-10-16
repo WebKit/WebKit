@@ -506,7 +506,7 @@ FloatSize MediaSampleAVFObjC::presentationSize() const
 
 void MediaSampleAVFObjC::dump(PrintStream& out) const
 {
-    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize(), ")}");
+    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
 }
 
 void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)

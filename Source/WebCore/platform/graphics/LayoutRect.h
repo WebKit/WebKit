@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+class TextStream;
+
 class LayoutRect {
 public:
     LayoutRect() { }
@@ -234,6 +236,8 @@ inline FloatRect snapRectToDevicePixelsWithWritingDirection(const LayoutRect& re
 }
 
 FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
+
+TextStream& operator<<(TextStream&, const LayoutRect&);
 
 } // namespace WebCore
 

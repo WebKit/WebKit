@@ -1,3 +1,27 @@
+2015-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Make TextStream the canonical way to log classes in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=150256
+
+        Reviewed by Sam Weinig.
+
+        We vacillated between PrintStream and TextStream as being the canonical way
+        to stringify WebCore data structures. This patch solidifies TextStream
+        as the solution, since it has convenient stream syntax, and is what we
+        use for render tree dumps.
+
+        Remove TextStream member functions that output non-simple structs
+        (sizes, points and rects), replacing them with free operator<< functions
+        in the .cpp file for the relevant class. Formatting is currently consistent
+        with RenderTreeAsText output, to avoid breaking tests.
+
+        Remove custom FloatRect outputting in SVG and RemoteLayerTreeTransaction.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingTreeTextStream::operator<<): Deleted.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<): Deleted.
+
 2015-10-16  Anders Carlsson  <andersca@apple.com>
 
         Remove some dead menu code

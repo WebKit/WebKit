@@ -31,6 +31,7 @@
 #include "config.h"
 #include "LayoutRect.h"
 
+#include "TextStream.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -151,6 +152,12 @@ FloatRect encloseRectToDevicePixels(const LayoutRect& rect, float pixelSnappingF
     FloatPoint maxPoint = ceilPointToDevicePixels(rect.maxXMaxYCorner(), pixelSnappingFactor);
 
     return FloatRect(location, maxPoint - location);
+}
+
+TextStream& operator<<(TextStream& ts, const LayoutRect& r)
+{
+    // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
+    return ts << snappedIntRect(r);
 }
 
 } // namespace WebCore

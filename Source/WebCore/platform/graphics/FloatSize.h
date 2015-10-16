@@ -50,6 +50,7 @@ typedef struct _NSSize NSSize;
 namespace WebCore {
 
 class IntSize;
+class TextStream;
 
 class FloatSize {
 public:
@@ -118,10 +119,9 @@ public:
     operator NSSize() const;
 #endif
 
-    void dump(WTF::PrintStream& out) const;
-
 private:
-    float m_width, m_height;
+    float m_width;
+    float m_height;
 };
 
 inline FloatSize& operator+=(FloatSize& a, const FloatSize& b)
@@ -207,6 +207,8 @@ inline IntPoint flooredIntPoint(const FloatSize& p)
 {
     return IntPoint(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
 }
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatSize&);
 
 } // namespace WebCore
 

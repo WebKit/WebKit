@@ -28,8 +28,8 @@
 
 #include "FloatRect.h"
 #include "LayoutRect.h"
+#include "TextStream.h"
 #include <algorithm>
-#include <wtf/PrintStream.h>
 
 namespace WebCore {
 
@@ -146,9 +146,9 @@ IntSize IntRect::differenceToPoint(const IntPoint& point) const
     return IntSize(xdistance, ydistance);
 }
 
-void IntRect::dump(PrintStream& out) const
+TextStream& operator<<(TextStream& ts, const IntRect& r)
 {
-    out.print(location(), " ", size());
+    return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
 
 } // namespace WebCore
