@@ -50,7 +50,7 @@ public:
     }
     ~WebContextMenuProxyMac();
 
-    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&) override;
+    virtual void showContextMenu() override;
 
     virtual void hideContextMenu() override;
     virtual void cancelTracking() override;
@@ -71,6 +71,7 @@ private:
 
 #if ENABLE(SERVICE_CONTROLS)
     void setupServicesMenu(const ContextMenuContextData&);
+    WebCore::ContextMenuItem shareMenuItem();
 #endif
 
     RetainPtr<NSPopUpButtonCell> m_popup;

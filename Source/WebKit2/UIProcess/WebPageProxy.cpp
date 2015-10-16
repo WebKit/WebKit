@@ -4209,44 +4209,8 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
     // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
-    bool askClientToChangeMenu = true;
-#if ENABLE(SERVICE_CONTROLS)
-    if (contextMenuContextData.isServicesMenu() || contextMenuContextData.controlledImage())
-        askClientToChangeMenu = false;
-#endif
-
-    Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
-    for (auto& item : contextMenuContextData.menuItems()) {
-        if (item.action() != ContextMenuItemTagShareMenu) {
-            proposedAPIItems.append(WebContextMenuItem::create(item));
-            continue;
-        }
-
-        ContextMenuItem coreItem = platformInitializeShareMenuItem(contextMenuContextData);
-        if (!coreItem.isNull())
-            proposedAPIItems.append(WebContextMenuItem::create(coreItem));
-    }
-
-    Vector<RefPtr<WebContextMenuItem>> clientItems;
-    bool useProposedItems = true;
-
-    if (askClientToChangeMenu && m_contextMenuClient->getContextMenuFromProposedMenu(*this, proposedAPIItems, clientItems, contextMenuContextData.webHitTestResultData(), m_process->transformHandlesToObjects(userData.object()).get()))
-        useProposedItems = false;
-
-    const Vector<RefPtr<WebContextMenuItem>>& itemsToShow = useProposedItems ? proposedAPIItems : clientItems;
-    if (!m_contextMenuClient->showContextMenu(*this, contextMenuContextData.menuLocation(), itemsToShow))
-        m_activeContextMenu->showContextMenu(itemsToShow);
-
-    m_contextMenuClient->contextMenuDismissed(*this);
+    m_activeContextMenu->showContextMenu();
 }
-
-#if !ENABLE(SERVICE_CONTROLS)
-ContextMenuItem WebPageProxy::platformInitializeShareMenuItem(const ContextMenuContextData&)
-{
-    return ContextMenuItem();
-}
-#endif
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 {

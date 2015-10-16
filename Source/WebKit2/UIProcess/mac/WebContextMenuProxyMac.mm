@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APIContextMenuClient.h"
 #import "DataReference.h"
 #import "MenuUtilities.h"
 #import "PageClientImpl.h"
@@ -251,7 +252,6 @@ template<typename ItemType> static Vector<RetainPtr<NSMenuItem>> nsMenuItemVecto
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-
 void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& context)
 {
     bool includeEditorServices = context.controlledDataIsEditable();
@@ -321,6 +321,39 @@ void WebContextMenuProxyMac::clearServicesMenu()
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nullptr];
     m_servicesMenu = nullptr;
 }
+
+ContextMenuItem WebContextMenuProxyMac::shareMenuItem()
+{
+    const WebHitTestResultData& hitTestData = m_context.webHitTestResultData();
+
+    URL absoluteLinkURL;
+    if (!hitTestData.absoluteLinkURL.isEmpty())
+        absoluteLinkURL = URL(ParsedURLString, hitTestData.absoluteLinkURL);
+
+    URL downloadableMediaURL;
+    if (!hitTestData.absoluteMediaURL.isEmpty() && hitTestData.isDownloadableMedia)
+        downloadableMediaURL = URL(ParsedURLString, hitTestData.absoluteMediaURL);
+
+    RetainPtr<NSImage> image;
+    if (hitTestData.imageSharedMemory && hitTestData.imageSize)
+        image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSize]]);
+
+    ContextMenuItem item = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), m_context.selectedText());
+
+    NSMenuItem *nsItem = item.platformDescription();
+
+    NSSharingServicePicker *sharingServicePicker = [nsItem representedObject];
+    sharingServicePicker.delegate = [WKSharingServicePickerDelegate sharedSharingServicePickerDelegate];
+
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setFiltersEditingServices:NO];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setHandlesEditingReplacement:NO];
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
+
+    // Setting the picker lets the delegate retain it to keep it alive, but this picker is kept alive by the menu item.
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nil];
+
+    return item;
+}
 #endif
 
 void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& items)
@@ -345,8 +378,35 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     populateNSMenu(menu, nsMenuItemVector(items));
 }
 
-void WebContextMenuProxyMac::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items)
+void WebContextMenuProxyMac::showContextMenu()
 {
+    // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
+    bool askClientToChangeMenu = true;
+#if ENABLE(SERVICE_CONTROLS)
+    if (m_context.isServicesMenu() || m_context.controlledImage())
+        askClientToChangeMenu = false;
+#endif
+
+    Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
+    for (auto& item : m_context.menuItems()) {
+        if (item.action() != ContextMenuItemTagShareMenu) {
+            proposedAPIItems.append(WebContextMenuItem::create(item));
+            continue;
+        }
+
+#if ENABLE(SERVICE_CONTROLS)
+        proposedAPIItems.append(WebContextMenuItem::create(shareMenuItem()));
+#endif
+    }
+
+    Vector<RefPtr<WebContextMenuItem>> clientItems;
+    bool useProposedItems = true;
+
+    if (askClientToChangeMenu && m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
+        useProposedItems = false;
+
+    const Vector<RefPtr<WebContextMenuItem>>& items = useProposedItems ? proposedAPIItems : clientItems;
+
 #if ENABLE(SERVICE_CONTROLS)
     if (items.isEmpty() && !m_context.isServicesMenu())
         return;

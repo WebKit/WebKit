@@ -1,3 +1,22 @@
+2015-10-16  Anders Carlsson  <andersca@apple.com>
+
+        Move more code to WebContextMenuProxyMac
+        https://bugs.webkit.org/show_bug.cgi?id=150240
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::contextMenuClient):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::initializeShareMenuItem):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformInitializeShareMenuItem): Deleted.
+
 2015-10-16  Tim Horton  <timothy_horton@apple.com>
 
         Hook up autolayout intrinsic sizing for WKWebView

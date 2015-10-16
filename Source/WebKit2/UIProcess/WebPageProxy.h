@@ -326,6 +326,7 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
+    API::ContextMenuClient& contextMenuClient() { return *m_contextMenuClient; }
     void setContextMenuClient(std::unique_ptr<API::ContextMenuClient>);
 #endif
     API::FindClient& findClient() { return *m_findClient; }
@@ -1264,7 +1265,6 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     void showContextMenu(const ContextMenuContextData&, const UserData&);
     void internalShowContextMenu(const ContextMenuContextData&, const UserData&);
-    WebCore::ContextMenuItem platformInitializeShareMenuItem(const ContextMenuContextData&);
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
