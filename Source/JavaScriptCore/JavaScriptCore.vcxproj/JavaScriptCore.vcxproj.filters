@@ -450,9 +450,6 @@
     <ClCompile Include="..\jit\JITStubRoutine.cpp">
       <Filter>jit</Filter>
     </ClCompile>
-    <ClCompile Include="..\jit\JITStubs.cpp">
-      <Filter>jit</Filter>
-    </ClCompile>
     <ClCompile Include="..\jit\JITThunks.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -2499,18 +2496,6 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITStubRoutine.h">
-      <Filter>jit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jit\JITStubs.h">
-      <Filter>jit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jit\JITStubsX86.h">
-      <Filter>jit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jit\JITStubsX86Common.h">
-      <Filter>jit</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jit\JITStubsX86_64.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITThunks.h">

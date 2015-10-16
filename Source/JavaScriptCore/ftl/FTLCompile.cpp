@@ -41,7 +41,6 @@
 #include "FTLJITCode.h"
 #include "FTLThunks.h"
 #include "FTLUnwindInfo.h"
-#include "JITStubs.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
 

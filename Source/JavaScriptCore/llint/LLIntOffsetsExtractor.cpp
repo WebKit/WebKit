@@ -34,7 +34,6 @@
 #include "Executable.h"
 #include "Heap.h"
 #include "Interpreter.h"
-#include "JITStubs.h"
 #include "JSArray.h"
 #include "JSArrowFunction.h"
 #include "JSCell.h"

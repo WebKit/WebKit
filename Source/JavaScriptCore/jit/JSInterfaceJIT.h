@@ -32,7 +32,6 @@
 #include "GPRInfo.h"
 #include "JITCode.h"
 #include "JITOperations.h"
-#include "JITStubs.h"
 #include "JSCJSValue.h"
 #include "JSStack.h"
 #include "JSString.h"

@@ -1,3 +1,62 @@
+2015-10-16  Mark Lam  <mark.lam@apple.com>
+
+        Move all the probe trampolines into their respective MacroAssembler files.
+        https://bugs.webkit.org/show_bug.cgi?id=150239
+
+        Reviewed by Saam Barati.
+
+        This patch does not introduce any behavior changes.  It only moves the
+        ctiMasmProbeTrampoline implementations from the respective JITStubs<CPU>.h
+        files to the corresponding MacroAssembler<CPU>.cpp files. 
+
+        I also had to make some minor changes to get the code to build after this move:
+        1. Added #include <wtf/InlineASM.h> in the MacroAssembler<CPU>.cpp files
+           because the ctiMasmProbeTrampoline is an inline assembly blob.
+        2. In the moved code, convert MacroAssembler:: qualifiers to the CPU specific
+           MacroAssembler equivalent.  The referenced entities were always defined in
+           the CPU specific MacroAssembler anyway, and indirectly referenced through
+           the generic MacroAssembler.
+
+        With this, we can get rid of all the JITStubs<CPU>.cpp files.  There is one
+        exception: JITStubsMSVC64.asm.  However, that one is unrelated to the probe
+        mechanism.  So, I'll leave it as is.
+
+        We can also remove JITStubs.cpp and JITStubs.h which are now empty except for
+        some stale unused code.
+
+        This patch has been build tested for x86, x86_64, armv7, and arm64.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::probe):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::arm64ProbeTrampoline):
+        (JSC::MacroAssemblerARM64::probe):
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssemblerARMv7::probe):
+        * assembler/MacroAssemblerX86Common.cpp:
+        * bytecode/CodeBlock.cpp:
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLLink.cpp:
+        * jit/JITArithmetic.cpp:
+        * jit/JITArithmetic32_64.cpp:
+        * jit/JITCode.h:
+        * jit/JITExceptions.cpp:
+        * jit/JITStubs.cpp: Removed.
+        * jit/JITStubs.h: Removed.
+        * jit/JITStubsARM.h: Removed.
+        * jit/JITStubsARM64.h: Removed.
+        * jit/JITStubsARMv7.h: Removed.
+        * jit/JITStubsX86.h: Removed.
+        * jit/JITStubsX86Common.h: Removed.
+        * jit/JITStubsX86_64.h: Removed.
+        * jit/JSInterfaceJIT.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * runtime/CommonSlowPaths.cpp:
+
 2015-10-16  Keith Miller  <keith_miller@apple.com>
 
         Fix some issues with TypedArrays

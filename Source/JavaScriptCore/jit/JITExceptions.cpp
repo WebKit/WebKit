@@ -29,7 +29,6 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "Interpreter.h"
-#include "JITStubs.h"
 #include "JSCJSValue.h"
 #include "LLIntData.h"
 #include "LLIntOpcode.h"

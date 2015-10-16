@@ -45,7 +45,6 @@
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JIT.h"
-#include "JITStubs.h"
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSLexicalEnvironment.h"

@@ -651,7 +651,6 @@
     <ClCompile Include="..\jit\JITPropertyAccess.cpp" />
     <ClCompile Include="..\jit\JITPropertyAccess32_64.cpp" />
     <ClCompile Include="..\jit\JITStubRoutine.cpp" />
-    <ClCompile Include="..\jit\JITStubs.cpp" />
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
     <ClCompile Include="..\jit\SetupVarargsFrame.cpp" />
@@ -1460,10 +1459,6 @@
     <ClInclude Include="..\jit\JITInlines.h" />
     <ClInclude Include="..\jit\JITOperations.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />
-    <ClInclude Include="..\jit\JITStubs.h" />
-    <ClInclude Include="..\jit\JITStubsX86.h" />
-    <ClInclude Include="..\jit\JITStubsX86Common.h" />
-    <ClInclude Include="..\jit\JITStubsX86_64.h" />
     <ClInclude Include="..\jit\JITThunks.h" />
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />

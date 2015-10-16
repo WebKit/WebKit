@@ -38,7 +38,6 @@
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "JIT.h"
-#include "JITStubs.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"

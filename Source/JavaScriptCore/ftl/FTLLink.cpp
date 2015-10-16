@@ -33,7 +33,6 @@
 #include "DFGCommon.h"
 #include "FTLJITCode.h"
 #include "JITOperations.h"
-#include "JITStubs.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
 #include "JSCInlines.h"
