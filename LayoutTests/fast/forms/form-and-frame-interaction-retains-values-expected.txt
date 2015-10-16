@@ -13,6 +13,6 @@ In this test the main page is loaded in a frameset, which sets the value of an i
 
 
 --------
-Frame: '<!--framePath //submitted/<!--frame0-->-->'
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
 --------
 

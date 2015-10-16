@@ -9,7 +9,7 @@ Frame: 'aFrame'
 Inner iframe.
 
 --------
-Frame: '<!--framePath //aFrame/<!--frame0-->-->'
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
 --------
 PASS: Cross frame access from a javascript: URL was allowed!
 

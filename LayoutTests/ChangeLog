@@ -1,3 +1,27 @@
+2015-10-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r190752. rdar://problem/23110932
+
+    2015-10-08  Andreas Kling  <akling@apple.com>
+
+            Generated frame tree names should be kept reasonably long.
+            <https://webkit.org/b/149874>
+
+            Reviewed by Darin Adler.
+
+            Added a test to document our name generation behavior for subframes with long-named ancestors.
+            Also rebaselined some tests that exposed the old behavior.
+
+            * fast/forms/form-and-frame-interaction-retains-values-expected.txt:
+            * fast/frames/long-names-in-nested-subframes-expected.txt: Added.
+            * fast/frames/long-names-in-nested-subframes.html: Added.
+            * http/tests/navigation/image-load-in-subframe-unload-handler-expected.txt:
+            * http/tests/security/dataURL/xss-DENIED-from-data-url-sub-frame-2-level-expected.txt:
+            * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-2-level-expected.txt:
+            * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-2-level-expected.txt:
+            * http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url-expected.txt:
+            * http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-from-javscript-url-expected.txt:
+
 2015-10-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r190604. rdar://problem/22993012

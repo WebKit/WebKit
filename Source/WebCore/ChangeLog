@@ -1,3 +1,43 @@
+2015-10-16  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r190752. rdar://problem/23110932
+
+    2015-10-08  Andreas Kling  <akling@apple.com>
+
+            Generated frame tree names should be kept reasonably long.
+            <https://webkit.org/b/149874>
+
+            Reviewed by Darin Adler.
+
+            Some clumsy advertising script is going around assigning JavaScript source code
+            to the "name" attribute of iframes. This is causing WebKit to generate way too huge
+            names for anonymous descendants of such iframes.
+
+            Previously, the generated name of an anonymous subframe would be its slash-separated
+            path from the root frame, with the "name" attribute of each ancestor between the
+            slashes, or "<!--frame${index in parent}-->" for anonymous ancestors.
+
+            These ad scripts are often over 100kB in size, with multiple subframes, so we'd end
+            up with frame names looking like this:
+
+            "<!--framePath //<MONSTER BLOB OF JAVASCRIPT FROM HELL>/<!--frame0--><!--frame0-->-->"
+
+            While this is worth fixing for the memory usage alone, we've been making it way
+            worse by also using these paths when recording the back/forward history parts of
+            WebKit session state.
+
+            This patch makes generated paths always use index-in-parent as the "directory name"
+            for ancestors of anonymous subframes. The above example path will now instead be:
+
+            "<!--framePath //<!--frame0-->/<!--frame0-->/<!--frame0-->-->"
+
+            Test: fast/frames/long-names-in-nested-subframes.html
+
+            * page/FrameTree.cpp:
+            (WebCore::FrameTree::indexInParent):
+            (WebCore::FrameTree::uniqueChildName):
+            * page/FrameTree.h:
+
 2015-10-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r190604. rdar://problem/22993012
