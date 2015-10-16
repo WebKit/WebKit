@@ -113,11 +113,15 @@ void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& tr
     transaction->didCommit(error);
 }
 
-void IDBConnectionToServer::fireVersionChangeEvent(uint64_t /*databaseConnectionIdentifier*/ , uint64_t /*requestedVersion*/)
+void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, uint64_t requestedVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::fireVersionChangeEvent");
 
-    // FIXME: Implement versionchange events firing on already-open transactions.
+    auto connection = m_databaseConnectionMap.get(databaseConnectionIdentifier);
+    if (!connection)
+        return;
+
+    connection->fireVersionChangeEvent(requestedVersion);
 }
 
 void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
@@ -129,14 +133,15 @@ void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
 
 void IDBConnectionToServer::registerDatabaseConnection(IDBDatabase& database)
 {
-    ASSERT(!m_databaseConnections.contains(&database));
-    m_databaseConnections.add(&database);
+    ASSERT(!m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
+    m_databaseConnectionMap.set(database.databaseConnectionIdentifier(), &database);
 }
 
 void IDBConnectionToServer::unregisterDatabaseConnection(IDBDatabase& database)
 {
-    ASSERT(m_databaseConnections.contains(&database));
-    m_databaseConnections.remove(&database);
+    ASSERT(m_databaseConnectionMap.contains(database.databaseConnectionIdentifier()));
+    ASSERT(m_databaseConnectionMap.get(database.databaseConnectionIdentifier()) == &database);
+    m_databaseConnectionMap.remove(database.databaseConnectionIdentifier());
 }
 
 } // namespace IDBClient

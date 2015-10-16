@@ -73,7 +73,7 @@ private:
     Ref<IDBConnectionToServerDelegate> m_delegate;
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::IDBOpenDBRequest>> m_openDBRequestMap;
-    HashSet<RefPtr<IDBDatabase>> m_databaseConnections;
+    HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
 };
 

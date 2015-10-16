@@ -32,6 +32,7 @@
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBServerOperation.h"
+#include "Timer.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseTransaction.h"
 #include <wtf/Deque.h>
@@ -89,6 +90,9 @@ private:
 
     void performErrorCallback(uint64_t callbackIdentifier, const IDBError&);
 
+    void invokeTransactionScheduler();
+    void transactionSchedulingTimerFired();
+
     IDBServer& m_server;
     IDBDatabaseIdentifier m_identifier;
     
@@ -105,6 +109,8 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
 
     HashMap<uint64_t, ErrorCallback> m_errorCallbacks;
+
+    Timer m_transactionSchedulingTimer;
 };
 
 } // namespace IDBServer

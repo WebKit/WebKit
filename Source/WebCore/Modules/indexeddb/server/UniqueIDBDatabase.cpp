@@ -41,6 +41,7 @@ namespace IDBServer {
 UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentifier& identifier)
     : m_server(server)
     , m_identifier(identifier)
+    , m_transactionSchedulingTimer(*this, &UniqueIDBDatabase::transactionSchedulingTimerFired)
 {
 }
 
@@ -266,8 +267,26 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
         return;
     }
 
-    // FIXME: Now that a database connection has closed, previously blocked transactions might be runnable.
-    // Try to run them now.
+    // Now that a database connection has closed, previously blocked transactions might be runnable.
+    invokeTransactionScheduler();
+}
+
+void UniqueIDBDatabase::invokeTransactionScheduler()
+{
+    if (!m_transactionSchedulingTimer.isActive())
+        m_transactionSchedulingTimer.startOneShot(0);
+}
+
+void UniqueIDBDatabase::transactionSchedulingTimerFired()
+{
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::transactionSchedulingTimerFired");
+
+    if (!hasAnyOpenConnections() && m_versionChangeOperation) {
+        startVersionChangeTransaction();
+        return;
+    }
+
+    // FIXME: Handle starting other pending transactions here.
 }
 
 void UniqueIDBDatabase::performErrorCallback(uint64_t callbackIdentifier, const IDBError& error)

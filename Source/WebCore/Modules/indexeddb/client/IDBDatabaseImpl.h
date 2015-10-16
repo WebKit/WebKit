@@ -77,6 +77,8 @@ public:
     void didCommitTransaction(IDBTransaction&);
     void didAbortTransaction(IDBTransaction&);
 
+    void fireVersionChangeEvent(uint64_t requestedVersion);
+
 private:
     IDBDatabase(ScriptExecutionContext&, IDBConnectionToServer&, const IDBResultData&);
 

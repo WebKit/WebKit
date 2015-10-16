@@ -28,11 +28,14 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "EventQueue.h"
 #include "IDBConnectionToServer.h"
 #include "IDBOpenDBRequestImpl.h"
 #include "IDBResultData.h"
 #include "IDBTransactionImpl.h"
+#include "IDBVersionChangeEventImpl.h"
 #include "Logging.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 namespace IDBClient {
@@ -189,6 +192,19 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 
     m_activeTransactions.remove(transaction.info().identifier());
     m_committingTransactions.remove(transaction.info().identifier());
+}
+
+void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)
+{
+    uint64_t currentVersion = m_info.version();
+    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %llu, requested version %llu", currentVersion, requestedVersion);
+
+    if (!scriptExecutionContext())
+        return;
+    
+    Ref<Event> event = IDBVersionChangeEvent::create(currentVersion, requestedVersion, eventNames().versionchangeEvent);
+    event->setTarget(this);
+    scriptExecutionContext()->eventQueue().enqueueEvent(adoptRef(&event.leakRef()));
 }
 
 } // namespace IDBClient
