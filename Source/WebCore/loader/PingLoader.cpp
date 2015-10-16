@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Roopesh Chander (roop@roopc.net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,13 +45,28 @@
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
+#include "ResourceLoadInfo.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
+#include "UserContentController.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+#if ENABLE(CONTENT_EXTENSIONS)
+static ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(const Frame& frame, ResourceRequest& request, ResourceType resourceType)
+{
+    if (DocumentLoader* documentLoader = frame.loader().documentLoader()) {
+        if (Page* page = frame.page()) {
+            if (UserContentController* controller = page->userContentController())
+                return controller->processContentExtensionRulesForLoad(request, resourceType, *documentLoader);
+        }
+    }
+    return ContentExtensions::BlockedStatus::NotBlocked;
+}
+#endif
 
 void PingLoader::loadImage(Frame& frame, const URL& url)
 {
@@ -60,6 +76,12 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     }
 
     ResourceRequest request(url);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Image) == ContentExtensions::BlockedStatus::Blocked)
+        return;
+#endif
+
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
     String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), request.url(), frame.loader().outgoingReferrer());
     if (!referrer.isEmpty())
@@ -73,6 +95,12 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
 void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinationURL)
 {
     ResourceRequest request(pingURL);
+    
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw) == ContentExtensions::BlockedStatus::Blocked)
+        return;
+#endif
+
     request.setHTTPMethod("POST");
     request.setHTTPContentType("text/ping");
     request.setHTTPBody(FormData::create("PING"));
@@ -98,10 +126,26 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
 void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRefPtr<FormData> report)
 {
     ResourceRequest request(reportURL);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw) == ContentExtensions::BlockedStatus::Blocked)
+        return;
+#endif
+
     request.setHTTPMethod("POST");
     request.setHTTPContentType("application/json");
     request.setHTTPBody(report);
-    request.setAllowCookies(frame.document()->securityOrigin()->isSameSchemeHostPort(SecurityOrigin::create(reportURL).ptr()));
+
+    bool removeCookies = true;
+    if (Document* document = frame.document()) {
+        if (SecurityOrigin* securityOrigin = document->securityOrigin()) {
+            if (securityOrigin->isSameSchemeHostPort(SecurityOrigin::create(reportURL).ptr()))
+                removeCookies = false;
+        }
+    }
+    if (removeCookies)
+        request.setAllowCookies(false);
+
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
     String referrer = SecurityPolicy::generateReferrerHeader(frame.document()->referrerPolicy(), reportURL, frame.loader().outgoingReferrer());

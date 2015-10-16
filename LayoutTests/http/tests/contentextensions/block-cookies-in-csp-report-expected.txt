@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Refused to load the image 'http://localhost/foo.png' because it violates the following Content Security Policy directive: "img-src 'self'".
+
+This test creates a CSP violation report, but the report URL matches a 'block-cookie' rule. 
+
+
+
+--------
+Frame: 'result_frame'
+--------
+Ping received.
+No cookies in ping.

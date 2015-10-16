@@ -1,0 +1,10 @@
+[
+    {
+        "trigger": {
+            "url-filter": "save-ping.php"
+        },
+        "action": {
+            "type": "block-cookies"
+        }
+    }
+]

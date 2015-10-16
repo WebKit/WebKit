@@ -1,0 +1,11 @@
+[
+    {
+        "trigger": {
+            "url-filter": "save-ping.php"
+        },
+        "action": {
+            "type": "css-display-none",
+            "selector": ".foo"
+        }
+    }
+]

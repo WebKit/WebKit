@@ -1,0 +1,3 @@
+main frame - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 29: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/block-image-load-in-onunload.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/save-ping.php?test=contentextensions-block-image-load-in-onunload
+Ping not received - timed out.
