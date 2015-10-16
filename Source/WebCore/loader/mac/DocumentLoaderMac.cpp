@@ -29,7 +29,7 @@
 #include "config.h"
 #include "DocumentLoader.h"
 
-#include "SubresourceLoader.h"
+#include "ResourceLoader.h"
 
 namespace WebCore {
 

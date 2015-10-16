@@ -40,7 +40,6 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
-#include <WebCore/SubresourceLoader.h>
 
 using namespace WebCore;
 

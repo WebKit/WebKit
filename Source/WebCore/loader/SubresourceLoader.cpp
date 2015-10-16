@@ -44,7 +44,6 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
@@ -202,8 +201,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 {
     ASSERT(!response.isNull());
     ASSERT(m_state == Initialized);
-
-    TemporaryChange<bool> callingDidReceiveResponse(m_callingDidReceiveResponse, true);
 
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
