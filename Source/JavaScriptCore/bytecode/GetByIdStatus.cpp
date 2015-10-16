@@ -207,8 +207,14 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                  
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
+                JSFunction* intrinsicFunction = nullptr;
+
                 switch (access.type()) {
                 case AccessCase::Load: {
+                    break;
+                }
+                case AccessCase::IntrinsicGetter: {
+                    intrinsicFunction = access.intrinsicFunction();
                     break;
                 }
                 case AccessCase::Getter: {
@@ -227,8 +233,9 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                  
                 GetByIdVariant variant(
                     StructureSet(structure), complexGetStatus.offset(),
-                    complexGetStatus.conditionSet(), WTF::move(callLinkStatus));
-                 
+                    complexGetStatus.conditionSet(), WTF::move(callLinkStatus),
+                    intrinsicFunction);
+
                 if (!result.appendVariant(variant))
                     return GetByIdStatus(slowPathState, true);
                 break;
@@ -314,7 +321,7 @@ GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringIm
         if (!isValidOffset(offset))
             return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
         if (attributes & Accessor)
-            return GetByIdStatus(MakesCalls); // We could be smarter here, like strenght-reducing this to a Call.
+            return GetByIdStatus(MakesCalls); // We could be smarter here, like strength-reducing this to a Call.
         
         if (!result.appendVariant(GetByIdVariant(structure, offset)))
             return GetByIdStatus(TakesSlowPath);

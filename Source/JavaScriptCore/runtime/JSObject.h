@@ -595,6 +595,7 @@ public:
     void putDirect(VM& vm, PropertyOffset offset, JSValue value) { locationForOffset(offset)->set(vm, this, value); }
     void putDirectUndefined(PropertyOffset offset) { locationForOffset(offset)->setUndefined(); }
 
+    JS_EXPORT_PRIVATE void putDirectNativeIntrinsicGetter(VM&, JSGlobalObject*, Identifier, NativeFunction, Intrinsic, unsigned attributes);
     JS_EXPORT_PRIVATE void putDirectNativeFunction(VM&, JSGlobalObject*, const PropertyName&, unsigned functionLength, NativeFunction, Intrinsic, unsigned attributes);
     JS_EXPORT_PRIVATE JSFunction* putDirectBuiltinFunction(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
     JSFunction* putDirectBuiltinFunctionWithoutTransition(VM&, JSGlobalObject*, const PropertyName&, FunctionExecutable*, unsigned attributes);
@@ -1471,13 +1472,13 @@ ALWAYS_INLINE Identifier makeIdentifier(VM&, const Identifier& name)
         vm, globalObject, makeIdentifier(vm, (jsName)), (generatorName)(vm), (attributes))
 
 // Helper for defining native getters on properties.
-#define JSC_NATIVE_GETTER(jsName, cppName, attributes, length) do { \
-        Identifier ident = makeIdentifier(vm, (jsName)); \
-        GetterSetter* accessor = GetterSetter::create(vm, globalObject); \
-        JSFunction* function = JSFunction::create(vm, globalObject, (length), ident.string(), (cppName)); \
-        accessor->setGetter(vm, globalObject, function); \
-        putDirectNonIndexAccessor(vm, ident, accessor, (attributes) | Accessor); \
-    } while (false)
+#define JSC_NATIVE_INTRINSIC_GETTER(jsName, cppName, attributes, intrinsic)  \
+    putDirectNativeIntrinsicGetter(\
+        vm, globalObject, makeIdentifier(vm, (jsName)), (cppName), \
+        (intrinsic), ((attributes) | Accessor))
+
+#define JSC_NATIVE_GETTER(jsName, cppName, attributes) \
+    JSC_NATIVE_INTRINSIC_GETTER((jsName), (cppName), (attributes), NoIntrinsic)
 
 
 } // namespace JSC

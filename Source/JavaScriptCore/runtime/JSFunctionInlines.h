@@ -73,6 +73,11 @@ inline bool JSFunction::isHostFunction() const
     return m_executable->isHostFunction();
 }
 
+inline Intrinsic JSFunction::intrinsic() const
+{
+    return executable()->intrinsic();
+}
+
 inline bool JSFunction::isBuiltinFunction() const
 {
 #if ENABLE(WEBASSEMBLY)

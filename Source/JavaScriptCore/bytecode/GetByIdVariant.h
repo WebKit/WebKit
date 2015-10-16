@@ -43,8 +43,9 @@ public:
     GetByIdVariant(
         const StructureSet& structureSet = StructureSet(), PropertyOffset offset = invalidOffset,
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
-        std::unique_ptr<CallLinkStatus> callLinkStatus = nullptr);
-    
+        std::unique_ptr<CallLinkStatus> = nullptr,
+        JSFunction* = nullptr);
+
     ~GetByIdVariant();
     
     GetByIdVariant(const GetByIdVariant&);
@@ -60,7 +61,9 @@ public:
     
     PropertyOffset offset() const { return m_offset; }
     CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
-    
+    JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
+    Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
+
     bool attemptToMerge(const GetByIdVariant& other);
     
     void dump(PrintStream&) const;
@@ -68,11 +71,14 @@ public:
     
 private:
     friend class GetByIdStatus;
+
+    bool canMergeIntrinsicStructures(const GetByIdVariant&) const;
     
     StructureSet m_structureSet;
     ObjectPropertyConditionSet m_conditionSet;
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
+    JSFunction* m_intrinsicFunction;
 };
 
 } // namespace JSC

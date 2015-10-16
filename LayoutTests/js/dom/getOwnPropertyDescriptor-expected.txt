@@ -157,11 +157,6 @@ PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 'l
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 'length').hasOwnProperty('writable') is false
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 'length').enumerable is true
 PASS Object.getOwnPropertyDescriptor(document.getElementsByClassName('pass'), 'length').configurable is false
-PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 'length').value is canvasPixelArray.length
-PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 'length').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 'length').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 'length').enumerable is true
-PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 'length').configurable is false
 PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 0).value is canvasPixelArray[0]
 PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 0).hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(canvasPixelArray, 0).hasOwnProperty('set') is false

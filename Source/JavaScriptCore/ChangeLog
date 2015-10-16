@@ -1,3 +1,157 @@
+2015-10-16  Keith Miller  <keith@Keiths-MacBook-Pro-5.local>
+
+        Add Intrinsic Getters and use them to fix performance on the getters of TypedArray properties.
+        https://bugs.webkit.org/show_bug.cgi?id=149687
+
+        Reviewed by Geoffrey Garen.
+
+        Add the ability to create intrinsic getters in both the inline cache and the DFG/FTL. When the
+        getter fetched by a GetById has an intrinsic we know about we add a new intrinsic access case.
+        Once we get to the DFG, we observe that the access case was an intrinsic and add an appropriate
+        GetByIdVariant. We then parse the intrinsic into an appropriate DFG node.
+
+        The first intrinsics are the new TypedArray prototype getters length, byteLength, and byteOffset.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::operator=):
+        (JSC::GetByIdVariant::canMergeIntrinsicStructures):
+        (JSC::GetByIdVariant::attemptToMerge):
+        (JSC::GetByIdVariant::dumpInContext):
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::intrinsicFunction):
+        (JSC::GetByIdVariant::intrinsic):
+        (JSC::GetByIdVariant::callLinkStatus): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::addWatchpoint):
+        (JSC::AccessGenerationState::restoreScratch):
+        (JSC::AccessGenerationState::succeed):
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCall):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCall):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownException):
+        (JSC::AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal):
+        (JSC::AccessGenerationState::originalExceptionHandler):
+        (JSC::AccessGenerationState::originalCallSiteIndex):
+        (JSC::AccessCase::getIntrinsic):
+        (JSC::AccessCase::clone):
+        (JSC::AccessCase::visitWeak):
+        (JSC::AccessCase::generate):
+        (WTF::printInternal):
+        (JSC::AccessCase::AccessCase): Deleted.
+        (JSC::AccessCase::get): Deleted.
+        (JSC::AccessCase::replace): Deleted.
+        (JSC::AccessCase::transition): Deleted.
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessCase::isGet):
+        (JSC::AccessCase::isPut):
+        (JSC::AccessCase::isIn):
+        (JSC::AccessCase::intrinsicFunction):
+        (JSC::AccessCase::intrinsic):
+        (JSC::AccessGenerationState::AccessGenerationState):
+        (JSC::AccessGenerationState::liveRegistersForCall):
+        (JSC::AccessGenerationState::callSiteIndexForExceptionHandling):
+        (JSC::AccessGenerationState::numberOfStackBytesUsedForRegisterPreservation):
+        (JSC::AccessGenerationState::needsToRestoreRegistersIfException):
+        (JSC::AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::intrinsic):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        (JSC::DFG::arrayTypeToString):
+        (JSC::DFG::toTypedArrayType):
+        (JSC::DFG::refineTypedArrayType):
+        (JSC::DFG::permitsBoundsCheckLowering):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::supportsLength):
+        (JSC::DFG::ArrayMode::isSomeTypedArrayView):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::presenceLike): Deleted.
+        (JSC::DFG::ByteCodeParser::store): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertToGetArrayLength): Deleted.
+        (JSC::DFG::FixupPhase::prependGetArrayLength): Deleted.
+        (JSC::DFG::FixupPhase::fixupChecksInBlock): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::tryGetFoldableView):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetArrayLength):
+        * jit/IntrinsicEmitter.cpp: Added.
+        (JSC::AccessCase::canEmitIntrinsicGetter):
+        (JSC::AccessCase::emitIntrinsicGetter):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * runtime/Intrinsic.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put):
+        (JSC::JSArrayBufferView::defineOwnProperty):
+        (JSC::JSArrayBufferView::deleteProperty):
+        (JSC::JSArrayBufferView::getOwnNonIndexPropertyNames):
+        (JSC::JSArrayBufferView::getOwnPropertySlot): Deleted.
+        (JSC::JSArrayBufferView::finalize): Deleted.
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::getOwnPropertySlot):
+        (JSC::JSDataView::put):
+        (JSC::JSDataView::defineOwnProperty):
+        (JSC::JSDataView::deleteProperty):
+        (JSC::JSDataView::getOwnNonIndexPropertyNames):
+        * runtime/JSDataView.h:
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::intrinsic):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot):
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex): Deleted.
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeIntrinsicGetter):
+        * runtime/JSObject.h:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * tests/stress/typedarray-add-property-to-base-object.js: Added.
+        (body.foo):
+        (body):
+        * tests/stress/typedarray-bad-getter.js: Added.
+        (body.foo):
+        (body.get Bar):
+        (body):
+        * tests/stress/typedarray-getter-on-self.js: Added.
+        (body.foo):
+        (body.bar):
+        (body.baz):
+        (body.get for):
+        (body):
+        * tests/stress/typedarray-intrinsic-getters-change-prototype.js: Added.
+        (body.foo):
+        (body.bar):
+        (body.baz):
+        (body):
+
 2015-10-16  Keith Miller  <keith_miller@apple.com>
 
         Fix some issues with TypedArrays

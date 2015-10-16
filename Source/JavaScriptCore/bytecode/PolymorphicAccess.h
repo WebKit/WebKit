@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
+#include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
 #include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
@@ -41,6 +42,7 @@ class CodeBlock;
 class PolymorphicAccess;
 class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
+class ScratchRegisterAllocator;
 
 struct AccessGenerationState;
 
@@ -57,6 +59,7 @@ public:
         Setter,
         CustomGetter,
         CustomSetter,
+        IntrinsicGetter,
         InHit,
         InMiss,
         ArrayLength,
@@ -77,6 +80,7 @@ public:
         case Miss:
         case Getter:
         case CustomGetter:
+        case IntrinsicGetter:
         case ArrayLength:
         case StringLength:
             return true;
@@ -90,6 +94,7 @@ public:
         case Miss:
         case Getter:
         case CustomGetter:
+        case IntrinsicGetter:
         case InHit:
         case InMiss:
         case ArrayLength:
@@ -110,6 +115,7 @@ public:
         case Miss:
         case Getter:
         case CustomGetter:
+        case IntrinsicGetter:
         case Transition:
         case Replace:
         case Setter:
@@ -147,6 +153,7 @@ public:
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
 
     static std::unique_ptr<AccessCase> getLength(VM&, JSCell* owner, AccessType);
+    static std::unique_ptr<AccessCase> getIntrinsic(VM&, JSCell* owner, JSFunction* intrinsic, PropertyOffset, Structure*, const ObjectPropertyConditionSet&);
     
     static std::unique_ptr<AccessCase> fromStructureStubInfo(VM&, JSCell* owner, StructureStubInfo&);
 
@@ -173,6 +180,15 @@ public:
     }
     
     ObjectPropertyConditionSet conditionSet() const { return m_conditionSet; }
+    JSFunction* intrinsicFunction() const
+    {
+        ASSERT(type() == IntrinsicGetter && m_rareData);
+        return m_rareData->intrinsicFunction.get();
+    }
+    Intrinsic intrinsic() const
+    {
+        return intrinsicFunction()->intrinsic();
+    }
 
     WatchpointSet* additionalSet() const
     {
@@ -220,6 +236,8 @@ public:
     // Is it still possible for this case to ever be taken?
     bool couldStillSucceed() const;
 
+    static bool canEmitIntrinsicGetter(JSFunction*, Structure*);
+
     // If this method returns true, then it's a good idea to remove 'other' from the access once 'this'
     // is added. This method assumes that in case of contradictions, 'this' represents a newer, and so
     // more useful, truth. This method can be conservative; it will return false when it doubt.
@@ -242,6 +260,7 @@ private:
 
     // Fall through on success, add a jump to the failure list on failure.
     void generate(AccessGenerationState&);
+    void emitIntrinsicGetter(AccessGenerationState&);
     
     AccessType m_type { Load };
     PropertyOffset m_offset { invalidOffset };
@@ -271,6 +290,7 @@ private:
             void* opaque;
         } customAccessor;
         WriteBarrier<JSObject> customSlotBase;
+        WriteBarrier<JSFunction> intrinsicFunction;
     };
 
     std::unique_ptr<RareData> m_rareData;
@@ -318,6 +338,83 @@ private:
     RefPtr<JITStubRoutine> m_stubRoutine;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
     std::unique_ptr<Vector<WriteBarrier<JSCell>>> m_weakReferences;
+};
+
+struct AccessGenerationState {
+    AccessGenerationState()
+    : m_calculatedRegistersForCallAndExceptionHandling(false)
+    , m_needsToRestoreRegistersIfException(false)
+    , m_calculatedCallSiteIndex(false)
+    {
+    }
+    CCallHelpers* jit { nullptr };
+    ScratchRegisterAllocator* allocator;
+    unsigned numberOfBytesUsedToPreserveReusedRegisters { 0 };
+    PolymorphicAccess* access { nullptr };
+    StructureStubInfo* stubInfo { nullptr };
+    MacroAssembler::JumpList success;
+    MacroAssembler::JumpList failAndRepatch;
+    MacroAssembler::JumpList failAndIgnore;
+    GPRReg baseGPR { InvalidGPRReg };
+    JSValueRegs valueRegs;
+    GPRReg scratchGPR { InvalidGPRReg };
+    Vector<std::function<void(LinkBuffer&)>> callbacks;
+    const Identifier* ident;
+    std::unique_ptr<WatchpointsOnStructureStubInfo> watchpoints;
+    Vector<WriteBarrier<JSCell>> weakReferences;
+
+    Watchpoint* addWatchpoint(const ObjectPropertyCondition& = ObjectPropertyCondition());
+
+    void restoreScratch();
+    void succeed();
+
+    void calculateLiveRegistersForCallAndExceptionHandling();
+
+    void preserveLiveRegistersToStackForCall();
+
+    void restoreLiveRegistersFromStackForCall(bool isGetter);
+    void restoreLiveRegistersFromStackForCallWithThrownException();
+    void restoreLiveRegistersFromStackForCall(const RegisterSet& dontRestore);
+
+    const RegisterSet& liveRegistersForCall()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        return m_liveRegistersForCall;
+    }
+
+    CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
+    CallSiteIndex callSiteIndexForExceptionHandling()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        RELEASE_ASSERT(m_needsToRestoreRegistersIfException);
+        RELEASE_ASSERT(m_calculatedCallSiteIndex);
+        return m_callSiteIndex;
+    }
+
+    const HandlerInfo& originalExceptionHandler() const;
+    unsigned numberOfStackBytesUsedForRegisterPreservation() const
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        return m_numberOfStackBytesUsedForRegisterPreservation;
+    }
+
+    bool needsToRestoreRegistersIfException() const { return m_needsToRestoreRegistersIfException; }
+    CallSiteIndex originalCallSiteIndex() const;
+    
+private:
+    const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite()
+    {
+        RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+        return m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    }
+    
+    RegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    RegisterSet m_liveRegistersForCall;
+    CallSiteIndex m_callSiteIndex { CallSiteIndex(std::numeric_limits<unsigned>::max()) };
+    unsigned m_numberOfStackBytesUsedForRegisterPreservation { std::numeric_limits<unsigned>::max() };
+    bool m_calculatedRegistersForCallAndExceptionHandling : 1;
+    bool m_needsToRestoreRegistersIfException : 1;
+    bool m_calculatedCallSiteIndex : 1;
 };
 
 } // namespace JSC

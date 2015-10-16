@@ -84,9 +84,10 @@ public:
 
     ExecutableBase* executable() const { return m_executable.get(); }
 
-    // To call either of these methods include Executable.h
+    // To call any of these methods include JSFunctionInlines.h
     bool isHostFunction() const;
     FunctionExecutable* jsExecutable() const;
+    Intrinsic intrinsic() const;
 
     JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;
 

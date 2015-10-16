@@ -1215,7 +1215,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
 
 JSArrayBufferView* Graph::tryGetFoldableView(JSValue value, ArrayMode arrayMode)
 {
-    if (arrayMode.typedArrayType() == NotTypedArray)
+    if (arrayMode.type() != Array::AnyTypedArray && arrayMode.typedArrayType() == NotTypedArray)
         return nullptr;
     return tryGetFoldableView(value);
 }

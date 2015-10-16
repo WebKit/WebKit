@@ -2022,6 +2022,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Float64Array:
             filter(node->child1(), SpecFloat64Array);
             break;
+        case Array::AnyTypedArray:
+            filter(node->child1(), SpecTypedArrayView);
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
             break;

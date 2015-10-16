@@ -51,7 +51,6 @@ descriptorShouldBe("document.getElementsByClassName('pass')", "0", {writable: fa
 descriptorShouldBe("document.getElementsByClassName('pass')", "'length'", {get: undefined, set: undefined, enumerable: true, configurable: false});
 var canvas = document.createElement("canvas");
 var canvasPixelArray = canvas.getContext("2d").createImageData(10,10).data;
-descriptorShouldBe("canvasPixelArray", "'length'", {writable: false, enumerable: true, configurable: false, value:"canvasPixelArray.length"});
 descriptorShouldBe("canvasPixelArray", "0", {writable: true, enumerable: true, configurable: false, value:"canvasPixelArray[0]"});
 var select = document.createElement("select");
 select.innerHTML = "<option>foo</option>";

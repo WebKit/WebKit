@@ -213,8 +213,8 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
 
     ASSERT(inherits(info()));
 
-    JSC_NATIVE_GETTER(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, DontEnum | ReadOnly | DontDelete, 0);
-    JSC_NATIVE_GETTER(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, DontEnum | ReadOnly | DontDelete, 0);
+    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteLength, typedArrayViewProtoGetterFuncByteLength, DontEnum | ReadOnly | DontDelete, TypedArrayByteLengthIntrinsic);
+    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->byteOffset, typedArrayViewProtoGetterFuncByteOffset, DontEnum | ReadOnly | DontDelete, TypedArrayByteOffsetIntrinsic);
     JSC_NATIVE_FUNCTION("copyWithin", typedArrayViewProtoFuncCopyWithin, DontEnum, 2);
     JSC_BUILTIN_FUNCTION("every", typedArrayPrototypeEveryCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION("filter", typedArrayPrototypeFilterCodeGenerator, DontEnum);
@@ -228,7 +228,7 @@ void JSTypedArrayViewPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_NATIVE_FUNCTION(vm.propertyNames->join, typedArrayViewProtoFuncJoin, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->keys, typedArrayViewProtoFuncKeys, DontEnum, 0);
     JSC_NATIVE_FUNCTION("lastIndexOf", typedArrayViewProtoFuncLastIndexOf, DontEnum, 1);
-    JSC_NATIVE_GETTER(vm.propertyNames->length, typedArrayViewProtoGetterFuncLength, DontEnum | ReadOnly | DontDelete, 0);
+    JSC_NATIVE_INTRINSIC_GETTER(vm.propertyNames->length, typedArrayViewProtoGetterFuncLength, DontEnum | ReadOnly | DontDelete, TypedArrayLengthIntrinsic);
     JSC_BUILTIN_FUNCTION("map", typedArrayPrototypeMapCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION("reduce", typedArrayPrototypeReduceCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION("reduceRight", typedArrayPrototypeReduceRightCodeGenerator, DontEnum);

@@ -1036,14 +1036,6 @@ private:
                     attemptToMakeGetArrayLength(node);
                     break;
                 }
-                if (uid == vm().propertyNames->byteLength.impl()) {
-                    attemptToMakeGetTypedArrayByteLength(node);
-                    break;
-                }
-                if (uid == vm().propertyNames->byteOffset.impl()) {
-                    attemptToMakeGetTypedArrayByteOffset(node);
-                    break;
-                }
             }
             fixEdge<CellUse>(node->child1());
             break;
@@ -1163,11 +1155,19 @@ private:
             break;
         }
 
-        case GetArrayLength:
+        case GetArrayLength: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
+
+        case GetTypedArrayByteOffset: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
+
         case Phi:
         case Upsilon:
         case GetIndexedPropertyStorage:
-        case GetTypedArrayByteOffset:
         case LastNodeType:
         case CheckTierUpInLoop:
         case CheckTierUpAtReturn:
@@ -2064,39 +2064,7 @@ private:
         convertToGetArrayLength(node, arrayMode);
         return true;
     }
-    
-    bool attemptToMakeGetTypedArrayByteLength(Node* node)
-    {
-        if (!isInt32Speculation(node->prediction()))
-            return false;
-        
-        TypedArrayType type = typedArrayTypeFromSpeculation(node->child1()->prediction());
-        if (!isTypedView(type))
-            return false;
-        
-        if (elementSize(type) == 1) {
-            convertToGetArrayLength(node, ArrayMode(toArrayType(type)));
-            return true;
-        }
-        
-        Node* length = prependGetArrayLength(
-            node->origin, node->child1().node(), ArrayMode(toArrayType(type)));
-        
-        Node* shiftAmount = m_insertionSet.insertNode(
-            m_indexInBlock, SpecInt32, JSConstant, node->origin,
-            OpInfo(m_graph.freeze(jsNumber(logElementSize(type)))));
-        
-        // We can use a BitLShift here because typed arrays will never have a byteLength
-        // that overflows int32.
-        node->setOp(BitLShift);
-        node->clearFlags(NodeMustGenerate);
-        observeUseKindOnNode(length, Int32Use);
-        observeUseKindOnNode(shiftAmount, Int32Use);
-        node->child1() = Edge(length, Int32Use);
-        node->child2() = Edge(shiftAmount, Int32Use);
-        return true;
-    }
-    
+
     void convertToGetArrayLength(Node* node, ArrayMode arrayMode)
     {
         node->setOp(GetArrayLength);
@@ -2117,25 +2085,6 @@ private:
         return m_insertionSet.insertNode(
             m_indexInBlock, SpecInt32, GetArrayLength, origin,
             OpInfo(arrayMode.asWord()), Edge(child, KnownCellUse), Edge(storage));
-    }
-    
-    bool attemptToMakeGetTypedArrayByteOffset(Node* node)
-    {
-        if (!isInt32Speculation(node->prediction()))
-            return false;
-        
-        TypedArrayType type = typedArrayTypeFromSpeculation(node->child1()->prediction());
-        if (!isTypedView(type))
-            return false;
-        
-        checkArray(
-            ArrayMode(toArrayType(type)), node->origin, node->child1().node(),
-            0, neverNeedsStorage);
-        
-        node->setOp(GetTypedArrayByteOffset);
-        node->clearFlags(NodeMustGenerate);
-        fixEdge<KnownCellUse>(node->child1());
-        return true;
     }
     
     void fixupChecksInBlock(BasicBlock* block)

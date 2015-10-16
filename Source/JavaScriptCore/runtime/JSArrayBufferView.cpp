@@ -140,10 +140,6 @@ bool JSArrayBufferView::getOwnPropertySlot(
     JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
-    if (propertyName == exec->propertyNames().byteOffset) {
-        slot.setValue(thisObject, DontDelete | ReadOnly, jsNumber(thisObject->byteOffset()));
-        return true;
-    }
     
     if (propertyName == exec->propertyNames().buffer) {
         slot.setValue(
@@ -160,9 +156,7 @@ void JSArrayBufferView::put(
     PutPropertySlot& slot)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
-    if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset
-        || propertyName == exec->propertyNames().buffer) {
+    if (propertyName == exec->propertyNames().buffer) {
         reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
         return;
     }
@@ -175,9 +169,7 @@ bool JSArrayBufferView::defineOwnProperty(
     const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
-    if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset
-        || propertyName == exec->propertyNames().buffer)
+    if (propertyName == exec->propertyNames().buffer)
         return reject(exec, shouldThrow, "Attempting to define read-only typed array property.");
     
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
@@ -187,9 +179,7 @@ bool JSArrayBufferView::deleteProperty(
     JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
-    if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset
-        || propertyName == exec->propertyNames().buffer)
+    if (propertyName == exec->propertyNames().buffer)
         return false;
     
     return Base::deleteProperty(thisObject, exec, propertyName);
@@ -200,12 +190,9 @@ void JSArrayBufferView::getOwnNonIndexPropertyNames(
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
     
-    // length/byteOffset/byteLength are DontEnum, at least in Firefox.
-    if (mode.includeDontEnumProperties()) {
-        array.add(exec->propertyNames().byteOffset);
-        array.add(exec->propertyNames().byteLength);
+    if (mode.includeDontEnumProperties())
         array.add(exec->propertyNames().buffer);
-    }
+
     
     Base::getOwnNonIndexPropertyNames(thisObject, exec, array, mode);
 }

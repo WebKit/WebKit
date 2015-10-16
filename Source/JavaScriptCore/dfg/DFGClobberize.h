@@ -575,6 +575,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             read(MiscFields);
             def(HeapLocation(IndexedPropertyLoc, TypedArrayProperties, node->child1(), node->child2()), LazyNode(node));
             return;
+        // We should not get an AnyTypedArray in a GetByVal as AnyTypedArray is only created from intrinsics, which
+        // are only added from Inline Caching a GetById.
+        case Array::AnyTypedArray:
+            DFG_CRASH(graph, node, "impossible array mode for get");
+            return;
         }
         RELEASE_ASSERT_NOT_REACHED();
         return;
@@ -679,6 +684,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             // FIXME: We can't def() anything here because these operations truncate their inputs.
             // https://bugs.webkit.org/show_bug.cgi?id=134737
             return;
+        case Array::AnyTypedArray:
         case Array::String:
         case Array::DirectArguments:
         case Array::ScopedArguments:
@@ -818,15 +824,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::String:
             def(PureValue(node, mode.asWord()));
             return;
-            
+
         case Array::DirectArguments:
         case Array::ScopedArguments:
             read(MiscFields);
             def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), LazyNode(node));
             return;
-            
+
         default:
-            ASSERT(mode.typedArrayType() != NotTypedArray);
+            ASSERT(mode.isSomeTypedArrayView());
             read(MiscFields);
             def(HeapLocation(ArrayLengthLoc, MiscFields, node->child1()), LazyNode(node));
             return;

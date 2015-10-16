@@ -2410,7 +2410,7 @@ private:
         }
             
         default:
-            if (isTypedView(m_node->arrayMode().typedArrayType())) {
+            if (m_node->arrayMode().isSomeTypedArrayView()) {
                 setInt32(
                     m_out.load32NonNegative(lowCell(m_node->child1()), m_heaps.JSArrayBufferView_length));
                 return;

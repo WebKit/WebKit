@@ -767,6 +767,7 @@ void SpeculativeJIT::checkArray(Node* node)
     const ClassInfo* expectedClassInfo = 0;
     
     switch (node->arrayMode().type()) {
+    case Array::AnyTypedArray:
     case Array::String:
         RELEASE_ASSERT_NOT_REACHED(); // Should have been a Phantom(String:)
         break;
@@ -4665,7 +4666,7 @@ void SpeculativeJIT::compileGetArrayLength(Node* node)
         break;
     }
     default: {
-        ASSERT(isTypedView(node->arrayMode().typedArrayType()));
+        ASSERT(node->arrayMode().isSomeTypedArrayView());
         SpeculateCellOperand base(this, node->child1());
         GPRTemporary result(this, Reuse, base);
         GPRReg baseGPR = base.gpr();

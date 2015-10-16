@@ -485,7 +485,10 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
 
     case Array::Float64Array:
         return speculationChecked(value.m_type, SpecFloat64Array);
-        
+
+    case Array::AnyTypedArray:
+        return speculationChecked(value.m_type, SpecTypedArrayView);
+
     case Array::SelectUsingPredictions:
     case Array::Unprofiled:
     case Array::SelectUsingArguments:
@@ -545,6 +548,8 @@ const char* arrayTypeToString(Array::Type type)
         return "Float32Array";
     case Array::Float64Array:
         return "Float64Array";
+    case Array::AnyTypedArray:
+        return "AnyTypedArray";
     default:
         // Better to return something then it is to crash. Remember, this method
         // is being called from our main diagnostic tool, the IR dumper. It's like
@@ -639,6 +644,9 @@ TypedArrayType toTypedArrayType(Array::Type type)
         return TypeFloat32;
     case Array::Float64Array:
         return TypeFloat64;
+    case Array::AnyTypedArray:
+        RELEASE_ASSERT_NOT_REACHED();
+        return NotTypedArray;
     default:
         return NotTypedArray;
     }
@@ -670,6 +678,19 @@ Array::Type toArrayType(TypedArrayType type)
     }
 }
 
+Array::Type refineTypedArrayType(Array::Type oldType, TypedArrayType newType)
+{
+    if (oldType == Array::Generic)
+        return oldType;
+    Array::Type newArrayType = toArrayType(newType);
+    if (newArrayType == Array::Generic)
+        return newArrayType;
+
+    if (oldType != newArrayType)
+        return Array::AnyTypedArray;
+    return oldType;
+}
+
 bool permitsBoundsCheckLowering(Array::Type type)
 {
     switch (type) {
@@ -685,6 +706,7 @@ bool permitsBoundsCheckLowering(Array::Type type)
     case Array::Uint32Array:
     case Array::Float32Array:
     case Array::Float64Array:
+    case Array::AnyTypedArray:
         return true;
     default:
         // These don't allow for bounds check lowering either because the bounds

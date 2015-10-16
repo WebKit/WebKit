@@ -77,7 +77,8 @@ enum Type {
     Uint16Array,
     Uint32Array,
     Float32Array,
-    Float64Array
+    Float64Array,
+    AnyTypedArray
 };
 
 enum Class {
@@ -110,6 +111,7 @@ IndexingType toIndexingShape(Array::Type);
 
 TypedArrayType toTypedArrayType(Array::Type);
 Array::Type toArrayType(TypedArrayType);
+Array::Type refineTypedArrayType(Array::Type, TypedArrayType);
 
 bool permitsBoundsCheckLowering(Array::Type);
 
@@ -354,6 +356,16 @@ public:
         case Array::Unprofiled:
         case Array::ForceExit:
         case Array::Generic:
+        // TypedArrays do not have a self length property as of ES6.
+        case Array::Int8Array:
+        case Array::Int16Array:
+        case Array::Int32Array:
+        case Array::Uint8Array:
+        case Array::Uint8ClampedArray:
+        case Array::Uint16Array:
+        case Array::Uint32Array:
+        case Array::Float32Array:
+        case Array::Float64Array:
             return false;
         case Array::Int32:
         case Array::Double:
@@ -429,6 +441,11 @@ public:
     TypedArrayType typedArrayType() const
     {
         return toTypedArrayType(type());
+    }
+
+    bool isSomeTypedArrayView() const
+    {
+        return type() == Array::AnyTypedArray || isTypedView(typedArrayType());
     }
     
     bool operator==(const ArrayMode& other) const

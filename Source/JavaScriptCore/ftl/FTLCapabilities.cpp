@@ -251,7 +251,7 @@ inline CapabilityLevel canCompile(Node* node)
         case Array::ScopedArguments:
             break;
         default:
-            if (isTypedView(node->arrayMode().typedArrayType()))
+            if (node->arrayMode().isSomeTypedArrayView())
                 break;
             return CannotCompile;
         }

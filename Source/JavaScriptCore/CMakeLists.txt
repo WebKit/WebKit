@@ -373,6 +373,7 @@ set(JavaScriptCore_SOURCES
     jit/ExecutableAllocatorFixedVMPool.cpp
     jit/GCAwareJITStubRoutine.cpp
     jit/HostCallReturnValue.cpp
+    jit/IntrinsicEmitter.cpp
     jit/JIT.cpp
     jit/JITArithmetic.cpp
     jit/JITArithmetic32_64.cpp

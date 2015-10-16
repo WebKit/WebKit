@@ -110,6 +110,9 @@ public:
     
     const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
     
+    // We don't support intrinsics for Setters (it would be sweet if we did) but we need this for templated helpers.
+    Intrinsic intrinsic() const { return NoIntrinsic; }
+    
     PropertyOffset offset() const
     {
         ASSERT(isSet());
