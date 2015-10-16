@@ -2295,7 +2295,9 @@ typedef Window WindowProxy;
   boolean confirm(optional DOMString message = "");
   DOMString? prompt(optional DOMString message = "", optional DOMString default = "");
   void print();
-  any showModalDialog(DOMString url, optional any argument);
+  // WebKit Modification: commented showModalDialog as timeouting tests
+  //any showModalDialog(DOMString url, optional any argument);
+  // WebKit Modification end.
 
   void postMessage(any message, DOMString targetOrigin, optional sequence<Transferable> transfer);
 

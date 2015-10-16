@@ -1,3 +1,18 @@
+2015-10-16  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Update testharness.js to web-platform-tests version
+        https://bugs.webkit.org/show_bug.cgi?id=150234
+
+        Reviewed by Chris Dumez.
+
+        * resources/web-platform-tests-modules.json: updated testharness module version.
+        * web-platform-tests/dom/interfaces-expected.txt: Rebased test expectation.
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_01-expected.txt: Ditto.
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/contenttype_datauri_02-expected.txt: Ditto.
+        * web-platform-tests/dom/nodes/Node-isEqualNode-expected.txt: Ditto.
+        * web-platform-tests/html/dom/interfaces-expected.txt: Ditto.
+        * web-platform-tests/html/dom/interfaces.html: Removed a method from Window as this is timing out the test otherwise.
+
 2015-10-16  Keith Rollin  <krollin@apple.com>
 
         The value sanitization algorithm for input[type=url] should strip whitespaces

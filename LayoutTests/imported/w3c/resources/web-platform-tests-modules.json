@@ -4,8 +4,8 @@
         "path": [
             "."
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/2a1da264f6718db04c3925a9956b635426827aef.tar.gz", 
-        "url_subpath": "testharness.js-2a1da264f6718db04c3925a9956b635426827aef"
+        "url": "https://github.com/w3c/testharness.js/archive/7756b113373ec09f7159c68c4ba7eb8f0ad7c964.tar.gz",
+        "url_subpath": "testharness.js-7756b113373ec09f7159c68c4ba7eb8f0ad7c964"
     }, 
     {
         "name": "webidl2",
