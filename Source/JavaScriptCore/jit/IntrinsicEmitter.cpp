@@ -28,6 +28,8 @@
 
 #include "config.h"
 
+#if ENABLE(JIT)
+
 #include "CCallHelpers.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
@@ -128,3 +130,5 @@ void AccessCase::emitIntrinsicGetter(AccessGenerationState& state)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(JIT)

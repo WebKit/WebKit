@@ -1,3 +1,9 @@
+2015-10-16  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed. Build fix for 191215.
+
+        * jit/IntrinsicEmitter.cpp:
+
 2015-10-16  Keith Miller  <keith@Keiths-MacBook-Pro-5.local>
 
         Add Intrinsic Getters and use them to fix performance on the getters of TypedArray properties.
