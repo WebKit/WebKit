@@ -1,3 +1,12 @@
+2015-10-16  Mark Lam  <mark.lam@apple.com>
+
+        Always enable MASM_PROBE for debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=150190
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h:
+
 2015-10-14  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r190882): Concatenating a character array and an empty string is broken.
