@@ -76,22 +76,33 @@ void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
     computeAvailableWidthFromLeftAndRight();
 }
 
-void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat)
+static bool newFloatShrinksLine(const FloatingObject& newFloat, const RenderBlockFlow& block, bool isFirstLine)
 {
-    LayoutUnit height = m_block.logicalHeight();
-    if (height < m_block.logicalTopForFloat(newFloat) || height >= m_block.logicalBottomForFloat(newFloat))
-        return;
+    LayoutUnit blockOffset = block.logicalHeight();
+    if (blockOffset >= block.logicalTopForFloat(&newFloat) && blockOffset < block.logicalBottomForFloat(&newFloat))
+        return true;
 
+    // initial-letter float always shrinks the first line.
+    const auto& style = newFloat.renderer().style();
+    if (isFirstLine && style.styleType() == FIRST_LETTER && !style.initialLetter().isEmpty())
+        return true;
+    return false;
+}
+
+void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(const FloatingObject& newFloat)
+{
+    if (!newFloatShrinksLine(newFloat, m_block, m_isFirstLine))
+        return;
 #if ENABLE(CSS_SHAPES)
     ShapeOutsideDeltas shapeDeltas;
-    if (ShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer().shapeOutsideInfo()) {
+    if (ShapeOutsideInfo* shapeOutsideInfo = newFloat.renderer().shapeOutsideInfo()) {
         LayoutUnit lineHeight = m_block.lineHeight(m_isFirstLine, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
-        shapeDeltas = shapeOutsideInfo->computeDeltasForContainingBlockLine(m_block, *newFloat, m_block.logicalHeight(), lineHeight);
+        shapeDeltas = shapeOutsideInfo->computeDeltasForContainingBlockLine(m_block, newFloat, m_block.logicalHeight(), lineHeight);
     }
 #endif
 
-    if (newFloat->type() == FloatingObject::FloatLeft) {
-        float newLeft = m_block.logicalRightForFloat(newFloat);
+    if (newFloat.type() == FloatingObject::FloatLeft) {
+        float newLeft = m_block.logicalRightForFloat(&newFloat);
         if (shouldIndentText() && m_block.style().isLeftToRightDirection())
             newLeft += floorToInt(m_block.textIndentOffset());
 #if ENABLE(CSS_SHAPES)
@@ -104,7 +115,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject* newFloat
 #endif
         m_left = std::max<float>(m_left, newLeft);
     } else {
-        float newRight = m_block.logicalLeftForFloat(newFloat);
+        float newRight = m_block.logicalLeftForFloat(&newFloat);
         if (shouldIndentText() && !m_block.style().isLeftToRightDirection())
             newRight -= floorToInt(m_block.textIndentOffset());
 #if ENABLE(CSS_SHAPES)

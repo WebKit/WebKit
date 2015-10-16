@@ -449,7 +449,7 @@ inline void BreakingContext::handleFloat()
     // If it does, position it now, otherwise, position
     // it after moving to next line (in clearFloats() func)
     if (m_floatsFitOnLine && m_width.fitsOnLineExcludingTrailingWhitespace(m_block.logicalWidthForFloat(floatingObject))) {
-        m_lineBreaker.positionNewFloatOnLine(floatingObject, m_lastFloatFromPreviousLine, m_lineInfo, m_width);
+        m_lineBreaker.positionNewFloatOnLine(*floatingObject, m_lastFloatFromPreviousLine, m_lineInfo, m_width);
         if (m_lineBreakHistory.renderer() == m_current.renderer()) {
             ASSERT(!m_lineBreakHistory.offset());
             m_lineBreakHistory.increment();

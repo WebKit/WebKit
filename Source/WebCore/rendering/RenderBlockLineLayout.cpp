@@ -2059,7 +2059,7 @@ void RenderBlockFlow::checkLinesForTextOverflow()
     }
 }
 
-bool RenderBlockFlow::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)
+bool RenderBlockFlow::positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)
 {
     if (!positionNewFloats())
         return false;
@@ -2069,14 +2069,14 @@ bool RenderBlockFlow::positionNewFloatOnLine(FloatingObject* newFloat, FloatingO
     // We only connect floats to lines for pagination purposes if the floats occur at the start of
     // the line and the previous line had a hard break (so this line is either the first in the block
     // or follows a <br>).
-    if (!newFloat->paginationStrut() || !lineInfo.previousLineBrokeCleanly() || !lineInfo.isEmpty())
+    if (!newFloat.paginationStrut() || !lineInfo.previousLineBrokeCleanly() || !lineInfo.isEmpty())
         return true;
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    ASSERT(floatingObjectSet.last().get() == newFloat);
+    ASSERT(floatingObjectSet.last().get() == &newFloat);
 
-    LayoutUnit floatLogicalTop = logicalTopForFloat(newFloat);
-    LayoutUnit paginationStrut = newFloat->paginationStrut();
+    LayoutUnit floatLogicalTop = logicalTopForFloat(&newFloat);
+    LayoutUnit paginationStrut = newFloat.paginationStrut();
 
     if (floatLogicalTop - paginationStrut != logicalHeight() + lineInfo.floatPaginationStrut())
         return true;

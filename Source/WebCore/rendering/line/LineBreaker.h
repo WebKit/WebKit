@@ -65,7 +65,7 @@ private:
     void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
 
     FloatingObject* insertFloatingObject(RenderBox& floatBox) { return m_block.insertFloatingObject(floatBox); }
-    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)
+    bool positionNewFloatOnLine(const FloatingObject& newFloat, FloatingObject* lastFloatFromPreviousLine, LineInfo& lineInfo, LineWidth& width)
     {
         return m_block.positionNewFloatOnLine(newFloat, lastFloatFromPreviousLine, lineInfo, width);
     }
