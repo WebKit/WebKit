@@ -471,6 +471,9 @@ public:
     IDBClient::IDBConnectionToServer& idbConnection();
 #endif
 
+    void setShowAllPlugins(bool showAll) { m_showAllPlugins = showAll; }
+    bool showAllPlugins() const { return m_showAllPlugins; }
+
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -634,6 +637,7 @@ private:
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
     
     bool m_allowsMediaDocumentInlinePlayback { false };
+    bool m_showAllPlugins { false };
 };
 
 inline PageGroup& Page::group()

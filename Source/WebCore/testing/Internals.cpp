@@ -385,6 +385,8 @@ void Internals::resetToConsistentState(Page* page)
 #if ENABLE(CONTENT_FILTERING)
     MockContentFilterSettings::reset();
 #endif
+
+    page->setShowAllPlugins(false);
 }
 
 Internals::Internals(Document* document)
@@ -3147,5 +3149,18 @@ String Internals::userVisibleString(const DOMURL*)
     return String();
 }
 #endif
+
+void Internals::setShowAllPlugins(bool show)
+{
+    Document* document = contextDocument();
+    if (!document)
+        return;
+    
+    Page* page = document->page();
+    if (!page)
+        return;
+
+    page->setShowAllPlugins(show);
+}
 
 }

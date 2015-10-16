@@ -24,6 +24,7 @@
 #include "config.h"
 #include "PluginData.h"
 
+#include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginStrategy.h"
 
@@ -41,6 +42,36 @@ Vector<PluginInfo> PluginData::webVisiblePlugins() const
 {
     Vector<PluginInfo> plugins;
     platformStrategies()->pluginStrategy()->getWebVisiblePluginInfo(m_page, plugins);
+    return plugins;
+}
+
+static bool shouldBePubliclyVisible(const PluginInfo& plugin)
+{
+    // For practical website compatibility, there are a few plugins that need to be
+    // visible. We are matching the set of plugins that Mozilla has been using since
+    // there is a good track record that this does not harm compatibility.
+    return plugin.name.containsIgnoringASCIICase("Shockwave")
+        || plugin.name.containsIgnoringASCIICase("QuickTime")
+        || plugin.name.containsIgnoringASCIICase("Java");
+}
+
+Vector<PluginInfo> PluginData::publiclyVisiblePlugins() const
+{
+    if (m_page->showAllPlugins())
+        return webVisiblePlugins();
+    
+    Vector<PluginInfo> allPlugins;
+    platformStrategies()->pluginStrategy()->getWebVisiblePluginInfo(m_page, allPlugins);
+
+    Vector<PluginInfo> plugins;
+    for (auto&& plugin : allPlugins) {
+        if (shouldBePubliclyVisible(plugin))
+            plugins.append(WTF::move(plugin));
+    }
+
+    std::sort(plugins.begin(), plugins.end(), [](const PluginInfo& a, const PluginInfo& b) {
+        return codePointCompareLessThan(a.name, b.name);
+    });
     return plugins;
 }
 

@@ -436,6 +436,7 @@ public:
     String getCurrentMediaControlsStatusForElement(HTMLMediaElement*);
 
     String userVisibleString(const DOMURL*);
+    void setShowAllPlugins(bool);
 
 private:
     explicit Internals(Document*);

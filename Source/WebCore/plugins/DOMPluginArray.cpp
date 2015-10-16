@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -49,7 +49,7 @@ unsigned DOMPluginArray::length() const
     if (!data)
         return 0;
 
-    return data->webVisiblePlugins().size();
+    return data->publiclyVisiblePlugins().size();
 }
 
 RefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
@@ -58,7 +58,7 @@ RefPtr<DOMPlugin> DOMPluginArray::item(unsigned index)
     if (!data)
         return nullptr;
 
-    const Vector<PluginInfo>& plugins = data->webVisiblePlugins();
+    const Vector<PluginInfo>& plugins = data->publiclyVisiblePlugins();
     if (index >= plugins.size())
         return nullptr;
     return DOMPlugin::create(data, m_frame, plugins[index]);

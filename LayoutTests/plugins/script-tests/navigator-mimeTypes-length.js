@@ -2,6 +2,9 @@ description(
 "Test for bug 10038: REGRESSION: Length of navigator.mimeTypes collection returns number of installed plugins, not number of registered mime types."
 );
 
+if (window.internals)
+    internals.setShowAllPlugins(true);
+
 var numberOfMimeTypes = 0;
 for (var i = 0; i < navigator.plugins.length; ++i) {
     var plugin = navigator.plugins[i];
