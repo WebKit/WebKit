@@ -45,6 +45,7 @@ private:
     virtual bool typeMismatch() const override;
     virtual String typeMismatchText() const override;
     virtual bool isURLField() const override;
+    virtual String sanitizeValue(const String&) const override;
 };
 
 } // namespace WebCore

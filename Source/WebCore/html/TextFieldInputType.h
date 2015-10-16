@@ -68,9 +68,7 @@ protected:
     virtual void handleBlurEvent() override final;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
     virtual void updateInnerTextValue() override final;
-#if PLATFORM(IOS)
     virtual String sanitizeValue(const String&) const override;
-#endif
 
     virtual String convertFromVisibleValue(const String&) const;
     virtual void didSetValueByUserEdit();
@@ -86,9 +84,6 @@ private:
     virtual bool shouldSubmitImplicitly(Event*) override final;
     virtual RenderPtr<RenderElement> createInputRenderer(Ref<RenderStyle>&&) override;
     virtual bool shouldUseInputMethod() const override;
-#if !PLATFORM(IOS)
-    virtual String sanitizeValue(const String&) const override;
-#endif
     virtual bool shouldRespectListAttribute() override;
     virtual HTMLElement* placeholderElement() const override final;
     virtual void updatePlaceholderText() override final;

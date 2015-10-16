@@ -32,6 +32,7 @@
 #include "URLInputType.h"
 
 #include "HTMLInputElement.h"
+#include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
 #include "URL.h"
@@ -61,6 +62,11 @@ String URLInputType::typeMismatchText() const
 bool URLInputType::isURLField() const
 {
     return true;
+}
+
+String URLInputType::sanitizeValue(const String& proposedValue) const
+{
+    return stripLeadingAndTrailingHTMLSpaces(BaseTextInputType::sanitizeValue(proposedValue));
 }
 
 } // namespace WebCore

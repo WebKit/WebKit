@@ -1,3 +1,17 @@
+2015-10-16  Keith Rollin  <krollin@apple.com>
+
+        The value sanitization algorithm for input[type=url] should strip whitespaces
+        https://bugs.webkit.org/show_bug.cgi?id=148864
+        rdar://problem/22589358
+
+        Reviewed by Chris Dumez.
+
+        Rebaseline two W3C HTML tests given changes in input[type=url].value
+        sanitization.
+
+        * web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/url-expected.txt:
+
 2015-10-15  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Update ImportExpectations according currently imported wpt tests
