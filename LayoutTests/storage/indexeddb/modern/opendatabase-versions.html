@@ -34,6 +34,7 @@ request.onupgradeneeded = function(e)
     request.transaction.oncomplete = function()
     {
         alert("Version change complete (firstPhase). Database version is now - " + request.transaction.db.version);
+        request.transaction.db.close();
         secondPhase();
     }
     request.transaction.onabort = function()
@@ -55,10 +56,9 @@ function secondPhase()
     request.onsuccess = function()
     {
         alert("Successfully opened database at version 1 (secondPhase)");
-
-        // FIXME: The following call will be used once bugs 150147-150150 are resolved.
-        // thirdPhase();
-        done();
+        request.result.close();
+        request.result.close(); // Close it twice just for the heck of it
+        thirdPhase();
     }
     request.onerror = function(e)
     {
@@ -78,13 +78,13 @@ function thirdPhase()
     alert(request + " (thirdPhase)");
     request.onsuccess = function()
     {
-     alert("Unexpected success (thirdPhase)");
-     done();
+        alert("Unexpected success (thirdPhase)");
+        done();
     }
     request.onerror = function(e)
     {
-     alert("Unexpected error (thirdPhase)");
-     done();
+        alert("Unexpected error (thirdPhase)");
+        done();
     }
     request.onupgradeneeded = function(e)
     {
@@ -93,6 +93,7 @@ function thirdPhase()
         request.transaction.oncomplete = function()
         {
             alert("Version change complete (thirdPhase). Database version is now - " + request.transaction.db.version);
+            request.transaction.db.close();
             fourthPhase();
         }
         request.transaction.onabort = function()

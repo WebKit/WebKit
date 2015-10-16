@@ -127,6 +127,14 @@ void InProcessIDBServer::fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConn
     });
 }
 
+void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, databaseConnectionIdentifier] {
+        m_server->databaseConnectionClosed(databaseConnectionIdentifier);
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

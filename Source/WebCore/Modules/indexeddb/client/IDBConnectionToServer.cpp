@@ -120,6 +120,13 @@ void IDBConnectionToServer::fireVersionChangeEvent(uint64_t /*databaseConnection
     // FIXME: Implement versionchange events firing on already-open transactions.
 }
 
+void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionClosed");
+
+    m_delegate->databaseConnectionClosed(database.databaseConnectionIdentifier());
+}
+
 void IDBConnectionToServer::registerDatabaseConnection(IDBDatabase& database)
 {
     ASSERT(!m_databaseConnections.contains(&database));

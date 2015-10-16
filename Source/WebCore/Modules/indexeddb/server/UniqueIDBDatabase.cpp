@@ -92,7 +92,6 @@ void UniqueIDBDatabase::handleOpenDatabaseOperations()
 
     Ref<UniqueIDBDatabaseConnection> connection = UniqueIDBDatabaseConnection::create(*this, operation->connection());
     UniqueIDBDatabaseConnection* rawConnection = &connection.get();
-    m_server.registerDatabaseConnection(*rawConnection);
 
     if (requestedVersion == m_databaseInfo->version()) {
         addOpenDatabaseConnection(WTF::move(connection));
@@ -249,6 +248,26 @@ void UniqueIDBDatabase::transactionDestroyed(UniqueIDBDatabaseTransaction& trans
 {
     if (m_versionChangeTransaction == &transaction)
         m_versionChangeTransaction = nullptr;
+}
+
+void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& connection)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::connectionClosedFromClient");
+
+    if (m_versionChangeDatabaseConnection == &connection)
+        m_versionChangeDatabaseConnection = nullptr;
+
+    ASSERT(m_openDatabaseConnections.contains(&connection));
+
+    auto removedConnection = m_openDatabaseConnections.take(&connection);
+    if (removedConnection->hasNonFinishedTransactions()) {
+        m_closePendingDatabaseConnections.add(WTF::move(removedConnection));
+        return;
+    }
+
+    // FIXME: Now that a database connection has closed, previously blocked transactions might be runnable.
+    // Try to run them now.
 }
 
 void UniqueIDBDatabase::performErrorCallback(uint64_t callbackIdentifier, const IDBError& error)
