@@ -1,3 +1,34 @@
+2015-10-16  Keith Miller  <keith_miller@apple.com>
+
+        Fix some issues with TypedArrays
+        https://bugs.webkit.org/show_bug.cgi?id=150216
+
+        Reviewed by Michael Saboff.
+
+        This fixes a couple of issues:
+        1) The DFG had a separate case for creating new typedarrays in the dfg when the first argument is an object.
+           Since the code for creating a Typedarray in the dfg is almost the same as the code in Baseline/LLInt
+           the two cases have been merged.
+        2) If the length property on an object was unset then the construction could crash.
+        3) The TypedArray.prototype.set function and the TypedArray constructor should not call [[Get]] for the
+           length of the source object when the source object is a TypedArray.
+        4) The conditions that were used to decide if the iterator could be skipped were incorrect.
+           Instead of checking for have a bad time we should have checked the Indexing type did not allow for
+           indexed accessors.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithOneArgument): Deleted.
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        (JSC::constructGenericTypedArrayViewWithFirstArgument):
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        * tests/stress/typedarray-construct-iterator.js: Added.
+        (iterator.return.next):
+        (iterator):
+        (body):
+
 2015-10-15  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r190289): Repro crash clicking back button on netflix.com

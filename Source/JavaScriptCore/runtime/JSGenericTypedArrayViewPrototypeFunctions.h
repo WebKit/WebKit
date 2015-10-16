@@ -66,10 +66,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(ExecState* exec)
     if (!exec->argumentCount())
         return throwVMError(exec, createTypeError(exec, "Expected at least one argument"));
 
-    JSObject* sourceArray = jsDynamicCast<JSObject*>(exec->uncheckedArgument(0));
-    if (!sourceArray)
-        return throwVMError(exec, createTypeError(exec, "First argument should be an object"));
-
     unsigned offset;
     if (exec->argumentCount() >= 2) {
         offset = exec->uncheckedArgument(1).toUInt32(exec);
@@ -78,7 +74,16 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSet(ExecState* exec)
     } else
         offset = 0;
 
-    unsigned length = sourceArray->get(exec, exec->vm().propertyNames->length).toUInt32(exec);
+    JSObject* sourceArray = jsDynamicCast<JSObject*>(exec->uncheckedArgument(0));
+    if (!sourceArray)
+        return throwVMError(exec, createTypeError(exec, "First argument should be an object"));
+
+    unsigned length;
+    if (isTypedView(sourceArray->classInfo()->typedArrayStorageType))
+        length = jsDynamicCast<JSArrayBufferView*>(sourceArray)->length();
+    else
+        length = sourceArray->get(exec, exec->vm().propertyNames->length).toUInt32(exec);
+
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -282,7 +287,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoGetterFuncByteOffset(Exec
 
     return JSValue::encode(jsNumber(thisObject->byteOffset()));
 }
-
 
 template<typename ViewClass>
 EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncReverse(ExecState* exec)

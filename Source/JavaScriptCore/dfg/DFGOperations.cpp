@@ -142,64 +142,6 @@ char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
     return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
 }
 
-template<typename ViewClass>
-char* newTypedArrayWithOneArgument(
-    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    
-    JSValue value = JSValue::decode(encodedValue);
-    
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(value)) {
-        RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
-        
-        if (buffer->byteLength() % ViewClass::elementSize) {
-            vm.throwException(exec, createRangeError(exec, ASCIILiteral("ArrayBuffer length minus the byteOffset is not a multiple of the element size")));
-            return 0;
-        }
-        return bitwise_cast<char*>(
-            ViewClass::create(
-                exec, structure, buffer, 0, buffer->byteLength() / ViewClass::elementSize));
-    }
-    
-    if (JSObject* object = jsDynamicCast<JSObject*>(value)) {
-        unsigned length = object->get(exec, vm.propertyNames->length).toUInt32(exec);
-        if (exec->hadException())
-            return 0;
-        
-        ViewClass* result = ViewClass::createUninitialized(exec, structure, length);
-        if (!result)
-            return 0;
-        
-        if (!result->set(exec, object, 0, length))
-            return 0;
-        
-        return bitwise_cast<char*>(result);
-    }
-    
-    int length;
-    if (value.isInt32())
-        length = value.asInt32();
-    else if (!value.isNumber()) {
-        vm.throwException(exec, createTypeError(exec, ASCIILiteral("Invalid array length argument")));
-        return 0;
-    } else {
-        length = static_cast<int>(value.asNumber());
-        if (length != value.asNumber()) {
-            vm.throwException(exec, createTypeError(exec, ASCIILiteral("Invalid array length argument (fractional lengths not allowed)")));
-            return 0;
-        }
-    }
-    
-    if (length < 0) {
-        vm.throwException(exec, createRangeError(exec, ASCIILiteral("Requested length is negative")));
-        return 0;
-    }
-    
-    return bitwise_cast<char*>(ViewClass::create(exec, structure, length));
-}
-
 extern "C" {
 
 EncodedJSValue JIT_OPERATION operationToThis(ExecState* exec, EncodedJSValue encodedOp)
@@ -664,7 +606,7 @@ char* JIT_OPERATION operationNewInt8ArrayWithSize(
 char* JIT_OPERATION operationNewInt8ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSInt8Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSInt8Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewInt16ArrayWithSize(
@@ -676,7 +618,7 @@ char* JIT_OPERATION operationNewInt16ArrayWithSize(
 char* JIT_OPERATION operationNewInt16ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSInt16Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSInt16Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewInt32ArrayWithSize(
@@ -688,7 +630,7 @@ char* JIT_OPERATION operationNewInt32ArrayWithSize(
 char* JIT_OPERATION operationNewInt32ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSInt32Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSInt32Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewUint8ArrayWithSize(
@@ -700,7 +642,7 @@ char* JIT_OPERATION operationNewUint8ArrayWithSize(
 char* JIT_OPERATION operationNewUint8ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSUint8Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSUint8Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(
@@ -712,7 +654,7 @@ char* JIT_OPERATION operationNewUint8ClampedArrayWithSize(
 char* JIT_OPERATION operationNewUint8ClampedArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSUint8ClampedArray>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSUint8ClampedArray>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewUint16ArrayWithSize(
@@ -724,7 +666,7 @@ char* JIT_OPERATION operationNewUint16ArrayWithSize(
 char* JIT_OPERATION operationNewUint16ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSUint16Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSUint16Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewUint32ArrayWithSize(
@@ -736,7 +678,7 @@ char* JIT_OPERATION operationNewUint32ArrayWithSize(
 char* JIT_OPERATION operationNewUint32ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSUint32Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSUint32Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewFloat32ArrayWithSize(
@@ -748,7 +690,7 @@ char* JIT_OPERATION operationNewFloat32ArrayWithSize(
 char* JIT_OPERATION operationNewFloat32ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSFloat32Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSFloat32Array>(exec, structure, encodedValue));
 }
 
 char* JIT_OPERATION operationNewFloat64ArrayWithSize(
@@ -760,7 +702,7 @@ char* JIT_OPERATION operationNewFloat64ArrayWithSize(
 char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(
     ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
 {
-    return newTypedArrayWithOneArgument<JSFloat64Array>(exec, structure, encodedValue);
+    return bitwise_cast<char*>(constructGenericTypedArrayViewWithFirstArgument<JSFloat64Array>(exec, structure, encodedValue));
 }
 
 JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState* exec, Structure* structure, JSScope* scope, SymbolTable* table, EncodedJSValue initialValueEncoded)
