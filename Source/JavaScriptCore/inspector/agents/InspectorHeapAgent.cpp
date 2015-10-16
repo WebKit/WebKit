@@ -130,7 +130,7 @@ void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
             .setEndTime(endTime)
             .release();
 
-        weakThis->m_frontendDispatcher->garbageCollected(WTF::move(collection));
+        m_frontendDispatcher->garbageCollected(WTF::move(collection));
     });
 
     m_gcStartTime = NAN;

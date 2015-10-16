@@ -1,5 +1,12 @@
 2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed. Build fix after r191160.
+
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+
+2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed. Revert part of r191159 which caused ASSERTs.
 
         A review comment suggested using WeakPtr. It is not suitable
