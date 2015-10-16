@@ -1,3 +1,11 @@
+2015-10-16  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed. Fix typo in TypeError messages in TypedArray.prototype.forEach/filter.
+
+        * builtins/TypedArray.prototype.js:
+        (forEach):
+        (filter):
+
 2015-10-16  Mark Lam  <mark.lam@apple.com>
 
         Use JITSubGenerator to support UntypedUse operands for op_sub in the DFG.

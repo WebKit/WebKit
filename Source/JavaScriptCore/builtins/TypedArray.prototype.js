@@ -83,7 +83,7 @@ function forEach(callback /* [, thisArg] */)
     var thisArg = arguments.length > 1 ? arguments[1] : undefined;
 
     if (typeof callback !== "function")
-        throw new @TypeError("TypedArray.prototype.findIndex callback must be a function");
+        throw new @TypeError("TypedArray.prototype.forEach callback must be a function");
 
     for (var i = 0; i < length; i++)
         callback.@call(thisArg, this[i], i, this);
@@ -249,7 +249,7 @@ function filter(callback /*, thisArg */)
     var length = @typedArrayLength(this);
 
     if (typeof callback !== "function")
-        throw new @TypeError("Array.prototype.map callback must be a function");
+        throw new @TypeError("Array.prototype.filter callback must be a function");
 
     var thisArg = arguments.length > 1 ? arguments[1] : undefined;
 
