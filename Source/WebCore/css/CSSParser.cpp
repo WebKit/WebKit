@@ -1197,10 +1197,10 @@ static CSSParser::ParseResult parseKeywordValue(MutableStyleProperties* declarat
     if (!isKeywordPropertyID(propertyId)) {
         // All properties accept the values of "initial" and "inherit".
         String lowerCaseString = string.lower();
-        if (lowerCaseString != "initial" && lowerCaseString != "inherit")
+        if (lowerCaseString != "initial" && lowerCaseString != "inherit" && lowerCaseString != "unset")
             return CSSParser::ParseResult::Error;
 
-        // Parse initial/inherit shorthands using the CSSParser.
+        // Parse initial/inherit/unset shorthands using the CSSParser.
         if (shorthandForProperty(propertyId).length())
             return CSSParser::ParseResult::Error;
     }
