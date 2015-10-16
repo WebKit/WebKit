@@ -139,7 +139,7 @@ void WebContextMenuProxyGtk::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     }
 }
 
-void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, const Vector<RefPtr<WebContextMenuItem>>& items, const ContextMenuContextData&)
+void WebContextMenuProxyGtk::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items)
 {
     if (!items.isEmpty())
         populate(items);
@@ -147,7 +147,7 @@ void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, 
     if (!m_menu.itemCount())
         return;
 
-    m_popupPosition = convertWidgetPointToScreenPoint(m_webView, position);
+    m_popupPosition = convertWidgetPointToScreenPoint(m_webView, m_context.menuLocation());
 
     // Display menu initiated by right click (mouse button pressed = 3).
     NativeWebMouseEvent* mouseEvent = m_page->currentlyProcessedMouseDownEvent();
@@ -162,9 +162,10 @@ void WebContextMenuProxyGtk::hideContextMenu()
     gtk_menu_popdown(m_menu.platformDescription());
 }
 
-WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy* page)
-    : m_webView(webView)
-    , m_page(page)
+WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+    : WebContextMenuProxy(context, userData)
+    , m_webView(webView)
+    , m_page(&page)
 {
     webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), this);
 }

@@ -206,14 +206,14 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     gtk_main_do_event(event.nativeEvent());
 }
 
-RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
+RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
     return WebPopupMenuProxyGtk::create(m_viewWidget, page);
 }
 
-RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
+RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    return WebContextMenuProxyGtk::create(m_viewWidget, page);
+    return WebContextMenuProxyGtk::create(m_viewWidget, page, context, userData);
 }
 
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect& rect)

@@ -41,13 +41,13 @@ class WebPageProxy;
 
 class WebContextMenuProxyGtk : public WebContextMenuProxy {
 public:
-    static Ref<WebContextMenuProxyGtk> create(GtkWidget* webView, WebPageProxy* page)
+    static Ref<WebContextMenuProxyGtk> create(GtkWidget* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyGtk(webView, page));
+        return adoptRef(*new WebContextMenuProxyGtk(webView, page, context, userData));
     }
     ~WebContextMenuProxyGtk();
 
-    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&) override;
+    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&) override;
     virtual void hideContextMenu() override;
     virtual void cancelTracking() override;
 
@@ -55,7 +55,7 @@ public:
     GtkMenu* gtkMenu() const { return m_menu.platformDescription(); }
 
 private:
-    WebContextMenuProxyGtk(GtkWidget*, WebPageProxy*);
+    WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
 
     void append(WebCore::ContextMenuItem&);
     void populate(const Vector<RefPtr<WebContextMenuItem>>&);

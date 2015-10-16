@@ -38,7 +38,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy::Client* client)
+WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
     , m_popup(gtk_menu_new())

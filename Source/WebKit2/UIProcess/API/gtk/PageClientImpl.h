@@ -82,8 +82,8 @@ private:
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
     virtual WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
-    virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
-    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
+    virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
+    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&) override;
 #endif

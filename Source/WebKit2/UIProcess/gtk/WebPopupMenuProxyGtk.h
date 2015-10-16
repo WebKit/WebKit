@@ -37,7 +37,7 @@ class WebPageProxy;
 
 class WebPopupMenuProxyGtk : public WebPopupMenuProxy {
 public:
-    static Ref<WebPopupMenuProxyGtk> create(GtkWidget* webView, WebPopupMenuProxy::Client* client)
+    static Ref<WebPopupMenuProxyGtk> create(GtkWidget* webView, WebPopupMenuProxy::Client& client)
     {
         return adoptRef(*new WebPopupMenuProxyGtk(webView, client));
     }
@@ -48,7 +48,7 @@ public:
     virtual void cancelTracking() override;
 
 private:
-    WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client*);
+    WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client&);
 
     void setCurrentlySelectedMenuItem(GtkWidget* item) { m_currentlySelectedMenuItem = item; }
     GtkAction* createGtkActionForMenuItem(const WebPopupItem&, int itemIndex);
