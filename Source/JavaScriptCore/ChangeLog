@@ -1,3 +1,15 @@
+2015-10-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed. Revert part of r191159 which caused ASSERTs.
+
+        A review comment suggested using WeakPtr. It is not suitable
+        here and causes ASSERTs across threads. Will address separately.
+
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+        (Inspector::InspectorHeapAgent::InspectorHeapAgent): Deleted.
+
 2015-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include Garbage Collection Event in Timeline

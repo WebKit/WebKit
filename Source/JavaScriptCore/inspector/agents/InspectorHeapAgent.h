@@ -32,7 +32,6 @@
 #include "inspector/InspectorAgentBase.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/WeakPtr.h>
 
 namespace Inspector {
 
@@ -60,7 +59,6 @@ private:
     std::unique_ptr<HeapFrontendDispatcher> m_frontendDispatcher;
     RefPtr<HeapBackendDispatcher> m_backendDispatcher;
     InspectorEnvironment& m_environment;
-    WeakPtrFactory<InspectorHeapAgent> m_weakPtrFactory;
     bool m_enabled { false };
     double m_gcStartTime { NAN };
 };

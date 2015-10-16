@@ -40,7 +40,6 @@ InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     , m_frontendDispatcher(std::make_unique<HeapFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(HeapBackendDispatcher::create(context.backendDispatcher, this))
     , m_environment(context.environment)
-    , m_weakPtrFactory(this)
 {
 }
 
@@ -124,11 +123,7 @@ void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
     // with WebKitLegacy's in process inspector which shares the same
     // VM as the inspected page.
 
-    auto weakThis = m_weakPtrFactory.createWeakPtr();
-    RunLoop::current().dispatch([weakThis, startTime, endTime, operation]() {
-        if (!weakThis)
-            return;
-
+    RunLoop::current().dispatch([this, startTime, endTime, operation]() {
         auto collection = Inspector::Protocol::Heap::GarbageCollection::create()
             .setType(protocolTypeForHeapOperation(operation))
             .setStartTime(startTime)
