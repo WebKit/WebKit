@@ -1993,6 +1993,7 @@ webkit.org/b/136484 fast/css-generated-content/initial-letter-clearance.html [ F
 webkit.org/b/136484 fast/css-generated-content/initial-letter-descender.html [ Failure ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-raised.html [ Failure ]
 webkit.org/b/136484 fast/css-generated-content/initial-letter-sunken.html [ Failure ]
+webkit.org/b/136484 fast/css-generated-content/initial-letter-first-line-wrapping.html  [ ImageOnlyFailure ]
 fast/css/direct-adjacent-style-update-optimization.html [ Failure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
