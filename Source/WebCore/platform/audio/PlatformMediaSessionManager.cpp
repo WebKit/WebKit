@@ -289,9 +289,9 @@ void PlatformMediaSessionManager::applicationWillEnterBackground() const
     }
 }
 
-void PlatformMediaSessionManager::applicationWillEnterForeground() const
+void PlatformMediaSessionManager::applicationDidEnterForeground() const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationWillEnterForeground");
+    LOG(Media, "PlatformMediaSessionManager::applicationDidEnterForeground");
 
     if (!m_isApplicationInBackground)
         return;

@@ -84,10 +84,6 @@ public:
     void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
-    void applicationWillEnterForeground() const;
-    void applicationWillEnterBackground() const;
-    void applicationDidEnterBackground(bool isSuspendedUnderLock) const;
-
     bool clientWillBeginPlayback();
     bool clientWillPausePlayback();
 
