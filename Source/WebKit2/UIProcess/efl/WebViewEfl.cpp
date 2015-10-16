@@ -88,15 +88,15 @@ void WebViewEfl::paintToCairoSurface(cairo_surface_t* surface)
     scene->paintToGraphicsContext(&context, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground());
 }
 
-RefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy* page)
+RefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuListenerEfl::create(page);
+    return WebPopupMenuListenerEfl::create(&page);
 }
 
 #if ENABLE(CONTEXT_MENUS)
-RefPtr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy* page)
+RefPtr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    return WebContextMenuProxyEfl::create(m_ewkView, page);
+    return WebContextMenuProxyEfl::create(m_ewkView, page, context, userData);
 }
 #endif
 

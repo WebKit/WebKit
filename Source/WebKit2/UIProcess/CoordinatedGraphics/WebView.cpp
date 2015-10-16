@@ -432,13 +432,13 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEvent
 }
 #endif
 
-RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy*)
+RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy&)
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
+RefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&)
 {
     notImplemented();
     return nullptr;

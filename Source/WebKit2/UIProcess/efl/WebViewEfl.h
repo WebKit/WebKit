@@ -66,12 +66,12 @@ private:
     WebViewEfl(WebProcessPool*, WebPageGroup*);
 
     void setCursor(const WebCore::Cursor&) override;
-    RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
+    RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
     void updateTextInputState() override;
     void handleDownloadRequest(DownloadProxy*) override;
 
 #if ENABLE(CONTEXT_MENUS)
-    RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
+    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

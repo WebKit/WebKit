@@ -29,7 +29,7 @@
 namespace WebKit {
 
 WebPopupMenuListenerEfl::WebPopupMenuListenerEfl(WebPopupMenuProxy::Client* client)
-    : WebPopupMenuProxy(client)
+    : WebPopupMenuProxy(*client)
 {
 }
 

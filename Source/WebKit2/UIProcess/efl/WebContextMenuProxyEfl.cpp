@@ -37,7 +37,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebContextMenuProxyEfl::WebContextMenuProxyEfl(EwkView*, WebPageProxy*)
+WebContextMenuProxyEfl::WebContextMenuProxyEfl(EwkView*, WebPageProxy&, const ContextMenuContextData& context, const UserData& userData)
+    : WebContextMenuProxy(context, userData)
 {
 }
 
@@ -45,7 +46,7 @@ WebContextMenuProxyEfl::~WebContextMenuProxyEfl()
 {
 }
 
-void WebContextMenuProxyEfl::showContextMenu(const WebCore::IntPoint&, const Vector<RefPtr<WebContextMenuItem>>&, const ContextMenuContextData&)
+void WebContextMenuProxyEfl::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&)
 {
     notImplemented();
 }
@@ -54,6 +55,12 @@ void WebContextMenuProxyEfl::hideContextMenu()
 {
     notImplemented();
 }
+
+void WebContextMenuProxyEfl::cancelTracking()
+{
+    notImplemented();
+}
+
 
 } // namespace WebKit
 

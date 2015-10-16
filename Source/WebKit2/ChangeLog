@@ -1,3 +1,11 @@
+2015-10-15  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+         EFL build fix since r191137
+
+         Unreviewed EFL build fix.
+
+        * UIProcess/CoordinatedGraphics/WebView.cpp: Removed.
+
 2015-10-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate to CGContextSetBaseCTM() and CGContextResetClip() from WKSI
