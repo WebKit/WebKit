@@ -1,3 +1,21 @@
+2015-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Hook up autolayout intrinsic sizing for WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=150219
+        <rdar://problem/20016905>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm: Added.
+        (-[AutoLayoutNavigationDelegate webView:didFinishNavigation:]):
+        (-[AutoLayoutWKWebView load:expectingContentSize:]):
+        (-[AutoLayoutWKWebView expectContentSizeChange:]):
+        (-[AutoLayoutWKWebView invalidateIntrinsicContentSize]):
+        (TEST):
+        Add a variety of tests, including one which catches the bug that
+        the WebCore part of this patch fixes.
+
 2015-10-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Update the help message of --system-malloc

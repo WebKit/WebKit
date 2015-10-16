@@ -160,6 +160,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
 
     WebKit::WeakObjCPtr<id <_WKFormDelegate>> _formDelegate;
+
 #if PLATFORM(IOS)
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
@@ -216,6 +217,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
+    CGSize _intrinsicContentSize;
 #endif
 }
 
@@ -372,6 +374,8 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     _wkView = adoptNS([[WKView alloc] initWithFrame:bounds processPool:processPool configuration:WTF::move(pageConfiguration) webView:self]);
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
+
+    _intrinsicContentSize = CGSizeMake(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_wkView _setAutomaticallyAdjustsContentInsets:YES];
@@ -1924,6 +1928,26 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     return [_wkView performDragOperation:sender];
 }
+
+- (CGSize)intrinsicContentSize
+{
+    return _intrinsicContentSize;
+}
+
+- (void)_setIntrinsicContentSize:(CGSize)intrinsicContentSize
+{
+    // If the intrinsic content size is less than the minimum layout width, the content flowed to fit,
+    // so we can report that that dimension is flexible. If not, we need to report our intrinsic width
+    // so that autolayout will know to provide space for us.
+
+    CGSize intrinsicContentSizeAcknowledgingFlexibleWidth = intrinsicContentSize;
+    if (intrinsicContentSize.width < _page->minimumLayoutSize().width())
+        intrinsicContentSizeAcknowledgingFlexibleWidth.width = NSViewNoInstrinsicMetric;
+
+    _intrinsicContentSize = intrinsicContentSizeAcknowledgingFlexibleWidth;
+    [self invalidateIntrinsicContentSize];
+}
+
 #endif // PLATFORM(MAC)
 
 @end
@@ -3123,6 +3147,21 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 }
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+- (CGFloat)_minimumLayoutWidth
+{
+    return _page->minimumLayoutSize().width();
+}
+
+- (void)_setMinimumLayoutWidth:(CGFloat)width
+{
+    BOOL expandsToFit = width > 0;
+
+    _page->setMinimumLayoutSize(WebCore::IntSize(width, 0));
+    _page->setMainFrameIsScrollable(!expandsToFit);
+
+    [_wkView setShouldClipToVisibleRect:expandsToFit];
+}
 
 #endif
 

@@ -1,3 +1,35 @@
+2015-10-16  Tim Horton  <timothy_horton@apple.com>
+
+        Hook up autolayout intrinsic sizing for WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=150219
+        <rdar://problem/20016905>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView intrinsicContentSize]):
+        (-[WKWebView _setIntrinsicContentSize:]):
+        (-[WKWebView _minimumLayoutWidth]):
+        (-[WKWebView _setMinimumLayoutWidth:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Add a simple SPI to specify the minimum width that a WKWebView will attempt
+        to lay out to, similar to WKView except just a width, not a size, and
+        with no option to force the height to the view size. Similar behavior can
+        be achieved by clients by setting custom autolayout constraints on the view.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::intrinsicContentSizeDidChange):
+        Forward intrinsic content size changes to the WKWebView, not its inner WKView,
+        if we have one.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Only set the autosizing fixed minimum height if we're using that behavior;
+        otherwise, setting it to the view's height will end up accidentally
+        turning on that behavior (which involves an extra layout per resize!).
+
 2015-10-15  Anders Carlsson  <andersca@apple.com>
 
         Use the ShowContextMenu message for service menus as well

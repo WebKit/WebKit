@@ -643,7 +643,10 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
 
 void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
 {
-    [m_wkView _setIntrinsicContentSize:intrinsicContentSize];
+    if (m_webView)
+        [m_webView _setIntrinsicContentSize:intrinsicContentSize];
+    else
+        [m_wkView _setIntrinsicContentSize:intrinsicContentSize];
 }
 
 bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
