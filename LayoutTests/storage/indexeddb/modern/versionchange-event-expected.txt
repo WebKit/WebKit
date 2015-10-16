@@ -2,9 +2,9 @@ ALERT: upgradeneeded (firstPhase): old version - 0 new version - 1
 ALERT: Version change complete (firstPhase). Database version is now - 1
 ALERT: Open success (secondPhase)
 ALERT: thirdPhase - Requested database connection with version 2
-ALERT: secondPhase connection versionchange event - old version: 1, new version: 2
-ALERT: firstPhase connection versionchange event - old version: 1, new version: 2
 ALERT: Expected upgrade needed (thirdPhase)
+ALERT: firstPhase connection had received oldVersion: 1, newVersion: 2
+ALERT: secondPhase connection had received oldVersion: 1, newVersion: 2
 ALERT: Done
 This test:
 -Opens a connection to a database at version 1, creating the database

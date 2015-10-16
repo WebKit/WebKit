@@ -44,7 +44,8 @@ request.onupgradeneeded = function(e)
         connection1 = request.transaction.db;
         connection1.onversionchange = function(e)
         {
-            alert("firstPhase connection versionchange event - old version: " + e.oldVersion + ", new version: " + e.newVersion);
+            connection1.oldVersion = e.oldVersion;
+            connection1.newVersion = e.newVersion;
             connection1.close();
         }
         secondPhase();
@@ -70,7 +71,8 @@ function secondPhase()
         connection2 = request.result;
         connection2.onversionchange = function(e)
         {
-            alert("secondPhase connection versionchange event - old version: " + e.oldVersion + ", new version: " + e.newVersion);
+            connection2.oldVersion = e.oldVersion;
+            connection2.newVersion = e.newVersion;
             connection2.close();
         }
         thirdPhase();
@@ -104,6 +106,9 @@ function thirdPhase()
     request.onupgradeneeded = function(e)
     {
     	alert("Expected upgrade needed (thirdPhase)");
+    	alert("firstPhase connection had received oldVersion: " + connection1.oldVersion + ", newVersion: " + connection1.newVersion);
+    	alert("secondPhase connection had received oldVersion: " + connection2.oldVersion + ", newVersion: " + connection2.newVersion);
+
     	done();
     }
 }
