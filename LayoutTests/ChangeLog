@@ -1,5 +1,19 @@
 2015-10-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r190438. rdar://problem/22865007
+
+    2015-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed test fix after r190434.
+
+            One test was not updated to pass the new required interruption type
+            argument to 'internals.beginMediaSessionInterruption'.
+
+            * webaudio/audiocontext-state-interrupted-expected.txt:
+            * webaudio/audiocontext-state-interrupted.html:
+
+2015-10-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r190434. rdar://problem/22865007
 
     2015-10-01  Eric Carlson  <eric.carlson@apple.com>

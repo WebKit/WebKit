@@ -43,7 +43,7 @@ function beganRunning(e) {
 
     context.onstatechange = firstInterruptionStarted;
     if (window.internals)
-        evalAndLog('internals.beginMediaSessionInterruption()');
+        evalAndLog('internals.beginMediaSessionInterruption("System")');
 
 }
 
@@ -74,7 +74,7 @@ function firstResumeSucceeded() {
 
     context.onstatechange = secondInterruptionStarted;
     if (window.internals)
-        evalAndLog('internals.beginMediaSessionInterruption()');
+        evalAndLog('internals.beginMediaSessionInterruption("System")');
 }
 
 function secondInterruptionStarted(e) {
@@ -98,7 +98,7 @@ function secondResumeSucceeded() {
 
     context.onstatechange = thirdInterruptionStarted;
     if (window.internals)
-        evalAndLog('internals.beginMediaSessionInterruption()');
+        evalAndLog('internals.beginMediaSessionInterruption("System")');
 }
 
 function thirdInterruptionStarted() {
@@ -119,7 +119,7 @@ function thirdInterruptionEnded() {
 
     context.onstatechange = fourthInterruptionStarted;
     if (window.internals)
-        evalAndLog('internals.beginMediaSessionInterruption()');
+        evalAndLog('internals.beginMediaSessionInterruption("System")');
 }
 
 function fourthInterruptionStarted() {
