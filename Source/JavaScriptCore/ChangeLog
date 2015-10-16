@@ -1,3 +1,15 @@
+2015-10-16  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, rolling out r191190.
+
+        Patch needs some design changes.
+
+        Reverted changeset:
+
+        "Fix some issues with TypedArrays"
+        https://bugs.webkit.org/show_bug.cgi?id=150216
+        http://trac.webkit.org/changeset/191190
+
 2015-10-16  Mark Lam  <mark.lam@apple.com>
 
         Move all the probe trampolines into their respective MacroAssembler files.

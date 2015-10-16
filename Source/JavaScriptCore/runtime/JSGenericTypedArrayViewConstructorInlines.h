@@ -77,23 +77,23 @@ Structure* JSGenericTypedArrayViewConstructor<ViewClass>::createStructure(
 }
 
 template<typename ViewClass>
-static JSObject* constructGenericTypedArrayViewFromIterator(ExecState* exec, Structure* structure, JSValue iterator)
+static EncodedJSValue constructGenericTypedArrayViewFromIterator(ExecState* exec, Structure* structure, JSValue iterator)
 {
     if (!iterator.isObject())
-        return throwTypeError(exec, "Symbol.Iterator for the first argument did not return an object.");
+        return JSValue::encode(throwTypeError(exec, "Symbol.Iterator for the first argument did not return an object."));
 
     MarkedArgumentBuffer storage;
     while (true) {
         JSValue next = iteratorStep(exec, iterator);
         if (exec->hadException())
-            return nullptr;
+            return JSValue::encode(jsUndefined());
 
         if (next.isFalse())
             break;
 
         JSValue nextItem = iteratorValue(exec, next);
         if (exec->hadException())
-            return nullptr;
+            return JSValue::encode(jsUndefined());
 
         storage.append(nextItem);
     }
@@ -101,126 +101,17 @@ static JSObject* constructGenericTypedArrayViewFromIterator(ExecState* exec, Str
     ViewClass* result = ViewClass::createUninitialized(exec, structure, storage.size());
     if (!result) {
         ASSERT(exec->hadException());
-        return nullptr;
+        return JSValue::encode(jsUndefined());
     }
 
     for (unsigned i = 0; i < storage.size(); ++i) {
         if (!result->setIndex(exec, i, storage.at(i))) {
             ASSERT(exec->hadException());
-            return nullptr;
+            return JSValue::encode(jsUndefined());
         }
     }
 
-    return result;
-}
-
-template<typename ViewClass, bool checkForOtherArguments = false>
-static JSObject* constructGenericTypedArrayViewWithFirstArgument(ExecState* exec, Structure* structure, EncodedJSValue firstArgument)
-{
-    JSValue firstValue = JSValue::decode(firstArgument);
-    VM& vm = exec->vm();
-
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
-        RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
-
-        unsigned offset = 0;
-        unsigned length = 0;
-        if (checkForOtherArguments && exec->argumentCount() > 1) {
-            offset = exec->uncheckedArgument(1).toUInt32(exec);
-            if (exec->hadException())
-                return nullptr;
-        }
-
-        if (checkForOtherArguments && exec->argumentCount() > 2) {
-            length = exec->uncheckedArgument(2).toUInt32(exec);
-            if (exec->hadException())
-                return nullptr;
-        } else {
-            if ((buffer->byteLength() - offset) % ViewClass::elementSize)
-                return throwRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size");
-            length = (buffer->byteLength() - offset) / ViewClass::elementSize;
-
-        }
-
-        return ViewClass::create(exec, structure, buffer, offset, length);
-    }
-    
-    if (ViewClass::TypedArrayStorageType == TypeDataView)
-        return throwTypeError(exec, "Expected ArrayBuffer for the first argument.");
-    
-    // For everything but DataView, we allow construction with any of:
-    // - Another array. This creates a copy of the of that array.
-    // - An integer. This creates a new typed array of that length and zero-initializes it.
-
-    if (JSObject* object = jsDynamicCast<JSObject*>(firstValue)) {
-        unsigned length;
-
-        if (isTypedView(object->classInfo()->typedArrayStorageType))
-            length = jsCast<JSArrayBufferView*>(object)->length();
-        else {
-            PropertySlot lengthSlot(object);
-            object->getPropertySlot(exec, vm.propertyNames->length, lengthSlot);
-
-            JSValue iteratorFunc = object->get(exec, vm.propertyNames->iteratorSymbol);
-            if (exec->hadException())
-                return nullptr;
-
-            // We would like not use the iterator as it is painfully slow. Fortunately, unless
-            // 1) The iterator is not a known iterator.
-            // 2) The base object does not have a length getter.
-            // 3) The base object might have indexed getters.
-            // it should not be observable that we do not use the iterator.
-
-            if (!iteratorFunc.isUndefined()
-                && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
-                    || lengthSlot.isAccessor() || lengthSlot.isCustom()
-                    || hasAnyArrayStorage(object->indexingType()))) {
-
-                    CallData callData;
-                    CallType callType = getCallData(iteratorFunc, callData);
-                    if (callType == CallTypeNone)
-                        return throwTypeError(exec, "Symbol.Iterator for the first argument cannot be called.");
-
-                    ArgList arguments;
-                    JSValue iterator = call(exec, iteratorFunc, callType, callData, object, arguments);
-                    if (exec->hadException())
-                        return nullptr;
-
-                    return constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, iterator);
-            }
-
-            length = lengthSlot.isUnset() ? 0 : lengthSlot.getValue(exec, vm.propertyNames->length).toUInt32(exec);
-            if (exec->hadException())
-                return nullptr;
-        }
-
-        
-        ViewClass* result = ViewClass::createUninitialized(exec, structure, length);
-        if (!result) {
-            ASSERT(exec->hadException());
-            return nullptr;
-        }
-        
-        if (!result->set(exec, object, 0, length))
-            return nullptr;
-        
-        return result;
-    }
-    
-    int length;
-    if (firstValue.isInt32())
-        length = firstValue.asInt32();
-    else if (!firstValue.isNumber())
-        return throwTypeError(exec, "Invalid array length argument");
-    else {
-        length = static_cast<int>(firstValue.asNumber());
-        if (length != firstValue.asNumber())
-            return throwTypeError(exec, "Invalid array length argument (fractional lengths not allowed)");
-    }
-
-    if (length < 0)
-        return throwRangeError(exec, "Requested length is negative");
-    return ViewClass::create(exec, structure, length);
+    return JSValue::encode(result);
 }
 
 template<typename ViewClass>
@@ -230,14 +121,109 @@ static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* ex
         asInternalFunction(exec->callee())->globalObject()->typedArrayStructure(
             ViewClass::TypedArrayStorageType);
 
+    VM& vm = exec->vm();
+
     if (!exec->argumentCount()) {
         if (ViewClass::TypedArrayStorageType == TypeDataView)
             return throwVMError(exec, createTypeError(exec, "DataView constructor requires at least one argument."));
-
+        
+        // Even though the documentation doesn't say so, it's correct to say
+        // "new Int8Array()". This is the same as allocating an array of zero
+        // length.
         return JSValue::encode(ViewClass::create(exec, structure, 0));
     }
+    
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(exec->argument(0))) {
+        RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
+        
+        unsigned offset = (exec->argumentCount() > 1) ? exec->uncheckedArgument(1).toUInt32(exec) : 0;
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        unsigned length = 0;
+        if (exec->argumentCount() > 2) {
+            length = exec->uncheckedArgument(2).toUInt32(exec);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        } else {
+            if ((buffer->byteLength() - offset) % ViewClass::elementSize)
+                return throwVMError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"));
+            length = (buffer->byteLength() - offset) / ViewClass::elementSize;
+        }
+        return JSValue::encode(ViewClass::create(exec, structure, buffer, offset, length));
+    }
+    
+    if (ViewClass::TypedArrayStorageType == TypeDataView)
+        return throwVMError(exec, createTypeError(exec, "Expected ArrayBuffer for the first argument."));
+    
+    // For everything but DataView, we allow construction with any of:
+    // - Another array. This creates a copy of the of that array.
+    // - An integer. This creates a new typed array of that length and zero-initializes it.
+    
+    if (JSObject* object = jsDynamicCast<JSObject*>(exec->uncheckedArgument(0))) {
+        PropertySlot lengthSlot(object);
+        object->getPropertySlot(exec, vm.propertyNames->length, lengthSlot);
 
-    return JSValue::encode(constructGenericTypedArrayViewWithFirstArgument<ViewClass, true>(exec, structure, JSValue::encode(exec->uncheckedArgument(0))));
+        if (!isTypedView(object->classInfo()->typedArrayStorageType)) {
+            JSValue iteratorFunc = object->get(exec, vm.propertyNames->iteratorSymbol);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+
+            // We would like not use the iterator as it is painfully slow. Fortunately, unless
+            // 1) The iterator is not a known iterator.
+            // 2) The base object does not have a length getter.
+            // 3) Bad times are being had.
+            // it should not be observable that we do not use the iterator.
+
+            if (!iteratorFunc.isUndefined()
+                && (iteratorFunc != exec->lexicalGlobalObject()->arrayProtoValuesFunction()
+                    || lengthSlot.isAccessor() || lengthSlot.isCustom()
+                    || exec->lexicalGlobalObject()->isHavingABadTime())) {
+
+                    CallData callData;
+                    CallType callType = getCallData(iteratorFunc, callData);
+                    if (callType == CallTypeNone)
+                        return JSValue::encode(throwTypeError(exec, "Symbol.Iterator for the first argument cannot be called."));
+
+                    ArgList arguments;
+                    JSValue iterator = call(exec, iteratorFunc, callType, callData, object, arguments);
+                    if (exec->hadException())
+                        return JSValue::encode(jsUndefined());
+
+                    return constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, iterator);
+
+            }
+        }
+
+        unsigned length = lengthSlot.getValue(exec, vm.propertyNames->length).toUInt32(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        
+        ViewClass* result = ViewClass::createUninitialized(exec, structure, length);
+        if (!result) {
+            ASSERT(exec->hadException());
+            return JSValue::encode(jsUndefined());
+        }
+        
+        if (!result->set(exec, object, 0, length))
+            return JSValue::encode(jsUndefined());
+        
+        return JSValue::encode(result);
+    }
+    
+    int length;
+    if (exec->uncheckedArgument(0).isInt32())
+        length = exec->uncheckedArgument(0).asInt32();
+    else if (!exec->uncheckedArgument(0).isNumber())
+        return throwVMError(exec, createTypeError(exec, "Invalid array length argument"));
+    else {
+        length = static_cast<int>(exec->uncheckedArgument(0).asNumber());
+        if (length != exec->uncheckedArgument(0).asNumber())
+            return throwVMError(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)"));
+    }
+
+    if (length < 0)
+        return throwVMError(exec, createRangeError(exec, "Requested length is negative"));
+    return JSValue::encode(ViewClass::create(exec, structure, length));
 }
 
 template<typename ViewClass>
