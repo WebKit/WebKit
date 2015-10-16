@@ -1,3 +1,58 @@
+2015-10-16  Mark Lam  <mark.lam@apple.com>
+
+        Add MacroAssembler::callProbe() for supporting lambda JIT probes.
+        https://bugs.webkit.org/show_bug.cgi?id=150186
+
+        Reviewed by Geoffrey Garen.
+
+        With callProbe(), we can now make probes that are lambdas.  For example, we can
+        now conveniently add probes like so: 
+
+            // When you know exactly which register you want to inspect:
+            jit.callProbe([] (MacroAssembler::ProbeContext* context) {
+                intptr_t value = reinterpret_cast<intptr_t>(context->cpu.eax);
+                dataLogF("eax %p\n", context->cpu.eax); // Inspect the register.
+                ASSERT(value > 10); // Add test code for debugging.
+            });
+
+            // When you want to inspect whichever register the JIT allocated:
+            auto reg = op1.gpr();
+            jit.callProbe([reg] (MacroAssembler::ProbeContext* context) {
+                intptr_t value = reinterpret_cast<intptr_t>(context->gpr(reg));
+                dataLogF("reg %s: %ld\n", context->gprName(reg), value);
+                ASSERT(value > 10);
+            });
+
+        callProbe() is only meant to be used for debugging sessions.  It is not
+        appropriate to use it in permanent code (even for debug builds).
+        This is because:
+        1. The probe mechanism saves and restores all (and I really mean "all")
+           registers, and is inherently slow.
+        2. callProbe() currently works by allocating (via new) a std::function to
+           guarantee that it is persisted for the duration that the JIT generated code is
+           live.  We don't currently delete it ever i.e. it leaks a bit of memory each
+           time the JIT generates code that contains such a lambda probe.
+
+        These limitations are acceptable for a debugging session (assuming you're not
+        debugging a memory leak), but not for deployment code.  If there's a need, we can
+        plug that leak in another patch.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CPUState::fpr):
+        - Removed an unnecessary empty line.
+        (JSC::AbstractMacroAssembler::ProbeContext::gpr):
+        (JSC::AbstractMacroAssembler::ProbeContext::fpr):
+        (JSC::AbstractMacroAssembler::ProbeContext::gprName):
+        (JSC::AbstractMacroAssembler::ProbeContext::fprName):
+        - Added some convenience functions that will make using the probe mechanism
+          easier.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::StdFunctionData::StdFunctionData):
+        (JSC::stdFunctionCallback):
+        (JSC::MacroAssembler::callProbe):
+        * assembler/MacroAssembler.h:
+
 2015-10-16  Andreas Kling  <akling@apple.com>
 
         Remove unused StructureRareData::m_cachedGenericPropertyNameEnumerator.

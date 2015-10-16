@@ -903,7 +903,6 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             }
         }
-
     };
 
     struct ProbeContext;
@@ -914,6 +913,12 @@ public:
         void* arg1;
         void* arg2;
         CPUState cpu;
+
+        // Convenience methods:
+        void* gpr(RegisterID regID) { return cpu.gpr(regID); }
+        double fpr(FPRegisterID regID) { return cpu.gpr(regID); }
+        const char* gprName(RegisterID regID) { return cpu.gprName(regID); }
+        const char* fprName(FPRegisterID regID) { return cpu.fprName(regID); }
     };
 
     // This function emits code to preserve the CPUState (e.g. registers),

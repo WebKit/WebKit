@@ -1589,6 +1589,8 @@ public:
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
     template<typename... Arguments>
     void print(Arguments... args);
+
+    void callProbe(std::function<void (ProbeContext*)>);
 #endif
 };
 
