@@ -131,7 +131,7 @@ typedef const char* optionString;
     v(bool, forceProfilerBytecodeGeneration, false, nullptr) \
     \
     v(bool, useFunctionDotArguments, true, nullptr) \
-    v(bool, useTailCalls, true, nullptr) \
+    v(bool, useTailCalls, false, nullptr) \
     \
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
     v(bool, dumpDisassembly, false, "dumps disassembly of all JIT compiled code upon compilation") \

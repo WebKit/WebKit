@@ -1,3 +1,27 @@
+2015-10-16  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r191175): Still crashing when clicking back button on netflix.com
+        https://bugs.webkit.org/show_bug.cgi?id=150251
+
+        Rubber stamped by Filip Pizlo.
+
+        Turning off Tail Calls and disabling tests until the crash is fixed.
+
+        * runtime/Options.h:
+        * tests/es6.yaml:
+        * tests/stress/dfg-tail-calls.js:
+        (nonInlinedTailCall.callee):
+        * tests/stress/mutual-tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-in-inline-cache.js:
+        (tail):
+        * tests/stress/tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-recognize.js:
+        (callerMustBeRun):
+        * tests/stress/tail-call-varargs-no-stack-overflow.js:
+        (shouldThrow):
+
 2015-10-16  Mark Lam  <mark.lam@apple.com>
 
         Add MacroAssembler::callProbe() for supporting lambda JIT probes.

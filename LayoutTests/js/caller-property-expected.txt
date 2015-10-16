@@ -10,13 +10,13 @@ PASS nonStrictCaller(nonStrictCallee) is nonStrictCaller
 PASS nonStrictCaller(strictCallee) threw exception TypeError: Type error.
 PASS strictCaller(nonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
 PASS strictCaller(strictCallee) threw exception TypeError: Type error.
-PASS strictTailCaller(nonStrictCallee) is null
+FAIL strictTailCaller(nonStrictCallee) should be null. Threw exception TypeError: Function.caller used to retrieve strict caller
 PASS strictTailCaller(strictCallee) threw exception TypeError: Type error.
 PASS nonStrictCaller(boundNonStrictCallee) is nonStrictCaller
 PASS nonStrictCaller(boundStrictCallee) threw exception TypeError: Type error.
 PASS strictCaller(boundNonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
 PASS strictCaller(boundStrictCallee) threw exception TypeError: Type error.
-PASS strictTailCaller(boundNonStrictCallee) is null
+FAIL strictTailCaller(boundNonStrictCallee) should be null. Threw exception TypeError: Function.caller used to retrieve strict caller
 PASS strictTailCaller(boundStrictCallee) threw exception TypeError: Type error.
 PASS nonStrictGetter(nonStrictAccessor) is nonStrictGetter
 PASS nonStrictSetter(nonStrictAccessor) is true
