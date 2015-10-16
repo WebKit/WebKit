@@ -1,5 +1,20 @@
 2015-10-16  Anders Carlsson  <andersca@apple.com>
 
+        Remove some dead menu code
+        https://bugs.webkit.org/show_bug.cgi?id=150247
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::WebContextMenuItemData):
+        (WebKit::WebContextMenuItemData::encode): Deleted.
+        * Shared/WebContextMenuItemData.h:
+        (WebKit::WebContextMenuItemData::selectionHandler): Deleted.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::nsMenuItem):
+
+2015-10-16  Anders Carlsson  <andersca@apple.com>
+
         Move more code to WebContextMenuProxyMac
         https://bugs.webkit.org/show_bug.cgi?id=150240
 

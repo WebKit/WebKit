@@ -193,11 +193,7 @@ static RetainPtr<NSMenuItem> nsMenuItem(const WebContextMenuItemData& item)
         [menuItem setEnabled:item.enabled()];
         [menuItem setState:item.checked() ? NSOnState : NSOffState];
 
-        if (std::function<void ()> selectionHandler = item.selectionHandler()) {
-            WKSelectionHandlerWrapper *wrapper = [[WKSelectionHandlerWrapper alloc] initWithSelectionHandler:selectionHandler];
-            [menuItem setRepresentedObject:wrapper];
-            [wrapper release];
-        } else if (item.userData()) {
+        if (item.userData()) {
             WKUserDataWrapper *wrapper = [[WKUserDataWrapper alloc] initWithUserData:item.userData()];
             [menuItem setRepresentedObject:wrapper];
             [wrapper release];

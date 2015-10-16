@@ -67,11 +67,10 @@ WebContextMenuItemData::WebContextMenuItemData(WebCore::ContextMenuAction action
 {
 }
 
-WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item, std::function<void ()> selectionHandler)
+WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& item)
     : m_type(item.type())
     , m_action(item.action())
     , m_title(item.title())
-    , m_selectionHandler(selectionHandler)
 {
     if (m_type == WebCore::SubmenuType) {
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
@@ -107,9 +106,6 @@ void WebContextMenuItemData::setUserData(API::Object* userData)
     
 void WebContextMenuItemData::encode(IPC::ArgumentEncoder& encoder) const
 {
-    // WebContextMenuItemDatas with a selection handler are meant to exist solely in the UIProcess and should never be sent over IPC.
-    ASSERT(!m_selectionHandler);
-    
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_action);
     encoder << m_title;
