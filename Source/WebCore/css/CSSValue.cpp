@@ -201,6 +201,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSInheritedValue>(*this, other);
         case InitialClass:
             return compareCSSValues<CSSInitialValue>(*this, other);
+        case UnsetClass:
+            return compareCSSValues<CSSUnsetValue>(*this, other);
 #if ENABLE(CSS_GRID_LAYOUT)
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
