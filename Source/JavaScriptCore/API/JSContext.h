@@ -35,14 +35,9 @@
 
 /*!
 @interface
-@discussion An instance of JSContext represents a JavaScript execution environment. All
- JavaScript execution takes place within a context.
- JSContext is also used to manage the life-cycle of objects within the
- JavaScript virtual machine. Every instance of JSValue is associated with a
- JSContext via a strong reference. The JSValue will keep the JSContext it
- references alive so long as the JSValue remains alive. When all of the JSValues
- that reference a particular JSContext have been deallocated the JSContext
- will be deallocated unless it has been previously retained.
+@discussion A JSContext is a JavaScript execution environment. All
+ JavaScript execution takes place within a context, and all JavaScript values
+ are tied to a context.
 */
 NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSContext : NSObject
@@ -155,9 +150,6 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  This property may also be used to check for uncaught exceptions arising from
  API function calls (since the default behaviour of <code>exceptionHandler</code> is to
  assign an uncaught exception to this property).
-
- If a JSValue originating from a different JSVirtualMachine than this context
- is assigned to this property, an Objective-C exception will be raised.
 */
 @property (strong) JSValue *exception;
 
@@ -166,17 +158,16 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @discussion If a call to an API function results in an uncaught JavaScript exception, the
  <code>exceptionHandler</code> block will be invoked. The default implementation for the
  exception handler will store the exception to the exception property on
- context. As a consequence the default behaviour is for unhandled exceptions
+ context. As a consequence the default behaviour is for uncaught exceptions
  occurring within a callback from JavaScript to be rethrown upon return.
- Setting this value to nil will result in all uncaught exceptions thrown from
- the API being silently consumed.
+ Setting this value to nil will cause all exceptions occurring
+ within a callback from JavaScript to be silently caught.
 */
 @property (copy) void(^exceptionHandler)(JSContext *context, JSValue *exception);
 
 /*!
 @property
-@discussion All instances of JSContext are associated with a single JSVirtualMachine. The
- virtual machine provides an "object space" or set of execution resources.
+@discussion All instances of JSContext are associated with a JSVirtualMachine.
 */
 @property (readonly, strong) JSVirtualMachine *virtualMachine;
 

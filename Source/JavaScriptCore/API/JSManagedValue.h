@@ -37,18 +37,16 @@
 /*!
 @interface
 @discussion JSManagedValue represents a "conditionally retained" JSValue. 
- "Conditionally retained" means that as long as either the JSManagedValue's 
- JavaScript value is reachable through the JavaScript object graph
- or the JSManagedValue object is reachable through the external Objective-C 
- object graph as reported to the JSVirtualMachine using 
- addManagedReference:withOwner:, the corresponding JavaScript value will 
- be retained. However, if neither of these conditions are true, the 
+ "Conditionally retained" means that as long as the JSManagedValue's 
+ JSValue is reachable through the JavaScript object graph,
+ or through the Objective-C object graph reported to the JSVirtualMachine using
+ addManagedReference:withOwner:, the corresponding JSValue will 
+ be retained. However, if neither graph reaches the JSManagedValue, the 
  corresponding JSValue will be released and set to nil.
 
- The primary use case for JSManagedValue is for safely referencing JSValues 
- from the Objective-C heap. It is incorrect to store a JSValue into an 
- Objective-C heap object, as this can very easily create a reference cycle, 
- keeping the entire JSContext alive.
+The primary use for a JSManagedValue is to store a JSValue in an Objective-C
+or Swift object that is exported to JavaScript. It is incorrect to store a JSValue
+in an object that is exported to JavaScript, since doing so creates a retain cycle.
 */ 
 NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSManagedValue : NSObject

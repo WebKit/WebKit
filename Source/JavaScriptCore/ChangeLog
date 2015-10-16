@@ -1,3 +1,17 @@
+2015-10-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Update JavaScriptCore API docs
+        https://bugs.webkit.org/show_bug.cgi?id=150262
+
+        Reviewed by Mark Lam.
+
+        Apply some edits for clarity. These came out of a docs review.
+
+        * API/JSContext.h:
+        * API/JSExport.h:
+        * API/JSManagedValue.h:
+        * API/JSValue.h:
+
 2015-10-16  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed. Fix typo in TypeError messages in TypedArray.prototype.forEach/filter.

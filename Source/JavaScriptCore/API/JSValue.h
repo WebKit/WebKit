@@ -34,21 +34,15 @@
 
 /*!
 @interface
-@discussion A JSValue is a reference to a value within the JavaScript object space of a
- JSVirtualMachine. All instances of JSValue originate from a JSContext and
- hold a strong reference to this JSContext. As long as any value associated with 
- a particular JSContext is retained, that JSContext will remain alive. 
- Where an instance method is invoked upon a JSValue, and this returns another 
- JSValue, the returned JSValue will originate from the same JSContext as the 
- JSValue on which the method was invoked.
+@discussion A JSValue is a reference to a JavaScript value. Every JSValue
+ originates from a JSContext and holds a strong reference to it.
+ When a JSValue instance method creates a new JSValue, the new value
+ originates from the same JSContext.
 
- All JavaScript values are associated with a particular JSVirtualMachine
- (the associated JSVirtualMachine is available indirectly via the context
- property). An instance of JSValue may only be passed as an argument to
- methods on instances of JSValue and JSContext that belong to the same
- JSVirtualMachine - passing a JSValue to a method on an object originating
- from a different JSVirtualMachine will result in an Objective-C exception
- being raised.
+ All JSValues values also originate from a JSVirtualMachine
+ (available indirectly via the context property). It is an error to pass a
+ JSValue to a method or property of a JSValue or JSContext originating from a
+ different JSVirtualMachine. Doing so will raise an Objective-C exception.
 */
 NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSValue : NSObject
