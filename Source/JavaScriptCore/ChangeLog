@@ -1,3 +1,27 @@
+2015-10-16  Keith Miller  <keith_miller@apple.com>
+
+        Fix some issues with TypedArrays
+        https://bugs.webkit.org/show_bug.cgi?id=150216
+
+        Reviewed by Geoffrey Garen.
+
+        This fixes a couple of issues:
+        1) The DFG had a separate case for creating new typedarrays in the dfg when the first argument is an object.
+           Since the code for creating a Typedarray in the dfg is almost the same as the code in Baseline/LLInt
+           the two cases have been merged.
+        2) If the length property on an object was unset then the construction could crash.
+        3) The TypedArray.prototype.set function and the TypedArray constructor should not call [[Get]] for the
+           length of the source object when the source object is a TypedArray.
+        4) The conditions that were used to decide if the iterator could be skipped were incorrect.
+           Instead of checking for have a bad time we should have checked the Indexing type did not allow for
+           indexed accessors.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        (JSC::constructGenericTypedArrayView):
+        (JSC::constructGenericTypedArrayViewWithFirstArgument): Deleted.
+
 2015-10-16  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
