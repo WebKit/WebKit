@@ -1,3 +1,18 @@
+2015-10-16  Andreas Kling  <akling@apple.com>
+
+        [EFL, AppleWin] WTF.ConcatenateCharacterArrayAndEmptyString API test failed
+        <https://webkit.org/b/150153>
+
+        Unreviewed.
+
+        Just use simple arrays of LChar and UChar for this test instead of creating String
+        objects and then getting the characters8()/characters16() from them, since that
+        doesn't guarantee null-termination (the bug.)
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::build): Deleted.
+
 2015-10-16  Tim Horton  <timothy_horton@apple.com>
 
         WebKit2.AutoLayoutIntegration API test is failing on some of the bots
