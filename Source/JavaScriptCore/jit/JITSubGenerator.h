@@ -53,8 +53,8 @@ public:
         ASSERT(m_scratchGPR != InvalidGPRReg);
         ASSERT(m_scratchGPR != m_left.payloadGPR());
         ASSERT(m_scratchGPR != m_right.payloadGPR());
-#if ENABLE(JSVALUE32_64)
-        ASSERT(m_scratchGPR != m_left.tagGPR());x
+#if USE(JSVALUE32_64)
+        ASSERT(m_scratchGPR != m_left.tagGPR());
         ASSERT(m_scratchGPR != m_right.tagGPR());
         ASSERT(m_scratchFPR != InvalidFPRReg);
 #endif
