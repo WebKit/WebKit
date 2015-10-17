@@ -38,14 +38,10 @@ static const int maxRowspan = 8190;
 
 using namespace HTMLNames;
 
-inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document& document)
+HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document& document)
     : HTMLTablePartElement(tagName, document)
 {
-}
-
-Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLTableCellElement(tagName, document));
+    ASSERT(tagName == thTag || tagName == tdTag);
 }
 
 int HTMLTableCellElement::colSpan() const

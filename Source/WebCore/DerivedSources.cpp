@@ -237,7 +237,9 @@
 #include "JSHTMLTableCaptionElement.cpp"
 #include "JSHTMLTableCellElement.cpp"
 #include "JSHTMLTableColElement.cpp"
+#include "JSHTMLTableDataCellElement.cpp"
 #include "JSHTMLTableElement.cpp"
+#include "JSHTMLTableHeaderCellElement.cpp"
 #include "JSHTMLTableRowElement.cpp"
 #include "JSHTMLTableSectionElement.cpp"
 #if ENABLE(TEMPLATE_ELEMENT)

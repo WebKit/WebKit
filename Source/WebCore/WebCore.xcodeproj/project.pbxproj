@@ -2771,6 +2771,12 @@
 		8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8348BFAA1B85729500912F36 /* ClassCollection.h */; };
 		83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = 83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
+		836BAD211BD1CA670037356A /* HTMLTableHeaderCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836BAD1F1BD1CA670037356A /* HTMLTableHeaderCellElement.h */; };
+		836BAD221BD1CA670037356A /* HTMLTableDataCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836BAD201BD1CA670037356A /* HTMLTableDataCellElement.h */; };
+		836CB1F61BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836CB1F21BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h */; };
+		836CB1F71BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836CB1F31BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp */; };
+		836CB1F81BD1E41800AF1591 /* JSHTMLTableDataCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 836CB1F41BD1E41800AF1591 /* JSHTMLTableDataCellElement.h */; };
+		836CB1F91BD1E41800AF1591 /* JSHTMLTableDataCellElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836CB1F51BD1E41800AF1591 /* JSHTMLTableDataCellElement.cpp */; };
 		836FBCEA178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */; };
 		836FBCEC178C117F00B21A15 /* SVGAnimatedProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */; };
 		837131781BAB7A720009363B /* JSDOMTokenListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 837131771BAB7A720009363B /* JSDOMTokenListCustom.cpp */; };
@@ -10231,6 +10237,12 @@
 		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
 		8369E58F1AFDD0300087DF68 /* NonDocumentTypeChildNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NonDocumentTypeChildNode.idl; sourceTree = "<group>"; };
+		836BAD1F1BD1CA670037356A /* HTMLTableHeaderCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableHeaderCellElement.h; sourceTree = "<group>"; };
+		836BAD201BD1CA670037356A /* HTMLTableDataCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableDataCellElement.h; sourceTree = "<group>"; };
+		836CB1F21BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableHeaderCellElement.h; sourceTree = "<group>"; };
+		836CB1F31BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableHeaderCellElement.cpp; sourceTree = "<group>"; };
+		836CB1F41BD1E41800AF1591 /* JSHTMLTableDataCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableDataCellElement.h; sourceTree = "<group>"; };
+		836CB1F51BD1E41800AF1591 /* JSHTMLTableDataCellElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableDataCellElement.cpp; sourceTree = "<group>"; };
 		836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTypeAnimator.cpp; sourceTree = "<group>"; };
 		836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedProperty.cpp; sourceTree = "<group>"; };
 		837131771BAB7A720009363B /* JSDOMTokenListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMTokenListCustom.cpp; sourceTree = "<group>"; };
@@ -10266,6 +10278,8 @@
 		83E359A11BB1031D002CEB98 /* JSHTMLTimeElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTimeElement.cpp; sourceTree = "<group>"; };
 		83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeNodeFilter.h; sourceTree = "<group>"; };
 		83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilterCustom.cpp; sourceTree = "<group>"; };
+		83FE5F1F1BD1C55E0038BEEC /* HTMLTableHeaderCellElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTableHeaderCellElement.idl; sourceTree = "<group>"; };
+		83FE5F201BD1C55E0038BEEC /* HTMLTableDataCellElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTableDataCellElement.idl; sourceTree = "<group>"; };
 		8419D2A4120D92D000141F8F /* SVGPathByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathByteStream.h; sourceTree = "<group>"; };
 		8419D2A5120D92D000141F8F /* SVGPathByteStreamBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathByteStreamBuilder.cpp; sourceTree = "<group>"; };
 		8419D2A6120D92D000141F8F /* SVGPathByteStreamBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathByteStreamBuilder.h; sourceTree = "<group>"; };
@@ -18812,9 +18826,13 @@
 				A871DB1B0A150BD600B12A68 /* HTMLTableColElement.cpp */,
 				A871DB210A150BD600B12A68 /* HTMLTableColElement.h */,
 				855542590AA48B1E00BA89F2 /* HTMLTableColElement.idl */,
+				836BAD201BD1CA670037356A /* HTMLTableDataCellElement.h */,
+				83FE5F201BD1C55E0038BEEC /* HTMLTableDataCellElement.idl */,
 				A871DB1A0A150BD600B12A68 /* HTMLTableElement.cpp */,
 				A871DB190A150BD600B12A68 /* HTMLTableElement.h */,
 				8555425A0AA48B1E00BA89F2 /* HTMLTableElement.idl */,
+				836BAD1F1BD1CA670037356A /* HTMLTableHeaderCellElement.h */,
+				83FE5F1F1BD1C55E0038BEEC /* HTMLTableHeaderCellElement.idl */,
 				A871DB1F0A150BD600B12A68 /* HTMLTablePartElement.cpp */,
 				A871DB1E0A150BD600B12A68 /* HTMLTablePartElement.h */,
 				A871DB220A150BD600B12A68 /* HTMLTableRowElement.cpp */,
@@ -19733,8 +19751,12 @@
 				BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */,
 				BC06ED990BFD660600856E9D /* JSHTMLTableColElement.cpp */,
 				BC06ED9A0BFD660600856E9D /* JSHTMLTableColElement.h */,
+				836CB1F51BD1E41800AF1591 /* JSHTMLTableDataCellElement.cpp */,
+				836CB1F41BD1E41800AF1591 /* JSHTMLTableDataCellElement.h */,
 				BC06EE020BFD71AA00856E9D /* JSHTMLTableElement.cpp */,
 				BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */,
+				836CB1F31BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp */,
+				836CB1F21BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h */,
 				BC06ED9B0BFD660600856E9D /* JSHTMLTableRowElement.cpp */,
 				BC06ED9C0BFD660600856E9D /* JSHTMLTableRowElement.h */,
 				BC06ED040BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp */,
@@ -24679,6 +24701,7 @@
 				E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */,
 				E19AC3EF1824DC7900349426 /* CryptoAlgorithmSHA224.h in Headers */,
 				E19AC3F11824DC7900349426 /* CryptoAlgorithmSHA256.h in Headers */,
+				836CB1F81BD1E41800AF1591 /* JSHTMLTableDataCellElement.h in Headers */,
 				E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */,
 				E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */,
 				E1FE136718343A1000892F13 /* CryptoDigest.h in Headers */,
@@ -26238,6 +26261,7 @@
 				8542A7930AE5C93F00DF58DF /* JSSVGRect.h in Headers */,
 				B2FA3DEE0AB75A6F000E5AC4 /* JSSVGRectElement.h in Headers */,
 				B2FA3DF10AB75A6F000E5AC4 /* JSSVGRenderingIntent.h in Headers */,
+				836CB1F61BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.h in Headers */,
 				B2FA3DF30AB75A6F000E5AC4 /* JSSVGScriptElement.h in Headers */,
 				B2FA3DF50AB75A6F000E5AC4 /* JSSVGSetElement.h in Headers */,
 				B2FA3DF70AB75A6F000E5AC4 /* JSSVGStopElement.h in Headers */,
@@ -27241,6 +27265,7 @@
 				9393E605151A9A1800066F06 /* StyleCachedImageSet.h in Headers */,
 				9DAC7C571AF2CB6400437C44 /* StyleContentAlignmentData.h in Headers */,
 				BC779E171BB227CA00CAA8BF /* StyleCustomPropertyData.h in Headers */,
+				836BAD211BD1CA670037356A /* HTMLTableHeaderCellElement.h in Headers */,
 				BC5EB67F0E81D4A700B25965 /* StyleDashboardRegion.h in Headers */,
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
 				BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */,
@@ -27299,6 +27324,7 @@
 				43A625F813B3304000AC94B8 /* SVGAnimatedColor.h in Headers */,
 				08D46CE3127AD5FC0089694B /* SVGAnimatedEnumeration.h in Headers */,
 				71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */,
+				836BAD221BD1CA670037356A /* HTMLTableDataCellElement.h in Headers */,
 				0823D159127AD6AC000EBC95 /* SVGAnimatedInteger.h in Headers */,
 				71E623D1151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.h in Headers */,
 				089021A9126EF5DE0092D5EA /* SVGAnimatedLength.h in Headers */,
@@ -30494,6 +30520,7 @@
 				5824ABAA1AE849C8009074B7 /* RenderTreePosition.cpp in Sources */,
 				E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */,
 				BCEA4867097D93020094C9E4 /* RenderView.cpp in Sources */,
+				836CB1F71BD1E41800AF1591 /* JSHTMLTableHeaderCellElement.cpp in Sources */,
 				BE20507D18A458BF0080647E /* RenderVTTCue.cpp in Sources */,
 				A871DFE50A15376B00B12A68 /* RenderWidget.cpp in Sources */,
 				F5528DA61AC1033E000EF7AD /* ReplaceDeleteFromTextNodeCommand.cpp in Sources */,
@@ -31269,6 +31296,7 @@
 				A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */,
 				BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */,
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
+				836CB1F91BD1E41800AF1591 /* JSHTMLTableDataCellElement.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				1ACE53EA0A8D18E70022947D /* XMLSerializer.cpp in Sources */,
 				5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */,

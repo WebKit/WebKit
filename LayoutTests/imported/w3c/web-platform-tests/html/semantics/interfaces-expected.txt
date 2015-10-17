@@ -185,14 +185,14 @@ PASS Interfaces for table
 PASS Interfaces for TABLE 
 PASS Interfaces for tbody 
 PASS Interfaces for TBODY 
-FAIL Interfaces for td assert_equals: Element td should have HTMLTableDataCellElement as its primary interface. expected "[object HTMLTableDataCellElement]" but got "[object HTMLTableCellElement]"
-FAIL Interfaces for TD assert_equals: Element TD should have HTMLTableDataCellElement as its primary interface. expected "[object HTMLTableDataCellElement]" but got "[object HTMLTableCellElement]"
+PASS Interfaces for td 
+PASS Interfaces for TD 
 PASS Interfaces for textarea 
 PASS Interfaces for TEXTAREA 
 PASS Interfaces for tfoot 
 PASS Interfaces for TFOOT 
-FAIL Interfaces for th assert_equals: Element th should have HTMLTableHeaderCellElement as its primary interface. expected "[object HTMLTableHeaderCellElement]" but got "[object HTMLTableCellElement]"
-FAIL Interfaces for TH assert_equals: Element TH should have HTMLTableHeaderCellElement as its primary interface. expected "[object HTMLTableHeaderCellElement]" but got "[object HTMLTableCellElement]"
+PASS Interfaces for th 
+PASS Interfaces for TH 
 PASS Interfaces for thead 
 PASS Interfaces for THEAD 
 PASS Interfaces for title 

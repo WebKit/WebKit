@@ -517,7 +517,9 @@ set(WebCore_NON_SVG_IDL_FILES
     html/HTMLTableCaptionElement.idl
     html/HTMLTableCellElement.idl
     html/HTMLTableColElement.idl
+    html/HTMLTableDataCellElement.idl
     html/HTMLTableElement.idl
+    html/HTMLTableHeaderCellElement.idl
     html/HTMLTableRowElement.idl
     html/HTMLTableSectionElement.idl
     html/HTMLTemplateElement.idl

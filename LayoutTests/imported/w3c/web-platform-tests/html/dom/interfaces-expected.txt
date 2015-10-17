@@ -397,6 +397,9 @@ CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'ch' on a non-
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'chOff' on a non-HTMLTableRowElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'vAlign' on a non-HTMLTableRowElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'bgColor' on a non-HTMLTableRowElement object.
+CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'abbr' on a non-HTMLTableDataCellElement object.
+CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'scope' on a non-HTMLTableHeaderCellElement object.
+CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'abbr' on a non-HTMLTableHeaderCellElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'colSpan' on a non-HTMLTableCellElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'rowSpan' on a non-HTMLTableCellElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'headers' on a non-HTMLTableCellElement object.
@@ -3980,13 +3983,15 @@ PASS HTMLTableRowElement interface: document.createElement("tr") must inherit pr
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "chOff" with the proper type (7) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "vAlign" with the proper type (8) 
 PASS HTMLTableRowElement interface: document.createElement("tr") must inherit property "bgColor" with the proper type (9) 
-FAIL HTMLTableDataCellElement interface: existence and properties of interface object assert_own_property: self does not have own property "HTMLTableDataCellElement" expected property "HTMLTableDataCellElement" missing
-FAIL HTMLTableDataCellElement interface object length assert_own_property: self does not have own property "HTMLTableDataCellElement" expected property "HTMLTableDataCellElement" missing
-FAIL HTMLTableDataCellElement interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HTMLTableDataCellElement" expected property "HTMLTableDataCellElement" missing
-FAIL HTMLTableDataCellElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HTMLTableDataCellElement" expected property "HTMLTableDataCellElement" missing
-FAIL HTMLTableDataCellElement interface: attribute abbr assert_own_property: self does not have own property "HTMLTableDataCellElement" expected property "HTMLTableDataCellElement" missing
-FAIL HTMLTableDataCellElement must be primary interface of document.createElement("td") assert_own_property: self does not have own property "HTMLTableDataCellElement" expected property "HTMLTableDataCellElement" missing
-FAIL Stringification of document.createElement("td") assert_equals: class string of document.createElement("td") expected "[object HTMLTableDataCellElement]" but got "[object HTMLTableCellElement]"
+FAIL HTMLTableDataCellElement interface: existence and properties of interface object assert_equals: class string of HTMLTableDataCellElement expected "[object Function]" but got "[object HTMLTableDataCellElementConstructor]"
+PASS HTMLTableDataCellElement interface object length 
+PASS HTMLTableDataCellElement interface: existence and properties of interface prototype object 
+FAIL HTMLTableDataCellElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableDataCellElement.prototype.constructor is not writable expected true got false
+FAIL HTMLTableDataCellElement interface: attribute abbr assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+PASS HTMLTableDataCellElement must be primary interface of document.createElement("td") 
+PASS Stringification of document.createElement("td") 
 PASS HTMLTableDataCellElement interface: document.createElement("td") must inherit property "abbr" with the proper type (0) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "colSpan" with the proper type (0) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "rowSpan" with the proper type (1) 
@@ -4001,16 +4006,20 @@ PASS HTMLTableCellElement interface: document.createElement("td") must inherit p
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "noWrap" with the proper type (10) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "vAlign" with the proper type (11) 
 PASS HTMLTableCellElement interface: document.createElement("td") must inherit property "bgColor" with the proper type (12) 
-FAIL HTMLTableHeaderCellElement interface: existence and properties of interface object assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface object length assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface: existence and properties of interface prototype object assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface: attribute scope assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface: attribute abbr assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface: attribute sorted assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement interface: operation sort() assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL HTMLTableHeaderCellElement must be primary interface of document.createElement("th") assert_own_property: self does not have own property "HTMLTableHeaderCellElement" expected property "HTMLTableHeaderCellElement" missing
-FAIL Stringification of document.createElement("th") assert_equals: class string of document.createElement("th") expected "[object HTMLTableHeaderCellElement]" but got "[object HTMLTableCellElement]"
+FAIL HTMLTableHeaderCellElement interface: existence and properties of interface object assert_equals: class string of HTMLTableHeaderCellElement expected "[object Function]" but got "[object HTMLTableHeaderCellElementConstructor]"
+PASS HTMLTableHeaderCellElement interface object length 
+PASS HTMLTableHeaderCellElement interface: existence and properties of interface prototype object 
+FAIL HTMLTableHeaderCellElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLTableHeaderCellElement.prototype.constructor is not writable expected true got false
+FAIL HTMLTableHeaderCellElement interface: attribute scope assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL HTMLTableHeaderCellElement interface: attribute abbr assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
+FAIL HTMLTableHeaderCellElement interface: attribute sorted assert_true: The prototype object must have a property "sorted" expected true got false
+FAIL HTMLTableHeaderCellElement interface: operation sort() assert_own_property: interface prototype object missing non-static operation expected property "sort" missing
+PASS HTMLTableHeaderCellElement must be primary interface of document.createElement("th") 
+PASS Stringification of document.createElement("th") 
 PASS HTMLTableHeaderCellElement interface: document.createElement("th") must inherit property "scope" with the proper type (0) 
 PASS HTMLTableHeaderCellElement interface: document.createElement("th") must inherit property "abbr" with the proper type (1) 
 FAIL HTMLTableHeaderCellElement interface: document.createElement("th") must inherit property "sorted" with the proper type (2) assert_inherits: property "sorted" not found in prototype chain

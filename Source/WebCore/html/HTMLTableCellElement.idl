@@ -20,7 +20,6 @@
 
 interface HTMLTableCellElement : HTMLElement {
     readonly attribute long cellIndex;
-    [Reflect] attribute DOMString abbr;
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString axis;
     [Reflect] attribute DOMString bgColor;
@@ -35,8 +34,12 @@ interface HTMLTableCellElement : HTMLElement {
     [Reflect] attribute DOMString height;
     [Reflect] attribute boolean noWrap;
     attribute long rowSpan;
-    [Reflect] attribute DOMString scope;
     [Reflect] attribute DOMString vAlign;
     [Reflect] attribute DOMString width;
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+    [Reflect] attribute DOMString abbr;
+    [Reflect] attribute DOMString scope;
+#endif
 };
 
