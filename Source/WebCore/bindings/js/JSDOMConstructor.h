@@ -29,7 +29,7 @@ public:
     typedef DOMConstructorObject Base;
 
     static JSDOMConstructorNotConstructable* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
-    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue);
+    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
 
@@ -46,7 +46,7 @@ public:
     typedef DOMConstructorObject Base;
 
     static JSDOMConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
-    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue);
+    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
 
@@ -66,7 +66,7 @@ public:
     typedef DOMConstructorWithDocument Base;
 
     static JSDOMNamedConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
-    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue);
+    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
 
@@ -86,7 +86,7 @@ public:
     typedef DOMConstructorJSBuiltinObject Base;
 
     static JSBuiltinConstructor* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
-    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue);
+    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
     DECLARE_INFO;
 
@@ -134,14 +134,14 @@ template<typename JSClass> inline JSC::Structure* JSDOMConstructor<JSClass>::cre
     return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
 }
 
-template<typename JSClass> void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
+template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
     initializeProperties(vm, globalObject);
 }
 
-template<typename JSClass> JSC::ConstructType JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
+template<typename JSClass> inline JSC::ConstructType JSDOMConstructor<JSClass>::getConstructData(JSC::JSCell*, JSC::ConstructData& constructData)
 {
     constructData.native.function = construct;
     return JSC::ConstructTypeHost;
