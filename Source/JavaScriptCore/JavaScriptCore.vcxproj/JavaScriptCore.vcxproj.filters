@@ -408,6 +408,9 @@
     <ClCompile Include="..\jit\CallFrameShuffler64.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\IntrinsicEmitter.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JIT.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -3443,10 +3446,10 @@
     </ClInclude>
     <ClInclude Include="..\runtime\JSTypedArrayViewConstructor.h">
       <Filter>runtime</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSTypedArrayViewPrototype.h">
       <Filter>runtime</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="..\runtime\JSUint16Array.h">
       <Filter>runtime</Filter>
     </ClInclude>

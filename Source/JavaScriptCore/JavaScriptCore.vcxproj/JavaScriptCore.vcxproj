@@ -634,6 +634,7 @@
     <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
     <ClCompile Include="..\jit\HostCallReturnValue.cpp" />
+    <ClCompile Include="..\jit\IntrinsicEmitter.cpp" />
     <ClCompile Include="..\jit\JIT.cpp" />
     <ClCompile Include="..\jit\JITArithmetic.cpp" />
     <ClCompile Include="..\jit\JITArithmetic32_64.cpp" />
@@ -824,6 +825,7 @@
     <ClCompile Include="..\runtime\JSTypedArrayConstructors.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
+    <ClCompile Include="..\runtime\JSTypedArrayViewConstructor.cpp" />
     <ClCompile Include="..\runtime\JSTypedArrayViewPrototype.cpp" />
     <ClCompile Include="..\runtime\JSEnvironmentRecord.cpp" />
     <ClCompile Include="..\runtime\JSWeakMap.cpp" />
@@ -1695,6 +1697,7 @@
     <ClInclude Include="..\runtime\JSTypedArrayConstructors.h" />
     <ClInclude Include="..\runtime\JSTypedArrayPrototypes.h" />
     <ClInclude Include="..\runtime\JSTypedArrays.h" />
+    <ClInclude Include="..\runtime\JSTypedArrayViewConstructor.h" />
     <ClInclude Include="..\runtime\JSTypedArrayViewPrototype.h" />
     <ClInclude Include="..\runtime\JSUint16Array.h" />
     <ClInclude Include="..\runtime\JSUint32Array.h" />
