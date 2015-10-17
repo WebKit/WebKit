@@ -54,7 +54,7 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, bool enableLigat
         CFDictionarySetValue(mutableAttributes, kCTKernAttributeName, zeroKerningValue);
     }
 
-    if (!((orientation == Horizontal && platformData().allowsLigatures()) || enableLigatures)) {
+    if (!enableLigatures) {
         const int zero = 0;
         static CFNumberRef essentialLigaturesValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &zero);
         CFDictionarySetValue(mutableAttributes, kCTLigatureAttributeName, essentialLigaturesValue);
