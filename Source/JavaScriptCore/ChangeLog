@@ -1,3 +1,60 @@
+2015-10-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix some generational heap growth pathologies
+        https://bugs.webkit.org/show_bug.cgi?id=150270
+
+        Reviewed by Andreas Kling.
+
+        When doing generational copying, we would pretend that the size of old space was increased
+        just by the amount of bytes we copied. In reality, it would be increased by the number of
+        bytes used by the copied blocks we created. This is a larger number, and in some simple
+        pathological programs, the difference can be huge.
+
+        Fixing this bug was relatively easy, and the only really meaningful change here is in
+        Heap::updateAllocationLimits(). But to convince myself that the change was valid, I had to
+        add some debugging code and I had to refactor some stuff so that it made more sense.
+
+        This change does obviate the need for m_totalBytesCopied, because we no longer use it in
+        release builds to decide how much heap we are using at the end of collection. But I added a
+        FIXME about how we could restore our use of m_totalBytesCopied. So, I kept the logic, for
+        now. The FIXME references https://bugs.webkit.org/show_bug.cgi?id=150268.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CopiedBlock.cpp: Added.
+        (JSC::CopiedBlock::createNoZeroFill):
+        (JSC::CopiedBlock::destroy):
+        (JSC::CopiedBlock::create):
+        (JSC::CopiedBlock::zeroFillWilderness):
+        (JSC::CopiedBlock::CopiedBlock):
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::didSurviveGC):
+        (JSC::CopiedBlock::createNoZeroFill): Deleted.
+        (JSC::CopiedBlock::destroy): Deleted.
+        (JSC::CopiedBlock::create): Deleted.
+        (JSC::CopiedBlock::zeroFillWilderness): Deleted.
+        (JSC::CopiedBlock::CopiedBlock): Deleted.
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::startedCopying):
+        * heap/Heap.cpp:
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::resetVisitors):
+        (JSC::Heap::capacity):
+        (JSC::Heap::protectedGlobalObjectCount):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::sizeAfterCollect): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::isBusy):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+
 2015-10-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement String.prototype.normalize

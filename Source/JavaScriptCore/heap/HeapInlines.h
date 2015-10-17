@@ -39,9 +39,13 @@ inline bool Heap::shouldCollect()
 {
     if (isDeferred())
         return false;
+    if (!m_isSafeToCollect)
+        return false;
+    if (m_operationInProgress != NoOperation)
+        return false;
     if (Options::gcMaxHeapSize())
-        return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize() && m_isSafeToCollect && m_operationInProgress == NoOperation;
-    return m_bytesAllocatedThisCycle > m_maxEdenSize && m_isSafeToCollect && m_operationInProgress == NoOperation;
+        return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize();
+    return m_bytesAllocatedThisCycle > m_maxEdenSize;
 }
 
 inline bool Heap::isBusy()
@@ -274,9 +278,6 @@ inline void Heap::decrementDeferralDepth()
 
 inline bool Heap::collectIfNecessaryOrDefer()
 {
-    if (isDeferred())
-        return false;
-
     if (!shouldCollect())
         return false;
 
