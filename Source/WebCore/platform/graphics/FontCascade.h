@@ -265,8 +265,6 @@ public:
     static CodePath codePath();
     static CodePath s_codePath;
 
-    WEBCORE_EXPORT static void setDefaultKerning(bool);
-    WEBCORE_EXPORT static void setDefaultLigatures(bool);
     static const uint8_t s_roundingHackCharacterTable[256];
     static bool isRoundingHackCharacter(UChar32 c)
     {
@@ -306,7 +304,7 @@ private:
             return true;
         if (textRenderingMode == OptimizeSpeed)
             return false;
-        return s_defaultKerning;
+        return true;
     }
 
     bool computeEnableKerning() const
@@ -328,9 +326,6 @@ private:
             return false;
         return advancedTextRenderingMode();
     }
-
-    static bool s_defaultKerning;
-    static bool s_defaultLigatures;
 
     FontCascadeDescription m_fontDescription;
     mutable RefPtr<FontCascadeFonts> m_fonts;

@@ -624,8 +624,6 @@ NSString * const WebViewWillCloseNotification = @"WebViewWillCloseNotification";
 NSString *_WebViewRemoteInspectorHasSessionChangedNotification = @"_WebViewRemoteInspectorHasSessionChangedNotification";
 #endif
 
-NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
-
 @interface WebProgressItem : NSObject
 {
 @public
@@ -4697,7 +4695,6 @@ static Vector<String> toStringVector(NSArray* patterns)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey]];
 
 #if PLATFORM(IOS)
     continuousSpellCheckingEnabled = NO;
@@ -4707,10 +4704,6 @@ static Vector<String> toStringVector(NSArray* patterns)
     continuousSpellCheckingEnabled = [defaults boolForKey:WebContinuousSpellCheckingEnabled];
     grammarCheckingEnabled = [defaults boolForKey:WebGrammarCheckingEnabled];
 #endif
-
-    bool defaultKerningAndLigatures = [defaults boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
-    FontCascade::setDefaultKerning(defaultKerningAndLigatures);
-    FontCascade::setDefaultLigatures(defaultKerningAndLigatures);
 
 #if !PLATFORM(IOS)
     automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];
