@@ -875,6 +875,29 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
     }
 }
 
+TextStream& operator<<(TextStream& ts, const Vector<GraphicsLayer::PlatformLayerID>& layers)
+{
+    for (size_t i = 0; i < layers.size(); ++i) {
+        if (i)
+            ts << " ";
+        ts << layers[i];
+    }
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const WebCore::GraphicsLayer::CustomAppearance& customAppearance)
+{
+    switch (customAppearance) {
+    case GraphicsLayer::CustomAppearance::NoCustomAppearance: ts << "none"; break;
+    case GraphicsLayer::CustomAppearance::ScrollingOverhang: ts << "scrolling-overhang"; break;
+    case GraphicsLayer::CustomAppearance::ScrollingShadow: ts << "scrolling-shadow"; break;
+    case GraphicsLayer::CustomAppearance::LightBackdropAppearance: ts << "light-backdrop"; break;
+    case GraphicsLayer::CustomAppearance::DarkBackdropAppearance: ts << "dark-backdrop"; break;
+    }
+    return ts;
+}
+
 String GraphicsLayer::layerTreeAsText(LayerTreeAsTextBehavior behavior) const
 {
     TextStream ts;

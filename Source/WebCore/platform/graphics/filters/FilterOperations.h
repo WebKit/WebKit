@@ -74,6 +74,8 @@ private:
     Vector<RefPtr<FilterOperation>> m_operations;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FilterOperations&);
+
 } // namespace WebCore
 
 #endif // FilterOperations_h

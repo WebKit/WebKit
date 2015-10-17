@@ -280,6 +280,9 @@ protected:
     PlatformCALayerClient* m_owner;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCALayer::LayerType);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCALayer::FilterType);
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(ToValueTypeName, predicate) \

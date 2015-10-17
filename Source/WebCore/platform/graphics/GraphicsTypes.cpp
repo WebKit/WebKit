@@ -28,6 +28,7 @@
 #include "config.h"
 #include "GraphicsTypes.h"
 
+#include "TextStream.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -235,5 +236,77 @@ bool parseTextBaseline(const String& s, TextBaseline& baseline)
     }
     return false;
 }
+
+TextStream& operator<<(TextStream& ts, BlendMode blendMode)
+{
+    switch (blendMode) {
+    case BlendModeNormal: ts << "normal"; break;
+    case BlendModeMultiply: ts << "multiply"; break;
+    case BlendModeScreen: ts << "screen"; break;
+    case BlendModeOverlay: ts << "overlay"; break;
+    case BlendModeDarken: ts << "darken"; break;
+    case BlendModeLighten: ts << "lighten"; break;
+    case BlendModeColorDodge: ts << "color-dodge"; break;
+    case BlendModeColorBurn: ts << "color-burn"; break;
+    case BlendModeHardLight: ts << "hard-light"; break;
+    case BlendModeSoftLight: ts << "soft-light"; break;
+    case BlendModeDifference: ts << "difference"; break;
+    case BlendModeExclusion: ts << "exclusion"; break;
+    case BlendModeHue: ts << "hue"; break;
+    case BlendModeSaturation: ts << "saturation"; break;
+    case BlendModeColor: ts << "color"; break;
+    case BlendModeLuminosity: ts << "luminosity"; break;
+    case BlendModePlusDarker: ts << "plus-darker"; break;
+    case BlendModePlusLighter: ts << "plus-lighter"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, WindRule rule)
+{
+    switch (rule) {
+    case RULE_NONZERO:
+        ts << "NON-ZERO";
+        break;
+    case RULE_EVENODD:
+        ts << "EVEN-ODD";
+        break;
+    }
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, LineCap capStyle)
+{
+    switch (capStyle) {
+    case ButtCap:
+        ts << "BUTT";
+        break;
+    case RoundCap:
+        ts << "ROUND";
+        break;
+    case SquareCap:
+        ts << "SQUARE";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, LineJoin joinStyle)
+{
+    switch (joinStyle) {
+    case MiterJoin:
+        ts << "MITER";
+        break;
+    case RoundJoin:
+        ts << "ROUND";
+        break;
+    case BevelJoin:
+        ts << "BEVEL";
+        break;
+    }
+    return ts;
+}
+
 
 }

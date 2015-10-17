@@ -28,6 +28,7 @@
 
 #include "AnimationUtilities.h"
 #include "HashTools.h"
+#include "TextStream.h"
 #include <wtf/Assertions.h>
 #include <wtf/DecimalNumber.h>
 #include <wtf/HexNumber.h>
@@ -488,5 +489,9 @@ Color blend(const Color& from, const Color& to, double progress, bool blendPremu
         blend(from.alpha(), to.alpha(), progress));
 }
 
+TextStream& operator<<(TextStream& ts, const Color& color)
+{
+    return ts << color.nameForRenderTreeAsText();
+}
 
 } // namespace WebCore

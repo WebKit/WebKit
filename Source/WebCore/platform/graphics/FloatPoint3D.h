@@ -182,6 +182,8 @@ inline float FloatPoint3D::distanceTo(const FloatPoint3D& a) const
     return (*this - a).length();
 }
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatPoint3D&);
+
 } // namespace WebCore
 
 #endif // FloatPoint3D_h

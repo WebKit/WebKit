@@ -2139,6 +2139,7 @@ set(WebCore_SOURCES
 
     platform/animation/Animation.cpp
     platform/animation/AnimationList.cpp
+    platform/animation/TimingFunction.cpp
 
     platform/audio/AudioBus.cpp
     platform/audio/AudioChannel.cpp

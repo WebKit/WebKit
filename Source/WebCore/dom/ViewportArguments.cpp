@@ -33,6 +33,7 @@
 #include "IntSize.h"
 #include "Page.h"
 #include "ScriptableDocumentParser.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -448,6 +449,26 @@ void reportViewportWarning(Document* document, ViewportErrorCode errorCode, cons
 
     // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
     document->addConsoleMessage(MessageSource::Rendering, viewportErrorMessageLevel(errorCode), message);
+}
+
+TextStream& operator<<(TextStream& ts, const ViewportArguments& viewportArguments)
+{
+    ts.increaseIndent();
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
+
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
+    ts.decreaseIndent();
+
+    return ts;
 }
 
 } // namespace WebCore

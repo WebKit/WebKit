@@ -336,6 +336,8 @@ private:
     Color m_color;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FilterOperation&);
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_FILTEROPERATION(ToValueTypeName, predicate) \

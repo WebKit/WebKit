@@ -640,6 +640,9 @@ protected:
 #endif
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Vector<GraphicsLayer::PlatformLayerID>&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const GraphicsLayer::CustomAppearance&);
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(ToValueTypeName, predicate) \

@@ -136,6 +136,10 @@ private:
     AnimationType m_type;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCAAnimation::AnimationType);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCAAnimation::FillModeType);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, PlatformCAAnimation::ValueFunctionType);
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_CAANIMATION(ToValueTypeName, predicate) \

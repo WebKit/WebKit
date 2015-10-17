@@ -33,6 +33,7 @@
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
+#import <WebCore/TextStream.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
@@ -796,6 +797,105 @@ void PlatformCAAnimationRemote::updateLayerAnimations(CALayer *layer, RemoteLaye
         addAnimationToLayer(layer, layerTreeHost, keyAnimationPair.first, keyAnimationPair.second);
 
     END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+TextStream& operator<<(TextStream&ts, const PlatformCAAnimationRemote::KeyframeValue& value)
+{
+    switch (value.keyframeType()) {
+    case PlatformCAAnimationRemote::KeyframeValue::NumberKeyType:
+        ts << "number=" << value.numberValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::ColorKeyType:
+        ts << "color=";
+        ts << value.colorValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::PointKeyType:
+        ts << "point=";
+        ts << value.pointValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::TransformKeyType:
+        ts << "transform=";
+        ts << value.transformValue();
+        break;
+    case PlatformCAAnimationRemote::KeyframeValue::FilterKeyType:
+        ts << "filter=";
+        if (value.filterValue())
+            ts << *value.filterValue();
+        else
+            ts << "null";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properties& animation)
+{
+    ts << "type=";
+    ts << animation.animationType;
+    ts << " keyPath=";
+    ts << animation.keyPath;
+
+    if (animation.beginTime)
+        ts.dumpProperty("beginTime", animation.beginTime);
+
+    if (animation.duration)
+        ts.dumpProperty("duration", animation.duration);
+
+    if (animation.timeOffset)
+        ts.dumpProperty("timeOffset", animation.timeOffset);
+
+    ts.dumpProperty("repeatCount", animation.repeatCount);
+
+    if (animation.speed != 1)
+        ts.dumpProperty("speed", animation.speed);
+
+    ts.dumpProperty("fillMode", animation.fillMode);
+    ts.dumpProperty("valueFunction", animation.valueFunction);
+
+    if (animation.autoReverses)
+        ts.dumpProperty("autoReverses", animation.autoReverses);
+
+    if (!animation.removedOnCompletion)
+        ts.dumpProperty("removedOnCompletion", animation.removedOnCompletion);
+
+    if (animation.additive)
+        ts.dumpProperty("additive", animation.additive);
+
+    if (animation.reverseTimingFunctions)
+        ts.dumpProperty("reverseTimingFunctions", animation.reverseTimingFunctions);
+
+    if (animation.hasExplicitBeginTime)
+        ts.dumpProperty("hasExplicitBeginTime", animation.hasExplicitBeginTime);
+
+    ts << "\n";
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "(" << "keyframes";
+    ts.increaseIndent();
+
+    size_t maxFrames = std::max(animation.keyValues.size(), animation.keyTimes.size());
+    maxFrames = std::max(maxFrames, animation.timingFunctions.size());
+
+    for (size_t i = 0; i < maxFrames; ++i) {
+        ts << "\n";
+        ts.writeIndent();
+        ts << "(keyframe " << unsigned(i);
+        if (i < animation.keyTimes.size())
+            ts.dumpProperty("time", animation.keyTimes[i]);
+
+        if (i < animation.timingFunctions.size() && animation.timingFunctions[i])
+            ts.dumpProperty<const TimingFunction&>("timing function", *animation.timingFunctions[i]);
+
+        if (i < animation.keyValues.size())
+            ts.dumpProperty("value", animation.keyValues[i]);
+
+        ts << ")";
+    }
+
+    ts.decreaseIndent();
+    ts.decreaseIndent();
+
+    return ts;
 }
 
 } // namespace WebKit

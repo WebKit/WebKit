@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class TextStream;
+
 class ViewportConfiguration {
     WTF_MAKE_NONCOPYABLE(ViewportConfiguration); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -121,6 +123,8 @@ private:
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;
 };
+
+TextStream& operator<<(TextStream&, const ViewportConfiguration::Parameters&);
 
 } // namespace WebCore
 

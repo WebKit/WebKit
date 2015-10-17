@@ -135,6 +135,8 @@ float computeMinimumScaleFactorForContentContained(const ViewportAttributes& res
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement1, const String& replacement2);
 
+TextStream& operator<<(TextStream&, const ViewportArguments&);
+
 } // namespace WebCore
 
 #endif // ViewportArguments_h

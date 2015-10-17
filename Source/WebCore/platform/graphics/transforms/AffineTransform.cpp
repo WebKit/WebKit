@@ -31,6 +31,7 @@
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "TextStream.h"
 #include "TransformationMatrix.h"
 
 #include <wtf/MathExtras.h>
@@ -423,6 +424,22 @@ void AffineTransform::recompose(const DecomposedType& decomp)
     this->setF(decomp.translateY);
     this->rotate(rad2deg(decomp.angle));
     this->scale(decomp.scaleX, decomp.scaleY);
+}
+
+TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
+{
+    if (transform.isIdentity())
+        ts << "identity";
+    else
+        ts << "{m=(("
+        << transform.a() << "," << transform.b()
+        << ")("
+        << transform.c() << "," << transform.d()
+        << ")) t=("
+        << transform.e() << "," << transform.f()
+        << ")}";
+
+    return ts;
 }
 
 }

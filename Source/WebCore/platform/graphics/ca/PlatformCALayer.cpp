@@ -24,8 +24,10 @@
  */
 
 #include "config.h"
-#include "LayerPool.h"
 #include "PlatformCALayer.h"
+
+#include "LayerPool.h"
+#include "TextStream.h"
 #include <wtf/StringExtras.h>
 
 #if USE(CA)
@@ -131,6 +133,79 @@ LayerPool& PlatformCALayer::layerPool()
 {
     static LayerPool* sharedPool = new LayerPool;
     return *sharedPool;
+}
+
+TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
+{
+    switch (layerType) {
+    case PlatformCALayer::LayerTypeLayer:
+    case PlatformCALayer::LayerTypeWebLayer:
+    case PlatformCALayer::LayerTypeSimpleLayer:
+        ts << "layer";
+        break;
+    case PlatformCALayer::LayerTypeTransformLayer:
+        ts << "transform-layer";
+        break;
+    case PlatformCALayer::LayerTypeWebTiledLayer:
+        ts << "tiled-layer";
+        break;
+    case PlatformCALayer::LayerTypeTiledBackingLayer:
+        ts << "tiled-backing-layer";
+        break;
+    case PlatformCALayer::LayerTypePageTiledBackingLayer:
+        ts << "page-tiled-backing-layer";
+        break;
+    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+        ts << "tiled-backing-tile";
+        break;
+    case PlatformCALayer::LayerTypeRootLayer:
+        ts << "root-layer";
+        break;
+    case PlatformCALayer::LayerTypeBackdropLayer:
+        ts << "backdrop-layer";
+        break;
+    case PlatformCALayer::LayerTypeAVPlayerLayer:
+        ts << "av-player-layer";
+        break;
+    case PlatformCALayer::LayerTypeWebGLLayer:
+        ts << "web-gl-layer";
+        break;
+    case PlatformCALayer::LayerTypeShapeLayer:
+        ts << "shape-layer";
+        break;
+    case PlatformCALayer::LayerTypeScrollingLayer:
+        ts << "scrolling-layer";
+        break;
+    case PlatformCALayer::LayerTypeCustom:
+        ts << "custom-layer";
+        break;
+    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
+        ts << "light-system-backdrop-layer";
+        break;
+    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
+        ts << "dark-system-backdrop-layer";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, PlatformCALayer::FilterType filterType)
+{
+    switch (filterType) {
+    case PlatformCALayer::Linear:
+        ts << "linear";
+        break;
+    case PlatformCALayer::Nearest:
+        ts << "nearest";
+        break;
+    case PlatformCALayer::Trilinear:
+        ts << "trilinear";
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return ts;
 }
 
 }

@@ -29,6 +29,7 @@
 #include "FEGaussianBlur.h"
 #include "IntSize.h"
 #include "LengthFunctions.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -149,6 +150,20 @@ bool FilterOperations::hasFilterThatMovesPixels() const
         if (m_operations[i]->movesPixels())
             return true;
     return false;
+}
+
+TextStream& operator<<(TextStream& ts, const FilterOperations& filters)
+{
+    for (size_t i = 0; i < filters.size(); ++i) {
+        const auto filter = filters.at(i);
+        if (filter)
+            ts << *filter;
+        else
+            ts << "(null)";
+        if (i < filters.size() - 1)
+            ts << " ";
+    }
+    return ts;
 }
 
 } // namespace WebCore

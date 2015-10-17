@@ -25,6 +25,7 @@
 #ifndef TimingFunction_h
 #define TimingFunction_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -229,6 +230,9 @@ private:
     int m_steps;
     bool m_stepAtStart;
 };
+
+class TextStream;
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const TimingFunction&);
 
 } // namespace WebCore
 

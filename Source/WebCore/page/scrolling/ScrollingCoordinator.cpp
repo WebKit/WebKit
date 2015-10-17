@@ -40,6 +40,7 @@
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "Settings.h"
+#include "TextStream.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -419,6 +420,25 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
         return synchronousScrollingReasonsAsText(synchronousScrollingReasons(*frameView));
 
     return String();
+}
+
+TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
+{
+    switch (nodeType) {
+    case FrameScrollingNode:
+        ts << "frame-scrolling";
+        break;
+    case OverflowScrollingNode:
+        ts << "overflow-scrolling";
+        break;
+    case FixedNode:
+        ts << "fixed";
+        break;
+    case StickyNode:
+        ts << "sticky";
+        break;
+    }
+    return ts;
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "FloatRoundedRect.h"
 
+#include "TextStream.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -195,6 +196,25 @@ void FloatRoundedRect::adjustRadii()
     float heightRatio = m_rect.height() / maxRadiusHeight;
     m_radii.scale(widthRatio < heightRatio ? widthRatio : heightRatio);
 }
+
+TextStream& operator<<(TextStream& ts, const FloatRoundedRect& roundedRect)
+{
+    ts << roundedRect.rect().x() << " " << roundedRect.rect().y() << " " << roundedRect.rect().width() << " " << roundedRect.rect().height() << "\n";
+
+    ts.increaseIndent();
+    ts.writeIndent();
+    ts << "topLeft=" << roundedRect.topLeftCorner().width() << " " << roundedRect.topLeftCorner().height() << "\n";
+    ts.writeIndent();
+    ts << "topRight=" << roundedRect.topRightCorner().width() << " " << roundedRect.topRightCorner().height() << "\n";
+    ts.writeIndent();
+    ts << "bottomLeft=" << roundedRect.bottomLeftCorner().width() << " " << roundedRect.bottomLeftCorner().height() << "\n";
+    ts.writeIndent();
+    ts << "bottomRight=" << roundedRect.bottomRightCorner().width() << " " << roundedRect.bottomRightCorner().height();
+    ts.decreaseIndent();
+
+    return ts;
+}
+
 
 
 } // namespace WebCore

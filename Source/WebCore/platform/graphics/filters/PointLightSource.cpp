@@ -71,12 +71,6 @@ bool PointLightSource::setZ(float z)
     return true;
 }
 
-static TextStream& operator<<(TextStream& ts, const FloatPoint3D& p)
-{
-    ts << "x=" << p.x() << " y=" << p.y() << " z=" << p.z();
-    return ts;
-}
-
 TextStream& PointLightSource::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=POINT-LIGHT] ";

@@ -20,9 +20,9 @@
 */
 
 #include "config.h"
-
 #include "FloatPoint3D.h"
 
+#include "TextStream.h"
 #include <math.h>
 
 namespace WebCore {
@@ -36,6 +36,11 @@ void FloatPoint3D::normalize()
         m_y /= tempLength;
         m_z /= tempLength;
     }
+}
+
+TextStream& operator<<(TextStream& ts, const FloatPoint3D& point)
+{
+    return ts << point.x() << " " << point.y() << " " << point.z();
 }
 
 } // namespace WebCore

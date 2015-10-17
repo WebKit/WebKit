@@ -196,6 +196,9 @@ private:
     FloatPoint m_layerPositionAtLastLayout;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FixedPositionViewportConstraints&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const StickyPositionViewportConstraints&);
+
 } // namespace WebCore
 
 #endif // ScrollingConstraints_h

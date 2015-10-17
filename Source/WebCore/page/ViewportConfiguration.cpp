@@ -399,48 +399,9 @@ int ViewportConfiguration::layoutHeight() const
 }
 
 #ifndef NDEBUG
-class ViewportConfigurationTextStream : public TextStream {
-public:
-    ViewportConfigurationTextStream()
-        : m_indent(0)
-    {
-    }
 
-    using TextStream::operator<<;
-
-    ViewportConfigurationTextStream& operator<<(const ViewportConfiguration::Parameters&);
-    ViewportConfigurationTextStream& operator<<(const ViewportArguments&);
-
-    void increaseIndent() { ++m_indent; }
-    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
-
-    void writeIndent();
-
-private:
-    int m_indent;
-};
-
-template <typename T>
-static void dumpProperty(ViewportConfigurationTextStream& ts, String name, T value)
+TextStream& operator<<(TextStream& ts, const ViewportConfiguration::Parameters& parameters)
 {
-    ts << "\n";
-    ts.increaseIndent();
-    ts.writeIndent();
-    ts << "(" << name << " ";
-    ts << value << ")";
-    ts.decreaseIndent();
-}
-
-void ViewportConfigurationTextStream::writeIndent()
-{
-    for (int i = 0; i < m_indent; ++i)
-        *this << "  ";
-}
-
-ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(const ViewportConfiguration::Parameters& parameters)
-{
-    ViewportConfigurationTextStream& ts = *this;
-
     ts.increaseIndent();
     ts << "\n";
     ts.writeIndent();
@@ -455,39 +416,17 @@ ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(con
     ts << "(initialScale " << parameters.initialScale << ", set: " << (parameters.initialScaleIsSet ? "true" : "false") << ")";
     ts.decreaseIndent();
 
-    dumpProperty(ts, "minimumScale", parameters.minimumScale);
-    dumpProperty(ts, "maximumScale", parameters.maximumScale);
-    dumpProperty(ts, "allowsUserScaling", parameters.allowsUserScaling);
-    dumpProperty(ts, "allowsShrinkToFit", parameters.allowsShrinkToFit);
-
-    return ts;
-}
-
-ViewportConfigurationTextStream& ViewportConfigurationTextStream::operator<<(const ViewportArguments& viewportArguments)
-{
-    ViewportConfigurationTextStream& ts = *this;
-
-    ts.increaseIndent();
-
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(width " << viewportArguments.width << ", minWidth " << viewportArguments.minWidth << ", maxWidth " << viewportArguments.maxWidth << ")";
-
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(height " << viewportArguments.height << ", minHeight " << viewportArguments.minHeight << ", maxHeight " << viewportArguments.maxHeight << ")";
-
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(zoom " << viewportArguments.zoom << ", minZoom " << viewportArguments.minZoom << ", maxZoom " << viewportArguments.maxZoom << ")";
-    ts.decreaseIndent();
+    ts.dumpProperty("minimumScale", parameters.minimumScale);
+    ts.dumpProperty("maximumScale", parameters.maximumScale);
+    ts.dumpProperty("allowsUserScaling", parameters.allowsUserScaling);
+    ts.dumpProperty("allowsShrinkToFit", parameters.allowsShrinkToFit);
 
     return ts;
 }
 
 CString ViewportConfiguration::description() const
 {
-    ViewportConfigurationTextStream ts;
+    TextStream ts;
 
     ts << "(viewport-configuration " << (void*)this;
     ts << "\n";
@@ -514,8 +453,8 @@ CString ViewportConfiguration::description() const
     ts << ")";
     ts.decreaseIndent();
 
-    dumpProperty(ts, "contentSize", m_contentSize);
-    dumpProperty(ts, "minimumLayoutSize", m_minimumLayoutSize);
+    ts.dumpProperty("contentSize", m_contentSize);
+    ts.dumpProperty("minimumLayoutSize", m_minimumLayoutSize);
 
     ts << "\n";
     ts.increaseIndent();

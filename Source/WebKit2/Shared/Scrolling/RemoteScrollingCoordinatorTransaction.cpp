@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -454,166 +454,44 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
-class RemoteScrollingTreeTextStream : public TextStream {
-public:
-    using TextStream::operator<<;
-
-    RemoteScrollingTreeTextStream()
-        : m_indent(0)
-    {
-    }
-
-    RemoteScrollingTreeTextStream& operator<<(ScrollingNodeType);
-
-    RemoteScrollingTreeTextStream& operator<<(const FixedPositionViewportConstraints&);
-    RemoteScrollingTreeTextStream& operator<<(const StickyPositionViewportConstraints&);
-
-    void dump(const ScrollingStateTree&, bool changedPropertiesOnly = true);
-
-    void dump(const ScrollingStateNode&, bool changedPropertiesOnly = true);
-    void dump(const ScrollingStateScrollingNode&, bool changedPropertiesOnly = true);
-    void dump(const ScrollingStateFrameScrollingNode&, bool changedPropertiesOnly = true);
-    void dump(const ScrollingStateOverflowScrollingNode&, bool changedPropertiesOnly = true);
-    void dump(const ScrollingStateFixedNode&, bool changedPropertiesOnly = true);
-    void dump(const ScrollingStateStickyNode&, bool changedPropertiesOnly = true);
-
-    void increaseIndent() { ++m_indent; }
-    void decreaseIndent() { --m_indent; ASSERT(m_indent >= 0); }
-
-    void writeIndent();
-
-private:
-    void recursiveDumpNodes(const ScrollingStateNode&, bool changedPropertiesOnly);
-
-    int m_indent;
-};
-
-void RemoteScrollingTreeTextStream::writeIndent()
+static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool changedPropertiesOnly)
 {
-    for (int i = 0; i < m_indent; ++i)
-        *this << "  ";
-}
-
-template <class T>
-static void dumpProperty(RemoteScrollingTreeTextStream& ts, String name, T value)
-{
-    ts << "\n";
-    ts.increaseIndent();
-    ts.writeIndent();
-    ts << "(" << name << " ";
-    ts << value << ")";
-    ts.decreaseIndent();
-}
-
-RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(ScrollingNodeType nodeType)
-{
-    RemoteScrollingTreeTextStream& ts = *this;
-
-    switch (nodeType) {
-    case FrameScrollingNode: ts << "frame-scrolling"; break;
-    case OverflowScrollingNode: ts << "overflow-scrolling"; break;
-    case FixedNode: ts << "fixed"; break;
-    case StickyNode: ts << "sticky"; break;
-    }
-
-    return ts;
-}
-
-RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(const FixedPositionViewportConstraints& constraints)
-{
-    RemoteScrollingTreeTextStream& ts = *this;
-
-    dumpProperty(ts, "viewport-rect-at-last-layout", constraints.viewportRectAtLastLayout());
-    dumpProperty(ts, "layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
-
-    return ts;
-}
-
-RemoteScrollingTreeTextStream& RemoteScrollingTreeTextStream::operator<<(const StickyPositionViewportConstraints& constraints)
-{
-    RemoteScrollingTreeTextStream& ts = *this;
-
-    dumpProperty(ts, "sticky-position-at-last-layout", constraints.stickyOffsetAtLastLayout());
-    dumpProperty(ts, "layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
-
-    return ts;
-}
-
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateNode& node, bool changedPropertiesOnly)
-{
-    RemoteScrollingTreeTextStream& ts = *this;
-
-    ts << "(node " << node.scrollingNodeID();
-
-    dumpProperty(ts, "type", node.nodeType());
-
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-        dumpProperty(ts, "layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
-    
-    switch (node.nodeType()) {
-    case FrameScrollingNode:
-        dump(downcast<ScrollingStateFrameScrollingNode>(node), changedPropertiesOnly);
-        break;
-    case OverflowScrollingNode:
-        dump(downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);
-        break;
-    case FixedNode:
-        dump(downcast<ScrollingStateFixedNode>(node), changedPropertiesOnly);
-        break;
-    case StickyNode:
-        dump(downcast<ScrollingStateStickyNode>(node), changedPropertiesOnly);
-        break;
-    }
-}
-    
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateScrollingNode& node, bool changedPropertiesOnly)
-{
-    RemoteScrollingTreeTextStream& ts = *this;
-    
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaSize))
-        dumpProperty(ts, "scrollable-area-size", node.scrollableAreaSize());
+        ts.dumpProperty("scrollable-area-size", node.scrollableAreaSize());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
-        dumpProperty(ts, "total-contents-size", node.totalContentsSize());
+        ts.dumpProperty("total-contents-size", node.totalContentsSize());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ReachableContentsSize))
-        dumpProperty(ts, "reachable-contents-size", node.reachableContentsSize());
+        ts.dumpProperty("reachable-contents-size", node.reachableContentsSize());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollPosition))
-        dumpProperty(ts, "scroll-position", node.scrollPosition());
+        ts.dumpProperty("scroll-position", node.scrollPosition());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrollOrigin))
-        dumpProperty(ts, "scroll-origin", node.scrollOrigin());
+        ts.dumpProperty("scroll-origin", node.scrollOrigin());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition)) {
-        dumpProperty(ts, "requested-scroll-position", node.requestedScrollPosition());
-        dumpProperty(ts, "requested-scroll-position-is-programatic", node.requestedScrollPositionRepresentsProgrammaticScroll());
+        ts.dumpProperty("requested-scroll-position", node.requestedScrollPosition());
+        ts.dumpProperty("requested-scroll-position-is-programatic", node.requestedScrollPositionRepresentsProgrammaticScroll());
     }
 }
     
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateFrameScrollingNode& node, bool changedPropertiesOnly)
+static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, bool changedPropertiesOnly)
 {
-    RemoteScrollingTreeTextStream& ts = *this;
-    
-    dump(static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
+    dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
     
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
-        dumpProperty(ts, "frame-scale-factor", node.frameScaleFactor());
+        ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::NonFastScrollableRegion)) {
-        ts << "\n";
-        ts.increaseIndent();
-        ts.writeIndent();
-        ts << "(non-fast-scrollable-region";
-        ts.increaseIndent();
+        TextStream::GroupScope group(ts);
+        ts << "non-fast-scrollable-region";
         for (auto rect : node.nonFastScrollableRegion().rects()) {
             ts << "\n";
             ts.writeIndent();
             ts << rect;
         }
-        ts << ")\n";
-        ts.decreaseIndent();
-        ts.decreaseIndent();
     }
 
     // FIXME: dump synchronousScrollingReasons
@@ -621,123 +499,122 @@ void RemoteScrollingTreeTextStream::dump(const ScrollingStateFrameScrollingNode&
     // FIXME: dump scrollBehaviorForFixedElements
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderHeight))
-        dumpProperty(ts, "header-height", node.headerHeight());
+        ts.dumpProperty("header-height", node.headerHeight());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterHeight))
-        dumpProperty(ts, "footer-height", node.footerHeight());
+        ts.dumpProperty("footer-height", node.footerHeight());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::TopContentInset))
-        dumpProperty(ts, "top-content-inset", node.topContentInset());
+        ts.dumpProperty("top-content-inset", node.topContentInset());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
-        dumpProperty(ts, "frame-scale-factor", node.frameScaleFactor());
+        ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
-        dumpProperty(ts, "scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
+        ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
-        dumpProperty(ts, "clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
+        ts.dumpProperty("clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::ContentShadowLayer))
-        dumpProperty(ts, "content-shadow-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer()));
+        ts.dumpProperty("content-shadow-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.contentShadowLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
-        dumpProperty(ts, "header-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.headerLayer()));
+        ts.dumpProperty("header-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.headerLayer()));
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
-        dumpProperty(ts, "footer-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.footerLayer()));
+        ts.dumpProperty("footer-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.footerLayer()));
 }
     
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
+static void dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
 {
-    RemoteScrollingTreeTextStream& ts = *this;
-    
-    dump(static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
+    dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
     
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
-        dumpProperty(ts, "scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
+        ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
 }
 
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateFixedNode& node, bool changedPropertiesOnly)
+static void dump(TextStream& ts, const ScrollingStateFixedNode& node, bool changedPropertiesOnly)
 {
-    RemoteScrollingTreeTextStream& ts = *this;
-
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
         ts << node.viewportConstraints();
 }
 
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateStickyNode& node, bool changedPropertiesOnly)
+static void dump(TextStream& ts, const ScrollingStateStickyNode& node, bool changedPropertiesOnly)
 {
-    RemoteScrollingTreeTextStream& ts = *this;
-
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFixedNode::ViewportConstraints))
         ts << node.viewportConstraints();
 }
 
-void RemoteScrollingTreeTextStream::recursiveDumpNodes(const ScrollingStateNode& node, bool changedPropertiesOnly)
+static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPropertiesOnly)
 {
-    RemoteScrollingTreeTextStream& ts = *this;
+    ts.dumpProperty("type", node.nodeType());
 
-    ts << "\n";
-    ts.increaseIndent();
-    ts.writeIndent();
-    dump(node, changedPropertiesOnly);
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::ScrollLayer))
+        ts.dumpProperty("layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
+    
+    switch (node.nodeType()) {
+    case FrameScrollingNode:
+        dump(ts, downcast<ScrollingStateFrameScrollingNode>(node), changedPropertiesOnly);
+        break;
+    case OverflowScrollingNode:
+        dump(ts, downcast<ScrollingStateOverflowScrollingNode>(node), changedPropertiesOnly);
+        break;
+    case FixedNode:
+        dump(ts, downcast<ScrollingStateFixedNode>(node), changedPropertiesOnly);
+        break;
+    case StickyNode:
+        dump(ts, downcast<ScrollingStateStickyNode>(node), changedPropertiesOnly);
+        break;
+    }
+}
+
+static void recursiveDumpNodes(TextStream& ts, const ScrollingStateNode& node, bool changedPropertiesOnly)
+{
+    TextStream::GroupScope group(ts);
+    ts << "node " << node.scrollingNodeID();
+    dump(ts, node, changedPropertiesOnly);
 
     if (node.children()) {
-        ts << "\n";
-        ts.increaseIndent();
-        ts.writeIndent();
-        ts << "(children";
-        ts.increaseIndent();
+        TextStream::GroupScope group(ts);
+        ts << "children";
 
         for (auto& childNode : *node.children())
-            recursiveDumpNodes(*childNode, changedPropertiesOnly);
-
-        ts << ")";
-        ts.decreaseIndent();
-        ts.decreaseIndent();
+            recursiveDumpNodes(ts, *childNode, changedPropertiesOnly);
     }
-
-    ts << ")";
-    ts.decreaseIndent();
 }
 
-void RemoteScrollingTreeTextStream::dump(const ScrollingStateTree& stateTree, bool changedPropertiesOnly)
+static void dump(TextStream& ts, const ScrollingStateTree& stateTree, bool changedPropertiesOnly)
 {
-    RemoteScrollingTreeTextStream& ts = *this;
-
-    dumpProperty(ts, "has changed properties", stateTree.hasChangedProperties());
-    dumpProperty(ts, "has new root node", stateTree.hasNewRootStateNode());
+    ts.dumpProperty("has changed properties", stateTree.hasChangedProperties());
+    ts.dumpProperty("has new root node", stateTree.hasNewRootStateNode());
 
     if (stateTree.rootStateNode())
-        recursiveDumpNodes(*stateTree.rootStateNode(), changedPropertiesOnly);
+        recursiveDumpNodes(ts, *stateTree.rootStateNode(), changedPropertiesOnly);
 
     if (!stateTree.removedNodes().isEmpty()) {
         Vector<ScrollingNodeID> removedNodes;
         copyToVector(stateTree.removedNodes(), removedNodes);
-        dumpProperty<Vector<ScrollingNodeID>>(ts, "removed-nodes", removedNodes);
+        ts.dumpProperty<Vector<ScrollingNodeID>>("removed-nodes", removedNodes);
     }
 }
 
 WTF::CString RemoteScrollingCoordinatorTransaction::description() const
 {
-    RemoteScrollingTreeTextStream ts;
+    TextStream ts;
 
-    ts << "(\n";
-    ts.increaseIndent();
-    ts.writeIndent();
-    ts << "(scrolling state tree";
+    ts.startGroup();
+    ts << "scrolling state tree";
 
     if (m_scrollingStateTree) {
         if (!m_scrollingStateTree->hasChangedProperties())
             ts << " - no changes";
         else
-            ts.dump(*m_scrollingStateTree.get());
+            WebKit::dump(ts, *m_scrollingStateTree.get(), true);
     } else
         ts << " - none";
 
-    ts << ")\n";
-    ts.decreaseIndent();
+    ts.endGroup();
 
     return ts.release().utf8();
 }

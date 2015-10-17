@@ -56,6 +56,7 @@ class IntRect;
 class LayoutRect;
 class FloatRect;
 class FloatQuad;
+class TextStream;
 
 #if CPU(X86_64)
 #define TRANSFORMATION_MATRIX_USE_X86_64_SSE2
@@ -412,6 +413,8 @@ private:
 
     Matrix4 m_matrix;
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const TransformationMatrix&);
 
 } // namespace WebCore
 

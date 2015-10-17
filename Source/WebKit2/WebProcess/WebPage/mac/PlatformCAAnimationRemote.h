@@ -35,6 +35,10 @@ class ArgumentEncoder;
 class ArgumentDecoder;
 };
 
+namespace WebCore {
+class TextStream;
+};
+
 OBJC_CLASS CALayer;
 
 namespace WebKit {
@@ -296,6 +300,9 @@ private:
 
     Properties m_properties;
 };
+
+WebCore::TextStream& operator<<(WebCore::TextStream&, const PlatformCAAnimationRemote::KeyframeValue&);
+WebCore::TextStream& operator<<(WebCore::TextStream&, const PlatformCAAnimationRemote::Properties&);
 
 } // namespace WebKit
 

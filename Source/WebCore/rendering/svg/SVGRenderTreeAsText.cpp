@@ -118,36 +118,6 @@ static void writeIfNotDefault(TextStream& ts, const char* name, ValueType value,
         writeNameValuePair(ts, name, value);
 }
 
-TextStream& operator<<(TextStream& ts, const AffineTransform& transform)
-{
-    if (transform.isIdentity())
-        ts << "identity";
-    else
-        ts << "{m=(("
-           << transform.a() << "," << transform.b()
-           << ")("
-           << transform.c() << "," << transform.d()
-           << ")) t=("
-           << transform.e() << "," << transform.f()
-           << ")}";
-
-    return ts;
-}
-
-static TextStream& operator<<(TextStream& ts, const WindRule rule)
-{
-    switch (rule) {
-    case RULE_NONZERO:
-        ts << "NON-ZERO";
-        break;
-    case RULE_EVENODD:
-        ts << "EVEN-ODD";
-        break;
-    }
-
-    return ts;
-}
-
 static TextStream& operator<<(TextStream& ts, const SVGUnitTypes::SVGUnitType& unitType)
 {
     ts << SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::toString(unitType);
@@ -158,11 +128,6 @@ static TextStream& operator<<(TextStream& ts, const SVGMarkerUnitsType& markerUn
 {
     ts << SVGPropertyTraits<SVGMarkerUnitsType>::toString(markerUnit);
     return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const Color& c)
-{
-    return ts << c.nameForRenderTreeAsText();
 }
 
 // FIXME: Maybe this should be in KCanvasRenderingStyle.cpp
@@ -176,40 +141,6 @@ static TextStream& operator<<(TextStream& ts, const DashArray& a)
         ts << *it;
     }
     ts << "}";
-    return ts;
-}
-
-// FIXME: Maybe this should be in GraphicsTypes.cpp
-static TextStream& operator<<(TextStream& ts, LineCap style)
-{
-    switch (style) {
-    case ButtCap:
-        ts << "BUTT";
-        break;
-    case RoundCap:
-        ts << "ROUND";
-        break;
-    case SquareCap:
-        ts << "SQUARE";
-        break;
-    }
-    return ts;
-}
-
-// FIXME: Maybe this should be in GraphicsTypes.cpp
-static TextStream& operator<<(TextStream& ts, LineJoin style)
-{
-    switch (style) {
-    case MiterJoin:
-        ts << "MITER";
-        break;
-    case RoundJoin:
-        ts << "ROUND";
-        break;
-    case BevelJoin:
-        ts << "BEVEL";
-        break;
-    }
     return ts;
 }
 

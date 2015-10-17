@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollingConstraints.h"
 
+#include "TextStream.h"
+
 namespace WebCore {
 
 FloatPoint FixedPositionViewportConstraints::layerPositionForViewportRect(const FloatRect& viewportRect) const
@@ -96,6 +98,22 @@ FloatPoint StickyPositionViewportConstraints::layerPositionForConstrainingRect(c
 {
     FloatSize offset = computeStickyOffset(constrainingRect);
     return m_layerPositionAtLastLayout + offset - m_stickyOffsetAtLastLayout;
+}
+
+TextStream& operator<<(TextStream& ts, const FixedPositionViewportConstraints& constraints)
+{
+    ts.dumpProperty("viewport-rect-at-last-layout", constraints.viewportRectAtLastLayout());
+    ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const StickyPositionViewportConstraints& constraints)
+{
+    ts.dumpProperty("sticky-position-at-last-layout", constraints.stickyOffsetAtLastLayout());
+    ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+
+    return ts;
 }
 
 } // namespace WebCore

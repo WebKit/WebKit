@@ -139,6 +139,34 @@ String TextStream::release()
     return result;
 }
 
+void TextStream::startGroup()
+{
+    TextStream& ts = *this;
+    ts << "\n";
+    ts.writeIndent();
+    ts << "(";
+    ts.increaseIndent();
+}
+
+void TextStream::endGroup()
+{
+    TextStream& ts = *this;
+    ts << ")";
+    ts.decreaseIndent();
+}
+
+void TextStream::nextLine()
+{
+    TextStream& ts = *this;
+    ts << "\n";
+    ts.writeIndent();
+}
+
+void TextStream::writeIndent()
+{
+    WebCore::writeIndent(*this, m_indent);
+}
+
 void writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i != indent; ++i)

@@ -1,3 +1,47 @@
+2015-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance TextStream for logging, remove subclasses, log more things
+        https://bugs.webkit.org/show_bug.cgi?id=150269
+
+        Reviewed by Zalan Bujtas.
+
+        Remove the various TextStream subclasses that only existed to support indenting,
+        and output additional types. Add output for more WebCore and WebKit2 types, and
+        just use TextStream everywhere.
+        
+        TextStream is enhance to support grouping (open paren and intent), with a 
+        stack-based class to open/end a group.
+        
+        Remove some SVG-specific duplicate output functions.
+        
+        Outdent namespace contents of GraphicsTypes.h.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::dump):
+        (WebKit::recursiveDumpNodes):
+        (WebKit::RemoteScrollingCoordinatorTransaction::description):
+        (WebKit::RemoteScrollingTreeTextStream::RemoteScrollingTreeTextStream): Deleted.
+        (WebKit::RemoteScrollingTreeTextStream::increaseIndent): Deleted.
+        (WebKit::RemoteScrollingTreeTextStream::decreaseIndent): Deleted.
+        (WebKit::RemoteScrollingTreeTextStream::writeIndent): Deleted.
+        (WebKit::dumpProperty): Deleted.
+        (WebKit::RemoteScrollingTreeTextStream::operator<<): Deleted.
+        (WebKit::RemoteScrollingTreeTextStream::dump): Deleted.
+        (WebKit::RemoteScrollingTreeTextStream::recursiveDumpNodes): Deleted.
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::operator<<):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        (WebKit::RemoteLayerTreeTextStream::RemoteLayerTreeTextStream): Deleted.
+        (WebKit::RemoteLayerTreeTextStream::increaseIndent): Deleted.
+        (WebKit::RemoteLayerTreeTextStream::decreaseIndent): Deleted.
+        (WebKit::dumpProperty): Deleted.
+        (WebKit::RemoteLayerTreeTextStream::operator<<): Deleted.
+        (WebKit::RemoteLayerTreeTextStream::writeIndent): Deleted.
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::operator<<):
+
 2015-10-17  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         URTBF after r191194 to fix EFL build.

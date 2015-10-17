@@ -62,6 +62,7 @@ class GraphicsLayer;
 class Page;
 class Region;
 class ScrollableArea;
+class TextStream;
 class ViewportConstraints;
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -232,6 +233,8 @@ private:
     
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingNodeType);
 
 } // namespace WebCore
 
