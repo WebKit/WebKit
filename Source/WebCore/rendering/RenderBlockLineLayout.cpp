@@ -1255,7 +1255,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
 
         const InlineIterator oldEnd = end;
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
-        FloatingObject* lastFloatFromPreviousLine = (containsFloats()) ? m_floatingObjects->set().last().get() : 0;
+        FloatingObject* lastFloatFromPreviousLine = (containsFloats()) ? m_floatingObjects->set().last().get() : nullptr;
 
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), layoutState, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
@@ -1898,7 +1898,7 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-        FloatingObject* floatingObject = it->get();
+        const auto& floatingObject = *it->get();
         if (logicalBottomForFloat(floatingObject) >= logicalTop && logicalBottomForFloat(floatingObject) < logicalBottom)
             return false;
     }
@@ -2075,7 +2075,7 @@ bool RenderBlockFlow::positionNewFloatOnLine(const FloatingObject& newFloat, Flo
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     ASSERT(floatingObjectSet.last().get() == &newFloat);
 
-    LayoutUnit floatLogicalTop = logicalTopForFloat(&newFloat);
+    LayoutUnit floatLogicalTop = logicalTopForFloat(newFloat);
     LayoutUnit paginationStrut = newFloat.paginationStrut();
 
     if (floatLogicalTop - paginationStrut != logicalHeight() + lineInfo.floatPaginationStrut())
@@ -2086,15 +2086,15 @@ bool RenderBlockFlow::positionNewFloatOnLine(const FloatingObject& newFloat, Flo
     auto begin = floatingObjectSet.begin();
     while (it != begin) {
         --it;
-        FloatingObject* floatingObject = it->get();
-        if (floatingObject == lastFloatFromPreviousLine)
+        auto& floatingObject = *it->get();
+        if (&floatingObject == lastFloatFromPreviousLine)
             break;
         if (logicalTopForFloat(floatingObject) == logicalHeight() + lineInfo.floatPaginationStrut()) {
-            floatingObject->setPaginationStrut(paginationStrut + floatingObject->paginationStrut());
-            RenderBox& floatBox = floatingObject->renderer();
+            floatingObject.setPaginationStrut(paginationStrut + floatingObject.paginationStrut());
+            RenderBox& floatBox = floatingObject.renderer();
             setLogicalTopForChild(floatBox, logicalTopForChild(floatBox) + marginBeforeForChild(floatBox) + paginationStrut);
 
-            if (updateRegionRangeForBoxChild(floatingObject->renderer()))
+            if (updateRegionRangeForBoxChild(floatBox))
                 floatBox.setNeedsLayout(MarkOnlyThis);
             else if (is<RenderBlock>(floatBox))
                 downcast<RenderBlock>(floatBox).setChildNeedsLayout(MarkOnlyThis);
@@ -2103,9 +2103,9 @@ bool RenderBlockFlow::positionNewFloatOnLine(const FloatingObject& newFloat, Flo
             // Save the old logical top before calling removePlacedObject which will set
             // isPlaced to false. Otherwise it will trigger an assert in logicalTopForFloat.
             LayoutUnit oldLogicalTop = logicalTopForFloat(floatingObject);
-            m_floatingObjects->removePlacedObject(floatingObject);
+            m_floatingObjects->removePlacedObject(&floatingObject);
             setLogicalTopForFloat(floatingObject, oldLogicalTop + paginationStrut);
-            m_floatingObjects->addPlacedObject(floatingObject);
+            m_floatingObjects->addPlacedObject(&floatingObject);
         }
     }
 

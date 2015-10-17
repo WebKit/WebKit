@@ -79,7 +79,7 @@ void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
 static bool newFloatShrinksLine(const FloatingObject& newFloat, const RenderBlockFlow& block, bool isFirstLine)
 {
     LayoutUnit blockOffset = block.logicalHeight();
-    if (blockOffset >= block.logicalTopForFloat(&newFloat) && blockOffset < block.logicalBottomForFloat(&newFloat))
+    if (blockOffset >= block.logicalTopForFloat(newFloat) && blockOffset < block.logicalBottomForFloat(newFloat))
         return true;
 
     // initial-letter float always shrinks the first line.
@@ -102,7 +102,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(const FloatingObject& ne
 #endif
 
     if (newFloat.type() == FloatingObject::FloatLeft) {
-        float newLeft = m_block.logicalRightForFloat(&newFloat);
+        float newLeft = m_block.logicalRightForFloat(newFloat);
         if (shouldIndentText() && m_block.style().isLeftToRightDirection())
             newLeft += floorToInt(m_block.textIndentOffset());
 #if ENABLE(CSS_SHAPES)
@@ -115,7 +115,7 @@ void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(const FloatingObject& ne
 #endif
         m_left = std::max<float>(m_left, newLeft);
     } else {
-        float newRight = m_block.logicalLeftForFloat(&newFloat);
+        float newRight = m_block.logicalLeftForFloat(newFloat);
         if (shouldIndentText() && !m_block.style().isLeftToRightDirection())
             newRight -= floorToInt(m_block.textIndentOffset());
 #if ENABLE(CSS_SHAPES)

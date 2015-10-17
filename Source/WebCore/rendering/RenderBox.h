@@ -204,8 +204,8 @@ public:
     
     void addVisualEffectOverflow();
     LayoutRect applyVisualEffectOverflow(const LayoutRect&) const;
-    void addOverflowFromChild(RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
-    void addOverflowFromChild(RenderBox* child, const LayoutSize& delta);
+    void addOverflowFromChild(const RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
+    void addOverflowFromChild(const RenderBox* child, const LayoutSize& delta);
     
     void updateLayerTransform();
 
