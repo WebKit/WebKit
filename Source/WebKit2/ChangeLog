@@ -1,3 +1,14 @@
+2015-10-17  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        URTBF after r191194 to fix EFL build.
+        https://bugs.webkit.org/show_bug.cgi?id=150272
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp:
+        (WebKit::WebContextMenuProxyEfl::showContextMenu):
+        * UIProcess/efl/WebContextMenuProxyEfl.h:
+
 2015-10-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a WKWebView input delegate SPI

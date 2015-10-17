@@ -46,7 +46,7 @@ WebContextMenuProxyEfl::~WebContextMenuProxyEfl()
 {
 }
 
-void WebContextMenuProxyEfl::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&)
+void WebContextMenuProxyEfl::showContextMenu()
 {
     notImplemented();
 }
