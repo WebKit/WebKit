@@ -514,7 +514,6 @@
 		0FB7F39C15ED8E4600F167B2 /* PropertyStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39D15ED8E4600F167B2 /* Reject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39115ED8E3800F167B2 /* Reject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FBADF541BD1F4B800E073C1 /* CopiedBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBADF531BD1F4B800E073C1 /* CopiedBlock.cpp */; };
 		0FBC0AE71496C7C400D4FBDD /* DFGExitProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */; };
 		0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBD7E691447999600481315 /* CodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBD7E671447998F00481315 /* CodeOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2378,7 +2377,6 @@
 		0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyStorage.h; sourceTree = "<group>"; };
 		0FB7F39115ED8E3800F167B2 /* Reject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reject.h; sourceTree = "<group>"; };
 		0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparseArrayValueMap.h; sourceTree = "<group>"; };
-		0FBADF531BD1F4B800E073C1 /* CopiedBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopiedBlock.cpp; sourceTree = "<group>"; };
 		0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFGExitProfile.cpp; sourceTree = "<group>"; };
 		0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFGExitProfile.h; sourceTree = "<group>"; };
 		0FBD7E671447998F00481315 /* CodeOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeOrigin.h; sourceTree = "<group>"; };
@@ -4246,7 +4244,6 @@
 				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
 				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
 				C2EAD2FB14F0249800A4B159 /* CopiedAllocator.h */,
-				0FBADF531BD1F4B800E073C1 /* CopiedBlock.cpp */,
 				C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */,
 				C2FC9BD216644DFB00810D33 /* CopiedBlockInlines.h */,
 				C240305314B404C90079EB64 /* CopiedSpace.cpp */,
@@ -7831,7 +7828,6 @@
 				0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */,
 				86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */,
 				A7C1E8E4112E72EF00A37F98 /* JITPropertyAccess32_64.cpp in Sources */,
-				0FBADF541BD1F4B800E073C1 /* CopiedBlock.cpp in Sources */,
 				0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */,
 				0F766D2B15A8CC38008F363E /* JITStubRoutineSet.cpp in Sources */,
 				0F5EF91E16878F7A003E5C25 /* JITThunks.cpp in Sources */,

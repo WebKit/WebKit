@@ -32,26 +32,13 @@
 
 namespace JSC {
 
-static const bool computeBalance = false;
-static size_t balance;
-
 MarkedBlock* MarkedBlock::create(MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction)
 {
-    if (computeBalance) {
-        balance++;
-        if (!(balance % 10))
-            dataLog("MarkedBlock Balance: ", balance, "\n");
-    }
     return new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, needsDestruction);
 }
 
 void MarkedBlock::destroy(MarkedBlock* block)
 {
-    if (computeBalance) {
-        balance--;
-        if (!(balance % 10))
-            dataLog("MarkedBlock Balance: ", balance, "\n");
-    }
     block->~MarkedBlock();
     fastAlignedFree(block);
 }

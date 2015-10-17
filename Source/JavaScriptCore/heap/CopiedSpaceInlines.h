@@ -237,8 +237,8 @@ inline void CopiedSpace::startedCopying()
     }
 
     double markedSpaceBytes = m_heap->objectSpace().capacity();
-    double totalUtilization = static_cast<double>(totalLiveBytes + markedSpaceBytes) / static_cast<double>(totalUsableBytes + markedSpaceBytes);
-    m_shouldDoCopyPhase = m_heap->operationInProgress() == EdenCollection || totalUtilization <= Options::minHeapUtilization();
+    double totalFragmentation = static_cast<double>(totalLiveBytes + markedSpaceBytes) / static_cast<double>(totalUsableBytes + markedSpaceBytes);
+    m_shouldDoCopyPhase = m_heap->operationInProgress() == EdenCollection || totalFragmentation <= Options::minHeapUtilization();
     if (!m_shouldDoCopyPhase) {
         if (Options::logGC())
             dataLog("Skipped copying, ");

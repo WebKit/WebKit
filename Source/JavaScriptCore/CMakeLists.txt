@@ -288,7 +288,6 @@ set(JavaScriptCore_SOURCES
 
     heap/CodeBlockSet.cpp
     heap/ConservativeRoots.cpp
-    heap/CopiedBlock.cpp
     heap/CopiedSpace.cpp
     heap/CopyVisitor.cpp
     heap/DeferGC.cpp

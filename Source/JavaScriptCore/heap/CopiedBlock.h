@@ -108,6 +108,50 @@ private:
 #endif
 };
 
+inline CopiedBlock* CopiedBlock::createNoZeroFill(size_t capacity)
+{
+    return new(NotNull, fastAlignedMalloc(CopiedBlock::blockSize, capacity)) CopiedBlock(capacity);
+}
+
+inline void CopiedBlock::destroy(CopiedBlock* copiedBlock)
+{
+    copiedBlock->~CopiedBlock();
+    fastAlignedFree(copiedBlock);
+}
+
+inline CopiedBlock* CopiedBlock::create(size_t capacity)
+{
+    CopiedBlock* newBlock = createNoZeroFill(capacity);
+    newBlock->zeroFillWilderness();
+    return newBlock;
+}
+
+inline void CopiedBlock::zeroFillWilderness()
+{
+#if USE(JSVALUE64)
+    memset(wilderness(), 0, wildernessSize());
+#else
+    JSValue emptyValue;
+    JSValue* limit = reinterpret_cast_ptr<JSValue*>(wildernessEnd());
+    for (JSValue* currentValue = reinterpret_cast_ptr<JSValue*>(wilderness()); currentValue < limit; currentValue++)
+        *currentValue = emptyValue;
+#endif
+}
+
+inline CopiedBlock::CopiedBlock(size_t capacity)
+    : DoublyLinkedListNode<CopiedBlock>()
+    , m_capacity(capacity)
+    , m_remaining(payloadCapacity())
+    , m_isPinned(false)
+    , m_isOld(false)
+    , m_liveBytes(0)
+#ifndef NDEBUG
+    , m_liveObjects(0)
+#endif
+{
+    ASSERT(is8ByteAligned(reinterpret_cast<void*>(m_remaining)));
+}
+
 inline void CopiedBlock::didSurviveGC()
 {
     checkConsistency();
