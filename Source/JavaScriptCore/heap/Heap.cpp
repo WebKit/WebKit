@@ -864,11 +864,12 @@ void Heap::updateObjectCounts(double gcStartTime)
         m_totalBytesCopied = 0;
     } else
         m_totalBytesCopied -= bytesRemovedFromOldSpaceDueToReallocation;
+
+    m_totalBytesVisitedThisCycle = m_slotVisitor.bytesVisited() + threadBytesVisited();
+    m_totalBytesCopiedThisCycle = m_slotVisitor.bytesCopied() + threadBytesCopied();
     
-    m_totalBytesVisited += m_slotVisitor.bytesVisited();
-    m_totalBytesCopied += m_slotVisitor.bytesCopied();
-    m_totalBytesVisited += threadBytesVisited();
-    m_totalBytesCopied += threadBytesCopied();
+    m_totalBytesVisited += m_totalBytesVisitedThisCycle;
+    m_totalBytesCopied += m_totalBytesCopiedThisCycle;
 }
 
 void Heap::resetVisitors()
@@ -900,16 +901,6 @@ size_t Heap::size()
 size_t Heap::capacity()
 {
     return m_objectSpace.capacity() + m_storageSpace.capacity() + extraMemorySize();
-}
-
-size_t Heap::sizeAfterCollect()
-{
-    // The result here may not agree with the normal Heap::size(). 
-    // This is due to the fact that we only count live copied bytes
-    // rather than all used (including dead) copied bytes, thus it's 
-    // always the case that m_totalBytesCopied <= m_storageSpace.size(). 
-    ASSERT(m_totalBytesCopied <= m_storageSpace.size());
-    return m_totalBytesVisited + m_totalBytesCopied + extraMemorySize();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -1043,7 +1034,7 @@ NEVER_INLINE void Heap::collectImpl(HeapOperation collectionType, void* stackOri
     
     double before = 0;
     if (Options::logGC()) {
-        dataLog("[GC: ");
+        dataLog("[GC: ", capacity() / 1024, " kb ");
         before = currentTimeMS();
     }
     
@@ -1137,6 +1128,10 @@ void Heap::suspendCompilerThreads()
 void Heap::willStartCollection(HeapOperation collectionType)
 {
     GCPHASE(StartingCollection);
+    
+    if (Options::logGC())
+        dataLog("=> ");
+    
     if (shouldDoFullCollection(collectionType)) {
         m_operationInProgress = FullCollection;
         m_shouldDoFullCollection = false;
@@ -1273,7 +1268,42 @@ void Heap::resetAllocators()
 void Heap::updateAllocationLimits()
 {
     GCPHASE(UpdateAllocationLimits);
-    size_t currentHeapSize = sizeAfterCollect();
+    
+    // Calculate our current heap size threshold for the purpose of figuring out when we should
+    // run another collection. This isn't the same as either size() or capacity(), though it should
+    // be somewhere between the two. The key is to match the size calculations involved calls to
+    // didAllocate(), while never dangerously underestimating capacity(). In extreme cases of
+    // fragmentation, we may have size() much smaller than capacity(). Our collector sometimes
+    // temporarily allows very high fragmentation because it doesn't defragment old blocks in copied
+    // space.
+    size_t currentHeapSize = 0;
+
+    // For marked space, we use the total number of bytes visited. This matches the logic for
+    // MarkedAllocator's calls to didAllocate(), which effectively accounts for the total size of
+    // objects allocated rather than blocks used. This will underestimate capacity(), and in case
+    // of fragmentation, this may be substantial. Fortunately, marked space rarely fragments because
+    // cells usually have a narrow range of sizes. So, the underestimation is probably OK.
+    currentHeapSize += m_totalBytesVisited;
+
+    // For copied space, we use the capacity of storage space. This is because copied space may get
+    // badly fragmented between full collections. This arises when each eden collection evacuates
+    // much less than one CopiedBlock's worth of stuff. It can also happen when CopiedBlocks get
+    // pinned due to very short-lived objects. In such a case, we want to get to a full collection
+    // sooner rather than later. If we used m_totalBytesCopied, then for for each CopiedBlock that an
+    // eden allocation promoted, we would only deduct the one object's size from eden size. This
+    // would mean that we could "leak" many CopiedBlocks before we did a full collection and
+    // defragmented all of them. It would be great to use m_totalBytesCopied, but we'd need to
+    // augment it with something that accounts for those fragmented blocks.
+    // FIXME: Make it possible to compute heap size using m_totalBytesCopied rather than
+    // m_storageSpace.capacity()
+    // https://bugs.webkit.org/show_bug.cgi?id=150268
+    ASSERT(m_totalBytesCopied <= m_storageSpace.size());
+    currentHeapSize += m_storageSpace.capacity();
+
+    // It's up to the user to ensure that extraMemorySize() ends up corresponding to allocation-time
+    // extra memory reporting.
+    currentHeapSize += extraMemorySize();
+    
     if (Options::gcMaxHeapSize() && currentHeapSize > Options::gcMaxHeapSize())
         HeapStatistics::exitWithFailure();
 
@@ -1286,13 +1316,23 @@ void Heap::updateAllocationLimits()
         m_sizeAfterLastFullCollect = currentHeapSize;
         m_bytesAbandonedSinceLastFullCollect = 0;
     } else {
+        static const bool verbose = false;
+        
         ASSERT(currentHeapSize >= m_sizeAfterLastCollect);
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
         m_sizeAfterLastEdenCollect = currentHeapSize;
+        if (verbose) {
+            dataLog("Max heap size: ", m_maxHeapSize, "\n");
+            dataLog("Current heap size: ", currentHeapSize, "\n");
+            dataLog("Size after last eden collection: ", m_sizeAfterLastEdenCollect, "\n");
+        }
         double edenToOldGenerationRatio = (double)m_maxEdenSize / (double)m_maxHeapSize;
+        if (verbose)
+            dataLog("Eden to old generation ratio: ", edenToOldGenerationRatio, "\n");
         double minEdenToOldGenerationRatio = 1.0 / 3.0;
         if (edenToOldGenerationRatio < minEdenToOldGenerationRatio)
             m_shouldDoFullCollection = true;
+        // This seems suspect at first, but what it does is ensure that the nursery size is fixed.
         m_maxHeapSize += currentHeapSize - m_sizeAfterLastCollect;
         m_maxEdenSize = m_maxHeapSize - currentHeapSize;
         if (m_fullActivityCallback) {

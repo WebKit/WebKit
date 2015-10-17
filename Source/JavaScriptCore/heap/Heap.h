@@ -330,7 +330,6 @@ private:
     bool sweepNextLogicallyEmptyWeakBlock();
 
     bool shouldDoFullCollection(HeapOperation requestedCollectionType) const;
-    size_t sizeAfterCollect();
 
     JSStack& stack();
     
@@ -357,7 +356,9 @@ private:
     size_t m_maxHeapSize;
     bool m_shouldDoFullCollection;
     size_t m_totalBytesVisited;
+    size_t m_totalBytesVisitedThisCycle;
     size_t m_totalBytesCopied;
+    size_t m_totalBytesCopiedThisCycle;
     
     HeapOperation m_operationInProgress;
     StructureIDTable m_structureIDTable;
