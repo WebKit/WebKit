@@ -2127,9 +2127,9 @@ void RenderBlockFlow::addOverflowFromFloats()
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-        FloatingObject* r = it->get();
-        if (r->isDescendant())
-            addOverflowFromChild(&r->renderer(), IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
+        const auto& floatingObject = *it->get();
+        if (floatingObject.isDescendant())
+            addOverflowFromChild(&floatingObject.renderer(), IntSize(xPositionForFloatIncludingMargin(floatingObject), yPositionForFloatIncludingMargin(floatingObject)));
     }
 }
 
@@ -2190,23 +2190,26 @@ void RenderBlockFlow::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paint
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     auto end = floatingObjectSet.end();
     for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-        FloatingObject* r = it->get();
+        const auto& floatingObject = *it->get();
+        auto& renderer = floatingObject.renderer();
         // Only paint the object if our m_shouldPaint flag is set.
-        if (r->shouldPaint() && !r->renderer().hasSelfPaintingLayer()) {
+        if (floatingObject.shouldPaint() && !renderer.hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
             // FIXME: LayoutPoint version of xPositionForFloatIncludingMargin would make this much cleaner.
-            LayoutPoint childPoint = flipFloatForWritingModeForChild(r, LayoutPoint(paintOffset.x() + xPositionForFloatIncludingMargin(r) - r->renderer().x(), paintOffset.y() + yPositionForFloatIncludingMargin(r) - r->renderer().y()));
-            r->renderer().paint(currentPaintInfo, childPoint);
+            LayoutPoint childPoint = flipFloatForWritingModeForChild(floatingObject,
+                LayoutPoint(paintOffset.x() + xPositionForFloatIncludingMargin(floatingObject) - renderer.x(),
+                paintOffset.y() + yPositionForFloatIncludingMargin(floatingObject) - renderer.y()));
+            renderer.paint(currentPaintInfo, childPoint);
             if (!preservePhase) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
-                r->renderer().paint(currentPaintInfo, childPoint);
+                renderer.paint(currentPaintInfo, childPoint);
                 currentPaintInfo.phase = PaintPhaseFloat;
-                r->renderer().paint(currentPaintInfo, childPoint);
+                renderer.paint(currentPaintInfo, childPoint);
                 currentPaintInfo.phase = PaintPhaseForeground;
-                r->renderer().paint(currentPaintInfo, childPoint);
+                renderer.paint(currentPaintInfo, childPoint);
                 currentPaintInfo.phase = PaintPhaseOutline;
-                r->renderer().paint(currentPaintInfo, childPoint);
+                renderer.paint(currentPaintInfo, childPoint);
             }
         }
     }
@@ -2218,10 +2221,10 @@ void RenderBlockFlow::clipOutFloatingObjects(RenderBlock& rootBlock, const Paint
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         auto end = floatingObjectSet.end();
         for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-            FloatingObject* floatingObject = it->get();
+            const auto& floatingObject = *it->get();
             LayoutRect floatBox(offsetFromRootBlock.width() + xPositionForFloatIncludingMargin(floatingObject),
                 offsetFromRootBlock.height() + yPositionForFloatIncludingMargin(floatingObject),
-                floatingObject->renderer().width(), floatingObject->renderer().height());
+                floatingObject.renderer().width(), floatingObject.renderer().height());
             rootBlock.flipForWritingMode(floatBox);
             floatBox.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
             paintInfo->context().clipOut(snappedIntRect(floatBox));
@@ -2695,7 +2698,7 @@ LayoutUnit RenderBlockFlow::addOverhangingFloats(RenderBlockFlow& child, bool ma
             
             // Since the float doesn't overhang, it didn't get put into our list. We need to add its overflow in to the child now.
             if (floatingObject.isDescendant())
-                child.addOverflowFromChild(&renderer, LayoutSize(xPositionForFloatIncludingMargin(&floatingObject), yPositionForFloatIncludingMargin(&floatingObject)));
+                child.addOverflowFromChild(&renderer, LayoutSize(xPositionForFloatIncludingMargin(floatingObject), yPositionForFloatIncludingMargin(floatingObject)));
         }
     }
     return lowestFloatLogicalBottom;
@@ -2802,7 +2805,7 @@ void RenderBlockFlow::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     }
 }
 
-LayoutPoint RenderBlockFlow::flipFloatForWritingModeForChild(const FloatingObject* child, const LayoutPoint& point) const
+LayoutPoint RenderBlockFlow::flipFloatForWritingModeForChild(const FloatingObject& child, const LayoutPoint& point) const
 {
     if (!style().isFlippedBlocksWritingMode())
         return point;
@@ -2811,8 +2814,8 @@ LayoutPoint RenderBlockFlow::flipFloatForWritingModeForChild(const FloatingObjec
     // it's going to get added back in. We hide this complication here so that the calling code looks normal for the unflipped
     // case.
     if (isHorizontalWritingMode())
-        return LayoutPoint(point.x(), point.y() + height() - child->renderer().height() - 2 * yPositionForFloatIncludingMargin(child));
-    return LayoutPoint(point.x() + width() - child->renderer().width() - 2 * xPositionForFloatIncludingMargin(child), point.y());
+        return LayoutPoint(point.x(), point.y() + height() - child.renderer().height() - 2 * yPositionForFloatIncludingMargin(child));
+    return LayoutPoint(point.x() + width() - child.renderer().width() - 2 * xPositionForFloatIncludingMargin(child), point.y());
 }
 
 LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTop)
@@ -2900,12 +2903,13 @@ bool RenderBlockFlow::hitTestFloats(const HitTestRequest& request, HitTestResult
     auto begin = floatingObjectSet.begin();
     for (auto it = floatingObjectSet.end(); it != begin;) {
         --it;
-        FloatingObject* floatingObject = it->get();
-        if (floatingObject->shouldPaint() && !floatingObject->renderer().hasSelfPaintingLayer()) {
-            LayoutUnit xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->renderer().x();
-            LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->renderer().y();
+        const auto& floatingObject = *it->get();
+        auto& renderer = floatingObject.renderer();
+        if (floatingObject.shouldPaint() && !renderer.hasSelfPaintingLayer()) {
+            LayoutUnit xOffset = xPositionForFloatIncludingMargin(floatingObject) - renderer.x();
+            LayoutUnit yOffset = yPositionForFloatIncludingMargin(floatingObject) - renderer.y();
             LayoutPoint childPoint = flipFloatForWritingModeForChild(floatingObject, adjustedLocation + LayoutSize(xOffset, yOffset));
-            if (floatingObject->renderer().hitTest(request, result, locationInContainer, childPoint)) {
+            if (renderer.hitTest(request, result, locationInContainer, childPoint)) {
                 updateHitTestResult(result, locationInContainer.point() - toLayoutSize(childPoint));
                 return true;
             }
@@ -2959,11 +2963,11 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         auto end = floatingObjectSet.end();
         for (auto it = floatingObjectSet.begin(); it != end; ++it) {
-            FloatingObject* r = it->get();
+            const auto& floatingObject = *it->get();
             // Only examine the object if our m_shouldPaint flag is set.
-            if (r->shouldPaint()) {
-                LayoutUnit floatLeft = xPositionForFloatIncludingMargin(r) - r->renderer().x();
-                LayoutUnit floatRight = floatLeft + r->renderer().width();
+            if (floatingObject.shouldPaint()) {
+                LayoutUnit floatLeft = xPositionForFloatIncludingMargin(floatingObject) - floatingObject.renderer().x();
+                LayoutUnit floatRight = floatLeft + floatingObject.renderer().width();
                 left = std::min(left, floatLeft);
                 right = std::max(right, floatRight);
             }

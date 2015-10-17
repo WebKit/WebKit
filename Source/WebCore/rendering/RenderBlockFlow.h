@@ -333,10 +333,10 @@ public:
             floatingObject.setHeight(logicalWidth);
     }
 
-    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->x() + child->renderer().marginLeft() : child->x() + marginBeforeForChild(child->renderer()); }
-    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() + marginBeforeForChild(child->renderer()) : child->y() + child->renderer().marginTop(); }
+    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.x() + floatingObject.renderer().marginLeft() : floatingObject.x() + marginBeforeForChild(floatingObject.renderer()); }
+    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject& floatingObject) const { return isHorizontalWritingMode() ? floatingObject.y() + marginBeforeForChild(floatingObject.renderer()) : floatingObject.y() + floatingObject.renderer().marginTop(); }
 
-    LayoutPoint flipFloatForWritingModeForChild(const FloatingObject*, const LayoutPoint&) const;
+    LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
