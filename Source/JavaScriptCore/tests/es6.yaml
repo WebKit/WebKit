@@ -550,6 +550,8 @@
   cmd: runES6 :normal
 - path: es6/String.prototype_methods_String.prototype.includes.js
   cmd: runES6 :normal
+- path: es6/String.prototype_methods_String.prototype.normalize.js
+  cmd: runES6 :normal
 - path: es6/String.prototype_methods_String.prototype.repeat.js
   cmd: runES6 :normal
 - path: es6/String.prototype_methods_String.prototype.startsWith.js
@@ -1111,8 +1113,6 @@
 - path: es6/spread_..._operator_with_instances_of_iterables_in_calls.js
   cmd: runES6 :fail
 - path: es6/spread_..._operator_with_strings_in_function_calls.js
-  cmd: runES6 :fail
-- path: es6/String.prototype_methods_String.prototype.normalize.js
   cmd: runES6 :fail
 - path: es6/typed_arrays_%TypedArray%.from.js
   cmd: runES6 :normal

@@ -42,6 +42,8 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include <algorithm>
+#include <unicode/uconfig.h>
+#include <unicode/unorm.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>
@@ -90,6 +92,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState*);
 
 const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, CREATE_METHOD_TABLE(StringPrototype) };
@@ -145,6 +148,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION("startsWith", stringProtoFuncStartsWith, DontEnum, 1);
     JSC_NATIVE_FUNCTION("endsWith", stringProtoFuncEndsWith, DontEnum, 1);
     JSC_NATIVE_FUNCTION("includes", stringProtoFuncIncludes, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("normalize", stringProtoFuncNormalize, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, stringProtoFuncIterator, DontEnum, 0);
 
     JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->charCodeAtPrivateName, stringProtoFuncCharCodeAt, DontEnum, 1, CharCodeAtIntrinsic);
@@ -1787,6 +1791,68 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
         return throwVMTypeError(exec);
     JSString* string = thisValue.toString(exec);
     return JSValue::encode(JSStringIterator::create(exec, exec->callee()->globalObject()->stringIteratorStructure(), string));
+}
+
+static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLength, UNormalizationMode form)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t normalizedStringLength = unorm_normalize(source, sourceLength, form, 0, nullptr, 0, &status);
+
+    if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR) {
+        // The behavior is not specified when normalize fails.
+        // Now we throw a type erorr since it seems that the contents of the string are invalid.
+        return throwTypeError(exec);
+    }
+
+    UChar* buffer = nullptr;
+    RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(normalizedStringLength, buffer);
+    if (!impl)
+        return throwOutOfMemoryError(exec);
+
+    status = U_ZERO_ERROR;
+    unorm_normalize(source, sourceLength, form, 0, buffer, normalizedStringLength, &status);
+    if (U_FAILURE(status))
+        return throwTypeError(exec);
+
+    return jsString(exec, impl.get());
+}
+
+EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    if (!checkObjectCoercible(thisValue))
+        return throwVMTypeError(exec);
+    String source = thisValue.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    UNormalizationMode form = UNORM_NFC;
+    // Verify that the argument is provided and is not undefined.
+    if (!exec->argument(0).isUndefined()) {
+        String formString = exec->uncheckedArgument(0).toString(exec)->value(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
+        if (formString == "NFC")
+            form = UNORM_NFC;
+        else if (formString == "NFD")
+            form = UNORM_NFD;
+        else if (formString == "NFKC")
+            form = UNORM_NFKC;
+        else if (formString == "NFKD")
+            form = UNORM_NFKD;
+        else
+            return throwVMError(exec, createRangeError(exec, ASCIILiteral("argument does not match any normalization form")));
+    }
+
+    if (!source.is8Bit())
+        return JSValue::encode(normalize(exec, source.characters16(), source.length(), form));
+
+    Vector<UChar, 16> utf16Vector;
+    utf16Vector.resize(source.length());
+    const LChar* characters8 = source.characters8();
+    std::copy(characters8, characters8 + source.length(), utf16Vector.data());
+    return JSValue::encode(normalize(exec, utf16Vector.data(), utf16Vector.size(), form));
 }
 
 } // namespace JSC
