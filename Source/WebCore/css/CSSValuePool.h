@@ -31,6 +31,7 @@
 #include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSRevertValue.h"
 #include "CSSUnsetValue.h"
 #include "CSSValueKeywords.h"
 #include <utility>
@@ -56,6 +57,7 @@ public:
     Ref<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.copyRef(); }
     Ref<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.copyRef(); }
     Ref<CSSUnsetValue> createUnsetValue() { return m_unsetValue.copyRef(); }
+    Ref<CSSRevertValue> createRevertValue() { return m_revertValue.copyRef(); }
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
     Ref<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
@@ -74,6 +76,7 @@ private:
     Ref<CSSInitialValue> m_implicitInitialValue;
     Ref<CSSInitialValue> m_explicitInitialValue;
     Ref<CSSUnsetValue> m_unsetValue;
+    Ref<CSSRevertValue> m_revertValue;
 
     RefPtr<CSSPrimitiveValue> m_identifierValueCache[numCSSValueKeywords];
 

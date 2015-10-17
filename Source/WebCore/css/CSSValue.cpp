@@ -114,6 +114,8 @@ CSSValue::Type CSSValue::cssValueType() const
         return CSS_INITIAL;
     if (isUnsetValue())
         return CSS_UNSET;
+    if (isRevertValue())
+        return CSS_REVERT;
     return CSS_CUSTOM;
 }
 
@@ -203,6 +205,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSInitialValue>(*this, other);
         case UnsetClass:
             return compareCSSValues<CSSUnsetValue>(*this, other);
+        case RevertClass:
+            return compareCSSValues<CSSRevertValue>(*this, other);
 #if ENABLE(CSS_GRID_LAYOUT)
         case GridLineNamesClass:
             return compareCSSValues<CSSGridLineNamesValue>(*this, other);
@@ -305,6 +309,8 @@ String CSSValue::cssText() const
         return downcast<CSSInitialValue>(*this).customCSSText();
     case UnsetClass:
         return downcast<CSSUnsetValue>(*this).customCSSText();
+    case RevertClass:
+        return downcast<CSSRevertValue>(*this).customCSSText();
 #if ENABLE(CSS_GRID_LAYOUT)
     case GridLineNamesClass:
         return downcast<CSSGridLineNamesValue>(*this).customCSSText();
@@ -416,6 +422,9 @@ void CSSValue::destroy()
         return;
     case UnsetClass:
         delete downcast<CSSUnsetValue>(this);
+        return;
+    case RevertClass:
+        delete downcast<CSSRevertValue>(this);
         return;
 #if ENABLE(CSS_GRID_LAYOUT)
     case GridLineNamesClass:
