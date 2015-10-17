@@ -61,6 +61,14 @@
 #import <stdio.h>
 #import <wtf/RAMSize.h>
 
+#if USE(APPKIT)
+#import "AppKitSPI.h"
+#endif
+
+#if PLATFORM(IOS)
+#import <WebCore/GraphicsServicesSPI.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -190,9 +198,22 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
 #endif
 }
 
+static void registerWithAccessibility()
+{
+#if USE(APPKIT)
+    [NSAccessibilityRemoteUIElement setRemoteUIApp:YES];
+#endif
+#if PLATFORM(IOS)
+    NSString *accessibilityBundlePath = [(NSString *)GSSystemRootDirectory() stringByAppendingString:@"/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
+    NSError *error;
+    if (![[NSBundle bundleWithPath:accessibilityBundlePath] loadAndReturnError:&error])
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", accessibilityBundlePath, error);
+#endif
+}
+
 void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
 {
-    WKAXRegisterRemoteApp();
+    registerWithAccessibility();
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShim::singleton().initialize(this);

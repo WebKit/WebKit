@@ -315,8 +315,8 @@
 		1A81B38018BD66AD0007FDAC /* _WKVisitedLinkStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkStore.mm */; };
 		1A81B38118BD66AD0007FDAC /* _WKVisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A81B38518BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A81B38418BD673A0007FDAC /* _WKVisitedLinkStoreInternal.h */; };
-		1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66AE1BC43C860082DF77 /* PageLoadStateObserver.h */; settings = {ASSET_TAGS = (); }; };
-		1A8B66B31BC45B010082DF77 /* WKBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */; settings = {ASSET_TAGS = (); }; };
+		1A8B66B01BC43C860082DF77 /* PageLoadStateObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66AE1BC43C860082DF77 /* PageLoadStateObserver.h */; };
+		1A8B66B31BC45B010082DF77 /* WKBundleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */; };
 		1A8B66B41BC45B010082DF77 /* WKBundleMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8B66B21BC45B010082DF77 /* WKBundleMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8C728C1738477C000A6554 /* LocalStorageDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */; };
 		1A8C728D1738477C000A6554 /* LocalStorageDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */; };
@@ -785,6 +785,7 @@
 		37694525184FC6B600CDE21F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCF5068412431861005955AE /* Security.framework */; };
 		37716A5A195B910500EE8B1B /* ProcessAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37716A59195B910500EE8B1B /* ProcessAssertion.cpp */; };
 		377216B81A4E6BE000DCA718 /* _WKRenderingProgressEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 377216B71A4E6BE000DCA718 /* _WKRenderingProgressEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37777A0E1BD2CA11007F74B5 /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 37777A0D1BD2CA11007F74B5 /* AppKitSPI.h */; };
 		377EAD4517E2C51A002D193D /* WKDeclarationSpecifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4817E2C77B002D193D /* WKUserContentInjectedFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		377EAD4917E2C77B002D193D /* WKUserScriptInjectionTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2936,7 +2937,7 @@
 		373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFramePrivate.h; sourceTree = "<group>"; };
 		3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUIDelegatePrivate.h; sourceTree = "<group>"; };
 		374436871820E7240049579F /* WKObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObject.mm; sourceTree = "<group>"; };
-		3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSInvocationSPI.h; path = Cocoa/NSInvocationSPI.h; sourceTree = "<group>"; };
+		3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSInvocationSPI.h; sourceTree = "<group>"; };
 		375FB4731883415600BE34D4 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		3760881C150413E900FC82C7 /* WebRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRenderObject.cpp; sourceTree = "<group>"; };
 		3760881D150413E900FC82C7 /* WebRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderObject.h; sourceTree = "<group>"; };
@@ -2948,6 +2949,7 @@
 		3769079C18F340A2001DFF04 /* APIInjectedBundleFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundleFormClient.h; sourceTree = "<group>"; };
 		37716A59195B910500EE8B1B /* ProcessAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessAssertion.cpp; sourceTree = "<group>"; };
 		377216B71A4E6BE000DCA718 /* _WKRenderingProgressEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRenderingProgressEvents.h; sourceTree = "<group>"; };
+		37777A0D1BD2CA11007F74B5 /* AppKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		377EAD4417E2C51A002D193D /* WKDeclarationSpecifiers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeclarationSpecifiers.h; sourceTree = "<group>"; };
 		377EAD4617E2C77B002D193D /* WKUserContentInjectedFrames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentInjectedFrames.h; sourceTree = "<group>"; };
 		377EAD4717E2C77B002D193D /* WKUserScriptInjectionTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserScriptInjectionTime.h; sourceTree = "<group>"; };
@@ -5294,7 +5296,15 @@
 			children = (
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 			);
-			name = Cocoa;
+			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		37777A0C1BD2C9D6007F74B5 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				37777A0D1BD2CA11007F74B5 /* AppKitSPI.h */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		37C4C08318149C2A003688B9 /* Cocoa */ = {
@@ -7373,6 +7383,7 @@
 			children = (
 				3754D5411B3A2998003A4C7F /* Cocoa */,
 				CE1A0BCB1A48E6C60054EF74 /* ios */,
+				37777A0C1BD2C9D6007F74B5 /* mac */,
 			);
 			path = spi;
 			sourceTree = "<group>";
@@ -7500,6 +7511,7 @@
 				7C4ED3291A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h in Headers */,
 				E19BDA8A193686A400B97F57 /* SandboxUtilities.h in Headers */,
 				1A7284471959ED100007BCE5 /* SessionStateConversion.h in Headers */,
+				37777A0E1BD2CA11007F74B5 /* AppKitSPI.h in Headers */,
 				1AF459321946559500F9D4A2 /* WKError.h in Headers */,
 				1ADAE12E1919A5B400F48E21 /* WKPreferences.h in Headers */,
 			);
