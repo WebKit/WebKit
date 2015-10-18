@@ -27,10 +27,13 @@
 #define WebDatabaseProvider_h
 
 #include <WebCore/DatabaseProvider.h>
-#include <WebCore/InProcessIDBServer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
+
+#if ENABLE(INDEXED_DATABASE)
+#include <WebCore/InProcessIDBServer.h>
+#endif
 
 class WebDatabaseProvider final : public WebCore::DatabaseProvider {
     friend class NeverDestroyed<WebDatabaseProvider>;

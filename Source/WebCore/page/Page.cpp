@@ -50,7 +50,6 @@
 #include "HTMLElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
-#include "IDBConnectionToServer.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
@@ -115,6 +114,7 @@
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+#include "IDBConnectionToServer.h"
 #include "InProcessIDBServer.h"
 #endif
 
