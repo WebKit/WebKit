@@ -197,7 +197,7 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)
 {
     uint64_t currentVersion = m_info.version();
-    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %llu, requested version %llu", currentVersion, requestedVersion);
+    LOG(IndexedDB, "IDBDatabase::fireVersionChangeEvent - current version %" PRIu64 ", requested version %" PRIu64, currentVersion, requestedVersion);
 
     if (!scriptExecutionContext())
         return;

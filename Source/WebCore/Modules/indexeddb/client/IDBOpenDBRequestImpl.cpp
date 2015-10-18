@@ -92,7 +92,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
     uint64_t oldVersion = database->info().version();
     uint64_t newVersion = transaction->info().newVersion();
 
-    LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %llu, new is %llu", static_cast<unsigned long long>(oldVersion), static_cast<unsigned long long>(newVersion));
+    LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);
 
     m_result = IDBAny::create(WTF::move(database));
     m_readyState = IDBRequestReadyState::Done;

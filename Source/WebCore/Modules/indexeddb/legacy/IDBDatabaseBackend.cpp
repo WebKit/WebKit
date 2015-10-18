@@ -431,7 +431,7 @@ void IDBDatabaseBackend::processPendingOpenCalls(bool success)
             if (pendingOpenCall->version() == IDBDatabaseMetadata::NoIntVersion)
                 message = "Internal error opening database with no version specified.";
             else
-                message = String::format("Internal error opening database with version %llu", static_cast<unsigned long long>(pendingOpenCall->version()));
+                message = String::format("Internal error opening database with version %" PRIu64, pendingOpenCall->version());
             pendingOpenCall->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, message));
         }
     }
@@ -483,7 +483,7 @@ void IDBDatabaseBackend::openConnectionInternal(PassRefPtr<IDBCallbacks> prpCall
     }
 
     if (version < m_metadata.version && m_metadata.version != IDBDatabaseMetadata::NoIntVersion) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VersionError, String::format("The requested version (%llu) is less than the existing version (%llu).", static_cast<unsigned long long>(version), static_cast<unsigned long long>(m_metadata.version))));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VersionError, String::format("The requested version (%" PRIu64 ") is less than the existing version (%" PRIu64 ").", version, m_metadata.version)));
         return;
     }
 
