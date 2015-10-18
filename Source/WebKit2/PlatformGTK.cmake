@@ -973,8 +973,10 @@ add_custom_command(
         ${GObjectDOMBindings_GIR_HEADERS}
         ${WebKit2WebExtension_INSTALLED_HEADERS}
         ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenu.h
+        ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenu.cpp
         ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenuActions.h
         ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenuItem.h
+        ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitContextMenuItem.cpp
         ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
         ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
         ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitURIResponse.h

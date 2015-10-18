@@ -1,3 +1,16 @@
+2015-10-18  Joonghun Park  <jh718.park@samsung.com>
+
+        [GTK] Remove WebKitContextMenu related missing annotation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=150299
+
+        Reviewed by Darin Adler.
+
+        The warnings occur currently because when executing g-ir-scanner,
+        it doesn't consider WebKitContextMenu related .cpp files,
+        but only .h files.
+
+        * PlatformGTK.cmake: Add WebKitContextMenu related cpp files.
+
 2015-10-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop honoring the user default "WebKitKerningAndLigaturesEnabledByDefault"
