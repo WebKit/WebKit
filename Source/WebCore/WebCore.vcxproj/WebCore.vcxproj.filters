@@ -2165,6 +2165,9 @@
     <ClCompile Include="..\css\CSSReflectValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\CSSRevertValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -2201,6 +2204,9 @@
     <ClCompile Include="..\css\CSSUnicodeRangeValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\CSSUnsetValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -2208,6 +2214,12 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\CSSValuePool.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSVariableDependentValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\CSSVariableValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\FontLoader.cpp">
@@ -3872,7 +3884,7 @@
     <ClCompile Include="..\html\HTMLSelectElementWin.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLSlotElementWin.cpp">
+    <ClCompile Include="..\html\HTMLSlotElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\HTMLSourceElement.cpp">
@@ -9139,6 +9151,9 @@
     <ClInclude Include="..\css\CSSReflectValue.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\CSSRevertValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\CSSRule.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -9178,6 +9193,9 @@
     <ClInclude Include="..\css\CSSUnicodeRangeValue.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\CSSUnsetValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\CSSUnknownRule.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -9188,6 +9206,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSValuePool.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\CSSVariableDependentValue.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\CSSVariableValue.h">

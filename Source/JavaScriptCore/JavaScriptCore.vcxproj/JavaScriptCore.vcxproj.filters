@@ -261,6 +261,9 @@
     <ClCompile Include="..\heap\ConservativeRoots.cpp">
       <Filter>heap</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\CopiedBlock.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\CopiedSpace.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -361,6 +364,9 @@
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\agents\InspectorDebuggerAgent.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\agents\InspectorHeapAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp">
@@ -2424,6 +2430,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\agents\InspectorDebuggerAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\agents\InspectorHeapAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h">

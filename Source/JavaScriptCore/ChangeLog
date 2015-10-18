@@ -1,3 +1,15 @@
+2015-10-18  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        [Win] Fix the Windows builds.
+        https://bugs.webkit.org/show_bug.cgi?id=150300
+
+        Reviewed by Darin Adler.
+
+        Add missing files to JavaScriptCore.vcxproj.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2015-10-17  Filip Pizlo  <fpizlo@apple.com>
 
         Fix some generational heap growth pathologies

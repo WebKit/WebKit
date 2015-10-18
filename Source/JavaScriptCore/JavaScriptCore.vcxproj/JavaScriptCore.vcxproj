@@ -561,6 +561,7 @@
     <ClCompile Include="..\ftl\FTLValueRange.cpp" />
     <ClCompile Include="..\heap\CodeBlockSet.cpp" />
     <ClCompile Include="..\heap\ConservativeRoots.cpp" />
+    <ClCompile Include="..\heap\CopiedBlock.cpp" />
     <ClCompile Include="..\heap\CopiedSpace.cpp" />
     <ClCompile Include="..\heap\CopyVisitor.cpp" />
     <ClCompile Include="..\heap\DeferGC.cpp" />
@@ -615,6 +616,7 @@
     <ClCompile Include="..\inspector\agents\InspectorAgent.cpp" />
     <ClCompile Include="..\inspector\agents\InspectorConsoleAgent.cpp" />
     <ClCompile Include="..\inspector\agents\InspectorDebuggerAgent.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorHeapAgent.cpp" />
     <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp" />
     <ClCompile Include="..\interpreter\AbstractPC.cpp" />
     <ClCompile Include="..\interpreter\CallFrame.cpp" />
@@ -1424,6 +1426,7 @@
     <ClInclude Include="..\inspector\agents\InspectorAgent.h" />
     <ClInclude Include="..\inspector\agents\InspectorConsoleAgent.h" />
     <ClInclude Include="..\inspector\agents\InspectorDebuggerAgent.h" />
+    <ClInclude Include="..\inspector\agents\InspectorHeapAgent.h" />
     <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h" />
     <ClInclude Include="..\interpreter\AbstractPC.h" />
     <ClInclude Include="..\interpreter\CachedCall.h" />
