@@ -550,4 +550,4 @@ imported/blink/fast/multicol/vertical-lr/float-big-line.html  [ Pass ImageOnlyFa
 imported/blink/fast/pagination/viewport-x-horizontal-bt-ltr.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/transforms/transform-update-frame-overflow.html [ Pass ImageOnlyFailure ]
 imported/blink/fast/multicol/vertical-rl/float-big-line.html [ Pass ImageOnlyFailure ]
-imported/blink/fast/multicol/span/adjacent-spanners-with-margin-diffs.html [ Pass ImageOnlyFailure ]
+imported/blink/fast/multicol/span/adjacent-spanners-with-margin.html [ Pass ImageOnlyFailure ]
