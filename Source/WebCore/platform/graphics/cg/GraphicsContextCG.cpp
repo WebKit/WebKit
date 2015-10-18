@@ -1480,15 +1480,6 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return InterpolationDefault;
 }
 
-void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
-{
-    UNUSED_PARAM(allowsFontSmoothing);
-#if PLATFORM(COCOA)
-    CGContextRef context = platformContext();
-    CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
-#endif
-}
-
 void GraphicsContext::setIsCALayerContext(bool isLayerContext)
 {
     if (isLayerContext)
