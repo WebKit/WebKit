@@ -573,6 +573,9 @@ private:
 
     void removeShadowRoot();
 
+    RenderStyle* existingComputedStyle();
+    RenderStyle& resolveComputedStyle();
+
     bool rareDataStyleAffectedByEmpty() const;
     bool rareDataChildrenAffectedByHover() const;
     bool rareDataChildrenAffectedByActive() const;

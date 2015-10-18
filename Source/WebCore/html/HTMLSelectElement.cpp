@@ -887,13 +887,14 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         downcast<HTMLOptionElement>(*element).setSelectedState(true);
     }
 
+    updateValidity();
+
     // For the menu list case, this is what makes the selected element appear.
     if (auto* renderer = this->renderer())
         renderer->updateFromElement();
 
     scrollToSelection();
 
-    updateValidity();
     if (usesMenuList()) {
         m_isProcessingUserDrivenChange = flags & UserDriven;
         if (flags & DispatchChangeEvent)
