@@ -4694,18 +4694,15 @@ static Vector<String> toStringVector(NSArray* patterns)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_cacheModelChangedNotification:) name:WebPreferencesCacheModelChangedInternalNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
 
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
 #if PLATFORM(IOS)
     continuousSpellCheckingEnabled = NO;
-#endif
 
-#if !PLATFORM(IOS)
+#else
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     continuousSpellCheckingEnabled = [defaults boolForKey:WebContinuousSpellCheckingEnabled];
     grammarCheckingEnabled = [defaults boolForKey:WebGrammarCheckingEnabled];
-#endif
 
-#if !PLATFORM(IOS)
     automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];
     automaticLinkDetectionEnabled = [defaults boolForKey:WebAutomaticLinkDetectionEnabled];
     automaticDashSubstitutionEnabled = [self _shouldAutomaticDashSubstitutionBeEnabled];
