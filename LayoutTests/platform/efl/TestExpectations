@@ -1289,6 +1289,33 @@ fast/borders/border-painting-double.html [ Pass ]
 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ Pass ]
 mathml/roots-removeChild.html [ Pass ]
 
+# css variables tests are passed since r191128. However these passes aren't verified yet.
+webkit.org/b/150183 fast/css/variables/test-suite/failures/024.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/025.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/026.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/028.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/030.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/054.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/055.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/056.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/058.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/071.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/081.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/082.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/085.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/086.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/087.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/091.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/103.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/111.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/115.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/126.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/152.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/159.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/161.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/163.html [ Pass ]
+webkit.org/b/150183 fast/css/variables/test-suite/failures/169.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
