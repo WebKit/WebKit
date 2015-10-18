@@ -7,9 +7,12 @@ Type: "text/ecmascript", Language: unspecified
 Type: "application/javascript", Language: unspecified
 Type: "application/ecmascript", Language: unspecified
 Type: "application/x-javascript", Language: unspecified
+Type: "text/javascript1.0", Language: unspecified
 Type: "text/javascript1.1", Language: unspecified
 Type: "text/javascript1.2", Language: unspecified
 Type: "text/javascript1.3", Language: unspecified
+Type: "text/javascript1.4", Language: unspecified
+Type: "text/javascript1.5", Language: unspecified
 Type: "text/jscript", Language: unspecified
 Type: "text/livescript", Language: unspecified
 Type: "  text/javascript", Language: unspecified

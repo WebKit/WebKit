@@ -1,3 +1,15 @@
+2015-10-18  Chris Dumez  <cdumez@apple.com>
+
+        WebKit must support all JavaScript MIME types in HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=148854
+        <rdar://problem/22588195>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C HTML test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-languages-02-expected.txt:
+
 2015-10-17  Chris Dumez  <cdumez@apple.com>
 
         td and th should use HTMLTableDataCellElement and HTMLTableHeaderCellElement interfaces

@@ -277,28 +277,27 @@ static void initializeSupportedImageMIMETypesForEncoding()
 
 static void initializeSupportedJavaScriptMIMETypes()
 {
-    /*
-        Mozilla 1.8 and WinIE 7 both accept text/javascript and text/ecmascript.
-        Mozilla 1.8 accepts application/javascript, application/ecmascript, and application/x-javascript, but WinIE 7 doesn't.
-        WinIE 7 accepts text/javascript1.1 - text/javascript1.3, text/jscript, and text/livescript, but Mozilla 1.8 doesn't.
-        Mozilla 1.8 allows leading and trailing whitespace, but WinIE 7 doesn't.
-        Mozilla 1.8 and WinIE 7 both accept the empty string, but neither accept a whitespace-only string.
-        We want to accept all the values that either of these browsers accept, but not other values.
-     */
+    // https://html.spec.whatwg.org/multipage/scripting.html#javascript-mime-type
     static const char* types[] = {
         "text/javascript",
         "text/ecmascript",
         "application/javascript",
         "application/ecmascript",
         "application/x-javascript",
+        "application/x-ecmascript",
+        "text/javascript1.0",
         "text/javascript1.1",
         "text/javascript1.2",
         "text/javascript1.3",
+        "text/javascript1.4",
+        "text/javascript1.5",
         "text/jscript",
         "text/livescript",
+        "text/x-javascript",
+        "text/x-ecmascript"
     };
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(types); ++i)
-      supportedJavaScriptMIMETypes->add(types[i]);
+    for (auto* type : types)
+        supportedJavaScriptMIMETypes->add(type);
 }
 
 static void initializePDFMIMETypes()
