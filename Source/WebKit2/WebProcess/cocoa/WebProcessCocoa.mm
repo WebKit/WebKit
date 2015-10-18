@@ -152,8 +152,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
     m_compositingRenderServerPort = WTF::move(parameters.acceleratedCompositingPort);
     m_presenterApplicationPid = parameters.presenterApplicationPid;
-    FontCascade::setDefaultKerning(parameters.shouldEnableKerningByDefault);
-    FontCascade::setDefaultLigatures(parameters.shouldEnableLigaturesByDefault);
 
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 
