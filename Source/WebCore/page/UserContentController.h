@@ -26,7 +26,6 @@
 #ifndef UserContentController_h
 #define UserContentController_h
 
-#include "ContentExtensionActions.h"
 #include "UserScriptTypes.h"
 #include "UserStyleSheetTypes.h"
 #include <wtf/HashSet.h>
@@ -35,6 +34,10 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "UserMessageHandlerDescriptorTypes.h"
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ContentExtensionActions.h"
 #endif
 
 namespace WebCore {
