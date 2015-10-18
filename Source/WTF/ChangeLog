@@ -1,3 +1,11 @@
+2015-10-17  Mark Lam  <mark.lam@apple.com>
+
+        Add CPU(X86) to the supported MASM_PROBE CPUs. This was accidentally left out in r191197.
+
+        Not reviewed.
+
+        * wtf/Platform.h:
+
 2015-10-16  Mark Lam  <mark.lam@apple.com>
 
         Always enable MASM_PROBE for debug builds.
