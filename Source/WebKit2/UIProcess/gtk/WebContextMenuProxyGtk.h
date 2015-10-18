@@ -47,7 +47,7 @@ public:
     }
     ~WebContextMenuProxyGtk();
 
-    virtual void showContextMenu(const Vector<RefPtr<WebContextMenuItem>>&) override;
+    virtual void showContextMenu() override;
     virtual void hideContextMenu() override;
     virtual void cancelTracking() override;
 

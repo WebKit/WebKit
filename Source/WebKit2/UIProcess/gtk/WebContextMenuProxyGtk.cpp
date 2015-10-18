@@ -28,11 +28,13 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "APIContextMenuClient.h"
 #include "NativeWebMouseEvent.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include <WebCore/GtkUtilities.h>
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
@@ -139,8 +141,22 @@ void WebContextMenuProxyGtk::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     }
 }
 
-void WebContextMenuProxyGtk::showContextMenu(const Vector<RefPtr<WebContextMenuItem>>& items)
+void WebContextMenuProxyGtk::showContextMenu()
 {
+    Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
+    for (auto& item : m_context.menuItems()) {
+        if (item.action() != ContextMenuItemTagShareMenu)
+            proposedAPIItems.append(WebContextMenuItem::create(item));
+    }
+
+    Vector<RefPtr<WebContextMenuItem>> clientItems;
+    bool useProposedItems = true;
+
+    if (m_page->contextMenuClient().getContextMenuFromProposedMenu(*m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page->process().transformHandlesToObjects(m_userData.object()).get()))
+        useProposedItems = false;
+
+    const Vector<RefPtr<WebContextMenuItem>>& items = useProposedItems ? proposedAPIItems : clientItems;
+
     if (!items.isEmpty())
         populate(items);
 
