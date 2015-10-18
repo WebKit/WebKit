@@ -1,5 +1,17 @@
 2015-10-18  Chris Dumez  <cdumez@apple.com>
 
+        Script element with an empty for or event attributes should not execute
+        https://bugs.webkit.org/show_bug.cgi?id=148855
+        <rdar://problem/22588156>
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing W3C HTML test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event-expected.txt:
+
+2015-10-18  Chris Dumez  <cdumez@apple.com>
+
         WebKit must support all JavaScript MIME types in HTML5 spec
         https://bugs.webkit.org/show_bug.cgi?id=148854
         <rdar://problem/22588195>

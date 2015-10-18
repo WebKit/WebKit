@@ -368,7 +368,7 @@ bool ScriptElement::isScriptForEventSupported() const
 {
     String eventAttribute = eventAttributeValue();
     String forAttribute = forAttributeValue();
-    if (!eventAttribute.isEmpty() && !forAttribute.isEmpty()) {
+    if (!eventAttribute.isNull() && !forAttribute.isNull()) {
         forAttribute = forAttribute.stripWhiteSpace();
         if (!equalIgnoringCase(forAttribute, "window"))
             return false;

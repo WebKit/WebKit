@@ -5,9 +5,9 @@ PASS Script 1
 PASS Script 2 
 PASS Script 3 
 PASS Script 4 
-FAIL Script 5 assert_equals: script for="" event="onload" expected false but got true
-FAIL Script 6 assert_equals: script for="window" event="" expected false but got true
-FAIL Script 7 assert_equals: script for="" event="" expected false but got true
+PASS Script 5 
+PASS Script 6 
+PASS Script 7 
 PASS Script 8 
 PASS Script 9 
 PASS Script 10 
