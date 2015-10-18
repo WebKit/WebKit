@@ -272,6 +272,8 @@ webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ P
 
 webkit.org/b/150095 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-invalidstaterror.html [ Pass Timeout ]
 
+webkit.org/b/150241 webarchive/loading/object.html [ Pass Crash ] 
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
