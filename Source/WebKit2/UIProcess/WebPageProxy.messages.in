@@ -188,6 +188,7 @@ messages -> WebPageProxy {
     CommitPotentialTapFailed()
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     ViewportMetaTagWidthDidChange(float width)
+    DisableDoubleTapGesturesUntilTapIsFinishedIfNecessary(uint64_t requestID, bool allowsDoubleTapZoom, WebCore::FloatRect targetRect, bool isReplacedElement, double minimumScale, double maximumScale)
     DidFinishDrawingPagesToPDF(IPC::DataReference pdfData)
 #endif
 #if PLATFORM(GTK)

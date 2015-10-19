@@ -259,6 +259,14 @@ void PageClientImpl::didChangeViewportMetaTagWidth(float newWidth)
     [m_webView _setViewportMetaTagWidth:newWidth];
 }
 
+void PageClientImpl::disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(uint64_t requestID, bool allowsDoubleTapZoom, const WebCore::FloatRect& targetRect, bool isReplacedElement, double minimumScale, double maximumScale)
+{
+    if (!m_webView._viewportIsUserScalable)
+        return;
+
+    [m_contentView _disableDoubleTapGesturesUntilTapIsFinishedIfNecessary:requestID allowsDoubleTapZoom:allowsDoubleTapZoom targetRect:targetRect isReplaced:isReplacedElement minimumScale:minimumScale maximumScale:maximumScale];
+}
+
 double PageClientImpl::minimumZoomScale() const
 {
     if (UIScrollView *scroller = [m_webView scrollView])

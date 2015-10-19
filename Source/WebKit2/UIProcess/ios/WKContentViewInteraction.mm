@@ -831,7 +831,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius
 {
-    if (!_isTapHighlightIDValid || _latestTapHighlightID != requestID)
+    if (!_isTapHighlightIDValid || _latestTapID != requestID)
         return;
 
     _isTapHighlightIDValid = NO;
@@ -849,6 +849,44 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     }
 
     [self _showTapHighlight];
+}
+
+- (CGFloat)_fastClickZoomThreshold
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if (![defaults boolForKey:@"WebKitFastClickingEnabled"])
+        return 0;
+
+    return [defaults floatForKey:@"WebKitFastClickZoomThreshold"];
+}
+
+- (BOOL)_allowDoubleTapToZoomForCurrentZoomScale:(CGFloat)currentZoomScale andTargetZoomScale:(CGFloat)targetZoomScale
+{
+    CGFloat zoomThreshold = [self _fastClickZoomThreshold];
+    if (!zoomThreshold)
+        return YES;
+
+    CGFloat minimumZoomRatioForDoubleTapToZoomIn = 1 + zoomThreshold;
+    CGFloat maximumZoomRatioForDoubleTapToZoomOut = 1 / minimumZoomRatioForDoubleTapToZoomIn;
+    CGFloat zoomRatio = targetZoomScale / currentZoomScale;
+    return zoomRatio < maximumZoomRatioForDoubleTapToZoomOut || zoomRatio > minimumZoomRatioForDoubleTapToZoomIn;
+}
+
+- (void)_disableDoubleTapGesturesUntilTapIsFinishedIfNecessary:(uint64_t)requestID allowsDoubleTapZoom:(bool)allowsDoubleTapZoom targetRect:(WebCore::FloatRect)targetRect isReplaced:(BOOL)isReplacedElement minimumScale:(double)minimumScale maximumScale:(double)maximumScale
+{
+    if (!_potentialTapInProgress || _latestTapID != requestID)
+        return;
+
+    if (allowsDoubleTapZoom) {
+        // Though the element allows us to zoom in on double tap, we avoid this behavior in favor of fast clicking if the difference in scale is insignificant.
+        _smartMagnificationController->adjustSmartMagnificationTargetRectAndZoomScales(!isReplacedElement, targetRect, minimumScale, maximumScale);
+        CGFloat currentZoomScale = [_webView _contentZoomScale];
+        CGFloat targetZoomScale = [_webView _targetContentZoomScaleForRect:targetRect currentScale:currentZoomScale fitEntireRect:isReplacedElement minimumScale:minimumScale maximumScale:maximumScale];
+        if ([self _allowDoubleTapToZoomForCurrentZoomScale:currentZoomScale andTargetZoomScale:targetZoomScale])
+            return;
+    }
+
+    [self _setDoubleTapGesturesEnabled:NO];
 }
 
 - (void)_cancelLongPressGestureRecognizer
@@ -1155,7 +1193,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     case UIGestureRecognizerStateBegan:
         _highlightLongPressCanClick = YES;
         cancelPotentialTapIfNecessary(self);
-        _page->tapHighlightAtPosition([gestureRecognizer startPoint], ++_latestTapHighlightID);
+        _page->tapHighlightAtPosition([gestureRecognizer startPoint], ++_latestTapID);
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
@@ -1190,12 +1228,20 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     }
 }
 
+- (void)_endPotentialTapAndEnableDoubleTapGesturesIfNecessary
+{
+    if (_webView._viewportIsUserScalable)
+        [self _setDoubleTapGesturesEnabled:YES];
+
+    _potentialTapInProgress = NO;
+}
+
 - (void)_singleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
 {
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     ASSERT(!_potentialTapInProgress);
 
-    _page->potentialTapAtPosition(gestureRecognizer.location, ++_latestTapHighlightID);
+    _page->potentialTapAtPosition(gestureRecognizer.location, ++_latestTapID);
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
 }
@@ -1203,7 +1249,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     if (contentView->_potentialTapInProgress) {
-        contentView->_potentialTapInProgress = NO;
+        [contentView _endPotentialTapAndEnableDoubleTapGesturesIfNecessary];
         [contentView _cancelInteraction];
         contentView->_page->cancelPotentialTap();
     }
@@ -1242,7 +1288,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     _lastInteractionLocation = gestureRecognizer.location;
 
-    _potentialTapInProgress = NO;
+    [self _endPotentialTapAndEnableDoubleTapGesturesIfNecessary];
 
     if (_hasTapHighlightForPotentialTap) {
         [self _showTapHighlight];

@@ -1,3 +1,63 @@
+2015-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Extend fast-clicking behavior to trigger on elements that have negligible zoom
+        https://bugs.webkit.org/show_bug.cgi?id=150248
+        <rdar://problem/23140069>
+
+        Reviewed by Simon Fraser.
+
+        Currently, fast-clicking only triggers on pages that have unscalable viewports. To allow more websites to benefit from fast-clicking
+        behavior, we generalize fast-clicking to also occur when tapping on elements for which double-tap-to-zoom would zoom the element in
+        or out by an insignificant amount. We define an insignificant amount of zoom to mean that zooming would increase the viewport scale
+        by less than a configurable threshold, or decrease the viewport scale by more than a configurable threshold. We accomplish this by
+        temporarily disabling the double tap gesture recognizer for the duration of the tap. This patch refactors some logic used to compute
+        zoomed viewports to make it possible to predict the change in viewport scale when double tapping to zoom. See the changes in
+        SmartMagnificationController and ViewGestureGeometryCollector for more details.
+
+        There are no new tests, since this patch does not change existing behavior. Instead, this patch adds the machinery needed for zoom-
+        dependent fast-clicking: by setting the preferences WebKitFastClickingEnabled and WebKitFastClickZoomThreshold, we will be able to tweak
+        the behavior dynamically.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _contentZoomScale]):
+        (-[WKWebView _targetContentZoomScaleForRect:currentScale:fitEntireRect:minimumScale:maximumScale:]):
+        (-[WKWebView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        (-[WKWebView _viewportIsUserScalable]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::disableDoubleTapGesturesUntilTapIsFinishedIfNecessary):
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::adjustSmartMagnificationTargetRectAndZoomScales):
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        (WebKit::SmartMagnificationController::magnify):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]):
+        (-[WKContentView _fastClickZoomThreshold]):
+        (-[WKContentView _allowDoubleTapToZoomForCurrentZoomScale:andTargetZoomScale:]):
+        (-[WKContentView _disableDoubleTapGesturesUntilTapIsFinishedIfNecessary:allowsDoubleTapZoom:targetRect:isReplaced:minimumScale:maximumScale:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _endPotentialTapAndEnableDoubleTapGesturesIfNecessary]):
+        (-[WKContentView _singleTapRecognized:]):
+        (cancelPotentialTapIfNecessary):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView webSelectionRects]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::disableDoubleTapGesturesUntilTapIsFinishedIfNecessary):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture):
+        (WebKit::ViewGestureGeometryCollector::computeZoomInformationForNode):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::potentialTapAtPosition):
+
 2015-10-19  Tim Horton  <timothy_horton@apple.com>
 
         WKView being inside WKWebView leads to weird API issues

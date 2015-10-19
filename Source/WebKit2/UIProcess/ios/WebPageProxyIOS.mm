@@ -937,6 +937,11 @@ void WebPageProxy::viewportMetaTagWidthDidChange(float width)
     m_pageClient.didChangeViewportMetaTagWidth(width);
 }
 
+void WebPageProxy::disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(uint64_t requestID, bool allowsDoubleTapZoom, const WebCore::FloatRect& targetRect, bool isReplacedElement, double minimumScale, double maximumScale)
+{
+    m_pageClient.disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(requestID, allowsDoubleTapZoom, targetRect, isReplacedElement, minimumScale, maximumScale);
+}
+
 void WebPageProxy::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)
 {
     m_pageClient.didFinishDrawingPagesToPDF(pdfData);

@@ -126,7 +126,7 @@ struct WKAutoCorrectionData {
 
     id <UITextInputDelegate> _inputDelegate;
 
-    uint64_t _latestTapHighlightID;
+    uint64_t _latestTapID;
     struct TapHighlightInformation {
         WebCore::Color color;
         Vector<WebCore::FloatQuad> quads;
@@ -182,6 +182,7 @@ struct WKAutoCorrectionData {
 - (void)_commitPotentialTapFailed;
 - (void)_didGetTapHighlightForRequest:(uint64_t)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius;
 
+- (void)_disableDoubleTapGesturesUntilTapIsFinishedIfNecessary:(uint64_t)requestID allowsDoubleTapZoom:(bool)allowsDoubleTapZoom targetRect:(WebCore::FloatRect)targetRect isReplaced:(BOOL)isReplacedElement minimumScale:(double)minimumScale maximumScale:(double)maximumScale;
 - (void)_startAssistingNode:(const WebKit::AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject;
 - (void)_stopAssistingNode;
 - (void)_selectionChanged;
