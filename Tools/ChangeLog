@@ -1,3 +1,16 @@
+2015-10-19  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        REGRESSION(r190262): User media unit test failures after r190262
+        https://bugs.webkit.org/show_bug.cgi?id=149580
+
+        Reviewed by Carlos Garcia Campos.
+
+        The test failures on usermedia-permission-requests and WebKit2.UserMediaBasic have gone.
+        So we do not need to skip them anymore.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Deleted.
+
 2015-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add historical addresses to contributors.json
