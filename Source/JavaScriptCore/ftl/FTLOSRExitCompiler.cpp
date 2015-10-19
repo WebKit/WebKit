@@ -176,15 +176,8 @@ static void compileRecovery(
 static void compileStub(
     unsigned exitID, JITCode* jitCode, OSRExit& exit, VM* vm, CodeBlock* codeBlock)
 {
-    StackMaps::Record* record = nullptr;
-    
-    for (unsigned i = jitCode->stackmaps.records.size(); i--;) {
-        record = &jitCode->stackmaps.records[i];
-        if (record->patchpointID == exit.m_stackmapID)
-            break;
-    }
-    
-    RELEASE_ASSERT(record->patchpointID == exit.m_stackmapID);
+    StackMaps::Record* record = &jitCode->stackmaps.records[exit.m_stackmapRecordIndex];
+    RELEASE_ASSERT(record->patchpointID == exit.m_descriptor.m_stackmapID);
     
     // This code requires framePointerRegister is the same as callFrameRegister
     static_assert(MacroAssembler::framePointerRegister == GPRInfo::callFrameRegister, "MacroAssembler::framePointerRegister and GPRInfo::callFrameRegister must be the same");
@@ -198,7 +191,7 @@ static void compileStub(
     // Figure out how much space we need for those object allocations.
     unsigned numMaterializations = 0;
     size_t maxMaterializationNumArguments = 0;
-    for (ExitTimeObjectMaterialization* materialization : exit.m_materializations) {
+    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations) {
         numMaterializations++;
         
         maxMaterializationNumArguments = std::max(
@@ -208,18 +201,18 @@ static void compileStub(
     
     ScratchBuffer* scratchBuffer = vm->scratchBufferForSize(
         sizeof(EncodedJSValue) * (
-            exit.m_values.size() + numMaterializations + maxMaterializationNumArguments) +
+            exit.m_descriptor.m_values.size() + numMaterializations + maxMaterializationNumArguments) +
         requiredScratchMemorySizeInBytes() +
         codeBlock->calleeSaveRegisters()->size() * sizeof(uint64_t));
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
-    EncodedJSValue* materializationPointers = scratch + exit.m_values.size();
+    EncodedJSValue* materializationPointers = scratch + exit.m_descriptor.m_values.size();
     EncodedJSValue* materializationArguments = materializationPointers + numMaterializations;
     char* registerScratch = bitwise_cast<char*>(materializationArguments + maxMaterializationNumArguments);
     uint64_t* unwindScratch = bitwise_cast<uint64_t*>(registerScratch + requiredScratchMemorySizeInBytes());
     
     HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*> materializationToPointer;
     unsigned materializationCount = 0;
-    for (ExitTimeObjectMaterialization* materialization : exit.m_materializations) {
+    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations) {
         materializationToPointer.add(
             materialization, materializationPointers + materializationCount++);
     }
@@ -253,10 +246,10 @@ static void compileStub(
     jit.move(MacroAssembler::TrustedImm64(TagMask), GPRInfo::tagMaskRegister);
     
     // Do some value profiling.
-    if (exit.m_profileDataFormat != DataFormatNone) {
+    if (exit.m_descriptor.m_profileDataFormat != DataFormatNone) {
         record->locations[0].restoreInto(jit, jitCode->stackmaps, registerScratch, GPRInfo::regT0);
         reboxAccordingToFormat(
-            exit.m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+            exit.m_descriptor.m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
@@ -270,8 +263,8 @@ static void compileStub(
             }
         }
 
-        if (!!exit.m_valueProfile)
-            jit.store64(GPRInfo::regT0, exit.m_valueProfile.getSpecFailBucket(0));
+        if (!!exit.m_descriptor.m_valueProfile)
+            jit.store64(GPRInfo::regT0, exit.m_descriptor.m_valueProfile.getSpecFailBucket(0));
     }
 
     // Materialize all objects. Don't materialize an object until all
@@ -281,7 +274,7 @@ static void compileStub(
     // allocation of the former.
 
     HashSet<ExitTimeObjectMaterialization*> toMaterialize;
-    for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations)
         toMaterialize.add(materialization);
 
     while (!toMaterialize.isEmpty()) {
@@ -344,7 +337,7 @@ static void compileStub(
     // Now that all the objects have been allocated, we populate them
     // with the correct values. This time we can recover all the
     // fields, including those that are only needed for the allocation.
-    for (ExitTimeObjectMaterialization* materialization : exit.m_materializations) {
+    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations) {
         for (unsigned propertyIndex = materialization->properties().size(); propertyIndex--;) {
             const ExitValue& value = materialization->properties()[propertyIndex].value();
             compileRecovery(
@@ -365,16 +358,16 @@ static void compileStub(
     // Save all state from wherever the exit data tells us it was, into the appropriate place in
     // the scratch buffer. This also does the reboxing.
     
-    for (unsigned index = exit.m_values.size(); index--;) {
+    for (unsigned index = exit.m_descriptor.m_values.size(); index--;) {
         compileRecovery(
-            jit, exit.m_values[index], record, jitCode->stackmaps, registerScratch,
+            jit, exit.m_descriptor.m_values[index], record, jitCode->stackmaps, registerScratch,
             materializationToPointer);
         jit.store64(GPRInfo::regT0, scratch + index);
     }
     
     // Henceforth we make it look like the exiting function was called through a register
     // preservation wrapper. This implies that FP must be nudged down by a certain amount. Then
-    // we restore the various things according to either exit.m_values or by copying from the
+    // we restore the various things according to either exit.m_descriptor.m_values or by copying from the
     // old frame, and finally we save the various callee-save registers into where the
     // restoration thunk would restore them from.
     
@@ -422,7 +415,7 @@ static void compileStub(
 
     // First set up SP so that our data doesn't get clobbered by signals.
     unsigned conservativeStackDelta =
-        (exit.m_values.numberOfLocals() + baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters()) * sizeof(Register) +
+        (exit.m_descriptor.m_values.numberOfLocals() + baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters()) * sizeof(Register) +
         maxFrameExtentForSlowPathCall;
     conservativeStackDelta = WTF::roundUpToMultipleOf(
         stackAlignmentBytes(), conservativeStackDelta);
@@ -476,8 +469,8 @@ static void compileStub(
 
     // Now get state out of the scratch buffer and place it back into the stack. The values are
     // already reboxed so we just move them.
-    for (unsigned index = exit.m_values.size(); index--;) {
-        VirtualRegister reg = exit.m_values.virtualRegisterForIndex(index);
+    for (unsigned index = exit.m_descriptor.m_values.size(); index--;) {
+        VirtualRegister reg = exit.m_descriptor.m_values.virtualRegisterForIndex(index);
 
         if (reg.isLocal() && reg.toLocal() < static_cast<int>(baselineVirtualRegistersForCalleeSaves))
             continue;
@@ -497,7 +490,7 @@ static void compileStub(
         ("FTL OSR exit #%u (%s, %s) from %s, with operands = %s, and record = %s",
             exitID, toCString(exit.m_codeOrigin).data(),
             exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
-            toCString(ignoringContext<DumpContext>(exit.m_values)).data(),
+            toCString(ignoringContext<DumpContext>(exit.m_descriptor.m_values)).data(),
             toCString(*record).data()));
 }
 
@@ -527,10 +520,10 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
         dataLog("    Origin: ", exit.m_codeOrigin, "\n");
         if (exit.m_codeOriginForExitProfile != exit.m_codeOrigin)
             dataLog("    Origin for exit profile: ", exit.m_codeOriginForExitProfile, "\n");
-        dataLog("    Exit values: ", exit.m_values, "\n");
-        if (!exit.m_materializations.isEmpty()) {
+        dataLog("    Exit values: ", exit.m_descriptor.m_values, "\n");
+        if (!exit.m_descriptor.m_materializations.isEmpty()) {
             dataLog("    Materializations:\n");
-            for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+            for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations)
                 dataLog("        ", pointerDump(materialization), "\n");
         }
     }

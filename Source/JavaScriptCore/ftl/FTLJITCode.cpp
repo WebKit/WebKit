@@ -141,7 +141,7 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
     common.validateReferences(trackedReferences);
     
     for (OSRExit& exit : osrExit)
-        exit.validateReferences(trackedReferences);
+        exit.m_descriptor.validateReferences(trackedReferences);
 }
 
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex)

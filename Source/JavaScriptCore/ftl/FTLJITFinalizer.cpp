@@ -79,17 +79,8 @@ bool JITFinalizer::finalizeFunction()
     }
     
     if (exitThunksLinkBuffer) {
-        StackMaps::RecordMap recordMap = jitCode->stackmaps.computeRecordMap();
-        
         for (unsigned i = 0; i < osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = osrExit[i];
-            OSRExit& exit = jitCode->osrExit[i];
-            StackMaps::RecordMap::iterator iter = recordMap.find(exit.m_stackmapID);
-            if (iter == recordMap.end()) {
-                // It's OK, it was optimized out.
-                continue;
-            }
-            
             exitThunksLinkBuffer->link(
                 info.m_thunkJump,
                 CodeLocationLabel(

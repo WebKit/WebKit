@@ -144,9 +144,9 @@ static int offsetOfStackRegion(StackMaps::RecordMap& recordMap, uint32_t stackma
     StackMaps::RecordMap::iterator iter = recordMap.find(stackmapID);
     RELEASE_ASSERT(iter != recordMap.end());
     RELEASE_ASSERT(iter->value.size() == 1);
-    RELEASE_ASSERT(iter->value[0].locations.size() == 1);
+    RELEASE_ASSERT(iter->value[0].record.locations.size() == 1);
     Location capturedLocation =
-        Location::forStackmaps(nullptr, iter->value[0].locations[0]);
+        Location::forStackmaps(nullptr, iter->value[0].record.locations[0]);
     RELEASE_ASSERT(capturedLocation.kind() == Location::Register);
     RELEASE_ASSERT(capturedLocation.gpr() == GPRInfo::callFrameRegister);
     RELEASE_ASSERT(!(capturedLocation.addend() % sizeof(Register)));
@@ -209,12 +209,12 @@ void generateICFastPath(
         return;
     }
     
-    Vector<StackMaps::Record>& records = iter->value;
+    Vector<StackMaps::RecordAndIndex>& records = iter->value;
     
     RELEASE_ASSERT(records.size() == ic.m_generators.size());
     
     for (unsigned i = records.size(); i--;) {
-        StackMaps::Record& record = records[i];
+        StackMaps::Record& record = records[i].record;
         auto generator = ic.m_generators[i];
 
         CCallHelpers fastPathJIT(&vm, codeBlock);
@@ -247,12 +247,12 @@ static void generateCheckInICFastPath(
         return;
     }
     
-    Vector<StackMaps::Record>& records = iter->value;
+    Vector<StackMaps::RecordAndIndex>& records = iter->value;
     
     RELEASE_ASSERT(records.size() == ic.m_generators.size());
 
     for (unsigned i = records.size(); i--;) {
-        StackMaps::Record& record = records[i];
+        StackMaps::Record& record = records[i].record;
         auto generator = ic.m_generators[i];
 
         StructureStubInfo& stubInfo = *generator.m_stub;
@@ -318,7 +318,7 @@ void adjustCallICsForStackmaps(Vector<CallType>& calls, StackMaps::RecordMap& re
         
         for (unsigned j = 0; j < iter->value.size(); ++j) {
             CallType copy = call;
-            copy.m_instructionOffset = iter->value[j].instructionOffset;
+            copy.m_instructionOffset = iter->value[j].record.instructionOffset;
             calls.append(copy);
         }
     }
@@ -389,6 +389,22 @@ static void fixFunctionBasedOnStackMaps(
         state.finalizer->handleExceptionsLinkBuffer = WTF::move(linkBuffer);
     }
 
+    RELEASE_ASSERT(state.jitCode->osrExit.size() == 0);
+    for (unsigned i = 0; i < state.jitCode->osrExitDescriptors.size(); i++) {
+        OSRExitDescriptor& exitDescriptor = state.jitCode->osrExitDescriptors[i];
+        auto iter = recordMap.find(exitDescriptor.m_stackmapID);
+        if (iter == recordMap.end()) {
+            // It was optimized out.
+            continue;
+        }
+
+        for (unsigned j = 0; j < iter->value.size(); j++) {
+            uint32_t stackmapRecordIndex = iter->value[j].index;
+            OSRExit exit(exitDescriptor, stackmapRecordIndex);
+            state.jitCode->osrExit.append(exit);
+            state.finalizer->osrExit.append(OSRExitCompilationInfo());
+        }
+    }
     ExitThunkGenerator exitThunkGenerator(state);
     exitThunkGenerator.emitThunks();
     if (exitThunkGenerator.didThings()) {
@@ -408,28 +424,22 @@ static void fixFunctionBasedOnStackMaps(
             OSRExit& exit = jitCode->osrExit[i];
             
             if (verboseCompilationEnabled())
-                dataLog("Handling OSR stackmap #", exit.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
+                dataLog("Handling OSR stackmap #", exit.m_descriptor.m_stackmapID, " for ", exit.m_codeOrigin, "\n");
 
-            auto iter = recordMap.find(exit.m_stackmapID);
-            if (iter == recordMap.end()) {
-                // It was optimized out.
-                continue;
-            }
-            
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
             
-            for (unsigned j = exit.m_values.size(); j--;)
-                exit.m_values[j] = exit.m_values[j].withLocalsOffset(localsOffset);
-            for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+            for (unsigned j = exit.m_descriptor.m_values.size(); j--;)
+                exit.m_descriptor.m_values[j] = exit.m_descriptor.m_values[j].withLocalsOffset(localsOffset);
+            for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations)
                 materialization->accountForLocalsOffset(localsOffset);
             
             if (verboseCompilationEnabled()) {
                 DumpContext context;
-                dataLog("    Exit values: ", inContext(exit.m_values, &context), "\n");
-                if (!exit.m_materializations.isEmpty()) {
+                dataLog("    Exit values: ", inContext(exit.m_descriptor.m_values, &context), "\n");
+                if (!exit.m_descriptor.m_materializations.isEmpty()) {
                     dataLog("    Materializations: \n");
-                    for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+                    for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations)
                         dataLog("        Materialize(", pointerDump(materialization), ")\n");
                 }
             }
@@ -460,7 +470,7 @@ static void fixFunctionBasedOnStackMaps(
             
             CodeOrigin codeOrigin = getById.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
-                StackMaps::Record& record = iter->value[i];
+                StackMaps::Record& record = iter->value[i].record;
             
                 RegisterSet usedRegisters = usedRegistersFor(record);
                 
@@ -499,7 +509,7 @@ static void fixFunctionBasedOnStackMaps(
             
             CodeOrigin codeOrigin = putById.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
-                StackMaps::Record& record = iter->value[i];
+                StackMaps::Record& record = iter->value[i].record;
                 
                 RegisterSet usedRegisters = usedRegistersFor(record);
                 
@@ -539,7 +549,7 @@ static void fixFunctionBasedOnStackMaps(
             
             CodeOrigin codeOrigin = checkIn.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
-                StackMaps::Record& record = iter->value[i];
+                StackMaps::Record& record = iter->value[i].record;
                 RegisterSet usedRegisters = usedRegistersFor(record);
                 GPRReg result = record.locations[0].directGPR();
                 GPRReg obj = record.locations[1].directGPR();
@@ -576,7 +586,7 @@ static void fixFunctionBasedOnStackMaps(
             }
             CodeOrigin codeOrigin = descriptor.codeOrigin();
             for (unsigned i = 0; i < iter->value.size(); ++i) {
-                StackMaps::Record& record = iter->value[i];
+                StackMaps::Record& record = iter->value[i].record;
                 RegisterSet usedRegisters = usedRegistersFor(record);
                 Vector<Location> locations;
                 for (auto location : record.locations)
@@ -693,7 +703,7 @@ static void fixFunctionBasedOnStackMaps(
     // path, for some kinds of functions.
     if (iter != recordMap.end()) {
         for (unsigned i = iter->value.size(); i--;) {
-            StackMaps::Record& record = iter->value[i];
+            StackMaps::Record& record = iter->value[i].record;
             
             CodeLocationLabel source = CodeLocationLabel(
                 bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
@@ -709,7 +719,7 @@ static void fixFunctionBasedOnStackMaps(
     // path, for some kinds of functions.
     if (iter != recordMap.end()) {
         for (unsigned i = iter->value.size(); i--;) {
-            StackMaps::Record& record = iter->value[i];
+            StackMaps::Record& record = iter->value[i].record;
             
             CodeLocationLabel source = CodeLocationLabel(
                 bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
@@ -721,25 +731,20 @@ static void fixFunctionBasedOnStackMaps(
     for (unsigned exitIndex = 0; exitIndex < jitCode->osrExit.size(); ++exitIndex) {
         OSRExitCompilationInfo& info = state.finalizer->osrExit[exitIndex];
         OSRExit& exit = jitCode->osrExit[exitIndex];
-        iter = recordMap.find(exit.m_stackmapID);
         
         Vector<const void*> codeAddresses;
         
-        if (iter != recordMap.end()) {
-            for (unsigned i = iter->value.size(); i--;) {
-                StackMaps::Record& record = iter->value[i];
-                
-                CodeLocationLabel source = CodeLocationLabel(
-                    bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
-                
-                codeAddresses.append(bitwise_cast<char*>(generatedFunction) + record.instructionOffset + MacroAssembler::maxJumpReplacementSize());
-                
-                if (info.m_isInvalidationPoint)
-                    jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
-                else
-                    MacroAssembler::replaceWithJump(source, info.m_thunkAddress);
-            }
-        }
+        StackMaps::Record& record = jitCode->stackmaps.records[exit.m_stackmapRecordIndex];
+        
+        CodeLocationLabel source = CodeLocationLabel(
+            bitwise_cast<char*>(generatedFunction) + record.instructionOffset);
+        
+        codeAddresses.append(bitwise_cast<char*>(generatedFunction) + record.instructionOffset + MacroAssembler::maxJumpReplacementSize());
+        
+        if (exit.m_descriptor.m_isInvalidationPoint)
+            jitCode->common.jumpReplacements.append(JumpReplacement(source, info.m_thunkAddress));
+        else
+            MacroAssembler::replaceWithJump(source, info.m_thunkAddress);
         
         if (graph.compilation())
             graph.compilation()->addOSRExitSite(codeAddresses);

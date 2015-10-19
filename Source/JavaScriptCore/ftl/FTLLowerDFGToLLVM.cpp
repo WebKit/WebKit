@@ -4921,22 +4921,20 @@ private:
 
         DFG_ASSERT(m_graph, m_node, m_origin.exitOK);
         
-        m_ftlState.jitCode->osrExit.append(OSRExit(
+        m_ftlState.jitCode->osrExitDescriptors.append(OSRExitDescriptor(
             UncountableInvalidation, DataFormatNone, MethodOfGettingAValueProfile(),
             m_origin.forExit, m_origin.semantic,
             availabilityMap().m_locals.numberOfArguments(),
             availabilityMap().m_locals.numberOfLocals()));
-        m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
         
-        OSRExit& exit = m_ftlState.jitCode->osrExit.last();
-        OSRExitCompilationInfo& info = m_ftlState.finalizer->osrExit.last();
+        OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
         
         ExitArgumentList arguments;
         
-        buildExitArguments(exit, arguments, FormattedValue(), exit.m_codeOrigin);
-        callStackmap(exit, arguments);
+        buildExitArguments(exitDescriptor, arguments, FormattedValue(), exitDescriptor.m_codeOrigin);
+        callStackmap(exitDescriptor, arguments);
         
-        info.m_isInvalidationPoint = true;
+        exitDescriptor.m_isInvalidationPoint = true;
     }
     
     void compileIsUndefined()
@@ -8703,7 +8701,7 @@ private:
         ExitKind kind, FormattedValue lowValue, Node* highValue, LValue failCondition)
     {
         if (verboseCompilationEnabled()) {
-            dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", availabilityMap(), "\n");
+            dataLog("    OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap(), "\n");
             if (!m_availableRecoveries.isEmpty())
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
         }
@@ -8732,19 +8730,16 @@ private:
         if (failCondition == m_out.booleanFalse)
             return;
 
-        ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.finalizer->osrExit.size());
-        
-        m_ftlState.jitCode->osrExit.append(OSRExit(
+        m_ftlState.jitCode->osrExitDescriptors.append(OSRExitDescriptor(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
             m_origin.forExit, m_origin.semantic,
             availabilityMap().m_locals.numberOfArguments(),
             availabilityMap().m_locals.numberOfLocals()));
-        m_ftlState.finalizer->osrExit.append(OSRExitCompilationInfo());
 
-        OSRExit& exit = m_ftlState.jitCode->osrExit.last();
+        OSRExitDescriptor& exitDescriptor = m_ftlState.jitCode->osrExitDescriptors.last();
 
         if (failCondition == m_out.booleanTrue) {
-            emitOSRExitCall(exit, lowValue);
+            emitOSRExitCall(exitDescriptor, lowValue);
             return;
         }
 
@@ -8758,26 +8753,26 @@ private:
         
         lastNext = m_out.appendTo(failCase, continuation);
         
-        emitOSRExitCall(exit, lowValue);
+        emitOSRExitCall(exitDescriptor, lowValue);
         
         m_out.unreachable();
         
         m_out.appendTo(continuation, lastNext);
     }
     
-    void emitOSRExitCall(OSRExit& exit, FormattedValue lowValue)
+    void emitOSRExitCall(OSRExitDescriptor& exitDescriptor, FormattedValue lowValue)
     {
         ExitArgumentList arguments;
         
-        CodeOrigin codeOrigin = exit.m_codeOrigin;
+        CodeOrigin codeOrigin = exitDescriptor.m_codeOrigin;
         
-        buildExitArguments(exit, arguments, lowValue, codeOrigin);
+        buildExitArguments(exitDescriptor, arguments, lowValue, codeOrigin);
         
-        callStackmap(exit, arguments);
+        callStackmap(exitDescriptor, arguments);
     }
     
     void buildExitArguments(
-        OSRExit& exit, ExitArgumentList& arguments, FormattedValue lowValue,
+        OSRExitDescriptor& exitDescriptor, ExitArgumentList& arguments, FormattedValue lowValue,
         CodeOrigin codeOrigin)
     {
         if (!!lowValue)
@@ -8799,12 +8794,12 @@ private:
                 auto result = map.add(node, nullptr);
                 if (result.isNewEntry) {
                     result.iterator->value =
-                        exit.m_materializations.add(node->op(), node->origin.semantic);
+                        exitDescriptor.m_materializations.add(node->op(), node->origin.semantic);
                 }
             });
         
-        for (unsigned i = 0; i < exit.m_values.size(); ++i) {
-            int operand = exit.m_values.operandForIndex(i);
+        for (unsigned i = 0; i < exitDescriptor.m_values.size(); ++i) {
+            int operand = exitDescriptor.m_values.operandForIndex(i);
             
             Availability availability = availabilityMap.m_locals[i];
             
@@ -8814,7 +8809,7 @@ private:
                     (!(availability.isDead() && m_graph.isLiveInBytecode(VirtualRegister(operand), codeOrigin))) || m_graph.m_plan.mode == FTLForOSREntryMode);
             }
             
-            exit.m_values[i] = exitValueForAvailability(arguments, map, availability);
+            exitDescriptor.m_values[i] = exitValueForAvailability(arguments, map, availability);
         }
         
         for (auto heapPair : availabilityMap.m_heap) {
@@ -8826,20 +8821,20 @@ private:
         }
         
         if (verboseCompilationEnabled()) {
-            dataLog("        Exit values: ", exit.m_values, "\n");
-            if (!exit.m_materializations.isEmpty()) {
+            dataLog("        Exit values: ", exitDescriptor.m_values, "\n");
+            if (!exitDescriptor.m_materializations.isEmpty()) {
                 dataLog("        Materializations: \n");
-                for (ExitTimeObjectMaterialization* materialization : exit.m_materializations)
+                for (ExitTimeObjectMaterialization* materialization : exitDescriptor.m_materializations)
                     dataLog("            ", pointerDump(materialization), "\n");
             }
         }
     }
     
-    void callStackmap(OSRExit& exit, ExitArgumentList& arguments)
+    void callStackmap(OSRExitDescriptor& exitDescriptor, ExitArgumentList& arguments)
     {
-        exit.m_stackmapID = m_stackmapIDs++;
+        exitDescriptor.m_stackmapID = m_stackmapIDs++;
         arguments.insert(0, m_out.constInt32(MacroAssembler::maxJumpReplacementSize()));
-        arguments.insert(0, m_out.constInt64(exit.m_stackmapID));
+        arguments.insert(0, m_out.constInt64(exitDescriptor.m_stackmapID));
         
         m_out.call(m_out.stackmapIntrinsic(), arguments);
     }

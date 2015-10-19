@@ -40,16 +40,35 @@ namespace JSC { namespace FTL {
 
 using namespace DFG;
 
-OSRExit::OSRExit(
+OSRExitDescriptor::OSRExitDescriptor(
     ExitKind exitKind, DataFormat profileDataFormat,
     MethodOfGettingAValueProfile valueProfile, CodeOrigin codeOrigin,
     CodeOrigin originForProfile, unsigned numberOfArguments,
     unsigned numberOfLocals)
-    : OSRExitBase(exitKind, codeOrigin, originForProfile)
+    : m_kind(exitKind)
+    , m_codeOrigin(codeOrigin)
+    , m_codeOriginForExitProfile(originForProfile)
     , m_profileDataFormat(profileDataFormat)
     , m_valueProfile(valueProfile)
-    , m_patchableCodeOffset(0)
     , m_values(numberOfArguments, numberOfLocals)
+    , m_isInvalidationPoint(false)
+{
+}
+
+void OSRExitDescriptor::validateReferences(const TrackedReferences& trackedReferences)
+{
+    for (unsigned i = m_values.size(); i--;)
+        m_values[i].validateReferences(trackedReferences);
+    
+    for (ExitTimeObjectMaterialization* materialization : m_materializations)
+        materialization->validateReferences(trackedReferences);
+}
+
+
+OSRExit::OSRExit(OSRExitDescriptor& descriptor, uint32_t stackmapRecordIndex)
+    : OSRExitBase(descriptor.m_kind, descriptor.m_codeOrigin, descriptor.m_codeOriginForExitProfile)
+    , m_descriptor(descriptor)
+    , m_stackmapRecordIndex(stackmapRecordIndex)
 {
 }
 
@@ -59,15 +78,6 @@ CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
         reinterpret_cast<char*>(
             ftlCodeBlock->jitCode()->ftl()->exitThunks().dataLocation()) +
         m_patchableCodeOffset);
-}
-
-void OSRExit::validateReferences(const TrackedReferences& trackedReferences)
-{
-    for (unsigned i = m_values.size(); i--;)
-        m_values[i].validateReferences(trackedReferences);
-    
-    for (ExitTimeObjectMaterialization* materialization : m_materializations)
-        materialization->validateReferences(trackedReferences);
 }
 
 } } // namespace JSC::FTL

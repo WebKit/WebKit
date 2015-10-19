@@ -86,6 +86,7 @@ public:
     
     DFG::CommonData common;
     SegmentedVector<OSRExit, 8> osrExit;
+    SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
     StackMaps stackmaps;
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     

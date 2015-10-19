@@ -133,13 +133,15 @@ namespace FTL {
 //   intrinsics (or meta-data, or something) to inform the backend that it's safe to
 //   make the predicate passed to 'exitIf()' more truthy.
 
-struct OSRExit : public DFG::OSRExitBase {
-    OSRExit(
+struct OSRExitDescriptor {
+    OSRExitDescriptor(
         ExitKind, DataFormat profileDataFormat, MethodOfGettingAValueProfile,
         CodeOrigin, CodeOrigin originForProfile,
         unsigned numberOfArguments, unsigned numberOfLocals);
-    
-    MacroAssemblerCodeRef m_code;
+
+    ExitKind m_kind;
+    CodeOrigin m_codeOrigin;
+    CodeOrigin m_codeOriginForExitProfile;
     
     // The first argument to the exit call may be a value we wish to profile.
     // If that's the case, the format will be not Invalid and we'll have a
@@ -149,22 +151,30 @@ struct OSRExit : public DFG::OSRExitBase {
     DataFormat m_profileDataFormat;
     MethodOfGettingAValueProfile m_valueProfile;
     
-    // Offset within the exit stubs of the stub for this exit.
-    unsigned m_patchableCodeOffset;
-    
     Operands<ExitValue> m_values;
     Bag<ExitTimeObjectMaterialization> m_materializations;
     
     uint32_t m_stackmapID;
+    bool m_isInvalidationPoint;
     
+    void validateReferences(const TrackedReferences&);
+};
+
+struct OSRExit : public DFG::OSRExitBase {
+    OSRExit(OSRExitDescriptor&, uint32_t stackmapRecordIndex);
+
+    OSRExitDescriptor& m_descriptor;
+    MacroAssemblerCodeRef m_code;
+    // Offset within the exit stubs of the stub for this exit.
+    unsigned m_patchableCodeOffset;
+    // Offset within Stackmap::records
+    uint32_t m_stackmapRecordIndex;
+
     CodeLocationJump codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
-    
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
     }
-    
-    void validateReferences(const TrackedReferences&);
 };
 
 } } // namespace JSC::FTL

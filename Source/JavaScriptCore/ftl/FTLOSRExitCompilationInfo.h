@@ -35,14 +35,12 @@ namespace JSC { namespace FTL {
 
 struct OSRExitCompilationInfo {
     OSRExitCompilationInfo()
-        : m_isInvalidationPoint(false)
     {
     }
     
     MacroAssembler::Label m_thunkLabel;
     MacroAssembler::PatchableJump m_thunkJump;
     CodeLocationLabel m_thunkAddress;
-    bool m_isInvalidationPoint;
 };
 
 } } // namespace JSC::FTL

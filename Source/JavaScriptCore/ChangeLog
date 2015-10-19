@@ -1,3 +1,57 @@
+2015-10-19  Saam barati  <sbarati@apple.com>
+
+        FTL should generate a unique OSR exit for each duplicated OSR exit stackmap intrinsic.
+        https://bugs.webkit.org/show_bug.cgi?id=149970
+
+        Reviewed by Filip Pizlo.
+
+        When we lower DFG to LLVM, we generate a stackmap intrnsic for OSR 
+        exits. We also recorded the OSR exit inside FTL::JITCode during lowering.
+        This stackmap intrinsic may be duplicated or even removed by LLVM.
+        When the stackmap intrinsic is duplicated, we used to generate just
+        a single OSR exit data structure. Then, when we compiled an OSR exit, we 
+        would look for the first record in the record list that had the same stackmap ID
+        as what the OSR exit data structure had. We did this even when the OSR exit
+        stackmap intrinsic was duplicated. This would lead us to grab the wrong FTL::StackMaps::Record.
+
+        Now, each OSR exit knows exactly which FTL::StackMaps::Record it corresponds to.
+        We accomplish this by having an OSRExitDescriptor that is recorded during
+        lowering. Each descriptor may be referenced my zero, one, or more OSRExits.
+        Now, no more than one stackmap intrinsic corresponds to the same index inside 
+        JITCode's OSRExit Vector. Also, each OSRExit jump now jumps to a code location.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::validateReferences):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileInvalidationPoint):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileIsUndefined):
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitOSRExitCall):
+        (JSC::FTL::DFG::LowerDFGToLLVM::buildExitArguments):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callStackmap):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::OSRExitDescriptor):
+        (JSC::FTL::OSRExitDescriptor::validateReferences):
+        (JSC::FTL::OSRExit::OSRExit):
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::validateReferences): Deleted.
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+        * ftl/FTLOSRExitCompilationInfo.h:
+        (JSC::FTL::OSRExitCompilationInfo::OSRExitCompilationInfo):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        (JSC::FTL::compileFTLOSRExit):
+        * ftl/FTLStackMaps.cpp:
+        (JSC::FTL::StackMaps::computeRecordMap):
+        * ftl/FTLStackMaps.h:
+
 2015-10-16  Brian Burg  <bburg@apple.com>
 
         Unify handling of JavaScriptCore scripts that are used in WebCore
