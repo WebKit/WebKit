@@ -1,3 +1,13 @@
+2015-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Add new EWS queues to bot watcher's dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=150297
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer):
+
 2015-10-19  ChangSeok Oh  <changseok.oh@collabora.com>
 
         REGRESSION(r190262): User media unit test failures after r190262
