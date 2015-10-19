@@ -60,9 +60,6 @@ private:
     WriteBarrier<Structure> m_dateTimeFormatStructure;
 };
 
-EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState*);
-EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState*);
-
 } // namespace JSC
 
 #endif // ENABLE(INTL)

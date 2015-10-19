@@ -60,9 +60,6 @@ private:
     WriteBarrier<Structure> m_collatorStructure;
 };
 
-EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState*);
-EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState*);
-
 } // namespace JSC
 
 #endif // ENABLE(INTL)

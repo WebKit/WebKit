@@ -90,7 +90,7 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     VM& vm = exec->vm();
 
     JSValue newTarget = exec->newTarget();
-    if (!newTarget || newTarget.isUndefined())
+    if (newTarget.isUndefined())
         return throwVMTypeError(exec);
 
     JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());

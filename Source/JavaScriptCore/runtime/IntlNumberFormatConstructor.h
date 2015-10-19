@@ -60,9 +60,6 @@ private:
     WriteBarrier<Structure> m_numberFormatStructure;
 };
 
-EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState*);
-EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState*);
-
 } // namespace JSC
 
 #endif // ENABLE(INTL)

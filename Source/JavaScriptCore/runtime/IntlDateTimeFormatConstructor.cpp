@@ -84,12 +84,12 @@ void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPro
     m_dateTimeFormatStructure.set(vm, this, dateTimeFormatStructure);
 }
 
-EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* exec)
 {
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     JSValue newTarget = exec->newTarget();
-    if (!newTarget || newTarget.isUndefined())
+    if (newTarget.isUndefined())
         newTarget = exec->callee();
 
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
@@ -108,8 +108,8 @@ EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* exec)
 
     return JSValue::encode(dateTimeFormat);
 }
-    
-EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* exec)
+
+static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* exec)
 {
     // 12.1.2 Intl.DateTimeFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.

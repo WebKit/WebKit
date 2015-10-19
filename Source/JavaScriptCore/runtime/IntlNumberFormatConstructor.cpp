@@ -84,12 +84,12 @@ void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototy
     m_numberFormatStructure.set(vm, this, numberFormatStructure);
 }
 
-EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* exec)
 {
     // 11.1.2 Intl.NumberFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     JSValue newTarget = exec->newTarget();
-    if (!newTarget || newTarget.isUndefined())
+    if (newTarget.isUndefined())
         newTarget = exec->callee();
 
     // 2. Let numberFormat be OrdinaryCreateFromConstructor(newTarget, %NumberFormatPrototype%).
@@ -109,7 +109,7 @@ EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* exec)
     return JSValue::encode(numberFormat);
 }
 
-EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState* exec)
 {
     // 11.1.2 Intl.NumberFormat ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.

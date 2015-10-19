@@ -83,12 +83,12 @@ void IntlCollatorConstructor::finishCreation(VM& vm, IntlCollatorPrototype* coll
     m_collatorStructure.set(vm, this, collatorStructure);
 }
 
-EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* exec)
 {
     // 10.1.2 Intl.Collator ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     JSValue newTarget = exec->newTarget();
-    if (!newTarget || newTarget.isUndefined())
+    if (newTarget.isUndefined())
         newTarget = exec->callee();
 
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
@@ -108,7 +108,7 @@ EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* exec)
     return JSValue::encode(collator);
 }
 
-EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* exec)
+static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* exec)
 {
     // 10.1.2 Intl.Collator ([locales [, options]]) (ECMA-402 2.0)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
