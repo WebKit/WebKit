@@ -4927,9 +4927,10 @@ sub GenerateConstructorHelperMethods
 
     my $conditionalString = $codeGenerator->GenerateConstructorConditionalString($interface);
     if ($conditionalString) {
-        push(@$outputArray, "template<> ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
+        push(@$outputArray, "template<> ConstructType ${constructorClassName}::getConstructData(JSCell* cell, ConstructData& constructData)\n");
         push(@$outputArray, "{\n");
         push(@$outputArray, "#if $conditionalString\n");
+        push(@$outputArray, "    UNUSED_PARAM(cell);\n");
         push(@$outputArray, "    constructData.native.function = construct;\n");
         push(@$outputArray, "    return ConstructTypeHost;\n");
         push(@$outputArray, "#else\n");
