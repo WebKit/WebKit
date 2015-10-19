@@ -2203,8 +2203,8 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 }
 
 #if ENABLE(WEBASSEMBLY)
-CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerExecutable, VM& vm, JSGlobalObject* globalObject)
-    : JSCell(vm, structure)
+CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerExecutable, JSGlobalObject* globalObject)
+    : JSCell(*vm, structure)
     , m_globalObject(globalObject->vm(), this, globalObject)
     , m_heap(&m_globalObject->vm().heap)
     , m_numCalleeRegisters(0)
@@ -2217,7 +2217,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerE
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
     , m_ownerExecutable(m_globalObject->vm(), this, ownerExecutable)
-    , m_vm(&vm)
+    , m_vm(vm)
     , m_isStrictMode(false)
     , m_needsActivation(false)
     , m_codeType(FunctionCode)

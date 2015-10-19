@@ -111,7 +111,7 @@ protected:
     CodeBlock(VM*, Structure*, CopyParsedBlockTag, CodeBlock& other);
     CodeBlock(VM*, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
 #if ENABLE(WEBASSEMBLY)
-    CodeBlock(VM*, Structure*, WebAssemblyExecutable* ownerExecutable, VM&, JSGlobalObject*);
+    CodeBlock(VM*, Structure*, WebAssemblyExecutable* ownerExecutable, JSGlobalObject*);
 #endif
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
@@ -1286,13 +1286,14 @@ private:
 #if ENABLE(WEBASSEMBLY)
 class WebAssemblyCodeBlock : public CodeBlock {
 public:
+    typedef CodeBlock Base;
     DECLARE_INFO;
 
     static WebAssemblyCodeBlock* create(VM* vm, CopyParsedBlockTag, WebAssemblyCodeBlock& other)
     {
         WebAssemblyCodeBlock* instance = new (NotNull, allocateCell<WebAssemblyCodeBlock>(vm->heap))
             WebAssemblyCodeBlock(vm, vm->webAssemblyCodeBlockStructure.get(), CopyParsedBlock, other);
-        instance->finishCreation(*vm);
+        instance->finishCreation(*vm, CopyParsedBlock, other);
         return instance;
     }
 
@@ -1300,7 +1301,7 @@ public:
     {
         WebAssemblyCodeBlock* instance = new (NotNull, allocateCell<WebAssemblyCodeBlock>(vm->heap))
             WebAssemblyCodeBlock(vm, vm->webAssemblyCodeBlockStructure.get(), ownerExecutable, globalObject);
-        instance->finishCreation(*vm);
+        instance->finishCreation(*vm, ownerExecutable, globalObject);
         return instance;
     }
 
@@ -1310,13 +1311,13 @@ public:
     }
 
 private:
-    WebAssemblyCodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, WebAssemblyCodeBlock& other)
+    WebAssemblyCodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, WebAssemblyCodeBlock& other)
         : CodeBlock(vm, structure, CopyParsedBlock, other)
     {
     }
 
-    WebAssemblyCodeBlock(VM& vm, Structure* structure, WebAssemblyExecutable* ownerExecutable, JSGlobalObject* globalObject)
-        : CodeBlock(vm, structure, ownerExecutable, vm, globalObject)
+    WebAssemblyCodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerExecutable, JSGlobalObject* globalObject)
+        : CodeBlock(vm, structure, ownerExecutable, globalObject)
     {
     }
 

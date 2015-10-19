@@ -738,8 +738,8 @@ void WebAssemblyExecutable::prepareForExecution(ExecState* exec)
     VM& vm = exec->vm();
     DeferGC deferGC(vm.heap);
 
-    WebAssemblyCodeBlock* codeBlock = WebAssemblyCodeBlock::create(vm,
-        this, exec->lexicalGlobalObject()));
+    WebAssemblyCodeBlock* codeBlock = WebAssemblyCodeBlock::create(&vm,
+        this, exec->lexicalGlobalObject());
 
     WASMFunctionParser::compile(vm, codeBlock, m_module.get(), m_source, m_functionIndex);
 

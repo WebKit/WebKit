@@ -1,3 +1,18 @@
+2015-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(WEBASSEMBLY) build after r190827
+        https://bugs.webkit.org/show_bug.cgi?id=150330
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock): Removed the duplicated VM argument.
+        * bytecode/CodeBlock.h:
+        (JSC::WebAssemblyCodeBlock::create): Added new parameters to finishCreation() calls.
+        (JSC::WebAssemblyCodeBlock::WebAssemblyCodeBlock): Change VM parameter to pointer to match *CodeBlock classes.
+        * runtime/Executable.cpp:
+        (JSC::WebAssemblyExecutable::prepareForExecution): Removed extra ")" and pass pointer as it is expected.
+
 2015-10-19  Mark Lam  <mark.lam@apple.com>
 
         DoubleRep fails to convert SpecBoolean values.
