@@ -1,3 +1,23 @@
+2015-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] ASSERTION FAILED: parent in WebInspectorProxy::platformDetach()
+        https://bugs.webkit.org/show_bug.cgi?id=150319
+
+        Reviewed by Žan Doberšek.
+
+        This happens when the inspector is shown/closed very
+        quickly. Since we start the inspector attached by default, when
+        the web inspector is created m_isAttached is set to true, so that
+        when opened, it's attached to the view. If the inspector is closed
+        before it has been actually attached, the inspector view doesn't
+        have a parent, even if the m_isAttached is true. So, we should
+        handle this case instead of asserting. This is what happens in
+        test http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformDetach): Remove the view from
+        its parent container if it was actually attached.
+
 2015-10-19  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Implement WebContextMenuProxyEfl::showContextMenu after r191194

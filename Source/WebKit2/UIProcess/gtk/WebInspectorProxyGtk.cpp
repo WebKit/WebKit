@@ -311,9 +311,11 @@ void WebInspectorProxy::platformDetach()
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
     if (!m_client.detach(this)) {
-        GtkWidget* parent = gtk_widget_get_parent(m_inspectorView);
-        ASSERT(parent);
-        gtk_container_remove(GTK_CONTAINER(parent), m_inspectorView);
+        // Detach is called when m_isAttached is true, but it could called before
+        // the inspector is opened if the inspector is shown/closed quickly. So,
+        // we might not have a parent yet.
+        if (GtkWidget* parent = gtk_widget_get_parent(m_inspectorView))
+            gtk_container_remove(GTK_CONTAINER(parent), m_inspectorView);
     }
 
     if (!m_isVisible)
