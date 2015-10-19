@@ -194,7 +194,15 @@ void GraphicsContext::platformDestroy()
     delete m_data;
 }
 
-AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
+void GraphicsContext::resetPlatformCTM()
+{
+    if (platformContext())
+        m_state.ctm = getPlatformCTM();
+    else
+        m_state.ctm.makeIdentity();
+}
+
+AffineTransform GraphicsContext::getPlatformCTM(IncludeDeviceScale) const
 {
     if (paintingDisabled())
         return AffineTransform();
@@ -711,7 +719,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingM
     return result;
 }
 
-void GraphicsContext::translate(float x, float y)
+void GraphicsContext::translatePlatformCTM(float x, float y)
 {
     if (paintingDisabled())
         return;
@@ -773,7 +781,7 @@ void GraphicsContext::setURLForRect(const URL&, const IntRect&)
     notImplemented();
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContext::concatPlatformCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
@@ -784,7 +792,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     m_data->concatCTM(transform);
 }
 
-void GraphicsContext::setCTM(const AffineTransform& transform)
+void GraphicsContext::setPlatformCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
@@ -1003,7 +1011,7 @@ void GraphicsContext::clipOut(const Path& path)
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::rotate(float radians)
+void GraphicsContext::rotatePlatformCTM(float radians)
 {
     if (paintingDisabled())
         return;
@@ -1012,13 +1020,13 @@ void GraphicsContext::rotate(float radians)
     m_data->rotate(radians);
 }
 
-void GraphicsContext::scale(const FloatSize& size)
+void GraphicsContext::scalePlatformCTM(float x, float y)
 {
     if (paintingDisabled())
         return;
 
-    cairo_scale(platformContext()->cr(), size.width(), size.height());
-    m_data->scale(size);
+    cairo_scale(platformContext()->cr(), x, y);
+    m_data->scale(FloatSize(x, y));
 }
 
 void GraphicsContext::clipOut(const FloatRect& r)

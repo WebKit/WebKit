@@ -30,6 +30,7 @@
 #include "PlatformExportMacros.h"
 #include <array>
 #include <wtf/FastMalloc.h>
+#include <wtf/MathExtras.h>
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
@@ -140,6 +141,7 @@ public:
         return (m_transform[1] == 0 && m_transform[2] == 0) || (m_transform[0] == 0 && m_transform[3] == 0);
     }
 
+    // FIXME: If you compare floats for equality, you're gonna have a bad time. We should delete this.
     bool operator== (const AffineTransform& m2) const
     {
         return (m_transform[0] == m2.m_transform[0]
@@ -151,6 +153,21 @@ public:
     }
 
     bool operator!=(const AffineTransform& other) const { return !(*this == other); }
+
+    bool isEssentiallyEqualTo(const AffineTransform& m2, double epsilon = 0.0001) const
+    {
+        // WTF::areEssentiallyEqual() doesn't work well in this case. That function is designed to allow for error
+        // which scales proportionately to the values. However, AffineTransforms are often rotated by pi/2, which
+        // are not exactly representable. This results in AffineTransform components which are close to, but not
+        // exactly equal to, zero. In this case, the error and the value are approximately equal, which leads to
+        // a false negative return.
+        return std::abs(m_transform[0] - m2.m_transform[0]) < epsilon
+            && std::abs(m_transform[1] - m2.m_transform[1]) < epsilon
+            && std::abs(m_transform[2] - m2.m_transform[2]) < epsilon
+            && std::abs(m_transform[3] - m2.m_transform[3]) < epsilon
+            && std::abs(m_transform[4] - m2.m_transform[4]) < epsilon
+            && std::abs(m_transform[5] - m2.m_transform[5]) < epsilon;
+    }
 
     // *this = *this * t (i.e., a multRight)
     AffineTransform& operator*=(const AffineTransform& t)

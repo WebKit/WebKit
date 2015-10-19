@@ -133,7 +133,7 @@ public:
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
-    virtual PassNativeImagePtr nativeImageForCurrentFrame() { return 0; }
+    virtual PassNativeImagePtr nativeImageForCurrentFrame() { return nullptr; }
     virtual ImageOrientation orientationForCurrentFrame() { return ImageOrientation(); }
 
     // Accessors for native image formats.

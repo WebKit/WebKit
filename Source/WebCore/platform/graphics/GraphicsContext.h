@@ -156,6 +156,9 @@ struct GraphicsContextState {
     CompositeOperator compositeOperator { CompositeSourceOver };
     BlendMode blendMode { BlendModeNormal };
 
+    AffineTransform userToDeviceSpaceCTM;
+    AffineTransform ctm;
+
     bool shouldAntialias : 1;
     bool shouldSmoothFonts : 1;
     bool antialiasedFontDilationEnabled : 1;
@@ -420,18 +423,25 @@ public:
     void canvasClip(const Path&, WindRule = RULE_EVENODD);
     void clipOut(const Path&);
 
-    WEBCORE_EXPORT void scale(const FloatSize&);
+    WEBCORE_EXPORT void scale(const FloatSize& size) { scale(size.width(), size.height()); }
     void rotate(float angleInRadians);
     void translate(const FloatSize& size) { translate(size.width(), size.height()); }
+    WEBCORE_EXPORT void scale(float x, float y);
     WEBCORE_EXPORT void translate(float x, float y);
 
     void setURLForRect(const URL&, const IntRect&);
 
+    void checkCTMInvariants() const
+    {
+        ASSERT(getCTM(DefinitelyIncludeDeviceScale).isEssentiallyEqualTo(getPlatformCTM(DefinitelyIncludeDeviceScale)));
+        ASSERT(getCTM(PossiblyIncludeDeviceScale).isEssentiallyEqualTo(getPlatformCTM(PossiblyIncludeDeviceScale)));
+    }
     void concatCTM(const AffineTransform&);
     void setCTM(const AffineTransform&);
+    void resetPlatformCTM();
 
     enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
-    AffineTransform getCTM(IncludeDeviceScale includeScale = PossiblyIncludeDeviceScale) const;
+    AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const;
 
 #if ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)
     // This is needed when using accelerated-compositing in software mode, like in TextureMapper.
@@ -544,6 +554,13 @@ private:
 
     void setPlatformAlpha(float);
     void setPlatformCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
+
+    void concatPlatformCTM(const AffineTransform&);
+    void scalePlatformCTM(float x, float y);
+    void rotatePlatformCTM(float);
+    void translatePlatformCTM(float, float);
+    void setPlatformCTM(const AffineTransform&);
+    AffineTransform getPlatformCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const; // This is only computed to ASSERT() that the GraphicsContextState agrees with the underlying platform.
 
     void beginPlatformTransparencyLayer(float opacity);
     void endPlatformTransparencyLayer();
