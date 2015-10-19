@@ -1,4 +1,8 @@
 function test() {
+var passed = false;
+function asyncTestPassed() {
+    passed = true;
+}
 
 class P extends Promise {}
 var p1 = new P(function(resolve, reject) { resolve("foo"); });
@@ -24,6 +28,8 @@ function check() {
   if (score === 5) asyncTestPassed();
 }
       
+drainMicrotasks();
+return passed;
 }
 
 if (!test())

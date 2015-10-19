@@ -1,4 +1,8 @@
 function test() {
+var passed = false;
+function asyncTestPassed() {
+    passed = true;
+}
 
 var p1 = new Promise(function(resolve, reject) { resolve("foo"); });
 var p2 = new Promise(function(resolve, reject) { reject("quux"); });
@@ -23,6 +27,8 @@ function check() {
   if (score === 4) asyncTestPassed();
 }
       
+drainMicrotasks();
+return passed;
 }
 
 if (!test())

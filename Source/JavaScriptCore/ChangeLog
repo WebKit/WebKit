@@ -1,3 +1,39 @@
+2015-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Handle asynchronous tests in tests/es6
+        https://bugs.webkit.org/show_bug.cgi?id=150293
+
+        Reviewed by Darin Adler.
+
+        Since JSC can handle microtasks, some of ES6 Promise tests can be executed under the JSC shell.
+        Some of them still fail because it uses setTimeout that invokes macrotasks with explicit delay.
+
+        * tests/es6.yaml:
+        * tests/es6/Promise_Promise.all.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_Promise.all_generic_iterables.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_Promise.race.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_Promise.race_generic_iterables.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_basic_functionality.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_is_subclassable_Promise.all.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_is_subclassable_Promise.race.js:
+        (test.asyncTestPassed):
+        (test):
+        * tests/es6/Promise_is_subclassable_basic_functionality.js:
+        (test.asyncTestPassed):
+        (test):
+
 2015-10-18  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [Win] Fix the Windows builds.

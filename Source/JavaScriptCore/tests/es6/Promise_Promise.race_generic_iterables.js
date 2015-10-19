@@ -1,4 +1,8 @@
 function test() {
+var passed = false;
+function asyncTestPassed() {
+    passed = true;
+}
 
 var fulfills = Promise.race(global.__createIterableObject([
   new Promise(function(resolve)   { setTimeout(resolve,200,"foo"); }),
@@ -16,6 +20,8 @@ function check() {
   if (score === 2) asyncTestPassed();
 }
       
+drainMicrotasks();
+return passed;
 }
 
 if (!test())

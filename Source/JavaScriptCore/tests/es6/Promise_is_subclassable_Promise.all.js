@@ -1,4 +1,8 @@
 function test() {
+var passed = false;
+function asyncTestPassed() {
+    passed = true;
+}
 
 class P extends Promise {}
 var fulfills = P.all([
@@ -17,6 +21,8 @@ function check() {
   if (score === 3) asyncTestPassed();
 }
       
+drainMicrotasks();
+return passed;
 }
 
 if (!test())

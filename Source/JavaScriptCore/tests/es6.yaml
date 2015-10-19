@@ -440,6 +440,10 @@
   cmd: runES6 :normal
 - path: es6/own_property_order_Reflect.ownKeys_symbol_key_order.js
   cmd: runES6 :normal
+- path: es6/Promise_basic_functionality.js
+  cmd: runES6 :normal
+- path: es6/Promise_is_subclassable_basic_functionality.js
+  cmd: runES6 :normal
 - path: es6/Reflect_Reflect.apply.js
   cmd: runES6 :normal
 - path: es6/Reflect_Reflect.defineProperty.js
@@ -856,11 +860,7 @@
   cmd: runES6 :fail
 - path: es6/non-strict_function_semantics_hoisted_block-level_function_declaration.js
   cmd: runES6 :fail
-- path: es6/Promise_basic_functionality.js
-  cmd: runES6 :fail
 - path: es6/Promise_constructor_requires_new.js
-  cmd: runES6 :fail
-- path: es6/Promise_is_subclassable_basic_functionality.js
   cmd: runES6 :fail
 - path: es6/Promise_is_subclassable_correct_prototype_chain.js
   cmd: runES6 :fail
