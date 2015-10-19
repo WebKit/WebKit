@@ -4,6 +4,8 @@
 <script src='resources/streams-utils.js'></script>
 <script src='../../resources/gc.js'></script>
 <script>
+// This is updated till https://github.com/whatwg/streams/commit/ec5ffa036308d9f6350d2946560d48cdbf090939
+
 var ReadableStreamReader;
 
 test(function() {
@@ -65,8 +67,8 @@ test(function() {
 
 test(function() {
     var rs = new ReadableStream();
-    new ReadableStreamReader(rs); // Constructing directly should be fine.
-    assert_throws(new TypeError(), function() { new ReadableStreamReader(rs); }, 'constructing directly should fail');
+    new ReadableStreamReader(rs); // Constructing directly the first time should be fine.
+    assert_throws(new TypeError(), function() { new ReadableStreamReader(rs); }, 'constructing directly the second time should fail');
 }, 'Constructing a ReadableStreamReader directly should fail if the stream is already locked (via direct construction)');
 
 test(function() {
@@ -126,15 +128,16 @@ test1.step(function() {
     controller.enqueue('a');
 });
 
-var test2 = async_test('cancel() on a reader releases the reader before calling through');
+var test2 = async_test('cancel() on a reader does not release the reader');
 test2.step(function() {
     var cancelCalled = false;
     var passedReason = new Error('it wasn\'t the right time, sorry');
     var rs = new ReadableStream({
         cancel: function(reason) {
-            cancelCalled = true;
-            rs.getReader(); // Should be able to get another reader without error.
+            assert_true(rs.locked, 'the stream should still be locked');
+            assert_throws(new TypeError(), function() { rs.getReader(); }, 'should not be able to get another reader');
             assert_equals(reason, passedReason, 'the cancellation reason is passed through to the underlying source');
+            cancelCalled = true;
         }
     });
 
@@ -144,7 +147,8 @@ test2.step(function() {
             assert_true(cancelCalled);
             test2.done('reader.cancel() should fulfill');
         }),
-        test2.step_func(function(e) { assert_unreached('reader.cancel() should not reject'); }));
+        test2.step_func(function(e) { assert_unreached('reader.cancel() should not reject'); })
+    );
 });
 
 var test3 = async_test('closed should be fulfilled after stream is closed (.closed access before acquiring)');
@@ -164,10 +168,10 @@ test3.step(function() {
     controller.close();
 });
 
-var test4 = async_test('closed should be fulfilled after reader releases its lock (multiple stream locks)');
+var test4 = async_test('closed should be rejected after reader releases its lock (multiple stream locks)');
 test4.step(function() {
+    var promiseCalls = 0;
     var controller;
-    var reader1Closed = false;
     var rs = new ReadableStream({
         start: function(c) {
             controller = c;
@@ -181,12 +185,13 @@ test4.step(function() {
     var reader2 = rs.getReader();
     controller.close();
 
-    reader1.closed.then(test4.step_func(function() {
-        reader1Closed = true;
+    reader1.closed.catch(test4.step_func(function(e) {
+        assert_throws(new TypeError(), function() { throw e; }, 'reader1 closed should be rejected with a TypeError');
+        assert_equals(++promiseCalls, 1);
     }));
 
     reader2.closed.then(test4.step_func(function() {
-        assert_true(reader1Closed);
+        assert_equals(++promiseCalls, 2);
         test4.done('reader2 closed should be fulfilled');
     }));
 });
@@ -240,7 +245,7 @@ test6.step(function() {
 
 var test7 = async_test('cancel() on a released reader is a no-op and does not pass through');
 test7.step(function() {
-    var cancelled = false;
+    var promiseCalls = 0;
     var rs = new ReadableStream({
         start: function(c) {
             c.enqueue('a');
@@ -253,15 +258,16 @@ test7.step(function() {
     var reader = rs.getReader();
     reader.releaseLock();
     reader.cancel().then(test7.step_func(function(v) {
-        assert_equals(v, undefined, 'cancel() on the reader should fulfill with undefined')
-        cancelled = true;
+        assert_unreached('cancel promise should not fulfill');
+    })).catch(test7.step_func(function(e) {
+        assert_equals(++promiseCalls, 2);
+        test7.done();
     }));
 
     var reader2 = rs.getReader();
     reader2.read().then(test7.step_func(function(r) {
         assert_object_equals(r, { value: 'a', done: false }, 'a new reader should be able to read a chunk');
-        assert_true(cancelled);
-        test7.done();
+        assert_equals(++promiseCalls, 1);
     }));
 });
 
@@ -292,12 +298,16 @@ test8.step(function() {
 
     controller.error(theError);
 
-    rs.getReader().closed.catch(test8.step_func(function(e) {
+    reader1.releaseLock();
+
+    var reader2 = rs.getReader();
+
+    reader2.closed.catch(test8.step_func(function(e) {
         assert_equals(e, theError, 'the second reader closed getter should be rejected with the error');
         ++receivedErrors;
     }));
 
-    rs.getReader().read().catch(test8.step_func(function(e) {
+    reader2.read().catch(test8.step_func(function(e) {
         assert_equals(e, theError, 'the third reader read() should be rejected with the error');
         assert_equals(++receivedErrors, 4);
         test8.done();
