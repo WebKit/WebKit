@@ -1,3 +1,10 @@
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the 32-bit build.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
 2015-10-16  Anders Carlsson  <andersca@apple.com>
 
         Fix image service menus somewhat
