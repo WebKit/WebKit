@@ -121,7 +121,7 @@ function tee()
     if (!@isReadableStream(this))
         throw new @TypeError("Function should be called on a ReadableStream");
 
-    throw new @TypeError("tee is not implemented");
+    return @teeReadableStream(this, false);
 }
 
 function locked()
