@@ -726,7 +726,7 @@ void GraphicsContext::translatePlatformCTM(float x, float y)
 
     cairo_t* cr = platformContext()->cr();
     cairo_translate(cr, x, y);
-    m_data->translate(x, y);
+    m_data->translatePlatformCTM(x, y);
 }
 
 void GraphicsContext::setPlatformFillColor(const Color&, ColorSpace)
@@ -789,7 +789,7 @@ void GraphicsContext::concatPlatformCTM(const AffineTransform& transform)
     cairo_t* cr = platformContext()->cr();
     const cairo_matrix_t matrix = cairo_matrix_t(transform);
     cairo_transform(cr, &matrix);
-    m_data->concatCTM(transform);
+    m_data->concatPlatformCTM(transform);
 }
 
 void GraphicsContext::setPlatformCTM(const AffineTransform& transform)
@@ -800,7 +800,7 @@ void GraphicsContext::setPlatformCTM(const AffineTransform& transform)
     cairo_t* cr = platformContext()->cr();
     const cairo_matrix_t matrix = cairo_matrix_t(transform);
     cairo_set_matrix(cr, &matrix);
-    m_data->setCTM(transform);
+    m_data->setPlatformCTM(transform);
 }
 
 void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
@@ -1017,7 +1017,7 @@ void GraphicsContext::rotatePlatformCTM(float radians)
         return;
 
     cairo_rotate(platformContext()->cr(), radians);
-    m_data->rotate(radians);
+    m_data->rotatePlatformCTM(radians);
 }
 
 void GraphicsContext::scalePlatformCTM(float x, float y)
@@ -1026,7 +1026,7 @@ void GraphicsContext::scalePlatformCTM(float x, float y)
         return;
 
     cairo_scale(platformContext()->cr(), x, y);
-    m_data->scale(FloatSize(x, y));
+    m_data->scalePlatformCTM(x, y);
 }
 
 void GraphicsContext::clipOut(const FloatRect& r)
