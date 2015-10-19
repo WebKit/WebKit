@@ -1,5 +1,26 @@
 2015-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Promise constructor should throw when not called with "new"
+        https://bugs.webkit.org/show_bug.cgi?id=149380
+
+        Reviewed by Darin Adler.
+
+        Implement handling new.target in Promise constructor. And
+        prohibiting Promise constructor call without "new".
+
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        (JSC::callPromise):
+        (JSC::JSPromiseConstructor::getCallData):
+        * tests/es6.yaml:
+        * tests/stress/promise-cannot-be-called.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (Deferred):
+        (super):
+
+2015-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] Handle asynchronous tests in tests/es6
         https://bugs.webkit.org/show_bug.cgi?id=150293
 

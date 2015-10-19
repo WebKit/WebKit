@@ -89,10 +89,23 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
     JSGlobalObject* globalObject = exec->callee()->globalObject();
     VM& vm = exec->vm();
 
+    JSValue newTarget = exec->newTarget();
+    if (!newTarget || newTarget.isUndefined())
+        return throwVMTypeError(exec);
+
     JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+    if (!jsDynamicCast<JSPromiseConstructor*>(newTarget)) {
+        JSValue proto = asObject(newTarget)->getDirect(vm, vm.propertyNames->prototype);
+        asObject(promise)->setPrototypeWithCycleCheck(exec, proto);
+    }
     promise->initialize(exec, globalObject, exec->argument(0));
 
     return JSValue::encode(promise);
+}
+
+static EncodedJSValue JSC_HOST_CALL callPromise(ExecState* exec)
+{
+    return throwVMTypeError(exec);
 }
 
 ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -103,7 +116,11 @@ ConstructType JSPromiseConstructor::getConstructData(JSCell*, ConstructData& con
 
 CallType JSPromiseConstructor::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = constructPromise;
+    // FIXME: This is workaround. Since JSC does not expose @isConstructor to JS builtins,
+    // we use typeof function === "function" now. And since typeof constructorWithoutCallability
+    // returns "object", we need to define [[Call]] for now.
+    // https://bugs.webkit.org/show_bug.cgi?id=144093
+    callData.native.function = callPromise;
     return CallTypeHost;
 }
 
