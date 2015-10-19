@@ -1,3 +1,110 @@
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h: Added.
+        * UIProcess/Cocoa/WebViewImpl.mm: Added.
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::setDrawsBackground):
+        (WebKit::WebViewImpl::drawsBackground):
+        (WebKit::WebViewImpl::setDrawsTransparentBackground):
+        (WebKit::WebViewImpl::drawsTransparentBackground):
+        (WebKit::WebViewImpl::acceptsFirstResponder):
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::resignFirstResponder):
+        (WebKit::WebViewImpl::isFocused):
+        (WebKit::WebViewImpl::viewWillStartLiveResize):
+        (WebKit::WebViewImpl::viewDidEndLiveResize):
+        (WebKit::WebViewImpl::setFrameSize):
+        (WebKit::WebViewImpl::disableFrameSizeUpdates):
+        (WebKit::WebViewImpl::enableFrameSizeUpdates):
+        (WebKit::WebViewImpl::frameSizeUpdatesDisabled):
+        (WebKit::WebViewImpl::setFrameAndScrollBy):
+        (WebKit::WebViewImpl::setFixedLayoutSize):
+        (WebKit::WebViewImpl::fixedLayoutSize):
+        (WebKit::WebViewImpl::setDrawingAreaSize):
+        (WebKit::WebViewImpl::setContentPreparationRect):
+        (WebKit::WebViewImpl::updateViewExposedRect):
+        (WebKit::WebViewImpl::setClipsToVisibleRect):
+        (WebKit::WebViewImpl::setIntrinsicContentSize):
+        (WebKit::WebViewImpl::intrinsicContentSize):
+        (WebKit::WebViewImpl::setViewScale):
+        (WebKit::WebViewImpl::viewScale):
+        (WebKit::WebViewImpl::layoutMode):
+        (WebKit::WebViewImpl::setLayoutMode):
+        (WebKit::WebViewImpl::supportsArbitraryLayoutModes):
+        (WebKit::WebViewImpl::updateSupportsArbitraryLayoutModes):
+        (WebKit::WebViewImpl::updateSecureInputState):
+        (WebKit::WebViewImpl::resetSecureInputState):
+        (WebKit::WebViewImpl::notifyInputContextAboutDiscardedComposition):
+        (WebKit::WebViewImpl::hasFullScreenWindowController):
+        (WebKit::WebViewImpl::fullScreenWindowController):
+        (WebKit::WebViewImpl::closeFullScreenWindowController):
+        (WebKit::WebViewImpl::fullScreenPlaceholderView):
+        (WebKit::WebViewImpl::createFullScreenWindow):
+        Move the actual implementation of a number of WKView methods into a
+        C++ class, WebViewImpl, which WKView calls directly into.
+        Eventually, we will move all of the logic of WKView into WebViewImpl,
+        and then duplicate the necessary forwarding in WKWebView and remove
+        WKWebView's inner WKView.
+
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::updateSecureInputState):
+        (WebKit::PageClientImpl::resetSecureInputState):
+        (WebKit::PageClientImpl::notifyInputContextAboutDiscardedComposition):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        For now, forward PageClient requests that can be answered by WebViewImpl
+        to WebViewImpl. Eventually, we'll probably fold PageClientImpl and WebViewImpl
+        together into one class, and these things will collapse down.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]):
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]):
+        (-[WKFullScreenWindowController _manager]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+        (-[WKFullScreenWindowController initWithWindow:webView:]): Deleted.
+        (-[WKFullScreenWindowController _page]): Deleted.
+        * UIProcess/mac/WKViewLayoutStrategy.h:
+        * UIProcess/mac/WKViewLayoutStrategy.mm:
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:viewImpl:mode:]):
+        (-[WKViewLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewLayoutStrategy invalidate]):
+        (-[WKViewLayoutStrategy didChangeFrameSize]):
+        (-[WKViewViewSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewFixedSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy updateLayout]):
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy didChangeFrameSize]):
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy initWithPage:view:viewImpl:mode:]):
+        (+[WKViewLayoutStrategy layoutStrategyWithPage:view:mode:]): Deleted.
+        (-[WKViewLayoutStrategy initWithPage:view:mode:]): Deleted.
+        (-[WKViewLayoutStrategy willDestroyView:]): Deleted.
+        (-[WKViewViewSizeLayoutStrategy initWithPage:view:mode:]): Deleted.
+        (-[WKViewFixedSizeLayoutStrategy initWithPage:view:mode:]): Deleted.
+        (-[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy initWithPage:view:mode:]): Deleted.
+        (-[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy initWithPage:view:mode:]): Deleted.
+        Make WKViewLayoutStrategy and WKFullScreenWindowController operate in terms of generic
+        NSViews instead of WKView, so that eventually they will be able to work for either
+        WKView or WKWebView, and so that they can sit underneath WebViewImpl.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-10-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r191307.

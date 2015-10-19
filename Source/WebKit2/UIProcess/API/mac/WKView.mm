@@ -66,7 +66,6 @@
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
 #import "WKViewInternal.h"
-#import "WKViewLayoutStrategy.h"
 #import "WKViewPrivate.h"
 #import "WKWebView.h"
 #import "WebBackForwardList.h"
@@ -81,6 +80,7 @@
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
+#import "WebViewImpl.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <QuartzCore/QuartzCore.h>
@@ -130,10 +130,6 @@
 - (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
-@interface NSWindow (WKNSWindowDetails)
-- (id)_newFirstResponderAfterResigning;
-@end
-
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
 @interface NSTextInputContext (WKNSTextInputContextDetails)
 - (void)handleEvent:(NSEvent *)theEvent completionHandler:(void(^)(BOOL handled))completionHandler;
@@ -181,6 +177,7 @@ struct WKViewInterpretKeyEventsParameters {
 @public
     std::unique_ptr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
+    std::unique_ptr<WebViewImpl> _impl;
 
 #if WK_API_ENABLED
     RetainPtr<WKBrowsingContextController> _browsingContextController;
@@ -215,16 +212,12 @@ struct WKViewInterpretKeyEventsParameters {
     WKViewInterpretKeyEventsParameters* _interpretKeyEventsParameters;
 #endif
 
-    NSSize _resizeScrollOffset;
-
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
     uint64_t _pluginComplexTextInputIdentifier;
 
     // The state of complex text input for the plug-in.
     PluginComplexTextInputState _pluginComplexTextInputState;
 
-    bool _inBecomeFirstResponder;
-    bool _inResignFirstResponder;
     BOOL _willBecomeFirstResponderAgain;
     NSEvent *_mouseDownEvent;
     NSEvent *_pressureEvent;
@@ -232,14 +225,8 @@ struct WKViewInterpretKeyEventsParameters {
 
     id _flagsChangedEventMonitor;
 
-#if ENABLE(FULLSCREEN_API)
-    RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
-#endif
-
     BOOL _hasSpellCheckerDocumentTag;
     NSInteger _spellCheckerDocumentTag;
-
-    BOOL _inSecureInputState;
 
     BOOL _shouldDeferViewInWindowChanges;
     NSWindow *_targetWindowForMovePreparation;
@@ -254,11 +241,7 @@ struct WKViewInterpretKeyEventsParameters {
     RefPtr<WebCore::Image> _promisedImage;
     String _promisedFilename;
     String _promisedURL;
-    
-    NSSize _intrinsicContentSize;
-    BOOL _clipsToVisibleRect;
-    NSRect _contentPreparationRect;
-    BOOL _useContentPreparationRectForVisibleRect;
+
     BOOL _windowOcclusionDetectionEnabled;
 
     RetainPtr<WKWindowVisibilityObserver> _windowVisibilityObserver;
@@ -269,10 +252,6 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _ignoresAllEvents;
     BOOL _allowsBackForwardNavigationGestures;
     BOOL _allowsLinkPreview;
-
-    RetainPtr<WKViewLayoutStrategy> _layoutStrategy;
-    WKLayoutMode _lastRequestedLayoutMode;
-    float _lastRequestedViewScale;
 
     RetainPtr<CALayer> _rootLayer;
 
@@ -369,6 +348,9 @@ struct WKViewInterpretKeyEventsParameters {
 
 @end
 
+@interface WKView () <WebViewImplDelegate>
+@end
+
 @implementation WKView
 
 #if WK_API_ENABLED
@@ -390,7 +372,6 @@ struct WKViewInterpretKeyEventsParameters {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController willDestroyView:self];
 #endif
-    [_data->_layoutStrategy willDestroyView:self];
 
 #if WK_API_ENABLED
     if (_data->_remoteObjectRegistry) {
@@ -401,10 +382,11 @@ struct WKViewInterpretKeyEventsParameters {
 
     _data->_page->close();
 
+    _data->_impl = nullptr;
+
 #if WK_API_ENABLED
     ASSERT(!_data->_thumbnailView);
 #endif
-    ASSERT(!_data->_inSecureInputState);
 
     [_data release];
     _data = nil;
@@ -434,107 +416,47 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
 {
-    _data->_page->setDrawsBackground(drawsBackground);
+    _data->_impl->setDrawsBackground(drawsBackground);
 }
 
 - (BOOL)drawsBackground
 {
-    return _data->_page->drawsBackground();
+    return _data->_impl->drawsBackground();
 }
 
 - (void)setDrawsTransparentBackground:(BOOL)drawsTransparentBackground
 {
-    _data->_page->setDrawsTransparentBackground(drawsTransparentBackground);
+    _data->_impl->setDrawsTransparentBackground(drawsTransparentBackground);
 }
 
 - (BOOL)drawsTransparentBackground
 {
-    return _data->_page->drawsTransparentBackground();
+    return _data->_impl->drawsTransparentBackground();
 }
 
 - (BOOL)acceptsFirstResponder
 {
-    return YES;
+    return _data->_impl->acceptsFirstResponder();
 }
 
 - (BOOL)becomeFirstResponder
 {
-    // If we just became first responder again, there is no need to do anything,
-    // since resignFirstResponder has correctly detected this situation.
-    if (_data->_willBecomeFirstResponderAgain) {
-        _data->_willBecomeFirstResponderAgain = NO;
-        return YES;
-    }
-
-    NSSelectionDirection direction = [[self window] keyViewSelectionDirection];
-
-    _data->_inBecomeFirstResponder = true;
-    
-    [self _updateSecureInputState];
-    _data->_page->viewStateDidChange(ViewState::IsFocused);
-    // Restore the selection in the editable region if resigning first responder cleared selection.
-    _data->_page->restoreSelectionInFocusedEditableElement();
-
-    _data->_inBecomeFirstResponder = false;
-    
-    if (direction != NSDirectSelection) {
-        NSEvent *event = [NSApp currentEvent];
-        NSEvent *keyboardEvent = nil;
-        if ([event type] == NSKeyDown || [event type] == NSKeyUp)
-            keyboardEvent = event;
-        _data->_page->setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<KeypressCommand>()), [](WebKit::CallbackBase::Error) { });
-    }
-    return YES;
+    return _data->_impl->becomeFirstResponder();
 }
 
 - (BOOL)resignFirstResponder
 {
-#if WK_API_ENABLED
-    // Predict the case where we are losing first responder status only to
-    // gain it back again. We want resignFirstResponder to do nothing in that case.
-    id nextResponder = [[self window] _newFirstResponderAfterResigning];
-    if ([nextResponder isKindOfClass:[WKWebView class]] && self.superview == nextResponder) {
-        _data->_willBecomeFirstResponderAgain = YES;
-        return YES;
-    }
-#endif
-
-    _data->_willBecomeFirstResponderAgain = NO;
-    _data->_inResignFirstResponder = true;
-
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
-    _data->_page->confirmCompositionAsync();
-#else
-    if (_data->_page->editorState().hasComposition && !_data->_page->editorState().shouldIgnoreCompositionSelectionChange)
-        _data->_page->cancelComposition();
-#endif
-
-    [self _notifyInputContextAboutDiscardedComposition];
-
-    [self _resetSecureInputState];
-
-    if (!_data->_page->maintainsInactiveSelection())
-        _data->_page->clearSelection();
-    
-    _data->_page->viewStateDidChange(ViewState::IsFocused);
-
-    _data->_inResignFirstResponder = false;
-
-    return YES;
+    return _data->_impl->resignFirstResponder();
 }
 
 - (void)viewWillStartLiveResize
 {
-    _data->_page->viewWillStartLiveResize();
-
-    [_data->_layoutStrategy willStartLiveResize];
+    _data->_impl->viewWillStartLiveResize();
 }
 
 - (void)viewDidEndLiveResize
 {
-    _data->_page->viewWillEndLiveResize();
-
-    [_data->_layoutStrategy didEndLiveResize];
+    _data->_impl->viewDidEndLiveResize();
 }
 
 - (BOOL)isFlipped
@@ -544,39 +466,25 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (NSSize)intrinsicContentSize
 {
-    return _data->_intrinsicContentSize;
+    return NSSizeFromCGSize(_data->_impl->intrinsicContentSize());
 }
 
 - (void)prepareContentInRect:(NSRect)rect
 {
-    _data->_contentPreparationRect = rect;
-    _data->_useContentPreparationRectForVisibleRect = YES;
-
-    [self _updateViewExposedRect];
-}
-
-- (void)_updateViewExposedRect
-{
-    NSRect exposedRect = [self visibleRect];
-
-    if (_data->_useContentPreparationRectForVisibleRect)
-        exposedRect = NSUnionRect(_data->_contentPreparationRect, exposedRect);
-
-    if (auto drawingArea = _data->_page->drawingArea())
-        drawingArea->setExposedRect(_data->_clipsToVisibleRect ? FloatRect(exposedRect) : FloatRect::infiniteRect());
+    _data->_impl->setContentPreparationRect(NSRectToCGRect(rect));
+    _data->_impl->updateViewExposedRect();
 }
 
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
-
-    [_data->_layoutStrategy didChangeFrameSize];
+    _data->_impl->setFrameSize(NSSizeToCGSize(size));
 }
 
 - (void)_updateWindowAndViewFrames
 {
-    if (_data->_clipsToVisibleRect)
-        [self _updateViewExposedRect];
+    if (_data->_impl->clipsToVisibleRect())
+        _data->_impl->updateViewExposedRect();
 
     if (_data->_didScheduleWindowAndViewFrameUpdate)
         return;
@@ -1829,11 +1737,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     } else
         text = string;
 
-    if (_data->_inSecureInputState) {
+    if (_data->_impl->inSecureInputState()) {
         // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
         // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
         ASSERT(!_data->_page->editorState().hasComposition);
-        [self _notifyInputContextAboutDiscardedComposition];
+        _data->_impl->notifyInputContextAboutDiscardedComposition();
         // FIXME: We should store the command to handle it after DOM event processing, as it's regular keyboard input now, not a composition.
         if ([text length] == 1 && isASCII([text characterAtIndex:0]))
             _data->_page->insertTextAsync(text, replacementRange);
@@ -2225,7 +2133,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
         // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
         ASSERT(!_data->_page->editorState().hasComposition);
-        [self _notifyInputContextAboutDiscardedComposition];
+        _data->_impl->notifyInputContextAboutDiscardedComposition();
         if ([text length] == 1 && [[text decomposedStringWithCanonicalMapping] characterAtIndex:0] < 0x80) {
             _data->_page->insertText(text, replacementRange);
         } else
@@ -2436,6 +2344,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 }
 
 #endif // USE(ASYNC_NSTEXTINPUTCLIENT)
+
+- (NSTextInputContext *)_superInputContext
+{
+    return [super inputContext];
+}
 
 - (NSArray *)validAttributesForMarkedText
 {
@@ -2757,7 +2670,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet]) {
-        [self _updateSecureInputState];
+        _data->_impl->updateSecureInputState();
         _data->_page->viewStateDidChange(ViewState::WindowIsActive);
     }
 }
@@ -2776,7 +2689,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet]) {
-        [self _updateSecureInputState];
+        _data->_impl->updateSecureInputState();
         _data->_page->viewStateDidChange(ViewState::WindowIsActive);
     }
 }
@@ -3000,15 +2913,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     return [[NSScreen mainScreen] backingScaleFactor];
 }
 
-- (void)_setDrawingAreaSize:(NSSize)size
-{
-    if (!_data->_page->drawingArea())
-        return;
-    
-    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(0, 0), IntSize(_data->_resizeScrollOffset));
-    _data->_resizeScrollOffset = NSZeroSize;
-}
-
 - (void)quickLookWithEvent:(NSEvent *)event
 {
     if (_data->_ignoresNonWheelEvents)
@@ -3033,15 +2937,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(*_data->_page);
 }
 
-- (BOOL)_isFocused
-{
-    if (_data->_inBecomeFirstResponder)
-        return YES;
-    if (_data->_inResignFirstResponder)
-        return NO;
-    return [[self window] firstResponder] == self;
-}
-
 - (WebKit::ColorSpaceData)_colorSpace
 {
     if (!_data->_colorSpace) {
@@ -3061,7 +2956,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)_processDidExit
 {
-    [self _notifyInputContextAboutDiscardedComposition];
+    _data->_impl->notifyInputContextAboutDiscardedComposition();
 
     if (_data->_layerHostingView)
         [self _setAcceleratedCompositingModeRootLayer:nil];
@@ -3294,11 +3189,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 {
     if (_data->_textIndicatorWindow)
         _data->_textIndicatorWindow->setAnimationProgress(progress);
-}
-
-- (CALayer *)_rootLayer
-{
-    return [_data->_layerHostingView layer];
 }
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer
@@ -3632,53 +3522,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
-- (void)_updateSecureInputState
-{
-    if (![[self window] isKeyWindow] || ![self _isFocused]) {
-        if (_data->_inSecureInputState) {
-            DisableSecureEventInput();
-            _data->_inSecureInputState = NO;
-        }
-        return;
-    }
-    // WKView has a single input context for all editable areas (except for plug-ins).
-    NSTextInputContext *context = [super inputContext];
-    bool isInPasswordField = _data->_page->editorState().isInPasswordField;
-
-    if (isInPasswordField) {
-        if (!_data->_inSecureInputState)
-            EnableSecureEventInput();
-        static NSArray *romanInputSources = [[NSArray alloc] initWithObjects:&NSAllRomanInputSourcesLocaleIdentifier count:1];
-        LOG(TextInput, "-> setAllowedInputSourceLocales:romanInputSources");
-        [context setAllowedInputSourceLocales:romanInputSources];
-    } else {
-        if (_data->_inSecureInputState)
-            DisableSecureEventInput();
-        LOG(TextInput, "-> setAllowedInputSourceLocales:nil");
-        [context setAllowedInputSourceLocales:nil];
-    }
-    _data->_inSecureInputState = isInPasswordField;
-}
-
-- (void)_resetSecureInputState
-{
-    if (_data->_inSecureInputState) {
-        DisableSecureEventInput();
-        _data->_inSecureInputState = NO;
-    }
-}
-
-- (void)_notifyInputContextAboutDiscardedComposition
-{
-    // <rdar://problem/9359055>: -discardMarkedText can only be called for active contexts.
-    // FIXME: We fail to ever notify the input context if something (e.g. a navigation) happens while the window is not key.
-    // This is not a problem when the window is key, because we discard marked text on resigning first responder.
-    if (![[self window] isKeyWindow] || self != [[self window] firstResponder])
-        return;
-
-    LOG(TextInput, "-> discardMarkedText");
-    [[super inputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
-}
 
 - (NSWindow *)_targetWindowForMovePreparation
 {
@@ -3688,24 +3531,17 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if ENABLE(FULLSCREEN_API)
 - (BOOL)_hasFullScreenWindowController
 {
-    return (bool)_data->_fullScreenWindowController;
+    return _data->_impl->hasFullScreenWindowController();
 }
 
 - (WKFullScreenWindowController *)_fullScreenWindowController
 {
-    if (!_data->_fullScreenWindowController)
-        _data->_fullScreenWindowController = adoptNS([[WKFullScreenWindowController alloc] initWithWindow:[self createFullScreenWindow] webView:self]);
-
-    return _data->_fullScreenWindowController.get();
+    return _data->_impl->fullScreenWindowController();
 }
 
 - (void)_closeFullScreenWindowController
 {
-    if (!_data->_fullScreenWindowController)
-        return;
-
-    [_data->_fullScreenWindowController close];
-    _data->_fullScreenWindowController = nullptr;
+    _data->_impl->closeFullScreenWindowController();
 }
 #endif
 
@@ -3722,16 +3558,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_setIntrinsicContentSize:(NSSize)intrinsicContentSize
 {
-    // If the intrinsic content size is less than the minimum layout width, the content flowed to fit,
-    // so we can report that that dimension is flexible. If not, we need to report our intrinsic width
-    // so that autolayout will know to provide space for us.
-
-    NSSize intrinsicContentSizeAcknowledgingFlexibleWidth = intrinsicContentSize;
-    if (intrinsicContentSize.width < _data->_page->minimumLayoutSize().width())
-        intrinsicContentSizeAcknowledgingFlexibleWidth.width = NSViewNoInstrinsicMetric;
-
-    _data->_intrinsicContentSize = intrinsicContentSizeAcknowledgingFlexibleWidth;
-    [self invalidateIntrinsicContentSize];
+    _data->_impl->setIntrinsicContentSize(NSSizeToCGSize(intrinsicContentSize));
 }
 
 - (NSInteger)spellCheckerDocumentTag
@@ -3793,6 +3620,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
     _data->_page = processPool.createWebPage(*_data->_pageClient, WTF::move(configuration));
+
+    _data->_impl = std::make_unique<WebViewImpl>(self, *_data->_page);
+    static_cast<PageClientImpl*>(_data->_pageClient.get())->setImpl(*_data->_impl);
+
     _data->_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
@@ -3801,19 +3632,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_mouseDownEvent = nil;
     _data->_pressureEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
-    _data->_clipsToVisibleRect = NO;
-    _data->_useContentPreparationRectForVisibleRect = NO;
     _data->_windowOcclusionDetectionEnabled = YES;
-    _data->_lastRequestedLayoutMode = kWKLayoutModeViewSize;
-    _data->_lastRequestedViewScale = 1;
 
     _data->_windowVisibilityObserver = adoptNS([[WKWindowVisibilityObserver alloc] initWithView:self]);
 
-    _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
-
     _data->_needsViewFrameInWindowCoordinates = _data->_page->preferences().pluginsEnabled();
-
-    _data->_layoutStrategy = [WKViewLayoutStrategy layoutStrategyWithPage:*_data->_page view:self mode:kWKLayoutModeViewSize];
 
     [self _registerDraggedTypes];
 
@@ -3924,44 +3747,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_gestureController->didFirstVisuallyNonEmptyLayoutForMainFrame();
 }
 
-- (BOOL)_supportsArbitraryLayoutModes
-{
-    if ([_data->_fullScreenWindowController isFullScreen])
-        return NO;
-
-    WebPageProxy* page = _data->_page.get();
-    if (!page)
-        return YES;
-    WebFrameProxy* frame = page->mainFrame();
-    if (!frame)
-        return YES;
-
-    // If we have a plugin document in the main frame, avoid using custom WKLayoutModes
-    // and fall back to the defaults, because there's a good chance that it won't work (e.g. with PDFPlugin).
-    if (frame->containsPluginDocument())
-        return NO;
-
-    return YES;
-}
-
-- (void)_updateSupportsArbitraryLayoutModes
-{
-    if (![self _supportsArbitraryLayoutModes]) {
-        WKLayoutMode oldRequestedLayoutMode = _data->_lastRequestedLayoutMode;
-        float oldRequestedViewScale = _data->_lastRequestedViewScale;
-        [self _setViewScale:1];
-        [self _setLayoutMode:kWKLayoutModeViewSize];
-
-        // The 'last requested' parameters will have been overwritten by setting them above, but we don't
-        // want this to count as a request (only changes from the client count), so reset them.
-        _data->_lastRequestedLayoutMode = oldRequestedLayoutMode;
-        _data->_lastRequestedViewScale = oldRequestedViewScale;
-    } else if (_data->_lastRequestedLayoutMode != [_data->_layoutStrategy layoutMode]) {
-        [self _setViewScale:_data->_lastRequestedViewScale];
-        [self _setLayoutMode:_data->_lastRequestedLayoutMode];
-    }
-}
-
 #if WK_API_ENABLED
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
@@ -3972,14 +3757,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     return _data->_remoteObjectRegistry.get();
 }
-
 #endif
-
-
-- (void)_didCommitLoadForMainFrame
-{
-    [self _updateSupportsArbitraryLayoutModes];
-}
 
 - (void)_didFinishLoadForMainFrame
 {
@@ -4020,6 +3798,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [[self window] performWindowDragWithEvent:_data->_mouseDownEvent];
 }
 #endif
+
+// FIXME: Get rid of this when we have better plumbing to WKViewLayoutStrategy.
+- (void)_updateViewExposedRect
+{
+    _data->_impl->updateViewExposedRect();
+}
 
 @end
 
@@ -4108,25 +3892,22 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
 {
-    ASSERT(NSEqualSizes(_data->_resizeScrollOffset, NSZeroSize));
-
-    _data->_resizeScrollOffset = offset;
-    [self setFrame:rect];
+    _data->_impl->setFrameAndScrollBy(NSRectToCGRect(rect), NSSizeToCGSize(offset));
 }
 
 - (void)disableFrameSizeUpdates
 {
-    [_data->_layoutStrategy disableFrameSizeUpdates];
+    _data->_impl->disableFrameSizeUpdates();
 }
 
 - (void)enableFrameSizeUpdates
 {
-    [_data->_layoutStrategy enableFrameSizeUpdates];
+    _data->_impl->enableFrameSizeUpdates();
 }
 
 - (BOOL)frameSizeUpdatesDisabled
 {
-    return [_data->_layoutStrategy frameSizeUpdatesDisabled];
+    return _data->_impl->frameSizeUpdatesDisabled();
 }
 
 + (void)hideWordDefinitionWindow
@@ -4161,13 +3942,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (BOOL)shouldClipToVisibleRect
 {
-    return _data->_clipsToVisibleRect;
+    return _data->_impl->clipsToVisibleRect();
 }
 
 - (void)setShouldClipToVisibleRect:(BOOL)clipsToVisibleRect
 {
-    _data->_clipsToVisibleRect = clipsToVisibleRect;
-    [self _updateViewExposedRect];
+    _data->_impl->setClipsToVisibleRect(clipsToVisibleRect);
 }
 
 - (NSColor *)underlayColor
@@ -4204,20 +3984,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (NSView *)fullScreenPlaceholderView
 {
-#if ENABLE(FULLSCREEN_API)
-    if (_data->_fullScreenWindowController && [_data->_fullScreenWindowController isFullScreen])
-        return [_data->_fullScreenWindowController webViewPlaceholder];
-#endif
-    return nil;
+    return _data->_impl->fullScreenPlaceholderView();
 }
 
+// FIXME: This returns an autoreleased object. Should it really be prefixed 'create'?
 - (NSWindow *)createFullScreenWindow
 {
-#if ENABLE(FULLSCREEN_API)
-    return [[[WebCoreFullScreenWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:(NSBorderlessWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:NO] autorelease];
-#else
-    return nil;
-#endif
+    return _data->_impl->createFullScreenWindow();
 }
 
 // FIXME: All of these "DeferringViewInWindowChanges" methods should be able to be removed once clients are weaned off of them.
@@ -4383,50 +4156,32 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (WKLayoutMode)_layoutMode
 {
-    return [_data->_layoutStrategy layoutMode];
+    return _data->_impl->layoutMode();
 }
 
 - (void)_setLayoutMode:(WKLayoutMode)layoutMode
 {
-    _data->_lastRequestedLayoutMode = layoutMode;
-
-    if (![self _supportsArbitraryLayoutModes] && layoutMode != kWKLayoutModeViewSize)
-        return;
-
-    if (layoutMode == [_data->_layoutStrategy layoutMode])
-        return;
-
-    [_data->_layoutStrategy willChangeLayoutStrategy];
-    _data->_layoutStrategy = [WKViewLayoutStrategy layoutStrategyWithPage:*_data->_page view:self mode:layoutMode];
+    _data->_impl->setLayoutMode(layoutMode);
 }
 
 - (CGSize)_fixedLayoutSize
 {
-    return _data->_page->fixedLayoutSize();
+    return _data->_impl->fixedLayoutSize();
 }
 
 - (void)_setFixedLayoutSize:(CGSize)fixedLayoutSize
 {
-    _data->_page->setFixedLayoutSize(expandedIntSize(FloatSize(fixedLayoutSize)));
+    _data->_impl->setFixedLayoutSize(fixedLayoutSize);
 }
 
 - (CGFloat)_viewScale
 {
-    return _data->_page->viewScaleFactor();
+    return _data->_impl->viewScale();
 }
 
 - (void)_setViewScale:(CGFloat)viewScale
 {
-    _data->_lastRequestedViewScale = viewScale;
-
-    if (![self _supportsArbitraryLayoutModes] && viewScale != 1)
-        return;
-
-    if (viewScale <= 0 || isnan(viewScale) || isinf(viewScale))
-        [NSException raise:NSInvalidArgumentException format:@"View scale should be a positive number"];
-
-    _data->_page->scaleView(viewScale);
-    [_data->_layoutStrategy didChangeViewScale];
+    _data->_impl->setViewScale(viewScale);
 }
 
 - (void)_dispatchSetTopContentInset
@@ -4527,9 +4282,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 {
     // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    if (_data->_clipsToVisibleRect)
-        [self _updateViewExposedRect];
-    [self _setDrawingAreaSize:size];
+    if (_data->_impl->clipsToVisibleRect())
+        _data->_impl->updateViewExposedRect();
+    _data->_impl->setDrawingAreaSize(NSSizeToCGSize(size));
 
     // If a geometry update is pending the new update won't be sent. Poll without waiting for any
     // pending did-update message now, such that the new update can be sent. We do so after setting

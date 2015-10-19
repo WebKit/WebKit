@@ -696,6 +696,8 @@
 		2DF9EEEE1A786EAD00B6CFBE /* APINavigationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9EEED1A786EAD00B6CFBE /* APINavigationResponse.h */; };
 		2E0B8A7A1BC59A590044B32D /* _WKFormDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0B8A791BC59A590044B32D /* _WKFormDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E7A944A1BBD97C300945547 /* _WKFocusedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2DFC7DBB1BCCC19500C1548C /* WebViewImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */; settings = {ASSET_TAGS = (); }; };
+		2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */; settings = {ASSET_TAGS = (); }; };
 		31099973146C75A20029DEB9 /* WebNotificationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31099971146C759B0029DEB9 /* WebNotificationClient.cpp */; };
 		310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31099968146C71F50029DEB9 /* WebNotificationClient.h */; };
 		312C0C4A146DDC8A0016C911 /* WKNotificationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 312C0C49146DDC8A0016C911 /* WKNotificationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2860,6 +2862,8 @@
 		2DF9EEED1A786EAD00B6CFBE /* APINavigationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINavigationResponse.h; sourceTree = "<group>"; };
 		2E0B8A791BC59A590044B32D /* _WKFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormDelegate.h; sourceTree = "<group>"; };
 		2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKFocusedElementInfo.h; sourceTree = "<group>"; };
+		2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewImpl.h; sourceTree = "<group>"; };
+		2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewImpl.mm; sourceTree = "<group>"; };
 		31099968146C71F50029DEB9 /* WebNotificationClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebNotificationClient.h; sourceTree = "<group>"; };
 		31099971146C759B0029DEB9 /* WebNotificationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationClient.cpp; sourceTree = "<group>"; };
 		312C0C49146DDC8A0016C911 /* WKNotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNotificationProvider.h; sourceTree = "<group>"; };
@@ -4941,6 +4945,8 @@
 				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
 				7CE4D2151A49148400C7F152 /* WebProcessPoolCocoa.mm */,
 				1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */,
+				2DFC7DB91BCCC19500C1548C /* WebViewImpl.h */,
+				2DFC7DBA1BCCC19500C1548C /* WebViewImpl.mm */,
 				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
 				1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */,
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
@@ -7665,6 +7671,7 @@
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
 				BC82837A16B36A4F00A278FE /* ChildProcessEntryPoint.h in Headers */,
 				51FAEC3A1B0657630009C4E7 /* ChildProcessMessages.h in Headers */,
+				2DFC7DBB1BCCC19500C1548C /* WebViewImpl.h in Headers */,
 				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 				290F4272172A0C7400939FF0 /* ChildProcessSupplement.h in Headers */,
 				1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */,
@@ -9805,6 +9812,7 @@
 				1A8B66B31BC45B010082DF77 /* WKBundleMac.mm in Sources */,
 				BC111A5B112F4FBB00337BAB /* WebContextMenuClient.cpp in Sources */,
 				51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */,
+				2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */,
 				512935D71288D19400A4B695 /* WebContextMenuItem.cpp in Sources */,
 				510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */,
 				51A84CE3127F386B00CA6EA4 /* WebContextMenuProxy.cpp in Sources */,
