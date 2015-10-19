@@ -1,3 +1,19 @@
+2015-10-19  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL] Implement WebContextMenuProxyEfl::showContextMenu after r191194
+        https://bugs.webkit.org/show_bug.cgi?id=150310
+
+        Reviewed by Gyuyoung Kim.
+
+        showContextMenu() doesn't work correctly after r191194 in EFL port.
+        This patch implements WebContextMenuProxyEfl::showContextMenu.
+
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp:
+        (WebKit::WebContextMenuProxyEfl::WebContextMenuProxyEfl):
+        (WebKit::WebContextMenuProxyEfl::showContextMenu):
+        (WebKit::WebContextMenuProxyEfl::hideContextMenu):
+        * UIProcess/efl/WebContextMenuProxyEfl.h:
+
 2015-10-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Simplify unused return warning in WKRetainPtr.h

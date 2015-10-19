@@ -54,6 +54,9 @@ public:
 
 private:
     WebContextMenuProxyEfl(EwkView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
+
+    EwkView* m_ewkView;
+    WebPageProxy& m_page;
 };
 
 
