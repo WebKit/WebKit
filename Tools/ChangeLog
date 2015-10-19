@@ -1,3 +1,12 @@
+2015-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add historical addresses to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=150227
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-10-18  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [Win] Change the DLL name in MiniBrowserLib.vcxproj to match webkit.org/b/150124.
