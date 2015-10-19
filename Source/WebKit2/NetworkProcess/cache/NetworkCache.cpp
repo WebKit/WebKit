@@ -39,6 +39,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringBuilder.h>
@@ -49,6 +50,13 @@
 
 namespace WebKit {
 namespace NetworkCache {
+
+static const AtomicString& resourceType()
+{
+    ASSERT(WTF::isMainThread());
+    static NeverDestroyed<const AtomicString> resource("resource", AtomicString::ConstructFromLiteral);
+    return resource;
+}
 
 Cache& singleton()
 {
@@ -113,7 +121,7 @@ static Key makeCacheKey(const WebCore::ResourceRequest& request)
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
     String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
-    return { partition, range, request.url().string() };
+    return { partition, resourceType(), range, request.url().string() };
 }
 
 static String headerValueForVary(const WebCore::ResourceRequest& request, const String& headerName)
@@ -472,7 +480,7 @@ void Cache::traverse(std::function<void (const Entry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());
 
-    m_storage->traverse(0, [traverseHandler](const Storage::Record* record, const Storage::RecordInfo&) {
+    m_storage->traverse(resourceType(), 0, [traverseHandler](const Storage::Record* record, const Storage::RecordInfo&) {
         if (!record) {
             traverseHandler(nullptr);
             return;
@@ -509,7 +517,7 @@ void Cache::dumpContentsToFile()
     Totals totals;
     auto flags = Storage::TraverseFlag::ComputeWorth | Storage::TraverseFlag::ShareCount;
     size_t capacity = m_storage->capacity();
-    m_storage->traverse(flags, [fd, totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
+    m_storage->traverse(resourceType(), flags, [fd, totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
         if (!record) {
             StringBuilder epilogue;
             epilogue.appendLiteral("{}\n],\n");
@@ -567,7 +575,8 @@ void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::func
         RunLoop::main().dispatch(completionHandler);
         return;
     }
-    m_storage->clear(modifiedSince, WTF::move(completionHandler));
+    String anyType;
+    m_storage->clear(anyType, modifiedSince, WTF::move(completionHandler));
 
     deleteDumpFile();
 }

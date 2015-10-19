@@ -44,7 +44,7 @@ public:
     Key() { }
     Key(const Key&);
     Key(Key&&) = default;
-    Key(const String& partition, const String& range, const String& identifier);
+    Key(const String& partition, const String& type, const String& range, const String& identifier);
 
     Key& operator=(const Key&);
     Key& operator=(Key&&) = default;
@@ -53,6 +53,7 @@ public:
 
     const String& partition() const { return m_partition; }
     const String& identifier() const { return m_identifier; }
+    const String& type() const { return m_type; }
 
     HashType hash() const { return m_hash; }
 
@@ -71,6 +72,7 @@ private:
     HashType computeHash() const;
 
     String m_partition;
+    String m_type;
     String m_identifier;
     String m_range;
     HashType m_hash;
