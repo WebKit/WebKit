@@ -46,7 +46,11 @@ ContextMenuContextData::ContextMenuContextData()
 }
 
 ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
+#if ENABLE(SERVICE_CONTROLS)
+    : m_type(context.controlledImage() ? Type::ServicesMenu : Type::ContextMenu)
+#else
     : m_type(Type::ContextMenu)
+#endif
     , m_menuLocation(menuLocation)
     , m_menuItems(menuItems)
     , m_webHitTestResultData(context.hitTestResult(), true)

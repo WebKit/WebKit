@@ -1,3 +1,18 @@
+2015-10-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix image service menus somewhat
+        https://bugs.webkit.org/show_bug.cgi?id=150265
+
+        Reviewed by Tim Horton.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        It's a service menu if we have a controlled image.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        Use an item provider.
+
 2015-10-19  Tim Horton  <timothy_horton@apple.com>
 
         Add magnify and rotate gesture event support for Mac
