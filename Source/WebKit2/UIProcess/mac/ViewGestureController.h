@@ -92,13 +92,15 @@ public:
 #if PLATFORM(MAC)
     double magnification() const;
 
-    void handleMagnificationGesture(double scale, WebCore::FloatPoint origin);
-    void endMagnificationGesture();
+    void handleMagnificationGestureEvent(NSEvent *, WebCore::FloatPoint origin);
+
+    bool hasActiveMagnificationGesture() const { return m_activeGestureType == ViewGestureType::Magnification; }
 
     void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
 
     bool handleScrollWheelEvent(NSEvent *);
     void wheelEventWasNotHandledByWebCore(NSEvent *event) { m_pendingSwipeTracker.eventWasNotHandledByWebCore(event); }
+    void gestureEventWasNotHandledByWebCore(NSEvent *, WebCore::FloatPoint origin);
 
     void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTF::move(views); }
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
@@ -181,6 +183,8 @@ private:
     // Message handlers.
     void didCollectGeometryForMagnificationGesture(WebCore::FloatRect visibleContentBounds, bool frameHandlesMagnificationGesture);
     void didCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool isReplacedElement, double viewportMinimumScale, double viewportMaximumScale);
+
+    void endMagnificationGesture();
 
     WebCore::FloatPoint scaledMagnificationOrigin(WebCore::FloatPoint origin, double scale);
 

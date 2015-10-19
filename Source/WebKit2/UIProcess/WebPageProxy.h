@@ -176,6 +176,7 @@ typedef GtkWidget* PlatformWidget;
 namespace WebKit {
 
 class CertificateInfo;
+class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
@@ -602,6 +603,10 @@ public:
     void handleMouseEvent(const NativeWebMouseEvent&);
     void handleWheelEvent(const NativeWebWheelEvent&);
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void handleGestureEvent(const NativeWebGestureEvent&);
+#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     void handleTouchEventSynchronously(const NativeWebTouchEvent&);
@@ -1629,6 +1634,9 @@ private:
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
     Deque<NativeWebWheelEvent> m_wheelEventQueue;
     Deque<std::unique_ptr<Vector<NativeWebWheelEvent>>> m_currentlyProcessedWheelEvents;
+#if ENABLE(MAC_GESTURE_EVENTS)
+    Deque<NativeWebGestureEvent> m_gestureEventQueue;
+#endif
 
     bool m_processingMouseMoveEvent;
     std::unique_ptr<NativeWebMouseEvent> m_nextMouseMoveEvent;

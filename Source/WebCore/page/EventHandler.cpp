@@ -117,6 +117,10 @@
 #include "PlatformTouchEvent.h"
 #endif
 
+#if ENABLE(MAC_GESTURE_EVENTS)
+#include "PlatformGestureEventMac.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -134,7 +138,7 @@ const int GeneralDragHysteresis = 3;
 const std::chrono::milliseconds longMousePressRecognitionDelay = std::chrono::milliseconds(500);
 const int maximumLongMousePressDragDistance = 5; // in points.
 
-#if ENABLE(IOS_GESTURE_EVENTS)
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
 const float GestureUnknown = 0;
 #endif
 
@@ -428,8 +432,10 @@ void EventHandler::clear()
     m_clickNode = nullptr;
 #if ENABLE(IOS_GESTURE_EVENTS)
     m_gestureInitialDiameter = GestureUnknown;
-    m_gestureLastDiameter = GestureUnknown;
     m_gestureInitialRotation = GestureUnknown;
+#endif
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
+    m_gestureLastDiameter = GestureUnknown;
     m_gestureLastRotation = GestureUnknown;
     m_gestureTargets.clear();
 #endif

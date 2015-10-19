@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventConversion_h
-#define WebEventConversion_h
-
-#include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PlatformWheelEvent.h>
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include <WebKitAdditions/PlatformTouchEventIOS.h>
-#elif ENABLE(TOUCH_EVENTS)
-#include <WebCore/PlatformTouchEvent.h>
-#include <WebCore/PlatformTouchPoint.h>
-#endif
+#include "config.h"
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-#include <WebKitAdditions/PlatformGestureEventMac.h>
+
+#include <WebKitAdditions/GestureEvent.cpp>
+
 #endif
-
-namespace WebKit {
-
-class WebMouseEvent;
-class WebWheelEvent;
-class WebKeyboardEvent;
-
-#if ENABLE(TOUCH_EVENTS)
-class WebTouchEvent;
-class WebTouchPoint;
-#endif
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-class WebGestureEvent;
-#endif
-
-WebCore::PlatformMouseEvent platform(const WebMouseEvent&);
-WebCore::PlatformWheelEvent platform(const WebWheelEvent&);
-WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent&);
-
-#if ENABLE(TOUCH_EVENTS)
-WebCore::PlatformTouchEvent platform(const WebTouchEvent&);
-#if !ENABLE(IOS_TOUCH_EVENTS)
-WebCore::PlatformTouchPoint platform(const WebTouchPoint&);
-#endif
-#endif
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
-#endif
-
-} // namespace WebKit
-
-#endif // WebEventConversion_h

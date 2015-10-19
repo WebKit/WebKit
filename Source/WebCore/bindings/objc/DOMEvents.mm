@@ -44,7 +44,7 @@
 #import "DOMTouchEvent.h"
 #endif
 
-#if ENABLE(IOS_GESTURE_EVENTS)
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
 #import "DOMGestureEvent.h"
 #endif
 
@@ -67,7 +67,7 @@ Class kitClass(WebCore::Event* impl)
         if (desiredInterface == WebCore::TouchEventInterfaceType) 
             return [DOMTouchEvent class];
 #endif
-#if ENABLE(IOS_GESTURE_EVENTS)
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
         if (desiredInterface == WebCore::GestureEventInterfaceType)
             return [DOMGestureEvent class];
 #endif

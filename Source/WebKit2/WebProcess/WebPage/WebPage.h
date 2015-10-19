@@ -96,6 +96,10 @@
 #include <WebCore/PlatformTouchEvent.h>
 #endif
 
+#if ENABLE(MAC_GESTURE_EVENTS)
+#include <WebKitAdditions/PlatformGestureEventMac.h>
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
 #include "InjectedBundlePageContextMenuClient.h"
 #endif
@@ -166,6 +170,7 @@ class WebImage;
 class WebInspector;
 class WebInspectorClient;
 class WebInspectorUI;
+class WebGestureEvent;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebNotificationClient;
@@ -793,6 +798,10 @@ public:
 
     void wheelEventHandlersChanged(bool);
     void recomputeShortCircuitHorizontalWheelEventsState();
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void gestureEvent(const WebGestureEvent&);
+#endif
 
     void updateVisibilityState(bool isInitialState = false);
 

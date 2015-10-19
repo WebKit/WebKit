@@ -54,6 +54,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "Logging.h"
+#include "NativeWebGestureEvent.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -1898,6 +1899,20 @@ bool WebPageProxy::shouldStartTrackingTouchEvents(const WebTouchEvent& touchStar
     return true;
 }
 
+#endif
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
+{
+    if (!isValid())
+        return;
+
+    m_gestureEventQueue.append(event);
+    // FIXME: Consider doing some coalescing here.
+    m_process->responsivenessTimer()->start();
+
+    m_process->send(Messages::EventDispatcher::GestureEvent(m_pageID, event), 0);
+}
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -4525,6 +4540,11 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::TouchEnd:
     case WebEvent::TouchCancel:
 #endif
+#if ENABLE(MAC_GESTURE_EVENTS)
+    case WebEvent::GestureStart:
+    case WebEvent::GestureChange:
+    case WebEvent::GestureEnd:
+#endif
         m_process->responsivenessTimer()->stop();
         break;
     }
@@ -4594,6 +4614,21 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
             m_uiClient->didNotHandleKeyEvent(this, event);
         break;
     }
+#if ENABLE(MAC_GESTURE_EVENTS)
+    case WebEvent::GestureStart:
+    case WebEvent::GestureChange:
+    case WebEvent::GestureEnd: {
+        MESSAGE_CHECK(!m_gestureEventQueue.isEmpty());
+        NativeWebGestureEvent event = m_gestureEventQueue.takeFirst();
+
+        MESSAGE_CHECK(type == event.type());
+
+        if (!handled)
+            m_pageClient.gestureEventWasNotHandledByWebCore(event);
+        break;
+    }
+        break;
+#endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     case WebEvent::TouchStart:
     case WebEvent::TouchMove:

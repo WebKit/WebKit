@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEventConversion_h
-#define WebEventConversion_h
-
-#include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PlatformWheelEvent.h>
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include <WebKitAdditions/PlatformTouchEventIOS.h>
-#elif ENABLE(TOUCH_EVENTS)
-#include <WebCore/PlatformTouchEvent.h>
-#include <WebCore/PlatformTouchPoint.h>
-#endif
+#import "config.h"
+#import "NativeWebGestureEvent.h"
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-#include <WebKitAdditions/PlatformGestureEventMac.h>
-#endif
+
+#import "WebEvent.h"
+#import "WebGestureEvent.h"
+#import <WebCore/IntPoint.h>
+#import <wtf/CurrentTime.h>
 
 namespace WebKit {
 
-class WebMouseEvent;
-class WebWheelEvent;
-class WebKeyboardEvent;
+static inline WebEvent::Type webEventTypeForNSEvent(NSEvent *event)
+{
+    switch (event.phase) {
+    case NSEventPhaseBegan:
+        return WebEvent::GestureStart;
+    case NSEventPhaseChanged:
+        return WebEvent::GestureChange;
+    case NSEventPhaseEnded:
+    case NSEventPhaseCancelled:
+        return WebEvent::GestureEnd;
+    default:
+        break;
+    }
+    return WebEvent::Type::NoType;
+}
 
-#if ENABLE(TOUCH_EVENTS)
-class WebTouchEvent;
-class WebTouchPoint;
-#endif
+static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
+{
+    NSPoint location = [event locationInWindow];
+    if (windowView)
+        location = [windowView convertPoint:location fromView:nil];
+    return location;
+}
 
-#if ENABLE(MAC_GESTURE_EVENTS)
-class WebGestureEvent;
-#endif
-
-WebCore::PlatformMouseEvent platform(const WebMouseEvent&);
-WebCore::PlatformWheelEvent platform(const WebWheelEvent&);
-WebCore::PlatformKeyboardEvent platform(const WebKeyboardEvent&);
-
-#if ENABLE(TOUCH_EVENTS)
-WebCore::PlatformTouchEvent platform(const WebTouchEvent&);
-#if !ENABLE(IOS_TOUCH_EVENTS)
-WebCore::PlatformTouchPoint platform(const WebTouchPoint&);
-#endif
-#endif
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-WebCore::PlatformGestureEvent platform(const WebGestureEvent&);
-#endif
+NativeWebGestureEvent::NativeWebGestureEvent(NSEvent *event, NSView *view)
+    : WebGestureEvent(
+        webEventTypeForNSEvent(event),
+        static_cast<Modifiers>(0),
+        event.timestamp,
+        WebCore::IntPoint(pointForEvent(event, view)),
+        event.type == NSEventTypeMagnify ? event.magnification : 0,
+        event.type == NSEventTypeRotate ? event.rotation : 0)
+    , m_nativeEvent(event)
+{
+}
 
 } // namespace WebKit
 
-#endif // WebEventConversion_h
+#endif // ENABLE(MAC_GESTURE_EVENTS)

@@ -745,19 +745,23 @@ PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
 endif
 endif
 
-ifeq ($(WTF_PLATFORM_IOS), 1)
 ADDITIONAL_BINDING_IDLS =
+ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_MAC_GESTURE_EVENTS)
+ADDITIONAL_BINDING_IDLS += GestureEvent.idl
+endif
 
+ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
+ADDITIONAL_BINDING_IDLS += GestureEvent.idl
+endif
+
+ifeq ($(WTF_PLATFORM_IOS), 1)
 ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 ADDITIONAL_BINDING_IDLS += \
     Touch.idl \
     TouchEvent.idl \
     TouchList.idl
 endif
-
-ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GESTURE_EVENTS)
-ADDITIONAL_BINDING_IDLS += GestureEvent.idl
-endif
+endif # IOS
 
 NON_SVG_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
@@ -767,8 +771,6 @@ vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
 
 $(ADDITIONAL_BINDING_IDLS) : % : WebKitAdditions/%
 	cp $< .
-
-endif
 
 endif # MACOS
 

@@ -138,11 +138,21 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
     UNUSED_PARAM(canRubberBandAtBottom);
 #endif
 
-    RefPtr<EventDispatcher> eventDispatcher(this);
+    RefPtr<EventDispatcher> eventDispatcher = this;
     RunLoop::main().dispatch([eventDispatcher, pageID, wheelEvent] {
         eventDispatcher->dispatchWheelEvent(pageID, wheelEvent);
     }); 
 }
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+void EventDispatcher::gestureEvent(uint64_t pageID, const WebKit::WebGestureEvent& gestureEvent)
+{
+    RefPtr<EventDispatcher> eventDispatcher = this;
+    RunLoop::main().dispatch([eventDispatcher, pageID, gestureEvent] {
+        eventDispatcher->dispatchGestureEvent(pageID, gestureEvent);
+    });
+}
+#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 void EventDispatcher::clearQueuedTouchEventsForPage(const WebPage& webPage)
@@ -181,7 +191,7 @@ void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& t
     }
 
     if (updateListWasEmpty) {
-        RefPtr<EventDispatcher> eventDispatcher(this);
+        RefPtr<EventDispatcher> eventDispatcher = this;
         RunLoop::main().dispatch([eventDispatcher] {
             eventDispatcher->dispatchTouchEvents();
         });
@@ -213,6 +223,19 @@ void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& w
 
     webPage->wheelEvent(wheelEvent);
 }
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+void EventDispatcher::dispatchGestureEvent(uint64_t pageID, const WebGestureEvent& gestureEvent)
+{
+    ASSERT(RunLoop::isMain());
+
+    WebPage* webPage = WebProcess::singleton().webPage(pageID);
+    if (!webPage)
+        return;
+
+    webPage->gestureEvent(gestureEvent);
+}
+#endif
 
 #if ENABLE(ASYNC_SCROLLING)
 void EventDispatcher::sendDidReceiveEvent(uint64_t pageID, const WebEvent& event, bool didHandleEvent)

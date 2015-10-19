@@ -1,3 +1,95 @@
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+        Add magnify and rotate gesture event support for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=150179
+        <rdar://problem/8036240>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        New feature flag.
+
+        * Shared/NativeWebGestureEvent.h: Added.
+        (WebKit::NativeWebGestureEvent::nativeEvent):
+        * Shared/WebEvent.h:
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        (WebKit::platform):
+        * Shared/WebEventConversion.h:
+        * Shared/mac/NativeWebGestureEventMac.mm: Added.
+        (WebKit::webEventTypeForNSEvent):
+        (WebKit::pointForEvent):
+        (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+        Add and plumb a new native event that wraps a NSEvent of type
+        NSEventTypeMagnify or NSEventTypeRotate (gesture events).
+
+        * Shared/mac/WebGestureEvent.cpp: Added.
+        (WebKit::WebGestureEvent::encode):
+        (WebKit::WebGestureEvent::decode):
+        (WebKit::WebGestureEvent::isGestureEventType):
+        * Shared/mac/WebGestureEvent.h: Added.
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        (WebKit::WebGestureEvent::position):
+        (WebKit::WebGestureEvent::gestureScale):
+        (WebKit::WebGestureEvent::gestureRotation):
+        Add IPC plumbing for WebGestureEvent, which becomes a WebCore::PlatformGestureEvent.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Remove unnecessary iPhone-only WKView code.
+        Add _gestureEventWasNotHandledByWebCore, SPI which can be overridden
+        to react when WebCore decides not to handle a gesture event.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView magnifyWithEvent:]):
+        Route magnification gesture events to the page, unless we're already
+        in an active view zoom gesture, in which case we'll bypass the page
+        and send the event straight to ViewGestureController.
+
+        (-[WKView rotateWithEvent:]):
+        Route rotation gesture events to the page.
+
+        (-[WKView _gestureEventWasNotHandledByWebCore:]):
+        Let ViewGestureController know that WebCore didn't handle a gesture event.
+        We always give WebCore the first crack at the event if we're not in a zoom,
+        because it could preventDefault() on the Begin phase event, and that should
+        prevent pinch-zoom from starting.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::gestureEventWasNotHandledByWebCore):
+        Plumb gestureEventWasNotHandledByWebCore back from WebPageProxy to WKView.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleGestureEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * UIProcess/WebPageProxy.h:
+        Forward gesture events to EventDispatcher, and let WKView know when WebCore
+        passes on handling them.
+        
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::hasActiveMagnificationGesture):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::gestureEventWasNotHandledByWebCore):
+        (WebKit::ViewGestureController::handleMagnificationGestureEvent):
+        Don't try to start a zoom with anything other than a Begin phase event.
+        Try to start a zoom with any events that WebCore doesn't handle.
+        Move dispatch of endMagnificationGesture into ViewGestureController;
+        there is no reason for that to be in WKView anymore.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::gestureEvent):
+        (WebKit::EventDispatcher::dispatchGestureEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleGestureEvent):
+        (WebKit::WebPage::gestureEvent):
+        * WebProcess/WebPage/WebPage.h:
+        Dispatch to the main thread and hand off the gesture event to WebCore,
+        asynchronously informing the UI process of whether the event was handled or not.
+
 2015-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] ASSERTION FAILED: parent in WebInspectorProxy::platformDetach()

@@ -58,6 +58,13 @@ public:
         TouchEnd,
         TouchCancel,
 #endif
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+        // PlatformGestureEvent
+        GestureStart,
+        GestureChange,
+        GestureEnd,
+#endif
     };
 
     enum Modifiers : uint8_t {

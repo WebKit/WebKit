@@ -42,6 +42,7 @@
 #import "EditorState.h"
 #import "LayerTreeContext.h"
 #import "Logging.h"
+#import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
@@ -4578,6 +4579,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (void)magnifyWithEvent:(NSEvent *)event
 {
     if (!_data->_allowsMagnification) {
+#if ENABLE(MAC_GESTURE_EVENTS)
+        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
+        _data->_page->handleGestureEvent(webEvent);
+#endif
         [super magnifyWithEvent:event];
         return;
     }
@@ -4586,10 +4591,33 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [self _ensureGestureController];
 
-    _data->_gestureController->handleMagnificationGesture(event.magnification, [self convertPoint:event.locationInWindow fromView:nil]);
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (_data->_gestureController->hasActiveMagnificationGesture()) {
+        _data->_gestureController->handleMagnificationGestureEvent(event, [self convertPoint:event.locationInWindow fromView:nil]);
+        return;
+    }
 
-    if (event.phase == NSEventPhaseEnded || event.phase == NSEventPhaseCancelled)
-        _data->_gestureController->endMagnificationGesture();
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
+    _data->_page->handleGestureEvent(webEvent);
+#else
+    _data->_gestureController->handleMagnificationGestureEvent(event, [self convertPoint:event.locationInWindow fromView:nil]);
+#endif
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+- (void)rotateWithEvent:(NSEvent *)event
+{
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
+    _data->_page->handleGestureEvent(webEvent);
+}
+#endif
+
+- (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event
+{
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (_data->_gestureController)
+        _data->_gestureController->gestureEventWasNotHandledByWebCore(event, [self convertPoint:event.locationInWindow fromView:nil]);
+#endif
 }
 
 - (void)smartMagnifyWithEvent:(NSEvent *)event

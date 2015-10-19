@@ -40,7 +40,10 @@
 #include "WheelEventDeltaFilter.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS)
@@ -53,15 +56,6 @@ OBJC_CLASS WAKView;
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSView;
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-#include <wtf/HashMap.h>
-#endif
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 #endif
 
 namespace WebCore {
@@ -83,6 +77,7 @@ class KeyboardEvent;
 class MouseEventWithHitTestResults;
 class Node;
 class OptionalCursor;
+class PlatformGestureEvent;
 class PlatformKeyboardEvent;
 class PlatformTouchEvent;
 class PlatformWheelEvent;
@@ -108,7 +103,7 @@ extern const int TextDragHysteresis;
 extern const int GeneralDragHysteresis;
 #endif // ENABLE(DRAG_SUPPORT)
 
-#if ENABLE(IOS_GESTURE_EVENTS)
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
 extern const float GestureUnknown;
 extern const unsigned InvalidTouchIdentifier;
 #endif
@@ -216,6 +211,9 @@ public:
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
     typedef Vector<RefPtr<Touch>> TouchArray;
     typedef HashMap<EventTarget*, TouchArray*> EventTargetTouchMap;
+#endif
+
+#if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
     typedef HashSet<RefPtr<EventTarget>> EventTargetSet;
 #endif
 
@@ -226,6 +224,9 @@ public:
 
 #if ENABLE(IOS_GESTURE_EVENTS)
     bool dispatchGestureEvent(const PlatformTouchEvent&, const AtomicString&, const EventTargetSet&, float, float);
+#elif ENABLE(MAC_GESTURE_EVENTS)
+    bool dispatchGestureEvent(const PlatformGestureEvent&, const AtomicString&, const EventTargetSet&, float, float);
+    WEBCORE_EXPORT bool handleGestureEvent(const PlatformGestureEvent&);
 #endif
 
 #if PLATFORM(IOS)
@@ -523,9 +524,14 @@ private:
 #if ENABLE(IOS_GESTURE_EVENTS)
     float m_gestureInitialDiameter { GestureUnknown };
     float m_gestureInitialRotation { GestureUnknown };
+#endif
+#if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
     float m_gestureLastDiameter { GestureUnknown };
     float m_gestureLastRotation { GestureUnknown };
     EventTargetSet m_gestureTargets;
+#endif
+#if ENABLE(MAC_GESTURE_EVENTS)
+    bool m_hasActiveGesture { false };
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)

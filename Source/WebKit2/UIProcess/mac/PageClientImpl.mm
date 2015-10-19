@@ -32,6 +32,7 @@
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DownloadProxy.h"
+#import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
@@ -572,6 +573,13 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
 {
     [m_wkView _wheelEventWasNotHandledByWebCore:event.nativeEvent()];
 }
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+void PageClientImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent& event)
+{
+    [m_wkView _gestureEventWasNotHandledByWebCore:event.nativeEvent()];
+}
+#endif
 
 void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
 {

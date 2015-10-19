@@ -78,6 +78,12 @@ public:
         TouchEnd,
         TouchCancel,
 #endif
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+        GestureStart,
+        GestureChange,
+        GestureEnd,
+#endif
     };
 
     enum Modifiers {

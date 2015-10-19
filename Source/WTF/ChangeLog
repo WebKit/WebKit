@@ -1,3 +1,14 @@
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+        Add magnify and rotate gesture event support for Mac
+        https://bugs.webkit.org/show_bug.cgi?id=150179
+        <rdar://problem/8036240>
+
+        Reviewed by Darin Adler.
+
+        * wtf/FeatureDefines.h:
+        New feature flag.
+
 2015-10-17  Mark Lam  <mark.lam@apple.com>
 
         Add CPU(X86) to the supported MASM_PROBE CPUs. This was accidentally left out in r191197.
