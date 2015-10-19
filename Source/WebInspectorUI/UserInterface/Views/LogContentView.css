@@ -199,13 +199,10 @@
     background-color: hsla(53, 83%, 53%, 0.75);
 }
 
-/* @media reader currently blocked by: http://webkit.org/b/118096 */
-@media reader {
-    .console-user-command::before,
-    .console-messages:focus .console-item.selected .console-user-command::before,
-    .console-user-command-result.console-log-level::before,
-    .console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {
-        /* accessible label alternative for icon indicating console input/output/warning/error, etc. */
-        content: attr(data-labelprefix);
-    }
+.console-user-command::before,
+.console-messages:focus .console-item.selected .console-user-command::before,
+.console-user-command-result.console-log-level::before,
+.console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {
+        /* Accessible label alternative for icon indicating console input/output/warning/error, etc. */
+        alt: attr(data-labelprefix);
 }

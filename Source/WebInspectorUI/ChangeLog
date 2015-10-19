@@ -1,3 +1,17 @@
+2015-10-19  James Craig  <jcraig@apple.com>
+
+        Web Inspector: AX: console list 'input'/'output' markers are not perceivable
+        https://bugs.webkit.org/show_bug.cgi?id=133045
+
+        Enabling WebKit Web Inspector console pseudo-element labels using the new CSS4 'alt' property.
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LogContentView.css: 
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected):
+        (.console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before):
+        (@media reader): Deleted.
+
 2015-10-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Console Search should update when console is cleared
