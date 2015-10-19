@@ -381,6 +381,11 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._displayedContentView.filterDidChange();
     }
 
+    shouldFilterPopulate()
+    {
+        return false;
+    }
+
     hasCustomFilters()
     {
         return true;
