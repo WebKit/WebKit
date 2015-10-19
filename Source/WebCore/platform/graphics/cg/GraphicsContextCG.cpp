@@ -107,7 +107,7 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 void GraphicsContext::resetPlatformCTM()
 {
     m_state.ctm = CGContextGetCTM(platformContext());
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) || PLATFORM(IOS)
     m_state.userToDeviceSpaceCTM = static_cast<AffineTransform>(CGContextGetUserSpaceToDeviceSpaceTransform(platformContext())) * m_state.ctm.inverse();
 #else
     m_state.userToDeviceSpaceCTM = CGContextGetDefaultUserSpaceToDeviceSpaceTransform(platformContext());
