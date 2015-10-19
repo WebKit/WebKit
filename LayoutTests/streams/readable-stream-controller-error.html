@@ -2,6 +2,8 @@
 <script src='../resources/testharness.js'></script>
 <script src='../resources/testharnessreport.js'></script>
 <script>
+// This is updated till https://github.com/whatwg/streams/commit/ec5ffa036308d9f6350d2946560d48cdbf090939
+
 var test1 = async_test('Erroring a ReadableStream after checking closed should reject ReadableStreamReader closed promise');
 test1.step(function() {
     var controller;
@@ -35,7 +37,7 @@ test2.step(function() {
     controller.error(rsError);
 
     // Let's call getReader twice to ensure that stream is not locked to a reader.
-    rs.getReader();
+    rs.getReader().releaseLock();
     rs.getReader().closed.then(test2.step_func(function() {
         assert_unreached("closed promise should not be resolved when stream is errored");
     }), test2.step_func(function(err) {
