@@ -58,6 +58,8 @@ private:
     Length m_height;
 };
 
+TextStream& operator<<(TextStream&, const LengthSize&);
+
 } // namespace WebCore
 
 #endif // LengthSize_h

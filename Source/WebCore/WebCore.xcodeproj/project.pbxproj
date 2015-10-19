@@ -580,6 +580,8 @@
 		0FEA3E84191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E82191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEA3E87191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA3E85191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.cpp */; };
 		0FEA3E88191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA3E86191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEF20CE1BD4A24100128E5D /* LengthSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF20CD1BD4A24100128E5D /* LengthSize.cpp */; };
+		0FEF20D01BD4A64F00128E5D /* RenderStyleConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF20CF1BD4A64F00128E5D /* RenderStyleConstants.cpp */; };
 		0FF5025B102BA9010066F39A /* DOMStyleMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50259102BA9010066F39A /* DOMStyleMedia.h */; };
 		0FF5025C102BA9010066F39A /* DOMStyleMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FF5025A102BA9010066F39A /* DOMStyleMedia.mm */; };
 		0FF50263102BA92C0066F39A /* DOMStyleMediaInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF50262102BA92B0066F39A /* DOMStyleMediaInternal.h */; };
@@ -7827,6 +7829,8 @@
 		0FEA3E82191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingStateOverflowScrollingNode.h; sourceTree = "<group>"; };
 		0FEA3E85191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNode.cpp; sourceTree = "<group>"; };
 		0FEA3E86191B3BD7000F1B55 /* ScrollingTreeFrameScrollingNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNode.h; sourceTree = "<group>"; };
+		0FEF20CD1BD4A24100128E5D /* LengthSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LengthSize.cpp; sourceTree = "<group>"; };
+		0FEF20CF1BD4A64F00128E5D /* RenderStyleConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderStyleConstants.cpp; sourceTree = "<group>"; };
 		0FF50259102BA9010066F39A /* DOMStyleMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStyleMedia.h; sourceTree = "<group>"; };
 		0FF5025A102BA9010066F39A /* DOMStyleMedia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMStyleMedia.mm; sourceTree = "<group>"; };
 		0FF50262102BA92B0066F39A /* DOMStyleMediaInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStyleMediaInternal.h; sourceTree = "<group>"; };
@@ -22056,6 +22060,7 @@
 				5A574F27131DB96D00471B88 /* QuotesData.h */,
 				BC8C8FAB0DDCD31B00B592F4 /* RenderStyle.cpp */,
 				BC8C8FAC0DDCD31B00B592F4 /* RenderStyle.h */,
+				0FEF20CF1BD4A64F00128E5D /* RenderStyleConstants.cpp */,
 				BC5EB6670E81CB7100B25965 /* RenderStyleConstants.h */,
 				BC5EB8C10E82031B00B25965 /* ShadowData.cpp */,
 				BC5EB8C20E82031B00B25965 /* ShadowData.h */,
@@ -22398,6 +22403,7 @@
 				BCE65BE80EACDF16007E4533 /* Length.cpp */,
 				BCE65BE90EACDF16007E4533 /* Length.h */,
 				BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */,
+				0FEF20CD1BD4A24100128E5D /* LengthSize.cpp */,
 				BCFF64900EAD15C200C1D6F7 /* LengthSize.h */,
 				A7AD2F850EC89D07008AB002 /* LinkHash.cpp */,
 				A7AD2F860EC89D07008AB002 /* LinkHash.h */,
@@ -29733,6 +29739,7 @@
 				0705853317FDE6D9005F2BCB /* JSMediaTrackConstraints.cpp in Sources */,
 				0705853517FDE6D9005F2BCB /* JSMediaTrackConstraintSet.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
+				0FEF20CE1BD4A24100128E5D /* LengthSize.cpp in Sources */,
 				E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */,
 				75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */,
 				410B7E721045FAB000D8224F /* JSMessageEventCustom.cpp in Sources */,
@@ -30475,6 +30482,7 @@
 				D302754912A5FE84004BD828 /* RenderDetailsMarker.cpp in Sources */,
 				9B32CDAA13DF7FA900F34D13 /* RenderedPosition.cpp in Sources */,
 				E43A023D17EB3713004CDD25 /* RenderElement.cpp in Sources */,
+				0FEF20D01BD4A64F00128E5D /* RenderStyleConstants.cpp in Sources */,
 				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,

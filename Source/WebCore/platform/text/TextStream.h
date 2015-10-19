@@ -37,6 +37,7 @@ class LayoutPoint;
 class LayoutRect;
 class LayoutUnit;
 
+// FIXME: this should move to platform/
 class TextStream {
 public:
     struct FormatNumberRespectingIntegers {

@@ -47,7 +47,8 @@ static const char* const compositeOperatorNames[] = {
     "destination-atop",
     "xor",
     "darker",
-    "lighter"
+    "lighter",
+    "difference"
 };
 
 static const char* const blendOperatorNames[] = {
@@ -77,7 +78,7 @@ bool parseBlendMode(const String& s, BlendMode& blendMode)
 {
     for (int i = 0; i < numBlendOperatorNames; i++) {
         if (s == blendOperatorNames[i]) {
-            blendMode = static_cast<BlendMode>(i+1);
+            blendMode = static_cast<BlendMode>(i + BlendModeNormal);
             return true;
         }
     }
@@ -110,11 +111,18 @@ String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
 {
     ASSERT(op >= 0);
     ASSERT(op < numCompositeOperatorNames);
-    ASSERT(blendOp >= 0);
-    ASSERT(blendOp <= numBlendOperatorNames);
-    if (blendOp != BlendModeNormal)
-        return blendOperatorNames[blendOp-1];
+    ASSERT(blendOp >= BlendModeNormal);
+    ASSERT(blendOp < numBlendOperatorNames);
+    if (blendOp > BlendModeNormal)
+        return blendOperatorNames[blendOp - BlendModeNormal];
     return compositeOperatorNames[op];
+}
+
+static String blendModeName(BlendMode blendOp)
+{
+    ASSERT(blendOp >= BlendModeNormal);
+    ASSERT(blendOp <= BlendModePlusLighter);
+    return blendOperatorNames[blendOp - BlendModeNormal];
 }
 
 bool parseLineCap(const String& s, LineCap& cap)
@@ -237,29 +245,14 @@ bool parseTextBaseline(const String& s, TextBaseline& baseline)
     return false;
 }
 
+TextStream& operator<<(TextStream& ts, CompositeOperator op)
+{
+    return ts << compositeOperatorName(op, BlendModeNormal);
+}
+
 TextStream& operator<<(TextStream& ts, BlendMode blendMode)
 {
-    switch (blendMode) {
-    case BlendModeNormal: ts << "normal"; break;
-    case BlendModeMultiply: ts << "multiply"; break;
-    case BlendModeScreen: ts << "screen"; break;
-    case BlendModeOverlay: ts << "overlay"; break;
-    case BlendModeDarken: ts << "darken"; break;
-    case BlendModeLighten: ts << "lighten"; break;
-    case BlendModeColorDodge: ts << "color-dodge"; break;
-    case BlendModeColorBurn: ts << "color-burn"; break;
-    case BlendModeHardLight: ts << "hard-light"; break;
-    case BlendModeSoftLight: ts << "soft-light"; break;
-    case BlendModeDifference: ts << "difference"; break;
-    case BlendModeExclusion: ts << "exclusion"; break;
-    case BlendModeHue: ts << "hue"; break;
-    case BlendModeSaturation: ts << "saturation"; break;
-    case BlendModeColor: ts << "color"; break;
-    case BlendModeLuminosity: ts << "luminosity"; break;
-    case BlendModePlusDarker: ts << "plus-darker"; break;
-    case BlendModePlusLighter: ts << "plus-lighter"; break;
-    }
-    return ts;
+    return ts << blendModeName(blendMode);
 }
 
 TextStream& operator<<(TextStream& ts, WindRule rule)

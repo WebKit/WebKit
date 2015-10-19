@@ -109,6 +109,7 @@ bool parseTextBaseline(const String&, TextBaseline&);
 
 class TextStream;
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, BlendMode);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, CompositeOperator);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, WindRule);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, LineCap);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, LineJoin);

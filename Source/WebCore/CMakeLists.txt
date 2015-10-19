@@ -2110,6 +2110,7 @@ set(WebCore_SOURCES
     platform/KillRingNone.cpp
     platform/Language.cpp
     platform/Length.cpp
+    platform/LengthSize.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
     platform/MIMETypeRegistry.cpp
@@ -2534,6 +2535,7 @@ set(WebCore_SOURCES
     rendering/style/NinePieceImage.cpp
     rendering/style/QuotesData.cpp
     rendering/style/RenderStyle.cpp
+    rendering/style/RenderStyleConstants.cpp
     rendering/style/SVGRenderStyle.cpp
     rendering/style/SVGRenderStyleDefs.cpp
     rendering/style/ShadowData.cpp

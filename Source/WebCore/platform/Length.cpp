@@ -26,6 +26,7 @@
 #include "Length.h"
 
 #include "CalculationValue.h"
+#include "TextStream.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -300,5 +301,55 @@ struct SameSizeAsLength {
     int32_t metaData;
 };
 COMPILE_ASSERT(sizeof(Length) == sizeof(SameSizeAsLength), length_should_stay_small);
+
+static TextStream& operator<<(TextStream& ts, LengthType type)
+{
+    switch (type) {
+    case Auto: ts << "auto"; break;
+    case Relative: ts << "relative"; break;
+    case Percent: ts << "percent"; break;
+    case Fixed: ts << "fixed"; break;
+    case Intrinsic: ts << "intrinsic"; break;
+    case MinIntrinsic: ts << "min-intrinsic"; break;
+    case MinContent: ts << "min-content"; break;
+    case MaxContent: ts << "max-content"; break;
+    case FillAvailable: ts << "fill-available"; break;
+    case FitContent: ts << "fit-content"; break;
+    case Calculated: ts << "calc"; break;
+    case Undefined: ts << "undefined"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, Length length)
+{
+    switch (length.type()) {
+    case Auto:
+    case Undefined:
+        ts << length.type();
+        break;
+    case Relative:
+    case Fixed:
+    case Intrinsic:
+    case MinIntrinsic:
+    case MinContent:
+    case MaxContent:
+    case FillAvailable:
+    case FitContent:
+        ts << length.type() << " " << TextStream::FormatNumberRespectingIntegers(length.value());
+        break;
+    case Percent:
+        ts << TextStream::FormatNumberRespectingIntegers(length.percent()) << "%";
+        break;
+    case Calculated:
+        // FIXME: dump CalculationValue.
+        break;
+    }
+    
+    if (length.hasQuirk())
+        ts << " has-quirk";
+
+    return ts;
+}
 
 } // namespace WebCore

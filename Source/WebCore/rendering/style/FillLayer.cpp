@@ -22,6 +22,7 @@
 #include "config.h"
 #include "FillLayer.h"
 
+#include "TextStream.h"
 #include <wtf/PointerComparison.h>
 
 namespace WebCore {
@@ -393,6 +394,43 @@ bool FillLayer::imagesIdentical(const FillLayer* layer1, const FillLayer* layer2
     }
 
     return !layer1 && !layer2;
+}
+
+TextStream& operator<<(TextStream& ts, FillSize fillSize)
+{
+    return ts << fillSize.type << " " << fillSize.size;
+}
+
+TextStream& operator<<(TextStream& ts, const FillLayer& layer)
+{
+    TextStream::GroupScope scope(ts);
+    ts << "fill-layer";
+
+    ts.startGroup();
+    ts << "position " << layer.xPosition() << " " << layer.yPosition();
+    ts.endGroup();
+
+    ts.dumpProperty("size", layer.size());
+
+    ts.startGroup();
+    ts << "background-origin " << layer.backgroundXOrigin() << " " << layer.backgroundYOrigin();
+    ts.endGroup();
+
+    ts.startGroup();
+    ts << "repeat " << layer.repeatX() << " " << layer.repeatY();
+    ts.endGroup();
+
+    ts.dumpProperty("clip", layer.clip());
+    ts.dumpProperty("origin", layer.origin());
+
+    ts.dumpProperty("composite", layer.composite());
+    ts.dumpProperty("blend-mode", layer.blendMode());
+    ts.dumpProperty("mask-type", layer.maskSourceType());
+
+    if (layer.next())
+        ts << *layer.next();
+
+    return ts;
 }
 
 } // namespace WebCore

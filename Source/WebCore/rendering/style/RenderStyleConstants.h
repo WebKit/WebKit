@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class TextStream;
+
 static const size_t PrintColorAdjustBits = 1;
 enum PrintColorAdjust {
     PrintColorAdjustEconomy,
@@ -655,6 +657,13 @@ enum class TrailingWord {
     PartiallyBalanced
 };
 #endif
+
+TextStream& operator<<(TextStream&, EFillSizeType);
+TextStream& operator<<(TextStream&, EFillAttachment);
+TextStream& operator<<(TextStream&, EFillBox);
+TextStream& operator<<(TextStream&, EFillRepeat);
+TextStream& operator<<(TextStream&, EMaskSourceType);
+TextStream& operator<<(TextStream&, BackgroundEdgeOrigin);
 
 } // namespace WebCore
 
