@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC)
 
-#import "WKViewInternal.h"
 #import "WebPageProxy.h"
+#import "WebViewImpl.h"
 #import <WebCore/MachSendRight.h>
 #import <WebCore/QuartzCoreSPI.h>
 
@@ -50,23 +50,23 @@ using namespace WebKit;
 
 @implementation WKViewLayoutStrategy
 
-+ (instancetype)layoutStrategyWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
++ (instancetype)layoutStrategyWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     WKViewLayoutStrategy *strategy;
 
     switch (mode) {
     case kWKLayoutModeFixedSize:
-        strategy = [[WKViewFixedSizeLayoutStrategy alloc] initWithPage:page view:wkView mode:mode];
+        strategy = [[WKViewFixedSizeLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
         break;
     case kWKLayoutModeDynamicSizeComputedFromViewScale:
-        strategy = [[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy alloc] initWithPage:page view:wkView mode:mode];
+        strategy = [[WKViewDynamicSizeComputedFromViewScaleLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
         break;
     case kWKLayoutModeDynamicSizeComputedFromMinimumDocumentSize:
-        strategy = [[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy alloc] initWithPage:page view:wkView mode:mode];
+        strategy = [[WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
         break;
     case kWKLayoutModeViewSize:
     default:
-        strategy = [[WKViewViewSizeLayoutStrategy alloc] initWithPage:page view:wkView mode:mode];
+        strategy = [[WKViewViewSizeLayoutStrategy alloc] initWithPage:page view:view viewImpl:webViewImpl mode:mode];
         break;
     }
 
@@ -75,7 +75,7 @@ using namespace WebKit;
     return [strategy autorelease];
 }
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
     self = [super init];
 
@@ -83,16 +83,18 @@ using namespace WebKit;
         return nil;
 
     _page = &page;
-    _wkView = wkView;
+    _webViewImpl = &webViewImpl;
+    _view = view;
     _layoutMode = mode;
 
     return self;
 }
 
-- (void)willDestroyView:(WKView *)view
+- (void)invalidate
 {
     _page = nullptr;
-    _wkView = nil;
+    _webViewImpl = nullptr;
+    _view = nil;
 }
 
 - (WKLayoutMode)layoutMode
@@ -140,9 +142,9 @@ using namespace WebKit;
     if ([self frameSizeUpdatesDisabled])
         return;
 
-    if (_wkView.shouldClipToVisibleRect)
-        [_wkView _updateViewExposedRect];
-    [_wkView _setDrawingAreaSize:_wkView.frame.size];
+    if (_webViewImpl->clipsToVisibleRect())
+        _webViewImpl->updateViewExposedRect();
+    _webViewImpl->setDrawingAreaSize(NSSizeToCGSize(_view.frame.size));
 }
 
 - (void)willChangeLayoutStrategy
@@ -153,9 +155,9 @@ using namespace WebKit;
 
 @implementation WKViewViewSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:wkView mode:mode];
+    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
     if (!self)
         return nil;
@@ -173,9 +175,9 @@ using namespace WebKit;
 
 @implementation WKViewFixedSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:wkView mode:mode];
+    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
     if (!self)
         return nil;
@@ -193,9 +195,9 @@ using namespace WebKit;
 
 @implementation WKViewDynamicSizeComputedFromViewScaleLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:wkView mode:mode];
+    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
     if (!self)
         return nil;
@@ -208,7 +210,7 @@ using namespace WebKit;
 - (void)updateLayout
 {
     CGFloat inverseScale = 1 / _page->viewScaleFactor();
-    [_wkView _setFixedLayoutSize:CGSizeMake(_wkView.frame.size.width * inverseScale, _wkView.frame.size.height * inverseScale)];
+    _webViewImpl->setFixedLayoutSize(CGSizeMake(_view.frame.size.width * inverseScale, _view.frame.size.height * inverseScale));
 }
 
 - (void)didChangeViewScale
@@ -222,7 +224,7 @@ using namespace WebKit;
 {
     [super didChangeFrameSize];
 
-    if ([_wkView frameSizeUpdatesDisabled])
+    if (self.frameSizeUpdatesDisabled)
         return;
 
     [self updateLayout];
@@ -232,9 +234,9 @@ using namespace WebKit;
 
 @implementation WKViewDynamicSizeComputedFromMinimumDocumentSizeLayoutStrategy
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode
+- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode
 {
-    self = [super initWithPage:page view:wkView mode:mode];
+    self = [super initWithPage:page view:view viewImpl:webViewImpl mode:mode];
 
     if (!self)
         return nil;
