@@ -172,6 +172,20 @@
 }
 #endif
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (unsigned short)builtinAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return TestSupplemental::builtinAttribute(IMPL);
+}
+
+- (void)setBuiltinAttribute:(unsigned short)newBuiltinAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    TestSupplemental::setBuiltinAttribute(IMPL, newBuiltinAttribute);
+}
+#endif
+
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 - (void)implementsMethod1
@@ -254,6 +268,16 @@
 {
     WebCore::JSMainThreadNullState state;
     TestSupplemental::supplementalMethod4(IMPL);
+}
+
+#endif
+
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+- (void)builtinFunction
+{
+    WebCore::JSMainThreadNullState state;
+    TestSupplemental::builtinFunction(IMPL);
 }
 
 #endif

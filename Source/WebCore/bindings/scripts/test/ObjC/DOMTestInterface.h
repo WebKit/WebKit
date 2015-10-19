@@ -44,4 +44,5 @@ WEBCORE_EXPORT @interface DOMTestInterface : DOMObject
 @property (copy) NSString *supplementalStr2;
 @property (copy) NSString *supplementalStr3;
 @property (strong) DOMNode *supplementalNode;
+@property unsigned short builtinAttribute;
 @end

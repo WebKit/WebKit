@@ -11,6 +11,7 @@
 # Copyright (C) 2012 Ericsson AB. All rights reserved.
 # Copyright (C) 2007, 2008, 2009, 2012 Google Inc.
 # Copyright (C) 2013 Samsung Electronics. All rights reserved.
+# Copyright (C) 2015 Canon Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -571,7 +572,7 @@ sub GetAttributeGetterName
         return $codeGenerator->WK_lcfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst($attribute->signature->name);
     }
     if ($attribute->signature->extendedAttributes->{"JSBuiltin"}) {
-        return GetJSBuiltinFunctionName($className, $attribute->signature->name);
+        return GetJSBuiltinFunctionName($className, $attribute);
     }
     return "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
 }
@@ -583,28 +584,17 @@ sub GetAttributeSetterName
         return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . $codeGenerator->WK_ucfirst($attribute->signature->name);
     }
     if ($attribute->signature->extendedAttributes->{"JSBuiltin"}) {
-        return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute->signature->name));
+        return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute));
     }
     return "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
-}
-
-sub GetJSBuiltinFunctionName
-{
-    my ($className, $functionName) = @_;
-    return $codeGenerator->WK_lcfirst(substr $className, 2) . $codeGenerator->WK_ucfirst($functionName) . "CodeGenerator";
 }
 
 sub GetFunctionName
 {
     my ($className, $function) = @_;
 
-    my $scopeName = $function->signature->extendedAttributes->{"ImplementedBy"};
-    if (!$scopeName) {
-        $scopeName = substr $className, 2;
-    }
-
     if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
-        return GetJSBuiltinFunctionName($className, $function->signature->name);
+        return GetJSBuiltinFunctionName($className, $function);
     }
 
     my $kind = $function->isStatic ? "Constructor" : "Prototype";
@@ -4952,7 +4942,7 @@ sub GenerateConstructorHelperMethods
     if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
         push(@$outputArray, "template<> FunctionExecutable* ${constructorClassName}::initializeExecutable(VM& vm)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return " . GetJSBuiltinFunctionName($className, "initialize" . $interfaceName) . "(vm);\n");
+        push(@$outputArray, "    return " . GetJSBuiltinFunctionNameFromString($interfaceName, "initialize" . $interfaceName) . "(vm);\n");
         push(@$outputArray, "}\n");
         push(@$outputArray, "\n");
     }
@@ -5031,25 +5021,45 @@ sub ComputeFunctionSpecial
     return (@specials > 0) ? join(" | ", @specials) : "0";
 }
 
+sub GetJSBuiltinFunctionName
+{
+    my ($className, $function) = @_;
+    my $scopeName = $function->signature->extendedAttributes->{"ImplementedBy"};
+    $scopeName = substr $className, 2 unless $scopeName;
+    return GetJSBuiltinFunctionNameFromString($scopeName, $function->signature->name);
+}
+
+sub GetJSBuiltinFunctionNameFromString
+{
+    my ($scopeName, $functionName) = @_;
+    return $codeGenerator->WK_lcfirst($scopeName) . $codeGenerator->WK_ucfirst($functionName) . "CodeGenerator";
+}
+
+sub GetJSBuiltinScopeName
+{
+    my $interface = shift;
+    my $object = shift;
+
+    return $object->signature->extendedAttributes->{"ImplementedBy"} if $object->signature->extendedAttributes->{"ImplementedBy"};
+    return $interface->name;
+}
+
 sub AddJSBuiltinIncludesIfNeeded()
 {
     my $interface = shift;
 
-    my $include = $interface->name . "Builtins.h";
-
     if ($interface->extendedAttributes->{"JSBuiltinConstructor"}) {
-        AddToImplIncludes($include);
+        AddToImplIncludes($interface->name . "Builtins.h");
         return;
     }
 
     foreach my $function (@{$interface->functions}) {
-        AddToImplIncludes($include, $function->signature->extendedAttributes->{"Conditional"}) if $function->signature->extendedAttributes->{"JSBuiltin"};
+        AddToImplIncludes(GetJSBuiltinScopeName($interface, $function) . "Builtins.h", $function->signature->extendedAttributes->{"Conditional"}) if $function->signature->extendedAttributes->{"JSBuiltin"};
     }
 
     foreach my $attribute (@{$interface->attributes}) {
-        AddToImplIncludes($include, $attribute->signature->extendedAttributes->{"Conditional"}) if $attribute->signature->extendedAttributes->{"JSBuiltin"};
+        AddToImplIncludes(GetJSBuiltinScopeName($interface, $attribute) . "Builtins.h", $attribute->signature->extendedAttributes->{"Conditional"}) if $attribute->signature->extendedAttributes->{"JSBuiltin"};
     }
-
 }
 
 1;

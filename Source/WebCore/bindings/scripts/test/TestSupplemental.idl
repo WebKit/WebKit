@@ -45,4 +45,7 @@
 
     const unsigned short SUPPLEMENTALCONSTANT1 = 1;
     [Reflect=CONST_IMPL] const unsigned short SUPPLEMENTALCONSTANT2 = 2;
+
+    [JSBuiltin] void builtinFunction();
+    [JSBuiltin, ReadOnly] attribute unsigned short builtinAttribute;
 };

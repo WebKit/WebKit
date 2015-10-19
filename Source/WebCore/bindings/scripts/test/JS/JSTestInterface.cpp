@@ -32,6 +32,10 @@
 #include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+#include "TestSupplementalBuiltins.h"
+#endif
+
 #if ENABLE(Condition11) || ENABLE(Condition12) || ENABLE(Condition22) || ENABLE(Condition23)
 #include "JSNode.h"
 #include "JSTestObj.h"
@@ -319,6 +323,11 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "builtinAttribute", Accessor | Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testSupplementalBuiltinAttributeCodeGenerator), (intptr_t) (setTestSupplementalBuiltinAttributeCodeGenerator) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     { "IMPLEMENTSCONSTANT1", DontDelete | ReadOnly | ConstantInteger, NoIntrinsic, { (long long)(1) } },
 #else
@@ -366,6 +375,11 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalMethod3", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestInterfacePrototypeFunctionSupplementalMethod3), (intptr_t) (0) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "builtinFunction", JSC::Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testSupplementalBuiltinFunctionCodeGenerator), (intptr_t) (0) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
