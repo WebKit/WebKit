@@ -1,3 +1,10 @@
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+        Try again to fix the 32-bit build.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
 2015-10-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Extend fast-clicking behavior to trigger on elements that have negligible zoom

@@ -261,12 +261,12 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
         auto cgImage = image->makeCGImage();
         auto nsImage = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:image->size()]);
 
-        RetainPtr<NSItemProvider> itemProvider;
 #ifdef __LP64__
-        itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:[nsImage TIFFRepresentation] typeIdentifier:(__bridge NSString *)kUTTypeTIFF]);
-#endif
-
+        auto itemProvider = adoptNS([[NSItemProvider alloc] initWithItem:[nsImage TIFFRepresentation] typeIdentifier:(__bridge NSString *)kUTTypeTIFF]);
         items = @[ itemProvider.get() ];
+#else
+        items = @[ ];
+#endif
     } else if (!context.controlledSelectionData().isEmpty()) {
         RetainPtr<NSData> selectionData = adoptNS([[NSData alloc] initWithBytes:(void*)context.controlledSelectionData().data() length:context.controlledSelectionData().size()]);
         RetainPtr<NSAttributedString> selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);
