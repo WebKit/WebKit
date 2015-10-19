@@ -112,7 +112,7 @@ String compositeOperatorName(CompositeOperator op, BlendMode blendOp)
     ASSERT(op >= 0);
     ASSERT(op < numCompositeOperatorNames);
     ASSERT(blendOp >= BlendModeNormal);
-    ASSERT(blendOp < numBlendOperatorNames);
+    ASSERT(blendOp <= numBlendOperatorNames);
     if (blendOp > BlendModeNormal)
         return blendOperatorNames[blendOp - BlendModeNormal];
     return compositeOperatorNames[op];
