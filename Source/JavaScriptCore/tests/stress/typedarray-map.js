@@ -42,10 +42,10 @@ shouldThrow("testPrototypeFunction('map', '(isBigEnoughAndException)', [12, 15, 
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('map', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('map', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('map', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('map', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('map', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('map', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
+shouldThrow("testPrototypeFunction('map', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
+shouldThrow("testPrototypeFunction('map', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
+shouldThrow("testPrototypeFunction('map', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
+shouldThrow("testPrototypeFunction('map', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.map callback must be a function'");
 debug("");
 finishJSTest();

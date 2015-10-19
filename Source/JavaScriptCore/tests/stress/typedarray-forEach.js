@@ -82,10 +82,10 @@ shouldThrow("testPrototypeFunction('forEach', '(isBigEnoughAndException)', [9, 1
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('forEach', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('forEach', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('forEach', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('forEach', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('forEach', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('forEach', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.forEach callback must be a function'");
+shouldThrow("testPrototypeFunction('forEach', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.forEach callback must be a function'");
+shouldThrow("testPrototypeFunction('forEach', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.forEach callback must be a function'");
+shouldThrow("testPrototypeFunction('forEach', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.forEach callback must be a function'");
+shouldThrow("testPrototypeFunction('forEach', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.forEach callback must be a function'");
 debug("");
 finishJSTest();

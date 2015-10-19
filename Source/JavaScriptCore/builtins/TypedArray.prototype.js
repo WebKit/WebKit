@@ -249,7 +249,7 @@ function filter(callback /*, thisArg */)
     var length = @typedArrayLength(this);
 
     if (typeof callback !== "function")
-        throw new @TypeError("Array.prototype.filter callback must be a function");
+        throw new @TypeError("TypedArray.prototype.filter callback must be a function");
 
     var thisArg = arguments.length > 1 ? arguments[1] : undefined;
 

@@ -47,10 +47,10 @@ shouldThrow("testPrototypeFunction('some', '(isBigEnoughAndException)', [1, 15, 
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('some', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('some', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('some', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('some', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('some', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('some', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.some callback must be a function'");
+shouldThrow("testPrototypeFunction('some', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.some callback must be a function'");
+shouldThrow("testPrototypeFunction('some', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.some callback must be a function'");
+shouldThrow("testPrototypeFunction('some', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.some callback must be a function'");
+shouldThrow("testPrototypeFunction('some', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.some callback must be a function'");
 debug("");
 finishJSTest();

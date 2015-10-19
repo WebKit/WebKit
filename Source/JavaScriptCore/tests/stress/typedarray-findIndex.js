@@ -44,10 +44,10 @@ shouldThrow("testPrototypeFunction('findIndex', '(isBigEnoughAndException)', [9,
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('findIndex', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('findIndex', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('findIndex', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('findIndex', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('findIndex', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('findIndex', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.findIndex callback must be a function'");
+shouldThrow("testPrototypeFunction('findIndex', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.findIndex callback must be a function'");
+shouldThrow("testPrototypeFunction('findIndex', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.findIndex callback must be a function'");
+shouldThrow("testPrototypeFunction('findIndex', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.findIndex callback must be a function'");
+shouldThrow("testPrototypeFunction('findIndex', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.findIndex callback must be a function'");
 debug("");
 finishJSTest();

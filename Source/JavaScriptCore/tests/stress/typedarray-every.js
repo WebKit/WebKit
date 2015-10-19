@@ -46,11 +46,11 @@ shouldThrow("testPrototypeFunction('every', '(isBigEnoughAndException)', [12, 15
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('every', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('every', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('every', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('every', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('every', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('every', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.every callback must be a function'");
+shouldThrow("testPrototypeFunction('every', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.every callback must be a function'");
+shouldThrow("testPrototypeFunction('every', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.every callback must be a function'");
+shouldThrow("testPrototypeFunction('every', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.every callback must be a function'");
+shouldThrow("testPrototypeFunction('every', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.every callback must be a function'");
 debug("");
 
 finishJSTest();

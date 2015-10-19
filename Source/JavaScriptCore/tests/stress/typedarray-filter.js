@@ -42,10 +42,10 @@ shouldThrow("testPrototypeFunction('filter', '(isBigEnoughAndException)', [12, 1
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('filter', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('filter', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('filter', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('filter', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('filter', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('filter', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.filter callback must be a function'");
+shouldThrow("testPrototypeFunction('filter', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.filter callback must be a function'");
+shouldThrow("testPrototypeFunction('filter', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.filter callback must be a function'");
+shouldThrow("testPrototypeFunction('filter', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.filter callback must be a function'");
+shouldThrow("testPrototypeFunction('filter', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.filter callback must be a function'");
 debug("");
 finishJSTest();

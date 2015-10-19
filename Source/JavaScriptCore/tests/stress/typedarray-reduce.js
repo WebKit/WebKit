@@ -49,10 +49,11 @@ shouldThrow("testPrototypeFunction('reduce', '(isBigEnoughAndException)', [12, 1
 debug("");
 
 debug("5.0 Wrong Type for Callback Test");
-shouldThrow("testPrototypeFunction('reduce', '(8)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('reduce', '(\"wrong\")', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('reduce', '(new Object())', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('reduce', '(null)', [12, 15, 10, 13, 44], false)");
-shouldThrow("testPrototypeFunction('reduce', '()', [12, 15, 10, 13, 44], false)");
+shouldThrow("testPrototypeFunction('reduce', '(8)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.reduce callback must be a function'");
+shouldThrow("testPrototypeFunction('reduce', '(\"wrong\")', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.reduce callback must be a function'");
+shouldThrow("testPrototypeFunction('reduce', '(new Object())', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.reduce callback must be a function'");
+shouldThrow("testPrototypeFunction('reduce', '(null)', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.reduce callback must be a function'");
+shouldThrow("testPrototypeFunction('reduce', '()', [12, 15, 10, 13, 44], false)", "'TypeError: TypedArray.prototype.reduce callback must be a function'");
+shouldThrow("testPrototypeFunction('reduce', '(new Function())', [], false)", "'TypeError: TypedArray.prototype.reduce of empty array with no initial value'");
 debug("");
 finishJSTest();

@@ -1,3 +1,26 @@
+2015-10-17  Keith Miller  <keith_miller@apple.com>
+
+        Add regression tests for TypedArray.prototype functions' error messages.
+        https://bugs.webkit.org/show_bug.cgi?id=150288
+
+        Reviewed by Darin Adler.
+
+        Fix a typo in the text passed by TypedArrray.prototype.filter type error message.
+        Add tests that check the actual error message text for all the TypeArray.prototype
+        functions that throw.
+
+        * builtins/TypedArray.prototype.js:
+        (filter):
+        * tests/stress/typedarray-every.js:
+        * tests/stress/typedarray-filter.js:
+        * tests/stress/typedarray-find.js:
+        * tests/stress/typedarray-findIndex.js:
+        * tests/stress/typedarray-forEach.js:
+        * tests/stress/typedarray-map.js:
+        * tests/stress/typedarray-reduce.js:
+        * tests/stress/typedarray-reduceRight.js:
+        * tests/stress/typedarray-some.js:
+
 2015-10-19  Tim Horton  <timothy_horton@apple.com>
 
         Add magnify and rotate gesture event support for Mac
