@@ -1,5 +1,11 @@
 2015-10-19  Tim Horton  <timothy_horton@apple.com>
 
+        Try to fix the iOS build
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
         Try to fix the 32-bit build.
 
         * UIProcess/mac/WebContextMenuProxyMac.mm:
