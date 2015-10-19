@@ -2196,11 +2196,12 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             done.append(isNull);
 
             DFG_TYPE_CHECK(JSValueRegs(op1GPR), node->child1(), ~SpecCell,
-                m_jit.branchTest64(JITCompiler::NonZero, op1GPR, TrustedImm32(static_cast<int32_t>(~1))));
+                m_jit.branchTest64(JITCompiler::Zero, op1GPR, TrustedImm32(static_cast<int32_t>(TagBitBool))));
 
             JITCompiler::Jump isFalse = m_jit.branch64(JITCompiler::Equal, op1GPR, TrustedImm64(ValueFalse));
             static const double one = 1;
             m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&one), resultFPR);
+            done.append(m_jit.jump());
             done.append(isFalse);
 
             isUndefined.link(&m_jit);
@@ -2249,6 +2250,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             JITCompiler::Jump isFalse = m_jit.branchTest32(JITCompiler::Zero, op1PayloadGPR, TrustedImm32(1));
             static const double one = 1;
             m_jit.loadDouble(MacroAssembler::TrustedImmPtr(&one), resultFPR);
+            done.append(m_jit.jump());
             done.append(isFalse);
 
             isUndefined.link(&m_jit);

@@ -24,19 +24,24 @@ var o1 = {
 };
 
 var set1 = [
-    o1,
-    null,
-    undefined,
-    NaN,
-    "abc",
+    'o1',
+    'null',
+    'undefined',
+    'NaN',
+    '"abc"',
 ];
 
 var set2 = [
-    10, -10,
-    2147483647, -2147483647,
-    4294967296, -4294967296,
-    100.2, -100.2,
-    true, false
+    '10',
+    '-10',
+    '2147483647',
+    '-2147483647',
+    '4294967296',
+    '-4294967296',
+    '100.2',
+    '-100.2',
+    'true',
+    'false',
 ];
 
 // Assemble the values that we'll be testing with:
@@ -46,22 +51,18 @@ for (var i = 0; i < set1.length; i++)
 for (var i = 0; i < set2.length; i++)
     values.push(set2[i]);
 for (var i = 0; i < set2.length; i++)
-    values.push("" + set2[i]);
-
-function stringify(value) {
-    if (typeof value == "string")
-        return '"' + value + '"';
-    return "" + value;
-}
+    values.push('"' + set2[i] + '"');
 
 function generateScenarios(xvalues, yvalues) {
     var scenarios = [];
     for (var i = 0; i < xvalues.length; i++) {
         for (var j = 0; j < yvalues.length; j++) {
-            var name = "(" + xvalues[i] + " - " + yvalues[j] + ")";
-            var x = xvalues[i];
-            var y = yvalues[j];
-            var expected = eval(stringify(x) + " - " + stringify(y));
+            var xStr = xvalues[i];
+            var yStr = yvalues[j];
+            var x = eval(xStr);
+            var y = eval(yStr);
+            var name = "(" + xStr + " - " + yStr + ")";
+            var expected = eval("" + xStr + " - " + yStr);
             var scenario = { name: name, x: x, y: y, expected: expected };
 
             scenarios.push(scenario);
@@ -87,172 +88,172 @@ var testCases = [
     {
         name: "subI32V",
         func: function(x, y) { return 10 - y; },
-        xvalues: [ 10 ],
+        xvalues: [ '10' ],
         yvalues: values
     },
     {
         name: "subVI32",
         func: function(x, y) { return x - 10; },
         xvalues: values,
-        yvalues: [ 10 ]
+        yvalues: [ '10' ]
     },
     {
         name: "subI32oV",
         func: function(x, y) { return -2147483647 - y; },
-        xvalues: [ -2147483647 ],
+        xvalues: [ '-2147483647' ],
         yvalues: values
     },
     {
         name: "subVI32o",
         func: function(x, y) { return x - 2147483647; },
         xvalues: values,
-        yvalues: [ 2147483647 ]
+        yvalues: [ '2147483647' ]
     },
     {
         name: "subI52V",
         func: function(x, y) { return 4294967296 - y; },
-        xvalues: [ 4294967296 ],
+        xvalues: [ '4294967296' ],
         yvalues: values
     },
     {
         name: "subVI52",
         func: function(x, y) { return x - 4294967296; },
         xvalues: values,
-        yvalues: [ 4294967296 ]
+        yvalues: [ '4294967296' ]
     },
     {
         name: "subDV",
         func: function(x, y) { return 100.2 - y; },
-        xvalues: [ 100.2 ],
+        xvalues: [ '100.2' ],
         yvalues: values
     },
     {
         name: "subVD",
         func: function(x, y) { return x - 100.2; },
         xvalues: values,
-        yvalues: [ 100.2 ]
+        yvalues: [ '100.2' ]
     },
     {
         name: "subBV",
         func: function(x, y) { return true - y; },
-        xvalues: [ true ],
+        xvalues: [ 'true' ],
         yvalues: values
     },
     {
         name: "subVB",
         func: function(x, y) { return x - true; },
         xvalues: values,
-        yvalues: [ true ]
+        yvalues: [ 'true' ]
     },
     {
         name: "subSi32V",
         func: function(x, y) { return "10" - y; },
-        xvalues: [ "10" ],
+        xvalues: [ '"10"' ],
         yvalues: values
     },
     {
         name: "subVSi32",
         func: function(x, y) { return x - "10"; },
         xvalues: values,
-        yvalues: [ "10" ]
+        yvalues: [ '"10"' ]
     },
 
     {
         name: "subSi32oV",
         func: function(x, y) { return "-2147483647" - y; },
-        xvalues: [ "-2147483647" ],
+        xvalues: [ '"-2147483647"' ],
         yvalues: values
     },
     {
         name: "subVSi32o",
         func: function(x, y) { return x - "2147483647"; },
         xvalues: values,
-        yvalues: [ "2147483647" ]
+        yvalues: [ '"2147483647"' ]
     },
     {
         name: "subSi52V",
         func: function(x, y) { return "4294967296" - y; },
-        xvalues: [ "4294967296" ],
+        xvalues: [ '"4294967296"' ],
         yvalues: values
     },
     {
         name: "subVSi52",
         func: function(x, y) { return x - "4294967296"; },
         xvalues: values,
-        yvalues: [ "4294967296" ]
+        yvalues: [ '"4294967296"' ]
     },
     {
         name: "subSdV",
         func: function(x, y) { return "100.2" - y; },
-        xvalues: [ "100.2" ],
+        xvalues: [ '"100.2"' ],
         yvalues: values
     },
     {
         name: "subVSd",
         func: function(x, y) { return x - "100.2"; },
         xvalues: values,
-        yvalues: [ "100.2" ]
+        yvalues: [ '"100.2"' ]
     },
     {
         name: "subSbV",
         func: function(x, y) { return "true" - y; },
-        xvalues: [ "true" ],
+        xvalues: [ '"true"' ],
         yvalues: values
     },
     {
         name: "subVSb",
         func: function(x, y) { return x - "true"; },
         xvalues: values,
-        yvalues: [ "true" ]
+        yvalues: [ '"true"' ]
     },
 
     {
         name: "subSV",
         func: function(x, y) { return "abc" - y; },
-        xvalues: [ "abc" ],
+        xvalues: [ '"abc"' ],
         yvalues: values
     },
     {
         name: "subVS",
         func: function(x, y) { return x - "abc"; },
         xvalues: values,
-        yvalues: [ "abc" ]
+        yvalues: [ '"abc"' ]
     },
     {
         name: "subNV",
         func: function(x, y) { return null - y; },
-        xvalues: [ null ],
+        xvalues: [ 'null' ],
         yvalues: values
     },
     {
         name: "subVN",
         func: function(x, y) { return x - null; },
         xvalues: values,
-        yvalues: [ null ]
+        yvalues: [ 'null' ]
     },
     {
         name: "subOV",
         func: function(x, y) { return o1 - y; },
-        xvalues: [ o1 ],
+        xvalues: [ 'o1' ],
         yvalues: values
     },
     {
         name: "subVO",
         func: function(x, y) { return x - o1; },
         xvalues: values,
-        yvalues: [ o1 ]
+        yvalues: [ 'o1' ]
     },
     {
         name: "subNaNV",
         func: function(x, y) { return NaN - y; },
-        xvalues: [ NaN ],
+        xvalues: [ 'NaN' ],
         yvalues: values
     },
     {
         name: "subVNaN",
         func: function(x, y) { return x - NaN; },
         xvalues: values,
-        yvalues: [ NaN ]
+        yvalues: [ 'NaN' ]
     },
 ];
 
@@ -263,6 +264,8 @@ function initializeTestCases() {
     }
 }
 initializeTestCases();
+
+var errorReport = "";
 
 function runTest(test) {
     var failedScenario = [];
@@ -278,16 +281,18 @@ function runTest(test) {
                 if (Number.isNaN(result) && Number.isNaN(scenario.expected))
                     continue;
                 if (!failedScenario[scenarioID]) {
-                    print("FAIL: " + test.name + ":" + scenario.name + " started failing on iteration " + i + ": expected " + scenario.expected + ", actual " + result);
+                    errorReport += "FAIL: " + test.name + ":" + scenario.name + " started failing on iteration " + i + ": expected " + scenario.expected + ", actual " + result + "\n";
                     failedScenario[scenarioID] = scenario;
                 }
             }
         }
     } catch(e) {
-        print("Unexpected exception: " + e);
+        errorReport += "Unexpected exception: " + e + "\n";
     }
 }
 
 for (var test of testCases)
     runTest(test);
 
+if (errorReport !== "")
+    throw "Error: bad result:\n" + errorReport;

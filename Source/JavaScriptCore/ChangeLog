@@ -1,3 +1,42 @@
+2015-10-19  Mark Lam  <mark.lam@apple.com>
+
+        DoubleRep fails to convert SpecBoolean values.
+        https://bugs.webkit.org/show_bug.cgi?id=150313
+
+        Reviewed by Geoffrey Garen.
+
+        This was uncovered by the op_sub stress test on 32-bit builds.  On 32-bit builds,
+        DoubleRep will erroneously convert 'true' to a 'NaN' instead of a double 1.
+        On 64-bit, the same issue exists but is masked by another bug in DoubleRep where
+        boolean values will always erroneously trigger a BadType OSR exit.
+
+        The erroneous conversion of 'true' to 'NaN' is because the 'true' case in
+        compileDoubleRep() is missing a jump to the "done" destination.  Instead, it
+        fall through to the "isUndefined" case where it produces a NaN.
+
+        The 64-bit erroneous BadType OSR exit is due to the boolean type check being
+        implemented incorrectly.  It was checking if any bits other than bit 0 were set.
+        However, boolean JS values always have TagBitBool (the 3rd bit) set.  Hence, the
+        check will always fail if we have a boolean value.
+
+        This patch fixes both of these issues.
+
+        No new test is needed because these issues are already covered by scenarios in
+        the op_sub.js stress test.  This patch also fixes the op_sub.js test to throw an
+        exception if any failures are encountered (as expected by the stress test
+        harness).  This patch also re-worked the test code to provide more accurate
+        descriptions of each test scenario for error reporting.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+
+        * tests/stress/op_sub.js:
+        (generateScenarios):
+        (func):
+        (initializeTestCases):
+        (runTest):
+        (stringify): Deleted.
+
 2015-10-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop !newTarget check since it always becomes true
