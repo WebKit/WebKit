@@ -547,6 +547,8 @@ sub SkipFunction
         return 1 if $param->extendedAttributes->{"Clamp"};
     }
 
+    return 1 if $function->signature->extendedAttributes->{"Private"};
+
     return 0;
 }
 

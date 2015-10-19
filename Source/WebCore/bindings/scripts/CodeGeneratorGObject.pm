@@ -369,17 +369,13 @@ sub SkipFunction {
         return 1;
     }
 
-    if ($function->signature->type eq "Promise") {
-        return 1;
-    }
+    return 1 if $function->signature->type eq "Promise";
 
-    if ($function->signature->type eq "Date") {
-        return 1;
-    }
+    return 1 if $function->signature->type eq "Date";
 
-    if ($function->signature->extendedAttributes->{"JSBuiltin"}) {
-        return 1;
-    }
+    return 1 if $function->signature->extendedAttributes->{"JSBuiltin"};
+
+    return 1 if $function->signature->extendedAttributes->{"Private"};
 
     return 0;
 }

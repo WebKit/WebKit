@@ -53,6 +53,7 @@
 #include "TestNode.h"
 #include "TestObj.h"
 #include "URL.h"
+#include "WebCoreJSClientData.h"
 #include "bool.h"
 #include <bindings/ScriptValue.h>
 #include <inspector/ScriptArguments.h>
@@ -104,6 +105,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(JSC::E
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(JSC::ExecState*);
@@ -687,6 +689,8 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestObjPrototypeTableValues, *this);
+    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    putDirect(vm, clientData.builtinNames().privateMethodPrivateName(), JSFunction::create(vm, globalObject(), 0, String(), jsTestObjPrototypeFunctionPrivateMethod), ReadOnly | DontEnum);
 }
 
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, CREATE_METHOD_TABLE(JSTestObj) };
@@ -3482,6 +3486,23 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(Exec
         return throwThisTypeError(*state, "TestObj", "customMethodWithArgs");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethodWithArgs(*state));
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestObj", "privateMethod");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, createNotEnoughArgumentsError(state));
+    String argument = state->argument(0).toString(state)->value(state);
+    if (UNLIKELY(state->hadException()))
+        return JSValue::encode(jsUndefined());
+    JSValue result = jsStringWithCache(state, impl.privateMethod(argument));
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* state)

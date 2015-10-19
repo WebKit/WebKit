@@ -26,6 +26,10 @@
 
 #include "config.h"
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaDevicesBuiltins.cpp"
+#endif
+
 #if ENABLE(STREAMS_API)
 #include "ByteLengthQueuingStrategyBuiltins.cpp"
 #include "CountQueuingStrategyBuiltins.cpp"

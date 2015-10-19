@@ -63,6 +63,8 @@ public:
     void getUserMedia(const Dictionary&, Promise&&, ExceptionCode&) const;
     void enumerateDevices(EnumerateDevicesPromise&&, ExceptionCode&) const;
 
+    void getUserMediaFromJS(const Dictionary& dictionary, Promise&& promise, ExceptionCode& ec) const { getUserMedia(dictionary, WTF::move(promise), ec); }
+
 private:
     explicit MediaDevices(ScriptExecutionContext*);
 };

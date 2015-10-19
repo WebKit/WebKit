@@ -27,6 +27,10 @@
 #ifndef WebCoreJSBuiltins_h
 #define WebCoreJSBuiltins_h
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaDevicesBuiltinsWrapper.h"
+#endif
+
 #if ENABLE(STREAMS_API)
 #include "ByteLengthQueuingStrategyBuiltinsWrapper.h"
 #include "CountQueuingStrategyBuiltinsWrapper.h"
@@ -36,7 +40,6 @@
 #include "ReadableStreamReaderBuiltinsWrapper.h"
 #include "WritableStreamBuiltinsWrapper.h"
 #endif
-
 
 #include <runtime/VM.h>
 
@@ -55,6 +58,9 @@ public:
         , m_readableStreamReaderBuiltins(&vm)
         , m_writableStreamBuiltins(&vm)
 #endif
+#if ENABLE(MEDIA_STREAM)
+        , m_mediaDevicesBuiltins(&vm)
+#endif
     {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsBuiltins.exportNames();
@@ -69,6 +75,9 @@ public:
     ReadableStreamReaderBuiltinsWrapper& readableStreamReaderBuiltins() { return m_readableStreamReaderBuiltins; }
     WritableStreamBuiltinsWrapper& writableStreamBuiltins() { return m_writableStreamBuiltins; }
 #endif
+#if ENABLE(MEDIA_STREAM)
+    MediaDevicesBuiltinsWrapper& mediaDevicesBuiltins() { return m_mediaDevicesBuiltins; }
+#endif
 
 private:
     JSC::VM& vm;
@@ -80,6 +89,9 @@ private:
     ReadableStreamInternalsBuiltinsWrapper m_readableStreamInternalsBuiltins;
     ReadableStreamReaderBuiltinsWrapper m_readableStreamReaderBuiltins;
     WritableStreamBuiltinsWrapper m_writableStreamBuiltins;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    MediaDevicesBuiltinsWrapper m_mediaDevicesBuiltins;
 #endif
 
 };

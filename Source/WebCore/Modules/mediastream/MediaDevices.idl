@@ -32,6 +32,8 @@
     NoInterfaceObject,
     Conditional=MEDIA_STREAM
 ] interface MediaDevices {
-    [RaisesException] Promise getUserMedia(Dictionary options);
+    [JSBuiltin] Promise getUserMedia(Dictionary options);
     [RaisesException] Promise enumerateDevices();
+
+    [Private, RaisesException] Promise getUserMediaFromJS(Dictionary options);
 };

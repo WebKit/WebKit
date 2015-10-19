@@ -38,17 +38,18 @@ namespace WebCore {
     macro(closedPromiseReject) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(getUserMediaFromJS) \
     macro(highWaterMark) \
     macro(ownerReadableStream) \
-    macro(pullAgain) \
     macro(pulling) \
+    macro(pullAgain) \
     macro(queue) \
     macro(queueSize) \
     macro(readableStreamClosed) \
     macro(readableStreamErrored) \
     macro(readableStreamReadable) \
-    macro(readRequests) \
     macro(reader) \
+    macro(readRequests) \
     macro(state) \
     macro(started) \
     macro(storedError) \

@@ -2028,6 +2028,7 @@ sub GenerateImplementation
     my @runtimeEnabledFunctions = ();
 
     foreach my $function (@{$interface->functions}) {
+        next if ($function->signature->extendedAttributes->{"Private"});
         next if ($function->isStatic);
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         my $name = $function->signature->name;
@@ -2102,6 +2103,16 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
                 push(@implContent, "#endif\n") if $conditionalString;
             }
+
+            my $firstPrivateFunction = 1;
+            foreach my $function (@{$interface->functions}) {
+                next unless ($function->signature->extendedAttributes->{"Private"});
+                AddToImplIncludes("WebCoreJSClientData.h");
+                push(@implContent, "    JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);\n") if $firstPrivateFunction;
+                $firstPrivateFunction = 0;
+                push(@implContent, "    putDirect(vm, clientData.builtinNames()." . $function->signature->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($className, $function) . "), ReadOnly | DontEnum);\n");
+            }
+
             push(@implContent, "}\n\n");
         } else {
             push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");

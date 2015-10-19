@@ -103,6 +103,7 @@ ObjCProtocol
 ObjCUseDefaultView
 OverrideBuiltins
 PassContext
+Private
 PutForwards=*
 RaisesException
 Reflect=*
