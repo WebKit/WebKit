@@ -1,3 +1,13 @@
+2015-10-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(SECCOMP_FILTERS) build after r187030
+        https://bugs.webkit.org/show_bug.cgi?id=150172
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/linux/SeccompFilters/Syscall.cpp:
+        (WebKit::reportUnexpectedSyscall):
+
 2015-10-18  Joonghun Park  <jh718.park@samsung.com>
 
         [GTK] Remove WebKitContextMenu related missing annotation warnings
