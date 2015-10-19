@@ -142,87 +142,6 @@ void GraphicsContext::restore()
     restorePlatformState();
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& other)
-{
-    if (paintingDisabled())
-        return;
-
-    checkCTMInvariants();
-
-    m_state.ctm *= other;
-    concatPlatformCTM(other);
-
-    checkCTMInvariants();
-}
-
-void GraphicsContext::scale(float x, float y)
-{
-    if (paintingDisabled())
-        return;
-
-    checkCTMInvariants();
-
-    m_state.ctm.scale(x, y);
-    scalePlatformCTM(x, y);
-
-    checkCTMInvariants();
-}
-
-void GraphicsContext::rotate(float angle)
-{
-    if (paintingDisabled())
-        return;
-
-    checkCTMInvariants();
-
-    m_state.ctm.rotate(rad2deg(angle));
-    rotatePlatformCTM(angle);
-
-    checkCTMInvariants();
-}
-
-void GraphicsContext::translate(float x, float y)
-{
-    if (paintingDisabled())
-        return;
-
-    checkCTMInvariants();
-
-    m_state.ctm.translate(x, y);
-    translatePlatformCTM(x, y);
-
-    checkCTMInvariants();
-}
-
-void GraphicsContext::setCTM(const AffineTransform& other)
-{
-    if (paintingDisabled())
-        return;
-
-    checkCTMInvariants();
-
-    m_state.ctm = other;
-    setPlatformCTM(other);
-
-    checkCTMInvariants();
-}
-
-AffineTransform GraphicsContext::getCTM(IncludeDeviceScale includeScale) const
-{
-    if (paintingDisabled())
-        return AffineTransform();
-
-    AffineTransform result;
-    if (includeScale == DefinitelyIncludeDeviceScale)
-        result = m_state.userToDeviceSpaceCTM * m_state.ctm;
-    else
-        result = m_state.ctm;
-
-    ASSERT(result.isEssentiallyEqualTo(getPlatformCTM(includeScale)));
-
-    return result;
-}
-
 void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& ellipseColor, ColorSpace ellipseColorSpace, const Color& shadowColor, ColorSpace shadowColorSpace)
 {
     if (paintingDisabled())
@@ -376,8 +295,6 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
 {
     beginPlatformTransparencyLayer(opacity);
     ++m_transparencyCount;
-
-    resetPlatformCTM();
 }
 
 void GraphicsContext::endTransparencyLayer()
@@ -737,8 +654,7 @@ void GraphicsContext::platformApplyDeviceScaleFactor(float)
 
 void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
 {
-    scale(deviceScaleFactor, deviceScaleFactor);
-
+    scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
     platformApplyDeviceScaleFactor(deviceScaleFactor);
 }
 

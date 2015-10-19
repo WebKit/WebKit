@@ -216,13 +216,12 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
         
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
         CGContextRef cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
+        GraphicsContext graphicsContext(cgContext);    
         
         // Safari doesn't flip the NSGraphicsContext before calling WebKit, yet WebCore requires a flipped graphics context.
         BOOL flipped = [nsContext isFlipped];
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
-
-        GraphicsContext graphicsContext(cgContext);
             
         FontCascade webCoreFont(FontPlatformData(toCTFont(font), [font pointSize]), Antialiased);
         TextRun run(StringView(buffer.data(), length));

@@ -67,24 +67,24 @@ public:
     void flush();
     void clip(const FloatRect&);
     void clip(const Path&);
-    void scalePlatformCTM(float, float);
-    void rotatePlatformCTM(float);
-    void translatePlatformCTM(float, float);
-    void concatPlatformCTM(const AffineTransform&);
-    void setPlatformCTM(const AffineTransform&);
+    void scale(const FloatSize&);
+    void rotate(float);
+    void translate(float, float);
+    void concatCTM(const AffineTransform&);
+    void setCTM(const AffineTransform&);
     void syncContext(cairo_t* cr);
 #else
     // On everything else, we do nothing.
-    void save() { }
-    void restore() { }
-    void flush() { }
-    void clip(const FloatRect&) { }
-    void clip(const Path&) { }
-    void scalePlatformCTM(float, float) { }
-    void rotatePlatformCTM(float) { }
-    void translatePlatformCTM(float, float) { }
-    void concatPlatformCTM(const AffineTransform&) { }
-    void setPlatformCTM(const AffineTransform&) { }
+    void save() {}
+    void restore() {}
+    void flush() {}
+    void clip(const FloatRect&) {}
+    void clip(const Path&) {}
+    void scale(const FloatSize&) {}
+    void rotate(float) {}
+    void translate(float, float) {}
+    void concatCTM(const AffineTransform&) {}
+    void setCTM(const AffineTransform&) {}
     void syncContext(cairo_t*) { }
 #endif
 
