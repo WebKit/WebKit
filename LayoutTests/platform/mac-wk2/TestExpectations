@@ -528,7 +528,7 @@ webkit.org/b/141322 [ Debug Yosemite+ ] fast/images/destroyed-image-load-event.h
 
 webkit.org/b/141325 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Pass Failure ]
 
-webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Timeout ]
+webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 
 webkit.org/b/145702 [ Debug Yosemite ] http/tests/misc/acid3.html [ Pass Timeout ]
 
