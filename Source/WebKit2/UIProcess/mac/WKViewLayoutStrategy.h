@@ -32,24 +32,22 @@
 
 namespace WebKit {
 class WebPageProxy;
-class WebViewImpl;
 }
 
-@class NSView;
+@class WKView;
 
 @interface WKViewLayoutStrategy : NSObject {
 @package
-    WebKit::WebPageProxy* _page;
-    WebKit::WebViewImpl* _webViewImpl;
-    NSView *_view;
+    WebKit::WebPageProxy *_page;
+    WKView *_wkView;
 
     WKLayoutMode _layoutMode;
     unsigned _frameSizeUpdatesDisabledCount;
 }
 
-+ (instancetype)layoutStrategyWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)webViewImpl mode:(WKLayoutMode)mode;
++ (instancetype)layoutStrategyWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView mode:(WKLayoutMode)mode;
 
-- (void)invalidate;
+- (void)willDestroyView:(WKView *)view;
 
 - (void)enableFrameSizeUpdates;
 - (void)disableFrameSizeUpdates;

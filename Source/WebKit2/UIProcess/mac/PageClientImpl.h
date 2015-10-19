@@ -43,8 +43,6 @@ class AlternativeTextUIController;
 
 namespace WebKit {
 
-class WebViewImpl;
-
 class PageClientImpl final : public PageClient
 #if ENABLE(FULLSCREEN_API)
     , public WebFullScreenManagerProxyClient
@@ -53,10 +51,7 @@ class PageClientImpl final : public PageClient
 public:
     PageClientImpl(WKView *, WKWebView *);
     virtual ~PageClientImpl();
-
-    // FIXME: Eventually WebViewImpl should become the PageClient.
-    void setImpl(WebViewImpl& impl) { m_impl = &impl; }
-
+    
     void viewWillMoveToAnotherWindow();
 
 private:
@@ -218,7 +213,6 @@ private:
 
     WKView *m_wkView;
     WKWebView *m_webView;
-    WebViewImpl* m_impl { nullptr };
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;

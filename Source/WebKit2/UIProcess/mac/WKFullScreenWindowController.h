@@ -30,7 +30,6 @@
 
 namespace WebKit { 
 class LayerTreeContext;
-class WebPageProxy;
 }
 
 namespace WebCore {
@@ -45,8 +44,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 
 @interface WKFullScreenWindowController : NSWindowController<NSWindowDelegate> {
 @private
-    NSView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
-    WebKit::WebPageProxy* _page;
+    WKView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
     RetainPtr<WebCoreFullScreenPlaceholderView> _webViewPlaceholder;
     RetainPtr<NSView> _clipView;
     NSRect _initialFrame;
@@ -62,7 +60,7 @@ typedef enum FullScreenState : NSInteger FullScreenState;
 @property (readonly) NSRect initialFrame;
 @property (readonly) NSRect finalFrame;
 
-- (id)initWithWindow:(NSWindow *)window webView:(NSView *)webView page:(WebKit::WebPageProxy&)page;
+- (id)initWithWindow:(NSWindow *)window webView:(WKView *)webView;
 
 - (WebCoreFullScreenPlaceholderView*)webViewPlaceholder;
 

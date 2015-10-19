@@ -47,7 +47,6 @@
 #import "WebContextMenuProxyMac.h"
 #import "WebEditCommandProxy.h"
 #import "WebPopupMenuProxyMac.h"
-#import "WebViewImpl.h"
 #import "WindowServerConnection.h"
 #import "_WKDownloadInternal.h"
 #import "_WKHitTestResultInternal.h"
@@ -220,12 +219,7 @@ bool PageClientImpl::isViewWindowActive()
 
 bool PageClientImpl::isViewFocused()
 {
-    // FIXME: This is called from the WebPageProxy constructor before we have a WebViewImpl.
-    // Once WebViewImpl and PageClient merge, this won't be a problem.
-    if (!m_impl)
-        return NO;
-
-    return m_impl->isFocused();
+    return [m_wkView _isFocused];
 }
 
 void PageClientImpl::makeFirstResponder()
@@ -317,7 +311,7 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
 
 void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
 {
-    m_impl->updateSupportsArbitraryLayoutModes();
+    [m_wkView _didCommitLoadForMainFrame];
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
@@ -439,17 +433,17 @@ void PageClientImpl::setPromisedDataForAttachment(const String& pasteboardName, 
 
 void PageClientImpl::updateSecureInputState()
 {
-    m_impl->updateSecureInputState();
+    [m_wkView _updateSecureInputState];
 }
 
 void PageClientImpl::resetSecureInputState()
 {
-    m_impl->resetSecureInputState();
+    [m_wkView _resetSecureInputState];
 }
 
 void PageClientImpl::notifyInputContextAboutDiscardedComposition()
 {
-    m_impl->notifyInputContextAboutDiscardedComposition();
+    [m_wkView _notifyInputContextAboutDiscardedComposition];
 }
 
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -729,13 +723,13 @@ void PageClientImpl::exitFullScreen()
 void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     [m_wkView._fullScreenWindowController beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
-    m_impl->updateSupportsArbitraryLayoutModes();
+    [m_wkView _updateSupportsArbitraryLayoutModes];
 }
 
 void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     [m_wkView._fullScreenWindowController beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
-    m_impl->updateSupportsArbitraryLayoutModes();
+    [m_wkView _updateSupportsArbitraryLayoutModes];
 }
 
 #endif // ENABLE(FULLSCREEN_API)

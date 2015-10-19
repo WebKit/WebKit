@@ -77,6 +77,7 @@ struct EditorState;
 #endif
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (BOOL)_isFocused;
 - (void)_processDidExit;
 - (void)_pageClosed;
 - (void)_didRelaunchProcess;
@@ -109,6 +110,9 @@ struct EditorState;
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_setPromisedDataForAttachment:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl forPasteboard:(NSString *)pasteboardName;
 #endif
+- (void)_updateSecureInputState;
+- (void)_resetSecureInputState;
+- (void)_notifyInputContextAboutDiscardedComposition;
 
 - (WebKit::ColorSpaceData)_colorSpace;
 
@@ -119,6 +123,7 @@ struct EditorState;
 - (BOOL)_suppressVisibilityUpdates;
 
 - (void)_didFirstVisuallyNonEmptyLayoutForMainFrame;
+- (void)_didCommitLoadForMainFrame;
 - (void)_didFinishLoadForMainFrame;
 - (void)_didFailLoadForMainFrame;
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)type;
@@ -152,6 +157,13 @@ struct EditorState;
 @property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;
 
 @property (readonly) NSWindow *_targetWindowForMovePreparation;
+
+// For WKViewLayoutStrategy and subclasses:
+- (void)_setDrawingAreaSize:(NSSize)size;
+- (void)_updateViewExposedRect;
+- (CALayer *)_rootLayer;
+
+- (void)_updateSupportsArbitraryLayoutModes;
 
 #if WK_API_ENABLED
 @property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
