@@ -890,12 +890,10 @@ String Internals::visiblePlaceholder(Element* element)
 #if ENABLE(INPUT_TYPE_COLOR)
 void Internals::selectColorInColorChooser(Element* element, const String& colorValue)
 {
-    if (!is<HTMLInputElement>(*element))
+    if (!is<HTMLInputElement>(element))
         return;
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement)
-        return;
-    inputElement->selectColorInColorChooser(Color(colorValue));
+    auto& inputElement = downcast<HTMLInputElement>(*element);
+    inputElement.selectColorInColorChooser(Color(colorValue));
 }
 #endif
 

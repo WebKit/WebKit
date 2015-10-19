@@ -4,6 +4,16 @@ To manually test this, click on the input color element in the top left corner a
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-value changed to #ff0000
+PASS onChangeCount is 0
+internals.selectColorInColorChooser({}, '#ff0000');
+internals.selectColorInColorChooser(document, '#ff0000');
+PASS onChangeCount is 0
+input event dispatched - value is:  #ff0000
+change event dispatched - value changed to #ff0000
+PASS onChangeCount is 1
+PASS onChangeCount is 1
 PASS input.value is "#ff0000"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 
