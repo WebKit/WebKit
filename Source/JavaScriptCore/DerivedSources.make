@@ -78,6 +78,8 @@ all : \
 PYTHON = python
 PERL = perl
 
+JavaScriptCore_SCRIPTS_DIR = $(JavaScriptCore)/Scripts
+
 ifeq ($(OS),Windows_NT)
     DELETE = cmd //C del
 else
@@ -86,9 +88,9 @@ endif
 # --------
 
 .PHONY: JSCBuiltins
-JSCBuiltins: $(JavaScriptCore)/generate-js-builtins JSCBuiltins.h JSCBuiltins.cpp
-JSCBuiltins.h: $(JavaScriptCore)/generate-js-builtins $(JavaScriptCore)/builtins JSCBuiltinsSources
-	$(PYTHON) $(JavaScriptCore)/generate-js-builtins --input-directory $(JavaScriptCore)/builtins --output $@
+JSCBuiltins: $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins JSCBuiltins.h JSCBuiltins.cpp
+JSCBuiltins.h: $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins $(JavaScriptCore)/builtins JSCBuiltinsSources
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins --input-directory $(JavaScriptCore)/builtins --output $@
 
 JSCBuiltins.cpp: JSCBuiltins.h
 
@@ -185,8 +187,8 @@ INSPECTOR_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore)/inspector/scripts/codegen/generator_templates.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/generator.py \
 	$(JavaScriptCore)/inspector/scripts/codegen/models.py \
-	$(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py \
 	$(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py \
 #
 
 all : \
@@ -202,17 +204,17 @@ all : \
 EnabledInspectorDomains : $(JavaScriptCore)/UpdateContents.py force
 	$(PYTHON) $(JavaScriptCore)/UpdateContents.py '$(INSPECTOR_DOMAINS)' $@
 
-CombinedDomains.json : inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./CombinedDomains.json
+CombinedDomains.json : $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./CombinedDomains.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
 InspectorFrontendDispatchers.h : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./CombinedDomains.json
 
-InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore)/inspector/scripts/jsmin.py $(JavaScriptCore)/inspector/scripts/xxd.pl
+InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	echo "//# sourceURL=__WebInspectorInjectedScript__" > ./InjectedScriptSource.min.js
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js >> ./InjectedScriptSource.min.js
-	$(PERL) $(JavaScriptCore)/inspector/scripts/xxd.pl InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js >> ./InjectedScriptSource.min.js
+	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl InjectedScriptSource_js ./InjectedScriptSource.min.js InjectedScriptSource.h
 	$(DELETE) InjectedScriptSource.min.js
 
 # Web Replay inputs generator

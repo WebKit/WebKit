@@ -1,3 +1,35 @@
+2015-10-16  Brian Burg  <bburg@apple.com>
+
+        Unify handling of JavaScriptCore scripts that are used in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=150245
+
+        Reviewed by Alex Christensen.
+
+        Move all standalone JavaScriptCore scripts that are used by WebCore into the
+        JavaScriptCore/Scripts directory. Use JavaScriptCore_SCRIPTS_DIR to refer
+        to the path for these scripts.
+
+        * DerivedSources.make:
+
+            Define and use JavaScriptCore_SCRIPTS_DIR.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+            Make a new group in the Xcode project and clean up references.
+
+        * PlatformWin.cmake:
+
+            For Windows, copy these scripts over to ForwardingHeaders/Scripts since they
+            cannot be used directly from JAVASCRIPTCORE_DIR in AppleWin builds. Do the same
+            thing for both Windows variants to be consistent about it.
+
+        * Scripts/cssmin.py: Renamed from Source/JavaScriptCore/inspector/scripts/cssmin.py.
+        * Scripts/generate-combined-inspector-json.py: Renamed from Source/JavaScriptCore/inspector/scripts/generate-combined-inspector-json.py.
+        * Scripts/generate-js-builtins: Renamed from Source/JavaScriptCore/generate-js-builtins.
+        * Scripts/inline-and-minify-stylesheets-and-scripts.py: Renamed from Source/JavaScriptCore/inspector/scripts/inline-and-minify-stylesheets-and-scripts.py.
+        * Scripts/jsmin.py: Renamed from Source/JavaScriptCore/inspector/scripts/jsmin.py.
+        * Scripts/xxd.pl: Renamed from Source/JavaScriptCore/inspector/scripts/xxd.pl.
+
 2015-10-19  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the iOS build

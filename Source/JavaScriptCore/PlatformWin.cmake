@@ -29,11 +29,16 @@ file(COPY
 )
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore)
+
+file(GLOB _JavaScriptCore_Scripts "${JavaScriptCore_SCRIPTS_DIR}/*")
+foreach (_script ${_JavaScriptCore_Scripts})
+    file(COPY ${_script} DESTINATION ${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts)
+endforeach()
+
 set(JavaScriptCore_POST_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/JavaScriptCore/postBuild.cmd")
 file(WRITE "${JavaScriptCore_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${DERIVED_SOURCES_DIR}/JavaScriptCore/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore\" >nul 2>nul\n")
 file(APPEND "${JavaScriptCore_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${DERIVED_SOURCES_DIR}/JavaScriptCore/inspector/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore\" >nul 2>nul\n")
-file(APPEND "${JavaScriptCore_POST_BUILD_COMMAND}" "@xcopy /y /d /f /s \"${DERIVED_SOURCES_DIR}/JavaScriptCore/inspector/scripts/*.*\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore\" >nul 2>nul\n")
-file(APPEND "${JavaScriptCore_POST_BUILD_COMMAND}" "@xcopy /y /d /f /s \"${DERIVED_SOURCES_DIR}/JavaScriptCore/generate-js-builtins\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore\" >nul 2>nul\n")
+file(APPEND "${JavaScriptCore_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${JavaScriptCore_SCRIPTS_DIR}/*.*\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts\" >nul 2>nul\n")
 foreach (_directory ${JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES})
     file(APPEND "${JavaScriptCore_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${JAVASCRIPTCORE_DIR}/${_directory}/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore\" >nul 2>nul\n")
 endforeach ()
