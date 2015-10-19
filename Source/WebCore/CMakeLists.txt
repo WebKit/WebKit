@@ -281,6 +281,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/ReadableStream.idl
     Modules/streams/ReadableStreamController.idl
     Modules/streams/ReadableStreamReader.idl
+    Modules/streams/WritableStream.idl
 
     Modules/vibration/NavigatorVibration.idl
 
@@ -3368,6 +3369,7 @@ set(WEBCORE_JS_BUILTINS
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamController.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamReader.js
+    ${WEBCORE_DIR}/Modules/streams/WritableStream.js
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

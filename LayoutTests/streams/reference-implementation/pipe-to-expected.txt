@@ -1,26 +1,26 @@
 
-FAIL Piping from a ReadableStream from which lots of data are readable synchronously Can't find variable: WritableStream
-FAIL Piping from a ReadableStream in readable state to a WritableStream in closing state Can't find variable: WritableStream
-FAIL Piping from a ReadableStream in readable state to a WritableStream in errored state Can't find variable: WritableStream
-FAIL Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state Can't find variable: WritableStream
-FAIL Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state Can't find variable: WritableStream
-FAIL Piping from an empty ReadableStream which becomes non-empty after pipeTo call to a WritableStream in the writable state Can't find variable: WritableStream
-FAIL Piping from an empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the writable state Can't find variable: WritableStream
-FAIL Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call Can't find variable: WritableStream
-FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call Can't find variable: WritableStream
-FAIL Piping from a non-empty ReadableStream to a WritableStream in waiting state which becomes errored after a pipeTo call Can't find variable: WritableStream
-FAIL Piping from a non-empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the waiting state Can't find variable: WritableStream
-FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state where both become ready after a pipeTo Can't find variable: WritableStream
-FAIL Piping from an empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call Can't find variable: WritableStream
-FAIL Piping from an empty ReadableStream which becomes closed after a pipeTo call to a WritableStream in the waiting state whose writes never complete Can't find variable: WritableStream
-FAIL Piping from an empty ReadableStream which becomes errored after a pipeTo call to a WritableStream in the waiting state Can't find variable: WritableStream
+FAIL Piping from a ReadableStream from which lots of data are readable synchronously WritableStream constructor not implemented
+FAIL Piping from a ReadableStream in readable state to a WritableStream in closing state WritableStream constructor not implemented
+FAIL Piping from a ReadableStream in readable state to a WritableStream in errored state WritableStream constructor not implemented
+FAIL Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state WritableStream constructor not implemented
+FAIL Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state WritableStream constructor not implemented
+FAIL Piping from an empty ReadableStream which becomes non-empty after pipeTo call to a WritableStream in the writable state WritableStream constructor not implemented
+FAIL Piping from an empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the writable state WritableStream constructor not implemented
+FAIL Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call WritableStream constructor not implemented
+FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call WritableStream constructor not implemented
+FAIL Piping from a non-empty ReadableStream to a WritableStream in waiting state which becomes errored after a pipeTo call WritableStream constructor not implemented
+FAIL Piping from a non-empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the waiting state WritableStream constructor not implemented
+FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state where both become ready after a pipeTo WritableStream constructor not implemented
+FAIL Piping from an empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call WritableStream constructor not implemented
+FAIL Piping from an empty ReadableStream which becomes closed after a pipeTo call to a WritableStream in the waiting state whose writes never complete WritableStream constructor not implemented
+FAIL Piping from an empty ReadableStream which becomes errored after a pipeTo call to a WritableStream in the waiting state WritableStream constructor not implemented
 FAIL Piping to a duck-typed asynchronous "writable stream" works pipeTo is not implemented
-FAIL Piping to a stream that has been aborted passes through the error as the cancellation reason Can't find variable: WritableStream
-FAIL Piping to a stream and then aborting it passes through the error as the cancellation reason Can't find variable: WritableStream
-FAIL Piping to a stream that has been closed propagates a TypeError cancellation reason backward Can't find variable: WritableStream
-FAIL Piping to a stream and then closing it propagates a TypeError cancellation reason backward Can't find variable: WritableStream
-FAIL Piping to a stream that errors on write should pass through the error as the cancellation reason Can't find variable: WritableStream
-FAIL Piping to a stream that errors on write should not pass through the error if the stream is already closed Can't find variable: WritableStream
-FAIL Piping to a stream that errors soon after writing should pass through the error as the cancellation reason Can't find variable: WritableStream
-FAIL Piping to a writable stream that does not consume the writes fast enough exerts backpressure on the source Can't find variable: WritableStream
+FAIL Piping to a stream that has been aborted passes through the error as the cancellation reason WritableStream constructor not implemented
+FAIL Piping to a stream and then aborting it passes through the error as the cancellation reason WritableStream constructor not implemented
+FAIL Piping to a stream that has been closed propagates a TypeError cancellation reason backward WritableStream constructor not implemented
+FAIL Piping to a stream and then closing it propagates a TypeError cancellation reason backward WritableStream constructor not implemented
+FAIL Piping to a stream that errors on write should pass through the error as the cancellation reason WritableStream constructor not implemented
+FAIL Piping to a stream that errors on write should not pass through the error if the stream is already closed WritableStream constructor not implemented
+FAIL Piping to a stream that errors soon after writing should pass through the error as the cancellation reason WritableStream constructor not implemented
+FAIL Piping to a writable stream that does not consume the writes fast enough exerts backpressure on the source WritableStream constructor not implemented
 

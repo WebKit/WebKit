@@ -1,14 +1,14 @@
 
-FAIL error argument is given to start method Can't find variable: WritableStream
-FAIL Underlying sink's write won't be called until start finishes Can't find variable: WritableStream
-FAIL Underlying sink's close won't be called until start finishes Can't find variable: WritableStream
-FAIL Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value Can't find variable: WritableStream
-FAIL Underlying sink's write or close are never invoked if start throws assert_equals: expected object "Error: horrible things" but got object "ReferenceError: Can't find variable: WritableStream"
-FAIL Underlying sink's write or close are never invoked if the promise returned by start is rejected Can't find variable: WritableStream
-FAIL WritableStream can be constructed with no arguments Can't find variable: WritableStream
-FAIL WritableStream instances have the correct methods and properties Can't find variable: WritableStream
-FAIL WritableStream with simple input, processed asynchronously Can't find variable: WritableStream
-FAIL WritableStream with simple input, processed synchronously Can't find variable: WritableStream
-FAIL WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure Can't find variable: WritableStream
-FAIL Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined ovalue Can't find variable: WritableStream
+FAIL error argument is given to start method WritableStream constructor not implemented
+FAIL Underlying sink's write won't be called until start finishes WritableStream constructor not implemented
+FAIL Underlying sink's close won't be called until start finishes WritableStream constructor not implemented
+FAIL Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value WritableStream constructor not implemented
+FAIL Underlying sink's write or close are never invoked if start throws assert_equals: expected object "Error: horrible things" but got object "EvalError: WritableStream constructor not implemented"
+FAIL Underlying sink's write or close are never invoked if the promise returned by start is rejected WritableStream constructor not implemented
+FAIL WritableStream can be constructed with no arguments WritableStream constructor not implemented
+FAIL WritableStream instances have the correct methods and properties WritableStream constructor not implemented
+FAIL WritableStream with simple input, processed asynchronously WritableStream constructor not implemented
+FAIL WritableStream with simple input, processed synchronously WritableStream constructor not implemented
+FAIL WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure WritableStream constructor not implemented
+FAIL Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined ovalue WritableStream constructor not implemented
 

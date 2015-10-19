@@ -1,11 +1,11 @@
 
 PASS Can get the ReadableStreamReader constructor indirectly 
 PASS Can get the ReadableStreamController constructor indirectly 
-FAIL ReadableStream.prototype.cancel enforces a brand check Can't find variable: WritableStream
-FAIL ReadableStream.prototype.getReader enforces a brand check Can't find variable: WritableStream
+FAIL ReadableStream.prototype.cancel enforces a brand check WritableStream constructor not implemented
+FAIL ReadableStream.prototype.getReader enforces a brand check WritableStream constructor not implemented
 PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments 
 FAIL ReadableStream.prototype.pipeTo works generically on its this and its arguments pipeTo is not implemented
-FAIL ReadableStream.prototype.tee enforces a brand check Can't find variable: WritableStream
+FAIL ReadableStream.prototype.tee enforces a brand check WritableStream constructor not implemented
 PASS ReadableStreamReader enforces a brand check on its argument 
 PASS ReadableStreamReader.prototype.closed enforces a brand check 
 PASS ReadableStreamReader.prototype.cancel enforces a brand check 
@@ -17,12 +17,12 @@ PASS ReadableStreamController can't be given a fully-constructed ReadableStream
 PASS ReadableStreamController.prototype.close enforces a brand check 
 PASS ReadableStreamController.prototype.enqueue enforces a brand check 
 PASS ReadableStreamController.prototype.error enforces a brand check 
-FAIL WritableStream.prototype.closed enforces a brand check Can't find variable: WritableStream
-FAIL WritableStream.prototype.ready enforces a brand check Can't find variable: WritableStream
-FAIL WritableStream.prototype.state enforces a brand check Can't find variable: WritableStream
-FAIL WritableStream.prototype.abort enforces a brand check Can't find variable: WritableStream
-FAIL WritableStream.prototype.write enforces a brand check Can't find variable: WritableStream
-FAIL WritableStream.prototype.close enforces a brand check Can't find variable: WritableStream
+FAIL WritableStream.prototype.closed enforces a brand check closed not implemented
+FAIL WritableStream.prototype.ready enforces a brand check ready not implemented
+FAIL WritableStream.prototype.state enforces a brand check assert_throws: state should throw a TypeError function "function () { getter.call(target); }" threw object "EvalError: state not implemented" ("EvalError") expected object "TypeError" ("TypeError")
+FAIL WritableStream.prototype.abort enforces a brand check abort not implemented
+FAIL WritableStream.prototype.write enforces a brand check write not implemented
+FAIL WritableStream.prototype.close enforces a brand check close not implemented
 PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments 
 PASS CountQueuingStrategy.prototype.size should work generically on its this and its arguments 
 

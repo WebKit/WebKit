@@ -1998,6 +1998,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'Worker').hasOwnProperty('get') is 
 PASS Object.getOwnPropertyDescriptor(global, 'Worker').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Worker').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Worker').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WritableStream').value is WritableStream
+PASS Object.getOwnPropertyDescriptor(global, 'WritableStream').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WritableStream').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WritableStream').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WritableStream').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'XMLDocument').value is XMLDocument
 PASS Object.getOwnPropertyDescriptor(global, 'XMLDocument').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XMLDocument').hasOwnProperty('set') is false

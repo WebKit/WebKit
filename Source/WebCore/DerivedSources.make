@@ -179,6 +179,7 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/streams/ReadableStream.idl \
     $(WebCore)/Modules/streams/ReadableStreamController.idl \
     $(WebCore)/Modules/streams/ReadableStreamReader.idl \
+    $(WebCore)/Modules/streams/WritableStream.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
     $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
@@ -1260,6 +1261,7 @@ WEBCORE_JS_BUILTINS = \
     $(WebCore)/Modules/streams/ReadableStreamController.js \
     $(WebCore)/Modules/streams/ReadableStreamInternals.js \
     $(WebCore)/Modules/streams/ReadableStreamReader.js \
+    $(WebCore)/Modules/streams/WritableStream.js \
 #
 
 all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)

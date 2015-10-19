@@ -1262,6 +1262,13 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    WritableStream: {
+        abort: "reason",
+        close: "",
+        write: "chunk",
+        __proto__: null,
+    },
+
     RequestAnimationFrameCallback: {
         handleEvent: "highResTime",
         __proto__: null,

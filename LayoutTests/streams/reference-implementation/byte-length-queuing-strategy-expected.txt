@@ -4,5 +4,5 @@ PASS Can construct a ByteLengthQueuingStrategy with any value as its high water 
 PASS ByteLengthQueuingStrategy constructor behaves as expected with wrong arguments 
 PASS ByteLengthQueuingStrategy size behaves as expected with wrong arguments 
 PASS ByteLengthQueuingStrategy instances have the correct properties 
-FAIL Closing a writable stream with in-flight writes below the high water mark delays the close call properly Can't find variable: WritableStream
+FAIL Closing a writable stream with in-flight writes below the high water mark delays the close call properly WritableStream constructor not implemented
 

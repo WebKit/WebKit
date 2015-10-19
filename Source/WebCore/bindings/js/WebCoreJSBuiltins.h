@@ -34,6 +34,7 @@
 #include "ReadableStreamControllerBuiltinsWrapper.h"
 #include "ReadableStreamInternalsBuiltinsWrapper.h"
 #include "ReadableStreamReaderBuiltinsWrapper.h"
+#include "WritableStreamBuiltinsWrapper.h"
 #endif
 
 
@@ -52,6 +53,7 @@ public:
         , m_readableStreamControllerBuiltins(&vm)
         , m_readableStreamInternalsBuiltins(&vm)
         , m_readableStreamReaderBuiltins(&vm)
+        , m_writableStreamBuiltins(&vm)
 #endif
     {
 #if ENABLE(STREAMS_API)
@@ -59,12 +61,13 @@ public:
 #endif
     }
 #if ENABLE(STREAMS_API)
-    ByteLengthQueuingStrategyBuiltinsWrapper& byteLengthQueuingStrategyBuiltins() { return m_byteLengthQueuingStrategyBuiltins;}
-    CountQueuingStrategyBuiltinsWrapper& countQueuingStrategyBuiltins() { return m_countQueuingStrategyBuiltins;}
-    ReadableStreamBuiltinsWrapper& readableStreamBuiltins() { return m_readableStreamBuiltins;}
-    ReadableStreamControllerBuiltinsWrapper& readableStreamControllerBuiltins() { return m_readableStreamControllerBuiltins;}
-    ReadableStreamInternalsBuiltinsWrapper& readableStreamInternalsBuiltins() { return m_readableStreamInternalsBuiltins;}
-    ReadableStreamReaderBuiltinsWrapper& readableStreamReaderBuiltins() { return m_readableStreamReaderBuiltins;}
+    ByteLengthQueuingStrategyBuiltinsWrapper& byteLengthQueuingStrategyBuiltins() { return m_byteLengthQueuingStrategyBuiltins; }
+    CountQueuingStrategyBuiltinsWrapper& countQueuingStrategyBuiltins() { return m_countQueuingStrategyBuiltins; }
+    ReadableStreamBuiltinsWrapper& readableStreamBuiltins() { return m_readableStreamBuiltins; }
+    ReadableStreamControllerBuiltinsWrapper& readableStreamControllerBuiltins() { return m_readableStreamControllerBuiltins; }
+    ReadableStreamInternalsBuiltinsWrapper& readableStreamInternalsBuiltins() { return m_readableStreamInternalsBuiltins; }
+    ReadableStreamReaderBuiltinsWrapper& readableStreamReaderBuiltins() { return m_readableStreamReaderBuiltins; }
+    WritableStreamBuiltinsWrapper& writableStreamBuiltins() { return m_writableStreamBuiltins; }
 #endif
 
 private:
@@ -76,6 +79,7 @@ private:
     ReadableStreamControllerBuiltinsWrapper m_readableStreamControllerBuiltins;
     ReadableStreamInternalsBuiltinsWrapper m_readableStreamInternalsBuiltins;
     ReadableStreamReaderBuiltinsWrapper m_readableStreamReaderBuiltins;
+    WritableStreamBuiltinsWrapper m_writableStreamBuiltins;
 #endif
 
 };
