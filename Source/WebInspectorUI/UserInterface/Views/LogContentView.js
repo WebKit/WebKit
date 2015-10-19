@@ -641,6 +641,10 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
     _logCleared(event)
     {
         this._logViewController.clear();
+
+        let searchQuery = this._findBanner.searchQuery;
+        if (searchQuery)
+            this._performSearch(searchQuery);
     }
 
     _showConsoleTab()
@@ -697,7 +701,7 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
             }
         }, this);
 
-        this._performSearch("");
+        this._performSearch(this._findBanner.searchQuery);
     }
 
     _keyDown(event)
