@@ -36,6 +36,10 @@
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
 #if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
 #include <WebCore/BackingStoreBackendCairoX11.h>
 #include <WebCore/PlatformDisplayX11.h>
@@ -48,7 +52,7 @@ namespace WebKit {
 
 std::unique_ptr<BackingStoreBackendCairo> BackingStore::createBackend()
 {
-#if PLATFORM(GTK) && PLATFORM(X11)
+#if PLATFORM(GTK) && PLATFORM(X11) && defined(GDK_WINDOWING_X11)
     const auto& sharedDisplay = PlatformDisplay::sharedDisplay();
     if (is<PlatformDisplayX11>(sharedDisplay)) {
         GdkVisual* visual = gtk_widget_get_visual(m_webPageProxy.viewWidget());
