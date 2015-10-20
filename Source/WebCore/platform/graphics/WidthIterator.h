@@ -89,7 +89,7 @@ private:
     HashSet<const Font*>* m_fallbackFonts { nullptr };
     bool m_accountForGlyphBounds { false };
     bool m_enableKerning { false };
-    bool m_enableLigatures { false };
+    bool m_requiresShaping { false };
     bool m_forTextEmphasis { false };
     float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::min() };
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };

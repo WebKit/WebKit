@@ -371,19 +371,19 @@ PassRefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, 
     return platformCreateScaledFont(fontDescription, scaleFactor);
 }
 
-bool Font::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advances, size_t glyphCount, bool enableKerning, bool enableLigatures) const
+bool Font::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advances, size_t glyphCount, bool enableKerning, bool requiresShaping) const
 {
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
     ASSERT(!isSVGFont());
 #if PLATFORM(COCOA)
-    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | (enableLigatures ? kCTFontTransformApplyShaping : 0);
+    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | (requiresShaping ? kCTFontTransformApplyShaping : 0);
     return CTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
 #else
     UNUSED_PARAM(glyphs);
     UNUSED_PARAM(advances);
     UNUSED_PARAM(glyphCount);
     UNUSED_PARAM(enableKerning);
-    UNUSED_PARAM(enableLigatures);
+    UNUSED_PARAM(requiresShaping);
     return false;
 #endif
 }

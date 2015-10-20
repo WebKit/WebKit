@@ -53,7 +53,7 @@ private:
     bool fillBMPGlyphs(SVGFontElement*, GlyphPage*, UChar* buffer) const;
     bool fillNonBMPGlyphs(SVGFontElement*, GlyphPage*, UChar* buffer) const;
 
-    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t, bool enableKerning, bool enableLigatures) const = delete;
+    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t, bool enableKerning, bool requiresShaping) const = delete;
 
     // Ths SVGFontFaceElement is kept alive --
     // 1) in the external font case: by the CSSFontFaceSource, which holds a reference to the external SVG document

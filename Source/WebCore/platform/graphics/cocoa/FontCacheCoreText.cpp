@@ -321,13 +321,29 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings& features, const FontVariantSettings& variantSettings)
 {
-    if (!originalFont || (!features.size() && (textRenderingMode != OptimizeLegibility) && variantSettings.isAllNormal()))
+    if (!originalFont || (!features.size() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()))
         return originalFont;
 
-    // FIXME: We don't consult with the @font-face first, like the spec says we should.
+    // This algorithm is described at http://www.w3.org/TR/css3-fonts/#feature-precedence
 
-    // Spec says that font-feature-settings should override font-variant-*.
+    // Step 1: CoreText handles default features (such as required ligatures).
+
+    // Steps 2-3: Consult with @font-face
+    // FIXME: This is not yet implemented.
+
+    // Step 4: Font-variant
     auto fontFeatureSettingsFromVariants = computeFeatureSettingsFromVariants(variantSettings);
+
+    // Step 5: Other properties (text-rendering)
+    if (textRenderingMode == OptimizeSpeed) {
+        fontFeatureSettingsFromVariants.set(fontFeatureTag("liga"), 0);
+        fontFeatureSettingsFromVariants.set(fontFeatureTag("clig"), 0);
+        fontFeatureSettingsFromVariants.set(fontFeatureTag("dlig"), 0);
+        fontFeatureSettingsFromVariants.set(fontFeatureTag("hlig"), 0);
+        fontFeatureSettingsFromVariants.set(fontFeatureTag("calt"), 0);
+    }
+
+    // Step 6: Font-feature-settings
     for (auto& newFeature : features)
         fontFeatureSettingsFromVariants.set(newFeature.tag(), newFeature.value());
 

@@ -192,7 +192,7 @@ public:
     bool shouldNotBeUsedForArabic() const { return m_shouldNotBeUsedForArabic; };
 #endif
 #if PLATFORM(COCOA)
-    CFDictionaryRef getCFStringAttributes(bool enableKerning, bool enableLigatures, FontOrientation) const;
+    CFDictionaryRef getCFStringAttributes(bool enableKerning, FontOrientation) const;
     bool hasCustomTracking() const { return isSystemFont(); }
 #endif
 
@@ -200,7 +200,7 @@ public:
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
 #endif
 
-    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool enableLigatures) const;
+    bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t glyphCount, bool enableKerning, bool requiresShaping) const;
 
 #if PLATFORM(COCOA) || PLATFORM(WIN)
     bool isSystemFont() const { return m_isSystemFont; }

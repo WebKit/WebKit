@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, bool enableLigatures, FontOrientation orientation) const
+CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation orientation) const
 {
-    unsigned key = (enableKerning << 1 | enableLigatures) + 1;
+    unsigned key = static_cast<unsigned>(enableKerning) + 1;
     HashMap<unsigned, RetainPtr<CFDictionaryRef>>::AddResult addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());
     RetainPtr<CFDictionaryRef>& attributesDictionary = addResult.iterator->value;
     if (!addResult.isNewEntry)
@@ -52,12 +52,6 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, bool enableLigat
         const float zero = 0;
         static CFNumberRef zeroKerningValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &zero);
         CFDictionarySetValue(mutableAttributes, kCTKernAttributeName, zeroKerningValue);
-    }
-
-    if (!enableLigatures) {
-        const int zero = 0;
-        static CFNumberRef essentialLigaturesValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &zero);
-        CFDictionarySetValue(mutableAttributes, kCTLigatureAttributeName, essentialLigaturesValue);
     }
 
     if (orientation == Vertical)

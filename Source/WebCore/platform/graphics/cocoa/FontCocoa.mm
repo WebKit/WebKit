@@ -475,7 +475,7 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
 
     RetainPtr<CFTypeRef> fontEqualityObject = platformData().objectForEqualityCheck();
 
-    ProviderInfo info = { characters, length, getCFStringAttributes(false, false, platformData().orientation()) };
+    ProviderInfo info = { characters, length, getCFStringAttributes(false, platformData().orientation()) };
     RetainPtr<CTLineRef> line = adoptCF(CTLineCreateWithUniCharProvider(&provideStringAndAttributes, 0, &info));
 
     CFArrayRef runArray = CTLineGetGlyphRuns(line.get());

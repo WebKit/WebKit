@@ -44,7 +44,7 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
     , m_fallbackFonts(fallbackFonts)
     , m_accountForGlyphBounds(accountForGlyphBounds)
     , m_enableKerning(font->enableKerning())
-    , m_enableLigatures(font->enableLigatures())
+    , m_requiresShaping(font->requiresShaping())
     , m_forTextEmphasis(forTextEmphasis)
 {
     // If the padding is non-zero, count the number of spaces in the run
@@ -101,7 +101,7 @@ inline auto WidthIterator::shouldApplyFontTransforms(const GlyphBuffer* glyphBuf
 {
     if (glyphBuffer && glyphBuffer->size() == (lastGlyphCount + 1) && isSoftBankEmoji(previousCharacter))
         return TransformsType::Forced;
-    if (m_run.length() <= 1 || !(m_enableKerning || m_enableLigatures))
+    if (m_run.length() <= 1 || !(m_enableKerning || m_requiresShaping))
         return TransformsType::None;
     return TransformsType::NotForced;
 }
@@ -138,7 +138,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
         }
     } else
 #endif
-        font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, m_enableKerning, m_enableLigatures);
+        font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, m_enableKerning, m_requiresShaping);
 
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
