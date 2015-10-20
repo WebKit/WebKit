@@ -85,9 +85,6 @@ typedef void (*WKPageShowColorPickerCallback)(WKPageRef page, WKStringRef initia
 typedef void (*WKPageHideColorPickerCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 typedef void (*WKPagePinnedStateDidChangeCallback)(WKPageRef page, const void* clientInfo);
-typedef void (*WKPageDidBeginTrackingPotentialLongMousePressCallback)(WKPageRef page, WKPoint mouseDownPosition, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void *clientInfo);
-typedef void (*WKPageDidRecognizeLongMousePressCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
-typedef void (*WKPageDidCancelTrackingPotentialLongMousePressCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageIsPlayingAudioDidChangeCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageDecidePolicyForUserMediaPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo);
 typedef void (*WKPageDidClickAutoFillButtonCallback)(WKPageRef page, WKTypeRef userData, const void *clientInfo);
@@ -359,7 +356,7 @@ typedef struct WKPageUIClientV4 {
     WKPageDrawFooterCallback                                            drawFooter;
     WKPagePrintFrameCallback                                            printFrame;
     WKPageUIClientCallback                                              runModal;
-    void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame
+    void*                                                               unused1; // Used to be didCompleteRubberBandForMainFrame.
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
     void*                                                               shouldInterruptJavaScript_unavailable;
 
@@ -378,9 +375,9 @@ typedef struct WKPageUIClientV4 {
     WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
 
     // Version 4.
-    WKPageDidBeginTrackingPotentialLongMousePressCallback               didBeginTrackingPotentialLongMousePress;
-    WKPageDidRecognizeLongMousePressCallback                            didRecognizeLongMousePress;
-    WKPageDidCancelTrackingPotentialLongMousePressCallback              didCancelTrackingPotentialLongMousePress;
+    void*                                                               unused2; // Used to be didBeginTrackingPotentialLongMousePress.
+    void*                                                               unused3; // Used to be didRecognizeLongMousePress.
+    void*                                                               unused4; // Used to be didCancelTrackingPotentialLongMousePress.
     WKPageIsPlayingAudioDidChangeCallback                               isPlayingAudioDidChange;
 } WKPageUIClientV4;
 
@@ -443,9 +440,9 @@ typedef struct WKPageUIClientV5 {
     WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
 
     // Version 4.
-    WKPageDidBeginTrackingPotentialLongMousePressCallback               didBeginTrackingPotentialLongMousePress;
-    WKPageDidRecognizeLongMousePressCallback                            didRecognizeLongMousePress;
-    WKPageDidCancelTrackingPotentialLongMousePressCallback              didCancelTrackingPotentialLongMousePress;
+    void*                                                               unused2; // Used to be didBeginTrackingPotentialLongMousePress.
+    void*                                                               unused3; // Used to be didRecognizeLongMousePress.
+    void*                                                               unused4; // Used to be didCancelTrackingPotentialLongMousePress.
     WKPageIsPlayingAudioDidChangeCallback                               isPlayingAudioDidChange;
 
     // Version 5.
@@ -516,9 +513,9 @@ typedef struct WKPageUIClientV6 {
     WKPagePinnedStateDidChangeCallback                                  pinnedStateDidChange;
 
     // Version 4.
-    WKPageDidBeginTrackingPotentialLongMousePressCallback               didBeginTrackingPotentialLongMousePress;
-    WKPageDidRecognizeLongMousePressCallback                            didRecognizeLongMousePress;
-    WKPageDidCancelTrackingPotentialLongMousePressCallback              didCancelTrackingPotentialLongMousePress;
+    void*                                                               unused2; // Used to be didBeginTrackingPotentialLongMousePress.
+    void*                                                               unused3; // Used to be didRecognizeLongMousePress.
+    void*                                                               unused4; // Used to be didCancelTrackingPotentialLongMousePress.
     WKPageIsPlayingAudioDidChangeCallback                               isPlayingAudioDidChange;
 
     // Version 5.

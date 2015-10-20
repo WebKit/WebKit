@@ -1922,31 +1922,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.pinnedStateDidChange(toAPI(&page), m_client.base.clientInfo);
         }
 
-        virtual void didBeginTrackingPotentialLongMousePress(WebPageProxy* page, const IntPoint& mouseDownPosition, const WebHitTestResultData& data, API::Object* userInfo) override
-        {
-            if (!m_client.didBeginTrackingPotentialLongMousePress)
-                return;
-
-            RefPtr<API::HitTestResult> webHitTestResult = API::HitTestResult::create(data);
-            m_client.didBeginTrackingPotentialLongMousePress(toAPI(page), toAPI(mouseDownPosition), toAPI(webHitTestResult.get()), toAPI(userInfo), m_client.base.clientInfo);
-        }
-
-        virtual void didRecognizeLongMousePress(WebPageProxy* page, API::Object* userInfo) override
-        {
-            if (!m_client.didRecognizeLongMousePress)
-                return;
-
-            m_client.didRecognizeLongMousePress(toAPI(page), toAPI(userInfo), m_client.base.clientInfo);
-        }
-
-        virtual void didCancelTrackingPotentialLongMousePress(WebPageProxy* page, API::Object* userInfo) override
-        {
-            if (!m_client.didCancelTrackingPotentialLongMousePress)
-                return;
-
-            m_client.didCancelTrackingPotentialLongMousePress(toAPI(page), toAPI(userInfo), m_client.base.clientInfo);
-        }
-
         virtual void isPlayingAudioDidChange(WebPageProxy& page) override
         {
             if (!m_client.isPlayingAudioDidChange)

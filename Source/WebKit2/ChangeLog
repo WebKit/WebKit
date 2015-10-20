@@ -1,3 +1,46 @@
+2015-10-19  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused support for long presses from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=150345
+
+        Reviewed by Beth Dakin.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didBeginTrackingPotentialLongMousePress): Deleted.
+        (API::UIClient::didRecognizeLongMousePress): Deleted.
+        (API::UIClient::didCancelTrackingPotentialLongMousePress): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Deleted.
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetLongMousePressEnabled):
+        (WKPreferencesSetLongMousePressEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBeginTrackingPotentialLongMousePress): Deleted.
+        (WebKit::WebPageProxy::didRecognizeLongMousePress): Deleted.
+        (WebKit::WebPageProxy::didCancelTrackingPotentialLongMousePress): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didBeginTrackingPotentialLongMousePress): Deleted.
+        (API::InjectedBundle::PageUIClient::didRecognizeLongMousePress): Deleted.
+        (API::InjectedBundle::PageUIClient::didCancelTrackingPotentialLongMousePress): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didBeginTrackingPotentialLongMousePress): Deleted.
+        (WebKit::InjectedBundlePageUIClient::didRecognizeLongMousePress): Deleted.
+        (WebKit::InjectedBundlePageUIClient::didCancelTrackingPotentialLongMousePress): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didBeginTrackingPotentialLongMousePress): Deleted.
+        (WebKit::WebChromeClient::didRecognizeLongMousePress): Deleted.
+        (WebKit::WebChromeClient::didCancelTrackingPotentialLongMousePress): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Deleted.
+
 2015-10-19  Chris Dumez  <cdumez@apple.com>
 
         Make sure development Safari does not delete the stable Safari cache storage.

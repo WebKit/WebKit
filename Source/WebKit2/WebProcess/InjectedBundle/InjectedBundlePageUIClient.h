@@ -70,10 +70,6 @@ public:
     String plugInExtraStyleSheet() const override;
     String plugInExtraScript() const override;
 
-    void didBeginTrackingPotentialLongMousePress(WebPage*, const WebCore::IntPoint&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) override;
-    void didRecognizeLongMousePress(WebPage*, RefPtr<API::Object>& userData) override;
-    void didCancelTrackingPotentialLongMousePress(WebPage*, RefPtr<API::Object>& userData) override;
-
     void didClickAutoFillButton(WebPage&, InjectedBundleNodeHandle&, RefPtr<API::Object>& userData) override;
 };
 

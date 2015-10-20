@@ -400,10 +400,6 @@ public:
     virtual bool isPointerLocked() { return false; }
 #endif
 
-    virtual void didBeginTrackingPotentialLongMousePress(const IntPoint& mouseDownPosition, const HitTestResult&) { UNUSED_PARAM(mouseDownPosition); }
-    virtual void didRecognizeLongMousePress() { }
-    virtual void didCancelTrackingPotentialLongMousePress() { }
-
     virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
 
     virtual bool isEmptyChromeClient() const { return false; }

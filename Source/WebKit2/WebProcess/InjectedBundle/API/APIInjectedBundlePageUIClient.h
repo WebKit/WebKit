@@ -87,10 +87,6 @@ public:
     virtual WTF::String plugInExtraStyleSheet() const { return emptyString(); }
     virtual WTF::String plugInExtraScript() const { return emptyString(); }
 
-    virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPage*, const WebCore::IntPoint&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
-    virtual void didRecognizeLongMousePress(WebKit::WebPage*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
-    virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPage*, RefPtr<API::Object>& userData) { UNUSED_PARAM(userData); }
-
     virtual void didClickAutoFillButton(WebKit::WebPage&, WebKit::InjectedBundleNodeHandle&, RefPtr<API::Object>&) { }
 };
 

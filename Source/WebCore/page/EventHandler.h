@@ -459,13 +459,6 @@ private:
     void autoHideCursorTimerFired();
 #endif
 
-    void beginTrackingPotentialLongMousePress(const HitTestResult&);
-    void recognizeLongMousePress();
-    void cancelTrackingPotentialLongMousePress();
-    bool longMousePressHysteresisExceeded();
-    void clearLongMousePressState();
-    bool handleLongMousePressMouseMovedEvent(const PlatformMouseEvent&);
-
     void clearLatchedState();
 
     Frame& m_frame;
@@ -493,9 +486,6 @@ private:
 #if ENABLE(CURSOR_SUPPORT)
     Timer m_cursorUpdateTimer;
 #endif
-
-    Timer m_longMousePressTimer;
-    bool m_didRecognizeLongMousePress { false };
 
     std::unique_ptr<AutoscrollController> m_autoscrollController;
     bool m_mouseDownMayStartAutoscroll { false };
@@ -575,7 +565,6 @@ private:
     double m_maxMouseMovedDuration { 0 };
     PlatformEvent::Type m_baseEventType { PlatformEvent::NoType };
     bool m_didStartDrag { false };
-    bool m_didLongPressInvokeContextMenu { false };
     bool m_isHandlingWheelEvent { false };
 
 #if ENABLE(CURSOR_VISIBILITY)

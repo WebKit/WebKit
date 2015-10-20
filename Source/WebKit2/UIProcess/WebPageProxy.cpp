@@ -3579,21 +3579,6 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResultData& hitTestRe
     m_uiClient->mouseDidMoveOverElement(this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-void WebPageProxy::didBeginTrackingPotentialLongMousePress(const IntPoint& mouseDownPosition, const WebHitTestResultData& hitTestResultData, const UserData& userData)
-{
-    m_uiClient->didBeginTrackingPotentialLongMousePress(this, mouseDownPosition, hitTestResultData, m_process->transformHandlesToObjects(userData.object()).get());
-}
-
-void WebPageProxy::didRecognizeLongMousePress(const UserData& userData)
-{
-    m_uiClient->didRecognizeLongMousePress(this, m_process->transformHandlesToObjects(userData.object()).get());
-}
-
-void WebPageProxy::didCancelTrackingPotentialLongMousePress(const UserData& userData)
-{
-    m_uiClient->didCancelTrackingPotentialLongMousePress(this, m_process->transformHandlesToObjects(userData.object()).get());
-}
-
 void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
 {
     ASSERT(&connection == m_process->connection());

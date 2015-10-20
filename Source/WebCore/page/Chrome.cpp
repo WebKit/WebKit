@@ -599,19 +599,4 @@ void Chrome::notifyPopupOpeningObservers() const
         observer->willOpenPopup();
 }
 
-void Chrome::didBeginTrackingPotentialLongMousePress(const IntPoint& mouseDownPosition, const HitTestResult& hitTestResult)
-{
-    m_client.didBeginTrackingPotentialLongMousePress(mouseDownPosition, hitTestResult);
-}
-
-void Chrome::didRecognizeLongMousePress()
-{
-    m_client.didRecognizeLongMousePress();
-}
-
-void Chrome::didCancelTrackingPotentialLongMousePress()
-{
-    m_client.didCancelTrackingPotentialLongMousePress();
-}
-
 } // namespace WebCore

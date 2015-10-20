@@ -128,10 +128,6 @@ private:
     virtual void scrollbarsModeDidChange() const override;
     virtual void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags) override;
 
-    virtual void didBeginTrackingPotentialLongMousePress(const WebCore::IntPoint& mouseDownPosition, const WebCore::HitTestResult&) override;
-    virtual void didRecognizeLongMousePress() override;
-    virtual void didCancelTrackingPotentialLongMousePress() override;
-
     virtual void setToolTip(const String&, WebCore::TextDirection) override;
     
     virtual void print(WebCore::Frame*) override;

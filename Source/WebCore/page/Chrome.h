@@ -186,10 +186,6 @@ public:
     void registerPopupOpeningObserver(PopupOpeningObserver*);
     void unregisterPopupOpeningObserver(PopupOpeningObserver*);
 
-    void didBeginTrackingPotentialLongMousePress(const IntPoint&, const HitTestResult&);
-    void didRecognizeLongMousePress();
-    void didCancelTrackingPotentialLongMousePress();
-
 private:
     void notifyPopupOpeningObservers() const;
 

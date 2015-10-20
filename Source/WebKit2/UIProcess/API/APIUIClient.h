@@ -147,10 +147,6 @@ public:
 
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
-    virtual void didBeginTrackingPotentialLongMousePress(WebKit::WebPageProxy*, const WebCore::IntPoint&, const WebKit::WebHitTestResultData&, API::Object*) { }
-    virtual void didRecognizeLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
-    virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
-
     virtual void isPlayingAudioDidChange(WebKit::WebPageProxy&) { }
 
 #if ENABLE(MEDIA_SESSION)

@@ -1327,14 +1327,14 @@ bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->gamepadsEnabled();
 }
 
+// FIXME: Remove these when possible.
 void WKPreferencesSetLongMousePressEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setLongMousePressEnabled(enabled);
 }
 
 bool WKPreferencesGetLongMousePressEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->longMousePressEnabled();
+    return false;
 }
 
 void WKPreferencesSetMinimumZoomFontSize(WKPreferencesRef preferencesRef, double size)

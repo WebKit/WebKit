@@ -54,9 +54,6 @@ typedef WKStringRef (*WKBundlePagePlugInCreateStartLabelTitleCallback)(WKStringR
 typedef WKStringRef (*WKBundlePagePlugInCreateStartLabelSubtitleCallback)(WKStringRef mimeType, const void *clientInfo);
 typedef WKStringRef (*WKBundlePagePlugInCreateExtraStyleSheetCallback)(const void *clientInfo);
 typedef WKStringRef (*WKBundlePagePlugInCreateExtraScriptCallback)(const void *clientInfo);
-typedef void (*WKBundlePageDidBeginTrackingPotentialLongMousePressCallback)(WKBundlePageRef page, WKPoint mouseDownPosition, WKBundleHitTestResultRef hitTestResult, WKTypeRef* userData, const void *clientInfo);
-typedef void (*WKBundlePageDidRecognizeLongMousePressCallback)(WKBundlePageRef page, WKTypeRef* userData, const void *clientInfo);
-typedef void (*WKBundlePageDidCancelTrackingPotentialLongMousePressCallback)(WKBundlePageRef page, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidClickAutoFillButtonCallback)(WKBundlePageRef page, WKBundleNodeHandleRef inputElement, WKTypeRef* userData, const void *clientInfo);
 
 typedef struct WKBundlePageUIClientBase {
@@ -167,9 +164,9 @@ typedef struct WKBundlePageUIClientV3 {
     WKBundlePagePlugInCreateExtraScriptCallback                         createPlugInExtraScript;
 
     // Version 3.
-    WKBundlePageDidBeginTrackingPotentialLongMousePressCallback         didBeginTrackingPotentialLongMousePress;
-    WKBundlePageDidRecognizeLongMousePressCallback                      didRecognizeLongMousePress;
-    WKBundlePageDidCancelTrackingPotentialLongMousePressCallback        didCancelTrackingPotentialLongMousePress;
+    void*                                                               unused3;
+    void*                                                               unused4;
+    void*                                                               unused5;
 
     WKBundlePageDidClickAutoFillButtonCallback                          didClickAutoFillButton;
 } WKBundlePageUIClientV3;

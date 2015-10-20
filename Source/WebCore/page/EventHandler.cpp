@@ -135,9 +135,6 @@ const int TextDragHysteresis = 3;
 const int GeneralDragHysteresis = 3;
 #endif // ENABLE(DRAG_SUPPORT)
 
-const std::chrono::milliseconds longMousePressRecognitionDelay = std::chrono::milliseconds(500);
-const int maximumLongMousePressDragDistance = 5; // in points.
-
 #if ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
 const float GestureUnknown = 0;
 #endif
@@ -381,7 +378,6 @@ EventHandler::EventHandler(Frame& frame)
 #if ENABLE(CURSOR_SUPPORT)
     , m_cursorUpdateTimer(*this, &EventHandler::cursorUpdateTimerFired)
 #endif
-    , m_longMousePressTimer(*this, &EventHandler::recognizeLongMousePress)
     , m_autoscrollController(std::make_unique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
     , m_fakeMouseMoveEventTimer(*this, &EventHandler::fakeMouseMoveEventTimerFired)
@@ -422,7 +418,6 @@ void EventHandler::clear()
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
 #endif
-    clearLongMousePressState();
     m_resizeLayer = nullptr;
     m_elementUnderMouse = nullptr;
     m_lastElementUnderMouse = nullptr;
@@ -467,7 +462,6 @@ void EventHandler::clear()
     m_maxMouseMovedDuration = 0;
     m_baseEventType = PlatformEvent::NoType;
     m_didStartDrag = false;
-    m_didLongPressInvokeContextMenu = false;
 }
 
 void EventHandler::nodeWillBeRemoved(Node& nodeToBeRemoved)
@@ -786,11 +780,6 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         }
     }
 
-    if (event.event().button() == LeftButton && event.isOverLink()) {
-        // FIXME 135703: Handle long press for more than just links.
-        beginTrackingPotentialLongMousePress(event.hitTestResult());
-    }
-
     // We don't do this at the start of mouse down handling,
     // because we don't want to do it until we know we didn't hit a widget.
     if (singleClick)
@@ -875,9 +864,6 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (event.button() != LeftButton || event.clickCount() != 1)
         return false;
 
-    if (m_didRecognizeLongMousePress)
-        return false;
-    
     FrameView* view = m_frame.view();
     if (!view)
         return false;
@@ -1033,11 +1019,6 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     m_mouseDownWasInSubframe = false;
   
     bool handled = false;
-    
-    if (event.event().button() == LeftButton) {
-        // FIXME 135767: Implement long mouse press for arbitrary mouse buttons.
-        clearLongMousePressState();
-    }
 
     // Clear the selection if the mouse didn't move after the last mouse
     // press and it's not a context menu click.  We do this so when clicking
@@ -1578,68 +1559,6 @@ void EventHandler::autoHideCursorTimerFired()
         view->setCursor(m_currentMouseCursor);
 }
 #endif
-    
-void EventHandler::beginTrackingPotentialLongMousePress(const HitTestResult& hitTestResult)
-{
-    clearLongMousePressState();
-
-    Page* page = m_frame.page();
-    if (!(page && page->settings().longMousePressEnabled()))
-        return;
-
-    m_longMousePressTimer.startOneShot(longMousePressRecognitionDelay);
-
-    page->chrome().didBeginTrackingPotentialLongMousePress(m_mouseDownPos, hitTestResult);
-}
-    
-void EventHandler::recognizeLongMousePress()
-{
-    Page* page = m_frame.page();
-    if (!page)
-        return;
-
-    m_didRecognizeLongMousePress = true;
-
-    // Clear mouse state to avoid initiating a drag.
-    m_mousePressed = false;
-    invalidateClick();
-
-    page->chrome().didRecognizeLongMousePress();
-}
-    
-void EventHandler::cancelTrackingPotentialLongMousePress()
-{
-    if (!m_longMousePressTimer.isActive())
-        return;
-
-    clearLongMousePressState();
-
-    Page* page = m_frame.page();
-    if (!page)
-        return;
-
-    page->chrome().didCancelTrackingPotentialLongMousePress();
-}
-
-void EventHandler::clearLongMousePressState()
-{
-    m_longMousePressTimer.stop();
-    m_didRecognizeLongMousePress = false;
-}
-    
-bool EventHandler::handleLongMousePressMouseMovedEvent(const PlatformMouseEvent& mouseEvent)
-{
-    if (mouseEvent.button() != LeftButton || mouseEvent.type() != PlatformEvent::MouseMoved)
-        return false;
-
-    if (m_didRecognizeLongMousePress)
-        return true;
-
-    if (!mouseMovementExceedsThreshold(mouseEvent.position(), maximumLongMousePressDragDistance))
-        cancelTrackingPotentialLongMousePress();
-
-    return false;
-}
 
 static LayoutPoint documentPointForWindowPoint(Frame& frame, const IntPoint& windowPoint)
 {
@@ -1893,9 +1812,6 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
     if (defaultPrevented)
         return true;
 #endif
-
-    if (handleLongMousePressMouseMovedEvent(platformMouseEvent))
-        return true;
 
     RefPtr<FrameView> protector(m_frame.view());
     
@@ -3529,8 +3445,6 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         // On OS X this causes problems with the ownership of the pasteboard and the promised types.
         if (m_didStartDrag) {
             m_mouseDownMayStartDrag = false;
-
-            cancelTrackingPotentialLongMousePress();
             return true;
         }
         if (dragState().source && dragState().shouldDispatchEvents) {
