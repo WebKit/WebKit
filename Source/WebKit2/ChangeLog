@@ -1,5 +1,13 @@
 2015-10-20  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (photoLibraryIcon):
+
+2015-10-20  Alexey Proskuryakov  <ap@apple.com>
+
         Touch a file to trigger a build.
 
         * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
