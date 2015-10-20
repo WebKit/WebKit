@@ -1,3 +1,9 @@
+2015-10-20  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-10-20  Yoav Weiss  <yoav@yoav.ws>
 
         Rename the PICTURE_SIZES flag to CURRENTSRC
