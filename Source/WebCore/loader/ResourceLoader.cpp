@@ -256,6 +256,8 @@ void ResourceLoader::loadDataURL()
             loader->didFail(ResourceError(errorDomainWebKitInternal, 0, url.string(), "Data URL decoding failed"));
             return;
         }
+        if (loader->wasCancelled())
+            return;
         auto& result = decodeResult.value();
         auto dataSize = result.data->size();
 
