@@ -1,3 +1,18 @@
+2015-10-20  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r191333.
+        https://bugs.webkit.org/show_bug.cgi?id=150362
+
+        Caused assertions on regression tests (Requested by ap on
+        #webkit).
+
+        Reverted changeset:
+
+        "ERROR: Unhandled web process message
+        'StorageAreaMap:DispatchStorageEvent'"
+        https://bugs.webkit.org/show_bug.cgi?id=150315
+        http://trac.webkit.org/changeset/191333
+
 2015-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [UNIX] ASSERTION FAILED: m_shouldWaitForSyncReplies in Connection::connectionDidClose()
