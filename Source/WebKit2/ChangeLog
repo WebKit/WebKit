@@ -1,3 +1,22 @@
+2015-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        ERROR: Unhandled web process message 'StorageAreaMap:DispatchStorageEvent'
+        https://bugs.webkit.org/show_bug.cgi?id=150315
+
+        Reviewed by Andreas Kling.
+
+        It was introduced in r184930, that keeps the session storage area
+        maps alive in the UI process when they are destroyed by the web
+        process. The problem is that we also keep the listeners, so that
+        events are also dispatched to the listeners of destroyed areas,
+        and the message handlers were removed in the web process.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createTransientLocalStorageMap): Add a
+        listener for the new storage map ID when the map is reused.
+        (WebKit::StorageManager::destroyStorageMap): Always remove
+        listeners of destroyed maps.
+
 2015-10-19  Tim Horton  <timothy_horton@apple.com>
 
         Remove unused support for long presses from WebKit

@@ -736,6 +736,7 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
             continue;
         if (!origin->isSameSchemeHostPort(&area->securityOrigin()))
             continue;
+        area->addListener(connection, storageMapID);
         m_storageAreasByConnection.remove(it);
         m_storageAreasByConnection.add({ &connection, storageMapID }, WTF::move(area));
         return;
@@ -796,11 +797,12 @@ void StorageManager::destroyStorageMap(IPC::Connection& connection, uint64_t sto
         return;
     }
 
+    it->value->removeListener(connection, storageMapID);
+
     // Don't remove session storage maps. The web process may reconnect and expect the data to still be around.
     if (it->value->isSessionStorage())
         return;
 
-    it->value->removeListener(connection, storageMapID);
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
