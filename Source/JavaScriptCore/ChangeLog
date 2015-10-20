@@ -1,3 +1,24 @@
+2015-10-20  Saam barati  <sbarati@apple.com>
+
+        GCAwareJITStubRoutineWithExceptionHandler has a stale CodeBlock pointer in its destructor
+        https://bugs.webkit.org/show_bug.cgi?id=150351
+
+        Reviewed by Mark Lam.
+
+        We may regenerate many GCAwareJITStubRoutineWithExceptionHandler stubs per one PolymorphicAccess.
+        Only the last GCAwareJITStubRoutineWithExceptionHandler stub that was generated will get the CodeBlock's aboutToDie()
+        notification. All other GCAwareJITStubRoutineWithExceptionHandler stubs will still be holding a stale CodeBlock pointer
+        that they will use in their destructor. The solution is to have GCAwareJITStubRoutineWithExceptionHandler remove its
+        exception handler in observeZeroRefCount() instead of its destructor. observeZeroRefCount() will run when a PolymorphicAccess
+        replaces its m_stubRoutine.
+
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::aboutToDie):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::observeZeroRefCount):
+        (JSC::createJITStubRoutine):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHandler): Deleted.
+        * jit/GCAwareJITStubRoutine.h:
+
 2015-10-20  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10

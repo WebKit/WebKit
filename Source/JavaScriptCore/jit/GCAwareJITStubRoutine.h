@@ -95,10 +95,12 @@ private:
 // for new exception handlers to use the same CallSiteIndex.
 class GCAwareJITStubRoutineWithExceptionHandler : public GCAwareJITStubRoutine {
 public:
+    typedef GCAwareJITStubRoutine Base;
+
     GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef&, VM&, CodeBlock*, CallSiteIndex);
-    ~GCAwareJITStubRoutineWithExceptionHandler() override;
 
     void aboutToDie() override;
+    void observeZeroRefCount() override;
 
 private:
     CodeBlock* m_codeBlockWithExceptionHandler;
