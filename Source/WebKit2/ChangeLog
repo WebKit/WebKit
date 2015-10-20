@@ -1,5 +1,29 @@
 2015-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [UNIX] ASSERTION FAILED: m_shouldWaitForSyncReplies in Connection::connectionDidClose()
+        https://bugs.webkit.org/show_bug.cgi?id=150361
+
+        Reviewed by Martin Robinson.
+
+        It doesn't always happen because it depends on how sockets are
+        closed, and the state of the threads. The problem is that we are
+        not handling the case when the read fails because we closed the
+        connection. In that case we log the error and call
+        Connection::connectionDidClose(). But it was connectionDidClose()
+        the one closing the socket. So, in this particular case it's not an
+        error but a normal termination, and we shouldn't try to close the
+        connection again. Something similar can happen while sending a
+        message, and we get a broken pipe error, but in that case we are
+        only printing the error, so it's harmless.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::readyReadHandler): Only print error and call
+        connectionDidClose() if we are still connected when read fails.
+        (IPC::Connection::sendOutgoingMessage): Only print error if we are
+        still connected when send fails.
+
+2015-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Graphics corruption when entering/leaving AC mode quickly
         https://bugs.webkit.org/show_bug.cgi?id=150323
 
