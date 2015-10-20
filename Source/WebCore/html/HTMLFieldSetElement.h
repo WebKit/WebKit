@@ -39,7 +39,7 @@ public:
     HTMLLegendElement* legend() const;
 
     Ref<HTMLFormControlsCollection> elements();
-    Ref<HTMLCollection> elementsForObjC();
+    Ref<HTMLCollection> elementsForNativeBindings();
 
     const Vector<FormAssociatedElement*>& associatedElements() const;
     unsigned length() const;

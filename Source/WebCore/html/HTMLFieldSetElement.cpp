@@ -165,7 +165,7 @@ Ref<HTMLFormControlsCollection> HTMLFieldSetElement::elements()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
 }
 
-Ref<HTMLCollection> HTMLFieldSetElement::elementsForObjC()
+Ref<HTMLCollection> HTMLFieldSetElement::elementsForNativeBindings()
 {
     return elements();
 }
