@@ -369,11 +369,11 @@ bool ScriptElement::isScriptForEventSupported() const
     String eventAttribute = eventAttributeValue();
     String forAttribute = forAttributeValue();
     if (!eventAttribute.isNull() && !forAttribute.isNull()) {
-        forAttribute = forAttribute.stripWhiteSpace();
+        forAttribute = stripLeadingAndTrailingHTMLSpaces(forAttribute);
         if (!equalIgnoringCase(forAttribute, "window"))
             return false;
 
-        eventAttribute = eventAttribute.stripWhiteSpace();
+        eventAttribute = stripLeadingAndTrailingHTMLSpaces(eventAttribute);
         if (!equalIgnoringCase(eventAttribute, "onload") && !equalIgnoringCase(eventAttribute, "onload()"))
             return false;
     }
