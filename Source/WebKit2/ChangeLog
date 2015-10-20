@@ -1,3 +1,10 @@
+2015-10-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+
 2015-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         ASSERT when right clicking on SVG Image generating Share menu - can break Web Inspector
