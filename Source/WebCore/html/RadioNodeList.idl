@@ -29,5 +29,5 @@
 ] interface RadioNodeList : NodeList {
     attribute DOMString value;
 
-    getter Node (unsigned long index);
+    getter HTMLElement (unsigned long index);
 };

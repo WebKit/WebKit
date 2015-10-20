@@ -160,9 +160,14 @@ HTMLLegendElement* HTMLFieldSetElement::legend() const
     return const_cast<HTMLLegendElement*>(childrenOfType<HTMLLegendElement>(*this).first());
 }
 
-Ref<HTMLCollection> HTMLFieldSetElement::elements()
+Ref<HTMLFormControlsCollection> HTMLFieldSetElement::elements()
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
+}
+
+Ref<HTMLCollection> HTMLFieldSetElement::elementsForObjC()
+{
+    return elements();
 }
 
 void HTMLFieldSetElement::refreshElementsIfNeeded() const

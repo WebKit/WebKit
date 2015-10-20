@@ -39,8 +39,15 @@
 #else
     [SetterRaisesException] attribute unsigned long length;
 #endif
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     getter Node item(unsigned long index);
     Node namedItem([Default=Undefined] optional DOMString name);
+#else
+    getter HTMLOptionElement item(unsigned long index);
+    HTMLOptionElement namedItem([Default=Undefined] optional DOMString name);
+#endif
+
     [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, [Default=Undefined] optional HTMLElement? before);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [RaisesException] void add(HTMLElement element, [Default=Undefined] optional long index);

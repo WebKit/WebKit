@@ -25,8 +25,14 @@
     ReportExtraMemoryCost,
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     getter Node item([Default=Undefined] optional unsigned long index);
     getter Node namedItem([Default=Undefined] optional DOMString name);
+#else
+    getter Element item([Default=Undefined] optional unsigned long index);
+    getter Element namedItem([Default=Undefined] optional DOMString name);
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     NodeList tags([Default=Undefined] optional DOMString name);

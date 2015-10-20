@@ -48,7 +48,7 @@ unsigned StaticElementList::length() const
     return m_elements.size();
 }
 
-Node* StaticElementList::item(unsigned index) const
+Element* StaticElementList::item(unsigned index) const
 {
     if (index < m_elements.size())
         return const_cast<Element*>(m_elements[index].ptr());

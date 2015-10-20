@@ -27,7 +27,6 @@
 #include "config.h"
 #include "RadioNodeList.h"
 
-#include "Element.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -50,12 +49,12 @@ RadioNodeList::~RadioNodeList()
     ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_name);
 }
 
-static inline HTMLInputElement* toRadioButtonInputElement(Node& node)
+static inline HTMLInputElement* toRadioButtonInputElement(HTMLElement& element)
 {
-    if (!is<HTMLInputElement>(node))
+    if (!is<HTMLInputElement>(element))
         return nullptr;
 
-    auto& inputElement = downcast<HTMLInputElement>(node);
+    auto& inputElement = downcast<HTMLInputElement>(element);
     if (!inputElement.isRadioButton() || inputElement.value().isEmpty())
         return nullptr;
     return &inputElement;

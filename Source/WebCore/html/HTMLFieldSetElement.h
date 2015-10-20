@@ -30,14 +30,16 @@
 namespace WebCore {
 
 class FormAssociatedElement;
-class HTMLCollection;
+class HTMLFormControlsCollection;
 
 class HTMLFieldSetElement final : public HTMLFormControlElement {
 public:
     static Ref<HTMLFieldSetElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     HTMLLegendElement* legend() const;
-    Ref<HTMLCollection> elements();
+
+    Ref<HTMLFormControlsCollection> elements();
+    Ref<HTMLCollection> elementsForObjC();
 
     const Vector<FormAssociatedElement*>& associatedElements() const;
     unsigned length() const;

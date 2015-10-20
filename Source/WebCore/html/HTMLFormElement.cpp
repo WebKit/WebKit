@@ -172,7 +172,7 @@ unsigned HTMLFormElement::length() const
     return len;
 }
 
-Node* HTMLFormElement::item(unsigned index)
+HTMLElement* HTMLFormElement::item(unsigned index)
 {
     return elements()->item(index);
 }
@@ -634,9 +634,14 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
     ASSERT_UNUSED(removed, removed);
 }
 
-Ref<HTMLCollection> HTMLFormElement::elements()
+Ref<HTMLFormControlsCollection> HTMLFormElement::elements()
 {
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
+}
+
+Ref<HTMLCollection> HTMLFormElement::elementsForObjC()
+{
+    return elements();
 }
 
 String HTMLFormElement::name() const

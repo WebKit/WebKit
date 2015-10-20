@@ -75,7 +75,7 @@ public:
     }
 
     virtual unsigned length() const override;
-    virtual Node* item(unsigned index) const override;
+    virtual Element* item(unsigned index) const override;
 
 private:
     StaticElementList()

@@ -40,7 +40,7 @@ public:
     virtual ~CachedHTMLCollection();
 
     virtual unsigned length() const override final { return m_indexCache.nodeCount(collection()); }
-    virtual Element* item(unsigned offset) const override final { return m_indexCache.nodeAt(collection(), offset); }
+    virtual Element* item(unsigned offset) const override { return m_indexCache.nodeAt(collection(), offset); }
     virtual Element* namedItem(const AtomicString& name) const override;
     virtual size_t memoryCost() const override final { return m_indexCache.memoryCost() + HTMLCollection::memoryCost(); }
 

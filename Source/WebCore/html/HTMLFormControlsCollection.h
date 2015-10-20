@@ -39,8 +39,10 @@ public:
     static Ref<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
     virtual ~HTMLFormControlsCollection();
 
+    virtual HTMLElement* item(unsigned offset) const override;
+
     // For CachedHTMLCollection.
-    Element* customElementAfter(Element*) const;
+    HTMLElement* customElementAfter(Element*) const;
 
 private:
     explicit HTMLFormControlsCollection(ContainerNode&);
@@ -55,6 +57,11 @@ private:
     mutable Element* m_cachedElement;
     mutable unsigned m_cachedElementOffsetInArray;
 };
+
+inline HTMLElement* HTMLFormControlsCollection::item(unsigned offset) const
+{
+    return downcast<HTMLElement>(CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>::item(offset));
+}
 
 } // namespace WebCore
 

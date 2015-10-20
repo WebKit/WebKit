@@ -435,12 +435,12 @@ void HTMLSelectElement::setSize(int size)
 
 HTMLOptionElement* HTMLSelectElement::namedItem(const AtomicString& name)
 {
-    return downcast<HTMLOptionElement>(options()->namedItem(name));
+    return options()->namedItem(name);
 }
 
 HTMLOptionElement* HTMLSelectElement::item(unsigned index)
 {
-    return downcast<HTMLOptionElement>(options()->item(index));
+    return options()->item(index);
 }
 
 void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, ExceptionCode& ec)
@@ -449,13 +449,13 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement* option, Exc
     if (index > maxSelectItems - 1)
         index = maxSelectItems - 1;
     int diff = index - length();
-    RefPtr<HTMLElement> before = 0;
+    RefPtr<HTMLOptionElement> before;
     // Out of array bounds? First insert empty dummies.
     if (diff > 0) {
         setLength(index, ec);
         // Replace an existing entry?
     } else if (diff < 0) {
-        before = downcast<HTMLElement>(options()->item(index + 1));
+        before = item(index + 1);
         removeByIndex(index);
     }
     // Finally add the new element.

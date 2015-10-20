@@ -1780,19 +1780,18 @@ void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& re
 {
     Document& document = m_renderer->document();
     Ref<HTMLCollection> links = document.links();
-    for (unsigned i = 0; Node* curr = links->item(i); i++) {
-        RenderObject* obj = curr->renderer();
-        if (obj) {
-            RefPtr<AccessibilityObject> axobj = document.axObjectCache()->getOrCreate(obj);
-            ASSERT(axobj);
-            if (!axobj->accessibilityIsIgnored() && axobj->isLink())
-                result.append(axobj);
+    for (unsigned i = 0; auto* current = links->item(i); ++i) {
+        if (auto* renderer = current->renderer()) {
+            RefPtr<AccessibilityObject> axObject = document.axObjectCache()->getOrCreate(renderer);
+            ASSERT(axObject);
+            if (!axObject->accessibilityIsIgnored() && axObject->isLink())
+                result.append(axObject);
         } else {
-            Node* parent = curr->parentNode();
-            if (is<HTMLAreaElement>(*curr) && is<HTMLMapElement>(parent)) {
+            auto* parent = current->parentNode();
+            if (is<HTMLAreaElement>(*current) && is<HTMLMapElement>(parent)) {
                 auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->getOrCreate(ImageMapLinkRole));
                 HTMLMapElement& map = downcast<HTMLMapElement>(*parent);
-                areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(curr));
+                areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(current));
                 areaObject.setHTMLMapElement(&map);
                 areaObject.setParent(accessibilityParentForImageMap(&map));
 

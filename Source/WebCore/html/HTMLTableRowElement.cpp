@@ -132,10 +132,9 @@ void HTMLTableRowElement::deleteCell(int index, ExceptionCode& ec)
     int numCells = children->length();
     if (index == -1)
         index = numCells-1;
-    if (index >= 0 && index < numCells) {
-        RefPtr<Node> cell = children->item(index);
-        HTMLElement::removeChild(*cell, ec);
-    } else
+    if (index >= 0 && index < numCells)
+        HTMLElement::removeChild(*children->item(index), ec);
+    else
         ec = INDEX_SIZE_ERR;
 }
 

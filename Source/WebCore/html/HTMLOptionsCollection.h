@@ -40,6 +40,9 @@ public:
     HTMLSelectElement& selectElement() { return downcast<HTMLSelectElement>(ownerNode()); }
     const HTMLSelectElement& selectElement() const { return downcast<HTMLSelectElement>(ownerNode()); }
 
+    virtual HTMLOptionElement* item(unsigned offset) const override;
+    virtual HTMLOptionElement* namedItem(const AtomicString& name) const override;
+
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void add(HTMLElement*, int beforeIndex, ExceptionCode&);
     void remove(int index);
@@ -56,6 +59,16 @@ public:
 private:
     explicit HTMLOptionsCollection(HTMLSelectElement&);
 };
+
+inline HTMLOptionElement* HTMLOptionsCollection::item(unsigned offset) const
+{
+    return downcast<HTMLOptionElement>(CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>::item(offset));
+}
+
+inline HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomicString& name) const
+{
+    return downcast<HTMLOptionElement>(CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>::namedItem(name));
+}
 
 inline bool HTMLOptionsCollection::elementMatches(Element& element) const
 {

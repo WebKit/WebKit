@@ -80,7 +80,7 @@ public:
     virtual ~CachedLiveNodeList();
 
     unsigned length() const override final { return m_indexCache.nodeCount(nodeList()); }
-    Node* item(unsigned offset) const override final { return m_indexCache.nodeAt(nodeList(), offset); }
+    Element* item(unsigned offset) const override { return m_indexCache.nodeAt(nodeList(), offset); }
 
     // For CollectionIndexCache
     ElementDescendantIterator collectionBegin() const { return CollectionTraversal<CollectionTraversalType::Descendants>::begin(nodeList(), rootNode()); }

@@ -43,7 +43,7 @@ void HTMLOptionsCollection::add(HTMLElement* element, HTMLElement* beforeElement
 
 void HTMLOptionsCollection::add(HTMLElement* element, int beforeIndex, ExceptionCode& ec)
 {
-    add(element, downcast<HTMLElement>(item(beforeIndex)), ec);
+    add(element, item(beforeIndex), ec);
 }
 
 void HTMLOptionsCollection::remove(int index)

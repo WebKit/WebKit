@@ -76,7 +76,7 @@ static unsigned findFormAssociatedElement(const Vector<FormAssociatedElement*>& 
     return elements.size();
 }
 
-Element* HTMLFormControlsCollection::customElementAfter(Element* current) const
+HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) const
 {
     const Vector<FormAssociatedElement*>& elements = formControlElements();
     unsigned start;

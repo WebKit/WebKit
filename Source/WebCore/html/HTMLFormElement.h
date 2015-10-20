@@ -40,6 +40,7 @@ class Event;
 class FormAssociatedElement;
 class FormData;
 class HTMLFormControlElement;
+class HTMLFormControlsCollection;
 class HTMLImageElement;
 class HTMLInputElement;
 class TextEncoding;
@@ -50,11 +51,12 @@ public:
     static Ref<HTMLFormElement> create(const QualifiedName&, Document&);
     virtual ~HTMLFormElement();
 
-    Ref<HTMLCollection> elements();
+    Ref<HTMLFormControlsCollection> elements();
+    Ref<HTMLCollection> elementsForObjC();
     Vector<Ref<Element>> namedElements(const AtomicString&);
 
     unsigned length() const;
-    Node* item(unsigned index);
+    HTMLElement* item(unsigned index);
 
     String enctype() const { return m_attributes.encodingType(); }
     void setEnctype(const String&);

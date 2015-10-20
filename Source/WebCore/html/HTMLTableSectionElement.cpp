@@ -87,10 +87,9 @@ void HTMLTableSectionElement::deleteRow(int index, ExceptionCode& ec)
     int numRows = children->length();
     if (index == -1)
         index = numRows - 1;
-    if (index >= 0 && index < numRows) {
-        RefPtr<Node> row = children->item(index);
-        HTMLElement::removeChild(*row, ec);
-    } else
+    if (index >= 0 && index < numRows)
+        HTMLElement::removeChild(*children->item(index), ec);
+    else
         ec = INDEX_SIZE_ERR;
 }
 

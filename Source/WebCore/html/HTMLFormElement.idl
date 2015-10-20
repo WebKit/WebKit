@@ -32,7 +32,11 @@
     [Reflect] attribute boolean noValidate;
     [Reflect] attribute DOMString target;
 
-    readonly attribute HTMLCollection elements;
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    [ImplementedAs=elementsForObjC] readonly attribute HTMLCollection elements;
+#else
+    readonly attribute HTMLFormControlsCollection elements;
+#endif
     readonly attribute long length;
 
     getter Element (unsigned long index);
