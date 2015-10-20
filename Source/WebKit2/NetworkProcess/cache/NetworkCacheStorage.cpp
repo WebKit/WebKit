@@ -1028,6 +1028,13 @@ void Storage::deleteOldVersions()
             if (directoryVersion >= version)
                 return;
 
+#if PLATFORM(MAC)
+            // Allow the last stable version of the cache to co-exist with the latest development one on Mac.
+            const unsigned lastStableVersion = 4;
+            if (directoryVersion == lastStableVersion)
+                return;
+#endif
+
             auto oldVersionPath = WebCore::pathByAppendingComponent(cachePath, subdirName);
             LOG(NetworkCacheStorage, "(NetworkProcess) deleting old cache version, path %s", oldVersionPath.utf8().data());
 
