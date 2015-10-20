@@ -48,7 +48,7 @@ public:
 
     int naturalWidth() const;
     int naturalHeight() const;
-#if ENABLE(PICTURE_SIZES)
+#if ENABLE(CURRENTSRC)
     const AtomicString& currentSrc() const { return m_currentSrc; }
 #endif
 
@@ -126,7 +126,7 @@ private:
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
-#if ENABLE(PICTURE_SIZES)
+#if ENABLE(CURRENTSRC)
     AtomicString m_currentSrc;
 #endif
     AtomicString m_lowercasedUsemap;

@@ -127,7 +127,7 @@ const AtomicString& HTMLImageElement::imageSourceURL() const
 void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
 {
     m_bestFitImageURL = candidate.string.toString();
-#if ENABLE(PICTURE_SIZES)
+#if ENABLE(CURRENTSRC)
     m_currentSrc = AtomicString(document().completeURL(imageSourceURL()).string());
 #endif
     if (candidate.density >= 0)

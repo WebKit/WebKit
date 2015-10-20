@@ -1,3 +1,12 @@
+2015-10-20  Yoav Weiss  <yoav@yoav.ws>
+
+        Rename the PICTURE_SIZES flag to CURRENTSRC
+        https://bugs.webkit.org/show_bug.cgi?id=150275
+
+        Reviewed by Dean Jackson.
+
+        * wtf/FeatureDefines.h:
+
 2015-10-19  Beth Dakin  <bdakin@apple.com>
 
         Build fix.
