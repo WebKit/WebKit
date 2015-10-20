@@ -104,6 +104,23 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 }
 #endif
 
+static InterpolationQuality convertInterpolationQuality(CGInterpolationQuality quality)
+{
+    switch (quality) {
+    case kCGInterpolationDefault:
+        return InterpolationDefault;
+    case kCGInterpolationNone:
+        return InterpolationNone;
+    case kCGInterpolationLow:
+        return InterpolationLow;
+    case kCGInterpolationMedium:
+        return InterpolationMedium;
+    case kCGInterpolationHigh:
+        return InterpolationHigh;
+    }
+    return InterpolationDefault;
+}
+
 void GraphicsContext::platformInit(CGContextRef cgContext)
 {
     m_data = new GraphicsContextPlatformPrivate(cgContext);
@@ -113,6 +130,7 @@ void GraphicsContext::platformInit(CGContextRef cgContext)
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
         setPlatformStrokeThickness(strokeThickness());
+        m_state.imageInterpolationQuality = convertInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
     }
 }
 
@@ -1433,11 +1451,8 @@ void GraphicsContext::setURLForRect(const URL& link, const IntRect& destRect)
 #endif
 }
 
-void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
+void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality mode)
 {
-    if (paintingDisabled())
-        return;
-
     CGInterpolationQuality quality = kCGInterpolationDefault;
     switch (mode) {
     case InterpolationDefault:
@@ -1457,27 +1472,6 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
         break;
     }
     CGContextSetInterpolationQuality(platformContext(), quality);
-}
-
-InterpolationQuality GraphicsContext::imageInterpolationQuality() const
-{
-    if (paintingDisabled())
-        return InterpolationDefault;
-
-    CGInterpolationQuality quality = CGContextGetInterpolationQuality(platformContext());
-    switch (quality) {
-    case kCGInterpolationDefault:
-        return InterpolationDefault;
-    case kCGInterpolationNone:
-        return InterpolationNone;
-    case kCGInterpolationLow:
-        return InterpolationLow;
-    case kCGInterpolationMedium:
-        return InterpolationMedium;
-    case kCGInterpolationHigh:
-        return InterpolationHigh;
-    }
-    return InterpolationDefault;
 }
 
 void GraphicsContext::setIsCALayerContext(bool isLayerContext)

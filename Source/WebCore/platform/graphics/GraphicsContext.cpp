@@ -262,6 +262,16 @@ void GraphicsContext::setShouldSmoothFonts(bool shouldSmoothFonts)
     setPlatformShouldSmoothFonts(shouldSmoothFonts);
 }
 
+void GraphicsContext::setImageInterpolationQuality(InterpolationQuality imageInterpolationQuality)
+{
+    m_state.imageInterpolationQuality = imageInterpolationQuality;
+
+    if (paintingDisabled())
+        return;
+
+    setPlatformImageInterpolationQuality(imageInterpolationQuality);
+}
+
 void GraphicsContext::setAntialiasedFontDilationEnabled(bool antialiasedFontDilationEnabled)
 {
     m_state.antialiasedFontDilationEnabled = antialiasedFontDilationEnabled;

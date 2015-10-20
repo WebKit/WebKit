@@ -155,6 +155,7 @@ struct GraphicsContextState {
     float alpha { 1 };
     CompositeOperator compositeOperator { CompositeSourceOver };
     BlendMode blendMode { BlendModeNormal };
+    InterpolationQuality imageInterpolationQuality { InterpolationDefault };
 
     bool shouldAntialias : 1;
     bool shouldSmoothFonts : 1;
@@ -322,7 +323,7 @@ public:
     void drawPattern(Image&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ColorSpace, CompositeOperator, const FloatRect& destRect, BlendMode = BlendModeNormal);
 
     WEBCORE_EXPORT void setImageInterpolationQuality(InterpolationQuality);
-    InterpolationQuality imageInterpolationQuality() const;
+    InterpolationQuality imageInterpolationQuality() const { return m_state.imageInterpolationQuality; }
 
     WEBCORE_EXPORT void clip(const IntRect&);
     WEBCORE_EXPORT void clip(const FloatRect&);
@@ -538,6 +539,7 @@ private:
 
     void setPlatformShouldAntialias(bool);
     void setPlatformShouldSmoothFonts(bool);
+    void setPlatformImageInterpolationQuality(InterpolationQuality);
 
     void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
     void clearPlatformShadow();

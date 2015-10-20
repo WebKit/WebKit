@@ -1098,14 +1098,9 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
     cairo_set_antialias(platformContext()->cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
 
-void GraphicsContext::setImageInterpolationQuality(InterpolationQuality quality)
+void GraphicsContext::setPlatformImageInterpolationQuality(InterpolationQuality quality)
 {
     platformContext()->setImageInterpolationQuality(quality);
-}
-
-InterpolationQuality GraphicsContext::imageInterpolationQuality() const
-{
-    return platformContext()->imageInterpolationQuality();
 }
 
 bool GraphicsContext::isAcceleratedContext() const
