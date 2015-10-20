@@ -34,17 +34,13 @@ namespace WebCore {
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
     macro(closeRequested) \
     macro(closedPromise) \
-    macro(closedPromiseResolve) \
-    macro(closedPromiseReject) \
     macro(controlledReadableStream) \
     macro(controller) \
     macro(getUserMediaFromJS) \
-    macro(highWaterMark) \
     macro(ownerReadableStream) \
     macro(pulling) \
     macro(pullAgain) \
     macro(queue) \
-    macro(queueSize) \
     macro(readableStreamClosed) \
     macro(readableStreamErrored) \
     macro(readableStreamReadable) \
@@ -53,7 +49,7 @@ namespace WebCore {
     macro(state) \
     macro(started) \
     macro(storedError) \
-    macro(strategySize) \
+    macro(strategy) \
     macro(underlyingSource) \
     macro(ReadableStreamReader) \
     macro(ReadableStreamController) \

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Canon Inc.
+ * Copyright (C) 2015 Igalia.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +43,7 @@ function initializeReadableStream(underlyingSource, strategy)
 
     this.@underlyingSource = underlyingSource;
 
-    this.@queue = [];
-    this.@queueSize = 0;
+    this.@queue = @newQueue();
     this.@state = @readableStreamReadable;
     this.@started = false;
     this.@closeRequested = false;
@@ -52,13 +52,7 @@ function initializeReadableStream(underlyingSource, strategy)
     this.@reader = undefined;
     this.@storedError = undefined;
     this.@controller = new @ReadableStreamController(this);
-    this.@strategySize = strategy.size;
-    this.@highWaterMark = Number(strategy.highWaterMark);
-
-    if (Number.isNaN(this.@highWaterMark))
-        throw new TypeError("highWaterMark parameter is not correct");
-    if (this.@highWaterMark < 0)
-        throw new RangeError("highWaterMark is negative");
+    this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
 
     var result = @invokeOrNoop(underlyingSource, "start", [this.@controller]);
     var _this = this;

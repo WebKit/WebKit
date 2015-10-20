@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Canon Inc. All rights reserved.
+ * Copyright (C) 2015 Igalia.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,10 +42,7 @@ function privateInitializeReadableStreamReader(stream)
         this.@ownerReadableStream = stream;
         this.@storedError = undefined;
         stream.@reader = this;
-        this.@closedPromise = new Promise(function(resolve, reject) {
-            stream.@reader.@closedPromiseResolve = resolve;
-            stream.@reader.@closedPromiseReject = reject;
-        });
+        this.@closedPromise = @createNewStreamsPromise();
         return this;
     }
     if (stream.@state === @readableStreamClosed) {
@@ -199,7 +197,7 @@ function errorReadableStream(stream, error)
     "use strict";
 
     // TODO: ASSERT(stream.@state === @readableStreamReadable);
-    stream.@queue = [];
+    stream.@queue = @newQueue();
     stream.@storedError = error;
     stream.@state = @readableStreamErrored;
 
@@ -209,14 +207,14 @@ function errorReadableStream(stream, error)
 
     var requests = reader.@readRequests;
     for (var index = 0, length = requests.length; index < length; ++index)
-        requests[index].reject(error);
+        @rejectStreamsPromise(requests[index], error);
     reader.@readRequests = [];
 
     @releaseReadableStreamReader(reader);
     reader.@storedError = error;
     reader.@state = @readableStreamErrored;
 
-    reader.@closedPromiseReject(error);
+    @rejectStreamsPromise(reader.@closedPromise, error);
 }
 
 function requestReadableStreamPull(stream)
@@ -262,7 +260,7 @@ function getReadableStreamDesiredSize(stream)
 {
    "use strict";
 
-   return stream.@highWaterMark - stream.@queueSize;
+   return stream.@strategy.highWaterMark - stream.@queue.size;
 }
 
 function releaseReadableStreamReader(reader)
@@ -281,7 +279,7 @@ function cancelReadableStream(stream, reason)
         return Promise.resolve();
     if (stream.@state === @readableStreamErrored)
         return Promise.reject(stream.@storedError);
-    stream.@queue = [];
+    stream.@queue = @newQueue();
     @finishClosingReadableStream(stream);
     return @promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]).then(function() { });
 }
@@ -306,7 +304,7 @@ function closeReadableStream(stream)
     if (stream.@state === @readableStreamClosed)
         return; 
     stream.@closeRequested = true;
-    if (!stream.@queue.length)
+    if (!stream.@queue.content.length)
         @finishClosingReadableStream(stream);
 }
 
@@ -316,11 +314,11 @@ function closeReadableStreamReader(reader)
 
     var requests = reader.@readRequests;
     for (var index = 0, length = requests.length; index < length; ++index)
-        requests[index].resolve({value:undefined, done: true});
+        @resolveStreamsPromise(requests[index], {value:undefined, done: true});
     reader.@readRequests = [];
     @releaseReadableStreamReader(reader);
     reader.@state = @readableStreamClosed;
-    reader.@closedPromiseResolve();
+    @resolveStreamsPromise(reader.@closedPromise);
 }
 
 function enqueueInReadableStream(stream, chunk)
@@ -332,19 +330,18 @@ function enqueueInReadableStream(stream, chunk)
     if (stream.@state === @readableStreamClosed)
         return undefined;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
-        stream.@reader.@readRequests.shift().resolve({value: chunk, done: false});
+        @resolveStreamsPromise(stream.@reader.@readRequests.shift(), {value: chunk, done: false});
         @requestReadableStreamPull(stream);
         return;
     }
     try {
         var size = 1;
-        if (stream.@strategySize) {
-            size = Number(stream.@strategySize(chunk));
+        if (stream.@strategy.size) {
+            size = Number(stream.@strategy.size(chunk));
             if (Number.isNaN(size) || size === +Infinity || size < 0)
                 throw new RangeError("Chunk size is not valid");
         }
-        stream.@queue.push({ value: chunk, size: size });
-        stream.@queueSize += size;
+        @enqueueValueWithSize(stream.@queue, chunk, size);
     }
     catch(error) {
         @errorReadableStream(stream, error);
@@ -364,47 +361,16 @@ function readFromReadableStreamReader(reader)
     // TODO: ASSERT(!!reader.@ownerReadableStream);
     // TODO: ASSERT(reader.@ownerReadableStream.@state === @readableStreamReadable);
     var stream = reader.@ownerReadableStream;
-    if (stream.@queue.length) {
-        var chunk = stream.@queue.shift();
-        stream.@queueSize -= chunk.size;
+    if (stream.@queue.content.length) {
+        var chunk = @dequeueValue(stream.@queue);
         if (!stream.@closeRequested)
             @requestReadableStreamPull(stream);
-        else if (!stream.@queue.length)
+        else if (!stream.@queue.content.length)
             @finishClosingReadableStream(stream);
-        return Promise.resolve({value: chunk.value, done: false});
+        return Promise.resolve({value: chunk, done: false});
     }
-    var readRequest = {};
-    var readPromise = new Promise(function(resolve, reject) {
-        readRequest.resolve = resolve;
-        readRequest.reject = reject;
-    });
-    reader.@readRequests.push(readRequest);
+    var readPromise = @createNewStreamsPromise();
+    reader.@readRequests.push(readPromise);
     @requestReadableStreamPull(stream);
     return readPromise;
-}
-
-function invokeOrNoop(object, key, args)
-{
-    "use strict";
-
-    var method = object[key];
-    if (typeof method === "undefined")
-        return;
-    return method.@apply(object, args);
-}
-
-function promiseInvokeOrNoop(object, key, args)
-{
-    "use strict";
-
-    try {
-        var method = object[key];
-        if (typeof method === "undefined")
-            return Promise.resolve();
-        var result = method.@apply(object, args);
-        return Promise.resolve(result);
-    }
-    catch(error) {
-        return Promise.reject(error);
-    }
 }

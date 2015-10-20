@@ -37,5 +37,6 @@
 #include "ReadableStreamControllerBuiltins.cpp"
 #include "ReadableStreamInternalsBuiltins.cpp"
 #include "ReadableStreamReaderBuiltins.cpp"
+#include "StreamInternalsBuiltins.cpp"
 #include "WritableStreamBuiltins.cpp"
 #endif

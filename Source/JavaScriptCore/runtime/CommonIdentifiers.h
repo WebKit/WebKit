@@ -291,6 +291,7 @@
     macro(isFinite) \
     macro(getPrototypeOf) \
     macro(getOwnPropertyNames) \
+    macro(RangeError) \
     macro(TypeError) \
     macro(typedArrayLength) \
     macro(typedArraySort) \

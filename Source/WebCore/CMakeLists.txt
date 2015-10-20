@@ -3369,6 +3369,7 @@ set(WEBCORE_JS_BUILTINS
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamController.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamReader.js
+    ${WEBCORE_DIR}/Modules/streams/StreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/WritableStream.js
 )
 

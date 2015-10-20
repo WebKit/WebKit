@@ -29,6 +29,7 @@
 
 #if ENABLE(STREAMS_API)
 #include "ReadableStreamInternalsBuiltinsWrapper.h"
+#include "StreamInternalsBuiltinsWrapper.h"
 #endif
 
 namespace WebCore {
@@ -39,15 +40,18 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
         : vm(v)
 #if ENABLE(STREAMS_API)
         , m_readableStreamInternalsFunctions(vm)
+        , m_streamInternalsFunctions(vm)
 #endif
     { }
 
 #if ENABLE(STREAMS_API)
     ReadableStreamInternalsBuiltinFunctions readableStreamInternals() { return m_readableStreamInternalsFunctions; }
+    StreamInternalsBuiltinFunctions streamInternals() { return m_streamInternalsFunctions; }
 #endif
     void visit(JSC::SlotVisitor& visitor) {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsFunctions.visit(visitor);
+        m_streamInternalsFunctions.visit(visitor);
 #else
         UNUSED_PARAM(visitor);
 #endif
@@ -55,6 +59,7 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
     void init(JSC::JSGlobalObject& globalObject) {
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsFunctions.init(globalObject);
+        m_streamInternalsFunctions.init(globalObject);
 #else
         UNUSED_PARAM(globalObject);
 #endif
@@ -63,7 +68,8 @@ explicit JSBuiltinInternalFunctions(JSC::VM& v)
 private:
     JSC::VM& vm;
 #if ENABLE(STREAMS_API)
-     ReadableStreamInternalsBuiltinFunctions m_readableStreamInternalsFunctions;
+    ReadableStreamInternalsBuiltinFunctions m_readableStreamInternalsFunctions;
+    StreamInternalsBuiltinFunctions m_streamInternalsFunctions;
 #endif
 
 };
