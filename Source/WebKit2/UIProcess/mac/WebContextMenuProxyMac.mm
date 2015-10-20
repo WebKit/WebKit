@@ -341,6 +341,8 @@ ContextMenuItem WebContextMenuProxyMac::shareMenuItem()
         image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSize]]);
 
     ContextMenuItem item = ContextMenuItem::shareMenuItem(absoluteLinkURL, downloadableMediaURL, image.get(), m_context.selectedText());
+    if (item.isNull())
+        return item;
 
     NSMenuItem *nsItem = item.platformDescription();
 
@@ -397,7 +399,9 @@ void WebContextMenuProxyMac::showContextMenu()
         }
 
 #if ENABLE(SERVICE_CONTROLS)
-        proposedAPIItems.append(WebContextMenuItem::create(shareMenuItem()));
+        ContextMenuItem shareItem = shareMenuItem();
+        if (!shareItem.isNull())
+            proposedAPIItems.append(WebContextMenuItem::create(shareItem));
 #endif
     }
 
