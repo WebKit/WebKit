@@ -1,3 +1,17 @@
+2015-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Enable OpenWebRTC test video/audio sources in tests
+
+        This is needed because we can't expect the buildbots to have
+        webcam/mic devices plugged in.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._setup_testing_environment):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+
 2015-10-20  Yoav Weiss  <yoav@yoav.ws>
 
         Rename the PICTURE_SIZES flag to CURRENTSRC
