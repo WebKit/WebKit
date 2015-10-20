@@ -104,6 +104,16 @@ CGColorSpaceRef linearRGBColorSpaceRef()
 }
 #endif
 
+void GraphicsContext::resetPlatformCTM()
+{
+    m_state.ctm = CGContextGetCTM(platformContext());
+#if PLATFORM(WIN) || PLATFORM(IOS)
+    m_state.userToDeviceSpaceCTM = static_cast<AffineTransform>(CGContextGetUserSpaceToDeviceSpaceTransform(platformContext())) * m_state.ctm.inverse();
+#else
+    m_state.userToDeviceSpaceCTM = CGContextGetDefaultUserSpaceToDeviceSpaceTransform(platformContext());
+#endif
+}
+
 void GraphicsContext::platformInit(CGContextRef cgContext)
 {
     m_data = new GraphicsContextPlatformPrivate(cgContext);
@@ -113,6 +123,7 @@ void GraphicsContext::platformInit(CGContextRef cgContext)
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
         setPlatformStrokeThickness(strokeThickness());
+        resetPlatformCTM();
     }
 }
 
@@ -154,7 +165,7 @@ void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSi
         return;
 
     CGContextRef context = platformContext();
-    CGContextStateSaver stateSaver(context);
+    GraphicsContextStateSaver stateSaver(*this);
 
 #if PLATFORM(IOS)
     // Anti-aliasing is on by default on the iPhone. Need to turn it off when drawing images.
@@ -268,7 +279,7 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& tileRect, const
         return;
 
     CGContextRef context = platformContext();
-    CGContextStateSaver stateSaver(context);
+    GraphicsContextStateSaver stateSaver(*this);
     CGContextClipToRect(context, destRect);
 
     setPlatformCompositeOperation(op, blendMode);
@@ -670,7 +681,7 @@ void GraphicsContext::fillPath(const Path& path)
             FloatRect rect = path.fastBoundingRect();
             FloatSize layerSize = getCTM().mapSize(rect.size());
 
-            CGLayerRef layer = CGLayerCreateWithContext(context, layerSize, 0);
+            CGLayerRef layer = CGLayerCreateWithContext(context, layerSize, nullptr);
             CGContextRef layerContext = CGLayerGetContext(layer);
 
             CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
@@ -1253,52 +1264,52 @@ void GraphicsContext::clipOut(const Path& path)
     CGContextEOClip(platformContext());
 }
 
-void GraphicsContext::scale(const FloatSize& size)
+void GraphicsContext::scalePlatformCTM(float x, float y)
 {
     if (paintingDisabled())
         return;
-    CGContextScaleCTM(platformContext(), size.width(), size.height());
-    m_data->scale(size);
+    CGContextScaleCTM(platformContext(), x, y);
+    m_data->scalePlatformCTM(x, y);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::rotate(float angle)
+void GraphicsContext::rotatePlatformCTM(float angle)
 {
     if (paintingDisabled())
         return;
     CGContextRotateCTM(platformContext(), angle);
-    m_data->rotate(angle);
+    m_data->rotatePlatformCTM(angle);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::translate(float x, float y)
+void GraphicsContext::translatePlatformCTM(float x, float y)
 {
     if (paintingDisabled())
         return;
     CGContextTranslateCTM(platformContext(), x, y);
-    m_data->translate(x, y);
+    m_data->translatePlatformCTM(x, y);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::concatCTM(const AffineTransform& transform)
+void GraphicsContext::concatPlatformCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
     CGContextConcatCTM(platformContext(), transform);
-    m_data->concatCTM(transform);
+    m_data->concatPlatformCTM(transform);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::setCTM(const AffineTransform& transform)
+void GraphicsContext::setPlatformCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
     CGContextSetCTM(platformContext(), transform);
-    m_data->setCTM(transform);
+    m_data->setPlatformCTM(transform);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-AffineTransform GraphicsContext::getCTM(IncludeDeviceScale includeScale) const
+AffineTransform GraphicsContext::getPlatformCTM(IncludeDeviceScale includeScale) const
 {
     if (paintingDisabled())
         return AffineTransform();
