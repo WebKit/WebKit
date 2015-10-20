@@ -1,3 +1,9 @@
+2015-10-19  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed, add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         Add new EWS queues to bot watcher's dashboard

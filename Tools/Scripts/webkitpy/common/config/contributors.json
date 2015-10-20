@@ -1133,6 +1133,16 @@
             "hugopl"
          ]
       },
+      "Hunseop Jeong" : {
+         "emails" : [
+            "hs85.jeong@samsung.com",
+            "hs85jeong@gmail.com"
+         ],
+         "expertise" : "The EFLWebKit port, Cairo graphics backend",
+         "nicks" : [
+            "hunseop"
+         ]
+      },
       "Hyowon Kim" : {
          "emails" : [
             "hw1008.kim@samsung.com"
