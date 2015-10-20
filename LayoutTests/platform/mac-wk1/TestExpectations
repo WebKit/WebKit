@@ -48,6 +48,8 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/copyTexImage2DBadArgs.html [ Pass Failure ]
 
+webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
