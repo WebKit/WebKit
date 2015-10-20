@@ -52,7 +52,7 @@ public:
     virtual ~HTMLFormElement();
 
     Ref<HTMLFormControlsCollection> elements();
-    Ref<HTMLCollection> elementsForObjC();
+    Ref<HTMLCollection> elementsForNativeBindings();
     Vector<Ref<Element>> namedElements(const AtomicString&);
 
     unsigned length() const;

@@ -639,7 +639,7 @@ Ref<HTMLFormControlsCollection> HTMLFormElement::elements()
     return ensureRareData().ensureNodeLists().addCachedCollection<HTMLFormControlsCollection>(*this, FormControls);
 }
 
-Ref<HTMLCollection> HTMLFormElement::elementsForObjC()
+Ref<HTMLCollection> HTMLFormElement::elementsForNativeBindings()
 {
     return elements();
 }
