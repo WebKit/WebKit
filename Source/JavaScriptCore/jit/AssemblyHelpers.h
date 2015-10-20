@@ -178,7 +178,7 @@ public:
 #endif
     }
 
-    void emitSaveCalleeSavesFor(CodeBlock* codeBlock, VirtualRegister offsetVirtualRegister = static_cast<VirtualRegister>(0))
+    void emitSaveCalleeSavesFor(CodeBlock* codeBlock)
     {
         ASSERT(codeBlock);
 
@@ -190,10 +190,43 @@ public:
             RegisterAtOffset entry = calleeSaves->at(i);
             if (dontSaveRegisters.get(entry.reg()))
                 continue;
-            storePtr(entry.reg().gpr(), Address(framePointerRegister, offsetVirtualRegister.offsetInBytes() + entry.offset()));
+            storePtr(entry.reg().gpr(), Address(framePointerRegister, entry.offset()));
         }
     }
+    
+    enum RestoreTagRegisterMode { UseExistingTagRegisterContents, CopySavedTagRegistersFromBaseFrame };
 
+    void emitSaveOrCopyCalleeSavesFor(CodeBlock* codeBlock, VirtualRegister offsetVirtualRegister, RestoreTagRegisterMode tagRegisterMode, GPRReg temp)
+    {
+        ASSERT(codeBlock);
+        
+        RegisterAtOffsetList* calleeSaves = codeBlock->calleeSaveRegisters();
+        RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters(), RegisterSet::allFPRs());
+        unsigned registerCount = calleeSaves->size();
+        
+        for (unsigned i = 0; i < registerCount; i++) {
+            RegisterAtOffset entry = calleeSaves->at(i);
+            if (dontSaveRegisters.get(entry.reg()))
+                continue;
+            
+            GPRReg registerToWrite;
+            
+#if USE(JSVALUE32_64)
+            UNUSED_PARAM(tagRegisterMode);
+            UNUSED_PARAM(temp);
+#else
+            if (tagRegisterMode == CopySavedTagRegistersFromBaseFrame
+                && (entry.reg() == GPRInfo::tagTypeNumberRegister || entry.reg() == GPRInfo::tagMaskRegister)) {
+                registerToWrite = temp;
+                loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, entry.offset()), registerToWrite);
+            } else
+#endif
+                registerToWrite = entry.reg().gpr();
+
+            storePtr(registerToWrite, Address(framePointerRegister, offsetVirtualRegister.offsetInBytes() + entry.offset()));
+        }
+    }
+    
     void emitRestoreCalleeSavesFor(CodeBlock* codeBlock)
     {
         ASSERT(codeBlock);

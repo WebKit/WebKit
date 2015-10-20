@@ -214,7 +214,16 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(trueReturnPC), AssemblyHelpers::addressFor(inlineCallFrame->stackOffset + virtualRegisterForArgument(inlineCallFrame->arguments.size()).offset()));
                          
         jit.storePtr(AssemblyHelpers::TrustedImmPtr(baselineCodeBlock), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::CodeBlock)));
-        jit.emitSaveCalleeSavesFor(baselineCodeBlock, static_cast<VirtualRegister>(inlineCallFrame->stackOffset));
+
+        // Restore the inline call frame's callee save registers.
+        // If this inlined frame is a tail call that will return back to the original caller, we need to
+        // copy the prior contents of the tag registers already saved for the outer frame to this frame.
+        jit.emitSaveOrCopyCalleeSavesFor(
+            baselineCodeBlock,
+            static_cast<VirtualRegister>(inlineCallFrame->stackOffset),
+            trueCaller ? AssemblyHelpers::UseExistingTagRegisterContents : AssemblyHelpers::CopySavedTagRegistersFromBaseFrame,
+            GPRInfo::regT2);
+
         if (!inlineCallFrame->isVarargs())
             jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
 #if USE(JSVALUE64)

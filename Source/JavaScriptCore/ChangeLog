@@ -1,3 +1,39 @@
+2015-10-20  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r191175): OSR Exit from an inlined tail callee trashes callee save registers
+        https://bugs.webkit.org/show_bug.cgi?id=150336
+
+        Reviewed by Mark Lam.
+
+        During OSR exit, we need to restore and transform the active stack into what the baseline
+        JIT expects.  Inlined call frames become true call frames.  When we reify an inlined call
+        frame and it is a tail call which we will be continuing from, we need to restore the tag
+        constant callee save registers with what was saved by the outermost caller.
+
+        Re-enabled tail calls and restored tests for tail calls.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames): Select whether or not we use the callee save tag register
+        contents or what was saved by the inlining caller when populating an inlined callee's
+        callee save registers.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor): This function no longer needs a stack offset.
+        (JSC::AssemblyHelpers::emitSaveOrCopyCalleeSavesFor): New helper.
+        * runtime/Options.h: Turned tail calls back on.
+        * tests/es6.yaml:
+        * tests/stress/dfg-tail-calls.js:
+        (nonInlinedTailCall.callee):
+        * tests/stress/mutual-tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-in-inline-cache.js:
+        (tail):
+        * tests/stress/tail-call-no-stack-overflow.js:
+        (shouldThrow):
+        * tests/stress/tail-call-recognize.js:
+        (callerMustBeRun):
+        * tests/stress/tail-call-varargs-no-stack-overflow.js:
+        (shouldThrow):
+
 2015-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives
@@ -68,6 +104,7 @@
         (JSC::GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHandler): Deleted.
         * jit/GCAwareJITStubRoutine.h:
 
+>>>>>>> .r191351
 2015-10-20  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10
