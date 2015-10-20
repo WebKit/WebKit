@@ -479,84 +479,84 @@ bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
     return collector.hasAnyMatchingRules(ruleSet);
 }
 
-bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
+bool StyleResolver::canShareStyleWithControl(StyledElement& element) const
 {
     const State& state = m_state;
-    HTMLInputElement* thisInputElement = element->toInputElement();
-    HTMLInputElement* otherInputElement = state.element()->toInputElement();
-
-    if (!thisInputElement || !otherInputElement)
+    if (!is<HTMLInputElement>(element) || !is<HTMLInputElement>(*state.element()))
         return false;
 
-    if (thisInputElement->isAutoFilled() != otherInputElement->isAutoFilled())
+    auto& thisInputElement = downcast<HTMLInputElement>(element);
+    auto& otherInputElement = downcast<HTMLInputElement>(*state.element());
+
+    if (thisInputElement.isAutoFilled() != otherInputElement.isAutoFilled())
         return false;
-    if (thisInputElement->shouldAppearChecked() != otherInputElement->shouldAppearChecked())
+    if (thisInputElement.shouldAppearChecked() != otherInputElement.shouldAppearChecked())
         return false;
-    if (thisInputElement->shouldAppearIndeterminate() != otherInputElement->shouldAppearIndeterminate())
+    if (thisInputElement.shouldAppearIndeterminate() != otherInputElement.shouldAppearIndeterminate())
         return false;
-    if (thisInputElement->isRequired() != otherInputElement->isRequired())
+    if (thisInputElement.isRequired() != otherInputElement.isRequired())
         return false;
 
-    if (element->isDisabledFormControl() != state.element()->isDisabledFormControl())
+    if (element.isDisabledFormControl() != state.element()->isDisabledFormControl())
         return false;
 
-    if (element->isDefaultButtonForForm() != state.element()->isDefaultButtonForForm())
+    if (element.isDefaultButtonForForm() != state.element()->isDefaultButtonForForm())
         return false;
 
-    if (element->isInRange() != state.element()->isInRange())
+    if (element.isInRange() != state.element()->isInRange())
         return false;
 
-    if (element->isOutOfRange() != state.element()->isOutOfRange())
+    if (element.isOutOfRange() != state.element()->isOutOfRange())
         return false;
 
     return true;
 }
 
-static inline bool elementHasDirectionAuto(Element* element)
+static inline bool elementHasDirectionAuto(Element& element)
 {
     // FIXME: This line is surprisingly hot, we may wish to inline hasDirectionAuto into StyleResolver.
-    return is<HTMLElement>(*element) && downcast<HTMLElement>(*element).hasDirectionAuto();
+    return is<HTMLElement>(element) && downcast<HTMLElement>(element).hasDirectionAuto();
 }
 
-bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement* sharingCandidate) const
+bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement& sharingCandidate) const
 {
     const State& state = m_state;
-    if (state.element()->elementData() == sharingCandidate->elementData())
+    if (state.element()->elementData() == sharingCandidate.elementData())
         return true;
-    if (state.element()->fastGetAttribute(XMLNames::langAttr) != sharingCandidate->fastGetAttribute(XMLNames::langAttr))
+    if (state.element()->fastGetAttribute(XMLNames::langAttr) != sharingCandidate.fastGetAttribute(XMLNames::langAttr))
         return false;
-    if (state.element()->fastGetAttribute(langAttr) != sharingCandidate->fastGetAttribute(langAttr))
+    if (state.element()->fastGetAttribute(langAttr) != sharingCandidate.fastGetAttribute(langAttr))
         return false;
 
     if (!state.elementAffectedByClassRules()) {
-        if (sharingCandidate->hasClass() && classNamesAffectedByRules(sharingCandidate->classNames()))
+        if (sharingCandidate.hasClass() && classNamesAffectedByRules(sharingCandidate.classNames()))
             return false;
-    } else if (sharingCandidate->hasClass()) {
+    } else if (sharingCandidate.hasClass()) {
         // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.
         if (state.element()->isSVGElement()) {
-            if (state.element()->getAttribute(classAttr) != sharingCandidate->getAttribute(classAttr))
+            if (state.element()->getAttribute(classAttr) != sharingCandidate.getAttribute(classAttr))
                 return false;
         } else {
-            if (state.element()->classNames() != sharingCandidate->classNames())
+            if (state.element()->classNames() != sharingCandidate.classNames())
                 return false;
         }
     } else
         return false;
 
-    if (state.styledElement()->presentationAttributeStyle() != sharingCandidate->presentationAttributeStyle())
+    if (state.styledElement()->presentationAttributeStyle() != sharingCandidate.presentationAttributeStyle())
         return false;
 
     if (state.element()->hasTagName(progressTag)) {
-        if (state.element()->shouldAppearIndeterminate() != sharingCandidate->shouldAppearIndeterminate())
+        if (state.element()->shouldAppearIndeterminate() != sharingCandidate.shouldAppearIndeterminate())
             return false;
     }
 
     return true;
 }
 
-bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
+bool StyleResolver::canShareStyleWithElement(StyledElement& element) const
 {
-    RenderStyle* style = element->renderStyle();
+    auto* style = element.renderStyle();
     const State& state = m_state;
 
     if (!style)
@@ -565,37 +565,37 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (style->hasUniquePseudoStyle())
         return false;
-    if (element->tagQName() != state.element()->tagQName())
+    if (element.tagQName() != state.element()->tagQName())
         return false;
-    if (element->inlineStyle())
+    if (element.inlineStyle())
         return false;
-    if (element->needsStyleRecalc())
+    if (element.needsStyleRecalc())
         return false;
-    if (element->isSVGElement() && downcast<SVGElement>(*element).animatedSMILStyleProperties())
+    if (element.isSVGElement() && downcast<SVGElement>(element).animatedSMILStyleProperties())
         return false;
-    if (element->isLink() != state.element()->isLink())
+    if (element.isLink() != state.element()->isLink())
         return false;
-    if (element->hovered() != state.element()->hovered())
+    if (element.hovered() != state.element()->hovered())
         return false;
-    if (element->active() != state.element()->active())
+    if (element.active() != state.element()->active())
         return false;
-    if (element->focused() != state.element()->focused())
+    if (element.focused() != state.element()->focused())
         return false;
-    if (element->shadowPseudoId() != state.element()->shadowPseudoId())
+    if (element.shadowPseudoId() != state.element()->shadowPseudoId())
         return false;
-    if (element == element->document().cssTarget())
+    if (&element == element.document().cssTarget())
         return false;
     if (!sharingCandidateHasIdenticalStyleAffectingAttributes(element))
         return false;
-    if (element->additionalPresentationAttributeStyle() != state.styledElement()->additionalPresentationAttributeStyle())
+    if (element.additionalPresentationAttributeStyle() != state.styledElement()->additionalPresentationAttributeStyle())
         return false;
-    if (element->affectsNextSiblingElementStyle() || element->styleIsAffectedByPreviousSibling())
-        return false;
-
-    if (element->hasID() && m_ruleSets.features().idsInRules.contains(element->idForStyleResolution().impl()))
+    if (element.affectsNextSiblingElementStyle() || element.styleIsAffectedByPreviousSibling())
         return false;
 
-    bool isControl = is<HTMLFormControlElement>(*element);
+    if (element.hasID() && m_ruleSets.features().idsInRules.contains(element.idForStyleResolution().impl()))
+        return false;
+
+    bool isControl = is<HTMLFormControlElement>(element);
 
     if (isControl != is<HTMLFormControlElement>(*state.element()))
         return false;
@@ -608,31 +608,31 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
     // Turn off style sharing for elements that can gain layers for reasons outside of the style system.
     // See comments in RenderObject::setStyle().
-    if (element->hasTagName(iframeTag) || element->hasTagName(frameTag) || element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag) || element->hasTagName(canvasTag))
+    if (element.hasTagName(iframeTag) || element.hasTagName(frameTag) || element.hasTagName(embedTag) || element.hasTagName(objectTag) || element.hasTagName(appletTag) || element.hasTagName(canvasTag))
         return false;
 
     if (elementHasDirectionAuto(element))
         return false;
 
-    if (element->isLink() && state.elementLinkState() != style->insideLink())
+    if (element.isLink() && state.elementLinkState() != style->insideLink())
         return false;
 
-    if (element->elementData() != state.element()->elementData()) {
-        if (element->fastGetAttribute(readonlyAttr) != state.element()->fastGetAttribute(readonlyAttr))
+    if (element.elementData() != state.element()->elementData()) {
+        if (element.fastGetAttribute(readonlyAttr) != state.element()->fastGetAttribute(readonlyAttr))
             return false;
-        if (element->isSVGElement()) {
-            if (element->getAttribute(typeAttr) != state.element()->getAttribute(typeAttr))
+        if (element.isSVGElement()) {
+            if (element.getAttribute(typeAttr) != state.element()->getAttribute(typeAttr))
                 return false;
         } else {
-            if (element->fastGetAttribute(typeAttr) != state.element()->fastGetAttribute(typeAttr))
+            if (element.fastGetAttribute(typeAttr) != state.element()->fastGetAttribute(typeAttr))
                 return false;
         }
     }
 
-    if (element->matchesValidPseudoClass() != state.element()->matchesValidPseudoClass())
+    if (element.matchesValidPseudoClass() != state.element()->matchesValidPseudoClass())
         return false;
 
-    if (element->matchesInvalidPseudoClass() != state.element()->matchesValidPseudoClass())
+    if (element.matchesInvalidPseudoClass() != state.element()->matchesValidPseudoClass())
         return false;
 
 #if ENABLE(VIDEO_TRACK)
@@ -642,7 +642,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (element == element->document().webkitCurrentFullScreenElement() || state.element() == state.document().webkitCurrentFullScreenElement())
+    if (&element == element.document().webkitCurrentFullScreenElement() || state.element() == state.document().webkitCurrentFullScreenElement())
         return false;
 #endif
     return true;
@@ -653,7 +653,7 @@ inline StyledElement* StyleResolver::findSiblingForStyleSharing(Node* node, unsi
     for (; node; node = node->previousSibling()) {
         if (!is<StyledElement>(*node))
             continue;
-        if (canShareStyleWithElement(downcast<StyledElement>(node)))
+        if (canShareStyleWithElement(downcast<StyledElement>(*node)))
             break;
         if (count++ == cStyleSearchThreshold)
             return nullptr;
@@ -679,7 +679,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return nullptr;
     if (state.element() == state.document().cssTarget())
         return nullptr;
-    if (elementHasDirectionAuto(state.element()))
+    if (elementHasDirectionAuto(*state.element()))
         return nullptr;
 
     // Cache whether state.element is affected by any known class selectors.

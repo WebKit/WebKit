@@ -903,7 +903,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
             }
             break;
         case CSSSelector::PseudoClassAutofill:
-            return isAutofilled(element);
+            return isAutofilled(*element);
         case CSSSelector::PseudoClassAnyLink:
         case CSSSelector::PseudoClassAnyLinkDeprecated:
         case CSSSelector::PseudoClassLink:
@@ -972,7 +972,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
         case CSSSelector::PseudoClassInvalid:
             return isInvalid(element);
         case CSSSelector::PseudoClassChecked:
-            return isChecked(element);
+            return isChecked(*element);
         case CSSSelector::PseudoClassIndeterminate:
             return shouldAppearIndeterminate(element);
         case CSSSelector::PseudoClassRoot:

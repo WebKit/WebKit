@@ -281,17 +281,20 @@ DragOperation DragController::dragEnteredOrUpdated(DragData& dragData)
     return dragOperation;
 }
 
-static HTMLInputElement* asFileInput(Node* node)
+static HTMLInputElement* asFileInput(Node& node)
 {
-    ASSERT(node);
+    if (!is<HTMLInputElement>(node))
+        return nullptr;
 
-    HTMLInputElement* inputElement = node->toInputElement();
+    auto* inputElement = &downcast<HTMLInputElement>(node);
 
     // If this is a button inside of the a file input, move up to the file input.
-    if (inputElement && inputElement->isTextButton() && is<ShadowRoot>(inputElement->treeScope().rootNode()))
-        inputElement = downcast<ShadowRoot>(inputElement->treeScope().rootNode()).host()->toInputElement();
+    if (inputElement->isTextButton() && is<ShadowRoot>(inputElement->treeScope().rootNode())) {
+        auto& host = *downcast<ShadowRoot>(inputElement->treeScope().rootNode()).host();
+        inputElement = is<HTMLInputElement>(host) ? &downcast<HTMLInputElement>(host) : nullptr;
+    }
 
-    return inputElement && inputElement->isFileUpload() ? inputElement : 0;
+    return inputElement && inputElement->isFileUpload() ? inputElement : nullptr;
 }
 
 // This can return null if an empty document is loaded.
@@ -355,7 +358,7 @@ bool DragController::tryDocumentDrag(DragData& dragData, DragDestinationAction a
         if (!element)
             return false;
         
-        HTMLInputElement* elementAsFileInput = asFileInput(element);
+        HTMLInputElement* elementAsFileInput = asFileInput(*element);
         if (m_fileInputElementUnderMouse != elementAsFileInput) {
             if (m_fileInputElementUnderMouse)
                 m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
@@ -565,7 +568,7 @@ bool DragController::canProcessDrag(DragData& dragData)
     if (!result.innerNonSharedNode())
         return false;
 
-    if (dragData.containsFiles() && asFileInput(result.innerNonSharedNode()))
+    if (dragData.containsFiles() && asFileInput(*result.innerNonSharedNode()))
         return true;
 
     if (is<HTMLPlugInElement>(*result.innerNonSharedNode())) {

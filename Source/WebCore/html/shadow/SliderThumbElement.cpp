@@ -55,20 +55,20 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline static Decimal sliderPosition(HTMLInputElement* element)
+inline static Decimal sliderPosition(HTMLInputElement& element)
 {
-    const StepRange stepRange(element->createStepRange(RejectAny));
-    const Decimal oldValue = parseToDecimalForNumberType(element->value(), stepRange.defaultValue());
+    const StepRange stepRange(element.createStepRange(RejectAny));
+    const Decimal oldValue = parseToDecimalForNumberType(element.value(), stepRange.defaultValue());
     return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
 
-inline static bool hasVerticalAppearance(HTMLInputElement* input)
+inline static bool hasVerticalAppearance(HTMLInputElement& input)
 {
-    ASSERT(input->renderer());
-    const RenderStyle& sliderStyle = input->renderer()->style();
+    ASSERT(input.renderer());
+    const RenderStyle& sliderStyle = input.renderer()->style();
 
 #if ENABLE(VIDEO)
-    if (sliderStyle.appearance() == MediaVolumeSliderPart && input->renderer()->theme().usesVerticalVolumeSlider())
+    if (sliderStyle.appearance() == MediaVolumeSliderPart && input.renderer()->theme().usesVerticalVolumeSlider())
         return true;
 #endif
 
@@ -126,11 +126,12 @@ private:
 
 void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    HTMLInputElement* input = element()->shadowHost()->toInputElement();
+    ASSERT(element()->shadowHost());
+    auto& input = downcast<HTMLInputElement>(*element()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
 
 #if ENABLE(DATALIST_ELEMENT)
-    if (input->renderer()->isSlider() && !isVertical && input->list()) {
+    if (input.renderer()->isSlider() && !isVertical && input.list()) {
         int offsetFromCenter = theme().sliderTickOffsetFromTrackCenter();
         LayoutUnit trackHeight = 0;
         if (offsetFromCenter < 0)
@@ -154,7 +155,8 @@ void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, Layou
 
 void RenderSliderContainer::layout()
 {
-    HTMLInputElement* input = element()->shadowHost()->toInputElement();
+    ASSERT(element()->shadowHost());
+    auto& input = downcast<HTMLInputElement>(*element()->shadowHost());
     bool isVertical = hasVerticalAppearance(input);
     style().setFlexDirection(isVertical ? FlowColumn : FlowRow);
     TextDirection oldTextDirection = style().direction();
@@ -165,8 +167,8 @@ void RenderSliderContainer::layout()
         style().setDirection(LTR);
     }
 
-    RenderBox* thumb = input->sliderThumbElement() ? input->sliderThumbElement()->renderBox() : 0;
-    RenderBox* track = input->sliderTrackElement() ? input->sliderTrackElement()->renderBox() : 0;
+    RenderBox* thumb = input.sliderThumbElement() ? input.sliderThumbElement()->renderBox() : nullptr;
+    RenderBox* track = input.sliderTrackElement() ? input.sliderTrackElement()->renderBox() : nullptr;
     // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
     // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
     if (track)
@@ -261,7 +263,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     RenderBox& inputRenderer = downcast<RenderBox>(*input->renderer());
     RenderBox& trackRenderer = *trackElement->renderBox();
 
-    bool isVertical = hasVerticalAppearance(input.get());
+    bool isVertical = hasVerticalAppearance(*input);
     bool isLeftToRightDirection = renderBox()->style().isLeftToRightDirection();
     
     LayoutPoint offset(inputRenderer.absoluteToLocal(absolutePoint, UseTransforms));
@@ -569,8 +571,7 @@ HTMLInputElement* SliderThumbElement::hostInput() const
 {
     // Only HTMLInputElement creates SliderThumbElement instances as its shadow nodes.
     // So, shadowHost() must be an HTMLInputElement.
-    Element* host = shadowHost();
-    return host ? host->toInputElement() : 0;
+    return downcast<HTMLInputElement>(shadowHost());
 }
 
 static const AtomicString& sliderThumbShadowPseudoId()
@@ -644,13 +645,14 @@ const AtomicString& SliderContainerElement::shadowPseudoId() const
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, mediaSliderContainer, ("-webkit-media-slider-container", AtomicString::ConstructFromLiteral));
     DEPRECATED_DEFINE_STATIC_LOCAL(const AtomicString, sliderContainer, ("-webkit-slider-container", AtomicString::ConstructFromLiteral));
 
-    HTMLInputElement* input = shadowHost()->toInputElement();
-    if (!input)
+    if (!is<HTMLInputElement>(*shadowHost()))
         return sliderContainer;
-    if (!input->renderer())
+
+    auto& input = downcast<HTMLInputElement>(*shadowHost());
+    if (!input.renderer())
         return emptyAtom;
 
-    const RenderStyle& sliderStyle = input->renderer()->style();
+    const RenderStyle& sliderStyle = input.renderer()->style();
     switch (sliderStyle.appearance()) {
     case MediaSliderPart:
     case MediaSliderThumbPart:

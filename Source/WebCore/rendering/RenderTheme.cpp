@@ -785,26 +785,12 @@ bool RenderTheme::isActive(const RenderObject& o) const
 
 bool RenderTheme::isChecked(const RenderObject& o) const
 {
-    if (!o.node())
-        return false;
-
-    HTMLInputElement* inputElement = o.node()->toInputElement();
-    if (!inputElement)
-        return false;
-
-    return inputElement->shouldAppearChecked();
+    return is<HTMLInputElement>(o.node()) && downcast<HTMLInputElement>(*o.node()).shouldAppearChecked();
 }
 
 bool RenderTheme::isIndeterminate(const RenderObject& o) const
 {
-    if (!o.node())
-        return false;
-
-    HTMLInputElement* inputElement = o.node()->toInputElement();
-    if (!inputElement)
-        return false;
-
-    return inputElement->shouldAppearIndeterminate();
+    return is<HTMLInputElement>(o.node()) && downcast<HTMLInputElement>(*o.node()).shouldAppearIndeterminate();
 }
 
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
@@ -993,20 +979,16 @@ LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
 
 void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    Node* node = o.node();
-    if (!node)
+    if (!is<HTMLInputElement>(o.node()))
         return;
 
-    HTMLInputElement* input = node->toInputElement();
-    if (!input)
-        return;
-
-    HTMLDataListElement* dataList = downcast<HTMLDataListElement>(input->list());
+    auto& input = downcast<HTMLInputElement>(*o.node());
+    auto* dataList = downcast<HTMLDataListElement>(input.list());
     if (!dataList)
         return;
 
-    double min = input->minimum();
-    double max = input->maximum();
+    double min = input.minimum();
+    double max = input.maximum();
     ControlPart part = o.style().appearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (part !=  SliderHorizontalPart && part != SliderVerticalPart)
@@ -1014,7 +996,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     bool isHorizontal = part ==  SliderHorizontalPart;
 
     IntSize thumbSize;
-    const RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
+    const RenderObject* thumbRenderer = input.sliderThumbElement()->renderer();
     if (thumbRenderer) {
         const RenderStyle& thumbStyle = thumbRenderer->style();
         int thumbWidth = thumbStyle.width().intValue();
@@ -1029,7 +1011,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     int tickRegionSideMargin = 0;
     int tickRegionWidth = 0;
     IntRect trackBounds;
-    RenderObject* trackRenderer = input->sliderTrackElement()->renderer();
+    RenderObject* trackRenderer = input.sliderTrackElement()->renderer();
     // We can ignoring transforms because transform is handled by the graphics context.
     if (trackRenderer)
         trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
@@ -1059,9 +1041,9 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         ASSERT(is<HTMLOptionElement>(*node));
         HTMLOptionElement& optionElement = downcast<HTMLOptionElement>(*node);
         String value = optionElement.value();
-        if (!input->isValidValue(value))
+        if (!input.isValidValue(value))
             continue;
-        double parsedValue = parseToDoubleForNumberType(input->sanitizeValue(value));
+        double parsedValue = parseToDoubleForNumberType(input.sanitizeValue(value));
         double tickFraction = (parsedValue - min) / (max - min);
         double tickRatio = isHorizontal && o.style().isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
         double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);

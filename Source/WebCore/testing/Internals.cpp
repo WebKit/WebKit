@@ -1188,8 +1188,8 @@ bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
         return false;
     }
 
-    if (HTMLInputElement* inputElement = textField->toInputElement())
-        return inputElement->lastChangeWasUserEdit();
+    if (is<HTMLInputElement>(*textField))
+        return downcast<HTMLInputElement>(*textField).lastChangeWasUserEdit();
 
     if (is<HTMLTextAreaElement>(*textField))
         return downcast<HTMLTextAreaElement>(*textField).lastChangeWasUserEdit();
@@ -1205,11 +1205,12 @@ bool Internals::elementShouldAutoComplete(Element* element, ExceptionCode& ec)
         return false;
     }
 
-    if (HTMLInputElement* inputElement = element->toInputElement())
-        return inputElement->shouldAutocomplete();
+    if (!is<HTMLInputElement>(*element)) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return false;
+    }
 
-    ec = INVALID_NODE_TYPE_ERR;
-    return false;
+    return downcast<HTMLInputElement>(*element).shouldAutocomplete();
 }
 
 void Internals::setEditingValue(Element* element, const String& value, ExceptionCode& ec)
@@ -1219,33 +1220,42 @@ void Internals::setEditingValue(Element* element, const String& value, Exception
         return;
     }
 
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement) {
+    if (!is<HTMLInputElement>(*element)) {
         ec = INVALID_NODE_TYPE_ERR;
         return;
     }
 
-    inputElement->setEditingValue(value);
+    downcast<HTMLInputElement>(*element).setEditingValue(value);
 }
 
 void Internals::setAutofilled(Element* element, bool enabled, ExceptionCode& ec)
 {
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement) {
+    if (!element) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
-    inputElement->setAutoFilled(enabled);
+
+    if (!is<HTMLInputElement>(*element)) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    downcast<HTMLInputElement>(*element).setAutoFilled(enabled);
 }
 
 void Internals::setShowAutoFillButton(Element* element, bool show, ExceptionCode& ec)
 {
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement) {
+    if (!element) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
-    inputElement->setShowAutoFillButton(show);
+
+    if (!is<HTMLInputElement>(*element)) {
+        ec = INVALID_NODE_TYPE_ERR;
+        return;
+    }
+
+    downcast<HTMLInputElement>(*element).setShowAutoFillButton(show);
 }
 
 

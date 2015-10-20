@@ -421,9 +421,9 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     if (unloadEventPolicy != UnloadEventPolicyNone) {
         if (m_frame.document()) {
             if (m_didCallImplicitClose && !m_wasUnloadEventEmitted) {
-                Element* currentFocusedElement = m_frame.document()->focusedElement();
-                if (currentFocusedElement && currentFocusedElement->toInputElement())
-                    currentFocusedElement->toInputElement()->endEditing();
+                auto* currentFocusedElement = m_frame.document()->focusedElement();
+                if (is<HTMLInputElement>(currentFocusedElement))
+                    downcast<HTMLInputElement>(*currentFocusedElement).endEditing();
                 if (m_pageDismissalEventBeingDispatched == PageDismissalType::None) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
                         m_pageDismissalEventBeingDispatched = PageDismissalType::PageHide;

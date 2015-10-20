@@ -41,13 +41,9 @@
 
 namespace WebCore {
 
-ALWAYS_INLINE bool isAutofilled(const Element* element)
+ALWAYS_INLINE bool isAutofilled(const Element& element)
 {
-    if (is<HTMLFormControlElement>(*element)) {
-        if (const HTMLInputElement* inputElement = element->toInputElement())
-            return inputElement->isAutoFilled();
-    }
-    return false;
+    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilled();
 }
 
 ALWAYS_INLINE bool isDefaultButtonForForm(const Element* element)
@@ -72,16 +68,18 @@ ALWAYS_INLINE bool isMediaDocument(Element* element)
     return element->document().isMediaDocument();
 }
 
-ALWAYS_INLINE bool isChecked(Element* element)
+ALWAYS_INLINE bool isChecked(Element& element)
 {
     // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
     // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
     // obey the CSS spec here in the test for matching the pseudo.
-    const HTMLInputElement* inputElement = element->toInputElement();
-    if (inputElement && inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate())
-        return true;
-    if (is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected())
-        return true;
+    if (is<HTMLInputElement>(element)) {
+        auto& inputElement = downcast<HTMLInputElement>(element);
+        return inputElement.shouldAppearChecked() && !inputElement.shouldAppearIndeterminate();
+    }
+    if (is<HTMLOptionElement>(element))
+        return downcast<HTMLOptionElement>(element).selected();
+
     return false;
 }
 

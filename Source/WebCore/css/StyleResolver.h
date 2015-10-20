@@ -183,7 +183,7 @@ private:
     bool styleSharingCandidateMatchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
     StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
-    bool canShareStyleWithElement(StyledElement*) const;
+    bool canShareStyleWithElement(StyledElement&) const;
 
     Ref<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleKeyframe*, KeyframeValue&);
 
@@ -530,7 +530,7 @@ private:
 
     void cacheBorderAndBackground();
 
-    bool canShareStyleWithControl(StyledElement*) const;
+    bool canShareStyleWithControl(StyledElement&) const;
 
     void applyProperty(CSSPropertyID, CSSValue*, SelectorChecker::LinkMatchMask = SelectorChecker::MatchDefault, const MatchResult* = nullptr);
     RefPtr<CSSValue> resolvedVariableValue(CSSPropertyID, const CSSVariableDependentValue&);
@@ -559,7 +559,7 @@ private:
     void sweepMatchedPropertiesCache();
 
     bool classNamesAffectedByRules(const SpaceSplitString&) const;
-    bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement*) const;
+    bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement&) const;
 
     unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
 

@@ -61,7 +61,7 @@ bool RenderButton::canBeSelectionLeaf() const
 
 bool RenderButton::hasLineIfEmpty() const
 {
-    return formControlElement().toInputElement();
+    return is<HTMLInputElement>(formControlElement());
 }
 
 void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)

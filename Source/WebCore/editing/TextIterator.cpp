@@ -858,7 +858,7 @@ static bool shouldEmitNewlineForNode(Node* node, bool emitsOriginalText)
     auto* renderer = node->renderer();
     if (!(renderer ? renderer->isBR() : node->hasTagName(brTag)))
         return false;
-    return emitsOriginalText || !(node->isInShadowTree() && node->shadowHost()->toInputElement());
+    return emitsOriginalText || !(node->isInShadowTree() && is<HTMLInputElement>(*node->shadowHost()));
 }
 
 static bool hasHeaderTag(HTMLElement& element)

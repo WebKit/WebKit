@@ -50,20 +50,22 @@ RadioNodeList::~RadioNodeList()
     ownerNode().nodeLists()->removeCacheWithAtomicName(this, m_name);
 }
 
-static inline HTMLInputElement* toRadioButtonInputElement(Node* node)
+static inline HTMLInputElement* toRadioButtonInputElement(Node& node)
 {
-    ASSERT(node->isElementNode());
-    HTMLInputElement* inputElement = node->toInputElement();
-    if (!inputElement || !inputElement->isRadioButton() || inputElement->value().isEmpty())
-        return 0;
-    return inputElement;
+    if (!is<HTMLInputElement>(node))
+        return nullptr;
+
+    auto& inputElement = downcast<HTMLInputElement>(node);
+    if (!inputElement.isRadioButton() || inputElement.value().isEmpty())
+        return nullptr;
+    return &inputElement;
 }
 
 String RadioNodeList::value() const
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        Node* node = item(i);
-        const HTMLInputElement* inputElement = toRadioButtonInputElement(node);
+    auto length = this->length();
+    for (unsigned i = 0; i < length; ++i) {
+        auto* inputElement = toRadioButtonInputElement(*item(i));
         if (!inputElement || !inputElement->checked())
             continue;
         return inputElement->value();
@@ -73,9 +75,9 @@ String RadioNodeList::value() const
 
 void RadioNodeList::setValue(const String& value)
 {
-    for (unsigned i = 0; i < length(); ++i) {
-        Node* node = item(i);
-        HTMLInputElement* inputElement = toRadioButtonInputElement(node);
+    auto length = this->length();
+    for (unsigned i = 0; i < length; ++i) {
+        auto* inputElement = toRadioButtonInputElement(*item(i));
         if (!inputElement || inputElement->value() != value)
             continue;
         inputElement->setChecked(true);
@@ -104,10 +106,8 @@ bool RadioNodeList::elementMatches(Element& testElement) const
     if (!is<HTMLObjectElement>(testElement) && !is<HTMLFormControlElement>(testElement))
         return false;
 
-    if (HTMLInputElement* inputElement = testElement.toInputElement()) {
-        if (inputElement->isImageButton())
-            return false;
-    }
+    if (is<HTMLInputElement>(testElement) && downcast<HTMLInputElement>(testElement).isImageButton())
+        return false;
 
     return checkElementMatchesRadioNodeListFilter(testElement);
 }
