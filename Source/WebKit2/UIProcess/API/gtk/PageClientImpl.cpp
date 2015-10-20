@@ -233,6 +233,11 @@ void PageClientImpl::exitAcceleratedCompositingMode()
     webkitWebViewBaseExitAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
+void PageClientImpl::willEnterAcceleratedCompositingMode()
+{
+    webkitWebViewBaseWillEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+}
+
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
     notImplemented();

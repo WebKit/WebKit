@@ -95,6 +95,7 @@ private:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) override;
     virtual void exitAcceleratedCompositingMode() override;
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
+    void willEnterAcceleratedCompositingMode() override;
 
     virtual void handleDownloadRequest(DownloadProxy*) override;
     virtual void didChangeContentSize(const WebCore::IntSize&) override { }

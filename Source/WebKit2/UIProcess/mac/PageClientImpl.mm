@@ -555,6 +555,10 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& la
     [m_wkView _setAcceleratedCompositingModeRootLayer:renderLayer];
 }
 
+void PageClientImpl::willEnterAcceleratedCompositingMode()
+{
+}
+
 void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 {
     [m_wkView _setAcceleratedCompositingModeRootLayer:rootLayer];

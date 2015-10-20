@@ -70,6 +70,7 @@ void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase*, GtkWidget* aut
 void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase*);
 void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, WebKit::AttachmentSide);
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
+void webkitWebViewBaseWillEnterAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);

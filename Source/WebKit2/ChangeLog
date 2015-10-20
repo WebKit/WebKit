@@ -1,3 +1,68 @@
+2015-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Graphics corruption when entering/leaving AC mode quickly
+        https://bugs.webkit.org/show_bug.cgi?id=150323
+
+        Reviewed by Mario Sanchez Prada.
+
+        The UI process is notified when entering accelerated compositing
+        mode after the layers have been flushed and rendered to avoid
+        flickering. However, this is producing flickering in the GTK+
+        port, because we use an offscreen redirected window that is
+        resized to a minimium size to save memory when not in AC mode. The
+        web process always uses the current size of the redirected window,
+        so when entering AC mode, contents are rendered into the 1x1
+        window, then the UI process is notified, the redirected window is
+        resized to its actual size, and we force a resize to ask the web
+        process to render again, now at the correct size. Rendering at 1x1
+        and then resizing the window is what produces the flickering when
+        entering AC mode, but it's also inefficient, since we need to
+        render again after the redirected window is resized. So, this
+        patch adds a WillEnterAcceleratedCompositing message that is sent
+        to the UI process when the layer tree host is created but before
+        the contents have been composited and rendered. This is
+        implemented by the GTK+ port to prepare for entering AC mode, by
+        resizing the redirected window. When we actually enter AC mode,
+        the contents have already been rendered in the web process at the
+        correct size, so we can just use the redirected window surface
+        instead of the drawing area one, and paint in the web view without
+        any flickering. We no longer need the forceResize either.
+        When leaving accelerated compositing mode, we now clear the redirected
+        window resources after a short delay. This ensures that we have
+        already rendered the update sent in the ExitAcceleratedCompositingMode
+        message, but also that entering/leaving AC mode quickly doesn't
+        produce any redirected window resize.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::willEnterAcceleratedCompositingMode):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseClearRedirectedWindowSoon):
+        (webkitWebViewBaseWillEnterAcceleratedCompositingMode):
+        (webkitWebViewBaseEnterAcceleratedCompositingMode):
+        (webkitWebViewBaseExitAcceleratedCompositingMode):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::willEnterAcceleratedCompositingMode):
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::willEnterAcceleratedCompositingMode):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (WebKit::DrawingAreaProxyImpl::forceResize): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willEnterAcceleratedCompositingMode):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::willEnterAcceleratedCompositingMode):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::willEnterAcceleratedCompositingMode):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode):
+
 2015-10-20  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] Fix build for ENABLE_PLUGIN_PROCESS_GTK2=OFF

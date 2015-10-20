@@ -465,6 +465,8 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
     m_exitCompositingTimer.stop();
     m_wantsToExitAcceleratedCompositingMode = false;
 
+    m_webPage.send(Messages::DrawingAreaProxy::WillEnterAcceleratedCompositingMode(m_backingStoreStateID));
+
     ASSERT(!m_layerTreeHost);
 
     m_layerTreeHost = LayerTreeHost::create(&m_webPage);
