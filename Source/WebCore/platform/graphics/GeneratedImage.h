@@ -59,6 +59,8 @@ protected:
     GeneratedImage() { }
 
 private:
+    virtual bool isGeneratedImage() const override { return true; }
+
     FloatSize m_size;
 };
 

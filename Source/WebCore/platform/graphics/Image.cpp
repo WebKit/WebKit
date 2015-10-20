@@ -34,6 +34,7 @@
 #include "Length.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
+#include "TextStream.h"
 #include <math.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -268,6 +269,38 @@ void Image::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsic
 #endif
     intrinsicWidth = Length(intrinsicRatio.width(), Fixed);
     intrinsicHeight = Length(intrinsicRatio.height(), Fixed);
+}
+
+void Image::dump(TextStream& ts) const
+{
+    if (isAnimated())
+        ts.dumpProperty("animated", isAnimated());
+
+    if (isNull())
+        ts.dumpProperty("is-null-image", true);
+
+    ts.dumpProperty("size", size());
+}
+
+TextStream& operator<<(TextStream& ts, const Image& image)
+{
+    TextStream::GroupScope scope(ts);
+    
+    if (image.isBitmapImage())
+        ts << "bitmap image";
+    else if (image.isCrossfadeGeneratedImage())
+        ts << "crossfade image";
+    else if (image.isNamedImageGeneratedImage())
+        ts << "named image";
+    else if (image.isGradientImage())
+        ts << "gradient image";
+    else if (image.isSVGImage())
+        ts << "svg image";
+    else if (image.isPDFDocumentImage())
+        ts << "pdf image";
+
+    image.dump(ts);
+    return ts;
 }
 
 }

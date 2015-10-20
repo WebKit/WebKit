@@ -33,6 +33,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "TextStream.h"
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
@@ -707,6 +708,27 @@ Color BitmapImage::solidColor() const
 bool BitmapImage::canAnimate()
 {
     return shouldAnimate() && frameCount() > 1;
+}
+
+void BitmapImage::dump(TextStream& ts) const
+{
+    Image::dump(ts);
+
+    ts.dumpProperty("type", m_source.filenameExtension());
+
+    if (isAnimated()) {
+        ts.dumpProperty("frame-count", m_frameCount);
+        ts.dumpProperty("repetitions", m_repetitionCount);
+        ts.dumpProperty("current-frame", m_currentFrame);
+    }
+    
+    if (allowSubsampling())
+        ts.dumpProperty("allow-subsampling", allowSubsampling());
+    if (m_isSolidColor)
+        ts.dumpProperty("solid-color", m_isSolidColor);
+    
+    if (m_imageOrientation != OriginTopLeft)
+        ts.dumpProperty("orientation", m_imageOrientation);
 }
 
 }

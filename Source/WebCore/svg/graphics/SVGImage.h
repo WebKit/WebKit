@@ -90,6 +90,8 @@ private:
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() override { return false; }
 
+    virtual void dump(TextStream&) const override;
+
     SVGImage(ImageObserver&, const URL&);
     virtual void draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     void drawForContainer(GraphicsContext&, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);

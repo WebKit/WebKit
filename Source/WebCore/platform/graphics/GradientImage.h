@@ -53,6 +53,9 @@ protected:
     GradientImage(PassRefPtr<Gradient>, const FloatSize&);
 
 private:
+    virtual bool isGradientImage() const override { return true; }
+    virtual void dump(TextStream&) const override;
+    
     RefPtr<Gradient> m_gradient;
     std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
     FloatSize m_cachedAdjustedSize;

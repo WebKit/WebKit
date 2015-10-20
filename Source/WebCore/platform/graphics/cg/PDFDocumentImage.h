@@ -74,6 +74,8 @@ private:
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() override { return false; }
 
+    virtual void dump(TextStream&) const override;
+
     void createPDFDocument();
     void computeBoundsForCurrentPage();
     unsigned pageCount() const;

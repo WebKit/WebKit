@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "TextStream.h"
 #include "Theme.h"
 
 namespace WebCore {
@@ -83,6 +84,12 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
     UNUSED_PARAM(compositeOp);
     UNUSED_PARAM(blendMode);
 #endif
+}
+
+void NamedImageGeneratedImage::dump(TextStream& ts) const
+{
+    GeneratedImage::dump(ts);
+    ts.dumpProperty("name", m_name);
 }
 
 }

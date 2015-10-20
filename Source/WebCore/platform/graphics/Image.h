@@ -80,12 +80,16 @@ public:
     WEBCORE_EXPORT static PassRefPtr<Image> loadPlatformResource(const char* name);
     WEBCORE_EXPORT static bool supportsType(const String&);
 
-    virtual bool isSVGImage() const { return false; }
     virtual bool isBitmapImage() const { return false; }
+    virtual bool isGeneratedImage() const { return false; }
+    virtual bool isCrossfadeGeneratedImage() const { return false; }
+    virtual bool isNamedImageGeneratedImage() const { return false; }
+    virtual bool isGradientImage() const { return false; }
+    virtual bool isSVGImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
-    virtual bool currentFrameKnownToBeOpaque() = 0;
 
-    virtual bool isAnimated() { return false; }
+    virtual bool currentFrameKnownToBeOpaque() = 0;
+    virtual bool isAnimated() const { return false; }
 
     // Derived classes should override this if they can assure that 
     // the image contains only resources from its own security origin.
@@ -177,6 +181,8 @@ public:
     virtual bool notSolidColor() { return true; }
 #endif
 
+    virtual void dump(TextStream&) const;
+
 protected:
     Image(ImageObserver* = nullptr);
 
@@ -199,6 +205,8 @@ private:
     RefPtr<SharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
 };
+
+TextStream& operator<<(TextStream&, const Image&);
 
 } // namespace WebCore
 

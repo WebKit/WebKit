@@ -121,8 +121,6 @@ public:
 #endif
     virtual ~BitmapImage();
     
-    virtual bool isBitmapImage() const override { return true; }
-
     virtual bool hasSingleSecurityOrigin() const override;
 
     // FloatSize due to override.
@@ -179,7 +177,7 @@ public:
 
     virtual bool currentFrameKnownToBeOpaque() override;
 
-    virtual bool isAnimated() override { return m_frameCount > 1; }
+    virtual bool isAnimated() const override { return m_frameCount > 1; }
     
     bool canAnimate();
 
@@ -187,6 +185,8 @@ public:
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
     
 private:
+    virtual bool isBitmapImage() const override { return true; }
+
     void updateSize(ImageOrientationDescription = ImageOrientationDescription()) const;
     void determineMinimumSubsamplingLevel() const;
 
@@ -290,6 +290,8 @@ private:
     virtual bool decodedDataIsPurgeable() const override;
     void clearTimer();
     void startTimer(double delay);
+
+    virtual void dump(TextStream&) const override;
 
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).

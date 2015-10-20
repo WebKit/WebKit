@@ -33,7 +33,6 @@
 
 #include "FloatSize.h"
 
-
 namespace WebCore {
 
 void GeneratedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio)

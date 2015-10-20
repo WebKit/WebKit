@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -107,6 +108,14 @@ void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, const FloatR
 
     // Tile the image buffer into the context.
     imageBuffer->drawPattern(context, srcRect, patternTransform, phase, spacing, styleColorSpace, compositeOp, dstRect, blendMode);
+}
+
+void CrossfadeGeneratedImage::dump(TextStream& ts) const
+{
+    GeneratedImage::dump(ts);
+    ts.dumpProperty("from-image", m_fromImage.get());
+    ts.dumpProperty("to-image", m_toImage.get());
+    ts.dumpProperty("percentage", m_percentage);
 }
 
 }

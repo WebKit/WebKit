@@ -47,6 +47,9 @@ protected:
     NamedImageGeneratedImage(String name, const FloatSize&);
 
 private:
+    virtual bool isNamedImageGeneratedImage() const override { return true; }
+    virtual void dump(TextStream&) const override;
+
     String m_name;
 };
 

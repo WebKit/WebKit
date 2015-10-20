@@ -45,6 +45,7 @@
 #include "SVGImageClients.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
+#include "TextStream.h"
 
 namespace WebCore {
 
@@ -399,5 +400,12 @@ bool isInSVGImage(const Element* element)
 
     return page->chrome().client().isSVGImageChromeClient();
 }
+
+void SVGImage::dump(TextStream& ts) const
+{
+    Image::dump(ts);
+    ts.dumpProperty("url", m_url.string());
+}
+
 
 }

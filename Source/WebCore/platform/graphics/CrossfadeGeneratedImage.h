@@ -55,6 +55,9 @@ protected:
     CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize&);
 
 private:
+    virtual bool isCrossfadeGeneratedImage() const override { return true; }
+    virtual void dump(TextStream&) const override;
+    
     void drawCrossfade(GraphicsContext&);
 
     Ref<Image> m_fromImage;
