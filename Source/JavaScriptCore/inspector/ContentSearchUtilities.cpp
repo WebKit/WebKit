@@ -166,12 +166,6 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> 
     return result;
 }
 
-static String scriptCommentPattern(const String& name)
-{
-    // "//# <name>=<value>" and deprecated "//@"
-    return "//[#@][\040\t]" + name + "=[\040\t]*([^\\s\'\"]*)[\040\t]*$";
-}
-
 static String stylesheetCommentPattern(const String& name)
 {
     // "/*# <name>=<value> */" and deprecated "/*@"
@@ -197,16 +191,6 @@ static String findMagicComment(const String& content, const String& patternStrin
 
     ASSERT(matches[2] > 0 && matches[3] > 0);
     return content.substring(matches[2], matches[3] - matches[2]);
-}
-
-String findScriptSourceURL(const String& content)
-{
-    return findMagicComment(content, scriptCommentPattern(ASCIILiteral("sourceURL")));
-}
-
-String findScriptSourceMapURL(const String& content)
-{
-    return findMagicComment(content, scriptCommentPattern(ASCIILiteral("sourceMappingURL")));
 }
 
 String findStylesheetSourceMapURL(const String& content)

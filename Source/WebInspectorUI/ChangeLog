@@ -1,3 +1,16 @@
+2015-10-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives
+        https://bugs.webkit.org/show_bug.cgi?id=150096
+
+        Reviewed by Geoffrey Garen.
+
+        * UserInterface/Test/InspectorProtocol.js:
+        (InspectorProtocol._sendMessage):
+        (InspectorProtocol.dispatchMessageFromBackend):
+        This is only used for tests, so avoid console.log
+        and just dump directly to the system console.
+
 2015-10-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Add skeleton for initial WritableStream support
