@@ -38,16 +38,14 @@ namespace NetworkCache {
 
 Key::Key(const Key& o)
     : m_partition(o.m_partition.isolatedCopy())
-    , m_type(o.m_type.isolatedCopy())
     , m_identifier(o.m_identifier.isolatedCopy())
     , m_range(o.m_range.isolatedCopy())
     , m_hash(o.m_hash)
 {
 }
 
-Key::Key(const String& partition, const String& type, const String& range, const String& identifier)
+Key::Key(const String& partition, const String& range, const String& identifier)
     : m_partition(partition.isolatedCopy())
-    , m_type(type.isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
     , m_range(range.isolatedCopy())
     , m_hash(computeHash())
@@ -57,7 +55,6 @@ Key::Key(const String& partition, const String& type, const String& range, const
 Key& Key::operator=(const Key& other)
 {
     m_partition = other.m_partition.isolatedCopy();
-    m_type = other.m_type.isolatedCopy();
     m_identifier = other.m_identifier.isolatedCopy();
     m_range = other.m_range.isolatedCopy();
     m_hash = other.m_hash;
@@ -86,7 +83,6 @@ Key::HashType Key::computeHash() const
     // SHA1 just happens to be suitably sized, fast and available.
     SHA1 sha1;
     hashString(sha1, m_partition);
-    hashString(sha1, m_type);
     hashString(sha1, m_identifier);
     hashString(sha1, m_range);
     SHA1::Digest hash;
@@ -128,13 +124,12 @@ bool Key::stringToHash(const String& string, HashType& hash)
 
 bool Key::operator==(const Key& other) const
 {
-    return m_hash == other.m_hash && m_partition == other.m_partition && m_type == other.m_type && m_identifier == other.m_identifier && m_range == other.m_range;
+    return m_hash == other.m_hash && m_partition == other.m_partition && m_identifier == other.m_identifier && m_range == other.m_range;
 }
 
 void Key::encode(Encoder& encoder) const
 {
     encoder << m_partition;
-    encoder << m_type;
     encoder << m_identifier;
     encoder << m_range;
     encoder << m_hash;
@@ -142,7 +137,7 @@ void Key::encode(Encoder& encoder) const
 
 bool Key::decode(Decoder& decoder, Key& key)
 {
-    return decoder.decode(key.m_partition) && decoder.decode(key.m_type) && decoder.decode(key.m_identifier) && decoder.decode(key.m_range) && decoder.decode(key.m_hash);
+    return decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_range) && decoder.decode(key.m_hash);
 }
 
 }
