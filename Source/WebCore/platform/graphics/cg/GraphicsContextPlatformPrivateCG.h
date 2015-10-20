@@ -53,16 +53,16 @@ public:
 
 #if PLATFORM(COCOA)
     // These methods do nothing on Mac.
-    void save() { }
-    void restore() { }
-    void flush() { }
-    void clip(const FloatRect&) { }
-    void clip(const Path&) { }
-    void scalePlatformCTM(float, float) { }
-    void rotatePlatformCTM(float) { }
-    void translatePlatformCTM(float, float) { }
-    void concatPlatformCTM(const AffineTransform&) { }
-    void setPlatformCTM(const AffineTransform&) { }
+    void save() {}
+    void restore() {}
+    void flush() {}
+    void clip(const FloatRect&) {}
+    void clip(const Path&) {}
+    void scale(const FloatSize&) {}
+    void rotate(float) {}
+    void translate(float, float) {}
+    void concatCTM(const AffineTransform&) {}
+    void setCTM(const AffineTransform&) {}
 #endif
 
 #if PLATFORM(WIN)
@@ -72,11 +72,11 @@ public:
     void flush();
     void clip(const FloatRect&);
     void clip(const Path&);
-    void scalePlatformCTM(float x, float y);
-    void rotatePlatformCTM(float);
-    void translatePlatformCTM(float, float);
-    void concatPlatformCTM(const AffineTransform&);
-    void setPlatformCTM(const AffineTransform&);
+    void scale(const FloatSize&);
+    void rotate(float);
+    void translate(float, float);
+    void concatCTM(const AffineTransform&);
+    void setCTM(const AffineTransform&);
 
     HDC m_hdc;
     bool m_shouldIncludeChildWindows;

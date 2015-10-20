@@ -194,15 +194,7 @@ void GraphicsContext::platformDestroy()
     delete m_data;
 }
 
-void GraphicsContext::resetPlatformCTM()
-{
-    if (platformContext())
-        m_state.ctm = getPlatformCTM();
-    else
-        m_state.ctm.makeIdentity();
-}
-
-AffineTransform GraphicsContext::getPlatformCTM(IncludeDeviceScale) const
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
 {
     if (paintingDisabled())
         return AffineTransform();
@@ -719,14 +711,14 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingM
     return result;
 }
 
-void GraphicsContext::translatePlatformCTM(float x, float y)
+void GraphicsContext::translate(float x, float y)
 {
     if (paintingDisabled())
         return;
 
     cairo_t* cr = platformContext()->cr();
     cairo_translate(cr, x, y);
-    m_data->translatePlatformCTM(x, y);
+    m_data->translate(x, y);
 }
 
 void GraphicsContext::setPlatformFillColor(const Color&, ColorSpace)
@@ -781,7 +773,7 @@ void GraphicsContext::setURLForRect(const URL&, const IntRect&)
     notImplemented();
 }
 
-void GraphicsContext::concatPlatformCTM(const AffineTransform& transform)
+void GraphicsContext::concatCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
@@ -789,10 +781,10 @@ void GraphicsContext::concatPlatformCTM(const AffineTransform& transform)
     cairo_t* cr = platformContext()->cr();
     const cairo_matrix_t matrix = cairo_matrix_t(transform);
     cairo_transform(cr, &matrix);
-    m_data->concatPlatformCTM(transform);
+    m_data->concatCTM(transform);
 }
 
-void GraphicsContext::setPlatformCTM(const AffineTransform& transform)
+void GraphicsContext::setCTM(const AffineTransform& transform)
 {
     if (paintingDisabled())
         return;
@@ -800,7 +792,7 @@ void GraphicsContext::setPlatformCTM(const AffineTransform& transform)
     cairo_t* cr = platformContext()->cr();
     const cairo_matrix_t matrix = cairo_matrix_t(transform);
     cairo_set_matrix(cr, &matrix);
-    m_data->setPlatformCTM(transform);
+    m_data->setCTM(transform);
 }
 
 void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
@@ -1011,22 +1003,22 @@ void GraphicsContext::clipOut(const Path& path)
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::rotatePlatformCTM(float radians)
+void GraphicsContext::rotate(float radians)
 {
     if (paintingDisabled())
         return;
 
     cairo_rotate(platformContext()->cr(), radians);
-    m_data->rotatePlatformCTM(radians);
+    m_data->rotate(radians);
 }
 
-void GraphicsContext::scalePlatformCTM(float x, float y)
+void GraphicsContext::scale(const FloatSize& size)
 {
     if (paintingDisabled())
         return;
 
-    cairo_scale(platformContext()->cr(), x, y);
-    m_data->scalePlatformCTM(x, y);
+    cairo_scale(platformContext()->cr(), size.width(), size.height());
+    m_data->scale(size);
 }
 
 void GraphicsContext::clipOut(const FloatRect& r)

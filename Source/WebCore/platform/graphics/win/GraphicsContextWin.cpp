@@ -171,24 +171,24 @@ void GraphicsContextPlatformPrivate::clip(const Path&)
     notImplemented();
 }
 
-void GraphicsContextPlatformPrivate::scalePlatformCTM(float x, float y)
+void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
 {
     if (!m_hdc)
         return;
 
-    XFORM xform = TransformationMatrix().scaleNonUniform(x, y);
+    XFORM xform = TransformationMatrix().scaleNonUniform(size.width(), size.height());
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
 static const double deg2rad = 0.017453292519943295769; // pi/180
 
-void GraphicsContextPlatformPrivate::rotatePlatformCTM(float degreesAngle)
+void GraphicsContextPlatformPrivate::rotate(float degreesAngle)
 {
     XFORM xform = TransformationMatrix().rotate(degreesAngle);
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
-void GraphicsContextPlatformPrivate::translatePlatformCTM(float x , float y)
+void GraphicsContextPlatformPrivate::translate(float x , float y)
 {
     if (!m_hdc)
         return;
@@ -197,7 +197,7 @@ void GraphicsContextPlatformPrivate::translatePlatformCTM(float x , float y)
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
-void GraphicsContextPlatformPrivate::concatPlatformCTM(const AffineTransform& transform)
+void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& transform)
 {
     if (!m_hdc)
         return;
@@ -206,7 +206,7 @@ void GraphicsContextPlatformPrivate::concatPlatformCTM(const AffineTransform& tr
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
-void GraphicsContextPlatformPrivate::setPlatformCTM(const AffineTransform& transform)
+void GraphicsContextPlatformPrivate::setCTM(const AffineTransform& transform)
 {
     if (!m_hdc)
         return;
