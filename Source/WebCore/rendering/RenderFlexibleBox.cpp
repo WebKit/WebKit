@@ -869,14 +869,14 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
         // This is the implementation of CSS flexbox section 4.5 which defines the minimum size of "pure" flex
         // items. For any other item the value should be 0, this also includes RenderFlexibleBox's derived clases
         // (RenderButton, RenderFullScreen...) because that's just an implementation detail.
-        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).valueOr(0);
-        ASSERT(computeMainAxisExtentForChild(child, MinSize, Length(MinContent)));
+        LayoutUnit contentSize = computeMainAxisExtentForChild(child, MinSize, Length(MinContent)).value();
+        ASSERT(contentSize >= 0);
         contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
 
         Length mainSize = isHorizontalFlow() ? child.style().width() : child.style().height();
         if (!mainAxisLengthIsIndefinite(mainSize)) {
-            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).valueOr(0);
-            ASSERT(computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize));
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).value();
+            ASSERT(resolvedMainSize >= 0);
             LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.valueOr(resolvedMainSize));
 
             return std::max(childSize, std::min(specifiedSize, contentSize));
