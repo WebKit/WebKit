@@ -45,6 +45,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
         class TestEWS(AbstractEarlyWarningSystem):
             port_name = "win"  # Needs to be a port which port/factory understands.
+            _build_style = None
 
         ews = TestEWS()
         ews.bind_to_tool(MockTool())

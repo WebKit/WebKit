@@ -1,3 +1,13 @@
+2015-10-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Mac Debug EWS never finishes when there are failures
+        https://bugs.webkit.org/show_bug.cgi?id=150334
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2015-10-20  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Enable OpenWebRTC test video/audio sources in tests
