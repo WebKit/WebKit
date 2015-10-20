@@ -127,7 +127,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 #if ENABLE_CSS_GRID_LAYOUT
 %expect 39
 #else
-%expect 37
+%expect 38
 #endif
 
 %nonassoc LOWEST_PREC
