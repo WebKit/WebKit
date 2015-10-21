@@ -1546,7 +1546,7 @@ private:
 
     RefPtr<WebPopupMenuProxy> m_activePopupMenu;
 #if ENABLE(CONTEXT_MENUS)
-    RefPtr<WebContextMenuProxy> m_activeContextMenu;
+    std::unique_ptr<WebContextMenuProxy> m_activeContextMenu;
     ContextMenuContextData m_activeContextMenuContextData;
 #endif
     RefPtr<API::HitTestResult> m_lastMouseMoveHitTestResult;

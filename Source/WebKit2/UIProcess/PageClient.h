@@ -224,7 +224,7 @@ public:
 
     virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) = 0;
 #if ENABLE(CONTEXT_MENUS)
-    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) = 0;
+    virtual std::unique_ptr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) = 0;
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

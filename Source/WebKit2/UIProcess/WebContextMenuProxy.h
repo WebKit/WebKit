@@ -36,13 +36,11 @@ namespace WebKit {
 
 class WebContextMenuItem;
 
-class WebContextMenuProxy : public RefCounted<WebContextMenuProxy> {
+class WebContextMenuProxy {
 public:
     virtual ~WebContextMenuProxy();
 
-    virtual void showContextMenu() = 0;
-    virtual void hideContextMenu() = 0;
-    virtual void cancelTracking() { }
+    virtual void show() = 0;
 
 protected:
     WebContextMenuProxy(const ContextMenuContextData&, const UserData&);

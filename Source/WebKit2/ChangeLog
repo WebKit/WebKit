@@ -1,5 +1,38 @@
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
+        WebContextMenuProxy doesn't have to be ref-counted
+        https://bugs.webkit.org/show_bug.cgi?id=150415
+
+        Reviewed by Tim Horton.
+
+        Change WebContextMenuProxy to not inherit from RefCounted. Instead of using RefPtr, use std::unique_ptr.
+        Get rid of cancelTracking and hideContextMenu and dismiss the menu whenever the menu proxy is destroyed.
+        Also, rename showContextMenu to show.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContextMenuProxy.h:
+        (WebKit::WebContextMenuProxy::cancelTracking): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::create): Deleted.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::~WebContextMenuProxyMac):
+        (WebKit::WebContextMenuProxyMac::show):
+        (WebKit::WebContextMenuProxyMac::showContextMenu): Deleted.
+        (WebKit::WebContextMenuProxyMac::hideContextMenu): Deleted.
+        (WebKit::WebContextMenuProxyMac::cancelTracking): Deleted.
+
+2015-10-21  Anders Carlsson  <andersca@apple.com>
+
         Stop using a popup menu button cell(!) for context menus
         https://bugs.webkit.org/show_bug.cgi?id=150413
 

@@ -817,8 +817,7 @@ void WebPageProxy::close()
         m_activePopupMenu->cancelTracking();
 
 #if ENABLE(CONTEXT_MENUS)
-    if (m_activeContextMenu)
-        m_activeContextMenu->cancelTracking();
+    m_activeContextMenu = nullptr;
 #endif
 
     m_backForwardList->pageClosed();
@@ -4197,11 +4196,6 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
 {
     m_activeContextMenuContextData = contextMenuContextData;
 
-    if (!m_contextMenuClient->hideContextMenu(*this) && m_activeContextMenu) {
-        m_activeContextMenu->hideContextMenu();
-        m_activeContextMenu = nullptr;
-    }
-
     m_activeContextMenu = m_pageClient.createContextMenuProxy(*this, contextMenuContextData, userData);
     if (!m_activeContextMenu)
         return;
@@ -4209,7 +4203,7 @@ void WebPageProxy::internalShowContextMenu(const ContextMenuContextData& context
     // Since showContextMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
-    m_activeContextMenu->showContextMenu();
+    m_activeContextMenu->show();
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)

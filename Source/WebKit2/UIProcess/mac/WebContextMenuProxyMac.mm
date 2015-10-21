@@ -160,6 +160,7 @@ WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& pa
 
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
 {
+    [m_menu cancelTracking];
 }
 
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -374,7 +375,7 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     populateNSMenu(m_menu.get(), nsMenuItemVector(items));
 }
 
-void WebContextMenuProxyMac::showContextMenu()
+void WebContextMenuProxyMac::show()
 {
     // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
     bool askClientToChangeMenu = true;
@@ -422,21 +423,9 @@ void WebContextMenuProxyMac::showContextMenu()
         [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
 #endif
 
-    Ref<WebContextMenuProxyMac> protect(*this);
+    Ref<WebPageProxy> protect(m_page);
 
     [m_menu popUpMenuPositioningItem:nil atLocation:m_context.menuLocation() inView:m_webView];
-
-    hideContextMenu();
-}
-
-void WebContextMenuProxyMac::hideContextMenu()
-{
-    [m_menu cancelTracking];
-}
-
-void WebContextMenuProxyMac::cancelTracking()
-{
-    [m_menu cancelTracking];
 }
 
 NSWindow *WebContextMenuProxyMac::window() const
