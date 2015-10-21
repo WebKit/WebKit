@@ -1,3 +1,14 @@
+2015-10-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Array previews with Symbol objects have too few preview values
+        https://bugs.webkit.org/show_bug.cgi?id=150404
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.RemoteObject.prototype._appendPropertyPreviews):
+        We should be continuing inside this loop not returning.
+
 2015-10-21  Filip Pizlo  <fpizlo@apple.com>
 
         Failures in PutStackSinkingPhase should be less severe
