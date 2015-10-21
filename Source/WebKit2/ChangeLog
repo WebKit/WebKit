@@ -1,3 +1,32 @@
+2015-10-20  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Generalize NetworkCacheStorage API so it can store different types of metadata
+        https://bugs.webkit.org/show_bug.cgi?id=150221
+        <rdar://problem/23149771>
+
+        Reviewed by Darin Adler and Antti Koivisto.
+
+        Generalize NetworkCacheStorage API so it can store different types of
+        metadata alongside the network resources. This is a pre-requirement to
+        making our NetworkCache smarter by storing information about the
+        resources.
+
+        To keep the code simple, the entry type is now part of the entry key and
+        we store records of a specific type in a 'type' subfolder. The cache
+        structure looks like so:
+        - WebKitCache/Version 5/[Partition]/[Type]/[Hash]
+        - WebKitCache/Version 5/[Partition]/[Type]/[Hash]-blob (Optional)
+
+        Existing cache entries now that the 'resource' type as these are network
+        resources.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-10-20  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] ContextMenu doesn't work correctly on MiniBrowser after r191194.
