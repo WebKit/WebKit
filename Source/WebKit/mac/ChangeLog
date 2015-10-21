@@ -1,3 +1,17 @@
+2015-10-20  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        Fix build for clang-700.0.59.5 by replacing deprecated calls to convertScreenToBase: with convertRectFromScreen:.
+        https://bugs.webkit.org/show_bug.cgi?id=150379
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView characterIndexForPoint:]):
+        Convert point to rect, and call convertRectFromScreen:.
+
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        Replace convertBaseToScreen: with convertRectToScreen:.
+
 2015-10-20  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10
