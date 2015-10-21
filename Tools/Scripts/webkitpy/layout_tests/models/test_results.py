@@ -55,6 +55,7 @@ class TestResult(object):
         self.shard_name = ''
         self.total_run_time = 0  # The time taken to run the test plus any references, compute diffs, etc.
         self.test_number = None
+        self.is_other_crash = False
 
     def __eq__(self, other):
         return (self.test_name == other.test_name and

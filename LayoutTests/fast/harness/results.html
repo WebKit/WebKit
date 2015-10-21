@@ -235,6 +235,7 @@ function globalState()
     if (!g_state) {
         g_state = {
             crashTests: [],
+            crashOther: [],
             flakyPassTests: [],
             hasHttpTests: false,
             hasImageFailures: false,
@@ -263,6 +264,9 @@ function ADD_RESULTS(input)
 function splitExtension(test)
 {
     var index = test.lastIndexOf('.');
+    if (index == -1) {
+        return [test, ""];
+    }
     return [test.substring(0, index), test.substring(index + 1)];
 }
 
@@ -701,6 +705,16 @@ function forEachTest(handler, opt_tree, opt_prefix)
             handler(testObject);
         } else
             forEachTest(handler, tree[key], newPrefix);
+    }
+}
+
+function forOtherCrashes()
+{
+    var tree = globalState().results.other_crashes;
+    for (var key in tree) {
+            var testObject = tree[key];
+            testObject.name = key;
+            globalState().crashOther.push(testObject);
     }
 }
 
@@ -1361,6 +1375,7 @@ function failingTestsTable(tests, title, id)
 function generatePage()
 {
     forEachTest(processGlobalStateFor);
+    forOtherCrashes();
 
     var html = "";
 
@@ -1369,6 +1384,9 @@ function generatePage()
 
     if (globalState().crashTests.length)
         html += testList(globalState().crashTests, 'Tests that crashed', 'crash-tests-table');
+
+    if (globalState().crashOther.length)
+        html += testList(globalState().crashOther, 'Other Crashes', 'crash-tests-table');
 
     html += failingTestsTable(globalState().failingTests,
         'Tests that failed text/pixel/audio diff', 'results-table');

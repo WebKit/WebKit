@@ -1,3 +1,36 @@
+2015-10-20  Aakash Jain  <aakash_jain@apple.com>
+
+        run-webkit-tests does not copy all crash logs for layout test failures on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=150056
+        <rdar://problem/9280656>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.find_all_logs): Generic method to find all crash logs.
+        (CrashLogs._find_all_logs_darwin): Darwin based method to find all crash logs.
+        It iterates through log directory and returns all the logs based on timestamp.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.create_crash_logs_darwin): Creates sample crash logs and verify them.
+        (CrashLogsTest.test_find_all_log_darwin): Testcase for above find_all_logs method
+        (CrashLogsTest.test_find_log_darwin): Restructured to share code with other methods.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Modified start_time to start counting before simulator launch
+        so that we can capture crashes during simualator launch.
+        (Manager._look_for_new_crash_logs): Browse through list of crashes and append
+        any test which is not already marked as CRASH to the run_results.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationsModel.get_expectations_string): return PASS in case there
+        are no expectations defined for this test.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results): Add other_crashes in a separte category in full_results.json.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._merge_crash_logs): Merge unique crash logs from two dictionaries.
+        (IOSSimulatorPort._look_for_all_crash_logs_in_log_dir): Get the crash logs
+        from the log directory.
+        (IOSSimulatorPort.look_for_new_crash_logs): Uses above method to get crash
+        logs from log directory and merge them with the list of already crashed tests.
+
 2015-10-20  Dana Burkart  <dburkart@apple.com>
 
         Fix the build

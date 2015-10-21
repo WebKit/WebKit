@@ -233,30 +233,46 @@ quit:
 """.format(process_name=process_name, pid=pid)
 
 class CrashLogsTest(unittest.TestCase):
-    def test_find_log_darwin(self):
+    def create_crash_logs_darwin(self):
         if not SystemHost().platform.is_mac():
             return
 
-        older_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)
-        mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28530)
-        newer_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28529)
-        other_process_mock_crash_report = make_mock_crash_report_darwin('FooProcess', 28527)
-        misformatted_mock_crash_report = 'Junk that should not appear in a crash report' + make_mock_crash_report_darwin('DumpRenderTree', 28526)[200:]
-        files = {}
-        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen.crash'] = older_mock_crash_report
-        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash'] = mock_crash_report
-        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150720_quadzen.crash'] = newer_mock_crash_report
-        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash'] = None
-        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150722_quadzen.crash'] = other_process_mock_crash_report
-        files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150723_quadzen.crash'] = misformatted_mock_crash_report
-        filesystem = MockFileSystem(files)
-        crash_logs = CrashLogs(MockSystemHost(filesystem=filesystem))
+        self.older_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28528)
+        self.mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28530)
+        self.newer_mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 28529)
+        self.other_process_mock_crash_report = make_mock_crash_report_darwin('FooProcess', 28527)
+        self.misformatted_mock_crash_report = 'Junk that should not appear in a crash report' + make_mock_crash_report_darwin('DumpRenderTree', 28526)[200:]
+        self.files = {}
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash'] = self.mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150720_quadzen.crash'] = self.newer_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash'] = None
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150722_quadzen.crash'] = self.other_process_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150723_quadzen.crash'] = self.misformatted_mock_crash_report
+        self.filesystem = MockFileSystem(self.files)
+        crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem))
+        logs = self.filesystem.files_under('/Users/mock/Library/Logs/DiagnosticReports/')
+        for path in reversed(sorted(logs)):
+            self.assertTrue(path in self.files.keys())
+        return crash_logs
+
+    def test_find_all_log_darwin(self):
+        crash_logs = self.create_crash_logs_darwin()
+        all_logs = crash_logs.find_all_logs()
+        self.assertEqual(len(all_logs), 5)
+
+        for test, crash_log in all_logs.iteritems():
+            self.assertTrue(crash_log in self.files.values())
+            self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
+
+    def test_find_log_darwin(self):
+        crash_logs = self.create_crash_logs_darwin()
         log = crash_logs.find_newest_log("DumpRenderTree")
-        self.assertMultiLineEqual(log, newer_mock_crash_report)
+        self.assertMultiLineEqual(log, self.newer_mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28529)
-        self.assertMultiLineEqual(log, newer_mock_crash_report)
+        self.assertMultiLineEqual(log, self.newer_mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28530)
-        self.assertMultiLineEqual(log, mock_crash_report)
+        self.assertMultiLineEqual(log, self.mock_crash_report)
         log = crash_logs.find_newest_log("DumpRenderTree", 28531)
         self.assertIsNone(log)
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0)
@@ -268,13 +284,13 @@ class CrashLogsTest(unittest.TestCase):
         def bad_mtime(path):
             raise OSError('OSError: No such file or directory')
 
-        filesystem.read_text_file = bad_read
+        self.filesystem.read_text_file = bad_read
         log = crash_logs.find_newest_log("DumpRenderTree", 28531, include_errors=True)
         self.assertIn('IOError: No such file or directory', log)
 
-        filesystem = MockFileSystem(files)
-        crash_logs = CrashLogs(MockSystemHost(filesystem=filesystem))
-        filesystem.mtime = bad_mtime
+        self.filesystem = MockFileSystem(self.files)
+        crash_logs = CrashLogs(MockSystemHost(filesystem=self.filesystem))
+        self.filesystem.mtime = bad_mtime
         log = crash_logs.find_newest_log("DumpRenderTree", newer_than=1.0, include_errors=True)
         self.assertIn('OSError: No such file or directory', log)
 

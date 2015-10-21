@@ -561,7 +561,10 @@ class TestExpectationsModel(object):
     def get_expectations_string(self, test):
         """Returns the expectatons for the given test as an uppercase string.
         If there are no expectations for the test, then "PASS" is returned."""
-        expectations = self.get_expectations(test)
+        try:
+            expectations = self.get_expectations(test)
+        except:
+            return "PASS"
         retval = []
 
         for expectation in expectations:

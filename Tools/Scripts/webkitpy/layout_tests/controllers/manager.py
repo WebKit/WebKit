@@ -49,6 +49,7 @@ from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
@@ -179,6 +180,7 @@ class Manager(object):
 
         tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
         self._printer.print_found(len(test_names), len(tests_to_run), self._options.repeat_each, self._options.iterations)
+        start_time = time.time()
 
         # Check to make sure we're not skipping every test.
         if not tests_to_run:
@@ -188,7 +190,6 @@ class Manager(object):
         if not self._set_up_run(tests_to_run):
             return test_run_results.RunDetails(exit_code=-1)
 
-        start_time = time.time()
         enabled_pixel_tests_in_retry = False
         try:
             initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
@@ -304,6 +305,14 @@ class Manager(object):
             for test, crash_log in crash_logs.iteritems():
                 writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
                 writer.write_crash_log(crash_log)
+
+                # Check if this crashing 'test' is already in list of crashed_processes, if not add it to the run_results
+                if not any(process[0] == test for process in crashed_processes):
+                    result = test_results.TestResult(test)
+                    result.type = test_expectations.CRASH
+                    result.is_other_crash = True
+                    run_results.add(result, expected=False, test_is_slow=False)
+                    _log.debug("Adding results for other crash: " + str(test))
 
     def _clobber_old_results(self):
         # Just clobber the actual test results directories since the other
