@@ -49,6 +49,9 @@ struct GlyphData {
         , font(f)
     {
     }
+
+    bool isValid() const { return glyph || font; }
+
     Glyph glyph;
     const Font* font;
 };

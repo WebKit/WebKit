@@ -29,6 +29,7 @@
 #include "FontCache.h"
 #include "GlyphBuffer.h"
 #include "LayoutRect.h"
+#include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
 #include <wtf/MainThread.h>
@@ -1197,38 +1198,31 @@ GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& te
 
 // FIXME: This function may not work if the emphasis mark uses a complex script, but none of the
 // standard emphasis marks do so.
-bool FontCascade::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphData) const
+Optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomicString& mark) const
 {
     if (mark.isEmpty())
-        return false;
+        return Nullopt;
 
-    UChar32 character = mark[0];
+    UChar32 character;
+    if (!mark.is8Bit()) {
+        SurrogatePairAwareTextIterator iterator(mark.characters16(), 0, mark.length(), mark.length());
+        unsigned clusterLength;
+        if (!iterator.consume(character, clusterLength))
+            return Nullopt;
+    } else
+        character = mark[0];
 
-    if (U16_IS_SURROGATE(character)) {
-        if (!U16_IS_SURROGATE_LEAD(character))
-            return false;
-
-        if (mark.length() < 2)
-            return false;
-
-        UChar low = mark[1];
-        if (!U16_IS_TRAIL(low))
-            return false;
-
-        character = U16_GET_SUPPLEMENTARY(character, low);
-    }
-
-    glyphData = glyphDataForCharacter(character, false, EmphasisMarkVariant);
-    return true;
+    Optional<GlyphData> glyphData(glyphDataForCharacter(character, false, EmphasisMarkVariant));
+    return glyphData.value().isValid() ? glyphData : Nullopt;
 }
 
 int FontCascade::emphasisMarkAscent(const AtomicString& mark) const
 {
-    GlyphData markGlyphData;
-    if (!getEmphasisMarkGlyphData(mark, markGlyphData))
+    Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
+    if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.font;
+    const Font* markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1238,11 +1232,11 @@ int FontCascade::emphasisMarkAscent(const AtomicString& mark) const
 
 int FontCascade::emphasisMarkDescent(const AtomicString& mark) const
 {
-    GlyphData markGlyphData;
-    if (!getEmphasisMarkGlyphData(mark, markGlyphData))
+    Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
+    if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.font;
+    const Font* markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1252,11 +1246,11 @@ int FontCascade::emphasisMarkDescent(const AtomicString& mark) const
 
 int FontCascade::emphasisMarkHeight(const AtomicString& mark) const
 {
-    GlyphData markGlyphData;
-    if (!getEmphasisMarkGlyphData(mark, markGlyphData))
+    Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
+    if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.font;
+    const Font* markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1389,16 +1383,16 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
 
 void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
 {
-    GlyphData markGlyphData;
-    if (!getEmphasisMarkGlyphData(mark, markGlyphData))
+    Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
+    if (!markGlyphData)
         return;
 
-    const Font* markFontData = markGlyphData.font;
+    const Font* markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return;
 
-    Glyph markGlyph = markGlyphData.glyph;
+    Glyph markGlyph = markGlyphData.value().glyph;
     Glyph spaceGlyph = markFontData->spaceGlyph();
 
     float middleOfLastGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, 0);

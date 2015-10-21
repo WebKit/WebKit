@@ -33,6 +33,7 @@
 #include "TextFlags.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -231,7 +232,7 @@ private:
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
 
-    bool getEmphasisMarkGlyphData(const AtomicString&, GlyphData&) const;
+    Optional<GlyphData> getEmphasisMarkGlyphData(const AtomicString&) const;
 
     static bool canReturnFallbackFontsForComplexText();
     static bool canExpandAroundIdeographsInComplexText();
