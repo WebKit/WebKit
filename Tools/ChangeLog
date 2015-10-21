@@ -1,3 +1,18 @@
+2015-10-21  Aakash Jain  <aakash_jain@apple.com>
+
+        run-webkit-tests does not copy all crash logs for layout test failures on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=150407
+        <rdar://problem/22239750>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort._merge_crash_logs): Merge unique crash logs from two dictionaries.
+        (MacPort._look_for_all_crash_logs_in_log_dir): Get the crash logs from
+        the log directory.
+        (MacPort.look_for_new_crash_logs): Uses above method to get crash logs
+        from log directory and merge them with the list of already crashed tests.
+
 2015-10-21  Filip Pizlo  <fpizlo@apple.com>
 
         Failures in PutStackSinkingPhase should be less severe

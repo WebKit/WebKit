@@ -220,6 +220,22 @@ class MacPort(ApplePort):
             return (stderr, None)
         return (stderr, crash_log)
 
+    def _merge_crash_logs(self, logs, new_logs, crashed_processes):
+        for test, crash_log in new_logs.iteritems():
+            try:
+                process_name = test.split("-")[0]
+                pid = int(test.split("-")[1])
+            except IndexError:
+                continue
+            if not any(entry[1] == process_name and entry[2] == pid for entry in crashed_processes):
+                # if this is a new crash, then append the logs
+                logs[test] = crash_log
+        return logs
+
+    def _look_for_all_crash_logs_in_log_dir(self, newer_than):
+        crash_log = CrashLogs(self.host)
+        return crash_log.find_all_logs(include_errors=True, newer_than=newer_than)
+
     def look_for_new_crash_logs(self, crashed_processes, start_time):
         """Since crash logs can take a long time to be written out if the system is
            under stress do a second pass at the end of the test run.
@@ -236,7 +252,8 @@ class MacPort(ApplePort):
             if not crash_log:
                 continue
             crash_logs[test_name] = crash_log
-        return crash_logs
+        all_crash_log = self._look_for_all_crash_logs_in_log_dir(start_time)
+        return self._merge_crash_logs(crash_logs, all_crash_log, crashed_processes)
 
     def look_for_new_samples(self, unresponsive_processes, start_time):
         sample_files = {}
