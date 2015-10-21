@@ -1,3 +1,17 @@
+2015-10-21  Chris Dumez  <cdumez@apple.com>
+
+        Add assertions to NetworkCache::Entry constructor to make sure a key's type is "resource"
+        https://bugs.webkit.org/show_bug.cgi?id=150369
+
+        Reviewed by Antti Koivisto.
+
+        Add assertions to NetworkCache::Entry constructor to make sure a key's
+        type is "resource" now that the NetworkCache storage supports other
+        types of entries.
+
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+
 2015-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkProcess: DNS prefetch happens in the Web Process

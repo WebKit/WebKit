@@ -46,6 +46,7 @@ Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<W
     , m_varyingRequestHeaders(varyingRequestHeaders)
     , m_buffer(WTF::move(buffer))
 {
+    ASSERT(m_key.type() == "resource");
 }
 
 Entry::Entry(const Storage::Record& storageEntry)
@@ -53,6 +54,7 @@ Entry::Entry(const Storage::Record& storageEntry)
     , m_timeStamp(storageEntry.timeStamp)
     , m_sourceStorageRecord(storageEntry)
 {
+    ASSERT(m_key.type() == "resource");
 }
 
 Storage::Record Entry::encodeAsStorageRecord() const
