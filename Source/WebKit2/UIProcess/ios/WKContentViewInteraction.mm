@@ -453,6 +453,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
     _smartMagnificationController = std::make_unique<SmartMagnificationController>(self);
+    _isExpectingFastSingleTapCommit = NO;
 }
 
 - (void)cleanupInteraction
@@ -462,6 +463,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _actionSheetAssistant = nil;
     _smartMagnificationController = nil;
     _didAccessoryTabInitiateFocus = NO;
+    _isExpectingFastSingleTapCommit = NO;
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
@@ -849,6 +851,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     }
 
     [self _showTapHighlight];
+    if (_isExpectingFastSingleTapCommit) {
+        [self _finishInteraction];
+        if (!_potentialTapInProgress)
+            _isExpectingFastSingleTapCommit = NO;
+    }
 }
 
 - (CGFloat)_fastClickZoomThreshold
@@ -1244,6 +1251,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     _page->potentialTapAtPosition(gestureRecognizer.location, ++_latestTapID);
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
+    _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
 }
 
 static void cancelPotentialTapIfNecessary(WKContentView* contentView)
@@ -1297,7 +1305,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     _page->commitPotentialTap();
 
-    [self _finishInteraction];
+    if (!_isExpectingFastSingleTapCommit)
+        [self _finishInteraction];
 }
 
 - (void)_doubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer

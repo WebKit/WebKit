@@ -1,3 +1,23 @@
+2015-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Single tapping clickable elements in unscalable pages should show a tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=150382
+
+        Reviewed by Simon Fraser.
+
+        When the double tap gesture recognizer is disabled ahead of time (as in the case of unscalable pages) the tap is
+        committed before the geometries come in. To fix this, we introduce a flag that allows the single tap to be
+        committed before the tap highlight arrives. This allows the tap highlight to be immediately animated when receiving
+        the tap highlight geometries only in the case where double tapping is disabled when recognizing the single tap.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _didGetTapHighlightForRequest:color:quads:topLeftRadius:topRightRadius:bottomLeftRadius:bottomRightRadius:]):
+        (-[WKContentView _singleTapRecognized:]):
+        (-[WKContentView _singleTapCommited:]):
+
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
         Get rid of useBinaryEncoding from WKPageGetContentsAsMHTMLData

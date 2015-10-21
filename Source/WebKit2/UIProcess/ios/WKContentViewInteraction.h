@@ -158,6 +158,7 @@ struct WKAutoCorrectionData {
     BOOL _usingGestureForSelection;
     BOOL _inspectorNodeSearchEnabled;
     BOOL _didAccessoryTabInitiateFocus;
+    BOOL _isExpectingFastSingleTapCommit;
 }
 
 @end
