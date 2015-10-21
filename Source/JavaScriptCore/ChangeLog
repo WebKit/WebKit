@@ -1,3 +1,14 @@
+2015-10-21  Guillaume Emont  <guijemont@igalia.com>
+
+        llint: align stack pointer on mips too
+
+        [MIPS] LLInt: align stack pointer on MIPS too
+        https://bugs.webkit.org/show_bug.cgi?id=150380
+
+        Reviewed by Michael Saboff.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2015-10-20  Mark Lam  <mark.lam@apple.com>
 
         YarrPatternConstructor::containsCapturingTerms() should not assume that its terms.size() is greater than 0.
