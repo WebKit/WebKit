@@ -274,6 +274,8 @@ webkit.org/b/150095 http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-in
 
 webkit.org/b/150241 webarchive/loading/object.html [ Pass Crash ] 
 
+webkit.org/b/150363 [ Yosemite ] http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
