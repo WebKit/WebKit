@@ -531,6 +531,7 @@ set(EWK2UnitTests_BINARIES
     test_ewk2_color_picker
     test_ewk2_context
     test_ewk2_context_history_callbacks
+    test_ewk2_context_menu
     test_ewk2_cookie_manager
     test_ewk2_database_manager
     test_ewk2_download_job
@@ -553,7 +554,6 @@ set(EWK2UnitTests_BINARIES
 # Skipped unit tests list:
 #
 # webkit.org/b/107422: test_ewk2_auth_request
-# webkit.org/b/132980: test_ewk2_context_menu
 
 if (ENABLE_API_TESTS)
     foreach (testName ${EWK2UnitTests_BINARIES})
