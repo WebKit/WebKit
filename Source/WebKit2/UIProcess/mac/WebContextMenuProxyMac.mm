@@ -160,7 +160,6 @@ WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& pa
 
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
 {
-    [m_popup setControlView:nil];
 }
 
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -284,10 +283,10 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setFiltersEditingServices:!includeEditorServices];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setHandlesEditingReplacement:includeEditorServices];
 
-    m_servicesMenu = adoptNS([[picker menu] copy]);
+    m_menu = adoptNS([[picker menu] copy]);
 
     if (!hasControlledImage)
-        [m_servicesMenu setShowsStateColumn:YES];
+        [m_menu setShowsStateColumn:YES];
 
     // Explicitly add a menu item for each telephone number that is in the selection.
     const Vector<String>& selectedTelephoneNumbers = context.selectedTelephoneNumbers();
@@ -300,28 +299,28 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     }
 
     if (!telephoneNumberMenuItems.isEmpty()) {
-        if (m_servicesMenu)
-            [m_servicesMenu insertItem:[NSMenuItem separatorItem] atIndex:0];
+        if (m_menu)
+            [m_menu insertItem:[NSMenuItem separatorItem] atIndex:0];
         else
-            m_servicesMenu = adoptNS([[NSMenu alloc] init]);
+            m_menu = adoptNS([[NSMenu alloc] init]);
         int itemPosition = 0;
         NSMenuItem *groupEntry = [[NSMenuItem alloc] initWithTitle:menuItemTitleForTelephoneNumberGroup() action:nil keyEquivalent:@""];
         [groupEntry setEnabled:NO];
-        [m_servicesMenu insertItem:groupEntry atIndex:itemPosition++];
+        [m_menu insertItem:groupEntry atIndex:itemPosition++];
         for (auto& menuItem : telephoneNumberMenuItems)
-            [m_servicesMenu insertItem:menuItem.get() atIndex:itemPosition++];
+            [m_menu insertItem:menuItem.get() atIndex:itemPosition++];
     }
 
     // If there is no services menu, then the existing services on the system have changed, so refresh that list of services.
     // If <rdar://problem/17954709> is resolved then we can more accurately keep the list up to date without this call.
-    if (!m_servicesMenu)
+    if (!m_menu)
         ServicesController::singleton().refreshExistingServices();
 }
 
 void WebContextMenuProxyMac::clearServicesMenu()
 {
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nullptr];
-    m_servicesMenu = nullptr;
+    m_menu = nullptr;
 }
 
 ContextMenuItem WebContextMenuProxyMac::shareMenuItem()
@@ -369,17 +368,10 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
     }
 #endif
 
-    if (m_popup)
-        [m_popup removeAllItems];
-    else {
-        m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
-        [m_popup setUsesItemFromMenu:NO];
-        [m_popup setAutoenablesItems:NO];
-        [m_popup setAltersStateOfSelectedItem:NO];
-    }
+    m_menu = [[NSMenu alloc] initWithTitle:@""];
+    [m_menu setAutoenablesItems:NO];
 
-    NSMenu* menu = [m_popup menu];
-    populateNSMenu(menu, nsMenuItemVector(items));
+    populateNSMenu(m_menu.get(), nsMenuItemVector(items));
 }
 
 void WebContextMenuProxyMac::showContextMenu()
@@ -425,62 +417,26 @@ void WebContextMenuProxyMac::showContextMenu()
 
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
 
-    NSPoint menuLocation = m_context.menuLocation();
-    NSRect menuRect = NSMakeRect(menuLocation.x, menuLocation.y, 0, 0);
-
 #if ENABLE(SERVICE_CONTROLS)
     if (m_context.isServicesMenu())
         [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
-
-    if (!m_servicesMenu)
-        [m_popup attachPopUpWithFrame:menuRect inView:m_webView];
-
-    NSMenu *menu = m_servicesMenu ? m_servicesMenu.get() : [m_popup menu];
-
-    // Telephone number and service menus must use the [NSMenu popUpMenuPositioningItem:atLocation:inView:] API.
-    // FIXME: That API is better than WKPopupContextMenu. In the future all menus should use either it
-    // or the [NSMenu popUpContextMenu:withEvent:forView:] API, depending on the menu type.
-    // Then we could get rid of NSPopUpButtonCell, custom metrics, and WKPopupContextMenu.
-    if (m_context.isServicesMenu()) {
-        [menu popUpMenuPositioningItem:nil atLocation:menuLocation inView:m_webView];
-        hideContextMenu();
-        return;
-    }
-
-#else
-    [m_popup attachPopUpWithFrame:menuRect inView:m_webView];
-
-    NSMenu *menu = [m_popup menu];
 #endif
-
-    // These values were borrowed from AppKit to match their placement of the menu.
-    NSRect titleFrame = [m_popup titleRectForBounds:menuRect];
-    if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
-        titleFrame = menuRect;
-    float vertOffset = roundf((NSMaxY(menuRect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
-    NSPoint location = NSMakePoint(NSMinX(menuRect), NSMaxY(menuRect) - vertOffset);
-
-    location = [m_webView convertPoint:location toView:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    location = [m_webView.window convertBaseToScreen:location];
-#pragma clang diagnostic pop
 
     Ref<WebContextMenuProxyMac> protect(*this);
 
-    WKPopupContextMenu(menu, location);
+    [m_menu popUpMenuPositioningItem:nil atLocation:m_context.menuLocation() inView:m_webView];
 
     hideContextMenu();
 }
 
 void WebContextMenuProxyMac::hideContextMenu()
 {
-    [m_popup dismissPopUp];
+    [m_menu cancelTracking];
 }
 
 void WebContextMenuProxyMac::cancelTracking()
 {
-    [[m_popup menu] cancelTracking];
+    [m_menu cancelTracking];
 }
 
 NSWindow *WebContextMenuProxyMac::window() const

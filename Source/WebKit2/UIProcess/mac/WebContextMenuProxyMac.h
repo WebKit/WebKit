@@ -74,10 +74,8 @@ private:
     WebCore::ContextMenuItem shareMenuItem();
 #endif
 
-    RetainPtr<NSPopUpButtonCell> m_popup;
-#if ENABLE(SERVICE_CONTROLS)
-    RetainPtr<NSMenu> m_servicesMenu;
-#endif
+    RetainPtr<NSMenu> m_menu;
+
     WKView* m_webView;
     WebPageProxy& m_page;
 };
