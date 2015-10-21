@@ -149,7 +149,7 @@ messages -> WebPage LegacyReceiver {
     # Callbacks.
     GetContentsAsString(uint64_t callbackID)
 #if ENABLE(MHTML)
-    GetContentsAsMHTMLData(uint64_t callbackID, bool useBinaryEncoding)
+    GetContentsAsMHTMLData(uint64_t callbackID)
 #endif
     GetMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
     GetResourceDataFromFrame(uint64_t frameID, String resourceURL, uint64_t callbackID)

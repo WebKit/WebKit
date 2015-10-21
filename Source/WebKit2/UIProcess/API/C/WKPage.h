@@ -244,7 +244,7 @@ typedef void (*WKPageGetContentsAsStringFunction)(WKStringRef, WKErrorRef, void*
 WK_EXPORT void WKPageGetContentsAsString(WKPageRef page, void* context, WKPageGetContentsAsStringFunction function);
 
 typedef void (*WKPageGetContentsAsMHTMLDataFunction)(WKDataRef, WKErrorRef, void*);
-WK_EXPORT void WKPageGetContentsAsMHTMLData(WKPageRef page, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction function);
+WK_EXPORT void WKPageGetContentsAsMHTMLData(WKPageRef page, void* context, WKPageGetContentsAsMHTMLDataFunction function);
 
 typedef void (*WKPageGetSelectionAsWebArchiveDataFunction)(WKDataRef, WKErrorRef, void*);
 WK_EXPORT void WKPageGetSelectionAsWebArchiveData(WKPageRef page, void* context, WKPageGetSelectionAsWebArchiveDataFunction function);

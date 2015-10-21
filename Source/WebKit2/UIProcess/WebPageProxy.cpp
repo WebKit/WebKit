@@ -2639,7 +2639,7 @@ void WebPageProxy::getBytecodeProfile(std::function<void (const String&, Callbac
 }
     
 #if ENABLE(MHTML)
-void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction, bool useBinaryEncoding)
+void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {
         callbackFunction(nullptr, CallbackBase::Error::Unknown);
@@ -2647,7 +2647,7 @@ void WebPageProxy::getContentsAsMHTMLData(std::function<void (API::Data*, Callba
     }
 
     uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::GetContentsAsMHTMLData(callbackID, useBinaryEncoding), m_pageID);
+    m_process->send(Messages::WebPage::GetContentsAsMHTMLData(callbackID), m_pageID);
 }
 #endif
 

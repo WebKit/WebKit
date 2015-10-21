@@ -644,7 +644,7 @@ Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Conten
 
     switch (context->type) {
     case EWK_PAGE_CONTENTS_TYPE_MHTML:
-        WKPageGetContentsAsMHTMLData(impl->wkPage(), false, context, ewkViewPageContentsAsMHTMLCallback);
+        WKPageGetContentsAsMHTMLData(impl->wkPage(), context, ewkViewPageContentsAsMHTMLCallback);
         break;
     case EWK_PAGE_CONTENTS_TYPE_STRING:
         WKPageGetContentsAsString(impl->wkPage(), context, ewkViewPageContentsAsStringCallback);

@@ -2524,11 +2524,9 @@ void WebPage::getContentsAsString(uint64_t callbackID)
 }
 
 #if ENABLE(MHTML)
-void WebPage::getContentsAsMHTMLData(uint64_t callbackID, bool useBinaryEncoding)
+void WebPage::getContentsAsMHTMLData(uint64_t callbackID)
 {
-    RefPtr<SharedBuffer> buffer = useBinaryEncoding
-        ? MHTMLArchive::generateMHTMLDataUsingBinaryEncoding(m_page.get())
-        : MHTMLArchive::generateMHTMLData(m_page.get());
+    RefPtr<SharedBuffer> buffer = MHTMLArchive::generateMHTMLData(m_page.get());
 
     // FIXME: Use SharedBufferDataReference.
     IPC::DataReference dataReference;

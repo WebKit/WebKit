@@ -3328,7 +3328,7 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
     getPage(webView)->getContentsAsMHTMLData([task](API::Data* data, WebKit::CallbackBase::Error) {
         getContentsAsMHTMLDataCallback(data, task);
-    }, false);
+    });
 }
 
 /**
@@ -3393,7 +3393,7 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
 
     getPage(webView)->getContentsAsMHTMLData([task](API::Data* data, WebKit::CallbackBase::Error) {
         getContentsAsMHTMLDataCallback(data, task);
-    }, false);
+    });
 }
 
 /**

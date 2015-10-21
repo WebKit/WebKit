@@ -1038,7 +1038,7 @@ private:
 
     void getContentsAsString(uint64_t callbackID);
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(uint64_t callbackID, bool useBinaryEncoding);
+    void getContentsAsMHTMLData(uint64_t callbackID);
 #endif
     void getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID);
     void getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, uint64_t callbackID);

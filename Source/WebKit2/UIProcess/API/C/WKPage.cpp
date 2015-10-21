@@ -2185,13 +2185,12 @@ void WKPageGetSelectionAsWebArchiveData(WKPageRef pageRef, void* context, WKPage
     toImpl(pageRef)->getSelectionAsWebArchiveData(toGenericCallbackFunction(context, callback));
 }
 
-void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
+void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
 {
 #if ENABLE(MHTML)
-    toImpl(pageRef)->getContentsAsMHTMLData(toGenericCallbackFunction(context, callback), useBinaryEncoding);
+    toImpl(pageRef)->getContentsAsMHTMLData(toGenericCallbackFunction(context, callback));
 #else
     UNUSED_PARAM(pageRef);
-    UNUSED_PARAM(useBinaryEncoding);
     UNUSED_PARAM(context);
     UNUSED_PARAM(callback);
 #endif
