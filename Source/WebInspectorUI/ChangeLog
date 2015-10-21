@@ -1,3 +1,13 @@
+2015-10-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Typo in a property name: style.inerhited
+        https://bugs.webkit.org/show_bug.cgi?id=150391
+
+        Reviewed by Csaba Osztrogonác.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh):
+
 2015-10-20  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Pressing Command-S while focused on the styles sidebar should save CSS file

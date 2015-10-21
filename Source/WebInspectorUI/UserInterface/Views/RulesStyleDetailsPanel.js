@@ -272,7 +272,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         var orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
         for (var style of orderedStyles) {
             var isUserAgentStyle = style.ownerRule && style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent;
-            insertAllMatchingPseudoStyles.call(this, isUserAgentStyle || style.inerhited);
+            insertAllMatchingPseudoStyles.call(this, isUserAgentStyle || style.inherited);
 
             insertMediaOrInheritanceLabel.call(this, style);
             appendStyleSection.call(this, style);
