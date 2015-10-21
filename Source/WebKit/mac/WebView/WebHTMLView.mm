@@ -6108,10 +6108,8 @@ static BOOL writingDirectionKeyBindingsEnabled()
     NSWindow *window = [self window];
     WebFrame *frame = [self _frame];
 
-    if (window) {
-        NSRect screenRect = { thePoint, NSZeroSize };
-        thePoint = [window convertRectFromScreen:screenRect].origin;
-    }     
+    if (window)
+        thePoint = [window convertScreenToBase:thePoint];
     thePoint = [self convertPoint:thePoint fromView:nil];
 
     DOMRange *range = [frame _characterRangeAtPoint:thePoint];
@@ -6151,7 +6149,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     NSWindow *window = [self window];
     if (window)
-        resultRect = [window convertRectToScreen:resultRect];
+        resultRect.origin = [window convertBaseToScreen:resultRect.origin];
     
     LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
     return resultRect;
