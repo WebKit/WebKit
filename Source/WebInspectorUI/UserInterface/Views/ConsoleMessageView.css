@@ -94,13 +94,13 @@
 }
 
 .console-message-preview-divider {
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 }
 
 .console-message-enclosed {
     font-family: Menlo, monospace;
     font-size: 11px;
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 }
 
 .console-message .console-message-extra-parameters-container,
@@ -142,7 +142,7 @@
 
     font-family: -apple-system, sans-serif;
     font-size: 11px;
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 
     vertical-align: top;
 }
@@ -215,7 +215,7 @@
 
 .console-saved-variable {
     font-style: normal;
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 }
 
 .console-user-command,

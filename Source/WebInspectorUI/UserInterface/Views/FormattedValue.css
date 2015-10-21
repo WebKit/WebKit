@@ -31,15 +31,15 @@
 
 :matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size {
     font-style: normal;
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 }
 
 .formatted-number {
-    color: hsl(248, 100%, 40%);
+    color: var(--syntax-highlight-number-color);
 }
 
 .formatted-boolean {
-    color: hsl(309, 85%, 35%);
+    color: var(--syntax-highlight-boolean-color);
 }
 
 .formatted-string, .formatted-regexp {
@@ -47,15 +47,15 @@
 }
 
 .formatted-string {
-    color: hsl(1, 79%, 42%);
+    color: var(--syntax-highlight-string-color);
 }
 
 .formatted-regexp {
-    color: hsl(20, 100%, 44%);
+    color: var(--syntax-highlight-regexp-color);
 }
 
 .formatted-symbol {
-    color: hsl(172, 45%, 45%);
+    color: var(--syntax-highlight-symbol-color);
 }
 
 .formatted-null, .formatted-undefined {

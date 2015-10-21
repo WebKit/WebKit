@@ -204,7 +204,7 @@
 
 .css-style-text-editor > .CodeMirror .cm-link {
     /* Style url(...) links as if they are strings. */
-    color: hsl(1, 79%, 42%);
+    color: var(--syntax-highlight-string-color);
     text-decoration: inherit;
     cursor: inherit;
 }

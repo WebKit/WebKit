@@ -41,12 +41,12 @@
 .cm-s-default :matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
 .cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property),
 .syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
-    color: hsl(309, 85%, 35%);
+    color: var(--syntax-highlight-boolean-color);
 }
 
 .cm-s-default :matches(.cm-number, .cm-atom.cm-hex-color),
 .syntax-highlighted :matches(.css-number, .javascript-number) {
-    color: hsl(248, 100%, 40%);
+    color: var(--syntax-highlight-number-color);
 }
 
 .cm-s-default :matches(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
@@ -57,12 +57,12 @@
 
 .cm-s-default .cm-string,
 .syntax-highlighted :matches(.css-string, .javascript-string, .html-attribute-value) {
-    color: hsl(1, 79%, 42%);
+    color: var(--syntax-highlight-string-color);
 }
 
 .cm-s-default .cm-string-2,
 .syntax-highlighted .javascript-regexp {
-    color: hsl(20, 100%, 44%);
+    color: var(--syntax-highlight-regexp-color);
 }
 
 .cm-s-default .cm-m-xml.cm-meta,

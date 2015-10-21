@@ -70,7 +70,7 @@
 
 .dom-tree-outline li.selected > span::after {
     content: " = $0";
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
     position: absolute;
     white-space: pre;
 }

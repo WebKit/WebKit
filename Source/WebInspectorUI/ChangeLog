@@ -1,3 +1,46 @@
+2015-10-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Use some CSS Variables in Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=150405
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Main.html:
+        Include the new variables stylesheet.
+
+        * UserInterface/Views/Variables.css: Added.
+        (:root):
+        Introduce new global variables.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .cm-link):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message-preview-divider):
+        (.console-message-enclosed):
+        (.console-message .console-message-extra-parameters-container > li::before):
+        (.console-saved-variable):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline li.selected > span::after):
+        * UserInterface/Views/FormattedValue.css:
+        (:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size):
+        (.formatted-number):
+        (.formatted-boolean):
+        (.formatted-string):
+        (.formatted-regexp):
+        (.formatted-symbol):
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview > .size):
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-name):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag)):
+        (.syntax-highlighted :matches(.css-number, .javascript-number)):
+        (.syntax-highlighted :matches(.css-string, .javascript-string, .html-attribute-value)):
+        (.syntax-highlighted .javascript-regexp):
+        * UserInterface/Views/TypeTokenView.css:
+        (.type-token-symbol):
+        Make use of variables.
+
 2015-10-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Typo in a property name: style.inerhited

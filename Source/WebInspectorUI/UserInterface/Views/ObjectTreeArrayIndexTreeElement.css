@@ -39,7 +39,7 @@
     font-family: -apple-system-monospaced-numbers, sans-serif;
     font-size: 11px;
     vertical-align: top;
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 
     position:relative;
     top: -1px;

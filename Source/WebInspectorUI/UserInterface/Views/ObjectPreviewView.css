@@ -41,5 +41,5 @@
 
 .object-preview > .size {
     font-style: normal;
-    color: hsla(0, 0%, 0%, 0.33);
+    color: var(--console-secondary-text-color);
 }
