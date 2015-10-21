@@ -400,6 +400,7 @@ public:
     bool handleMouseEvent(UINT, WPARAM, LPARAM);
     void setMouseActivated(bool flag) { m_mouseActivated = flag; }
     bool handleContextMenuEvent(WPARAM, LPARAM);
+    HMENU createContextMenu();
     bool onMeasureItem(WPARAM, LPARAM);
     bool onDrawItem(WPARAM, LPARAM);
     bool onInitMenuPopup(WPARAM, LPARAM);

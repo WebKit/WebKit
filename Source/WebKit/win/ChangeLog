@@ -1,3 +1,21 @@
+2015-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Simplify context menu handling on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=150423
+
+        Reviewed by Tim Horton.
+
+        Instead of converting a ContextMenu to a HMENU, then back to a ContextMenu, and then back to a HMENU again
+        just convert it once right before showing it and let the UIDelegate return a new menu at at time where we don't
+        have to convert it back.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::customizeMenu):
+        * WebView.cpp:
+        (WebView::createContextMenu):
+        (WebView::handleContextMenuEvent):
+        * WebView.h:
+
 2015-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkProcess: DNS prefetch happens in the Web Process

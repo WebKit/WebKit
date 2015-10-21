@@ -52,29 +52,9 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-std::unique_ptr<ContextMenu> WebContextMenuClient::customizeMenu(std::unique_ptr<ContextMenu> popMenu)
+std::unique_ptr<ContextMenu> WebContextMenuClient::customizeMenu(std::unique_ptr<ContextMenu> menu)
 {
-    std::unique_ptr<ContextMenu> menu = WTF::move(popMenu);
-
-    COMPtr<IWebUIDelegate> uiDelegate;
-    if (FAILED(m_webView->uiDelegate(&uiDelegate)))
-        return menu;
-
-    ASSERT(uiDelegate);
-
-    HMENU nativeMenu = menu->platformContextMenu();
-    COMPtr<WebElementPropertyBag> propertyBag;
-    propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController().hitTestResult()));
-    // FIXME: We need to decide whether to do the default before calling this delegate method
-    if (FAILED(uiDelegate->contextMenuItemsForElement(m_webView, propertyBag.get(), nativeMenu, &nativeMenu))) {
-        ::DestroyMenu(nativeMenu);
-        return menu;
-    }
-    
-    std::unique_ptr<ContextMenu> customizedMenu = std::unique_ptr<ContextMenu>(new ContextMenu(nativeMenu));
-    ::DestroyMenu(nativeMenu);
-
-    return customizedMenu;
+    return WTF::move(menu);
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
