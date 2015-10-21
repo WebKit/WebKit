@@ -1,3 +1,24 @@
+2015-10-13  Conrad Shultz  <conrad_shultz@apple.com>
+
+        _WKThumbnailView should support a snapshot-only mode
+        https://bugs.webkit.org/show_bug.cgi?id=150106
+
+        Reviewed by Tim Horton.
+
+        Add a new property to _WKThumbnailView, exclusivelyUsesSnapshot, which causes _WKThumbnailView
+        to bypass both layer tree reparenting and event suppression on the associated WKView.
+
+        Add a new method, -requestSnapshot, which clients can use to force _WKThumbnailView to refresh
+        on demand.
+
+        * UIProcess/API/Cocoa/_WKThumbnailView.h:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView requestSnapshot]):
+        Extracted from -_requestSnapshotIfNeeded:.
+        (-[_WKThumbnailView _viewWasUnparented]):
+        (-[_WKThumbnailView _viewWasParented]):
+        (-[_WKThumbnailView _requestSnapshotIfNeeded]):
+
 2015-10-20  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
