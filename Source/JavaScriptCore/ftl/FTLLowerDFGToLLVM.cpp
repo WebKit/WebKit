@@ -554,6 +554,7 @@ private:
             compilePutStructure();
             break;
         case GetById:
+        case GetByIdFlush:
             compileGetById();
             break;
         case In:
@@ -561,6 +562,7 @@ private:
             break;
         case PutById:
         case PutByIdDirect:
+        case PutByIdFlush:
             compilePutById();
             break;
         case GetButterfly:
@@ -2212,9 +2214,6 @@ private:
     
     void compileGetById()
     {
-        // Pretty much the only reason why we don't also support GetByIdFlush is because:
-        // https://bugs.webkit.org/show_bug.cgi?id=125711
-        
         switch (m_node->child1().useKind()) {
         case CellUse: {
             setJSValue(getById(lowCell(m_node->child1())));
@@ -8596,7 +8595,7 @@ private:
                         GPRReg scratch2 = scratchRegisterAllocator.allocateScratchGPR();
 
                         unsigned bytesPushed =
-                            scratchRegisterAllocator.preserveReusedRegistersByPushing(jit);
+                            scratchRegisterAllocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
                         // We've already saved these, so when we make a slow path call, we don't have
                         // to save them again.
@@ -8618,7 +8617,7 @@ private:
                                 scratch1, scratch2, CCallHelpers::ScalePtr,
                                 static_cast<int32_t>(-sizeof(void*))));
 
-                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesPushed);
+                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesPushed, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
                         params.doneJumps.append(jit.jump());
 
@@ -8627,7 +8626,7 @@ private:
                             usedRegisters, jit, params.lazySlowPath->callSiteIndex(),
                             params.exceptionJumps, operationFlushWriteBarrierBuffer, InvalidGPRReg,
                             baseGPR);
-                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesPushed);
+                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, bytesPushed, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
                         params.doneJumps.append(jit.jump());
                     });
             },

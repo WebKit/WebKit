@@ -307,9 +307,14 @@ RegisterSet RegisterSet::webAssemblyCalleeSaveRegisters()
 }
 #endif
 
-RegisterSet RegisterSet::registersToNotSaveForCall()
+RegisterSet RegisterSet::registersToNotSaveForJSCall()
 {
     return RegisterSet(RegisterSet::vmCalleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
+}
+
+RegisterSet RegisterSet::registersToNotSaveForCCall()
+{
+    return RegisterSet(RegisterSet::calleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
 }
 
 RegisterSet RegisterSet::allGPRs()

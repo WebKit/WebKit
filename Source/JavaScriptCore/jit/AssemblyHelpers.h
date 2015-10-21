@@ -35,6 +35,7 @@
 #include "InlineCallFrame.h"
 #include "JITCode.h"
 #include "MacroAssembler.h"
+#include "MaxFrameExtentForSlowPathCall.h"
 #include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
 #include "TypeofType.h"
@@ -1322,6 +1323,20 @@ public:
     }
 
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
+
+    void makeSpaceOnStackForCCall()
+    {
+        unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
+        if (stackOffset)
+            subPtr(TrustedImm32(stackOffset), stackPointerRegister);
+    }
+
+    void reclaimSpaceOnStackForCCall()
+    {
+        unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
+        if (stackOffset)
+            addPtr(TrustedImm32(stackOffset), stackPointerRegister);
+    }
     
 protected:
     VM* m_vm;

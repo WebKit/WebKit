@@ -102,7 +102,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
 GPRReg ScratchRegisterAllocator::allocateScratchGPR() { return allocateScratch<GPRInfo>(); }
 FPRReg ScratchRegisterAllocator::allocateScratchFPR() { return allocateScratch<FPRInfo>(); }
 
-unsigned ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit)
+unsigned ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembler& jit, ExtraStackSpace extraStackSpace)
 {
     if (!didReuseRegisters())
         return 0;
@@ -119,13 +119,13 @@ unsigned ScratchRegisterAllocator::preserveReusedRegistersByPushing(MacroAssembl
             registersToSpill.set(reg);
     }
 
-    unsigned extraStackBytesAtTopOfStack = maxFrameExtentForSlowPathCall;
+    unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
     unsigned stackAdjustmentSize = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraStackBytesAtTopOfStack);
 
     return stackAdjustmentSize;
 }
 
-void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters)
+void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters, ExtraStackSpace extraStackSpace)
 {
     if (!didReuseRegisters())
         return;
@@ -142,7 +142,7 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& j
             registersToFill.set(reg);
     }
 
-    unsigned extraStackBytesAtTopOfStack = maxFrameExtentForSlowPathCall;
+    unsigned extraStackBytesAtTopOfStack = extraStackSpace == ExtraStackSpace::SpaceForCCall ? maxFrameExtentForSlowPathCall : 0;
     RegisterSet dontRestore; // Empty set. We want to restore everything.
     ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToFill, dontRestore, numberOfBytesUsedToPreserveReusedRegisters, extraStackBytesAtTopOfStack);
 }
@@ -150,7 +150,7 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(MacroAssembler& j
 RegisterSet ScratchRegisterAllocator::usedRegistersForCall() const
 {
     RegisterSet result = m_usedRegisters;
-    result.exclude(RegisterSet::registersToNotSaveForCall());
+    result.exclude(RegisterSet::registersToNotSaveForJSCall());
     return result;
 }
 

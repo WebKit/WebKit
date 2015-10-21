@@ -1,3 +1,56 @@
+2015-10-21  Saam barati  <sbarati@apple.com>
+
+        C calls in PolymorphicAccess shouldn't assume that the top of the stack looks like a JSC JIT frame and enable *ByIdFlush in FTL
+        https://bugs.webkit.org/show_bug.cgi?id=125711
+
+        Reviewed by Filip Pizlo.
+
+        This patch ensures that anytime we need to make a C call inside
+        PolymorphicAccess, we ensure there is enough space on the stack to do so.
+
+        This patch also enables GetByIdFlush/PutByIdFlush inside the FTL.
+        Because PolymorphicAccess now spills the necessary registers
+        before making a JS/C call, any registers that LLVM report as
+        being in use for the patchpoint will be spilled before making
+        a call by PolymorphicAccess.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::restoreScratch):
+        (JSC::AccessGenerationState::succeed):
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::emitStoreBarrier):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitTypeOf):
+        (JSC::AssemblyHelpers::makeSpaceOnStackForCCall):
+        (JSC::AssemblyHelpers::reclaimSpaceOnStackForCCall):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::webAssemblyCalleeSaveRegisters):
+        (JSC::RegisterSet::registersToNotSaveForJSCall):
+        (JSC::RegisterSet::registersToNotSaveForCCall):
+        (JSC::RegisterSet::allGPRs):
+        (JSC::RegisterSet::registersToNotSaveForCall): Deleted.
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::set):
+        * jit/ScratchRegisterAllocator.cpp:
+        (JSC::ScratchRegisterAllocator::allocateScratchGPR):
+        (JSC::ScratchRegisterAllocator::allocateScratchFPR):
+        (JSC::ScratchRegisterAllocator::preserveReusedRegistersByPushing):
+        (JSC::ScratchRegisterAllocator::restoreReusedRegistersByPopping):
+        These methods now take an extra parameter indicating if they
+        should create space for a C call at the top of the stack if
+        there are any reused registers to spill.
+
+        (JSC::ScratchRegisterAllocator::usedRegistersForCall):
+        * jit/ScratchRegisterAllocator.h:
+        (JSC::ScratchRegisterAllocator::usedRegisters):
+
 2015-10-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Array previews with Symbol objects have too few preview values

@@ -66,12 +66,9 @@ public:
 
     RegisterSet usedRegisters() const { return m_usedRegisters; }
     
-    // preserveReusedRegistersByPushing() returns the number of padding bytes used to keep the stack
-    // pointer properly aligned and to reserve room for calling a C helper. This number of padding
-    // bytes must be provided to restoreReusedRegistersByPopping() in order to reverse the work done
-    // by preserveReusedRegistersByPushing().
-    unsigned preserveReusedRegistersByPushing(MacroAssembler& jit);
-    void restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters);
+    enum class ExtraStackSpace { SpaceForCCall, NoExtraSpace };
+    unsigned preserveReusedRegistersByPushing(MacroAssembler& jit, ExtraStackSpace);
+    void restoreReusedRegistersByPopping(MacroAssembler& jit, unsigned numberOfBytesUsedToPreserveReusedRegisters, ExtraStackSpace);
     
     RegisterSet usedRegistersForCall() const;
     

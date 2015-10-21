@@ -159,6 +159,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MakeRope:
     case NewArrayWithSize:
     case GetById:
+    case GetByIdFlush:
     case ToThis:
     case MultiGetByOffset:
     case MultiPutByOffset:
@@ -222,6 +223,7 @@ inline CapabilityLevel canCompile(Node* node)
         return CannotCompile;
     case PutByIdDirect:
     case PutById:
+    case PutByIdFlush:
         if (node->child1().useKind() == CellUse)
             break;
         return CannotCompile;

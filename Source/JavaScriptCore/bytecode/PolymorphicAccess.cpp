@@ -36,7 +36,6 @@
 #include "JITOperations.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
-#include "MaxFrameExtentForSlowPathCall.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
@@ -55,7 +54,7 @@ Watchpoint* AccessGenerationState::addWatchpoint(const ObjectPropertyCondition& 
 
 void AccessGenerationState::restoreScratch()
 {
-    allocator->restoreReusedRegistersByPopping(*jit, numberOfBytesUsedToPreserveReusedRegisters);
+    allocator->restoreReusedRegistersByPopping(*jit, numberOfBytesUsedToPreserveReusedRegisters, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 }
 
 void AccessGenerationState::succeed()
@@ -75,7 +74,7 @@ void AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
         m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
-        m_liveRegistersForCall.exclude(RegisterSet::registersToNotSaveForCall());
+        m_liveRegistersForCall.exclude(RegisterSet::registersToNotSaveForJSCall());
     }
 }
 
@@ -744,17 +743,12 @@ void AccessCase::generate(AccessGenerationState& state)
                         CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
                 });
         } else {
-            unsigned stackOffset = 0;
-            // Need to make room for the C call so our spillage isn't overwritten.
-            if (state.numberOfStackBytesUsedForRegisterPreservation()) {
-                if (maxFrameExtentForSlowPathCall)
-                    stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), maxFrameExtentForSlowPathCall);
-            }
-            if (stackOffset) {
-                jit.subPtr(
-                    CCallHelpers::TrustedImm32(stackOffset),
-                    CCallHelpers::stackPointerRegister);
-            }
+            // Need to make room for the C call so any of our stack spillage isn't overwritten.
+            // We also need to make room because we may be an inline cache in the FTL and not
+            // have a JIT call frame.
+            bool needsToMakeRoomOnStackForCCall = state.numberOfStackBytesUsedForRegisterPreservation() || codeBlock->jitType() == JITCode::FTLJIT;
+            if (needsToMakeRoomOnStackForCCall)
+                jit.makeSpaceOnStackForCCall();
 
             // getter: EncodedJSValue (*GetValueFunc)(ExecState*, JSObject* slotBase, EncodedJSValue thisValue, PropertyName);
             // setter: void (*PutValueFunc)(ExecState*, JSObject* base, EncodedJSValue thisObject, EncodedJSValue value);
@@ -783,12 +777,8 @@ void AccessCase::generate(AccessGenerationState& state)
             operationCall = jit.call();
             if (m_type == CustomGetter)
                 jit.setupResults(valueRegs);
-
-            if (stackOffset) {
-                jit.addPtr(
-                    CCallHelpers::TrustedImm32(stackOffset),
-                    CCallHelpers::stackPointerRegister);
-            }
+            if (needsToMakeRoomOnStackForCCall)
+                jit.reclaimSpaceOnStackForCCall();
 
             CCallHelpers::Jump noException =
                 jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
@@ -893,11 +883,12 @@ void AccessCase::generate(AccessGenerationState& state)
         else
             scratchGPR3 = InvalidGPRReg;
 
-        size_t numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit);
+        size_t numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
         ASSERT(structure()->transitionWatchpointSetHasBeenInvalidated());
 
         bool scratchGPRHasStorage = false;
+        bool needsToMakeRoomOnStackForCCall = !numberOfBytesUsedToPreserveReusedRegisters && codeBlock->jitType() == JITCode::FTLJIT;
 
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
             size_t newSize = newStructure()->outOfLineCapacity() * sizeof(JSValue);
@@ -1004,8 +995,12 @@ void AccessCase::generate(AccessGenerationState& state)
             // barrier slow path was just the normal slow path, below.
             // https://bugs.webkit.org/show_bug.cgi?id=149030
             allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR2);
+            if (needsToMakeRoomOnStackForCCall)
+                jit.makeSpaceOnStackForCCall();
             jit.setupArgumentsWithExecState(baseGPR);
             callFlushWriteBarrierBuffer = jit.call();
+            if (needsToMakeRoomOnStackForCCall)
+                jit.reclaimSpaceOnStackForCCall();
             allocator.restoreUsedRegistersFromScratchBufferForCall(
                 jit, scratchBuffer, scratchGPR2);
 
@@ -1018,13 +1013,15 @@ void AccessCase::generate(AccessGenerationState& state)
                 });
         }
         
-        allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters);
+        allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
         state.succeed();
 
         if (newStructure()->outOfLineCapacity() != structure()->outOfLineCapacity()) {
             slowPath.link(&jit);
-            allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters);
+            allocator.restoreReusedRegistersByPopping(jit, numberOfBytesUsedToPreserveReusedRegisters, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
             allocator.preserveUsedRegistersToScratchBufferForCall(jit, scratchBuffer, scratchGPR);
+            if (needsToMakeRoomOnStackForCCall)
+                jit.makeSpaceOnStackForCCall();
 #if USE(JSVALUE64)
             jit.setupArgumentsWithExecState(
                 baseGPR,
@@ -1039,6 +1036,8 @@ void AccessCase::generate(AccessGenerationState& state)
                 valueRegs.payloadGPR(), valueRegs.tagGPR());
 #endif
             CCallHelpers::Call operationCall = jit.call();
+            if (needsToMakeRoomOnStackForCCall)
+                jit.reclaimSpaceOnStackForCCall();
             allocator.restoreUsedRegistersFromScratchBufferForCall(jit, scratchBuffer, scratchGPR);
             state.succeed();
 
@@ -1240,7 +1239,7 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     CCallHelpers jit(&vm, codeBlock);
     state.jit = &jit;
 
-    state.numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit);
+    state.numberOfBytesUsedToPreserveReusedRegisters = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     bool allGuardedByStructureCheck = true;
     bool hasJSGetterSetterCall = false;

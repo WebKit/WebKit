@@ -62,7 +62,8 @@ public:
     static RegisterSet allFPRs();
     static RegisterSet allRegisters();
 
-    static RegisterSet registersToNotSaveForCall();
+    static RegisterSet registersToNotSaveForJSCall();
+    static RegisterSet registersToNotSaveForCCall();
     
     void set(Reg reg, bool value = true)
     {
