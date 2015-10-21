@@ -62,7 +62,7 @@ private:
     void populate(const Vector<RefPtr<WebContextMenuItem>>&);
 
 #if ENABLE(SERVICE_CONTROLS)
-    void setupServicesMenu(const ContextMenuContextData&);
+    void setupServicesMenu();
     WebCore::ContextMenuItem shareMenuItem();
 #endif
 

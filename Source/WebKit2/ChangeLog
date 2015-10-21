@@ -1,5 +1,17 @@
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
+        WebContextMenuProxyMac::setupServicesMenu doesn't need to take a context parameter
+        https://bugs.webkit.org/show_bug.cgi?id=150418
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        (WebKit::WebContextMenuProxyMac::populate):
+
+2015-10-21  Anders Carlsson  <andersca@apple.com>
+
         WebContextMenuProxy doesn't have to be ref-counted
         https://bugs.webkit.org/show_bug.cgi?id=150415
 

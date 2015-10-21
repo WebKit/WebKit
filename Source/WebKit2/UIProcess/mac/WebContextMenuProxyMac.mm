@@ -248,13 +248,13 @@ template<typename ItemType> static Vector<RetainPtr<NSMenuItem>> nsMenuItemVecto
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& context)
+void WebContextMenuProxyMac::setupServicesMenu()
 {
-    bool includeEditorServices = context.controlledDataIsEditable();
-    bool hasControlledImage = context.controlledImage();
+    bool includeEditorServices = m_context.controlledDataIsEditable();
+    bool hasControlledImage = m_context.controlledImage();
     NSArray *items = nil;
     if (hasControlledImage) {
-        RefPtr<ShareableBitmap> image = context.controlledImage();
+        RefPtr<ShareableBitmap> image = m_context.controlledImage();
         if (!image)
             return;
 
@@ -267,9 +267,9 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
 #else
         items = @[ ];
 #endif
-    } else if (!context.controlledSelectionData().isEmpty()) {
-        RetainPtr<NSData> selectionData = adoptNS([[NSData alloc] initWithBytes:(void*)context.controlledSelectionData().data() length:context.controlledSelectionData().size()]);
-        RetainPtr<NSAttributedString> selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);
+    } else if (!m_context.controlledSelectionData().isEmpty()) {
+        auto selectionData = adoptNS([[NSData alloc] initWithBytes:static_cast<const void*>(m_context.controlledSelectionData().data()) length:m_context.controlledSelectionData().size()]);
+        auto selection = adoptNS([[NSAttributedString alloc] initWithRTFD:selectionData.get() documentAttributes:nil]);
 
         items = @[ selection.get() ];
     } else {
@@ -290,9 +290,9 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
         [m_menu setShowsStateColumn:YES];
 
     // Explicitly add a menu item for each telephone number that is in the selection.
-    const Vector<String>& selectedTelephoneNumbers = context.selectedTelephoneNumbers();
     Vector<RetainPtr<NSMenuItem>> telephoneNumberMenuItems;
-    for (auto& telephoneNumber : selectedTelephoneNumbers) {
+
+    for (auto& telephoneNumber : m_context.selectedTelephoneNumbers()) {
         if (NSMenuItem *item = menuItemForTelephoneNumber(telephoneNumber)) {
             [item setIndentationLevel:1];
             telephoneNumberMenuItems.append(item);
@@ -364,7 +364,7 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
 {
 #if ENABLE(SERVICE_CONTROLS)
     if (m_context.isServicesMenu()) {
-        setupServicesMenu(m_context);
+        setupServicesMenu();
         return;
     }
 #endif
