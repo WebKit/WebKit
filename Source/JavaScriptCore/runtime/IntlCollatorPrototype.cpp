@@ -39,8 +39,6 @@
 
 namespace JSC {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlCollatorPrototype);
-
 static EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeGetterCompare(ExecState*);
 static EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(ExecState*);
 
@@ -122,12 +120,22 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorPrototypeFuncResolvedOptions(ExecState*
     if (!collator)
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator")));
 
-    // The function returns a new object whose properties and attributes are set as if constructed by an object literal assigning to each of the following properties the value of the corresponding internal slot of this Collator object (see 10.4): locale, usage, sensitivity, ignorePunctuation, collation, as well as those properties shown in Table 1 whose keys are included in the %Collator%[[relevantExtensionKeys]] internal slot of the standard built-in object that is the initial value of Intl.Collator.
+    // The function returns a new object whose properties and attributes are set as if
+    // constructed by an object literal assigning to each of the following properties the
+    // value of the corresponding internal slot of this Collator object (see 10.4): locale,
+    // usage, sensitivity, ignorePunctuation, collation, as well as those properties shown
+    // in Table 1 whose keys are included in the %Collator%[[relevantExtensionKeys]]
+    // internal slot of the standard built-in object that is the initial value of
+    // Intl.Collator.
 
+    VM& vm = exec->vm();
     JSObject* options = constructEmptyObject(exec);
-
-    // FIXME: Populate object from internal slots.
-
+    options->putDirect(vm, vm.propertyNames->locale, jsString(exec, collator->locale()));
+    options->putDirect(vm, vm.propertyNames->usage, jsString(exec, collator->usage()));
+    options->putDirect(vm, vm.propertyNames->sensitivity, jsString(exec, collator->sensitivity()));
+    options->putDirect(vm, vm.propertyNames->ignorePunctuation, jsBoolean(collator->ignorePunctuation()));
+    options->putDirect(vm, vm.propertyNames->collation, jsString(exec, collator->collation()));
+    options->putDirect(vm, vm.propertyNames->numeric, jsBoolean(collator->numeric()));
     return JSValue::encode(options);
 }
 

@@ -7,11 +7,73 @@ PASS Intl.Collator is an instance of Function
 PASS Intl.Collator() is an instance of Intl.Collator
 PASS Intl.Collator.call({}) is an instance of Intl.Collator
 PASS new Intl.Collator() is an instance of Intl.Collator
+PASS Intl.Collator('en') is an instance of Intl.Collator
+PASS Intl.Collator(42) is an instance of Intl.Collator
+PASS Intl.Collator(null) threw exception TypeError: null is not an object (evaluating 'Intl.Collator(null)').
+PASS Intl.Collator({ get length() { throw 42; } }) threw exception 42.
+PASS Intl.Collator('en', { }) is an instance of Intl.Collator
+PASS Intl.Collator('en', 42) is an instance of Intl.Collator
+PASS Intl.Collator('en', null) threw exception TypeError: null is not an object (evaluating 'Intl.Collator('en', null)').
 PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instanceof DerivedCollator is true
 PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instanceof Intl.Collator is true
 PASS class DerivedCollator extends Intl.Collator {};new DerivedCollator().compare('a', 'b') === -1 is true
 PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype is true
 PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype is true
+PASS testCollator(Intl.Collator('en'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('eN-uS'), [{locale: 'en-US'}]) is true
+PASS testCollator(Intl.Collator(['en', 'de']), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('de'), [{locale: 'de'}]) is true
+PASS testCollator(Intl.Collator('en-u-co-eor'), [{locale: 'en-u-co-eor', collation: 'eor'}, {locale: 'en'}]) is true
+PASS testCollator(new Intl.Collator('en-u-co-eor'), [{locale: 'en-u-co-eor', collation: 'eor'}, {locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('En-U-Co-Eor'), [{locale: 'en-u-co-eor', collation: 'eor'}, {locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-co-phonebk'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-co-standard'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-co-search'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-co-abcd'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}]) is true
+PASS testCollator(Intl.Collator('en-u-kn'), [{locale: 'en', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-false'), [{locale: 'en-u-kn-false', numeric: false}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-abcd'), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en-u-aa-aaaa-kn-true-bb-bbbb-co-eor-cc-cccc-y-yyd'), [{locale: 'en-u-co-eor-kn-true', collation: 'eor', numeric: true}, {locale: 'en-u-kn-true', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-true-a-aa'), [{locale: 'en-u-kn-true', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-a-aa-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-a-aa-u-kn-true-b-bb'), [{locale: 'en-u-kn-true', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en', {usage: 'sort'}), [{locale: 'en', usage: 'sort'}]) is true
+PASS testCollator(Intl.Collator('en', {usage: 'search'}), [{locale: 'en', usage: 'search'}]) is true
+PASS Intl.Collator('en', {usage: 'Sort'}) threw exception RangeError: usage must be either "sort" or "search".
+PASS Intl.Collator('en', { get usage() { throw 42; } }) threw exception 42.
+PASS Intl.Collator('en', {usage: {toString() { throw 42; }}}) threw exception 42.
+PASS testCollator(Intl.Collator('en', {localeMatcher: 'lookup'}), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en', {localeMatcher: 'best fit'}), [{locale: 'en'}]) is true
+PASS Intl.Collator('en', {localeMatcher: 'LookUp'}) threw exception RangeError: localeMatcher must be either "lookup" or "best fit".
+PASS Intl.Collator('en', { get localeMatcher() { throw 42; } }) threw exception 42.
+PASS testCollator(Intl.Collator('en', {numeric: true}), [{locale: 'en', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en', {numeric: false}), [{locale: 'en', numeric: false}]) is true
+PASS testCollator(Intl.Collator('en', {numeric: 'false'}), [{locale: 'en', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en', {numeric: { }}), [{locale: 'en', numeric: true}]) is true
+PASS Intl.Collator('en', { get numeric() { throw 42; } }) threw exception 42.
+PASS testCollator(Intl.Collator('en', {caseFirst: 'upper'}), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: 'lower'}), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: 'false'}), [{locale: 'en'}]) is true
+PASS testCollator(Intl.Collator('en', {caseFirst: false}), [{locale: 'en'}]) is true
+PASS Intl.Collator('en', {caseFirst: 'true'}) threw exception RangeError: caseFirst must be either "upper", "lower", or "false".
+PASS Intl.Collator('en', { get caseFirst() { throw 42; } }) threw exception 42.
+PASS testCollator(Intl.Collator('en', {sensitivity: 'base'}), [{locale: 'en', sensitivity: 'base'}]) is true
+PASS testCollator(Intl.Collator('en', {sensitivity: 'accent'}), [{locale: 'en', sensitivity: 'accent'}]) is true
+PASS testCollator(Intl.Collator('en', {sensitivity: 'case'}), [{locale: 'en', sensitivity: 'case'}]) is true
+PASS testCollator(Intl.Collator('en', {sensitivity: 'variant'}), [{locale: 'en', sensitivity: 'variant'}]) is true
+PASS Intl.Collator('en', {sensitivity: 'abcd'}) threw exception RangeError: sensitivity must be either "base", "accent", "case", or "variant".
+PASS Intl.Collator('en', { get sensitivity() { throw 42; } }) threw exception 42.
+PASS testCollator(Intl.Collator('en', {ignorePunctuation: true}), [{locale: 'en', ignorePunctuation: true}]) is true
+PASS testCollator(Intl.Collator('en', {ignorePunctuation: false}), [{locale: 'en', ignorePunctuation: false}]) is true
+PASS testCollator(Intl.Collator('en', {ignorePunctuation: 'false'}), [{locale: 'en', ignorePunctuation: true}]) is true
+PASS Intl.Collator('en', { get ignorePunctuation() { throw 42; } }) threw exception 42.
+PASS testCollator(Intl.Collator('en-u-kn-true', {numeric: false}), [{locale: 'en', numeric: false}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-false', {numeric: true}), [{locale: 'en', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn-true', numeric: true}]) is true
+PASS testCollator(Intl.Collator('en-u-kn-false', {numeric: false}), [{locale: 'en-u-kn-false', numeric: false}]) is true
+PASS testCollator(Intl.Collator('en-a-aa-u-kn-false-co-eor-b-bb', {usage: 'sort', numeric: true, caseFirst: 'lower', sensitivity: 'case', ignorePunctuation: true}), [{locale: 'en-u-co-eor', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, collation: 'eor', numeric: true}, {locale: 'en', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, numeric: true}]) is true
 PASS Intl.Collator.length is 0
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').writable is false
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').enumerable is false

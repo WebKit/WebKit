@@ -57,7 +57,10 @@ private:
     IntlObject(VM&, Structure*);
 };
 
+bool getIntlBooleanOption(ExecState*, JSValue options, PropertyName, bool& usesFallback);
+String getIntlStringOption(ExecState*, JSValue options, PropertyName, const HashSet<String>& values, const char* notFound, String fallback);
 Vector<String> canonicalizeLocaleList(ExecState*, JSValue locales);
+HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const Vector<String>& relevantExtensionKeys, Vector<String> (*localeData)(const String&, const String&));
 JSValue supportedLocales(ExecState*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
 
 } // namespace JSC

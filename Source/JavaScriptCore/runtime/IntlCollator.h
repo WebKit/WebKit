@@ -44,6 +44,18 @@ public:
 
     DECLARE_INFO;
 
+    const String& usage() const { return m_usage; }
+    void setUsage(const String& usage) { m_usage = usage; }
+    const String& locale() const { return m_locale; }
+    void setLocale(const String& locale) { m_locale = locale; }
+    const String& collation() const { return m_collation; }
+    void setCollation(const String& collation) { m_collation = collation; }
+    bool numeric() const { return m_numeric; }
+    void setNumeric(bool numeric) { m_numeric = numeric; }
+    const String& sensitivity() const { return m_sensitivity; }
+    void setSensitivity(const String& sensitivity) { m_sensitivity = sensitivity; }
+    bool ignorePunctuation() const { return m_ignorePunctuation; }
+    void setIgnorePunctuation(bool ignorePunctuation) { m_ignorePunctuation = ignorePunctuation; }
     JSBoundFunction* boundCompare() const { return m_boundCompare.get(); }
     void setBoundCompare(VM&, JSBoundFunction*);
 
@@ -54,7 +66,13 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 private:
+    String m_usage;
+    String m_locale;
+    String m_collation;
+    String m_sensitivity;
     WriteBarrier<JSBoundFunction> m_boundCompare;
+    bool m_numeric;
+    bool m_ignorePunctuation;
 };
     
 EncodedJSValue JSC_HOST_CALL IntlCollatorFuncCompare(ExecState*);

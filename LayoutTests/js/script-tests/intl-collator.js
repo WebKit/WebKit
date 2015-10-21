@@ -9,6 +9,13 @@ shouldBeType("Intl.Collator", "Function");
 shouldBeType("Intl.Collator()", "Intl.Collator");
 shouldBeType("Intl.Collator.call({})", "Intl.Collator");
 shouldBeType("new Intl.Collator()", "Intl.Collator");
+shouldBeType("Intl.Collator('en')", "Intl.Collator");
+shouldBeType("Intl.Collator(42)", "Intl.Collator");
+shouldThrow("Intl.Collator(null)", "'TypeError: null is not an object (evaluating \\'Intl.Collator(null)\\')'");
+shouldThrow("Intl.Collator({ get length() { throw 42; } })", "'42'");
+shouldBeType("Intl.Collator('en', { })", "Intl.Collator");
+shouldBeType("Intl.Collator('en', 42)", "Intl.Collator");
+shouldThrow("Intl.Collator('en', null)", "'TypeError: null is not an object (evaluating \\'Intl.Collator(\\'en\\', null)\\')'");
 
 // Subclassable
 var classPrefix = "class DerivedCollator extends Intl.Collator {};";
@@ -17,6 +24,104 @@ shouldBeTrue(classPrefix + "(new DerivedCollator) instanceof Intl.Collator");
 shouldBeTrue(classPrefix + "new DerivedCollator().compare('a', 'b') === -1");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype");
 shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype");
+
+var testCollator = function(collator, possibleOptionDifferences) {
+    var possibleOptions = possibleOptionDifferences.map(function(difference) {
+        var defaultOptions = {
+            locale: "en",
+            usage: "sort",
+            sensitivity: "variant",
+            ignorePunctuation: false,
+            collation: "default",
+            numeric: false
+        }
+        Object.assign(defaultOptions, difference);
+        return JSON.stringify(defaultOptions);
+    });
+    var actualOptions = JSON.stringify(collator.resolvedOptions())
+    return possibleOptions.includes(actualOptions);
+}
+
+// Locale is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en'), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('eN-uS'), [{locale: 'en-US'}])");
+shouldBeTrue("testCollator(Intl.Collator(['en', 'de']), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('de'), [{locale: 'de'}])");
+
+// The "co" key is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en-u-co-eor'), [{locale: 'en-u-co-eor', collation: 'eor'}, {locale: 'en'}])");
+shouldBeTrue("testCollator(new Intl.Collator('en-u-co-eor'), [{locale: 'en-u-co-eor', collation: 'eor'}, {locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('En-U-Co-Eor'), [{locale: 'en-u-co-eor', collation: 'eor'}, {locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-co-phonebk'), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-co-standard'), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-co-search'), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-co-abcd'), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}])");
+
+// The "kn" key is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn'), [{locale: 'en', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-false'), [{locale: 'en-u-kn-false', numeric: false}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-abcd'), [{locale: 'en'}])");
+
+// Ignores irrelevant extension keys.
+shouldBeTrue("testCollator(Intl.Collator('en-u-aa-aaaa-kn-true-bb-bbbb-co-eor-cc-cccc-y-yyd'), [{locale: 'en-u-co-eor-kn-true', collation: 'eor', numeric: true}, {locale: 'en-u-kn-true', numeric: true}])");
+
+// Ignores other extensions.
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-true-a-aa'), [{locale: 'en-u-kn-true', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en-a-aa-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en-a-aa-u-kn-true-b-bb'), [{locale: 'en-u-kn-true', numeric: true}])");
+
+// The option usage is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en', {usage: 'sort'}), [{locale: 'en', usage: 'sort'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {usage: 'search'}), [{locale: 'en', usage: 'search'}])");
+shouldThrow("Intl.Collator('en', {usage: 'Sort'})", '\'RangeError: usage must be either "sort" or "search"\'');
+shouldThrow("Intl.Collator('en', { get usage() { throw 42; } })", "'42'");
+shouldThrow("Intl.Collator('en', {usage: {toString() { throw 42; }}})", "'42'");
+
+// The option localeMatcher is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en', {localeMatcher: 'lookup'}), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {localeMatcher: 'best fit'}), [{locale: 'en'}])");
+shouldThrow("Intl.Collator('en', {localeMatcher: 'LookUp'})", '\'RangeError: localeMatcher must be either "lookup" or "best fit"\'');
+shouldThrow("Intl.Collator('en', { get localeMatcher() { throw 42; } })", "'42'");
+
+// The option numeric is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en', {numeric: true}), [{locale: 'en', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {numeric: false}), [{locale: 'en', numeric: false}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {numeric: 'false'}), [{locale: 'en', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {numeric: { }}), [{locale: 'en', numeric: true}])");
+shouldThrow("Intl.Collator('en', { get numeric() { throw 42; } })", "'42'");
+
+// The option caseFirst is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en', {caseFirst: 'upper'}), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {caseFirst: 'lower'}), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {caseFirst: 'false'}), [{locale: 'en'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {caseFirst: false}), [{locale: 'en'}])");
+shouldThrow("Intl.Collator('en', {caseFirst: 'true'})", '\'RangeError: caseFirst must be either "upper", "lower", or "false"\'');
+shouldThrow("Intl.Collator('en', { get caseFirst() { throw 42; } })", "'42'");
+
+// The option sensitivity is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en', {sensitivity: 'base'}), [{locale: 'en', sensitivity: 'base'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {sensitivity: 'accent'}), [{locale: 'en', sensitivity: 'accent'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {sensitivity: 'case'}), [{locale: 'en', sensitivity: 'case'}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {sensitivity: 'variant'}), [{locale: 'en', sensitivity: 'variant'}])");
+shouldThrow("Intl.Collator('en', {sensitivity: 'abcd'})", '\'RangeError: sensitivity must be either "base", "accent", "case", or "variant"\'');
+shouldThrow("Intl.Collator('en', { get sensitivity() { throw 42; } })", "'42'");
+
+// The option ignorePunctuation is processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en', {ignorePunctuation: true}), [{locale: 'en', ignorePunctuation: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {ignorePunctuation: false}), [{locale: 'en', ignorePunctuation: false}])");
+shouldBeTrue("testCollator(Intl.Collator('en', {ignorePunctuation: 'false'}), [{locale: 'en', ignorePunctuation: true}])");
+shouldThrow("Intl.Collator('en', { get ignorePunctuation() { throw 42; } })", "'42'");
+
+// Options override the language tag.
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-true', {numeric: false}), [{locale: 'en', numeric: false}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-false', {numeric: true}), [{locale: 'en', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-true', {numeric: true}), [{locale: 'en-u-kn-true', numeric: true}])");
+shouldBeTrue("testCollator(Intl.Collator('en-u-kn-false', {numeric: false}), [{locale: 'en-u-kn-false', numeric: false}])");
+
+// Options and extension keys are processed correctly.
+shouldBeTrue("testCollator(Intl.Collator('en-a-aa-u-kn-false-co-eor-b-bb', {usage: 'sort', numeric: true, caseFirst: 'lower', sensitivity: 'case', ignorePunctuation: true}), [{locale: 'en-u-co-eor', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, collation: 'eor', numeric: true}, {locale: 'en', usage: 'sort', sensitivity: 'case', ignorePunctuation: true, numeric: true}])");
 
 // 10.2 Properties of the Intl.Collator Constructor
 

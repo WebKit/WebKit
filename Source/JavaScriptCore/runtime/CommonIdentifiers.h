@@ -87,9 +87,11 @@
     macro(bytecodesID) \
     macro(callee) \
     macro(caller) \
+    macro(caseFirst) \
     macro(clear) \
     macro(close) \
     macro(closed) \
+    macro(collation) \
     macro(column) \
     macro(compilationKind) \
     macro(compilations) \
@@ -126,6 +128,7 @@
     macro(href) \
     macro(id) \
     macro(ignoreCase) \
+    macro(ignorePunctuation) \
     macro(index) \
     macro(indexedDB) \
     macro(inferredName) \
@@ -142,6 +145,7 @@
     macro(lastIndex) \
     macro(length) \
     macro(line) \
+    macro(locale) \
     macro(localeMatcher) \
     macro(message) \
     macro(multiline) \
@@ -151,6 +155,7 @@
     macro(numInlinedCalls) \
     macro(numInlinedGetByIds) \
     macro(numInlinedPutByIds) \
+    macro(numeric) \
     macro(of) \
     macro(opcode) \
     macro(origin) \
@@ -166,6 +171,7 @@
     macro(reload) \
     macro(replace) \
     macro(resolve) \
+    macro(sensitivity) \
     macro(set) \
     macro(showModalDialog) \
     macro(size) \
@@ -185,6 +191,7 @@
     macro(toLocaleString) \
     macro(toPrecision) \
     macro(toString) \
+    macro(usage) \
     macro(value) \
     macro(valueOf) \
     macro(values) \

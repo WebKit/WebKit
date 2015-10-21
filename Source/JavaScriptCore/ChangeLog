@@ -1,3 +1,48 @@
+2015-10-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        [INTL] Implement Intl.Collator.prototype.resolvedOptions ()
+        https://bugs.webkit.org/show_bug.cgi?id=147601
+
+        Reviewed by Benjamin Poulain.
+
+        This patch implements Intl.Collator.prototype.resolvedOptions() according
+        to the ECMAScript 2015 Internationalization API spec (ECMA-402 2nd edition.)
+        It also implements the abstract operations InitializeCollator, ResolveLocale,
+        LookupMatcher, and BestFitMatcher.
+
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlCollator.h:
+        (JSC::IntlCollator::usage):
+        (JSC::IntlCollator::setUsage):
+        (JSC::IntlCollator::locale):
+        (JSC::IntlCollator::setLocale):
+        (JSC::IntlCollator::collation):
+        (JSC::IntlCollator::setCollation):
+        (JSC::IntlCollator::numeric):
+        (JSC::IntlCollator::setNumeric):
+        (JSC::IntlCollator::sensitivity):
+        (JSC::IntlCollator::setSensitivity):
+        (JSC::IntlCollator::ignorePunctuation):
+        (JSC::IntlCollator::setIgnorePunctuation):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::sortLocaleData):
+        (JSC::searchLocaleData):
+        (JSC::initializeCollator):
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        * runtime/IntlCollatorPrototype.cpp:
+        (JSC::IntlCollatorPrototypeFuncResolvedOptions):
+        * runtime/IntlObject.cpp:
+        (JSC::defaultLocale):
+        (JSC::getIntlBooleanOption):
+        (JSC::getIntlStringOption):
+        (JSC::removeUnicodeLocaleExtension):
+        (JSC::lookupMatcher):
+        (JSC::bestFitMatcher):
+        (JSC::resolveLocale):
+        (JSC::lookupSupportedLocales):
+        * runtime/IntlObject.h:
+
 2015-10-21  Saam barati  <sbarati@apple.com>
 
         C calls in PolymorphicAccess shouldn't assume that the top of the stack looks like a JSC JIT frame and enable *ByIdFlush in FTL

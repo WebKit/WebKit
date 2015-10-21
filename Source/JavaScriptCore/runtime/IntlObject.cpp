@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (thetalecrafter@gmail.com)
+ * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +55,12 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlObject);
 
 namespace JSC {
 
+struct MatcherResult {
+    String locale;
+    String extension;
+    size_t extensionIndex;
+};
+
 const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, 0, CREATE_METHOD_TABLE(IntlObject) };
 
 IntlObject::IntlObject(VM& vm, Structure* structure)
@@ -105,7 +112,53 @@ Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-static String getIntlStringOption(ExecState* exec, JSValue options, PropertyName property, const HashSet<String>& values, const char* notFound, String fallback)
+static String defaultLocale()
+{
+    // 6.2.4 DefaultLocale ()
+    // FIXME: Implement this method.
+    return ASCIILiteral("en");
+}
+
+bool getIntlBooleanOption(ExecState* exec, JSValue options, PropertyName property, bool& usesFallback)
+{
+    // 9.2.9 GetOption (options, property, type, values, fallback)
+    // For type="boolean". values is always undefined.
+
+    // 1. Let opts be ToObject(options).
+    JSObject* opts = options.toObject(exec);
+
+    // 2. ReturnIfAbrupt(opts).
+    if (exec->hadException())
+        return false;
+
+    // 3. Let value be Get(opts, property).
+    JSValue value = opts->get(exec, property);
+
+    // 4. ReturnIfAbrupt(value).
+    if (exec->hadException())
+        return false;
+
+    // 5. If value is not undefined, then
+    if (!value.isUndefined()) {
+        // a. Assert: type is "boolean" or "string".
+        // Function dedicated to "boolean".
+
+        // b. If type is "boolean", then
+        // i. Let value be ToBoolean(value).
+        bool booleanValue = value.toBoolean(exec);
+
+        // e. Return value.
+        usesFallback = false;
+        return booleanValue;
+    }
+
+    // 6. Else return fallback.
+    // Because fallback can be undefined, we let the caller handle it instead.
+    usesFallback = true;
+    return false;
+}
+
+String getIntlStringOption(ExecState* exec, JSValue options, PropertyName property, const HashSet<String>& values, const char* notFound, String fallback)
 {
     // 9.2.9 GetOption (options, property, type, values, fallback)
     // For type="string".
@@ -551,6 +604,203 @@ static String bestAvailableLocale(const HashSet<String>& availableLocales, const
     return String();
 }
 
+static String removeUnicodeLocaleExtension(const String& locale)
+{
+    Vector<String> parts;
+    locale.split('-', parts);
+    StringBuilder builder;
+    size_t partsSize = parts.size();
+    if (partsSize > 0)
+        builder.append(parts[0]);
+    for (size_t p = 1; p < partsSize; ++p) {
+        if (parts[p] == "u") {
+            // Skip the u- and anything that follows until another singleton.
+            // While the next part is part of the unicode extension, skip it.
+            while (p + 1 < partsSize && parts[p + 1].length() > 1)
+                ++p;
+        } else {
+            builder.append('-');
+            builder.append(parts[p]);
+        }
+    }
+    return builder.toString();
+}
+
+static MatcherResult lookupMatcher(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+{
+    // 9.2.3 LookupMatcher (availableLocales, requestedLocales) (ECMA-402 2.0)
+    String locale;
+    String noExtensionsLocale;
+    String availableLocale;
+    for (size_t i = 0; i < requestedLocales.size() && availableLocale.isNull(); ++i) {
+        locale = requestedLocales[i];
+        noExtensionsLocale = removeUnicodeLocaleExtension(locale);
+        availableLocale = bestAvailableLocale(availableLocales, noExtensionsLocale);
+    }
+
+    MatcherResult result;
+    if (!availableLocale.isNull()) {
+        result.locale = availableLocale;
+        if (locale != noExtensionsLocale) {
+            // i. Let extension be the String value consisting of the first substring of locale that is a Unicode locale extension sequence.
+            // ii. Let extensionIndex be the character position of the initial "-" extension sequence within locale.
+            size_t extensionIndex = locale.find("-u-");
+            RELEASE_ASSERT(extensionIndex != notFound);
+
+            size_t extensionLength = locale.length() - extensionIndex;
+            size_t end = extensionIndex + 3;
+            while (end < locale.length()) {
+                end = locale.find('-', end);
+                if (end == notFound)
+                    break;
+                if (end + 2 < locale.length() && locale[end + 2] == '-') {
+                    extensionLength = end - extensionIndex;
+                    break;
+                }
+                end++;
+            }
+            result.extension = locale.substring(extensionIndex, extensionLength);
+            result.extensionIndex = extensionIndex;
+        }
+    } else
+        result.locale = defaultLocale();
+    return result;
+}
+
+static MatcherResult bestFitMatcher(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+{
+    // 9.2.4 BestFitMatcher (availableLocales, requestedLocales) (ECMA-402 2.0)
+    // FIXME: Implement something better than lookup.
+    return lookupMatcher(availableLocales, requestedLocales);
+}
+
+HashMap<String, String> resolveLocale(const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, const HashMap<String, String>& options, const Vector<String>& relevantExtensionKeys, Vector<String> (*localeData)(const String&, const String&))
+{
+    // 9.2.5 ResolveLocale (availableLocales, requestedLocales, options, relevantExtensionKeys, localeData) (ECMA-402 2.0)
+    // 1. Let matcher be the value of options.[[localeMatcher]].
+    const String& matcher = options.get(ASCIILiteral("localeMatcher"));
+
+    // 2. If matcher is "lookup", then
+    MatcherResult (*matcherOperation)(const HashSet<String>&, const Vector<String>&);
+    if (matcher == "lookup") {
+        // a. Let MatcherOperation be the abstract operation LookupMatcher.
+        matcherOperation = lookupMatcher;
+    } else { // 3. Else
+        // a. Let MatcherOperation be the abstract operation BestFitMatcher.
+        matcherOperation = bestFitMatcher;
+    }
+
+    // 4. Let r be MatcherOperation(availableLocales, requestedLocales).
+    MatcherResult matcherResult = matcherOperation(availableLocales, requestedLocales);
+
+    // 5. Let foundLocale be the value of r.[[locale]].
+    String foundLocale = matcherResult.locale;
+
+    // 6. If r has an [[extension]] field, then
+    Vector<String> extensionSubtags;
+    if (!matcherResult.extension.isNull()) {
+        // a. Let extension be the value of r.[[extension]].
+        // b. Let extensionIndex be the value of r.[[extensionIndex]].
+        // c. Let extensionSubtags be Call(%StringProto_split%, extension, «"-"») .
+        // d. Let extensionSubtagsLength be Get(CreateArrayFromList(extensionSubtags), "length").
+        matcherResult.extension.split('-', extensionSubtags);
+    }
+
+    // 7. Let result be a new Record.
+    HashMap<String, String> result;
+
+    // 8. Set result.[[dataLocale]] to foundLocale.
+    result.set(ASCIILiteral("dataLocale"), foundLocale);
+
+    // 9. Let supportedExtension be "-u".
+    String supportedExtension = ASCIILiteral("-u");
+
+    // 10. Let k be 0.
+    // 11. Let rExtensionKeys be ToObject(CreateArrayFromList(relevantExtensionKeys)).
+    // 12. ReturnIfAbrupt(rExtensionKeys).
+    // 13. Let len be ToLength(Get(rExtensionKeys, "length")).
+    // 14. Repeat while k < len
+    for (size_t k = 0; k < relevantExtensionKeys.size(); ++k) {
+        // a. Let key be Get(rExtensionKeys, ToString(k)).
+        // b. ReturnIfAbrupt(key).
+        const String& key = relevantExtensionKeys[k];
+
+        // c. Let foundLocaleData be Get(localeData, foundLocale).
+        // d. ReturnIfAbrupt(foundLocaleData).
+        // e. Let keyLocaleData be ToObject(Get(foundLocaleData, key)).
+        // f. ReturnIfAbrupt(keyLocaleData).
+        Vector<String> keyLocaleData = localeData(foundLocale, key);
+
+        // g. Let value be ToString(Get(keyLocaleData, "0")).
+        // h. ReturnIfAbrupt(value).
+        ASSERT(!keyLocaleData.isEmpty());
+        String value = keyLocaleData[0];
+
+        // i. Let supportedExtensionAddition be "".
+        String supportedExtensionAddition;
+
+        // j. If extensionSubtags is not undefined, then
+        if (!extensionSubtags.isEmpty()) {
+            // i. Let keyPos be Call(%ArrayProto_indexOf%, extensionSubtags, «key») .
+            size_t keyPos = extensionSubtags.find(key);
+            // ii. If keyPos != -1, then
+            if (keyPos != notFound) {
+                // 1. If keyPos + 1 < extensionSubtagsLength and the length of the result of Get(extensionSubtags, ToString(keyPos +1)) is greater than 2, then
+                if (keyPos + 1 < extensionSubtags.size() && extensionSubtags[keyPos + 1].length() > 2) {
+                    const String& requestedValue = extensionSubtags[keyPos + 1];
+                    if (keyLocaleData.contains(requestedValue)) {
+                        value = requestedValue;
+                        supportedExtensionAddition = "-" + key + '-' + value;
+                    }
+                } else if (keyLocaleData.contains(static_cast<String>(ASCIILiteral("true")))) {
+                    // 2. Else, if the result of Call(%StringProto_includes%, keyLocaleData, «"true"») is true, then
+                    value = ASCIILiteral("true");
+                }
+            }
+        }
+
+        // k. If options has a field [[<key>]], then
+        HashMap<String, String>::const_iterator iterator = options.find(key);
+        if (iterator != options.end()) {
+            // i. Let optionsValue be the value of ToString(options.[[<key>]]).
+            // ii. ReturnIfAbrupt(optionsValue).
+            const String& optionsValue = iterator->value;
+            // iii. If the result of Call(%StringProto_includes%, keyLocaleData, «optionsValue») is true, then
+            if (!optionsValue.isNull() && keyLocaleData.contains(optionsValue)) {
+                // 1. If optionsValue is not equal to value, then
+                if (optionsValue != value) {
+                    value = optionsValue;
+                    supportedExtensionAddition = String();
+                }
+            }
+        }
+
+        // l. Set result.[[<key>]] to value.
+        result.set(key, value);
+
+        // m. Append supportedExtensionAddition to supportedExtension.
+        supportedExtension.append(supportedExtensionAddition);
+
+        // n. Increase k by 1.
+    }
+
+    // 15. If the number of elements in supportedExtension is greater than 2, then
+    if (supportedExtension.length() > 2) {
+        // a. Let preExtension be the substring of foundLocale from position 0, inclusive, to position extensionIndex, exclusive.
+        // b. Let postExtension be the substring of foundLocale from position extensionIndex to the end of the string.
+        // c. Let foundLocale be the concatenation of preExtension, supportedExtension, and postExtension.
+        String preExtension = foundLocale.substring(0, matcherResult.extensionIndex);
+        String postExtension = foundLocale.substring(matcherResult.extensionIndex);
+        foundLocale = preExtension + supportedExtension + postExtension;
+    }
+
+    // 16. Set result.[[locale]] to foundLocale.
+    result.set(ASCIILiteral("locale"), foundLocale);
+
+    // 17. Return result.
+    return result;
+}
+
 static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
 {
     // 9.2.6 LookupSupportedLocales (availableLocales, requestedLocales)
@@ -576,27 +826,10 @@ static JSArray* lookupSupportedLocales(ExecState* exec, const HashSet<String>& a
         // a. Let Pk be ToString(k).
         // b. Let locale be Get(rLocales, Pk).
         // c. ReturnIfAbrupt(locale).
-        String locale = requestedLocales[k];
+        const String& locale = requestedLocales[k];
 
         // d. Let noExtensionsLocale be the String value that is locale with all Unicode locale extension sequences removed.
-        Vector<String> parts;
-        locale.split('-', parts);
-        StringBuilder builder;
-        size_t partsSize = parts.size();
-        if (partsSize > 0)
-            builder.append(parts[0]);
-        for (size_t p = 1; p < partsSize; ++p) {
-            if (parts[p] == "u") {
-                // Skip the u- and anything that follows until another singleton.
-                // While the next part is part of the unicode extension, skip it.
-                while (p + 1 < partsSize && parts[p + 1].length() > 1)
-                    ++p;
-            } else {
-                builder.append('-');
-                builder.append(parts[p]);
-            }
-        }
-        String noExtensionsLocale = builder.toString();
+        String noExtensionsLocale = removeUnicodeLocaleExtension(locale);
 
         // e. Let availableLocale be BestAvailableLocale(availableLocales, noExtensionsLocale).
         String availableLocale = bestAvailableLocale(availableLocales, noExtensionsLocale);
