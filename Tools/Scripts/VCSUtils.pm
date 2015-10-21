@@ -2039,8 +2039,8 @@ sub decodeGitBinaryPatch($$)
     # Then, content of the chunk comes. To decode the content, we
     # need decode it with base85 first, and then zlib.
     my $gitPatchRegExp = '(literal|delta) ([0-9]+)\n([A-Za-z0-9!#$%&()*+-;<=>?@^_`{|}~\\n]*?)\n\n';
-    if ($contents !~ m"\nGIT binary patch\n$gitPatchRegExp$gitPatchRegExp\Z") {
-        die "$fullPath: unknown git binary patch format"
+    if ($contents !~ m"\nGIT binary patch\n$gitPatchRegExp$gitPatchRegExp(\Z|-- \n)") {
+        return ();
     }
 
     my $binaryChunkType = $1;

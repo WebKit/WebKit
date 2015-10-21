@@ -250,6 +250,9 @@ sub handleGitBinaryChange($$)
     my $contents = $diffHashRef->{svnConvertedText};
 
     my ($binaryChunkType, $binaryChunk, $reverseBinaryChunkType, $reverseBinaryChunk) = decodeGitBinaryPatch($contents, $fullPath);
+    if (!$binaryChunkType) {
+        die "$fullPath: unknown git binary patch format";
+    }
 
     my $isFileAddition = $diffHashRef->{isNew};
     my $isFileDeletion = $diffHashRef->{isDeletion};
