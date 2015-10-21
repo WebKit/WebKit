@@ -96,6 +96,7 @@ namespace WebCore {
     macro(durationchange) \
     macro(emptied) \
     macro(end) \
+    macro(endEvent) \
     macro(ended) \
     macro(enter) \
     macro(error) \

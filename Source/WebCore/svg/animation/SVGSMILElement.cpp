@@ -480,6 +480,8 @@ void SVGSMILElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         parseBeginOrEnd(value.string(), End);
         if (inDocument())
             connectConditions();
+    } else if (name == SVGNames::onendAttr) {
+        setAttributeEventListener(eventNames().endEventEvent, name, value);
     } else
         SVGElement::parseAttribute(name, value);
 }
