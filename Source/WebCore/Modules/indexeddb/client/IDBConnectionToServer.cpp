@@ -113,6 +113,26 @@ void IDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& tr
     transaction->didCommit(error);
 }
 
+void IDBConnectionToServer::abortTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::abortTransaction");
+    ASSERT(!m_abortingTransactions.contains(transaction.info().identifier()));
+    m_abortingTransactions.set(transaction.info().identifier(), &transaction);
+
+    auto identifier = transaction.info().identifier();
+    m_delegate->abortTransaction(identifier);
+}
+
+void IDBConnectionToServer::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didAbortTransaction");
+
+    auto transaction = m_abortingTransactions.take(transactionIdentifier);
+    ASSERT(transaction);
+
+    transaction->didAbort(error);
+}
+
 void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, uint64_t requestedVersion)
 {
     LOG(IndexedDB, "IDBConnectionToServer::fireVersionChangeEvent");

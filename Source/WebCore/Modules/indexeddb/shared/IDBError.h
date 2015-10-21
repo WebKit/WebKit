@@ -36,6 +36,9 @@ enum class IDBExceptionCode {
     None = 0,
     Unknown,
     VersionError,
+
+    // Indexed DB existing exception codes with IDB-specific error messages:
+    InvalidStateError,
 };
 
 class IDBError {

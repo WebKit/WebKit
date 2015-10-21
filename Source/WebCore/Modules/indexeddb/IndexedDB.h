@@ -43,6 +43,7 @@ enum class TransactionState {
     Unstarted,
     Running,
     Committing,
+    Aborting,
     Finished,
 };
 

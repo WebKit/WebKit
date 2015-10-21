@@ -175,6 +175,17 @@ void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
     didCommitOrAbortTransaction(transaction);
 }
 
+void IDBDatabase::abortTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBDatabase::abortTransaction");
+
+    auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
+    ASSERT(refTransaction);
+    m_abortingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
+
+    m_serverConnection->abortTransaction(transaction);
+}
+
 void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBDatabase::didAbortTransaction");
@@ -187,11 +198,22 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
 
     if (m_versionChangeTransaction == &transaction)
         m_versionChangeTransaction = nullptr;
-    
-    ASSERT(m_activeTransactions.contains(transaction.info().identifier()) || m_committingTransactions.contains(transaction.info().identifier()));
+
+#ifndef NDBEBUG
+    unsigned count = 0;
+    if (m_activeTransactions.contains(transaction.info().identifier()))
+        ++count;
+    if (m_committingTransactions.contains(transaction.info().identifier()))
+        ++count;
+    if (m_abortingTransactions.contains(transaction.info().identifier()))
+        ++count;
+
+    ASSERT(count == 1);
+#endif
 
     m_activeTransactions.remove(transaction.info().identifier());
     m_committingTransactions.remove(transaction.info().identifier());
+    m_abortingTransactions.remove(transaction.info().identifier());
 }
 
 void IDBDatabase::fireVersionChangeEvent(uint64_t requestedVersion)

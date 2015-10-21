@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "Logging.h"
+
 namespace WebCore {
 namespace IDBServer {
 
@@ -51,6 +53,53 @@ const IDBDatabaseInfo& MemoryIDBBackingStore::getOrEstablishDatabaseInfo()
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(m_identifier.databaseName(), 0);
 
     return *m_databaseInfo;
+}
+
+void MemoryIDBBackingStore::setDatabaseInfo(const IDBDatabaseInfo& info)
+{
+    // It is not valid to directly set database info on a backing store that hasn't already set its own database info.
+    ASSERT(m_databaseInfo);
+
+    m_databaseInfo = std::make_unique<IDBDatabaseInfo>(info);
+}
+
+IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::beginTransaction");
+
+    if (m_transactions.contains(info.identifier()))
+        return IDBError(IDBExceptionCode::InvalidStateError, "Backing store asked to create transaction it already has a record of");
+
+    auto transaction = MemoryBackingStoreTransaction::create(*this, info);
+    m_transactions.set(info.identifier(), WTF::move(transaction));
+
+    return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::abortTransaction");
+
+    auto transaction = m_transactions.take(transactionIdentifier);
+    if (!transaction)
+        return IDBError(IDBExceptionCode::InvalidStateError, "Backing store asked to abort transaction it didn't have record of");
+
+    transaction->abort();
+
+    return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::commitTransaction");
+
+    auto transaction = m_transactions.take(transactionIdentifier);
+    if (!transaction)
+        return IDBError(IDBExceptionCode::InvalidStateError, "Backing store asked to commit transaction it didn't have record of");
+
+    transaction->commit();
+
+    return IDBError();
 }
 
 } // namespace IDBServer

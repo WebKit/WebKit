@@ -44,6 +44,7 @@ namespace WebCore {
 
 class IDBError;
 class IDBRequestData;
+class IDBTransactionInfo;
 
 namespace IDBServer {
 
@@ -65,6 +66,7 @@ public:
     IDBServer& server() { return m_server; }
 
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
+    void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
 
@@ -83,10 +85,13 @@ private:
     // Database thread operations
     void openBackingStore(const IDBDatabaseIdentifier&);
     void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+    void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
+    void beginTransactionInBackingStore(const IDBTransactionInfo&);
 
     // Main thread callbacks
     void didOpenBackingStore(const IDBDatabaseInfo&);
     void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&);
+    void didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError&);
 
     void performErrorCallback(uint64_t callbackIdentifier, const IDBError&);
 

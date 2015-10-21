@@ -30,6 +30,9 @@
 
 #include "IDBBackingStore.h"
 #include "IDBDatabaseIdentifier.h"
+#include "IDBResourceIdentifier.h"
+#include "MemoryBackingStoreTransaction.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -42,12 +45,20 @@ public:
     virtual ~MemoryIDBBackingStore() override final;
 
     virtual const IDBDatabaseInfo& getOrEstablishDatabaseInfo() override final;
-    
+    void setDatabaseInfo(const IDBDatabaseInfo&);
+
+    virtual IDBError beginTransaction(const IDBTransactionInfo&) override final;
+    virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) override final;
+    virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) override final;
+
 private:
     MemoryIDBBackingStore(const IDBDatabaseIdentifier&);
 
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
+
+    HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;
+
 };
 
 } // namespace IDBServer

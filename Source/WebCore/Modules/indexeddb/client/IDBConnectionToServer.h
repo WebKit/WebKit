@@ -61,6 +61,9 @@ public:
     void commitTransaction(IDBTransaction&);
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
+    void abortTransaction(IDBTransaction&);
+    void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+
     void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, uint64_t requestedVersion);
 
     void databaseConnectionClosed(IDBDatabase&);
@@ -75,6 +78,7 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::IDBOpenDBRequest>> m_openDBRequestMap;
     HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
 };
 
 } // namespace IDBClient

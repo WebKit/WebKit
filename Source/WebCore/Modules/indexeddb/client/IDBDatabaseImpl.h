@@ -75,6 +75,7 @@ public:
     Ref<IDBTransaction> startVersionChangeTransaction(const IDBTransactionInfo&);
     void commitTransaction(IDBTransaction&);
     void didCommitTransaction(IDBTransaction&);
+    void abortTransaction(IDBTransaction&);
     void didAbortTransaction(IDBTransaction&);
 
     void fireVersionChangeEvent(uint64_t requestedVersion);
@@ -96,6 +97,7 @@ private:
     RefPtr<IDBTransaction> m_versionChangeTransaction;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
 };
 
 } // namespace IDBClient

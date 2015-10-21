@@ -31,6 +31,7 @@
 #include "DOMError.h"
 #include "EventQueue.h"
 #include "IDBDatabaseImpl.h"
+#include "IDBError.h"
 #include "IDBEventDispatcher.h"
 #include "IDBObjectStore.h"
 #include "Logging.h"
@@ -51,8 +52,13 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     , m_operationTimer(*this, &IDBTransaction::operationTimerFired)
 
 {
+    m_activationTimer = std::make_unique<Timer>(*this, &IDBTransaction::activationTimerFired);
+    m_activationTimer->startOneShot(0);
+
+    if (m_info.mode() == IndexedDB::TransactionMode::VersionChange)
+        m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_database->info());
+
     suspendIfNeeded();
-    scheduleOperationTimer();
     m_state = IndexedDB::TransactionState::Running;
 }
 
@@ -91,9 +97,18 @@ RefPtr<IDBObjectStore> IDBTransaction::objectStore(const String&, ExceptionCode&
     return nullptr;
 }
 
-void IDBTransaction::abort(ExceptionCode&)
+void IDBTransaction::abort(ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBTransaction::abort");
+
+    if (isFinishedOrFinishing()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    m_state = IndexedDB::TransactionState::Aborting;
+
+    m_database->abortTransaction(*this);
 }
 
 const char* IDBTransaction::activeDOMObjectName() const
@@ -114,6 +129,19 @@ bool IDBTransaction::hasPendingActivity() const
 bool IDBTransaction::isActive() const
 {
     return m_state == IndexedDB::TransactionState::Running;
+}
+
+bool IDBTransaction::isFinishedOrFinishing() const
+{
+    return m_state == IndexedDB::TransactionState::Committing
+        || m_state == IndexedDB::TransactionState::Aborting
+        || m_state == IndexedDB::TransactionState::Finished;
+}
+
+void IDBTransaction::activationTimerFired()
+{
+    scheduleOperationTimer();
+    m_activationTimer = nullptr;
 }
 
 void IDBTransaction::scheduleOperationTimer()
@@ -149,6 +177,20 @@ void IDBTransaction::commit()
     m_state = IndexedDB::TransactionState::Committing;
 
     m_database->commitTransaction(*this);
+}
+
+void IDBTransaction::didAbort(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBTransaction::didAbort");
+
+    ASSERT(m_state == IndexedDB::TransactionState::Aborting || m_state == IndexedDB::TransactionState::Running);
+
+    m_database->didAbortTransaction(*this);
+
+    m_idbError = error;
+    fireOnAbort();
+
+    m_state = IndexedDB::TransactionState::Finished;
 }
 
 void IDBTransaction::didCommit(const IDBError& error)

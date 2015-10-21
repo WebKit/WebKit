@@ -57,6 +57,7 @@ public:
     // Operations requested by the client.
     void openDatabase(const IDBRequestData&);
     void deleteDatabase(const IDBRequestData&);
+    void abortTransaction(const IDBResourceIdentifier&);
     void commitTransaction(const IDBResourceIdentifier&);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 

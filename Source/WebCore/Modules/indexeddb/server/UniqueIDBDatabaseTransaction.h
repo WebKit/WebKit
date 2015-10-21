@@ -34,6 +34,9 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class IDBDatabaseInfo;
+
 namespace IDBServer {
 
 class UniqueIDBDatabaseConnection;
@@ -47,6 +50,9 @@ public:
     UniqueIDBDatabaseConnection& databaseConnection() { return m_databaseConnection.get(); }
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
 
+    IDBDatabaseInfo* originalDatabaseInfo() const;
+
+    void abort();
     void commit();
 
 private:
@@ -54,6 +60,8 @@ private:
 
     Ref<UniqueIDBDatabaseConnection> m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
+
+    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 };
 
 } // namespace IDBServer

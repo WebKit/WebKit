@@ -56,6 +56,7 @@ public:
     // IDBConnectionToServer
     virtual void deleteDatabase(IDBRequestData&) override final;
     virtual void openDatabase(IDBRequestData&) override final;
+    virtual void abortTransaction(IDBResourceIdentifier&) override final;
     virtual void commitTransaction(IDBResourceIdentifier&) override final;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
 
@@ -63,6 +64,7 @@ public:
     virtual uint64_t identifier() const override;
     virtual void didDeleteDatabase(const IDBResultData&) override final;
     virtual void didOpenDatabase(const IDBResultData&) override final;
+    virtual void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
     virtual void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
     virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, uint64_t requestedVersion) override final;
 

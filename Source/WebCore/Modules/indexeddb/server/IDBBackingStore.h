@@ -29,8 +29,13 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseInfo.h"
+#include "IDBError.h"
 
 namespace WebCore {
+
+class IDBResourceIdentifier;
+class IDBTransactionInfo;
+
 namespace IDBServer {
 
 class IDBBackingStore {
@@ -38,6 +43,10 @@ public:
     virtual ~IDBBackingStore() { }
 
     virtual const IDBDatabaseInfo& getOrEstablishDatabaseInfo() = 0;
+
+    virtual IDBError beginTransaction(const IDBTransactionInfo&) = 0;
+    virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
+    virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
 };
 
 } // namespace IDBServer

@@ -42,6 +42,7 @@ public:
     virtual uint64_t identifier() const = 0;
     virtual void deleteDatabase(IDBRequestData&) = 0;
     virtual void openDatabase(IDBRequestData&) = 0;
+    virtual void abortTransaction(IDBResourceIdentifier&) = 0;
     virtual void commitTransaction(IDBResourceIdentifier&) = 0;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;
 

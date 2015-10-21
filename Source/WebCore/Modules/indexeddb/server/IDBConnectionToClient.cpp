@@ -58,6 +58,11 @@ void IDBConnectionToClient::didOpenDatabase(const IDBResultData& result)
     m_delegate->didOpenDatabase(result);
 }
 
+void IDBConnectionToClient::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    m_delegate->didAbortTransaction(transactionIdentifier, error);
+}
+
 void IDBConnectionToClient::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     m_delegate->didCommitTransaction(transactionIdentifier, error);

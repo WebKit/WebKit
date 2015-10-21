@@ -43,6 +43,10 @@ static const String& idbErrorName(IDBExceptionCode code)
         static NeverDestroyed<String> entry = ASCIILiteral("VersionError");
         return entry;
     }
+    case IDBExceptionCode::InvalidStateError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("InvalidStateError");
+        return entry;
+    }
     case IDBExceptionCode::None:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -54,12 +58,16 @@ static const String& idbErrorDescription(IDBExceptionCode code)
 {
     switch (code) {
     case IDBExceptionCode::Unknown: {
-        NeverDestroyed<String> entry = ASCIILiteral("Operation failed for reasons unrelated to the database itself and not covered by any other errors.");
+        static NeverDestroyed<String> entry = ASCIILiteral("Operation failed for reasons unrelated to the database itself and not covered by any other errors.");
         return entry.get();
     }
     case IDBExceptionCode::VersionError: {
-        NeverDestroyed<String> entry = ASCIILiteral("An attempt was made to open a database using a lower version than the existing version.");
+        static NeverDestroyed<String> entry = ASCIILiteral("An attempt was made to open a database using a lower version than the existing version.");
         return entry.get();
+    }
+    case IDBExceptionCode::InvalidStateError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("Operation was called on an object on which it is not allowed or at a time when it is not allowed.");
+        return entry;
     }
     case IDBExceptionCode::None:
         RELEASE_ASSERT_NOT_REACHED();

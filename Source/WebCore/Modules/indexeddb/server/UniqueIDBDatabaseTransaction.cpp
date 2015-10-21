@@ -44,6 +44,9 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     : m_databaseConnection(connection)
     , m_transactionInfo(info)
 {
+    if (m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange)
+        m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_databaseConnection->database().info());
+
     m_databaseConnection->database().server().registerTransaction(*this);
 }
 
@@ -51,6 +54,23 @@ UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction()
 {
     m_databaseConnection->database().transactionDestroyed(*this);
     m_databaseConnection->database().server().unregisterTransaction(*this);
+}
+
+IDBDatabaseInfo* UniqueIDBDatabaseTransaction::originalDatabaseInfo() const
+{
+    ASSERT(m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange);
+    return m_originalDatabaseInfo.get();
+}
+
+void UniqueIDBDatabaseTransaction::abort()
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort");
+
+    RefPtr<UniqueIDBDatabaseTransaction> self(this);
+    m_databaseConnection->database().abortTransaction(*this, [this, self](const IDBError& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort (callback)");
+        m_databaseConnection->didAbortTransaction(*this, error);
+    });
 }
 
 void UniqueIDBDatabaseTransaction::commit()

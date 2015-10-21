@@ -142,6 +142,20 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     connection->didDeleteDatabase(result);
 }
 
+void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
+{
+    LOG(IndexedDB, "IDBServer::abortTransaction");
+
+    auto transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction) {
+        // If there is no transaction there is nothing to abort.
+        // We also have no access to a connection over which to message failure-to-abort.
+        return;
+    }
+
+    transaction->abort();
+}
+
 void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::commitTransaction");

@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseInfo.h"
 #include "IDBError.h"
 #include "IDBTransaction.h"
 #include "IDBTransactionInfo.h"
@@ -68,16 +69,19 @@ public:
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
 
+    void didAbort(const IDBError&);
     void didCommit(const IDBError&);
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
 
     bool isActive() const;
+    bool isFinishedOrFinishing() const;
     void commit();
 
     void scheduleOperationTimer();
     void operationTimerFired();
+    void activationTimerFired();
 
     void fireOnComplete();
     void fireOnAbort();
@@ -85,11 +89,13 @@ private:
 
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
+    std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
     IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Unstarted };
     IDBError m_idbError;
 
     Timer m_operationTimer;
+    std::unique_ptr<Timer> m_activationTimer;
 };
 
 } // namespace IDBClient
