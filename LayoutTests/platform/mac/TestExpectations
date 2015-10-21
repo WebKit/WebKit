@@ -1350,4 +1350,4 @@ webkit.org/b/149930 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failu
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass ImageOnlyFailure ]
 
 # USE_TYPO_METRICS is not implemented on mac.
-webkit.org/b/131839 fonts/use-typo-metrics-1.html [ Failure ]
+webkit.org/b/131839 fonts/use-typo-metrics-1.html [ ImageOnlyFailure ]
