@@ -43,8 +43,8 @@ static inline bool fallbackURLLongerThan(const std::pair<URL, URL>& lhs, const s
 }
 
 ApplicationCache::ApplicationCache()
-    : m_group(0)
-    , m_manifest(0)
+    : m_group(nullptr)
+    , m_manifest(nullptr)
     , m_estimatedSizeInStorage(0)
     , m_storageID(0)
 {
@@ -136,7 +136,7 @@ ApplicationCacheResource* ApplicationCache::resourceForRequest(const ResourceReq
 {
     // We only care about HTTP/HTTPS GET requests.
     if (!requestIsHTTPOrHTTPSGet(request))
-        return 0;
+        return nullptr;
 
     URL url(request.url());
     if (url.hasFragmentIdentifier())

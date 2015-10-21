@@ -326,7 +326,7 @@ TextResourceDecoder::TextResourceDecoder(const String& mimeType, const TextEncod
     : m_contentType(determineContentType(mimeType))
     , m_encoding(defaultEncoding(m_contentType, specifiedDefaultEncoding))
     , m_source(DefaultEncoding)
-    , m_hintEncoding(0)
+    , m_hintEncoding(nullptr)
     , m_checkedForBOM(false)
     , m_checkedForCSSCharset(false)
     , m_checkedForHeadCharset(false)

@@ -624,7 +624,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
 
     // Do not drop the document before the ScriptController and view are cleared
     // as some destructors might still try to access the document.
-    m_frame.setDocument(0);
+    m_frame.setDocument(nullptr);
 
     subframeLoader().clear();
 
@@ -1622,7 +1622,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
     // If no new load is in progress, we should clear the provisional item from history
     // before we call stopLoading.
     if (clearProvisionalItemPolicy == ShouldClearProvisionalItem)
-        history().setProvisionalItem(0);
+        history().setProvisionalItem(nullptr);
 
     for (RefPtr<Frame> child = m_frame.tree().firstChild(); child; child = child->tree().nextSibling())
         child->loader().stopAllLoaders(clearProvisionalItemPolicy);
@@ -1631,7 +1631,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
     if (m_documentLoader)
         m_documentLoader->stopLoading();
 
-    setProvisionalDocumentLoader(0);
+    setProvisionalDocumentLoader(nullptr);
 
     m_checkTimer.stop();
 
@@ -1744,7 +1744,7 @@ void FrameLoader::setState(FrameState newState)
 
 void FrameLoader::clearProvisionalLoad()
 {
-    setProvisionalDocumentLoader(0);
+    setProvisionalDocumentLoader(nullptr);
     m_progressTracker->progressCompleted();
     setState(FrameStateComplete);
 }
@@ -1908,7 +1908,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
         m_documentLoader->stopLoadingPlugIns();
 
     setDocumentLoader(m_provisionalDocumentLoader.get());
-    setProvisionalDocumentLoader(0);
+    setProvisionalDocumentLoader(nullptr);
 
     if (pdl != m_documentLoader) {
         ASSERT(m_state == FrameStateComplete);
@@ -2434,7 +2434,7 @@ void FrameLoader::closeAndRemoveChild(Frame* child)
 {
     child->tree().detachFromParent();
 
-    child->setView(0);
+    child->setView(nullptr);
     if (child->ownerElement() && child->page())
         child->page()->decrementSubframeCount();
     child->willDetachPage();
@@ -2517,7 +2517,7 @@ void FrameLoader::detachFromParent()
         parent->loader().closeAndRemoveChild(&m_frame);
         parent->loader().scheduleCheckCompleted();
     } else {
-        m_frame.setView(0);
+        m_frame.setView(nullptr);
         m_frame.willDetachPage();
         m_frame.detachFromPage();
     }
@@ -2526,7 +2526,7 @@ void FrameLoader::detachFromParent()
 void FrameLoader::detachViewsAndDocumentLoader()
 {
     m_client.detachedFromParent2();
-    setDocumentLoader(0);
+    setDocumentLoader(nullptr);
     m_client.detachedFromParent3();
 }
     
@@ -2786,7 +2786,7 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     // If we have a provisional request for a different document, a fragment scroll should cancel it.
     if (m_provisionalDocumentLoader && !equalIgnoringFragmentIdentifier(m_provisionalDocumentLoader->request().url(), request.url())) {
         m_provisionalDocumentLoader->stopLoading();
-        setProvisionalDocumentLoader(0);
+        setProvisionalDocumentLoader(nullptr);
     }
 
     bool isRedirect = m_quickRedirectComing || policyChecker().loadType() == FrameLoadType::RedirectWithLockedBackForwardList;
@@ -2954,7 +2954,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         if (m_quickRedirectComing)
             clientRedirectCancelledOrFinished(false);
 
-        setPolicyDocumentLoader(0);
+        setPolicyDocumentLoader(nullptr);
 
         // If the navigation request came from the back/forward menu, and we punt on it, we have the 
         // problem that we have optimistically moved the b/f cursor already, so move it back.  For sanity, 
@@ -2983,7 +2983,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     m_loadType = type;
     setState(FrameStateProvisional);
 
-    setPolicyDocumentLoader(0);
+    setPolicyDocumentLoader(nullptr);
 
     if (isBackForwardLoadType(type)) {
         auto& diagnosticLoggingClient = m_frame.mainFrame().diagnosticLoggingClient();

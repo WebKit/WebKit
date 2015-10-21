@@ -47,7 +47,7 @@ bool IconDatabaseBase::open(const String&, const String&)
     return false;
 }
 
-static IconDatabaseBase* vmbase = 0;
+static IconDatabaseBase* vmbase = nullptr;
 
 // Functions to get/set the global icon database.
 IconDatabaseBase& iconDatabase()
@@ -55,7 +55,7 @@ IconDatabaseBase& iconDatabase()
     if (vmbase)
         return *vmbase;
 
-    static IconDatabaseBase* defaultDatabase = 0;        
+    static IconDatabaseBase* defaultDatabase = nullptr;
     if (!defaultDatabase)
         defaultDatabase = new IconDatabase;
 

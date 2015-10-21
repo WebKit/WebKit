@@ -150,7 +150,7 @@ void DocumentThreadableLoader::cancel()
         didFail(m_resource->identifier(), error);
     }
     clearResource();
-    m_client = 0;
+    m_client = nullptr;
 }
 
 void DocumentThreadableLoader::setDefersLoading(bool value)
@@ -166,7 +166,7 @@ void DocumentThreadableLoader::clearResource()
     // this DocumentThreadableLoader. Save off a copy of m_resource and clear it to
     // prevent the reentrancy.
     if (CachedResourceHandle<CachedRawResource> resource = m_resource) {
-        m_resource = 0;
+        m_resource = nullptr;
         resource->removeClient(this);
     }
 }

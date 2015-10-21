@@ -31,7 +31,7 @@
 namespace WebCore {
 
 CachedResourceHandleBase::CachedResourceHandleBase()
-    : m_resource(0)
+    : m_resource(nullptr)
 {
 }
 

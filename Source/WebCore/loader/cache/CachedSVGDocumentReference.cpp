@@ -36,7 +36,7 @@ namespace WebCore {
 
 CachedSVGDocumentReference::CachedSVGDocumentReference(const String& url)
     : m_url(url)
-    , m_document(0)
+    , m_document(nullptr)
     , m_loadRequested(false)
 {
 }

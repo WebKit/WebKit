@@ -49,7 +49,7 @@ DOMApplicationCache::DOMApplicationCache(Frame* frame)
 void DOMApplicationCache::disconnectFrameForPageCache()
 {
     if (ApplicationCacheHost* cacheHost = applicationCacheHost())
-        cacheHost->setDOMApplicationCache(0);
+        cacheHost->setDOMApplicationCache(nullptr);
     DOMWindowProperty::disconnectFrameForPageCache();
 }
 
@@ -63,14 +63,14 @@ void DOMApplicationCache::reconnectFrameFromPageCache(Frame* frame)
 void DOMApplicationCache::willDestroyGlobalObjectInFrame()
 {
     if (ApplicationCacheHost* cacheHost = applicationCacheHost())
-        cacheHost->setDOMApplicationCache(0);
+        cacheHost->setDOMApplicationCache(nullptr);
     DOMWindowProperty::willDestroyGlobalObjectInFrame();
 }
 
 ApplicationCacheHost* DOMApplicationCache::applicationCacheHost() const
 {
     if (!m_frame || !m_frame->loader().documentLoader())
-        return 0;
+        return nullptr;
     return m_frame->loader().documentLoader()->applicationCacheHost();
 }
 
@@ -107,7 +107,7 @@ ScriptExecutionContext* DOMApplicationCache::scriptExecutionContext() const
 {
     if (m_frame)
         return m_frame->document();
-    return 0;
+    return nullptr;
 }
 
 const AtomicString& DOMApplicationCache::toEventType(ApplicationCacheHost::EventID id)

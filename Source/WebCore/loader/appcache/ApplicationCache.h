@@ -72,7 +72,7 @@ public:
 
     void setFallbackURLs(const FallbackURLVector&);
     const FallbackURLVector& fallbackURLs() const { return m_fallbackURLs; }
-    bool urlMatchesFallbackNamespace(const URL&, URL* fallbackURL = 0);
+    bool urlMatchesFallbackNamespace(const URL&, URL* fallbackURL = nullptr);
     
 #ifndef NDEBUG
     void dump();

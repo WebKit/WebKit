@@ -49,7 +49,7 @@ const char* CachedRawResource::calculateIncrementalDataChunk(SharedBuffer* data,
 {
     incrementalDataLength = 0;
     if (!data)
-        return 0;
+        return nullptr;
 
     unsigned previousDataLength = encodedSize();
     ASSERT(data->size() >= previousDataLength);

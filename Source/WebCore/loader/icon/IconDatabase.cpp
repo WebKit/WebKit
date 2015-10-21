@@ -225,7 +225,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // We should go our of our way to only copy it if we have to store it
     
     if (!isOpen() || !documentCanHaveIcon(pageURLOriginal))
-        return 0;
+        return nullptr;
 
     LockHolder locker(m_urlAndIconLock);
 
@@ -250,7 +250,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
         if (!m_iconURLImportComplete)
             m_pageURLsInterestedInIcons.add(pageURLCopy);
         
-        return 0;
+        return nullptr;
     }
 
     IconRecord* iconRecord = pageRecord->iconRecord();
@@ -259,14 +259,14 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // In this case, the pageURL is already in the set to alert the client when the iconURL mapping is complete so
     // we can just bail now
     if (!m_iconURLImportComplete && !iconRecord)
-        return 0;
+        return nullptr;
 
     // Assuming we're done initializing and cleanup is allowed,
     // the only way we should *not* have an icon record is if this pageURL is retained but has no icon yet.
     ASSERT(iconRecord || databaseCleanupCounter || m_retainedPageURLs.contains(pageURLOriginal));
     
     if (!iconRecord)
-        return 0;
+        return nullptr;
         
     // If it's a new IconRecord object that doesn't have its imageData set yet,
     // mark it to be read by the background thread
@@ -278,13 +278,13 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
         m_pageURLsInterestedInIcons.add(pageURLCopy);
         m_iconsPendingReading.add(iconRecord);
         wakeSyncThread();
-        return 0;
+        return nullptr;
     }
     
     // If the size parameter was (0, 0) that means the caller of this method just wanted the read from disk to be kicked off
     // and isn't actually interested in the image return value
     if (size == IntSize(0, 0))
-        return 0;
+        return nullptr;
         
     // PARANOID DISCUSSION: This method makes some assumptions.  It returns a WebCore::image which the icon database might dispose of at anytime in the future,
     // and Images aren't ref counted.  So there is no way for the client to guarantee continued existence of the image.
@@ -303,7 +303,7 @@ PassNativeImagePtr IconDatabase::synchronousNativeIconForPageURL(const String& p
 {
     Image* icon = synchronousIconForPageURL(pageURLOriginal, size);
     if (!icon)
-        return 0;
+        return nullptr;
 
     LockHolder locker(m_urlAndIconLock);
     return icon->nativeImageForCurrentFrame();
@@ -541,7 +541,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
     if (!isOpen() || iconURLOriginal.isEmpty())
         return;
     
-    RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(0);
+    RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(nullptr);
     String iconURL = iconURLOriginal.isolatedCopy();
     
     Vector<String> pageURLs;
@@ -905,7 +905,7 @@ PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
     ASSERT(!m_urlAndIconLock.tryLock());
 
     if (!documentCanHaveIcon(pageURL))
-        return 0;
+        return nullptr;
 
     PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURL);
     
@@ -922,7 +922,7 @@ PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
         // Mark the URL as "interested in the result of the import" then bail
         if (!pageRecord->iconRecord()) {
             m_pageURLsPendingImport.add(pageURL);
-            return 0;
+            return nullptr;
         }
     }
 
@@ -1794,7 +1794,7 @@ void* IconDatabase::cleanupSyncThread()
 #endif
     
     m_syncThreadRunning = false;
-    return 0;
+    return nullptr;
 }
 
 // readySQLiteStatement() handles two things

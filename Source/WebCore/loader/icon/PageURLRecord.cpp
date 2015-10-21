@@ -41,7 +41,7 @@ PageURLRecord::PageURLRecord(const String& pageURL)
 
 PageURLRecord::~PageURLRecord()
 {
-    setIconRecord(0);
+    setIconRecord(nullptr);
 }
 
 void PageURLRecord::setIconRecord(PassRefPtr<IconRecord> icon)

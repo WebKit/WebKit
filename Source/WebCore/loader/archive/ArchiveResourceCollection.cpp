@@ -73,7 +73,7 @@ ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url
 {
     ArchiveResource* resource = m_subresources.get(url);
     if (!resource)
-        return 0;
+        return nullptr;
         
     return resource;
 }

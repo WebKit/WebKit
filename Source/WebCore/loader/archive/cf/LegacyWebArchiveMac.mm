@@ -61,7 +61,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
     NSURLResponse *nsResponse = response.nsURLResponse();
     ASSERT(nsResponse);
     if (!nsResponse)
-        return 0;
+        return nullptr;
 
     CFMutableDataRef responseData = CFDataCreateMutable(0, 0);
 

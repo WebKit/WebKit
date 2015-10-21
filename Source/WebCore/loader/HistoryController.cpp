@@ -870,7 +870,7 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
         m_currentItem->setURLString(urlString);
     m_currentItem->setTitle(title);
     m_currentItem->setStateObject(stateObject);
-    m_currentItem->setFormData(0);
+    m_currentItem->setFormData(nullptr);
     m_currentItem->setFormContentType(String());
 
     if (m_frame.page()->usesEphemeralSession())

@@ -1152,7 +1152,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
        
           if (!state.now)
           {
-            time_t now = time(NULL);
+            time_t now = time(nullptr);
             state.now = now * 1000000.0;
 
             // FIXME: This code has the year 2038 bug
@@ -1617,7 +1617,7 @@ FTPEntryType parseOneFTPLine(const char* line, ListState& state, ListResult& res
                 result.modifiedTime.tm_min = atoi(p+3);
                 if (!state.now)
                 {
-                  time_t now = time(NULL);
+                  time_t now = time(nullptr);
                   state.now = now * 1000000.0;
                   
                   // FIXME: This code has the year 2038 bug

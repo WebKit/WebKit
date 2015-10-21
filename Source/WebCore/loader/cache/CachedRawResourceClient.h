@@ -42,7 +42,7 @@ public:
     virtual void dataReceived(CachedResource*, const char* /* data */, int /* length */) { }
     virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) { }
 #if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(CachedResource*, size_t /* requestedSize */, size_t& /* actualSize */) { return 0; }
+    virtual char* getOrCreateReadBuffer(CachedResource*, size_t /* requestedSize */, size_t& /* actualSize */) { return nullptr; }
 #endif
 };
 

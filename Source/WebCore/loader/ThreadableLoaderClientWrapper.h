@@ -48,7 +48,7 @@ public:
     void clearClient()
     {
         m_done = true;
-        m_client = 0;
+        m_client = nullptr;
     }
 
     bool done() const

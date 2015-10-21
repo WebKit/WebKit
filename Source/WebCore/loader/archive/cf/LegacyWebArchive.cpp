@@ -95,7 +95,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
         CFDictionarySetValue(propertyList.get(), LegacyWebArchiveResourceURLKey, cfURL.get());
     else {
         LOG(Archives, "LegacyWebArchive - NULL resource URL is invalid - returning null property list");
-        return 0;
+        return nullptr;
     }
 
     // FrameName should be left out if empty for subresources, but always included for main resources
@@ -129,7 +129,7 @@ RetainPtr<CFDictionaryRef> LegacyWebArchive::createPropertyListRepresentation(Ar
     RetainPtr<CFDictionaryRef> mainResourceDict = createPropertyListRepresentation(archive->mainResource(), MainResource);
     ASSERT(mainResourceDict);
     if (!mainResourceDict)
-        return 0;
+        return nullptr;
     CFDictionarySetValue(propertyList.get(), LegacyWebArchiveMainResourceKey, mainResourceDict.get());
 
     RetainPtr<CFMutableArrayRef> subresourcesArray = adoptCF(CFArrayCreateMutable(0, archive->subresources().size(), &kCFTypeArrayCallBacks));
@@ -175,36 +175,36 @@ PassRefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dic
 {
     ASSERT(dictionary);
     if (!dictionary)
-        return 0;
+        return nullptr;
         
     CFDataRef resourceData = static_cast<CFDataRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceDataKey));
     if (resourceData && CFGetTypeID(resourceData) != CFDataGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Resource data is not of type CFData, cannot create invalid resource");
-        return 0;
+        return nullptr;
     }
     
     CFStringRef frameName = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceFrameNameKey));
     if (frameName && CFGetTypeID(frameName) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Frame name is not of type CFString, cannot create invalid resource");
-        return 0;
+        return nullptr;
     }
     
     CFStringRef mimeType = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceMIMETypeKey));
     if (mimeType && CFGetTypeID(mimeType) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - MIME type is not of type CFString, cannot create invalid resource");
-        return 0;
+        return nullptr;
     }
     
     CFStringRef url = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
     if (url && CFGetTypeID(url) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - URL is not of type CFString, cannot create invalid resource");
-        return 0;
+        return nullptr;
     }
     
     CFStringRef textEncoding = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceTextEncodingNameKey));
     if (textEncoding && CFGetTypeID(textEncoding) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Text encoding is not of type CFString, cannot create invalid resource");
-        return 0;
+        return nullptr;
     }
 
     ResourceResponse response;
@@ -213,13 +213,13 @@ PassRefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dic
     if (resourceResponseData) {
         if (CFGetTypeID(resourceResponseData) != CFDataGetTypeID()) {
             LOG(Archives, "LegacyWebArchive - Resource response data is not of type CFData, cannot create invalid resource");
-            return 0;
+            return nullptr;
         }
         
         CFStringRef resourceResponseVersion = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceResponseVersionKey));
         if (resourceResponseVersion && CFGetTypeID(resourceResponseVersion) != CFStringGetTypeID()) {
             LOG(Archives, "LegacyWebArchive - Resource response version is not of type CFString, cannot create invalid resource");
-            return 0;
+            return nullptr;
         }
         
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
@@ -237,7 +237,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(PassRefPtr<ArchiveResource
 {
     ASSERT(mainResource);
     if (!mainResource)
-        return 0;
+        return nullptr;
     
     RefPtr<LegacyWebArchive> archive = create();
     archive->setMainResource(mainResource);
@@ -264,13 +264,13 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, SharedBuffer* 
         
     ASSERT(data);
     if (!data)
-        return 0;
+        return nullptr;
         
     RetainPtr<CFDataRef> cfData = data->createCFData();
     if (!cfData)
-        return 0;
+        return nullptr;
         
-    CFErrorRef error = 0;
+    CFErrorRef error = nullptr;
     
     RetainPtr<CFDictionaryRef> plist = adoptCF(static_cast<CFDictionaryRef>(CFPropertyListCreateWithData(0, cfData.get(), kCFPropertyListImmutable, 0, &error)));
     if (!plist) {
@@ -281,16 +281,16 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, SharedBuffer* 
 #endif
         if (error)
             CFRelease(error);
-        return 0;
+        return nullptr;
     }
     
     if (CFGetTypeID(plist.get()) != CFDictionaryGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - Archive property list is not the expected CFDictionary, aborting invalid WebArchive");
-        return 0;
+        return nullptr;
     }
     
     if (!archive->extract(plist.get()))
-        return 0;
+        return nullptr;
 
     return archive.release();
 }
@@ -381,7 +381,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
     ASSERT(propertyList);
     if (!propertyList) {
         LOG(Archives, "LegacyWebArchive - Failed to create property list for archive, returning no data");
-        return 0;
+        return nullptr;
     }
 
     RetainPtr<CFWriteStreamRef> stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
@@ -396,7 +396,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
 
     if (!plistData) {
         LOG(Archives, "LegacyWebArchive - Failed to convert property list into raw data, returning no data");
-        return 0;
+        return nullptr;
     }
 
     return plistData;
@@ -415,7 +415,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromMacArchivedData(CFD
 RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const ResourceResponse& response)
 {
     // FIXME: Write out the "new" format described in createResourceResponseFromPropertyListData once we invent it.
-    return 0;
+    return nullptr;
 }
 
 #endif
@@ -455,7 +455,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
     DocumentLoader* documentLoader = frame->loader().documentLoader();
 
     if (!documentLoader)
-        return 0;
+        return nullptr;
         
     Vector<RefPtr<LegacyWebArchive>> subframeArchives;
     

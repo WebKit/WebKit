@@ -31,7 +31,7 @@ class FrameNetworkingContext : public NetworkingContext {
 public:
     void invalidate()
     {
-        m_frame = 0;
+        m_frame = nullptr;
     }
 
     virtual bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override

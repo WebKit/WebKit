@@ -58,7 +58,7 @@ ApplicationCacheGroup::ApplicationCacheGroup(Ref<ApplicationCacheStorage>&& stor
     , m_downloadingPendingMasterResourceLoadersCount(0)
     , m_progressTotal(0)
     , m_progressDone(0)
-    , m_frame(0)
+    , m_frame(nullptr)
     , m_storageID(0)
     , m_isObsolete(false)
     , m_completionType(None)
@@ -104,7 +104,7 @@ ApplicationCache* ApplicationCacheGroup::cacheForMainRequest(const ResourceReque
 ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const ResourceRequest& request, DocumentLoader* documentLoader)
 {
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
-        return 0;
+        return nullptr;
 
     URL url(request.url());
     if (url.hasFragmentIdentifier())
@@ -121,7 +121,7 @@ ApplicationCache* ApplicationCacheGroup::fallbackCacheForMainRequest(const Resou
         return group->newestCache();
     }
     
-    return 0;
+    return nullptr;
 }
 
 void ApplicationCacheGroup::selectCache(Frame* frame, const URL& passedManifestURL)
@@ -250,7 +250,7 @@ void ApplicationCacheGroup::finishedLoadingMainResource(DocumentLoader* loader)
         // Cache update has been a failure, so there is no reason to keep the document associated with the incomplete cache
         // (its main resource was not cached yet, so it is likely that the application changed significantly server-side).
         ASSERT(!m_cacheBeingUpdated); // Already cleared out by stopLoading().
-        loader->applicationCacheHost()->setApplicationCache(0); // Will unset candidate, too.
+        loader->applicationCacheHost()->setApplicationCache(nullptr); // Will unset candidate, too.
         m_associatedDocumentLoaders.remove(loader);
         postListenerTask(ApplicationCacheHost::ERROR_EVENT, loader);
         break;
@@ -295,7 +295,7 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
         ASSERT(!m_cacheBeingUpdated); // Already cleared out by stopLoading().
         ASSERT(!loader->applicationCacheHost()->applicationCache() || loader->applicationCacheHost()->applicationCache()->group() == this);
 
-        loader->applicationCacheHost()->setApplicationCache(0); // Will unset candidate, too.
+        loader->applicationCacheHost()->setApplicationCache(nullptr); // Will unset candidate, too.
         m_associatedDocumentLoaders.remove(loader);
         postListenerTask(ApplicationCacheHost::ERROR_EVENT, loader);
         break;
@@ -306,7 +306,7 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
         ASSERT(loader->applicationCacheHost()->applicationCache() == m_cacheBeingUpdated);
         ASSERT(!loader->applicationCacheHost()->candidateApplicationCacheGroup());
         m_associatedDocumentLoaders.remove(loader);
-        loader->applicationCacheHost()->setApplicationCache(0);
+        loader->applicationCacheHost()->setApplicationCache(nullptr);
 
         postListenerTask(ApplicationCacheHost::ERROR_EVENT, loader);
 
@@ -816,13 +816,13 @@ void ApplicationCacheGroup::manifestNotFound()
         
         ASSERT((*it)->applicationCacheHost()->candidateApplicationCacheGroup() == this);
         ASSERT(!(*it)->applicationCacheHost()->applicationCache());
-        (*it)->applicationCacheHost()->setCandidateApplicationCacheGroup(0);
+        (*it)->applicationCacheHost()->setCandidateApplicationCacheGroup(nullptr);
         m_pendingMasterResourceLoaders.remove(it);
     }
 
     m_downloadingPendingMasterResourceLoadersCount = 0;
     setUpdateStatus(Idle);    
-    m_frame = 0;
+    m_frame = nullptr;
     
     if (m_caches.isEmpty()) {
         ASSERT(m_associatedDocumentLoaders.isEmpty());
@@ -959,7 +959,7 @@ void ApplicationCacheGroup::checkIfLoadIsComplete()
     m_pendingMasterResourceLoaders.clear();
     m_completionType = None;
     setUpdateStatus(Idle);
-    m_frame = 0;
+    m_frame = nullptr;
     m_availableSpaceInQuota = ApplicationCacheStorage::unknownQuota();
     m_calledReachedMaxAppCacheSize = false;
 }

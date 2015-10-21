@@ -79,7 +79,7 @@ ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const 
 ResourceLoadScheduler* resourceLoadScheduler()
 {
     ASSERT(isMainThread());
-    static ResourceLoadScheduler* globalScheduler = 0;
+    static ResourceLoadScheduler* globalScheduler = nullptr;
     
     if (!globalScheduler) {
         static bool isCallingOutToStrategy = false;

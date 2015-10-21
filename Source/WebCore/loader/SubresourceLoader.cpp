@@ -466,7 +466,7 @@ void SubresourceLoader::releaseResources()
     if (m_state != Uninitialized)
 #endif
         m_resource->clearLoader();
-    m_resource = 0;
+    m_resource = nullptr;
     ResourceLoader::releaseResources();
 }
 

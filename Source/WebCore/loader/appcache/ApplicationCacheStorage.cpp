@@ -67,7 +67,7 @@ public:
 private:
     class Record {
     public:
-        Record() : m_resource(0), m_storageID(0) { }
+        Record() : m_resource(nullptr), m_storageID(0) { }
         Record(T* resource, unsigned storageID) : m_resource(resource), m_storageID(storageID) { }
 
         void restore()
@@ -102,28 +102,28 @@ ApplicationCacheGroup* ApplicationCacheStorage::loadCacheGroup(const URL& manife
 
     openDatabase(false);
     if (!m_database.isOpen())
-        return 0;
+        return nullptr;
 
     SQLiteStatement statement(m_database, "SELECT id, manifestURL, newestCache FROM CacheGroups WHERE newestCache IS NOT NULL AND manifestURL=?");
     if (statement.prepare() != SQLITE_OK)
-        return 0;
+        return nullptr;
     
     statement.bindText(1, manifestURL);
    
     int result = statement.step();
     if (result == SQLITE_DONE)
-        return 0;
+        return nullptr;
     
     if (result != SQLITE_ROW) {
         LOG_ERROR("Could not load cache group, error \"%s\"", m_database.lastErrorMsg());
-        return 0;
+        return nullptr;
     }
     
     unsigned newestCacheStorageID = static_cast<unsigned>(statement.getColumnInt64(2));
 
     RefPtr<ApplicationCache> cache = loadCache(newestCacheStorageID);
     if (!cache)
-        return 0;
+        return nullptr;
         
     ApplicationCacheGroup* group = new ApplicationCacheGroup(*this, manifestURL);
       
@@ -197,7 +197,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
     
     // Hash the host name and see if there's a manifest with the same host.
     if (!m_cacheHostSet.contains(urlHostHash(url)))
-        return 0;
+        return nullptr;
 
     // Check if a cache already exists in memory.
     for (const auto& group : m_cachesInMemory.values()) {
@@ -217,14 +217,14 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
     }
     
     if (!m_database.isOpen())
-        return 0;
+        return nullptr;
         
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
     // Check the database. Look for all cache groups with a newest cache.
     SQLiteStatement statement(m_database, "SELECT id, manifestURL, newestCache FROM CacheGroups WHERE newestCache IS NOT NULL");
     if (statement.prepare() != SQLITE_OK)
-        return 0;
+        return nullptr;
     
     int result;
     while ((result = statement.step()) == SQLITE_ROW) {
@@ -262,7 +262,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::cacheGroupForURL(const URL& url)
     if (result != SQLITE_DONE)
         LOG_ERROR("Could not load cache group, error \"%s\"", m_database.lastErrorMsg());
     
-    return 0;
+    return nullptr;
 }
 
 ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const URL& url)
@@ -288,12 +288,12 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
     }
     
     if (!m_database.isOpen())
-        return 0;
+        return nullptr;
         
     // Check the database. Look for all cache groups with a newest cache.
     SQLiteStatement statement(m_database, "SELECT id, manifestURL, newestCache FROM CacheGroups WHERE newestCache IS NOT NULL");
     if (statement.prepare() != SQLITE_OK)
-        return 0;
+        return nullptr;
     
     int result;
     while ((result = statement.step()) == SQLITE_ROW) {
@@ -332,7 +332,7 @@ ApplicationCacheGroup* ApplicationCacheStorage::fallbackCacheGroupForURL(const U
     if (result != SQLITE_DONE)
         LOG_ERROR("Could not load cache group, error \"%s\"", m_database.lastErrorMsg());
     
-    return 0;
+    return nullptr;
 }
 
 void ApplicationCacheStorage::cacheGroupDestroyed(ApplicationCacheGroup* group)
@@ -1122,7 +1122,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
                                    "INNER JOIN CacheResourceData ON CacheResourceData.id=CacheResources.data WHERE CacheEntries.cache=?");
     if (cacheStatement.prepare() != SQLITE_OK) {
         LOG_ERROR("Could not prepare cache statement, error \"%s\"", m_database.lastErrorMsg());
-        return 0;
+        return nullptr;
     }
     
     cacheStatement.bindInt64(1, storageID);
@@ -1181,7 +1181,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     // Load the online whitelist
     SQLiteStatement whitelistStatement(m_database, "SELECT url FROM CacheWhitelistURLs WHERE cache=?");
     if (whitelistStatement.prepare() != SQLITE_OK)
-        return 0;
+        return nullptr;
     whitelistStatement.bindInt64(1, storageID);
     
     Vector<URL> whitelist;
@@ -1196,7 +1196,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     // Load online whitelist wildcard flag.
     SQLiteStatement whitelistWildcardStatement(m_database, "SELECT wildcard FROM CacheAllowsAllNetworkRequests WHERE cache=?");
     if (whitelistWildcardStatement.prepare() != SQLITE_OK)
-        return 0;
+        return nullptr;
     whitelistWildcardStatement.bindInt64(1, storageID);
     
     result = whitelistWildcardStatement.step();
@@ -1211,7 +1211,7 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     // Load fallback URLs.
     SQLiteStatement fallbackStatement(m_database, "SELECT namespace, fallbackURL FROM FallbackURLs WHERE cache=?");
     if (fallbackStatement.prepare() != SQLITE_OK)
-        return 0;
+        return nullptr;
     fallbackStatement.bindInt64(1, storageID);
     
     FallbackURLVector fallbackURLs;

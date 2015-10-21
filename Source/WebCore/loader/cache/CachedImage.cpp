@@ -59,7 +59,7 @@ namespace WebCore {
 
 CachedImage::CachedImage(const ResourceRequest& resourceRequest, SessionID sessionID)
     : CachedResource(resourceRequest, ImageResource, sessionID)
-    , m_image(0)
+    , m_image(nullptr)
     , m_isManuallyCached(false)
     , m_shouldPaintBrokenImage(true)
 {

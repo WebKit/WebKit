@@ -94,12 +94,12 @@ public:
         if (!m_callback)
             return;
         m_callback(result, context());
-        m_callback = 0;
+        m_callback = nullptr;
     }
     
     void invalidate()
     {
-        m_callback = 0;
+        m_callback = nullptr;
     }
 
 private:
@@ -133,12 +133,12 @@ public:
         if (!m_callback)
             return;
         m_callback(result, context());
-        m_callback = 0;
+        m_callback = nullptr;
     }
     
     void invalidate()
     {
-        m_callback = 0;
+        m_callback = nullptr;
     }
 
 private:
@@ -178,8 +178,8 @@ public:
     virtual String synchronousIconURLForPageURL(const String&);
     virtual bool synchronousIconDataKnownForIconURL(const String&) { return false; }
     virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*) { return IconLoadNo; }
-    virtual Image* synchronousIconForPageURL(const String&, const IntSize&) { return 0; }
-    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String&, const IntSize&) { return 0; }
+    virtual Image* synchronousIconForPageURL(const String&, const IntSize&) { return nullptr; }
+    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String&, const IntSize&) { return nullptr; }
 
     // Asynchronous calls we should use to replace the above when supported.
     virtual bool supportsAsynchronousMode() { return false; }
@@ -191,7 +191,7 @@ public:
     // We should try to remove these dependencies from the IconDatabaseBase class.
     virtual void setEnabled(bool) { }
 
-    virtual Image* defaultIcon(const IntSize&) { return 0; }
+    virtual Image* defaultIcon(const IntSize&) { return nullptr; }
 
     virtual size_t pageURLMappingCount() { return 0; }
     virtual size_t retainedPageURLCount() { return 0; }

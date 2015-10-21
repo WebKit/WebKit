@@ -40,10 +40,10 @@ static NetworkingContext* networkingContext(const Document* document)
 {
     // FIXME: Returning 0 means falling back to default context. That's not a choice that is appropriate to do at runtime
     if (!document)
-        return 0;
+        return nullptr;
     Frame* frame = document->frame();
     if (!frame)
-        return 0;
+        return nullptr;
 
     return frame->loader().networkingContext();
 }

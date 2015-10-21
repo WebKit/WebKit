@@ -46,10 +46,10 @@
 namespace WebCore {
 
 ApplicationCacheHost::ApplicationCacheHost(DocumentLoader& documentLoader)
-    : m_domApplicationCache(0)
+    : m_domApplicationCache(nullptr)
     , m_documentLoader(documentLoader)
     , m_defersEvents(true)
-    , m_candidateApplicationCacheGroup(0)
+    , m_candidateApplicationCacheGroup(nullptr)
 {
 }
 
@@ -364,7 +364,7 @@ void ApplicationCacheHost::setApplicationCache(PassRefPtr<ApplicationCache> appl
 {
     if (m_candidateApplicationCacheGroup) {
         ASSERT(!m_applicationCache);
-        m_candidateApplicationCacheGroup = 0;
+        m_candidateApplicationCacheGroup = nullptr;
     }
 
     m_applicationCache = applicationCache;

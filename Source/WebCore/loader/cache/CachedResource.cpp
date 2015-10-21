@@ -135,9 +135,9 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type, Sessio
     , m_deleted(false)
     , m_lruIndex(0)
 #endif
-    , m_owningCachedResourceLoader(0)
-    , m_resourceToRevalidate(0)
-    , m_proxyResource(0)
+    , m_owningCachedResourceLoader(nullptr)
+    , m_resourceToRevalidate(nullptr)
+    , m_proxyResource(nullptr)
 {
     ASSERT(m_type == unsigned(type)); // m_type is a bitfield, so this tests careless updates of the enum.
     ASSERT(sessionID.isValid());
@@ -612,7 +612,7 @@ void CachedResource::clearResourceToRevalidate()
     m_resourceToRevalidate->deleteIfPossible();
 
     m_handlesToRevalidate.clear();
-    m_resourceToRevalidate = 0;
+    m_resourceToRevalidate = nullptr;
     deleteIfPossible();
 }
     

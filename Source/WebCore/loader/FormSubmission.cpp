@@ -158,7 +158,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement* form, const Attribut
 {
     ASSERT(form);
 
-    HTMLFormControlElement* submitButton = 0;
+    HTMLFormControlElement* submitButton = nullptr;
     if (event && event->target()) {
         for (Node* node = event->target()->toNode(); node; node = node->parentNode()) {
             if (is<HTMLFormControlElement>(*node)) {

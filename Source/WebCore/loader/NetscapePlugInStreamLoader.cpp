@@ -71,7 +71,7 @@ bool NetscapePlugInStreamLoader::isDone() const
 
 void NetscapePlugInStreamLoader::releaseResources()
 {
-    m_client = 0;
+    m_client = nullptr;
     ResourceLoader::releaseResources();
 }
 

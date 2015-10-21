@@ -127,9 +127,9 @@ struct ListResult
     {
         valid = false;
         type = FTPJunkEntry;
-        filename = 0;
+        filename = nullptr;
         filenameLength = 0;
-        linkname = 0;
+        linkname = nullptr;
         linknameLength = 0;
         fileSize.truncate(0);
         caseSensitive = false;

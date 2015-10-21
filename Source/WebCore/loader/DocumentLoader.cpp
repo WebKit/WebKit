@@ -121,7 +121,7 @@ static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
 
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
     : m_deferMainResourceDataLoad(true)
-    , m_frame(0)
+    , m_frame(nullptr)
     , m_cachedResourceLoader(CachedResourceLoader::create(this))
     , m_writer(m_frame)
     , m_originalRequest(req)
@@ -154,7 +154,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
 FrameLoader* DocumentLoader::frameLoader() const
 {
     if (!m_frame)
-        return 0;
+        return nullptr;
     return &m_frame->loader();
 }
 
@@ -1057,7 +1057,7 @@ void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
 
 PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName, const URL& url)
 {
-    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName, url) : PassRefPtr<Archive>(0);
+    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName, url) : PassRefPtr<Archive>(nullptr);
 }
 
 void DocumentLoader::clearArchiveResources()
@@ -1516,7 +1516,7 @@ void DocumentLoader::clearMainResource()
     m_contentFilter = nullptr;
 #endif
 
-    m_mainResource = 0;
+    m_mainResource = nullptr;
 }
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)

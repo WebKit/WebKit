@@ -120,11 +120,11 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 #endif
     }
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
-    : m_document(0)
+    : m_document(nullptr)
     , m_documentLoader(documentLoader)
     , m_requestCount(0)
     , m_garbageCollectDocumentResourcesTimer(*this, &CachedResourceLoader::garbageCollectDocumentResources)
@@ -136,8 +136,8 @@ CachedResourceLoader::CachedResourceLoader(DocumentLoader* documentLoader)
 
 CachedResourceLoader::~CachedResourceLoader()
 {
-    m_documentLoader = 0;
-    m_document = 0;
+    m_documentLoader = nullptr;
+    m_document = nullptr;
 
     clearPreloads();
     for (auto& resource : m_documentResources.values())
@@ -364,7 +364,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
         if (!forPreload)
             FrameLoader::reportLocalLoadFailed(frame(), url.stringCenterEllipsizedToLength());
         LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
-        return 0;
+        return false;
     }
 
     bool skipContentSecurityPolicyCheck = options.contentSecurityPolicyImposition() == ContentSecurityPolicyImposition::SkipPolicyCheck;
@@ -533,7 +533,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     if (memoryCache.disabled()) {
         DocumentResourceMap::iterator it = m_documentResources.find(url.string());
         if (it != m_documentResources.end()) {
-            it->value->setOwningCachedResourceLoader(0);
+            it->value->setOwningCachedResourceLoader(nullptr);
             m_documentResources.remove(it);
         }
     }

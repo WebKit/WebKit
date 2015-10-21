@@ -150,7 +150,7 @@ namespace WebCore {
         CacheInfo applicationCacheInfo();
 
         bool shouldLoadResourceFromApplicationCache(const ResourceRequest&, ApplicationCacheResource*&);
-        bool getApplicationCacheFallbackResource(const ResourceRequest&, ApplicationCacheResource*&, ApplicationCache* = 0);
+        bool getApplicationCacheFallbackResource(const ResourceRequest&, ApplicationCacheResource*&, ApplicationCache* = nullptr);
 
     private:
         bool isApplicationCacheEnabled();
@@ -173,7 +173,7 @@ namespace WebCore {
         friend class ApplicationCacheGroup;
         friend class ApplicationCacheStorage;
 
-        bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, ApplicationCache* = 0);
+        bool scheduleLoadFallbackResourceFromApplicationCache(ResourceLoader*, ApplicationCache* = nullptr);
         void setCandidateApplicationCacheGroup(ApplicationCacheGroup* group);
         ApplicationCacheGroup* candidateApplicationCacheGroup() const { return m_candidateApplicationCacheGroup; }
         void setApplicationCache(PassRefPtr<ApplicationCache> applicationCache);
