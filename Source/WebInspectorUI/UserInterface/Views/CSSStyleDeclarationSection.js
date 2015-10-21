@@ -40,6 +40,8 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._element = document.createElement("div");
         this._element.classList.add("style-declaration-section");
 
+        new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
+
         this._headerElement = document.createElement("div");
         this._headerElement.classList.add("header");
 
@@ -487,6 +489,39 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
     _handleMouseOut(event)
     {
         this._hideDOMNodeHighlight();
+    }
+
+    _save(event)
+    {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (this._style.type !== WebInspector.CSSStyleDeclaration.Type.Rule) {
+            // FIXME: Can't save CSS inside <style></style> <https://webkit.org/b/150357>
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        console.assert(this._style.ownerRule instanceof WebInspector.CSSRule);
+        console.assert(this._style.ownerRule.sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
+
+        let sourceCode = this._style.ownerRule.sourceCodeLocation.sourceCode;
+        if (sourceCode.type !== WebInspector.Resource.Type.Stylesheet) {
+            // FIXME: Can't save CSS inside style="" <https://webkit.org/b/150357>
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        var url;
+        if (sourceCode.urlComponents.scheme === "data") {
+            let mainResource = WebInspector.frameResourceManager.mainFrame.mainResource;
+            let pathDirectory = mainResource.url.slice(0, -mainResource.urlComponents.lastPathComponent.length);
+            url = pathDirectory + "base64.css";
+        } else
+            url = sourceCode.url;
+
+        const saveAs = event.shiftKey;
+        WebInspector.saveDataToFile({url: url, content: sourceCode.content}, saveAs);
     }
 
     _handleKeyDown(event)

@@ -1,3 +1,14 @@
+2015-10-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Pressing Command-S while focused on the styles sidebar should save CSS file
+        https://bugs.webkit.org/show_bug.cgi?id=150298
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        Beep when saving didn't work. Inline CSS and CSS in style attributes aren't curently supported.
+
 2015-10-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JavaScriptCore should parse sourceURL and sourceMappingURL directives
