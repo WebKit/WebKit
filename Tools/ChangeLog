@@ -1,3 +1,14 @@
+2015-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Failures in PutStackSinkingPhase should be less severe
+        https://bugs.webkit.org/show_bug.cgi?id=150400
+
+        Reviewed by Geoffrey Garen.
+
+        Add a test mode for no PutStackSinkingPhase.
+
+        * Scripts/run-jsc-stress-tests:
+
 2015-10-21  Nan Wang  <n_wang@apple.com>
 
         AX: Expose table size and cell indexes on iOS

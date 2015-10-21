@@ -746,6 +746,10 @@ def runFTLNoCJITValidate
     run("ftl-no-cjit-validate", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
+def runFTLNoCJITNoPutStackValidate
+    run("ftl-no-cjit-no-put-stack-validate", "--validateGraph=true", "--usePutStackSinking=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+end
+
 def runFTLNoCJITNoInlineValidate
     run("ftl-no-cjit-no-inline-validate", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
@@ -823,6 +827,7 @@ def defaultRun
             runDFGEagerNoCJITValidate
             runDefaultFTL
             runFTLNoCJITValidate
+            runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
             runFTLEagerNoCJITValidate

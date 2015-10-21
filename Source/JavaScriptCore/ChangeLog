@@ -1,3 +1,18 @@
+2015-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Failures in PutStackSinkingPhase should be less severe
+        https://bugs.webkit.org/show_bug.cgi?id=150400
+
+        Reviewed by Geoffrey Garen.
+
+        Make the PutStackSinkingPhase abort instead of asserting. To test that it's OK to not have
+        PutStackSinkingPhase run, this adds a test mode where we run without PutStackSinkingPhase.
+
+        * dfg/DFGPlan.cpp: Make it possible to not run PutStackSinkingPhase for tests.
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPutStackSinkingPhase.cpp: PutStackSinkingPhase should abort instead of asserting, except when validation is enabled.
+        * runtime/Options.h: Add an option for disabling PutStackSinkingPhase.
+
 2015-10-21  Saam barati  <sbarati@apple.com>
 
         The FTL should place the CallSiteIndex on the call frame for JS calls when it fills in the patchpoint

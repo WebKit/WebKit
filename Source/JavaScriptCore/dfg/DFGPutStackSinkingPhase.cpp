@@ -233,10 +233,39 @@ public:
                         dataLog("Deferred at ", node, ":", deferred, "\n");
                     
                     if (node->op() == GetStack) {
-                        DFG_ASSERT(
-                            m_graph, node,
-                            deferred.operand(node->stackAccessData()->local) != ConflictingFlush);
+                        // Handle the case that the input doesn't match our requirements. This is
+                        // really a bug, but it's a benign one if we simply don't run this phase.
+                        // It usually arises because of patterns like:
+                        //
+                        // if (thing)
+                        //     PutStack()
+                        // ...
+                        // if (thing)
+                        //     GetStack()
+                        //
+                        // Or:
+                        //
+                        // if (never happens)
+                        //     GetStack()
+                        //
+                        // Because this phase runs early in SSA, it should be sensible to enforce
+                        // that no such code pattern has arisen yet. So, when validation is
+                        // enabled, we assert that we aren't seeing this. But with validation
+                        // disabled we silently let this fly and we just abort this phase.
+                        // FIXME: Get rid of all remaining cases of conflicting GetStacks.
+                        // https://bugs.webkit.org/show_bug.cgi?id=150398
+
+                        bool isConflicting =
+                            deferred.operand(node->stackAccessData()->local) == ConflictingFlush;
                         
+                        if (validationEnabled())
+                            DFG_ASSERT(m_graph, node, !isConflicting);
+
+                        if (isConflicting) {
+                            // Oh noes! Abort!!
+                            return false;
+                        }
+
                         // A GetStack doesn't affect anything, since we know which local we are reading
                         // from.
                         continue;

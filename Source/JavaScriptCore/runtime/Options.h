@@ -202,6 +202,7 @@ typedef const char* optionString;
     v(double, minimumCallToKnownRate, 0.51, nullptr) \
     v(bool, createPreHeaders, true, nullptr) \
     v(bool, useMovHintRemoval, true, nullptr) \
+    v(bool, usePutStackSinking, true, nullptr) \
     v(bool, useObjectAllocationSinking, true, nullptr) \
     v(bool, useCopyBarrierOptimization, true, nullptr) \
     \
