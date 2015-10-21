@@ -30,7 +30,38 @@ function initializeWritableStream(underlyingSink, strategy)
 {
     "use strict";
 
-    throw new EvalError("WritableStream constructor not implemented");
+    if (typeof underlyingSink === "undefined")
+        underlyingSink = { };
+    if (typeof strategy === "undefined")
+        strategy = { highWaterMark: 0, size: function() { return 1; } };
+
+    if (!@isObject(underlyingSink))
+        throw new @TypeError("WritableStream constructor takes an object as first argument");
+
+    if (!@isObject(strategy))
+        throw new @TypeError("WritableStream constructor takes an object as second argument, if any");
+
+    this.@underlyingSink = underlyingSink;
+    this.@closedPromise = @createNewStreamsPromise();
+    this.@readyPromise = Promise.resolve(undefined);
+    this.@queue = @newQueue();
+    this.@started = false;
+    this.@writing = false;
+
+    this.@strategy = @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark);
+
+    @syncWritableStreamStateWithQueue(this);
+
+    var error = @errorWritableStream.bind(this);
+    var startResult = @invokeOrNoop(underlyingSink, "start", [error]);
+    this.@startedPromise = Promise.resolve(startResult);
+    var _this = this;
+    this.@startedPromise.then(function() {
+        _this.@started = true;
+        _this.@startedPromise = undefined;
+    }, function(r) {
+        error(r);
+    });
 
     return this;
 }

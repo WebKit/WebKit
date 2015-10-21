@@ -18,8 +18,8 @@ PASS Running templatedRSClosed with ReadableStream (closed via call in start)
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS locked should be false 
 PASS getReader() should be OK 
-FAIL piping to a WritableStream in the writable state should close the writable stream WritableStream constructor not implemented
-FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing WritableStream constructor not implemented
+FAIL piping to a WritableStream in the writable state should close the writable stream state not implemented
+FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing state not implemented
 PASS should be able to acquire multiple readers if they are released in succession 
 FAIL should not be able to acquire a second reader if we don't release the first one assert_throws: getting a second reader should throw function "function () { rs.getReader(); }" did not throw
 PASS Running templatedRSClosedReader with ReadableStream reader (closed before getting reader) 
@@ -40,8 +40,8 @@ PASS Running templatedRSClosed with ReadableStream (closed via cancel)
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS locked should be false 
 PASS getReader() should be OK 
-FAIL piping to a WritableStream in the writable state should close the writable stream WritableStream constructor not implemented
-FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing WritableStream constructor not implemented
+FAIL piping to a WritableStream in the writable state should close the writable stream state not implemented
+FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing state not implemented
 PASS should be able to acquire multiple readers if they are released in succession 
 FAIL should not be able to acquire a second reader if we don't release the first one assert_throws: getting a second reader should throw function "function () { rs.getReader(); }" did not throw
 PASS Running templatedRSClosedReader with ReadableStream reader (closed via cancel after getting reader) 
@@ -52,7 +52,7 @@ PASS closed should fulfill with undefined
 FAIL releasing the lock should cause closed to reject and change identity assert_not_equals: the closed promise should change identity got disallowed value object "[object Promise]"
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
-FAIL piping to a WritableStream in the writable state should abort the writable stream WritableStream constructor not implemented
+FAIL piping to a WritableStream in the writable state should abort the writable stream state not implemented
 PASS getReader() should return a reader that acts errored 
 PASS read() twice should give the error each time 
 PASS locked should be false 
@@ -62,14 +62,14 @@ FAIL should not be able to obtain additional readers if we don't release the fir
 PASS cancel() should return a distinct rejected promise each time 
 PASS reader cancel() should return a distinct rejected promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
-FAIL piping to a WritableStream in the writable state should abort the writable stream WritableStream constructor not implemented
+FAIL piping to a WritableStream in the writable state should abort the writable stream state not implemented
 PASS getReader() should return a reader that acts errored 
 PASS read() twice should give the error each time 
 PASS locked should be false 
 PASS Running templatedRSErroredAsyncOnly with ReadableStream (errored via returning a rejected promise in start) reader 
-FAIL piping with no options WritableStream constructor not implemented
-FAIL piping with { preventAbort: false } WritableStream constructor not implemented
-FAIL piping with { preventAbort: true } WritableStream constructor not implemented
+FAIL piping with no options pipeTo is not implemented
+FAIL piping with { preventAbort: false } pipeTo is not implemented
+FAIL piping with { preventAbort: true } pipeTo is not implemented
 PASS Running templatedRSErroredReader with ReadableStream (errored via returning a rejected promise in start) reader 
 PASS closed should reject with the error 
 FAIL releasing the lock should cause closed to reject and change identity assert_not_equals: the closed promise should change identity got disallowed value object "[object Promise]"
@@ -88,26 +88,26 @@ PASS calling read() twice with waiting will eventually give both chunks
 PASS read() should return distinct promises each time 
 PASS cancel() after a read() should still give that single read result 
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued, then closed) 
-FAIL piping with no options and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: false } and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: false } and a destination with that errors synchronously WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and a destination with that errors synchronously WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and a destination that errors on the last chunk WritableStream constructor not implemented
+FAIL piping with no options and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: false } and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: true } and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: false } and a destination with that errors synchronously pipeTo is not implemented
+FAIL piping with { preventClose: true } and a destination with that errors synchronously pipeTo is not implemented
+FAIL piping with { preventClose: true } and a destination that errors on the last chunk pipeTo is not implemented
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued async, then closed) 
-FAIL piping with no options and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: false } and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: false } and a destination with that errors synchronously WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and a destination with that errors synchronously WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and a destination that errors on the last chunk WritableStream constructor not implemented
+FAIL piping with no options and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: false } and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: true } and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: false } and a destination with that errors synchronously pipeTo is not implemented
+FAIL piping with { preventClose: true } and a destination with that errors synchronously pipeTo is not implemented
+FAIL piping with { preventClose: true } and a destination that errors on the last chunk pipeTo is not implemented
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued via pull, then closed) 
-FAIL piping with no options and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: false } and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and no destination errors WritableStream constructor not implemented
-FAIL piping with { preventClose: false } and a destination with that errors synchronously WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and a destination with that errors synchronously WritableStream constructor not implemented
-FAIL piping with { preventClose: true } and a destination that errors on the last chunk WritableStream constructor not implemented
+FAIL piping with no options and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: false } and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: true } and no destination errors pipeTo is not implemented
+FAIL piping with { preventClose: false } and a destination with that errors synchronously pipeTo is not implemented
+FAIL piping with { preventClose: true } and a destination with that errors synchronously pipeTo is not implemented
+FAIL piping with { preventClose: true } and a destination that errors on the last chunk pipeTo is not implemented
 PASS Running templatedRSTwoChunksClosedReader with ReadableStream (two chunks enqueued, then closed) reader 
 PASS third read(), without waiting, should give { value: undefined, done: true } 
 PASS third read, with waiting, should give { value: undefined, done: true } 

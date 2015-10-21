@@ -4,15 +4,9 @@ PASS Readable stream: throwing strategy.size method
 PASS Readable stream: throwing strategy.highWaterMark getter 
 PASS Readable stream: invalid strategy.highWaterMark 
 PASS Readable stream: invalid strategy.size return value 
-FAIL Writable stream: throwing strategy.size getter assert_throws: construction should re-throw the error function "function () {
-        new WritableStream({}, {
-          ..." threw object "EvalError: WritableStream constructor not implemented" ("EvalError") expected object "Error: a unique string" ("Error")
-FAIL Writable stream: throwing strategy.size method WritableStream constructor not implemented
-FAIL Writable stream: invalid strategy.size return value WritableStream constructor not implemented
-FAIL Writable stream: throwing strategy.highWaterMark getter assert_throws: construction should re-throw the error function "function () {
-        new WritableStream({}, {
-          ..." threw object "EvalError: WritableStream constructor not implemented" ("EvalError") expected object "Error: a unique string" ("Error")
-FAIL Writable stream: invalid strategy.highWaterMark assert_throws: construction should throw a RangeError for -1 function "function () {
-            new WritableStream({}, {
-      ..." threw object "EvalError: WritableStream constructor not implemented" ("EvalError") expected object "RangeError" ("RangeError")
+PASS Writable stream: throwing strategy.size getter 
+FAIL Writable stream: throwing strategy.size method write not implemented
+FAIL Writable stream: invalid strategy.size return value write not implemented
+PASS Writable stream: throwing strategy.highWaterMark getter 
+PASS Writable stream: invalid strategy.highWaterMark 
 

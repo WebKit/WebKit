@@ -39,4 +39,5 @@
 #include "ReadableStreamReaderBuiltins.cpp"
 #include "StreamInternalsBuiltins.cpp"
 #include "WritableStreamBuiltins.cpp"
+#include "WritableStreamInternalsBuiltins.cpp"
 #endif

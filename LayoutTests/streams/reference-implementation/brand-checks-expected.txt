@@ -1,11 +1,11 @@
 
 PASS Can get the ReadableStreamReader constructor indirectly 
 PASS Can get the ReadableStreamController constructor indirectly 
-FAIL ReadableStream.prototype.cancel enforces a brand check WritableStream constructor not implemented
-FAIL ReadableStream.prototype.getReader enforces a brand check WritableStream constructor not implemented
+PASS ReadableStream.prototype.cancel enforces a brand check 
+PASS ReadableStream.prototype.getReader enforces a brand check 
 PASS ReadableStream.prototype.pipeThrough works generically on its this and its arguments 
 FAIL ReadableStream.prototype.pipeTo works generically on its this and its arguments pipeTo is not implemented
-FAIL ReadableStream.prototype.tee enforces a brand check WritableStream constructor not implemented
+PASS ReadableStream.prototype.tee enforces a brand check 
 PASS ReadableStreamReader enforces a brand check on its argument 
 PASS ReadableStreamReader.prototype.closed enforces a brand check 
 PASS ReadableStreamReader.prototype.cancel enforces a brand check 

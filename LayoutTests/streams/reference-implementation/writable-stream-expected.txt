@@ -1,14 +1,14 @@
 
-FAIL error argument is given to start method WritableStream constructor not implemented
-FAIL Underlying sink's write won't be called until start finishes WritableStream constructor not implemented
-FAIL Underlying sink's close won't be called until start finishes WritableStream constructor not implemented
-FAIL Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value WritableStream constructor not implemented
-FAIL Underlying sink's write or close are never invoked if start throws assert_equals: expected object "Error: horrible things" but got object "EvalError: WritableStream constructor not implemented"
-FAIL Underlying sink's write or close are never invoked if the promise returned by start is rejected WritableStream constructor not implemented
-FAIL WritableStream can be constructed with no arguments WritableStream constructor not implemented
-FAIL WritableStream instances have the correct methods and properties WritableStream constructor not implemented
-FAIL WritableStream with simple input, processed asynchronously WritableStream constructor not implemented
-FAIL WritableStream with simple input, processed synchronously WritableStream constructor not implemented
-FAIL WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure WritableStream constructor not implemented
-FAIL Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined ovalue WritableStream constructor not implemented
+FAIL error argument is given to start method state not implemented
+FAIL Underlying sink's write won't be called until start finishes write not implemented
+FAIL Underlying sink's close won't be called until start finishes close not implemented
+FAIL Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value close not implemented
+PASS Underlying sink's write or close are never invoked if start throws 
+PASS Underlying sink's write or close are never invoked if the promise returned by start is rejected 
+PASS WritableStream can be constructed with no arguments 
+FAIL WritableStream instances have the correct methods and properties state not implemented
+FAIL WritableStream with simple input, processed asynchronously write not implemented
+FAIL WritableStream with simple input, processed synchronously write not implemented
+FAIL WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure state not implemented
+FAIL Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined ovalue write not implemented
 

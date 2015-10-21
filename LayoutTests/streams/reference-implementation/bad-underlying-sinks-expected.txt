@@ -1,14 +1,10 @@
 
-FAIL Underlying sink: throwing start getter assert_throws: function "function () {
-        new WritableStream({
-            ge..." threw object "EvalError: WritableStream constructor not implemented" ("EvalError") expected object "Error: a unique string" ("Error")
-FAIL Underlying sink: throwing start method assert_throws: function "function () {
-        new WritableStream({
-            st..." threw object "EvalError: WritableStream constructor not implemented" ("EvalError") expected object "Error: a unique string" ("Error")
-FAIL Underlying sink: throwing write getter WritableStream constructor not implemented
-FAIL Underlying sink: throwing write method WritableStream constructor not implemented
-FAIL Underlying sink: throwing abort getter WritableStream constructor not implemented
-FAIL Underlying sink: throwing abort method WritableStream constructor not implemented
-FAIL Underlying sink: throwing close getter WritableStream constructor not implemented
-FAIL Underlying sink: throwing close method WritableStream constructor not implemented
+PASS Underlying sink: throwing start getter 
+PASS Underlying sink: throwing start method 
+FAIL Underlying sink: throwing write getter write not implemented
+FAIL Underlying sink: throwing write method write not implemented
+FAIL Underlying sink: throwing abort getter abort not implemented
+FAIL Underlying sink: throwing abort method abort not implemented
+FAIL Underlying sink: throwing close getter close not implemented
+FAIL Underlying sink: throwing close method close not implemented
 

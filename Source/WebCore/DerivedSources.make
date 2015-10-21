@@ -1266,6 +1266,7 @@ WEBCORE_JS_BUILTINS = \
     $(WebCore)/Modules/streams/ReadableStreamReader.js \
     $(WebCore)/Modules/streams/StreamInternals.js \
     $(WebCore)/Modules/streams/WritableStream.js \
+    $(WebCore)/Modules/streams/WritableStreamInternals.js \
 #
 
 all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)

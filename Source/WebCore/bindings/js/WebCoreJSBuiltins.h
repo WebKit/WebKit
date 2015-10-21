@@ -40,6 +40,7 @@
 #include "ReadableStreamReaderBuiltinsWrapper.h"
 #include "StreamInternalsBuiltinsWrapper.h"
 #include "WritableStreamBuiltinsWrapper.h"
+#include "WritableStreamInternalsBuiltinsWrapper.h"
 #endif
 
 #include <runtime/VM.h>
@@ -59,6 +60,7 @@ public:
         , m_readableStreamReaderBuiltins(&vm)
         , m_streamInternalsBuiltins(&vm)
         , m_writableStreamBuiltins(&vm)
+        , m_writableStreamInternalsBuiltins(&vm)
 #endif
 #if ENABLE(MEDIA_STREAM)
         , m_mediaDevicesBuiltins(&vm)
@@ -67,6 +69,7 @@ public:
 #if ENABLE(STREAMS_API)
         m_readableStreamInternalsBuiltins.exportNames();
         m_streamInternalsBuiltins.exportNames();
+        m_writableStreamInternalsBuiltins.exportNames();
 #endif
     }
 #if ENABLE(STREAMS_API)
@@ -78,6 +81,7 @@ public:
     ReadableStreamReaderBuiltinsWrapper& readableStreamReaderBuiltins() { return m_readableStreamReaderBuiltins; }
     StreamInternalsBuiltinsWrapper& streamInternalsBuiltins() { return m_streamInternalsBuiltins; }
     WritableStreamBuiltinsWrapper& writableStreamBuiltins() { return m_writableStreamBuiltins; }
+    WritableStreamInternalsBuiltinsWrapper& writableStreamInternalsBuiltins() { return m_writableStreamInternalsBuiltins;}
 #endif
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper& mediaDevicesBuiltins() { return m_mediaDevicesBuiltins; }
@@ -94,6 +98,7 @@ private:
     ReadableStreamReaderBuiltinsWrapper m_readableStreamReaderBuiltins;
     StreamInternalsBuiltinsWrapper m_streamInternalsBuiltins;
     WritableStreamBuiltinsWrapper m_writableStreamBuiltins;
+    WritableStreamInternalsBuiltinsWrapper m_writableStreamInternalsBuiltins;
 #endif
 #if ENABLE(MEDIA_STREAM)
     MediaDevicesBuiltinsWrapper m_mediaDevicesBuiltins;

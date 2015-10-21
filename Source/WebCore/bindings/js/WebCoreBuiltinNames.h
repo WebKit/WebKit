@@ -46,11 +46,15 @@ namespace WebCore {
     macro(readableStreamReadable) \
     macro(reader) \
     macro(readRequests) \
+    macro(readyPromise) \
     macro(state) \
     macro(started) \
+    macro(startedPromise) \
     macro(storedError) \
     macro(strategy) \
+    macro(underlyingSink) \
     macro(underlyingSource) \
+    macro(writing) \
     macro(ReadableStreamReader) \
     macro(ReadableStreamController) \
 

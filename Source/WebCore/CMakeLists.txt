@@ -3371,6 +3371,7 @@ set(WEBCORE_JS_BUILTINS
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamReader.js
     ${WEBCORE_DIR}/Modules/streams/StreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/WritableStream.js
+    ${WEBCORE_DIR}/Modules/streams/WritableStreamInternals.js
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

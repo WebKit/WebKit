@@ -51,6 +51,7 @@
 #include "JSReadableStreamPrivateConstructors.h"
 #include "ReadableStreamInternalsBuiltins.h"
 #include "StreamInternalsBuiltins.h"
+#include "WritableStreamInternalsBuiltins.h"
 #endif
 
 using namespace JSC;
@@ -102,6 +103,12 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
             static_cast<JSVMClientData*>(vm.clientData)->builtinFunctions().streamInternalsBuiltins().name##PrivateName(), \
             m_privateFunctions.streamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
         WEBCORESTREAMINTERNALS_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
+#undef DECLARE_GLOBAL_STATIC
+#define DECLARE_GLOBAL_STATIC(name)\
+        GlobalPropertyInfo(\
+            static_cast<JSVMClientData*>(vm.clientData)->builtinFunctions().writableStreamInternalsBuiltins().name##PrivateName(), \
+            m_privateFunctions.writableStreamInternals().m_##name##Function.get() , DontDelete | ReadOnly),
+        WEBCOREWRITABLESTREAMINTERNALS_FOREACH_BUILTIN_FUNCTION_NAME(DECLARE_GLOBAL_STATIC)
 #undef DECLARE_GLOBAL_STATIC
 #endif
     };
