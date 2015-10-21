@@ -1,3 +1,17 @@
+2015-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Move services menu handling out into a separate function
+        https://bugs.webkit.org/show_bug.cgi?id=150420
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showServicesMenu):
+        (WebKit::WebContextMenuProxyMac::show):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        (WebKit::WebContextMenuProxyMac::populate): Deleted.
+
 2015-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Single tapping clickable elements in unscalable pages should show a tap highlight

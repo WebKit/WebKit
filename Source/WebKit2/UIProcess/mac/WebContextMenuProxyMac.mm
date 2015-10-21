@@ -318,6 +318,14 @@ void WebContextMenuProxyMac::setupServicesMenu()
         ServicesController::singleton().refreshExistingServices();
 }
 
+void WebContextMenuProxyMac::showServicesMenu()
+{
+    setupServicesMenu();
+
+    [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
+    [m_menu popUpMenuPositioningItem:nil atLocation:m_context.menuLocation() inView:m_webView];
+}
+
 void WebContextMenuProxyMac::clearServicesMenu()
 {
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setPicker:nullptr];
@@ -360,30 +368,22 @@ ContextMenuItem WebContextMenuProxyMac::shareMenuItem()
 }
 #endif
 
-void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& items)
+void WebContextMenuProxyMac::show()
 {
+    Ref<WebPageProxy> protect(m_page);
+
 #if ENABLE(SERVICE_CONTROLS)
     if (m_context.isServicesMenu()) {
-        setupServicesMenu();
+        showServicesMenu();
         return;
     }
 #endif
 
-    m_menu = [[NSMenu alloc] initWithTitle:@""];
-    [m_menu setAutoenablesItems:NO];
-
-    populateNSMenu(m_menu.get(), nsMenuItemVector(items));
+    showContextMenu();
 }
 
-void WebContextMenuProxyMac::show()
+void WebContextMenuProxyMac::showContextMenu()
 {
-    // Unless this is an image control, give the PageContextMenuClient one last swipe at changing the menu.
-    bool askClientToChangeMenu = true;
-#if ENABLE(SERVICE_CONTROLS)
-    if (m_context.isServicesMenu() || m_context.controlledImage())
-        askClientToChangeMenu = false;
-#endif
-
     Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
     for (auto& item : m_context.menuItems()) {
         if (item.action() != ContextMenuItemTagShareMenu) {
@@ -401,30 +401,20 @@ void WebContextMenuProxyMac::show()
     Vector<RefPtr<WebContextMenuItem>> clientItems;
     bool useProposedItems = true;
 
-    if (askClientToChangeMenu && m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
+    if (m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
         useProposedItems = false;
 
     const Vector<RefPtr<WebContextMenuItem>>& items = useProposedItems ? proposedAPIItems : clientItems;
 
-#if ENABLE(SERVICE_CONTROLS)
-    if (items.isEmpty() && !m_context.isServicesMenu())
-        return;
-#else
     if (items.isEmpty())
         return;
-#endif
 
-    populate(items);
+    m_menu = [[NSMenu alloc] initWithTitle:@""];
+    [m_menu setAutoenablesItems:NO];
+
+    populateNSMenu(m_menu.get(), nsMenuItemVector(items));
 
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
-
-#if ENABLE(SERVICE_CONTROLS)
-    if (m_context.isServicesMenu())
-        [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setMenuProxy:this];
-#endif
-
-    Ref<WebPageProxy> protect(m_page);
-
     [m_menu popUpMenuPositioningItem:nil atLocation:m_context.menuLocation() inView:m_webView];
 }
 

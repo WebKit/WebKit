@@ -59,9 +59,10 @@ public:
 private:
     virtual void show() override;
 
-    void populate(const Vector<RefPtr<WebContextMenuItem>>&);
+    void showContextMenu();
 
 #if ENABLE(SERVICE_CONTROLS)
+    void showServicesMenu();
     void setupServicesMenu();
     WebCore::ContextMenuItem shareMenuItem();
 #endif
