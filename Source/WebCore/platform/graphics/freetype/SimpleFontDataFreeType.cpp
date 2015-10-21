@@ -65,6 +65,21 @@ void Font::platformInit()
     float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
 
+    // If the USE_TYPO_METRICS flag is set in the OS/2 table then we use typo metrics instead.
+    FT_Face freeTypeFace = cairo_ft_scaled_font_lock_face(m_platformData.scaledFont());
+    if (TT_OS2* OS2Table = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(freeTypeFace, ft_sfnt_os2))) {
+        const FT_Short kUseTypoMetricsMask = 1 << 7;
+        if (OS2Table->fsSelection & kUseTypoMetricsMask) {
+            // FT_Size_Metrics::y_scale is in 16.16 fixed point format.
+            // Its (fractional) value is a factor that converts vertical metrics from design units to units of 1/64 pixels.
+            double yscale = (freeTypeFace->size->metrics.y_scale / 65536.0) / 64.0;
+            ascent = narrowPrecisionToFloat(yscale * OS2Table->sTypoAscender);
+            descent = -narrowPrecisionToFloat(yscale * OS2Table->sTypoDescender);
+            lineGap = narrowPrecisionToFloat(yscale * OS2Table->sTypoLineGap);
+        }
+    }
+    cairo_ft_scaled_font_unlock_face(m_platformData.scaledFont());
+
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setCapHeight(capHeight);

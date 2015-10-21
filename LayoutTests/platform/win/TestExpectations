@@ -3264,3 +3264,6 @@ webkit.org/b/150040 js/dom/dfg-custom-getter.html [ Failure ]
 
 # The following tests are not relevant on the Windows platform:
 fast/forms/hidpi-textfield-background-bleeding.html [ Skip ]
+
+# USE_TYPO_METRICS is not implemented on the Windows platform
+webkit.org/b/131839 fonts/use-typo-metrics-1.html [ Failure ]
