@@ -15,9 +15,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-iframe-element/iframe_javascript_url_01.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-iframe-element/iframe_sandbox_allow_script.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-iframe-element/move_iframe_in_dom_01.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-iframe-element/move_iframe_in_dom_02.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-iframe-element/move_iframe_in_dom_03.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-iframe-element/move_iframe_in_dom_04.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_01.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_02.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_03.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_04.html

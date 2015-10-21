@@ -15,4 +15,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/tabular-data/attributes-common-to-td-and-th-elements/cellIndex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/tabular-data/attributes-common-to-td-and-th-elements/cellIndex.html

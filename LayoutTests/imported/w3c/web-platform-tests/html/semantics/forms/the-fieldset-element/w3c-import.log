@@ -15,6 +15,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-fieldset-element/HTMLFieldSetElement.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-fieldset-element/disabled-001.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-fieldset-element/disabled-002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-fieldset-element/HTMLFieldSetElement.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-fieldset-element/disabled-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-fieldset-element/disabled-002.xhtml

@@ -15,8 +15,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-audio-element/audio_001-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-audio-element/audio_001.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-audio-element/audio_002-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-audio-element/audio_002.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-audio-element/audio_constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_001-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_001.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_002-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_002.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio_constructor.html

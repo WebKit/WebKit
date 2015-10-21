@@ -229,8 +229,8 @@ var validator = {
         assert_true(ctl.reportValidity(), "The reportValidity method should be true.");
         assert_false(eventFired, "The invalid event should not be fired.");
       } else {
-        assert_true(eventFired, "The invalid event should be fired.");
         assert_false(ctl.reportValidity(), "The reportValidity method should be false.");
+        assert_true(eventFired, "The invalid event should be fired.");
       }
     }, data.name);
 
@@ -262,8 +262,20 @@ var validator = {
   },
 
   set_conditions: function (ctl, obj) {
-    ["required", "pattern", "step", "max", "min", "maxlength",
-     "value", "multiple", "checked", "selected"].forEach(function(item) {
+    [
+      "checked",
+      "disabled",
+      "max",
+      "maxlength",
+      "min",
+      "minlength",
+      "multiple",
+      "pattern",
+      "required",
+      "selected",
+      "step",
+      "value"
+    ].forEach(function(item) {
       ctl.removeAttribute(item);
     });
     for (var attr in obj) {
@@ -273,14 +285,16 @@ var validator = {
   },
 
   set_dirty: function(ctl) {
-    document.disgnMode = "on";
+    document.designMode = "on";
     ctl.focus();
     var old_value = ctl.value;
     ctl.value = "a";
     ctl.value = old_value;
-    ctl.setSelectionRange(ctl.value.length, ctl.value.length);
+    if (ctl.type !== 'email') {
+      ctl.setSelectionRange(ctl.value.length, ctl.value.length);
+    }
     document.execCommand("Delete");
-    document.disgnMode = "off";
+    document.designMode = "off";
   },
 
   pre_check: function(ctl, item) {

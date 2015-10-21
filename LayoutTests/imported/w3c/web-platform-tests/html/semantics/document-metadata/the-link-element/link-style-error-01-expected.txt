@@ -1,4 +1,3 @@
 CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/common/css-red.txt' because non CSS MIME types are not allowed in strict mode.
-
-FAIL Should get an error event for a text/plain response. assert_unreached: Should have received an error event. Reached unreachable code
+FAIL: Timed out waiting for notifyDone to be called
 

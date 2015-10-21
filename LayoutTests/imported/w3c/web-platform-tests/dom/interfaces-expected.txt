@@ -35,6 +35,7 @@ CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'documentURI' 
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'origin' on a non-Document object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'compatMode' on a non-Document object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'characterSet' on a non-Document object.
+CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'charset' on a non-Document object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'inputEncoding' on a non-Document object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'contentType' on a non-Document object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'doctype' on a non-Document object.
@@ -412,6 +413,9 @@ FAIL Document interface: attribute compatMode assert_throws: getting property on
 FAIL Document interface: attribute characterSet assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
+FAIL Document interface: attribute charset assert_throws: getting property on prototype object must throw TypeError function "function () {
+    [native code]
+}" did not throw
 FAIL Document interface: attribute inputEncoding assert_throws: getting property on prototype object must throw TypeError function "function () {
     [native code]
 }" did not throw
@@ -472,85 +476,86 @@ FAIL Document interface: xmlDoc must inherit property "documentURI" with the pro
 PASS Document interface: xmlDoc must inherit property "origin" with the proper type (3) 
 PASS Document interface: xmlDoc must inherit property "compatMode" with the proper type (4) 
 PASS Document interface: xmlDoc must inherit property "characterSet" with the proper type (5) 
-PASS Document interface: xmlDoc must inherit property "inputEncoding" with the proper type (6) 
-PASS Document interface: xmlDoc must inherit property "contentType" with the proper type (7) 
-PASS Document interface: xmlDoc must inherit property "doctype" with the proper type (8) 
-PASS Document interface: xmlDoc must inherit property "documentElement" with the proper type (9) 
-PASS Document interface: xmlDoc must inherit property "getElementsByTagName" with the proper type (10) 
+FAIL Document interface: xmlDoc must inherit property "charset" with the proper type (6) assert_equals: expected "string" but got "undefined"
+PASS Document interface: xmlDoc must inherit property "inputEncoding" with the proper type (7) 
+PASS Document interface: xmlDoc must inherit property "contentType" with the proper type (8) 
+PASS Document interface: xmlDoc must inherit property "doctype" with the proper type (9) 
+PASS Document interface: xmlDoc must inherit property "documentElement" with the proper type (10) 
+PASS Document interface: xmlDoc must inherit property "getElementsByTagName" with the proper type (11) 
 FAIL Document interface: calling getElementsByTagName(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "getElementsByTagNameNS" with the proper type (11) 
+PASS Document interface: xmlDoc must inherit property "getElementsByTagNameNS" with the proper type (12) 
 FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "getElementsByClassName" with the proper type (12) 
+PASS Document interface: xmlDoc must inherit property "getElementsByClassName" with the proper type (13) 
 FAIL Document interface: calling getElementsByClassName(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "createElement" with the proper type (13) 
+PASS Document interface: xmlDoc must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createElementNS" with the proper type (14) 
+PASS Document interface: xmlDoc must inherit property "createElementNS" with the proper type (15) 
 FAIL Document interface: calling createElementNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "createDocumentFragment" with the proper type (15) 
-PASS Document interface: xmlDoc must inherit property "createTextNode" with the proper type (16) 
+PASS Document interface: xmlDoc must inherit property "createDocumentFragment" with the proper type (16) 
+PASS Document interface: xmlDoc must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "createComment" with the proper type (17) 
+PASS Document interface: xmlDoc must inherit property "createComment" with the proper type (18) 
 FAIL Document interface: calling createComment(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "createProcessingInstruction" with the proper type (18) 
+PASS Document interface: xmlDoc must inherit property "createProcessingInstruction" with the proper type (19) 
 FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "importNode" with the proper type (19) 
+PASS Document interface: xmlDoc must inherit property "importNode" with the proper type (20) 
 FAIL Document interface: calling importNode(Node,boolean) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: xmlDoc must inherit property "adoptNode" with the proper type (20) 
+PASS Document interface: xmlDoc must inherit property "adoptNode" with the proper type (21) 
 FAIL Document interface: calling adoptNode(Node) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: xmlDoc must inherit property "createAttribute" with the proper type (21) 
+PASS Document interface: xmlDoc must inherit property "createAttribute" with the proper type (22) 
 FAIL Document interface: calling createAttribute(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (22) 
+PASS Document interface: xmlDoc must inherit property "createAttributeNS" with the proper type (23) 
 FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (23) 
+PASS Document interface: xmlDoc must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (24) 
-PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (25) 
+PASS Document interface: xmlDoc must inherit property "createRange" with the proper type (25) 
+PASS Document interface: xmlDoc must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "createTreeWalker" with the proper type (26) 
+PASS Document interface: xmlDoc must inherit property "createTreeWalker" with the proper type (27) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "getElementById" with the proper type (27) 
+PASS Document interface: xmlDoc must inherit property "getElementById" with the proper type (28) 
 FAIL Document interface: calling getElementById(DOMString) on xmlDoc with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: xmlDoc must inherit property "children" with the proper type (28) 
-PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type (29) 
-PASS Document interface: xmlDoc must inherit property "lastElementChild" with the proper type (30) 
-PASS Document interface: xmlDoc must inherit property "childElementCount" with the proper type (31) 
-PASS Document interface: xmlDoc must inherit property "prepend" with the proper type (32) 
+PASS Document interface: xmlDoc must inherit property "children" with the proper type (29) 
+PASS Document interface: xmlDoc must inherit property "firstElementChild" with the proper type (30) 
+PASS Document interface: xmlDoc must inherit property "lastElementChild" with the proper type (31) 
+PASS Document interface: xmlDoc must inherit property "childElementCount" with the proper type (32) 
+PASS Document interface: xmlDoc must inherit property "prepend" with the proper type (33) 
 PASS Document interface: calling prepend([object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "append" with the proper type (33) 
+PASS Document interface: xmlDoc must inherit property "append" with the proper type (34) 
 PASS Document interface: calling append([object Object],[object Object]) on xmlDoc with too few arguments must throw TypeError 
-FAIL Document interface: xmlDoc must inherit property "query" with the proper type (34) assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: xmlDoc must inherit property "query" with the proper type (35) assert_inherits: property "query" not found in prototype chain
 FAIL Document interface: calling query(DOMString) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: xmlDoc must inherit property "queryAll" with the proper type (35) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Document interface: xmlDoc must inherit property "queryAll" with the proper type (36) assert_inherits: property "queryAll" not found in prototype chain
 FAIL Document interface: calling queryAll(DOMString) on xmlDoc with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Document interface: xmlDoc must inherit property "querySelector" with the proper type (36) 
+PASS Document interface: xmlDoc must inherit property "querySelector" with the proper type (37) 
 PASS Document interface: calling querySelector(DOMString) on xmlDoc with too few arguments must throw TypeError 
-PASS Document interface: xmlDoc must inherit property "querySelectorAll" with the proper type (37) 
+PASS Document interface: xmlDoc must inherit property "querySelectorAll" with the proper type (38) 
 PASS Document interface: calling querySelectorAll(DOMString) on xmlDoc with too few arguments must throw TypeError 
 PASS Node interface: xmlDoc must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: xmlDoc must inherit property "ATTRIBUTE_NODE" with the proper type (1) 

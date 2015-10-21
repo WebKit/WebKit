@@ -120,7 +120,6 @@ PASS document.childNodes[1]
 PASS document.URL 
 PASS document.compatMode 
 PASS document.characterSet 
-PASS document.inputEncoding 
 PASS document.contentType 
 PASS document.doctype 
 PASS document.nodeName 
@@ -132,6 +131,8 @@ PASS document.parentElement
 PASS document.parentNode 
 PASS document.ownerDocument 
 PASS document.documentURI 
+PASS document.inputEncoding 
+PASS document.charset 
 PASS document.firstChild 
 PASS document.lastChild 
 PASS document.hasChildNodes() 
@@ -143,7 +144,6 @@ PASS foreignDoc.childNodes[2]
 FAIL foreignDoc.URL assert_equals: expected "about:blank" but got ""
 PASS foreignDoc.compatMode 
 PASS foreignDoc.characterSet 
-PASS foreignDoc.inputEncoding 
 PASS foreignDoc.contentType 
 PASS foreignDoc.nodeName 
 PASS foreignDoc.textContent 
@@ -154,6 +154,8 @@ PASS foreignDoc.parentElement
 PASS foreignDoc.parentNode 
 PASS foreignDoc.ownerDocument 
 FAIL foreignDoc.documentURI assert_equals: expected (string) "about:blank" but got (object) null
+PASS foreignDoc.inputEncoding 
+FAIL foreignDoc.charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
 PASS foreignDoc.firstChild 
 PASS foreignDoc.lastChild 
 PASS foreignDoc.hasChildNodes() 
@@ -216,7 +218,6 @@ PASS xmlDoc.childNodes[3]
 FAIL xmlDoc.URL assert_equals: expected "about:blank" but got ""
 PASS xmlDoc.compatMode 
 PASS xmlDoc.characterSet 
-PASS xmlDoc.inputEncoding 
 PASS xmlDoc.contentType 
 PASS xmlDoc.nodeName 
 PASS xmlDoc.textContent 
@@ -227,6 +228,8 @@ PASS xmlDoc.parentElement
 PASS xmlDoc.parentNode 
 PASS xmlDoc.ownerDocument 
 FAIL xmlDoc.documentURI assert_equals: expected (string) "about:blank" but got (object) null
+PASS xmlDoc.inputEncoding 
+FAIL xmlDoc.charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
 PASS xmlDoc.firstChild 
 PASS xmlDoc.lastChild 
 PASS xmlDoc.hasChildNodes() 

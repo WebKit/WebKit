@@ -15,11 +15,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bdo-child-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bdo-child.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bdo-ltr-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bdo-ltr.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bdo-override-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bdo-override.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bidi-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-bdo-element/bidi-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-child-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-child.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-ltr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-ltr.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-override-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-override.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bidi-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bidi-001.html

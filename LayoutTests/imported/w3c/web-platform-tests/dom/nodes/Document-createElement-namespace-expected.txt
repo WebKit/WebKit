@@ -5,10 +5,10 @@ PASS Created element's namespace in created XML document
 FAIL Created element's namespace in created XHTML document assert_equals: Wrong MIME type -- incorrect server config? expected "application/xml" but got "application/xhtml+xml"
 FAIL Created element's namespace in created SVG document assert_equals: Wrong MIME type -- incorrect server config? expected "application/xml" but got "image/svg+xml"
 PASS Created element's namespace in created MathML document 
-PASS Created element's namespace in empty.html 
-PASS Created element's namespace in empty.xhtml 
-PASS Created element's namespace in empty.xml 
-PASS Created element's namespace in empty.svg 
+FAIL Created element's namespace in empty.html assert_equals: Wrong MIME type -- incorrect server config? expected "text/html" but got "application/json"
+FAIL Created element's namespace in empty.xhtml assert_equals: Wrong MIME type -- incorrect server config? expected "application/xhtml+xml" but got "application/json"
+FAIL Created element's namespace in empty.xml assert_equals: Wrong MIME type -- incorrect server config? expected "application/xml" but got "application/json"
+FAIL Created element's namespace in empty.svg assert_equals: Wrong MIME type -- incorrect server config? expected "image/svg+xml" but got "application/json"
 PASS Created element's namespace in minimal_html.html 
 PASS Created element's namespace in minimal_html.xhtml 
 PASS Created element's namespace in minimal_html.xml 

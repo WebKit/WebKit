@@ -32,7 +32,7 @@ PASS [INPUT in NUMBER status] Value is -0
 PASS [INPUT in NUMBER status] Value is a number with some white spaces 
 PASS [INPUT in NUMBER status] Value is Math.pow(2, 1024) 
 PASS [INPUT in NUMBER status] Value is Math.pow(-2, 1024) 
-PASS [INPUT in NUMBER status] Value is a string that can not be coverted to a number 
+PASS [INPUT in NUMBER status] Value is a string that cannot be converted to a number 
 PASS [INPUT in NUMBER status] The value attribute is empty string 
 PASS [INPUT in CHECKBOX status] The required attribute is not set 
 PASS [INPUT in CHECKBOX status] The checked attribute is true 

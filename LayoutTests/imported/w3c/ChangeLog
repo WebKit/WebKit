@@ -1,3 +1,309 @@
+2015-10-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Update web-platform-tests tests to the same revision as tools
+        https://bugs.webkit.org/show_bug.cgi?id=149656
+
+        Reviewed by Darin Adler.
+
+        Syncing tests with WPT repository.
+        Some files previously in resources folder are now in not-resources folder.
+        Updated TestExpectations to skip those files.
+        web-platform-tests/dom/nodes/resources should be removed for a later patch.
+
+        * web-platform-tests/common/failing-test.html: Removed.
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-names.html:
+        * web-platform-tests/dom/collections/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/dom/events/w3c-import.log: Added.
+        * web-platform-tests/dom/historical-expected.txt:
+        * web-platform-tests/dom/historical.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/interfaces.html:
+        * web-platform-tests/dom/lists/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-meter-element/w3c-import.log.
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createHTMLDocument.html:
+        * web-platform-tests/dom/nodes/Document-adoptNode.html:
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization-expected.txt:
+        * web-platform-tests/dom/nodes/Document-characterSet-normalization.html:
+        * web-platform-tests/dom/nodes/Document-constructor-expected.txt:
+        * web-platform-tests/dom/nodes/Document-constructor.html:
+        * web-platform-tests/dom/nodes/Document-contentType/contentType/w3c-import.log: Added.
+        * web-platform-tests/dom/nodes/Document-contentType/resources/w3c-import.log: Added.
+        * web-platform-tests/dom/nodes/Document-contentType/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/w3c-import.log.
+        * web-platform-tests/dom/nodes/Document-createAttribute-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createAttribute.html:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_mathml.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_mathml.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_mathml.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_mathml.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_svg.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_svg.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_svg.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_svg.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.svg: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.xhtml: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/bare_xhtml.xml: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/blank.htm.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/empty.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/generate.py: Added.
+        (__main__):
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/mathml.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/mathml.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/mathml.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/mathml.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/minimal_html.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/minimal_html.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/minimal_html.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/minimal_html.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/svg.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/svg.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/svg.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/svg.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/w3c-import.log: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_changed.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_changed.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_changed.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_changed.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_removed.html: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_removed.svg: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_removed.xhtml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace-tests/xhtml_ns_removed.xml: Added.
+        * web-platform-tests/dom/nodes/Document-createElement-namespace.html:
+        * web-platform-tests/dom/nodes/Document-doctype.html:
+        * web-platform-tests/dom/nodes/Document-getElementById.html:
+        * web-platform-tests/dom/nodes/Element-matches.html:
+        * web-platform-tests/dom/nodes/MutationObserver-characterData-expected.txt:
+        * web-platform-tests/dom/nodes/MutationObserver-characterData.html:
+        * web-platform-tests/dom/nodes/Node-compareDocumentPosition.html:
+        * web-platform-tests/dom/nodes/Node-contains.html:
+        * web-platform-tests/dom/nodes/Node-lookupPrefix.xhtml:
+        * web-platform-tests/dom/nodes/Node-parentNode-iframe.html: Added.
+        * web-platform-tests/dom/nodes/Node-parentNode.html:
+        * web-platform-tests/dom/nodes/Node-properties-expected.txt:
+        * web-platform-tests/dom/nodes/Node-properties.html:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.html: Added.
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.xht: Added.
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All.html:
+        * web-platform-tests/dom/nodes/getElementsByClassName-14.htm:
+        * web-platform-tests/dom/nodes/getElementsByClassName-28.htm:
+        * web-platform-tests/dom/nodes/w3c-import.log: Added.
+        * web-platform-tests/dom/ranges/w3c-import.log: Added.
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter.html:
+        * web-platform-tests/dom/traversal/TreeWalker-basic.html:
+        * web-platform-tests/dom/traversal/TreeWalker-currentNode.html:
+        * web-platform-tests/dom/traversal/TreeWalker-previousNodeLastChildReject.html:
+        * web-platform-tests/dom/traversal/TreeWalker-previousSiblingLastChildSkip.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-reject.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-skip-most.html:
+        * web-platform-tests/dom/traversal/TreeWalker-traversal-skip.html:
+        * web-platform-tests/dom/traversal/TreeWalker-walking-outside-a-tree.html:
+        * web-platform-tests/dom/traversal/w3c-import.log: Added.
+        * web-platform-tests/dom/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/w3c-import.log.
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+        * web-platform-tests/domparsing/w3c-import.log:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.getElementsByName/w3c-import.log: Added.
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/w3c-import.log: Added.
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-lastModified-01.html:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/w3c-import.log: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/closing-the-input-stream/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/w3c-import.log.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/w3c-import.log: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/w3c-import.log.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010-1.html: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010-2.html: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010-expected.txt:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/010.html: Added.
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/w3c-import.log: Added.
+        * web-platform-tests/html/dom/elements/content-models/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-meter-element/w3c-import.log.
+        * web-platform-tests/html/dom/elements/element-definitions/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log.
+        * web-platform-tests/html/dom/elements/elements-in-the-dom/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/disabled-elements/w3c-import.log.
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-001.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-002.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-003.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-004.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-005.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-006.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-007.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-008.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-009.html:
+        * web-platform-tests/html/dom/elements/global-attributes/the-lang-attribute-010.html:
+        * web-platform-tests/html/dom/elements/global-attributes/w3c-import.log: Added.
+        * web-platform-tests/html/dom/elements/wai-aria/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log.
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/w3c-import.log: Added.
+        * web-platform-tests/html/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-meter-element/w3c-import.log.
+        * web-platform-tests/html/semantics/disabled-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/styling/support/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/base_multiple.html:
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/example.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/resources/example.html.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/example2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/resources/example2.html.
+        * web-platform-tests/html/semantics/document-metadata/the-base-element/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-meta-element/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/style-error-01-expected.txt:
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/style-error-01.html:
+        * web-platform-tests/html/semantics/document-metadata/the-style-element/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-title-element/w3c-import.log:
+        * web-platform-tests/html/semantics/edits/the-del-element/w3c-import.log:
+        * web-platform-tests/html/semantics/edits/the-ins-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/image-maps/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCueList/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TrackEvent/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/offsets-into-the-media-resource/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/user-interface/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-area-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-audio-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_javascript_url_01.htm: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_01.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_02.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_03.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/move_iframe_in_dom_04.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/resources/sandbox_allow_script.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/support/sandbox_allow_script.html: Removed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/current-pixel-density/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/iframed.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/viewport-change-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/environment-changes/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-iframed.sub.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/test0.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/resources/test0.html.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/resources/test1.html.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/test2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/resources/test2.html.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-video-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/resources/dirname-ltr-iframe.html.
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/dirname-ltr.html:
+        * web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooLong-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-tooLong.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valueMissing.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html:
+        * web-platform-tests/html/semantics/forms/constraints/support/validator.js:
+        (validator.test_reportValidity):
+        (validator.set_conditions):
+        (validator.set_dirty):
+        * web-platform-tests/html/semantics/forms/constraints/support/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/constraints/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-control-infrastructure/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/form-submission-0/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/introduction-1/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/resetting-a-form/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html:
+        * web-platform-tests/html/semantics/forms/textfieldselection/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-button-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-datalist-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-form-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes.html:
+        * web-platform-tests/html/semantics/forms/the-label-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-legend-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-meter-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-option-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-output-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-progress-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-select-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-textarea-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-dd-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-div-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-dl-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-dt-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-figcaption-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-figure-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-hr-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-002-ref-expected.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-002-ref.html: Removed.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1a.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-p-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-pre-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-ul-element/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/commands/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-details-element/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+        * web-platform-tests/html/semantics/interactive-elements/the-menu-element/w3c-import.log:
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/interfaces.js:
+        * web-platform-tests/html/semantics/links/downloading-resources/w3c-import.log:
+        * web-platform-tests/html/semantics/links/linktypes/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-parsing-xhtml-documents/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-serializing-xhtml-documents/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-steps-to-clone-a-node/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-document-type-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/template-contents-owner-document-type.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/definitions/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/innerhtml-on-templates/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/serializing-html-templates/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-descendant-frameset.html:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/w3c-import.log:
+        * web-platform-tests/html/semantics/sections/headings-and-sections/w3c-import.log:
+        * web-platform-tests/html/semantics/sections/the-h1-h2-h3-h4-h5-and-h6-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/disabled-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/disabled.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/resources/focus-iframe.html.
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/attributes-common-to-td-and-th-elements/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/processing-model-1/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-caption-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/w3c-import.log:
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-a-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-bdi-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-br-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-time-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/w3c-import.log:
+        * web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/wbr-element-expected.html:
+        * web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/wbr-element-ref.html: Removed.
+        * web-platform-tests/html/semantics/text-level-semantics/the-wbr-element/wbr-element.html:
+        * web-platform-tests/html/semantics/w3c-import.log:
+
 2015-10-18  Chris Dumez  <cdumez@apple.com>
 
         Script element with an empty for or event attributes should not execute

@@ -15,6 +15,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/interactive-elements/the-dialog-element/contains.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/interactive-elements/the-dialog-element/dialog-close.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/interactive-elements/the-dialog-element/dialog-showModal.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-close.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal.html

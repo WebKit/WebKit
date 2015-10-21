@@ -87,7 +87,7 @@ var tests = [
 tests.forEach(function(testName) {
   Object.keys(testExtensions).forEach(function(ext) {
     var iframe = document.createElement("iframe");
-    iframe.src = "resources/Document-createElement-namespace-tests/" +
+    iframe.src = "Document-createElement-namespace-tests/" +
                  testName + "." + ext;
     var t = async_test("Created element's namespace in " + testName + "." + ext);
     iframe.onload = function() {

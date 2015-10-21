@@ -15,5 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/addTextTrack.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/textTracks.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/addTextTrack.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLMediaElement/textTracks.html

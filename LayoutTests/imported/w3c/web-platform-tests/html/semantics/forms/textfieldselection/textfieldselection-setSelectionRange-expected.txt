@@ -33,11 +33,11 @@ PASS textarea direction of setSelectionRange(0,1,"none")
 PASS textarea direction of setSelectionRange(0,1,"hoge") 
 PASS textarea direction of setSelectionRange(0,1,"BACKWARD") 
 PASS textarea direction of setSelectionRange(0,1) 
-FAIL textarea setSelectionRange("string",1) assert_equals: element.selectionStart should be 0 expected 1 but got 0
+PASS textarea setSelectionRange("string",1) 
 PASS textarea setSelectionRange(true,1) 
-FAIL textarea setSelectionRange([],1) assert_equals: element.selectionStart should be 0 expected 1 but got 0
-FAIL textarea setSelectionRange({},1) assert_equals: element.selectionStart should be 0 expected 1 but got 0
-FAIL textarea setSelectionRange(NaN,1) assert_equals: element.selectionStart should be 0 expected 1 but got 0
-FAIL textarea setSelectionRange(null,1) assert_equals: element.selectionStart should be 0 expected 1 but got 0
-FAIL textarea setSelectionRange(undefined,1) assert_equals: element.selectionStart should be 0 expected 1 but got 0
+PASS textarea setSelectionRange([],1) 
+PASS textarea setSelectionRange({},1) 
+PASS textarea setSelectionRange(NaN,1) 
+PASS textarea setSelectionRange(null,1) 
+PASS textarea setSelectionRange(undefined,1) 
 

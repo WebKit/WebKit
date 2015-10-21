@@ -15,7 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-br-element/br-bidi-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/text-level-semantics/the-br-element/br-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi.html

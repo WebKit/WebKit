@@ -15,13 +15,13 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/activeCues.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/addCue.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/constants.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/cues.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/kind.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/label.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/language.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/mode.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/oncuechange.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrack/removeCue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/activeCues.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/addCue.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/constants.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/cues.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/kind.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/mode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/oncuechange.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/removeCue.html

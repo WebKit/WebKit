@@ -15,4 +15,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-legend-element/legend-form.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-legend-element/legend-form.html

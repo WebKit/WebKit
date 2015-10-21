@@ -8,7 +8,7 @@ PASS [INPUT in TEXT status] Non-dirty value - length of value is greater than ma
 PASS [INPUT in TEXT status] Dirty value - value is less than maxlength 
 PASS [INPUT in TEXT status] Dirty value - length of value(AAA) in unicode is less than maxlength 
 PASS [INPUT in TEXT status] Dirty value - value equals to maxlength 
-FAIL [INPUT in TEXT status] Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [INPUT in TEXT status] Dirty value - length of value is greater than maxlength 
 PASS [INPUT in SEARCH status] Non-dirty value - maxlength is not set 
 PASS [INPUT in SEARCH status] Non-dirty value - value is empty string 
 PASS [INPUT in SEARCH status] Non-dirty value - length of value is less than maxlength 
@@ -17,7 +17,7 @@ PASS [INPUT in SEARCH status] Non-dirty value - length of value is greater than 
 PASS [INPUT in SEARCH status] Dirty value - value is less than maxlength 
 PASS [INPUT in SEARCH status] Dirty value - length of value(AAA) in unicode is less than maxlength 
 PASS [INPUT in SEARCH status] Dirty value - value equals to maxlength 
-FAIL [INPUT in SEARCH status] Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [INPUT in SEARCH status] Dirty value - length of value is greater than maxlength 
 PASS [INPUT in TEL status] Non-dirty value - maxlength is not set 
 PASS [INPUT in TEL status] Non-dirty value - value is empty string 
 PASS [INPUT in TEL status] Non-dirty value - length of value is less than maxlength 
@@ -26,7 +26,7 @@ PASS [INPUT in TEL status] Non-dirty value - length of value is greater than max
 PASS [INPUT in TEL status] Dirty value - value is less than maxlength 
 PASS [INPUT in TEL status] Dirty value - length of value(AAA) in unicode is less than maxlength 
 PASS [INPUT in TEL status] Dirty value - value equals to maxlength 
-FAIL [INPUT in TEL status] Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [INPUT in TEL status] Dirty value - length of value is greater than maxlength 
 PASS [INPUT in URL status] Non-dirty value - maxlength is not set 
 PASS [INPUT in URL status] Non-dirty value - value is empty string 
 PASS [INPUT in URL status] Non-dirty value - length of value is less than maxlength 
@@ -35,7 +35,7 @@ PASS [INPUT in URL status] Non-dirty value - length of value is greater than max
 PASS [INPUT in URL status] Dirty value - value is less than maxlength 
 PASS [INPUT in URL status] Dirty value - length of value(AAA) in unicode is less than maxlength 
 PASS [INPUT in URL status] Dirty value - value equals to maxlength 
-FAIL [INPUT in URL status] Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [INPUT in URL status] Dirty value - length of value is greater than maxlength 
 PASS [INPUT in EMAIL status] Non-dirty value - maxlength is not set 
 PASS [INPUT in EMAIL status] Non-dirty value - value is empty string 
 PASS [INPUT in EMAIL status] Non-dirty value - length of value is less than maxlength 
@@ -44,7 +44,7 @@ PASS [INPUT in EMAIL status] Non-dirty value - length of value is greater than m
 PASS [INPUT in EMAIL status] Dirty value - value is less than maxlength 
 PASS [INPUT in EMAIL status] Dirty value - length of value(AAA) in unicode is less than maxlength 
 PASS [INPUT in EMAIL status] Dirty value - value equals to maxlength 
-FAIL [INPUT in EMAIL status] Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [INPUT in EMAIL status] Dirty value - length of value is greater than maxlength 
 PASS [INPUT in PASSWORD status] Non-dirty value - maxlength is not set 
 PASS [INPUT in PASSWORD status] Non-dirty value - value is empty string 
 PASS [INPUT in PASSWORD status] Non-dirty value - length of value is less than maxlength 
@@ -53,7 +53,7 @@ PASS [INPUT in PASSWORD status] Non-dirty value - length of value is greater tha
 PASS [INPUT in PASSWORD status] Dirty value - value is less than maxlength 
 PASS [INPUT in PASSWORD status] Dirty value - length of value(AAA) in unicode is less than maxlength 
 PASS [INPUT in PASSWORD status] Dirty value - value equals to maxlength 
-FAIL [INPUT in PASSWORD status] Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [INPUT in PASSWORD status] Dirty value - length of value is greater than maxlength 
 PASS [textarea]  Non-dirty value - maxlength is not set 
 PASS [textarea]  Non-dirty value - value is empty string 
 PASS [textarea]  Non-dirty value - length of value is less than maxlength 
@@ -62,5 +62,5 @@ PASS [textarea]  Non-dirty value - length of value is greater than maxlength
 PASS [textarea]  Dirty value - value is less than maxlength 
 PASS [textarea]  Dirty value - length of value(LF, CRLF) in unicode is less than maxlength 
 PASS [textarea]  Dirty value - length of value equals to maxlength 
-FAIL [textarea]  Dirty value - length of value is greater than maxlength assert_true: The validity.tooLong should be true. expected true got false
+PASS [textarea]  Dirty value - length of value is greater than maxlength 
 

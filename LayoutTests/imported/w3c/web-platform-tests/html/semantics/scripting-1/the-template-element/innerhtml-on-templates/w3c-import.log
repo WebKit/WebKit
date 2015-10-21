@@ -15,4 +15,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/scripting-1/the-template-element/innerhtml-on-templates/innerhtml.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/innerhtml-on-templates/innerhtml.html

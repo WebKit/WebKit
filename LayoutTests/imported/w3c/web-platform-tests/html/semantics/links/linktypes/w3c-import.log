@@ -15,5 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/links/linktypes/contains.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/links/linktypes/original-id.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/links/linktypes/original-id.json

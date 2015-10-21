@@ -15,7 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/track/track-element/resources/track.de.vtt
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/track/track-element/resources/track.en.vtt
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/track/track-element/resources/track.fr.vtt
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/track/track-element/resources/track.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.de.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.en.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.fr.vtt
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/resources/track.vtt

@@ -15,5 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/document-metadata/the-meta-element/contains.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/document-metadata/the-meta-element/the-lang-attribute-012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/the-lang-attribute-012.html

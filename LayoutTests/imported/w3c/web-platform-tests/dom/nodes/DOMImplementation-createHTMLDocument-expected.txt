@@ -9,5 +9,6 @@ FAIL createHTMLDocument test 6: "foo\f\fbar baz","foo\f\fbar baz","foo bar baz" 
 FAIL createHTMLDocument test 7: "foo\r\rbar baz","foo\r\rbar baz","foo bar baz" assert_equals: expected (string) "" but got (object) null
 FAIL Missing title argument assert_equals: expected (string) "" but got (object) null
 FAIL createHTMLDocument(): metadata assert_equals: expected "about:blank" but got ""
+FAIL createHTMLDocument(): characterSet aliases assert_equals: charset expected (string) "UTF-8" but got (undefined) undefined
 PASS createHTMLDocument(): URL parsing 
 

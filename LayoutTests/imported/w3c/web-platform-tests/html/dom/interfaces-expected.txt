@@ -935,230 +935,231 @@ PASS Document interface: iframe.contentDocument must inherit property "documentU
 PASS Document interface: iframe.contentDocument must inherit property "origin" with the proper type (3) 
 FAIL Document interface: iframe.contentDocument must inherit property "compatMode" with the proper type (4) assert_inherits: property "compatMode" found on object expected in prototype chain
 PASS Document interface: iframe.contentDocument must inherit property "characterSet" with the proper type (5) 
-PASS Document interface: iframe.contentDocument must inherit property "inputEncoding" with the proper type (6) 
-PASS Document interface: iframe.contentDocument must inherit property "contentType" with the proper type (7) 
-PASS Document interface: iframe.contentDocument must inherit property "doctype" with the proper type (8) 
-PASS Document interface: iframe.contentDocument must inherit property "documentElement" with the proper type (9) 
-PASS Document interface: iframe.contentDocument must inherit property "getElementsByTagName" with the proper type (10) 
+PASS Document interface: iframe.contentDocument must inherit property "charset" with the proper type (6) 
+PASS Document interface: iframe.contentDocument must inherit property "inputEncoding" with the proper type (7) 
+PASS Document interface: iframe.contentDocument must inherit property "contentType" with the proper type (8) 
+PASS Document interface: iframe.contentDocument must inherit property "doctype" with the proper type (9) 
+PASS Document interface: iframe.contentDocument must inherit property "documentElement" with the proper type (10) 
+PASS Document interface: iframe.contentDocument must inherit property "getElementsByTagName" with the proper type (11) 
 FAIL Document interface: calling getElementsByTagName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "getElementsByTagNameNS" with the proper type (11) 
+PASS Document interface: iframe.contentDocument must inherit property "getElementsByTagNameNS" with the proper type (12) 
 FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "getElementsByClassName" with the proper type (12) 
+PASS Document interface: iframe.contentDocument must inherit property "getElementsByClassName" with the proper type (13) 
 FAIL Document interface: calling getElementsByClassName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "createElement" with the proper type (13) 
+PASS Document interface: iframe.contentDocument must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "createElementNS" with the proper type (14) 
+PASS Document interface: iframe.contentDocument must inherit property "createElementNS" with the proper type (15) 
 FAIL Document interface: calling createElementNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "createDocumentFragment" with the proper type (15) 
-PASS Document interface: iframe.contentDocument must inherit property "createTextNode" with the proper type (16) 
+PASS Document interface: iframe.contentDocument must inherit property "createDocumentFragment" with the proper type (16) 
+PASS Document interface: iframe.contentDocument must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "createComment" with the proper type (17) 
+PASS Document interface: iframe.contentDocument must inherit property "createComment" with the proper type (18) 
 FAIL Document interface: calling createComment(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "createProcessingInstruction" with the proper type (18) 
+PASS Document interface: iframe.contentDocument must inherit property "createProcessingInstruction" with the proper type (19) 
 FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "importNode" with the proper type (19) 
+PASS Document interface: iframe.contentDocument must inherit property "importNode" with the proper type (20) 
 FAIL Document interface: calling importNode(Node,boolean) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: iframe.contentDocument must inherit property "adoptNode" with the proper type (20) 
+PASS Document interface: iframe.contentDocument must inherit property "adoptNode" with the proper type (21) 
 FAIL Document interface: calling adoptNode(Node) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: iframe.contentDocument must inherit property "createAttribute" with the proper type (21) 
+PASS Document interface: iframe.contentDocument must inherit property "createAttribute" with the proper type (22) 
 FAIL Document interface: calling createAttribute(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "createAttributeNS" with the proper type (22) 
+PASS Document interface: iframe.contentDocument must inherit property "createAttributeNS" with the proper type (23) 
 FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "createEvent" with the proper type (23) 
+PASS Document interface: iframe.contentDocument must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: iframe.contentDocument must inherit property "createRange" with the proper type (24) 
-PASS Document interface: iframe.contentDocument must inherit property "createNodeIterator" with the proper type (25) 
+PASS Document interface: iframe.contentDocument must inherit property "createRange" with the proper type (25) 
+PASS Document interface: iframe.contentDocument must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "createTreeWalker" with the proper type (26) 
+PASS Document interface: iframe.contentDocument must inherit property "createTreeWalker" with the proper type (27) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "styleSheets" with the proper type (27) 
-FAIL Document interface: iframe.contentDocument must inherit property "selectedStyleSheetSet" with the proper type (28) assert_inherits: property "selectedStyleSheetSet" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "lastStyleSheetSet" with the proper type (29) assert_inherits: property "lastStyleSheetSet" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "preferredStyleSheetSet" with the proper type (30) assert_inherits: property "preferredStyleSheetSet" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "styleSheetSets" with the proper type (31) assert_inherits: property "styleSheetSets" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "enableStyleSheetsForSet" with the proper type (32) assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "styleSheets" with the proper type (28) 
+FAIL Document interface: iframe.contentDocument must inherit property "selectedStyleSheetSet" with the proper type (29) assert_inherits: property "selectedStyleSheetSet" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "lastStyleSheetSet" with the proper type (30) assert_inherits: property "lastStyleSheetSet" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "preferredStyleSheetSet" with the proper type (31) assert_inherits: property "preferredStyleSheetSet" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "styleSheetSets" with the proper type (32) assert_inherits: property "styleSheetSets" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "enableStyleSheetsForSet" with the proper type (33) assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
 FAIL Document interface: calling enableStyleSheetsForSet(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
 FAIL Document interface: iframe.contentDocument must have own property "location" assert_equals: getter must be Function expected "function" but got "undefined"
-PASS Document interface: iframe.contentDocument must inherit property "domain" with the proper type (34) 
-PASS Document interface: iframe.contentDocument must inherit property "referrer" with the proper type (35) 
-PASS Document interface: iframe.contentDocument must inherit property "cookie" with the proper type (36) 
-PASS Document interface: iframe.contentDocument must inherit property "lastModified" with the proper type (37) 
-PASS Document interface: iframe.contentDocument must inherit property "readyState" with the proper type (38) 
-PASS Document interface: iframe.contentDocument must inherit property "title" with the proper type (40) 
-FAIL Document interface: iframe.contentDocument must inherit property "dir" with the proper type (41) assert_inherits: property "dir" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "body" with the proper type (42) 
-PASS Document interface: iframe.contentDocument must inherit property "head" with the proper type (43) 
-PASS Document interface: iframe.contentDocument must inherit property "images" with the proper type (44) 
-FAIL Document interface: iframe.contentDocument must inherit property "embeds" with the proper type (45) assert_inherits: property "embeds" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "plugins" with the proper type (46) assert_inherits: property "plugins" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "links" with the proper type (47) 
-PASS Document interface: iframe.contentDocument must inherit property "forms" with the proper type (48) 
-FAIL Document interface: iframe.contentDocument must inherit property "scripts" with the proper type (49) assert_inherits: property "scripts" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "getElementsByName" with the proper type (50) 
+PASS Document interface: iframe.contentDocument must inherit property "domain" with the proper type (35) 
+PASS Document interface: iframe.contentDocument must inherit property "referrer" with the proper type (36) 
+PASS Document interface: iframe.contentDocument must inherit property "cookie" with the proper type (37) 
+PASS Document interface: iframe.contentDocument must inherit property "lastModified" with the proper type (38) 
+PASS Document interface: iframe.contentDocument must inherit property "readyState" with the proper type (39) 
+PASS Document interface: iframe.contentDocument must inherit property "title" with the proper type (41) 
+FAIL Document interface: iframe.contentDocument must inherit property "dir" with the proper type (42) assert_inherits: property "dir" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "body" with the proper type (43) 
+PASS Document interface: iframe.contentDocument must inherit property "head" with the proper type (44) 
+PASS Document interface: iframe.contentDocument must inherit property "images" with the proper type (45) 
+FAIL Document interface: iframe.contentDocument must inherit property "embeds" with the proper type (46) assert_inherits: property "embeds" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "plugins" with the proper type (47) assert_inherits: property "plugins" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "links" with the proper type (48) 
+PASS Document interface: iframe.contentDocument must inherit property "forms" with the proper type (49) 
+FAIL Document interface: iframe.contentDocument must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "getElementsByName" with the proper type (51) 
 FAIL Document interface: calling getElementsByName(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL Document interface: iframe.contentDocument must inherit property "getItems" with the proper type (51) assert_inherits: property "getItems" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "getItems" with the proper type (52) assert_inherits: property "getItems" not found in prototype chain
 FAIL Document interface: calling getItems(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "getItems" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "currentScript" with the proper type (53) 
-FAIL Document interface: iframe.contentDocument must inherit property "open" with the proper type (54) assert_inherits: property "open" found on object expected in prototype chain
-FAIL Document interface: calling open(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "open" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "cssElementMap" with the proper type (53) assert_inherits: property "cssElementMap" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "currentScript" with the proper type (54) 
 FAIL Document interface: iframe.contentDocument must inherit property "open" with the proper type (55) assert_inherits: property "open" found on object expected in prototype chain
+FAIL Document interface: calling open(DOMString,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "open" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "open" with the proper type (56) assert_inherits: property "open" found on object expected in prototype chain
 FAIL Document interface: calling open(DOMString,DOMString,DOMString,boolean) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "open" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "close" with the proper type (56) 
-PASS Document interface: iframe.contentDocument must inherit property "write" with the proper type (57) 
+PASS Document interface: iframe.contentDocument must inherit property "close" with the proper type (57) 
+PASS Document interface: iframe.contentDocument must inherit property "write" with the proper type (58) 
 PASS Document interface: calling write(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "writeln" with the proper type (58) 
+PASS Document interface: iframe.contentDocument must inherit property "writeln" with the proper type (59) 
 PASS Document interface: calling writeln(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "defaultView" with the proper type (59) 
-PASS Document interface: iframe.contentDocument must inherit property "activeElement" with the proper type (60) 
-PASS Document interface: iframe.contentDocument must inherit property "hasFocus" with the proper type (61) 
-FAIL Document interface: iframe.contentDocument must inherit property "designMode" with the proper type (62) assert_inherits: property "designMode" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "execCommand" with the proper type (63) 
+PASS Document interface: iframe.contentDocument must inherit property "defaultView" with the proper type (60) 
+PASS Document interface: iframe.contentDocument must inherit property "activeElement" with the proper type (61) 
+PASS Document interface: iframe.contentDocument must inherit property "hasFocus" with the proper type (62) 
+FAIL Document interface: iframe.contentDocument must inherit property "designMode" with the proper type (63) assert_inherits: property "designMode" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "execCommand" with the proper type (64) 
 FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "queryCommandEnabled" with the proper type (64) 
+PASS Document interface: iframe.contentDocument must inherit property "queryCommandEnabled" with the proper type (65) 
 FAIL Document interface: calling queryCommandEnabled(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "queryCommandIndeterm" with the proper type (65) 
+PASS Document interface: iframe.contentDocument must inherit property "queryCommandIndeterm" with the proper type (66) 
 FAIL Document interface: calling queryCommandIndeterm(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "queryCommandState" with the proper type (66) 
+PASS Document interface: iframe.contentDocument must inherit property "queryCommandState" with the proper type (67) 
 FAIL Document interface: calling queryCommandState(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "queryCommandSupported" with the proper type (67) 
+PASS Document interface: iframe.contentDocument must inherit property "queryCommandSupported" with the proper type (68) 
 FAIL Document interface: calling queryCommandSupported(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "queryCommandValue" with the proper type (68) 
+PASS Document interface: iframe.contentDocument must inherit property "queryCommandValue" with the proper type (69) 
 FAIL Document interface: calling queryCommandValue(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL Document interface: iframe.contentDocument must inherit property "commands" with the proper type (69) assert_inherits: property "commands" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onreadystatechange" with the proper type (70) 
-FAIL Document interface: iframe.contentDocument must inherit property "fgColor" with the proper type (71) assert_inherits: property "fgColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "linkColor" with the proper type (72) assert_inherits: property "linkColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "vlinkColor" with the proper type (73) assert_inherits: property "vlinkColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "alinkColor" with the proper type (74) assert_inherits: property "alinkColor" found on object expected in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "bgColor" with the proper type (75) assert_inherits: property "bgColor" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "anchors" with the proper type (76) 
-PASS Document interface: iframe.contentDocument must inherit property "applets" with the proper type (77) 
-PASS Document interface: iframe.contentDocument must inherit property "clear" with the proper type (78) 
-PASS Document interface: iframe.contentDocument must inherit property "captureEvents" with the proper type (79) 
-PASS Document interface: iframe.contentDocument must inherit property "releaseEvents" with the proper type (80) 
-FAIL Document interface: iframe.contentDocument must inherit property "all" with the proper type (81) assert_inherits: property "all" found on object expected in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "getElementById" with the proper type (82) 
+FAIL Document interface: iframe.contentDocument must inherit property "commands" with the proper type (70) assert_inherits: property "commands" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onreadystatechange" with the proper type (71) 
+FAIL Document interface: iframe.contentDocument must inherit property "fgColor" with the proper type (72) assert_inherits: property "fgColor" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "linkColor" with the proper type (73) assert_inherits: property "linkColor" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "vlinkColor" with the proper type (74) assert_inherits: property "vlinkColor" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "alinkColor" with the proper type (75) assert_inherits: property "alinkColor" found on object expected in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "bgColor" with the proper type (76) assert_inherits: property "bgColor" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "anchors" with the proper type (77) 
+PASS Document interface: iframe.contentDocument must inherit property "applets" with the proper type (78) 
+PASS Document interface: iframe.contentDocument must inherit property "clear" with the proper type (79) 
+PASS Document interface: iframe.contentDocument must inherit property "captureEvents" with the proper type (80) 
+PASS Document interface: iframe.contentDocument must inherit property "releaseEvents" with the proper type (81) 
+FAIL Document interface: iframe.contentDocument must inherit property "all" with the proper type (82) assert_inherits: property "all" found on object expected in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "getElementById" with the proper type (83) 
 FAIL Document interface: calling getElementById(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: iframe.contentDocument must inherit property "children" with the proper type (83) 
-PASS Document interface: iframe.contentDocument must inherit property "firstElementChild" with the proper type (84) 
-PASS Document interface: iframe.contentDocument must inherit property "lastElementChild" with the proper type (85) 
-PASS Document interface: iframe.contentDocument must inherit property "childElementCount" with the proper type (86) 
-PASS Document interface: iframe.contentDocument must inherit property "prepend" with the proper type (87) 
+PASS Document interface: iframe.contentDocument must inherit property "children" with the proper type (84) 
+PASS Document interface: iframe.contentDocument must inherit property "firstElementChild" with the proper type (85) 
+PASS Document interface: iframe.contentDocument must inherit property "lastElementChild" with the proper type (86) 
+PASS Document interface: iframe.contentDocument must inherit property "childElementCount" with the proper type (87) 
+PASS Document interface: iframe.contentDocument must inherit property "prepend" with the proper type (88) 
 PASS Document interface: calling prepend([object Object],[object Object]) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "append" with the proper type (88) 
+PASS Document interface: iframe.contentDocument must inherit property "append" with the proper type (89) 
 PASS Document interface: calling append([object Object],[object Object]) on iframe.contentDocument with too few arguments must throw TypeError 
-FAIL Document interface: iframe.contentDocument must inherit property "query" with the proper type (89) assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "query" with the proper type (90) assert_inherits: property "query" not found in prototype chain
 FAIL Document interface: calling query(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "queryAll" with the proper type (90) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "queryAll" with the proper type (91) assert_inherits: property "queryAll" not found in prototype chain
 FAIL Document interface: calling queryAll(DOMString) on iframe.contentDocument with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "querySelector" with the proper type (91) 
+PASS Document interface: iframe.contentDocument must inherit property "querySelector" with the proper type (92) 
 PASS Document interface: calling querySelector(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "querySelectorAll" with the proper type (92) 
+PASS Document interface: iframe.contentDocument must inherit property "querySelectorAll" with the proper type (93) 
 PASS Document interface: calling querySelectorAll(DOMString) on iframe.contentDocument with too few arguments must throw TypeError 
-PASS Document interface: iframe.contentDocument must inherit property "onabort" with the proper type (93) 
-FAIL Document interface: iframe.contentDocument must inherit property "onautocomplete" with the proper type (94) assert_inherits: property "onautocomplete" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "onautocompleteerror" with the proper type (95) assert_inherits: property "onautocompleteerror" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onblur" with the proper type (96) 
-FAIL Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type (97) assert_inherits: property "oncancel" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "oncanplay" with the proper type (98) 
-PASS Document interface: iframe.contentDocument must inherit property "oncanplaythrough" with the proper type (99) 
-PASS Document interface: iframe.contentDocument must inherit property "onchange" with the proper type (100) 
-PASS Document interface: iframe.contentDocument must inherit property "onclick" with the proper type (101) 
-FAIL Document interface: iframe.contentDocument must inherit property "onclose" with the proper type (102) assert_inherits: property "onclose" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "oncontextmenu" with the proper type (103) 
-FAIL Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type (104) assert_inherits: property "oncuechange" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "ondblclick" with the proper type (105) 
-PASS Document interface: iframe.contentDocument must inherit property "ondrag" with the proper type (106) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragend" with the proper type (107) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragenter" with the proper type (108) 
-FAIL Document interface: iframe.contentDocument must inherit property "ondragexit" with the proper type (109) assert_inherits: property "ondragexit" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "ondragleave" with the proper type (110) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragover" with the proper type (111) 
-PASS Document interface: iframe.contentDocument must inherit property "ondragstart" with the proper type (112) 
-PASS Document interface: iframe.contentDocument must inherit property "ondrop" with the proper type (113) 
-PASS Document interface: iframe.contentDocument must inherit property "ondurationchange" with the proper type (114) 
-PASS Document interface: iframe.contentDocument must inherit property "onemptied" with the proper type (115) 
-PASS Document interface: iframe.contentDocument must inherit property "onended" with the proper type (116) 
-PASS Document interface: iframe.contentDocument must inherit property "onerror" with the proper type (117) 
-PASS Document interface: iframe.contentDocument must inherit property "onfocus" with the proper type (118) 
-PASS Document interface: iframe.contentDocument must inherit property "oninput" with the proper type (119) 
-PASS Document interface: iframe.contentDocument must inherit property "oninvalid" with the proper type (120) 
-PASS Document interface: iframe.contentDocument must inherit property "onkeydown" with the proper type (121) 
-PASS Document interface: iframe.contentDocument must inherit property "onkeypress" with the proper type (122) 
-PASS Document interface: iframe.contentDocument must inherit property "onkeyup" with the proper type (123) 
-PASS Document interface: iframe.contentDocument must inherit property "onload" with the proper type (124) 
-PASS Document interface: iframe.contentDocument must inherit property "onloadeddata" with the proper type (125) 
-PASS Document interface: iframe.contentDocument must inherit property "onloadedmetadata" with the proper type (126) 
-PASS Document interface: iframe.contentDocument must inherit property "onloadstart" with the proper type (127) 
-PASS Document interface: iframe.contentDocument must inherit property "onmousedown" with the proper type (128) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseenter" with the proper type (129) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseleave" with the proper type (130) 
-PASS Document interface: iframe.contentDocument must inherit property "onmousemove" with the proper type (131) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseout" with the proper type (132) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseover" with the proper type (133) 
-PASS Document interface: iframe.contentDocument must inherit property "onmouseup" with the proper type (134) 
-PASS Document interface: iframe.contentDocument must inherit property "onmousewheel" with the proper type (135) 
-PASS Document interface: iframe.contentDocument must inherit property "onpause" with the proper type (136) 
-PASS Document interface: iframe.contentDocument must inherit property "onplay" with the proper type (137) 
-PASS Document interface: iframe.contentDocument must inherit property "onplaying" with the proper type (138) 
-PASS Document interface: iframe.contentDocument must inherit property "onprogress" with the proper type (139) 
-PASS Document interface: iframe.contentDocument must inherit property "onratechange" with the proper type (140) 
-PASS Document interface: iframe.contentDocument must inherit property "onreset" with the proper type (141) 
-FAIL Document interface: iframe.contentDocument must inherit property "onresize" with the proper type (142) assert_inherits: property "onresize" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onscroll" with the proper type (143) 
-PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type (144) 
-PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type (145) 
-PASS Document interface: iframe.contentDocument must inherit property "onselect" with the proper type (146) 
-FAIL Document interface: iframe.contentDocument must inherit property "onshow" with the proper type (147) assert_inherits: property "onshow" not found in prototype chain
-FAIL Document interface: iframe.contentDocument must inherit property "onsort" with the proper type (148) assert_inherits: property "onsort" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onstalled" with the proper type (149) 
-PASS Document interface: iframe.contentDocument must inherit property "onsubmit" with the proper type (150) 
-PASS Document interface: iframe.contentDocument must inherit property "onsuspend" with the proper type (151) 
-PASS Document interface: iframe.contentDocument must inherit property "ontimeupdate" with the proper type (152) 
-FAIL Document interface: iframe.contentDocument must inherit property "ontoggle" with the proper type (153) assert_inherits: property "ontoggle" not found in prototype chain
-PASS Document interface: iframe.contentDocument must inherit property "onvolumechange" with the proper type (154) 
-PASS Document interface: iframe.contentDocument must inherit property "onwaiting" with the proper type (155) 
+PASS Document interface: iframe.contentDocument must inherit property "onabort" with the proper type (94) 
+FAIL Document interface: iframe.contentDocument must inherit property "onautocomplete" with the proper type (95) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "onautocompleteerror" with the proper type (96) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onblur" with the proper type (97) 
+FAIL Document interface: iframe.contentDocument must inherit property "oncancel" with the proper type (98) assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "oncanplay" with the proper type (99) 
+PASS Document interface: iframe.contentDocument must inherit property "oncanplaythrough" with the proper type (100) 
+PASS Document interface: iframe.contentDocument must inherit property "onchange" with the proper type (101) 
+PASS Document interface: iframe.contentDocument must inherit property "onclick" with the proper type (102) 
+FAIL Document interface: iframe.contentDocument must inherit property "onclose" with the proper type (103) assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "oncontextmenu" with the proper type (104) 
+FAIL Document interface: iframe.contentDocument must inherit property "oncuechange" with the proper type (105) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "ondblclick" with the proper type (106) 
+PASS Document interface: iframe.contentDocument must inherit property "ondrag" with the proper type (107) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragend" with the proper type (108) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragenter" with the proper type (109) 
+FAIL Document interface: iframe.contentDocument must inherit property "ondragexit" with the proper type (110) assert_inherits: property "ondragexit" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "ondragleave" with the proper type (111) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragover" with the proper type (112) 
+PASS Document interface: iframe.contentDocument must inherit property "ondragstart" with the proper type (113) 
+PASS Document interface: iframe.contentDocument must inherit property "ondrop" with the proper type (114) 
+PASS Document interface: iframe.contentDocument must inherit property "ondurationchange" with the proper type (115) 
+PASS Document interface: iframe.contentDocument must inherit property "onemptied" with the proper type (116) 
+PASS Document interface: iframe.contentDocument must inherit property "onended" with the proper type (117) 
+PASS Document interface: iframe.contentDocument must inherit property "onerror" with the proper type (118) 
+PASS Document interface: iframe.contentDocument must inherit property "onfocus" with the proper type (119) 
+PASS Document interface: iframe.contentDocument must inherit property "oninput" with the proper type (120) 
+PASS Document interface: iframe.contentDocument must inherit property "oninvalid" with the proper type (121) 
+PASS Document interface: iframe.contentDocument must inherit property "onkeydown" with the proper type (122) 
+PASS Document interface: iframe.contentDocument must inherit property "onkeypress" with the proper type (123) 
+PASS Document interface: iframe.contentDocument must inherit property "onkeyup" with the proper type (124) 
+PASS Document interface: iframe.contentDocument must inherit property "onload" with the proper type (125) 
+PASS Document interface: iframe.contentDocument must inherit property "onloadeddata" with the proper type (126) 
+PASS Document interface: iframe.contentDocument must inherit property "onloadedmetadata" with the proper type (127) 
+PASS Document interface: iframe.contentDocument must inherit property "onloadstart" with the proper type (128) 
+PASS Document interface: iframe.contentDocument must inherit property "onmousedown" with the proper type (129) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseenter" with the proper type (130) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseleave" with the proper type (131) 
+PASS Document interface: iframe.contentDocument must inherit property "onmousemove" with the proper type (132) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseout" with the proper type (133) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseover" with the proper type (134) 
+PASS Document interface: iframe.contentDocument must inherit property "onmouseup" with the proper type (135) 
+PASS Document interface: iframe.contentDocument must inherit property "onmousewheel" with the proper type (136) 
+PASS Document interface: iframe.contentDocument must inherit property "onpause" with the proper type (137) 
+PASS Document interface: iframe.contentDocument must inherit property "onplay" with the proper type (138) 
+PASS Document interface: iframe.contentDocument must inherit property "onplaying" with the proper type (139) 
+PASS Document interface: iframe.contentDocument must inherit property "onprogress" with the proper type (140) 
+PASS Document interface: iframe.contentDocument must inherit property "onratechange" with the proper type (141) 
+PASS Document interface: iframe.contentDocument must inherit property "onreset" with the proper type (142) 
+FAIL Document interface: iframe.contentDocument must inherit property "onresize" with the proper type (143) assert_inherits: property "onresize" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onscroll" with the proper type (144) 
+PASS Document interface: iframe.contentDocument must inherit property "onseeked" with the proper type (145) 
+PASS Document interface: iframe.contentDocument must inherit property "onseeking" with the proper type (146) 
+PASS Document interface: iframe.contentDocument must inherit property "onselect" with the proper type (147) 
+FAIL Document interface: iframe.contentDocument must inherit property "onshow" with the proper type (148) assert_inherits: property "onshow" not found in prototype chain
+FAIL Document interface: iframe.contentDocument must inherit property "onsort" with the proper type (149) assert_inherits: property "onsort" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onstalled" with the proper type (150) 
+PASS Document interface: iframe.contentDocument must inherit property "onsubmit" with the proper type (151) 
+PASS Document interface: iframe.contentDocument must inherit property "onsuspend" with the proper type (152) 
+PASS Document interface: iframe.contentDocument must inherit property "ontimeupdate" with the proper type (153) 
+FAIL Document interface: iframe.contentDocument must inherit property "ontoggle" with the proper type (154) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "onvolumechange" with the proper type (155) 
+PASS Document interface: iframe.contentDocument must inherit property "onwaiting" with the proper type (156) 
 PASS Node interface: iframe.contentDocument must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: iframe.contentDocument must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: iframe.contentDocument must inherit property "TEXT_NODE" with the proper type (2) 
@@ -1249,230 +1250,231 @@ FAIL Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "origin" with the proper type (3) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "compatMode" with the proper type (4) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "characterSet" with the proper type (5) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "inputEncoding" with the proper type (6) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "contentType" with the proper type (7) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "doctype" with the proper type (8) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentElement" with the proper type (9) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByTagName" with the proper type (10) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "charset" with the proper type (6) assert_equals: expected "string" but got "undefined"
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "inputEncoding" with the proper type (7) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "contentType" with the proper type (8) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "doctype" with the proper type (9) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "documentElement" with the proper type (10) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByTagName" with the proper type (11) 
 FAIL Document interface: calling getElementsByTagName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByTagNameNS" with the proper type (11) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByTagNameNS" with the proper type (12) 
 FAIL Document interface: calling getElementsByTagNameNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByClassName" with the proper type (12) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByClassName" with the proper type (13) 
 FAIL Document interface: calling getElementsByClassName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElement" with the proper type (13) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElement" with the proper type (14) 
 PASS Document interface: calling createElement(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElementNS" with the proper type (14) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createElementNS" with the proper type (15) 
 FAIL Document interface: calling createElementNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createDocumentFragment" with the proper type (15) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createTextNode" with the proper type (16) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createDocumentFragment" with the proper type (16) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createTextNode" with the proper type (17) 
 FAIL Document interface: calling createTextNode(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createComment" with the proper type (17) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createComment" with the proper type (18) 
 FAIL Document interface: calling createComment(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createProcessingInstruction" with the proper type (18) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createProcessingInstruction" with the proper type (19) 
 FAIL Document interface: calling createProcessingInstruction(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "importNode" with the proper type (19) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "importNode" with the proper type (20) 
 FAIL Document interface: calling importNode(Node,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "adoptNode" with the proper type (20) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "adoptNode" with the proper type (21) 
 FAIL Document interface: calling adoptNode(Node) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttribute" with the proper type (21) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttribute" with the proper type (22) 
 FAIL Document interface: calling createAttribute(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttributeNS" with the proper type (22) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createAttributeNS" with the proper type (23) 
 FAIL Document interface: calling createAttributeNS(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createEvent" with the proper type (23) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createEvent" with the proper type (24) 
 FAIL Document interface: calling createEvent(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" threw object "Error: NotSupportedError: DOM Exception 9" ("NotSupportedError") expected object "TypeError" ("TypeError")
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createRange" with the proper type (24) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createNodeIterator" with the proper type (25) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createRange" with the proper type (25) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createNodeIterator" with the proper type (26) 
 PASS Document interface: calling createNodeIterator(Node,unsigned long,NodeFilter) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createTreeWalker" with the proper type (26) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "createTreeWalker" with the proper type (27) 
 PASS Document interface: calling createTreeWalker(Node,unsigned long,NodeFilter) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "styleSheets" with the proper type (27) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "selectedStyleSheetSet" with the proper type (28) assert_inherits: property "selectedStyleSheetSet" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastStyleSheetSet" with the proper type (29) assert_inherits: property "lastStyleSheetSet" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "preferredStyleSheetSet" with the proper type (30) assert_inherits: property "preferredStyleSheetSet" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "styleSheetSets" with the proper type (31) assert_inherits: property "styleSheetSets" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "enableStyleSheetsForSet" with the proper type (32) assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "styleSheets" with the proper type (28) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "selectedStyleSheetSet" with the proper type (29) assert_inherits: property "selectedStyleSheetSet" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastStyleSheetSet" with the proper type (30) assert_inherits: property "lastStyleSheetSet" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "preferredStyleSheetSet" with the proper type (31) assert_inherits: property "preferredStyleSheetSet" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "styleSheetSets" with the proper type (32) assert_inherits: property "styleSheetSets" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "enableStyleSheetsForSet" with the proper type (33) assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
 FAIL Document interface: calling enableStyleSheetsForSet(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "enableStyleSheetsForSet" not found in prototype chain
 FAIL Document interface: document.implementation.createDocument(null, "", null) must have own property "location" assert_equals: getter must be Function expected "function" but got "undefined"
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "domain" with the proper type (34) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "referrer" with the proper type (35) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "cookie" with the proper type (36) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastModified" with the proper type (37) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "readyState" with the proper type (38) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "title" with the proper type (40) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "dir" with the proper type (41) assert_inherits: property "dir" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "body" with the proper type (42) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "head" with the proper type (43) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "images" with the proper type (44) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "embeds" with the proper type (45) assert_inherits: property "embeds" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "plugins" with the proper type (46) assert_inherits: property "plugins" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "links" with the proper type (47) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "forms" with the proper type (48) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "scripts" with the proper type (49) assert_inherits: property "scripts" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByName" with the proper type (50) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "domain" with the proper type (35) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "referrer" with the proper type (36) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "cookie" with the proper type (37) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastModified" with the proper type (38) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "readyState" with the proper type (39) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "title" with the proper type (41) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "dir" with the proper type (42) assert_inherits: property "dir" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "body" with the proper type (43) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "head" with the proper type (44) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "images" with the proper type (45) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "embeds" with the proper type (46) assert_inherits: property "embeds" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "plugins" with the proper type (47) assert_inherits: property "plugins" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "links" with the proper type (48) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "forms" with the proper type (49) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "scripts" with the proper type (50) assert_inherits: property "scripts" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementsByName" with the proper type (51) 
 FAIL Document interface: calling getElementsByName(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "getItems" with the proper type (51) assert_inherits: property "getItems" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "getItems" with the proper type (52) assert_inherits: property "getItems" not found in prototype chain
 FAIL Document interface: calling getItems(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "getItems" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "cssElementMap" with the proper type (52) assert_inherits: property "cssElementMap" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "currentScript" with the proper type (53) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "open" with the proper type (54) assert_inherits: property "open" not found in prototype chain
-FAIL Document interface: calling open(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "cssElementMap" with the proper type (53) assert_inherits: property "cssElementMap" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "currentScript" with the proper type (54) 
 FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "open" with the proper type (55) assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: calling open(DOMString,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "open" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "open" with the proper type (56) assert_inherits: property "open" not found in prototype chain
 FAIL Document interface: calling open(DOMString,DOMString,DOMString,boolean) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "open" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "close" with the proper type (56) assert_inherits: property "close" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "write" with the proper type (57) assert_inherits: property "write" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "close" with the proper type (57) assert_inherits: property "close" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "write" with the proper type (58) assert_inherits: property "write" not found in prototype chain
 FAIL Document interface: calling write(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "write" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "writeln" with the proper type (58) assert_inherits: property "writeln" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "writeln" with the proper type (59) assert_inherits: property "writeln" not found in prototype chain
 FAIL Document interface: calling writeln(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "writeln" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "defaultView" with the proper type (59) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "activeElement" with the proper type (60) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "hasFocus" with the proper type (61) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "designMode" with the proper type (62) assert_inherits: property "designMode" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "execCommand" with the proper type (63) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "defaultView" with the proper type (60) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "activeElement" with the proper type (61) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "hasFocus" with the proper type (62) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "designMode" with the proper type (63) assert_inherits: property "designMode" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "execCommand" with the proper type (64) 
 FAIL Document interface: calling execCommand(DOMString,boolean,DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandEnabled" with the proper type (64) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandEnabled" with the proper type (65) 
 FAIL Document interface: calling queryCommandEnabled(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandIndeterm" with the proper type (65) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandIndeterm" with the proper type (66) 
 FAIL Document interface: calling queryCommandIndeterm(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandState" with the proper type (66) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandState" with the proper type (67) 
 FAIL Document interface: calling queryCommandState(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandSupported" with the proper type (67) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandSupported" with the proper type (68) 
 FAIL Document interface: calling queryCommandSupported(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandValue" with the proper type (68) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryCommandValue" with the proper type (69) 
 FAIL Document interface: calling queryCommandValue(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "commands" with the proper type (69) assert_inherits: property "commands" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreadystatechange" with the proper type (70) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "fgColor" with the proper type (71) assert_inherits: property "fgColor" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "linkColor" with the proper type (72) assert_inherits: property "linkColor" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "vlinkColor" with the proper type (73) assert_inherits: property "vlinkColor" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "alinkColor" with the proper type (74) assert_inherits: property "alinkColor" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "bgColor" with the proper type (75) assert_inherits: property "bgColor" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "anchors" with the proper type (76) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "applets" with the proper type (77) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "clear" with the proper type (78) assert_inherits: property "clear" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "captureEvents" with the proper type (79) assert_inherits: property "captureEvents" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "releaseEvents" with the proper type (80) assert_inherits: property "releaseEvents" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "all" with the proper type (81) assert_inherits: property "all" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementById" with the proper type (82) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "commands" with the proper type (70) assert_inherits: property "commands" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreadystatechange" with the proper type (71) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "fgColor" with the proper type (72) assert_inherits: property "fgColor" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "linkColor" with the proper type (73) assert_inherits: property "linkColor" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "vlinkColor" with the proper type (74) assert_inherits: property "vlinkColor" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "alinkColor" with the proper type (75) assert_inherits: property "alinkColor" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "bgColor" with the proper type (76) assert_inherits: property "bgColor" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "anchors" with the proper type (77) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "applets" with the proper type (78) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "clear" with the proper type (79) assert_inherits: property "clear" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "captureEvents" with the proper type (80) assert_inherits: property "captureEvents" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "releaseEvents" with the proper type (81) assert_inherits: property "releaseEvents" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "all" with the proper type (82) assert_inherits: property "all" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "getElementById" with the proper type (83) 
 FAIL Document interface: calling getElementById(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
     [native code]
 }" did not throw
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "children" with the proper type (83) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "firstElementChild" with the proper type (84) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastElementChild" with the proper type (85) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "childElementCount" with the proper type (86) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "prepend" with the proper type (87) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "children" with the proper type (84) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "firstElementChild" with the proper type (85) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "lastElementChild" with the proper type (86) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "childElementCount" with the proper type (87) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "prepend" with the proper type (88) 
 PASS Document interface: calling prepend([object Object],[object Object]) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "append" with the proper type (88) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "append" with the proper type (89) 
 PASS Document interface: calling append([object Object],[object Object]) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "query" with the proper type (89) assert_inherits: property "query" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "query" with the proper type (90) assert_inherits: property "query" not found in prototype chain
 FAIL Document interface: calling query(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "query" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryAll" with the proper type (90) assert_inherits: property "queryAll" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "queryAll" with the proper type (91) assert_inherits: property "queryAll" not found in prototype chain
 FAIL Document interface: calling queryAll(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError assert_inherits: property "queryAll" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelector" with the proper type (91) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelector" with the proper type (92) 
 PASS Document interface: calling querySelector(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelectorAll" with the proper type (92) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "querySelectorAll" with the proper type (93) 
 PASS Document interface: calling querySelectorAll(DOMString) on document.implementation.createDocument(null, "", null) with too few arguments must throw TypeError 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onabort" with the proper type (93) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocomplete" with the proper type (94) assert_inherits: property "onautocomplete" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocompleteerror" with the proper type (95) assert_inherits: property "onautocompleteerror" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onblur" with the proper type (96) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncancel" with the proper type (97) assert_inherits: property "oncancel" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplay" with the proper type (98) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplaythrough" with the proper type (99) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onchange" with the proper type (100) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclick" with the proper type (101) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclose" with the proper type (102) assert_inherits: property "onclose" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncontextmenu" with the proper type (103) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncuechange" with the proper type (104) assert_inherits: property "oncuechange" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondblclick" with the proper type (105) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrag" with the proper type (106) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragend" with the proper type (107) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragenter" with the proper type (108) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragexit" with the proper type (109) assert_inherits: property "ondragexit" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragleave" with the proper type (110) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragover" with the proper type (111) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragstart" with the proper type (112) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrop" with the proper type (113) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondurationchange" with the proper type (114) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onemptied" with the proper type (115) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onended" with the proper type (116) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onerror" with the proper type (117) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onfocus" with the proper type (118) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninput" with the proper type (119) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninvalid" with the proper type (120) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeydown" with the proper type (121) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeypress" with the proper type (122) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeyup" with the proper type (123) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onload" with the proper type (124) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadeddata" with the proper type (125) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadedmetadata" with the proper type (126) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadstart" with the proper type (127) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousedown" with the proper type (128) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseenter" with the proper type (129) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseleave" with the proper type (130) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousemove" with the proper type (131) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseout" with the proper type (132) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseover" with the proper type (133) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseup" with the proper type (134) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousewheel" with the proper type (135) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onpause" with the proper type (136) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplay" with the proper type (137) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplaying" with the proper type (138) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onprogress" with the proper type (139) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onratechange" with the proper type (140) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreset" with the proper type (141) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onresize" with the proper type (142) assert_inherits: property "onresize" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onscroll" with the proper type (143) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeked" with the proper type (144) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeking" with the proper type (145) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onselect" with the proper type (146) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onshow" with the proper type (147) assert_inherits: property "onshow" not found in prototype chain
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsort" with the proper type (148) assert_inherits: property "onsort" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onstalled" with the proper type (149) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsubmit" with the proper type (150) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsuspend" with the proper type (151) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontimeupdate" with the proper type (152) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontoggle" with the proper type (153) assert_inherits: property "ontoggle" not found in prototype chain
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onvolumechange" with the proper type (154) 
-PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onwaiting" with the proper type (155) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onabort" with the proper type (94) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocomplete" with the proper type (95) assert_inherits: property "onautocomplete" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onautocompleteerror" with the proper type (96) assert_inherits: property "onautocompleteerror" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onblur" with the proper type (97) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncancel" with the proper type (98) assert_inherits: property "oncancel" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplay" with the proper type (99) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncanplaythrough" with the proper type (100) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onchange" with the proper type (101) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclick" with the proper type (102) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onclose" with the proper type (103) assert_inherits: property "onclose" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncontextmenu" with the proper type (104) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncuechange" with the proper type (105) assert_inherits: property "oncuechange" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondblclick" with the proper type (106) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrag" with the proper type (107) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragend" with the proper type (108) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragenter" with the proper type (109) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragexit" with the proper type (110) assert_inherits: property "ondragexit" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragleave" with the proper type (111) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragover" with the proper type (112) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondragstart" with the proper type (113) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondrop" with the proper type (114) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ondurationchange" with the proper type (115) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onemptied" with the proper type (116) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onended" with the proper type (117) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onerror" with the proper type (118) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onfocus" with the proper type (119) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninput" with the proper type (120) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oninvalid" with the proper type (121) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeydown" with the proper type (122) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeypress" with the proper type (123) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onkeyup" with the proper type (124) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onload" with the proper type (125) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadeddata" with the proper type (126) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadedmetadata" with the proper type (127) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onloadstart" with the proper type (128) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousedown" with the proper type (129) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseenter" with the proper type (130) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseleave" with the proper type (131) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousemove" with the proper type (132) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseout" with the proper type (133) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseover" with the proper type (134) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmouseup" with the proper type (135) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onmousewheel" with the proper type (136) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onpause" with the proper type (137) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplay" with the proper type (138) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onplaying" with the proper type (139) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onprogress" with the proper type (140) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onratechange" with the proper type (141) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onreset" with the proper type (142) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onresize" with the proper type (143) assert_inherits: property "onresize" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onscroll" with the proper type (144) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeked" with the proper type (145) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onseeking" with the proper type (146) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onselect" with the proper type (147) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onshow" with the proper type (148) assert_inherits: property "onshow" not found in prototype chain
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsort" with the proper type (149) assert_inherits: property "onsort" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onstalled" with the proper type (150) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsubmit" with the proper type (151) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsuspend" with the proper type (152) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontimeupdate" with the proper type (153) 
+FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontoggle" with the proper type (154) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onvolumechange" with the proper type (155) 
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onwaiting" with the proper type (156) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "ELEMENT_NODE" with the proper type (0) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "ATTRIBUTE_NODE" with the proper type (1) 
 PASS Node interface: document.implementation.createDocument(null, "", null) must inherit property "TEXT_NODE" with the proper type (2) 
@@ -2224,6 +2226,8 @@ FAIL HTMLUnknownElement interface: existence and properties of interface object 
 PASS HTMLUnknownElement interface object length 
 PASS HTMLUnknownElement interface: existence and properties of interface prototype object 
 FAIL HTMLUnknownElement interface: existence and properties of interface prototype object's "constructor" property assert_true: HTMLUnknownElement.prototype.constructor is not writable expected true got false
+PASS HTMLUnknownElement must be primary interface of document.createElement("blink") 
+PASS Stringification of document.createElement("blink") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("quasit") 
 PASS Stringification of document.createElement("quasit") 
 FAIL HTMLUnknownElement must be primary interface of document.createElement("bgsound") assert_equals: document.createElement("bgsound")'s prototype is not HTMLUnknownElement.prototype expected Node object of unknown type but got Node object of unknown type

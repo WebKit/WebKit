@@ -15,4 +15,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/constraints/support/validator.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/constraints/support/validator.js

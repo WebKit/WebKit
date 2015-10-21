@@ -24,11 +24,7 @@ tText.step(function() {
   elt.onerror = tText.step_func(function() {
     assert_true(true, "Got error event for 404 error.")
     tText.done()
-  });
-  elt.onload = tText.step_func(function() {
-    assert_unreached("Should have received an error event");
-    tText.done()
-  });
+  })
   elt.appendChild(
     document.createTextNode('@import "../../../../common/css-red.txt";'));
   document.getElementsByTagName("head")[0].appendChild(elt);

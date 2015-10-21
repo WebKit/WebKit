@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in Webkit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
+
+Do NOT modify or remove this file
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-constants.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-constructors.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-defaultPrevented.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-bubbles-false.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-handlers-changed.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-omitted-capture.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-reenter.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-target-moved.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-target-removed.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-initEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-propagation.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-type.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-addEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-returnvalue.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/EventTarget-removeEventListener.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/ProgressEvent.html

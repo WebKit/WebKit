@@ -15,8 +15,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackList/getTrackById.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackList/getter.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackList/length.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackList/onaddtrack.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackList/onremovetrack.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/getTrackById.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/getter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/length.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/onaddtrack.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackList/onremovetrack.html

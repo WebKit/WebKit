@@ -15,6 +15,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-textarea-element/textarea-newline-bidi-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-textarea-element/textarea-newline-bidi.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-textarea-element/textarea-type.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-newline-bidi.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/textarea-type.html

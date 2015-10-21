@@ -15,10 +15,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/default.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/kind.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/label.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/readyState.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/src.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/track.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/kind.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/readyState.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/src.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/track.html

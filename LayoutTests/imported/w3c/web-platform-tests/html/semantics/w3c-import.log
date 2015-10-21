@@ -15,5 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/./interfaces.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/./interfaces.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interfaces.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/interfaces.js

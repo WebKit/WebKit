@@ -15,14 +15,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video-tabindex.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_content_image-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_content_image.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_content_text-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_content_text.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_dynamic_poster_absolute-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_dynamic_poster_absolute.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_dynamic_poster_relative-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_dynamic_poster_relative.htm
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_initially_paused-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-video-element/video_initially_paused.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-tabindex.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_image-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_image.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_text-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_content_text.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_absolute-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_absolute.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_relative-expected.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster_relative.htm
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html

@@ -15,11 +15,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/3.jpg
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/Image-constructor.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/brokenimg.jpg
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/contains.json
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/image-1.jpg
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/img.complete.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/relevant-mutations.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/the-img-element/update-the-source-set.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/3.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/Image-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/brokenimg.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-1.jpg
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img.complete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set.html

@@ -1,10 +1,10 @@
 
 PASS Parsing of id attribute 
-FAIL URL value assert_equals: The document must have a URL value equal to the URL of the active document. expected (object) null but got (string) "http://localhost:8800/domparsing/DOMParser-parseFromString-html.html"(stack: assert@http://localhost:8800/resources/testharness.js:1739:42
-assert_equals@http://localhost:8800/resources/testharness.js:331:19
-http://localhost:8800/domparsing/DOMParser-parseFromString-html.html:30:18
-step@http://localhost:8800/resources/testharness.js:799:30
-test@http://localhost:8800/resources/testharness.js:74:22
-global code@http://localhost:8800/domparsing/DOMParser-parseFromString-html.html:29:5)
+PASS contentType 
+PASS characterSet 
+PASS inputEncoding 
+FAIL charset assert_equals: expected (string) "UTF-8" but got (undefined) undefined
+FAIL URL value assert_equals: The document must have a URL value equal to the URL of the active document. expected (string) "http://localhost:8800/domparsing/DOMParser-parseFromString-html.html" but got (object) null
 PASS Location value 
+PASS DOMParser parses HTML tag soup with no problems 
 

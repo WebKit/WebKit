@@ -15,10 +15,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/endTime.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/id.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/onenter.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/onexit.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/pauseOnExit.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/startTime.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/embedded-content/media-elements/interfaces/TextTrackCue/track.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/endTime.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/id.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/onenter.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/onexit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/pauseOnExit.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/startTime.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrackCue/track.html

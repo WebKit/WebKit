@@ -15,5 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-label-element/label-attributes.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantic/forms/the-label-element/labelable-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/label-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html
