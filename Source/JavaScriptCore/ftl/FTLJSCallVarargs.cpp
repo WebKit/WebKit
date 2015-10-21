@@ -30,6 +30,7 @@
 
 #include "DFGNode.h"
 #include "DFGOperations.h"
+#include "FTLState.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "ScratchRegisterAllocator.h"
@@ -46,14 +47,14 @@ JSCallVarargs::JSCallVarargs()
 {
 }
 
-JSCallVarargs::JSCallVarargs(unsigned stackmapID, Node* node)
+JSCallVarargs::JSCallVarargs(unsigned stackmapID, Node* node, CodeOrigin callSiteDescriptionOrigin)
     : m_stackmapID(stackmapID)
     , m_node(node)
     , m_callBase(
         (node->op() == ConstructVarargs || node->op() == ConstructForwardVarargs)
         ? CallLinkInfo::ConstructVarargs : (node->op() == TailCallVarargs || node->op() == TailCallForwardVarargs)
         ? CallLinkInfo::TailCallVarargs : CallLinkInfo::CallVarargs,
-        node->origin.semantic)
+        node->origin.semantic, callSiteDescriptionOrigin)
     , m_instructionOffset(0)
 {
     ASSERT(
@@ -68,7 +69,7 @@ unsigned JSCallVarargs::numSpillSlotsNeeded()
     return 4;
 }
 
-void JSCallVarargs::emit(CCallHelpers& jit, int32_t spillSlotsOffset)
+void JSCallVarargs::emit(CCallHelpers& jit, State& state, int32_t spillSlotsOffset)
 {
     // We are passed three pieces of information:
     // - The callee.
@@ -204,7 +205,7 @@ void JSCallVarargs::emit(CCallHelpers& jit, int32_t spillSlotsOffset)
     // stack frame to already be set up, which it is.
     jit.store64(GPRInfo::regT0, CCallHelpers::calleeFrameSlot(JSStack::Callee));
 
-    m_callBase.emit(jit);
+    m_callBase.emit(jit, state);
     
     // Undo the damage we've done.
     if (isARM64()) {

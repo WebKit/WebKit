@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGNode.h"
+#include "FTLState.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace FTL {
@@ -41,21 +42,19 @@ JSCall::JSCall()
 {
 }
 
-JSCall::JSCall(unsigned stackmapID, Node* node)
-    : JSCallBase(
-        node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call,
-        node->origin.semantic)
+JSCall::JSCall(unsigned stackmapID, Node* node, CodeOrigin callSiteDescriptionOrigin)
+    : JSCallBase(node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call, node->origin.semantic, callSiteDescriptionOrigin)
     , m_stackmapID(stackmapID)
     , m_instructionOffset(0)
 {
     ASSERT(node->op() == Call || node->op() == Construct || node->op() == TailCallInlinedCaller);
 }
 
-void JSCall::emit(CCallHelpers& jit, unsigned stackSizeForLocals)
+void JSCall::emit(CCallHelpers& jit, State& state)
 {
-    JSCallBase::emit(jit);
+    JSCallBase::emit(jit, state);
 
-    jit.addPtr(CCallHelpers::TrustedImm32(- static_cast<int64_t>(stackSizeForLocals)), CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
+    jit.addPtr(CCallHelpers::TrustedImm32(- static_cast<int64_t>(state.jitCode->stackmaps.stackSizeForLocals())), CCallHelpers::framePointerRegister, CCallHelpers::stackPointerRegister);
 }
 
 } } // namespace JSC::FTL

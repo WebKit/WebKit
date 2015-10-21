@@ -29,6 +29,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DFGNode.h"
+#include "FTLState.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace FTL {
@@ -41,15 +42,19 @@ JSCallBase::JSCallBase()
 {
 }
 
-JSCallBase::JSCallBase(CallLinkInfo::CallType type, CodeOrigin origin)
+JSCallBase::JSCallBase(CallLinkInfo::CallType type, CodeOrigin semantic, CodeOrigin callSiteDescription)
     : m_type(type)
-    , m_origin(origin)
+    , m_semanticeOrigin(semantic)
+    , m_callSiteDescriptionOrigin(callSiteDescription)
     , m_callLinkInfo(nullptr)
 {
 }
 
-void JSCallBase::emit(CCallHelpers& jit)
+void JSCallBase::emit(CCallHelpers& jit, State& state)
 {
+    CallSiteIndex callSiteIndex = state.jitCode->common.addUniqueCallSiteIndex(m_callSiteDescriptionOrigin);
+    jit.store32(CCallHelpers::TrustedImm32(callSiteIndex.bits()), CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
+
     m_callLinkInfo = jit.codeBlock()->addCallLinkInfo();
     
     if (CallLinkInfo::callModeFor(m_type) == CallMode::Tail)
@@ -79,7 +84,7 @@ void JSCallBase::emit(CCallHelpers& jit)
     else
         done.link(&jit);
 
-    m_callLinkInfo->setUpCall(m_type, m_origin, GPRInfo::regT0);
+    m_callLinkInfo->setUpCall(m_type, m_semanticeOrigin, GPRInfo::regT0);
 }
 
 void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)

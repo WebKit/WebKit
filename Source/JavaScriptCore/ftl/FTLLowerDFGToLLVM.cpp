@@ -4462,12 +4462,10 @@ private:
         for (unsigned i = 0; i < padding; ++i)
             arguments.append(getUndef(m_out.int64));
         
-        callPreflight();
-        
         LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMWebKitJSCallConv);
         
-        m_ftlState.jsCalls.append(JSCall(stackmapID, m_node));
+        m_ftlState.jsCalls.append(JSCall(stackmapID, m_node, codeOriginDescriptionOfCallSite()));
         
         setJSValue(call);
     }
@@ -4544,12 +4542,10 @@ private:
         ASSERT(thisArg);
         arguments.append(thisArg);
         
-        callPreflight();
-        
         LValue call = m_out.call(m_out.patchpointInt64Intrinsic(), arguments);
         setInstructionCallingConvention(call, LLVMCCallConv);
         
-        m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, m_node));
+        m_ftlState.jsCallVarargses.append(JSCallVarargs(stackmapID, m_node, codeOriginDescriptionOfCallSite()));
 
         switch (m_node->op()) {
         case TailCallVarargs:
@@ -8665,16 +8661,27 @@ private:
                 m_ftlState.jitCode->common.addCodeOrigin(codeOrigin).bits()),
             tagFor(JSStack::ArgumentCount));
     }
+
     void callPreflight()
     {
-        CodeOrigin codeOrigin = m_node->origin.semantic;
+        callPreflight(codeOriginDescriptionOfCallSite());
+    }
 
+    CodeOrigin codeOriginDescriptionOfCallSite() const
+    {
+        CodeOrigin codeOrigin = m_node->origin.semantic;
         if (m_node->op() == TailCallInlinedCaller
             || m_node->op() == TailCallVarargsInlinedCaller
-            || m_node->op() == TailCallForwardVarargsInlinedCaller)
+            || m_node->op() == TailCallForwardVarargsInlinedCaller) {
+            // This case arises when you have a situation like this:
+            // foo makes a call to bar, bar is inlined in foo. bar makes a call
+            // to baz and baz is inlined in bar. And then baz makes a tail-call to jaz,
+            // and jaz is inlined in baz. We want the callframe for jaz to appear to 
+            // have caller be bar.
             codeOrigin = *codeOrigin.inlineCallFrame->getCallerSkippingDeadFrames();
+        }
 
-        callPreflight(codeOrigin);
+        return codeOrigin;
     }
     
     void callCheck()

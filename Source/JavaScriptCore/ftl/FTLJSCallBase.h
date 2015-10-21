@@ -42,17 +42,20 @@ struct Node;
 
 namespace FTL {
 
+class State;
+
 class JSCallBase {
 public:
     JSCallBase();
-    JSCallBase(CallLinkInfo::CallType, CodeOrigin);
+    JSCallBase(CallLinkInfo::CallType, CodeOrigin semantic, CodeOrigin callSiteDescription);
     
-    void emit(CCallHelpers&);
+    void emit(CCallHelpers&, State&);
     void link(VM&, LinkBuffer&);
     
 protected:
     CallLinkInfo::CallType m_type;
-    CodeOrigin m_origin;
+    CodeOrigin m_semanticeOrigin;
+    CodeOrigin m_callSiteDescriptionOrigin; // These two code origins may be different with tail calls under some circumstances of inlining. See relevant comment in LowerDFGToLLVM.
     CCallHelpers::DataLabelPtr m_targetToCheck;
     CCallHelpers::Call m_fastCall;
     CCallHelpers::Call m_slowCall;

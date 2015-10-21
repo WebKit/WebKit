@@ -657,7 +657,7 @@ static void fixFunctionBasedOnStackMaps(
         JSCall& call = state.jsCalls[i];
 
         CCallHelpers fastPathJIT(&vm, codeBlock);
-        call.emit(fastPathJIT, state.jitCode->stackmaps.stackSizeForLocals());
+        call.emit(fastPathJIT, state);
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
 
@@ -672,7 +672,7 @@ static void fixFunctionBasedOnStackMaps(
         JSCallVarargs& call = state.jsCallVarargses[i];
         
         CCallHelpers fastPathJIT(&vm, codeBlock);
-        call.emit(fastPathJIT, varargsSpillSlotsOffset);
+        call.emit(fastPathJIT, state, varargsSpillSlotsOffset);
 
         char* startOfIC = bitwise_cast<char*>(generatedFunction) + call.m_instructionOffset;
         size_t sizeOfIC = sizeOfICFor(call.node());

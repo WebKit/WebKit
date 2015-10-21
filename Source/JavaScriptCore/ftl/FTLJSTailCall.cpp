@@ -179,7 +179,7 @@ uint32_t sizeFor(DataFormat format)
 } // anonymous namespace
 
 JSTailCall::JSTailCall(unsigned stackmapID, Node* node, Vector<ExitValue> arguments)
-    : JSCallBase(CallLinkInfo::TailCall, node->origin.semantic)
+    : JSCallBase(CallLinkInfo::TailCall, node->origin.semantic, node->origin.semantic)
     , m_stackmapID(stackmapID)
     , m_arguments { WTF::move(arguments) }
     , m_instructionOffset(0)
@@ -318,7 +318,7 @@ void JSTailCall::emit(JITCode& jitCode, CCallHelpers& jit)
 
     jit.abortWithReason(JITDidReturnFromTailCall);
 
-    m_callLinkInfo->setUpCall(m_type, m_origin, calleeGPR);
+    m_callLinkInfo->setUpCall(m_type, m_semanticeOrigin, calleeGPR);
 }
 
 } } // namespace JSC::FTL

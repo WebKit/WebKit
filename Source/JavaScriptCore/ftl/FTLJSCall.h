@@ -41,9 +41,9 @@ namespace FTL {
 class JSCall : public JSCallBase {
 public:
     JSCall();
-    JSCall(unsigned stackmapID, DFG::Node*);
+    JSCall(unsigned stackmapID, DFG::Node*, CodeOrigin callSiteDescriptionOrigin);
 
-    void emit(CCallHelpers&, unsigned stackSizeForLocals);
+    void emit(CCallHelpers&, State&);
     
     unsigned stackmapID() const { return m_stackmapID; }
     

@@ -43,13 +43,13 @@ namespace FTL {
 class JSCallVarargs {
 public:
     JSCallVarargs();
-    JSCallVarargs(unsigned stackmapID, DFG::Node*);
+    JSCallVarargs(unsigned stackmapID, DFG::Node*, CodeOrigin callSiteDescriptionOrigin);
     
     DFG::Node* node() const { return m_node; }
     
     static unsigned numSpillSlotsNeeded();
     
-    void emit(CCallHelpers&, int32_t spillSlotsOffset);
+    void emit(CCallHelpers&, State&, int32_t spillSlotsOffset);
     void link(VM&, LinkBuffer&, CodeLocationLabel exceptionHandler);
     
     unsigned stackmapID() const { return m_stackmapID; }

@@ -1,3 +1,48 @@
+2015-10-21  Saam barati  <sbarati@apple.com>
+
+        The FTL should place the CallSiteIndex on the call frame for JS calls when it fills in the patchpoint
+        https://bugs.webkit.org/show_bug.cgi?id=150104
+
+        Reviewed by Filip Pizlo.
+
+        We lower JS Calls to patchpoints in LLVM. LLVM may decide to duplicate
+        these patchpoints (or remove them). We eagerly store the CallSiteIndex on the 
+        call frame when lowering DFG to LLVM. But, because the patchpoint we lower to may
+        be duplicated, we really don't know the unique CallSiteIndex until we've
+        actually seen the resulting patchpoints after LLVM has completed its transformations.
+        To solve this, we now store the unique CallSiteIndex on the call frame header 
+        when generating code to fill into the patchpoint.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::mmAllocateDataSection):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::JSCall):
+        (JSC::FTL::JSCall::emit):
+        * ftl/FTLJSCall.h:
+        (JSC::FTL::JSCall::stackmapID):
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::JSCallBase):
+        (JSC::FTL::JSCallBase::emit):
+        (JSC::FTL::JSCallBase::link):
+        * ftl/FTLJSCallBase.h:
+        * ftl/FTLJSCallVarargs.cpp:
+        (JSC::FTL::JSCallVarargs::JSCallVarargs):
+        (JSC::FTL::JSCallVarargs::numSpillSlotsNeeded):
+        (JSC::FTL::JSCallVarargs::emit):
+        * ftl/FTLJSCallVarargs.h:
+        (JSC::FTL::JSCallVarargs::node):
+        (JSC::FTL::JSCallVarargs::stackmapID):
+        * ftl/FTLJSTailCall.cpp:
+        (JSC::FTL::JSTailCall::JSTailCall):
+        (JSC::FTL::m_instructionOffset):
+        (JSC::FTL::JSTailCall::emit):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callPreflight):
+        (JSC::FTL::DFG::LowerDFGToLLVM::codeOriginDescriptionOfCallSite):
+        (JSC::FTL::DFG::LowerDFGToLLVM::callCheck):
+
 2015-10-21  Geoffrey Garen  <ggaren@apple.com>
 
         Date creation should share a little code
