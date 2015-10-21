@@ -166,10 +166,13 @@ class TestImporter(object):
         self._webkit_root = webkit_finder.webkit_base()
 
         self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
-        self.layout_tests_w3c_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c')
+        self.tests_w3c_relative_path = self.filesystem.join('imported', 'w3c')
+        self.layout_tests_w3c_path = webkit_finder.path_from_webkit_base('LayoutTests', self.tests_w3c_relative_path)
         self.tests_download_path = webkit_finder.path_from_webkit_base('WebKitBuild', 'w3c-tests')
 
         self._test_downloader = None
+
+        self._potential_test_resource_files = []
 
         self.import_list = []
         self._importing_downloaded_tests = source_directory is None
@@ -253,9 +256,17 @@ class TestImporter(object):
                 test_parser = TestParser(vars(self.options), filename=fullpath, host=self.host)
                 test_info = test_parser.analyze_test()
                 if test_info is None:
-                    # If html file is in a "resources" folder, it should be copied anyway
-                    if self.filesystem.basename(self.filesystem.dirname(fullpath)) == "resources":
-                        copy_list.append({'src': fullpath, 'dest': filename})
+                    # This is probably a resource file.
+                    if self.filesystem.basename(self.filesystem.dirname(fullpath)) != "resources":
+                        self._potential_test_resource_files.append({'src': fullpath, 'dest': filename})
+                    copy_list.append({'src': fullpath, 'dest': filename})
+                    continue
+
+                if 'manualtest' in test_info.keys():
+                    continue
+
+                if 'referencefile' in test_info.keys():
+                    # Skip it since, the corresponding reference test should have a link to this file
                     continue
 
                 if 'reference' in test_info.keys():
@@ -412,6 +423,11 @@ class TestImporter(object):
 
         for prefixed_value in sorted(total_prefixed_property_values, key=lambda p: total_prefixed_property_values[p]):
             _log.info('  %s: %s', prefixed_value, total_prefixed_property_values[prefixed_value])
+
+        if self._potential_test_resource_files:
+            _log.info('The following files may be resource files and should be marked as skipped in the TestExpectations:')
+            for filename in sorted([test['src'] for test in self._potential_test_resource_files]):
+                _log.info(filename.replace(self.source_directory, self.tests_w3c_relative_path) + ' [ Skip ]')
 
     def remove_deleted_files(self, import_directory, new_file_list):
         """ Reads an import log in |import_directory|, compares it to the |new_file_list|, and removes files not in the new list."""

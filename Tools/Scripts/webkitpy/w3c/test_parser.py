@@ -95,6 +95,9 @@ class TestParser(object):
                 _log.error('%s has a reference link but is missing the "href"', self.filesystem)
                 return None
 
+            if (ref_file == self.filename):
+                return {'referencefile': self.filename}
+
             if self.ref_doc is None:
                 self.load_file(ref_file, True)
 
@@ -114,10 +117,12 @@ class TestParser(object):
             test_info['reference_support_info'] = {}
         # we check for wpt manual test before checking for jstest, as some WPT manual tests can be classified as CSS JS tests
         elif self.is_wpt_manualtest():
-            test_info = None
+            test_info = {'test': self.filename, 'manualtest': True}
         elif self.is_jstest():
             test_info = {'test': self.filename, 'jstest': True}
-        elif self.options['all'] is True and not('-ref' in self.filename) and not('reference' in self.filename):
+        elif '-ref' in self.filename or 'reference' in self.filename:
+            test_info = {'referencefile': self.filename}
+        elif self.options['all'] is True:
             test_info = {'test': self.filename}
 
         return test_info

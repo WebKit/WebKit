@@ -166,7 +166,7 @@ class TestParserTest(unittest.TestCase):
         parser = TestParser(options, os.path.join(test_path, 'somefile-manual.html'))
         test_info = parser.analyze_test(test_contents=test_html)
 
-        self.assertEqual(test_info, None, 'test_info is None')
+        self.assertTrue(test_info['manualtest'], 'test_info is None')
 
     def test_analyze_pixel_test_all_true(self):
         """ Tests analyze_test() using a test that is neither a reftest or jstest with all=False """
@@ -228,3 +228,26 @@ CONTENT OF TEST
         parser = TestParser(options, os.path.join(os.path.dirname(__file__), 'test_parser.py'))
         test_info = parser.analyze_test()
         self.assertEqual(test_info, None, 'no tests should have been found in this file')
+
+    def test_reference_test(self):
+        """ Tests analyze_test() using a test that is a reference file having a <link rel="match"> tag"""
+
+        test_html = """<html>
+<head>
+<title>CSS Test: DESCRIPTION OF TEST</title>
+<link rel="match" href="test-ref.html" />
+<link rel="author" title="NAME_OF_AUTHOR" />
+<style type="text/css"><![CDATA[
+CSS FOR TEST
+]]></style>
+</head>
+<body>
+CONTENT OF TEST
+</body>
+</html>
+"""
+        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+        parser = TestParser(options, os.path.join(test_path, 'test-ref.html'))
+        test_info = parser.analyze_test(test_contents=test_html)
+
+        self.assertTrue('referencefile' in test_info, 'test should be detected as reference file')

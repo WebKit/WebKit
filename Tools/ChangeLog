@@ -1,3 +1,28 @@
+2015-10-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        W3C test importer should not import reference files as regular tests
+        https://bugs.webkit.org/show_bug.cgi?id=150331
+
+        Reviewed by Darin Adler.
+
+        Updated test_parser to return information that a file can be a referencefile or a manual test.
+        Updated test importer to skip those files.
+        Updated/Added test parser unit tests accordingly.
+
+        Updated test importer to import all not-test files, as they are usually used by tests and lead to test failing or timing out.
+        Updated test importer to log these 'resource' files that are not in a resources folder, and suggest to import script user
+        to mark these files as Skip, since they are not direct tests. 
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter.__init__):
+        (TestImporter.find_importable_tests):
+        (TestImporter.import_tests):
+        * Scripts/webkitpy/w3c/test_parser.py:
+        (TestParser.analyze_test):
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+        (test_analyze_non_html_file):
+        (test_reference_test):
+
 2015-10-20  Aakash Jain  <aakash_jain@apple.com>
 
         run-webkit-tests does not copy all crash logs for layout test failures on iOS
