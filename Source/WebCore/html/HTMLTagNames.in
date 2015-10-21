@@ -18,7 +18,7 @@ base
 basefont interfaceName=HTMLBaseFontElement
 bdi interfaceName=HTMLBDIElement, JSInterfaceName=HTMLElement
 bdo interfaceName=HTMLElement
-bgsound interfaceName=HTMLElement
+bgsound interfaceName=HTMLUnknownElement
 big interfaceName=HTMLElement
 blockquote interfaceName=HTMLQuoteElement
 body

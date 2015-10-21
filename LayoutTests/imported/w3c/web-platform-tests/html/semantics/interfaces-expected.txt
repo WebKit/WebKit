@@ -17,8 +17,8 @@ FAIL Interfaces for basefont assert_equals: Element basefont should have HTMLUnk
 FAIL Interfaces for BASEFONT assert_equals: Element BASEFONT should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLBaseFontElement]"
 PASS Interfaces for bdo 
 PASS Interfaces for BDO 
-FAIL Interfaces for bgsound assert_equals: Element bgsound should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
-FAIL Interfaces for BGSOUND assert_equals: Element BGSOUND should have HTMLUnknownElement as its primary interface. expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
+PASS Interfaces for bgsound 
+PASS Interfaces for BGSOUND 
 PASS Interfaces for big 
 PASS Interfaces for BIG 
 PASS Interfaces for blink 

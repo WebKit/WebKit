@@ -148,10 +148,6 @@ CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a
 CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'version' on a non-HTMLHtmlElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'text' on a non-HTMLTitleElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'href' on a non-HTMLBaseElement object.
@@ -2230,8 +2226,8 @@ PASS HTMLUnknownElement must be primary interface of document.createElement("bli
 PASS Stringification of document.createElement("blink") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("quasit") 
 PASS Stringification of document.createElement("quasit") 
-FAIL HTMLUnknownElement must be primary interface of document.createElement("bgsound") assert_equals: document.createElement("bgsound")'s prototype is not HTMLUnknownElement.prototype expected Node object of unknown type but got Node object of unknown type
-FAIL Stringification of document.createElement("bgsound") assert_equals: class string of document.createElement("bgsound") expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
+PASS HTMLUnknownElement must be primary interface of document.createElement("bgsound") 
+PASS Stringification of document.createElement("bgsound") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("isindex") 
 PASS Stringification of document.createElement("isindex") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("multicol") 

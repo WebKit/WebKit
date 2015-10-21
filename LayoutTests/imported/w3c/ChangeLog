@@ -1,3 +1,16 @@
+2015-10-21  Chris Dumez  <cdumez@apple.com>
+
+        bgsound should use HTMLUnknownElement interface
+        https://bugs.webkit.org/show_bug.cgi?id=148857
+        <rdar://problem/22589036>
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline a couple of W3C HTML tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/interfaces-expected.txt:
+
 2015-10-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should not import reference files as regular tests
