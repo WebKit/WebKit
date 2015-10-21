@@ -61,6 +61,12 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
 - (NSString *)accessibilityARIACurrentStatus;
+- (NSUInteger)accessibilityRowCount;
+- (NSUInteger)accessibilityColumnCount;
+- (NSUInteger)accessibilityARIARowCount;
+- (NSUInteger)accessibilityARIAColumnCount;
+- (NSUInteger)accessibilityARIARowIndex;
+- (NSUInteger)accessibilityARIAColumnIndex;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -323,6 +329,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
 
 double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 {
+    // Support test for table related attributes.
+    if (JSStringIsEqualToUTF8CString(attribute, "AXARIAColumnCount"))
+        return [m_element accessibilityARIAColumnCount];
+    if (JSStringIsEqualToUTF8CString(attribute, "AXARIARowCount"))
+        return [m_element accessibilityARIARowCount];
+    if (JSStringIsEqualToUTF8CString(attribute, "AXARIAColumnIndex"))
+        return [m_element accessibilityARIAColumnIndex];
+    if (JSStringIsEqualToUTF8CString(attribute, "AXARIARowIndex"))
+        return [m_element accessibilityARIARowIndex];
+    
     return 0;
 }
 
@@ -658,12 +674,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier()
 
 int AccessibilityUIElement::rowCount()
 {
-    return -1;
+    return [m_element accessibilityRowCount];
 }
 
 int AccessibilityUIElement::columnCount()
 {
-    return -1;
+    return [m_element accessibilityColumnCount];
 }
 
 int AccessibilityUIElement::indexInTable()

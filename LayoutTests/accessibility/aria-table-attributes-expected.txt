@@ -5,6 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS grid.numberAttributeValue('AXARIAColumnCount') is 16
 PASS grid.numberAttributeValue('AXARIARowCount') is 30
+PASS grid.rowCount is 4
+PASS grid.columnCount is 4
 PASS cell1.numberAttributeValue('AXARIAColumnIndex') is 2
 PASS cell1.numberAttributeValue('AXARIARowIndex') is 7
 PASS cell2.numberAttributeValue('AXARIAColumnIndex') is 4

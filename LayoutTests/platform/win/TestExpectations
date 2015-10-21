@@ -621,6 +621,9 @@ animations/trigger-container-scroll-boundaries.html [ Skip ]
 # TODO aria-current is not supported
 webkit.org/b/149018 accessibility/aria-current.html [ Skip ]
 
+# TODO ARIA 1.1 table related attributes are not supported
+webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
+
 # TODO webkit-font-smoothing is not supported.
 webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-001.html [ Skip ]
 webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-002.html [ Skip ]

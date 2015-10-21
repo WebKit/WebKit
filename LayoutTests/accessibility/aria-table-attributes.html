@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/js-test-pre.js"></script>
 </head>
 <body id="body">
 
@@ -81,6 +81,8 @@
           // aria-colcount and aria-rowcount
           shouldBe("grid.numberAttributeValue('AXARIAColumnCount')", "16");
           shouldBe("grid.numberAttributeValue('AXARIARowCount')", "30");
+          shouldBe("grid.rowCount", "4");
+          shouldBe("grid.columnCount", "4");
           
           // aria-colindex and aria-rowindex
           shouldBe("cell1.numberAttributeValue('AXARIAColumnIndex')", "2");
@@ -102,6 +104,6 @@
 
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
+<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

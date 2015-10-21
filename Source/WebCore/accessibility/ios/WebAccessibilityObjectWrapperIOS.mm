@@ -918,7 +918,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     // Find if the parent table for the table cell.
     AccessibilityObject* parentTable = nullptr;
-    for (parentTable = m_object; parentTable && !parentTable->isDataTable(); parentTable = parentTable->parentObject()) 
+    for (parentTable = m_object; parentTable && !(is<AccessibilityTable>(*parentTable) && downcast<AccessibilityTable>(*parentTable).isExposableThroughAccessibility()); parentTable = parentTable->parentObject())
     { }
     
     if (!parentTable)
@@ -998,6 +998,76 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!cell)
         return nil;
     return cell->wrapper();
+}
+
+- (NSUInteger)accessibilityRowCount
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    AccessibilityTable *table = [self tableParent];
+    if (!table)
+        return 0;
+    
+    return table->rowCount();
+}
+
+- (NSUInteger)accessibilityColumnCount
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    AccessibilityTable *table = [self tableParent];
+    if (!table)
+        return 0;
+    
+    return table->columnCount();
+}
+
+- (NSUInteger)accessibilityARIARowCount
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    AccessibilityTable *table = [self tableParent];
+    if (!table)
+        return 0;
+    
+    NSInteger rowCount = table->ariaRowCount();
+    return rowCount > 0 ? rowCount : 0;
+}
+
+- (NSUInteger)accessibilityARIAColumnCount
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    AccessibilityTable *table = [self tableParent];
+    if (!table)
+        return 0;
+    
+    NSInteger colCount = table->ariaColumnCount();
+    return colCount > 0 ? colCount : 0;
+}
+
+- (NSUInteger)accessibilityARIARowIndex
+{
+    if (![self _prepareAccessibilityCall])
+        return NSNotFound;
+    AccessibilityTableCell* tableCell = [self tableCellParent];
+    if (!tableCell)
+        return NSNotFound;
+    
+    NSInteger rowIndex = tableCell->ariaRowIndex();
+    return rowIndex > 0 ? rowIndex : NSNotFound;
+}
+
+- (NSUInteger)accessibilityARIAColumnIndex
+{
+    if (![self _prepareAccessibilityCall])
+        return NSNotFound;
+    AccessibilityTableCell* tableCell = [self tableCellParent];
+    if (!tableCell)
+        return NSNotFound;
+    
+    NSInteger columnIndex = tableCell->ariaColumnIndex();
+    return columnIndex > 0 ? columnIndex : NSNotFound;
 }
 
 - (NSRange)accessibilityRowRange

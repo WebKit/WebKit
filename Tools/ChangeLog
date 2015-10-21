@@ -1,3 +1,21 @@
+2015-10-21  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose table size and cell indexes on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=150366
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::rowCount):
+        (AccessibilityUIElement::columnCount):
+        (AccessibilityUIElement::indexInTable):
+        (AccessibilityUIElement::numberAttributeValue):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::columnCount):
+        (WTR::AccessibilityUIElement::indexInTable):
+
 2015-10-21  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should not import reference files as regular tests
