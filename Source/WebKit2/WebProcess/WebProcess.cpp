@@ -36,6 +36,7 @@
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
 #include "Logging.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
@@ -67,6 +68,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
+#include <WebCore/DNS.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/Frame.h>
@@ -162,6 +164,7 @@ WebProcess::WebProcess()
 #if ENABLE(NETWORK_PROCESS)
     , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
+    , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
@@ -1459,5 +1462,24 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
     m_hasRichContentServices = hasRichContentServices;
 }
 #endif
+
+void WebProcess::prefetchDNS(const String& hostname)
+{
+    if (hostname.isEmpty())
+        return;
+
+#if ENABLE(NETWORK_PROCESS)
+    if (usesNetworkProcess()) {
+        if (m_dnsPrefetchedHosts.add(hostname).isNewEntry)
+            networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::PrefetchDNS(hostname), 0);
+        // The DNS prefetched hosts cache is only to avoid asking for the same hosts too many times
+        // in a very short period of time, producing a lot of IPC traffic. So we clear this cache after
+        // some time of no DNS requests.
+        m_dnsPrefetchHystereris.impulse();
+        return;
+    }
+#endif
+    WebCore::prefetchDNS(hostname);
+}
 
 } // namespace WebKit

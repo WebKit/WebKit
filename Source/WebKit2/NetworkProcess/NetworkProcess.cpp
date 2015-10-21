@@ -45,6 +45,7 @@
 #include "WebCookieManager.h"
 #include "WebProcessPoolMessages.h"
 #include "WebsiteData.h"
+#include <WebCore/DNS.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/Logging.h>
 #include <WebCore/PlatformCookieJar.h>
@@ -527,6 +528,11 @@ void NetworkProcess::cancelPrepareToSuspend()
 
 void NetworkProcess::processDidResume()
 {
+}
+
+void NetworkProcess::prefetchDNS(const String& hostname)
+{
+    WebCore::prefetchDNS(hostname);
 }
 
 #if !PLATFORM(COCOA)

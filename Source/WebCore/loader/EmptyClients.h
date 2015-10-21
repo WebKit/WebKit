@@ -400,6 +400,8 @@ public:
 #endif
 
     virtual bool isEmptyFrameLoaderClient() override { return true; }
+
+    virtual void prefetchDNS(const String&) override { }
 };
 
 class EmptyTextCheckerClient : public TextCheckerClient {

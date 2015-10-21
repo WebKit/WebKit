@@ -1,3 +1,37 @@
+2015-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkProcess: DNS prefetch happens in the Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=147824
+
+        Reviewed by Chris Dumez.
+
+        DNS prefetch requests started in the WebProcess should be sent to
+        the network process when it's enabled.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::prefetchDNS): Use NetworkProcess::prefetchDNS().
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in: Add
+        PrefetchDNS message.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prefetchDNS): Do the actual DNS prefetch.
+        * NetworkProcess/NetworkProcess.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (webkitWebExtensionDidReceiveMessage): Use WebProcess::prefetchDNS().
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::prefetchDNS): Use WebProcess::prefetchDNS().
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary): Use
+        FrameLoaderClient to do the DNS prefetch.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess): Initialize the DNS prefetched
+        hosts cleanup hysteresis activity. Clear the cache of DNS
+        prefetched when hysteresis activity stopped.
+        (WebKit::WebProcess::prefetchDNS): Send the request to the network
+        process if it's enabled, otherwise do the actual DNS prefetch.
+        * WebProcess/WebProcess.h:
+
 2015-10-20  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Generalize NetworkCacheStorage API so it can store different types of metadata

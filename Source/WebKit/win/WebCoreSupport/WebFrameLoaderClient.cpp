@@ -60,6 +60,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/BackForwardController.h>
 #include <WebCore/CachedFrame.h>
+#include <WebCore/DNS.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FormState.h>
 #include <WebCore/Frame.h>
@@ -1365,4 +1366,9 @@ void WebFrameLoaderClient::receivedPolicyDecision(PolicyAction action)
     ASSERT(coreFrame);
 
     function(action);
+}
+
+void WebFrameLoaderClient::prefetchDNS(const String& hostname)
+{
+    WebCore::prefetchDNS(hostname);
 }

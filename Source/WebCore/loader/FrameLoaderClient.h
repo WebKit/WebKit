@@ -346,6 +346,8 @@ namespace WebCore {
 #if ENABLE(CONTENT_FILTERING)
         virtual void contentFilterDidBlockLoad(ContentFilterUnblockHandler) { }
 #endif
+
+        virtual void prefetchDNS(const String&) = 0;
     };
 
 } // namespace WebCore
