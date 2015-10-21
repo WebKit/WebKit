@@ -24,7 +24,7 @@ function childFrameWasNavigated()
 
 function sandboxWasNavigated()
 {
-    shouldBe("document.getElementById('sandboxedFrameId').sandbox", "'allow-scripts allow-same-origin'");
+    shouldBeEqualToString("String(document.getElementById('sandboxedFrameId').sandbox)", "allow-scripts allow-same-origin");
     isSuccessfullyParsed();
 
     if (window.testRunner)

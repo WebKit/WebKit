@@ -28,9 +28,13 @@
 
 namespace WebCore {
 
+class AttributeDOMTokenList;
+
 class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
     static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
+
+    DOMSettableTokenList& sandbox();
 
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);
@@ -45,6 +49,8 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) override;
     virtual RenderPtr<RenderElement> createElementRenderer(Ref<RenderStyle>&&, const RenderTreePosition&) override;
+
+    std::unique_ptr<AttributeDOMTokenList> m_sandbox;
 };
 
 } // namespace WebCore
