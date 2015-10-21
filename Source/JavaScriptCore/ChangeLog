@@ -1,3 +1,24 @@
+2015-10-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Date creation should share a little code
+        https://bugs.webkit.org/show_bug.cgi?id=150399
+
+        Reviewed by Filip Pizlo.
+
+        I want to fix a bug in this code, but I don't want to fix it in two
+        different places. (See https://bugs.webkit.org/show_bug.cgi?id=150386.)
+
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::getOwnPropertySlot):
+        (JSC::milliseconds): Factored out a shared helper function. If you look
+        closely, you'll see that one copy of this code previously checked isfinite
+        while the other checked isnan. isnan returning nan was obviously a no-op,
+        so I removed it. isfinite, it turns out, is also a no-op -- but less
+        obviously so, so I kept it for now.
+
+        (JSC::constructDate):
+        (JSC::dateUTC): Use the helper function.
+
 2015-10-21  Guillaume Emont  <guijemont@igalia.com>
 
         llint: align stack pointer on mips too
