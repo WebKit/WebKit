@@ -473,9 +473,12 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     for (auto trackIndex : flexibleSizedTracksIndex) {
         const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
         GridTrack& track = tracks[trackIndex];
-        LayoutUnit baseSize = std::max<LayoutUnit>(track.baseSize(), flexFraction * trackSize.maxTrackBreadth().flex());
-        track.setBaseSize(baseSize);
-        availableLogicalSpace -= baseSize;
+        LayoutUnit oldBaseSize = track.baseSize();
+        LayoutUnit baseSize = std::max<LayoutUnit>(oldBaseSize, flexFraction * trackSize.maxTrackBreadth().flex());
+        if (LayoutUnit increment = baseSize - oldBaseSize) {
+            track.setBaseSize(baseSize);
+            availableLogicalSpace -= increment;
+        }
     }
 }
 
