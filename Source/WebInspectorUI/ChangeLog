@@ -1,3 +1,21 @@
+2015-10-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: CSS Data URIs count against page weight twice
+        https://bugs.webkit.org/show_bug.cgi?id=150101
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard.prototype._resourceSizeDidChange):
+        Exclude resources with a data URI from the total page weight.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.updateForRedirectResponse):
+        (WebInspector.Resource.prototype.updateForResponse):
+        (WebInspector.Resource.prototype.markAsFinished):
+        Removed uses of `delete`.
+
 2015-10-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused Timeline GCEvent Record type

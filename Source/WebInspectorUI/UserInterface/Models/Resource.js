@@ -35,7 +35,9 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             type = WebInspector.Resource.Type[type];
 
         this._url = url;
+        this._urlComponents = null;
         this._mimeType = mimeType;
+        this._mimeTypeComponents = null;
         this._type = type || WebInspector.Resource.typeFromMIMEType(mimeType);
         this._loaderIdentifier = loaderIdentifier || null;
         this._requestIdentifier = requestIdentifier || null;
@@ -51,6 +53,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._lastRedirectReceivedTimestamp = NaN;
         this._lastDataReceivedTimestamp = NaN;
         this._finishedOrFailedTimestamp = NaN;
+        this._finishThenRequestContentPromise = null;
         this._size = NaN;
         this._transferSize = NaN;
         this._cached = false;
@@ -415,7 +418,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         if (oldURL !== url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
-            delete this._urlComponents;
+            this._urlComponents = null;
 
             this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL});
         }
@@ -454,14 +457,14 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
 
         if (oldURL !== url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
-            delete this._urlComponents;
+            this._urlComponents = null;
 
             this.dispatchEventToListeners(WebInspector.Resource.Event.URLDidChange, {oldURL});
         }
 
         if (oldMIMEType !== mimeType) {
             // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
-            delete this._mimeTypeComponents;
+            this._mimeTypeComponents = null;
 
             this.dispatchEventToListeners(WebInspector.Resource.Event.MIMETypeDidChange, {oldMIMEType});
         }
@@ -551,7 +554,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._finishedOrFailedTimestamp = elapsedTime || NaN;
 
         if (this._finishThenRequestContentPromise)
-            delete this._finishThenRequestContentPromise;
+            this._finishThenRequestContentPromise = null;
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFinish);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
