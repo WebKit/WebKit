@@ -583,7 +583,7 @@ void GraphicsContext::clipConvexPolygon(size_t numberOfPoints, const FloatPoint*
 void GraphicsContext::applyStrokePattern()
 {
     CGContextRef cgContext = platformContext();
-    AffineTransform userToBaseCTM = AffineTransform(wkGetUserToBaseCTM(cgContext));
+    AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
     RetainPtr<CGPatternRef> platformPattern = adoptCF(m_state.strokePattern->createPlatformPattern(userToBaseCTM));
     if (!platformPattern)
@@ -599,7 +599,7 @@ void GraphicsContext::applyStrokePattern()
 void GraphicsContext::applyFillPattern()
 {
     CGContextRef cgContext = platformContext();
-    AffineTransform userToBaseCTM = AffineTransform(wkGetUserToBaseCTM(cgContext));
+    AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
     RetainPtr<CGPatternRef> platformPattern = adoptCF(m_state.fillPattern->createPlatformPattern(userToBaseCTM));
     if (!platformPattern)
@@ -1070,7 +1070,7 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     CGContextRef context = platformContext();
 
     if (!m_state.shadowsIgnoreTransforms) {
-        CGAffineTransform userToBaseCTM = wkGetUserToBaseCTM(context);
+        CGAffineTransform userToBaseCTM = getUserToBaseCTM(context);
 
         CGFloat A = userToBaseCTM.a * userToBaseCTM.a + userToBaseCTM.b * userToBaseCTM.b;
         CGFloat B = userToBaseCTM.a * userToBaseCTM.c + userToBaseCTM.b * userToBaseCTM.d;

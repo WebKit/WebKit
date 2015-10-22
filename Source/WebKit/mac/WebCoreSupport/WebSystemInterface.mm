@@ -93,9 +93,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetHTTPRequestMinimumFastLanePriority);
     INIT(HTTPRequestEnablePipelining);
     INIT(SetNSURLRequestShouldContentSniff);
-    INIT(SetPatternPhaseInUserSpace);
     INIT(CGContextIsPDFContext);
-    INIT(GetUserToBaseCTM);
 #if ENABLE(VIDEO) && !PLATFORM(IOS)
     INIT(QTIncludeOnlyModernMediaFileTypes);
     INIT(QTMovieDisableComponent);

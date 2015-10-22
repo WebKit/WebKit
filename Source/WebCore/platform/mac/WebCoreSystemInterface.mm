@@ -76,8 +76,6 @@ void (*wkQTClearMediaDownloadCache)();
 
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*, BOOL);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
-void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
-CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 bool (*wkCGContextIsPDFContext)(CGContextRef);
 void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);

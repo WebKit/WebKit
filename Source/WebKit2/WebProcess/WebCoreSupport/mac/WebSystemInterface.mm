@@ -62,7 +62,6 @@ void InitWebCoreSystemInterface(void)
 #if !PLATFORM(IOS)
         INIT(SignedPublicKeyAndChallengeString);
 #endif
-        INIT(GetUserToBaseCTM);
         INIT(GetWebDefaultCFStringEncoding);
         INIT(CGContextIsPDFContext);
 #if !PLATFORM(IOS)
@@ -99,7 +98,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SetHTTPRequestPriority);
         INIT(SetHTTPRequestMinimumFastLanePriority);
         INIT(SetNSURLRequestShouldContentSniff);
-        INIT(SetPatternPhaseInUserSpace);
         INIT(CreatePrivateStorageSession);
         INIT(CopyRequestWithStorageSession);
         INIT(CopyHTTPCookieStorage);

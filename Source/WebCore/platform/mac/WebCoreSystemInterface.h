@@ -197,8 +197,6 @@ extern void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
 #endif
 extern void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
-extern void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint);
-extern CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 extern bool (*wkCGContextIsPDFContext)(CGContextRef);
 extern unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
 extern int (*wkGetHTTPRequestPriority)(CFURLRequestRef);

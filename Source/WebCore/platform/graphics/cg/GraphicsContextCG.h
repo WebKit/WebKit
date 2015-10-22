@@ -36,6 +36,11 @@ CGColorSpaceRef deviceRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
 CGColorSpaceRef linearRGBColorSpaceRef();
 
+inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
+{
+    return CGAffineTransformConcat(CGContextGetCTM(context), CGAffineTransformInvert(CGContextGetBaseCTM(context)));
+}
+
 static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
     switch (colorSpace) {

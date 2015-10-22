@@ -322,7 +322,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     CGContextRef destContext = context().platformContext();
     CGContextSaveGState(destContext);
     if (coordinateSystem == LogicalCoordinateSystem)
-        CGContextConcatCTM(destContext, AffineTransform(wkGetUserToBaseCTM(destContext)).inverse());
+        CGContextConcatCTM(destContext, AffineTransform(getUserToBaseCTM(destContext)).inverse());
     else
         CGContextConcatCTM(destContext, AffineTransform(CGContextGetCTM(destContext)).inverse());
     CGContextResetClip(destContext);

@@ -155,6 +155,14 @@ void GraphicsContext::updateDocumentMarkerResources()
     correctionPatternColor = nullptr;
 }
 
+static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phasePoint)
+{
+    CGAffineTransform userToBase = getUserToBaseCTM(context);
+    CGPoint phase = CGPointApplyAffineTransform(phasePoint, userToBase);
+
+    CGContextSetPatternPhase(context, CGSizeMake(phase.x, phase.y));
+}
+
 // WebKit on Mac is a standard platform component, so it must use the standard platform artwork for underline.
 void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float width, DocumentMarkerLineStyle style)
 {
@@ -251,7 +259,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     
     // FIXME: This code should not use NSGraphicsContext currentContext
     // In order to remove this requirement we will need to use CGPattern instead of NSColor
-    // FIXME: This code should not be using wkSetPatternPhaseInUserSpace, as this approach is wrong
+    // FIXME: This code should not be using setPatternPhaseInUserSpace, as this approach is wrong
     // for transforms.
 
     // Draw underline.
@@ -270,7 +278,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     WKSetPattern(context, dotPattern, YES, YES);
 #endif
 
-    wkSetPatternPhaseInUserSpace(context, offsetPoint);
+    setPatternPhaseInUserSpace(context, offsetPoint);
 
 #if !PLATFORM(IOS)
     NSRectFillUsingOperation(NSMakeRect(offsetPoint.x(), offsetPoint.y(), width, patternHeight), NSCompositeSourceOver);

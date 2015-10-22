@@ -1,3 +1,13 @@
+2015-10-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate WKSetPatternPhaseInUserSpace() and WKGetUserToBaseCTM() from WKSI
+        https://bugs.webkit.org/show_bug.cgi?id=150460
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Deleted.
+
 2015-10-22  Alex Christensen  <achristensen@webkit.org>
 
         Initial NSURLSession WebResourceLoader implementation
