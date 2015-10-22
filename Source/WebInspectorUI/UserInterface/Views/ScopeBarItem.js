@@ -30,7 +30,7 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
         super();
 
         this._element = document.createElement("li");
-        this._element.classList.toggle("exclusive", exclusive);
+        this._element.classList.toggle("exclusive", !!exclusive);
         this._element.classList.add(className);
         this._element.textContent = label;
         this._element.addEventListener("click", this._clicked.bind(this));

@@ -1,5 +1,22 @@
 2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Adjust usages of classList.toggle to ensure a true/false value instead of undefined
+        https://bugs.webkit.org/show_bug.cgi?id=150424
+
+        Reviewed by Timothy Hatcher.
+
+        Adds "!!" in front of force parameters in classList.toggle calls that
+        could possibly be undefined (thereby breaking the UI).
+
+        * UserInterface/Views/ScopeBarItem.js:
+        (WebInspector.ScopeBarItem):
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._updateSections):
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor):
+
+2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Option-Up doesn't increment certain attribute values
         https://bugs.webkit.org/show_bug.cgi?id=149257
 

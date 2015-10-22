@@ -155,7 +155,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
             return;
 
         let disabled = this._currentStyle[WebInspector.VisualStyleDetailsPanel.StyleDisabledSymbol];
-        this._element.classList.toggle("disabled", disabled);
+        this._element.classList.toggle("disabled", !!disabled);
         if (disabled)
             return;
 

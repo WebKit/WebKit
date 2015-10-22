@@ -65,7 +65,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         this._element = document.createElement("div");
         this._element.classList.add("visual-style-property-container", className);
-        this._element.classList.toggle("layout-reversed", layoutReversed);
+        this._element.classList.toggle("layout-reversed", !!layoutReversed);
 
         if (label && label.length) {
             let titleContainer = document.createElement("div");
