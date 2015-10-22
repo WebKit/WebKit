@@ -31,19 +31,20 @@
 
 namespace WebCore {
 
-class FloatPoint;
-class IntPoint;
-class LayoutPoint;
-class LayoutRect;
 class LayoutUnit;
 
-// FIXME: this should move to platform/
 class TextStream {
 public:
     struct FormatNumberRespectingIntegers {
         FormatNumberRespectingIntegers(double number) : value(number) { }
         double value;
     };
+    
+    enum class LineMode { SingleLine, MultipleLine };
+    TextStream(LineMode lineMode = LineMode::MultipleLine)
+        : m_multiLineMode(lineMode == LineMode::MultipleLine)
+    {
+    }
 
     WEBCORE_EXPORT TextStream& operator<<(bool);
     WEBCORE_EXPORT TextStream& operator<<(int);
@@ -100,6 +101,7 @@ public:
 private:
     StringBuilder m_text;
     int m_indent { 0 };
+    bool m_multiLineMode { true };
 };
 
 template<typename Item>

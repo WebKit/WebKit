@@ -82,6 +82,11 @@ void registerNotifyCallback(const String& notifyID, std::function<void()> callba
 }
 #endif
 
+void logFunctionResult(WTFLogChannel* channel, std::function<const char*()> function)
+{
+    WTFLog(channel, "%s", function());
 }
+
+} // namespace WebCore
 
 #endif // !LOG_DISABLED

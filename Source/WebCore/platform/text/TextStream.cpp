@@ -142,29 +142,38 @@ String TextStream::release()
 void TextStream::startGroup()
 {
     TextStream& ts = *this;
-    ts << "\n";
-    ts.writeIndent();
-    ts << "(";
-    ts.increaseIndent();
+
+    if (m_multiLineMode) {
+        ts << "\n";
+        ts.writeIndent();
+        ts << "(";
+        ts.increaseIndent();
+    } else
+        ts << " (";
 }
 
 void TextStream::endGroup()
 {
     TextStream& ts = *this;
     ts << ")";
-    ts.decreaseIndent();
+    if (m_multiLineMode)
+        ts.decreaseIndent();
 }
 
 void TextStream::nextLine()
 {
     TextStream& ts = *this;
-    ts << "\n";
-    ts.writeIndent();
+    if (m_multiLineMode) {
+        ts << "\n";
+        ts.writeIndent();
+    } else
+        ts << " ";
 }
 
 void TextStream::writeIndent()
 {
-    WebCore::writeIndent(*this, m_indent);
+    if (m_multiLineMode)
+        WebCore::writeIndent(*this, m_indent);
 }
 
 void writeIndent(TextStream& ts, int indent)
