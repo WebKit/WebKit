@@ -205,12 +205,24 @@ void UserContentController::removeAllUserContentExtensions()
     m_contentExtensionBackend->removeAllContentExtensions();
 }
 
+static bool contentExtensionsEnabled(const DocumentLoader& documentLoader)
+{
+    if (auto frame = documentLoader.frame()) {
+        if (frame->isMainFrame())
+            return documentLoader.userContentExtensionsEnabled();
+        if (auto mainDocumentLoader = frame->mainFrame().loader().documentLoader())
+            return mainDocumentLoader->userContentExtensionsEnabled();
+    }
+
+    return true;
+}
+
 void UserContentController::processContentExtensionRulesForLoad(ResourceRequest& request, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (!m_contentExtensionBackend)
         return;
 
-    if (!initiatingDocumentLoader.userContentExtensionsEnabled())
+    if (!contentExtensionsEnabled(initiatingDocumentLoader))
         return;
 
     m_contentExtensionBackend->processContentExtensionRulesForLoad(request, resourceType, initiatingDocumentLoader);
@@ -221,7 +233,7 @@ Vector<ContentExtensions::Action> UserContentController::actionsForResourceLoad(
     if (!m_contentExtensionBackend)
         return Vector<ContentExtensions::Action>();
     
-    if (!initiatingDocumentLoader.userContentExtensionsEnabled())
+    if (!contentExtensionsEnabled(initiatingDocumentLoader))
         return Vector<ContentExtensions::Action>();
 
     return m_contentExtensionBackend->actionsForResourceLoad(resourceLoadInfo);

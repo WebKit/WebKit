@@ -1,5 +1,27 @@
 2015-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r191223. rdar://problem/22900764
+
+    2015-10-16  Alex Christensen  <achristensen@webkit.org>
+
+            Disabled content blockers should not block any loads
+            https://bugs.webkit.org/show_bug.cgi?id=150261
+
+            Reviewed by Brady Eidson.
+
+            This fix was tested manually by reloading without content blockers
+            on websites with iframes and content blockers that block the contents of the iframes.
+
+            * page/UserContentController.cpp:
+            (WebCore::UserContentController::removeAllUserContentExtensions):
+            (WebCore::contentExtensionsEnabled):
+            (WebCore::UserContentController::processContentExtensionRulesForLoad):
+            (WebCore::UserContentController::actionsForResourceLoad):
+            Check the DocumentLoader of the main frame when checking if content extensions are disabled,
+            because that is the DocumentLoader that has the flag from reloading without content blockers.
+
+2015-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r191063. rdar://problem/22900764
 
     2015-10-14  Alex Christensen  <achristensen@webkit.org>
