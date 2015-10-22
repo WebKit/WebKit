@@ -1172,3 +1172,8 @@ style
 // will-change
 scroll-position
 contents
+
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+// touch-action
+manipulation
+#endif

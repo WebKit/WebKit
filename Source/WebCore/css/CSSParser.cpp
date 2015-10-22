@@ -754,6 +754,12 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueBreakWord)
             return true;
         break;
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyTouchAction: // auto | manipulation
+        if (valueID == CSSValueAuto || valueID == CSSValueManipulation)
+            return true;
+        break;
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType: // none | mandatory | proximity
         if (valueID == CSSValueNone || valueID == CSSValueMandatory || valueID == CSSValueProximity)
@@ -1176,6 +1182,9 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordWrap:
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyTouchAction:
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
 #endif
@@ -3267,6 +3276,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordWrap:
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyTouchAction:
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType:
 #endif

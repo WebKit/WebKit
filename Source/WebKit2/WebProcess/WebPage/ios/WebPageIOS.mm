@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -665,6 +665,12 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation);
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get());
     if (m_potentialTapNode) {
+#if ENABLE(TOUCH_EVENTS)
+        if (!m_potentialTapNode->allowsDoubleTapGesture()) {
+            send(Messages::WebPageProxy::DisableDoubleTapGesturesUntilTapIsFinishedIfNecessary(requestID, false, FloatRect(), false, 0, 0));
+            return;
+        }
+#endif
         FloatPoint origin = position;
         FloatRect renderRect;
         bool isReplaced;

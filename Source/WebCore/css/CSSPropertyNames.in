@@ -666,6 +666,9 @@ user-zoom [SkipBuilder]
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
 -webkit-overflow-scrolling [Inherited, NameForMethods=UseTouchOverflowScrolling, Converter=OverflowScrolling]
 #endif
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+touch-action
+#endif
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 -webkit-touch-callout [Inherited, NameForMethods=TouchCalloutEnabled, Converter=TouchCallout]
 #endif

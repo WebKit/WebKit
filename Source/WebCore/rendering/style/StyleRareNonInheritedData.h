@@ -184,6 +184,10 @@ public:
     StyleSelfAlignmentData m_justifyItems;
     StyleSelfAlignmentData m_justifySelf;
 
+#if ENABLE(TOUCH_EVENTS)
+    unsigned m_touchAction : 1; // TouchAction
+#endif
+
 #if ENABLE(CSS_SCROLL_SNAP)
     unsigned m_scrollSnapType : 2; // ScrollSnapType
 #endif

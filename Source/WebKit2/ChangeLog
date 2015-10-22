@@ -1,3 +1,19 @@
+2015-10-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement touch-action: manipulation; for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=149854
+        <rdar://problem/23017145>
+
+        Reviewed by Benjamin Poulain.
+
+        Implements the manipulation value for the CSS property touch-action. Performs hit-testing upon receiving a potential
+        tap to determine whether to disable double-tap gesture recognition over the duration of the tap. If so, sends a message
+        from the web process to the UI process indicating that double-tapping should be disabled, allowing single taps to
+        avoid the delay.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::potentialTapAtPosition):
+
 2015-10-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r181972): Scroll position changes to top of youtube page when switching tabs

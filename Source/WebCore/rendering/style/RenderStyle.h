@@ -1119,6 +1119,10 @@ public:
     int initialLetterDrop() const { return initialLetter().width(); }
     int initialLetterHeight() const { return initialLetter().height(); }
 
+#if ENABLE(TOUCH_EVENTS)
+    TouchAction touchAction() const { return static_cast<TouchAction>(rareNonInheritedData->m_touchAction); }
+#endif
+
 #if ENABLE(CSS_SCROLL_SNAP)
     ScrollSnapType scrollSnapType() const { return static_cast<ScrollSnapType>(rareNonInheritedData->m_scrollSnapType); }
     const ScrollSnapPoints* scrollSnapPointsX() const;
@@ -1679,6 +1683,10 @@ public:
     
     void setInitialLetter(const IntSize& size) { SET_VAR(rareNonInheritedData, m_initialLetter, size); }
     
+#if ENABLE(TOUCH_EVENTS)
+    void setTouchAction(TouchAction touchAction) { SET_VAR(rareNonInheritedData, m_touchAction, static_cast<unsigned>(touchAction)); }
+#endif
+
 #if ENABLE(CSS_SCROLL_SNAP)
     void setScrollSnapType(ScrollSnapType type) { SET_VAR(rareNonInheritedData, m_scrollSnapType, static_cast<unsigned>(type)); }
     void setScrollSnapPointsX(std::unique_ptr<ScrollSnapPoints>);
@@ -2031,6 +2039,10 @@ public:
     static const AtomicString& initialContentAltText() { return emptyAtom; }
 
     static WillChangeData* initialWillChange() { return nullptr; }
+
+#if ENABLE(TOUCH_EVENTS)
+    static TouchAction initialTouchAction() { return TouchAction::Auto; }
+#endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
     static ScrollSnapType initialScrollSnapType() { return ScrollSnapType::None; }
