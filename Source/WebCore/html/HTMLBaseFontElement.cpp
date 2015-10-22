@@ -29,15 +29,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLBaseFontElement::HTMLBaseFontElement(const QualifiedName& tagName, Document& document)
+HTMLBaseFontElement::HTMLBaseFontElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(basefontTag));
-}
-
-Ref<HTMLBaseFontElement> HTMLBaseFontElement::create(const QualifiedName& tagName, Document& document)
-{
-    return adoptRef(*new HTMLBaseFontElement(tagName, document));
 }
 
 }

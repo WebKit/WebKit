@@ -333,11 +333,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseElement').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseElement').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseFontElement').value is HTMLBaseFontElement
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseFontElement').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseFontElement').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseFontElement').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLBaseFontElement').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLBodyElement').value is HTMLBodyElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLBodyElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLBodyElement').hasOwnProperty('set') is false

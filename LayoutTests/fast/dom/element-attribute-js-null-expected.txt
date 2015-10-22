@@ -46,9 +46,6 @@ TEST SUCCEEDED: The value was the empty string. [tested HTMLAreaElement.target]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLBaseElement.target]
 
-TEST SUCCEEDED: The value was the empty string. [tested HTMLBaseFontElement.color]
-TEST SUCCEEDED: The value was the empty string. [tested HTMLBaseFontElement.face]
-
 TEST SUCCEEDED: The value was the empty string. [tested HTMLBlockquoteElement.cite]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLBodyElement.aLink]

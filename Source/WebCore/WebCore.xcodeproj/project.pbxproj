@@ -873,8 +873,6 @@
 		1AE00D59182DAC8D00087DD7 /* KeyedCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2AA1E0A1CDAB400B42B25 /* JSHTMLAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */; };
 		1AE2AA1F0A1CDAB400B42B25 /* JSHTMLAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */; };
-		1AE2AA200A1CDAB400B42B25 /* JSHTMLBaseFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */; };
-		1AE2AA210A1CDAB400B42B25 /* JSHTMLBaseFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */; };
 		1AE2AA220A1CDAB400B42B25 /* JSHTMLBodyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */; };
 		1AE2AA230A1CDAB400B42B25 /* JSHTMLBodyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */; };
 		1AE2AA240A1CDAB400B42B25 /* JSHTMLBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */; };
@@ -8172,8 +8170,6 @@
 		1AE2A9F90A1CDA5700B42B25 /* HTMLHRElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLHRElement.idl; sourceTree = "<group>"; };
 		1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAreaElement.cpp; sourceTree = "<group>"; };
 		1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLAreaElement.h; sourceTree = "<group>"; };
-		1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBaseFontElement.cpp; sourceTree = "<group>"; };
-		1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBaseFontElement.h; sourceTree = "<group>"; };
 		1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBodyElement.cpp; sourceTree = "<group>"; };
 		1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLBodyElement.h; sourceTree = "<group>"; };
 		1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLBRElement.cpp; sourceTree = "<group>"; };
@@ -19696,8 +19692,6 @@
 				E4B4237E0CBFB73C00AF2ECE /* JSHTMLAudioElement.h */,
 				A80E7B080A19D606007FB8C5 /* JSHTMLBaseElement.cpp */,
 				A80E7B070A19D606007FB8C5 /* JSHTMLBaseElement.h */,
-				1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */,
-				1AE2AA0D0A1CDAB300B42B25 /* JSHTMLBaseFontElement.h */,
 				1AE2AA0E0A1CDAB300B42B25 /* JSHTMLBodyElement.cpp */,
 				1AE2AA0F0A1CDAB300B42B25 /* JSHTMLBodyElement.h */,
 				1AE2AA100A1CDAB300B42B25 /* JSHTMLBRElement.cpp */,
@@ -26000,7 +25994,6 @@
 				7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */,
 				E44614380CD689C500FADA75 /* JSHTMLAudioElement.h in Headers */,
 				A80E7B110A19D606007FB8C5 /* JSHTMLBaseElement.h in Headers */,
-				1AE2AA210A1CDAB400B42B25 /* JSHTMLBaseFontElement.h in Headers */,
 				1AE2AA230A1CDAB400B42B25 /* JSHTMLBodyElement.h in Headers */,
 				1AE2AA250A1CDAB400B42B25 /* JSHTMLBRElement.h in Headers */,
 				A80E7E9F0A1A83E3007FB8C5 /* JSHTMLButtonElement.h in Headers */,
@@ -29622,7 +29615,6 @@
 				7C9DBFED1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp in Sources */,
 				E44614370CD689C400FADA75 /* JSHTMLAudioElement.cpp in Sources */,
 				A80E7B120A19D606007FB8C5 /* JSHTMLBaseElement.cpp in Sources */,
-				1AE2AA200A1CDAB400B42B25 /* JSHTMLBaseFontElement.cpp in Sources */,
 				1AE2AA220A1CDAB400B42B25 /* JSHTMLBodyElement.cpp in Sources */,
 				1AE2AA240A1CDAB400B42B25 /* JSHTMLBRElement.cpp in Sources */,
 				A80E7EA00A1A83E3007FB8C5 /* JSHTMLButtonElement.cpp in Sources */,

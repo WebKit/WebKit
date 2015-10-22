@@ -177,7 +177,6 @@
 #endif
 #include "JSHTMLAudioElement.cpp"
 #include "JSHTMLBaseElement.cpp"
-#include "JSHTMLBaseFontElement.cpp"
 #include "JSHTMLBodyElement.cpp"
 #include "JSHTMLBRElement.cpp"
 #include "JSHTMLButtonElement.cpp"

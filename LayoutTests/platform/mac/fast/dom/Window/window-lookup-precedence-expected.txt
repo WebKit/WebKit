@@ -126,8 +126,6 @@ PASS win['HTMLBRElement'] == '[object HTMLBRElementConstructor]' is true
 PASS win['HTMLBRElement'] == '[object HTMLBRElementConstructor]' is true
 PASS win['HTMLBaseElement'] == '[object HTMLBaseElementConstructor]' is true
 PASS win['HTMLBaseElement'] == '[object HTMLBaseElementConstructor]' is true
-PASS win['HTMLBaseFontElement'] == '[object HTMLBaseFontElementConstructor]' is true
-PASS win['HTMLBaseFontElement'] == '[object HTMLBaseFontElementConstructor]' is true
 PASS win['HTMLBodyElement'] == '[object HTMLBodyElementConstructor]' is true
 PASS win['HTMLBodyElement'] == '[object HTMLBodyElementConstructor]' is true
 PASS win['HTMLButtonElement'] == '[object HTMLButtonElementConstructor]' is true

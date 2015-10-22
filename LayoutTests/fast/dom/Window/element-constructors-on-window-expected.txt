@@ -10,8 +10,6 @@ HTMLAreaElement: [object HTMLAreaElementConstructor]
 
 HTMLBaseElement: [object HTMLBaseElementConstructor]
 
-HTMLBaseFontElement: [object HTMLBaseFontElementConstructor]
-
 HTMLBodyElement: [object HTMLBodyElementConstructor]
 
 HTMLBRElement: [object HTMLBRElementConstructor]

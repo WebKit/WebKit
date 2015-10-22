@@ -86,7 +86,6 @@ PASS: canGetDescriptor(targetWindow, 'HTMLAppletElement') should be 'false' and 
 PASS: canGetDescriptor(targetWindow, 'HTMLAreaElement') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'HTMLBRElement') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'HTMLBaseElement') should be 'false' and is.
-PASS: canGetDescriptor(targetWindow, 'HTMLBaseFontElement') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'HTMLBodyElement') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'HTMLButtonElement') should be 'false' and is.
 PASS: canGetDescriptor(targetWindow, 'HTMLCanvasElement') should be 'false' and is.

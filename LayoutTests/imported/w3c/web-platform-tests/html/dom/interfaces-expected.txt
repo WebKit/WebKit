@@ -144,10 +144,6 @@ CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a
 CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 794: Deprecated attempt to access property 'nodeType' on a non-Node object.
-CONSOLE MESSAGE: line 2476: Deprecated attempt to access property 'nodeType' on a non-Node object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'version' on a non-HTMLHtmlElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'text' on a non-HTMLTitleElement object.
 CONSOLE MESSAGE: line 1152: Deprecated attempt to access property 'href' on a non-HTMLBaseElement object.
@@ -2238,8 +2234,8 @@ FAIL HTMLUnknownElement must be primary interface of document.createElement("rb"
 FAIL Stringification of document.createElement("rb") assert_equals: class string of document.createElement("rb") expected "[object HTMLUnknownElement]" but got "[object HTMLElement]"
 PASS HTMLUnknownElement must be primary interface of document.createElement("spacer") 
 PASS Stringification of document.createElement("spacer") 
-FAIL HTMLUnknownElement must be primary interface of document.createElement("basefont") assert_equals: document.createElement("basefont")'s prototype is not HTMLUnknownElement.prototype expected Node object of unknown type but got Node object of unknown type
-FAIL Stringification of document.createElement("basefont") assert_equals: class string of document.createElement("basefont") expected "[object HTMLUnknownElement]" but got "[object HTMLBaseFontElement]"
+PASS HTMLUnknownElement must be primary interface of document.createElement("basefont") 
+PASS Stringification of document.createElement("basefont") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("directory") 
 PASS Stringification of document.createElement("directory") 
 PASS HTMLUnknownElement must be primary interface of document.createElement("mod") 

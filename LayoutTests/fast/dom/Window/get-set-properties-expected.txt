@@ -47,8 +47,6 @@ PASS: canGet('HTMLBRElement') should be 'true' and is.
 PASS: canSet('HTMLBRElement') should be 'true' and is.
 PASS: canGet('HTMLBaseElement') should be 'true' and is.
 PASS: canSet('HTMLBaseElement') should be 'true' and is.
-PASS: canGet('HTMLBaseFontElement') should be 'true' and is.
-PASS: canSet('HTMLBaseFontElement') should be 'true' and is.
 PASS: canGet('HTMLBodyElement') should be 'true' and is.
 PASS: canSet('HTMLBodyElement') should be 'true' and is.
 PASS: canGet('HTMLButtonElement') should be 'true' and is.
