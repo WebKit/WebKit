@@ -1,6 +1,13 @@
 add_definitions(-ObjC++)
 
-find_library(PDFKIT_FRAMEWORK PDFKit HINTS ${QUARTZ_LIBRARY}/Versions/*/Frameworks)
+if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
+elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
+else ()
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
+endif ()
+link_directories(../../WebKitLibraries)
 
 find_library(ACCELERATE_LIBRARY accelerate)
 find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
@@ -19,6 +26,8 @@ find_library(SQLITE3_LIBRARY sqlite3)
 find_library(XML2_LIBRARY XML2)
 find_package(ZLIB REQUIRED)
 
+add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
+
 list(APPEND WebKit2_LIBRARIES
     ${ACCELERATE_LIBRARY}
     ${AUDIOTOOLBOX_LIBRARY}
@@ -30,7 +39,6 @@ list(APPEND WebKit2_LIBRARIES
     ${IOKIT_LIBRARY}
     ${IOSURFACE_LIBRARY}
     ${OPENGL_LIBRARY}
-    ${PDFKIT_FRAMEWORK}/PDFKit
     ${QUARTZ_LIBRARY}
     ${QUARTZCORE_LIBRARY}
     ${SECURITY_LIBRARY}
@@ -48,12 +56,37 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/mac/NetworkResourceLoaderMac.mm
     NetworkProcess/mac/RemoteNetworkingContext.mm
 
+    Shared/API/Cocoa/RemoteObjectRegistry.mm
+    Shared/API/Cocoa/WKBrowsingContextHandle.mm
+    Shared/API/Cocoa/WKRemoteObject.mm
+    Shared/API/Cocoa/WKRemoteObjectCoder.mm
+    Shared/API/Cocoa/WebKit.m
+    Shared/API/Cocoa/_WKFrameHandle.mm
+    Shared/API/Cocoa/_WKHitTestResult.mm
+    Shared/API/Cocoa/_WKNSFileManagerExtras.mm
+    Shared/API/Cocoa/_WKRemoteObjectInterface.mm
+    Shared/API/Cocoa/_WKRemoteObjectRegistry.mm
+
+    Shared/API/c/cf/WKErrorCF.cpp
+    Shared/API/c/cf/WKStringCF.mm
+    Shared/API/c/cf/WKURLCF.mm
+
+    Shared/API/c/cg/WKImageCG.cpp
+
+    Shared/API/c/mac/WKCertificateInfoMac.mm
+    Shared/API/c/mac/WKObjCTypeWrapperRef.mm
+    Shared/API/c/mac/WKURLRequestNS.mm
+    Shared/API/c/mac/WKURLResponseNS.mm
+    Shared/API/c/mac/WKWebArchive.cpp
+    Shared/API/c/mac/WKWebArchiveResource.cpp
+
     UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
     UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm
     UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
     UIProcess/API/Cocoa/LegacyBundleForClass.mm
     UIProcess/API/Cocoa/WKBackForwardList.mm
     UIProcess/API/Cocoa/WKBackForwardListItem.mm
+    UIProcess/API/Cocoa/WKBrowsingContextController.mm
     UIProcess/API/Cocoa/WKError.mm
     UIProcess/API/Cocoa/WKFrameInfo.mm
     UIProcess/API/Cocoa/WKNavigation.mm
@@ -130,29 +163,38 @@ list(APPEND WebKit2_SOURCES
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/network/cf"
+    "${WEBCORE_DIR}/platform/network/cocoa"
+    "${WEBCORE_DIR}/platform/spi/mac"
+    "${WEBCORE_DIR}/platform/graphics/cg"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBKIT2_DIR}/NetworkProcess/cocoa"
     "${WEBKIT2_DIR}/NetworkProcess/mac"
     "${WEBKIT2_DIR}/UIProcess/mac"
     "${WEBKIT2_DIR}/UIProcess/API/C/mac"
+    "${WEBKIT2_DIR}/UIProcess/API/Cocoa"
+    "${WEBKIT2_DIR}/UIProcess/API/mac"
     "${WEBKIT2_DIR}/UIProcess/Cocoa"
     "${WEBKIT2_DIR}/UIProcess/Scrolling"
     "${WEBKIT2_DIR}/Platform/mac"
     "${WEBKIT2_DIR}/Platform/IPC/mac"
+    "${WEBKIT2_DIR}/Platform/spi/Cocoa"
     "${WEBKIT2_DIR}/Shared/API/Cocoa"
     "${WEBKIT2_DIR}/Shared/API/c/cf"
+    "${WEBKIT2_DIR}/Shared/API/c/cg"
+    "${WEBKIT2_DIR}/Shared/API/c/mac"
     "${WEBKIT2_DIR}/Shared/cf"
     "${WEBKIT2_DIR}/Shared/Cocoa"
     "${WEBKIT2_DIR}/Shared/mac"
     "${WEBKIT2_DIR}/Shared/Plugins/mac"
+    "${WEBKIT2_DIR}/Shared/Scrolling"
     "${WEBKIT2_DIR}/WebProcess/Plugins/PDF"
     "${WEBKIT2_DIR}/WebProcess/Scrolling"
     "${WEBKIT2_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/mac"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
 )
 
 set(WEBKIT2_EXTRA_DEPENDENCIES
@@ -180,7 +222,20 @@ set(WebKit2_FORWARDING_HEADERS_FILES
     UIProcess/API/C/WKPageRenderingProgressEvents.h
 )
 
+list(APPEND WebKit2_MESSAGES_IN_FILES
+    Shared/API/Cocoa/RemoteObjectRegistry.messages.in
+
+    Shared/mac/SecItemShim.messages.in
+
+    UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in
+    UIProcess/mac/SecItemShimProxy.messages.in
+    UIProcess/mac/ViewGestureController.messages.in
+
+    WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
+)
+
 set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
+    Shared/API/Cocoa
     Shared/API/c
 
     Shared/API/c/mac

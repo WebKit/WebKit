@@ -93,7 +93,7 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
     status = SecAccessCreate((CFStringRef)localizedItemName, nullptr, &accessRef);
     if (status) {
         WTFLogAlways("Cannot create a security access object for storing WebCrypto master key, error %d", (int)status);
-        return nullptr;
+        return false;
     }
     RetainPtr<SecAccessRef> access = adoptCF(accessRef);
 
@@ -104,14 +104,14 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
     status = SecTrustedApplicationCreateFromPath(0, &trustedAppRef);
     if (status) {
         WTFLogAlways("Cannot create a trusted application object for storing WebCrypto master key, error %d", (int)status);
-        return nullptr;
+        return false;
     }
     RetainPtr<SecTrustedApplicationRef> trustedApp = adoptCF(trustedAppRef);
 
     status = SecACLSetContents(acl, (CFArrayRef)@[ (id)trustedApp.get() ], (CFStringRef)localizedItemName, kSecKeychainPromptRequirePassphase);
     if (status) {
         WTFLogAlways("Cannot set ACL for WebCrypto master key, error %d", (int)status);
-        return nullptr;
+        return false;
     }
 #endif
 
@@ -134,7 +134,7 @@ static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
     status = SecItemAdd((CFDictionaryRef)attributes, nullptr);
     if (status) {
         WTFLogAlways("Cannot store WebCrypto master key, error %d", (int)status);
-        return nullptr;
+        return false;
     }
     return true;
 }

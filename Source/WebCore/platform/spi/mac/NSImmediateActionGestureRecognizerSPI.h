@@ -22,6 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef NSImmediateActionGestureRecognizerSPI_h
+#define NSImmediateActionGestureRecognizerSPI_h
 
 #if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
@@ -60,3 +62,5 @@
 @end
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+
+#endif

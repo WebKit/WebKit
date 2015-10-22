@@ -23,9 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
-#include "config.h"
 #include "WheelEventDeltaFilterMac.h"
 #include "FloatPoint.h"
 

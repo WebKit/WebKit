@@ -93,12 +93,12 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/shadow"
     "${WEBCORE_DIR}/html/track"
+    "${WEBCORE_DIR}/icu"
     "${WEBCORE_DIR}/inspector"
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/archive"
     "${WEBCORE_DIR}/loader/icon"
     "${WEBCORE_DIR}/loader/cache"
-    "${WEBCORE_DIR}/page"
     "${WEBCORE_DIR}/page/animation"
     "${WEBCORE_DIR}/page/scrolling"
     "${WEBCORE_DIR}/platform"
@@ -148,6 +148,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBKIT2_DIR}/include"
     "${CMAKE_BINARY_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
+    "${CMAKE_SOURCE_DIR}/WebKitLibraries"
 )
 
 set(WebKit2_SYSTEM_INCLUDE_DIRECTORIES "")
@@ -768,6 +769,12 @@ macro(ADD_WEBKIT2_PREFIX_HEADER _target)
 endmacro()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+# This needs to be after UIProcess/Cocoa on Mac.
+# FIXME: There is a conflict with including DiagnosticLoggingClient.h.
+list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/page"
+)
 
 GENERATE_WEBKIT2_MESSAGE_SOURCES(WebKit2_DERIVED_SOURCES "${WebKit2_MESSAGES_IN_FILES}")
 

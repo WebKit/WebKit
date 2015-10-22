@@ -33,7 +33,6 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterface.h"
-#import "WebMemoryPressureHandlerIOS.h"
 #import "WebPageGroup.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessCreationParameters.h"
@@ -54,6 +53,7 @@
 
 #if PLATFORM(IOS)
 #import "ArgumentCodersCF.h"
+#import "WebMemoryPressureHandlerIOS.h"
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #else
 #import <QuartzCore/CARemoteLayerServer.h>

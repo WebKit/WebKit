@@ -99,8 +99,8 @@ list(APPEND WebCore_SOURCES
 )
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    "/usr/include/libxslt"
-    "/usr/include/libxml2"
+    "${CMAKE_OSX_SYSROOT}/usr/include/libxslt"
+    "${CMAKE_OSX_SYSROOT}/usr/include/libxml2"
 )
 
 list(APPEND WebCore_SOURCES
@@ -233,6 +233,7 @@ list(APPEND WebCore_SOURCES
     page/mac/SettingsMac.mm
     page/mac/TextIndicatorWindow.mm
     page/mac/UserAgentMac.mm
+    page/mac/WheelEventDeltaFilterMac.mm
 
     page/scrolling/AsyncScrollingCoordinator.cpp
 
@@ -280,6 +281,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/ParentalControlsContentFilter.mm
     platform/cocoa/ScrollController.mm
     platform/cocoa/ScrollSnapAnimatorState.mm
+    platform/cocoa/SearchPopupMenuCocoa.mm
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.cpp
@@ -559,6 +561,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/animation
     platform/audio
+    platform/cf
+    platform/cocoa
     platform/graphics
     platform/mac
     platform/mediastream
@@ -568,6 +572,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/text
 
     platform/graphics/ca
+    platform/graphics/cocoa
     platform/graphics/cg
     platform/graphics/filters
     platform/graphics/mac
