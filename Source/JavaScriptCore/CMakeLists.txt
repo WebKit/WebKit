@@ -699,12 +699,41 @@ set(JavaScriptCore_LUT_FILES
     runtime/SymbolPrototype.cpp
 )
 
-set(JavaScriptCore_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/Scripts")
-
 set(JavaScriptCore_LIBRARIES
     WTF${DEBUG_SUFFIX}
     ${ICU_I18N_LIBRARIES}
 )
+
+set(JavaScriptCore_SCRIPTS_SOURCES_DIR "${JAVASCRIPTCORE_DIR}/Scripts")
+
+# Globbing relies on the fact that generator-specific file names are prefixed with their directory.
+# Top-level scripts should have a file extension, since they are invoked during the build.
+
+set(JavaScriptCore_SCRIPTS_SOURCES_PATHS
+    ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/*.pl
+    ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/*.py
+    ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/builtins/builtins*.py
+)
+
+# Force JavaScriptCore to run scripts from the same staging path as WebCore.
+set(JavaScriptCore_SCRIPTS_DIR "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts")
+
+file(MAKE_DIRECTORY ${JavaScriptCore_SCRIPTS_DIR})
+
+# The directory flattening performed below mirrors what the Mac port does with private headers.
+
+file(GLOB JavaScriptCore_SCRIPTS_SOURCES ${JavaScriptCore_SCRIPTS_SOURCES_PATHS})
+
+foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
+    get_filename_component(_script "${_file}" NAME)
+    add_custom_command(
+        OUTPUT ${JavaScriptCore_SCRIPTS_DIR}/${_script}
+        MAIN_DEPENDENCY ${_file}
+        WORKING_DIRECTORY ${DERIVED_SOURCES_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_file} ${JavaScriptCore_SCRIPTS_DIR}/${_script}
+        VERBATIM)
+    list(APPEND JavaScriptCore_SCRIPTS ${JavaScriptCore_SCRIPTS_DIR}/${_script})
+endforeach ()
 
 if (USE_UDIS86)
     set(UDIS_GEN_DEP
@@ -940,7 +969,7 @@ set(HASH_LUT_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_hash_table)
 macro(GENERATE_HASH_LUT _input _output)
     add_custom_command(
         OUTPUT ${_output}
-        DEPENDS ${HASH_LUT_GENERATOR} ${_input} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins
+        DEPENDS ${HASH_LUT_GENERATOR} ${_input} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
         COMMAND ${PERL_EXECUTABLE} ${HASH_LUT_GENERATOR} ${_input} -i > ${_output}
         VERBATIM)
     list(APPEND JavaScriptCore_HEADERS ${_output})
@@ -1079,6 +1108,21 @@ add_custom_command(
     VERBATIM)
 
 # JSCBuiltins
+
+set(BUILTINS_GENERATOR_SCRIPTS
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generator.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_model.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_templates.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_wrapper.py
+    ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
+    ${JavaScriptCore_SCRIPTS_DIR}/lazywriter.py
+)
+
 set(JavaScriptCore_BUILTINS_SOURCES
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayConstructor.js
     ${JAVASCRIPTCORE_DIR}/builtins/ArrayIterator.prototype.js
@@ -1101,10 +1145,11 @@ set(JavaScriptCore_BUILTINS_SOURCES
 )
 
 add_custom_command(
-   OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
-   MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins
-   DEPENDS ${JavaScriptCore_BUILTINS_SOURCES}
-   COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins --input-directory ${CMAKE_CURRENT_SOURCE_DIR}/builtins --output ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp
+   OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp
+          ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+   MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
+   DEPENDS ${JavaScriptCore_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS}
+   COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} --combined ${JavaScriptCore_BUILTINS_SOURCES}
    VERBATIM)
 
 list(APPEND JavaScriptCore_SOURCES
@@ -1208,4 +1253,7 @@ if (ENABLE_FTL_JIT)
     add_dependencies(JavaScriptCore llvmForJSC)
 endif ()
 
+# Force staging of shared scripts, even if they aren't directly used to build JavaScriptCore.
 
+add_custom_target(stageSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
+add_dependencies(JavaScriptCore stageSharedScripts)

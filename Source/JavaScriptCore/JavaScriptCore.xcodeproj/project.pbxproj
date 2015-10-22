@@ -1213,7 +1213,6 @@
 		9928FF3B18AC4AEC00B8CF12 /* JSReplayInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */; };
 		9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92B1BD17FA4001AA413 /* cssmin.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9271BD17FA0001AA413 /* cssmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		9959E92C1BD17FA4001AA413 /* generate-js-builtins in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9281BD17FA0001AA413 /* generate-js-builtins */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92D1BD17FA4001AA413 /* jsmin.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9291BD17FA0001AA413 /* jsmin.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E92E1BD17FA4001AA413 /* xxd.pl in Headers */ = {isa = PBXBuildFile; fileRef = 9959E92A1BD17FA0001AA413 /* xxd.pl */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E9311BD18272001AA413 /* generate-combined-inspector-json.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1221,6 +1220,18 @@
 		996231E918D1804200C03FDA /* InspectorBackendCommands.js in Headers */ = {isa = PBXBuildFile; fileRef = A53243961856A475002ED692 /* InspectorBackendCommands.js */; settings = {ATTRIBUTES = (Private, ); }; };
 		99CC0B6218BE9946006CEBCC /* CodeGeneratorReplayInputsTemplates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009A1BD5992700F4575C /* builtins_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A41BD5993100F4575C /* builtins_model.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009B1BD5992700F4575C /* builtins_model.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009C1BD5992700F4575C /* builtins_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A61BD5993100F4575C /* builtins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009D1BD5992700F4575C /* builtins.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A71BD5993100F4575C /* builtins_generate_combined_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00AB1BD5993100F4575C /* builtins_generate_separate_wrapper.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A21BD5992700F4575C /* builtins_generate_separate_wrapper.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AD1BD5993E00F4575C /* lazywriter.py */; settings = {ATTRIBUTES = (Private, ); }; };
+		99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AE1BD5993E00F4575C /* UpdateContents.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E45A2418A1B2590026D88F /* EmptyInputCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1F18A1B2590026D88F /* EmptyInputCursor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99E45A2518A1B2590026D88F /* EncodedValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99E45A2018A1B2590026D88F /* EncodedValue.cpp */; };
 		99E45A2618A1B2590026D88F /* EncodedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A2118A1B2590026D88F /* EncodedValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1793,7 +1804,7 @@
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861E182B7A0400F6D851 /* Breakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEA08621182B7A0400F6D851 /* DebuggerPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */; settings = {ASSET_TAGS = (); }; };
+		FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */; };
 		FEB51F6C1A97B688001F921C /* Regress141809.mm in Sources */ = {isa = PBXBuildFile; fileRef = FEB51F6B1A97B688001F921C /* Regress141809.mm */; };
 		FEB58C14187B8B160098EF0B /* ErrorHandlingScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB58C12187B8B160098EF0B /* ErrorHandlingScope.cpp */; };
 		FEB58C15187B8B160098EF0B /* ErrorHandlingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FEB58C13187B8B160098EF0B /* ErrorHandlingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3116,11 +3127,23 @@
 		9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReplayInputs.h; sourceTree = "<group>"; };
 		9928FF3D18AC4B1C00B8CF12 /* JSInputs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSInputs.json; sourceTree = "<group>"; };
 		9959E9271BD17FA0001AA413 /* cssmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = cssmin.py; sourceTree = "<group>"; };
-		9959E9281BD17FA0001AA413 /* generate-js-builtins */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-js-builtins"; sourceTree = "<group>"; };
 		9959E9291BD17FA0001AA413 /* jsmin.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = jsmin.py; sourceTree = "<group>"; };
 		9959E92A1BD17FA0001AA413 /* xxd.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = xxd.pl; sourceTree = "<group>"; };
 		9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-combined-inspector-json.py"; sourceTree = "<group>"; };
 		9959E9301BD181F6001AA413 /* inline-and-minify-stylesheets-and-scripts.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "inline-and-minify-stylesheets-and-scripts.py"; sourceTree = "<group>"; };
+		99DA00991BD5992700F4575C /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		99DA009A1BD5992700F4575C /* builtins_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generator.py; sourceTree = "<group>"; };
+		99DA009B1BD5992700F4575C /* builtins_model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_model.py; sourceTree = "<group>"; };
+		99DA009C1BD5992700F4575C /* builtins_templates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_templates.py; sourceTree = "<group>"; };
+		99DA009D1BD5992700F4575C /* builtins.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins.py; sourceTree = "<group>"; };
+		99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_combined_header.py; sourceTree = "<group>"; };
+		99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_combined_implementation.py; sourceTree = "<group>"; };
+		99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_header.py; sourceTree = "<group>"; };
+		99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_implementation.py; sourceTree = "<group>"; };
+		99DA00A21BD5992700F4575C /* builtins_generate_separate_wrapper.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_wrapper.py; sourceTree = "<group>"; };
+		99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-js-builtins.py"; sourceTree = "<group>"; };
+		99DA00AD1BD5993E00F4575C /* lazywriter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = lazywriter.py; sourceTree = "<group>"; };
+		99DA00AE1BD5993E00F4575C /* UpdateContents.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = UpdateContents.py; sourceTree = "<group>"; };
 		99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodeGeneratorReplayInputs.py; sourceTree = "<group>"; };
 		99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodeGeneratorReplayInputsTemplates.py; sourceTree = "<group>"; };
 		99E45A1F18A1B2590026D88F /* EmptyInputCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyInputCursor.h; sourceTree = "<group>"; };
@@ -3808,9 +3831,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				932F5BE10822A1C700736975 /* jsc */,
-				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
@@ -5729,14 +5752,34 @@
 		9959E9251BD17F1E001AA413 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				9959E9281BD17FA0001AA413 /* generate-js-builtins */,
+				99DA00971BD598E000F4575C /* builtins */,
 				9959E9271BD17FA0001AA413 /* cssmin.py */,
 				9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */,
+				99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */,
 				9959E9301BD181F6001AA413 /* inline-and-minify-stylesheets-and-scripts.py */,
 				9959E9291BD17FA0001AA413 /* jsmin.py */,
+				99DA00AD1BD5993E00F4575C /* lazywriter.py */,
+				99DA00AE1BD5993E00F4575C /* UpdateContents.py */,
 				9959E92A1BD17FA0001AA413 /* xxd.pl */,
 			);
 			path = Scripts;
+			sourceTree = "<group>";
+		};
+		99DA00971BD598E000F4575C /* builtins */ = {
+			isa = PBXGroup;
+			children = (
+				99DA00991BD5992700F4575C /* __init__.py */,
+				99DA009D1BD5992700F4575C /* builtins.py */,
+				99DA009E1BD5992700F4575C /* builtins_generate_combined_header.py */,
+				99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */,
+				99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */,
+				99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */,
+				99DA00A21BD5992700F4575C /* builtins_generate_separate_wrapper.py */,
+				99DA009A1BD5992700F4575C /* builtins_generator.py */,
+				99DA009B1BD5992700F4575C /* builtins_model.py */,
+				99DA009C1BD5992700F4575C /* builtins_templates.py */,
+			);
+			path = builtins;
 			sourceTree = "<group>";
 		};
 		99E45A0C18A01E930026D88F /* replay */ = {
@@ -6034,6 +6077,15 @@
 				FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */,
 				A7D801A51880D66E0026C39B /* BuiltinExecutables.h in Headers */,
 				A75EE9B218AAB7E200AAD043 /* BuiltinNames.h in Headers */,
+				99DA00A61BD5993100F4575C /* builtins.py in Headers */,
+				99DA00A71BD5993100F4575C /* builtins_generate_combined_header.py in Headers */,
+				99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */,
+				99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */,
+				99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */,
+				99DA00AB1BD5993100F4575C /* builtins_generate_separate_wrapper.py in Headers */,
+				99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */,
+				99DA00A41BD5993100F4575C /* builtins_model.py in Headers */,
+				99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */,
 				41DEA1321B9F3163006D65DD /* BuiltinUtils.h in Headers */,
 				9E72940B190F0514001A91B5 /* BundlePath.h in Headers */,
 				0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */,
@@ -6101,6 +6153,7 @@
 				C2FC9BD316644DFB00810D33 /* CopiedBlockInlines.h in Headers */,
 				C2EAA3FA149A835E00FCE112 /* CopiedSpace.h in Headers */,
 				C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */,
+				0F7C11AD1BC3862C00C74CDB /* CopyBarrier.h in Headers */,
 				0F5A52D017ADD717008ECB2D /* CopyToken.h in Headers */,
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,
@@ -6171,6 +6224,7 @@
 				0F38B01A17CFE75500B144D3 /* DFGCompilationMode.h in Headers */,
 				0F3B3A1B153E68F4003ED0FF /* DFGConstantFoldingPhase.h in Headers */,
 				0FED67BA1B26256D0066CE15 /* DFGConstantHoistingPhase.h in Headers */,
+				0F0981F81BC5E565004814F8 /* DFGCopyBarrierOptimizationPhase.h in Headers */,
 				0FBE0F7316C1DB050082C5E8 /* DFGCPSRethreadingPhase.h in Headers */,
 				A7D89CF617A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.h in Headers */,
 				0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */,
@@ -6407,7 +6461,7 @@
 				A54E8EB118BFFBBE00556D28 /* GCSegmentedArrayInlines.h in Headers */,
 				9959E9311BD18272001AA413 /* generate-combined-inspector-json.py in Headers */,
 				C4703CC0192844960013FBEA /* generate-inspector-protocol-bindings.py in Headers */,
-				9959E92C1BD17FA4001AA413 /* generate-js-builtins in Headers */,
+				99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */,
 				A5EA70EC19F5B3EA0098F5EC /* generate_cpp_alternate_backend_dispatcher_header.py in Headers */,
 				A5EF9B141A1D43F600702E90 /* generate_cpp_backend_dispatcher_header.py in Headers */,
 				A5EF9B151A1D43FA00702E90 /* generate_cpp_backend_dispatcher_implementation.py in Headers */,
@@ -6539,7 +6593,6 @@
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
 				0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */,
-				0F0981F81BC5E565004814F8 /* DFGCopyBarrierOptimizationPhase.h in Headers */,
 				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
 				840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */,
 				C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */,
@@ -6598,7 +6651,6 @@
 				797E07AA1B8FCFB9008400BA /* JSGlobalLexicalEnvironment.h in Headers */,
 				BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */,
 				A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */,
-				534C457C1BC72411007476A7 /* JSTypedArrayViewConstructor.h in Headers */,
 				A5C3A1A618C0490200C9593A /* JSGlobalObjectConsoleClient.h in Headers */,
 				A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */,
 				A57D23EA1891B0770031C7FA /* JSGlobalObjectDebuggerAgent.h in Headers */,
@@ -6667,6 +6719,7 @@
 				0F2B66FB17B6B5AB00A7AE3F /* JSTypedArrayConstructors.h in Headers */,
 				0F2B66FD17B6B5AB00A7AE3F /* JSTypedArrayPrototypes.h in Headers */,
 				0F2B66FF17B6B5AB00A7AE3F /* JSTypedArrays.h in Headers */,
+				534C457C1BC72411007476A7 /* JSTypedArrayViewConstructor.h in Headers */,
 				DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */,
 				6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */,
 				0F2B670217B6B5AB00A7AE3F /* JSUint16Array.h in Headers */,
@@ -6691,6 +6744,7 @@
 				969A072A0ED1CE6900F1F681 /* Label.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
 				0FB5467714F59B5C002C2989 /* LazyOperandValueProfile.h in Headers */,
+				99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */,
 				BC18C4520E16F5CD00B34460 /* LegacyProfiler.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */,
@@ -6787,7 +6841,6 @@
 				868916B0155F286300CB2B9A /* PrivateName.h in Headers */,
 				BC18C4500E16F5CD00B34460 /* Profile.h in Headers */,
 				95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */,
-				0F7C11AD1BC3862C00C74CDB /* CopyBarrier.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
 				0FF729A5166AD351000F5BA3 /* ProfilerBytecode.h in Headers */,
 				0FF729B9166AD360000F5BA3 /* ProfilerBytecodes.h in Headers */,
@@ -6946,6 +6999,7 @@
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
 				14142E511B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h in Headers */,
 				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
+				99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
 				79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */,
@@ -7485,7 +7539,6 @@
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
 				0F24E54017EA9F5900ABB217 /* AssemblyHelpers.cpp in Sources */,
-				FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */,
 				52678F8E1A031009006A306D /* BasicBlockLocation.cpp in Sources */,
 				0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */,
 				14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */,
@@ -7517,7 +7570,6 @@
 				A77F1821164088B200640A47 /* CodeCache.cpp in Sources */,
 				0F8F9446166764F100D61971 /* CodeOrigin.cpp in Sources */,
 				86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */,
-				DE5A0A001BA3AC3E003D4424 /* IntrinsicEmitter.cpp in Sources */,
 				86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */,
 				0F8F943C1667631300D61971 /* CodeSpecializationKind.cpp in Sources */,
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
@@ -7535,6 +7587,7 @@
 				1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */,
 				A57D23F11891B5B40031C7FA /* ContentSearchUtilities.cpp in Sources */,
 				52B717B51A0597E1007AF4F3 /* ControlFlowProfiler.cpp in Sources */,
+				0FBADF541BD1F4B800E073C1 /* CopiedBlock.cpp in Sources */,
 				C240305514B404E60079EB64 /* CopiedSpace.cpp in Sources */,
 				C2239D1716262BDD005AC5FD /* CopyVisitor.cpp in Sources */,
 				2A111245192FCE79005EE18D /* CustomGetterSetter.cpp in Sources */,
@@ -7580,6 +7633,7 @@
 				0F38B01917CFE75500B144D3 /* DFGCompilationMode.cpp in Sources */,
 				0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */,
 				0FED67B91B26256D0066CE15 /* DFGConstantHoistingPhase.cpp in Sources */,
+				0F0981F71BC5E565004814F8 /* DFGCopyBarrierOptimizationPhase.cpp in Sources */,
 				0FBE0F7216C1DB030082C5E8 /* DFGCPSRethreadingPhase.cpp in Sources */,
 				A7D89CF517A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp in Sources */,
 				0FFFC95914EF90A600C72532 /* DFGCSEPhase.cpp in Sources */,
@@ -7820,6 +7874,7 @@
 				A1D792FE1B43864B004516F5 /* IntlNumberFormatConstructor.cpp in Sources */,
 				A1D793001B43864B004516F5 /* IntlNumberFormatPrototype.cpp in Sources */,
 				A12BBFF41B044A9800664B69 /* IntlObject.cpp in Sources */,
+				DE5A0A001BA3AC3E003D4424 /* IntrinsicEmitter.cpp in Sources */,
 				70113D4B1A8DB093003848C4 /* IteratorOperations.cpp in Sources */,
 				70DC3E091B2DF2C700054299 /* IteratorPrototype.cpp in Sources */,
 				A503FA19188E0FB000110F14 /* JavaScriptCallFrame.cpp in Sources */,
@@ -7837,7 +7892,6 @@
 				0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */,
 				86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */,
 				A7C1E8E4112E72EF00A37F98 /* JITPropertyAccess32_64.cpp in Sources */,
-				0FBADF541BD1F4B800E073C1 /* CopiedBlock.cpp in Sources */,
 				0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */,
 				0F766D2B15A8CC38008F363E /* JITStubRoutineSet.cpp in Sources */,
 				0F5EF91E16878F7A003E5C25 /* JITThunks.cpp in Sources */,
@@ -7930,6 +7984,7 @@
 				0F2B66FA17B6B5AB00A7AE3F /* JSTypedArrayConstructors.cpp in Sources */,
 				0F2B66FC17B6B5AB00A7AE3F /* JSTypedArrayPrototypes.cpp in Sources */,
 				0F2B66FE17B6B5AB00A7AE3F /* JSTypedArrays.cpp in Sources */,
+				534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */,
 				DEA7E2441BBC677200D78440 /* JSTypedArrayViewPrototype.cpp in Sources */,
 				86E3C61A167BABEE006D760A /* JSValue.mm in Sources */,
 				14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */,
@@ -7961,6 +8016,7 @@
 				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,
 				0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */,
 				86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */,
+				FEB137571BB11EF900CD5100 /* MacroAssemblerARM64.cpp in Sources */,
 				A729009C17976C6000317298 /* MacroAssemblerARMv7.cpp in Sources */,
 				FE68C6381B90DE0B0042BCB3 /* MacroAssemblerPrinter.cpp in Sources */,
 				A7A4AE0817973B26005612B1 /* MacroAssemblerX86Common.cpp in Sources */,
@@ -8040,7 +8096,6 @@
 				6540C7A01B82E1C3000F6B79 /* RegisterAtOffset.cpp in Sources */,
 				6540C7A11B82E1C3000F6B79 /* RegisterAtOffsetList.cpp in Sources */,
 				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,
-				534C457E1BC72549007476A7 /* JSTypedArrayViewConstructor.cpp in Sources */,
 				A57D23ED1891B5540031C7FA /* RegularExpression.cpp in Sources */,
 				A5BA15E9182340B300A82E69 /* RemoteInspector.mm in Sources */,
 				A594558F18245EFD00CC3843 /* RemoteInspectorDebuggable.cpp in Sources */,
@@ -8141,7 +8196,6 @@
 				709FB86B1AE335C60039D069 /* WeakSetPrototype.cpp in Sources */,
 				2A4EC90B1860D6C20094F782 /* WriteBarrierBuffer.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
-				0F0981F71BC5E565004814F8 /* DFGCopyBarrierOptimizationPhase.cpp in Sources */,
 				A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */,
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,
 				86704B8412DBA33700A9FE7B /* YarrInterpreter.cpp in Sources */,

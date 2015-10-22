@@ -1,3 +1,199 @@
+2015-10-21  Brian Burg  <bburg@apple.com>
+
+        Restructure generate-js-bindings script to be modular and testable
+        https://bugs.webkit.org/show_bug.cgi?id=149929
+
+        Reviewed by Alex Christensen.
+
+        This is a new code generator, based on the replay inputs code generator and
+        the inspector protocol code generator, which produces various files for JS
+        builtins.
+
+        Relative to the generator it replaces, this one consolidates two scripts in
+        JavaScriptCore and WebCore into a single script with multiple files. Parsed
+        information about the builtins file is stored in backend-independent model
+        objects. Each output file has its own code generator that uses the model to
+        produce resulting code. Generators are additionally parameterized by the target
+        framework (to choose correct macros and includes) and output mode (one
+        header/implementation file per builtin or per framework).
+
+        It includes a few simple tests of the generator's functionality. These result-
+        based tests will become increasingly more important as we start to add support
+        for builtins annotation such as @optional, @internal, etc. to the code generator.
+
+        Some of these complexities, such as having two output modes, will be removed in
+        subsequent patches. This patch is intended to exactly replace the existing
+        functionality with a unified script that makes additional cleanups straightforward.
+
+        Additional cleanup and consolidation between inspector code generator scripts
+        and this script will be pursued in followup patches.
+
+        New tests:
+
+        Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Combined.js
+        Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Separate.js
+        Scripts/tests/builtins/JavaScriptCore-Builtin.prototype-Combined.js
+        Scripts/tests/builtins/JavaScriptCore-Builtin.prototype-Separate.js
+        Scripts/tests/builtins/JavaScriptCore-BuiltinConstructor-Combined.js
+        Scripts/tests/builtins/JavaScriptCore-BuiltinConstructor-Separate.js
+        Scripts/tests/builtins/WebCore-GuardedBuiltin-Separate.js
+        Scripts/tests/builtins/WebCore-GuardedInternalBuiltin-Separate.js
+        Scripts/tests/builtins/WebCore-UnguardedBuiltin-Separate.js
+        Scripts/tests/builtins/WebCore-xmlCasingTest-Separate.js
+
+
+        * CMakeLists.txt:
+
+            Copy the scripts that are used by other targets to a staging directory inside
+            ${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts.
+            Define JavaScriptCore_SCRIPTS_DIR to point here so that the add_custom_command
+            and shared file lists are identical between JavaScriptCore and WebCore. The staged
+            scripts are a dependency of the main JavaScriptCore target so that they are
+            always staged, even if JavaScriptCore itself does not use a particular script.
+
+            The output files additionally depend on all builtin generator script files
+            and input files that are combined into the single header/implementation file.
+
+        * DerivedSources.make:
+
+            Define JavaScriptCore_SCRIPTS_DIR explicitly so the rule for code generation and
+            shared file lists are identical between JavaScriptCore and WebCore.
+
+            The output files additionally depend on all builtin generator script files
+            and input files that are combined into the single header/implementation file.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+            Mark the new builtins generator files as private headers so we can use them from
+            WebCore.
+
+        * Scripts/UpdateContents.py: Renamed from Source/JavaScriptCore/UpdateContents.py.
+        * Scripts/builtins/__init__.py: Added.
+        * Scripts/builtins/builtins.py: Added.
+        * Scripts/builtins/builtins_generator.py: Added. This file contains the base generator.
+        (WK_lcfirst):
+        (WK_ucfirst):
+        (BuiltinsGenerator):
+        (BuiltinsGenerator.__init__):
+        (BuiltinsGenerator.model):
+        (BuiltinsGenerator.generate_license):
+        (BuiltinsGenerator.generate_includes_from_entries):
+        (BuiltinsGenerator.generate_output):
+        (BuiltinsGenerator.output_filename):
+        (BuiltinsGenerator.mangledNameForFunction):
+        (BuiltinsGenerator.mangledNameForFunction.toCamel):
+        (BuiltinsGenerator.generate_embedded_code_string_section_for_function):
+        * Scripts/builtins/builtins_model.py: Added. This file contains builtins model objects.
+        (ParseException):
+        (Framework):
+        (Framework.__init__):
+        (Framework.setting):
+        (Framework.fromString):
+        (Frameworks):
+        (BuiltinObject):
+        (BuiltinObject.__init__):
+        (BuiltinFunction):
+        (BuiltinFunction.__init__):
+        (BuiltinFunction.fromString):
+        (BuiltinFunction.__str__):
+        (BuiltinsCollection):
+        (BuiltinsCollection.__init__):
+        (BuiltinsCollection.parse_builtins_file):
+        (BuiltinsCollection.copyrights):
+        (BuiltinsCollection.all_functions):
+        (BuiltinsCollection._parse_copyright_lines):
+        (BuiltinsCollection._parse_functions):
+        * Scripts/builtins/builtins_templates.py: Added.
+        (BuiltinsGeneratorTemplates):
+        * Scripts/builtins/builtins_generate_combined_header.py: Added.
+        (BuiltinsCombinedHeaderGenerator):
+        (BuiltinsCombinedHeaderGenerator.__init__):
+        (BuiltinsCombinedHeaderGenerator.output_filename):
+        (BuiltinsCombinedHeaderGenerator.generate_output):
+        (BuiltinsCombinedHeaderGenerator.generate_forward_declarations):
+        (FunctionExecutable):
+        (VM):
+        (ConstructAbility):
+        (generate_section_for_object):
+        (generate_externs_for_object):
+        (generate_macros_for_object):
+        (generate_defines_for_object):
+        (generate_section_for_code_table_macro):
+        (generate_section_for_code_name_macro):
+        * Scripts/builtins/builtins_generate_combined_implementation.py: Added.
+        (BuiltinsCombinedImplementationGenerator):
+        (BuiltinsCombinedImplementationGenerator.__init__):
+        (BuiltinsCombinedImplementationGenerator.output_filename):
+        (BuiltinsCombinedImplementationGenerator.generate_output):
+        (BuiltinsCombinedImplementationGenerator.generate_header_includes):
+        * Scripts/builtins/builtins_generate_separate_header.py: Added.
+        (BuiltinsSeparateHeaderGenerator):
+        (BuiltinsSeparateHeaderGenerator.__init__):
+        (BuiltinsSeparateHeaderGenerator.output_filename):
+        (BuiltinsSeparateHeaderGenerator.macro_prefix):
+        (BuiltinsSeparateHeaderGenerator.generate_output):
+        (BuiltinsSeparateHeaderGenerator.generate_forward_declarations):
+        (FunctionExecutable):
+        (generate_header_includes):
+        (generate_section_for_object):
+        (generate_externs_for_object):
+        (generate_macros_for_object):
+        (generate_defines_for_object):
+        (generate_section_for_code_table_macro):
+        (generate_section_for_code_name_macro):
+        * Scripts/builtins/builtins_generate_separate_implementation.py: Added.
+        (BuiltinsSeparateImplementationGenerator):
+        (BuiltinsSeparateImplementationGenerator.__init__):
+        (BuiltinsSeparateImplementationGenerator.output_filename):
+        (BuiltinsSeparateImplementationGenerator.macro_prefix):
+        (BuiltinsSeparateImplementationGenerator.generate_output):
+        (BuiltinsSeparateImplementationGenerator.generate_header_includes):
+        * Scripts/builtins/builtins_generate_separate_wrapper.py: Added.
+        (BuiltinsSeparateWrapperGenerator):
+        (BuiltinsSeparateWrapperGenerator.__init__):
+        (BuiltinsSeparateWrapperGenerator.output_filename):
+        (BuiltinsSeparateWrapperGenerator.macro_prefix):
+        (BuiltinsSeparateWrapperGenerator.generate_output):
+        (BuiltinsSeparateWrapperGenerator.generate_header_includes):
+        * Scripts/generate-js-builtins.py: Added.
+
+            Parse command line options, decide which generators and output modes to use.
+
+        (generate_bindings_for_builtins_files):
+        * Scripts/lazywriter.py: Copied from the inspector protocol generator.
+        (LazyFileWriter):
+        (LazyFileWriter.__init__):
+        (LazyFileWriter.write):
+        (LazyFileWriter.close):
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Combined.js: Added.
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.Promise-Separate.js: Added.
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.prototype-Combined.js: Added.
+        * Scripts/tests/builtins/JavaScriptCore-Builtin.prototype-Separate.js: Added.
+        * Scripts/tests/builtins/JavaScriptCore-BuiltinConstructor-Combined.js: Added.
+        * Scripts/tests/builtins/JavaScriptCore-BuiltinConstructor-Separate.js: Added.
+        * Scripts/tests/builtins/WebCore-GuardedBuiltin-Separate.js: Added.
+        * Scripts/tests/builtins/WebCore-GuardedInternalBuiltin-Separate.js: Added.
+        * Scripts/tests/builtins/WebCore-UnguardedBuiltin-Separate.js: Added.
+        * Scripts/tests/builtins/WebCore-xmlCasingTest-Separate.js: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result: Added.
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result: Added.
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result: Added.
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        * builtins/BuiltinExecutables.h:
+        * create_hash_table:
+
+            Update the generated builtin macro names.
+
+        * generate-js-builtins: Removed.
+
 2015-10-21  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Remove FTL Native Inlining, it is dead code

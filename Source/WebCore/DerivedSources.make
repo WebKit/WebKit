@@ -797,7 +797,6 @@ all : \
     $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
     $(JS_DOM_HEADERS) \
     $(WEB_DOM_HEADERS) \
-    $(WEBCORE_JS_BUILTINS) \
     \
     CSSGrammar.cpp \
     CSSPropertyNames.cpp \
@@ -1256,7 +1255,7 @@ WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 
 # WebCore JS Builtins
 
-WEBCORE_JS_BUILTINS = \
+WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/mediastream/MediaDevices.js \
     $(WebCore)/Modules/streams/ByteLengthQueuingStrategy.js \
     $(WebCore)/Modules/streams/CountQueuingStrategy.js \
@@ -1269,10 +1268,31 @@ WEBCORE_JS_BUILTINS = \
     $(WebCore)/Modules/streams/WritableStreamInternals.js \
 #
 
-all : $(WEBCORE_JS_BUILTINS:%.js=%Builtins.cpp)
+BUILTINS_GENERATOR_SCRIPTS = \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_generator.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_model.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_templates.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_generate_combined_header.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_generate_combined_implementation.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_generate_separate_header.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_generate_separate_implementation.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins_generate_separate_wrapper.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/lazywriter.py \
+#
 
-%Builtins.cpp: %.js
-	$(PYTHON) $(WebCore)/generate-js-builtins --input $< --generate_js_builtins_path $(JavaScriptCore_SCRIPTS_DIR)
+# Adding/removing scripts should trigger regeneration, but changing which builtins are
+# generated should not affect other builtins when not passing '--combined' to the generator.
+
+.PHONY: force
+WebCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(BUILTINS_GENERATOR_SCRIPTS)' $@
+
+%Builtins.h: %.js $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --output-directory . --framework WebCore $<
+
+all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h))
 
 # ------------------------
 

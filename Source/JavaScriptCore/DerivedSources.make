@@ -71,10 +71,9 @@ all : \
     udis86_itab.h \
     Bytecodes.h \
     InitBytecodes.asm \
-    JSCBuiltins \
+    JSCBuiltins.h \
 #
 
-# builtin functions
 PYTHON = python
 PERL = perl
 
@@ -87,15 +86,24 @@ else
 endif
 # --------
 
-.PHONY: JSCBuiltins
-JSCBuiltins: $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins JSCBuiltins.h JSCBuiltins.cpp
-JSCBuiltins.h: $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins $(JavaScriptCore)/builtins JSCBuiltinsSources
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins --input-directory $(JavaScriptCore)/builtins --output $@
+# JavaScript builtins.
 
-JSCBuiltins.cpp: JSCBuiltins.h
+BUILTINS_GENERATOR_SCRIPTS = \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/__init__.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_generator.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_model.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_templates.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_generate_combined_header.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_generate_combined_implementation.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_generate_separate_header.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_generate_separate_implementation.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/builtins/builtins_generate_separate_wrapper.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py \
+    $(JavaScriptCore_SCRIPTS_DIR)/lazywriter.py \
+#
 
-.PHONY: JSCBuiltinsSources
-JSCBuiltinsSources: \
+JavaScriptCore_BUILTINS_SOURCES = \
     $(JavaScriptCore)/builtins/ArrayConstructor.js \
     $(JavaScriptCore)/builtins/ArrayIterator.prototype.js \
     $(JavaScriptCore)/builtins/Array.prototype.js \
@@ -112,7 +120,19 @@ JSCBuiltinsSources: \
     $(JavaScriptCore)/builtins/ReflectObject.js \
     $(JavaScriptCore)/builtins/StringConstructor.js \
     $(JavaScriptCore)/builtins/StringIterator.prototype.js \
+    $(JavaScriptCore)/builtins/TypedArrayConstructor.js \
+    $(JavaScriptCore)/builtins/TypedArray.prototype.js \
 #
+
+# The combined output file depends on the contents of builtins and generator scripts, so
+# adding, modifying, or removing builtins or scripts will trigger regeneration of files.
+
+.PHONY: force
+JavaScriptCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(JavaScriptCore_BUILTINS_SOURCES) $(BUILTINS_GENERATOR_SCRIPTS)' $@
+
+JSCBuiltins.h: $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --combined --output-directory . --framework JavaScriptCore $(JavaScriptCore_BUILTINS_SOURCES)
 
 # lookup tables for classes
 
@@ -201,8 +221,8 @@ all : \
 # adding, modifying, or removing domains will trigger regeneration of inspector files.
 
 .PHONY: force
-EnabledInspectorDomains : $(JavaScriptCore)/UpdateContents.py force
-	$(PYTHON) $(JavaScriptCore)/UpdateContents.py '$(INSPECTOR_DOMAINS)' $@
+EnabledInspectorDomains : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(INSPECTOR_DOMAINS)' $@
 
 CombinedDomains.json : $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) EnabledInspectorDomains
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./CombinedDomains.json

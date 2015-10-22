@@ -821,14 +821,10 @@ set(WebCore_IDL_FILES
     ${WebCore_SVG_IDL_FILES}
 )
 
-if (WIN32)
-    if (INTERNAL_BUILD)
-        set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore/Scripts")
-    else ()
-        set(JavaScriptCore_SCRIPTS_DIR "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts")
-    endif ()
+if (WIN32 AND INTERNAL_BUILD)
+    set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore/Scripts")
 else ()
-    set(JavaScriptCore_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/Scripts")
+    set(JavaScriptCore_SCRIPTS_DIR "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts")
 endif ()
 
 set(WebCore_SOURCES
@@ -3362,19 +3358,6 @@ set(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/WorkerGlo
 set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/DedicatedWorkerGlobalScopeConstructors.idl)
 set(IDL_ATTRIBUTES_FILE ${WEBCORE_DIR}/bindings/scripts/IDLAttributes.txt)
 
-set(WEBCORE_JS_BUILTINS
-    ${WEBCORE_DIR}/Modules/mediastream/MediaDevices.js
-    ${WEBCORE_DIR}/Modules/streams/ByteLengthQueuingStrategy.js
-    ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
-    ${WEBCORE_DIR}/Modules/streams/ReadableStream.js
-    ${WEBCORE_DIR}/Modules/streams/ReadableStreamController.js
-    ${WEBCORE_DIR}/Modules/streams/ReadableStreamInternals.js
-    ${WEBCORE_DIR}/Modules/streams/ReadableStreamReader.js
-    ${WEBCORE_DIR}/Modules/streams/StreamInternals.js
-    ${WEBCORE_DIR}/Modules/streams/WritableStream.js
-    ${WEBCORE_DIR}/Modules/streams/WritableStreamInternals.js
-)
-
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # Generate InspectorOverlayPage.h
@@ -3599,21 +3582,50 @@ GENERATE_BINDINGS(WebCoreTestSupport_SOURCES
     ${ADDITIONAL_BINDINGS_DEPENDENCIES})
 
 # WebCore JS Builtins
-foreach (_builtinjs ${WEBCORE_JS_BUILTINS})
-    get_filename_component(_name ${_builtinjs} NAME_WE)
+
+set(WebCore_BUILTINS_SOURCES
+    ${WEBCORE_DIR}/Modules/mediastream/MediaDevices.js
+    ${WEBCORE_DIR}/Modules/streams/ByteLengthQueuingStrategy.js
+    ${WEBCORE_DIR}/Modules/streams/CountQueuingStrategy.js
+    ${WEBCORE_DIR}/Modules/streams/ReadableStream.js
+    ${WEBCORE_DIR}/Modules/streams/ReadableStreamController.js
+    ${WEBCORE_DIR}/Modules/streams/ReadableStreamInternals.js
+    ${WEBCORE_DIR}/Modules/streams/ReadableStreamReader.js
+    ${WEBCORE_DIR}/Modules/streams/StreamInternals.js
+    ${WEBCORE_DIR}/Modules/streams/WritableStream.js
+)
+
+set(BUILTINS_GENERATOR_SCRIPTS
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generator.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_model.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_templates.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_header.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_implementation.py
+    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_wrapper.py
+    ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
+    ${JavaScriptCore_SCRIPTS_DIR}/lazywriter.py
+)
+
+foreach (_builtinSource ${WebCore_BUILTINS_SOURCES})
+    get_filename_component(_objectName ${_builtinSource} NAME_WE)
     add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}BuiltinsWrapper.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.h ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.cpp
-        MAIN_DEPENDENCY ${WEBCORE_DIR}/generate-js-builtins
-        DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins
-        DEPENDS ${_builtinjs}
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/generate-js-builtins --input ${_builtinjs} --output_dir ${DERIVED_SOURCES_WEBCORE_DIR} --generate_js_builtins_path ${JavaScriptCore_SCRIPTS_DIR}
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.cpp
+               ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h
+               ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}BuiltinsWrapper.h 
+        MAIN_DEPENDENCY ${_builtinSource}
+        DEPENDS ${BUILTINS_GENERATOR_SCRIPTS}
+        COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework WebCore --output-directory ${DERIVED_SOURCES_WEBCORE_DIR} ${_builtinSource}
         VERBATIM)
     list(APPEND WebCore_SOURCES
-        ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}Builtins.h
-        ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}BuiltinsWrapper.h
+        ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h
+        ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}BuiltinsWrapper.h
     )
-    ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/bindings/js/WebCoreJSBuiltins.cpp ${_name}Builtins.cpp)
+    ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/bindings/js/WebCoreJSBuiltins.cpp ${_objectName}Builtins.cpp)
 endforeach ()
+
 
 ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/html/HTMLTreeBuilder.cpp MathMLNames.cpp)
 

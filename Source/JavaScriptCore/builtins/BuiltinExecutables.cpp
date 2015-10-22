@@ -40,7 +40,7 @@ static UnlinkedFunctionExecutable* createExecutableInternal(VM&, const SourceCod
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
 #define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length)))
-    JSC_FOREACH_BUILTIN(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
+    JSC_FOREACH_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef EXPOSE_BUILTIN_STRINGS
 {
 }
@@ -132,7 +132,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
         m_##name##Executable = Weak<UnlinkedFunctionExecutable>(createBuiltinExecutable(m_##name##Source, m_vm.propertyNames->builtinNames().functionName##PublicName(), s_##name##ConstructAbility), this, &m_##name##Executable);\
     return m_##name##Executable.get();\
 }
-JSC_FOREACH_BUILTIN(DEFINE_BUILTIN_EXECUTABLES)
+JSC_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_EXECUTABLES)
 #undef EXPOSE_BUILTIN_SOURCES
 
 }
