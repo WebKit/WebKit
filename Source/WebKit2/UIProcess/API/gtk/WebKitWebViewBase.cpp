@@ -1346,6 +1346,7 @@ void webkitWebViewBaseResetClickCounter(WebKitWebViewBase* webkitWebViewBase)
     webkitWebViewBase->priv->clickCounter.reset();
 }
 
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
 static void webkitWebViewBaseClearRedirectedWindowSoon(WebKitWebViewBase* webkitWebViewBase)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
@@ -1355,6 +1356,7 @@ static void webkitWebViewBaseClearRedirectedWindowSoon(WebKitWebViewBase* webkit
             priv->redirectedWindow->resize(IntSize());
     }, clearRedirectedWindowSoonDelay);
 }
+#endif
 
 void webkitWebViewBaseWillEnterAcceleratedCompositingMode(WebKitWebViewBase* webkitWebViewBase)
 {
