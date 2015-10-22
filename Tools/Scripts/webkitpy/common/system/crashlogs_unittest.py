@@ -257,6 +257,9 @@ class CrashLogsTest(unittest.TestCase):
         return crash_logs
 
     def test_find_all_log_darwin(self):
+        if not SystemHost().platform.is_mac():
+            return
+
         crash_logs = self.create_crash_logs_darwin()
         all_logs = crash_logs.find_all_logs()
         self.assertEqual(len(all_logs), 5)
@@ -266,6 +269,9 @@ class CrashLogsTest(unittest.TestCase):
             self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
 
     def test_find_log_darwin(self):
+        if not SystemHost().platform.is_mac():
+            return
+
         crash_logs = self.create_crash_logs_darwin()
         log = crash_logs.find_newest_log("DumpRenderTree")
         self.assertMultiLineEqual(log, self.newer_mock_crash_report)
