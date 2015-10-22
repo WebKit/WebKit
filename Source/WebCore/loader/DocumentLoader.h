@@ -226,6 +226,9 @@ namespace WebCore {
         void stopLoadingPlugIns();
         void stopLoadingSubresources();
 
+        bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
+        void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
+
         void addSubresourceLoader(ResourceLoader*);
         void removeSubresourceLoader(ResourceLoader*);
         WEBCORE_EXPORT void addPlugInStreamLoader(ResourceLoader*);
@@ -450,6 +453,7 @@ namespace WebCore {
         HashMap<String, RefPtr<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
         HashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
+        bool m_userContentExtensionsEnabled { true };
 
 #ifndef NDEBUG
         bool m_hasEverBeenAttached { false };
