@@ -75,6 +75,9 @@ void registerNotifyCallback(const String& notifyID, std::function<void()> callba
     notify_register_dispatch(notifyID.utf8().data(), &token, dispatch_get_main_queue(), ^(int) {
         callback();
     });
+#else
+    UNUSED_PARAM(notifyID);
+    UNUSED_PARAM(callback);
 #endif
 }
 #endif
