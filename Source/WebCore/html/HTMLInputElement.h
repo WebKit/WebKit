@@ -343,7 +343,7 @@ private:
     virtual bool isMouseFocusable() const override final;
     virtual bool isEnumeratable() const override final;
     virtual bool supportLabels() const override final;
-    virtual void updateFocusAppearance(bool restorePreviousSelection) override final;
+    virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) override final;
     virtual bool shouldUseInputMethod() override final;
 
     virtual bool isTextFormControl() const override final { return isTextField(); }

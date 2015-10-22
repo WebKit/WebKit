@@ -1,3 +1,15 @@
+2015-10-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r181972): Scroll position changes to top of youtube page when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=150428
+
+        Reviewed by Antti Koivisto.
+
+        Call updateFocusAppearance with RevealMode::DoNotReveal to avoid revealing the focused element.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSelectionInFocusedEditableElement):
+
 2015-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix a crash in GTk+ after r191402.

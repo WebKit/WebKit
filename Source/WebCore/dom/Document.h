@@ -274,6 +274,16 @@ enum class DocumentCompatibilityMode : unsigned char {
 
 enum DimensionsCheck { WidthDimensionsCheck = 1 << 0, HeightDimensionsCheck = 1 << 1, AllDimensionsCheck = 1 << 2 };
 
+enum class SelectionRestorationMode {
+    Restore,
+    SetDefault,
+};
+
+enum class SelectionRevealMode {
+    Reveal,
+    DoNotReveal
+};
+
 enum class HttpEquivPolicy {
     Enabled,
     DisabledBySettings,
@@ -966,7 +976,7 @@ public:
     bool hasNodesWithPlaceholderStyle() const { return m_hasNodesWithPlaceholderStyle; }
     void setHasNodesWithPlaceholderStyle() { m_hasNodesWithPlaceholderStyle = true; }
 
-    void updateFocusAppearanceSoon(bool restorePreviousSelection);
+    void updateFocusAppearanceSoon(SelectionRestorationMode);
     void cancelFocusAppearanceUpdate();
 
     // Extension for manipulating canvas drawing contexts for use in CSS
@@ -1492,7 +1502,7 @@ private:
     bool m_isDNSPrefetchEnabled;
     bool m_haveExplicitlyDisabledDNSPrefetch;
     bool m_frameElementsShouldIgnoreScrolling;
-    bool m_updateFocusAppearanceRestoresSelection;
+    SelectionRestorationMode m_updateFocusAppearanceRestoresSelection;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#ignore-destructive-writes-counter
     unsigned m_ignoreDestructiveWriteCount;
