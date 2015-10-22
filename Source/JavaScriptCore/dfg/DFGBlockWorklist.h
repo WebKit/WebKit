@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,151 +30,29 @@
 
 #include "DFGBasicBlock.h"
 #include "DFGBlockSet.h"
+#include <wtf/GraphNodeWorklist.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
 struct BasicBlock;
 
-class BlockWorklist {
-public:
-    BlockWorklist();
-    ~BlockWorklist();
-    
-    bool push(BasicBlock*); // Returns true if we didn't know about the block before.
-    
-    bool notEmpty() const { return !m_stack.isEmpty(); }
-    BasicBlock* pop();
-    
-private:
-    BlockSet m_seen;
-    Vector<BasicBlock*, 16> m_stack;
-};
+typedef GraphNodeWorklist<BasicBlock*, BlockSet> BlockWorklist;
 
 // When you say BlockWith<int> you should read it as "block with an int".
-template<typename T>
-struct BlockWith {
-    BlockWith()
-        : block(nullptr)
-    {
-    }
-    
-    BlockWith(BasicBlock* block, const T& data)
-        : block(block)
-        , data(data)
-    {
-    }
-    
-    explicit operator bool() const { return block; }
-
-    BasicBlock* block;
-    T data;
-};
+template<typename T> using BlockWith = GraphNodeWith<BasicBlock*, T>;
 
 // Extended block worklist is useful for enqueueing some meta-data along with the block. It also
 // permits forcibly enqueueing things even if the block has already been seen. It's useful for
 // things like building a spanning tree, in which case T (the auxiliary payload) would be the
 // successor index.
-template<typename T>
-class ExtendedBlockWorklist {
-public:
-    ExtendedBlockWorklist() { }
-    
-    void forcePush(const BlockWith<T>& entry)
-    {
-        m_stack.append(entry);
-    }
-    
-    void forcePush(BasicBlock* block, const T& data)
-    {
-        forcePush(BlockWith<T>(block, data));
-    }
-    
-    bool push(const BlockWith<T>& entry)
-    {
-        if (!m_seen.add(entry.block))
-            return false;
-        
-        forcePush(entry);
-        return true;
-    }
-    
-    bool push(BasicBlock* block, const T& data)
-    {
-        return push(BlockWith<T>(block, data));
-    }
-    
-    bool notEmpty() const { return !m_stack.isEmpty(); }
-    
-    BlockWith<T> pop()
-    {
-        if (m_stack.isEmpty())
-            return BlockWith<T>();
-        
-        return m_stack.takeLast();
-    }
+template<typename T> using ExtendedBlockWorklist = ExtendedGraphNodeWorklist<BasicBlock*, T, BlockSet>;
 
-private:
-    BlockSet m_seen;
-    Vector<BlockWith<T>> m_stack;
-};
+typedef GraphVisitOrder VisitOrder;
 
-enum VisitOrder {
-    PreOrder,
-    PostOrder
-};
+typedef GraphNodeWithOrder<BasicBlock*> BlockWithOrder;
 
-struct BlockWithOrder {
-    BlockWithOrder()
-        : block(nullptr)
-        , order(PreOrder)
-    {
-    }
-    
-    BlockWithOrder(BasicBlock* block, VisitOrder order)
-        : block(block)
-        , order(order)
-    {
-    }
-    
-    explicit operator bool() const { return block; }
-
-    BasicBlock* block;
-    VisitOrder order;
-};
-
-// Block worklist suitable for post-order traversal.
-class PostOrderBlockWorklist {
-public:
-    PostOrderBlockWorklist();
-    ~PostOrderBlockWorklist();
-    
-    bool pushPre(BasicBlock*);
-    void pushPost(BasicBlock*);
-    
-    bool push(BasicBlock* block, VisitOrder order = PreOrder)
-    {
-        switch (order) {
-        case PreOrder:
-            return pushPre(block);
-        case PostOrder:
-            pushPost(block);
-            return true;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
-    bool push(const BlockWithOrder& data)
-    {
-        return push(data.block, data.order);
-    }
-    
-    bool notEmpty() const { return m_worklist.notEmpty(); }
-    BlockWithOrder pop();
-
-private:
-    ExtendedBlockWorklist<VisitOrder> m_worklist;
-};
+typedef PostOrderGraphNodeWorklist<BasicBlock*, BlockSet> PostOrderBlockWorklist;
 
 } } // namespace JSC::DFG
 

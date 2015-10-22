@@ -47,14 +47,14 @@ void PrePostNumbering::compute(Graph& graph)
     unsigned nextPostNumber = 0;
     while (BlockWithOrder item = worklist.pop()) {
         switch (item.order) {
-        case PreOrder:
-            m_map[item.block].m_preNumber = nextPreNumber++;
-            worklist.pushPost(item.block);
-            for (BasicBlock* successor : item.block->successors())
+        case VisitOrder::Pre:
+            m_map[item.node].m_preNumber = nextPreNumber++;
+            worklist.pushPost(item.node);
+            for (BasicBlock* successor : item.node->successors())
                 worklist.push(successor);
             break;
-        case PostOrder:
-            m_map[item.block].m_postNumber = nextPostNumber++;
+        case VisitOrder::Post:
+            m_map[item.node].m_postNumber = nextPostNumber++;
             break;
         }
     }

@@ -545,7 +545,6 @@
 		0FC3CCFC19ADA410006AC72A /* DFGBlockMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC3CCF519ADA410006AC72A /* DFGBlockMap.h */; };
 		0FC3CCFD19ADA410006AC72A /* DFGBlockMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC3CCF619ADA410006AC72A /* DFGBlockMapInlines.h */; };
 		0FC3CCFE19ADA410006AC72A /* DFGBlockSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC3CCF719ADA410006AC72A /* DFGBlockSet.h */; };
-		0FC3CCFF19ADA410006AC72A /* DFGBlockWorklist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC3CCF819ADA410006AC72A /* DFGBlockWorklist.cpp */; };
 		0FC3CD0019ADA410006AC72A /* DFGBlockWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC3CCF919ADA410006AC72A /* DFGBlockWorklist.h */; };
 		0FC3CD0119ADA411006AC72A /* DFGNaiveDominators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FC3CCFA19ADA410006AC72A /* DFGNaiveDominators.cpp */; };
 		0FC3CD0219ADA411006AC72A /* DFGNaiveDominators.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC3CCFB19ADA410006AC72A /* DFGNaiveDominators.h */; };
@@ -2410,7 +2409,6 @@
 		0FC3CCF519ADA410006AC72A /* DFGBlockMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockMap.h; path = dfg/DFGBlockMap.h; sourceTree = "<group>"; };
 		0FC3CCF619ADA410006AC72A /* DFGBlockMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockMapInlines.h; path = dfg/DFGBlockMapInlines.h; sourceTree = "<group>"; };
 		0FC3CCF719ADA410006AC72A /* DFGBlockSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockSet.h; path = dfg/DFGBlockSet.h; sourceTree = "<group>"; };
-		0FC3CCF819ADA410006AC72A /* DFGBlockWorklist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBlockWorklist.cpp; path = dfg/DFGBlockWorklist.cpp; sourceTree = "<group>"; };
 		0FC3CCF919ADA410006AC72A /* DFGBlockWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockWorklist.h; path = dfg/DFGBlockWorklist.h; sourceTree = "<group>"; };
 		0FC3CCFA19ADA410006AC72A /* DFGNaiveDominators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNaiveDominators.cpp; path = dfg/DFGNaiveDominators.cpp; sourceTree = "<group>"; };
 		0FC3CCFB19ADA410006AC72A /* DFGNaiveDominators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNaiveDominators.h; path = dfg/DFGNaiveDominators.h; sourceTree = "<group>"; };
@@ -5217,7 +5215,6 @@
 				0FBF158A19B7A53100695DD0 /* DFGBlockSet.cpp */,
 				0FC3CCF719ADA410006AC72A /* DFGBlockSet.h */,
 				0FBF158B19B7A53100695DD0 /* DFGBlockSetInlines.h */,
-				0FC3CCF819ADA410006AC72A /* DFGBlockWorklist.cpp */,
 				0FC3CCF919ADA410006AC72A /* DFGBlockWorklist.h */,
 				0F8364B5164B0C0E0053329A /* DFGBranchDirection.h */,
 				86EC9DB41328DF82002B2AD7 /* DFGByteCodeParser.cpp */,
@@ -7568,7 +7565,6 @@
 				A7D89CF217A0B8CC00773AD8 /* DFGBasicBlock.cpp in Sources */,
 				A7D89CF317A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp in Sources */,
 				0FBF158C19B7A53100695DD0 /* DFGBlockSet.cpp in Sources */,
-				0FC3CCFF19ADA410006AC72A /* DFGBlockWorklist.cpp in Sources */,
 				86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */,
 				0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */,
 				0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */,

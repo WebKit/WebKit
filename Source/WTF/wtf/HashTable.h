@@ -290,6 +290,8 @@ namespace WTF {
         HashTableAddResult(IteratorType iter, bool isNewEntry) : iterator(iter), isNewEntry(isNewEntry) { }
         IteratorType iterator;
         bool isNewEntry;
+
+        explicit operator bool() const { return isNewEntry; }
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

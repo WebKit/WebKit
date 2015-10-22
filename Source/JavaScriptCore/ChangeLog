@@ -1,3 +1,37 @@
+2015-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Factor out the graph node worklists from DFG into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=150411
+
+        Reviewed by Geoffrey Garen.
+
+        Rewrite the DFGBlockWorklist.h file as a bunch of typedefs and aliases for things in
+        wtf/GraphNodeWorklist.h. Most users won't notice, except that some small things got
+        renamed. For example PreOrder becomes VisitOrder::Pre and item.block becomes item.node.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGBlockWorklist.cpp: Removed.
+        * dfg/DFGBlockWorklist.h:
+        (JSC::DFG::BlockWorklist::notEmpty): Deleted.
+        (JSC::DFG::BlockWith::BlockWith): Deleted.
+        (JSC::DFG::BlockWith::operator bool): Deleted.
+        (JSC::DFG::ExtendedBlockWorklist::ExtendedBlockWorklist): Deleted.
+        (JSC::DFG::ExtendedBlockWorklist::forcePush): Deleted.
+        (JSC::DFG::ExtendedBlockWorklist::push): Deleted.
+        (JSC::DFG::ExtendedBlockWorklist::notEmpty): Deleted.
+        (JSC::DFG::ExtendedBlockWorklist::pop): Deleted.
+        (JSC::DFG::BlockWithOrder::BlockWithOrder): Deleted.
+        (JSC::DFG::BlockWithOrder::operator bool): Deleted.
+        (JSC::DFG::PostOrderBlockWorklist::push): Deleted.
+        (JSC::DFG::PostOrderBlockWorklist::notEmpty): Deleted.
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::compute):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::blocksInPostOrder):
+        * dfg/DFGPrePostNumbering.cpp:
+        (JSC::DFG::PrePostNumbering::compute):
+
 2015-10-21  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         [INTL] Implement Intl.Collator.prototype.resolvedOptions ()

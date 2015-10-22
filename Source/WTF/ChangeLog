@@ -1,3 +1,40 @@
+2015-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Factor out the graph node worklists from DFG into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=150411
+
+        Reviewed by Geoffrey Garen.
+
+        The new GraphNodeWorklist.h file is basically just the functionality from the old
+        DFGBlockWorklist.h, but templatized to work for any graph node type and any kind of graph
+        node set.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/GraphNodeWorklist.h: Added.
+        (WTF::GraphNodeWorklist::push):
+        (WTF::GraphNodeWorklist::notEmpty):
+        (WTF::GraphNodeWorklist::pop):
+        (WTF::GraphNodeWith::GraphNodeWith):
+        (WTF::GraphNodeWith::operator bool):
+        (WTF::ExtendedGraphNodeWorklist::ExtendedGraphNodeWorklist):
+        (WTF::ExtendedGraphNodeWorklist::forcePush):
+        (WTF::ExtendedGraphNodeWorklist::push):
+        (WTF::ExtendedGraphNodeWorklist::notEmpty):
+        (WTF::ExtendedGraphNodeWorklist::pop):
+        (WTF::GraphNodeWithOrder::GraphNodeWithOrder):
+        (WTF::GraphNodeWithOrder::operator bool):
+        (WTF::PostOrderGraphNodeWorklist::PostOrderGraphNodeWorklist):
+        (WTF::PostOrderGraphNodeWorklist::~PostOrderGraphNodeWorklist):
+        (WTF::PostOrderGraphNodeWorklist::pushPre):
+        (WTF::PostOrderGraphNodeWorklist::pushPost):
+        (WTF::PostOrderGraphNodeWorklist::push):
+        (WTF::PostOrderGraphNodeWorklist::notEmpty):
+        (WTF::PostOrderGraphNodeWorklist::pop):
+        * wtf/HashTable.h:
+        (WTF::HashTableAddResult::HashTableAddResult):
+        (WTF::HashTableAddResult::operator bool):
+
 2015-10-20  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10

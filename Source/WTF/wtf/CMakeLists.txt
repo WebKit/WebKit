@@ -29,6 +29,7 @@ set(WTF_HEADERS
     FunctionDispatcher.h
     Functional.h
     GetPtr.h
+    GraphNodeWorklist.h
     GregorianDateTime.h
     HashCountedSet.h
     Hasher.h

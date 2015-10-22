@@ -150,7 +150,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGBasicBlock.cpp
     dfg/DFGBlockInsertionSet.cpp
     dfg/DFGBlockSet.cpp
-    dfg/DFGBlockWorklist.cpp
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCFAPhase.cpp
     dfg/DFGCFGSimplificationPhase.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,7 +108,7 @@ private:
         worklist.push(m_graph.block(0), 0);
         
         while (BlockWith<unsigned> item = worklist.pop()) {
-            BasicBlock* block = item.block;
+            BasicBlock* block = item.node;
             unsigned successorIndex = item.data;
             
             // We initially push with successorIndex = 0 regardless of whether or not we have any
@@ -355,18 +355,18 @@ void Dominators::compute(Graph& graph)
     
     // Plain stack-based worklist because we are guaranteed to see each block exactly once anyway.
     Vector<BlockWithOrder> worklist;
-    worklist.append(BlockWithOrder(graph.block(0), PreOrder));
+    worklist.append(BlockWithOrder(graph.block(0), VisitOrder::Pre));
     while (!worklist.isEmpty()) {
         BlockWithOrder item = worklist.takeLast();
         switch (item.order) {
-        case PreOrder:
-            m_data[item.block].preNumber = nextPreNumber++;
-            worklist.append(BlockWithOrder(item.block, PostOrder));
-            for (BasicBlock* kid : m_data[item.block].idomKids)
-                worklist.append(BlockWithOrder(kid, PreOrder));
+        case VisitOrder::Pre:
+            m_data[item.node].preNumber = nextPreNumber++;
+            worklist.append(BlockWithOrder(item.node, VisitOrder::Post));
+            for (BasicBlock* kid : m_data[item.node].idomKids)
+                worklist.append(BlockWithOrder(kid, VisitOrder::Pre));
             break;
-        case PostOrder:
-            m_data[item.block].postNumber = nextPostNumber++;
+        case VisitOrder::Post:
+            m_data[item.node].postNumber = nextPostNumber++;
             break;
         }
     }

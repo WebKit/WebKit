@@ -802,13 +802,13 @@ BlockList Graph::blocksInPostOrder()
     worklist.push(block(0));
     while (BlockWithOrder item = worklist.pop()) {
         switch (item.order) {
-        case PreOrder:
-            worklist.pushPost(item.block);
-            for (unsigned i = item.block->numSuccessors(); i--;)
-                worklist.push(item.block->successor(i));
+        case VisitOrder::Pre:
+            worklist.pushPost(item.node);
+            for (unsigned i = item.node->numSuccessors(); i--;)
+                worklist.push(item.node->successor(i));
             break;
-        case PostOrder:
-            result.append(item.block);
+        case VisitOrder::Post:
+            result.append(item.node);
             break;
         }
     }
