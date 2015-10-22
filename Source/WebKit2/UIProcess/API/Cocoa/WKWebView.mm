@@ -36,6 +36,7 @@
 #import "FindClient.h"
 #import "LegacySessionStateCoding.h"
 #import "NavigationState.h"
+#import "ObjCObjectGraph.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
@@ -2003,6 +2004,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
     _page->loadAlternateHTMLString(string, [baseURL _web_originalDataAsWTFString], [unreachableURL _web_originalDataAsWTFString]);
+}
+
+- (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData
+{
+    auto navigation = _page->loadData(API::Data::createWithoutCopying(data).ptr(), MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr());
+    if (!navigation)
+        return nil;
+
+    return [wrapper(*navigation.release().leakRef()) autorelease];
 }
 
 - (NSArray *)_certificateChain

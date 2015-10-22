@@ -1,3 +1,14 @@
+2015-10-22  Tim Horton  <timothy_horton@apple.com>
+
+        Add a SPI variant of loadData that accepts user data to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=150475
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadData:MIMEType:characterEncodingName:baseURL:userData:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2015-10-22  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards CMake on Mac
