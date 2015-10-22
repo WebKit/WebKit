@@ -1,3 +1,14 @@
+2015-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Move menu creation to WebView
+        https://bugs.webkit.org/show_bug.cgi?id=150463
+
+        Reviewed by Tim Horton.
+
+        * WebView.cpp:
+        (createContextMenuFromItems):
+        (WebView::createContextMenu):
+
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebContextMenuClient::customizeMenu, it's no longer used

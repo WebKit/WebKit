@@ -1393,6 +1393,33 @@ Page* WebView::page()
     return m_page;
 }
 
+static HMENU createContextMenuFromItems(const Vector<ContextMenuItem>& items)
+{
+    HMENU menu = ::CreatePopupMenu();
+
+    for (auto& item : items) {
+        UINT flags = 0;
+
+        flags |= item.enabled() ? MF_ENABLED : MF_DISABLED;
+        flags |= item.checked() ? MF_CHECKED : MF_UNCHECKED;
+
+        switch (item.type()) {
+        case ActionType:
+        case CheckableActionType:
+            ::AppendMenu(menu, flags | MF_STRING, item.action(), item.title().charactersWithNullTermination().data());
+            break;
+        case SeparatorType:
+            ::AppendMenu(menu, flags | MF_SEPARATOR, item.action(), nullptr);
+            break;
+        case SubmenuType:
+            ::AppendMenu(menu, flags | MF_POPUP, (UINT_PTR)createContextMenuFromItems(item.subMenuItems()), item.title().charactersWithNullTermination().data());
+            break;
+        }
+    }
+
+    return menu;
+}
+
 HMENU WebView::createContextMenu()
 {
     auto& contextMenuController = m_page->contextMenuController();
@@ -1401,7 +1428,7 @@ HMENU WebView::createContextMenu()
     if (!coreMenu)
         return nullptr;
 
-    HMENU contextMenu = coreMenu->platformContextMenu();
+    HMENU contextMenu = createContextMenuFromItems(coreMenu->items());
 
     COMPtr<IWebUIDelegate> uiDelegate;
     if (SUCCEEDED(this->uiDelegate(&uiDelegate))) {
