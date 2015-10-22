@@ -48,6 +48,7 @@ public:
     virtual void didOpenDatabase(const IDBResultData&) = 0;
     virtual void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;
     virtual void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;
+    virtual void didCreateObjectStore(const IDBResultData&) = 0;
 
     virtual void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion) = 0;
 

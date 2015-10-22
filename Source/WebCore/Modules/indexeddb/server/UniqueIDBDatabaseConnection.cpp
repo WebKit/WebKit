@@ -117,6 +117,13 @@ void UniqueIDBDatabaseConnection::didCommitTransaction(UniqueIDBDatabaseTransact
     m_connectionToClient.didCommitTransaction(transactionIdentifier, error);
 }
 
+void UniqueIDBDatabaseConnection::didCreateObjectStore(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::didCreateObjectStore");
+
+    m_connectionToClient.didCreateObjectStore(resultData);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

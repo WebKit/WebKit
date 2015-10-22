@@ -156,6 +156,18 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
     transaction->abort();
 }
 
+void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
+{
+    LOG(IndexedDB, "IDBServer::createObjectStore");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    ASSERT(transaction->isVersionChange());
+    transaction->createObjectStore(requestData, info);
+}
+
 void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::commitTransaction");

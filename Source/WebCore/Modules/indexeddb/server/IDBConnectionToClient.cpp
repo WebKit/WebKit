@@ -63,6 +63,11 @@ void IDBConnectionToClient::didAbortTransaction(const IDBResourceIdentifier& tra
     m_delegate->didAbortTransaction(transactionIdentifier, error);
 }
 
+void IDBConnectionToClient::didCreateObjectStore(const IDBResultData& result)
+{
+    m_delegate->didCreateObjectStore(result);
+}
+
 void IDBConnectionToClient::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     m_delegate->didCommitTransaction(transactionIdentifier, error);

@@ -39,6 +39,12 @@ IDBResultData::IDBResultData(const IDBResourceIdentifier& requestIdentifier)
 {
 }
 
+IDBResultData::IDBResultData(IDBResultType type, const IDBResourceIdentifier& requestIdentifier)
+    : m_type(type)
+    , m_requestIdentifier(requestIdentifier)
+{
+}
+
 IDBResultData::IDBResultData(const IDBResultData& other)
     : m_type(other.m_type)
     , m_requestIdentifier(other.m_requestIdentifier)
@@ -77,6 +83,11 @@ IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifi
     result.m_databaseInfo = std::make_unique<IDBDatabaseInfo>(transaction.databaseConnection().database().info());
     result.m_transactionInfo = std::make_unique<IDBTransactionInfo>(transaction.info());
     return WTF::move(result);
+}
+
+IDBResultData IDBResultData::createObjectStoreSuccess(const IDBResourceIdentifier& requestIdentifier)
+{
+    return { IDBResultType::CreateObjectStoreSuccess, requestIdentifier };
 }
 
 const IDBDatabaseInfo& IDBResultData::databaseInfo() const

@@ -30,16 +30,23 @@
 
 #include "IDBDatabaseInfo.h"
 #include "IDBError.h"
+#include "IDBObjectStoreImpl.h"
 #include "IDBTransaction.h"
 #include "IDBTransactionInfo.h"
 #include "IndexedDB.h"
 #include "Timer.h"
-#include <heap/StrongInlines.h>
+#include <wtf/Deque.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
+
+class IDBObjectStoreInfo;
+class IDBResultData;
+
 namespace IDBClient {
 
 class IDBDatabase;
+class TransactionOperation;
 
 class IDBTransaction : public WebCore::IDBTransaction {
 public:
@@ -51,7 +58,7 @@ public:
     virtual const String& mode() const override final;
     virtual WebCore::IDBDatabase* db() override final;
     virtual RefPtr<DOMError> error() const override final;
-    virtual RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBObjectStore> objectStore(const String& name, ExceptionCode&) override final;
     virtual void abort(ExceptionCode&) override final;
 
     virtual EventTargetInterface eventTargetInterface() const override final { return IDBTransactionEventTargetInterfaceType; }
@@ -68,17 +75,28 @@ public:
     const IDBTransactionInfo info() const { return m_info; }
     IDBDatabase& database() { return m_database.get(); }
     const IDBDatabase& database() const { return m_database.get(); }
+    IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
 
     void didAbort(const IDBError&);
     void didCommit(const IDBError&);
 
+    bool isVersionChange() const { return m_info.mode() == IndexedDB::TransactionMode::VersionChange; }
+    bool isActive() const;
+
+    Ref<IDBObjectStore> createObjectStore(const IDBObjectStoreInfo&);
+
+    IDBConnectionToServer& serverConnection();
+
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
 
-    bool isActive() const;
     bool isFinishedOrFinishing() const;
+
     void commit();
 
+    void finishAbortOrCommit();
+
+    void scheduleOperation(RefPtr<TransactionOperation>&&);
     void scheduleOperationTimer();
     void operationTimerFired();
     void activationTimerFired();
@@ -86,6 +104,9 @@ private:
     void fireOnComplete();
     void fireOnAbort();
     void enqueueEvent(Ref<Event>);
+
+    void createObjectStoreOnServer(TransactionOperation&, const IDBObjectStoreInfo&);
+    void didCreateObjectStoreOnServer(const IDBResultData&);
 
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
@@ -96,6 +117,9 @@ private:
 
     Timer m_operationTimer;
     std::unique_ptr<Timer> m_activationTimer;
+
+    Deque<RefPtr<TransactionOperation>> m_transactionOperationQueue;
+    HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_transactionOperationMap;
 };
 
 } // namespace IDBClient

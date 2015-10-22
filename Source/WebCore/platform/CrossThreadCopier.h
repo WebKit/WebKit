@@ -221,6 +221,12 @@ namespace WebCore {
         static Type copy(const IDBTransactionInfo&);
     };
 
+    class IDBObjectStoreInfo;
+    template<> struct WEBCORE_EXPORT CrossThreadCopierBase<false, false, IDBObjectStoreInfo> {
+        typedef IDBObjectStoreInfo Type;
+        static Type copy(const IDBObjectStoreInfo&);
+    };
+
 #endif
 
     template<typename T>

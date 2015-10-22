@@ -34,10 +34,38 @@
 namespace WebCore {
 
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBOpenDBRequest& request)
-    : m_requestIdentifier(connection, request)
+    : m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))
     , m_databaseIdentifier(request.databaseIdentifier())
     , m_requestedVersion(request.version())
 {
+}
+
+IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
+    : m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(operation.identifier()))
+    , m_transactionIdentifier(std::make_unique<IDBResourceIdentifier>(operation.transactionIdentifier()))
+{
+}
+
+IDBRequestData::IDBRequestData(const IDBRequestData& other)
+    : m_databaseIdentifier(other.m_databaseIdentifier)
+    , m_requestedVersion(other.m_requestedVersion)
+{
+    if (other.m_requestIdentifier)
+        m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_requestIdentifier);
+    if (other.m_transactionIdentifier)
+        m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_transactionIdentifier);
+}
+
+IDBResourceIdentifier IDBRequestData::requestIdentifier() const
+{
+    RELEASE_ASSERT(m_requestIdentifier);
+    return *m_requestIdentifier;
+}
+
+IDBResourceIdentifier IDBRequestData::transactionIdentifier() const
+{
+    RELEASE_ASSERT(m_transactionIdentifier);
+    return *m_transactionIdentifier;
 }
 
 uint64_t IDBRequestData::requestedVersion() const

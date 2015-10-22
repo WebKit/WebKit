@@ -32,6 +32,7 @@
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
+#include "TransactionOperation.h"
 
 namespace WebCore {
 namespace IDBClient {
@@ -91,6 +92,26 @@ void IDBConnectionToServer::didOpenDatabase(const IDBResultData& resultData)
     ASSERT(request);
 
     request->requestCompleted(resultData);
+}
+
+void IDBConnectionToServer::createObjectStore(TransactionOperation& operation, const IDBObjectStoreInfo& info)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::createObjectStore");
+
+    ASSERT(!m_activeOperations.contains(operation.identifier()));
+    m_activeOperations.set(operation.identifier(), &operation);
+
+    m_delegate->createObjectStore(IDBRequestData(operation), info);
+}
+
+void IDBConnectionToServer::didCreateObjectStore(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didCreateObjectStore");
+
+    auto operation = m_activeOperations.take(resultData.requestIdentifier());
+    ASSERT(operation);
+
+    operation->completed(resultData);
 }
 
 void IDBConnectionToServer::commitTransaction(IDBTransaction& transaction)

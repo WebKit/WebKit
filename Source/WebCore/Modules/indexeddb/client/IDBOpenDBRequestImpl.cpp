@@ -115,6 +115,8 @@ void IDBOpenDBRequest::requestCompleted(const IDBResultData& data)
     case IDBResultType::OpenDatabaseUpgradeNeeded:
         onUpgradeNeeded(data);
         break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 

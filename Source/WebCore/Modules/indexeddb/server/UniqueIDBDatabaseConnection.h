@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class IDBError;
+class IDBResultData;
 
 namespace IDBServer {
 
@@ -64,6 +65,7 @@ public:
 
     void didAbortTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCommitTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
+    void didCreateObjectStore(const IDBResultData&);
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, IDBConnectionToClient&);

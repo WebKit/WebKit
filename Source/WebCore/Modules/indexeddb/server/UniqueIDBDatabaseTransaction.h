@@ -36,6 +36,8 @@
 namespace WebCore {
 
 class IDBDatabaseInfo;
+class IDBObjectStoreInfo;
+class IDBRequestData;
 
 namespace IDBServer {
 
@@ -49,11 +51,14 @@ public:
 
     UniqueIDBDatabaseConnection& databaseConnection() { return m_databaseConnection.get(); }
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
+    bool isVersionChange() const;
 
     IDBDatabaseInfo* originalDatabaseInfo() const;
 
     void abort();
     void commit();
+
+    void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
 
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, IDBTransactionInfo&);

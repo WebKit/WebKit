@@ -53,8 +53,8 @@ public:
     virtual uint64_t version() const override final;
     virtual RefPtr<DOMStringList> objectStoreNames() const override final;
 
-    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) override final;
-    virtual RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&) override final;
     virtual void deleteObjectStore(const String& name, ExceptionCode&) override final;
@@ -79,6 +79,8 @@ public:
     void didAbortTransaction(IDBTransaction&);
 
     void fireVersionChangeEvent(uint64_t requestedVersion);
+
+    IDBConnectionToServer& serverConnection() { return m_serverConnection.get(); }
 
 private:
     IDBDatabase(ScriptExecutionContext&, IDBConnectionToServer&, const IDBResultData&);

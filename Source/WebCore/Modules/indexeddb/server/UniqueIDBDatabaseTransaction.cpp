@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBError.h"
+#include "IDBResultData.h"
 #include "IDBServer.h"
 #include "Logging.h"
 #include "UniqueIDBDatabase.h"
@@ -73,6 +75,11 @@ void UniqueIDBDatabaseTransaction::abort()
     });
 }
 
+bool UniqueIDBDatabaseTransaction::isVersionChange() const
+{
+    return m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange;
+}
+
 void UniqueIDBDatabaseTransaction::commit()
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit");
@@ -81,6 +88,23 @@ void UniqueIDBDatabaseTransaction::commit()
     m_databaseConnection->database().commitTransaction(*this, [this, self](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit (callback)");
         m_databaseConnection->didCommitTransaction(*this, error);
+    });
+}
+
+void UniqueIDBDatabaseTransaction::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createObjectStore");
+
+    ASSERT(isVersionChange());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> self(this);
+    m_databaseConnection->database().createObjectStore(*this, info, [this, self, requestData](const IDBError& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createObjectStore (callback)");
+        if (error.isNull())
+            m_databaseConnection->didCreateObjectStore(IDBResultData::createObjectStoreSuccess(requestData.requestIdentifier()));
+        else
+            m_databaseConnection->didCreateObjectStore(IDBResultData::error(requestData.requestIdentifier(), error));
     });
 }
 

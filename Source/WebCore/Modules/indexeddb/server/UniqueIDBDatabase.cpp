@@ -217,6 +217,37 @@ void UniqueIDBDatabase::didOpenBackingStore(const IDBDatabaseInfo& info)
     handleOpenDatabaseOperations();
 }
 
+void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transaction, const IDBObjectStoreInfo& info, ErrorCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::createObjectStore");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performCreateObjectStore, callbackID, transaction.info().identifier(), info));
+}
+
+void UniqueIDBDatabase::performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier&, const IDBObjectStoreInfo& info)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performCreateObjectStore");
+
+    // FIXME: Create object store in backing store, once that exists.
+
+    IDBError error;
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCreateObjectStore, callbackIdentifier, error, info));
+}
+
+void UniqueIDBDatabase::didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError& error, const IDBObjectStoreInfo& info)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformCreateObjectStore");
+
+    if (error.isNull())
+        m_databaseInfo->addExistingObjectStore(info);
+
+    performErrorCallback(callbackIdentifier, error);
+}
+
 void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)
 {
     ASSERT(isMainThread());
@@ -262,14 +293,6 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
 
     ASSERT(&transaction.databaseConnection().database() == this);
 
-    if (m_versionChangeTransaction == &transaction) {
-        ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
-        ASSERT(transaction.originalDatabaseInfo());
-        m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*transaction.originalDatabaseInfo());
-        m_versionChangeTransaction = nullptr;
-        m_versionChangeDatabaseConnection = nullptr;
-    }
-
     uint64_t callbackID = storeCallback(callback);
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performAbortTransaction, callbackID, transaction.info().identifier()));
 }
@@ -280,13 +303,22 @@ void UniqueIDBDatabase::performAbortTransaction(uint64_t callbackIdentifier, con
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performAbortTransaction");
 
     IDBError error = m_backingStore->abortTransaction(transactionIdentifier);
-    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformAbortTransaction, callbackIdentifier, error));
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformAbortTransaction, callbackIdentifier, error, transactionIdentifier));
 }
 
-void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError& error)
+void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError& error, const IDBResourceIdentifier& transactionIdentifier)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformAbortTransaction");
+
+    if (m_versionChangeTransaction || m_versionChangeTransaction->info().identifier() == transactionIdentifier) {
+        ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
+        ASSERT(m_versionChangeTransaction->originalDatabaseInfo());
+        m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
+
+        m_versionChangeTransaction = nullptr;
+        m_versionChangeDatabaseConnection = nullptr;
+    }
 
     // Previously blocked transactions might now be unblocked.
     invokeTransactionScheduler();

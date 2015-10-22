@@ -118,6 +118,14 @@ void InProcessIDBServer::didCommitTransaction(const IDBResourceIdentifier& trans
     });
 }
 
+void InProcessIDBServer::didCreateObjectStore(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didCreateObjectStore(resultData);
+    });
+}
+
 void InProcessIDBServer::abortTransaction(IDBResourceIdentifier& resourceIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
@@ -131,6 +139,14 @@ void InProcessIDBServer::commitTransaction(IDBResourceIdentifier& resourceIdenti
     RefPtr<InProcessIDBServer> self(this);
     RunLoop::current().dispatch([this, self, resourceIdentifier] {
         m_server->commitTransaction(resourceIdentifier);
+    });
+}
+
+void InProcessIDBServer::createObjectStore(const IDBRequestData& resultData, const IDBObjectStoreInfo& info)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData, info] {
+        m_server->createObjectStore(resultData, info);
     });
 }
 

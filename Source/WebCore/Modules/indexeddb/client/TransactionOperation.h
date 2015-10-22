@@ -1,0 +1,101 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef TransactionOperation_h
+#define TransactionOperation_h
+
+#if ENABLE(INDEXED_DATABASE)
+
+#include "IDBResourceIdentifier.h"
+#include "IDBTransactionImpl.h"
+
+namespace WebCore {
+
+class IDBResultData;
+
+namespace IDBClient {
+
+class TransactionOperation : public RefCounted<TransactionOperation> {
+public:
+    void perform()
+    {
+        m_performFunction();
+    }
+
+    void completed(const IDBResultData& data)
+    {
+        m_completeFunction(data);
+    }
+
+    const IDBResourceIdentifier& identifier() const { return m_identifier; }
+    IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
+
+protected:
+    TransactionOperation(IDBTransaction& transaction)
+        : m_transaction(transaction)
+        , m_identifier(transaction.serverConnection())
+    {
+    }
+
+    Ref<IDBTransaction> m_transaction;
+    IDBResourceIdentifier m_identifier;
+    std::function<void ()> m_performFunction;
+    std::function<void (const IDBResultData&)> m_completeFunction;
+};
+
+template <typename... Arguments>
+class TransactionOperationImpl final : public TransactionOperation {
+public:
+    TransactionOperationImpl(IDBTransaction& transaction, void (IDBTransaction::*completeMethod)(const IDBResultData&), void (IDBTransaction::*performMethod)(TransactionOperation&, Arguments...), Arguments&&... arguments)
+        : TransactionOperation(transaction)
+    {
+        relaxAdoptionRequirement();
+        RefPtr<TransactionOperation> self(this);
+        m_performFunction = [self, this, performMethod, arguments...] {
+            (&m_transaction.get()->*performMethod)(*this, arguments...);
+        };
+
+        m_completeFunction = [self, this, completeMethod](const IDBResultData& resultData) {
+            (&m_transaction.get()->*completeMethod)(resultData);
+        };
+    }
+};
+
+template<typename MP1, typename P1>
+RefPtr<TransactionOperation> createTransactionOperation(
+    IDBTransaction& transaction,
+    void (IDBTransaction::*complete)(const IDBResultData&),
+    void (IDBTransaction::*perform)(TransactionOperation&, MP1),
+    const P1& parameter1)
+{
+    auto operation = new TransactionOperationImpl<MP1>(transaction, complete, perform, parameter1);
+    return adoptRef(operation);
+}
+
+} // namespace IDBClient
+} // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)
+#endif // TransactionOperation_h

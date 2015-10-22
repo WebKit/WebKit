@@ -65,6 +65,7 @@ public:
     const IDBDatabaseInfo& info() const;
     IDBServer& server() { return m_server; }
 
+    void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback);
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
@@ -87,11 +88,13 @@ private:
     void performCommitTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void beginTransactionInBackingStore(const IDBTransactionInfo&);
+    void performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&);
 
     // Main thread callbacks
     void didOpenBackingStore(const IDBDatabaseInfo&);
+    void didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError&, const IDBObjectStoreInfo&);
     void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&);
-    void didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError&);
+    void didPerformAbortTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);
 
     void performErrorCallback(uint64_t callbackIdentifier, const IDBError&);
 

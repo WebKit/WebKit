@@ -50,6 +50,43 @@ IDBDatabaseInfo IDBDatabaseInfo::isolatedCopy() const
     return WTF::move(info);
 }
 
+bool IDBDatabaseInfo::hasObjectStore(const String& name) const
+{
+    for (auto& objectStore : m_objectStoreMap.values()) {
+        if (objectStore.name() == name)
+            return true;
+    }
+
+    return false;
+}
+
+IDBObjectStoreInfo IDBDatabaseInfo::createNewObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+{
+    IDBObjectStoreInfo info(++m_maxObjectStoreID, name, keyPath, autoIncrement);
+    m_objectStoreMap.set(info.identifier(), info);
+    return info;
+}
+
+void IDBDatabaseInfo::addExistingObjectStore(const IDBObjectStoreInfo& info)
+{
+    ASSERT(!m_objectStoreMap.contains(info.identifier()));
+
+    if (info.identifier() > m_maxObjectStoreID)
+        m_maxObjectStoreID = info.identifier();
+
+    m_objectStoreMap.set(info.identifier(), info);
+}
+
+Vector<String> IDBDatabaseInfo::objectStoreNames() const
+{
+    Vector<String> names;
+    names.reserveCapacity(m_objectStoreMap.size());
+    for (auto& objectStore : m_objectStoreMap.values())
+        names.uncheckedAppend(objectStore.name());
+
+    return WTF::move(names);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

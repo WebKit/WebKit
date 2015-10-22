@@ -34,8 +34,10 @@
 #include "IDBError.h"
 #include "IDBEventDispatcher.h"
 #include "IDBObjectStore.h"
+#include "IDBResultData.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include "TransactionOperation.h"
 
 namespace WebCore {
 namespace IDBClient {
@@ -85,13 +87,18 @@ WebCore::IDBDatabase* IDBTransaction::db()
     return &m_database.get();
 }
 
+IDBConnectionToServer& IDBTransaction::serverConnection()
+{
+    return m_database->serverConnection();
+}
+
 RefPtr<DOMError> IDBTransaction::error() const
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-RefPtr<IDBObjectStore> IDBTransaction::objectStore(const String&, ExceptionCode&)
+RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String&, ExceptionCode&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
@@ -144,6 +151,16 @@ void IDBTransaction::activationTimerFired()
     m_activationTimer = nullptr;
 }
 
+void IDBTransaction::scheduleOperation(RefPtr<TransactionOperation>&& operation)
+{
+    ASSERT(!m_transactionOperationMap.contains(operation->identifier()));
+
+    m_transactionOperationQueue.append(operation);
+    m_transactionOperationMap.set(operation->identifier(), WTF::move(operation));
+
+    scheduleOperationTimer();
+}
+
 void IDBTransaction::scheduleOperationTimer()
 {
     if (!m_operationTimer.isActive())
@@ -157,9 +174,12 @@ void IDBTransaction::operationTimerFired()
     if (m_state == IndexedDB::TransactionState::Unstarted)
         return;
 
-    // FIXME: Once transactions can do things, like configure the database or insert data into it,
-    // those operations will be handled here, and will prevent the transaction from committing
-    // as long as outstanding operations exist.
+    if (!m_transactionOperationQueue.isEmpty()) {
+        auto operation = m_transactionOperationQueue.takeFirst();
+        operation->perform();
+
+        return;
+    }
 
     if (isActive())
         commit();
@@ -179,6 +199,14 @@ void IDBTransaction::commit()
     m_database->commitTransaction(*this);
 }
 
+void IDBTransaction::finishAbortOrCommit()
+{
+    ASSERT(m_state != IndexedDB::TransactionState::Finished);
+    m_state = IndexedDB::TransactionState::Finished;
+
+    m_originalDatabaseInfo = nullptr;
+}
+
 void IDBTransaction::didAbort(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::didAbort");
@@ -190,7 +218,7 @@ void IDBTransaction::didAbort(const IDBError& error)
     m_idbError = error;
     fireOnAbort();
 
-    m_state = IndexedDB::TransactionState::Finished;
+    finishAbortOrCommit();
 }
 
 void IDBTransaction::didCommit(const IDBError& error)
@@ -208,7 +236,7 @@ void IDBTransaction::didCommit(const IDBError& error)
         fireOnAbort();
     }
 
-    m_state = IndexedDB::TransactionState::Finished;
+    finishAbortOrCommit();
 }
 
 void IDBTransaction::fireOnComplete()
@@ -247,6 +275,38 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
     targets.append(db());
 
     return IDBEventDispatcher::dispatch(event.get(), targets);
+}
+
+Ref<IDBObjectStore> IDBTransaction::createObjectStore(const IDBObjectStoreInfo& info)
+{
+    LOG(IndexedDB, "IDBTransaction::createObjectStore");
+    ASSERT(isVersionChange());
+
+    Ref<IDBObjectStore> objectStore = IDBObjectStore::create(info, *this);
+
+    auto operation = createTransactionOperation(*this, &IDBTransaction::didCreateObjectStoreOnServer, &IDBTransaction::createObjectStoreOnServer, info);
+    scheduleOperation(WTF::move(operation));
+
+    return WTF::move(objectStore);
+}
+
+void IDBTransaction::createObjectStoreOnServer(TransactionOperation& operation, const IDBObjectStoreInfo& info)
+{
+    LOG(IndexedDB, "IDBTransaction::createObjectStoreOnServer");
+
+    ASSERT(isActive());
+    ASSERT(isVersionChange());
+
+    m_database->serverConnection().createObjectStore(operation, info);
+}
+
+void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didCreateObjectStoreOnServer");
+
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess);
+
+    scheduleOperationTimer();
 }
 
 } // namespace IDBClient
