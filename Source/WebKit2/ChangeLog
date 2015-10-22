@@ -1,3 +1,21 @@
+2015-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Simplify menu creation
+        https://bugs.webkit.org/show_bug.cgi?id=150476
+
+        Reviewed by Tim Horton.
+
+        Instead of creating vectors of NSMenuItem objects, just simply build the menu recursively.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::createContextMenuFromItems):
+        (WebKit::WebContextMenuProxyMac::createContextMenuItem):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        (WebKit::populateNSMenu): Deleted.
+        (WebKit::nsMenuItem): Deleted.
+        (WebKit::nsMenuItemVector): Deleted.
+
 2015-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         ERROR: Unhandled web process message 'StorageAreaMap:DispatchStorageEvent'
