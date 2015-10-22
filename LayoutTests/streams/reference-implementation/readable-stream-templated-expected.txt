@@ -18,8 +18,8 @@ PASS Running templatedRSClosed with ReadableStream (closed via call in start)
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS locked should be false 
 PASS getReader() should be OK 
-FAIL piping to a WritableStream in the writable state should close the writable stream state not implemented
-FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing state not implemented
+FAIL piping to a WritableStream in the writable state should close the writable stream pipeTo is not implemented
+FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing pipeTo is not implemented
 PASS should be able to acquire multiple readers if they are released in succession 
 FAIL should not be able to acquire a second reader if we don't release the first one assert_throws: getting a second reader should throw function "function () { rs.getReader(); }" did not throw
 PASS Running templatedRSClosedReader with ReadableStream reader (closed before getting reader) 
@@ -40,8 +40,8 @@ PASS Running templatedRSClosed with ReadableStream (closed via cancel)
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS locked should be false 
 PASS getReader() should be OK 
-FAIL piping to a WritableStream in the writable state should close the writable stream state not implemented
-FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing state not implemented
+FAIL piping to a WritableStream in the writable state should close the writable stream pipeTo is not implemented
+FAIL piping to a WritableStream in the writable state with { preventClose: true } should do nothing pipeTo is not implemented
 PASS should be able to acquire multiple readers if they are released in succession 
 FAIL should not be able to acquire a second reader if we don't release the first one assert_throws: getting a second reader should throw function "function () { rs.getReader(); }" did not throw
 PASS Running templatedRSClosedReader with ReadableStream reader (closed via cancel after getting reader) 
@@ -52,7 +52,7 @@ PASS closed should fulfill with undefined
 FAIL releasing the lock should cause closed to reject and change identity assert_not_equals: the closed promise should change identity got disallowed value object "[object Promise]"
 PASS cancel() should return a distinct fulfilled promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
-FAIL piping to a WritableStream in the writable state should abort the writable stream state not implemented
+FAIL piping to a WritableStream in the writable state should abort the writable stream pipeTo is not implemented
 PASS getReader() should return a reader that acts errored 
 PASS read() twice should give the error each time 
 PASS locked should be false 
@@ -62,7 +62,7 @@ FAIL should not be able to obtain additional readers if we don't release the fir
 PASS cancel() should return a distinct rejected promise each time 
 PASS reader cancel() should return a distinct rejected promise each time 
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
-FAIL piping to a WritableStream in the writable state should abort the writable stream state not implemented
+FAIL piping to a WritableStream in the writable state should abort the writable stream pipeTo is not implemented
 PASS getReader() should return a reader that acts errored 
 PASS read() twice should give the error each time 
 PASS locked should be false 

@@ -59,9 +59,7 @@ function initializeWritableStream(underlyingSink, strategy)
     this.@startedPromise.then(function() {
         _this.@started = true;
         _this.@startedPromise = undefined;
-    }, function(r) {
-        error(r);
-    });
+    }, error);
 
     return this;
 }
@@ -91,19 +89,28 @@ function closed()
 {
     "use strict";
 
-    throw new EvalError("closed not implemented");
+    if (!@isWritableStream(this))
+        return Promise.reject(new @TypeError("The WritableStream.closed getter can only be used on instances of WritableStream"));
+
+    return this.@closedPromise;
 }
 
 function ready()
 {
     "use strict";
 
-    throw new EvalError("ready not implemented");
+    if (!@isWritableStream(this))
+        return Promise.reject(new @TypeError("The WritableStream.ready getter can only be used on instances of WritableStream"));
+
+    return this.@readyPromise;
 }
 
 function state()
 {
     "use strict";
 
-    throw new EvalError("state not implemented");
+    if (!@isWritableStream(this))
+        throw new @TypeError("The WritableStream.state getter can only be used on instances of WritableStream");
+
+    return this.@state;
 }

@@ -9,6 +9,6 @@ PASS Correctly governs the return value of a ReadableStream's enqueue function (
 PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 1) 
 PASS Correctly governs a ReadableStreamController's desiredSize property (HWM = 4) 
 PASS Can construct a writable stream with a valid CountQueuingStrategy 
-FAIL Correctly governs the value of a WritableStream's state property (HWM = 0) state not implemented
-FAIL Correctly governs the value of a WritableStream's state property (HWM = 4) state not implemented
+FAIL Correctly governs the value of a WritableStream's state property (HWM = 0) write not implemented
+FAIL Correctly governs the value of a WritableStream's state property (HWM = 4) write not implemented
 

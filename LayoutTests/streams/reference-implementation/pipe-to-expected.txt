@@ -1,12 +1,12 @@
 
-FAIL Piping from a ReadableStream from which lots of data are readable synchronously state not implemented
+FAIL Piping from a ReadableStream from which lots of data are readable synchronously pipeTo is not implemented
 FAIL Piping from a ReadableStream in readable state to a WritableStream in closing state close not implemented
 FAIL Piping from a ReadableStream in readable state to a WritableStream in errored state write not implemented
 FAIL Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state pipeTo is not implemented
 FAIL Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state pipeTo is not implemented
 FAIL Piping from an empty ReadableStream which becomes non-empty after pipeTo call to a WritableStream in the writable state pipeTo is not implemented
 FAIL Piping from an empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the writable state pipeTo is not implemented
-FAIL Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call state not implemented
+FAIL Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call pipeTo is not implemented
 FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call write not implemented
 FAIL Piping from a non-empty ReadableStream to a WritableStream in waiting state which becomes errored after a pipeTo call write not implemented
 FAIL Piping from a non-empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the waiting state write not implemented

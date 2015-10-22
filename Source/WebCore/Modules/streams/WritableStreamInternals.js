@@ -27,6 +27,13 @@
 // @optional=STREAMS_API
 // @internals
 
+function isWritableStream(stream)
+{
+    "use strict";
+
+    return @isObject(stream) && !!stream.@underlyingSink;
+}
+
 function syncWritableStreamStateWithQueue(stream)
 {
     "use strict";

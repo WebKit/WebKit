@@ -17,9 +17,9 @@ PASS ReadableStreamController can't be given a fully-constructed ReadableStream
 PASS ReadableStreamController.prototype.close enforces a brand check 
 PASS ReadableStreamController.prototype.enqueue enforces a brand check 
 PASS ReadableStreamController.prototype.error enforces a brand check 
-FAIL WritableStream.prototype.closed enforces a brand check closed not implemented
-FAIL WritableStream.prototype.ready enforces a brand check ready not implemented
-FAIL WritableStream.prototype.state enforces a brand check assert_throws: state should throw a TypeError function "function () { getter.call(target); }" threw object "EvalError: state not implemented" ("EvalError") expected object "TypeError" ("TypeError")
+PASS WritableStream.prototype.closed enforces a brand check 
+PASS WritableStream.prototype.ready enforces a brand check 
+PASS WritableStream.prototype.state enforces a brand check 
 FAIL WritableStream.prototype.abort enforces a brand check abort not implemented
 FAIL WritableStream.prototype.write enforces a brand check write not implemented
 FAIL WritableStream.prototype.close enforces a brand check close not implemented
