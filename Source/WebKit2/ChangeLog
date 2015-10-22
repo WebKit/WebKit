@@ -1,3 +1,72 @@
+2015-10-22  Alex Christensen  <achristensen@webkit.org>
+
+        Initial NSURLSession WebResourceLoader implementation
+        https://bugs.webkit.org/show_bug.cgi?id=150355
+
+        Reviewed by Antti Koivisto.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        (WebKit::NetworkResourceLoader::setDefersLoading):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didConvertHandleToDownload):
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::willPerformHTTPRedirection):
+        (WebKit::NetworkResourceLoader::didReceiveChallenge):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveData):
+        (WebKit::NetworkResourceLoader::didCompleteWithError):
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        (WebKit::NetworkResourceLoader::willSendRequestAsync):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::continueDidReceiveResponse):
+        (WebKit::NetworkResourceLoader::didSendData):
+        (WebKit::NetworkResourceLoader::receivedCancellation):
+        (WebKit::NetworkResourceLoader::startBufferingTimerIfNeeded):
+        (WebKit::NetworkResourceLoader::bufferingTimerFired):
+        (WebKit::NetworkResourceLoader::validateCacheEntry):
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+        (WebKit::NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkResourceLoader::supportsDataArray):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::create):
+        (WebKit::NetworkResourceLoader::currentRequest):
+        (WebKit::NetworkResourceLoader::handle):
+        * NetworkProcess/NetworkSession.h: Added.
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+        (WebKit::NetworkingDataTask::client):
+        (WebKit::NetworkingDataTask::clearClient):
+        (WebKit::NetworkSession::~NetworkSession):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm: Added.
+        (toNSURLSessionResponseDisposition):
+        (toNSURLSessionAuthChallengeDisposition):
+        (-[NetworkSessionDelegate initWithNetworkSession:]):
+        (-[NetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[NetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[NetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        (-[NetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[NetworkSessionDelegate URLSession:dataTask:didReceiveData:]):
+        (WebKit::NetworkSession::create):
+        (WebKit::NetworkSession::singleton):
+        (WebKit::configurationForType):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::createDataTaskWithRequest):
+        (WebKit::NetworkSession::dataTaskForIdentifier):
+        (WebKit::NetworkingDataTask::NetworkingDataTask):
+        (WebKit::NetworkingDataTask::~NetworkingDataTask):
+        (WebKit::NetworkingDataTask::suspend):
+        (WebKit::NetworkingDataTask::resume):
+        (WebKit::NetworkingDataTask::taskIdentifier):
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * config.h:
+
 2015-10-22  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix for disabled redirected XComposite window support.

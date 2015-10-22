@@ -55,7 +55,7 @@ public:
 
     CFURLAuthChallengeRef cfURLAuthChallengeRef() const { return m_cfChallenge.get(); }
 #else
-    AuthenticationChallenge(NSURLAuthenticationChallenge *);
+    WEBCORE_EXPORT AuthenticationChallenge(NSURLAuthenticationChallenge *);
 
     id sender() const { return m_sender.get(); }
     NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }

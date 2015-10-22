@@ -47,11 +47,14 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SynchronousLoaderClient.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+
+#if !USE(NETWORK_SESSION)
+#include <WebCore/ResourceHandle.h>
+#endif
 
 using namespace WebCore;
 
@@ -116,7 +119,11 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
 NetworkResourceLoader::~NetworkResourceLoader()
 {
     ASSERT(RunLoop::isMain());
+#if USE(NETWORK_SESSION)
+    ASSERT(!m_task);
+#else
     ASSERT(!m_handle);
+#endif
     ASSERT(!isSynchronous() || !m_synchronousLoadData->delayedReply);
 }
 
@@ -180,7 +187,13 @@ void NetworkResourceLoader::startNetworkLoad()
 #endif
 
     bool shouldSniff = m_parameters.contentSniffingPolicy == SniffContent;
+#if USE(NETWORK_SESSION)
+    UNUSED_PARAM(shouldSniff); // FIXME: Use this.
+    m_task = NetworkSession::singleton()->createDataTaskWithRequest(m_currentRequest, *this);
+    m_task->resume();
+#else
     m_handle = ResourceHandle::create(m_networkingContext.get(), m_currentRequest, this, m_defersLoading, shouldSniff);
+#endif
 }
 
 void NetworkResourceLoader::setDefersLoading(bool defers)
@@ -188,10 +201,15 @@ void NetworkResourceLoader::setDefersLoading(bool defers)
     if (m_defersLoading == defers)
         return;
     m_defersLoading = defers;
+#if USE(NETWORK_SESSION)
+    // FIXME: Do something here.
+    notImplemented();
+#else
     if (m_handle) {
         m_handle->setDefersLoading(defers);
         return;
     }
+#endif
     if (!m_defersLoading)
         start();
 }
@@ -204,25 +222,40 @@ void NetworkResourceLoader::cleanup()
 
     invalidateSandboxExtensions();
 
+#if USE(NETWORK_SESSION)
+    if (m_task) {
+        m_task->clearClient();
+        m_task = nullptr;
+    }
+#else
     if (m_handle) {
         m_handle->clearClient();
         m_handle = nullptr;
     }
+#endif
 
     // This will cause NetworkResourceLoader to be destroyed and therefore we do it last.
     m_connection->didCleanupResourceLoader(*this);
 }
 
+#if !USE(NETWORK_SESSION)
 void NetworkResourceLoader::didConvertHandleToDownload()
 {
     ASSERT(m_handle);
     m_didConvertHandleToDownload = true;
 }
+#endif
 
 void NetworkResourceLoader::abort()
 {
     ASSERT(RunLoop::isMain());
 
+#if USE(NETWORK_SESSION)
+    if (m_task)
+        m_task->suspend();
+    // FIXME: Do something with the network cache here.
+    notImplemented();
+#else
     if (m_handle && !m_didConvertHandleToDownload) {
         m_handle->cancel();
 
@@ -234,9 +267,50 @@ void NetworkResourceLoader::abort()
         }
 #endif
     }
-
+#endif
     cleanup();
 }
+
+#if USE(NETWORK_SESSION)
+
+void NetworkResourceLoader::willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest& request, std::function<void(const WebCore::ResourceRequest&)> completionHandler)
+{
+    notImplemented();
+    completionHandler(request);
+}
+
+void NetworkResourceLoader::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> completionHandler)
+{
+    notImplemented();
+    completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, WebCore::Credential());
+}
+
+void NetworkResourceLoader::didReceiveResponse(WebCore::ResourceResponse& response, std::function<void(ResponseDisposition)> completionHandler)
+{
+    ASSERT(isMainThread());
+    m_response = response;
+    m_response.setSource(ResourceResponse::Source::Network);
+    if (m_parameters.needsCertificateInfo)
+        m_response.includeCertificateInfo();
+    
+    bool shouldWaitContinueDidReceiveResponse = originalRequest().requester() == ResourceRequest::Requester::Main;
+    if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse)))
+        return;
+    completionHandler(ResponseDisposition::Allow);
+}
+
+void NetworkResourceLoader::didReceiveData(RefPtr<WebCore::SharedBuffer> buffer)
+{
+    ASSERT(buffer);
+    sendBufferMaybeAborting(*buffer, buffer->size());
+}
+
+void NetworkResourceLoader::didCompleteWithError(const WebCore::ResourceError&)
+{
+    send(Messages::WebResourceLoader::DidFinishResourceLoad(WTF::monotonicallyIncreasingTime()));
+}
+
+#else
 
 void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)
 {
@@ -428,6 +502,8 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
     sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(m_currentRequest, redirectResponse));
 }
 
+#endif // USE(NETWORK_SESSION)
+    
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
 {
 #if PLATFORM(COCOA)
@@ -438,23 +514,40 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
 #endif
 
     if (m_currentRequest.isNull()) {
+#if USE(NETWORK_SESSION)
+        // FIXME: Do something here.
+        notImplemented();
+#else
         m_handle->cancel();
         didFail(m_handle.get(), cancelledError(m_currentRequest));
+#endif
         return;
     }
 
+#if USE(NETWORK_SESSION)
+    // FIXME: Do something here.
+    notImplemented();
+#else
     m_handle->continueWillSendRequest(m_currentRequest);
+#endif
 }
 
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
     // FIXME: Remove this check once BlobResourceHandle implements didReceiveResponseAsync correctly.
     // Currently, it does not wait for response, so the load is likely to finish before continueDidReceiveResponse.
+#if USE(NETWORK_SESSION)
+    // FIXME: Do something here.
+    notImplemented();
+#else
     if (!m_handle)
         return;
 
     m_handle->continueDidReceiveResponse();
+#endif
 }
+
+#if !USE(NETWORK_SESSION)
 
 void NetworkResourceLoader::didSendData(ResourceHandle* handle, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
@@ -520,6 +613,8 @@ void NetworkResourceLoader::receivedCancellation(ResourceHandle* handle, const A
     didFail(m_handle.get(), cancelledError(m_currentRequest));
 }
 
+#endif // !USE(NETWORK_SESSION)
+
 void NetworkResourceLoader::startBufferingTimerIfNeeded()
 {
     if (isSynchronous())
@@ -532,7 +627,9 @@ void NetworkResourceLoader::startBufferingTimerIfNeeded()
 void NetworkResourceLoader::bufferingTimerFired()
 {
     ASSERT(m_bufferedData);
+#if !USE(NETWORK_SESSION)
     ASSERT(m_handle);
+#endif
     if (!m_bufferedData->size())
         return;
 
@@ -600,7 +697,9 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
 void NetworkResourceLoader::validateCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
+#if !USE(NETWORK_SESSION)
     ASSERT(!m_handle);
+#endif
 
     // If the request is already conditional then the revalidation was not triggered by the disk cache
     // and we should not overwrite the existing conditional headers.
@@ -663,7 +762,7 @@ bool NetworkResourceLoader::sendAbortingOnFailure(T&& message, unsigned messageS
     return result;
 }
 
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK) && !USE(NETWORK_SESSION)
 void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace& protectionSpace)
 {
     ASSERT(RunLoop::isMain());
@@ -685,14 +784,21 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceH
     }
     sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace));
 }
+#endif
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
+#if USE(NETWORK_SESSION)
+    // FIXME: Do something here.
+    notImplemented();
+#else
     m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
+#endif
 }
 #endif
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK) && !USE(NETWORK_SESSION)
 bool NetworkResourceLoader::supportsDataArray()
 {
     notImplemented();
