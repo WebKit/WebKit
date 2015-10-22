@@ -1,3 +1,14 @@
+2015-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WebContextMenuClient::customizeMenu, it's no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=150427
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::customizeMenu): Deleted.
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+
 2015-10-21  Tim Horton  <timothy_horton@apple.com>
 
         API-ify the FindMatches client

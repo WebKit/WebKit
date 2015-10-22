@@ -1,5 +1,16 @@
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of WebContextMenuClient::customizeMenu, it's no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=150427
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::customizeMenu): Deleted.
+        * WebCoreSupport/WebContextMenuClient.h:
+
+2015-10-21  Anders Carlsson  <andersca@apple.com>
+
         Simplify context menu handling on Windows
         https://bugs.webkit.org/show_bug.cgi?id=150423
 

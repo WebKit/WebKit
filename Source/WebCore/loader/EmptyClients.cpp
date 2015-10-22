@@ -232,13 +232,4 @@ void EmptyEditorClient::registerRedoStep(PassRefPtr<UndoStep>)
 {
 }
 
-#if ENABLE(CONTEXT_MENUS)
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-std::unique_ptr<ContextMenu> EmptyContextMenuClient::customizeMenu(std::unique_ptr<ContextMenu>)
-{
-    return nullptr;
-}
-#endif
-#endif
-
 }

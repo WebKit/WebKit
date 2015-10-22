@@ -52,11 +52,6 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-std::unique_ptr<ContextMenu> WebContextMenuClient::customizeMenu(std::unique_ptr<ContextMenu> menu)
-{
-    return WTF::move(menu);
-}
-
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
 {
     ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
