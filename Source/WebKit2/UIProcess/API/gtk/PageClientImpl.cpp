@@ -211,9 +211,9 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
     return WebPopupMenuProxyGtk::create(m_viewWidget, page);
 }
 
-RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+std::unique_ptr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    return WebContextMenuProxyGtk::create(m_viewWidget, page, context, userData);
+    return std::make_unique<WebContextMenuProxyGtk>(m_viewWidget, page, context, userData);
 }
 
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect& rect)

@@ -1,3 +1,28 @@
+2015-10-22  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [GTK] Try to fix the build after r191402.
+        https://bugs.webkit.org/show_bug.cgi?id=150435
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::populate):
+        (WebKit::WebContextMenuProxyGtk::show):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::menuPositionFunction):
+        (WebKit::WebContextMenuProxyGtk::showContextMenu): Deleted.
+        (WebKit::WebContextMenuProxyGtk::hideContextMenu): Deleted.
+        (WebKit::WebContextMenuProxyGtk::cancelTracking): Deleted.
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        (WebKit::WebContextMenuProxyGtk::gtkMenu):
+        (WebKit::WebContextMenuProxyGtk::create): Deleted.
+
 2015-10-21  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
        Unreviewed EFL build fix. Remove customizeMenu implementation.
