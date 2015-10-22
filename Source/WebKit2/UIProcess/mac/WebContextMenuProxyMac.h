@@ -64,7 +64,10 @@ private:
 #if ENABLE(SERVICE_CONTROLS)
     void showServicesMenu();
     void setupServicesMenu();
+// FIXME: This shouldn't be public.
+public:
     WebCore::ContextMenuItem shareMenuItem();
+private:
 #endif
 
     RetainPtr<NSMenu> m_menu;

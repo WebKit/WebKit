@@ -1,3 +1,18 @@
+2015-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Wait to convert the share menu item to a real share menu until after calling out to the client
+        https://bugs.webkit.org/show_bug.cgi?id=150465
+
+        Reviewed by Tim Horton.
+
+        This will let us simplify more code in upcoming patches.
+
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::nsMenuItem):
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 2015-10-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Migrate WKSetPatternPhaseInUserSpace() and WKGetUserToBaseCTM() from WKSI
