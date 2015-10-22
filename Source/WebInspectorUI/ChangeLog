@@ -1,3 +1,16 @@
+2015-10-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Restore :not(:placeholder-shown) behavior on search bars with comments
+        https://bugs.webkit.org/show_bug.cgi?id=150452
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner.console-find-banner > input[type="search"]:not(:placeholder-shown)):
+        * UserInterface/Views/SearchBar.css:
+        (.search-bar > input[type="search"]:not(:placeholder-shown)):
+        Add back the placeholder-shown related styles and add a comment about what they are for.
+
 2015-10-22  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Tabbing over CSS properties prepended by * doesn't move the highlighted range
