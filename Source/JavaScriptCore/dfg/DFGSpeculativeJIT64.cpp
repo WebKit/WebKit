@@ -4102,8 +4102,6 @@ void SpeculativeJIT::compile(Node* node)
     case PutByOffset: {
         StorageOperand storage(this, node->child1());
         JSValueOperand value(this, node->child3());
-        GPRTemporary scratch1(this);
-        GPRTemporary scratch2(this);
 
         GPRReg storageGPR = storage.gpr();
         GPRReg valueGPR = value.gpr();
