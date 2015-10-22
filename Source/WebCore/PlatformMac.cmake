@@ -77,12 +77,9 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.css
 )
 
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScripts.h ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScripts.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.js
-    DEPENDS Scripts/make-js-file-arrays.py
-    COMMAND PYTHONPATH=${WebCore_INSPECTOR_SCRIPTS_DIR} ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Scripts/make-js-file-arrays.py ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScripts.h ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScripts.cpp ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.js
-    VERBATIM)
+set(WebCore_USER_AGENT_SCRIPTS
+    ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.js
+)
 
 #FIXME: Use ios-encodings.txt once we get CMake working for iOS.
 add_custom_command(
@@ -95,7 +92,6 @@ add_custom_command(
 
 list(APPEND WebCore_SOURCES
     ${DERIVED_SOURCES_WEBCORE_DIR}/CharsetData.cpp
-    ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScripts.cpp
 )
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
