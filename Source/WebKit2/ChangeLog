@@ -1,3 +1,10 @@
+2015-10-21  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+       Unreviewed EFL build fix. Remove customizeMenu implementation.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::customizeMenu): Deleted.
+
 2015-10-21  Alex Christensen  <achristensen@webkit.org>
 
         Speculative EFL build fix.

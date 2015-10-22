@@ -49,12 +49,7 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-std::unique_ptr<ContextMenu> WebContextMenuClient::customizeMenu(std::unique_ptr<ContextMenu>)
-{
-    return nullptr;
-}
-#else
+#if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
 PlatformMenuDescription WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
 {
     // WebKit2 ignores this client callback and does context menu customization when it is told to show the menu.
