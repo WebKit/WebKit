@@ -972,7 +972,7 @@ webkit.org/b/141294 compositing/reflections/masked-reflection-on-composited.html
 webkit.org/b/142152 media/track/track-in-band-cues-added-once.html [ Pass Failure ]
 webkit.org/b/147944 media/video-seek-to-current-time.html [ Pass Failure ]
 webkit.org/b/114177 media/event-queue-crash.html [ Pass Failure ]
-
+webkit.org/b/150408 http/tests/media/video-load-suspend.html [ Pass Timeout ]
 ## --- End flaky media tests
 
 # Skipped while Eric Carlson works on a fix.
