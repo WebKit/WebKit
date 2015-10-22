@@ -1,3 +1,28 @@
+2015-10-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: srcset attributes should have hyperlinks to the resources
+        https://bugs.webkit.org/show_bug.cgi?id=150409
+
+        Reviewed by Timothy Hatcher.
+
+        The "srcset" attribute parsing is a simplification of:
+        https://html.spec.whatwg.org/multipage/embedded-content.html#attr-img-srcset
+
+        The "srcset" attribute value is expected to be in comma
+        separated groups. Within each group we always expect a link,
+        and an optional descriptor. We want to linkify the link.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        (tokenizeSrcSetString):
+        (extendedXMLToken):
+        When parsing srcset attribute, parse links as link tokens
+        so that they are linkified in resource content views.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._buildAttributeDOM):
+        When creating the DOMTree DOM for srcset attributes,
+        create link elements for the link values of attribute value.
+
 2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Autocompletion previews in the CSS sidebar do not apply

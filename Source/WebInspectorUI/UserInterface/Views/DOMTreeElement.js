@@ -1109,6 +1109,37 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 attrValueElement.textContent = value;
                 attrSpanElement.appendChild(attrValueElement);
             }
+        } else if (name === "srcset") {
+            let baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
+            attrValueElement = attrSpanElement.createChild("span", "html-attribute-value");
+
+            let groups = value.split(/\s*,\s*/);
+            for (let i = 0; i < groups.length; ++i) {
+                let string = groups[i];
+                let spaceIndex = string.search(/\s/);
+
+                if (spaceIndex === -1) {
+                    let linkText = string;
+                    let rewrittenURL = absoluteURL(string, baseURL);
+                    let linkElement = attrValueElement.appendChild(document.createElement("a"));
+                    linkElement.href = rewrittenURL;
+                    linkElement.textContent = linkText.insertWordBreakCharacters();
+                } else {
+                    let linkText = string.substring(0, spaceIndex);
+                    let descriptorText = string.substring(spaceIndex).insertWordBreakCharacters();
+                    let rewrittenURL = absoluteURL(linkText, baseURL);
+                    let linkElement = attrValueElement.appendChild(document.createElement("a"));
+                    linkElement.href = rewrittenURL;
+                    linkElement.textContent = linkText.insertWordBreakCharacters();
+                    let descriptorElement = attrValueElement.appendChild(document.createElement("span"));
+                    descriptorElement.textContent = string.substring(spaceIndex);
+                }
+
+                if (i < groups.length - 1) {
+                    let commaElement = attrValueElement.appendChild(document.createElement("span"));
+                    commaElement.textContent = ", ";
+                }
+            }
         } else {
             value = value.insertWordBreakCharacters();
             attrValueElement = attrSpanElement.createChild("span", "html-attribute-value");
