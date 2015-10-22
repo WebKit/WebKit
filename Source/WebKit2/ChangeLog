@@ -1,3 +1,15 @@
+2015-10-21  Enrica Casucci  <enrica@apple.com>
+
+        WebProcess crashes when accessibility bundle is not found.
+        https://bugs.webkit.org/show_bug.cgi?id=150414
+
+        Reviewed by Dan Bernstein.
+
+        The uninitialized pointer to NSError causes the print function to crash.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::registerWithAccessibility):
+
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
         Move services menu handling out into a separate function

@@ -203,7 +203,7 @@ static void registerWithAccessibility()
 #endif
 #if PLATFORM(IOS)
     NSString *accessibilityBundlePath = [(NSString *)GSSystemRootDirectory() stringByAppendingString:@"/System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
-    NSError *error;
+    NSError *error = nil;
     if (![[NSBundle bundleWithPath:accessibilityBundlePath] loadAndReturnError:&error])
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", accessibilityBundlePath, error);
 #endif
