@@ -242,8 +242,10 @@ template<typename ItemType> static Vector<RetainPtr<NSMenuItem>> nsMenuItemVecto
 
     unsigned size = items.size();
     result.reserveCapacity(size);
-    for (auto& item : items)
-        result.uncheckedAppend(nsMenuItem(contextMenuProxy, item));
+    for (auto& item : items) {
+        if (auto menuItem = nsMenuItem(contextMenuProxy, item))
+            result.uncheckedAppend(menuItem);
+    }
 
     WKMenuTarget* target = [WKMenuTarget sharedMenuTarget];
     for (auto& item : result)
