@@ -560,29 +560,28 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return CodeMirror.Pass;
         }
 
-        var cursor = codeMirror.getCursor();
-        var line = codeMirror.getLine(cursor.line);
-        var previousLine = codeMirror.getLine(cursor.line - 1);
+        let cursor = codeMirror.getCursor();
+        let line = codeMirror.getLine(cursor.line);
+        let previousLine = codeMirror.getLine(cursor.line - 1);
 
         if (!line && !previousLine && !cursor.line)
             return switchRule.call(this);
 
-        var trimmedPreviousLine = previousLine ? previousLine.trimRight() : "";
-        var previousAnchor;
-        var previousHead;
-        var isComment = this._textAtCursorIsComment(codeMirror, cursor);
+        let trimmedPreviousLine = previousLine ? previousLine.trimRight() : "";
+        let previousAnchor = 0;
+        let previousHead = line.length;
+        let isComment = this._textAtCursorIsComment(codeMirror, cursor);
 
         if (cursor.ch === line.indexOf(":") || line.indexOf(":") < 0 || isComment) {
             if (previousLine) {
                 --cursor.line;
+                previousHead = trimmedPreviousLine.length;
 
-                if (this._textAtCursorIsComment(codeMirror, cursor)) {
-                    previousAnchor = 0;
-                    previousHead = trimmedPreviousLine.length;
-                } else {
-                    var colon = /(?::\s*)/.exec(previousLine);
+                if (!this._textAtCursorIsComment(codeMirror, cursor)) {
+                    let colon = /(?::\s*)/.exec(previousLine);
                     previousAnchor = colon ? colon.index + colon[0].length : 0;
-                    previousHead = trimmedPreviousLine.length - trimmedPreviousLine.endsWith(";");
+                    if (trimmedPreviousLine.includes(";"))
+                        previousHead = trimmedPreviousLine.lastIndexOf(";");
                 }
                 
                 codeMirror.setSelection({line: cursor.line, ch: previousAnchor}, {line: cursor.line, ch: previousHead});
@@ -597,11 +596,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return switchRule.call(this);
         }
 
-        if (isComment) {
-            previousAnchor = 0;
-            previousHead = line.length;
-        } else {
-            var match = /(?:[^:;\s]\s*)+/.exec(line);
+        if (!isComment) {
+            let match = /(?:[^:;\s]\s*)+/.exec(line);
             previousAnchor = match.index;
             previousHead = previousAnchor + match[0].length;
         }
@@ -620,12 +616,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return CodeMirror.Pass;
         }
 
-        var cursor = codeMirror.getCursor();
-        var line = codeMirror.getLine(cursor.line);
-        var trimmedLine = line.trimRight();
-        var lastLine = cursor.line === codeMirror.lineCount() - 1;
-        var nextLine = codeMirror.getLine(cursor.line + 1);
-        var trimmedNextLine = nextLine ? nextLine.trimRight() : "";
+        let cursor = codeMirror.getCursor();
+        let line = codeMirror.getLine(cursor.line);
+        let trimmedLine = line.trimRight();
+        let lastLine = cursor.line === codeMirror.lineCount() - 1;
+        let nextLine = codeMirror.getLine(cursor.line + 1);
+        let trimmedNextLine = nextLine ? nextLine.trimRight() : "";
 
         if (!trimmedLine.trimLeft().length) {
             if (lastLine)
@@ -647,16 +643,17 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return;
         }
 
-        var hasEndingSemicolon = trimmedLine.endsWith(";");
+        let hasEndingSemicolon = trimmedLine.endsWith(";");
+        let pastLastSemicolon = line.includes(";") && cursor.ch >= line.lastIndexOf(";");
 
-        if (cursor.ch >= line.trimRight().length - hasEndingSemicolon) {
+        if (cursor.ch >= line.trimRight().length - hasEndingSemicolon || pastLastSemicolon) {
             this._completionController.completeAtCurrentPositionIfNeeded().then(function(result) {
                 if (result !== WebInspector.CodeMirrorCompletionController.UpdatePromise.NoCompletionsFound)
                     return;
 
-                var replacement = "";
+                let replacement = "";
 
-                if (!hasEndingSemicolon && !this._textAtCursorIsComment(codeMirror, cursor))
+                if (!hasEndingSemicolon && !pastLastSemicolon && !this._textAtCursorIsComment(codeMirror, cursor))
                     replacement += ";";
 
                 if (lastLine)

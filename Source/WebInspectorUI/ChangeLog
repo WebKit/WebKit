@@ -1,3 +1,17 @@
+2015-10-22  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Tabbing over CSS properties prepended by * doesn't move the highlighted range
+        https://bugs.webkit.org/show_bug.cgi?id=150294
+
+        Reviewed by Timothy Hatcher.
+
+        Moving the selected text when tabbing and shift-tabbing now relies upon
+        the last index of ";" if it exists instead of whether the line ends with it.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey):
+
 2015-10-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: srcset attributes should have hyperlinks to the resources
