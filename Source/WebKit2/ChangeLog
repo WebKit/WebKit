@@ -1,5 +1,31 @@
 2015-10-22  Anders Carlsson  <andersca@apple.com>
 
+        CTTE WebContextMenuItemData
+        https://bugs.webkit.org/show_bug.cgi?id=150471
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        (WKContextMenuItemGetTag):
+        (WKContextMenuItemGetType):
+        (WKContextMenuItemCopyTitle):
+        (WKContextMenuItemGetEnabled):
+        (WKContextMenuItemGetChecked):
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::create):
+        * Shared/WebContextMenuItem.h:
+        (WebKit::WebContextMenuItem::data):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSelectContextMenuItem):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::nsMenuItem):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageClickMenuItem):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+
+2015-10-22  Anders Carlsson  <andersca@apple.com>
+
         Handle nil menu items.
 
         * UIProcess/mac/WebContextMenuProxyMac.mm:

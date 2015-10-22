@@ -77,7 +77,7 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage&
             continue;
         }
         
-        newMenu.append(*item->data());
+        newMenu.append(item->data());
     }
     
     return true;

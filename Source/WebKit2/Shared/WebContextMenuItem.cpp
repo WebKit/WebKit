@@ -56,7 +56,7 @@ PassRefPtr<WebContextMenuItem> WebContextMenuItem::create(const String& title, b
     for (size_t i = 0; i < size; ++i) {
         WebContextMenuItem* item = submenuItems->at<WebContextMenuItem>(i);
         if (item)
-            submenu.append(*item->data());
+            submenu.append(item->data());
     }
 
     return adoptRef(new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();

@@ -93,7 +93,7 @@ WKContextMenuItemRef WKContextMenuItemSeparatorItem()
 WKContextMenuItemTag WKContextMenuItemGetTag(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(toImpl(itemRef)->data()->action());
+    return toAPI(toImpl(itemRef)->data().action());
 #else
     UNUSED_PARAM(itemRef);
     return toAPI(ContextMenuItemTagNoAction);
@@ -103,7 +103,7 @@ WKContextMenuItemTag WKContextMenuItemGetTag(WKContextMenuItemRef itemRef)
 WKContextMenuItemType WKContextMenuItemGetType(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(toImpl(itemRef)->data()->type());
+    return toAPI(toImpl(itemRef)->data().type());
 #else
     UNUSED_PARAM(itemRef);
     return toAPI(ActionType);
@@ -113,7 +113,7 @@ WKContextMenuItemType WKContextMenuItemGetType(WKContextMenuItemRef itemRef)
 WKStringRef WKContextMenuItemCopyTitle(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toCopiedAPI(toImpl(itemRef)->data()->title().impl());
+    return toCopiedAPI(toImpl(itemRef)->data().title().impl());
 #else
     UNUSED_PARAM(itemRef);
     return 0;
@@ -123,7 +123,7 @@ WKStringRef WKContextMenuItemCopyTitle(WKContextMenuItemRef itemRef)
 bool WKContextMenuItemGetEnabled(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toImpl(itemRef)->data()->enabled();
+    return toImpl(itemRef)->data().enabled();
 #else
     UNUSED_PARAM(itemRef);
     return false;
@@ -133,7 +133,7 @@ bool WKContextMenuItemGetEnabled(WKContextMenuItemRef itemRef)
 bool WKContextMenuItemGetChecked(WKContextMenuItemRef itemRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toImpl(itemRef)->data()->checked();
+    return toImpl(itemRef)->data().checked();
 #else
     UNUSED_PARAM(itemRef);
     return false;

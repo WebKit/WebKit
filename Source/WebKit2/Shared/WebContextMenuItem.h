@@ -62,7 +62,7 @@ public:
     API::Object* userData() const;
     void setUserData(API::Object*);
 
-    WebContextMenuItemData* data() { return &m_webContextMenuItemData; }
+    const WebContextMenuItemData& data() { return m_webContextMenuItemData; }
     NativeContextMenuItem* nativeContextMenuItem() { return m_nativeContextMenuItem.get(); }
 
 private:

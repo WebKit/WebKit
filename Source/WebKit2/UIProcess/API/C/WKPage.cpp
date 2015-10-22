@@ -2423,7 +2423,7 @@ void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)
 void WKPageSelectContextMenuItem(WKPageRef page, WKContextMenuItemRef item)
 {
 #if ENABLE(CONTEXT_MENUS)
-    toImpl(page)->contextMenuItemSelected(*(toImpl(item)->data()));
+    toImpl(page)->contextMenuItemSelected((toImpl(item)->data()));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(item);

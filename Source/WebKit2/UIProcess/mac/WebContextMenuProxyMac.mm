@@ -232,8 +232,7 @@ static RetainPtr<NSMenuItem> nsMenuItem(WebContextMenuProxyMac& contextMenuProxy
     if (NativeContextMenuItem* nativeItem = item->nativeContextMenuItem())
         return nativeItem->nsMenuItem();
 
-    ASSERT(item->data());
-    return nsMenuItem(contextMenuProxy, *item->data());
+    return nsMenuItem(contextMenuProxy, item->data());
 }
 
 template<typename ItemType> static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(WebContextMenuProxyMac& contextMenuProxy, const Vector<ItemType>& items)
