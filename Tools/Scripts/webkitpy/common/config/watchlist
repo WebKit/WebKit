@@ -216,6 +216,10 @@
             "filename": r"Source/WebCore/Modules/websockets"
                         r"|Source/WebCore/platform/network/(|.+/)SocketStream.*",
         },
+        "JSBuiltinsGenerator": {
+            "filename": r"Source/JavaScriptCore/Scripts/builtins"
+                        r"|Source/JavaScriptCore/Scripts/generate-js-builtins\.py",
+        },
         "MediaStream": {
             "filename": r"Source/WebCore/Modules/mediastream"
                         r"|Source/WebCore/platform/mediastream"
@@ -386,6 +390,7 @@
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org" ],
         "WebInspectorUIImages": [ "agomez@igalia.com" ],
         "WebReplayGenerator": [ "bburg@apple.com" ],
+        "JSBuiltinsGenerator": [ "bburg@apple.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org", "berto@igalia.com", "cgarcia@igalia.com", "mcatanzaro@igalia.com" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],
@@ -404,5 +409,6 @@
                    "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
         "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
         "WebReplayGenerator": [ "This patch modifies the WEB_REPLAY inputs generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-input-generator-tests --reset-results`)" ],
+        "JSBuiltinsGenerator": [ "This patch modifies the JS builtins code generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-builtins-generator-tests --reset-results`)" ],
     },
 }
