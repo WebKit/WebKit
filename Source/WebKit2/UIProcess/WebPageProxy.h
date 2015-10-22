@@ -53,7 +53,6 @@
 #include "WebColorPicker.h"
 #include "WebContextMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebFindClient.h"
 #include "WebFrameProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
@@ -129,6 +128,7 @@ class MediaSessionMetadata;
 namespace API {
 class ContextMenuClient;
 class FindClient;
+class FindMatchesClient;
 class FormClient;
 class HistoryClient;
 class LoaderClient;
@@ -332,9 +332,10 @@ public:
 #endif
     API::FindClient& findClient() { return *m_findClient; }
     void setFindClient(std::unique_ptr<API::FindClient>);
+    API::FindMatchesClient& findMatchesClient() { return *m_findMatchesClient; }
+    void setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>);
     API::DiagnosticLoggingClient& diagnosticLoggingClient() { return *m_diagnosticLoggingClient; }
     void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>);
-    void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
     void setFormClient(std::unique_ptr<API::FormClient>);
     void setNavigationClient(std::unique_ptr<API::NavigationClient>);
     void setHistoryClient(std::unique_ptr<API::HistoryClient>);
@@ -1476,7 +1477,7 @@ private:
     WebUIPopupMenuClient m_uiPopupMenuClient;
 #endif
     std::unique_ptr<API::FindClient> m_findClient;
-    WebFindMatchesClient m_findMatchesClient;
+    std::unique_ptr<API::FindMatchesClient> m_findMatchesClient;
     std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::ContextMenuClient> m_contextMenuClient;

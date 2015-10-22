@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFindClient_h
-#define WebFindClient_h
+#ifndef APIFindMatchesClient_h
+#define APIFindMatchesClient_h
 
-#include "APIClient.h"
-#include "WKPage.h"
-#include <wtf/Forward.h>
-
-namespace API {
-class Array;
-
-template<> struct ClientTraits<WKPageFindClientBase> {
-    typedef std::tuple<WKPageFindClientV0> Versions;
-};
-
-template<> struct ClientTraits<WKPageFindMatchesClientBase> {
-    typedef std::tuple<WKPageFindMatchesClientV0> Versions;
-};
-}
+#include <WebCore/IntRect.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
-
-class WebPageProxy;
 class WebImage;
+class WebPageProxy;
+}
 
-class WebFindClient : public API::Client<WKPageFindClientBase> {
+namespace API {
+
+class FindMatchesClient {
 public:
-    void didFindString(WebPageProxy*, const String&, uint32_t matchCount, int32_t matchIndex);
-    void didFailToFindString(WebPageProxy*, const String&);
-    void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
+    virtual ~FindMatchesClient() { }
+
+    virtual void didFindStringMatches(WebKit::WebPageProxy*, const WTF::String&, const WTF::Vector<WTF::Vector<WebCore::IntRect>>&, int32_t) { }
+    virtual void didGetImageForMatchResult(WebKit::WebPageProxy*, WebKit::WebImage*, int32_t) { }
 };
 
-class WebFindMatchesClient : public API::Client<WKPageFindMatchesClientBase> {
-public:
-    void didFindStringMatches(WebPageProxy*, const String&, API::Array*, int);
-    void didGetImageForMatchResult(WebPageProxy*, WebImage*, uint32_t);
-};
+} // namespace API
 
-} // namespace WebKit
-
-#endif // WebFindClient_h
+#endif // APIFindMatchesClient_h

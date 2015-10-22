@@ -32,7 +32,9 @@
 #include "APIData.h"
 #include "APIDictionary.h"
 #include "APIFindClient.h"
+#include "APIFindMatchesClient.h"
 #include "APIFrameInfo.h"
+#include "APIGeometry.h"
 #include "APIHitTestResult.h"
 #include "APILoaderClient.h"
 #include "APINavigationAction.h"
@@ -57,6 +59,7 @@
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
 #include "WebFormClient.h"
+#include "WebImage.h"
 #include "WebInspectorProxy.h"
 #include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -112,6 +115,14 @@ template<> struct ClientTraits<WKPageContextMenuClientBase> {
     typedef std::tuple<WKPageContextMenuClientV0, WKPageContextMenuClientV1, WKPageContextMenuClientV2, WKPageContextMenuClientV3> Versions;
 };
 #endif
+
+template<> struct ClientTraits<WKPageFindClientBase> {
+    typedef std::tuple<WKPageFindClientV0> Versions;
+};
+
+template<> struct ClientTraits<WKPageFindMatchesClientBase> {
+    typedef std::tuple<WKPageFindMatchesClientV0> Versions;
+};
 
 }
 
@@ -914,7 +925,45 @@ void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkCl
 
 void WKPageSetPageFindMatchesClient(WKPageRef pageRef, const WKPageFindMatchesClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeFindMatchesClient(wkClient);
+    class FindMatchesClient : public API::Client<WKPageFindMatchesClientBase>, public API::FindMatchesClient {
+    public:
+        explicit FindMatchesClient(const WKPageFindMatchesClientBase* client)
+        {
+            initialize(client);
+        }
+
+    private:
+        virtual void didFindStringMatches(WebPageProxy* page, const String& string, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t index) override
+        {
+            if (!m_client.didFindStringMatches)
+                return;
+
+            Vector<RefPtr<API::Object>> matches;
+            matches.reserveInitialCapacity(matchRects.size());
+
+            for (const auto& rects : matchRects) {
+                Vector<RefPtr<API::Object>> apiRects;
+                apiRects.reserveInitialCapacity(rects.size());
+
+                for (const auto& rect : rects)
+                    apiRects.uncheckedAppend(API::Rect::create(toAPI(rect)));
+
+                matches.uncheckedAppend(API::Array::create(WTF::move(apiRects)));
+            }
+
+            m_client.didFindStringMatches(toAPI(page), toAPI(string.impl()), toAPI(API::Array::create(WTF::move(matches)).ptr()), index, m_client.base.clientInfo);
+        }
+
+        virtual void didGetImageForMatchResult(WebPageProxy* page, WebImage* image, int32_t index) override
+        {
+            if (!m_client.didGetImageForMatchResult)
+                return;
+
+            m_client.didGetImageForMatchResult(toAPI(page), toAPI(image), index, m_client.base.clientInfo);
+        }
+    };
+
+    toImpl(pageRef)->setFindMatchesClient(std::make_unique<FindMatchesClient>(wkClient));
 }
 
 void WKPageSetPageInjectedBundleClient(WKPageRef pageRef, const WKPageInjectedBundleClientBase* wkClient)

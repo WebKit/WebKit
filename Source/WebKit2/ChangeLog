@@ -1,3 +1,28 @@
+2015-10-21  Tim Horton  <timothy_horton@apple.com>
+
+        API-ify the FindMatches client
+        https://bugs.webkit.org/show_bug.cgi?id=150422
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/APIFindMatchesClient.h: Renamed from Source/WebKit2/UIProcess/WebFindClient.h.
+        (API::FindMatchesClient::~FindMatchesClient):
+        (API::FindMatchesClient::didFindStringMatches):
+        (API::FindMatchesClient::didGetImageForMatchResult):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindMatchesClient):
+        * UIProcess/WebFindClient.cpp: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setFindMatchesClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::didGetImageForFindMatch):
+        (WebKit::WebPageProxy::didFindStringMatches):
+        (WebKit::WebPageProxy::initializeFindMatchesClient): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::findMatchesClient):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-10-21  Enrica Casucci  <enrica@apple.com>
 
         WebProcess crashes when accessibility bundle is not found.

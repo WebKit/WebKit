@@ -30,6 +30,7 @@
 #include "APIArray.h"
 #include "APIContextMenuClient.h"
 #include "APIFindClient.h"
+#include "APIFindMatchesClient.h"
 #include "APIFormClient.h"
 #include "APIFrameInfo.h"
 #include "APIGeometry.h"
@@ -310,6 +311,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_formClient(std::make_unique<API::FormClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_findClient(std::make_unique<API::FindClient>())
+    , m_findMatchesClient(std::make_unique<API::FindMatchesClient>())
     , m_diagnosticLoggingClient(std::make_unique<API::DiagnosticLoggingClient>())
 #if ENABLE(CONTEXT_MENUS)
     , m_contextMenuClient(std::make_unique<API::ContextMenuClient>())
@@ -622,9 +624,14 @@ void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient> findClient)
     m_findClient = WTF::move(findClient);
 }
 
-void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClientBase* client)
+void WebPageProxy::setFindMatchesClient(std::unique_ptr<API::FindMatchesClient> findMatchesClient)
 {
-    m_findMatchesClient.initialize(client);
+    if (!findMatchesClient) {
+        m_findMatchesClient = std::make_unique<API::FindMatchesClient>();
+        return;
+    }
+
+    m_findMatchesClient = WTF::move(findMatchesClient);
 }
 
 void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient> diagnosticLoggingClient)
@@ -835,7 +842,7 @@ void WebPageProxy::close()
     m_uiPopupMenuClient.initialize(nullptr);
 #endif
     m_findClient = std::make_unique<API::FindClient>();
-    m_findMatchesClient.initialize(nullptr);
+    m_findMatchesClient = std::make_unique<API::FindMatchesClient>();
     m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
 #if ENABLE(CONTEXT_MENUS)
     m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
@@ -4034,7 +4041,7 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
 
 void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex)
 {
-    m_findMatchesClient.didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
+    m_findMatchesClient->didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
 }
 
 void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)
@@ -4072,20 +4079,7 @@ void WebPageProxy::didFindString(const String& string, uint32_t matchCount, int3
 
 void WebPageProxy::didFindStringMatches(const String& string, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection)
 {
-    Vector<RefPtr<API::Object>> matches;
-    matches.reserveInitialCapacity(matchRects.size());
-
-    for (const auto& rects : matchRects) {
-        Vector<RefPtr<API::Object>> apiRects;
-        apiRects.reserveInitialCapacity(rects.size());
-
-        for (const auto& rect : rects)
-            apiRects.uncheckedAppend(API::Rect::create(toAPI(rect)));
-
-        matches.uncheckedAppend(API::Array::create(WTF::move(apiRects)));
-    }
-
-    m_findMatchesClient.didFindStringMatches(this, string, API::Array::create(WTF::move(matches)).ptr(), firstIndexAfterSelection);
+    m_findMatchesClient->didFindStringMatches(this, string, matchRects, firstIndexAfterSelection);
 }
 
 void WebPageProxy::didFailToFindString(const String& string)
