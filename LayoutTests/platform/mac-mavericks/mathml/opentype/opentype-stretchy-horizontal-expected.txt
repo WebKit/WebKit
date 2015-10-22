@@ -10,7 +10,7 @@ layer at (0,0) size 800x153
               RenderMathMLOperator {mo} at (0,1) size 16x21
                 RenderMathMLBlock (anonymous, flex) at (2,0) size 11x4
                   RenderBlock (anonymous) at (0,0) size 2x4
-                    RenderText at (0,-3) size 2x0
+                    RenderText at (0,-3) size 2x10
                       text run at (0,-3) width 2: "\x{219C}"
               RenderMathMLSpace {mspace} at (4,0) size 8x1
         RenderText {#text} at (0,0) size 0x0
@@ -21,7 +21,7 @@ layer at (0,0) size 800x153
               RenderMathMLOperator {mo} at (0,1) size 26x21
                 RenderMathMLBlock (anonymous, flex) at (2,0) size 22x4
                   RenderBlock (anonymous) at (0,0) size 2x4
-                    RenderText at (0,-3) size 2x0
+                    RenderText at (0,-3) size 2x10
                       text run at (0,-3) width 2: "\x{219C}"
               RenderMathMLSpace {mspace} at (5,0) size 16x1
         RenderText {#text} at (0,0) size 0x0
@@ -32,7 +32,7 @@ layer at (0,0) size 800x153
               RenderMathMLOperator {mo} at (0,1) size 156x41
                 RenderMathMLBlock (anonymous, flex) at (2,0) size 151x4
                   RenderBlock (anonymous) at (0,0) size 2x4
-                    RenderText at (0,-3) size 2x0
+                    RenderText at (0,-3) size 2x10
                       text run at (0,-3) width 2: "\x{219C}"
               RenderMathMLSpace {mspace} at (2,0) size 151x1
         RenderText {#text} at (0,0) size 0x0
