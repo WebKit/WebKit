@@ -189,7 +189,6 @@ WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
         g_signal_handler_disconnect(handler.value, handler.key);
     m_signalHandlers.clear();
 
-    webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), nullptr);
     m_menu.setPlatformDescription(nullptr);
 }
 

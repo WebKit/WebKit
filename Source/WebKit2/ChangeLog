@@ -1,3 +1,25 @@
+2015-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix a crash in GTk+ after r191402.
+
+        Since r191402 WebContextMenuProxy is no longer refcounted, and
+        std::unique_ptr is used instead. This means that when we show the
+        context menu for the second time in a web view, a new
+        WebContextMenuProxy is created and the previous one is
+        destroyed. We were setting the active context menu of the WebView
+        in the constructor of WebContextMenuProxy, and unsetting it in the
+        destructor. Now the constructor of the new WebContextMenuProxy
+        happens before the destructor of the current one that unsets the
+        WebView active context menu. This patch simply makes the web view
+        unset its active context menu when it's unmapped and a new one
+        hasn't been set.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (activeContextMenuUnmapped):
+        (webkitWebViewBaseSetActiveContextMenuProxy):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+
 2015-10-22  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [GTK] Try to fix the build after r191402.
