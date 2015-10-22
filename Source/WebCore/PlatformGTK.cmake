@@ -608,7 +608,6 @@ list(APPEND GObjectDOMBindingsStable_IDL_FILES
     html/HTMLAreaElement.idl
     html/HTMLBRElement.idl
     html/HTMLBaseElement.idl
-    html/HTMLBaseFontElement.idl
     html/HTMLBodyElement.idl
     html/HTMLButtonElement.idl
     html/HTMLCanvasElement.idl

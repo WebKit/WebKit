@@ -24,7 +24,6 @@
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
-#include "WebKitDOMHTMLElement.h"
 #include "WebKitDOMNodeListPrivate.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -154,4 +153,47 @@ WebKitDOMEntityReference* webkit_dom_document_create_entity_reference(WebKitDOMD
 {
     g_warning("%s: EntityReference has been removed from DOM spec, this function does nothing.", __func__);
     return nullptr;
+}
+
+G_DEFINE_TYPE(WebKitDOMHTMLBaseFontElement, webkit_dom_html_base_font_element, WEBKIT_DOM_TYPE_HTML_ELEMENT)
+
+static void webkit_dom_html_base_font_element_init(WebKitDOMHTMLBaseFontElement*)
+{
+}
+
+static void webkit_dom_html_base_font_element_class_init(WebKitDOMHTMLBaseFontElementClass*)
+{
+}
+
+gchar* webkit_dom_html_base_font_element_get_color(WebKitDOMHTMLBaseFontElement*)
+{
+    g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
+    return nullptr;
+}
+
+void webkit_dom_html_base_font_element_set_color(WebKitDOMHTMLBaseFontElement*, const gchar*)
+{
+    g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
+}
+
+gchar* webkit_dom_html_base_font_element_get_face(WebKitDOMHTMLBaseFontElement*)
+{
+    g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
+    return nullptr;
+}
+
+void webkit_dom_html_base_font_element_set_face(WebKitDOMHTMLBaseFontElement*, const gchar*)
+{
+    g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
+}
+
+glong webkit_dom_html_base_font_element_get_size(WebKitDOMHTMLBaseFontElement*)
+{
+    g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
+    return 0;
+}
+
+void webkit_dom_html_base_font_element_set_size(WebKitDOMHTMLBaseFontElement*, glong)
+{
+    g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
 }

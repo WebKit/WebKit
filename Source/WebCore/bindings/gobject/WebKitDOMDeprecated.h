@@ -23,6 +23,7 @@
 
 #include <glib.h>
 #include <webkitdom/WebKitDOMNode.h>
+#include <webkitdom/WebKitDOMHTMLElement.h>
 #include <webkitdom/webkitdomdefines.h>
 
 G_BEGIN_DECLS
@@ -215,6 +216,102 @@ WEBKIT_DEPRECATED gboolean webkit_dom_tree_walker_get_expand_entity_references(W
  * Deprecated: 2.12
  */
 WEBKIT_DEPRECATED WebKitDOMEntityReference* webkit_dom_document_create_entity_reference(WebKitDOMDocument* self, const gchar* name, GError** error);
+
+#define WEBKIT_DOM_TYPE_HTML_BASE_FONT_ELEMENT            (webkit_dom_html_base_font_element_get_type())
+#define WEBKIT_DOM_HTML_BASE_FONT_ELEMENT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_DOM_TYPE_HTML_BASE_FONT_ELEMENT, WebKitDOMHTMLBaseFontElement))
+#define WEBKIT_DOM_HTML_BASE_FONT_ELEMENT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_DOM_TYPE_HTML_BASE_FONT_ELEMENT, WebKitDOMHTMLBaseFontElementClass)
+#define WEBKIT_DOM_IS_HTML_BASE_FONT_ELEMENT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_DOM_TYPE_HTML_BASE_FONT_ELEMENT))
+#define WEBKIT_DOM_IS_HTML_BASE_FONT_ELEMENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_DOM_TYPE_HTML_BASE_FONT_ELEMENT))
+#define WEBKIT_DOM_HTML_BASE_FONT_ELEMENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_DOM_TYPE_HTML_BASE_FONT_ELEMENT, WebKitDOMHTMLBaseFontElementClass))
+
+typedef struct _WebKitDOMHTMLBaseFontElement WebKitDOMHTMLBaseFontElement;
+typedef struct _WebKitDOMHTMLBaseFontElementClass WebKitDOMHTMLBaseFontElementClass;
+
+struct _WebKitDOMHTMLBaseFontElement {
+    WebKitDOMHTMLElement parent_instance;
+};
+
+struct _WebKitDOMHTMLBaseFontElementClass {
+    WebKitDOMHTMLElementClass parent_class;
+};
+
+WEBKIT_DEPRECATED GType
+webkit_dom_html_base_font_element_get_type(void);
+
+/**
+ * webkit_dom_html_base_font_element_get_color:
+ * @self: A #WebKitDOMHTMLBaseFontElement
+ *
+ * This function has been removed from the DOM spec and it just returns %NULL.
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_html_base_font_element_get_color(WebKitDOMHTMLBaseFontElement* self);
+
+/**
+ * webkit_dom_html_base_font_element_set_color:
+ * @self: A #WebKitDOMHTMLBaseFontElement
+ * @value: A #gchar
+ *
+ * This function has been removed from the DOM spec and it does nothing.
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_html_base_font_element_set_color(WebKitDOMHTMLBaseFontElement* self, const gchar* value);
+
+/**
+ * webkit_dom_html_base_font_element_get_face:
+ * @self: A #WebKitDOMHTMLBaseFontElement
+ *
+ * This function has been removed from the DOM spec and it just returns %NULL.
+ *
+ * Returns: A #gchar
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED gchar*
+webkit_dom_html_base_font_element_get_face(WebKitDOMHTMLBaseFontElement* self);
+
+/**
+ * webkit_dom_html_base_font_element_set_face:
+ * @self: A #WebKitDOMHTMLBaseFontElement
+ * @value: A #gchar
+ *
+ * This function has been removed from the DOM spec and it does nothing.
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_html_base_font_element_set_face(WebKitDOMHTMLBaseFontElement* self, const gchar* value);
+
+/**
+ * webkit_dom_html_base_font_element_get_size:
+ * @self: A #WebKitDOMHTMLBaseFontElement
+ *
+ * This function has been removed from the DOM spec and it just returns 0.
+ *
+ * Returns: A #glong
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED glong
+webkit_dom_html_base_font_element_get_size(WebKitDOMHTMLBaseFontElement* self);
+
+/**
+ * webkit_dom_html_base_font_element_set_size:
+ * @self: A #WebKitDOMHTMLBaseFontElement
+ * @value: A #glong
+ *
+ * This function has been removed from the DOM spec and it does nothing.
+ *
+ * Deprecated: 2.12
+ */
+WEBKIT_DEPRECATED void
+webkit_dom_html_base_font_element_set_size(WebKitDOMHTMLBaseFontElement* self, glong value);
 
 G_END_DECLS
 

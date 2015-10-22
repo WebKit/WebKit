@@ -17,18 +17,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
 
 [
     NoInterfaceObject
 ] interface HTMLBaseFontElement : HTMLElement {
     [Reflect] attribute DOMString color;
     [Reflect] attribute DOMString face;
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     [Reflect] attribute DOMString size; // this changed to a long, but our existing API is a string
-#else
-    [Reflect] attribute long size;
-#endif
 };
 
 #endif

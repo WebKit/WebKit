@@ -95,7 +95,6 @@
 #include "WebKitDOMHTMLAreaElementPrivate.h"
 #include "WebKitDOMHTMLBRElementPrivate.h"
 #include "WebKitDOMHTMLBaseElementPrivate.h"
-#include "WebKitDOMHTMLBaseFontElementPrivate.h"
 #include "WebKitDOMHTMLBodyElementPrivate.h"
 #include "WebKitDOMHTMLButtonElementPrivate.h"
 #include "WebKitDOMHTMLCanvasElementPrivate.h"
@@ -173,7 +172,6 @@ using namespace WebCore::HTMLNames;
     macro(applet, Applet) \
     macro(area, Area) \
     macro(base, Base) \
-    macro(basefont, BaseFont) \
     macro(blockquote, Quote) \
     macro(body, Body) \
     macro(br, BR) \

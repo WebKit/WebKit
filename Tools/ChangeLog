@@ -1,3 +1,12 @@
+2015-10-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r191423.
+
+        Add WebKitDOMHTMLBaseFontElement to the list of deleted classes.
+
+        * gtk/webkitdom.py:
+        (WebKitDOMDocGenerator):
+
 2015-10-22  Aakash Jain  <aakash_jain@apple.com>
 
         [Win][EFL][GTK] webkitpy test failed after r191374.

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-// Only used by ObjC / Gobject bindings.
+// Only used by ObjC bindings.
 class HTMLBaseFontElement final : public HTMLElement {
 private:
     HTMLBaseFontElement(const QualifiedName&, Document&);

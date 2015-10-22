@@ -27,7 +27,7 @@ from ConfigParser import SafeConfigParser
 
 class WebKitDOMDocGenerator(object):
 
-    DELETED_CLASSES = ["WebKitDOMEntityReference"]
+    DELETED_CLASSES = ["WebKitDOMEntityReference", "WebKitDOMHTMLBaseFontElement"]
 
     def __init__(self, symbol_files, file_handle):
         self._symbol_files = symbol_files
