@@ -43,6 +43,7 @@
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
+#include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PseudoElement.h"
@@ -81,6 +82,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 #ifndef NDEBUG
+void printRenderTreeForLiveDocuments();
+
 RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScope(RenderObject* renderObject, bool isForbidden)
     : m_renderObject(renderObject)
     , m_preexistingForbidden(m_renderObject->isSetNeedsLayoutForbidden())
@@ -123,6 +126,10 @@ RenderObject::RenderObject(Node& node)
         renderView->didCreateRenderer();
 #ifndef NDEBUG
     renderObjectCounter.increment();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+    });
 #endif
 }
 
@@ -2215,6 +2222,19 @@ void RenderObject::removeRareData()
     setHasRareData(false);
 }
 
+#ifndef NDEBUG
+void printRenderTreeForLiveDocuments()
+{
+    for (const auto* document : Document::allDocuments()) {
+        if (!document->renderView() || document->inPageCache())
+            continue;
+        if (document->frame() && document->frame()->isMainFrame())
+            fprintf(stderr, "----------------------main frame--------------------------\n");
+        fprintf(stderr, "%s", document->url().string().utf8().data());
+        showRenderTree(document->renderView());
+    }
+}
+#endif
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

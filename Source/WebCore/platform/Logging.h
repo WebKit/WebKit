@@ -26,6 +26,7 @@
 #ifndef Logging_h
 #define Logging_h
 
+#include <functional>
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 
@@ -89,6 +90,9 @@ WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
     String logLevelString();
     bool isLogChannelEnabled(const String& name);
     WEBCORE_EXPORT void initializeLoggingChannelsIfNecessary();
+#ifndef NDEBUG
+    void registerNotifyCallback(const String& notifyID, std::function<void()> callback);
+#endif
 }
 
 #endif // !LOG_DISABLED
