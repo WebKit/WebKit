@@ -59,12 +59,14 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
             "Cmd-Y": this._handleHideKey.bind(this)
         };
 
+        this._handleBeforeChangeListener = this._handleBeforeChange.bind(this);
         this._handleChangeListener = this._handleChange.bind(this);
         this._handleCursorActivityListener = this._handleCursorActivity.bind(this);
         this._handleHideActionListener = this._handleHideAction.bind(this);
 
         this._codeMirror.addKeyMap(this._keyMap);
 
+        this._codeMirror.on("beforeChange", this._handleBeforeChangeListener);
         this._codeMirror.on("change", this._handleChangeListener);
         this._codeMirror.on("cursorActivity", this._handleCursorActivityListener);
         this._codeMirror.on("blur", this._handleHideActionListener);
@@ -171,6 +173,7 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
     {
         this._codeMirror.removeKeyMap(this._keyMap);
 
+        this._codeMirror.off("beforeChange", this._handleBeforeChangeListener);
         this._codeMirror.off("change", this._handleChangeListener);
         this._codeMirror.off("cursorActivity", this._handleCursorActivityListener);
         this._codeMirror.off("blur", this._handleHideActionListener);
@@ -246,15 +249,6 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
         this._notifyCompletionsHiddenIfNeededTimeout = setTimeout(notify.bind(this), WebInspector.CodeMirrorCompletionController.CompletionsHiddenDelay);
     }
 
-    _createCompletionHintMarker(position, text)
-    {
-        var container = document.createElement("span");
-        container.classList.add(WebInspector.CodeMirrorCompletionController.CompletionHintStyleClassName);
-        container.textContent = text;
-
-        this._completionHintMarker = this._codeMirror.setUniqueBookmark(position, {widget: container, insertLeft: true});
-    }
-
     _applyCompletionHint(completionText)
     {
         console.assert(completionText);
@@ -267,13 +261,17 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
             this._removeCompletionHint(true, true);
 
-            var replacementText = this._currentReplacementText;
+            let replacementText = this._currentReplacementText;
 
-            var from = {line: this._lineNumber, ch: this._startOffset};
-            var cursor = {line: this._lineNumber, ch: this._endOffset};
-            var currentText = this._codeMirror.getRange(from, cursor);
+            let from = {line: this._lineNumber, ch: this._startOffset};
+            let cursor = {line: this._lineNumber, ch: this._endOffset};
+            let to = {line: this._lineNumber, ch: this._startOffset + replacementText.length};
 
-            this._createCompletionHintMarker(cursor, replacementText.replace(currentText, ""));
+            this._codeMirror.replaceRange(replacementText, from, cursor, WebInspector.CodeMirrorCompletionController.CompletionOrigin);
+
+            this._codeMirror.setCursor(cursor);
+            if (cursor.ch !== to.ch)
+                this._completionHintMarker = this._codeMirror.markText(cursor, to, {className: WebInspector.CodeMirrorCompletionController.CompletionHintStyleClassName});
         }
 
         this._ignoreChange = true;
@@ -302,8 +300,6 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
                 to.ch -= 1 + this._implicitSuffix.length;
 
             this._codeMirror.replaceRange(replacementText, from, cursor, WebInspector.CodeMirrorCompletionController.CompletionOrigin);
-
-            // Don't call _removeLastChangeFromHistory here to allow the committed completion to be undone.
 
             this._codeMirror.setCursor(to);
 
@@ -340,21 +336,15 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
         this._notifyCompletionsHiddenSoon();
 
-        function clearMarker(marker)
-        {
-            if (!marker)
-                return;
-
-            var range = marker.find();
-            if (range)
-                marker.clear();
-
-            return null;
-        }
-
         function update()
         {
-            this._completionHintMarker = clearMarker(this._completionHintMarker);
+            this._codeMirror.undo();
+
+            let range = this._completionHintMarker.find();
+            if (range)
+                this._completionHintMarker.clear();
+
+            this._completionHintMarker = null;
 
             if (dontRestorePrefix)
                 return;
@@ -363,8 +353,8 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
             console.assert(!isNaN(this._endOffset));
             console.assert(!isNaN(this._lineNumber));
 
-            var from = {line: this._lineNumber, ch: this._startOffset};
-            var to = {line: this._lineNumber, ch: this._endOffset};
+            let from = {line: this._lineNumber, ch: this._startOffset};
+            let to = {line: this._lineNumber, ch: this._endOffset};
 
             this._codeMirror.replaceRange(this._prefix, from, to, WebInspector.CodeMirrorCompletionController.DeleteCompletionOrigin);
             this._removeLastChangeFromHistory();
@@ -798,6 +788,17 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
         this._endOffset = this._startOffset + commonPrefix.length;
 
         this._applyCompletionHint(this._currentCompletion);
+    }
+
+    _handleBeforeChange(codeMirror, change)
+    {
+        if (this.isCompletionChange(change))
+            return;
+
+        this._ignoreNextCursorActivity = true;
+
+        if (this.isShowingCompletions())
+            this.hideCompletions();
     }
 
     _handleChange(codeMirror, change)

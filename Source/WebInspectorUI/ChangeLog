@@ -1,5 +1,30 @@
 2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Autocompletion previews in the CSS sidebar do not apply
+        https://bugs.webkit.org/show_bug.cgi?id=147720
+
+        Reviewed by Timothy Hatcher.
+
+        When autocompletion hints are added to styles or the console, the history
+        object used by CodeMirror was edited to remove the last entry. Instead of
+        using this method (which caused glitchy behaviour when undo-ing), call
+        CodeMirror.undo() and adjust accordingly. In addition, a marker was being
+        used as the completion hint instead of applying text, whereas these
+        changes use actual text, ensuring that completions are previewed in the page.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController):
+        (WebInspector.CodeMirrorCompletionController.prototype.close):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._commitCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._handleBeforeChange):
+        (WebInspector.CodeMirrorCompletionController.prototype._createCompletionHintMarker): Deleted.
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.clearMarker): Deleted.
+
+2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Add forgotten WebInspector.UIString from r190521
         https://bugs.webkit.org/show_bug.cgi?id=150425
 
