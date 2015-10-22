@@ -1,3 +1,19 @@
+2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Option-Up doesn't increment certain attribute values
+        https://bugs.webkit.org/show_bug.cgi?id=149257
+
+        Reviewed by Brian Burg.
+
+        If the user tries to modify a numerical attribute in HTML and the cursor
+        was at the beginning of the attribute value, the range of the selection
+        was within a sibling element instead of the text node containin the value.
+        This patch fixes this issue and ensures that the correct text is selected.
+
+        * UserInterface/Views/EditingSupport.js:
+        (WebInspector.startEditing.handleEditingResult):
+        Replaced var with let.
+
 2015-10-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use some CSS Variables in Web Inspector

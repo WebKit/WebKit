@@ -218,8 +218,8 @@ WebInspector.startEditing = function(element, config)
             if (event.keyIdentifier !== "U+0009")
                 blurEventListener();
         } else if (result && result.startsWith("modify-")) {
-            var direction = result.substring(7);
-            var modifyValue = direction.startsWith("up") ? 1 : -1;
+            let direction = result.substring(7);
+            let modifyValue = direction.startsWith("up") ? 1 : -1;
             if (direction.endsWith("big"))
                 modifyValue *= 10;
 
@@ -228,21 +228,21 @@ WebInspector.startEditing = function(element, config)
             else if (event.ctrlKey)
                 modifyValue /= 10;
 
-            var selection = element.ownerDocument.defaultView.getSelection();
+            let selection = element.ownerDocument.defaultView.getSelection();
             if (!selection.rangeCount)
                 return;
 
-            var range = selection.getRangeAt(0);
+            let range = selection.getRangeAt(0);
             if (!range.commonAncestorContainer.isSelfOrDescendant(element))
                 return false;
 
-            var wordRange = range.startContainer.rangeOfWord(range.startOffset, WebInspector.EditingSupport.StyleValueDelimiters, element);
-            var word = wordRange.toString();
-            var wordPrefix = "";
-            var wordSuffix = "";
-            var nonNumberInWord = /[^\d-\.]+/.exec(word);
+            let wordRange = range.startContainer.rangeOfWord(range.startOffset, WebInspector.EditingSupport.StyleValueDelimiters, element);
+            let word = wordRange.toString();
+            let wordPrefix = "";
+            let wordSuffix = "";
+            let nonNumberInWord = /[^\d-\.]+/.exec(word);
             if (nonNumberInWord) {
-                var nonNumberEndOffset = nonNumberInWord.index + nonNumberInWord[0].length;
+                let nonNumberEndOffset = nonNumberInWord.index + nonNumberInWord[0].length;
                 if (range.startOffset > wordRange.startOffset + nonNumberInWord.index && nonNumberEndOffset < word.length && range.startOffset !== wordRange.startOffset) {
                     wordPrefix = word.substring(0, nonNumberEndOffset);
                     word = word.substring(nonNumberEndOffset);
@@ -252,19 +252,36 @@ WebInspector.startEditing = function(element, config)
                 }
             }
 
-            var matches = WebInspector.EditingSupport.CSSNumberRegex.exec(word);
+            let matches = WebInspector.EditingSupport.CSSNumberRegex.exec(word);
             if (!matches || matches.length !== 4)
                 return;
 
-            var replacement = matches[1] + (Math.round((parseFloat(matches[2]) + modifyValue) * 100) / 100) + matches[3];
+            let replacement = matches[1] + (Math.round((parseFloat(matches[2]) + modifyValue) * 100) / 100) + matches[3];
 
             selection.removeAllRanges();
             selection.addRange(wordRange);
             document.execCommand("insertText", false, wordPrefix + replacement + wordSuffix);
 
-            var replacementSelectionRange = document.createRange();
-            replacementSelectionRange.setStart(wordRange.commonAncestorContainer, wordRange.startOffset + wordPrefix.length);
-            replacementSelectionRange.setEnd(wordRange.commonAncestorContainer, wordRange.startOffset + wordPrefix.length + replacement.length);
+            let container = range.commonAncestorContainer;
+            let startOffset = range.startOffset;
+            // This check is for the situation when the cursor is in the space between the
+            // opening quote of the attribute and the first character. In that spot, the
+            // commonAncestorContainer is actually the entire attribute node since `="` is
+            // added as a simple text node. Since the opening quote is immediately before
+            // the attribute, the node for that attribute must be the next sibling and the
+            // text of the attribute's value must be the first child of that sibling.
+            if (container.parentNode.classList.contains("editing")) {
+                container = container.nextSibling.firstChild;
+                startOffset = 0;
+            }
+            startOffset += wordPrefix.length;
+
+            if (!container)
+                return;
+
+            let replacementSelectionRange = document.createRange();
+            replacementSelectionRange.setStart(container, startOffset);
+            replacementSelectionRange.setEnd(container, startOffset + replacement.length);
 
             selection.removeAllRanges();
             selection.addRange(replacementSelectionRange);
