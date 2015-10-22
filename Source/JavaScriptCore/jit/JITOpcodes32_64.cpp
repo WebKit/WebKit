@@ -110,10 +110,10 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
 
 #if CPU(X86)
     addPtr(TrustedImm32(-4), stackPointerRegister);
-    loadPtr(Address(callFrameRegister), X86Registers::ecx);
+    move(callFrameRegister, X86Registers::ecx);
     push(X86Registers::ecx);
 #else
-    loadPtr(Address(callFrameRegister), argumentGPR0);
+    move(callFrameRegister, argumentGPR0);
 #endif
     move(TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), regT3);
     call(regT3);

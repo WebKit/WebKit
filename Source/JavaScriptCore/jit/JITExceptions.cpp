@@ -42,7 +42,11 @@ namespace JSC {
 void genericUnwind(VM* vm, ExecState* callFrame, UnwindStart unwindStart)
 {
     if (Options::breakOnThrow()) {
-        dataLog("In call frame ", RawPointer(callFrame), " for code block ", *callFrame->codeBlock(), "\n");
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        if (codeBlock)
+            dataLog("In call frame ", RawPointer(callFrame), " for code block ", *codeBlock, "\n");
+        else
+            dataLog("In call frame ", RawPointer(callFrame), " with null CodeBlock\n");
         CRASH();
     }
     

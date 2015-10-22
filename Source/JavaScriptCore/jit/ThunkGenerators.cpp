@@ -358,14 +358,14 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
 #if CPU(X86) && USE(JSVALUE32_64)
     jit.addPtr(JSInterfaceJIT::TrustedImm32(-12), JSInterfaceJIT::stackPointerRegister);
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister), JSInterfaceJIT::regT0);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::regT0);
     jit.push(JSInterfaceJIT::regT0);
 #else
 #if OS(WINDOWS)
     // Allocate space on stack for the 4 parameter registers.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
 #endif
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::callFrameRegister), JSInterfaceJIT::argumentGPR0);
+    jit.move(JSInterfaceJIT::callFrameRegister, JSInterfaceJIT::argumentGPR0);
 #endif
     jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(operationVMHandleException).value()), JSInterfaceJIT::regT3);
     jit.call(JSInterfaceJIT::regT3);
