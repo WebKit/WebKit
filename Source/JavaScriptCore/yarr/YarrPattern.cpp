@@ -739,11 +739,12 @@ public:
         }
     }
 
-    bool containsCapturingTerms(PatternAlternative* alternative, size_t firstTermIndex, size_t lastTermIndex)
+    bool containsCapturingTerms(PatternAlternative* alternative, size_t firstTermIndex, size_t endIndex)
     {
         Vector<PatternTerm>& terms = alternative->m_terms;
 
-        for (size_t termIndex = firstTermIndex; termIndex <= lastTermIndex; ++termIndex) {
+        ASSERT(endIndex <= terms.size());
+        for (size_t termIndex = firstTermIndex; termIndex < endIndex; ++termIndex) {
             PatternTerm& term = terms[termIndex];
 
             if (term.m_capture)
@@ -752,7 +753,7 @@ public:
             if (term.type == PatternTerm::TypeParenthesesSubpattern) {
                 PatternDisjunction* nestedDisjunction = term.parentheses.disjunction;
                 for (unsigned alt = 0; alt < nestedDisjunction->m_alternatives.size(); ++alt) {
-                    if (containsCapturingTerms(nestedDisjunction->m_alternatives[alt].get(), 0, nestedDisjunction->m_alternatives[alt]->m_terms.size() - 1))
+                    if (containsCapturingTerms(nestedDisjunction->m_alternatives[alt].get(), 0, nestedDisjunction->m_alternatives[alt]->m_terms.size()))
                         return true;
                 }
             }
@@ -777,7 +778,7 @@ public:
         if (terms.size() >= 3) {
             bool startsWithBOL = false;
             bool endsWithEOL = false;
-            size_t termIndex, firstExpressionTerm, lastExpressionTerm;
+            size_t termIndex, firstExpressionTerm;
 
             termIndex = 0;
             if (terms[termIndex].type == PatternTerm::TypeAssertionBOL) {
@@ -800,14 +801,13 @@ public:
             PatternTerm& lastNonAnchorTerm = terms[termIndex];
             if ((lastNonAnchorTerm.type != PatternTerm::TypeCharacterClass) || (lastNonAnchorTerm.characterClass != m_pattern.newlineCharacterClass()) || (lastNonAnchorTerm.quantityType != QuantifierGreedy))
                 return;
-            
-            lastExpressionTerm = termIndex - 1;
 
-            if (firstExpressionTerm > lastExpressionTerm)
+            size_t endIndex = termIndex;
+            if (firstExpressionTerm >= endIndex)
                 return;
 
-            if (!containsCapturingTerms(alternative, firstExpressionTerm, lastExpressionTerm)) {
-                for (termIndex = terms.size() - 1; termIndex > lastExpressionTerm; --termIndex)
+            if (!containsCapturingTerms(alternative, firstExpressionTerm, endIndex)) {
+                for (termIndex = terms.size() - 1; termIndex >= endIndex; --termIndex)
                     terms.remove(termIndex);
 
                 for (termIndex = firstExpressionTerm; termIndex > 0; --termIndex)

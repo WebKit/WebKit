@@ -1,3 +1,20 @@
+2015-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r191364. rdar://problem/22864960
+
+    2015-10-20  Mark Lam  <mark.lam@apple.com>
+
+            YarrPatternConstructor::containsCapturingTerms() should not assume that its terms.size() is greater than 0.
+            https://bugs.webkit.org/show_bug.cgi?id=150372
+
+            Reviewed by Geoffrey Garen.
+
+            * yarr/YarrPattern.cpp:
+            (JSC::Yarr::CharacterClassConstructor::CharacterClassConstructor):
+            (JSC::Yarr::YarrPatternConstructor::optimizeBOL):
+            (JSC::Yarr::YarrPatternConstructor::containsCapturingTerms):
+            (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+
 2015-10-08  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r189834. rdar://problem/22807373
