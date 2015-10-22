@@ -967,7 +967,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 && !property.implicit && typeof this._delegate.cssStyleDeclarationTextEditorShowProperty === "function") {
 
             let arrowElement = WebInspector.createGoToArrowButton();
-            arrowElement.title = "Option-click to show source";
+            arrowElement.title = WebInspector.UIString("Option-click to show source");
 
             let delegate = this._delegate;
             arrowElement.addEventListener("click", function(event) {

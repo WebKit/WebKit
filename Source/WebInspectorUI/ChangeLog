@@ -1,5 +1,16 @@
 2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: Add forgotten WebInspector.UIString from r190521
+        https://bugs.webkit.org/show_bug.cgi?id=150425
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (UserInterface/Views/CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded)
+
+2015-10-21  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: Adjust usages of classList.toggle to ensure a true/false value instead of undefined
         https://bugs.webkit.org/show_bug.cgi?id=150424
 
