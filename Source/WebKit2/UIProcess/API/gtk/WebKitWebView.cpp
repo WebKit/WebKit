@@ -2452,7 +2452,9 @@ void webkit_web_view_reload(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->reload(false);
+    const bool reloadFromOrigin = false;
+    const bool contentBlockersEnabled = true;
+    getPage(webView)->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
 /**
@@ -2466,7 +2468,9 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    getPage(webView)->reload(true);
+    const bool reloadFromOrigin = true;
+    const bool contentBlockersEnabled = true;
+    getPage(webView)->reload(reloadFromOrigin, contentBlockersEnabled);
 }
 
 /**

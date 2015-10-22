@@ -175,6 +175,8 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 @property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_AVAILABLE(WK_MAC_TBA, NA);
 #endif
 
+- (WKNavigation *)_reloadWithoutContentBlockers WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 - (void)_killWebContentProcessAndResetState;
 
 - (void)_getMainResourceDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;

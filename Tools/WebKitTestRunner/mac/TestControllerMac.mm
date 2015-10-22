@@ -136,11 +136,6 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
         doneCompiling = true;
     }];
     platformRunUntil(doneCompiling, 0);
-
-    // This is for http/tests/contentextensions/disable-blocker.html
-    if (!test.urlContains("disable-blocker"))
-        return;
-    mainWebView()->platformView()._userContentExtensionsEnabled = false;
 #endif
 }
 

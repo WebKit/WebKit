@@ -1039,7 +1039,7 @@ void WebPageProxy::stopLoading()
     m_process->responsivenessTimer()->start();
 }
 
-RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin)
+RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin, bool contentBlockersEnabled)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
 
@@ -1059,7 +1059,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin)
     
     auto navigation = m_navigationState->createReloadNavigation();
 
-    m_process->send(Messages::WebPage::Reload(navigation->navigationID(), reloadFromOrigin, sandboxExtensionHandle), m_pageID);
+    m_process->send(Messages::WebPage::Reload(navigation->navigationID(), reloadFromOrigin, contentBlockersEnabled, sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer()->start();
 
     return WTF::move(navigation);
@@ -5202,7 +5202,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.appleMailPaginationQuirkEnabled = false;
 #endif
     parameters.shouldScaleViewToFitDocument = m_shouldScaleViewToFitDocument;
-    parameters.userContentExtensionsEnabled = m_userContentExtensionsEnabled;
 
     return parameters;
 }
@@ -6098,19 +6097,6 @@ void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocu
         return;
 
     m_process->send(Messages::WebPage::SetShouldScaleViewToFitDocument(shouldScaleViewToFitDocument), m_pageID);
-}
-
-void WebPageProxy::setUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
-{
-    if (m_userContentExtensionsEnabled == userContentExtensionsEnabled)
-        return;
-
-    m_userContentExtensionsEnabled = userContentExtensionsEnabled;
-
-    if (!isValid())
-        return;
-
-    m_process->send(Messages::WebPage::SetUserContentExtensionsEnabled(userContentExtensionsEnabled), m_pageID);
 }
 
 } // namespace WebKit

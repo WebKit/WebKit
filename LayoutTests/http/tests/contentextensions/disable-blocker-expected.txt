@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 12: status: 0, readyState:1, responseText: 
-CONSOLE MESSAGE: line 12: status: 200, readyState:2, responseText: 
-CONSOLE MESSAGE: line 12: status: 200, readyState:3, responseText: 
-CONSOLE MESSAGE: line 12: status: 200, readyState:4, responseText: This page should load.
-<script>
-    console.log("This page should load.");
-</script>
-
-This page should load successfully. The content blocker is disabled in WebKitTestRunner before loading the page.

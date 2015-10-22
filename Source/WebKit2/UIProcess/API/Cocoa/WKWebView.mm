@@ -561,7 +561,9 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 - (WKNavigation *)reload
 {
-    auto navigation = _page->reload(false);
+    const bool reloadFromOrigin = false;
+    const bool contentBlockersEnabled = true;
+    auto navigation = _page->reload(reloadFromOrigin, contentBlockersEnabled);
     if (!navigation)
         return nil;
 
@@ -570,7 +572,9 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 - (WKNavigation *)reloadFromOrigin
 {
-    auto navigation = _page->reload(true);
+    const bool reloadFromOrigin = true;
+    const bool contentBlockersEnabled = true;
+    auto navigation = _page->reload(reloadFromOrigin, contentBlockersEnabled);
     if (!navigation)
         return nil;
 
@@ -2017,12 +2021,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)_setUserContentExtensionsEnabled:(BOOL)userContentExtensionsEnabled
 {
-    _page->setUserContentExtensionsEnabled(userContentExtensionsEnabled);
+    // This is kept for binary compatibility with iOS 9.
 }
 
 - (BOOL)_userContentExtensionsEnabled
 {
-    return _page->userContentExtensionsEnabled();
+    // This is kept for binary compatibility with iOS 9.
+    return true;
 }
 
 - (pid_t)_webProcessIdentifier
@@ -2036,6 +2041,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     _page->process().terminate();
+}
+
+- (WKNavigation *)_reloadWithoutContentBlockers
+{
+    const bool reloadFromOrigin = false;
+    const bool contentBlockersEnabled = false;
+    auto navigation = _page->reload(reloadFromOrigin, contentBlockersEnabled);
+    if (!navigation)
+        return nil;
+    
+    return [wrapper(*navigation.release().leakRef()) autorelease];
 }
 
 - (void)_killWebContentProcessAndResetState
