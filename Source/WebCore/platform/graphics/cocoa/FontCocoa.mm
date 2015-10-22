@@ -178,7 +178,7 @@ void Font::platformInit()
     // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
     // We only apply this rule in the important case of fonts with a MATH table.
     CFArrayRef availableTables = CTFontCopyAvailableTables(m_platformData.cgFont(), kCTFontTableOptionNoOptions);
-    if (CFArrayContainsValue(availableTables, CFRangeMake(0, CFArrayGetCount(availableTables)), kCTFontTableMATH)) {
+    if (CFArrayContainsValue(availableTables, CFRangeMake(0, CFArrayGetCount(availableTables)), &kCTFontTableMATH)) {
         if (CFDataRef os2Table = CGFontCopyTableForTag(m_platformData.cgFont(), kCTFontTableOS2)) {
             // For the structure of the OS/2 table, see
             // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6OS2.html
