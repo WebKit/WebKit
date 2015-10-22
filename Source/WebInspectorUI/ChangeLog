@@ -1,5 +1,24 @@
 2015-10-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: srcset attributes should have hyperlinks to the resources
+        https://bugs.webkit.org/show_bug.cgi?id=150409
+
+        Reviewed by Timothy Hatcher.
+
+        Follow-up tweaks and fixes that were intended to be landed.
+
+        * UserInterface/Views/CodeMirrorAdditions.js:
+        (tokenizeSrcSetString):
+        Multiline parsing has issues recovering the state CodeMirror
+        expects, so we just bail in those cases. Leading whitespace
+        is also handled poorly, but expected to be rare.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._buildAttributeDOM):
+        Trim to eliminate leading whitespace.
+
+2015-10-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Restore :not(:placeholder-shown) behavior on search bars with comments
         https://bugs.webkit.org/show_bug.cgi?id=150452
 
