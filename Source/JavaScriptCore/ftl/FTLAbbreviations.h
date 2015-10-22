@@ -149,10 +149,6 @@ static inline LValue mdNode(LContext context, LValue arg1, LValue arg2, LValue a
 
 static inline void setMetadata(LValue instruction, unsigned kind, LValue metadata) { llvm->SetMetadata(instruction, kind, metadata); }
 
-static inline LValue getFirstInstruction(LBasicBlock block) { return llvm->GetFirstInstruction(block); }
-static inline LValue getNextInstruction(LValue instruction) { return llvm->GetNextInstruction(instruction); }
-
-
 static inline LValue addFunction(LModule module, const char* name, LType type) { return llvm->AddFunction(module, name, type); }
 static inline LValue getNamedFunction(LModule module, const char* name) { return llvm->GetNamedFunction(module, name); }
 static inline LValue getFirstFunction(LModule module) { return llvm->GetFirstFunction(module); }
@@ -213,9 +209,6 @@ static inline LValue constReal(LType type, double value) { return llvm->ConstRea
 static inline LValue constIntToPtr(LValue value, LType type) { return llvm->ConstIntToPtr(value, type); }
 static inline LValue constNull(LType type) { return llvm->ConstNull(type); }
 static inline LValue constBitCast(LValue value, LType type) { return llvm->ConstBitCast(value, type); }
-
-static inline LBasicBlock getFirstBasicBlock(LValue function) { return llvm->GetFirstBasicBlock(function); }
-static inline LBasicBlock getNextBasicBlock(LBasicBlock block) { return llvm->GetNextBasicBlock(block); }
 
 static inline LBasicBlock appendBasicBlock(LContext context, LValue function, const char* name = "") { return llvm->AppendBasicBlockInContext(context, function, name); }
 static inline LBasicBlock insertBasicBlock(LContext context, LBasicBlock beforeBasicBlock, const char* name = "") { return llvm->InsertBasicBlockInContext(context, beforeBasicBlock, name); }

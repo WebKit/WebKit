@@ -5647,19 +5647,6 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
 
-    bool isInlinableSize(LValue function)
-    {
-        size_t instructionCount = 0;
-        size_t maxSize = Options::maximumLLVMInstructionCountForNativeInlining();
-        for (LBasicBlock basicBlock = getFirstBasicBlock(function); basicBlock; basicBlock = getNextBasicBlock(basicBlock)) {
-            for (LValue instruction = getFirstInstruction(basicBlock); instruction; instruction = getNextInstruction(instruction)) {
-                if (++instructionCount >= maxSize)
-                    return false;
-            }
-        }
-        return true;
-    }
-
     LValue didOverflowStack()
     {
         // This does a very simple leaf function analysis. The invariant of FTL call

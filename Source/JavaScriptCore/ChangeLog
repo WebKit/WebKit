@@ -1,5 +1,23 @@
 2015-10-21  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Remove FTL Native Inlining, it is dead code
+        https://bugs.webkit.org/show_bug.cgi?id=150429
+
+        Reviewed by Filip Pizlo.
+
+        The code is not used and it is in the way of other changes.
+
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::getFirstInstruction): Deleted.
+        (JSC::FTL::getNextInstruction): Deleted.
+        (JSC::FTL::getFirstBasicBlock): Deleted.
+        (JSC::FTL::getNextBasicBlock): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::isInlinableSize): Deleted.
+        * runtime/Options.h:
+
+2015-10-21  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Remove two useless temporaries from the PutByOffset codegen
         https://bugs.webkit.org/show_bug.cgi?id=150421
 
