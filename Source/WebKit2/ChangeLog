@@ -1,3 +1,25 @@
+2015-10-21  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][GTK][WK2] Fix build break since r191402, r191401
+        https://bugs.webkit.org/show_bug.cgi?id=150432
+
+        Unreviewed EFL and GTK build fix.
+
+        * CMakeLists.txt:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createContextMenuProxy):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp:
+        (WebKit::WebContextMenuProxyEfl::show):
+        * UIProcess/efl/WebContextMenuProxyEfl.h:
+        (WebKit::WebContextMenuProxyEfl::create): Deleted.
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::createContextMenuProxy):
+        * UIProcess/efl/WebViewEfl.h:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::customizeMenu):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+
 2015-10-21  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WebContextMenuClient::customizeMenu, it's no longer used

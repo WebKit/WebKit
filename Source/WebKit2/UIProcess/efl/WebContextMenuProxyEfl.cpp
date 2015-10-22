@@ -50,6 +50,11 @@ WebContextMenuProxyEfl::~WebContextMenuProxyEfl()
 {
 }
 
+void WebContextMenuProxyEfl::show()
+{
+    showContextMenu();
+}
+
 void WebContextMenuProxyEfl::showContextMenu()
 {
     Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;

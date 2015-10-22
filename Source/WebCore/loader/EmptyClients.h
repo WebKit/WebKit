@@ -549,7 +549,9 @@ public:
     virtual ~EmptyContextMenuClient() {  }
     virtual void contextMenuDestroyed() override { }
 
-#if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
+#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
+    virtual std::unique_ptr<ContextMenu> customizeMenu(std::unique_ptr<ContextMenu>) override { return nullptr; }
+#else
     virtual PlatformMenuDescription getCustomMenuFromDefaultItems(ContextMenu*) override { return nullptr; }
 #endif
     virtual void contextMenuItemSelected(ContextMenuItem*, const ContextMenu*) override { }

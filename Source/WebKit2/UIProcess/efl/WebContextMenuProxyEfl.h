@@ -41,19 +41,16 @@ class WebPageProxy;
 
 class WebContextMenuProxyEfl : public WebContextMenuProxy {
 public:
-    static Ref<WebContextMenuProxyEfl> create(EwkView* viewImpl, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
-    {
-        return adoptRef(*new WebContextMenuProxyEfl(viewImpl, page, context, userData));
-    }
-
+    WebContextMenuProxyEfl(EwkView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
     ~WebContextMenuProxyEfl();
 
-    virtual void showContextMenu() override;
-    virtual void hideContextMenu() override;
-    virtual void cancelTracking() override;
-
 private:
-    WebContextMenuProxyEfl(EwkView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
+    virtual void show() override;
+
+    void showContextMenu();
+    void hideContextMenu();
+    void cancelTracking();
+
 
     EwkView* m_ewkView;
     WebPageProxy& m_page;

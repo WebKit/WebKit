@@ -438,7 +438,7 @@ RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy&)
     return nullptr;
 }
 
-RefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&)
+std::unique_ptr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&)
 {
     notImplemented();
     return nullptr;

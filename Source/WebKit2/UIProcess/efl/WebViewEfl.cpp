@@ -94,9 +94,9 @@ RefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy& page)
 }
 
 #if ENABLE(CONTEXT_MENUS)
-RefPtr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+std::unique_ptr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    return WebContextMenuProxyEfl::create(m_ewkView, page, context, userData);
+    return std::make_unique<WebContextMenuProxyEfl>(m_ewkView, page, context, userData);
 }
 #endif
 

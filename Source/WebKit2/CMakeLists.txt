@@ -359,7 +359,6 @@ set(WebKit2_SOURCES
     UIProcess/WebDatabaseManagerProxy.cpp
     UIProcess/WebDatabaseManagerProxyClient.cpp
     UIProcess/WebEditCommandProxy.cpp
-    UIProcess/WebFindClient.cpp
     UIProcess/WebFormClient.cpp
     UIProcess/WebFormSubmissionListenerProxy.cpp
     UIProcess/WebFrameListenerProxy.cpp
