@@ -63,7 +63,6 @@ list(APPEND WebKit2_SOURCES
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/gtk/ArgumentCodersGtk.cpp
-    Shared/gtk/NativeContextMenuItemGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
     Shared/gtk/NativeWebTouchEventGtk.cpp

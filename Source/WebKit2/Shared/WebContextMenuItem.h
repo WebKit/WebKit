@@ -29,7 +29,6 @@
 #if ENABLE(CONTEXT_MENUS)
 
 #include "APIObject.h"
-#include "NativeContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 
 namespace API {
@@ -49,11 +48,6 @@ public:
         return adoptRef(*new WebContextMenuItem(data));
     }
 
-    static PassRefPtr<WebContextMenuItem> create(const WebCore::ContextMenuItem& item)
-    {
-        return adoptRef(*new WebContextMenuItem(item));
-    }
-
     static PassRefPtr<WebContextMenuItem> create(const String& title, bool enabled, API::Array* submenuItems);
     static WebContextMenuItem* separatorItem();
 
@@ -63,15 +57,11 @@ public:
     void setUserData(API::Object*);
 
     const WebContextMenuItemData& data() { return m_webContextMenuItemData; }
-    NativeContextMenuItem* nativeContextMenuItem() { return m_nativeContextMenuItem.get(); }
 
 private:
     WebContextMenuItem(const WebContextMenuItemData&);
-    WebContextMenuItem(const WebCore::ContextMenuItem&);
 
     WebContextMenuItemData m_webContextMenuItemData;
-
-    std::unique_ptr<NativeContextMenuItem> m_nativeContextMenuItem;
 };
 
 } // namespace WebKit

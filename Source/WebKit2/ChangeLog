@@ -1,5 +1,32 @@
 2015-10-22  Anders Carlsson  <andersca@apple.com>
 
+        NativeContextMenuItem isn't needed anymore, remove it
+        https://bugs.webkit.org/show_bug.cgi?id=150473
+
+        Reviewed by Tim Horton.
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/NativeContextMenuItem.h: Removed.
+        (WebKit::NativeContextMenuItem::~NativeContextMenuItem): Deleted.
+        (WebKit::NativeContextMenuItem::nsMenuItem): Deleted.
+        * Shared/WebContextMenuItem.cpp:
+        (WebKit::WebContextMenuItem::WebContextMenuItem): Deleted.
+        * Shared/WebContextMenuItem.h:
+        (WebKit::WebContextMenuItem::create): Deleted.
+        (WebKit::WebContextMenuItem::nativeContextMenuItem): Deleted.
+        * Shared/efl/NativeContextMenuItemEfl.cpp: Removed.
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem): Deleted.
+        * Shared/gtk/NativeContextMenuItemGtk.cpp: Removed.
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem): Deleted.
+        * Shared/mac/NativeContextMenuItem.mm: Removed.
+        (WebKit::NativeContextMenuItem::NativeContextMenuItem): Deleted.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::nsMenuItem): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2015-10-22  Anders Carlsson  <andersca@apple.com>
+
         CTTE WebContextMenuItemData
         https://bugs.webkit.org/show_bug.cgi?id=150471
 

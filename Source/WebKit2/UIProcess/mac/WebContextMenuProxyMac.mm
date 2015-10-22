@@ -229,9 +229,6 @@ static RetainPtr<NSMenuItem> nsMenuItem(WebContextMenuProxyMac& contextMenuProxy
 
 static RetainPtr<NSMenuItem> nsMenuItem(WebContextMenuProxyMac& contextMenuProxy, const RefPtr<WebContextMenuItem>& item)
 {
-    if (NativeContextMenuItem* nativeItem = item->nativeContextMenuItem())
-        return nativeItem->nsMenuItem();
-
     return nsMenuItem(contextMenuProxy, item->data());
 }
 
