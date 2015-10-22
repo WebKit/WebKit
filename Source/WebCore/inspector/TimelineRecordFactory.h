@@ -58,8 +58,6 @@ namespace WebCore {
         static Ref<Inspector::InspectorObject> createGenericRecord(double startTime, int maxCallStackDepth);
         static Ref<Inspector::InspectorObject> createBackgroundRecord(double startTime, const String& thread);
 
-        static Ref<Inspector::InspectorObject> createGCEventData(const size_t usedHeapSizeDelta);
-
         static Ref<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
         static Ref<Inspector::InspectorObject> createConsoleProfileData(const String& title);
 

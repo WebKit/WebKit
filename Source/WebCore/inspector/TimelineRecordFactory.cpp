@@ -70,13 +70,6 @@ Ref<InspectorObject> TimelineRecordFactory::createBackgroundRecord(double startT
     return WTF::move(record);
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createGCEventData(const size_t usedHeapSizeDelta)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setInteger("usedHeapSizeDelta", usedHeapSizeDelta);
-    return WTF::move(data);
-}
-
 Ref<InspectorObject> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
 {
     Ref<InspectorObject> data = InspectorObject::create();

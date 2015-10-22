@@ -31,7 +31,6 @@
                 "FunctionCall",
                 "ProbeSample",
                 "ConsoleProfile",
-                "GCEvent",
                 "RequestAnimationFrame",
                 "CancelAnimationFrame",
                 "FireAnimationFrame",
