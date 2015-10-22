@@ -1,3 +1,10 @@
+2015-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        Speculative EFL build fix.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        Remove another customizeMenu call.
+
 2015-10-21  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL][GTK][WK2] Fix build break since r191402, r191401
