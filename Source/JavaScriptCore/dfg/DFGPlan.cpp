@@ -354,8 +354,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         
         // Ideally, these would be run to fixpoint with the object allocation sinking phase.
         performArgumentsElimination(dfg);
-        if (Options::usePutStackSinking())
-            performPutStackSinking(dfg);
+        performPutStackSinking(dfg);
         
         performConstantHoisting(dfg);
         performGlobalCSE(dfg);
