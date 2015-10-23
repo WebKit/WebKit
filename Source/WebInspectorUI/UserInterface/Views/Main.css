@@ -262,7 +262,7 @@ body.window-inactive #split-content-browser {
     border: none;
 
     background-color: transparent;
-    background-image: -webkit-canvas(go-to-arrow-normal);
+    background-image: url(../Images/GoToArrow.svg#normal);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 10px 10px;
@@ -277,15 +277,15 @@ body.window-inactive #split-content-browser {
 }
 
 .go-to-arrow:active {
-    background-image: -webkit-canvas(go-to-arrow-normal-active);
+    background-image: url(../Images/GoToArrow.svg#active);
 }
 
 :matches(:focus, .force-focus) .selected .go-to-arrow {
-    background-image: -webkit-canvas(go-to-arrow-selected);
+    background-image: url(../Images/GoToArrow.svg#selected);
 }
 
 :matches(:focus, .force-focus) .selected .go-to-arrow:active {
-    background-image: -webkit-canvas(go-to-arrow-selected-active);
+    background-image: url(../Images/GoToArrow.svg#selected-active);
 }
 
 .hidden {

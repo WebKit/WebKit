@@ -53,8 +53,6 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
         this._contentElement.className = "content";
         this._element.appendChild(this._contentElement);
 
-        this._generateDisclosureTrianglesIfNeeded();
-
         this._identifier = identifier;
         this.title = title;
         this.groups = groups || [new WebInspector.DetailsSectionGroup];
@@ -144,33 +142,7 @@ WebInspector.DetailsSection = class DetailsSection extends WebInspector.Object
     {
         this._headerElement.classList.remove(WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName);
     }
-
-    _generateDisclosureTrianglesIfNeeded()
-    {
-        if (WebInspector.DetailsSection._generatedDisclosureTriangles)
-            return;
-
-        // Set this early instead of in _generateDisclosureTriangle because we don't want multiple sections that are
-        // created at the same time to duplicate the work (even though it would be harmless.)
-        WebInspector.DetailsSection._generatedDisclosureTriangles = true;
-
-        var specifications = {};
-        specifications[WebInspector.DetailsSection.DisclosureTriangleNormalCanvasIdentifierSuffix] = {
-            fillColor: [134, 134, 134]
-        };
-
-        specifications[WebInspector.DetailsSection.DisclosureTriangleActiveCanvasIdentifierSuffix] = {
-            fillColor: [57, 57, 57]
-        };
-
-        generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.svg", specifications, 13, 13, WebInspector.DetailsSection.DisclosureTriangleOpenCanvasIdentifier);
-        generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.svg", specifications, 13, 13, WebInspector.DetailsSection.DisclosureTriangleClosedCanvasIdentifier);
-    }
 };
 
 WebInspector.DetailsSection.CollapsedStyleClassName = "collapsed";
 WebInspector.DetailsSection.MouseOverOptionsElementStyleClassName = "mouse-over-options-element";
-WebInspector.DetailsSection.DisclosureTriangleOpenCanvasIdentifier = "details-section-disclosure-triangle-open";
-WebInspector.DetailsSection.DisclosureTriangleClosedCanvasIdentifier = "details-section-disclosure-triangle-closed";
-WebInspector.DetailsSection.DisclosureTriangleNormalCanvasIdentifierSuffix = "-normal";
-WebInspector.DetailsSection.DisclosureTriangleActiveCanvasIdentifierSuffix = "-active";

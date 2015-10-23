@@ -1,3 +1,141 @@
+2015-10-22  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove generateColoredImagesForCSS and its clients
+        https://bugs.webkit.org/show_bug.cgi?id=150474
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/ImageUtilities.js:
+        (generateColoredImage): Deleted.
+        (imageLoaded): Deleted.
+        (ensureImageIsLoaded): Deleted.
+        (restoreImages.restoreActiveImages): Deleted.
+        (restoreImages): Deleted.
+        (restoreImage): Deleted.
+        (update): Deleted.
+        (generateImage): Deleted.
+        (generateColoredImagesForCSS): Deleted.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded): Deleted call to _generateDisclosureTriangleImages.
+        (WebInspector._generateDisclosureTriangleImages): Deleted.
+        (WebInspector.createGoToArrowButton): Deleted code to generate the states.
+
+        * UserInterface/Images/BackArrow.svg: Removed.
+        * UserInterface/Images/BackForwardArrows.svg: Added.
+        * UserInterface/Images/DisclosureTriangleSmallClosed.svg: Removed.
+        * UserInterface/Images/DisclosureTriangleSmallOpen.svg: Removed.
+        * UserInterface/Images/DisclosureTriangleTinyClosed.svg: Removed.
+        * UserInterface/Images/DisclosureTriangleTinyOpen.svg: Removed.
+        * UserInterface/Images/DisclosureTriangles.svg: Added.
+        * UserInterface/Images/ForwardArrow.svg: Removed.
+        * UserInterface/Images/GoToArrow.svg:
+        * UserInterface/Images/Locked.svg: Moved fill color here.
+        * UserInterface/Images/SortIndicatorArrows.svg: Added.
+        * UserInterface/Images/SortIndicatorDownArrow.svg: Removed.
+        * UserInterface/Images/SortIndicatorUpArrow.svg: Removed.
+        * UserInterface/Images/gtk/BackArrow.svg: Removed.
+        * UserInterface/Images/gtk/BackForwardArrows.svg: Added.
+        * UserInterface/Images/gtk/DisclosureTriangleSmallClosed.svg: Removed.
+        * UserInterface/Images/gtk/DisclosureTriangleSmallOpen.svg: Removed.
+        * UserInterface/Images/gtk/DisclosureTriangleTinyClosed.svg: Removed.
+        * UserInterface/Images/gtk/DisclosureTriangleTinyOpen.svg: Removed.
+        * UserInterface/Images/gtk/DisclosureTriangles.svg: Added.
+        * UserInterface/Images/gtk/ForwardArrow.svg: Removed.
+        * UserInterface/Images/gtk/GoToArrow.svg:
+        * UserInterface/Images/gtk/Locked.svg: Moved fill color here.
+        * UserInterface/Images/gtk/SortIndicatorArrows.svg: Added.
+        * UserInterface/Images/gtk/SortIndicatorDownArrow.svg: Removed.
+        * UserInterface/Images/gtk/SortIndicatorUpArrow.svg: Removed.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section.locked > .header::before):
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection): Deleted.
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message.expandable .console-top-level-message::before):
+        (.console-message.expandable.expanded .console-top-level-message::before):
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser): Use BackForwardArrows.svg.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline li.parent::before):
+        (.dom-tree-outline:focus li.parent.selected::before):
+        (.dom-tree-outline li.parent.expanded::before):
+        (.dom-tree-outline:focus li.parent.expanded.selected::before):
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid th.sort-ascending > div:first-child::after):
+        (.data-grid th.sort-descending > div:first-child::after):
+        (.data-grid tr.parent td.disclosure::before):
+        (.data-grid tr.parent.expanded td.disclosure::before):
+        (.data-grid:matches(:focus, .force-focus) tr.parent.selected td.disclosure::before):
+        (.data-grid:matches(:focus, .force-focus) tr.parent.expanded.selected td.disclosure::before):
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid): Deleted call to _generateSortIndicatorImagesIfNeeded.
+        (WebInspector.DataGrid.prototype._generateSortIndicatorImagesIfNeeded): Deleted.
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .header::before):
+        (.details-section > .header:not(.mouse-over-options-element):active::before):
+        (.details-section.collapsed > .header::before):
+        (.details-section.collapsed > .header:not(.mouse-over-options-element):active::before):
+
+        * UserInterface/Views/DetailsSection.js:
+        (WebInspector.DetailsSection): Deleted call to _generateDisclosureTrianglesIfNeeded.
+        (WebInspector.DetailsSection.prototype._generateDisclosureTrianglesIfNeeded): Deleted.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object > .formatted-error::before):
+        (.error-object.expanded > .formatted-error::before):
+
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > button.segmented.left > .glyph):
+        (.find-banner > button.segmented.left:active:not(:disabled) > .glyph):
+        (.find-banner > button.segmented.right > .glyph):
+        (.find-banner > button.segmented.right:active:not(:disabled) > .glyph):
+
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner): Deleted call to _generateButtonsGlyphsIfNeeded.
+        (WebInspector.FindBanner.prototype._generateButtonsGlyphsIfNeeded): Deleted.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-group-title::before):
+        (.console-group.collapsed .console-group-title::before):
+
+        * UserInterface/Views/Main.css:
+        (.go-to-arrow):
+        (.go-to-arrow:active):
+        (:matches(:focus, .force-focus) .selected .go-to-arrow):
+        (:matches(:focus, .force-focus) .selected .go-to-arrow:active):
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.navigation-sidebar-panel-content-tree-outline .item .disclosure-button):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button):
+        (.navigation-sidebar-panel-content-tree-outline .item.expanded .disclosure-button):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button):
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel): Deleted call to _generateDisclosureTrianglesIfNeeded.
+        (WebInspector.NavigationSidebarPanel.prototype._generateDisclosureTrianglesIfNeeded): Deleted.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property.parent > .disclosure-button):
+        (.object-tree-property.parent.expanded > .disclosure-button):
+        (.object-tree-property .read-only): Deleted.
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree > :matches(.title, .object-preview)::before):
+        (.object-tree.expanded > :matches(.title, .object-preview)::before):
+
+        * UserInterface/Views/TypeTreeElement.css:
+        (.type-tree-element.parent > .disclosure-button):
+        (.type-tree-element.parent.expanded > .disclosure-button):
+
 2015-10-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: CSS Data URIs count against page weight twice

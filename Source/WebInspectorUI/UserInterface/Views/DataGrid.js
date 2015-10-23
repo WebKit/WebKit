@@ -98,8 +98,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
             for (var columnIdentifier in columnsData)
                 this.insertColumn(columnIdentifier, columnsData[columnIdentifier]);
         }
-
-        this._generateSortIndicatorImagesIfNeeded();
     }
 
     static createSortableDataGrid(columnNames, values)
@@ -1083,21 +1081,6 @@ WebInspector.DataGrid = class DataGrid extends WebInspector.Object
     headerTableHeader(columnIdentifier)
     {
         return this._headerTableCellElements.get(columnIdentifier);
-    }
-
-    _generateSortIndicatorImagesIfNeeded()
-    {
-        if (WebInspector.DataGrid._generatedSortIndicatorImages)
-            return;
-
-        WebInspector.DataGrid._generatedSortIndicatorImages = true;
-
-        var specifications = {arrow: {
-            fillColor: [81, 81, 81],
-        }};
-
-        generateColoredImagesForCSS("Images/SortIndicatorDownArrow.svg", specifications, 9, 8, "data-grid-sort-indicator-down-");
-        generateColoredImagesForCSS("Images/SortIndicatorUpArrow.svg", specifications, 9, 8, "data-grid-sort-indicator-up-");
     }
 
     _mouseDownInDataTable(event)

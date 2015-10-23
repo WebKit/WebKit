@@ -34,7 +34,7 @@
     margin-right: 2px;
     width: 13px;
     height: 13px;
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-size: 13px 13px;
     background-repeat: no-repeat;
     background-position: center;
@@ -42,7 +42,7 @@
 }
 
 .error-object.expanded > .formatted-error::before {
-    background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
+    background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
 .error-object-link-container {
