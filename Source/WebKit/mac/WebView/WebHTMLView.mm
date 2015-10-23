@@ -3365,21 +3365,6 @@ static void setMenuTargets(NSMenu* menu)
     if (!coreMenu)
         return nil;
 
-    auto menuItemVector = contextMenuItemVector(coreMenu->platformDescription());
-    for (auto& menuItem : menuItemVector) {
-        if (menuItem.action() != ContextMenuItemTagShareMenu)
-            continue;
-
-        NSMenuItem *nsItem = menuItem.platformDescription();
-        if (![nsItem.representedObject isKindOfClass:[NSSharingServicePicker class]]) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-#if ENABLE(SERVICE_CONTROLS)
-        _private->currentSharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithSharingServicePicker:nsItem.representedObject client:static_cast<WebContextMenuClient&>(page->contextMenuController().client())]);
-#endif
-    }
-
     NSArray* menuItems = coreMenu->platformDescription();
     if (!menuItems)
         return nil;
@@ -3388,14 +3373,24 @@ static void setMenuTargets(NSMenu* menu)
     if (!count)
         return nil;
 
-    NSMenu* menu = [[[NSMenu alloc] init] autorelease];
-    for (NSUInteger i = 0; i < count; i++)
-        [menu addItem:[menuItems objectAtIndex:i]];
-    setMenuTargets(menu);
+    auto menu = adoptNS([[NSMenu alloc] init]);
+
+    for (NSMenuItem *item in menuItems) {
+        [menu addItem:item];
+
+        if (item.tag == ContextMenuItemTagShareMenu) {
+            ASSERT([item.representedObject isKindOfClass:[NSSharingServicePicker class]]);
+#if ENABLE(SERVICE_CONTROLS)
+            _private->currentSharingServicePickerController = adoptNS([[WebSharingServicePickerController alloc] initWithSharingServicePicker:item.representedObject client:static_cast<WebContextMenuClient&>(page->contextMenuController().client())]);
+#endif
+        }
+
+    }
+    setMenuTargets(menu.get());
     
     [[WebMenuTarget sharedMenuTarget] setMenuController:&page->contextMenuController()];
     
-    return menu;
+    return menu.autorelease();
 }
 #endif // !PLATFORM(IOS)
 
