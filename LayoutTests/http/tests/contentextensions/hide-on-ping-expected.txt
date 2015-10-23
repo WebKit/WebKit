@@ -1,0 +1,10 @@
+This test follows a link with a ping attribute where the ping URL matches a 'css-display-none' rule.
+This text should remain visible.
+ Link with ping
+
+
+--------
+Frame: 'result_frame'
+--------
+Ping received.
+No cookies in ping.
