@@ -61,6 +61,8 @@
       href="http://download.savannah.gnu.org/releases/"/>
   <repository type="git" name="freedesktop-git"
       href="http://anongit.freedesktop.org/git"/>
+  <repository type="tarball" name="people.freedesktop.org"
+      href="http://people.freedesktop.org"/>
 
   <autotools id="cairo"
              autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no"
@@ -362,9 +364,10 @@
   <autotools id="mesa" autogenargs="--enable-xlib-glx --disable-dri --with-gallium-drivers=swrast" skip-install="true">
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
-    <branch module="git/mesa/mesa.git" version="10.5.4" tag="mesa-10.5.4"
+    <branch module="/~brianp/mesa/10.5.4/mesa-10.5.4.tar.xz" version="10.5.4"
             checkoutdir="Mesa"
-            repo="freedesktop-git">
+            repo="people.freedesktop.org"
+            hash="sha256:b51e723f3a20d842c88a92d809435b229fc4744ca0dbec0317d9d4a3ac4c6803">
     </branch>
   </autotools>
 

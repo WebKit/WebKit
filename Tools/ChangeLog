@@ -1,3 +1,18 @@
+2015-10-23  Mark Salisbury  <mark.salisbury@hp.com>
+
+        [GTK] update-webkitgtk-libs should use mesa tarball
+
+        https://bugs.webkit.org/show_bug.cgi?id=150470
+
+        update-webkitgtk-libs downloads all build dependencies; in fixing
+        bug 148941 mesa was switched from ftp to git access.  Now an http
+        tarball is available, which is preferred over accessing via git.
+
+        Reviewed by Philippe Normand
+
+        * gtk/jhbuild.modules:
+        Mesa access changed to http tarball.
+
 2015-10-22  Sam Weinig  <sam@webkit.org>
 
         Navigations on the same host (but with different schemes and ports) should not trigger universal links
