@@ -136,7 +136,7 @@ void WebContextMenuProxyGtk::populate(Vector<ContextMenuItem>& items)
 void WebContextMenuProxyGtk::populate(const Vector<RefPtr<WebContextMenuItem>>& items)
 {
     for (size_t i = 0; i < items.size(); i++) {
-        ContextMenuItem menuitem = items.at(i)->data()->core();
+        ContextMenuItem menuitem = items.at(i)->data().core();
         append(menuitem);
     }
 }

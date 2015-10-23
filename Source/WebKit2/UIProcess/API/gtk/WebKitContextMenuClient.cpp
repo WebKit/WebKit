@@ -47,7 +47,7 @@ private:
         Vector<WebContextMenuItemData> menuItems;
         menuItems.reserveInitialCapacity(proposedMenu.size());
         for (auto& item : proposedMenu)
-            menuItems.uncheckedAppend(*item->data());
+            menuItems.uncheckedAppend(item->data());
         webkitWebViewPopulateContextMenu(m_webView, menuItems, hitTestResultData, variant.get());
         return true;
     }
