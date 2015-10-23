@@ -307,9 +307,10 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
 
     NSMutableArray *defaultMenuItems = defaultMenu->platformDescription();
 
-    unsigned defaultItemsCount = [defaultMenuItems count];
-    for (unsigned i = 0; i < defaultItemsCount; ++i)
-        [[defaultMenuItems objectAtIndex:i] setRepresentedObject:element];
+    for (NSMenuItem *menuItem in defaultMenuItems) {
+        if (!menuItem.representedObject)
+            menuItem.representedObject = element;
+    }
 
     NSMutableArray *savedItems = [fixMenusToSendToOldClients(defaultMenuItems) retain];
     NSArray *delegateSuppliedItems = CallUIDelegate(m_webView, selector, element, defaultMenuItems);

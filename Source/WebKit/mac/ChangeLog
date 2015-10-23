@@ -1,3 +1,16 @@
+2015-10-23  Anders Carlsson  <andersca@apple.com>
+
+        Don't override already existing represented objects on menu items
+        https://bugs.webkit.org/show_bug.cgi?id=150508
+
+        Reviewed by Tim Horton.
+
+        This fixes a crash/exception when a client implements webView:contextMenuItemsForElement:defaultMenuItems: and
+        the default menu has a share menu item.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+
 2015-10-22  Sam Weinig  <sam@webkit.org>
 
         Navigations on the same host (but with different schemes and ports) should not trigger universal links
