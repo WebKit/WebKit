@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#include "PluginComplexTextInputState.h"
 #include "WKLayoutMode.h"
 #include "WebPageProxy.h"
 #include <WebCore/TextIndicatorWindow.h>
@@ -159,6 +160,14 @@ public:
     void resetSecureInputState();
     bool inSecureInputState() const { return m_inSecureInputState; }
     void notifyInputContextAboutDiscardedComposition();
+    void setPluginComplexTextInputStateAndIdentifier(PluginComplexTextInputState, uint64_t identifier);
+    void disableComplexTextInputIfNecessary();
+    bool handlePluginComplexTextInputKeyDown(NSEvent *);
+    bool tryHandlePluginComplexTextInputKeyDown(NSEvent *);
+    void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus, uint64_t pluginComplexTextInputIdentifier);
+    bool tryPostProcessPluginComplexTextInputKeyDown(NSEvent *);
+    PluginComplexTextInputState pluginComplexTextInputState() const { return m_pluginComplexTextInputState; }
+    uint64_t pluginComplexTextInputIdentifier() const { return m_pluginComplexTextInputIdentifier; }
 
     void pressureChangeWithEvent(NSEvent *);
     NSEvent *lastPressureEvent() { return m_lastPressureEvent.get(); }
@@ -218,6 +227,8 @@ private:
 
     void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
 
+    void setPluginComplexTextInputState(PluginComplexTextInputState);
+
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;
     PageClient& m_pageClient;
@@ -250,6 +261,12 @@ private:
 
     bool m_inSecureInputState { false };
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
+
+    // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
+    uint64_t m_pluginComplexTextInputIdentifier;
+
+    // The state of complex text input for the plug-in.
+    PluginComplexTextInputState m_pluginComplexTextInputState;
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;

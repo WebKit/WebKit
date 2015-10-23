@@ -36,6 +36,7 @@
 #import "PageClient.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
+#import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebView.h"
 #import "WebEditCommandProxy.h"
@@ -1013,6 +1014,116 @@ void WebViewImpl::notifyInputContextAboutDiscardedComposition()
     LOG(TextInput, "-> discardMarkedText");
 
     [[m_view _superInputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
+}
+
+void WebViewImpl::setPluginComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
+{
+    m_pluginComplexTextInputState = pluginComplexTextInputState;
+
+    if (m_pluginComplexTextInputState != PluginComplexTextInputDisabled)
+        return;
+
+    // Send back an empty string to the plug-in. This will disable text input.
+    m_page.sendComplexTextInputToPlugin(m_pluginComplexTextInputIdentifier, String());
+}
+
+void WebViewImpl::setPluginComplexTextInputStateAndIdentifier(PluginComplexTextInputState pluginComplexTextInputState, uint64_t pluginComplexTextInputIdentifier)
+{
+    if (pluginComplexTextInputIdentifier != m_pluginComplexTextInputIdentifier) {
+        // We're asked to update the state for a plug-in that doesn't have focus.
+        return;
+    }
+
+    setPluginComplexTextInputState(pluginComplexTextInputState);
+}
+
+void WebViewImpl::disableComplexTextInputIfNecessary()
+{
+    if (!m_pluginComplexTextInputIdentifier)
+        return;
+
+    if (m_pluginComplexTextInputState != PluginComplexTextInputEnabled)
+        return;
+
+    // Check if the text input window has been dismissed.
+    if (![[WKTextInputWindowController sharedTextInputWindowController] hasMarkedText])
+        setPluginComplexTextInputState(PluginComplexTextInputDisabled);
+}
+
+bool WebViewImpl::handlePluginComplexTextInputKeyDown(NSEvent *event)
+{
+    ASSERT(m_pluginComplexTextInputIdentifier);
+    ASSERT(m_pluginComplexTextInputState != PluginComplexTextInputDisabled);
+
+    BOOL usingLegacyCocoaTextInput = m_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy;
+
+    NSString *string = nil;
+    BOOL didHandleEvent = [[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:event usingLegacyCocoaTextInput:usingLegacyCocoaTextInput string:&string];
+
+    if (string) {
+        m_page.sendComplexTextInputToPlugin(m_pluginComplexTextInputIdentifier, string);
+
+        if (!usingLegacyCocoaTextInput)
+            m_pluginComplexTextInputState = PluginComplexTextInputDisabled;
+    }
+
+    return didHandleEvent;
+}
+
+bool WebViewImpl::tryHandlePluginComplexTextInputKeyDown(NSEvent *event)
+{
+    if (!m_pluginComplexTextInputIdentifier || m_pluginComplexTextInputState == PluginComplexTextInputDisabled)
+        return NO;
+
+    // Check if the text input window has been dismissed and let the plug-in process know.
+    // This is only valid with the updated Cocoa text input spec.
+    disableComplexTextInputIfNecessary();
+
+    // Try feeding the keyboard event directly to the plug-in.
+    if (m_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy)
+        return handlePluginComplexTextInputKeyDown(event);
+
+    return NO;
+}
+
+void WebViewImpl::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus, uint64_t pluginComplexTextInputIdentifier)
+{
+    BOOL inputSourceChanged = m_pluginComplexTextInputIdentifier;
+
+    if (pluginHasFocusAndWindowHasFocus) {
+        // Check if we're already allowing text input for this plug-in.
+        if (pluginComplexTextInputIdentifier == m_pluginComplexTextInputIdentifier)
+            return;
+
+        m_pluginComplexTextInputIdentifier = pluginComplexTextInputIdentifier;
+
+    } else {
+        // Check if we got a request to unfocus a plug-in that isn't focused.
+        if (pluginComplexTextInputIdentifier != m_pluginComplexTextInputIdentifier)
+            return;
+
+        m_pluginComplexTextInputIdentifier = 0;
+    }
+
+    if (inputSourceChanged) {
+        // The input source changed; discard any entered text.
+        [[WKTextInputWindowController sharedTextInputWindowController] unmarkText];
+    }
+    
+    // This will force the current input context to be updated to its correct value.
+    [NSApp updateWindows];
+}
+
+bool WebViewImpl::tryPostProcessPluginComplexTextInputKeyDown(NSEvent *event)
+{
+    if (!m_pluginComplexTextInputIdentifier || m_pluginComplexTextInputState == PluginComplexTextInputDisabled)
+        return NO;
+
+    // In the legacy text input model, the event has already been sent to the input method.
+    if (m_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy)
+        return NO;
+
+    return handlePluginComplexTextInputKeyDown(event);
 }
 
 void WebViewImpl::pressureChangeWithEvent(NSEvent *event)

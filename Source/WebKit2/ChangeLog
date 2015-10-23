@@ -1,3 +1,40 @@
+2015-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _interpretKeyEvent:completionHandler:]):
+        (-[WKView inputContext]):
+        (-[WKView performKeyEquivalent:]):
+        (-[WKView keyDown:]):
+        (-[WKView _doneWithKeyEvent:eventWasHandled:]):
+        (-[WKView _setPluginComplexTextInputState:]): Deleted.
+        (-[WKView _disableComplexTextInputIfNecessary]): Deleted.
+        (-[WKView _handlePluginComplexTextInputKeyDown:]): Deleted.
+        (-[WKView _tryHandlePluginComplexTextInputKeyDown:]): Deleted.
+        (-[WKView _tryPostProcessPluginComplexTextInputKeyDown:]): Deleted.
+        (-[WKView _pluginFocusOrWindowFocusChanged:pluginComplexTextInputIdentifier:]): Deleted.
+        (-[WKView _setPluginComplexTextInputState:pluginComplexTextInputIdentifier:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::pluginComplexTextInputState):
+        (WebKit::WebViewImpl::pluginComplexTextInputIdentifier):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setPluginComplexTextInputState):
+        (WebKit::WebViewImpl::setPluginComplexTextInputStateAndIdentifier):
+        (WebKit::WebViewImpl::disableComplexTextInputIfNecessary):
+        (WebKit::WebViewImpl::handlePluginComplexTextInputKeyDown):
+        (WebKit::WebViewImpl::tryHandlePluginComplexTextInputKeyDown):
+        (WebKit::WebViewImpl::pluginFocusOrWindowFocusChanged):
+        (WebKit::WebViewImpl::tryPostProcessPluginComplexTextInputKeyDown):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::pluginFocusOrWindowFocusChanged):
+        (WebKit::PageClientImpl::setPluginComplexTextInputState):
+        Move a few more methods.
+
 2015-10-23  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Fix UserMediaPermissionRequestProxy::invalidate

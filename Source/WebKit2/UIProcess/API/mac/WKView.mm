@@ -201,15 +201,8 @@ struct WKViewInterpretKeyEventsParameters {
     WKViewInterpretKeyEventsParameters* _interpretKeyEventsParameters;
 #endif
 
-    // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
-    uint64_t _pluginComplexTextInputIdentifier;
-
-    // The state of complex text input for the plug-in.
-    PluginComplexTextInputState _pluginComplexTextInputState;
-
     BOOL _willBecomeFirstResponderAgain;
     NSEvent *_mouseDownEvent;
-    NSEvent *_pressureEvent;
     BOOL _ignoringMouseDraggedEvents;
 
     BOOL _hasSpellCheckerDocumentTag;
@@ -390,17 +383,6 @@ struct WKViewInterpretKeyEventsParameters {
 {
     _data->_impl->renewGState();
     [super renewGState];
-}
-
-- (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState
-{
-    _data->_pluginComplexTextInputState = pluginComplexTextInputState;
-    
-    if (_data->_pluginComplexTextInputState != PluginComplexTextInputDisabled)
-        return;
-
-    // Send back an empty string to the plug-in. This will disable text input.
-    _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, String());
 }
 
 typedef HashMap<SEL, String> SelectorNameMap;
@@ -1188,55 +1170,6 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     return result;
 }
 
-- (void)_disableComplexTextInputIfNecessary
-{
-    if (!_data->_pluginComplexTextInputIdentifier)
-        return;
-
-    if (_data->_pluginComplexTextInputState != PluginComplexTextInputEnabled)
-        return;
-
-    // Check if the text input window has been dismissed.
-    if (![[WKTextInputWindowController sharedTextInputWindowController] hasMarkedText])
-        [self _setPluginComplexTextInputState:PluginComplexTextInputDisabled];
-}
-
-- (BOOL)_handlePluginComplexTextInputKeyDown:(NSEvent *)event
-{
-    ASSERT(_data->_pluginComplexTextInputIdentifier);
-    ASSERT(_data->_pluginComplexTextInputState != PluginComplexTextInputDisabled);
-
-    BOOL usingLegacyCocoaTextInput = _data->_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy;
-
-    NSString *string = nil;
-    BOOL didHandleEvent = [[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:event usingLegacyCocoaTextInput:usingLegacyCocoaTextInput string:&string];
-
-    if (string) {
-        _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
-
-        if (!usingLegacyCocoaTextInput)
-            _data->_pluginComplexTextInputState = PluginComplexTextInputDisabled;
-    }
-
-    return didHandleEvent;
-}
-
-- (BOOL)_tryHandlePluginComplexTextInputKeyDown:(NSEvent *)event
-{
-    if (!_data->_pluginComplexTextInputIdentifier || _data->_pluginComplexTextInputState == PluginComplexTextInputDisabled)
-        return NO;
-
-    // Check if the text input window has been dismissed and let the plug-in process know.
-    // This is only valid with the updated Cocoa text input spec.
-    [self _disableComplexTextInputIfNecessary];
-
-    // Try feeding the keyboard event directly to the plug-in.
-    if (_data->_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy)
-        return [self _handlePluginComplexTextInputKeyDown:event];
-
-    return NO;
-}
-
 static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnderline>& result)
 {
     int length = [[string string] length];
@@ -1279,7 +1212,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     // For regular Web content, input methods run before passing a keydown to DOM, but plug-ins get an opportunity to handle the event first.
     // There is no need to collect commands, as the plug-in cannot execute them.
-    if (_data->_pluginComplexTextInputIdentifier) {
+    if (_data->_impl->pluginComplexTextInputIdentifier()) {
         completionHandler(NO, Vector<KeypressCommand>());
         return;
     }
@@ -1523,7 +1456,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSTextInputContext *)inputContext
 {
-    if (_data->_pluginComplexTextInputIdentifier) {
+    if (_data->_impl->pluginComplexTextInputIdentifier()) {
         ASSERT(!_data->_collectedKeypressCommands); // Should not get here from -_interpretKeyEvent:completionHandler:, we only use WKTextInputWindowController after giving the plug-in a chance to handle keydown natively.
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
     }
@@ -1638,7 +1571,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     ASSERT(event == [NSApp currentEvent]);
 
-    [self _disableComplexTextInputIfNecessary];
+    _data->_impl->disableComplexTextInputIfNecessary();
 
     // Pass key combos through WebCore if there is a key binding available for
     // this event. This lets webpages have a crack at intercepting key-modified keypresses.
@@ -1673,7 +1606,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     LOG(TextInput, "keyDown:%p %@%s", theEvent, theEvent, (theEvent == _data->_keyDownEventBeingResent) ? " (re-sent)" : "");
 
-    if ([self _tryHandlePluginComplexTextInputKeyDown:theEvent]) {
+    if (_data->_impl->tryHandlePluginComplexTextInputKeyDown(theEvent)) {
         LOG(TextInput, "...handled by plug-in");
         return;
     }
@@ -1859,7 +1792,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
 
-    if (_data->_pluginComplexTextInputIdentifier && !parameters)
+    if (_data->_impl->pluginComplexTextInputIdentifier() && !parameters)
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
 
     // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
@@ -2081,7 +2014,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     ASSERT(event == [NSApp currentEvent]);
 
-    [self _disableComplexTextInputIfNecessary];
+    _data->_impl->disableComplexTextInputIfNecessary();
 
     // Pass key combos through WebCore if there is a key binding available for
     // this event. This lets webpages have a crack at intercepting key-modified keypresses.
@@ -2118,7 +2051,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     [[theEvent retain] autorelease];
 
-    if ([self _tryHandlePluginComplexTextInputKeyDown:theEvent]) {
+    if (_data->_impl->tryHandlePluginComplexTextInputKeyDown(theEvent)) {
         LOG(TextInput, "...handled by plug-in");
         return;
     }
@@ -2541,24 +2474,12 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     }
 }
 
-- (BOOL)_tryPostProcessPluginComplexTextInputKeyDown:(NSEvent *)event
-{
-    if (!_data->_pluginComplexTextInputIdentifier || _data->_pluginComplexTextInputState == PluginComplexTextInputDisabled)
-        return NO;
-
-    // In the legacy text input model, the event has already been sent to the input method.
-    if (_data->_pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy)
-        return NO;
-
-    return [self _handlePluginComplexTextInputKeyDown:event];
-}
-
 - (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
     if ([event type] != NSKeyDown)
         return;
 
-    if ([self _tryPostProcessPluginComplexTextInputKeyDown:event])
+    if (_data->_impl->tryPostProcessPluginComplexTextInputKeyDown(event))
         return;
     
     if (eventWasHandled) {
@@ -2838,44 +2759,6 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 {
     _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
     [self _updateRemoteAccessibilityRegistration:YES];
-}
-
-- (void)_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
-{
-    BOOL inputSourceChanged = _data->_pluginComplexTextInputIdentifier;
-
-    if (pluginHasFocusAndWindowHasFocus) {
-        // Check if we're already allowing text input for this plug-in.
-        if (pluginComplexTextInputIdentifier == _data->_pluginComplexTextInputIdentifier)
-            return;
-
-        _data->_pluginComplexTextInputIdentifier = pluginComplexTextInputIdentifier;
-
-    } else {
-        // Check if we got a request to unfocus a plug-in that isn't focused.
-        if (pluginComplexTextInputIdentifier != _data->_pluginComplexTextInputIdentifier)
-            return;
-
-        _data->_pluginComplexTextInputIdentifier = 0;
-    }
-
-    if (inputSourceChanged) {
-        // The input source changed; discard any entered text.
-        [[WKTextInputWindowController sharedTextInputWindowController] unmarkText];
-    }
-
-    // This will force the current input context to be updated to its correct value.
-    [NSApp updateWindows];
-}
-
-- (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
-{
-    if (pluginComplexTextInputIdentifier != _data->_pluginComplexTextInputIdentifier) {
-        // We're asked to update the state for a plug-in that doesn't have focus.
-        return;
-    }
-
-    [self _setPluginComplexTextInputState:pluginComplexTextInputState];
 }
 
 - (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
