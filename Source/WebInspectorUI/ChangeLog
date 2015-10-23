@@ -1,3 +1,74 @@
+2015-10-23  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Visual sidebar should support multiple backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=148310
+
+        Reviewed by Timothy Hatcher.
+
+        Changes the layout of the Background - Style section in the Visual sidebar
+        to be a list instead of a single editable field for a background-image URL.
+        Allows for comma-separated background properties (both shorthand and
+        longhand) and displays them all in a single list for editing.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/VisualStyleColorPicker.js:
+        (WebInspector.VisualStyleColorPicker):
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.css:
+        (.visual-style-property-container.comma-separated-keyword-editor):
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._generateTextFromLonghandProperties.propertyValue):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype._generateTextFromLonghandProperties):
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor.prototype.modifyPropertyText):
+        Comma separated properties will now try to assemble a value from related longhand
+        properties so that a single shorthand property with commas may be used.
+
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section.background .details-section.background-style .visual-style-property-container.comma-separated-keyword-editor.background):
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBackgroundStyleSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._noRemainingCommaSeparatedEditorItems):
+        (WebInspector.VisualStyleDetailsPanel.prototype._selectedCommaSeparatedEditorItemValueChanged):
+        (WebInspector.VisualStyleDetailsPanel.prototype._commaSeparatedEditorTreeItemSelected):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection.noRemainingTreeItems): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection.selectedBoxShadowItemValueChanged): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateBoxShadowSection.boxShadowItemSelected): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection.noRemainingTreeItems): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection.selectedtransitionItemValueChanged): Deleted.
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateTransitionSection.transitionItemSelected): Deleted.
+        Made the "background-image" property into a comma separated editor.
+
+        * UserInterface/Views/VisualStyleFontFamilyListEditor.js:
+        (WebInspector.VisualStyleFontFamilyListEditor):
+        * UserInterface/Views/VisualStyleKeywordIconList.js:
+        (WebInspector.VisualStyleKeywordIconList.prototype.set value):
+        (WebInspector.VisualStyleKeywordIconList.prototype._handleKeywordChanged):
+        (WebInspector.VisualStyleKeywordIconList):
+        * UserInterface/Views/VisualStyleKeywordPicker.js:
+        (WebInspector.VisualStyleKeywordPicker.prototype.updateEditorValues):
+        (WebInspector.VisualStyleKeywordPicker.prototype._setValue):
+        * UserInterface/Views/VisualStyleNumberInputBox.js:
+        (WebInspector.VisualStyleNumberInputBox.prototype.set value):
+        * UserInterface/Views/VisualStylePropertyCombiner.js:
+        (WebInspector.VisualStylePropertyCombiner):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText.updateCompatibleEditor):
+        (WebInspector.VisualStylePropertyCombiner.prototype.updateValuesFromText):
+        * UserInterface/Views/VisualStylePropertyEditor.js:
+        (WebInspector.VisualStylePropertyEditor):
+        (WebInspector.VisualStylePropertyEditor.prototype.update):
+        (WebInspector.VisualStylePropertyEditor.prototype.getValuesFromText):
+        (WebInspector.VisualStylePropertyEditor.prototype.get propertyMissing):
+        (WebInspector.VisualStylePropertyEditor.prototype._valueDidChange):
+        Moved "propertyMissing" into a member variable for better access.
+
+        * UserInterface/Views/VisualStyleURLInput.js:
+        (WebInspector.VisualStyleURLInput):
+        (WebInspector.VisualStyleURLInput.prototype.get synthesizedValue):
+        (WebInspector.VisualStyleURLInput.prototype.parseValue):
+        Added support for specific keywords to be used in the input field.
+
 2015-10-22  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Remove generateColoredImagesForCSS and its clients

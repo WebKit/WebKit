@@ -25,9 +25,9 @@
 
 WebInspector.VisualStyleURLInput = class VisualStyleURLInput extends WebInspector.VisualStylePropertyEditor
 {
-    constructor(propertyNames, text, layoutReversed)
+    constructor(propertyNames, text, possibleValues, layoutReversed)
     {
-        super(propertyNames, text, null, null, "url-input", layoutReversed);
+        super(propertyNames, text, possibleValues, null, "url-input", layoutReversed);
 
         this._urlInputElement = document.createElement("input");
         this._urlInputElement.type = "url";
@@ -53,17 +53,23 @@ WebInspector.VisualStyleURLInput = class VisualStyleURLInput extends WebInspecto
 
     get synthesizedValue()
     {
-        var value = this.value;
+        let value = this.value;
         if (!value || !value.length)
             return null;
 
-        return "url(" + this.value + ")";
+        if (this.valueIsSupportedKeyword(value))
+            return value;
+
+        return "url(" + value + ")";
     }
 
     // Protected
 
     parseValue(text)
     {
+        if (this.valueIsSupportedKeyword(text))
+            return [text, text];
+
         return /^(?:url\(\s*)([^\)]*)(?:\s*\)\s*;?)$/.exec(text);
     }
 };

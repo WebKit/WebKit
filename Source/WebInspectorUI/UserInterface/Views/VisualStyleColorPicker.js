@@ -51,6 +51,7 @@ WebInspector.VisualStyleColorPicker = class VisualStyleColorPicker extends WebIn
 
         this._formatChanged = false;
         this._updateColorSwatch();
+        this._colorProperty = true;
     }
 
     // Public

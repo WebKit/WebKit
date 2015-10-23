@@ -79,7 +79,7 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
 
     updateEditorValues(updatedValues)
     {   if (!updatedValues.conflictingValues) {
-            let missing = updatedValues.propertyMissing || !updatedValues.value;
+            let missing = this._propertyMissing || !updatedValues.value;
             this._unchangedOptionElement.selected = missing;
             this.specialPropertyPlaceholderElement.hidden = !missing;
         }
@@ -102,7 +102,7 @@ WebInspector.VisualStyleKeywordPicker = class VisualStyleKeywordPicker extends W
             return;
         }
 
-        if (this._updatedValues.propertyMissing || !this.valueIsSupportedKeyword(value))
+        if (this._propertyMissing || !this.valueIsSupportedKeyword(value))
             return;
 
         if (value === this._keywordSelectElement.value)

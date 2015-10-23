@@ -95,6 +95,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
 
         this._updatedValues = {};
         this._lastValue = null;
+        this._propertyMissing = false;
 
         if (typeof propertyNames === "string")
             propertyNames = [propertyNames];
@@ -280,13 +281,21 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
             if (propertyMissing && this._style.nodeStyles)
                 property = this._style.nodeStyles.computedStyle.propertyForName(propertyInfo.name);
 
-            if (!property)
+            let longhandPropertyValue = null;
+            if (typeof this._generateTextFromLonghandProperties === "function")
+                longhandPropertyValue = this._generateTextFromLonghandProperties();
+
+            if (longhandPropertyValue)
+                propertyMissing = false;
+
+            let propertyText = (property && property.value) || longhandPropertyValue;
+            if (!propertyText || !propertyText.length)
                 continue;
 
-            if (!propertyMissing && property.anonymous)
+            if (!propertyMissing && property && property.anonymous)
                 this._representedProperty = property;
 
-            let newValues = this.getValuesFromText(property.value, propertyMissing);
+            let newValues = this.getValuesFromText(propertyText, propertyMissing);
             if (this._updatedValues.placeholder && this._updatedValues.placeholder !== newValues.placeholder)
                 propertyValuesConflict = true;
 
@@ -349,12 +358,13 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         if (propertyMissing)
             value = this.valueIsSupportedKeyword(text) ? text : null;
 
-        return {value, units, placeholder, propertyMissing};
+        this._propertyMissing = propertyMissing || false;
+        return {value, units, placeholder};
     }
 
     get propertyMissing()
     {
-        return this._updatedValues && this._updatedValues.propertyMissing;
+        return this._updatedValues && this._propertyMissing;
     }
 
     valueIsCompatible(value)
@@ -462,7 +472,7 @@ WebInspector.VisualStylePropertyEditor = class VisualStylePropertyEditor extends
         }
 
         this._lastValue = value;
-        this._updatedValues.propertyMissing = !value;
+        this._propertyMissing = !value;
         this._ignoreNextUpdate = true;
         this._specialPropertyPlaceholderElement.hidden = true;
 

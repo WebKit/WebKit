@@ -737,7 +737,6 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let textShadowStyle = new WebInspector.DetailsSectionRow;
 
         let textShadowColor = new WebInspector.VisualStyleColorPicker("text-shadow", WebInspector.UIString("Color"));
-        textShadowColor.colorProperty = true;
         let textShadowBlur = new WebInspector.VisualStyleNumberInputBox("text-shadow", WebInspector.UIString("Blur"), null, this._units.defaultsSansPercent);
         textShadowBlur.optionalProperty = true;
 
@@ -760,10 +759,10 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let backgroundStyleRow = new WebInspector.DetailsSectionRow;
 
         properties.backgroundColor = new WebInspector.VisualStyleColorPicker("background-color", WebInspector.UIString("Color"));
-        properties.backgroundImage = new WebInspector.VisualStyleURLInput("background-image", WebInspector.UIString("Image"));
+        properties.backgroundClip = new WebInspector.VisualStyleKeywordPicker("background-clip", WebInspector.UIString("Clip"), ["Inherit", "Border Box", "Padding Box", "Content Box"]);
 
         backgroundStyleRow.element.appendChild(properties.backgroundColor.element);
-        backgroundStyleRow.element.appendChild(properties.backgroundImage.element);
+        backgroundStyleRow.element.appendChild(properties.backgroundClip.element);
 
         let backgroundSizeRow = new WebInspector.DetailsSectionRow;
 
@@ -778,27 +777,58 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         backgroundSizeRow.element.appendChild(backgroundSizeX.element);
         backgroundSizeRow.element.appendChild(backgroundSizeY.element);
 
-        let backgroundRepeatRow = new WebInspector.DetailsSectionRow;
+        let backgroundRow = new WebInspector.DetailsSectionRow;
 
-        properties.backgroundRepeat = new WebInspector.VisualStyleKeywordPicker("background-repeat", WebInspector.UIString("Repeat"), this._keywords.defaults.concat(["No Repeat", "Repeat", "Repeat X", "Repeat Y"]));
-        properties.backgroundAttachment = new WebInspector.VisualStyleKeywordPicker("background-attachment", WebInspector.UIString("Attach"), this._keywords.defaults.concat(["Fixed", "Local", "Scroll"]));
+        properties.background = new WebInspector.VisualStyleCommaSeparatedKeywordEditor("background", null, {
+            "background-image": "none",
+            "background-position": "0% 0%",
+            "background-repeat": "repeat",
+            "background-attachment": "scroll",
+        });
 
-        backgroundRepeatRow.element.appendChild(properties.backgroundRepeat.element);
-        backgroundRepeatRow.element.appendChild(properties.backgroundAttachment.element);
+        backgroundRow.element.appendChild(properties.background.element);
+
+        let backgroundImageRow = new WebInspector.DetailsSectionRow;
+
+        let backgroundImage = new WebInspector.VisualStyleURLInput("background-image", WebInspector.UIString("Image"), this._keywords.defaults.concat(["None"]));
+
+        backgroundImageRow.element.appendChild(backgroundImage.element);
 
         let backgroundPositionRow = new WebInspector.DetailsSectionRow;
 
         let backgroundPositionX = new WebInspector.VisualStyleNumberInputBox("background-position", WebInspector.UIString("Position X"), ["Center", "Left", "Right"], this._units.defaults);
+        backgroundPositionX.optionalProperty = true;
         let backgroundPositionY = new WebInspector.VisualStyleNumberInputBox("background-position", WebInspector.UIString("Position Y"), ["Bottom", "Center", "Top"], this._units.defaults);
-
-        properties.backgroundPosition = new WebInspector.VisualStylePropertyCombiner("background-position", [backgroundPositionX, backgroundPositionY]);
+        backgroundPositionY.optionalProperty = true;
 
         backgroundPositionRow.element.appendChild(backgroundPositionX.element);
         backgroundPositionRow.element.appendChild(backgroundPositionY.element);
 
+        let backgroundRepeatRow = new WebInspector.DetailsSectionRow;
+
+        let backgroundRepeat = new WebInspector.VisualStyleKeywordPicker("background-repeat", WebInspector.UIString("Repeat"), this._keywords.defaults.concat(["No Repeat", "Repeat", "Repeat X", "Repeat Y"]));
+        backgroundRepeat.optionalProperty = true;
+        let backgroundAttachment = new WebInspector.VisualStyleKeywordPicker("background-attachment", WebInspector.UIString("Attach"), this._keywords.defaults.concat(["Fixed", "Local", "Scroll"]));
+        backgroundAttachment.optionalProperty = true;
+
+        backgroundRepeatRow.element.appendChild(backgroundRepeat.element);
+        backgroundRepeatRow.element.appendChild(backgroundAttachment.element);
+
+        let backgroundProperties = [backgroundImage, backgroundPositionX, backgroundPositionY, backgroundRepeat, backgroundAttachment];
+        let backgroundPropertyCombiner = new WebInspector.VisualStylePropertyCombiner("background", backgroundProperties);
+
+        let noRemainingCommaSeparatedEditorItems = this._noRemainingCommaSeparatedEditorItems.bind(this, backgroundPropertyCombiner, backgroundProperties);
+        properties.background.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems, noRemainingCommaSeparatedEditorItems, this);
+
+        let selectedCommaSeparatedEditorItemValueChanged = this._selectedCommaSeparatedEditorItemValueChanged.bind(this, properties.background, backgroundPropertyCombiner);
+        backgroundPropertyCombiner.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, selectedCommaSeparatedEditorItemValueChanged, this);
+
+        let commaSeparatedEditorTreeItemSelected = this._commaSeparatedEditorTreeItemSelected.bind(backgroundPropertyCombiner);
+        properties.background.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, commaSeparatedEditorTreeItemSelected, this);
+
         group.autocompleteCompatibleProperties = [properties.backgroundColor];
 
-        let backgroundStyleGroup = new WebInspector.DetailsSectionGroup([backgroundStyleRow, backgroundSizeRow, backgroundRepeatRow, backgroundPositionRow]);
+        let backgroundStyleGroup = new WebInspector.DetailsSectionGroup([backgroundStyleRow, backgroundSizeRow, backgroundRow, backgroundImageRow, backgroundPositionRow, backgroundRepeatRow]);
         this._populateSection(group, [backgroundStyleGroup]);
     }
 
@@ -962,7 +992,6 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let boxShadowRow = new WebInspector.DetailsSectionRow;
 
         properties.boxShadow = new WebInspector.VisualStyleCommaSeparatedKeywordEditor("box-shadow");
-        properties.boxShadow.element.style.marginLeft = "11px";
 
         boxShadowRow.element.appendChild(properties.boxShadow.element);
 
@@ -991,35 +1020,23 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         let boxShadowColorRow = new WebInspector.DetailsSectionRow;
 
         let boxShadowColor = new WebInspector.VisualStyleColorPicker("box-shadow", WebInspector.UIString("Color"));
-        boxShadowColor.colorProperty = true;
         let boxShadowInset = new WebInspector.VisualStyleKeywordCheckbox("box-shadow", WebInspector.UIString("Inset"), "Inset");
         boxShadowInset.optionalProperty = true;
 
         boxShadowColorRow.element.appendChild(boxShadowColor.element);
         boxShadowColorRow.element.appendChild(boxShadowInset.element);
 
-        let boxShadowPropertyCombiner = new WebInspector.VisualStylePropertyCombiner("box-shadow", [boxShadowH, boxShadowV, boxShadowBlur, boxShadowSpread, boxShadowColor, boxShadowInset]);
+        let boxShadowProperties = [boxShadowH, boxShadowV, boxShadowBlur, boxShadowSpread, boxShadowColor, boxShadowInset];
+        let boxShadowPropertyCombiner = new WebInspector.VisualStylePropertyCombiner("box-shadow", boxShadowProperties);
 
-        function noRemainingTreeItems() {
-            boxShadowPropertyCombiner.updateValuesFromText("");
-            boxShadowH.disabled = true;
-            boxShadowV.disabled = true;
-            boxShadowBlur.disabled = true;
-            boxShadowSpread.disabled = true;
-            boxShadowColor.disabled = true;
-            boxShadowInset.disabled = true;
-        }
-        properties.boxShadow.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems, noRemainingTreeItems, this);
+        let noRemainingCommaSeparatedEditorItems = this._noRemainingCommaSeparatedEditorItems.bind(this, boxShadowPropertyCombiner, boxShadowProperties);
+        properties.boxShadow.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems, noRemainingCommaSeparatedEditorItems, this);
 
-        function selectedBoxShadowItemValueChanged() {
-            properties.boxShadow.selectedTreeElementValue = boxShadowPropertyCombiner.synthesizedValue;
-        }
-        boxShadowPropertyCombiner.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, selectedBoxShadowItemValueChanged, this);
+        let selectedCommaSeparatedEditorItemValueChanged = this._selectedCommaSeparatedEditorItemValueChanged.bind(this, properties.boxShadow, boxShadowPropertyCombiner);
+        boxShadowPropertyCombiner.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, selectedCommaSeparatedEditorItemValueChanged, this);
 
-        function boxShadowItemSelected(event) {
-            boxShadowPropertyCombiner.updateValuesFromText(event.data.text || "");
-        }
-        properties.boxShadow.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, boxShadowItemSelected, this);
+        let commaSeparatedEditorTreeItemSelected = this._commaSeparatedEditorTreeItemSelected.bind(boxShadowPropertyCombiner);
+        properties.boxShadow.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, commaSeparatedEditorTreeItemSelected, this);
 
         group.autocompleteCompatibleProperties = [boxShadowColor];
 
@@ -1034,8 +1051,12 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
 
         let transitionRow = new WebInspector.DetailsSectionRow;
 
-        properties.transition = new WebInspector.VisualStyleCommaSeparatedKeywordEditor("transition");
-        properties.transition.element.style.marginLeft = "11px";
+        properties.transition = new WebInspector.VisualStyleCommaSeparatedKeywordEditor("transition", null, {
+            "transition-property": "all",
+            "transition-timing-function": "ease",
+            "transition-duration": "0",
+            "transition-delay": "0"
+        });
 
         transitionRow.element.appendChild(properties.transition.element);
 
@@ -1057,31 +1078,43 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
         transitionDurationRow.element.appendChild(transitionDuration.element);
         transitionDurationRow.element.appendChild(transitionDelay.element);
 
-        let transitionPropertyCombiner = new WebInspector.VisualStylePropertyCombiner("transition", [transitionProperty, transitionTiming, transitionDuration, transitionDelay]);
+        let transitionProperties = [transitionProperty, transitionTiming, transitionDuration, transitionDelay];
+        let transitionPropertyCombiner = new WebInspector.VisualStylePropertyCombiner("transition", transitionProperties);
 
-        function noRemainingTreeItems() {
-            transitionPropertyCombiner.updateValuesFromText("");
-            transitionProperty.disabled = true;
-            transitionTiming.disabled = true;
-            transitionDuration.disabled = true;
-            transitionDelay.disabled = true;
-        }
-        properties.transition.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems, noRemainingTreeItems, this);
+        let noRemainingCommaSeparatedEditorItems = this._noRemainingCommaSeparatedEditorItems.bind(this, transitionPropertyCombiner, transitionProperties);
+        properties.transition.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.NoRemainingTreeItems, noRemainingCommaSeparatedEditorItems, this);
 
-        function selectedtransitionItemValueChanged() {
-            properties.transition.selectedTreeElementValue = transitionPropertyCombiner.synthesizedValue;
-        }
-        transitionPropertyCombiner.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, selectedtransitionItemValueChanged, this);
+        let selectedCommaSeparatedEditorItemValueChanged = this._selectedCommaSeparatedEditorItemValueChanged.bind(this, properties.transition, transitionPropertyCombiner);
+        transitionPropertyCombiner.addEventListener(WebInspector.VisualStylePropertyEditor.Event.ValueDidChange, selectedCommaSeparatedEditorItemValueChanged, this);
 
-        function transitionItemSelected(event) {
-            transitionPropertyCombiner.updateValuesFromText(event.data.text || "");
-        }
-        properties.transition.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, transitionItemSelected, this);
+        let commaSeparatedEditorTreeItemSelected = this._commaSeparatedEditorTreeItemSelected.bind(transitionPropertyCombiner);
+        properties.transition.addEventListener(WebInspector.VisualStyleCommaSeparatedKeywordEditor.Event.TreeItemSelected, commaSeparatedEditorTreeItemSelected, this);
 
         group.autocompleteCompatibleProperties = [transitionProperty];
 
         let transitionGroup = new WebInspector.DetailsSectionGroup([transitionRow, transitionPropertyRow, transitionDurationRow]);
         this._populateSection(group, [transitionGroup]);
+    }
+
+    _noRemainingCommaSeparatedEditorItems(propertyCombiner, propertyEditors)
+    {
+        if (!propertyCombiner || !propertyEditors)
+            return;
+
+        propertyCombiner.updateValuesFromText("");
+        for (let editor of propertyEditors)
+            editor.disabled = true;
+    }
+
+    _selectedCommaSeparatedEditorItemValueChanged(propertyEditor, propertyCombiner)
+    {
+        propertyEditor.selectedTreeElementValue = propertyCombiner.synthesizedValue;
+    }
+
+    _commaSeparatedEditorTreeItemSelected(event)
+    {
+        if (typeof this.updateValuesFromText === "function")
+            this.updateValuesFromText(event.data.text || "");
     }
 };
 
