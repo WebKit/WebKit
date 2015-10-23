@@ -1,5 +1,17 @@
 2015-10-23  Anders Carlsson  <andersca@apple.com>
 
+        Simplify the WebKitLegacy menu conversion code
+        https://bugs.webkit.org/show_bug.cgi?id=150509
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients):
+        (fixMenusReceivedFromOldClients):
+        (WebContextMenuClient::getCustomMenuFromDefaultItems):
+
+2015-10-23  Anders Carlsson  <andersca@apple.com>
+
         Don't override already existing represented objects on menu items
         https://bugs.webkit.org/show_bug.cgi?id=150508
 

@@ -101,9 +101,9 @@ static BOOL isPreInspectElementTagClient(void)
     return preInspectElementTagClient;
 }
 
-static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
+static RetainPtr<NSArray> fixMenusToSendToOldClients(NSMutableArray *defaultMenuItems)
 {
-    NSMutableArray *savedItems = nil;
+    auto savedItems = adoptNS([[NSMutableArray alloc] init]);
 
     unsigned defaultItemsCount = [defaultMenuItems count];
 
@@ -112,7 +112,7 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
         NSMenuItem *lastItem = [defaultMenuItems objectAtIndex:defaultItemsCount - 1];
 
         if ([secondToLastItem isSeparatorItem] && [lastItem tag] == WebMenuItemTagInspectElement) {
-            savedItems = [NSMutableArray arrayWithCapacity:2];
+            savedItems = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
             [savedItems addObject:secondToLastItem];
             [savedItems addObject:lastItem];
 
@@ -125,10 +125,9 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
     BOOL preVersion3Client = isPreVersion3Client();
     if (!preVersion3Client)
         return savedItems;
-        
-    for (unsigned i = 0; i < defaultItemsCount; ++i) {
-        NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
-        int tag = [item tag];
+
+    for (NSMenuItem *item in defaultMenuItems) {
+        int tag = item.tag;
         int oldStyleTag = tag;
 
         if (tag >= WEBMENUITEMTAG_WEBKIT_3_0_SPI_START) {
@@ -158,21 +157,23 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
             }
         }
 
-        if (oldStyleTag != tag)
-            [item setTag:oldStyleTag];
+        item.tag = oldStyleTag;
     }
 
     return savedItems;
 }
 
-static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutableArray *savedItems)
-{   
+// FIXME: This should return NSArray.
+static RetainPtr<NSMutableArray> fixMenusReceivedFromOldClients(NSArray *delegateSuppliedItems, NSArray *savedItems)
+{
+    auto newMenuItems = adoptNS([delegateSuppliedItems mutableCopy]);
+
     if (savedItems)
         [newMenuItems addObjectsFromArray:savedItems];
 
     BOOL preVersion3Client = isPreVersion3Client();
     if (!preVersion3Client)
-        return;
+        return newMenuItems;
     
     // Restore the modern tags to the menu items whose tags we altered in fixMenusToSendToOldClients. 
     unsigned newItemsCount = [newMenuItems count];
@@ -285,6 +286,8 @@ static void fixMenusReceivedFromOldClients(NSMutableArray *newMenuItems, NSMutab
         if (modernTag != tag)
             [item setTag:modernTag];        
     }
+
+    return newMenuItems;
 }
 
 NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
@@ -312,12 +315,11 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
             menuItem.representedObject = element;
     }
 
-    NSMutableArray *savedItems = [fixMenusToSendToOldClients(defaultMenuItems) retain];
+    auto savedItems = fixMenusToSendToOldClients(defaultMenuItems);
+
     NSArray *delegateSuppliedItems = CallUIDelegate(m_webView, selector, element, defaultMenuItems);
-    NSMutableArray *newMenuItems = [delegateSuppliedItems mutableCopy];
-    fixMenusReceivedFromOldClients(newMenuItems, savedItems);
-    [savedItems release];
-    return [newMenuItems autorelease];
+
+    return fixMenusReceivedFromOldClients(delegateSuppliedItems, savedItems.get()).autorelease();
 }
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)

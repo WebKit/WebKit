@@ -341,6 +341,11 @@
     [self updateTitle:title];
 }
 
+- (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
+{
+    return defaultMenuItems;
+}
+
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
     NSAlert *alert = [[NSAlert alloc] init];
