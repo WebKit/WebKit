@@ -1,3 +1,9 @@
+2015-10-23  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build by unapplying review comments.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+
 2015-10-23  Tim Horton  <timothy_horton@apple.com>
 
         WKView being inside WKWebView leads to weird API issues

@@ -228,7 +228,7 @@ private:
     bool m_inBecomeFirstResponder { false };
     bool m_inResignFirstResponder { false };
 
-    CGRect m_contentPreparationRect { CGRectZero };
+    CGRect m_contentPreparationRect { { 0, 0 }, { 0, 0 } };
     bool m_useContentPreparationRectForVisibleRect { false };
     bool m_clipsToVisibleRect { false };
     bool m_needsViewFrameInWindowCoordinates;
@@ -239,9 +239,9 @@ private:
     CGFloat m_topContentInset { 0 };
     bool m_didScheduleSetTopContentInset { false };
 
-    CGSize m_resizeScrollOffset { CGSizeZero };
+    CGSize m_resizeScrollOffset { 0, 0 };
 
-    CGSize m_intrinsicContentSize { CGSizeZero };
+    CGSize m_intrinsicContentSize { 0, 0 };
     CGFloat m_overrideDeviceScaleFactor { 0 };
 
     RetainPtr<WKViewLayoutStrategy> m_layoutStrategy;
