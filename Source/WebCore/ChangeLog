@@ -1,3 +1,22 @@
+2015-10-23  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r191484.
+
+    2015-10-22  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+            Fix build for clang-700.0.59.5 by replacing deprecated calls to convert points between screen and window coordinates for Mac.
+            https://bugs.webkit.org/show_bug.cgi?id=150379
+
+            Reviewed by Andy Estes.
+
+            Provide WAKWindow versions of the non-deprecated methods for converting an NSRect between
+            window and screen coordinates, which replace the deprecated methods that operated on an NSPoint.
+
+            * platform/ios/wak/WAKWindow.h:
+            * platform/ios/wak/WAKWindow.mm:
+            (-[WAKWindow convertRectToScreen:]): Added.
+            (-[WAKWindow convertRectFromScreen:]): Added.
+
 2015-10-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r191357. rdar://problem/23103279

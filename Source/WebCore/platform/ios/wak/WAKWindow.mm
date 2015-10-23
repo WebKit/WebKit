@@ -160,6 +160,24 @@ static id<OrientationProvider> gOrientationProvider;
     return [_hostLayer convertPoint:aPoint fromLayer:rootLayer];
 }
 
+- (NSRect)convertRectToScreen:(NSRect)windowRect
+{
+    CALayer* rootLayer = _hostLayer;
+    while (rootLayer.superlayer)
+        rootLayer = rootLayer.superlayer;
+
+    return [_hostLayer convertRect:windowRect toLayer:rootLayer];
+}
+
+- (NSRect)convertRectFromScreen:(NSRect)screenRect
+{
+    CALayer* rootLayer = _hostLayer;
+    while (rootLayer.superlayer)
+        rootLayer = rootLayer.superlayer;
+
+    return [_hostLayer convertRect:screenRect fromLayer:rootLayer];
+}
+
 - (BOOL)isKeyWindow
 {
     return YES || self == _WAKKeyWindow; 
