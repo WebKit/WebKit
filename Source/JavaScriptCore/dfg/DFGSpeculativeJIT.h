@@ -1155,35 +1155,16 @@ public:
         return appendCallSetResult(operation, result);
     }
 
-    template<typename FunctionType>
-    JITCompiler::Call callOperation(FunctionType operation, NoResultTag)
+    JITCompiler::Call callOperation(V_JITOperation_ECIZC operation, GPRReg regOp1, UniquedStringImpl* identOp2, int32_t op3, GPRReg regOp4)
     {
-        return callOperation(operation);
+        m_jit.setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), TrustedImm32(op3), regOp4);
+        return appendCall(operation);
     }
-    template<typename FunctionType, typename ArgumentType1>
-    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1)
+
+    template<typename FunctionType, typename... Args>
+    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, Args... args)
     {
-        return callOperation(operation, arg1);
-    }
-    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2>
-    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2)
-    {
-        return callOperation(operation, arg1, arg2);
-    }
-    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3>
-    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3)
-    {
-        return callOperation(operation, arg1, arg2, arg3);
-    }
-    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3, typename ArgumentType4>
-    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3, ArgumentType4 arg4)
-    {
-        return callOperation(operation, arg1, arg2, arg3, arg4);
-    }
-    template<typename FunctionType, typename ArgumentType1, typename ArgumentType2, typename ArgumentType3, typename ArgumentType4, typename ArgumentType5>
-    JITCompiler::Call callOperation(FunctionType operation, NoResultTag, ArgumentType1 arg1, ArgumentType2 arg2, ArgumentType3 arg3, ArgumentType4 arg4, ArgumentType5 arg5)
-    {
-        return callOperation(operation, arg1, arg2, arg3, arg4, arg5);
+        return callOperation(operation, args...);
     }
 
     JITCompiler::Call callOperation(D_JITOperation_ZZ operation, FPRReg result, GPRReg arg1, GPRReg arg2)
@@ -1534,6 +1515,16 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), arg2, TrustedImm32(arg3), arg4, TrustedImm32(arg5));
         return appendCall(operation);
     }
+    JITCompiler::Call callOperation(V_JITOperation_ECJZC operation, GPRReg regOp1, GPRReg regOp2, int32_t op3, GPRReg regOp4)
+    {
+        m_jit.setupArgumentsWithExecState(regOp1, regOp2, TrustedImm32(op3), regOp4);
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECIZJJ operation, GPRReg regOp1, UniquedStringImpl* identOp2, int32_t op3, GPRReg regOp4, GPRReg regOp5)
+    {
+        m_jit.setupArgumentsWithExecState(regOp1, TrustedImmPtr(identOp2), TrustedImm32(op3), regOp4, regOp5);
+        return appendCall(operation);
+    }
 #else // USE(JSVALUE32_64)
 
 // EncodedJSValue in JSVALUE32_64 is a 64-bit integer. When being compiled in ARM EABI, it must be aligned even-numbered register (r0, r2 or [sp]).
@@ -1853,6 +1844,16 @@ public:
     JITCompiler::Call callOperation(V_JITOperation_EZJZZZ operation, unsigned arg1, GPRReg arg2Tag, GPRReg arg2Payload, unsigned arg3, GPRReg arg4, unsigned arg5)
     {
         m_jit.setupArgumentsWithExecState(TrustedImm32(arg1), arg2Payload, arg2Tag, TrustedImm32(arg3), arg4, TrustedImm32(arg5));
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECJZC operation, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload, int32_t arg3, GPRReg arg4)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag, TrustedImm32(arg3), arg4);
+        return appendCall(operation);
+    }
+    JITCompiler::Call callOperation(V_JITOperation_ECIZCC operation, GPRReg arg1, UniquedStringImpl* identOp2, int32_t op3, GPRReg arg4, GPRReg arg5)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(identOp2), TrustedImm32(op3), arg4, arg5);
         return appendCall(operation);
     }
 #undef EABI_32BIT_DUMMY_ARG
@@ -2243,6 +2244,9 @@ public:
     void compileTypeOf(Node*);
     void compileCheckStructure(Node*, GPRReg cellGPR, GPRReg tempGPR);
     void compileCheckStructure(Node*);
+    void compilePutAccessorById(Node*);
+    void compilePutGetterSetterById(Node*);
+    void compilePutAccessorByVal(Node*);
     
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

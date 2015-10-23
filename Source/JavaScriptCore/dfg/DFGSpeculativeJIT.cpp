@@ -6741,6 +6741,61 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scrat
     ownerIsRememberedOrInEden.link(&m_jit);
 }
 
+void SpeculativeJIT::compilePutAccessorById(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand accessor(this, node->child2());
+
+    flushRegisters();
+    callOperation(node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById, NoResult, base.gpr(), identifierUID(node->identifierNumber()), node->accessorAttributes(), accessor.gpr());
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
+void SpeculativeJIT::compilePutGetterSetterById(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    JSValueOperand getter(this, node->child2());
+    JSValueOperand setter(this, node->child3());
+
+    flushRegisters();
+#if USE(JSVALUE64)
+    callOperation(operationPutGetterSetter, NoResult, base.gpr(), identifierUID(node->identifierNumber()), node->accessorAttributes(), getter.gpr(), setter.gpr());
+#else
+    // These JSValues may be JSUndefined OR JSFunction*.
+    // At that time,
+    // 1. If the JSValue is JSUndefined, its payload becomes nullptr.
+    // 2. If the JSValue is JSFunction*, its payload becomes JSFunction*.
+    // So extract payload and pass it to operationPutGetterSetter. This hack is used as the same way in baseline JIT.
+    JSValueRegs getterRegs = getter.jsValueRegs();
+    JSValueRegs setterRegs = setter.jsValueRegs();
+    callOperation(operationPutGetterSetter, NoResult, base.gpr(), identifierUID(node->identifierNumber()), node->accessorAttributes(), getterRegs.payloadGPR(), setterRegs.payloadGPR());
+#endif
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
+void SpeculativeJIT::compilePutAccessorByVal(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    JSValueOperand subscript(this, node->child2());
+    SpeculateCellOperand accessor(this, node->child3());
+
+    flushRegisters();
+    auto operation = node->op() == PutGetterByVal ? operationPutGetterByVal : operationPutSetterByVal;
+#if USE(JSVALUE64)
+    callOperation(operation, NoResult, base.gpr(), subscript.gpr(), node->accessorAttributes(), accessor.gpr());
+#else
+    JSValueRegs subscriptRegs = subscript.jsValueRegs();
+    callOperation(operation, NoResult, base.gpr(), subscriptRegs.tagGPR(), subscriptRegs.payloadGPR(), node->accessorAttributes(), accessor.gpr());
+#endif
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
 } } // namespace JSC::DFG
 
 #endif
