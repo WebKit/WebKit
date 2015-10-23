@@ -87,9 +87,6 @@ struct EditorState;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 
-- (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
-- (CALayer *)_acceleratedCompositingModeRootLayer;
-
 - (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
 - (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event;
 
@@ -117,7 +114,6 @@ struct EditorState;
 
 #if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
-- (void)_reparentLayerTreeInThumbnailView;
 #endif
 
 - (void)_addFontPanelObserver;

@@ -482,12 +482,12 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& lay
     ASSERT(!layerTreeContext.isEmpty());
 
     CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
-    [m_wkView _setAcceleratedCompositingModeRootLayer:renderLayer];
+    m_impl->setAcceleratedCompositingRootLayer(renderLayer);
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
-    [m_wkView _setAcceleratedCompositingModeRootLayer:nil];
+    m_impl->setAcceleratedCompositingRootLayer(nil);
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -495,7 +495,7 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& la
     ASSERT(!layerTreeContext.isEmpty());
 
     CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
-    [m_wkView _setAcceleratedCompositingModeRootLayer:renderLayer];
+    m_impl->setAcceleratedCompositingRootLayer(renderLayer);
 }
 
 void PageClientImpl::willEnterAcceleratedCompositingMode()
@@ -504,12 +504,12 @@ void PageClientImpl::willEnterAcceleratedCompositingMode()
 
 void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
 {
-    [m_wkView _setAcceleratedCompositingModeRootLayer:rootLayer];
+    m_impl->setAcceleratedCompositingRootLayer(rootLayer);
 }
 
 CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 {
-    return m_wkView._acceleratedCompositingModeRootLayer;
+    return m_impl->acceleratedCompositingRootLayer();
 }
 
 PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()

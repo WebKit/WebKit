@@ -45,6 +45,7 @@ OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKViewLayoutStrategy;
 OBJC_CLASS WKWindowVisibilityObserver;
+OBJC_CLASS _WKThumbnailView;
 
 @protocol WebViewImplDelegate
 
@@ -227,6 +228,15 @@ public:
     NSString *stringForToolTip(NSToolTipTag tag);
     void toolTipChanged(NSString *oldToolTip, NSString *newToolTip);
 
+    void setAcceleratedCompositingRootLayer(CALayer *);
+    CALayer *acceleratedCompositingRootLayer() const { return m_rootLayer.get(); }
+    NSView *layerHostingView() const { return m_layerHostingView.get(); }
+
+#if WK_API_ENABLED
+    void setThumbnailView(_WKThumbnailView *);
+    _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
+#endif // WK_API_ENABLED
+
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -240,6 +250,9 @@ private:
 
     void sendToolTipMouseExited();
     void sendToolTipMouseEntered();
+
+    void reparentLayerTreeInThumbnailView();
+    void updateThumbnailViewLayer();
 
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;
@@ -312,6 +325,13 @@ private:
     NSToolTipTag m_lastToolTipTag { 0 };
     id m_trackingRectOwner { nil };
     void* m_trackingRectUserData { nullptr };
+
+    RetainPtr<CALayer> m_rootLayer;
+    RetainPtr<NSView> m_layerHostingView;
+
+#if WK_API_ENABLED
+    _WKThumbnailView *m_thumbnailView;
+#endif
 };
     
 } // namespace WebKit

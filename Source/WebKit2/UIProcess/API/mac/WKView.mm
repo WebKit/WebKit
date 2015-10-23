@@ -80,7 +80,6 @@
 #import "WebSystemInterface.h"
 #import "WebViewImpl.h"
 #import "_WKRemoteObjectRegistryInternal.h"
-#import "_WKThumbnailViewInternal.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
@@ -104,7 +103,6 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
-#import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
@@ -179,8 +177,6 @@ struct WKViewInterpretKeyEventsParameters {
 
     RetainPtr<NSTrackingArea> _primaryTrackingArea;
 
-    RetainPtr<NSView> _layerHostingView;
-
     RetainPtr<id> _remoteAccessibilityChild;
 
     // For asynchronous validation.
@@ -213,13 +209,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _allowsMagnification;
     BOOL _allowsBackForwardNavigationGestures;
 
-    RetainPtr<CALayer> _rootLayer;
-
     CGFloat _totalHeightOfBanners;
-
-#if WK_API_ENABLED
-    _WKThumbnailView *_thumbnailView;
-#endif
 }
 
 @end
@@ -234,18 +224,6 @@ struct WKViewInterpretKeyEventsParameters {
 - (id)initWithResponderChain:(NSResponder *)chain;
 - (void)detach;
 - (bool)didReceiveUnhandledCommand;
-@end
-
-@interface WKFlippedView : NSView
-@end
-
-@implementation WKFlippedView
-
-- (BOOL)isFlipped
-{
-    return YES;
-}
-
 @end
 
 @interface WKView () <WebViewImplDelegate>
@@ -279,10 +257,6 @@ struct WKViewInterpretKeyEventsParameters {
     _data->_page->close();
 
     _data->_impl = nullptr;
-
-#if WK_API_ENABLED
-    ASSERT(!_data->_thumbnailView);
-#endif
 
     [_data release];
     _data = nil;
@@ -2410,7 +2384,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 - (NSView *)hitTest:(NSPoint)point
 {
     NSView *hitView = [super hitTest:point];
-    if (hitView && _data && hitView == _data->_layerHostingView)
+    if (hitView && _data && hitView == _data->_impl->layerHostingView())
         hitView = self;
 
     return hitView;
@@ -2443,8 +2417,8 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 {
     _data->_impl->notifyInputContextAboutDiscardedComposition();
 
-    if (_data->_layerHostingView)
-        [self _setAcceleratedCompositingModeRootLayer:nil];
+    if (_data->_impl->layerHostingView())
+        _data->_impl->setAcceleratedCompositingRootLayer(nil);
 
     [self _updateRemoteAccessibilityRegistration:NO];
 
@@ -2549,61 +2523,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
 {
     _data->_impl->toolTipChanged(oldToolTip, newToolTip);
-}
-
-- (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer
-{
-    [rootLayer web_disableAllActions];
-
-    _data->_rootLayer = rootLayer;
-
-#if WK_API_ENABLED
-    if (_data->_thumbnailView) {
-        [self _updateThumbnailViewLayer];
-        return;
-    }
-#endif
-
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-
-    if (rootLayer) {
-        if (!_data->_layerHostingView) {
-            // Create an NSView that will host our layer tree.
-            _data->_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
-            [_data->_layerHostingView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-
-
-            [self addSubview:_data->_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
-
-            // Create a root layer that will back the NSView.
-            RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
-            [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-#ifndef NDEBUG
-            [layer setName:@"Hosting root layer"];
-#endif
-
-            [_data->_layerHostingView setLayer:layer.get()];
-            [_data->_layerHostingView setWantsLayer:YES];
-        }
-
-        [_data->_layerHostingView layer].sublayers = [NSArray arrayWithObject:rootLayer];
-    } else {
-        if (_data->_layerHostingView) {
-            [_data->_layerHostingView removeFromSuperview];
-            [_data->_layerHostingView setLayer:nil];
-            [_data->_layerHostingView setWantsLayer:NO];
-
-            _data->_layerHostingView = nullptr;
-        }
-    }
-
-    [CATransaction commit];
-}
-
-- (CALayer *)_acceleratedCompositingModeRootLayer
-{
-    return _data->_rootLayer.get();
 }
 
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
@@ -2969,33 +2888,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if WK_API_ENABLED
 - (void)_setThumbnailView:(_WKThumbnailView *)thumbnailView
 {
-    ASSERT(!_data->_thumbnailView || !thumbnailView);
-
-    _data->_thumbnailView = thumbnailView;
-
-    if (thumbnailView)
-        [self _updateThumbnailViewLayer];
-    else
-        [self _setAcceleratedCompositingModeRootLayer:_data->_rootLayer.get()];
+    _data->_impl->setThumbnailView(thumbnailView);
 }
 
 - (_WKThumbnailView *)_thumbnailView
 {
-    return _data->_thumbnailView;
-}
-
-- (void)_updateThumbnailViewLayer
-{
-    _WKThumbnailView *thumbnailView = _data->_thumbnailView;
-    ASSERT(thumbnailView);
-
-    if (thumbnailView._waitingForSnapshot && self.window)
-        [self _reparentLayerTreeInThumbnailView];
-}
-
-- (void)_reparentLayerTreeInThumbnailView
-{
-    _data->_thumbnailView._thumbnailLayer = _data->_rootLayer.get();
+    if (!_data->_impl)
+        return nil;
+    return _data->_impl->thumbnailView();
 }
 #endif // WK_API_ENABLED
 

@@ -42,6 +42,7 @@
 #import "WKWebView.h"
 #import "WebEditCommandProxy.h"
 #import "WebPageProxy.h"
+#import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/DataDetectorsSPI.h>
@@ -52,6 +53,8 @@
 #import <WebCore/NSWindowSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/ViewState.h>
+#import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebKitSystemInterface.h>
@@ -296,6 +299,18 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
+@interface WKFlippedView : NSView
+@end
+
+@implementation WKFlippedView
+
+- (BOOL)isFlipped
+{
+    return YES;
+}
+
+@end
+
 namespace WebKit {
 
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WebPageProxy& page, PageClient& pageClient)
@@ -324,6 +339,10 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WebPageProxy& page,
 WebViewImpl::~WebViewImpl()
 {
     ASSERT(!m_inSecureInputState);
+
+#if WK_API_ENABLED
+    ASSERT(!m_thumbnailView);
+#endif
 
     [m_layoutStrategy invalidate];
 
@@ -1552,6 +1571,81 @@ void WebViewImpl::toolTipChanged(NSString *oldToolTip, NSString *newToolTip)
         sendToolTipMouseEntered();
     }
 }
+
+void WebViewImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
+{
+    [rootLayer web_disableAllActions];
+
+    m_rootLayer = rootLayer;
+
+#if WK_API_ENABLED
+    if (m_thumbnailView) {
+        updateThumbnailViewLayer();
+        return;
+    }
+#endif
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
+    if (rootLayer) {
+        if (!m_layerHostingView) {
+            // Create an NSView that will host our layer tree.
+            m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:m_view.bounds]);
+            [m_layerHostingView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
+            [m_view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
+
+            // Create a root layer that will back the NSView.
+            RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
+            [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
+#ifndef NDEBUG
+            [layer setName:@"Hosting root layer"];
+#endif
+
+            [m_layerHostingView setLayer:layer.get()];
+            [m_layerHostingView setWantsLayer:YES];
+        }
+
+        [m_layerHostingView layer].sublayers = [NSArray arrayWithObject:rootLayer];
+    } else if (m_layerHostingView) {
+        [m_layerHostingView removeFromSuperview];
+        [m_layerHostingView setLayer:nil];
+        [m_layerHostingView setWantsLayer:NO];
+
+        m_layerHostingView = nullptr;
+    }
+
+    [CATransaction commit];
+}
+
+#if WK_API_ENABLED
+void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
+{
+    ASSERT(!m_thumbnailView || !thumbnailView);
+
+    m_thumbnailView = thumbnailView;
+
+    if (thumbnailView)
+        updateThumbnailViewLayer();
+    else
+        setAcceleratedCompositingRootLayer(m_rootLayer.get());
+}
+
+void WebViewImpl::reparentLayerTreeInThumbnailView()
+{
+    m_thumbnailView._thumbnailLayer = m_rootLayer.get();
+}
+
+void WebViewImpl::updateThumbnailViewLayer()
+{
+    _WKThumbnailView *thumbnailView = m_thumbnailView;
+    ASSERT(thumbnailView);
+
+    if (thumbnailView._waitingForSnapshot && m_view.window)
+        reparentLayerTreeInThumbnailView();
+}
+#endif // WK_API_ENABLED
 
 } // namespace WebKit
 
