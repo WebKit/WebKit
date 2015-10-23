@@ -1,3 +1,15 @@
+2015-10-23  Chris Dumez  <cdumez@apple.com>
+
+        A label element not in a document should not label an element in a document
+        https://bugs.webkit.org/show_bug.cgi?id=148863
+        <rdar://problem/22589300>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C HTML test now that one more check is passing.
+
+        * web-platform-tests/html/semantics/forms/the-label-element/label-attributes-expected.txt:
+
 2015-10-21  Chris Dumez  <cdumez@apple.com>
 
         Un-expose obsolete HTMLBaseFontElement
