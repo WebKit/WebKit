@@ -1234,6 +1234,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
 
     viewPrivate->setShouldApplyMacFontAscentHack(TRUE);
     viewPrivate->setAlwaysUsesComplexTextCodePath(forceComplexText);
+    viewPrivate->setCustomBackingScaleFactor(1.0);
 
     _bstr_t pluginPath = _bstr_t(exePath().data()) + TestPluginDir;
     if (FAILED(viewPrivate->addAdditionalPluginDirectory(pluginPath.GetBSTR())))

@@ -1,3 +1,15 @@
+2015-10-23  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Improve test results for fast layouttests.
+        https://bugs.webkit.org/show_bug.cgi?id=150464
+
+        Reviewed by Alex Christensen.
+
+        Set custom device scale factor to 1.0.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (createWebViewAndOffscreenWindow):
+
 2015-10-23  Mark Salisbury  <mark.salisbury@hp.com>
 
         [GTK] update-webkitgtk-libs should use mesa tarball

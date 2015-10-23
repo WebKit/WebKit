@@ -81,8 +81,6 @@ void Font::platformInit()
     ::GetTextFace(dc, faceLength, faceName.data());
     m_isSystemFont = !wcscmp(faceName.data(), L"Lucida Grande");
  
-    ascent = ascentConsideringMacAscentHack(faceName.data(), ascent, descent);
-
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
