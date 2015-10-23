@@ -887,7 +887,7 @@ static BOOL shouldTryAppLink(WebView *webView, const NavigationAction& action, F
     if (!action.processingUserGesture())
         return NO;
 
-    if (targetFrame && targetFrame->document() && protocolHostAndPortAreEqual(targetFrame->document()->url(), action.url()))
+    if (targetFrame && targetFrame->document() && hostsAreEqual(targetFrame->document()->url(), action.url()))
         return NO;
 
     return YES;

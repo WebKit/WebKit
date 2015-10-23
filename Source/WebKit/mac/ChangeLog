@@ -1,3 +1,15 @@
+2015-10-22  Sam Weinig  <sam@webkit.org>
+
+        Navigations on the same host (but with different schemes and ports) should not trigger universal links
+        <rdar://problem/22811325>
+        https://bugs.webkit.org/show_bug.cgi?id=150481
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (shouldTryAppLink):
+        Update the policy for following universal links to only take host into consideration.
+
 2015-10-22  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         Fix build for clang-700.0.59.5 by replacing deprecated calls to convert points between screen and window coordinates for Mac.

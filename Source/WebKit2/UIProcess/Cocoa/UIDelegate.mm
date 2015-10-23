@@ -111,7 +111,7 @@ PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::Web
 
     auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
 
-    bool shouldOpenAppLinks = !protocolHostAndPortAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), request.url());
+    bool shouldOpenAppLinks = !hostsAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), request.url());
     auto apiNavigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, request, WebCore::URL(), shouldOpenAppLinks);
 
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);

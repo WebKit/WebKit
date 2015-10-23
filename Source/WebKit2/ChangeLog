@@ -1,3 +1,23 @@
+2015-10-22  Sam Weinig  <sam@webkit.org>
+
+        Navigations on the same host (but with different schemes and ports) should not trigger universal links
+        <rdar://problem/22811325>
+        https://bugs.webkit.org/show_bug.cgi?id=150481
+
+        Reviewed by Dan Bernstein.
+
+        Update the policy for following universal links to only take host into consideration.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::showPage):
+
 2015-10-22  Anders Carlsson  <andersca@apple.com>
 
         Simplify menu creation
