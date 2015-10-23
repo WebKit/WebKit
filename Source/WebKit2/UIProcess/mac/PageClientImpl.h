@@ -220,7 +220,6 @@ private:
     WKView *m_wkView;
     WKWebView *m_webView;
     WebViewImpl* m_impl { nullptr };
-    RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 #if USE(AUTOCORRECTION_PANEL)
     CorrectionPanel m_correctionPanel;
 #endif

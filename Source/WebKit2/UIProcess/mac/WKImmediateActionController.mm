@@ -30,11 +30,11 @@
 
 #import "APIHitTestResult.h"
 #import "WKNSURLExtras.h"
-#import "WKViewInternal.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
+#import "WebViewImpl.h"
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/GeometryUtilities.h>
@@ -64,7 +64,7 @@ using namespace WebKit;
 
 @implementation WKImmediateActionController
 
-- (instancetype)initWithPage:(WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
+- (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view viewImpl:(WebViewImpl&)viewImpl recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
 {
     self = [super init];
 
@@ -72,7 +72,8 @@ using namespace WebKit;
         return nil;
 
     _page = &page;
-    _wkView = wkView;
+    _view = view;
+    _viewImpl = &viewImpl;
     _type = kWKImmediateActionNone;
     _immediateActionRecognizer = immediateActionRecognizer;
     _hasActiveImmediateAction = NO;
@@ -80,10 +81,11 @@ using namespace WebKit;
     return self;
 }
 
-- (void)willDestroyView:(WKView *)view
+- (void)willDestroyView:(NSView *)view
 {
     _page = nullptr;
-    _wkView = nil;
+    _view = nil;
+    _viewImpl = nullptr;
     _hitTestResultData = WebHitTestResultData();
     _contentPreventsDefault = NO;
     
@@ -168,9 +170,9 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    [_wkView _prepareForImmediateActionAnimation];
+    _viewImpl->prepareForImmediateActionAnimation();
 
-    [_wkView _dismissContentRelativeChildWindows];
+    _viewImpl->dismissContentRelativeChildWindowsWithAnimation(true);
 
     _page->setMaintainsInactiveSelection(true);
 
@@ -231,7 +233,7 @@ using namespace WebKit;
 
     _page->immediateActionDidCancel();
 
-    [_wkView _cancelImmediateActionAnimation];
+    _viewImpl->cancelImmediateActionAnimation();
 
     _page->setTextIndicatorAnimationProgress(0);
     [self _clearImmediateActionState];
@@ -245,7 +247,7 @@ using namespace WebKit;
 
     _page->immediateActionDidComplete();
 
-    [_wkView _completeImmediateActionAnimation];
+    _viewImpl->completeImmediateActionAnimation();
 
     _page->setTextIndicatorAnimationProgress(1);
 }
@@ -345,12 +347,12 @@ using namespace WebKit;
 
 - (NSView *)menuItem:(NSMenuItem *)menuItem viewAtScreenPoint:(NSPoint)screenPoint
 {
-    return _wkView;
+    return _view;
 }
 
 - (id<QLPreviewItem>)menuItem:(NSMenuItem *)menuItem previewItemAtPoint:(NSPoint)point
 {
-    if (!_wkView)
+    if (!_view)
         return nil;
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
@@ -369,20 +371,20 @@ using namespace WebKit;
 
 - (NSRect)menuItem:(NSMenuItem *)menuItem itemFrameForPoint:(NSPoint)point
 {
-    if (!_wkView)
+    if (!_view)
         return NSZeroRect;
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
-    return [_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil];
+    return [_view convertRect:hitTestResult->elementBoundingBox() toView:nil];
 }
 
 - (NSSize)menuItem:(NSMenuItem *)menuItem maxSizeForPoint:(NSPoint)point
 {
-    if (!_wkView)
+    if (!_view)
         return NSZeroSize;
 
-    NSSize screenSize = _wkView.window.screen.frame.size;
-    FloatRect largestRect = largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _wkView.bounds);
+    NSSize screenSize = _view.window.screen.frame.size;
+    FloatRect largestRect = largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _view.bounds);
     return NSMakeSize(largestRect.width() * 0.75, largestRect.height() * 0.75);
 }
 
@@ -403,7 +405,7 @@ using namespace WebKit;
 
     RefPtr<WebPageProxy> page = _page;
     PageOverlay::PageOverlayID overlayID = _hitTestResultData.detectedDataOriginatingPageOverlay;
-    _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+    _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
         page->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID));
     } interactionChangedHandler:^() {
         if (_hitTestResultData.detectedDataTextIndicator)
@@ -414,7 +416,7 @@ using namespace WebKit;
         [self _clearImmediateActionState];
     }];
 
-    [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResultData.detectedDataBoundingBox toView:nil]]];
+    [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.detectedDataBoundingBox toView:nil]]];
 
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
 
@@ -435,7 +437,7 @@ using namespace WebKit;
     [actionContext setImmediate:YES];
 
     RefPtr<WebPageProxy> page = _page;
-    _currentActionContext = [actionContext contextForView:_wkView altMode:YES interactionStartedHandler:^() {
+    _currentActionContext = [actionContext contextForView:_view altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
         if (_hitTestResultData.linkTextIndicator)
             page->setTextIndicator(_hitTestResultData.linkTextIndicator->data());
@@ -443,7 +445,7 @@ using namespace WebKit;
         [self _clearImmediateActionState];
     }];
 
-    [_currentActionContext setHighlightFrame:[_wkView.window convertRectToScreen:[_wkView convertRect:_hitTestResultData.elementBoundingBox toView:nil]]];
+    [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.elementBoundingBox toView:nil]]];
 
     RefPtr<API::HitTestResult> hitTestResult = [self _webHitTestResult];
     NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:_currentActionContext.get()];
@@ -465,10 +467,10 @@ using namespace WebKit;
     if (!dictionaryPopupInfo.attributedString)
         return nil;
 
-    [_wkView _prepareForDictionaryLookup];
+    _viewImpl->prepareForDictionaryLookup();
 
-    return DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _wkView, [self](TextIndicator& textIndicator) {
-        [_wkView _setTextIndicator:textIndicator withLifetime:TextIndicatorWindowLifetime::Permanent];
+    return DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](TextIndicator& textIndicator) {
+        _viewImpl->setTextIndicator(textIndicator, TextIndicatorWindowLifetime::Permanent);
     });
 }
 

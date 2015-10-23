@@ -90,60 +90,11 @@
 using namespace WebCore;
 using namespace WebKit;
 
-@interface WKEditCommandObjC : NSObject
-{
-    RefPtr<WebEditCommandProxy> m_command;
-}
-- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command;
-- (WebEditCommandProxy*)command;
-@end
-
-@interface WKEditorUndoTargetObjC : NSObject
-- (void)undoEditing:(id)sender;
-- (void)redoEditing:(id)sender;
-@end
-
-@implementation WKEditCommandObjC
-
-- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    m_command = command;
-    return self;
-}
-
-- (WebEditCommandProxy*)command
-{
-    return m_command.get();
-}
-
-@end
-
-@implementation WKEditorUndoTargetObjC
-
-- (void)undoEditing:(id)sender
-{
-    ASSERT([sender isKindOfClass:[WKEditCommandObjC class]]);
-    [sender command]->unapply();
-}
-
-- (void)redoEditing:(id)sender
-{
-    ASSERT([sender isKindOfClass:[WKEditCommandObjC class]]);
-    [sender command]->reapply();
-}
-
-@end
-
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(WKView* wkView, WKWebView *webView)
     : m_wkView(wkView)
     , m_webView(webView)
-    , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(std::make_unique<AlternativeTextUIController>())
 #endif
@@ -207,8 +158,8 @@ NSWindow *PageClientImpl::activeWindow() const
     if (m_wkView._thumbnailView)
         return m_wkView._thumbnailView.window;
 #endif
-    if (m_wkView._targetWindowForMovePreparation)
-        return m_wkView._targetWindowForMovePreparation;
+    if (m_impl && m_impl->targetWindowForMovePreparation())
+        return m_impl->targetWindowForMovePreparation();
     return m_wkView.window;
 }
 
@@ -307,7 +258,7 @@ void PageClientImpl::didRelaunchProcess()
 
 void PageClientImpl::preferencesDidChange()
 {
-    [m_wkView _preferencesDidChange];
+    m_impl->preferencesDidChange();
 }
 
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
@@ -373,15 +324,7 @@ void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttribut
 
 void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    RefPtr<WebEditCommandProxy> command = prpCommand;
-
-    RetainPtr<WKEditCommandObjC> commandObjC = adoptNS([[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
-    String actionName = WebEditCommandProxy::nameForEditAction(command->editAction());
-
-    NSUndoManager *undoManager = [m_wkView undoManager];
-    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == WebPageProxy::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
-    if (!actionName.isEmpty())
-        [undoManager setActionName:(NSString *)actionName];
+    m_impl->registerEditCommand(prpCommand, undoOrRedo);
 }
 
 #if USE(INSERTION_UNDO_GROUPING)
@@ -393,7 +336,7 @@ void PageClientImpl::registerInsertionUndoGrouping()
 
 void PageClientImpl::clearAllEditCommands()
 {
-    [[m_wkView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
+    m_impl->clearAllEditCommands();
 }
 
 bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
@@ -515,17 +458,17 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)
 {
-    [m_wkView _setTextIndicator:textIndicator.get() withLifetime:lifetime];
+    m_impl->setTextIndicator(textIndicator.get(), lifetime);
 }
 
 void PageClientImpl::clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation dismissalAnimation)
 {
-    [m_wkView _clearTextIndicatorWithAnimation:dismissalAnimation];
+    m_impl->clearTextIndicatorWithAnimation(dismissalAnimation);
 }
 
 void PageClientImpl::setTextIndicatorAnimationProgress(float progress)
 {
-    [m_wkView _setTextIndicatorAnimationProgress:progress];
+    m_impl->setTextIndicatorAnimationProgress(progress);
 }
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
@@ -576,7 +519,7 @@ PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
 
 void PageClientImpl::selectionDidChange()
 {
-    [m_wkView _selectionChanged];
+    m_impl->selectionDidChange();
 }
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
@@ -603,10 +546,10 @@ void PageClientImpl::setPluginComplexTextInputState(uint64_t pluginComplexTextIn
 
 void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    [m_wkView _prepareForDictionaryLookup];
+    m_impl->prepareForDictionaryLookup();
 
     DictionaryLookup::showPopup(dictionaryPopupInfo, m_wkView, [this](TextIndicator& textIndicator) {
-        [m_wkView _setTextIndicator:textIndicator withLifetime:TextIndicatorWindowLifetime::Permanent];
+        m_impl->setTextIndicator(textIndicator, TextIndicatorWindowLifetime::Permanent);
     });
 }
 
@@ -661,10 +604,14 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
 
 void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
 {
-    if (m_webView)
+#if WK_API_ENABLED
+    if (m_webView) {
         [m_webView _setIntrinsicContentSize:intrinsicContentSize];
-    else
-        [m_wkView _setIntrinsicContentSize:intrinsicContentSize];
+        return;
+    }
+#endif
+
+    m_impl->setIntrinsicContentSize(intrinsicContentSize);
 }
 
 bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
@@ -839,7 +786,7 @@ CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *laye
 void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& result, bool contentPreventsDefault, API::Object* userData)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [m_wkView _didPerformImmediateActionHitTest:result contentPreventsDefault:contentPreventsDefault userData:userData];
+    m_impl->didPerformImmediateActionHitTest(result, contentPreventsDefault, userData);
 #endif
 }
 
@@ -849,7 +796,7 @@ void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<
     if (m_webView)
         return [m_webView _immediateActionAnimationControllerForHitTestResult:wrapper(*hitTestResult) withType:(_WKImmediateActionType)type userData:(id)(userData.get())];
 #endif
-    return [m_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:type userData:toAPI(userData.get())];
+    return m_impl->immediateActionAnimationControllerForHitTestResult(toAPI(hitTestResult.get()), type, toAPI(userData.get()));
 }
 
 void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)

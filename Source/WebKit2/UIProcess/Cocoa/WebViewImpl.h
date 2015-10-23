@@ -28,29 +28,52 @@
 
 #if PLATFORM(MAC)
 
-#import "WKLayoutMode.h"
-#import <wtf/RetainPtr.h>
+#include "WKLayoutMode.h"
+#include "WebPageProxy.h"
+#include <WebCore/TextIndicatorWindow.h>
+#include <functional>
+#include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
+OBJC_CLASS WKEditorUndoTargetObjC;
 OBJC_CLASS WKFullScreenWindowController;
+OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKViewLayoutStrategy;
+OBJC_CLASS WKWindowVisibilityObserver;
 
 @protocol WebViewImplDelegate
 
 - (NSTextInputContext *)_superInputContext;
+- (void)_superQuickLookWithEvent:(NSEvent *)event;
+
+// This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
+// They're not actually optional.
+@optional
+
+- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData;
+- (void)_prepareForImmediateActionAnimation;
+- (void)_cancelImmediateActionAnimation;
+- (void)_completeImmediateActionAnimation;
+- (void)_dismissContentRelativeChildWindows;
+- (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
 
 @end
 
 namespace WebKit {
 
+class WebEditCommandProxy;
 class WebPageProxy;
+struct ColorSpaceData;
 
 class WebViewImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
 public:
-    WebViewImpl(NSView <WebViewImplDelegate> *, WebPageProxy&);
+    WebViewImpl(NSView <WebViewImplDelegate> *, WebPageProxy&, PageClient&);
 
     ~WebViewImpl();
 
@@ -67,16 +90,24 @@ public:
     void viewWillStartLiveResize();
     void viewDidEndLiveResize();
 
+    void renewGState();
     void setFrameSize(CGSize);
     void disableFrameSizeUpdates();
     void enableFrameSizeUpdates();
     bool frameSizeUpdatesDisabled() const;
     void setFrameAndScrollBy(CGRect, CGSize);
+    void updateWindowAndViewFrames();
 
     void setFixedLayoutSize(CGSize);
     CGSize fixedLayoutSize() const;
 
     void setDrawingAreaSize(CGSize);
+
+    void setAutomaticallyAdjustsContentInsets(bool);
+    bool automaticallyAdjustsContentInsets() const { return m_automaticallyAdjustsContentInsets; }
+    void updateContentInsetsIfAutomatic();
+    void setTopContentInset(CGFloat);
+    CGFloat topContentInset() const { return m_topContentInset; }
 
     void setContentPreparationRect(CGRect);
     void updateViewExposedRect();
@@ -93,10 +124,44 @@ public:
     void setLayoutMode(WKLayoutMode);
     void updateSupportsArbitraryLayoutModes();
 
+    void setOverrideDeviceScaleFactor(CGFloat);
+    CGFloat overrideDeviceScaleFactor() const { return m_overrideDeviceScaleFactor; }
+
+    void windowDidOrderOffScreen();
+    void windowDidOrderOnScreen();
+    void windowDidBecomeKey(NSWindow *);
+    void windowDidResignKey(NSWindow *);
+    void windowDidMiniaturize();
+    void windowDidDeminiaturize();
+    void windowDidMove();
+    void windowDidResize();
+    void windowDidChangeBackingProperties(CGFloat oldBackingScaleFactor);
+    void windowDidChangeScreen();
+    void windowDidChangeLayerHosting();
+    void windowDidChangeOcclusionState();
+
+    void viewWillMoveToWindow(NSWindow *);
+    void viewDidMoveToWindow();
+    void viewDidChangeBackingProperties();
+
+    ColorSpaceData colorSpace();
+
+    void beginDeferringViewInWindowChanges();
+    // FIXME: Merge these two?
+    void endDeferringViewInWindowChanges();
+    void endDeferringViewInWindowChangesSync();
+    bool isDeferringViewInWindowChanges() const { return m_shouldDeferViewInWindowChanges; }
+
+    void prepareForMoveToWindow(NSWindow *targetWindow, std::function<void()> completionHandler);
+    NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation; }
+
     void updateSecureInputState();
     void resetSecureInputState();
     bool inSecureInputState() const { return m_inSecureInputState; }
     void notifyInputContextAboutDiscardedComposition();
+
+    void pressureChangeWithEvent(NSEvent *);
+    NSEvent *lastPressureEvent() { return m_lastPressureEvent.get(); }
 
 #if ENABLE(FULLSCREEN_API)
     bool hasFullScreenWindowController() const;
@@ -106,33 +171,114 @@ public:
     NSView *fullScreenPlaceholderView();
     NSWindow *createFullScreenWindow();
 
+    bool isEditable() const;
+    void executeEditCommand(const String& commandName, const String& argument = String());
+    void registerEditCommand(RefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
+    void clearAllEditCommands();
+    bool writeSelectionToPasteboard(NSPasteboard *, NSArray *types);
+    void centerSelectionInVisibleArea();
+    void selectionDidChange();
+    void startObservingFontPanel();
+    void updateFontPanelIfNeeded();
+
+    void preferencesDidChange();
+
+    void setTextIndicator(WebCore::TextIndicator&, WebCore::TextIndicatorWindowLifetime = WebCore::TextIndicatorWindowLifetime::Permanent);
+    void clearTextIndicatorWithAnimation(WebCore::TextIndicatorWindowDismissalAnimation);
+    void setTextIndicatorAnimationProgress(float);
+    void dismissContentRelativeChildWindows();
+    void dismissContentRelativeChildWindowsFromViewOnly();
+    void dismissContentRelativeChildWindowsWithAnimation(bool);
+    void dismissContentRelativeChildWindowsWithAnimationFromViewOnly(bool);
+
+    void quickLookWithEvent(NSEvent *);
+    void prepareForDictionaryLookup();
+    void setAllowsLinkPreview(bool);
+    bool allowsLinkPreview() const { return m_allowsLinkPreview; }
+    void* immediateActionAnimationControllerForHitTestResult(WKHitTestResultRef, uint32_t type, WKTypeRef userData);
+    void* immediateActionAnimationControllerForHitTestResultFromViewOnly(WKHitTestResultRef, uint32_t type, WKTypeRef userData);
+    void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object* userData);
+    void prepareForImmediateActionAnimation();
+    void cancelImmediateActionAnimation();
+    void completeImmediateActionAnimation();
+
+    void setIgnoresNonWheelEvents(bool);
+    bool ignoresNonWheelEvents() const { return m_ignoresNonWheelEvents; }
+    void setIgnoresAllEvents(bool);
+    bool ignoresAllEvents() const { return m_ignoresAllEvents; }
+
+    void accessibilityRegisterUIProcessTokens();
+
 private:
+    WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
     bool supportsArbitraryLayoutModes() const;
+    float intrinsicDeviceScaleFactor() const;
+    void dispatchSetTopContentInset();
+
+    void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
 
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;
+    PageClient& m_pageClient;
+
+    WeakPtrFactory<WebViewImpl> m_weakPtrFactory;
 
     bool m_willBecomeFirstResponderAgain { false };
     bool m_inBecomeFirstResponder { false };
     bool m_inResignFirstResponder { false };
 
-    CGRect m_contentPreparationRect;
+    CGRect m_contentPreparationRect { CGRectZero };
     bool m_useContentPreparationRectForVisibleRect { false };
     bool m_clipsToVisibleRect { false };
+    bool m_needsViewFrameInWindowCoordinates;
+    bool m_didScheduleWindowAndViewFrameUpdate { false };
+    bool m_isDeferringViewInWindowChanges { false };
 
-    CGSize m_resizeScrollOffset;
+    bool m_automaticallyAdjustsContentInsets { false };
+    CGFloat m_topContentInset { 0 };
+    bool m_didScheduleSetTopContentInset { false };
 
-    CGSize m_intrinsicContentSize;
+    CGSize m_resizeScrollOffset { CGSizeZero };
+
+    CGSize m_intrinsicContentSize { CGSizeZero };
+    CGFloat m_overrideDeviceScaleFactor { 0 };
 
     RetainPtr<WKViewLayoutStrategy> m_layoutStrategy;
     WKLayoutMode m_lastRequestedLayoutMode { kWKLayoutModeViewSize };
     CGFloat m_lastRequestedViewScale { 1 };
 
     bool m_inSecureInputState { false };
+    RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
 #endif
+
+    RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;
+
+    bool m_shouldDeferViewInWindowChanges { false };
+    bool m_viewInWindowChangeWasDeferred { false };
+    NSWindow *m_targetWindowForMovePreparation { nullptr };
+
+    id m_flagsChangedEventMonitor { nullptr };
+
+    std::unique_ptr<WebCore::TextIndicatorWindow> m_textIndicatorWindow;
+
+    RetainPtr<NSColorSpace> m_colorSpace;
+
+    RetainPtr<NSEvent> m_lastPressureEvent;
+
+    bool m_ignoresNonWheelEvents { false };
+    bool m_ignoresAllEvents { false };
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    RetainPtr<WKImmediateActionController> m_immediateActionController;
+    RetainPtr<NSImmediateActionGestureRecognizer> m_immediateActionGestureRecognizer;
+#endif
+
+    bool m_allowsLinkPreview { true };
+    bool m_didRegisterForLookupPopoverCloseNotifications { false };
 };
     
 } // namespace WebKit

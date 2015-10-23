@@ -1,3 +1,237 @@
+2015-10-23  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView renewGState]):
+        (-[WKView writeSelectionToPasteboard:types:]):
+        (-[WKView centerSelectionInVisibleArea:]):
+        (-[WKView scrollWheel:]):
+        (-[WKView swipeWithEvent:]):
+        (-[WKView mouseMoved:]):
+        (-[WKView mouseDown:]):
+        (-[WKView mouseUp:]):
+        (-[WKView mouseDragged:]):
+        (-[WKView pressureChangeWithEvent:]):
+        (-[WKView acceptsFirstMouse:]):
+        (-[WKView shouldDelayWindowOrderingForEvent:]):
+        (-[WKView performKeyEquivalent:]):
+        (-[WKView keyUp:]):
+        (-[WKView keyDown:]):
+        (-[WKView flagsChanged:]):
+        (-[WKView _superQuickLookWithEvent:]):
+        (-[WKView _addFontPanelObserver]):
+        (-[WKView viewWillMoveToWindow:]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView viewDidChangeBackingProperties]):
+        (-[WKView enableAccessibilityIfNecessary]):
+        (-[WKView quickLookWithEvent:]):
+        (-[WKView _colorSpace]):
+        (-[WKView _didRelaunchProcess]):
+        (-[WKView _setTextIndicator:]):
+        (-[WKView _setTextIndicator:withLifetime:]):
+        (-[WKView _clearTextIndicatorWithAnimation:]):
+        (-[WKView _setTextIndicatorAnimationProgress:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView _didPerformImmediateActionHitTest:contentPreventsDefault:userData:]):
+        (-[WKView _internalImmediateActionAnimationControllerForHitTestResult:withType:userData:]):
+        (-[WKView _internalPrepareForImmediateActionAnimation]):
+        (-[WKView _internalCancelImmediateActionAnimation]):
+        (-[WKView _internalCompleteImmediateActionAnimation]):
+        (-[WKView _internalDismissContentRelativeChildWindowsWithAnimation:]):
+        (-[WKView beginDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChangesSync]):
+        (-[WKView _prepareForMoveToWindow:withCompletionHandler:]):
+        (-[WKView isDeferringViewInWindowChanges]):
+        (-[WKView allowsLinkPreview]):
+        (-[WKView setAllowsLinkPreview:]):
+        (-[WKView _setIgnoresAllEvents:]):
+        (-[WKView _setIgnoresNonWheelMouseEvents:]):
+        (-[WKView _setIgnoresNonWheelEvents:]):
+        (-[WKView _ignoresNonWheelEvents]):
+        (-[WKView _ignoresAllEvents]):
+        (-[WKView _setOverrideDeviceScaleFactor:]):
+        (-[WKView _overrideDeviceScaleFactor]):
+        (-[WKView _setTopContentInset:]):
+        (-[WKView _topContentInset]):
+        (-[WKView _dismissContentRelativeChildWindows]):
+        (-[WKView _dismissContentRelativeChildWindowsWithAnimation:]):
+        (-[WKView _setAutomaticallyAdjustsContentInsets:]):
+        (-[WKView _automaticallyAdjustsContentInsets]):
+        (-[WKWindowVisibilityObserver initWithView:]): Deleted.
+        (-[WKWindowVisibilityObserver startObserving:]): Deleted.
+        (-[WKWindowVisibilityObserver stopObserving:]): Deleted.
+        (-[WKWindowVisibilityObserver _windowDidOrderOnScreen:]): Deleted.
+        (-[WKWindowVisibilityObserver _windowDidOrderOffScreen:]): Deleted.
+        (-[WKView dealloc]): Deleted.
+        (-[WKView _updateWindowAndViewFrames]): Deleted.
+        (-[WKView updateFontPanelIfNeeded]): Deleted.
+        (-[WKView _selectionChanged]): Deleted.
+        (-[WKView addWindowObserversForWindow:]): Deleted.
+        (-[WKView removeWindowObservers]): Deleted.
+        (-[WKView doWindowDidChangeScreen]): Deleted.
+        (-[WKView _windowDidBecomeKey:]): Deleted.
+        (-[WKView _windowDidChangeScreen:]): Deleted.
+        (-[WKView _windowDidChangeLayerHosting:]): Deleted.
+        (-[WKView _windowDidResignKey:]): Deleted.
+        (-[WKView _windowDidMiniaturize:]): Deleted.
+        (-[WKView _windowDidDeminiaturize:]): Deleted.
+        (-[WKView _windowDidMove:]): Deleted.
+        (-[WKView _windowDidResize:]): Deleted.
+        (-[WKView _windowDidOrderOffScreen:]): Deleted.
+        (-[WKView _windowDidOrderOnScreen:]): Deleted.
+        (-[WKView _windowDidChangeBackingProperties:]): Deleted.
+        (-[WKView _windowDidChangeOcclusionState:]): Deleted.
+        (-[WKView _prepareForDictionaryLookup]): Deleted.
+        (-[WKView _dictionaryLookupPopoverWillClose:]): Deleted.
+        (-[WKView _accessibilityRegisterUIProcessTokens]): Deleted.
+        (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]): Deleted.
+        (-[WKView _intrinsicDeviceScaleFactor]): Deleted.
+        (-[WKView _preferencesDidChange]): Deleted.
+        (-[WKView _targetWindowForMovePreparation]): Deleted.
+        (-[WKView _updateContentInsetsIfAutomatic]): Deleted.
+        (-[WKView observeValueForKeyPath:ofObject:change:context:]): Deleted.
+        (-[WKView _dispatchSetTopContentInset]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::automaticallyAdjustsContentInsets):
+        (WebKit::WebViewImpl::topContentInset):
+        (WebKit::WebViewImpl::overrideDeviceScaleFactor):
+        (WebKit::WebViewImpl::isDeferringViewInWindowChanges):
+        (WebKit::WebViewImpl::targetWindowForMovePreparation):
+        (WebKit::WebViewImpl::lastPressureEvent):
+        (WebKit::WebViewImpl::allowsLinkPreview):
+        (WebKit::WebViewImpl::ignoresNonWheelEvents):
+        (WebKit::WebViewImpl::ignoresAllEvents):
+        (WebKit::WebViewImpl::createWeakPtr):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (SOFT_LINK_CONSTANT_MAY_FAIL):
+        (-[WKWindowVisibilityObserver initWithView:impl:]):
+        (-[WKWindowVisibilityObserver dealloc]):
+        (-[WKWindowVisibilityObserver startObserving:]):
+        (-[WKWindowVisibilityObserver stopObserving:]):
+        (-[WKWindowVisibilityObserver startObservingFontPanel]):
+        (-[WKWindowVisibilityObserver startObservingLookupDismissal]):
+        (-[WKWindowVisibilityObserver _windowDidOrderOnScreen:]):
+        (-[WKWindowVisibilityObserver _windowDidOrderOffScreen:]):
+        (-[WKWindowVisibilityObserver _windowDidBecomeKey:]):
+        (-[WKWindowVisibilityObserver _windowDidResignKey:]):
+        (-[WKWindowVisibilityObserver _windowDidMiniaturize:]):
+        (-[WKWindowVisibilityObserver _windowDidDeminiaturize:]):
+        (-[WKWindowVisibilityObserver _windowDidMove:]):
+        (-[WKWindowVisibilityObserver _windowDidResize:]):
+        (-[WKWindowVisibilityObserver _windowDidChangeBackingProperties:]):
+        (-[WKWindowVisibilityObserver _windowDidChangeScreen:]):
+        (-[WKWindowVisibilityObserver _windowDidChangeLayerHosting:]):
+        (-[WKWindowVisibilityObserver _windowDidChangeOcclusionState:]):
+        (-[WKWindowVisibilityObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WKWindowVisibilityObserver _dictionaryLookupPopoverWillClose:]):
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]):
+        (-[WKEditCommandObjC command]):
+        (-[WKEditorUndoTargetObjC undoEditing:]):
+        (-[WKEditorUndoTargetObjC redoEditing:]):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::resignFirstResponder):
+        (WebKit::WebViewImpl::renewGState):
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+        (WebKit::WebViewImpl::setAutomaticallyAdjustsContentInsets):
+        (WebKit::WebViewImpl::updateContentInsetsIfAutomatic):
+        (WebKit::WebViewImpl::setTopContentInset):
+        (WebKit::WebViewImpl::dispatchSetTopContentInset):
+        (WebKit::WebViewImpl::setOverrideDeviceScaleFactor):
+        (WebKit::WebViewImpl::intrinsicDeviceScaleFactor):
+        (WebKit::WebViewImpl::windowDidOrderOffScreen):
+        (WebKit::WebViewImpl::windowDidOrderOnScreen):
+        (WebKit::WebViewImpl::windowDidBecomeKey):
+        (WebKit::WebViewImpl::windowDidResignKey):
+        (WebKit::WebViewImpl::windowDidMiniaturize):
+        (WebKit::WebViewImpl::windowDidDeminiaturize):
+        (WebKit::WebViewImpl::windowDidMove):
+        (WebKit::WebViewImpl::windowDidResize):
+        (WebKit::WebViewImpl::windowDidChangeBackingProperties):
+        (WebKit::WebViewImpl::windowDidChangeScreen):
+        (WebKit::WebViewImpl::windowDidChangeLayerHosting):
+        (WebKit::WebViewImpl::windowDidChangeOcclusionState):
+        (WebKit::WebViewImpl::viewWillMoveToWindow):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::viewDidChangeBackingProperties):
+        (WebKit::WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent):
+        (WebKit::WebViewImpl::colorSpace):
+        (WebKit::WebViewImpl::beginDeferringViewInWindowChanges):
+        (WebKit::WebViewImpl::endDeferringViewInWindowChanges):
+        (WebKit::WebViewImpl::endDeferringViewInWindowChangesSync):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        (WebKit::WebViewImpl::pressureChangeWithEvent):
+        (WebKit::WebViewImpl::isEditable):
+        (WebKit::WebViewImpl::executeEditCommand):
+        (WebKit::WebViewImpl::registerEditCommand):
+        (WebKit::WebViewImpl::clearAllEditCommands):
+        (WebKit::WebViewImpl::writeSelectionToPasteboard):
+        (WebKit::WebViewImpl::centerSelectionInVisibleArea):
+        (WebKit::WebViewImpl::selectionDidChange):
+        (WebKit::WebViewImpl::startObservingFontPanel):
+        (WebKit::WebViewImpl::updateFontPanelIfNeeded):
+        (WebKit::WebViewImpl::preferencesDidChange):
+        (WebKit::WebViewImpl::setTextIndicator):
+        (WebKit::WebViewImpl::clearTextIndicatorWithAnimation):
+        (WebKit::WebViewImpl::setTextIndicatorAnimationProgress):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindows):
+        (WebKit::WebViewImpl::quickLookWithEvent):
+        (WebKit::WebViewImpl::prepareForDictionaryLookup):
+        (WebKit::WebViewImpl::setAllowsLinkPreview):
+        (WebKit::WebViewImpl::immediateActionAnimationControllerForHitTestResult):
+        (WebKit::WebViewImpl::prepareForImmediateActionAnimation):
+        (WebKit::WebViewImpl::cancelImmediateActionAnimation):
+        (WebKit::WebViewImpl::completeImmediateActionAnimation):
+        (WebKit::WebViewImpl::setIgnoresNonWheelEvents):
+        (WebKit::WebViewImpl::setIgnoresAllEvents):
+        (WebKit::WebViewImpl::accessibilityRegisterUIProcessTokens):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::activeWindow):
+        (WebKit::PageClientImpl::preferencesDidChange):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::selectionDidChange):
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]): Deleted.
+        (-[WKEditCommandObjC command]): Deleted.
+        (-[WKEditorUndoTargetObjC undoEditing:]): Deleted.
+        (-[WKEditorUndoTargetObjC redoEditing:]): Deleted.
+        (WebKit::PageClientImpl::PageClientImpl): Deleted.
+        Move more things to WebViewImpl.
+        This also introduces an unfortunate pattern that is required for things which
+        clients override on WKView, where we have a flow like this:
+                - somebody (PageClient, etc.) calls WebViewImpl::x
+                - WebViewImpl::x does nothing except call [WKView _x]
+                - [WKView _x] calls WebViewImpl::xFromViewOnly, which does the real work
+        As long as no clients call the -FromViewOnly variant, this will mean that
+        all callers are bottlenecked through the overridable WKView method.
+        How this works with WKWebView, I am not sure yet.
+
+        * UIProcess/mac/WKImmediateActionController.h:
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController initWithPage:view:viewImpl:recognizer:]):
+        (-[WKImmediateActionController willDestroyView:]):
+        (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+        (-[WKImmediateActionController immediateActionRecognizerDidCancelAnimation:]):
+        (-[WKImmediateActionController immediateActionRecognizerDidCompleteAnimation:]):
+        (-[WKImmediateActionController menuItem:viewAtScreenPoint:]):
+        (-[WKImmediateActionController menuItem:previewItemAtPoint:]):
+        (-[WKImmediateActionController menuItem:itemFrameForPoint:]):
+        (-[WKImmediateActionController menuItem:maxSizeForPoint:]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+        (-[WKImmediateActionController _animationControllerForText]):
+        (-[WKImmediateActionController initWithPage:view:recognizer:]): Deleted.
+        Keep a generic NSView, use the WebViewImpl for WK*View related things.
+
 2015-10-22  Joonghun Park  <jh718.park@samsung.com>
 
         [GTK] Fix build break since r191471

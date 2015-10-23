@@ -35,6 +35,7 @@
 
 namespace WebKit {
 class WebPageProxy;
+class WebViewImpl;
 
 enum class ImmediateActionState {
     None = 0,
@@ -46,12 +47,12 @@ enum class ImmediateActionState {
 
 @class DDActionContext;
 @class QLPreviewMenuItem;
-@class WKView;
 
 @interface WKImmediateActionController : NSObject <NSImmediateActionGestureRecognizerDelegate> {
 @private
-    WebKit::WebPageProxy *_page;
-    WKView *_wkView;
+    WebKit::WebPageProxy* _page;
+    NSView *_view;
+    WebKit::WebViewImpl* _viewImpl;
 
     WebKit::ImmediateActionState _state;
     WebKit::WebHitTestResultData _hitTestResultData;
@@ -67,8 +68,8 @@ enum class ImmediateActionState {
     BOOL _hasActiveImmediateAction;
 }
 
-- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(WKView *)wkView recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
-- (void)willDestroyView:(WKView *)view;
+- (instancetype)initWithPage:(WebKit::WebPageProxy&)page view:(NSView *)view viewImpl:(WebKit::WebViewImpl&)viewImpl recognizer:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
+- (void)willDestroyView:(NSView *)view;
 - (void)didPerformImmediateActionHitTest:(const WebKit::WebHitTestResultData&)hitTestResult contentPreventsDefault:(BOOL)contentPreventsDefault userData:(API::Object*)userData;
 - (void)dismissContentRelativeChildWindows;
 - (BOOL)hasActiveImmediateAction;
