@@ -746,7 +746,7 @@ double AnimationBase::getElapsedTime() const
     if (m_startTime <= 0)
         return 0;
     if (postActive() || fillingForwards())
-        return 1;
+        return m_totalDuration;
 
     return beginAnimationUpdateTime() - m_startTime;
 }
