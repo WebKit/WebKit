@@ -290,7 +290,6 @@ set(WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES
     mac/WebCoreSupport
     mac/WebInspector
     mac/WebView
-    ${DERIVED_SOURCES_WEBCORE_DIR}
     ${WEBCORE_DIR}/bindings/objc
     ${WEBCORE_DIR}/plugins
 )
@@ -411,3 +410,17 @@ list(APPEND WebKit_SOURCES
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
+
+set(WebKitLegacy_WebCore_FORWARDING_HEADERS
+    DOMElement.h
+    DOMHTMLFormElement.h
+    DOMHTMLInputElement.h
+    DOMWheelEvent.h
+)
+
+# FIXME: These shouldn't be necessary, but it doesn't compile without them.
+foreach (_file ${WebKitLegacy_WebCore_FORWARDING_HEADERS})
+    if (NOT EXISTS ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/${_file})
+        file(WRITE ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/${_file} "#import <WebCore/${_file}>")
+    endif ()
+endforeach ()

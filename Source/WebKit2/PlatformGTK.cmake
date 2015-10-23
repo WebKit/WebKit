@@ -89,6 +89,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
+    UIProcess/LegacySessionStateCodingNone.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 

@@ -63,6 +63,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
+    UIProcess/LegacySessionStateCodingNone.cpp
 
     UIProcess/API/C/CoordinatedGraphics/WKView.cpp
 

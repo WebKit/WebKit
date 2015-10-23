@@ -261,6 +261,8 @@ list(APPEND WebCore_SOURCES
     platform/cf/CFURLExtras.cpp
     platform/cf/CoreMediaSoftLink.cpp
     platform/cf/FileSystemCF.cpp
+    platform/cf/KeyedDecoderCF.cpp
+    platform/cf/KeyedEncoderCF.cpp
     platform/cf/MediaAccessibilitySoftLink.cpp
     platform/cf/RunLoopObserver.cpp
     platform/cf/SharedBufferCF.cpp
@@ -314,6 +316,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/ca/GraphicsLayerCA.cpp
     platform/graphics/ca/LayerFlushScheduler.cpp
     platform/graphics/ca/LayerPool.cpp
+    platform/graphics/ca/PlatformCAAnimation.cpp
     platform/graphics/ca/PlatformCALayer.cpp
     platform/graphics/ca/TileController.cpp
     platform/graphics/ca/TileCoverageMap.cpp
@@ -555,6 +558,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     page/mac
     page/scrolling
 
+    page/scrolling/mac
+
     platform/animation
     platform/audio
     platform/cf
@@ -573,6 +578,8 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     platform/graphics/filters
     platform/graphics/mac
     platform/graphics/transforms
+
+    platform/graphics/ca/cocoa
 
     platform/network/cf
     platform/network/cocoa

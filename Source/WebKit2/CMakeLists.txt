@@ -336,7 +336,6 @@ set(WebKit2_SOURCES
     UIProcess/FrameLoadState.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
-    UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/PageLoadState.cpp
     UIProcess/ProcessAssertion.cpp
     UIProcess/ProcessThrottler.cpp
