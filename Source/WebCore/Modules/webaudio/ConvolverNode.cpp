@@ -32,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "ExceptionCode.h"
 #include "Reverb.h"
 #include <wtf/MainThread.h>
 
@@ -115,12 +116,17 @@ void ConvolverNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-void ConvolverNode::setBuffer(AudioBuffer* buffer)
+void ConvolverNode::setBuffer(AudioBuffer* buffer, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     
     if (!buffer)
         return;
+
+    if (buffer->sampleRate() != context()->sampleRate()) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
 
     unsigned numberOfChannels = buffer->numberOfChannels();
     size_t bufferLength = buffer->length();
