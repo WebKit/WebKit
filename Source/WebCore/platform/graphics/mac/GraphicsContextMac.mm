@@ -116,7 +116,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int, int offse
 }
 
 #if !PLATFORM(IOS)
-static NSColor* makePatternColor(NSString* firstChoiceName, NSString* secondChoiceName, NSColor* defaultColor, bool& usingDot)
+static NSImage *findImage(NSString* firstChoiceName, NSString* secondChoiceName, bool& usingDot)
 {
     // Eventually we should be able to get rid of the secondChoiceName. For the time being we need both to keep
     // this working on all platforms.
@@ -124,12 +124,8 @@ static NSColor* makePatternColor(NSString* firstChoiceName, NSString* secondChoi
     if (!image)
         image = [NSImage imageNamed:secondChoiceName];
     ASSERT(image); // if image is not available, we want to know
-    NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
-    if (color)
-        usingDot = true;
-    else
-        color = defaultColor;
-    return color;
+    usingDot = image;
+    return image;
 }
 #else
 static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* resourceName)
@@ -141,18 +137,18 @@ static RetainPtr<CGPatternRef> createDotPattern(bool& usingDot, const char* reso
 }
 #endif // !PLATFORM(IOS)
 
-static NSColor *spellingPatternColor = nullptr;
-static NSColor *grammarPatternColor = nullptr;
-static NSColor *correctionPatternColor = nullptr;
+static NSImage *spellingImage = nullptr;
+static NSImage *grammarImage = nullptr;
+static NSImage *correctionImage = nullptr;
 
 void GraphicsContext::updateDocumentMarkerResources()
 {
-    [spellingPatternColor release];
-    spellingPatternColor = nullptr;
-    [grammarPatternColor release];
-    grammarPatternColor = nullptr;
-    [correctionPatternColor release];
-    correctionPatternColor = nullptr;
+    [spellingImage release];
+    spellingImage = nullptr;
+    [grammarImage release];
+    grammarImage = nullptr;
+    [correctionImage release];
+    correctionImage = nullptr;
 }
 
 static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phasePoint)
@@ -175,7 +171,8 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 
     bool usingDot;
 #if !PLATFORM(IOS)
-    NSColor *patternColor;
+    NSImage *image;
+    NSColor *fallbackColor;
 #else
     CGPatternRef dotPattern;
 #endif
@@ -185,9 +182,10 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
 #if !PLATFORM(IOS)
-            if (!spellingPatternColor)
-                spellingPatternColor = [makePatternColor(@"NSSpellingDot", @"SpellingDot", [NSColor redColor], usingDotForSpelling) retain];
-            patternColor = spellingPatternColor;
+            if (!spellingImage)
+                spellingImage = [findImage(@"NSSpellingDot", @"SpellingDot", usingDotForSpelling) retain];
+            image = spellingImage;
+            fallbackColor = [NSColor redColor];
 #else
             static CGPatternRef spellingPattern = createDotPattern(usingDotForSpelling, "SpellingDot").leakRef();
             dotPattern = spellingPattern;
@@ -200,10 +198,11 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 #if !PLATFORM(IOS)
             // Constants for grammar pattern color.
             static bool usingDotForGrammar = false;
-            if (!grammarPatternColor)
-                grammarPatternColor = [makePatternColor(@"NSGrammarDot", @"GrammarDot", [NSColor greenColor], usingDotForGrammar) retain];
-            usingDot = usingDotForGrammar;
-            patternColor = grammarPatternColor;
+            if (!grammarImage)
+                grammarImage = [findImage(@"NSGrammarDot", @"GrammarDot", usingDotForGrammar) retain];
+            usingDot = grammarImage;
+            image = grammarImage;
+            fallbackColor = [NSColor greenColor];
             break;
 #else
             ASSERT_NOT_REACHED();
@@ -217,10 +216,11 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
-            if (!correctionPatternColor)
-                correctionPatternColor = [makePatternColor(@"NSCorrectionDot", @"CorrectionDot", [NSColor blueColor], usingDotForSpelling) retain];
+            if (!correctionImage)
+                correctionImage = [findImage(@"NSCorrectionDot", @"CorrectionDot", usingDotForSpelling) retain];
             usingDot = usingDotForSpelling;
-            patternColor = correctionPatternColor;
+            image = correctionImage;
+            fallbackColor = [NSColor blueColor];
             break;
         }
 #endif
@@ -263,27 +263,30 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     // for transforms.
 
     // Draw underline.
-#if !PLATFORM(IOS)
-    LocalCurrentGraphicsContext localContext(*this);
-    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    CGContextRef context = (CGContextRef)[currentContext graphicsPort];
-#else
     CGContextRef context = platformContext();
-#endif
     CGContextSaveGState(context);
 
-#if !PLATFORM(IOS)
-    [patternColor set];
-#else
+#if PLATFORM(IOS)
     WKSetPattern(context, dotPattern, YES, YES);
 #endif
 
     setPatternPhaseInUserSpace(context, offsetPoint);
 
+    CGRect destinationRect = CGRectMake(offsetPoint.x(), offsetPoint.y(), width, patternHeight);
 #if !PLATFORM(IOS)
-    NSRectFillUsingOperation(NSMakeRect(offsetPoint.x(), offsetPoint.y(), width, patternHeight), NSCompositeSourceOver);
+    if (image) {
+        // FIXME: Rather than getting the NSImage and then picking the CGImage from it, we should do what iOS does and
+        // just load the CGImage in the first place.
+        NSRect dotRect = NSMakeRect(offsetPoint.x(), offsetPoint.y(), patternWidth, patternHeight);
+        CGImageRef cgImage = [image CGImageForProposedRect:&dotRect context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES] hints:nullptr];
+        CGContextClipToRect(context, destinationRect);
+        CGContextDrawTiledImage(context, NSRectToCGRect(dotRect), cgImage);
+    } else {
+        CGContextSetFillColorWithColor(context, [fallbackColor CGColor]);
+        CGContextFillRect(context, destinationRect);
+    }
 #else
-    WKRectFillUsingOperation(context, CGRectMake(offsetPoint.x(), offsetPoint.y(), width, patternHeight), kCGCompositeSover);
+    WKRectFillUsingOperation(context, destinationRect, kCGCompositeSover);
 #endif
     
     CGContextRestoreGState(context);
