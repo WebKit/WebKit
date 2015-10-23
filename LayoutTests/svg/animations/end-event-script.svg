@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
-<svg onload="loaded()" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg onload="loaded()" xmlns="http://www.w3.org/2000/svg">
 <rect id="rect" x="0" y="0" width="50" height="50" fill="red">
     <animate id="anim" attributeName="visibility" to="visible" begin="0s" end="2s" />
 </rect>
