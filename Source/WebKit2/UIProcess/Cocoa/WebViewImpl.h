@@ -288,10 +288,10 @@ private:
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
-    uint64_t m_pluginComplexTextInputIdentifier;
+    uint64_t m_pluginComplexTextInputIdentifier { 0 };
 
     // The state of complex text input for the plug-in.
-    PluginComplexTextInputState m_pluginComplexTextInputState;
+    PluginComplexTextInputState m_pluginComplexTextInputState { PluginComplexTextInputDisabled };
 
 #if ENABLE(FULLSCREEN_API)
     RetainPtr<WKFullScreenWindowController> m_fullScreenWindowController;
@@ -330,7 +330,7 @@ private:
     RetainPtr<NSView> m_layerHostingView;
 
 #if WK_API_ENABLED
-    _WKThumbnailView *m_thumbnailView;
+    _WKThumbnailView *m_thumbnailView { nullptr };
 #endif
 };
     
