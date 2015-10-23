@@ -51,7 +51,6 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
             "Right": this._handleRightOrEnterKey.bind(this),
             "Esc": this._handleEscapeKey.bind(this),
             "Enter": this._handleRightOrEnterKey.bind(this),
-            "Cmd-Enter": this._handleCommandEnterKey.bind(this),
             "Tab": this._handleTabKey.bind(this),
             "Cmd-A": this._handleHideKey.bind(this),
             "Cmd-Z": this._handleHideKey.bind(this),
@@ -712,19 +711,6 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
             return;
 
         this._commitCompletionHint();
-    }
-
-    _handleCommandEnterKey(codeMirror)
-    {
-        const modeName = codeMirror.getMode().name;
-        if (modeName !== "javascript" && modeName !== "htmlmixed")
-            return CodeMirror.Pass;
-
-        const selectedText = codeMirror.getSelection();
-        if (!selectedText)
-            return CodeMirror.Pass;
-
-        WebInspector.consoleLogViewController.consolePromptTextCommitted(null, selectedText);
     }
 
     _handleEscapeKey(codeMirror)

@@ -1,3 +1,55 @@
+2015-10-23  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Command-Enter in Debugger should show a popover with evaluation result
+        https://bugs.webkit.org/show_bug.cgi?id=149195
+
+        Currenty, the only way to display the popover is to hover over the text with a mouse cursor.
+        Provide a way to display it via a keyboard shortcut.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController): Deleted.
+        (WebInspector.CodeMirrorCompletionController.prototype._generateJavaScriptCompletions): Deleted.
+        Don't evaluate selected text from Debugger or Sources in the console.
+
+        * UserInterface/Controllers/CodeMirrorTokenTrackingController.js:
+        (WebInspector.CodeMirrorTokenTrackingController):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._handleCommandEnterKey):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._hidePopover):
+        Cmd-Enter triggers the popover, Esc hides it.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.set mode):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype.removeHighlightedRange):
+        Don't use delete.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._mouseMovedWithMarkedText):
+        When a token isn't hovered, hide it only when it was triggered not by the keyboard.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._markedTextIsNoLongerHovered):
+        Don't use delete.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._updateHoveredTokenInfo):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._getTokenInfoForPosition):
+        Abstract out a no side effects _getTokenInfoForPosition method, which is also used by _handleCommandEnterKey.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._mouseMovedOutOfEditor):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._mouseButtonWasReleasedOverEditor):
+        Don't use delete.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processNewHoveredToken):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processNonSymbolToken):
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._processJavaScriptExpression):
+        Pass tokenInfo as an argument to explicitly state that these methods require it.
+
+        (WebInspector.CodeMirrorTokenTrackingController.prototype._resetTrackingStates):
+        Don't use delete.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.tokenTrackingControllerHighlightedRangeReleased):
+        Allow to hide the popover regardless of mouse position. Used when the text cursor moves or
+        when Esc key is pressed.
+
 2015-10-23  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Visual sidebar should support multiple backgrounds
