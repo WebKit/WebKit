@@ -179,11 +179,6 @@ struct WKViewInterpretKeyEventsParameters {
 
     RetainPtr<NSTrackingArea> _primaryTrackingArea;
 
-    // For ToolTips.
-    NSToolTipTag _lastToolTipTag;
-    id _trackingRectOwner;
-    void* _trackingRectUserData;
-
     RetainPtr<NSView> _layerHostingView;
 
     RetainPtr<id> _remoteAccessibilityChild;
@@ -2110,6 +2105,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [super quickLookWithEvent:event];
 }
 
+- (void)_superRemoveTrackingRect:(NSTrackingRectTag)tag
+{
+    [super removeTrackingRect:tag];
+}
+
 - (NSArray *)validAttributesForMarkedText
 {
     static NSArray *validAttributes;
@@ -2508,121 +2508,47 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     return toUserSpace(rect, [self window]);
 }
 
-// Any non-zero value will do, but using something recognizable might help us debug some day.
-#define TRACKING_RECT_TAG 0xBADFACE
-
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside
 {
-    ASSERT(_data->_trackingRectOwner == nil);
-    _data->_trackingRectOwner = owner;
-    _data->_trackingRectUserData = data;
-    return TRACKING_RECT_TAG;
+    return _data->_impl->addTrackingRect(NSRectToCGRect(rect), owner, data, assumeInside);
 }
 
 - (NSTrackingRectTag)_addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside useTrackingNum:(int)tag
 {
-    ASSERT(tag == 0 || tag == TRACKING_RECT_TAG);
-    ASSERT(_data->_trackingRectOwner == nil);
-    _data->_trackingRectOwner = owner;
-    _data->_trackingRectUserData = data;
-    return TRACKING_RECT_TAG;
+    return _data->_impl->addTrackingRectWithTrackingNum(NSRectToCGRect(rect), owner, data, assumeInside, tag);
 }
 
 - (void)_addTrackingRects:(NSRect *)rects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
 {
-    ASSERT(count == 1);
-    ASSERT(trackingNums[0] == 0 || trackingNums[0] == TRACKING_RECT_TAG);
-    ASSERT(_data->_trackingRectOwner == nil);
-    _data->_trackingRectOwner = owner;
-    _data->_trackingRectUserData = userDataList[0];
-    trackingNums[0] = TRACKING_RECT_TAG;
+    CGRect *cgRects = (CGRect *)calloc(1, sizeof(CGRect));
+    for (int i = 0; i < count; i++)
+        cgRects[i] = NSRectToCGRect(rects[i]);
+    _data->_impl->addTrackingRectsWithTrackingNums(cgRects, owner, userDataList, assumeInsideList, trackingNums, count);
+    free(cgRects);
 }
 
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
 {
     if (!_data)
         return;
-
-    if (tag == 0)
-        return;
-    
-    if (tag == TRACKING_RECT_TAG) {
-        _data->_trackingRectOwner = nil;
-        return;
-    }
-    
-    if (tag == _data->_lastToolTipTag) {
-        [super removeTrackingRect:tag];
-        _data->_lastToolTipTag = 0;
-        return;
-    }
-
-    // If any other tracking rect is being removed, we don't know how it was created
-    // and it's possible there's a leak involved (see 3500217)
-    ASSERT_NOT_REACHED();
+    _data->_impl->removeTrackingRect(tag);
 }
 
 - (void)_removeTrackingRects:(NSTrackingRectTag *)tags count:(int)count
 {
-    int i;
-    for (i = 0; i < count; ++i) {
-        int tag = tags[i];
-        if (tag == 0)
-            continue;
-        ASSERT(tag == TRACKING_RECT_TAG);
-        if (_data != nil) {
-            _data->_trackingRectOwner = nil;
-        }
-    }
-}
-
-- (void)_sendToolTipMouseExited
-{
-    // Nothing matters except window, trackingNumber, and userData.
-    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseExited
-        location:NSMakePoint(0, 0)
-        modifierFlags:0
-        timestamp:0
-        windowNumber:[[self window] windowNumber]
-        context:NULL
-        eventNumber:0
-        trackingNumber:TRACKING_RECT_TAG
-        userData:_data->_trackingRectUserData];
-    [_data->_trackingRectOwner mouseExited:fakeEvent];
-}
-
-- (void)_sendToolTipMouseEntered
-{
-    // Nothing matters except window, trackingNumber, and userData.
-    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseEntered
-        location:NSMakePoint(0, 0)
-        modifierFlags:0
-        timestamp:0
-        windowNumber:[[self window] windowNumber]
-        context:NULL
-        eventNumber:0
-        trackingNumber:TRACKING_RECT_TAG
-        userData:_data->_trackingRectUserData];
-    [_data->_trackingRectOwner mouseEntered:fakeEvent];
+    if (!_data)
+        return;
+    _data->_impl->removeTrackingRects(tags, count);
 }
 
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
 {
-    return nsStringFromWebCoreString(_data->_page->toolTip());
+    return _data->_impl->stringForToolTip(tag);
 }
 
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
 {
-    if (oldToolTip)
-        [self _sendToolTipMouseExited];
-
-    if (newToolTip && [newToolTip length] > 0) {
-        // See radar 3500217 for why we remove all tooltips rather than just the single one we created.
-        [self removeAllToolTips];
-        NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);
-        _data->_lastToolTipTag = [self addToolTipRect:wideOpenRect owner:self userData:NULL];
-        [self _sendToolTipMouseEntered];
-    }
+    _data->_impl->toolTipChanged(oldToolTip, newToolTip);
 }
 
 - (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer

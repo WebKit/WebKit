@@ -34,6 +34,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
 #import "PageClient.h"
+#import "StringUtilities.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKTextInputWindowController.h"
@@ -1439,6 +1440,117 @@ void WebViewImpl::accessibilityRegisterUIProcessTokens()
     IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
     IPC::DataReference windowToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
     m_page.registerUIProcessAccessibilityTokens(elementToken, windowToken);
+}
+
+// Any non-zero value will do, but using something recognizable might help us debug some day.
+#define TRACKING_RECT_TAG 0xBADFACE
+
+NSTrackingRectTag WebViewImpl::addTrackingRect(CGRect, id owner, void* userData, bool assumeInside)
+{
+    ASSERT(m_trackingRectOwner == nil);
+    m_trackingRectOwner = owner;
+    m_trackingRectUserData = userData;
+    return TRACKING_RECT_TAG;
+}
+
+NSTrackingRectTag WebViewImpl::addTrackingRectWithTrackingNum(CGRect, id owner, void* userData, bool assumeInside, int tag)
+{
+    ASSERT(tag == 0 || tag == TRACKING_RECT_TAG);
+    ASSERT(m_trackingRectOwner == nil);
+    m_trackingRectOwner = owner;
+    m_trackingRectUserData = userData;
+    return TRACKING_RECT_TAG;
+}
+
+void WebViewImpl::addTrackingRectsWithTrackingNums(CGRect*, id owner, void** userDataList, bool assumeInside, NSTrackingRectTag *trackingNums, int count)
+{
+    ASSERT(count == 1);
+    ASSERT(trackingNums[0] == 0 || trackingNums[0] == TRACKING_RECT_TAG);
+    ASSERT(m_trackingRectOwner == nil);
+    m_trackingRectOwner = owner;
+    m_trackingRectUserData = userDataList[0];
+    trackingNums[0] = TRACKING_RECT_TAG;
+}
+
+void WebViewImpl::removeTrackingRect(NSTrackingRectTag tag)
+{
+    if (tag == 0)
+        return;
+
+    if (tag == TRACKING_RECT_TAG) {
+        m_trackingRectOwner = nil;
+        return;
+    }
+
+    if (tag == m_lastToolTipTag) {
+        [m_view _superRemoveTrackingRect:tag];
+        m_lastToolTipTag = 0;
+        return;
+    }
+
+    // If any other tracking rect is being removed, we don't know how it was created
+    // and it's possible there's a leak involved (see 3500217)
+    ASSERT_NOT_REACHED();
+}
+
+void WebViewImpl::removeTrackingRects(NSTrackingRectTag *tags, int count)
+{
+    for (int i = 0; i < count; ++i) {
+        int tag = tags[i];
+        if (tag == 0)
+            continue;
+        ASSERT(tag == TRACKING_RECT_TAG);
+        m_trackingRectOwner = nil;
+    }
+}
+
+void WebViewImpl::sendToolTipMouseExited()
+{
+    // Nothing matters except window, trackingNumber, and userData.
+    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseExited
+                                                location:NSMakePoint(0, 0)
+                                           modifierFlags:0
+                                               timestamp:0
+                                            windowNumber:m_view.window.windowNumber
+                                                 context:NULL
+                                             eventNumber:0
+                                          trackingNumber:TRACKING_RECT_TAG
+                                                userData:m_trackingRectUserData];
+    [m_trackingRectOwner mouseExited:fakeEvent];
+}
+
+void WebViewImpl::sendToolTipMouseEntered()
+{
+    // Nothing matters except window, trackingNumber, and userData.
+    NSEvent *fakeEvent = [NSEvent enterExitEventWithType:NSMouseEntered
+                                                location:NSMakePoint(0, 0)
+                                           modifierFlags:0
+                                               timestamp:0
+                                            windowNumber:m_view.window.windowNumber
+                                                 context:NULL
+                                             eventNumber:0
+                                          trackingNumber:TRACKING_RECT_TAG
+                                                userData:m_trackingRectUserData];
+    [m_trackingRectOwner mouseEntered:fakeEvent];
+}
+
+NSString *WebViewImpl::stringForToolTip(NSToolTipTag tag)
+{
+    return nsStringFromWebCoreString(m_page.toolTip());
+}
+
+void WebViewImpl::toolTipChanged(NSString *oldToolTip, NSString *newToolTip)
+{
+    if (oldToolTip)
+        sendToolTipMouseExited();
+    
+    if (newToolTip && [newToolTip length] > 0) {
+        // See radar 3500217 for why we remove all tooltips rather than just the single one we created.
+        [m_view removeAllToolTips];
+        NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);
+        m_lastToolTipTag = [m_view addToolTipRect:wideOpenRect owner:m_view userData:NULL];
+        sendToolTipMouseEntered();
+    }
 }
 
 } // namespace WebKit

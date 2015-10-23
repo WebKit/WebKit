@@ -50,6 +50,7 @@ OBJC_CLASS WKWindowVisibilityObserver;
 
 - (NSTextInputContext *)_superInputContext;
 - (void)_superQuickLookWithEvent:(NSEvent *)event;
+- (void)_superRemoveTrackingRect:(NSTrackingRectTag)tag;
 
 // This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
 // They're not actually optional.
@@ -218,6 +219,14 @@ public:
 
     void accessibilityRegisterUIProcessTokens();
 
+    NSTrackingRectTag addTrackingRect(CGRect, id owner, void* userData, bool assumeInside);
+    NSTrackingRectTag addTrackingRectWithTrackingNum(CGRect, id owner, void* userData, bool assumeInside, int tag);
+    void addTrackingRectsWithTrackingNums(CGRect*, id owner, void** userDataList, bool assumeInside, NSTrackingRectTag *trackingNums, int count);
+    void removeTrackingRect(NSTrackingRectTag);
+    void removeTrackingRects(NSTrackingRectTag *, int count);
+    NSString *stringForToolTip(NSToolTipTag tag);
+    void toolTipChanged(NSString *oldToolTip, NSString *newToolTip);
+
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -228,6 +237,9 @@ private:
     void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
 
     void setPluginComplexTextInputState(PluginComplexTextInputState);
+
+    void sendToolTipMouseExited();
+    void sendToolTipMouseEntered();
 
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;
@@ -296,6 +308,10 @@ private:
 
     bool m_allowsLinkPreview { true };
     bool m_didRegisterForLookupPopoverCloseNotifications { false };
+
+    NSToolTipTag m_lastToolTipTag { 0 };
+    id m_trackingRectOwner { nil };
+    void* m_trackingRectUserData { nullptr };
 };
     
 } // namespace WebKit
