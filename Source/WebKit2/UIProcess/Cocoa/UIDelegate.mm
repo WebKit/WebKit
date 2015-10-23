@@ -113,7 +113,7 @@ PassRefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::Web
 
     auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
 
-    bool shouldOpenAppLinks = !protocolHostAndPortAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), request.url());
+    bool shouldOpenAppLinks = !hostsAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), request.url());
     auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, request, WebCore::URL(), shouldOpenAppLinks);
 
     RetainPtr<WKWebView> webView = [delegate.get() webView:m_uiDelegate.m_webView createWebViewWithConfiguration:configuration.get() forNavigationAction:wrapper(navigationAction) windowFeatures:adoptNS([[WKWindowFeatures alloc] _initWithWindowFeatures:windowFeatures]).get()];

@@ -1,3 +1,19 @@
+2015-10-23  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r191487. rdar://problem/22811325
+
+    2015-10-22  Sam Weinig  <sam@webkit.org>
+
+            Navigations on the same host (but with different schemes and ports) should not trigger universal links
+            <rdar://problem/22811325>
+            https://bugs.webkit.org/show_bug.cgi?id=150481
+
+            Reviewed by Dan Bernstein.
+
+            * WebCoreSupport/WebFrameLoaderClient.mm:
+            (shouldTryAppLink):
+            Update the policy for following universal links to only take host into consideration.
+
 2015-10-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r188486. rdar://problem/22707497
