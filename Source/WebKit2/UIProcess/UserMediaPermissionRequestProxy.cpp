@@ -27,7 +27,7 @@
 namespace WebKit {
 
 UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
-    : m_manager(manager)
+    : m_manager(&manager)
     , m_userMediaID(userMediaID)
     , m_videoDeviceUIDs(videoDeviceUIDs)
     , m_audioDeviceUIDs(audioDeviceUIDs)
@@ -36,17 +36,27 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
 
 void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const String& videoDeviceUID)
 {
-    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, true, audioDeviceUID, videoDeviceUID);
+    ASSERT(m_manager);
+    if (!m_manager)
+        return;
+
+    m_manager->didReceiveUserMediaPermissionDecision(m_userMediaID, true, audioDeviceUID, videoDeviceUID);
+    m_manager = nullptr;
 }
 
 void UserMediaPermissionRequestProxy::deny()
 {
-    m_manager.didReceiveUserMediaPermissionDecision(m_userMediaID, false, emptyString(), emptyString());
+    ASSERT(m_manager);
+    if (!m_manager)
+        return;
+
+    m_manager->didReceiveUserMediaPermissionDecision(m_userMediaID, false, emptyString(), emptyString());
+    m_manager = nullptr;
 }
 
 void UserMediaPermissionRequestProxy::invalidate()
 {
-    m_manager.invalidateRequests();
+    m_manager = nullptr;
 }
 
 } // namespace WebKit

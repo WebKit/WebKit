@@ -53,7 +53,7 @@ public:
 private:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, const Vector<String>& videoDeviceUIDs, const Vector<String>& audioDeviceUIDs);
 
-    UserMediaPermissionRequestManagerProxy& m_manager;
+    UserMediaPermissionRequestManagerProxy* m_manager;
     uint64_t m_userMediaID;
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;

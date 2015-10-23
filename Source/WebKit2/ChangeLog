@@ -1,3 +1,20 @@
+2015-10-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Fix UserMediaPermissionRequestProxy::invalidate
+        https://bugs.webkit.org/show_bug.cgi?id=150503
+        <rdar://problem/23235386>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy): m_manager is a pointer.
+        (WebKit::UserMediaPermissionRequestProxy::allow): Return early if m_manager is null, clear it after
+          calling the manager.
+        (WebKit::UserMediaPermissionRequestProxy::deny): Ditto.
+        (WebKit::UserMediaPermissionRequestProxy::invalidate): Clear m_manager.
+        * UIProcess/UserMediaPermissionRequestProxy.h: Change m_manager from a reference to a
+          pointer so it can be cleared.
+
 2015-10-23  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Minor web editor fixes
