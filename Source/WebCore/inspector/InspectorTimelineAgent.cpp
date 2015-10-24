@@ -415,16 +415,6 @@ void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& 
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 
-void InspectorTimelineAgent::willScroll(Frame& frame)
-{
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::ScrollLayer, false, &frame);
-}
-
-void InspectorTimelineAgent::didScroll()
-{
-    didCompleteCurrentRecord(TimelineRecordType::ScrollLayer);
-}
-
 void InspectorTimelineAgent::willWriteHTML(unsigned startLine, Frame* frame)
 {
     pushCurrentRecord(TimelineRecordFactory::createParseHTMLData(startLine), TimelineRecordType::ParseHTML, true, frame);
@@ -612,8 +602,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Composite;
     case TimelineRecordType::RenderingFrame:
         return Inspector::Protocol::Timeline::EventType::RenderingFrame;
-    case TimelineRecordType::ScrollLayer:
-        return Inspector::Protocol::Timeline::EventType::ScrollLayer;
 
     case TimelineRecordType::ParseHTML:
         return Inspector::Protocol::Timeline::EventType::ParseHTML;

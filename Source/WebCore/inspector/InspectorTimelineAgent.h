@@ -73,7 +73,6 @@ enum class TimelineRecordType {
     Paint,
     Composite,
     RenderingFrame,
-    ScrollLayer,
 
     ParseHTML,
 
@@ -151,8 +150,6 @@ public:
     void didInvalidateLayout(Frame&);
     void willLayout(Frame&);
     void didLayout(RenderObject*);
-    void willScroll(Frame&);
-    void didScroll();
     void willDispatchXHRLoadEvent(const String&, Frame*);
     void didDispatchXHRLoadEvent();
     void willComposite(Frame&);

@@ -15,7 +15,6 @@
                 "Paint",
                 "Composite",
                 "RenderingFrame",
-                "ScrollLayer",
                 "ParseHTML",
                 "TimerInstall",
                 "TimerRemove",

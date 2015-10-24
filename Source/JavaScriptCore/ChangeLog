@@ -1,5 +1,14 @@
 2015-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused ScrollLayer Timeline EventType
+        https://bugs.webkit.org/show_bug.cgi?id=150518
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Timeline.json:
+
+2015-10-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Clean up InspectorInstrumentation includes
         https://bugs.webkit.org/show_bug.cgi?id=150523
 

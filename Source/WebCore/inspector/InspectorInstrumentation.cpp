@@ -528,18 +528,6 @@ void InspectorInstrumentation::didPaintImpl(InstrumentingAgents& instrumentingAg
         pageAgent->didPaint(renderer, rect);
 }
 
-void InspectorInstrumentation::willScrollLayerImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->willScroll(frame);
-}
-
-void InspectorInstrumentation::didScrollLayerImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->didScroll();
-}
-
 InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyleImpl(InstrumentingAgents& instrumentingAgents, Document& document)
 {
     int timelineAgentId = 0;

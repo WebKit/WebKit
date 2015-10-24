@@ -1,5 +1,19 @@
 2015-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused ScrollLayer Timeline EventType
+        https://bugs.webkit.org/show_bug.cgi?id=150518
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+
+2015-10-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: xlink:href should be linkified
         https://bugs.webkit.org/show_bug.cgi?id=150505
 

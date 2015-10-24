@@ -165,8 +165,6 @@ public:
     static void didScroll(Page&);
     static InspectorInstrumentationCookie willDispatchXHRLoadEvent(ScriptExecutionContext*, XMLHttpRequest&);
     static void didDispatchXHRLoadEvent(const InspectorInstrumentationCookie&);
-    static void willScrollLayer(Frame&);
-    static void didScrollLayer(Frame&);
     static void willComposite(Frame&);
     static void didComposite(Frame&);
     static void willPaint(RenderObject*);
@@ -348,8 +346,6 @@ private:
     static void didScrollImpl(InstrumentingAgents&);
     static InspectorInstrumentationCookie willDispatchXHRLoadEventImpl(InstrumentingAgents&, XMLHttpRequest&, ScriptExecutionContext*);
     static void didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie&);
-    static void willScrollLayerImpl(InstrumentingAgents&, Frame&);
-    static void didScrollLayerImpl(InstrumentingAgents&);
     static void willCompositeImpl(InstrumentingAgents&, Frame&);
     static void didCompositeImpl(InstrumentingAgents&);
     static void willPaintImpl(InstrumentingAgents&, RenderObject*);
@@ -874,20 +870,6 @@ inline void InspectorInstrumentation::didPaint(RenderObject* renderer, const Lay
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderer(renderer))
         didPaintImpl(*instrumentingAgents, renderer, rect);
-}
-
-inline void InspectorInstrumentation::willScrollLayer(Frame& frame)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        willScrollLayerImpl(*instrumentingAgents, frame);
-}
-
-inline void InspectorInstrumentation::didScrollLayer(Frame& frame)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didScrollLayerImpl(*instrumentingAgents);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyle(Document& document)
