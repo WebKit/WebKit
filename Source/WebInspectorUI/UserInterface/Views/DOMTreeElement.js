@@ -1093,7 +1093,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (hasText)
             attrSpanElement.append("=\u200B\"");
 
-        if (name === "src" || name === "href") {
+        if (name === "src" || /\bhref\b/.test(name)) {
             let baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
             let rewrittenURL = absoluteURL(value, baseURL);
             value = value.insertWordBreakCharacters();

@@ -153,6 +153,12 @@ function absoluteURL(partialURL, baseURL)
     if (partialURL[0] === "/")
         return baseURLPrefix + resolveDotsInPath(partialURL);
 
+    // A URL that starts with "#" is just a fragment that gets applied to the base URL (replacing the base URL fragment, maintaining the query string).
+    if (partialURL[0] === "#") {
+        let queryStringComponent = baseURLComponents.queryString ? "?" + baseURLComponents.queryString : "";
+        return baseURLPrefix + baseURLComponents.path + queryStringComponent + partialURL;
+    }
+
     // Generate the base path that is used in the final case by removing everything after the last "/" from the base URL's path.
     var basePath = baseURLComponents.path.substring(0, baseURLComponents.path.lastIndexOf("/")) + "/";
     return baseURLPrefix + resolveDotsInPath(basePath + partialURL);

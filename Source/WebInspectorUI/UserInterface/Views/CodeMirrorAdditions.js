@@ -124,7 +124,7 @@
             // Look for "href" or "src" attributes. If found then we should
             // expect a string later that should get the "link" style instead.
             var text = stream.current().toLowerCase();
-            if (text === "href" || text === "src")
+            if (text === "src" || /\bhref\b/.test(text))
                 state._expectLink = true;
             else if (text === "srcset")
                 state._expectSrcSet = true;
