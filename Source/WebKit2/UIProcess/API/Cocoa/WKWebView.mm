@@ -3214,13 +3214,15 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 // Execute the supplied block after the next transaction from the WebProcess.
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {
-    typeof(updateBlock) updateBlockCopy = nil;
+    void (^updateBlockCopy)(void) = nil;
     if (updateBlock)
         updateBlockCopy = Block_copy(updateBlock);
 
     _page->callAfterNextPresentationUpdate([updateBlockCopy](WebKit::CallbackBase::Error error) {
-        updateBlockCopy();
-        Block_release(updateBlockCopy);
+        if (updateBlockCopy) {
+            updateBlockCopy();
+            Block_release(updateBlockCopy);
+        }
     });
 }
 
