@@ -5,7 +5,7 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
-# Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2015 Apple Inc. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,18 +21,19 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
-
+ 
 use strict;
+use Getopt::Long qw(:config pass_through);
 
-my $file = $ARGV[0];
-shift;
-my $includelookup = 0;
+my $includeLookup = 0;
+my $includeBuiltin = 0;
 
-# Use -i as second argument to make it include "Lookup.h"
-$includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
+GetOptions('i|lookup' => \$includeLookup,    # Include "Lookup.h".
+           'b|builtin' => \$includeBuiltin,  # Include JSCBuiltins.h and builtins support.
+)
+or die("Unable to process command line options.");
 
-# Use -n as second argument to make it use the third argument as namespace parameter ie. -n KDOM
-my $useNameSpace = $ARGV[1] if (defined($ARGV[0]) && $ARGV[0] eq "-n");
+my $file = shift @ARGV or die("Must provide source file as final argument.");
 
 print STDERR "Creating hashtable for $file\n";
 open(IN, $file) or die "No such file $file";
@@ -257,17 +258,13 @@ sub output() {
     my $nameIndex = "${name}Index";
     $nameIndex =~ s/:/_/g;
 
-    print "\n#include \"JSCBuiltins.h\"\n";
-    print "\n#include \"Lookup.h\"\n" if ($includelookup);
-
-    if ($useNameSpace) {
-        print "\nnamespace ${useNameSpace} {\n";
-        print "\nusing namespace JSC;\n";
-    } else {
-        print "\nnamespace JSC {\n";
-    }
-
-    print "\nstatic const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n";
+    print "\n";
+    print "#include \"JSCBuiltins.h\"\n" if ($includeBuiltin);
+    print "#include \"Lookup.h\"\n" if ($includeLookup);
+    print "\n";
+    print "namespace JSC {\n";
+    print "\n";
+    print "static const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n";
     for (my $i = 0; $i < $compactSize; $i++) {
         my $T = -1;
         if (defined($table[$i])) { $T = $table[$i]; }
@@ -275,10 +272,11 @@ sub output() {
         if (defined($links[$i])) { $L = $links[$i]; }
         print "    { $T, $L },\n";
     }
-    print "};\n\n";
+    print "};\n";
+    print "\n";
 
     my $packedSize = scalar @keys;
-    print "\nstatic const struct HashTableValue ${nameEntries}\[$packedSize\] = {\n";
+    print "static const struct HashTableValue ${nameEntries}\[$packedSize\] = {\n";
     my $i = 0;
     foreach my $key (@keys) {
         my $firstValue = "";
@@ -316,7 +314,7 @@ sub output() {
             $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
         }
 
-        if ($values[$i]{"type"} eq "Function")  {
+        if ($values[$i]{"type"} eq "Function" && $includeBuiltin)  {
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
             print " #if JSC_BUILTIN_EXISTS(" . uc($tableHead) . ", " . uc($key) .")\n";
@@ -324,13 +322,15 @@ sub output() {
             print " #else\n"
         }
         print "   { \"$key\", $attrs[$i], $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
-        if ($values[$i]{"type"} eq "Function")  {
-            print " #endif\n"
+        if ($values[$i]{"type"} eq "Function" && $includeBuiltin)  {
+            print " #endif\n";
         }
         $i++;
     }
-    print "};\n\n";
+    print "};\n";
+    print "\n";
     print "static const struct HashTable $name =\n";
     print "    \{ $packedSize, $compactHashSizeMask, $hasSetter, $nameEntries, $nameIndex \};\n";
-    print "} // namespace\n";
+    print "\n";
+    print "} // namespace JSC\n";
 }

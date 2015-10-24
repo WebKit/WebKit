@@ -1,3 +1,42 @@
+2015-10-24  Brian Burg  <bburg@apple.com>
+
+        Teach create_hash_table to omit builtins macros when generating tables for native-only objects
+        https://bugs.webkit.org/show_bug.cgi?id=150491
+
+        Reviewed by Yusuke Suzuki.
+
+        In order to support separate compilation for generated builtins files, we need to be able to
+        include specific builtins headers from generated .lut.h files. However, the create_hash_table
+        script isn't smart enough to figure out when a generated file might actually contain a builtin.
+        Without further help, we'd have to include an all-in-one header, mostly defeating the point of
+        generating separate .h and .cpp files for every builtin.
+
+        This patch segregates the pure native and partially builtin sources in the build system, and
+        gives hints to create_hash_table so that it doesn't even generate checks for builtins if the
+        input file has no builtin method implementations. Also do some modernization and code cleanup.
+
+        * CMakeLists.txt:
+
+        Generate each group with different flags to create_hash_table. Change the macro to take
+        flags through the variable LUT_GENERATOR_FLAGS. Set this as necessary before calling macro.
+        Add an additional hint to CMake that the .cpp source file depends on the generated file.
+
+        * DerivedSources.make:
+
+        Generate each group with different flags to create_hash_table. Clean up the 'all' target
+        so that static dependencies are listed first. Use static patterns to decide which .lut.h
+        files require which flags. Reduce fragile usages of implicit variables.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+        Add some missing .lut.h files to the Derived Sources group. Sort the project.
+
+        * create_hash_table:
+
+        Parse options in a sane way using GetOpt::Long. Remove ability to specify a custom namespace
+        since this isn't actually used anywhere. Normalize placement of newlines in quoted strings.
+        Only generate builtins macros and includes if the source file is known to have some builtins.
+
 2015-10-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused ScrollLayer Timeline EventType

@@ -1218,6 +1218,24 @@
 		9959E9311BD18272001AA413 /* generate-combined-inspector-json.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		9959E9321BD18279001AA413 /* inline-and-minify-stylesheets-and-scripts.py in Headers */ = {isa = PBXBuildFile; fileRef = 9959E9301BD181F6001AA413 /* inline-and-minify-stylesheets-and-scripts.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		996231E918D1804200C03FDA /* InspectorBackendCommands.js in Headers */ = {isa = PBXBuildFile; fileRef = A53243961856A475002ED692 /* InspectorBackendCommands.js */; settings = {ATTRIBUTES = (Private, ); }; };
+		996B73171BDA067F00331B84 /* ArrayConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */; };
+		996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */; };
+		996B73191BDA068000331B84 /* BooleanPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */; };
+		996B731A1BDA08D100331B84 /* DateConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73081BD9FA2C00331B84 /* DateConstructor.lut.h */; };
+		996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */; };
+		996B731C1BDA08DD00331B84 /* JSDataViewPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730A1BD9FA2C00331B84 /* JSDataViewPrototype.lut.h */; };
+		996B731D1BDA08EF00331B84 /* JSGlobalObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */; };
+		996B731E1BDA08EF00331B84 /* JSPromiseConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */; };
+		996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E2517BFFA36007CB63A /* JSPromisePrototype.lut.h */; };
+		996B73201BDA08EF00331B84 /* ModuleLoaderObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730C1BD9FA2C00331B84 /* ModuleLoaderObject.lut.h */; };
+		996B73211BDA08EF00331B84 /* NumberPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */; };
+		996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */; };
+		996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */; };
+		996B73241BDA08EF00331B84 /* RegExpPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73101BD9FA2C00331B84 /* RegExpPrototype.lut.h */; };
+		996B73251BDA08EF00331B84 /* StringConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */; };
+		996B73261BDA08EF00331B84 /* StringIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */; };
+		996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */; };
+		996B73281BDA08EF00331B84 /* SymbolPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */; };
 		99CC0B6218BE9946006CEBCC /* CodeGeneratorReplayInputsTemplates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009A1BD5992700F4575C /* builtins_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1656,7 +1674,6 @@
 		BC18C46A0E16F5CD00B34460 /* StringPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C3C60E16EE3300B34460 /* StringPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C46B0E16F5CD00B34460 /* SymbolTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A396A60CD2933100B5B4FF /* SymbolTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* Lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* Lexer.lut.h */; };
 		BC3046070E1F497F003232CF /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3046060E1F497F003232CF /* Error.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3131,6 +3148,22 @@
 		9959E92A1BD17FA0001AA413 /* xxd.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = xxd.pl; sourceTree = "<group>"; };
 		9959E92F1BD181F6001AA413 /* generate-combined-inspector-json.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-combined-inspector-json.py"; sourceTree = "<group>"; };
 		9959E9301BD181F6001AA413 /* inline-and-minify-stylesheets-and-scripts.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "inline-and-minify-stylesheets-and-scripts.py"; sourceTree = "<group>"; };
+		996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanPrototype.lut.h; sourceTree = "<group>"; };
+		996B73081BD9FA2C00331B84 /* DateConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateConstructor.lut.h; sourceTree = "<group>"; };
+		996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorPrototype.lut.h; sourceTree = "<group>"; };
+		996B730A1BD9FA2C00331B84 /* JSDataViewPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataViewPrototype.lut.h; sourceTree = "<group>"; };
+		996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.lut.h; sourceTree = "<group>"; };
+		996B730C1BD9FA2C00331B84 /* ModuleLoaderObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleLoaderObject.lut.h; sourceTree = "<group>"; };
+		996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberPrototype.lut.h; sourceTree = "<group>"; };
+		996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectConstructor.lut.h; sourceTree = "<group>"; };
+		996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.lut.h; sourceTree = "<group>"; };
+		996B73101BD9FA2C00331B84 /* RegExpPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpPrototype.lut.h; sourceTree = "<group>"; };
+		996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.lut.h; sourceTree = "<group>"; };
+		996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringIteratorPrototype.lut.h; sourceTree = "<group>"; };
+		996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolConstructor.lut.h; sourceTree = "<group>"; };
+		996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolPrototype.lut.h; sourceTree = "<group>"; };
+		996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.lut.h; sourceTree = "<group>"; };
+		996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		99DA00991BD5992700F4575C /* __init__.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
 		99DA009A1BD5992700F4575C /* builtins_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generator.py; sourceTree = "<group>"; };
 		99DA009B1BD5992700F4575C /* builtins_model.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_model.py; sourceTree = "<group>"; };
@@ -3518,7 +3551,6 @@
 		BC18C3C30E16EE3300B34460 /* StringObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringObject.h; sourceTree = "<group>"; };
 		BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringPrototype.cpp; sourceTree = "<group>"; };
 		BC18C3C60E16EE3300B34460 /* StringPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrototype.h; sourceTree = "<group>"; };
-		BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.lut.h; sourceTree = "<group>"; };
 		BC18C52D0E16FCE100B34460 /* Lexer.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.lut.h; sourceTree = "<group>"; };
 		BC22A3980E16E14800AF21C8 /* JSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; };
 		BC22A3990E16E14800AF21C8 /* JSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; };
@@ -3831,9 +3863,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
-				932F5BE10822A1C700736975 /* jsc */,
 				0FCEFAB61805D61600472CE4 /* libllvmForJSC.dylib */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
@@ -4501,10 +4533,14 @@
 		650FDF8D09D0FCA700769E54 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
-				BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */,
+				996B73151BDA05AA00331B84 /* ArrayConstructor.lut.h */,
+				996B73161BDA05AA00331B84 /* ArrayIteratorPrototype.lut.h */,
+				996B73071BD9FA2C00331B84 /* BooleanPrototype.lut.h */,
 				6514F21718B3E1670098FF8B /* Bytecodes.h */,
 				A53243951856A475002ED692 /* CombinedDomains.json */,
+				996B73081BD9FA2C00331B84 /* DateConstructor.lut.h */,
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
+				996B73091BD9FA2C00331B84 /* ErrorPrototype.lut.h */,
 				6514F21818B3E1670098FF8B /* InitBytecodes.asm */,
 				A513E5C6185F9436007E95AD /* InjectedScriptSource.h */,
 				A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */,
@@ -4524,6 +4560,8 @@
 				A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */,
 				A7D801A61880D6A80026C39B /* JSCBuiltins.cpp */,
 				A7D801A71880D6A80026C39B /* JSCBuiltins.h */,
+				996B730A1BD9FA2C00331B84 /* JSDataViewPrototype.lut.h */,
+				996B730B1BD9FA2C00331B84 /* JSGlobalObject.lut.h */,
 				E33F50861B8449EF00413856 /* JSInternalPromiseConstructor.lut.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
 				7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */,
@@ -4532,9 +4570,18 @@
 				9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */,
 				A7C225CD1399849C00FF1662 /* KeywordLookup.h */,
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
+				996B730C1BD9FA2C00331B84 /* ModuleLoaderObject.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
+				996B730D1BD9FA2C00331B84 /* NumberPrototype.lut.h */,
+				996B730E1BD9FA2C00331B84 /* ObjectConstructor.lut.h */,
+				996B730F1BD9FA2C00331B84 /* ReflectObject.lut.h */,
 				BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */,
 				A718F61A11754A21002465A7 /* RegExpJitTables.h */,
+				996B73101BD9FA2C00331B84 /* RegExpPrototype.lut.h */,
+				996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */,
+				996B73121BD9FA2C00331B84 /* StringIteratorPrototype.lut.h */,
+				996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */,
+				996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */,
 				5D53727D0E1C55EC0021E549 /* TracingDtrace.h */,
 			);
 			name = "Derived Sources";
@@ -6061,7 +6108,6 @@
 				A7BDAEC917F4EA1400F6140C /* ArrayIteratorPrototype.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
-				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
 				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
@@ -6135,12 +6181,15 @@
 				0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
+				996B731D1BDA08EF00331B84 /* JSGlobalObject.lut.h in Headers */,
+				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				0F6FC751196110A800E1D02D /* ComplexGetStatus.h in Headers */,
 				0FDB2CEA174896C7007B3C1B /* ConcurrentJITLock.h in Headers */,
 				BC18C3F50E16F5CD00B34460 /* config.h in Headers */,
 				144836E7132DA7BE005BE785 /* ConservativeRoots.h in Headers */,
 				A53CE08A18BC21C300BEDF76 /* ConsoleClient.h in Headers */,
 				A5FD007A189B051000633231 /* ConsoleMessage.h in Headers */,
+				996B73191BDA068000331B84 /* BooleanPrototype.lut.h in Headers */,
 				A53CE08618BC1A5600BEDF76 /* ConsolePrototype.h in Headers */,
 				A5FD0074189B038C00633231 /* ConsoleTypes.h in Headers */,
 				0FFC99D1184EC8AD009C10AB /* ConstantMode.h in Headers */,
@@ -6171,6 +6220,7 @@
 				14A1563210966365006FA260 /* DateInstanceCache.h in Headers */,
 				BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */,
 				BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */,
+				996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */,
 				BC18C3FA0E16F5CD00B34460 /* Debugger.h in Headers */,
 				BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */,
 				6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */,
@@ -6353,6 +6403,7 @@
 				0F2BDC491522809600CD8910 /* DFGVariableEvent.h in Headers */,
 				0F2BDC4B1522809D00CD8910 /* DFGVariableEventStream.h in Headers */,
 				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
+				996B73181BDA068000331B84 /* ArrayIteratorPrototype.lut.h in Headers */,
 				0FC97F4218202119002C9B26 /* DFGWatchpointCollectionPhase.h in Headers */,
 				0FDB2CE8174830A2007B3C1B /* DFGWorklist.h in Headers */,
 				0FE050181AA9091100D33B33 /* DirectArguments.h in Headers */,
@@ -6391,6 +6442,7 @@
 				0F485328187DFDEC0083B687 /* FTLAvailableRecovery.h in Headers */,
 				0FEA0A0A170513DB00BB722C /* FTLCapabilities.h in Headers */,
 				0FEA0A231709606900BB722C /* FTLCommonValues.h in Headers */,
+				996B73221BDA08EF00331B84 /* ObjectConstructor.lut.h in Headers */,
 				0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */,
 				0FE95F7A18B5694700B531FB /* FTLDataSection.h in Headers */,
 				2AC922BC18A16182003CE0FB /* FTLDWARFDebugLineInfo.h in Headers */,
@@ -6425,6 +6477,7 @@
 				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
 				0F235BDD17178E1C00690C7F /* FTLOSRExit.h in Headers */,
 				0F235BDE17178E1C00690C7F /* FTLOSRExitCompilationInfo.h in Headers */,
+				996B73281BDA08EF00331B84 /* SymbolPrototype.lut.h in Headers */,
 				0F235BE017178E1C00690C7F /* FTLOSRExitCompiler.h in Headers */,
 				0FEA0A11170513DB00BB722C /* FTLOutput.h in Headers */,
 				0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */,
@@ -6462,10 +6515,12 @@
 				9959E9311BD18272001AA413 /* generate-combined-inspector-json.py in Headers */,
 				C4703CC0192844960013FBEA /* generate-inspector-protocol-bindings.py in Headers */,
 				99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */,
+				996B731C1BDA08DD00331B84 /* JSDataViewPrototype.lut.h in Headers */,
 				A5EA70EC19F5B3EA0098F5EC /* generate_cpp_alternate_backend_dispatcher_header.py in Headers */,
 				A5EF9B141A1D43F600702E90 /* generate_cpp_backend_dispatcher_header.py in Headers */,
 				A5EF9B151A1D43FA00702E90 /* generate_cpp_backend_dispatcher_implementation.py in Headers */,
 				A5EF9B161A1D440000702E90 /* generate_cpp_frontend_dispatcher_header.py in Headers */,
+				996B73251BDA08EF00331B84 /* StringConstructor.lut.h in Headers */,
 				A5EF9B171A1D440300702E90 /* generate_cpp_frontend_dispatcher_implementation.py in Headers */,
 				A5EF9B181A1D440600702E90 /* generate_cpp_protocol_types_header.py in Headers */,
 				A5EF9B191A1D440700702E90 /* generate_cpp_protocol_types_implementation.py in Headers */,
@@ -6639,6 +6694,7 @@
 				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
 				0F2B66EF17B6B5AB00A7AE3F /* JSFloat32Array.h in Headers */,
 				0F2B66F017B6B5AB00A7AE3F /* JSFloat64Array.h in Headers */,
+				996B731E1BDA08EF00331B84 /* JSPromiseConstructor.lut.h in Headers */,
 				BC18C41F0E16F5CD00B34460 /* JSFunction.h in Headers */,
 				A72028BA1797603D0098028C /* JSFunctionInlines.h in Headers */,
 				0F2B66F117B6B5AB00A7AE3F /* JSGenericTypedArrayView.h in Headers */,
@@ -6713,6 +6769,7 @@
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
 				BC18C4290E16F5CD00B34460 /* JSStringRefCF.h in Headers */,
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
+				996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */,
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				70ECA6061AFDBEA200449739 /* JSTemplateRegistryKey.h in Headers */,
 				BC18C42A0E16F5CD00B34460 /* JSType.h in Headers */,
@@ -6723,6 +6780,7 @@
 				DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */,
 				6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */,
 				0F2B670217B6B5AB00A7AE3F /* JSUint16Array.h in Headers */,
+				996B731A1BDA08D100331B84 /* DateConstructor.lut.h in Headers */,
 				0F2B670317B6B5AB00A7AE3F /* JSUint32Array.h in Headers */,
 				0F2B670017B6B5AB00A7AE3F /* JSUint8Array.h in Headers */,
 				0F2B670117B6B5AB00A7AE3F /* JSUint8ClampedArray.h in Headers */,
@@ -6730,6 +6788,7 @@
 				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
 				86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */,
+				996B73211BDA08EF00331B84 /* NumberPrototype.lut.h in Headers */,
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
 				7B98D1371B60CD620023B1A4 /* JSWASMModule.h in Headers */,
 				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
@@ -6740,6 +6799,7 @@
 				86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */,
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
 				BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */,
+				996B73201BDA08EF00331B84 /* ModuleLoaderObject.lut.h in Headers */,
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
 				969A072A0ED1CE6900F1F681 /* Label.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
@@ -6803,6 +6863,7 @@
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
 				E355F3531B7DC85300C50DC5 /* ModuleLoaderObject.h in Headers */,
+				996B73241BDA08EF00331B84 /* RegExpPrototype.lut.h in Headers */,
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				E33E8D211B9013DE00346B52 /* NativeStdFunctionCell.h in Headers */,
@@ -6832,6 +6893,7 @@
 				0FE228ED1436AB2700196C48 /* Options.h in Headers */,
 				BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */,
 				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
+				996B73231BDA08EF00331B84 /* ReflectObject.lut.h in Headers */,
 				0FCCAE4516D0CF7400D0C65B /* ParserError.h in Headers */,
 				A77F1825164192C700640A47 /* ParserModes.h in Headers */,
 				65303D641447B9E100D3F904 /* ParserTokens.h in Headers */,
@@ -6876,6 +6938,7 @@
 				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
 				E33637A61B63220200EE0840 /* ReflectObject.h in Headers */,
 				0FA7A8EC18B413C80052371D /* Reg.h in Headers */,
+				996B73171BDA067F00331B84 /* ArrayConstructor.lut.h in Headers */,
 				BC18C45A0E16F5CD00B34460 /* RegExp.h in Headers */,
 				A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */,
 				BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */,
@@ -6997,6 +7060,7 @@
 				A7A8AF4017ADB5F3005AB174 /* Uint8ClampedArray.h in Headers */,
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
+				996B73261BDA08EF00331B84 /* StringIteratorPrototype.lut.h in Headers */,
 				14142E511B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h in Headers */,
 				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
 				99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */,

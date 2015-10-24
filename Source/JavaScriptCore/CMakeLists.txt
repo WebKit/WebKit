@@ -666,14 +666,11 @@ list(APPEND JavaScriptCore_SOURCES
     ${JavaScriptCore_RUNTIME_SOURCES}
 )
 
-set(JavaScriptCore_LUT_FILES
-    runtime/ArrayConstructor.cpp
-    runtime/ArrayIteratorPrototype.cpp
+set(JavaScriptCore_NATIVE_OBJECT_LUT_SOURCES
     runtime/BooleanPrototype.cpp
     runtime/DateConstructor.cpp
     runtime/DatePrototype.cpp
     runtime/ErrorPrototype.cpp
-    runtime/InspectorInstrumentationObject.cpp
     runtime/IntlCollatorConstructor.cpp
     runtime/IntlCollatorPrototype.cpp
     runtime/IntlDateTimeFormatConstructor.cpp
@@ -681,22 +678,31 @@ set(JavaScriptCore_LUT_FILES
     runtime/IntlNumberFormatConstructor.cpp
     runtime/IntlNumberFormatPrototype.cpp
     runtime/JSDataViewPrototype.cpp
+    runtime/JSONObject.cpp
+    runtime/NumberConstructor.cpp
+    runtime/NumberPrototype.cpp
+    runtime/RegExpConstructor.cpp
+    runtime/RegExpPrototype.cpp
+    runtime/SymbolConstructor.cpp
+    runtime/SymbolPrototype.cpp
+)
+
+# If an object's implementation contains at least one builtin, then it must
+# be added to this section so it is generated with builtin-specific includes.
+
+set(JavaScriptCore_BUILTIN_OBJECT_LUT_SOURCES
+    runtime/ArrayConstructor.cpp
+    runtime/ArrayIteratorPrototype.cpp
+    runtime/InspectorInstrumentationObject.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSInternalPromiseConstructor.cpp
-    runtime/JSONObject.cpp
     runtime/JSPromiseConstructor.cpp
     runtime/JSPromisePrototype.cpp
     runtime/ModuleLoaderObject.cpp
-    runtime/NumberConstructor.cpp
-    runtime/NumberPrototype.cpp
     runtime/ObjectConstructor.cpp
     runtime/ReflectObject.cpp
-    runtime/RegExpConstructor.cpp
-    runtime/RegExpPrototype.cpp
     runtime/StringConstructor.cpp
     runtime/StringIteratorPrototype.cpp
-    runtime/SymbolConstructor.cpp
-    runtime/SymbolPrototype.cpp
 )
 
 set(JavaScriptCore_LIBRARIES
@@ -966,18 +972,29 @@ if (ENABLE_FTL_JIT)
 endif ()
 
 set(HASH_LUT_GENERATOR ${CMAKE_CURRENT_SOURCE_DIR}/create_hash_table)
+set(LUT_GENERATOR_FLAGS "")
 macro(GENERATE_HASH_LUT _input _output)
     add_custom_command(
         OUTPUT ${_output}
-        DEPENDS ${HASH_LUT_GENERATOR} ${_input} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
-        COMMAND ${PERL_EXECUTABLE} ${HASH_LUT_GENERATOR} ${_input} -i > ${_output}
+        MAIN_DEPENDENCY ${HASH_LUT_GENERATOR}
+        DEPENDS ${_input}
+        COMMAND ${PERL_EXECUTABLE} ${HASH_LUT_GENERATOR} ${LUT_GENERATOR_FLAGS} ${_input} > ${_output}
         VERBATIM)
     list(APPEND JavaScriptCore_HEADERS ${_output})
+    ADD_SOURCE_DEPENDENCIES(${_input} ${_output})
 endmacro()
 
 # GENERATOR 1-A: LUT creator
-foreach (_file ${JavaScriptCore_LUT_FILES})
+
+foreach (_file ${JavaScriptCore_NATIVE_OBJECT_LUT_SOURCES})
     get_filename_component(_name ${_file} NAME_WE)
+    set(LUT_GENERATOR_FLAGS -i)
+    GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
+endforeach ()
+
+foreach (_file ${JavaScriptCore_BUILTIN_OBJECT_LUT_SOURCES})
+    get_filename_component(_name ${_file} NAME_WE)
+    set(LUT_GENERATOR_FLAGS -i -b)
     GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
 endforeach ()
 
@@ -1009,6 +1026,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
 )
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
+set(LUT_GENERATOR_FLAGS )
 GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Lexer.lut.h)
 
 #GENERATOR: "RegExpJitTables.h": tables used by Yarr
