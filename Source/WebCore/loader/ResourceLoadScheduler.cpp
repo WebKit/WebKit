@@ -29,8 +29,6 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "InspectorInstrumentation.h"
-#include "URL.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "NetscapePlugInStreamLoader.h"
@@ -38,6 +36,7 @@
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "SubresourceLoader.h"
+#include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>

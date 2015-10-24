@@ -32,7 +32,6 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
-#include "InspectorInstrumentationCookie.h"
 #include "InspectorOverlay.h"
 #include <inspector/InspectorAgentRegistry.h>
 #include <inspector/InspectorEnvironment.h>
@@ -72,7 +71,6 @@ class InspectorTimelineAgent;
 class InstrumentingAgents;
 class Node;
 class Page;
-class PageDebuggerAgent;
 class WebInjectedScriptManager;
 
 class InspectorController final : public Inspector::InspectorEnvironment {
@@ -157,7 +155,6 @@ private:
     InspectorDOMDebuggerAgent* m_domDebuggerAgent { nullptr };
     InspectorTimelineAgent* m_timelineAgent { nullptr };
 
-    Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
     bool m_isUnderTest { false };
     bool m_isAutomaticInspection { false };
 };

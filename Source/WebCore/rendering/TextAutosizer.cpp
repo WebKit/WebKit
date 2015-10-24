@@ -26,7 +26,6 @@
 
 #include "Document.h"
 #include "HTMLElement.h"
-#include "InspectorInstrumentation.h"
 #include "IntSize.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
@@ -34,7 +33,6 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
-
 #include <algorithm>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

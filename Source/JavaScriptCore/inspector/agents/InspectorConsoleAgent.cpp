@@ -124,14 +124,6 @@ void InspectorConsoleAgent::addMessageToConsole(std::unique_ptr<ConsoleMessage> 
     addConsoleMessage(WTF::move(message));
 }
 
-Vector<unsigned> InspectorConsoleAgent::consoleMessageArgumentCounts() const
-{
-    Vector<unsigned> result(m_consoleMessages.size());
-    for (size_t i = 0; i < m_consoleMessages.size(); i++)
-        result[i] = m_consoleMessages[i]->argumentCount();
-    return result;
-}
-
 void InspectorConsoleAgent::startTiming(const String& title)
 {
     // Follow Firebug's behavior of requiring a title that is not null or

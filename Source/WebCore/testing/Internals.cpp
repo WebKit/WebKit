@@ -66,11 +66,11 @@
 #include "HTMLVideoElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "HitTestResult.h"
 #include "IconController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClientLocal.h"
-#include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
@@ -114,7 +114,6 @@
 #include "TypeConversions.h"
 #include "UserMediaController.h"
 #include "ViewportArguments.h"
-#include "WebConsoleAgent.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
 #include <JavaScriptCore/Profile.h>
@@ -1775,27 +1774,6 @@ unsigned Internals::numberOfLiveNodes() const
 unsigned Internals::numberOfLiveDocuments() const
 {
     return Document::allDocuments().size();
-}
-
-Vector<String> Internals::consoleMessageArgumentCounts() const
-{
-    Document* document = contextDocument();
-    if (!document || !document->page())
-        return Vector<String>();
-
-    InstrumentingAgents* instrumentingAgents = InspectorInstrumentation::instrumentingAgentsForPage(document->page());
-    if (!instrumentingAgents)
-        return Vector<String>();
-
-    InspectorConsoleAgent* consoleAgent = instrumentingAgents->webConsoleAgent();
-    if (!consoleAgent)
-        return Vector<String>();
-
-    Vector<unsigned> counts = consoleAgent->consoleMessageArgumentCounts();
-    Vector<String> result(counts.size());
-    for (size_t i = 0; i < counts.size(); i++)
-        result[i] = String::number(counts[i]);
-    return result;
 }
 
 RefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)

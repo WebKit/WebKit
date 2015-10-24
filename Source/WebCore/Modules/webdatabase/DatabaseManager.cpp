@@ -33,7 +33,7 @@
 #include "DatabaseServer.h"
 #include "DatabaseTask.h"
 #include "ExceptionCode.h"
-#include "InspectorDatabaseInstrumentation.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "PlatformStrategies.h"
 #include "ScriptController.h"

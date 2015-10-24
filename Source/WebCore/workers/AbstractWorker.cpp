@@ -29,15 +29,11 @@
  */
 
 #include "config.h"
-
 #include "AbstractWorker.h"
 
 #include "ContentSecurityPolicy.h"
-#include "ErrorEvent.h"
 #include "Event.h"
-#include "EventNames.h"
 #include "ExceptionCode.h"
-#include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 

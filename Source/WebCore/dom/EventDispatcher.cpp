@@ -32,7 +32,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLSlotElement.h"
-#include "InspectorInstrumentation.h"
 #include "MouseEvent.h"
 #include "PseudoElement.h"
 #include "ScopedEventQueue.h"

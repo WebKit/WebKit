@@ -22842,7 +22842,6 @@
     <ClInclude Include="..\inspector\InspectorController.h" />
     <ClInclude Include="..\inspector\InspectorCSSAgent.h" />
     <ClInclude Include="..\inspector\InspectorDatabaseAgent.h" />
-    <ClInclude Include="..\inspector\InspectorDatabaseInstrumentation.h" />
     <ClInclude Include="..\inspector\InspectorDatabaseResource.h" />
     <ClInclude Include="..\inspector\InspectorDOMAgent.h" />
     <ClInclude Include="..\inspector\InspectorDOMDebuggerAgent.h" />

@@ -246,7 +246,6 @@ enum MediaControlEvent {
 
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
-    sequence<DOMString> consoleMessageArgumentCounts();
     DOMWindow openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
     [RaisesException] void setJavaScriptProfilingEnabled(boolean creates);

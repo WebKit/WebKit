@@ -36,7 +36,6 @@
 #include "Event.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"

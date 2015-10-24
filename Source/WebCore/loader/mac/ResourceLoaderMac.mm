@@ -34,10 +34,6 @@
 #include "FrameLoaderClient.h"
 #include "SharedBuffer.h"
 
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-#include "InspectorInstrumentation.h"
-#endif
-
 namespace WebCore {
 
 #if USE(CFNETWORK)

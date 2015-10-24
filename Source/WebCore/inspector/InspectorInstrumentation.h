@@ -1128,6 +1128,13 @@ inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentatio
         didWriteHTMLImpl(cookie, endLine);
 }
 
+inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didOpenDatabaseImpl(*instrumentingAgents, WTF::move(database), domain, name, version);
+}
+
 inline void InspectorInstrumentation::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());

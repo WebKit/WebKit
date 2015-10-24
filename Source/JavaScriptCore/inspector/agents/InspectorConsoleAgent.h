@@ -71,8 +71,6 @@ public:
 
     void addMessageToConsole(std::unique_ptr<ConsoleMessage>);
 
-    Vector<unsigned> consoleMessageArgumentCounts() const;
-
     void startTiming(const String& title);
     void stopTiming(const String& title, PassRefPtr<ScriptCallStack>);
     void count(JSC::ExecState*, PassRefPtr<ScriptArguments>);

@@ -26,17 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "config.h"
 #include "Screen.h"
 
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "InspectorInstrumentation.h"
 #include "PlatformScreen.h"
-#include "Settings.h"
-#include "Widget.h"
 
 namespace WebCore {
 

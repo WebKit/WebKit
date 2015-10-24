@@ -55,7 +55,6 @@
 #include "ImageBuffer.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
-#include "InspectorInstrumentation.h"
 #include "InspectorOverlay.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"

@@ -11929,9 +11929,6 @@
     <ClInclude Include="..\inspector\InspectorDatabaseAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
-    <ClInclude Include="..\inspector\InspectorDatabaseInstrumentation.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
     <ClInclude Include="..\inspector\InspectorDatabaseResource.h">
       <Filter>inspector</Filter>
     </ClInclude>
