@@ -4015,6 +4015,11 @@ class WebKitStyleTest(CppStyleTestBase):
             ['Extra space after ( in function call  [whitespace/parens] [4]',
              'Extra space before )  [whitespace/parens] [2]'])
 
+        # Ignore spacing inside four char code.
+        self.assert_multi_line_lint(
+            'CTFontTableTag os2Tag = \'OS/2\';',
+            '')
+
     def test_line_breaking(self):
         # 1. Each statement should get its own line.
         self.assert_multi_line_lint(

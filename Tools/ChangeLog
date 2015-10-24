@@ -1,3 +1,14 @@
+2015-10-24  Frederic Wang  <fred.wang@free.fr>
+
+        check-webkit-style complains about missing operator whitespace inside character literal
+        https://bugs.webkit.org/show_bug.cgi?id=150396
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Improve matching of C++ character literal.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_spacing): Add a test to verify that the spacing for the character literal 'OS/2' is not tested.
+
 2015-10-23  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r179357-r179359): WebContent Crash using AOL Mail @ com.apple.JavascriptCore JSC::linkPolymorphicCall(JSC::ExecState*, JSC::CallLinkInfo&, JSC::CallVariant, JSC::RegisterPreservationMode) + 1584
