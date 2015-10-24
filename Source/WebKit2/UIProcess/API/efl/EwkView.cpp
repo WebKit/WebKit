@@ -982,7 +982,7 @@ void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const W
     case kWKPopupItemTextDirectionRTL:
         sd->api->popup_menu_show(sd, einaRect, EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, pageScaleFactor, m_popupMenu.get());
         break;
-    case EWK_TEXT_DIRECTION_LEFT_TO_RIGHT:
+    case kWKPopupItemTextDirectionLTR:
         sd->api->popup_menu_show(sd, einaRect, EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, pageScaleFactor, m_popupMenu.get());
         break;
     }
