@@ -36,6 +36,7 @@
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, copy) NSString *accessoryViewCustomButtonTitle;
+@property (nonatomic, strong) UIView *customInputView WK_AVAILABLE(NA, WK_IOS_TBA);
 #endif
 
 @end

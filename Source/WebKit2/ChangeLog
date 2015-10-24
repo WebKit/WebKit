@@ -1,3 +1,19 @@
+2015-10-24  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Allow clients to specify a custom input view to be used for a form input session
+        https://bugs.webkit.org/show_bug.cgi?id=150395
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h: Added customInputView property to the protocol.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession customInputView]): Added this getter.
+        (-[WKFormInputSession setCustomInputView:]): Added this setter, which reloads the input
+          views when the custom input view changes.
+        (-[WKContentView inputView]): Changed to return the custom view from the input session if
+          there is one.
+
 2015-10-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake compile error and add correct null check

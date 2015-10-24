@@ -233,6 +233,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @implementation WKFormInputSession {
     WKContentView *_contentView;
     RetainPtr<NSObject <NSSecureCoding>> _userObject;
+    RetainPtr<UIView> _customInputView;
 }
 
 - (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject
@@ -269,6 +270,20 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         [[_contentView formAccessoryView] hideAutoFillButton];
     if (UICurrentUserInterfaceIdiomIsPad())
         [_contentView reloadInputViews];
+}
+
+- (UIView *)customInputView
+{
+    return _customInputView.get();
+}
+
+- (void)setCustomInputView:(UIView *)customInputView
+{
+    if (customInputView == _customInputView)
+        return;
+
+    _customInputView = customInputView;
+    [_contentView reloadInputViews];
 }
 
 - (void)invalidate
@@ -974,7 +989,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     else
         [self _displayFormNodeInputView];
 
-    return [_inputPeripheral assistantView];
+    return [_formInputSession customInputView] ?: [_inputPeripheral assistantView];
 }
 
 - (CGRect)_selectionClipRect
