@@ -1353,7 +1353,79 @@ static void putAccessorByVal(ExecState* exec, JSObject* base, JSValue subscript,
         base->putSetter(exec, propertyKey, accessor, attribute);
 }
 
-void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, UniquedStringImpl* uid, int32_t options, JSCell* getter)
+#if USE(JSVALUE64)
+void JIT_OPERATION operationPutGetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t options, EncodedJSValue encodedGetterValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(JSValue::decode(encodedObjectValue).isObject());
+    JSObject* baseObj = asObject(JSValue::decode(encodedObjectValue));
+
+    JSValue getter = JSValue::decode(encodedGetterValue);
+    ASSERT(getter.isObject());
+    baseObj->putGetter(exec, *identifier, asObject(getter), options);
+}
+
+void JIT_OPERATION operationPutSetterById(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t options, EncodedJSValue encodedSetterValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(JSValue::decode(encodedObjectValue).isObject());
+    JSObject* baseObj = asObject(JSValue::decode(encodedObjectValue));
+
+    JSValue setter = JSValue::decode(encodedSetterValue);
+    ASSERT(setter.isObject());
+    baseObj->putSetter(exec, *identifier, asObject(setter), options);
+}
+
+void JIT_OPERATION operationPutGetterSetter(ExecState* exec, EncodedJSValue encodedObjectValue, Identifier* identifier, int32_t attribute,
+    EncodedJSValue encodedGetterValue, EncodedJSValue encodedSetterValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(JSValue::decode(encodedObjectValue).isObject());
+    JSObject* baseObj = asObject(JSValue::decode(encodedObjectValue));
+
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
+
+    JSValue getter = JSValue::decode(encodedGetterValue);
+    JSValue setter = JSValue::decode(encodedSetterValue);
+    ASSERT(getter.isObject() || getter.isUndefined());
+    ASSERT(setter.isObject() || setter.isUndefined());
+    ASSERT(getter.isObject() || setter.isObject());
+
+    if (!getter.isUndefined())
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
+    if (!setter.isUndefined())
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
+    baseObj->putDirectAccessor(exec, *identifier, accessor, attribute);
+}
+
+void JIT_OPERATION operationPutGetterByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, int32_t attribute, EncodedJSValue encodedGetter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSObject* base = asObject(JSValue::decode(encodedBase));
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSObject* getter = asObject(JSValue::decode(encodedGetter));
+    putAccessorByVal(exec, base, subscript, attribute, getter, AccessorType::Getter);
+}
+
+void JIT_OPERATION operationPutSetterByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, int32_t attribute, EncodedJSValue encodedSetter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSObject* base = asObject(JSValue::decode(encodedBase));
+    JSValue subscript = JSValue::decode(encodedSubscript);
+    JSObject* setter = asObject(JSValue::decode(encodedSetter));
+    putAccessorByVal(exec, base, subscript, attribute, setter, AccessorType::Setter);
+}
+
+#else
+void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, Identifier* identifier, int32_t options, JSCell* getter)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1362,10 +1434,10 @@ void JIT_OPERATION operationPutGetterById(ExecState* exec, JSCell* object, Uniqu
     JSObject* baseObj = object->getObject();
 
     ASSERT(getter->isObject());
-    baseObj->putGetter(exec, uid, getter, options);
+    baseObj->putGetter(exec, *identifier, getter, options);
 }
 
-void JIT_OPERATION operationPutSetterById(ExecState* exec, JSCell* object, UniquedStringImpl* uid, int32_t options, JSCell* setter)
+void JIT_OPERATION operationPutSetterById(ExecState* exec, JSCell* object, Identifier* identifier, int32_t options, JSCell* setter)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1374,7 +1446,28 @@ void JIT_OPERATION operationPutSetterById(ExecState* exec, JSCell* object, Uniqu
     JSObject* baseObj = object->getObject();
 
     ASSERT(setter->isObject());
-    baseObj->putSetter(exec, uid, setter, options);
+    baseObj->putSetter(exec, *identifier, setter, options);
+}
+
+void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Identifier* identifier, int32_t attribute, JSCell* getter, JSCell* setter)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(object && object->isObject());
+    JSObject* baseObj = object->getObject();
+
+    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
+
+    ASSERT(!getter || getter->isObject());
+    ASSERT(!setter || setter->isObject());
+    ASSERT(getter || setter);
+
+    if (getter)
+        accessor->setGetter(vm, exec->lexicalGlobalObject(), getter->getObject());
+    if (setter)
+        accessor->setSetter(vm, exec->lexicalGlobalObject(), setter->getObject());
+    baseObj->putDirectAccessor(exec, *identifier, accessor, attribute);
 }
 
 void JIT_OPERATION operationPutGetterByVal(ExecState* exec, JSCell* base, EncodedJSValue encodedSubscript, int32_t attribute, JSCell* getter)
@@ -1393,51 +1486,6 @@ void JIT_OPERATION operationPutSetterByVal(ExecState* exec, JSCell* base, Encode
     putAccessorByVal(exec, asObject(base), JSValue::decode(encodedSubscript), attribute, asObject(setter), AccessorType::Setter);
 }
 
-#if USE(JSVALUE64)
-void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, UniquedStringImpl* uid, int32_t attribute, EncodedJSValue encodedGetterValue, EncodedJSValue encodedSetterValue)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    ASSERT(object && object->isObject());
-    JSObject* baseObj = asObject(object);
-
-    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
-
-    JSValue getter = JSValue::decode(encodedGetterValue);
-    JSValue setter = JSValue::decode(encodedSetterValue);
-    ASSERT(getter.isObject() || getter.isUndefined());
-    ASSERT(setter.isObject() || setter.isUndefined());
-    ASSERT(getter.isObject() || setter.isObject());
-
-    if (!getter.isUndefined())
-        accessor->setGetter(vm, exec->lexicalGlobalObject(), asObject(getter));
-    if (!setter.isUndefined())
-        accessor->setSetter(vm, exec->lexicalGlobalObject(), asObject(setter));
-    baseObj->putDirectAccessor(exec, uid, accessor, attribute);
-}
-
-#else
-void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, UniquedStringImpl* uid, int32_t attribute, JSCell* getter, JSCell* setter)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-
-    ASSERT(object && object->isObject());
-    JSObject* baseObj = asObject(object);
-
-    GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
-
-    ASSERT(!getter || getter->isObject());
-    ASSERT(!setter || setter->isObject());
-    ASSERT(getter || setter);
-
-    if (getter)
-        accessor->setGetter(vm, exec->lexicalGlobalObject(), getter->getObject());
-    if (setter)
-        accessor->setSetter(vm, exec->lexicalGlobalObject(), setter->getObject());
-    baseObj->putDirectAccessor(exec, uid, accessor, attribute);
-}
 #endif
 
 void JIT_OPERATION operationPopScope(ExecState* exec, int32_t scopeReg)

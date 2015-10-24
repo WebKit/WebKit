@@ -2363,15 +2363,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         break;
     }
-
-    case PutGetterById:
-    case PutSetterById:
-    case PutGetterSetterById:
-    case PutGetterByVal:
-    case PutSetterByVal: {
-        clobberWorld(node->origin.semantic, clobberLimit);
-        break;
-    }
         
     case In: {
         // FIXME: We can determine when the property definitely exists based on abstract

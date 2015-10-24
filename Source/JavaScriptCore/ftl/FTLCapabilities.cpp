@@ -204,11 +204,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ForwardVarargs:
     case Switch:
     case TypeOf:
-    case PutGetterById:
-    case PutSetterById:
-    case PutGetterSetterById:
-    case PutGetterByVal:
-    case PutSetterByVal:
         // These are OK.
         break;
     case ArithSub:

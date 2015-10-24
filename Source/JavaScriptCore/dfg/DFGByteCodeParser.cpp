@@ -3749,38 +3749,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_by_id);
         }
 
-        case op_put_getter_by_id:
-        case op_put_setter_by_id: {
-            Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
-            unsigned attributes = currentInstruction[3].u.operand;
-            Node* accessor = get(VirtualRegister(currentInstruction[4].u.operand));
-            NodeType op = (opcodeID == op_put_getter_by_id) ? PutGetterById : PutSetterById;
-            addToGraph(op, OpInfo(identifierNumber), OpInfo(attributes), base, accessor);
-            NEXT_OPCODE(op_put_getter_by_id);
-        }
-
-        case op_put_getter_setter: {
-            Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
-            unsigned attributes = currentInstruction[3].u.operand;
-            Node* getter = get(VirtualRegister(currentInstruction[4].u.operand));
-            Node* setter = get(VirtualRegister(currentInstruction[5].u.operand));
-            addToGraph(PutGetterSetterById, OpInfo(identifierNumber), OpInfo(attributes), base, getter, setter);
-            NEXT_OPCODE(op_put_getter_setter);
-        }
-
-        case op_put_getter_by_val:
-        case op_put_setter_by_val: {
-            Node* base = get(VirtualRegister(currentInstruction[1].u.operand));
-            Node* subscript = get(VirtualRegister(currentInstruction[2].u.operand));
-            unsigned attributes = currentInstruction[3].u.operand;
-            Node* accessor = get(VirtualRegister(currentInstruction[4].u.operand));
-            NodeType op = (opcodeID == op_put_getter_by_val) ? PutGetterByVal : PutSetterByVal;
-            addToGraph(op, OpInfo(attributes), base, subscript, accessor);
-            NEXT_OPCODE(op_put_getter_by_val);
-        }
-
         case op_profile_type: {
             Node* valueToProfile = get(VirtualRegister(currentInstruction[1].u.operand));
             addToGraph(ProfileType, OpInfo(currentInstruction[2].u.location), valueToProfile);

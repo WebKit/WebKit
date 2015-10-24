@@ -95,11 +95,6 @@ bool doesGC(Graph& graph, Node* node)
     case PutById:
     case PutByIdFlush:
     case PutByIdDirect:
-    case PutGetterById:
-    case PutSetterById:
-    case PutGetterSetterById:
-    case PutGetterByVal:
-    case PutSetterByVal:
     case CheckStructure:
     case GetExecutable:
     case GetButterfly:

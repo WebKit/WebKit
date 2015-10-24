@@ -565,17 +565,6 @@ private:
         case PutByIdFlush:
             compilePutById();
             break;
-        case PutGetterById:
-        case PutSetterById:
-            compilePutAccessorById();
-            break;
-        case PutGetterSetterById:
-            compilePutGetterSetterById();
-            break;
-        case PutGetterByVal:
-        case PutSetterByVal:
-            compilePutAccessorByVal();
-            break;
         case GetButterfly:
             compileGetButterfly();
             break;
@@ -3009,38 +2998,6 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             break;
         }
-    }
-
-    void compilePutAccessorById()
-    {
-        LValue base = lowCell(m_node->child1());
-        LValue accessor = lowCell(m_node->child2());
-        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
-        vmCall(
-            m_out.operation(m_node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById),
-            m_callFrame, base, m_out.constIntPtr(uid), m_out.constInt32(m_node->accessorAttributes()), accessor);
-    }
-
-    void compilePutGetterSetterById()
-    {
-        LValue base = lowCell(m_node->child1());
-        LValue getter = lowJSValue(m_node->child2());
-        LValue setter = lowJSValue(m_node->child3());
-        auto uid = m_graph.identifiers()[m_node->identifierNumber()];
-        vmCall(
-            m_out.operation(operationPutGetterSetter),
-            m_callFrame, base, m_out.constIntPtr(uid), m_out.constInt32(m_node->accessorAttributes()), getter, setter);
-
-    }
-
-    void compilePutAccessorByVal()
-    {
-        LValue base = lowCell(m_node->child1());
-        LValue subscript = lowJSValue(m_node->child2());
-        LValue accessor = lowCell(m_node->child3());
-        vmCall(
-            m_out.operation(m_node->op() == PutGetterByVal ? operationPutGetterByVal : operationPutSetterByVal),
-            m_callFrame, base, subscript, m_out.constInt32(m_node->accessorAttributes()), accessor);
     }
     
     void compileArrayPush()
