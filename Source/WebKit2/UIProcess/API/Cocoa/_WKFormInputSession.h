@@ -28,11 +28,13 @@
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
+#import <WebKit/_WKFocusedElementInfo.h>
 
 @protocol _WKFormInputSession <NSObject>
 
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
 @property (nonatomic, readonly) NSObject <NSSecureCoding> *userObject;
+@property (nonatomic, readonly) id <_WKFocusedElementInfo> focusedElementInfo WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, copy) NSString *accessoryViewCustomButtonTitle;

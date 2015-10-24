@@ -1,5 +1,24 @@
 2015-10-24  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] _WKFormInputSession should provide access to the focused element info
+        https://bugs.webkit.org/show_bug.cgi?id=150512
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKFormInputSession.h: Added focusedElementInfo property to the
+          protocol.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession initWithContentView:focusedElementInfo:userObject:]): Added the
+          focusedElementInfo argument, used to initialize a new ivar.
+        (-[WKFormInputSession focusedElementInfo]): Added this getter for the new
+          _WKFormInputSession property.
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+          Create the WKFocusedElementInfo unconditionally and pass it to the new WKFormInputSession
+          initializer.
+
+2015-10-24  Dan Bernstein  <mitz@apple.com>
+
         [iOS] Allow clients to specify a custom input view to be used for a form input session
         https://bugs.webkit.org/show_bug.cgi?id=150395
 

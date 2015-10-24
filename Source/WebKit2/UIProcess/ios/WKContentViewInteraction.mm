@@ -223,9 +223,13 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 #endif
 
+@interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
+- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;
+@end
+
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
-- (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject;
 - (void)invalidate;
 
 @end
@@ -233,18 +237,25 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @implementation WKFormInputSession {
     WKContentView *_contentView;
     RetainPtr<NSObject <NSSecureCoding>> _userObject;
+    RetainPtr<WKFocusedElementInfo> _focusedElementInfo;
     RetainPtr<UIView> _customInputView;
 }
 
-- (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject
+- (instancetype)initWithContentView:(WKContentView *)view focusedElementInfo:(WKFocusedElementInfo *)elementInfo userObject:(NSObject <NSSecureCoding> *)userObject
 {
     if (!(self = [super init]))
         return nil;
 
     _contentView = view;
+    _focusedElementInfo = elementInfo;
     _userObject = userObject;
 
     return self;
+}
+
+- (id <_WKFocusedElementInfo>)focusedElementInfo
+{
+    return _focusedElementInfo.get();
 }
 
 - (NSObject <NSSecureCoding> *)userObject
@@ -291,10 +302,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
     _contentView = nil;
 }
 
-@end
-
-@interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
-- (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;
 @end
 
 @implementation WKFocusedElementInfo {
@@ -3192,11 +3199,12 @@ static bool isAssistableInputType(InputType type)
 - (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject
 {
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
+    RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting]);
     BOOL shouldShowKeyboard;
-    if ([inputDelegate respondsToSelector:@selector(_webView:focusShouldStartInputSession:)]) {
-        RetainPtr<WKFocusedElementInfo> focusedElementInfo = adoptNS([[WKFocusedElementInfo alloc] initWithAssistedNodeInformation:information isUserInitiated:userIsInteracting]);
+
+    if ([inputDelegate respondsToSelector:@selector(_webView:focusShouldStartInputSession:)])
         shouldShowKeyboard = [inputDelegate _webView:_webView focusShouldStartInputSession:focusedElementInfo.get()];
-    } else {
+    else {
         // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
         shouldShowKeyboard = userIsInteracting || _textSelectionAssistant;
     }
@@ -3244,7 +3252,7 @@ static bool isAssistableInputType(InputType type)
     [_inputPeripheral beginEditing];
 
     if ([inputDelegate respondsToSelector:@selector(_webView:didStartInputSession:)]) {
-        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self userObject:userObject]);
+        _formInputSession = adoptNS([[WKFormInputSession alloc] initWithContentView:self focusedElementInfo:focusedElementInfo.get() userObject:userObject]);
         [inputDelegate _webView:_webView didStartInputSession:_formInputSession.get()];
     }
 }
