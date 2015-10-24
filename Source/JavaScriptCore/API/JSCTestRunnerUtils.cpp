@@ -32,6 +32,14 @@
 
 namespace JSC {
 
+
+JSValueRef failNextNewCodeBlock(JSContextRef context)
+{
+    ExecState* exec= toJS(context);
+    JSLockHolder holder(exec);
+    return toRef(exec, failNextNewCodeBlock(exec));
+}
+
 JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValueRef)
 {
     ExecState* exec= toJS(context);

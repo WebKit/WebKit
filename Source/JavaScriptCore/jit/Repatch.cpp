@@ -682,9 +682,9 @@ void linkPolymorphicCall(
             else
 #endif
                 codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
-            // If we cannot handle a callee, assume that it's better for this whole thing to be a
-            // virtual call.
-            if (exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
+            // If we cannot handle a callee, either because we don't have a CodeBlock or because arity mismatch,
+            // assume that it's better for this whole thing to be a virtual call.
+            if (!codeBlock || exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
                 linkVirtualFor(exec, callLinkInfo);
                 return;
             }

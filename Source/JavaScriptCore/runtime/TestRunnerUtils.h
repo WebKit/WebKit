@@ -41,6 +41,7 @@ JS_EXPORT_PRIVATE JSValue setNeverInline(JSValue function);
 JS_EXPORT_PRIVATE JSValue setNeverOptimize(JSValue function);
 JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSValue function);
 
+JS_EXPORT_PRIVATE JSValue failNextNewCodeBlock(ExecState*);
 JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(ExecState*);
 JS_EXPORT_PRIVATE JSValue setNeverInline(ExecState*);
 JS_EXPORT_PRIVATE JSValue setNeverOptimize(ExecState*);

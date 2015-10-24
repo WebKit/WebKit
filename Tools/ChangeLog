@@ -1,3 +1,24 @@
+2015-10-23  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r179357-r179359): WebContent Crash using AOL Mail @ com.apple.JavascriptCore JSC::linkPolymorphicCall(JSC::ExecState*, JSC::CallLinkInfo&, JSC::CallVariant, JSC::RegisterPreservationMode) + 1584
+        https://bugs.webkit.org/show_bug.cgi?id=150513
+
+        Reviewed by Saam Barati.
+
+        Added a new test function, failNextNewCodeBlock() to simplify the writing of a regression test.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (simulateWebNotificationClickCallback):
+        (failNextCodeBlock):
+        (numberOfDFGCompiles):
+        (TestRunner::staticFunctions):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setBlockAllPlugins):
+        (WTR::TestRunner::failNextCodeBlock):
+        (WTR::TestRunner::numberOfDFGCompiles):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2015-10-23  Anders Carlsson  <andersca@apple.com>
 
         Simplify the WebKitLegacy menu conversion code

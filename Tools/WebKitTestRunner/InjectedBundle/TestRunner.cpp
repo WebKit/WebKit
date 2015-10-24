@@ -861,6 +861,13 @@ void TestRunner::setBlockAllPlugins(bool shouldBlock)
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
 }
 
+JSValueRef TestRunner::failNextNewCodeBlock()
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    return JSC::failNextNewCodeBlock(context);
+}
+
 JSValueRef TestRunner::numberOfDFGCompiles(JSValueRef theFunction)
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
