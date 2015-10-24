@@ -1582,11 +1582,11 @@ FAIL HTMLCollection interface: document.createElement("form").elements must inhe
 FAIL HTMLCollection interface: calling item(unsigned long) on document.createElement("form").elements with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLCollection interface: document.createElement("form").elements must inherit property "namedItem" with the proper type (2) assert_equals: wrong typeof object expected "function" but got "object"
 FAIL HTMLCollection interface: calling namedItem(DOMString) on document.createElement("form").elements with too few arguments must throw TypeError assert_equals: wrong typeof object expected "function" but got "object"
-FAIL RadioNodeList interface: existence and properties of interface object assert_own_property: self does not have own property "RadioNodeList" expected property "RadioNodeList" missing
-FAIL RadioNodeList interface object length assert_own_property: self does not have own property "RadioNodeList" expected property "RadioNodeList" missing
-FAIL RadioNodeList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RadioNodeList" expected property "RadioNodeList" missing
-FAIL RadioNodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RadioNodeList" expected property "RadioNodeList" missing
-FAIL RadioNodeList interface: attribute value assert_own_property: self does not have own property "RadioNodeList" expected property "RadioNodeList" missing
+FAIL RadioNodeList interface: existence and properties of interface object assert_equals: class string of RadioNodeList expected "[object Function]" but got "[object RadioNodeListConstructor]"
+PASS RadioNodeList interface object length 
+PASS RadioNodeList interface: existence and properties of interface prototype object 
+FAIL RadioNodeList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: RadioNodeList.prototype does not have own property "constructor" expected property "constructor" missing
+FAIL RadioNodeList interface: attribute value assert_true: The prototype object must have a property "value" expected true got false
 FAIL HTMLOptionsCollection interface: existence and properties of interface object assert_equals: class string of HTMLOptionsCollection expected "[object Function]" but got "[object HTMLOptionsCollectionConstructor]"
 PASS HTMLOptionsCollection interface object length 
 PASS HTMLOptionsCollection interface: existence and properties of interface prototype object 

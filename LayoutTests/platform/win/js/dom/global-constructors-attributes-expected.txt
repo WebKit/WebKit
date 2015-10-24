@@ -863,6 +863,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'RadioNodeList').value is RadioNodeList
+PASS Object.getOwnPropertyDescriptor(global, 'RadioNodeList').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RadioNodeList').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RadioNodeList').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'RadioNodeList').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Range').value is Range
 PASS Object.getOwnPropertyDescriptor(global, 'Range').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Range').hasOwnProperty('set') is false

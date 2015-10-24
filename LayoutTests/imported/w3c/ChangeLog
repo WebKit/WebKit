@@ -1,5 +1,18 @@
 2015-10-23  Chris Dumez  <cdumez@apple.com>
 
+        RadioNodeList should be exposed on Window
+        https://bugs.webkit.org/show_bug.cgi?id=148869
+        <rdar://problem/22589828>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-elements-nameditem-01-expected.txt:
+
+2015-10-23  Chris Dumez  <cdumez@apple.com>
+
         A label element not in a document should not label an element in a document
         https://bugs.webkit.org/show_bug.cgi?id=148863
         <rdar://problem/22589300>
