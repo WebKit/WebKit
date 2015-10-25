@@ -23,22 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUserContentController.h>
+#import "_WKUserStyleSheet.h"
 
 #if WK_API_ENABLED
 
-@class _WKUserContentFilter;
-@class _WKUserStyleSheet;
+#import "APIUserStyleSheet.h"
+#import <wtf/RetainPtr.h>
 
-@interface WKUserContentController (WKPrivate)
+namespace API {
 
-- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_AVAILABLE(10_11, 9_0);
-- (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_AVAILABLE(10_11, 9_0);
-- (void)_removeAllUserContentFilters WK_AVAILABLE(10_11, 9_0);
+inline _WKUserStyleSheet *wrapper(UserStyleSheet& userStyleSheet)
+{
+    ASSERT([userStyleSheet.wrapper() isKindOfClass:[_WKUserStyleSheet class]]);
+    return (_WKUserStyleSheet *)userStyleSheet.wrapper();
+}
 
-- (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_removeAllUserStyleSheets WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+}
 
+@interface _WKUserStyleSheet () <WKObject> {
+@package
+    API::ObjectStorage<API::UserStyleSheet> _userStyleSheet;
+}
 @end
 
 #endif

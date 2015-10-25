@@ -23,22 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUserContentController.h>
+#ifndef APIUserStyleSheet_h
+#define APIUserStyleSheet_h
 
-#if WK_API_ENABLED
+#include "APIObject.h"
+#include <WebCore/UserStyleSheet.h>
 
-@class _WKUserContentFilter;
-@class _WKUserStyleSheet;
+namespace API {
 
-@interface WKUserContentController (WKPrivate)
+class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet> {
+public:
+    static WebCore::URL generateUniqueURL();
 
-- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_AVAILABLE(10_11, 9_0);
-- (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_AVAILABLE(10_11, 9_0);
-- (void)_removeAllUserContentFilters WK_AVAILABLE(10_11, 9_0);
+    UserStyleSheet(WebCore::UserStyleSheet userStyleSheet)
+        : m_userStyleSheet(userStyleSheet)
+    {
+    }
 
-- (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_removeAllUserStyleSheets WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+    const WebCore::UserStyleSheet& userStyleSheet() const { return m_userStyleSheet; }
 
-@end
+private:
+    WebCore::UserStyleSheet m_userStyleSheet;
+};
 
-#endif
+} // namespace API
+
+#endif // APIUserStyleSheet_h

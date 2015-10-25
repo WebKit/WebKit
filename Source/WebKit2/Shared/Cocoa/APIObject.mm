@@ -67,6 +67,7 @@
 #import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKUserContentExtensionStoreInternal.h"
 #import "_WKUserContentFilterInternal.h"
+#import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import <objc/objc-auto.h>
 
@@ -209,6 +210,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::UserScript:
         wrapper = [WKUserScript alloc];
+        break;
+
+    case Type::UserStyleSheet:
+        wrapper = [_WKUserStyleSheet alloc];
         break;
 
     case Type::VisitedLinkStore:

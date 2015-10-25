@@ -38,6 +38,7 @@
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKUserContentFilterInternal.h"
+#import "_WKUserStyleSheetInternal.h"
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedScriptValue.h>
@@ -144,6 +145,16 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     _userContentControllerProxy->removeAllUserContentExtensions();
 #endif
+}
+
+- (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet
+{
+    _userContentControllerProxy->addUserStyleSheet(userStyleSheet->_userStyleSheet->userStyleSheet());
+}
+
+- (void)_removeAllUserStyleSheets
+{
+    _userContentControllerProxy->removeAllUserStyleSheets();
 }
 
 @end

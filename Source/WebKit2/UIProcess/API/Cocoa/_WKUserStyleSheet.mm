@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "_WKUserStyleSheetInternal.h"
+
+#import "APIArray.h"
+#import "WKNSArray.h"
+#import "WebKit2Initialize.h"
+
+#if WK_API_ENABLED
+
+@implementation _WKUserStyleSheet
+
+static Vector<String> toWTFStrings(NSArray *strings)
+{
+    Vector<String> result;
+    result.reserveInitialCapacity(strings.count);
+
+    for (NSString *string in strings)
+        result.uncheckedAppend(string);
+
+    return result;
+}
+
+- (instancetype)initWithSource:(NSString *)source whitelistedURLPatterns:(NSArray *)whitelistedURLPatterns blacklistedURLPatterns:(NSArray *)blacklistedURLPatterns forMainFrameOnly:(BOOL)forMainFrameOnly
+{
+    if (!(self = [super init]))
+        return nil;
+
+    // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
+    WebKit::InitializeWebKit2();
+
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), toWTFStrings(whitelistedURLPatterns), toWTFStrings(blacklistedURLPatterns), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel });
+
+    return self;
+}
+
+- (NSString *)source
+{
+    return _userStyleSheet->userStyleSheet().source();
+}
+
+- (NSArray *)whitelistedURLPatterns
+{
+    return wrapper(API::Array::createStringArray(_userStyleSheet->userStyleSheet().whitelist()));
+}
+
+- (NSArray *)blacklistedURLPatterns
+{
+    return wrapper(API::Array::createStringArray(_userStyleSheet->userStyleSheet().blacklist()));
+}
+
+- (BOOL)isForMainFrameOnly
+{
+    return _userStyleSheet->userStyleSheet().injectedFrames() == WebCore::InjectInTopFrameOnly;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_userStyleSheet;
+}
+
+@end
+
+#endif

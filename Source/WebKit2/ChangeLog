@@ -1,5 +1,43 @@
 2015-10-24  Tim Horton  <timothy_horton@apple.com>
 
+        Add a way to add user style sheets to WKUserContentController
+        https://bugs.webkit.org/show_bug.cgi?id=150531
+        <rdar://problem/23191691>
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Boilerplate for a new API::UserStyleSheet.
+
+        * UIProcess/API/APIUserStyleSheet.cpp: Added.
+        (API::generateIdentifier):
+        (API::UserStyleSheet::generateUniqueURL):
+        * UIProcess/API/APIUserStyleSheet.h: Added.
+        Added API::UserStyleSheet, borrowing URL generation code from API::UserScript.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _addUserStyleSheet:]):
+        (-[WKUserContentController _removeAllUserStyleSheets]):
+        Forward add and remove-all to WebUserContentControllerProxy.
+
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h: Added.
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm: Added.
+        (toWTFStrings):
+        (-[_WKUserStyleSheet initWithSource:whitelistedURLPatterns:blacklistedURLPatterns:forMainFrameOnly:]):
+        (-[_WKUserStyleSheet source]):
+        (-[_WKUserStyleSheet isForMainFrameOnly]):
+        (-[_WKUserStyleSheet copyWithZone:]):
+        (-[_WKUserStyleSheet _apiObject]):
+        * UIProcess/API/Cocoa/_WKUserStyleSheetInternal.h: Added.
+        (API::wrapper):
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add the new modern API object (as SPI for now).
+
+2015-10-24  Tim Horton  <timothy_horton@apple.com>
+
         Expose more information about the exception in WKErrorJavaScriptExceptionOccurred errors
         https://bugs.webkit.org/show_bug.cgi?id=150525
 

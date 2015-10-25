@@ -23,22 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUserContentController.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-@class _WKUserContentFilter;
-@class _WKUserStyleSheet;
+#import <Foundation/Foundation.h>
 
-@interface WKUserContentController (WKPrivate)
+WK_ASSUME_NONNULL_BEGIN
 
-- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_AVAILABLE(10_11, 9_0);
-- (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_AVAILABLE(10_11, 9_0);
-- (void)_removeAllUserContentFilters WK_AVAILABLE(10_11, 9_0);
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface _WKUserStyleSheet : NSObject <NSCopying>
 
-- (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_removeAllUserStyleSheets WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly, copy) NSString *source;
+
+@property (nonatomic, readonly, copy) WK_ARRAY(NSString *) *whitelistedURLPatterns;
+@property (nonatomic, readonly, copy) WK_ARRAY(NSString *) *blacklistedURLPatterns;
+
+@property (nonatomic, readonly, getter=isForMainFrameOnly) BOOL forMainFrameOnly;
+
+- (instancetype)initWithSource:(NSString *)source whitelistedURLPatterns:(WK_ARRAY(NSString *) *)whitelistedURLPatterns blacklistedURLPatterns:(WK_ARRAY(NSString *) *)blacklistedURLPatterns forMainFrameOnly:(BOOL)forMainFrameOnly;
 
 @end
+
+WK_ASSUME_NONNULL_END
 
 #endif

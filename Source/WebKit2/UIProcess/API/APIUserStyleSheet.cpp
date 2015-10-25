@@ -23,22 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKUserContentController.h>
+#include "config.h"
+#include "APIUserStyleSheet.h"
 
-#if WK_API_ENABLED
+#include <wtf/text/StringBuilder.h>
 
-@class _WKUserContentFilter;
-@class _WKUserStyleSheet;
+namespace API {
 
-@interface WKUserContentController (WKPrivate)
+static uint64_t generateIdentifier()
+{
+    static uint64_t identifier;
 
-- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter WK_AVAILABLE(10_11, 9_0);
-- (void)_removeUserContentFilter:(NSString *)userContentFilterName WK_AVAILABLE(10_11, 9_0);
-- (void)_removeAllUserContentFilters WK_AVAILABLE(10_11, 9_0);
+    return ++identifier;
+}
 
-- (void)_addUserStyleSheet:(_WKUserStyleSheet *)userStyleSheet WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
-- (void)_removeAllUserStyleSheets WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+WebCore::URL UserStyleSheet::generateUniqueURL()
+{
+    StringBuilder urlStringBuilder;
+    urlStringBuilder.appendLiteral("user-style-sheet:");
+    urlStringBuilder.appendNumber(generateIdentifier());
+    return { { }, urlStringBuilder.toString() };
+}
 
-@end
 
-#endif
+} // namespace API

@@ -1,5 +1,16 @@
 2015-10-24  Tim Horton  <timothy_horton@apple.com>
 
+        Add a way to add user style sheets to WKUserContentController
+        https://bugs.webkit.org/show_bug.cgi?id=150531
+        <rdar://problem/23191691>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        (TEST):
+
+2015-10-24  Tim Horton  <timothy_horton@apple.com>
+
         Expose more information about the exception in WKErrorJavaScriptExceptionOccurred errors
         https://bugs.webkit.org/show_bug.cgi?id=150525
 

@@ -28,6 +28,8 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WebKit.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
@@ -211,5 +213,155 @@ TEST(WKUserContentController, ScriptMessageHandlerWithNavigation)
     EXPECT_WK_STREQ(@"Second Message", (NSString *)[lastScriptMessage body]);    
 }
 #endif
+
+static NSString *styleSheetSource = @"body { background-color: green !important; }";
+static NSString *backgroundColorScript = @"window.getComputedStyle(document.body, null).getPropertyValue('background-color')";
+static NSString *frameBackgroundColorScript = @"window.getComputedStyle(document.getElementsByTagName('iframe')[0].contentDocument.body, null).getPropertyValue('background-color')";
+static const char* greenInRGB = "rgb(0, 128, 0)";
+static const char* redInRGB = "rgb(255, 0, 0)";
+static const char* whiteInRGB = "rgba(0, 0, 0, 0)";
+
+static void expectScriptEvaluatesToColor(WKWebView *webView, NSString *script, const char* color)
+{
+    static bool didCheckBackgroundColor;
+
+    [webView evaluateJavaScript:script completionHandler:^ (id value, NSError * error) {
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ(color, value);
+        didCheckBackgroundColor = true;
+    }];
+
+    TestWebKitAPI::Util::run(&didCheckBackgroundColor);
+    didCheckBackgroundColor = false;
+}
+
+TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:YES]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+}
+
+TEST(WKUserContentController, AddUserStyleSheetAfterCreatingView)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:YES]);
+    [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetWhiteAndBlackList)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ @"http://happy.example.com/", @"http://*.example2.com/" ] blacklistedURLPatterns:@[ @"http://sad.example.com/" ] forMainFrameOnly:YES]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Try something on the whitelist:
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://happy.example.com/"]];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    // Try something on the blacklist:
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://sad.example.com/"]];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    // Try something on neither list:
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://mediocre.example.com/"]];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
+
+    // Try something that matches the globbing pattern in the whitelist:
+
+    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://anything.example2.com/"]];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingOnlyMainFrame)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:YES]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadHTMLString:@"<body style='background-color: red;'><iframe></iframe></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    // The main frame should be affected.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    // The subframe shouldn't be affected.
+    expectScriptEvaluatesToColor(webView.get(), frameBackgroundColorScript, whiteInRGB);
+}
+
+TEST(WKUserContentController, UserStyleSheetAffectingAllFrames)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:NO]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadHTMLString:@"<body style='background-color: red;'><iframe></iframe></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    isDoneWithNavigation = false;
+
+    // The main frame should be affected.
+    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
+
+    // The subframe should also be affected.
+    expectScriptEvaluatesToColor(webView.get(), frameBackgroundColorScript, greenInRGB);
+}
 
 #endif

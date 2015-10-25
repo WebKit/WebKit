@@ -42,7 +42,7 @@ WebCore::URL UserScript::generateUniqueURL()
     StringBuilder urlStringBuilder;
     urlStringBuilder.appendLiteral("user-script:");
     urlStringBuilder.appendNumber(generateIdentifier());
-    return WebCore::URL { WebCore::URL { }, urlStringBuilder.toString() };
+    return { { }, urlStringBuilder.toString() };
 }
 
 

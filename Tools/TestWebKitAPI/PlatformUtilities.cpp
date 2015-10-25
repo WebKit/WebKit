@@ -25,14 +25,14 @@
 
 #include "config.h"
 
-#if WK_HAVE_C_SPI
-
 #include "PlatformUtilities.h"
 
 #include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 namespace Util {
+
+#if WK_HAVE_C_SPI
 
 WKContextRef createContextWithInjectedBundle()
 {
@@ -79,17 +79,17 @@ std::string toSTD(WKRetainPtr<WKStringRef> string)
     return toSTD(string.get());
 }
 
-std::string toSTD(const char* string)
-{
-    return std::string(string);
-}
-
 WKRetainPtr<WKStringRef> toWK(const char* utf8String)
 {
     return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(utf8String));
 }
 
+#endif // WK_HAVE_C_SPI
+
+std::string toSTD(const char* string)
+{
+    return std::string(string);
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI
-
-#endif
