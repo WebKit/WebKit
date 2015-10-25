@@ -1,0 +1,17 @@
+
+PASS XMLHttpRequest: responseText decoding (application/xml %3C%3Fxml%20version%3D'1.0'%20encoding%3D'windows-1252'%3F%3E%3Cx%3E%FF%3C%2Fx%3E) 
+PASS XMLHttpRequest: responseText decoding (text/html %3C!doctype%20html%3E%3Cmeta%20charset%3Dwindows-1252%3E%FF) 
+PASS XMLHttpRequest: responseText decoding (text/plain;charset=windows-1252 %FF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %FF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %FE%FF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %FE%FF%FE%FF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %EF%BB%BF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %EF%BB%BF%EF%BB%BF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %C2) 
+PASS XMLHttpRequest: responseText decoding (text/xml %FE%FF) 
+PASS XMLHttpRequest: responseText decoding (text/xml %FE%FF%FE%FF) 
+PASS XMLHttpRequest: responseText decoding (text/xml %EF%BB%BF) 
+PASS XMLHttpRequest: responseText decoding (text/xml %EF%BB%BF%EF%BB%BF) 
+PASS XMLHttpRequest: responseText decoding (text/plain %E3%81%B2) 
+FAIL XMLHttpRequest: responseText decoding (text/xml %3C%3Fxml%20version%3D'1.0'%20encoding%3D'windows-1252'%3F%3E%3Cx%3E%E3%81%B2%3C%2Fx%3E) assert_equals: expected "<?xml version='1.0' encoding='windows-1252'?><x>ひ</x>" but got "<?xml version='1.0' encoding='windows-1252'?><x>ã²</x>"
+

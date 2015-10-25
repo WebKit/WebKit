@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: getResponseHeader() server and date 
+

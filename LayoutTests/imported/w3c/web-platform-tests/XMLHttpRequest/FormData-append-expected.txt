@@ -1,0 +1,3 @@
+
+PASS Passing a String object to FormData.append should work. 
+

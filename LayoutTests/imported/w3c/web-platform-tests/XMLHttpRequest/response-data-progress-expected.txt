@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: progress events grow response body size 
+

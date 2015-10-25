@@ -1,0 +1,8 @@
+      
+
+FAIL XMLHttpRequest: send() - Document Can't find variable: number
+FAIL XMLHttpRequest: send() - Document 1 Can't find variable: number
+FAIL XMLHttpRequest: send() - Document 2 Can't find variable: number
+FAIL XMLHttpRequest: send() - Document 3 Can't find variable: number
+FAIL XMLHttpRequest: send() - Document 4 Can't find variable: number
+

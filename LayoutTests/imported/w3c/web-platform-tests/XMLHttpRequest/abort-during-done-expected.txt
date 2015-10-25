@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: abort() during DONE 
+

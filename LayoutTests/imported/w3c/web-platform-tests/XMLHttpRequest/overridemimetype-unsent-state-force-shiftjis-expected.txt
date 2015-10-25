@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: overrideMimeType() in unsent state, enforcing Shift-JIS encoding 
+

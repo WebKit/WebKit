@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: relative URLs in worker scripts resolved by script URL 
+

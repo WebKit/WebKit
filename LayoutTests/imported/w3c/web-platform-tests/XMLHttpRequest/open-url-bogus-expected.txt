@@ -1,0 +1,4 @@
+
+FAIL XMLHttpRequest: open() - bogus URLs (http:) assert_throws: function "function () { client.open("GET", url) }" did not throw
+FAIL XMLHttpRequest: open() - bogus URLs (http://a a/) assert_throws: function "function () { client.open("GET", url) }" did not throw
+

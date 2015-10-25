@@ -1,0 +1,3 @@
+
+FAIL XMLHttpRequest: The abort() method: do not fire abort event in OPENED state when send() flag is unset. send() throws after abort(). assert_unreached: when abort() is called, state is OPENED with the send() flag being unset, must not fire abort event per spec Reached unreachable code
+

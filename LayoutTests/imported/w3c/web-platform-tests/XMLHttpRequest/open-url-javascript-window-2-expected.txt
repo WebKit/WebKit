@@ -1,0 +1,4 @@
+
+
+PASS XMLHttpRequest: open() - resolving URLs (javascript: <iframe>; 2) 
+

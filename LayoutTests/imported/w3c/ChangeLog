@@ -1,3 +1,475 @@
+2015-10-25  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Import W3C XMLHttpRequest tests
+        https://bugs.webkit.org/show_bug.cgi?id=142163
+
+        Reviewed by Darin Adler.
+
+        * resources/ImportExpectations: skipping import of some XHR tests that are failing or timing out.
+        * web-platform-tests/XMLHttpRequest/FormData-append-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/FormData-append.html: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.html: Added.
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.js: Added.
+        (test_withCredentials.):
+        (test_withCredentials):
+        * web-platform-tests/XMLHttpRequest/XMLHttpRequest-withCredentials.worker.js: Added.
+        * web-platform-tests/XMLHttpRequest/abort-after-receive-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-after-receive.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-after-send-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-after-send.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-after-timeout-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-after-timeout.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-done-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-done.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-open-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-open.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-unsent-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-unsent.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-upload-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-during-upload.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-abort-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-abort.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-listeners-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-listeners.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-loadend-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-loadend.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-order-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-event-order.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-upload-event-abort-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-upload-event-abort.htm: Added.
+        * web-platform-tests/XMLHttpRequest/abort-upload-event-loadend-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/abort-upload-event-loadend.htm: Added.
+        * web-platform-tests/XMLHttpRequest/anonymous-mode-unsupported-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/anonymous-mode-unsupported.htm: Added.
+        * web-platform-tests/XMLHttpRequest/data-uri-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/data-uri.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-abort-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-abort.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-error-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-error.html: Added.
+        * web-platform-tests/XMLHttpRequest/event-load-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-load.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-loadend-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-loadend.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-loadstart-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-loadstart.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-progress-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-progress.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-readystatechange-loaded-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-timeout-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-timeout.htm: Added.
+        * web-platform-tests/XMLHttpRequest/event-upload-progress-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/event-upload-progress.htm: Added.
+        * web-platform-tests/XMLHttpRequest/folder.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-blob-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-blob.htm: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getallresponseheaders-cookies-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getallresponseheaders-cookies.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getallresponseheaders-status-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getallresponseheaders-status.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-case-insensitive-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-case-insensitive.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-chunked-trailer.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-cookies-and-more-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-cookies-and-more.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-error-state-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-error-state.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-server-date-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-server-date.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-special-characters-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-special-characters.htm: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-unsent-opened-state-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/getresponseheader-unsent-opened-state.htm: Added.
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/interfaces.html: Added.
+        * web-platform-tests/XMLHttpRequest/open-after-abort-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-after-abort.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-after-setrequestheader-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-after-setrequestheader.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-during-abort-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-during-abort.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-bogus-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-bogus.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-case-insensitive-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-case-insensitive.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-case-sensitive-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-case-sensitive.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-insecure-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-insecure.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-responsetype-set-sync-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-method-responsetype-set-sync.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-open-send-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-open-send.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-open-sync-send-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-open-sync-send.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-referer-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-referer.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-send-open-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-send-open.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-sync-open-send-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-sync-open-send.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-about-blank-window-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-about-blank-window.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-base-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-base-inserted-after-open-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-base-inserted-after-open.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-base-inserted-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-base-inserted.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-base.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-bogus-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-bogus.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-encoding-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-encoding.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-fragment-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-fragment.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-javascript-window-2-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-javascript-window-2.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-javascript-window-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-javascript-window.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-2-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-2.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-3-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-3.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-4-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-4.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-5-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-5.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-multi-window.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-worker-simple-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-url-worker-simple.htm: Added.
+        * web-platform-tests/XMLHttpRequest/open-user-password-non-same-origin-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/open-user-password-non-same-origin.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-done-state-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-done-state.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-headers-received-state-force-shiftjis-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-headers-received-state-force-shiftjis.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-invalid-mime-type-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-invalid-mime-type.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-loading-state-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-loading-state.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-open-state-force-utf-8-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-open-state-force-utf-8.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-open-state-force-xml-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-open-state-force-xml.htm: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-unsent-state-force-shiftjis-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/overridemimetype-unsent-state-force-shiftjis.htm: Added.
+        * web-platform-tests/XMLHttpRequest/progress-events-response-data-gzip-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/progress-events-response-data-gzip.htm: Added.
+        * web-platform-tests/XMLHttpRequest/readme.txt: Added.
+        * web-platform-tests/XMLHttpRequest/resources/accept-language.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/accept.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth1/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth1/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth2/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth2/corsenabled.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth2/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth3/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth3/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth4/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth4/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth5/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth5/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/auth6/auth.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/auth6/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/authentication.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/chunked.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/conditional.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/content.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/corsenabled.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/delay.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/echo-method.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/folder.txt: Added.
+        * web-platform-tests/XMLHttpRequest/resources/form.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/gzip.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/headers.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/image.gif: Added.
+        * web-platform-tests/XMLHttpRequest/resources/img.jpg: Added.
+        * web-platform-tests/XMLHttpRequest/resources/infinite-redirects.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/init.htm: Added.
+        * web-platform-tests/XMLHttpRequest/resources/inspect-headers.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/invalid-utf8-html.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/nocors/folder.txt: Added.
+        * web-platform-tests/XMLHttpRequest/resources/nocors/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/XMLHttpRequest/resources/redirect.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/requri.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/shift-jis-html.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/status.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/trickle.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/upload.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/utf16.txt: Added.
+        * web-platform-tests/XMLHttpRequest/resources/w3c-import.log: Added.
+        * web-platform-tests/XMLHttpRequest/resources/well-formed.xml: Added.
+        * web-platform-tests/XMLHttpRequest/resources/win-1252-xml.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/resources/workerxhr-origin-referrer.js: Added.
+        (xhr.new.XMLHttpRequest.xhr.onreadystatechange):
+        (true.xhr.send.xhr2.new.XMLHttpRequest.xhr2.onreadystatechange):
+        (true.xhr2.send.xhr3.new.XMLHttpRequest.xhr3.onreadystatechange):
+        * web-platform-tests/XMLHttpRequest/resources/workerxhr-simple.js: Added.
+        (xhr.new.XMLHttpRequest.xhr.onreadystatechange):
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-aborted.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-abortedonmain.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-overrides.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-overridesexpires.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-runner.js: Added.
+        (testResultCallbackHandler):
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-simple.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-synconmain.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-synconworker.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout-twice.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-timeout.js: Added.
+        (catch):
+        (message):
+        (is):
+        (ok):
+        (RequestTracker):
+        (RequestTracker.prototype.handleEvent):
+        (RequestTracker.prototype.startXHR):
+        (RequestTracker.prototype.getMessage):
+        (AbortedRequest):
+        (AbortedRequest.prototype.handleEvent):
+        (AbortedRequest.prototype.abortReq):
+        (AbortedRequest.prototype.startXHR):
+        (AbortedRequest.prototype.noEventsFired):
+        (AbortedRequest.prototype.getMessage):
+        (SyncRequestSettingTimeoutAfterOpen.startXHR):
+        (SyncRequestSettingTimeoutBeforeOpen.startXHR):
+        (TestCounter.testComplete):
+        (TestCounter.next):
+        (runTestRequests):
+        * web-platform-tests/XMLHttpRequest/resources/zlib.py: Added.
+        (main):
+        * web-platform-tests/XMLHttpRequest/response-data-arraybuffer-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-arraybuffer.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-blob-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-blob.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-deflate-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-deflate.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-gzip-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-gzip.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-progress-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-data-progress.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-invalid-responsetype-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-invalid-responsetype.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-json-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-json.htm: Added.
+        * web-platform-tests/XMLHttpRequest/response-method-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/response-method.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responseText-status-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responseText-status.html: Added.
+        * web-platform-tests/XMLHttpRequest/responsetext-decoding-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsetext-decoding.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responsetype-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsetype.html: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-basic-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-basic.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-media-type-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-media-type.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-non-document-types-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-non-document-types.htm: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-non-well-formed-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responsexml-non-well-formed.htm: Added.
+        * web-platform-tests/XMLHttpRequest/security-consideration.sub-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/security-consideration.sub.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-accept-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-accept-language-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-accept-language.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-accept.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-authentication-cors-basic-setrequestheader.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-conditional-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-conditional.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-content-type-charset-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-content-type-charset.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-content-type-string-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-content-type-string.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-arraybuffer-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-arraybuffer.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-blob-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-blob.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-es-object-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-es-object.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-formdata-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-formdata.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-unexpected-tostring-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-data-unexpected-tostring.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-bogus-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-bogus.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-document.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-empty-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-empty.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-get-head-async.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-get-head-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-get-head.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-none-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-entity-body-none.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-loadend-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-loadend.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-loadstart-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-loadstart.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-order-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-order.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.sub-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-non-same-origin.sub.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-receive-utf16-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-receive-utf16.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-bogus-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-infinite-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-infinite-sync.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-infinite.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-no-location-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-no-location.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-cors-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-cors.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect-to-non-cors.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-redirect.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-event-order-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-event-order.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-upload-event-loadend-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-upload-event-loadend.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-upload-event-loadstart-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-upload-event-loadstart.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-upload-event-progress-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-response-upload-event-progress.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-send-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-send.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-blocks-async-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-blocks-async.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-no-response-event-load-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-no-response-event-load.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-no-response-event-loadend-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-no-response-event-loadend.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-no-response-event-order-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-no-response-event-order.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-response-event-order-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-response-event-order.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-timeout-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-sync-timeout.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-timeout-events-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-timeout-events.htm: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp.html: Added.
+        * web-platform-tests/XMLHttpRequest/send-usp.js: Added.
+        (encode):
+        (do_test.):
+        * web-platform-tests/XMLHttpRequest/send-usp.worker.js: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-after-send-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-after-send.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-allow-empty-value-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-allow-empty-value.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-allow-whitespace-in-value-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-allow-whitespace-in-value.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-before-open-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-before-open.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-name-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-name.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-value-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-bogus-value.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-case-insensitive-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-case-insensitive.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-content-type-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-forbidden-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-header-forbidden.htm: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-open-setrequestheader-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/setrequestheader-open-setrequestheader.htm: Added.
+        * web-platform-tests/XMLHttpRequest/status-async-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/status-async.htm: Added.
+        * web-platform-tests/XMLHttpRequest/status-basic-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/status-basic.htm: Added.
+        * web-platform-tests/XMLHttpRequest/status-error-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/status-error.htm: Added.
+        * web-platform-tests/XMLHttpRequest/timeout-cors-async-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/timeout-cors-async.htm: Added.
+        * web-platform-tests/XMLHttpRequest/timeout-sync-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/timeout-sync.htm: Added.
+        * web-platform-tests/XMLHttpRequest/w3c-import.log: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-basic-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-basic.htm: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-eventtarget-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-eventtarget.htm: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error-sync.htm: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-network-error.htm: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-aborted.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-abortedonmain-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-abortedonmain.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overrides-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overrides.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overridesexpires-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-overridesexpires.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-simple-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-simple.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-synconmain.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-twice-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-twice.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-aborted-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-aborted.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overrides-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overrides.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overridesexpires-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-overridesexpires.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-simple-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-simple.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-synconworker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-synconworker.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-unsent-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/xmlhttprequest-unsent.htm: Added.
+        * web-platform-tests/w3c-import.log:
+
 2015-10-23  Chris Dumez  <cdumez@apple.com>
 
         RadioNodeList should be exposed on Window

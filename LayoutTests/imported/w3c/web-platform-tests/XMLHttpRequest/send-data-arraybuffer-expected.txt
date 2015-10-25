@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 44: ArrayBuffer is deprecated in XMLHttpRequest.send(). Use ArrayBufferView instead.
+
+PASS XMLHttpRequest: The send() method: ArrayBuffer data 
+

@@ -1,0 +1,4 @@
+Blocked access to external URL http://example.nonexist/
+
+PASS XMLHttpRequest Test: event - error 
+

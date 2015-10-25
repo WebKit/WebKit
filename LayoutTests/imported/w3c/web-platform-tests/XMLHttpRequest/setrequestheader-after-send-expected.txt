@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: setRequestHeader() after send() 
+

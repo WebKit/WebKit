@@ -1,0 +1,22 @@
+
+FAIL domain assert_equals: expected (undefined) undefined but got (string) "localhost"
+PASS URL 
+PASS documentURI 
+PASS referrer 
+PASS title 
+PASS contentType 
+FAIL readyState assert_equals: expected "complete" but got "interactive"
+PASS location 
+PASS defaultView 
+FAIL body assert_equals: expected (undefined) undefined but got (object) null
+FAIL images assert_equals: expected (undefined) undefined but got (object) object "[object HTMLCollection]"
+PASS doctype 
+FAIL forms assert_equals: expected (undefined) undefined but got (object) object "[object HTMLCollection]"
+PASS all 
+FAIL links assert_equals: expected (undefined) undefined but got (object) object "[object HTMLCollection]"
+PASS cookie 
+FAIL lastModified set according to HTTP header assert_true: responseXML.lastModified time shoud be equal to time in response Last-Modified header expected true got false
+PASS cookie (after setting it) 
+PASS styleSheets 
+PASS implementation 
+
