@@ -1,3 +1,11 @@
+2015-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r191543.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_run_javascript):
+        (resourcesStreamReadCallback):
+
 2015-10-24  Tim Horton  <timothy_horton@apple.com>
 
         Add a way to add user style sheets to WKUserContentController

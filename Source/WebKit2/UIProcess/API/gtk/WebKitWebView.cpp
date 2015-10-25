@@ -3057,7 +3057,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(script);
 
     GTask* task = g_task_new(webView, cancellable, callback, userData);
-    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, bool, WebKit::CallbackBase::Error) {
+    getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(script), [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails&, WebKit::CallbackBase::Error) {
         webkitWebViewRunJavaScriptCallback(serializedScriptValue, adoptGRef(task).get());
     });
 }
@@ -3148,7 +3148,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
     getPage(webView)->runJavaScriptInMainFrame(String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)),
-        [task](API::SerializedScriptValue* serializedScriptValue, bool, WebKit::CallbackBase::Error) {
+        [task](API::SerializedScriptValue* serializedScriptValue, bool, const WebCore::ExceptionDetails&, WebKit::CallbackBase::Error) {
             webkitWebViewRunJavaScriptCallback(serializedScriptValue, task.get());
         });
 }
