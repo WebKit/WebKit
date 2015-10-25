@@ -272,7 +272,7 @@ sub listAllTests()
         if (isIOSWebKit()) {
             $pid = open3($childIn, $childOut, $childErr, qw(xcrun -sdk iphonesimulator sim --environment=merge), @commonArguments) or die "Failed to build list of tests!";
         } elsif (isAppleMacWebKit() && architecture()) {
-            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), @commonArguments) or die "Failed to build list of tests!";
+            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), archCommandLineArgumentsForRestrictedEnvironmentVariables(), @commonArguments) or die "Failed to build list of tests!";
         } else {
             $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to build list of tests!";
         }
