@@ -746,3 +746,5 @@ webkit.org/b/150183 fast/css/variables/test-suite/failures/159.html [ ImageOnlyF
 webkit.org/b/150183 fast/css/variables/test-suite/failures/161.html [ ImageOnlyFailure ]
 webkit.org/b/150183 fast/css/variables/test-suite/failures/163.html [ ImageOnlyFailure ]
 webkit.org/b/150183 fast/css/variables/test-suite/failures/169.html [ ImageOnlyFailure ]
+
+webkit.org/b/150541 imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
