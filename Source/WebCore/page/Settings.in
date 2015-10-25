@@ -163,7 +163,6 @@ DOMPasteAllowed initial=false
 windowFocusRestricted initial=true
 
 diagnosticLoggingEnabled initial=false
-applyDeviceScaleFactorInCompositor initial=true
 delegatesPageScaling initial=false
 plugInSnapshottingEnabled initial=false
 snapshotAllPlugIns initial=false

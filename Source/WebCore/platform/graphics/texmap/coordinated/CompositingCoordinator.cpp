@@ -64,7 +64,6 @@ CompositingCoordinator::CompositingCoordinator(Page* page, CompositingCoordinato
     , m_lastAnimationServiceTime(0)
 #endif
 {
-    m_page->settings().setApplyDeviceScaleFactorInCompositor(true);
 }
 
 void CompositingCoordinator::setRootCompositingLayer(GraphicsLayer* compositingLayer, GraphicsLayer* overlayLayer)
