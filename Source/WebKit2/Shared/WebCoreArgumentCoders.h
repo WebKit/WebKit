@@ -71,6 +71,7 @@ struct CompositionUnderline;
 struct Cookie;
 struct DictationAlternative;
 struct DictionaryPopupInfo;
+struct ExceptionDetails;
 struct FileChooserSettings;
 struct Length;
 struct GrammarDetail;
@@ -455,6 +456,11 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
 template<> struct ArgumentCoder<WebCore::RecentSearch> {
     static void encode(ArgumentEncoder&, const WebCore::RecentSearch&);
     static bool decode(ArgumentDecoder&, WebCore::RecentSearch&);
+};
+
+template<> struct ArgumentCoder<WebCore::ExceptionDetails> {
+    static void encode(ArgumentEncoder&, const WebCore::ExceptionDetails&);
+    static bool decode(ArgumentDecoder&, WebCore::ExceptionDetails&);
 };
 
 } // namespace IPC

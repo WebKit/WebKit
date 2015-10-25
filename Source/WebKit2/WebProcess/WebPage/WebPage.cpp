@@ -2505,7 +2505,8 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     RefPtr<SerializedScriptValue> serializedResultValue;
     JSLockHolder lock(JSDOMWindow::commonVM());
     bool hadException = true;
-    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true).jsValue()) {
+    ExceptionDetails details;
+    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true, &details).jsValue()) {
         hadException = false;
         serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(),
             toRef(m_mainFrame->coreFrame()->script().globalObject(mainThreadNormalWorld())->globalExec(), resultValue), nullptr);
@@ -2514,7 +2515,7 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     IPC::DataReference dataReference;
     if (serializedResultValue)
         dataReference = serializedResultValue->data();
-    send(Messages::WebPageProxy::ScriptValueCallback(dataReference, hadException, callbackID));
+    send(Messages::WebPageProxy::ScriptValueCallback(dataReference, hadException, details, callbackID));
 }
 
 void WebPage::getContentsAsString(uint64_t callbackID)

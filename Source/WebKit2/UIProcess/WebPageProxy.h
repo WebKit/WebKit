@@ -157,6 +157,7 @@ class RunLoopObserver;
 class SharedBuffer;
 class TextIndicator;
 struct DictionaryPopupInfo;
+struct ExceptionDetails;
 struct FileChooserSettings;
 struct SecurityOriginData;
 struct TextAlternativeWithRange;
@@ -222,7 +223,7 @@ class QuickLookDocumentData;
 typedef GenericCallback<uint64_t> UnsignedCallback;
 typedef GenericCallback<EditingRange> EditingRangeCallback;
 typedef GenericCallback<const String&> StringCallback;
-typedef GenericCallback<API::SerializedScriptValue*, bool> ScriptValueCallback;
+typedef GenericCallback<API::SerializedScriptValue*, bool, const WebCore::ExceptionDetails&> ScriptValueCallback;
 
 #if PLATFORM(GTK)
 typedef GenericCallback<API::Error*> PrintFinishedCallback;
@@ -762,7 +763,7 @@ public:
     void getSelectionAsWebArchiveData(std::function<void (API::Data*, CallbackBase::Error)>);
     void getSourceForFrame(WebFrameProxy*, std::function<void (const String&, CallbackBase::Error)>);
     void getWebArchiveOfFrame(WebFrameProxy*, std::function<void (API::Data*, CallbackBase::Error)>);
-    void runJavaScriptInMainFrame(const String&, std::function<void (API::SerializedScriptValue*, bool hadException, CallbackBase::Error)> callbackFunction);
+    void runJavaScriptInMainFrame(const String&, std::function<void (API::SerializedScriptValue*, bool hadException, const WebCore::ExceptionDetails&, CallbackBase::Error)> callbackFunction);
     void forceRepaint(PassRefPtr<VoidCallback>);
 
     float headerHeight(WebFrameProxy*);
@@ -1323,7 +1324,7 @@ private:
     void dataCallback(const IPC::DataReference&, uint64_t);
     void imageCallback(const ShareableBitmap::Handle&, uint64_t);
     void stringCallback(const String&, uint64_t);
-    void scriptValueCallback(const IPC::DataReference&, bool hadException, uint64_t);
+    void scriptValueCallback(const IPC::DataReference&, bool hadException, const WebCore::ExceptionDetails&, uint64_t);
     void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, uint64_t);
     void validateCommandCallback(const String&, bool, int, uint64_t);
     void unsignedCallback(uint64_t, uint64_t);

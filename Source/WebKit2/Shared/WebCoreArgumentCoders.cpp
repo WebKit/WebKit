@@ -45,6 +45,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IDBGetResult.h>
 #include <WebCore/Image.h>
+#include <WebCore/JSDOMBinding.h>
 #include <WebCore/Length.h>
 #include <WebCore/Path.h>
 #include <WebCore/PluginData.h>
@@ -2034,6 +2035,31 @@ bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::ArgumentDecoder& decoder, D
     } else
         result.attributedString = nullptr;
 #endif
+    return true;
+}
+
+void ArgumentCoder<ExceptionDetails>::encode(IPC::ArgumentEncoder& encoder, const ExceptionDetails& info)
+{
+    encoder << info.message;
+    encoder << info.lineNumber;
+    encoder << info.columnNumber;
+    encoder << info.sourceURL;
+}
+
+bool ArgumentCoder<ExceptionDetails>::decode(IPC::ArgumentDecoder& decoder, ExceptionDetails& result)
+{
+    if (!decoder.decode(result.message))
+        return false;
+
+    if (!decoder.decode(result.lineNumber))
+        return false;
+
+    if (!decoder.decode(result.columnNumber))
+        return false;
+
+    if (!decoder.decode(result.sourceURL))
+        return false;
+
     return true;
 }
 

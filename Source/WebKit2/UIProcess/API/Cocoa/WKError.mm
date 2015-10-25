@@ -35,7 +35,12 @@
 NSString * const WKErrorDomain = @"WKErrorDomain";
 NSString * const _WKLegacyErrorDomain = @"WebKitErrorDomain";
 
-static NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
+NSString * const _WKJavaScriptExceptionMessageErrorKey = @"WKJavaScriptExceptionMessage";
+NSString * const _WKJavaScriptExceptionLineNumberErrorKey = @"WKJavaScriptExceptionLineNumber";
+NSString * const _WKJavaScriptExceptionColumnNumberErrorKey = @"WKJavaScriptExceptionColumnNumber";
+NSString * const _WKJavaScriptExceptionSourceURLErrorKey = @"WKJavaScriptExceptionSourceURL";
+
+NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
 {
     switch (errorCode) {
     case WKErrorUnknown:

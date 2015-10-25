@@ -1,3 +1,42 @@
+2015-10-24  Tim Horton  <timothy_horton@apple.com>
+
+        Expose more information about the exception in WKErrorJavaScriptExceptionOccurred errors
+        https://bugs.webkit.org/show_bug.cgi?id=150525
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ExceptionDetails>::encode):
+        (IPC::ArgumentCoder<ExceptionDetails>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        Learn how to en/decode ExceptionDetails.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::scriptValueCallback):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        Plumb ExceptionDetails back through runJavaScriptInMainFrame, across the
+        process boundary.
+
+        * UIProcess/API/Cocoa/WKError.mm:
+        (localizedDescriptionForErrorCode):
+        * UIProcess/API/Cocoa/WKErrorInternal.h:
+        * UIProcess/API/Cocoa/WKErrorPrivate.h:
+        Expose localizedDescriptionForErrorCode so that WKWebView can do special
+        things with its error.
+        Add new private userInfo keys for exception info.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        Fill in the NSError userInfo with the exception info.
+
 2015-10-24  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Fix a wrong enum variable use

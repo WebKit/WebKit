@@ -159,7 +159,7 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
     reportException(exec, exception, cachedScript);
 }
 
-void reportException(ExecState* exec, Exception* exception, CachedScript* cachedScript)
+void reportException(ExecState* exec, Exception* exception, CachedScript* cachedScript, ExceptionDetails* exceptionDetails)
 {
     RELEASE_ASSERT(exec->vm().currentThreadIsHoldingAPILock());
     if (isTerminatedExecutionException(exception))
@@ -202,6 +202,13 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
 
     ScriptExecutionContext* scriptExecutionContext = globalObject->scriptExecutionContext();
     scriptExecutionContext->reportException(errorMessage, lineNumber, columnNumber, exceptionSourceURL, callStack->size() ? callStack : 0, cachedScript);
+
+    if (exceptionDetails) {
+        exceptionDetails->message = errorMessage;
+        exceptionDetails->lineNumber = lineNumber;
+        exceptionDetails->columnNumber = columnNumber;
+        exceptionDetails->sourceURL = exceptionSourceURL;
+    }
 }
 
 void reportCurrentException(ExecState* exec)

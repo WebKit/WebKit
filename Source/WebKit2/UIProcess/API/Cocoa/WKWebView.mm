@@ -80,6 +80,7 @@
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import <WebCore/IOSurface.h>
+#import <WebCore/JSDOMBinding.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
@@ -612,7 +613,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 {
     auto handler = adoptNS([completionHandler copy]);
 
-    _page->runJavaScriptInMainFrame(javaScriptString, [handler](API::SerializedScriptValue* serializedScriptValue, bool hadException, WebKit::ScriptValueCallback::Error errorCode) {
+    _page->runJavaScriptInMainFrame(javaScriptString, [handler](API::SerializedScriptValue* serializedScriptValue, bool hadException, const WebCore::ExceptionDetails& details, WebKit::ScriptValueCallback::Error errorCode) {
         if (!handler)
             return;
 
@@ -637,7 +638,18 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         auto rawHandler = (void (^)(id, NSError *))handler.get();
         if (hadException) {
             ASSERT(!serializedScriptValue);
-            rawHandler(nil, createNSError(WKErrorJavaScriptExceptionOccurred).get());
+
+            RetainPtr<NSMutableDictionary> userInfo = adoptNS([[NSMutableDictionary alloc] init]);
+
+            [userInfo setObject:localizedDescriptionForErrorCode(WKErrorJavaScriptExceptionOccurred) forKey:NSLocalizedDescriptionKey];
+            [userInfo setObject:static_cast<NSString *>(details.message) forKey:_WKJavaScriptExceptionMessageErrorKey];
+            [userInfo setObject:@(details.lineNumber) forKey:_WKJavaScriptExceptionLineNumberErrorKey];
+            [userInfo setObject:@(details.columnNumber) forKey:_WKJavaScriptExceptionColumnNumberErrorKey];
+
+            if (!details.sourceURL.isEmpty())
+                [userInfo setObject:[NSURL _web_URLWithWTFString:details.sourceURL] forKey:_WKJavaScriptExceptionSourceURLErrorKey];
+
+            rawHandler(nil, adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorJavaScriptExceptionOccurred userInfo:userInfo.get()]).get());
             return;
         }
 

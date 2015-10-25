@@ -34,4 +34,20 @@ typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
     _WKLegacyErrorPlugInWillHandleLoad = 204,
 } WK_ENUM_AVAILABLE(10_11, 8_3);
 
+/*! @constant _WKJavaScriptExceptionMessageErrorKey Key in userInfo representing
+ the exception message (as an NSString) for WKErrorJavaScriptExceptionOccurred errors. */
+WK_EXTERN NSString * const _WKJavaScriptExceptionMessageErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant _WKJavaScriptExceptionLineNumberErrorKey Key in userInfo representing
+ the exception line number (as an NSNumber) for WKErrorJavaScriptExceptionOccurred errors. */
+WK_EXTERN NSString * const _WKJavaScriptExceptionLineNumberErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant _WKJavaScriptExceptionColumnNumberErrorKey Key in userInfo representing
+ the exception column number (as an NSNumber) for WKErrorJavaScriptExceptionOccurred errors. */
+WK_EXTERN NSString * const _WKJavaScriptExceptionColumnNumberErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+/*! @constant _WKJavaScriptExceptionSourceURLErrorKey Key in userInfo representing
+ the exception source URL (as an NSURL) for WKErrorJavaScriptExceptionOccurred errors. */
+WK_EXTERN NSString * const _WKJavaScriptExceptionSourceURLErrorKey WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 #endif

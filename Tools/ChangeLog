@@ -1,3 +1,14 @@
+2015-10-24  Tim Horton  <timothy_horton@apple.com>
+
+        Expose more information about the exception in WKErrorJavaScriptExceptionOccurred errors
+        https://bugs.webkit.org/show_bug.cgi?id=150525
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        Test the various new keys.
+
 2015-10-24  Frederic Wang  <fred.wang@free.fr>
 
         check-webkit-style complains about missing operator whitespace inside character literal

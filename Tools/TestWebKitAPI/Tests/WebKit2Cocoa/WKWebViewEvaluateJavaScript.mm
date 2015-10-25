@@ -31,9 +31,22 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import <WebKit/WKWebView.h>
+#import <WebKit/WKErrorPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool isDone;
+
+@interface EvaluateJavaScriptNavigationDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation EvaluateJavaScriptNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+}
+
+@end
 
 TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 {
@@ -63,14 +76,17 @@ TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 TEST(WKWebView, EvaluateJavaScriptErrorCases)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr<EvaluateJavaScriptNavigationDelegate> delegate = adoptNS([[EvaluateJavaScriptNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
 
     [webView evaluateJavaScript:@"document.body" completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
-        EXPECT_EQ(5, [error code]);
+        EXPECT_EQ(WKErrorJavaScriptResultTypeIsUnsupported, [error code]);
 
         isDone = true;
     }];
@@ -81,7 +97,26 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
     [webView evaluateJavaScript:@"document.body.insertBefore(document, document)" completionHandler:^(id result, NSError *error) {
         EXPECT_NULL(result);
         EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
-        EXPECT_EQ(4, [error code]);
+        EXPECT_EQ(WKErrorJavaScriptExceptionOccurred, [error code]);
+        EXPECT_NOT_NULL([error.userInfo objectForKey:_WKJavaScriptExceptionMessageErrorKey]);
+        EXPECT_GT([[error.userInfo objectForKey:_WKJavaScriptExceptionMessageErrorKey] length], (unsigned long)0);
+        EXPECT_EQ(1, [[error.userInfo objectForKey:_WKJavaScriptExceptionLineNumberErrorKey] intValue]);
+        EXPECT_EQ(27, [[error.userInfo objectForKey:_WKJavaScriptExceptionColumnNumberErrorKey] intValue]);
+
+        isDone = true;
+    }];
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+
+    [webView evaluateJavaScript:@"\n\nthrow 'something bad'" completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_WK_STREQ(@"WKErrorDomain", [error domain]);
+        EXPECT_EQ(WKErrorJavaScriptExceptionOccurred, [error code]);
+        EXPECT_WK_STREQ(@"something bad", [error.userInfo objectForKey:_WKJavaScriptExceptionMessageErrorKey]);
+        EXPECT_EQ(3, [[error.userInfo objectForKey:_WKJavaScriptExceptionLineNumberErrorKey] intValue]);
+        EXPECT_EQ(22, [[error.userInfo objectForKey:_WKJavaScriptExceptionColumnNumberErrorKey] intValue]);
+        EXPECT_NOT_NULL([error.userInfo objectForKey:_WKJavaScriptExceptionSourceURLErrorKey]);
 
         isDone = true;
     }];

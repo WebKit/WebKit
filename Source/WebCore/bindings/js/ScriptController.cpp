@@ -137,7 +137,7 @@ JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld& world)
     return windowShell.get();
 }
 
-Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
+Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world, ExceptionDetails* exceptionDetails)
 {
     JSLockHolder lock(world.vm());
 
@@ -166,7 +166,7 @@ Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode
     InspectorInstrumentation::didEvaluateScript(cookie, m_frame);
 
     if (evaluationException) {
-        reportException(exec, evaluationException, sourceCode.cachedScript());
+        reportException(exec, evaluationException, sourceCode.cachedScript(), exceptionDetails);
         m_sourceURL = savedSourceURL;
         return Deprecated::ScriptValue();
     }
@@ -175,9 +175,9 @@ Deprecated::ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode
     return Deprecated::ScriptValue(exec->vm(), returnValue);
 }
 
-Deprecated::ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode) 
+Deprecated::ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
 {
-    return evaluateInWorld(sourceCode, mainThreadNormalWorld());
+    return evaluateInWorld(sourceCode, mainThreadNormalWorld(), exceptionDetails);
 }
 
 Ref<DOMWrapperWorld> ScriptController::createWorld()
@@ -545,20 +545,20 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     return m_frame.loader().client().allowScript(m_frame.settings().isScriptEnabled());
 }
 
-Deprecated::ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)
+Deprecated::ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture, ExceptionDetails* exceptionDetails)
 {
     UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
-    return executeScript(ScriptSourceCode(script, m_frame.document()->url()));
+    return executeScript(ScriptSourceCode(script, m_frame.document()->url()), exceptionDetails);
 }
 
-Deprecated::ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
+Deprecated::ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode, ExceptionDetails* exceptionDetails)
 {
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return Deprecated::ScriptValue();
 
     Ref<Frame> protect(m_frame); // Script execution can destroy the frame, and thus the ScriptController.
 
-    return evaluate(sourceCode);
+    return evaluate(sourceCode, exceptionDetails);
 }
 
 bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)

@@ -352,6 +352,7 @@ def headers_for_type(type):
     special_cases = {
         'String': ['<wtf/text/WTFString.h>'],
         'WebCore::CompositionUnderline': ['<WebCore/Editor.h>'],
+        'WebCore::ExceptionDetails': ['<WebCore/JSDOMBinding.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
         'WebCore::TextureMapperAnimations': ['<WebCore/TextureMapperAnimation.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
