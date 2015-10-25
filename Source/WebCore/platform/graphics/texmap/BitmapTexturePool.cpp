@@ -83,7 +83,7 @@ PassRefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size)
         if (entry.m_texture->refCount() > 1)
             continue;
 
-        if (entry.m_texture->canReuseWith(size)) {
+        if (entry.m_texture->size() == size) {
             selectedEntry = &entry;
             break;
         }
