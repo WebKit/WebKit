@@ -838,14 +838,6 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             m_client.customContextMenuItemSelected(toAPI(&page), toAPI(WebContextMenuItem::create(itemData).ptr()), m_client.base.clientInfo);
         }
 
-        virtual void contextMenuDismissed(WebPageProxy& page) override
-        {
-            if (!m_client.contextMenuDismissed)
-                return;
-
-            m_client.contextMenuDismissed(toAPI(&page), m_client.base.clientInfo);
-        }
-
         virtual bool showContextMenu(WebPageProxy& page, const WebCore::IntPoint& menuLocation, const Vector<RefPtr<WebContextMenuItem>>& menuItemsVector) override
         {
             if (!m_client.showContextMenu)

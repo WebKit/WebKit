@@ -1,5 +1,17 @@
 2015-10-26  Anders Carlsson  <andersca@apple.com>
 
+        Remove more dead context menu code
+        https://bugs.webkit.org/show_bug.cgi?id=150569
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::contextMenuDismissed): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient): Deleted.
+
+2015-10-26  Anders Carlsson  <andersca@apple.com>
+
         Remove dead context menu code
         https://bugs.webkit.org/show_bug.cgi?id=150567
 
