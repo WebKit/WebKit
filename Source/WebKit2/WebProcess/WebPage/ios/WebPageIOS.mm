@@ -50,7 +50,6 @@
 #import "WebProcess.h"
 #import <CoreText/CTFont.h>
 #import <WebCore/Chrome.h>
-#import <WebCore/DNS.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
 #import <WebCore/Element.h>
@@ -59,6 +58,7 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
@@ -628,8 +628,10 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
     if (!node)
         return;
 
-    if (is<Element>(*node))
-        prefetchDNS(downcast<Element>(*node).absoluteLinkURL().host());
+    if (is<Element>(*node)) {
+        ASSERT(m_page);
+        m_page->mainFrame().loader().client().prefetchDNS(downcast<Element>(*node).absoluteLinkURL().host());
+    }
 
     Vector<FloatQuad> quads;
     if (RenderObject *renderer = node->renderer()) {

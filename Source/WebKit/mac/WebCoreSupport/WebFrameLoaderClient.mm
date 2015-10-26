@@ -79,6 +79,7 @@
 #import <WebCore/BlockExceptions.h>
 #import <WebCore/CachedFrame.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/DNS.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/EventHandler.h>
@@ -2283,6 +2284,11 @@ void WebFrameLoaderClient::contentFilterDidBlockLoad(WebCore::ContentFilterUnblo
     core(m_webFrame.get())->loader().policyChecker().setContentFilterUnblockHandler(WTF::move(unblockHandler));
 }
 #endif
+
+void WebFrameLoaderClient::prefetchDNS(const String& hostname)
+{
+    WebCore::prefetchDNS(hostname);
+}
 
 @implementation WebFramePolicyListener
 

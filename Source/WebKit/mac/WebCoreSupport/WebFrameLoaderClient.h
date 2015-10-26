@@ -247,6 +247,8 @@ private:
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler) override;
 #endif
 
+    void prefetchDNS(const String&) override;
+
     RetainPtr<WebFrame> m_webFrame;
 
     RetainPtr<WebFramePolicyListener> m_policyListener;

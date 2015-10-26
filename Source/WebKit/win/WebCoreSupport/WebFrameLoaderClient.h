@@ -202,6 +202,8 @@ public:
 
     virtual void dispatchDidFailToStartPlugin(const WebCore::PluginView*) const;
 
+    void prefetchDNS(const String&) override;
+
 protected:
     class WebFramePolicyListenerPrivate;
     std::unique_ptr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;

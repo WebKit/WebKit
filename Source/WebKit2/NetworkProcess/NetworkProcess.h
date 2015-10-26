@@ -100,6 +100,8 @@ public:
     void clearHSTSCache(WebCore::NetworkStorageSession&, std::chrono::system_clock::time_point modifiedSince);
 #endif
 
+    void prefetchDNS(const String&);
+
 private:
     NetworkProcess();
     ~NetworkProcess();

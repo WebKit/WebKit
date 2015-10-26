@@ -159,6 +159,11 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
     loader->setDefersLoading(defers);
 }
 
+void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
+{
+    NetworkProcess::singleton().prefetchDNS(hostname);
+}
+
 static NetworkStorageSession& storageSession(SessionID sessionID)
 {
     if (sessionID.isEphemeral()) {
