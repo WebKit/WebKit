@@ -1,3 +1,23 @@
+2015-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Pipe custom context menu handling through to the UIDelegate object
+        https://bugs.webkit.org/show_bug.cgi?id=150572
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::menuFromProposedMenu):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setUIDelegate:]):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::createContextMenuClient):
+        (WebKit::UIDelegate::ContextMenuClient::ContextMenuClient):
+        (WebKit::UIDelegate::ContextMenuClient::~ContextMenuClient):
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 2015-10-26  Tim Horton  <timothy_horton@apple.com>
 
         WKView being inside WKWebView leads to weird API issues
