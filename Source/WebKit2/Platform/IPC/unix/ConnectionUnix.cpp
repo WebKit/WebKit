@@ -338,8 +338,10 @@ void Connection::readyReadHandler()
             if (errno == EAGAIN || errno == EWOULDBLOCK)
                 return;
 
-            WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), strerror(errno));
-            connectionDidClose();
+            if (m_isConnected) {
+                WTFLogAlways("Error receiving IPC message on socket %d in process %d: %s", m_socketDescriptor, getpid(), strerror(errno));
+                connectionDidClose();
+            }
             return;
         }
 
@@ -513,7 +515,8 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
             continue;
         }
 
-        WTFLogAlways("Error sending IPC message: %s", strerror(errno));
+        if (m_isConnected)
+            WTFLogAlways("Error sending IPC message: %s", strerror(errno));
         return false;
     }
     return true;
