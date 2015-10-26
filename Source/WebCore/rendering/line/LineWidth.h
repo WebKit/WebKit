@@ -62,7 +62,7 @@ public:
     bool hasCommitted() const { return m_committedWidth > 0 || m_hasCommittedReplaced; }
 
     void updateAvailableWidth(LayoutUnit minimumHeight = 0);
-    void shrinkAvailableWidthForNewFloatIfNeeded(FloatingObject*);
+    void shrinkAvailableWidthForNewFloatIfNeeded(const FloatingObject&);
     void addUncommittedWidth(float delta)
     {
         m_uncommittedWidth += delta;

@@ -1,3 +1,19 @@
+2015-10-16  Zalan Bujtas  <zalan@apple.com>
+
+        First line box in paragraph using initial-letter overflows.
+        https://bugs.webkit.org/show_bug.cgi?id=147977
+        <rdar://problem/22901553>
+
+        Reviewed by David Hyatt.
+
+        When initial-letter float is present, we should shrink the first
+        line even if it's not intersected with the block's current height.
+        This is because of the sunken behaviour of initial-letter. 
+
+        * fast/css-generated-content/initial-letter-first-line-wrapping-expected.html: Added.
+        * fast/css-generated-content/initial-letter-first-line-wrapping.html: Added.
+        * platform/mac/fast/css-generated-content/initial-letter-basic-expected.txt: progression.
+
 2015-10-15  Dean Jackson  <dino@apple.com>
 
         CSSKeyframesRule::appendRule is deprecated, but is actually the spec
