@@ -51,7 +51,7 @@ public:
     virtual void uninitialize() override;
 
     // Impulse responses
-    void setBuffer(AudioBuffer*);
+    void setBuffer(AudioBuffer*, ExceptionCode&);
     AudioBuffer* buffer();
 
     bool normalize() const { return m_normalize; }
