@@ -65,8 +65,7 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
     // Find the block that we want to indent.  If it's not a list item (e.g., a div inside a list item), we bail out.
     RefPtr<Element> selectedListItem = enclosingBlock(lastNodeInSelectedParagraph);
 
-    // FIXME: we need to deal with the case where there is no li (malformed HTML)
-    if (!selectedListItem->hasTagName(liTag))
+    if (!selectedListItem || !selectedListItem->hasTagName(liTag))
         return false;
     
     // FIXME: previousElementSibling does not ignore non-rendered content like <span></span>.  Should we?
