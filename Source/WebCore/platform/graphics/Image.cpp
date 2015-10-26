@@ -214,27 +214,73 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const Flo
         return;
     }
     
-    // FIXME: We do not support 'round' or 'space' yet. For now just map them to 'repeat'.
-    if (hRule == RoundTile || hRule == SpaceTile)
-        hRule = RepeatTile;
-    if (vRule == RoundTile || vRule == SpaceTile)
-        vRule = RepeatTile;
+    FloatSize tileScale = tileScaleFactor;
+    FloatSize spacing;
+    
+    // FIXME: These rules follow CSS border-image rules, but they should not be down here in Image.
+    bool centerOnGapHorizonally = false;
+    bool centerOnGapVertically = false;
+    switch (hRule) {
+    case RoundTile: {
+        int numItems = std::max<int>(floorf(dstRect.width() / srcRect.width()), 1);
+        tileScale.setWidth(dstRect.width() / (srcRect.width() * numItems));
+        break;
+    }
+    case SpaceTile: {
+        int numItems = floorf(dstRect.width() / srcRect.width());
+        if (!numItems)
+            return;
+        spacing.setWidth((dstRect.width() - srcRect.width() * numItems) / (numItems + 1));
+        tileScale.setWidth(1);
+        centerOnGapHorizonally = !(numItems & 1);
+        break;
+    }
+    case StretchTile:
+    case RepeatTile:
+        break;
+    }
 
-    AffineTransform patternTransform = AffineTransform().scaleNonUniform(tileScaleFactor.width(), tileScaleFactor.height());
+    switch (vRule) {
+    case RoundTile: {
+        int numItems = std::max<int>(floorf(dstRect.height() / srcRect.height()), 1);
+        tileScale.setHeight(dstRect.height() / (srcRect.height() * numItems));
+        break;
+        }
+    case SpaceTile: {
+        int numItems = floorf(dstRect.height() / srcRect.height());
+        if (!numItems)
+            return;
+        spacing.setHeight((dstRect.height() - srcRect.height() * numItems) / (numItems + 1));
+        tileScale.setHeight(1);
+        centerOnGapVertically = !(numItems & 1);
+        break;
+    }
+    case StretchTile:
+    case RepeatTile:
+        break;
+    }
+
+    AffineTransform patternTransform = AffineTransform().scaleNonUniform(tileScale.width(), tileScale.height());
 
     // We want to construct the phase such that the pattern is centered (when stretch is not
     // set for a particular rule).
-    float hPhase = tileScaleFactor.width() * srcRect.x();
-    float vPhase = tileScaleFactor.height() * srcRect.y();
-    float scaledTileWidth = tileScaleFactor.width() * srcRect.width();
-    float scaledTileHeight = tileScaleFactor.height() * srcRect.height();
-    if (hRule == Image::RepeatTile)
+    float hPhase = tileScale.width() * srcRect.x();
+    float vPhase = tileScale.height() * srcRect.y();
+    float scaledTileWidth = tileScale.width() * srcRect.width();
+    float scaledTileHeight = tileScale.height() * srcRect.height();
+
+    if (centerOnGapHorizonally)
+        hPhase -= spacing.width();
+    else if (hRule == Image::RepeatTile || hRule == Image::SpaceTile)
         hPhase -= (dstRect.width() - scaledTileWidth) / 2;
-    if (vRule == Image::RepeatTile)
-        vPhase -= (dstRect.height() - scaledTileHeight) / 2; 
+
+    if (centerOnGapVertically)
+        vPhase -= spacing.height();
+    else if (vRule == Image::RepeatTile || vRule == Image::SpaceTile)
+        vPhase -= (dstRect.height() - scaledTileHeight) / 2;
+
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
-    
-    drawPattern(ctxt, srcRect, patternTransform, patternPhase, FloatSize(), styleColorSpace, op, dstRect);
+    drawPattern(ctxt, srcRect, patternTransform, patternPhase, spacing, styleColorSpace, op, dstRect);
 
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);
