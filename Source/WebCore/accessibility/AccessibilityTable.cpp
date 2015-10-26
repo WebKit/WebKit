@@ -101,17 +101,15 @@ HTMLTableElement* AccessibilityTable::tableElement() const
     if (is<HTMLTableElement>(table.element()))
         return downcast<HTMLTableElement>(table.element());
     
+    table.forceSectionsRecalc();
+
     // If the table has a display:table-row-group, then the RenderTable does not have a pointer to it's HTMLTableElement.
     // We can instead find it by asking the firstSection for its parent.
     RenderTableSection* firstBody = table.firstBody();
     if (!firstBody || !firstBody->element())
         return nullptr;
     
-    Element* actualTable = firstBody->element()->parentElement();
-    if (!is<HTMLTableElement>(actualTable))
-        return nullptr;
-    
-    return downcast<HTMLTableElement>(actualTable);
+    return ancestorsOfType<HTMLTableElement>(*(firstBody->element())).first();
 }
     
 bool AccessibilityTable::isDataTable() const
