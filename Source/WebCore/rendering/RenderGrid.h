@@ -55,7 +55,7 @@ public:
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 
     virtual bool avoidsFloats() const override { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const override { return false; }
+    virtual bool canDropAnonymousBlockChild() const override { return false; }
 
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
     const Vector<LayoutUnit>& rowPositions() const { return m_rowPositions; }

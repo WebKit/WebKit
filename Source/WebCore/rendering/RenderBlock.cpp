@@ -637,7 +637,7 @@ void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
     child->destroy();
 }
 
-static bool canMergeAnonymousBlock(RenderBlock& anonymousBlock)
+static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 {
     if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())
         return false;
@@ -655,33 +655,32 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObje
         if (!previous->isAnonymousBlock())
             return false;
         RenderBlock& previousAnonymousBlock = downcast<RenderBlock>(*previous);
-        if (!canMergeAnonymousBlock(previousAnonymousBlock))
+        if (!canDropAnonymousBlock(previousAnonymousBlock))
             return false;
     }
     if (next) {
         if (!next->isAnonymousBlock())
             return false;
         RenderBlock& nextAnonymousBlock = downcast<RenderBlock>(*next);
-        if (!canMergeAnonymousBlock(nextAnonymousBlock))
+        if (!canDropAnonymousBlock(nextAnonymousBlock))
             return false;
     }
     return true;
 }
 
-void RenderBlock::collapseAnonymousBoxChild(RenderBlock& parent, RenderBlock* child)
+void RenderBlock::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
 {
     parent.setNeedsLayoutAndPrefWidthsRecalc();
-    parent.setChildrenInline(child->childrenInline());
-    RenderObject* nextSibling = child->nextSibling();
+    parent.setChildrenInline(child.childrenInline());
+    if (auto* childFlowThread = child.flowThreadContainingBlock())
+        childFlowThread->removeFlowChildInfo(&child);
 
-    if (auto* childFlowThread = child->flowThreadContainingBlock())
-        childFlowThread->removeFlowChildInfo(child);
-
-    parent.removeChildInternal(*child, child->hasLayer() ? NotifyChildren : DontNotifyChildren);
-    child->moveAllChildrenTo(&parent, nextSibling, child->hasLayer());
+    RenderObject* nextSibling = child.nextSibling();
+    parent.removeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
+    child.moveAllChildrenTo(&parent, nextSibling, child.hasLayer());
     // Delete the now-empty block's lines and nuke it.
-    child->deleteLines();
-    child->destroy();
+    child.deleteLines();
+    child.destroy();
 }
 
 void RenderBlock::removeChild(RenderObject& oldChild)
@@ -746,19 +745,26 @@ void RenderBlock::removeChild(RenderObject& oldChild)
     RenderBox::removeChild(oldChild);
 
     RenderObject* child = prev ? prev : next;
-    if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canCollapseAnonymousBlockChild()) {
+    if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canDropAnonymousBlockChild()) {
         // The removal has knocked us down to containing only a single anonymous
         // box. We can pull the content right back up into our box.
-        collapseAnonymousBoxChild(*this, downcast<RenderBlock>(child));
-    } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canCollapseAnonymousBlockChild()) {
+        dropAnonymousBoxChild(*this, downcast<RenderBlock>(*child));
+    } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canDropAnonymousBlockChild()) {
         // It's possible that the removal has knocked us down to a single anonymous
-        // block with pseudo-style element siblings (e.g. first-letter). If these
-        // are floating, then we need to pull the content up also.
-        RenderBlock* anonBlock = downcast<RenderBlock>((prev && prev->isAnonymousBlock()) ? prev : next);
-        if ((anonBlock->previousSibling() || anonBlock->nextSibling())
-            && (!anonBlock->previousSibling() || (anonBlock->previousSibling()->style().styleType() != NOPSEUDO && anonBlock->previousSibling()->isFloating() && !anonBlock->previousSibling()->previousSibling()))
-            && (!anonBlock->nextSibling() || (anonBlock->nextSibling()->style().styleType() != NOPSEUDO && anonBlock->nextSibling()->isFloating() && !anonBlock->nextSibling()->nextSibling()))) {
-            collapseAnonymousBoxChild(*this, anonBlock);
+        // block with floating siblings.
+        RenderBlock& anonBlock = downcast<RenderBlock>((prev && prev->isAnonymousBlock()) ? *prev : *next);
+        if (canDropAnonymousBlock(anonBlock)) {
+            bool dropAnonymousBlock = true;
+            for (auto& sibling : childrenOfType<RenderObject>(*this)) {
+                if (&sibling == &anonBlock)
+                    continue;
+                if (!sibling.isFloating()) {
+                    dropAnonymousBlock = false;
+                    break;
+                }
+            }
+            if (dropAnonymousBlock)
+                dropAnonymousBoxChild(*this, anonBlock);
         }
     }
 

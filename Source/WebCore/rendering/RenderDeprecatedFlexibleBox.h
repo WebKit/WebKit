@@ -47,7 +47,7 @@ public:
     bool isStretchingChildren() const { return m_stretchingChildren; }
 
     virtual bool avoidsFloats() const override { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const override { return false; }
+    virtual bool canDropAnonymousBlockChild() const override { return false; }
 
     void placeChild(RenderBox* child, const LayoutPoint& location, LayoutSize* childLayoutDelta = nullptr);
 
