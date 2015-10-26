@@ -42,7 +42,6 @@ public:
 
     virtual IntSize size() const override;
     virtual bool isValid() const override;
-    virtual bool canReuseWith(const IntSize& contentsSize, Flags = 0) override;
     virtual void didReset() override;
     void bindAsSurface(GraphicsContext3D*);
     void initializeStencil();
@@ -88,6 +87,10 @@ private:
     void createFboIfNeeded();
 
     FilterInfo m_filterInfo;
+
+    GC3Dint m_internalFormat;
+    GC3Denum m_format;
+    GC3Denum m_type;
 };
 
 BitmapTextureGL* toBitmapTextureGL(BitmapTexture*);
