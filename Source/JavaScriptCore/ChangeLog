@@ -1,3 +1,38 @@
+2015-10-26  Mark Lam  <mark.lam@apple.com>
+
+        Add logging to warn about under-estimated FTL inline cache sizes.
+        https://bugs.webkit.org/show_bug.cgi?id=150570
+
+        Reviewed by Geoffrey Garen.
+
+        Added 2 options:
+        1. JSC_dumpFailedICSizing - dumps an error message if the FTL encounters IC size
+           estimates that are less than the actual needed code size.
+
+           This option is useful for when we add a new IC and want to compute an
+           estimated size for the IC.  To do this:
+           1. Build jsc for the target port with a very small IC size (enough to
+              store the jump instruction needed for the out of line fallback
+              implementation).
+           2. Implement a test suite with scenarios that exercise all the code paths in
+              the IC generator.
+           3. Run jsc with JSC_dumpFailedICSizing=true on the test suite.
+           4. The max value reported by the dumps will be the worst case size needed to
+              store the IC.  We should use this value for our estimate.
+           5. Update the IC's estimated size and rebuild jsc.
+           6. Re-run (3) and confirm that there are no more error messages about the
+              IC sizing.
+
+        2. JSC_assertICSizing - same as JSC_dumpFailedICSizing except that it also
+           crashes the VM each time it encounters an inadequate IC size estimate.
+
+           This option is useful for regression testing to ensure that our estimates
+           do not regress.
+
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::generateInlineIfPossibleOutOfLineIfNot):
+        * runtime/Options.h:
+
 2015-10-26  Saam barati  <sbarati@apple.com>
 
         r190735 Caused us to maybe trample the base's tag-GPR on 32-bit inline cache when the cache allocates a scratch register and then jumps to the slow path

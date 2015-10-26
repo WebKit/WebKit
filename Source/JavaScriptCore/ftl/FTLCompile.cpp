@@ -169,6 +169,15 @@ static void generateInlineIfPossibleOutOfLineIfNot(State& state, VM& vm, CodeBlo
         return;
     }
 
+    if (Options::assertICSizing() || Options::dumpFailedICSizing()) {
+        static size_t maxSize = 0;
+        if (maxSize < actualCodeSize)
+            maxSize = actualCodeSize;
+        dataLogF("ALERT: Under-estimated FTL Inline Cache Size for %s: estimated %zu, actual %zu, max %zu\n", codeDescription, sizeOfInlineCode, actualCodeSize, maxSize);
+        if (Options::assertICSizing())
+            CRASH();
+    }
+
     // If there isn't enough space in the provided inline code area, allocate out of line
     // executable memory to link the provided code. Place a jump at the beginning of the
     // inline area and jump to the out of line code. Similarly return by appending a jump
