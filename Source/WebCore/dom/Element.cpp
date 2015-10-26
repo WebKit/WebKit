@@ -2142,7 +2142,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     if (isFormControl)
         view->setProhibitsScrolling(true);
 #endif
-    updateFocusAppearance(restorePreviousSelection);
+    updateFocusAppearance(restorePreviousSelection ? SelectionRestorationMode::Restore : SelectionRestorationMode::SetDefault);
 #if PLATFORM(IOS)
     if (isFormControl)
         view->setProhibitsScrolling(false);
@@ -2157,11 +2157,11 @@ void Element::updateFocusAppearanceAfterAttachIfNeeded()
     if (!data->needsFocusAppearanceUpdateSoonAfterAttach())
         return;
     if (isFocusable() && document().focusedElement() == this)
-        document().updateFocusAppearanceSoon(false /* don't restore selection */);
+        document().updateFocusAppearanceSoon(SelectionRestorationMode::SetDefault);
     data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
 }
 
-void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
+void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode revealMode)
 {
     if (isRootEditableElement()) {
         Frame* frame = document().frame();
@@ -2177,9 +2177,10 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
         
         if (frame->selection().shouldChangeSelection(newSelection)) {
             frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), Element::defaultFocusTextStateChangeIntent());
-            frame->selection().revealSelection();
+            if (revealMode == SelectionRevealMode::Reveal)
+                frame->selection().revealSelection();
         }
-    } else if (renderer() && !renderer()->isWidget())
+    } else if (renderer() && !renderer()->isWidget() && revealMode == SelectionRevealMode::Reveal)
         renderer()->scrollRectToVisible(renderer()->anchorRect());
 }
 
