@@ -872,6 +872,9 @@ void AccessCase::generate(AccessGenerationState& state)
 
         ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
         allocator.lock(baseGPR);
+#if USE(JSVALUE32_64)
+        allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
+#endif
         allocator.lock(valueRegs);
         allocator.lock(scratchGPR);
 
@@ -1233,6 +1236,9 @@ MacroAssemblerCodePtr PolymorphicAccess::regenerate(
     state.allocator = &allocator;
     allocator.lock(state.baseGPR);
     allocator.lock(state.valueRegs);
+#if USE(JSVALUE32_64)
+    allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
+#endif
 
     state.scratchGPR = allocator.allocateScratchGPR();
     

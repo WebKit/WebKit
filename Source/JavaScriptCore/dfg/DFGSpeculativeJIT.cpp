@@ -960,6 +960,7 @@ void SpeculativeJIT::compileIn(Node* node)
             stubInfo->patch.valueGPR = static_cast<int8_t>(resultGPR);
 #if USE(JSVALUE32_64)
             stubInfo->patch.valueTagGPR = static_cast<int8_t>(InvalidGPRReg);
+            stubInfo->patch.baseTagGPR = static_cast<int8_t>(InvalidGPRReg);
 #endif
             stubInfo->patch.usedRegisters = usedRegisters();
 

@@ -134,6 +134,7 @@ public:
         int8_t baseGPR;
 #if USE(JSVALUE32_64)
         int8_t valueTagGPR;
+        int8_t baseTagGPR;
 #endif
         int8_t valueGPR;
         RegisterSet usedRegisters;

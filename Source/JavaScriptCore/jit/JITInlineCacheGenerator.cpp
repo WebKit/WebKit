@@ -61,6 +61,7 @@ JITByIdGenerator::JITByIdGenerator(
     m_stubInfo->patch.baseGPR = static_cast<int8_t>(base.payloadGPR());
     m_stubInfo->patch.valueGPR = static_cast<int8_t>(value.payloadGPR());
 #if USE(JSVALUE32_64)
+    m_stubInfo->patch.baseTagGPR = static_cast<int8_t>(base.tagGPR());
     m_stubInfo->patch.valueTagGPR = static_cast<int8_t>(value.tagGPR());
 #endif
 }

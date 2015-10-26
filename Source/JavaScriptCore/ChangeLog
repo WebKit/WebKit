@@ -1,3 +1,42 @@
+2015-10-26  Saam barati  <sbarati@apple.com>
+
+        r190735 Caused us to maybe trample the base's tag-GPR on 32-bit inline cache when the cache allocates a scratch register and then jumps to the slow path
+        https://bugs.webkit.org/show_bug.cgi?id=150532
+
+        Reviewed by Geoffrey Garen.
+
+        The base's tag register used to show up in the used register set
+        before r190735 because of how the DFG kept track of used register. I changed this 
+        in my work on inline caching because we don't want to spill these registers
+        when we have a GetByIdFlush/PutByIdFlush and we use the used register set
+        as the metric of what to spill. That said, these registers should be locked
+        and not used as scratch registers by the scratch register allocator. The
+        reason is that our inline cache may fail and jump to the slow path. The slow
+        path then uses the base's tag register. If the inline cache used the base's tag
+        register as a scratch and the inline cache fails and jumps to the slow path, we
+        have a problem because the tag may now be trampled.
+
+        Note that this doesn't mean that we can't trample the base's tag register when making
+        a call. We can totally trample the register as long as the inline cache succeeds in a GetByIdFlush/PutByIdFlush.
+        The problem is only when we trample it and then jump to the slow path.
+
+        This patch fixes this bug by making StructureStubInfo keep track of the base's
+        tag GPR. PolymorphicAccess then locks this register when using the ScratchRegisterAllocator.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generate):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        * tests/stress/regress-150532.js: Added.
+        (assert):
+        (randomFunction):
+        (foo):
+        (i.switch):
+
 2015-10-24  Brian Burg  <bburg@apple.com>
 
         Teach create_hash_table to omit builtins macros when generating tables for native-only objects
