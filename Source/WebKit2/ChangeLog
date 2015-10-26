@@ -1,3 +1,11 @@
+2015-10-26  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix when using NETWORK_SESSION after r191457.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[NetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        Use resourceResponse.
+
 2015-10-26  Anders Carlsson  <andersca@apple.com>
 
         Remove more dead context menu code

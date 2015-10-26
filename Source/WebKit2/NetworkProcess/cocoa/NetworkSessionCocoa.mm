@@ -134,7 +134,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         if (auto* client = networkingTask->client()) {
             ASSERT(isMainThread());
             WebCore::ResourceResponse resourceResponse(response);
-            client->didReceiveResponse(response, ^(WebKit::ResponseDisposition responseDisposition)
+            client->didReceiveResponse(resourceResponse, ^(WebKit::ResponseDisposition responseDisposition)
                 {
                     completionHandler(toNSURLSessionResponseDisposition(responseDisposition));
                 }
