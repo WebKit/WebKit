@@ -528,7 +528,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             setNodeAttribute(element, styleAttr, newInlineStyle->style()->asText());
 
         // FIXME: Tolerate differences in id, class, and style attributes.
-        if (isNonTableCellHTMLBlockElement(element) && areIdenticalElements(element, element->parentNode())
+        if (element->parentNode() && isNonTableCellHTMLBlockElement(element) && areIdenticalElements(element, element->parentNode())
             && VisiblePosition(firstPositionInNode(element->parentNode())) == VisiblePosition(firstPositionInNode(element))
             && VisiblePosition(lastPositionInNode(element->parentNode())) == VisiblePosition(lastPositionInNode(element))) {
             insertedNodes.willRemoveNodePreservingChildren(element);
@@ -536,7 +536,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             continue;
         }
 
-        if (element->parentNode()->hasRichlyEditableStyle())
+        if (element->parentNode() && element->parentNode()->hasRichlyEditableStyle())
             removeNodeAttribute(element, contenteditableAttr);
 
         // WebKit used to not add display: inline and float: none on copy.
