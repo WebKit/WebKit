@@ -1464,7 +1464,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
         } else
             ASSERT_NOT_REACHED();
     }
-    if (isStart || isMiddle)
+    if ((isStart || isMiddle) && lastNode->previousSibling())
         lastNode = lastNode->previousSibling();
     return lastNode;
 }
