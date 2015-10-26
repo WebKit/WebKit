@@ -115,8 +115,8 @@ SpellChecker::~SpellChecker()
 {
     if (m_processingRequest)
         m_processingRequest->requesterDestroyed();
-    for (RequestQueue::iterator i = m_requestQueue.begin(); i != m_requestQueue.end(); ++i)
-        (*i)->requesterDestroyed();
+    for (auto& queue : m_requestQueue)
+        queue->requesterDestroyed();
 }
 
 TextCheckerClient* SpellChecker::client() const
@@ -189,11 +189,11 @@ void SpellChecker::enqueueRequest(PassRefPtr<SpellCheckRequest> request)
 {
     ASSERT(request);
 
-    for (RequestQueue::iterator it = m_requestQueue.begin(); it != m_requestQueue.end(); ++it) {
-        if (request->rootEditableElement() != (*it)->rootEditableElement())
+    for (auto& queue : m_requestQueue) {
+        if (request->rootEditableElement() != queue->rootEditableElement())
             continue;
 
-        *it = request;
+        queue = request;
         return;
     }
 

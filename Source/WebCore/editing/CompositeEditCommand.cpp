@@ -132,9 +132,8 @@ void EditCommandComposition::reapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
 
-    size_t size = m_commands.size();
-    for (size_t i = 0; i != size; ++i)
-        m_commands[i]->doReapply();
+    for (auto& command : m_commands)
+        command->doReapply();
 
     frame->editor().reappliedEditing(this);
 }
@@ -159,9 +158,8 @@ void EditCommandComposition::setEndingSelection(const VisibleSelection& selectio
 #ifndef NDEBUG
 void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
 {
-    size_t size = m_commands.size();
-    for (size_t i = 0; i < size; ++i)
-        m_commands[i]->getNodesInCommand(nodes);
+    for (auto& command : m_commands)
+        command->getNodesInCommand(nodes);
 }
 #endif
 
@@ -406,9 +404,8 @@ void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned
     for (unsigned i = from; child && i < to; i++, child = child->nextSibling())
         children.append(child);
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        removeNode(children[i].release());
+    for (auto& child : children)
+        removeNode(child.release());
 }
 
 void CompositeEditCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
@@ -578,20 +575,21 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
     return Position(textNode.release(), start.offsetInContainerNode() + text.length());
 }
 
-static void copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers, Vector<RenderedDocumentMarker>& markers)
+static Vector<RenderedDocumentMarker> copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers)
 {
-    size_t arraySize = markerPointers.size();
-    markers.reserveCapacity(arraySize);
-    for (size_t i = 0; i < arraySize; ++i)
-        markers.append(*markerPointers[i]);
+    Vector<RenderedDocumentMarker> markers;
+    markers.reserveInitialCapacity(markerPointers.size());
+    for (auto& markerPointer : markerPointers)
+        markers.uncheckedAppend(*markerPointer);
+
+    return markers;
 }
 
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
     DocumentMarkerController& markerController = document().markers();
-    Vector<RenderedDocumentMarker> markers;
-    copyMarkers(markerController.markersInRange(Range::create(document(), node, offset, node, offset + count).ptr(), DocumentMarker::AllMarkers()), markers);
+    auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), node, offset, node, offset + count).ptr(), DocumentMarker::AllMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
     for (const auto& marker : markers)
@@ -888,8 +886,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
             break;
     }
 
-    for (size_t i = 0; i < nodes.size(); ++i) {
-        Text* textNode = nodes[i].get();
+    for (auto& textNode : nodes) {
         int startOffset = textNode == start.deprecatedNode() ? start.deprecatedEditingOffset() : 0;
         int endOffset = textNode == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
         deleteInsignificantText(textNode, startOffset, endOffset);

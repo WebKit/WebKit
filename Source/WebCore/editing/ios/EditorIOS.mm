@@ -568,8 +568,8 @@ PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedS
     RefPtr<DocumentFragment> fragment = client()->documentFragmentFromAttributedString(string, resources);
 
     if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
-        for (size_t i = 0, size = resources.size(); i < size; ++i)
-            loader->addArchiveResource(resources[i]);
+        for (auto& resource : resources)
+            loader->addArchiveResource(resource);
     }
 
     if (!wasDeferringCallbacks)

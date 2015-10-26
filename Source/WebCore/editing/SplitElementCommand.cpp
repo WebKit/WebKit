@@ -63,9 +63,8 @@ void SplitElementCommand::executeApply()
     // Delete id attribute from the second element because the same id cannot be used for more than one element
     m_element2->removeAttribute(HTMLNames::idAttr);
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        m_element1->appendChild(WTF::move(children[i]), ec);
+    for (auto& child : children)
+        m_element1->appendChild(WTF::move(child), ec);
 }
     
 void SplitElementCommand::doApply()
@@ -86,9 +85,8 @@ void SplitElementCommand::doUnapply()
 
     RefPtr<Node> refChild = m_element2->firstChild();
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        m_element2->insertBefore(WTF::move(children[i]), refChild.get(), IGNORE_EXCEPTION);
+    for (auto& child : children)
+        m_element2->insertBefore(WTF::move(child), refChild.get(), IGNORE_EXCEPTION);
 
     // Recover the id attribute of the original element.
     const AtomicString& id = m_element1->getIdAttribute();

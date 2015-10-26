@@ -44,9 +44,8 @@ void WrapContentsInDummySpanCommand::executeApply()
     for (Node* child = m_element->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        m_dummySpan->appendChild(WTF::move(children[i]), IGNORE_EXCEPTION);
+    for (auto& child : children)
+        m_dummySpan->appendChild(WTF::move(child), IGNORE_EXCEPTION);
 
     m_element->appendChild(*m_dummySpan, IGNORE_EXCEPTION);
 }
@@ -69,9 +68,8 @@ void WrapContentsInDummySpanCommand::doUnapply()
     for (Node* child = m_dummySpan->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        m_element->appendChild(WTF::move(children[i]), IGNORE_EXCEPTION);
+    for (auto& child : children)
+        m_element->appendChild(WTF::move(child), IGNORE_EXCEPTION);
 
     m_dummySpan->remove(IGNORE_EXCEPTION);
 }

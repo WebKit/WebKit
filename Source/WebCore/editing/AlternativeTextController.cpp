@@ -283,9 +283,9 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
         return;
 
     DocumentMarkerController& markers = replacementRange->startContainer().document().markers();
-    size_t size = markerTypesToAdd.size();
-    for (size_t i = 0; i < size; ++i)
-        markers.addMarker(replacementRange.get(), markerTypesToAdd[i], markerDescriptionForAppliedAlternativeText(alternativeType, markerTypesToAdd[i]));
+
+    for (auto& markerType : markerTypesToAdd)
+        markers.addMarker(replacementRange.get(), markerType, markerDescriptionForAppliedAlternativeText(alternativeType, markerType));
 }
 
 bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
@@ -434,9 +434,8 @@ FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) co
     Vector<FloatQuad> textQuads;
     range->absoluteTextQuads(textQuads);
     FloatRect boundingRect;
-    size_t size = textQuads.size();
-    for (size_t i = 0; i < size; ++i)
-        boundingRect.unite(textQuads[i].boundingBox());
+    for (auto& textQuad : textQuads)
+        boundingRect.unite(textQuad.boundingBox());
     return view->contentsToRootView(IntRect(boundingRect));
 }        
 
@@ -532,10 +531,8 @@ void AlternativeTextController::markReversed(PassRefPtr<Range> changedRange)
 
 void AlternativeTextController::markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString)
 {
-    Vector<DocumentMarker::MarkerType> markerTypesToAdd = markerTypesForAutocorrection();
     DocumentMarkerController& markers = replacedRange->startContainer().document().markers();
-    for (size_t i = 0; i < markerTypesToAdd.size(); ++i) {
-        DocumentMarker::MarkerType markerType = markerTypesToAdd[i];
+    for (auto& markerType : markerTypesForAutocorrection()) {
         if (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected)
             markers.addMarker(replacedRange.get(), markerType, replacedString);
         else

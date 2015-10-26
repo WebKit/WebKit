@@ -51,9 +51,8 @@ void MergeIdenticalElementsCommand::doApply()
     for (Node* child = m_element1->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        m_element2->insertBefore(WTF::move(children[i]), m_atChild.get(), IGNORE_EXCEPTION);
+    for (auto& child : children)
+        m_element2->insertBefore(WTF::move(child), m_atChild.get(), IGNORE_EXCEPTION);
 
     m_element1->remove(IGNORE_EXCEPTION);
 }
@@ -79,9 +78,8 @@ void MergeIdenticalElementsCommand::doUnapply()
     for (Node* child = m_element2->firstChild(); child && child != atChild; child = child->nextSibling())
         children.append(*child);
 
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i)
-        m_element1->appendChild(WTF::move(children[i]), ec);
+    for (auto& child : children)
+        m_element1->appendChild(WTF::move(child), ec);
 }
 
 #ifndef NDEBUG

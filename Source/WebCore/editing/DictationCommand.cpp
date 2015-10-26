@@ -63,8 +63,7 @@ public:
     virtual void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted)
     {
         DocumentMarkerController& markerController = textNode->document().markers();
-        for (size_t i = 0; i < m_alternatives.size(); ++i) {
-            const DictationAlternative& alternative = m_alternatives[i];
+        for (auto& alternative : m_alternatives) {
             markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, DictationMarkerDetails::create(textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength), alternative.dictationContext));
             markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::SpellCheckingExemption);
         }
@@ -129,8 +128,7 @@ void DictationCommand::insertParagraphSeparator()
 
 void DictationCommand::collectDictationAlternativesInRange(size_t rangeStart, size_t rangeLength, Vector<DictationAlternative>& alternatives)
 {
-    for (size_t i = 0; i < m_alternatives.size(); ++i) {
-        const DictationAlternative& alternative = m_alternatives[i];
+    for (auto& alternative : m_alternatives) {
         if (alternative.rangeStart >= rangeStart && (alternative.rangeStart + alternative.rangeLength) <= rangeStart + rangeLength)
             alternatives.append(DictationAlternative(alternative.rangeStart - rangeStart, alternative.rangeLength, alternative.dictationContext));
     }

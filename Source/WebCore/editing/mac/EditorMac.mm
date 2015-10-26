@@ -514,8 +514,7 @@ bool Editor::WebContentReader::readWebArchive(PassRefPtr<SharedBuffer> buffer)
 
 bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
 {
-    size_t size = paths.size();
-    if (!size)
+    if (paths.isEmpty())
         return false;
 
     if (!frame.document())
@@ -524,8 +523,7 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
 
     fragment = document.createDocumentFragment();
 
-    for (size_t i = 0; i < size; i++) {
-        String text = paths[i];
+    for (auto& text : paths) {
 #if ENABLE(ATTACHMENT_ELEMENT)
         Ref<HTMLAttachmentElement> attachment = HTMLAttachmentElement::create(attachmentTag, document);
         attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
@@ -660,8 +658,8 @@ PassRefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedS
     RefPtr<DocumentFragment> fragment = client()->documentFragmentFromAttributedString(string, resources);
 
     if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
-        for (size_t i = 0, size = resources.size(); i < size; ++i)
-            loader->addArchiveResource(resources[i]);
+        for (auto& resource : resources)
+            loader->addArchiveResource(resource);
     }
 
     if (!wasDeferringCallbacks)

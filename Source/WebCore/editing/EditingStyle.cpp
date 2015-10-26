@@ -100,8 +100,8 @@ static PassRefPtr<MutableStyleProperties> copyEditingProperties(StyleDeclaration
 
 static inline bool isEditingProperty(int id)
 {
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(editingProperties); ++i) {
-        if (editingProperties[i] == id)
+    for (auto& editingProperty : editingProperties) {
+        if (editingProperty == id)
             return true;
     }
     return false;
@@ -979,11 +979,8 @@ bool EditingStyle::extractConflictingImplicitStyleOfAttributes(HTMLElement* elem
     if (!m_mutableStyle)
         return false;
 
-    const Vector<std::unique_ptr<HTMLAttributeEquivalent>>& HTMLAttributeEquivalents = htmlAttributeEquivalents();
     bool removed = false;
-    for (size_t i = 0; i < HTMLAttributeEquivalents.size(); ++i) {
-        const HTMLAttributeEquivalent* equivalent = HTMLAttributeEquivalents[i].get();
-
+    for (auto& equivalent : htmlAttributeEquivalents()) {
         // unicode-bidi and direction are pushed down separately so don't push down with other styles.
         if (shouldPreserveWritingDirection == PreserveWritingDirection && equivalent->attributeName() == HTMLNames::dirAttr)
             continue;
@@ -1033,10 +1030,8 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
     if (element->hasTagName(HTMLNames::spanTag))
         elementIsSpanOrElementEquivalent = true;
     else {
-        const Vector<std::unique_ptr<HTMLElementEquivalent>>& HTMLElementEquivalents = htmlElementEquivalents();
-        size_t i;
-        for (i = 0; i < HTMLElementEquivalents.size(); ++i) {
-            if (HTMLElementEquivalents[i]->matches(*element)) {
+        for (auto& equivalent : htmlElementEquivalents()) {
+            if (equivalent->matches(*element)) {
                 elementIsSpanOrElementEquivalent = true;
                 break;
             }
@@ -1047,9 +1042,8 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
         return elementIsSpanOrElementEquivalent; // span, b, etc... without any attributes
 
     unsigned matchedAttributes = 0;
-    const Vector<std::unique_ptr<HTMLAttributeEquivalent>>& HTMLAttributeEquivalents = htmlAttributeEquivalents();
-    for (size_t i = 0; i < HTMLAttributeEquivalents.size(); ++i) {
-        if (HTMLAttributeEquivalents[i]->matches(*element) && HTMLAttributeEquivalents[i]->attributeName() != HTMLNames::dirAttr)
+    for (auto& equivalent : htmlAttributeEquivalents()) {
+        if (equivalent->matches(*element) && equivalent->attributeName() != HTMLNames::dirAttr)
             matchedAttributes++;
     }
 
@@ -1179,18 +1173,16 @@ void EditingStyle::mergeInlineAndImplicitStyleOfElement(StyledElement* element, 
     styleFromRules->m_mutableStyle = extractEditingProperties(styleFromRules->m_mutableStyle.get(), propertiesToInclude);
     mergeStyle(styleFromRules->m_mutableStyle.get(), mode);
 
-    const Vector<std::unique_ptr<HTMLElementEquivalent>>& elementEquivalents = htmlElementEquivalents();
-    for (size_t i = 0; i < elementEquivalents.size(); ++i) {
-        if (elementMatchesAndPropertyIsNotInInlineStyleDecl(elementEquivalents[i].get(), element, mode, *this))
-            elementEquivalents[i]->addToStyle(element, this);
+    for (auto& equivalent : htmlElementEquivalents()) {
+        if (elementMatchesAndPropertyIsNotInInlineStyleDecl(equivalent.get(), element, mode, *this))
+            equivalent->addToStyle(element, this);
     }
 
-    const Vector<std::unique_ptr<HTMLAttributeEquivalent>>& attributeEquivalents = htmlAttributeEquivalents();
-    for (size_t i = 0; i < attributeEquivalents.size(); ++i) {
-        if (attributeEquivalents[i]->attributeName() == HTMLNames::dirAttr)
+    for (auto& equivalent : htmlAttributeEquivalents()) {
+        if (equivalent->attributeName() == HTMLNames::dirAttr)
             continue; // We don't want to include directionality
-        if (elementMatchesAndPropertyIsNotInInlineStyleDecl(attributeEquivalents[i].get(), element, mode, *this))
-            attributeEquivalents[i]->addToStyle(element, this);
+        if (elementMatchesAndPropertyIsNotInInlineStyleDecl(equivalent.get(), element, mode, *this))
+            equivalent->addToStyle(element, this);
     }
 }
 
@@ -1277,10 +1269,9 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
 static PassRefPtr<MutableStyleProperties> styleFromMatchedRulesForElement(Element* element, unsigned rulesToInclude)
 {
     RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
-    auto matchedRules = element->styleResolver().styleRulesForElement(element, rulesToInclude);
-    for (unsigned i = 0; i < matchedRules.size(); ++i) {
-        if (matchedRules[i]->isStyleRule())
-            style->mergeAndOverrideOnConflict(static_pointer_cast<StyleRule>(matchedRules[i])->properties());
+    for (auto& matchedRule : element->styleResolver().styleRulesForElement(element, rulesToInclude)) {
+        if (matchedRule->isStyleRule())
+            style->mergeAndOverrideOnConflict(static_pointer_cast<StyleRule>(matchedRule)->properties());
     }
     
     return style.release();
@@ -1739,10 +1730,9 @@ static void diffTextDecorations(MutableStyleProperties& style, CSSPropertyID pro
         return;
 
     RefPtr<CSSValueList> newTextDecoration = downcast<CSSValueList>(*textDecoration).copy();
-    CSSValueList& valuesInRefTextDecoration = downcast<CSSValueList>(*refTextDecoration);
 
-    for (size_t i = 0; i < valuesInRefTextDecoration.length(); ++i)
-        newTextDecoration->removeAll(valuesInRefTextDecoration.item(i));
+    for (auto& value :  downcast<CSSValueList>(*refTextDecoration))
+        newTextDecoration->removeAll(&value.get());
 
     setTextDecorationProperty(style, newTextDecoration.get(), propertID);
 }

@@ -206,8 +206,8 @@ void MarkupAccumulator::appendEndTag(const Element& element)
 size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
 {
     size_t length = 0;
-    for (size_t i = 0; i < strings.size(); ++i)
-        length += strings[i].length();
+    for (auto& string : strings)
+        length += string.length();
     return length;
 }
 

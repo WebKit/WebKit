@@ -286,9 +286,8 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
             unrendered.append(node);
     }
 
-    size_t n = unrendered.size();
-    for (size_t i = 0; i < n; ++i)
-        removeNode(unrendered[i]);
+    for (auto& node : unrendered)
+        removeNode(node);
 }
 
 void ReplacementFragment::removeInterchangeNodes(Node* container)
@@ -502,8 +501,8 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
                 } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(&htmlElement, EditingStyle::PreserveWritingDirection, 0, attributes,
                     EditingStyle::DoNotExtractMatchingStyle)) {
                     // e.g. <font size="3" style="font-size: 20px;"> is converted to <font style="font-size: 20px;">
-                    for (size_t i = 0; i < attributes.size(); i++)
-                        removeNodeAttribute(element, attributes[i]);
+                    for (auto& attribute : attributes)
+                        removeNodeAttribute(element, attribute);
                 }
             }
 
@@ -733,8 +732,8 @@ static void removeHeadContents(ReplacementFragment& fragment)
         ++it;
     }
 
-    for (unsigned i = 0; i < toRemove.size(); ++i)
-        fragment.removeNode(toRemove[i]);
+    for (auto& element : toRemove)
+        fragment.removeNode(element);
 }
 
 // Remove style spans before insertion if they are unnecessary.  It's faster because we'll 
