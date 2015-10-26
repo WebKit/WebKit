@@ -1961,7 +1961,8 @@ void DOMWindow::finishedLoading()
 {
     if (m_shouldPrintWhenFinishedLoading) {
         m_shouldPrintWhenFinishedLoading = false;
-        print();
+        if (m_frame->loader().activeDocumentLoader()->mainDocumentError().isNull())
+            print();
     }
 }
 
