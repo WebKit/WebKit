@@ -239,7 +239,7 @@ TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:YES]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:YES]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -267,53 +267,8 @@ TEST(WKUserContentController, AddUserStyleSheetAfterCreatingView)
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
 
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:YES]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:YES]);
     [[webView configuration].userContentController _addUserStyleSheet:styleSheet.get()];
-
-    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
-}
-
-TEST(WKUserContentController, UserStyleSheetWhiteAndBlackList)
-{
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ @"http://happy.example.com/", @"http://*.example2.com/" ] blacklistedURLPatterns:@[ @"http://sad.example.com/" ] forMainFrameOnly:YES]);
-    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
-
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
-    // Try something on the whitelist:
-
-    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://happy.example.com/"]];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
-
-    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
-
-    // Try something on the blacklist:
-
-    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://sad.example.com/"]];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
-
-    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
-
-    // Try something on neither list:
-
-    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://mediocre.example.com/"]];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
-
-    expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, redInRGB);
-
-    // Try something that matches the globbing pattern in the whitelist:
-
-    [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:[NSURL URLWithString:@"http://anything.example2.com/"]];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
 
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
 }
@@ -322,7 +277,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingOnlyMainFrame)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:YES]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:YES]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -345,7 +300,7 @@ TEST(WKUserContentController, UserStyleSheetAffectingAllFrames)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource whitelistedURLPatterns:@[ ] blacklistedURLPatterns:@[ ] forMainFrameOnly:NO]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO]);
     [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

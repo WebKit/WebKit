@@ -36,12 +36,9 @@ WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 
 @property (nonatomic, readonly, copy) NSString *source;
 
-@property (nonatomic, readonly, copy) WK_ARRAY(NSString *) *whitelistedURLPatterns;
-@property (nonatomic, readonly, copy) WK_ARRAY(NSString *) *blacklistedURLPatterns;
-
 @property (nonatomic, readonly, getter=isForMainFrameOnly) BOOL forMainFrameOnly;
 
-- (instancetype)initWithSource:(NSString *)source whitelistedURLPatterns:(WK_ARRAY(NSString *) *)whitelistedURLPatterns blacklistedURLPatterns:(WK_ARRAY(NSString *) *)blacklistedURLPatterns forMainFrameOnly:(BOOL)forMainFrameOnly;
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly;
 
 @end
 

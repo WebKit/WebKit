@@ -1,3 +1,18 @@
+2015-10-26  Tim Horton  <timothy_horton@apple.com>
+
+        Don't expose the whitelist/blacklist in _WKUserStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=150566
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.h:
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:]):
+        (toWTFStrings): Deleted.
+        (-[_WKUserStyleSheet initWithSource:whitelistedURLPatterns:blacklistedURLPatterns:forMainFrameOnly:]): Deleted.
+        (-[_WKUserStyleSheet whitelistedURLPatterns]): Deleted.
+        (-[_WKUserStyleSheet blacklistedURLPatterns]): Deleted.
+
 2015-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r191543.

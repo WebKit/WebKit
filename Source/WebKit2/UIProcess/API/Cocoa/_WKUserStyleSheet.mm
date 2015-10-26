@@ -34,18 +34,7 @@
 
 @implementation _WKUserStyleSheet
 
-static Vector<String> toWTFStrings(NSArray *strings)
-{
-    Vector<String> result;
-    result.reserveInitialCapacity(strings.count);
-
-    for (NSString *string in strings)
-        result.uncheckedAppend(string);
-
-    return result;
-}
-
-- (instancetype)initWithSource:(NSString *)source whitelistedURLPatterns:(NSArray *)whitelistedURLPatterns blacklistedURLPatterns:(NSArray *)blacklistedURLPatterns forMainFrameOnly:(BOOL)forMainFrameOnly
+- (instancetype)initWithSource:(NSString *)source forMainFrameOnly:(BOOL)forMainFrameOnly
 {
     if (!(self = [super init]))
         return nil;
@@ -53,7 +42,7 @@ static Vector<String> toWTFStrings(NSArray *strings)
     // FIXME: In the API test, we can use generateUniqueURL below before the API::Object constructor has done this... where should this really be?
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), toWTFStrings(whitelistedURLPatterns), toWTFStrings(blacklistedURLPatterns), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel });
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { WTF::String(source), API::UserStyleSheet::generateUniqueURL(), { }, { }, forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames, WebCore::UserStyleUserLevel });
 
     return self;
 }
@@ -61,16 +50,6 @@ static Vector<String> toWTFStrings(NSArray *strings)
 - (NSString *)source
 {
     return _userStyleSheet->userStyleSheet().source();
-}
-
-- (NSArray *)whitelistedURLPatterns
-{
-    return wrapper(API::Array::createStringArray(_userStyleSheet->userStyleSheet().whitelist()));
-}
-
-- (NSArray *)blacklistedURLPatterns
-{
-    return wrapper(API::Array::createStringArray(_userStyleSheet->userStyleSheet().blacklist()));
 }
 
 - (BOOL)isForMainFrameOnly
