@@ -1,3 +1,16 @@
+2015-10-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add images needed for shadow DOM blog post
+        https://bugs.webkit.org/show_bug.cgi?id=150549
+
+        Reviewed by Timothy Hatcher.
+
+        Added images.
+
+        * blog-files/introducing-shadow-dom: Added.
+        * blog-files/introducing-shadow-dom/commit-queue-contact.png: Added.
+        * blog-files/introducing-shadow-dom/progress-bar.png: Added.
+
 2015-10-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Modify the image to fit the width of the blog.
