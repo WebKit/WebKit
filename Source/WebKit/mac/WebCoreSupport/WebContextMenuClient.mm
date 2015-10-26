@@ -89,11 +89,6 @@ void WebContextMenuClient::contextMenuDestroyed()
     delete this;
 }
 
-NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* defaultMenu)
-{
-    return defaultMenu->platformDescription();
-}
-
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
 {
     id delegate = [m_webView UIDelegate];

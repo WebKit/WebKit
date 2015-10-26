@@ -44,9 +44,6 @@ public:
 private:
     virtual void contextMenuDestroyed() override;
 
-#if !USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*) override;
-#endif
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) override;
     
     virtual void downloadURL(const WebCore::URL&) override;

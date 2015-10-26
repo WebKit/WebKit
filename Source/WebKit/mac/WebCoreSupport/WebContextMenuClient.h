@@ -50,7 +50,6 @@ public:
 
     virtual void contextMenuDestroyed() override;
     
-    virtual NSMutableArray* getCustomMenuFromDefaultItems(WebCore::ContextMenu*) override;
     virtual void contextMenuItemSelected(WebCore::ContextMenuItem*, const WebCore::ContextMenu*) override;
     
     virtual void downloadURL(const WebCore::URL&) override;
