@@ -1436,12 +1436,19 @@ Bug(EFL) fast/images/webp-color-profile-lossy.html [ Skip ]
 
 # Though MEDIA_SOURCE is enabled, below tests are still failing.
 webkit.org/b/134974 http/tests/media/media-source [ Skip ]
+webkit.org/b/134974 media/media-source/media-source-stpp-crash.html [ Skip ]
 webkit.org/b/134974 media/media-source/media-source-append-failed.html [ Timeout ]
 webkit.org/b/134974 media/media-source/media-source-seek-complete.html [ Timeout ]
 webkit.org/b/134974 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 webkit.org/b/134974 media/media-source/media-source-duplicate-seeked.html [ Failure ]
 webkit.org/b/134974 media/media-source/media-source-play.html [ Failure ]
 webkit.org/b/134974 media/media-source/media-source-append-buffer-with-append-window.html [ Failure Pass ]
+
+# Mocking the codec is not implemented in EFL. A gstreamer parser for MSE is also not implemented.
+Bug(EFL) media/media-source/media-source-timeoffset.html [ Failure ]
+Bug(EFL) media/media-source/media-source-track-enabled.html [ Failure ]
+Bug(EFL) media/media-source/media-source-tracks.html [ Failure ]
+Bug(EFL) media/media-source/media-source-video-playback-quality.html [ Failure ]
 
 # Requires ENCRYPTED_MEDIA support.
 webkit.org/b/95297 media/encrypted-media [ Pass ]
@@ -1640,6 +1647,9 @@ webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html 
 
 # New media test introduced in r133660 fails.
 webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure Pass ]
+
+# Fails because EventSendingController's contextClick does mouse click on Efl.
+Bug(EFL) media/controls-right-click-on-timebar.html [ Failure ]
 
 # HiDPI tests are failing to render correctly.
 webkit.org/b/102097 fast/hidpi [ Skip ]
