@@ -1,3 +1,16 @@
+2015-10-15  Dean Jackson  <dino@apple.com>
+
+        CSSKeyframesRule::appendRule is deprecated, but is actually the spec
+        https://bugs.webkit.org/show_bug.cgi?id=150113
+
+        Reviewed by Simon Fraser.
+
+        Update tests to deprecate the correct function.
+
+        * animations/change-keyframes-expected.txt:
+        * animations/keyframes-rule.html:
+        * animations/unprefixed-keyframes-rule.html:
+
 2015-10-14  Jiewen Tan  <jiewen_tan@apple.com>
 
         Postpone mutation events before invoke Editor::Command command(Document*, const String&, bool).
