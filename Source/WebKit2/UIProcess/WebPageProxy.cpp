@@ -5230,6 +5230,11 @@ void WebPageProxy::updateAcceleratedCompositingMode(const LayerTreeContext& laye
     m_pageClient.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
+void WebPageProxy::willEnterAcceleratedCompositingMode()
+{
+    m_pageClient.willEnterAcceleratedCompositingMode();
+}
+
 void WebPageProxy::backForwardClear()
 {
     m_backForwardList->clear();

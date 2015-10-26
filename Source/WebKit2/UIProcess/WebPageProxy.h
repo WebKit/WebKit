@@ -805,7 +805,8 @@ public:
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
-    
+    void willEnterAcceleratedCompositingMode();
+
     void didDraw();
 
     enum UndoOrRedo { Undo, Redo };

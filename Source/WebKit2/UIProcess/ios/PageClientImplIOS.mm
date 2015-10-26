@@ -478,6 +478,10 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
 }
 
+void PageClientImpl::willEnterAcceleratedCompositingMode()
+{
+}
+
 void PageClientImpl::setAcceleratedCompositingRootLayer(LayerOrView *rootLayer)
 {
     [m_contentView _setAcceleratedCompositingRootView:rootLayer];

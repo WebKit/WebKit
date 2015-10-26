@@ -208,6 +208,15 @@ void DrawingAreaProxyImpl::updateAcceleratedCompositingMode(uint64_t backingStor
     updateAcceleratedCompositingMode(layerTreeContext);
 }
 
+void DrawingAreaProxyImpl::willEnterAcceleratedCompositingMode(uint64_t backingStoreStateID)
+{
+    ASSERT_ARG(backingStoreStateID, backingStoreStateID <= m_currentBackingStoreStateID);
+    if (backingStoreStateID < m_currentBackingStoreStateID)
+        return;
+
+    m_webPageProxy.willEnterAcceleratedCompositingMode();
+}
+
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 {
     ASSERT(!isInAcceleratedCompositingMode());
