@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test animation with multiple concurrent animations</title>
+  <style type="text/css" media="screen">
+    #box1 {
+      position: relative;
+      left: 10px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      animation-fill-mode: forwards;
+      animation: anim1 2s 0.2s linear;
+    }
+    @keyframes anim1 {
+        from { left: 100px; }
+        40%  { left: 0px; }
+        60%  { left: 250px; }
+        to   { left: 100px; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim1", 2.5, "box1", "left", 100, 2],
+    ];
+
+    var disablePauseAnimationAPI = false;
+    runAnimationTest(expectedValues, null, null, disablePauseAnimationAPI);
+  </script>
+</head>
+<body>
+<p>Fill-forwards state should be the last keyframe state.</p>
+<div id="box1"></div>
+<div id="result"></div>
+</body>
+</html>
