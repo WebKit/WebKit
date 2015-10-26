@@ -1,3 +1,42 @@
+2015-10-26  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseDown:]):
+        (-[WKView mouseDragged:]):
+        (-[WKView draggedImage:endedAt:operation:]):
+        (-[WKView draggingEntered:]):
+        (-[WKView draggingUpdated:]):
+        (-[WKView draggingExited:]):
+        (-[WKView prepareForDragOperation:]):
+        (-[WKView performDragOperation:]):
+        (-[WKView _hitTest:dragTypes:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView applicationFlags:]): Deleted.
+        (maybeCreateSandboxExtensionFromPasteboard): Deleted.
+        (createSandboxExtensionsForFileUpload): Deleted.
+        (-[WKView _registerDraggedTypes]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::ignoresMouseDraggedEvents):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setIgnoresMouseDraggedEvents):
+        (WebKit::WebViewImpl::draggedImage):
+        (WebKit::applicationFlagsForDrag):
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        (WebKit::WebViewImpl::draggingExited):
+        (WebKit::WebViewImpl::prepareForDragOperation):
+        (WebKit::maybeCreateSandboxExtensionFromPasteboard):
+        (WebKit::createSandboxExtensionsForFileUpload):
+        (WebKit::WebViewImpl::performDragOperation):
+        (WebKit::WebViewImpl::hitTestForDragTypes):
+        (WebKit::WebViewImpl::registerDraggedTypes):
+        Move some drag-related things to WebViewImpl.
+
 2015-10-26  Anders Carlsson  <andersca@apple.com>
 
         Pipe custom context menu handling through to the UIDelegate object

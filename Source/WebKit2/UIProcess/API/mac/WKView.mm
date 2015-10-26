@@ -194,7 +194,6 @@ struct WKViewInterpretKeyEventsParameters {
 
     BOOL _willBecomeFirstResponderAgain;
     NSEvent *_mouseDownEvent;
-    BOOL _ignoringMouseDraggedEvents;
 
     BOOL _hasSpellCheckerDocumentTag;
     NSInteger _spellCheckerDocumentTag;
@@ -1073,7 +1072,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
         return;
 
     [self _setMouseDownEvent:event];
-    _data->_ignoringMouseDraggedEvents = NO;
+    _data->_impl->setIgnoresMouseDraggedEvents(false);
 
     [self mouseDownInternal:event];
 }
@@ -1091,9 +1090,9 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 {
     if (_data->_impl->ignoresNonWheelEvents())
         return;
-
-    if (_data->_ignoringMouseDraggedEvents)
+    if (_data->_impl->ignoresMouseDraggedEvents())
         return;
+
     [self mouseDraggedInternal:event];
 }
 
@@ -2110,144 +2109,39 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 }
 
 #if ENABLE(DRAG_SUPPORT)
-- (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
+- (void)draggedImage:(NSImage *)image endedAt:(NSPoint)endPoint operation:(NSDragOperation)operation
 {
-    NSPoint windowImageLoc = [[self window] convertScreenToBase:aPoint];
-    NSPoint windowMouseLoc = windowImageLoc;
-   
-    // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
-    _data->_ignoringMouseDraggedEvents = YES;
-    
-    _data->_page->dragEnded(IntPoint(windowMouseLoc), globalPoint(windowMouseLoc, [self window]), operation);
-}
-
-- (DragApplicationFlags)applicationFlags:(id <NSDraggingInfo>)draggingInfo
-{
-    uint32_t flags = 0;
-    if ([NSApp modalWindow])
-        flags = DragApplicationIsModal;
-    if ([[self window] attachedSheet])
-        flags |= DragApplicationHasAttachedSheet;
-    if ([draggingInfo draggingSource] == self)
-        flags |= DragApplicationIsSource;
-    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
-        flags |= DragApplicationIsCopyKeyDown;
-    return static_cast<DragApplicationFlags>(flags);
+    _data->_impl->draggedImage(image, NSPointToCGPoint(endPoint), operation);
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
-    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
-    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-
-    _data->_page->resetCurrentDragInformation();
-    _data->_page->dragEntered(dragData, [[draggingInfo draggingPasteboard] name]);
-    return NSDragOperationCopy;
+    return _data->_impl->draggingEntered(draggingInfo);
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
 {
-    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
-    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    _data->_page->dragUpdated(dragData, [[draggingInfo draggingPasteboard] name]);
-    
-    NSInteger numberOfValidItemsForDrop = _data->_page->currentDragNumberOfFilesToBeAccepted();
-    NSDraggingFormation draggingFormation = NSDraggingFormationNone;
-    if (_data->_page->currentDragIsOverFileInput() && numberOfValidItemsForDrop > 0)
-        draggingFormation = NSDraggingFormationList;
-
-    if ([draggingInfo numberOfValidItemsForDrop] != numberOfValidItemsForDrop)
-        [draggingInfo setNumberOfValidItemsForDrop:numberOfValidItemsForDrop];
-    if ([draggingInfo draggingFormation] != draggingFormation)
-        [draggingInfo setDraggingFormation:draggingFormation];
-
-    return _data->_page->currentDragOperation();
+    return _data->_impl->draggingUpdated(draggingInfo);
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
 {
-    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
-    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    _data->_page->dragExited(dragData, [[draggingInfo draggingPasteboard] name]);
-    _data->_page->resetCurrentDragInformation();
+    _data->_impl->draggingExited(draggingInfo);
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
-    return YES;
-}
-
-// FIXME: This code is more or less copied from Pasteboard::getBestURL.
-// It would be nice to be able to share the code somehow.
-static bool maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, SandboxExtension::Handle& sandboxExtensionHandle)
-{
-    NSArray *types = [pasteboard types];
-    if (![types containsObject:NSFilenamesPboardType])
-        return false;
-
-    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
-    if ([files count] != 1)
-        return false;
-
-    NSString *file = [files objectAtIndex:0];
-    BOOL isDirectory;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory])
-        return false;
-
-    if (isDirectory)
-        return false;
-
-    SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
-    return true;
-}
-
-static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, SandboxExtension::HandleArray& handles)
-{
-    NSArray *types = [pasteboard types];
-    if (![types containsObject:NSFilenamesPboardType])
-        return;
-
-    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
-    handles.allocate([files count]);
-    for (unsigned i = 0; i < [files count]; i++) {
-        NSString *file = [files objectAtIndex:i];
-        if (![[NSFileManager defaultManager] fileExistsAtPath:file])
-            continue;
-        SandboxExtension::Handle handle;
-        SandboxExtension::createHandle(file, SandboxExtension::ReadOnly, handles[i]);
-    }
+    return _data->_impl->prepareForDragOperation(draggingInfo);
 }
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
-    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
-    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-
-    SandboxExtension::Handle sandboxExtensionHandle;
-    bool createdExtension = maybeCreateSandboxExtensionFromPasteboard([draggingInfo draggingPasteboard], sandboxExtensionHandle);
-    if (createdExtension)
-        _data->_page->process().willAcquireUniversalFileReadSandboxExtension();
-
-    SandboxExtension::HandleArray sandboxExtensionForUpload;
-    createSandboxExtensionsForFileUpload([draggingInfo draggingPasteboard], sandboxExtensionForUpload);
-
-    _data->_page->performDragOperation(dragData, [[draggingInfo draggingPasteboard] name], sandboxExtensionHandle, sandboxExtensionForUpload);
-
-    return YES;
+    return _data->_impl->performDragOperation(draggingInfo);
 }
 
-// This code is needed to support drag and drop when the drag types cannot be matched.
-// This is the case for elements that do not place content
-// in the drag pasteboard automatically when the drag start (i.e. dragging a DIV element).
 - (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types
 {
-    if ([[self superview] mouse:*point inRect:[self frame]])
-        return self;
-    return nil;
+    return _data->_impl->hitTestForDragTypes(NSPointToCGPoint(*point), types);
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -2859,10 +2753,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->initializeWebPage();
 
     _data->_mouseDownEvent = nil;
-    _data->_ignoringMouseDraggedEvents = NO;
     _data->_windowOcclusionDetectionEnabled = YES;
 
-    [self _registerDraggedTypes];
+    _data->_impl->registerDraggedTypes();
 
     self.wantsLayer = YES;
 
@@ -2875,14 +2768,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
     return self;
-}
-
-- (void)_registerDraggedTypes
-{
-    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()];
-    [types addObjectsFromArray:PasteboardTypes::forURL()];
-    [self registerForDraggedTypes:[types allObjects]];
-    [types release];
 }
 
 #if WK_API_ENABLED

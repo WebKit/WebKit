@@ -34,6 +34,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
 #import "PageClient.h"
+#import "PasteboardTypes.h"
 #import "StringUtilities.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
@@ -42,15 +43,18 @@
 #import "WKWebView.h"
 #import "WebEditCommandProxy.h"
 #import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/DragData.h>
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSWindowSPI.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/ViewState.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -1451,6 +1455,11 @@ void WebViewImpl::setIgnoresAllEvents(bool ignoresAllEvents)
     setIgnoresNonWheelEvents(ignoresAllEvents);
 }
 
+void WebViewImpl::setIgnoresMouseDraggedEvents(bool ignoresMouseDraggedEvents)
+{
+    m_ignoresMouseDraggedEvents = ignoresMouseDraggedEvents;
+}
+
 void WebViewImpl::accessibilityRegisterUIProcessTokens()
 {
     // Initialize remote accessibility when the window connection has been established.
@@ -1646,6 +1655,159 @@ void WebViewImpl::updateThumbnailViewLayer()
         reparentLayerTreeInThumbnailView();
 }
 #endif // WK_API_ENABLED
+
+#if ENABLE(DRAG_SUPPORT)
+void WebViewImpl::draggedImage(NSImage *image, CGPoint endPoint, NSDragOperation operation)
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    NSPoint windowImageLoc = [m_view.window convertScreenToBase:NSPointFromCGPoint(endPoint)];
+#pragma clang diagnostic pop
+    NSPoint windowMouseLoc = windowImageLoc;
+
+    // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
+    m_ignoresMouseDraggedEvents = true;
+
+    m_page.dragEnded(WebCore::IntPoint(windowMouseLoc), WebCore::globalPoint(windowMouseLoc, m_view.window), operation);
+}
+
+static WebCore::DragApplicationFlags applicationFlagsForDrag(NSView *view, id <NSDraggingInfo> draggingInfo)
+{
+    uint32_t flags = 0;
+    if ([NSApp modalWindow])
+        flags = WebCore::DragApplicationIsModal;
+    if (view.window.attachedSheet)
+        flags |= WebCore::DragApplicationHasAttachedSheet;
+    if (draggingInfo.draggingSource == view)
+        flags |= WebCore::DragApplicationIsSource;
+    if ([NSApp currentEvent].modifierFlags & NSAlternateKeyMask)
+        flags |= WebCore::DragApplicationIsCopyKeyDown;
+    return static_cast<WebCore::DragApplicationFlags>(flags);
+
+}
+
+NSDragOperation WebViewImpl::draggingEntered(id <NSDraggingInfo> draggingInfo)
+{
+    WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
+    WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, m_view.window));
+    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
+
+    m_page.resetCurrentDragInformation();
+    m_page.dragEntered(dragData, draggingInfo.draggingPasteboard.name);
+    return NSDragOperationCopy;
+}
+
+NSDragOperation WebViewImpl::draggingUpdated(id <NSDraggingInfo> draggingInfo)
+{
+    WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
+    WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, m_view.window));
+    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
+    m_page.dragUpdated(dragData, draggingInfo.draggingPasteboard.name);
+
+    NSInteger numberOfValidItemsForDrop = m_page.currentDragNumberOfFilesToBeAccepted();
+    NSDraggingFormation draggingFormation = NSDraggingFormationNone;
+    if (m_page.currentDragIsOverFileInput() && numberOfValidItemsForDrop > 0)
+        draggingFormation = NSDraggingFormationList;
+
+    if (draggingInfo.numberOfValidItemsForDrop != numberOfValidItemsForDrop)
+        [draggingInfo setNumberOfValidItemsForDrop:numberOfValidItemsForDrop];
+    if (draggingInfo.draggingFormation != draggingFormation)
+        [draggingInfo setDraggingFormation:draggingFormation];
+
+    return m_page.currentDragOperation();
+}
+
+void WebViewImpl::draggingExited(id <NSDraggingInfo> draggingInfo)
+{
+    WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
+    WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, m_view.window));
+    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
+    m_page.dragExited(dragData, draggingInfo.draggingPasteboard.name);
+    m_page.resetCurrentDragInformation();
+}
+
+bool WebViewImpl::prepareForDragOperation(id <NSDraggingInfo>)
+{
+    return true;
+}
+
+// FIXME: This code is more or less copied from Pasteboard::getBestURL.
+// It would be nice to be able to share the code somehow.
+static bool maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    NSArray *types = pasteboard.types;
+    if (![types containsObject:NSFilenamesPboardType])
+        return false;
+
+    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
+    if (files.count != 1)
+        return false;
+
+    NSString *file = [files objectAtIndex:0];
+    BOOL isDirectory;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory])
+        return false;
+
+    if (isDirectory)
+        return false;
+
+    SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
+    return true;
+}
+
+static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, SandboxExtension::HandleArray& handles)
+{
+    NSArray *types = pasteboard.types;
+    if (![types containsObject:NSFilenamesPboardType])
+        return;
+
+    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
+    handles.allocate(files.count);
+    for (unsigned i = 0; i < files.count; i++) {
+        NSString *file = [files objectAtIndex:i];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:file])
+            continue;
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandle(file, SandboxExtension::ReadOnly, handles[i]);
+    }
+}
+
+bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
+{
+    WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
+    WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, m_view.window));
+    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    bool createdExtension = maybeCreateSandboxExtensionFromPasteboard(draggingInfo.draggingPasteboard, sandboxExtensionHandle);
+    if (createdExtension)
+        m_page.process().willAcquireUniversalFileReadSandboxExtension();
+
+    SandboxExtension::HandleArray sandboxExtensionForUpload;
+    createSandboxExtensionsForFileUpload(draggingInfo.draggingPasteboard, sandboxExtensionForUpload);
+
+    m_page.performDragOperation(dragData, draggingInfo.draggingPasteboard.name, sandboxExtensionHandle, sandboxExtensionForUpload);
+
+    return true;
+}
+
+NSView *WebViewImpl::hitTestForDragTypes(CGPoint point, NSSet *types)
+{
+    // This code is needed to support drag and drop when the drag types cannot be matched.
+    // This is the case for elements that do not place content
+    // in the drag pasteboard automatically when the drag start (i.e. dragging a DIV element).
+    if ([[m_view superview] mouse:NSPointFromCGPoint(point) inRect:[m_view frame]])
+        return m_view;
+    return nil;
+}
+
+void WebViewImpl::registerDraggedTypes()
+{
+    auto types = adoptNS([[NSMutableSet alloc] initWithArray:PasteboardTypes::forEditing()]);
+    [types addObjectsFromArray:PasteboardTypes::forURL()];
+    [m_view registerForDraggedTypes:[types allObjects]];
+}
+#endif // ENABLE(DRAG_SUPPORT)
 
 } // namespace WebKit
 

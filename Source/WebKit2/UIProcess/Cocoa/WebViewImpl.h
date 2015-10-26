@@ -217,6 +217,8 @@ public:
     bool ignoresNonWheelEvents() const { return m_ignoresNonWheelEvents; }
     void setIgnoresAllEvents(bool);
     bool ignoresAllEvents() const { return m_ignoresAllEvents; }
+    void setIgnoresMouseDraggedEvents(bool);
+    bool ignoresMouseDraggedEvents() const { return m_ignoresMouseDraggedEvents; }
 
     void accessibilityRegisterUIProcessTokens();
 
@@ -236,6 +238,17 @@ public:
     void setThumbnailView(_WKThumbnailView *);
     _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
 #endif // WK_API_ENABLED
+
+#if ENABLE(DRAG_SUPPORT)
+    void draggedImage(NSImage *, CGPoint endPoint, NSDragOperation);
+    NSDragOperation draggingEntered(id <NSDraggingInfo>);
+    NSDragOperation draggingUpdated(id <NSDraggingInfo>);
+    void draggingExited(id <NSDraggingInfo>);
+    bool prepareForDragOperation(id <NSDraggingInfo>);
+    bool performDragOperation(id <NSDraggingInfo>);
+    NSView *hitTestForDragTypes(CGPoint, NSSet *types);
+    void registerDraggedTypes();
+#endif
 
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
@@ -313,6 +326,7 @@ private:
 
     bool m_ignoresNonWheelEvents { false };
     bool m_ignoresAllEvents { false };
+    bool m_ignoresMouseDraggedEvents { false };
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     RetainPtr<WKImmediateActionController> m_immediateActionController;
