@@ -74,6 +74,9 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._checkForStaleResources, this);
             WebInspector.Frame.addEventListener(WebInspector.Frame.Event.ResourceWasRemoved, this._checkForStaleResources, this);
         }
+
+        this._pendingViewStateCookie = null;
+        this._restoringState = false;
     }
 
     // Public
@@ -239,12 +242,12 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         function finalAttemptToRestoreViewStateFromCookie()
         {
-            delete this._finalAttemptToRestoreViewStateTimeout;
+            this._finalAttemptToRestoreViewStateTimeout = undefined;
 
             this._checkOutlinesForPendingViewStateCookie(true);
 
-            delete this._pendingViewStateCookie;
-            delete this._restoringState;
+            this._pendingViewStateCookie = null;
+            this._restoringState = false;
         }
 
         // If the specific tree element wasn't found, we may need to wait for the resources
@@ -329,8 +332,8 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             treeElement.hidden = false;
 
             // If this tree element was expanded during filtering, collapse it again.
-            if (treeElement.expanded && treeElement.__wasExpandedDuringFiltering) {
-                delete treeElement.__wasExpandedDuringFiltering;
+            if (treeElement.expanded && treeElement[WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol]) {
+                treeElement[WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol] = false;
                 treeElement.collapse();
             }
 
@@ -388,8 +391,8 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
             makeVisible();
 
             // If this tree element didn't match a built-in filter and was expanded earlier during filtering, collapse it again.
-            if (!flags.expandTreeElement && treeElement.expanded && treeElement.__wasExpandedDuringFiltering) {
-                delete treeElement.__wasExpandedDuringFiltering;
+            if (!flags.expandTreeElement && treeElement.expanded && treeElement[WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol]) {
+                treeElement[WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol] = false;
                 treeElement.collapse();
             }
 
@@ -464,7 +467,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
     _updateContentOverflowShadowVisibility()
     {
-        delete this._updateContentOverflowShadowVisibilityIdentifier;
+        this._updateContentOverflowShadowVisibilityIdentifier = undefined;
 
         var scrollHeight = this.contentElement.scrollHeight;
         var offsetHeight = this.contentElement.offsetHeight;
@@ -698,21 +701,23 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
         if (matchedElement) {
             this.showDefaultContentViewForTreeElement(matchedElement);
 
-            delete this._pendingViewStateCookie;
+            this._pendingViewStateCookie = null;
 
             // Delay clearing the restoringState flag until the next runloop so listeners
             // checking for it in this runloop still know state was being restored.
             setTimeout(function() {
-                delete this._restoringState;
+                this._restoringState = false;
             }.bind(this));
 
             if (this._finalAttemptToRestoreViewStateTimeout) {
                 clearTimeout(this._finalAttemptToRestoreViewStateTimeout);
-                delete this._finalAttemptToRestoreViewStateTimeout;
+                this._finalAttemptToRestoreViewStateTimeout = undefined;
             }
         }
     }
 };
+
+WebInspector.NavigationSidebarPanel.WasExpandedDuringFilteringSymbol = Symbol("was-expanded-during-filtering");
 
 WebInspector.NavigationSidebarPanel.OverflowShadowElementStyleClassName = "overflow-shadow";
 WebInspector.NavigationSidebarPanel.TopOverflowShadowElementStyleClassName = "top";

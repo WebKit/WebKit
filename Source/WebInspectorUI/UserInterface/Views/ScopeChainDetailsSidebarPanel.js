@@ -160,9 +160,9 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
         let detailsSections = [];
         let foundLocalScope = false;
 
-        let sectionCountByType = {};
-        for (var type in WebInspector.ScopeChainNode.Type)
-            sectionCountByType[WebInspector.ScopeChainNode.Type[type]] = 0;
+        let sectionCountByType = new Map;
+        for (let type in WebInspector.ScopeChainNode.Type)
+            sectionCountByType.set(WebInspector.ScopeChainNode.Type[type], 0);
 
         let scopeChain = callFrame.scopeChain;
         for (let scope of scopeChain) {
@@ -170,7 +170,8 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
             let extraPropertyDescriptor = null;
             let collapsedByDefault = false;
 
-            ++sectionCountByType[scope.type];
+            let count = sectionCountByType.get(scope.type);
+            sectionCountByType.set(scope.type, ++count);
 
             switch (scope.type) {
                 case WebInspector.ScopeChainNode.Type.Local:
@@ -209,7 +210,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
                     break;
             }
 
-            let detailsSectionIdentifier = scope.type + "-" + sectionCountByType[scope.type];
+            let detailsSectionIdentifier = scope.type + "-" + sectionCountByType.get(scope.type);
 
             let scopePropertyPath = WebInspector.PropertyPath.emptyPropertyPathForScope(scope.object);
             let objectTree = new WebInspector.ObjectTreeView(scope.object, WebInspector.ObjectTreeView.Mode.Properties, scopePropertyPath);

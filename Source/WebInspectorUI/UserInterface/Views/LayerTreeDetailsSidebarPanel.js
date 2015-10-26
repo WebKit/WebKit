@@ -29,7 +29,7 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
     {
         super("layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"));
 
-        this._dataGridNodesByLayerId = {};
+        this._dataGridNodesByLayerId = new Map;
 
         this.element.classList.add("layer-tree");
 
@@ -258,26 +258,25 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
     _updateDataGrid(layerForNode, childLayers)
     {
-        var dataGrid = this._dataGrid;
-
-        var mutations = WebInspector.layerTreeManager.layerTreeMutations(this._childLayers, childLayers);
+        let dataGrid = this._dataGrid;
+        let mutations = WebInspector.layerTreeManager.layerTreeMutations(this._childLayers, childLayers);
 
         mutations.removals.forEach(function(layer) {
-            var node = this._dataGridNodesByLayerId[layer.layerId];
+            let node = this._dataGridNodesByLayerId.get(layer.layerId);
             if (node) {
                 dataGrid.removeChild(node);
-                delete this._dataGridNodesByLayerId[layer.layerId];
+                this._dataGridNodesByLayerId.delete(layer.layerId);
             }
         }, this);
 
         mutations.additions.forEach(function(layer) {
-            var node = this._dataGridNodeForLayer(layer);
+            let node = this._dataGridNodeForLayer(layer);
             if (node)
                 dataGrid.appendChild(node);
         }, this);
 
         mutations.preserved.forEach(function(layer) {
-            var node = this._dataGridNodesByLayerId[layer.layerId];
+            let node = this._dataGridNodesByLayerId.get(layer.layerId);
             if (node)
                 node.layer = layer;
         }, this);
@@ -289,9 +288,8 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 
     _dataGridNodeForLayer(layer)
     {
-        var node = new WebInspector.LayerTreeDataGridNode(layer);
-
-        this._dataGridNodesByLayerId[layer.layerId] = node;
+        let node = new WebInspector.LayerTreeDataGridNode(layer);
+        this._dataGridNodesByLayerId.set(layer.layerId, node);
 
         return node;
     }
