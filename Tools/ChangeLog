@@ -1,3 +1,18 @@
+2015-10-26  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GStreamer] Bump internal jhbuild versions to 1.6.0
+        https://bugs.webkit.org/show_bug.cgi?id=149594
+
+        Reviewed by Philippe Normand.
+
+        Bump up whole gstreamer libraries to 1.6.0. Relevant patches are no more
+        useful so they are removed accordingly.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/gst-plugins-bad-fix-faad2-version-check.patch: Removed.
+        * gtk/patches/gst-plugins-bad-remove-gnustep-support.patch: Removed.
+        * gtk/patches/gst-plugins-base-rtp-rtcpbuffer-fix-typo-in-enum.patch: Removed.
+
 2015-10-25  Alexey Proskuryakov  <ap@apple.com>
 
         API tests fail on El Capitan after r191543
