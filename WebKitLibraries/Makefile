@@ -23,7 +23,7 @@ release r:
 	@$(MAKE) libs
 
 analyze:
-	$(SCRIPTS_PATH)/set-webkit-configuration --release
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug
 	@$(MAKE) libs
 
 clean:

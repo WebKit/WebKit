@@ -1,3 +1,12 @@
+2015-10-26  Dana Burkart  <dburkart@apple.com>
+
+        `make analyze` should build using the debug configuration
+        https://bugs.webkit.org/show_bug.cgi?id=150571
+
+        Reviewed by Lucas Forschler.
+
+        * Makefile:
+
 2015-10-20  Yoav Weiss  <yoav@yoav.ws>
 
         Rename the PICTURE_SIZES flag to CURRENTSRC

@@ -51,7 +51,7 @@ release r deployment dep deploy: force
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 
 analyze:
-	$(SCRIPTS_PATH)/set-webkit-configuration --release $(ASAN_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug $(ASAN_OPTION)
 ifndef PATH_TO_SCAN_BUILD
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) RUN_CLANG_STATIC_ANALYZER=YES | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 else
