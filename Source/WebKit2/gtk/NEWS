@@ -1,4 +1,19 @@
 =================
+WebKitGTK+ 2.10.3
+=================
+
+What's new in WebKitGTK+ 2.10.3?
+
+  - Fix graphics artifacts when entering/leaving Accelerated Compositing mode.
+  - Honour 'forwards' fill-mode in Multiple-keyframe and delayed instantaneous
+    animations.
+  - Fix runtime warning when the inspector is closed.
+  - Fix the build with GTK+2 plugin process disabled.
+  - Gracefully handle errors when sending/receiving IPC messages data on connection
+    close.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.10.2
 =================
 
