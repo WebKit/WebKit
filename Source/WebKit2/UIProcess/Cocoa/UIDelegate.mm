@@ -52,6 +52,13 @@ UIDelegate::~UIDelegate()
 {
 }
 
+#if ENABLE(CONTEXT_MENUS)
+std::unique_ptr<API::ContextMenuClient> UIDelegate::createContextMenuClient()
+{
+    return std::make_unique<ContextMenuClient>(*this);
+}
+#endif
+
 std::unique_ptr<API::UIClient> UIDelegate::createUIClient()
 {
     return std::make_unique<UIClient>(*this);
@@ -87,6 +94,25 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #endif
     m_delegateMethods.webViewImageOrMediaDocumentSizeChanged = [delegate respondsToSelector:@selector(_webView:imageOrMediaDocumentSizeChanged:)];
 }
+
+#if ENABLE(CONTEXT_MENUS)
+UIDelegate::ContextMenuClient::ContextMenuClient(UIDelegate& uiDelegate)
+    : m_uiDelegate(uiDelegate)
+{
+}
+
+UIDelegate::ContextMenuClient::~ContextMenuClient()
+{
+}
+
+RetainPtr<NSMenu> UIDelegate::ContextMenuClient::menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *menu, const WebKit::WebHitTestResultData&)
+{
+    // FIXME: Call the UI delegate.
+    (void)m_uiDelegate;
+
+    return menu;
+}
+#endif
 
 UIDelegate::UIClient::UIClient(UIDelegate& uiDelegate)
     : m_uiDelegate(uiDelegate)

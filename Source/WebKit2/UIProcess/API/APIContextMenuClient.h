@@ -32,6 +32,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+OBJC_CLASS NSMenu;
+
 namespace WebCore {
 class IntPoint;
 }
@@ -52,6 +54,10 @@ public:
     virtual void customContextMenuItemSelected(WebKit::WebPageProxy&, const WebKit::WebContextMenuItemData&) { }
     virtual bool showContextMenu(WebKit::WebPageProxy&, const WebCore::IntPoint&, const Vector<RefPtr<WebKit::WebContextMenuItem>>&) { return false; }
     virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }
+
+#if PLATFORM(MAC)
+    virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *menu, const WebKit::WebHitTestResultData&) { return menu; }
+#endif
 };
 
 } // namespace API

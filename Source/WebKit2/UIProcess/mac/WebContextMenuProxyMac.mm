@@ -367,6 +367,7 @@ void WebContextMenuProxyMac::showContextMenu()
     Vector<RefPtr<WebContextMenuItem>> clientItems;
     bool useProposedItems = true;
 
+    // FIXME: Get rid of this once we don't need the C SPI.
     if (m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
         useProposedItems = false;
 
@@ -377,7 +378,8 @@ void WebContextMenuProxyMac::showContextMenu()
     if (items.isEmpty())
         return;
 
-    m_menu = createContextMenuFromItems(items);
+    auto menu = createContextMenuFromItems(items);
+    m_menu = m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData());
 
     [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
     [m_menu popUpMenuPositioningItem:nil atLocation:m_context.menuLocation() inView:m_webView];

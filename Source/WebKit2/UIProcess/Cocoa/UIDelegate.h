@@ -30,6 +30,7 @@
 
 #if WK_API_ENABLED
 
+#import "APIContextMenuClient.h"
 #import "APIUIClient.h"
 #import "WeakObjCPtr.h"
 #import <wtf/RetainPtr.h>
@@ -45,12 +46,29 @@ public:
     explicit UIDelegate(WKWebView *);
     ~UIDelegate();
 
+#if ENABLE(CONTEXT_MENUS)
+    std::unique_ptr<API::ContextMenuClient> createContextMenuClient();
+#endif
     std::unique_ptr<API::UIClient> createUIClient();
 
     RetainPtr<id <WKUIDelegate> > delegate();
     void setDelegate(id <WKUIDelegate>);
 
 private:
+#if ENABLE(CONTEXT_MENUS)
+    class ContextMenuClient : public API::ContextMenuClient {
+    public:
+        explicit ContextMenuClient(UIDelegate&);
+        ~ContextMenuClient();
+
+    private:
+        // API::ContextMenuClient
+        virtual RetainPtr<NSMenu> menuFromProposedMenu(WebKit::WebPageProxy&, NSMenu *, const WebKit::WebHitTestResultData&) override;
+
+        UIDelegate& m_uiDelegate;
+    };
+#endif
+
     class UIClient : public API::UIClient {
     public:
         explicit UIClient(UIDelegate&);
