@@ -1,3 +1,14 @@
+2015-10-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Avoid to insert TAB before HTML element.
+        https://bugs.webkit.org/show_bug.cgi?id=149295
+        <rdar://problem/22746706>
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/insert-tab-to-html-element-crash-expected.txt: Added.
+        * editing/execCommand/insert-tab-to-html-element-crash.html: Added.
+
 2015-10-16  Zalan Bujtas  <zalan@apple.com>
 
         First line box in paragraph using initial-letter overflows.

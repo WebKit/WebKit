@@ -235,6 +235,8 @@ void InsertTextCommand::doApply()
 Position InsertTextCommand::insertTab(const Position& pos)
 {
     Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
+    if (insertPos.isNull())
+        return pos;
 
     Node* node = insertPos.containerNode();
     unsigned int offset = node->isTextNode() ? insertPos.offsetInContainerNode() : 0;
