@@ -152,7 +152,7 @@ public:
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;
 
     // Returns true if this renderer requires a new stacking context.
-    bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBackdropFilter() || hasBlendMode(); }
+    bool createsGroup() const { return isTransparent() || hasMask() || hasClipPath() || hasFilter() || hasBackdropFilter() || hasBlendMode(); }
 
     bool isTransparent() const { return style().opacity() < 1.0f; }
     float opacity() const { return style().opacity(); }

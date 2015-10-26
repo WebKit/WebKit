@@ -49,6 +49,8 @@ bool buildStringFromSVGPathSegList(const SVGPathSegList&, String&, PathParsingMo
 // SVGPathByteStream -> SVGPathSegList
 bool buildSVGPathSegListFromByteStream(const SVGPathByteStream&, SVGPathElement&, SVGPathSegList&, PathParsingMode);
 
+bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
+
 bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& from, const SVGPathByteStream& to, SVGPathByteStream& result, float progress);
 bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathByteStream& from, unsigned repeatCount = 1);
 

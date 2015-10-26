@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Tests that clip-path with a composited descendent triggers composited clipping</title>
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: red;
+            -webkit-clip-path: inset(100px 100px 0px 0px);
+        }
+        
+        .child {
+            width: 300px;
+            height: 300px;
+            background-color: green;
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals)
+                document.getElementById('layers').textContent = window.internals.layerTreeAsText(document);
+
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="box">
+        <div class="child"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

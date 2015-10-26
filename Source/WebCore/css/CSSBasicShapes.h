@@ -39,13 +39,16 @@
 
 namespace WebCore {
 
+class SVGPathByteStream;
+
 class CSSBasicShape : public RefCounted<CSSBasicShape> {
 public:
     enum Type {
         CSSBasicShapePolygonType,
         CSSBasicShapeCircleType,
         CSSBasicShapeEllipseType,
-        CSSBasicShapeInsetType
+        CSSBasicShapeInsetType,
+        CSSBasicShapePathType
     };
 
     virtual Type type() const = 0;
@@ -107,13 +110,12 @@ public:
     void setBottomRightRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomRightRadius = radius; }
     void setBottomLeftRadius(PassRefPtr<CSSPrimitiveValue> radius) { m_bottomLeftRadius = radius; }
 
-    virtual String cssText() const override;
-    virtual bool equals(const CSSBasicShape&) const override;
-
 private:
     CSSBasicShapeInset() { }
 
     virtual Type type() const override { return CSSBasicShapeInsetType; }
+    virtual String cssText() const override;
+    virtual bool equals(const CSSBasicShape&) const override;
 
     RefPtr<CSSPrimitiveValue> m_top;
     RefPtr<CSSPrimitiveValue> m_right;
@@ -130,9 +132,6 @@ class CSSBasicShapeCircle final : public CSSBasicShape {
 public:
     static Ref<CSSBasicShapeCircle> create() { return adoptRef(*new CSSBasicShapeCircle); }
 
-    virtual String cssText() const override;
-    virtual bool equals(const CSSBasicShape&) const override;
-
     CSSPrimitiveValue* centerX() const { return m_centerX.get(); }
     CSSPrimitiveValue* centerY() const { return m_centerY.get(); }
     CSSPrimitiveValue* radius() const { return m_radius.get(); }
@@ -145,6 +144,8 @@ private:
     CSSBasicShapeCircle() { }
 
     virtual Type type() const override { return CSSBasicShapeCircleType; }
+    virtual String cssText() const override;
+    virtual bool equals(const CSSBasicShape&) const override;
 
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_centerY;
@@ -165,13 +166,12 @@ public:
     void setRadiusX(PassRefPtr<CSSPrimitiveValue> radiusX) { m_radiusX = radiusX; }
     void setRadiusY(PassRefPtr<CSSPrimitiveValue> radiusY) { m_radiusY = radiusY; }
 
-    virtual String cssText() const override;
-    virtual bool equals(const CSSBasicShape&) const override;
-
 private:
     CSSBasicShapeEllipse() { }
 
     virtual Type type() const override { return CSSBasicShapeEllipseType; }
+    virtual String cssText() const override;
+    virtual bool equals(const CSSBasicShape&) const override;
 
     RefPtr<CSSPrimitiveValue> m_centerX;
     RefPtr<CSSPrimitiveValue> m_centerY;
@@ -193,11 +193,8 @@ public:
     RefPtr<CSSPrimitiveValue> getYAt(unsigned i) const { return m_values.at(i * 2 + 1); }
     const Vector<RefPtr<CSSPrimitiveValue>>& values() const { return m_values; }
 
-    void setWindRule(WindRule w) { m_windRule = w; }
+    void setWindRule(WindRule rule) { m_windRule = rule; }
     WindRule windRule() const { return m_windRule; }
-
-    virtual String cssText() const override;
-    virtual bool equals(const CSSBasicShape&) const override;
 
 private:
     CSSBasicShapePolygon()
@@ -206,9 +203,37 @@ private:
     }
 
     virtual Type type() const override { return CSSBasicShapePolygonType; }
+    virtual String cssText() const override;
+    virtual bool equals(const CSSBasicShape&) const override;
 
     Vector<RefPtr<CSSPrimitiveValue>> m_values;
     WindRule m_windRule;
+};
+
+class CSSBasicShapePath final : public CSSBasicShape {
+public:
+    static Ref<CSSBasicShapePath> create(std::unique_ptr<SVGPathByteStream>&& pathData)
+    {
+        return adoptRef(*new CSSBasicShapePath(WTF::move(pathData)));
+    }
+
+    const SVGPathByteStream& pathData() const
+    {
+        return *m_byteStream;
+    }
+
+    void setWindRule(WindRule rule) { m_windRule = rule; }
+    WindRule windRule() const { return m_windRule; }
+
+private:
+    CSSBasicShapePath(std::unique_ptr<SVGPathByteStream>&&);
+
+    virtual Type type() const override { return CSSBasicShapePathType; }
+    virtual String cssText() const override;
+    virtual bool equals(const CSSBasicShape&) const override;
+
+    std::unique_ptr<SVGPathByteStream> m_byteStream;
+    WindRule m_windRule { RULE_NONZERO };
 };
 
 } // namespace WebCore
@@ -222,5 +247,6 @@ SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeInset)
 SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeCircle)
 SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapeEllipse)
 SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapePolygon)
+SPECIALIZE_TYPE_TRAITS_CSS_BASIC_SHAPES(CSSBasicShapePath)
 
 #endif // CSSBasicShapes_h

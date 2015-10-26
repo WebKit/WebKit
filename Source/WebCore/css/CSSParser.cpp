@@ -83,6 +83,8 @@
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGParserUtilities.h"
+#include "SVGPathByteStream.h"
+#include "SVGPathUtilities.h"
 #include "SelectorChecker.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "Settings.h"
@@ -6638,6 +6640,37 @@ RefPtr<CSSBasicShape> CSSParser::parseBasicShapePolygon(CSSParserValueList& args
     return shape;
 }
 
+RefPtr<CSSBasicShape> CSSParser::parseBasicShapePath(CSSParserValueList& args)
+{
+    unsigned size = args.size();
+    if (size != 1 && size != 3)
+        return nullptr;
+
+    WindRule windRule = RULE_NONZERO;
+
+    CSSParserValue* argument = args.current();
+    if (argument->id == CSSValueEvenodd || argument->id == CSSValueNonzero) {
+        windRule = argument->id == CSSValueEvenodd ? RULE_EVENODD : RULE_NONZERO;
+
+        if (!isComma(args.next()))
+            return nullptr;
+        argument = args.next();
+    }
+
+    if (argument->unit != CSSPrimitiveValue::CSS_STRING)
+        return nullptr;
+
+    auto byteStream = std::make_unique<SVGPathByteStream>();
+    if (!buildSVGPathByteStreamFromString(argument->string, *byteStream, UnalteredParsing))
+        return nullptr;
+
+    RefPtr<CSSBasicShapePath> shape = CSSBasicShapePath::create(WTF::move(byteStream));
+    shape->setWindRule(windRule);
+
+    args.next();
+    return shape;
+}
+
 static bool isBoxValue(CSSValueID valueId, CSSPropertyID propId)
 {
     switch (valueId) {
@@ -6748,6 +6781,8 @@ RefPtr<CSSPrimitiveValue> CSSParser::parseBasicShape()
         shape = parseBasicShapeEllipse(*args);
     else if (equalIgnoringCase(value.function->name, "polygon("))
         shape = parseBasicShapePolygon(*args);
+    else if (equalIgnoringCase(value.function->name, "path("))
+        shape = parseBasicShapePath(*args);
     else if (equalIgnoringCase(value.function->name, "inset("))
         shape = parseBasicShapeInset(*args);
 

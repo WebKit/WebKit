@@ -244,6 +244,7 @@ public:
     RefPtr<CSSBasicShape> parseBasicShapeCircle(CSSParserValueList&);
     RefPtr<CSSBasicShape> parseBasicShapeEllipse(CSSParserValueList&);
     RefPtr<CSSBasicShape> parseBasicShapePolygon(CSSParserValueList&);
+    RefPtr<CSSBasicShape> parseBasicShapePath(CSSParserValueList&);
     RefPtr<CSSBasicShape> parseBasicShapeInset(CSSParserValueList&);
 
     bool parseFont(bool important);

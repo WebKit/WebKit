@@ -30,17 +30,23 @@ namespace WebCore {
 
 bool SVGPathBlender::addAnimatedPath(SVGPathSource& fromSource, SVGPathSource& toSource, SVGPathConsumer& consumer, unsigned repeatCount)
 {
-    SVGPathBlender blender(fromSource, toSource, consumer);
+    SVGPathBlender blender(fromSource, toSource, &consumer);
     return blender.addAnimatedPath(repeatCount);
 }
 
 bool SVGPathBlender::blendAnimatedPath(SVGPathSource& fromSource, SVGPathSource& toSource, SVGPathConsumer& consumer, float progress)
 {
-    SVGPathBlender blender(fromSource, toSource, consumer);
+    SVGPathBlender blender(fromSource, toSource, &consumer);
     return blender.blendAnimatedPath(progress);
 }
 
-SVGPathBlender::SVGPathBlender(SVGPathSource& fromSource, SVGPathSource& toSource, SVGPathConsumer& consumer)
+bool SVGPathBlender::canBlendPaths(SVGPathSource& fromSource, SVGPathSource& toSource)
+{
+    SVGPathBlender blender(fromSource, toSource);
+    return blender.canBlendPaths();
+}
+
+SVGPathBlender::SVGPathBlender(SVGPathSource& fromSource, SVGPathSource& toSource, SVGPathConsumer* consumer)
     : m_fromSource(fromSource)
     , m_toSource(toSource)
     , m_consumer(consumer)
@@ -118,7 +124,10 @@ bool SVGPathBlender::blendMoveToSegment(float progress)
         || !m_toSource.parseMoveToSegment(toTargetPoint))
         return false;
 
-    m_consumer.moveTo(blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress), false, m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
+    if (!m_consumer)
+        return true;
+
+    m_consumer->moveTo(blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress), false, m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? fromTargetPoint : m_fromCurrentPoint + fromTargetPoint;
     m_toCurrentPoint = m_toMode == AbsoluteCoordinates ? toTargetPoint : m_toCurrentPoint + toTargetPoint;
     return true;
@@ -132,7 +141,10 @@ bool SVGPathBlender::blendLineToSegment(float progress)
         || !m_toSource.parseLineToSegment(toTargetPoint))
         return false;
 
-    m_consumer.lineTo(blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
+    if (!m_consumer)
+        return true;
+
+    m_consumer->lineTo(blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? fromTargetPoint : m_fromCurrentPoint + fromTargetPoint;
     m_toCurrentPoint = m_toMode == AbsoluteCoordinates ? toTargetPoint : m_toCurrentPoint + toTargetPoint;
     return true;
@@ -146,7 +158,10 @@ bool SVGPathBlender::blendLineToHorizontalSegment(float progress)
         || !m_toSource.parseLineToHorizontalSegment(toX))
         return false;
 
-    m_consumer.lineToHorizontal(blendAnimatedDimensonalFloat(fromX, toX, BlendHorizontal, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
+    if (!m_consumer)
+        return true;
+
+    m_consumer->lineToHorizontal(blendAnimatedDimensonalFloat(fromX, toX, BlendHorizontal, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint.setX(m_fromMode == AbsoluteCoordinates ? fromX : m_fromCurrentPoint.x() + fromX);
     m_toCurrentPoint.setX(m_toMode == AbsoluteCoordinates ? toX : m_toCurrentPoint.x() + toX);
     return true;
@@ -160,7 +175,10 @@ bool SVGPathBlender::blendLineToVerticalSegment(float progress)
         || !m_toSource.parseLineToVerticalSegment(toY))
         return false;
 
-    m_consumer.lineToVertical(blendAnimatedDimensonalFloat(fromY, toY, BlendVertical, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
+    if (!m_consumer)
+        return true;
+
+    m_consumer->lineToVertical(blendAnimatedDimensonalFloat(fromY, toY, BlendVertical, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint.setY(m_fromMode == AbsoluteCoordinates ? fromY : m_fromCurrentPoint.y() + fromY);
     m_toCurrentPoint.setY(m_toMode == AbsoluteCoordinates ? toY : m_toCurrentPoint.y() + toY);
     return true;
@@ -178,7 +196,10 @@ bool SVGPathBlender::blendCurveToCubicSegment(float progress)
         || !m_toSource.parseCurveToCubicSegment(toPoint1, toPoint2, toTargetPoint))
         return false;
 
-    m_consumer.curveToCubic(blendAnimatedFloatPoint(fromPoint1, toPoint1, progress),
+    if (!m_consumer)
+        return true;
+
+    m_consumer->curveToCubic(blendAnimatedFloatPoint(fromPoint1, toPoint1, progress),
         blendAnimatedFloatPoint(fromPoint2, toPoint2, progress),
         blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress),
         m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
@@ -197,7 +218,10 @@ bool SVGPathBlender::blendCurveToCubicSmoothSegment(float progress)
         || !m_toSource.parseCurveToCubicSmoothSegment(toPoint2, toTargetPoint))
         return false;
 
-    m_consumer.curveToCubicSmooth(blendAnimatedFloatPoint(fromPoint2, toPoint2, progress),
+    if (!m_consumer)
+        return true;
+
+    m_consumer->curveToCubicSmooth(blendAnimatedFloatPoint(fromPoint2, toPoint2, progress),
         blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress),
         m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? fromTargetPoint : m_fromCurrentPoint + fromTargetPoint;
@@ -215,7 +239,10 @@ bool SVGPathBlender::blendCurveToQuadraticSegment(float progress)
         || !m_toSource.parseCurveToQuadraticSegment(toPoint1, toTargetPoint))
         return false;
 
-    m_consumer.curveToQuadratic(blendAnimatedFloatPoint(fromPoint1, toPoint1, progress),
+    if (!m_consumer)
+        return true;
+
+    m_consumer->curveToQuadratic(blendAnimatedFloatPoint(fromPoint1, toPoint1, progress),
         blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress),
         m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? fromTargetPoint : m_fromCurrentPoint + fromTargetPoint;
@@ -231,7 +258,10 @@ bool SVGPathBlender::blendCurveToQuadraticSmoothSegment(float progress)
         || !m_toSource.parseCurveToQuadraticSmoothSegment(toTargetPoint))
         return false;
 
-    m_consumer.curveToQuadraticSmooth(blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
+    if (!m_consumer)
+        return true;
+
+    m_consumer->curveToQuadraticSmooth(blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint, progress), m_isInFirstHalfOfAnimation ? m_fromMode : m_toMode);
     m_fromCurrentPoint = m_fromMode == AbsoluteCoordinates ? fromTargetPoint : m_fromCurrentPoint + fromTargetPoint;
     m_toCurrentPoint = m_toMode == AbsoluteCoordinates ? toTargetPoint : m_toCurrentPoint + toTargetPoint;
     return true;
@@ -255,11 +285,14 @@ bool SVGPathBlender::blendArcToSegment(float progress)
         || !m_toSource.parseArcToSegment(toRx, toRy, toAngle, toLargeArc, toSweep, toTargetPoint))
         return false;
 
+    if (!m_consumer)
+        return true;
+
     if (m_addTypesCount) {
         ASSERT(m_fromMode == m_toMode);
         FloatPoint scaledToTargetPoint = toTargetPoint;
         scaledToTargetPoint.scale(m_addTypesCount, m_addTypesCount);
-        m_consumer.arcTo(fromRx + toRx * m_addTypesCount,
+        m_consumer->arcTo(fromRx + toRx * m_addTypesCount,
             fromRy + toRy * m_addTypesCount,
             fromAngle + toAngle * m_addTypesCount,
             fromLargeArc || toLargeArc,
@@ -267,7 +300,7 @@ bool SVGPathBlender::blendArcToSegment(float progress)
             fromTargetPoint + scaledToTargetPoint,
             m_fromMode);
     } else {
-        m_consumer.arcTo(blend(fromRx, toRx, progress),
+        m_consumer->arcTo(blend(fromRx, toRx, progress),
             blend(fromRy, toRy, progress),
             blend(fromAngle, toAngle, progress),
             m_isInFirstHalfOfAnimation ? fromLargeArc : toLargeArc,
@@ -312,6 +345,87 @@ bool SVGPathBlender::addAnimatedPath(unsigned repeatCount)
     return blendAnimatedPath(0);
 }
 
+bool SVGPathBlender::canBlendPaths()
+{
+    float progress = 0.5;
+    bool fromSourceHadData = m_fromSource.hasMoreData();
+    while (m_toSource.hasMoreData()) {
+        SVGPathSegType fromCommand;
+        SVGPathSegType toCommand;
+        if ((fromSourceHadData && !m_fromSource.parseSVGSegmentType(fromCommand)) || !m_toSource.parseSVGSegmentType(toCommand))
+            return false;
+
+        m_toMode = coordinateModeOfCommand(toCommand);
+        m_fromMode = fromSourceHadData ? coordinateModeOfCommand(fromCommand) : m_toMode;
+        if (m_fromMode != m_toMode && m_addTypesCount)
+            return false;
+
+        if (fromSourceHadData && !isSegmentEqual(fromCommand, toCommand, m_fromMode, m_toMode))
+            return false;
+
+        switch (toCommand) {
+        case PathSegMoveToRel:
+        case PathSegMoveToAbs:
+            if (!blendMoveToSegment(progress))
+                return false;
+            break;
+        case PathSegLineToRel:
+        case PathSegLineToAbs:
+            if (!blendLineToSegment(progress))
+                return false;
+            break;
+        case PathSegLineToHorizontalRel:
+        case PathSegLineToHorizontalAbs:
+            if (!blendLineToHorizontalSegment(progress))
+                return false;
+            break;
+        case PathSegLineToVerticalRel:
+        case PathSegLineToVerticalAbs:
+            if (!blendLineToVerticalSegment(progress))
+                return false;
+            break;
+        case PathSegClosePath:
+            break;
+        case PathSegCurveToCubicRel:
+        case PathSegCurveToCubicAbs:
+            if (!blendCurveToCubicSegment(progress))
+                return false;
+            break;
+        case PathSegCurveToCubicSmoothRel:
+        case PathSegCurveToCubicSmoothAbs:
+            if (!blendCurveToCubicSmoothSegment(progress))
+                return false;
+            break;
+        case PathSegCurveToQuadraticRel:
+        case PathSegCurveToQuadraticAbs:
+            if (!blendCurveToQuadraticSegment(progress))
+                return false;
+            break;
+        case PathSegCurveToQuadraticSmoothRel:
+        case PathSegCurveToQuadraticSmoothAbs:
+            if (!blendCurveToQuadraticSmoothSegment(progress))
+                return false;
+            break;
+        case PathSegArcRel:
+        case PathSegArcAbs:
+            if (!blendArcToSegment(progress))
+                return false;
+            break;
+        case PathSegUnknown:
+            return false;
+        }
+
+        if (!fromSourceHadData)
+            continue;
+        if (m_fromSource.hasMoreData() != m_toSource.hasMoreData())
+            return false;
+        if (!m_fromSource.hasMoreData() || !m_toSource.hasMoreData())
+            return true;
+    }
+
+    return true;
+}
+
 bool SVGPathBlender::blendAnimatedPath(float progress)
 {
     m_isInFirstHalfOfAnimation = progress < 0.5f;
@@ -353,7 +467,7 @@ bool SVGPathBlender::blendAnimatedPath(float progress)
                 return false;
             break;
         case PathSegClosePath:
-            m_consumer.closePath();
+            m_consumer->closePath();
             break;
         case PathSegCurveToCubicRel:
         case PathSegCurveToCubicAbs:

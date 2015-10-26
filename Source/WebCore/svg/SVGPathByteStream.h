@@ -49,6 +49,11 @@ public:
 
     SVGPathByteStream() { }
     SVGPathByteStream(const Data& data) : m_data(data) { }
+    
+    bool operator==(const SVGPathByteStream& other) const
+    {
+        return m_data == other.m_data;
+    }
 
     std::unique_ptr<SVGPathByteStream> copy() const
     {

@@ -125,6 +125,13 @@ bool buildSVGPathByteStreamFromString(const String& d, SVGPathByteStream& result
     return SVGPathParser::parseToByteStream(source, result, parsingMode);
 }
 
+bool canBlendSVGPathByteStreams(const SVGPathByteStream& fromStream, const SVGPathByteStream& toStream)
+{
+    SVGPathByteStreamSource fromSource(fromStream);
+    SVGPathByteStreamSource toSource(toStream);
+    return SVGPathBlender::canBlendPaths(fromSource, toSource);
+}
+
 bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& fromStream, const SVGPathByteStream& toStream, SVGPathByteStream& result, float progress)
 {
     ASSERT(&toStream != &result);

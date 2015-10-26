@@ -31,9 +31,12 @@
 
 #include "CSSBasicShapes.h"
 
+#include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
 #include "Pair.h"
+#include "SVGPathByteStream.h"
+#include "SVGPathUtilities.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
@@ -196,6 +199,47 @@ bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
         && compareCSSValuePtr(m_centerY, other.m_centerY)
         && compareCSSValuePtr(m_radiusX, other.m_radiusX)
         && compareCSSValuePtr(m_radiusY, other.m_radiusY);
+}
+
+CSSBasicShapePath::CSSBasicShapePath(std::unique_ptr<SVGPathByteStream>&& pathData)
+    : m_byteStream(WTF::move(pathData))
+{
+}
+
+static String buildPathString(const WindRule& windRule, const String& path, const String& box)
+{
+    StringBuilder result;
+    if (windRule == RULE_EVENODD)
+        result.appendLiteral("path(evenodd, ");
+    else
+        result.appendLiteral("path(");
+
+    result.append(quoteCSSString(path));
+    result.append(')');
+
+    if (box.length()) {
+        result.append(' ');
+        result.append(box);
+    }
+
+    return result.toString();
+}
+
+String CSSBasicShapePath::cssText() const
+{
+    String pathString;
+    buildStringFromByteStream(*m_byteStream, pathString, UnalteredParsing);
+
+    return buildPathString(m_windRule, pathString, m_referenceBox ? m_referenceBox->cssText() : String());
+}
+
+bool CSSBasicShapePath::equals(const CSSBasicShape& otherShape) const
+{
+    if (!is<CSSBasicShapePath>(otherShape))
+        return false;
+
+    auto& otherShapePath = downcast<CSSBasicShapePath>(otherShape);
+    return windRule() == otherShapePath.windRule() && pathData() == otherShapePath.pathData();
 }
 
 static String buildPolygonString(const WindRule& windRule, const Vector<String>& points)

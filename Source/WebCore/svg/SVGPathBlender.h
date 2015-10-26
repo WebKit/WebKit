@@ -39,8 +39,12 @@ public:
     static bool addAnimatedPath(SVGPathSource& from, SVGPathSource& to, SVGPathConsumer&, unsigned repeatCount);
     static bool blendAnimatedPath(SVGPathSource& from, SVGPathSource& to, SVGPathConsumer&, float);
 
+    static bool canBlendPaths(SVGPathSource& from, SVGPathSource& to);
+
 private:
-    SVGPathBlender(SVGPathSource&, SVGPathSource&, SVGPathConsumer&);
+    SVGPathBlender(SVGPathSource&, SVGPathSource&, SVGPathConsumer* = nullptr);
+
+    bool canBlendPaths();
 
     bool addAnimatedPath(unsigned repeatCount);
     bool blendAnimatedPath(float progress);
@@ -60,7 +64,7 @@ private:
 
     SVGPathSource& m_fromSource;
     SVGPathSource& m_toSource;
-    SVGPathConsumer& m_consumer;
+    SVGPathConsumer* m_consumer; // A null consumer indicates that we're just checking blendability.
 
     FloatPoint m_fromCurrentPoint;
     FloatPoint m_toCurrentPoint;

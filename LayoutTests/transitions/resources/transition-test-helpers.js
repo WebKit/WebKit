@@ -69,17 +69,35 @@ function parseCrossFade(s)
     return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
 }
 
+function extractPathValues(path)
+{
+    var components = path.split(' ');
+    var result = [];
+    for (component of components) {
+        var compMatch;
+        if (compMatch = component.match(/[0-9.-]+/)) {
+            result.push(parseFloat(component))
+        }
+    }
+    return result;
+}
+
 function parseClipPath(s)
 {
+    var pathMatch;
+    if (pathMatch = s.match(/path\(((evenodd|nonzero), ?)?\'(.+)\'\)/))
+        return extractPathValues(pathMatch[pathMatch.length - 1]);
+    
     // FIXME: This only matches a subset of the shape syntax, and the polygon expects 4 points.
     var patterns = [
         /inset\(([\d.]+)\w+ ([\d.]+)\w+\)/,
         /circle\(([\d.]+)\w+ at ([\d.]+)\w+ ([\d.]+)\w+\)/,
         /ellipse\(([\d.]+)\w+ ([\d.]+)\w+ at ([\d.]+)\w+ ([\d.]+)\w+\)/,
-        /polygon\(([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\)/
+        /polygon\(([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\, ([\d.]+)\w* ([\d.]+)\w*\)/,
     ];
     
     for (pattern of patterns) {
+        var matchResult;
         if (matchResult = s.match(pattern)) {
             var result = [];
             for (var i = 1; i < matchResult.length; ++i)
