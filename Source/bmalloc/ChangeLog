@@ -1,3 +1,41 @@
+2015-10-15  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: per-thread cache data structure should be smaller
+        https://bugs.webkit.org/show_bug.cgi?id=150218
+
+        Reviewed by Andreas Kling.
+
+        Reduce the number of entries in the range cache because it's really
+        big, and the bigness only helps in cases of serious fragmentation, and
+        it only saves us a little bit of lock acquisition time.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::scavenge):
+        (bmalloc::Allocator::refillAllocatorSlowCase):
+        (bmalloc::Allocator::refillAllocator):
+        (bmalloc::Allocator::allocateLarge):
+        (bmalloc::Allocator::allocateSlowCase):
+        (bmalloc::Allocator::allocateBumpRangeSlowCase): Deleted.
+        (bmalloc::Allocator::allocateBumpRange): Deleted.
+        * bmalloc/Allocator.h: Pass through the empty allocator and the range
+        cache when refilling, and refill both. Otherwise, we always immediately
+        pop the last item in the range cache, wasting that slot of capacity.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::allocateMediumBumpRanges): Account for the fact that
+        the range cache is no longer big enough to guarantee that it can hold
+        all the ranges in a page.
+
+        (bmalloc::Heap::refillSmallBumpRangeCache): Deleted.
+        (bmalloc::Heap::refillMediumBumpRangeCache): Deleted.
+
+        * bmalloc/Heap.h: Move VMHeap to the end of the object because it
+        contains a lot of unused / wasted space, and we want to pack our data
+        together in memory.
+
+        * bmalloc/Sizes.h: Make the range cache smaller.
+
 2015-10-13  Chris Dumez  <cdumez@apple.com>
 
         Avoid useless copies in range-loops that are using 'auto'

@@ -45,6 +45,7 @@
 namespace bmalloc {
 
 class BeginTag;
+class BumpAllocator;
 class EndTag;
 
 class Heap {
@@ -53,10 +54,10 @@ public:
     
     Environment& environment() { return m_environment; }
 
-    void refillSmallBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpRangeCache&);
+    void allocateSmallBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpAllocator&, BumpRangeCache&);
     void derefSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
 
-    void refillMediumBumpRangeCache(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpRangeCache&);
+    void allocateMediumBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpAllocator&, BumpRangeCache&);
     void derefMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
 
     void* allocateLarge(std::lock_guard<StaticMutex>&, size_t);
@@ -108,11 +109,11 @@ private:
     Vector<Range> m_xLargeObjects;
 
     bool m_isAllocatingPages;
+    AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 
     Environment m_environment;
 
     VMHeap m_vmHeap;
-    AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 };
 
 inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, SmallLine* line)

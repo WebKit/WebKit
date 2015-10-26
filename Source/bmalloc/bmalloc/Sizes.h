@@ -93,7 +93,7 @@ namespace Sizes {
     static const uintptr_t smallOrMediumSmallTypeMask = smallType ^ mediumType; // Only valid if object is known to be small or medium.
 
     static const size_t deallocatorLogCapacity = 256;
-    static const size_t bumpRangeCacheCapacity = vmPageSize / smallLineSize / 2;
+    static const size_t bumpRangeCacheCapacity = 3;
     
     static const std::chrono::milliseconds scavengeSleepDuration = std::chrono::milliseconds(512);
 

@@ -203,25 +203,23 @@ void Allocator::scavenge()
     }
 }
 
-NO_INLINE BumpRange Allocator::allocateBumpRangeSlowCase(size_t sizeClass)
+NO_INLINE void Allocator::refillAllocatorSlowCase(BumpAllocator& allocator, size_t sizeClass)
 {
     BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
 
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     if (sizeClass <= bmalloc::sizeClass(smallMax))
-        PerProcess<Heap>::getFastCase()->refillSmallBumpRangeCache(lock, sizeClass, bumpRangeCache);
+        PerProcess<Heap>::getFastCase()->allocateSmallBumpRanges(lock, sizeClass, allocator, bumpRangeCache);
     else
-        PerProcess<Heap>::getFastCase()->refillMediumBumpRangeCache(lock, sizeClass, bumpRangeCache);
-
-    return bumpRangeCache.pop();
+        PerProcess<Heap>::getFastCase()->allocateMediumBumpRanges(lock, sizeClass, allocator, bumpRangeCache);
 }
 
-INLINE BumpRange Allocator::allocateBumpRange(size_t sizeClass)
+INLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeClass)
 {
     BumpRangeCache& bumpRangeCache = m_bumpRangeCaches[sizeClass];
     if (!bumpRangeCache.size())
-        return allocateBumpRangeSlowCase(sizeClass);
-    return bumpRangeCache.pop();
+        return refillAllocatorSlowCase(allocator, sizeClass);
+    return allocator.refill(bumpRangeCache.pop());
 }
 
 NO_INLINE void* Allocator::allocateLarge(size_t size)
@@ -246,7 +244,7 @@ void* Allocator::allocateSlowCase(size_t size)
     if (size <= mediumMax) {
         size_t sizeClass = bmalloc::sizeClass(size);
         BumpAllocator& allocator = m_bumpAllocators[sizeClass];
-        allocator.refill(allocateBumpRange(sizeClass));
+        refillAllocator(allocator, sizeClass);
         return allocator.allocate();
     }
 
