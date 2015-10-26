@@ -1,5 +1,5 @@
- 
+
 
 PASS input type=image should not be present in the form.elements collection 
-FAIL form.elements should include elements whose name starts with a number assert_equals: [2] expected (undefined) undefined but got (object) Element node <input name="2"></input>
+PASS form.elements should include elements whose name starts with a number 
 

@@ -442,8 +442,15 @@ sub GenerateGetOwnPropertySlotBody
             &$prototypeCheck();
         }
 
-        # This condition is to make sure we use the subclass' named getter instead of the base class one when possible.
-        push(@getOwnPropertySlotImpl, "    if (thisObject->classInfo() == info()) {\n");
+        # The "thisObject->classInfo() == info()" check is to make sure we use the subclass' named getter
+        # instead of the base class one when possible.
+        if ($indexedGetterFunction) {
+            # Indexing an object with an integer that is not a supported property index should not call the named property getter.
+            # https://heycam.github.io/webidl/#idl-indexed-properties
+            push(@getOwnPropertySlotImpl, "    if (!optionalIndex && thisObject->classInfo() == info()) {\n");
+        } else {
+            push(@getOwnPropertySlotImpl, "    if (thisObject->classInfo() == info()) {\n");
+        }
         push(@getOwnPropertySlotImpl, "        JSValue value;\n");
         push(@getOwnPropertySlotImpl, "        if (thisObject->nameGetter(state, propertyName, value)) {\n");
         push(@getOwnPropertySlotImpl, "            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);\n");
@@ -2234,7 +2241,9 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
 
-            if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
+            # Indexing an object with an integer that is not a supported property index should not call the named property getter.
+            # https://heycam.github.io/webidl/#idl-indexed-properties
+            if (!$indexedGetterFunction && ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"})) {
                 &$propertyNameGeneration();
 
                 # This condition is to make sure we use the subclass' named getter instead of the base class one when possible.
