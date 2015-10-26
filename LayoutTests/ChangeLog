@@ -1,3 +1,14 @@
+2015-10-21  Dean Jackson  <dino@apple.com>
+
+        Null dereference loading Blink layout test svg/filters/display-none-filter-primitive.html
+        https://bugs.webkit.org/show_bug.cgi?id=150212
+        <rdar://problem/23137376>
+
+        Reviewed by Brent Fulgham.
+
+        * svg/filters/display-none-filter-primitive-expected.txt: Added.
+        * svg/filters/display-none-filter-primitive.html: Added.
+
 2015-10-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Avoid to insert TAB before HTML element.

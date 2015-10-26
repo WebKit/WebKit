@@ -68,7 +68,7 @@ void SVGFilterBuilder::appendEffectToEffectReferences(PassRefPtr<FilterEffect> p
 
     // The effect must be a newly created filter effect.
     ASSERT(!m_effectReferences.contains(effect));
-    ASSERT(object && !m_effectRenderer.contains(object));
+    ASSERT(!object || !m_effectRenderer.contains(object));
     m_effectReferences.add(effect, FilterEffectSet());
 
     unsigned numberOfInputEffects = effect->inputEffects().size();
@@ -76,7 +76,12 @@ void SVGFilterBuilder::appendEffectToEffectReferences(PassRefPtr<FilterEffect> p
     // It is not possible to add the same value to a set twice.
     for (unsigned i = 0; i < numberOfInputEffects; ++i)
         effectReferences(effect->inputEffect(i)).add(effect.get());
-    m_effectRenderer.add(object, effect.get());
+
+    // If object is null, that means the element isn't attached for some
+    // reason, which in turn mean that certain types of invalidation will not
+    // work (the LayoutObject -> FilterEffect mapping will not be defined).
+    if (object)
+        m_effectRenderer.add(object, effect.get());
 }
 
 void SVGFilterBuilder::clearEffects()
