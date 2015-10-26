@@ -350,7 +350,9 @@ void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRef
     ASSERT(insertChild);
     ASSERT(refChild);
     ContainerNode* parent = refChild->parentNode();
-    ASSERT(parent);
+    if (!parent)
+        return;
+
     ASSERT(!parent->isShadowRoot());
     if (parent->lastChild() == refChild)
         appendNode(insertChild, parent);
