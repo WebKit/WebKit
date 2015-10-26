@@ -4,7 +4,8 @@ var self = this;
 
 self.testRunner = {
     neverInlineFunction: neverInlineFunction,
-    numberOfDFGCompiles: numberOfDFGCompiles
+    numberOfDFGCompiles: numberOfDFGCompiles,
+    failNextNewCodeBlock: failNextNewCodeBlock
 };
 
 var silentTestPass, didPassSomeTestsSilently, didFailSomeTests, successfullyParsed;

@@ -279,6 +279,7 @@ public:
 
     bool secureEventInputIsEnabled() const;
     
+    JSValueRef failNextNewCodeBlock();
     JSValueRef numberOfDFGCompiles(JSValueRef theFunction);
     JSValueRef neverInlineFunction(JSValueRef theFunction);
 
