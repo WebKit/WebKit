@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="resources/animometer.css">
+    <script src="../resources/strings.js" defer></script>
     <script src="../resources/sampler.js" defer></script>
     <script src="../resources/extensions.js" defer></script>
     <script src="resources/tests.js" defer=""></script>
@@ -43,15 +44,32 @@
             </div>
         </section>
         <section id="results">
-            <h1>Results</h1>
+            <h1>Results:</h1>
             <table class="results-table"></table>
             <div class="buttons">
+                <button onclick="showJson()">JSON</button>
                 <button onclick="startTest()">Test Again</button>
             </div>
         </section>  
-        <section id="graph">
-            <h1>Graph</h1>
+        <section id="json">
+            <h1>JSON:</h1>
+            <textarea class="results-json"></textarea>
+            <div class="buttons">
+                <button onclick="showResults()">Results</button>
+                <button onclick="startTest()">Test Again</button>
+            </div>
+        </section>  
+        <section id="test-graph">
+            <h1>Graph:</h1>
             <div id="graphContainer"></div>
+            <div class="buttons">
+                <button onclick="showResults()">Results</button>
+                <button onclick="startTest()">Test Again</button>        
+            </div>
+        </section>  
+        <section id="test-json">
+            <h1>JSON:</h1>
+            <textarea class="results-json"></textarea>
             <div class="buttons">
                 <button onclick="showResults()">Results</button>
                 <button onclick="startTest()">Test Again</button>        

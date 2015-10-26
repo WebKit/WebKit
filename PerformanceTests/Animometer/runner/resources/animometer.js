@@ -5,7 +5,7 @@ window.benchmarkRunnerClient = {
     recordTable: null,
     options: { testInterval: 30000, frameRate: 50, estimatedFrameRate: true, fixTestComplexity : false },
     score: 0,
-    _iterationsSamplers: [],
+    _resultsDashboard: null,
     _resultsTable: null,
     
     willAddTestFrame: function (frame)
@@ -23,21 +23,31 @@ window.benchmarkRunnerClient = {
     
     willStartFirstIteration: function ()
     {
-        this._iterationsSamplers = [];
-        this._resultsTable = new RecordTable(document.querySelectorAll(".results-table")[0]);
+        this._resultsDashboard = new ResultsDashboard();
+        this._resultsTable = new ResultsTable(document.querySelector(".results-table"), Headers);
         
         this.progressBar = new ProgressBar(document.getElementById("progress-completed"), this.testsCount);
-        this.recordTable = new RecordTable(document.querySelectorAll(".record-table")[0]);
+        this.recordTable = new ResultsTable(document.querySelector(".record-table"), Headers);
     },
     
     didRunSuites: function (suitesSamplers)
     {
-        this._iterationsSamplers.push(suitesSamplers);
+        this._resultsDashboard.push(suitesSamplers);
     },
     
     didFinishLastIteration: function ()
     {
-        this.score = this._resultsTable.showIterations(this._iterationsSamplers, "");
+        var json = this._resultsDashboard.toJSON(true, true);
+        this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]]);
+        
+        var element = document.querySelector("#json > textarea");
+        element.innerHTML = JSON.stringify(json[Strings["JSON_RESULTS"][0]][0], function(key, value) { 
+            if (typeof value == "number")
+                return value.toFixed(2);
+            return value;
+        }, 4);
+        
+        this.score = json[Strings["JSON_SCORE"]];
         showResults();
     }
 }
@@ -92,10 +102,10 @@ function startTest()
     startBenchmark();
 }
 
-function showResults(score)
+function showResults()
 {
     var element = document.querySelector("#results > h1");
-    element.textContent = "Results:"
+    element.textContent = Strings["TEXT_RESULTS"][0] + ":";
     
     var score = benchmarkRunnerClient.score.toFixed(2);
     element.textContent += " [Score = " + score + "]";
@@ -103,16 +113,45 @@ function showResults(score)
     showSection("results", true);
 }
 
-function showGraph(testName, axes, samples, samplingTimeOffset)
+function showJson()
 {
-    var element = document.querySelector("#graph > h1");
-    element.textContent = "Graph:"
+    var element = document.querySelector("#json > h1");
+    element.textContent = Strings["TEXT_RESULTS"][2] + ":";
+    
+    var score = benchmarkRunnerClient.score.toFixed(2);
+    element.textContent += " [Score = " + score + "]";
+
+    showSection("json", true);
+}
+
+function showTestGraph(testName, axes, samples, samplingTimeOffset)
+{
+    var element = document.querySelector("#test-graph > h1");
+    element.textContent = Strings["TEXT_RESULTS"][1] + ":";
 
     if (testName.length)
         element.textContent += " [test = " + testName + "]";
             
     graph("#graphContainer", new Point(700, 400), new Insets(20, 50, 20, 50), axes, samples, samplingTimeOffset);
-    showSection("graph", true);    
+    showSection("test-graph", true);    
+}
+
+function showTestJSON(testName, testResults)
+{
+    var element = document.querySelector("#test-json > h1");
+    element.textContent = Strings["TEXT_RESULTS"][2] + ":";
+
+    if (testName.length)
+        element.textContent += " [test = " + testName + "]";
+            
+    var element = document.querySelector("#test-json > textarea");
+    element.innerHTML = JSON.stringify(testResults, function(key, value) { 
+        if (typeof value == "number")
+            return value.toFixed(2);
+        return value;
+    }, 4);
+
+    showSection("test-json", true);    
 }
 
 function populateSettings() {

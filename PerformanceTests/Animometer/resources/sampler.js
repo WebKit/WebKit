@@ -103,22 +103,49 @@ function Sampler(count)
 
 Sampler.prototype =
 {
-    startSampling: function(timeOffset)
+    startSampling: function(samplingTimeOffset)
     {
-        for (var index = 0; index < this.experiments.length; ++index)
-            this.experiments[index].startSampling();
+        this.experiments.forEach(function(experiment) {
+            experiment.startSampling();
+        });
             
-        this.samplingTimeOffset = timeOffset / 1000;
+        this.samplingTimeOffset = samplingTimeOffset / 1000;
     },
     
     sample: function(timeOffset, values)
     {
         if (values.length < this.experiments.length)
             throw "Not enough sample points";
+
+        this.experiments.forEach(function(experiment, index) {
+            experiment.sample(values[index]);
+        });
                     
-        for (var index = 0; index < this.experiments.length; ++index)
-            this.experiments[index].sample(values[index]);
-            
         this.samples.push({ timeOffset: timeOffset / 1000, values: values });
+    },
+    
+    toJSON: function(statistics, graph)
+    {
+        var results = {};
+         
+        results[Strings["JSON_SCORE"]] = this.experiments[0].score(Experiment.defaults.CONCERN);
+           
+        if (statistics) {
+            this.experiments.forEach(function(experiment, index) {
+                results[Strings["JSON_EXPERIMENTS"][index]] = {};
+                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][0]] = experiment.mean();
+                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][1]] = experiment.concern(Experiment.defaults.CONCERN);
+                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][2]] = experiment.standardDeviation();
+                results[Strings["JSON_EXPERIMENTS"][index]][Strings["JSON_MEASUREMENTS"][3]] = experiment.percentage();
+            });
+        }
+        
+        if (graph) {
+            results[Strings["JSON_SAMPLES"][0]] = {};
+            results[Strings["JSON_SAMPLES"][0]][Strings["JSON_GRAPH"][0]] = this.samples;
+            results[Strings["JSON_SAMPLES"][0]][Strings["JSON_GRAPH"][1]] = this.samplingTimeOffset;
+        }
+        
+        return results;
     }
 }

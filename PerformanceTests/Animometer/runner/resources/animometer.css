@@ -117,6 +117,17 @@ section#results > table th {
     text-align: center;
 }
 
+section#test-json > textarea,
+section#json > textarea {
+    width: 800px;
+    height: 460px;
+    background-color: rgb(128, 128, 128);
+    border: 1px solid rgb(235, 235, 235);
+    color: white;
+    white-space: pre;
+    overflow: scroll;
+}
+
 .options {
     margin:0 auto;    
     margin-top: 30px;

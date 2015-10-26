@@ -1,46 +1,49 @@
-var Titles = [
+var Headers = [
     {
-        text: "Test Name",
-        width: 28,
+        text: Strings["TEXT_TESTNAME"][0],
+        width: 27,
         children: []
     },
     {
-        text: "Animated Items",
-        width: 28,
+        text: Strings["TEXT_SCORE"][0],
+        width: 7,
+        children: []
+    },
+    {
+        text: Strings["TEXT_EXPERIMENTS"][0],
+        width: 27,
         children:
         [
-            { text:   "Avg.", width: 7, children: [] },
-            { text:   "W.5%", width: 7, children: [] },
-            { text:   "Std.", width: 7, children: [] },
-            { text:      "%", width: 7, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][0], width: 7, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][1], width: 7, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][2], width: 7, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][3], width: 6, children: [] },
         ]
     },
     {
-        text: "FPS",
-        width: 28,
+        text: Strings["TEXT_EXPERIMENTS"][1],
+        width: 24,
         children:
         [
-            { text:   "Avg.", width: 7, children: [] },
-            { text:   "W.5%", width: 7, children: [] },
-            { text:   "Std.", width: 7, children: [] },
-            { text:      "%", width: 7, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][0], width: 6, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][1], width: 6, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][2], width: 6, children: [] },
+            { text: Strings["TEXT_MEASUREMENTS"][3], width: 6, children: [] },
         ]
     },
     {
-        text: "Score",
-        width: 8,
-        children: []
-    },
-    {
-        text: "Samples",
-        width: 8,
-        children: []
+        text: Strings["TEXT_SAMPLES"][0],
+        width: 15,
+        children:
+        [
+            { text: Strings["TEXT_RESULTS"][1], width: 8, children: [] },
+            { text: Strings["TEXT_RESULTS"][2], width: 7, children: [] },
+        ]
     }
 ];
 
 var Suite = function(name, tests) {
     this.name = name;
-    this.titles = Titles;
     this.tests = tests;
 };
 Suite.prototype.prepare = function(runner, contentWindow, contentDocument)
@@ -53,7 +56,6 @@ Suite.prototype.run = function(contentWindow, test, options, recordTable, progre
 {
     return contentWindow.runBenchmark(this, test, options, recordTable, progressBar);
 };
-
 
 var Suites = [];
 

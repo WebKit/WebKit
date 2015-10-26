@@ -174,11 +174,11 @@ StageBenchmark.prototype.clear = function()
 
 StageBenchmark.prototype.showResults = function(message, progress)
 {
-    if (!this._recordTable || !this._progressBar || !this._suite || !this._test)
+    if (!this._recordTable || !this._progressBar || !this._test)
         return;
 
     if (this.options.showRunningResults)
-        this._recordTable.showRecord(this._suite, this._test, this._sampler, message);
+        this._recordTable.showRecord(this._test.name, message, this._sampler.toJSON(true, false));
 
     this._progressBar.setPos(progress);
 }

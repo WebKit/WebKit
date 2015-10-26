@@ -1,3 +1,105 @@
+2015-10-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add an option to output the results of the graphics benchmark in JSON format
+        https://bugs.webkit.org/show_bug.cgi?id=150484
+        <rdar://problem/23243721>
+
+        Reviewed by Darin Adler.
+
+        * Animometer/resources/extensions.js:
+        (ResultsDashboard): A new class to hold the iterations results.
+        (ResultsDashboard.prototype.push): Appends an iteration results;
+        (ResultsDashboard.prototype.toJSON): Converts the iterations results to JSON format.
+
+        (RecordTable.prototype.clear): Clears the results table.
+        (RecordTable.prototype._showTitles): Shows the header titles and appends the sub-titles to a queue.
+        (RecordTable.prototype._showHeader): Shows the table header titles.
+        (RecordTable.prototype._showEmpty): Shows an empty table cell.
+        (RecordTable.prototype._showValue): Shows a number value in the results table.
+        (RecordTable.prototype._showSamples): Shows a button for the sampled data graph.
+        (RecordTable.prototype._showTest): Shows the results of a single test.
+        (RecordTable.prototype._showSuite): Shows the results of a single suite.
+        (RecordTable.prototype.showRecord): Shows a single iteration for a single test.
+        (RecordTable.prototype.showIterations): Shows the results of all the suites of the iterations. 
+        
+        (ResultsTable): RecordTable was renamed to ResultsTable.
+        (ResultsTable.prototype.clear): Clears the table element.
+        (ResultsTable.prototype._showHeaderRow): Shows a row in the results table header.
+        (ResultsTable.prototype._showHeader): Shows the results table header.
+        (ResultsTable.prototype._showEmpty): Shows an empty table cell.
+        (ResultsTable.prototype._showText): Shows a string in a new table cell.
+        (ResultsTable.prototype._showFixedNumber): Shows a number in a new table cell.
+        (ResultsTable.prototype._showGraph): Shows a button for the sampled data graph.
+        (ResultsTable.prototype._showJSON): Shows a button for the sampled data JSON.
+        (ResultsTable.prototype._showTest): Shows the results of a single test.
+        (ResultsTable.prototype._showSuite): Shows the results of a single suite.
+        (ResultsTable.prototype._showIteration): Shows the results of a single iteration.
+        (ResultsTable.prototype.showRecord): Shows a single iteration for a single test.
+        (ResultsTable.prototype.showIterations): Shows all the results.
+        (RecordTable): Deleted.
+        (RecordTable.prototype.clear): Deleted.
+        (RecordTable.prototype._showTitles): Deleted.
+        (RecordTable.prototype._showHeader): Deleted.
+        (RecordTable.prototype._showEmpty): Deleted.
+        (RecordTable.prototype._showValue): Deleted.
+        (RecordTable.prototype._showSamples): Deleted.
+        (RecordTable.prototype._showTest): Deleted.
+        (RecordTable.prototype._showSuite): Deleted.
+        (RecordTable.prototype.showRecord): Deleted.
+        (RecordTable.prototype.showIterations): Deleted.
+        
+        * Animometer/resources/sampler.js:
+        (Sampler.prototype.startSampling): Use forEach.
+        (Sampler.prototype.sample): Use forEach.
+        (Sampler.prototype.toJSON): Converts the sampler data to JSON format.
+        
+        * Animometer/resources/strings.js: Added.
+        This new file will be used to associate the strings used by the benchmark
+        with IDs. A string can be changed in one place without having to change
+        all the instances of this string in multiple files. There two groups of
+        strings in this file. The first one is used by the UI elements and the second
+        group is used when constructing the results JSON.
+        
+        * Animometer/runner/animometer.html:
+        * Animometer/runner/resources/animometer.css:
+        
+        * Animometer/runner/resources/animometer.js:
+        (window.benchmarkRunnerClient.willAddTestFrame):
+        (window.benchmarkRunnerClient.willStartFirstIteration):
+        (window.benchmarkRunnerClient.didRunSuites):
+        (window.benchmarkRunnerClient.didFinishLastIteration):
+        Make benchmarkRunnerClient uses ResultsDashboard instead of _iterationsSamplers
+        Get the JSON from ResultsDashboard.toJSON() and pass it to ResultsTable.showIterations().
+        Also set the textContent of the "#json" textarea with the results JSON.
+        
+        (showResults): Delete unneeded code.
+        (showJson): Shows the "json" section.
+        (showTestGraph): Rename showGraph() to be showTestGraph().
+        (showTestJSON): Shows the JSON of a single testResults.
+        (showGraph): Deleted.
+        
+        * Animometer/runner/resources/tests.js:
+        Use the string table instead of putting literal strings.
+
+        * Animometer/tests/resources/stage.js:
+        (StageBenchmark.prototype.showResults):
+        Fix the parameters which are passed to RecordTable.showRecord().
+        
+        * Animometer/tests/bouncing-particles/bouncing-canvas-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-css-shapes.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-images.html:
+        * Animometer/tests/bouncing-particles/bouncing-svg-shapes.html:
+        * Animometer/tests/examples/canvas-electrons.html:
+        * Animometer/tests/examples/canvas-stars.html:
+        * Animometer/tests/simple/simple-canvas-paths.html:
+        * Animometer/tests/template/template-canvas.html:
+        * Animometer/tests/template/template-css.html:
+        * Animometer/tests/template/template-svg.html:
+        * Animometer/tests/text/layering-text.html:
+        Include the new strings.js file in all the test files.
+
 2015-10-12  Jon Lee  <jonlee@apple.com>
 
         Add canvas line dash test
