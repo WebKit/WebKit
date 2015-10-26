@@ -15,7 +15,7 @@ FAIL Piping from an empty ReadableStream to a WritableStream in the waiting stat
 FAIL Piping from an empty ReadableStream which becomes closed after a pipeTo call to a WritableStream in the waiting state whose writes never complete write not implemented
 FAIL Piping from an empty ReadableStream which becomes errored after a pipeTo call to a WritableStream in the waiting state write not implemented
 FAIL Piping to a duck-typed asynchronous "writable stream" works pipeTo is not implemented
-FAIL Piping to a stream that has been aborted passes through the error as the cancellation reason abort not implemented
+FAIL Piping to a stream that has been aborted passes through the error as the cancellation reason pipeTo is not implemented
 FAIL Piping to a stream and then aborting it passes through the error as the cancellation reason pipeTo is not implemented
 FAIL Piping to a stream that has been closed propagates a TypeError cancellation reason backward close not implemented
 FAIL Piping to a stream and then closing it propagates a TypeError cancellation reason backward pipeTo is not implemented

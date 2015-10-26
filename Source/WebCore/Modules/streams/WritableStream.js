@@ -68,7 +68,20 @@ function abort(reason)
 {
     "use strict";
 
-    throw new EvalError("abort not implemented");
+    if (!@isWritableStream(this))
+        return Promise.reject(new @TypeError("The WritableStream.abort method can only be used on instances of WritableStream"));
+
+    if (this.@state === "closed")
+        return Promise.resolve(undefined);
+
+    if (this.@state === "errored")
+        return Promise.reject(this.@storedError);
+
+    @errorWritableStream.@apply(this, [reason]);
+
+    const sinkAbortPromise = @promiseInvokeOrFallbackOrNoop(this.@underlyingSink, "abort", [reason], "close", []);
+
+    return sinkAbortPromise.then(function() { return undefined; });
 }
 
 function close()

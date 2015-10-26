@@ -54,6 +54,22 @@ function promiseInvokeOrNoop(object, key, args)
 
 }
 
+function promiseInvokeOrFallbackOrNoop(object, key1, args1, key2, args2)
+{
+    "use strict";
+
+    try {
+        const method = object[key1];
+        if (typeof method === "undefined")
+            return @promiseInvokeOrNoop(object, key2, args2);
+        const result = method.@apply(object, args1);
+        return Promise.resolve(result);
+    }
+    catch(error) {
+        return Promise.reject(error);
+    }
+}
+
 function validateAndNormalizeQueuingStrategy(size, highWaterMark)
 {
     "use strict";

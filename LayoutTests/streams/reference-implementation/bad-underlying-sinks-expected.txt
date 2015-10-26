@@ -3,8 +3,8 @@ PASS Underlying sink: throwing start getter
 PASS Underlying sink: throwing start method 
 FAIL Underlying sink: throwing write getter write not implemented
 FAIL Underlying sink: throwing write method write not implemented
-FAIL Underlying sink: throwing abort getter abort not implemented
-FAIL Underlying sink: throwing abort method abort not implemented
+PASS Underlying sink: throwing abort getter 
+PASS Underlying sink: throwing abort method 
 FAIL Underlying sink: throwing close getter close not implemented
 FAIL Underlying sink: throwing close method close not implemented
 
