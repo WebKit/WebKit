@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Logging.h"
+#include "MemoryObjectStore.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -100,6 +101,39 @@ IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& t
     transaction->commit();
 
     return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& info)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::createObjectStore");
+
+    ASSERT(m_databaseInfo);
+    if (m_databaseInfo->hasObjectStore(info.name()))
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    ASSERT(!m_objectStores.contains(info.identifier()));
+    auto objectStore = MemoryObjectStore::create(info);
+
+    m_databaseInfo->addExistingObjectStore(info);
+
+    auto rawTransaction = m_transactions.get(transactionIdentifier);
+    ASSERT(rawTransaction);
+    ASSERT(rawTransaction->isVersionChange());
+
+    rawTransaction->addNewObjectStore(*objectStore);
+    m_objectStores.set(info.identifier(), WTF::move(objectStore));
+
+    return IDBError();
+}
+
+void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");
+
+    ASSERT(m_objectStores.contains(objectStore.info().identifier()));
+    ASSERT(m_objectStores.get(objectStore.info().identifier()) == &objectStore);
+
+    m_objectStores.remove(objectStore.info().identifier());
 }
 
 } // namespace IDBServer

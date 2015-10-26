@@ -39,6 +39,10 @@ static const String& idbErrorName(IDBExceptionCode code)
         static NeverDestroyed<String> entry = ASCIILiteral("UnknownError");
         return entry;
     }
+    case IDBExceptionCode::ConstraintError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("ConstraintError");
+        return entry;
+    }
     case IDBExceptionCode::VersionError: {
         static NeverDestroyed<String> entry = ASCIILiteral("VersionError");
         return entry;
@@ -59,6 +63,10 @@ static const String& idbErrorDescription(IDBExceptionCode code)
     switch (code) {
     case IDBExceptionCode::Unknown: {
         static NeverDestroyed<String> entry = ASCIILiteral("Operation failed for reasons unrelated to the database itself and not covered by any other errors.");
+        return entry.get();
+    }
+    case IDBExceptionCode::ConstraintError: {
+        static NeverDestroyed<String> entry = ASCIILiteral("Mutation operation in the transaction failed because a constraint was not satisfied.");
         return entry.get();
     }
     case IDBExceptionCode::VersionError: {

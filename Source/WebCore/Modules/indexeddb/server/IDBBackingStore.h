@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class IDBObjectStoreInfo;
 class IDBResourceIdentifier;
 class IDBTransactionInfo;
 
@@ -47,6 +48,8 @@ public:
     virtual IDBError beginTransaction(const IDBTransactionInfo&) = 0;
     virtual IDBError abortTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
     virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
+
+    virtual IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) = 0;
 };
 
 } // namespace IDBServer

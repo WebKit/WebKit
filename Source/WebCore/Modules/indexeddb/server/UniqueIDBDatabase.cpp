@@ -222,6 +222,9 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::createObjectStore");
 
+    ASSERT(m_backingStore);
+    m_backingStore->createObjectStore(transaction.info().identifier(), info);
+
     uint64_t callbackID = storeCallback(callback);
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performCreateObjectStore, callbackID, transaction.info().identifier(), info));
 }

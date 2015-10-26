@@ -30,11 +30,13 @@
 
 #include "IDBDatabaseInfo.h"
 #include "IDBTransactionInfo.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 namespace IDBServer {
 
 class MemoryIDBBackingStore;
+class MemoryObjectStore;
 
 class MemoryBackingStoreTransaction {
     friend std::unique_ptr<MemoryBackingStoreTransaction> std::make_unique<MemoryBackingStoreTransaction>(WebCore::IDBServer::MemoryIDBBackingStore&, const WebCore::IDBTransactionInfo&);
@@ -44,8 +46,11 @@ public:
     ~MemoryBackingStoreTransaction();
 
     bool isVersionChange() const { return m_info.mode() == IndexedDB::TransactionMode::VersionChange; }
+    bool isWriting() const { return m_info.mode() != IndexedDB::TransactionMode::ReadOnly; }
 
     const IDBDatabaseInfo& originalDatabaseInfo() const;
+
+    void addNewObjectStore(MemoryObjectStore&);
 
     void abort();
     void commit();
@@ -53,12 +58,18 @@ public:
 private:
     MemoryBackingStoreTransaction(MemoryIDBBackingStore&, const IDBTransactionInfo&);
 
+    void finish();
+
     MemoryIDBBackingStore& m_backingStore;
     IDBTransactionInfo m_info;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
     bool m_inProgress { true };
+
+    HashSet<MemoryObjectStore*> m_objectStores;
+    HashSet<MemoryObjectStore*> m_versionChangeAddedObjectStores;
+
 };
 
 } // namespace IDBServer

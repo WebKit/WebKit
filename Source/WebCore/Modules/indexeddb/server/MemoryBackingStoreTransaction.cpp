@@ -31,6 +31,7 @@
 #include "IndexedDB.h"
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
+#include "MemoryObjectStore.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -53,6 +54,19 @@ MemoryBackingStoreTransaction::~MemoryBackingStoreTransaction()
     ASSERT(!m_inProgress);
 }
 
+void MemoryBackingStoreTransaction::addNewObjectStore(MemoryObjectStore& objectStore)
+{
+    LOG(IndexedDB, "MemoryBackingStoreTransaction::addNewObjectStore()");
+
+    ASSERT(isVersionChange());
+
+    ASSERT(!m_objectStores.contains(&objectStore));
+    m_objectStores.add(&objectStore);
+    m_versionChangeAddedObjectStores.add(&objectStore);
+
+    objectStore.writeTransactionStarted(*this);
+}
+
 void MemoryBackingStoreTransaction::abort()
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
@@ -62,14 +76,28 @@ void MemoryBackingStoreTransaction::abort()
         m_backingStore.setDatabaseInfo(*m_originalDatabaseInfo);
     }
 
-    m_inProgress = false;
+    finish();
+
+    for (auto objectStore : m_versionChangeAddedObjectStores)
+        m_backingStore.removeObjectStoreForVersionChangeAbort(*objectStore);
 }
 
 void MemoryBackingStoreTransaction::commit()
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::commit()");
 
+    finish();
+}
+
+void MemoryBackingStoreTransaction::finish()
+{
     m_inProgress = false;
+
+    if (!isWriting())
+        return;
+
+    for (auto objectStore : m_objectStores)
+        objectStore->writeTransactionFinished(*this);
 }
 
 } // namespace IDBServer

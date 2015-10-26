@@ -2051,6 +2051,8 @@
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51741D0E0B07259A00ED442C /* HistoryItem.cpp */; };
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
+		51771DFE1BDB485000CAE8E4 /* MemoryObjectStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */; };
+		51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */; };
 		5179CE24195C81420019C198 /* GamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE23195C81420019C198 /* GamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5179CE26195C821D0019C198 /* GamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5179CE25195C821D0019C198 /* GamepadProvider.cpp */; };
 		5179CE2A195C91860019C198 /* GamepadProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5179CE29195C91860019C198 /* GamepadProviderClient.h */; };
@@ -9472,6 +9474,8 @@
 		51741D0E0B07259A00ED442C /* HistoryItem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryItem.cpp; sourceTree = "<group>"; };
 		5174E20810A1F44F00F95E6F /* PopStateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopStateEvent.h; sourceTree = "<group>"; };
 		5174E20B10A1F49A00F95E6F /* PopStateEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PopStateEvent.idl; sourceTree = "<group>"; };
+		51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStore.cpp; sourceTree = "<group>"; };
+		51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStore.h; sourceTree = "<group>"; };
 		5179CE23195C81420019C198 /* GamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProvider.h; sourceTree = "<group>"; };
 		5179CE25195C821D0019C198 /* GamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadProvider.cpp; sourceTree = "<group>"; };
 		5179CE29195C91860019C198 /* GamepadProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProviderClient.h; sourceTree = "<group>"; };
@@ -16844,6 +16848,8 @@
 				51E1BAC11BD806470055D81F /* MemoryBackingStoreTransaction.h */,
 				51BA4AC81BBC5B9E00DF3D6D /* MemoryIDBBackingStore.cpp */,
 				51BA4AC91BBC5B9E00DF3D6D /* MemoryIDBBackingStore.h */,
+				51771DFC1BDB475600CAE8E4 /* MemoryObjectStore.cpp */,
+				51771DFD1BDB475600CAE8E4 /* MemoryObjectStore.h */,
 				518864DE1BBAF30F00E540C9 /* UniqueIDBDatabase.cpp */,
 				518864DF1BBAF30F00E540C9 /* UniqueIDBDatabase.h */,
 				5198F7A21BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.cpp */,
@@ -24899,6 +24905,7 @@
 				85031B3E0A44EFC700F992E0 /* DataTransfer.h in Headers */,
 				4B8AF4AA0B1CE02B00687690 /* DataTransferAccessPolicy.h in Headers */,
 				81AC5999131636E60009A7E0 /* DataTransferItem.h in Headers */,
+				51771DFF1BDB485000CAE8E4 /* MemoryObjectStore.h in Headers */,
 				81AC599A131636E60009A7E0 /* DataTransferItemList.h in Headers */,
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
 				E4A007831B820EC8002C5A6E /* DataURLDecoder.h in Headers */,
@@ -28539,6 +28546,7 @@
 				BCC0657D0F3CE1B700CD2D87 /* ClientRect.cpp in Sources */,
 				BCC065800F3CE1B700CD2D87 /* ClientRectList.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
+				51771DFE1BDB485000CAE8E4 /* MemoryObjectStore.cpp in Sources */,
 				580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */,
 				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
 				CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */,

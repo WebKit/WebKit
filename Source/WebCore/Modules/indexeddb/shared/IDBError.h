@@ -35,6 +35,7 @@ namespace WebCore {
 enum class IDBExceptionCode {
     None = 0,
     Unknown,
+    ConstraintError,
     VersionError,
 
     // Indexed DB existing exception codes with IDB-specific error messages:
