@@ -50,6 +50,8 @@ webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/co
 
 webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass Timeout ]
 
+webkit.org/b/150564 svg/repaint/add-background-property-on-root.html [ Pass Timeout ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
