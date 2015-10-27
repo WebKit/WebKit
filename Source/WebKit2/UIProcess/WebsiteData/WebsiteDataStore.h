@@ -93,6 +93,7 @@ private:
 
     void platformInitialize();
     void platformDestroy();
+    static void platformRemoveRecentSearches(std::chrono::system_clock::time_point);
 
     HashSet<RefPtr<WebProcessPool>> processPools() const;
 

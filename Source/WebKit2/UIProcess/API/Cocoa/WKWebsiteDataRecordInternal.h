@@ -64,6 +64,8 @@ static inline WebKit::WebsiteDataTypes toWebsiteDataTypes(NSSet *wkWebsiteDataTy
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeHSTSCache;
     if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeMediaKeys;
+    if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypeSearchFieldRecentSearches])
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeSearchFieldRecentSearches;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if ([wkWebsiteDataTypes containsObject:_WKWebsiteDataTypePlugInData])
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypePlugInData;
@@ -97,6 +99,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(int websiteDataTypes)
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeHSTSCache];
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeMediaKeys)
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeMediaKeys];
+    if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypeSearchFieldRecentSearches)
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeSearchFieldRecentSearches];
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (websiteDataTypes & WebsiteDataTypes::WebsiteDataTypePlugInData)
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypePlugInData];

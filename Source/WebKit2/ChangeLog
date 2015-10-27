@@ -1,3 +1,30 @@
+2015-10-27  Zhuo Li  <zachli@apple.com>
+
+        Add WebKit API to clear data type Search Field Recent Searches.
+        https://bugs.webkit.org/show_bug.cgi?id=150019.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h: Add data type Search Field Recent Searches.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm:
+        (dataTypesToString): Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordInternal.h:
+        (WebKit::toWebsiteDataTypes): Ditto.
+        (WebKit::toWKWebsiteDataTypes): Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h: Ditto.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData): Handle the case when data type is Search
+        Field Recent Searches.
+        * UIProcess/WebsiteData/WebsiteDataStore.h: Add a private function for removing
+        recent searches based on time.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStoreCocoa::platformRemoveRecentSearches): Call the removing
+        recent searches logic in WebCore.
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches): Not implemented.
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches): Not implemented.
+
 2015-10-26  Brady Eidson  <beidson@apple.com>
 
         Make IDBKeyData from a struct to a class.

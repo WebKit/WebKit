@@ -32,6 +32,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/UserAgentGtk.h>
 #include <gtk/gtkx.h>
 #include <wtf/NeverDestroyed.h>
@@ -63,6 +64,11 @@ void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::Recen
 }
 
 void WebPageProxy::loadRecentSearches(const String&, Vector<WebCore::RecentSearch>&)
+{
+    notImplemented();
+}
+
+void WebsiteDataStore::platformRemoveRecentSearches(std::chrono::system_clock::time_point oldestTimeToRemove)
 {
     notImplemented();
 }

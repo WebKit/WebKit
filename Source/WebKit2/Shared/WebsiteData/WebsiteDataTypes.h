@@ -39,11 +39,12 @@ enum WebsiteDataTypes {
     WebsiteDataTypeIndexedDBDatabases = 1 << 7,
     WebsiteDataTypeMediaKeys = 1 << 8,
     WebsiteDataTypeHSTSCache = 1 << 9,
+    WebsiteDataTypeSearchFieldRecentSearches = 1 << 10,
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    WebsiteDataTypePlugInData = 1 << 10,
+    WebsiteDataTypePlugInData = 1 << 11,
 #endif
 #if ENABLE(MEDIA_STREAM)
-    WebsiteDataTypeMediaDeviceIdentifier = 1 << 11,
+    WebsiteDataTypeMediaDeviceIdentifier = 1 << 12,
 #endif
 };
 
