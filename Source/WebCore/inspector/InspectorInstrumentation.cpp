@@ -345,23 +345,6 @@ void InspectorInstrumentation::didCallFunctionImpl(const InspectorInstrumentatio
         timelineAgent->didCallFunction(frameForScriptExecutionContext(context));
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRReadyStateChangeEventImpl(InstrumentingAgents& instrumentingAgents, XMLHttpRequest& request, ScriptExecutionContext* context)
-{
-    int timelineAgentId = 0;
-    InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent();
-    if (timelineAgent && request.hasEventListeners(eventNames().readystatechangeEvent)) {
-        timelineAgent->willDispatchXHRReadyStateChangeEvent(request.url().string(), request.readyState(), frameForScriptExecutionContext(context));
-        timelineAgentId = timelineAgent->id();
-    }
-    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
-}
-
-void InspectorInstrumentation::didDispatchXHRReadyStateChangeEventImpl(const InspectorInstrumentationCookie& cookie)
-{
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didDispatchXHRReadyStateChangeEvent();
-}
-
 InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(InstrumentingAgents& instrumentingAgents, Document& document, const Event& event, bool hasEventListeners)
 {
     int timelineAgentId = 0;
@@ -482,23 +465,6 @@ void InspectorInstrumentation::didLayoutImpl(const InspectorInstrumentationCooki
 
     if (InspectorPageAgent* pageAgent = cookie.instrumentingAgents()->inspectorPageAgent())
         pageAgent->didLayout();
-}
-
-InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRLoadEventImpl(InstrumentingAgents& instrumentingAgents, XMLHttpRequest& request, ScriptExecutionContext* context)
-{
-    int timelineAgentId = 0;
-    InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent();
-    if (timelineAgent && request.hasEventListeners(eventNames().loadEvent)) {
-        timelineAgent->willDispatchXHRLoadEvent(request.url(), frameForScriptExecutionContext(context));
-        timelineAgentId = timelineAgent->id();
-    }
-    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
-}
-
-void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie& cookie)
-{
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didDispatchXHRLoadEvent();
 }
 
 void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)

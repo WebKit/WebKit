@@ -116,21 +116,6 @@ Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, 
     return WTF::move(data);
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createXHRReadyStateChangeData(const String& url, int readyState)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("url", url);
-    data->setInteger("readyState", readyState);
-    return WTF::move(data);
-}
-
-Ref<InspectorObject> TimelineRecordFactory::createXHRLoadData(const String& url)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("url", url);
-    return WTF::move(data);
-}
-
 Ref<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
 {
     Ref<InspectorObject> data = InspectorObject::create();

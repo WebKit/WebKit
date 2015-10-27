@@ -343,12 +343,10 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
                 return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
             case TimelineAgent.EventType.EventDispatch:
                 return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
-            case TimelineAgent.EventType.XHRLoad:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "load", profileData);
-            case TimelineAgent.EventType.XHRReadyStateChange:
-                return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, "readystatechange", profileData);
             case TimelineAgent.EventType.FireAnimationFrame:
                 return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+            default:
+                console.assert(false, "Missed FunctionCall embedded inside of: " + parentRecordPayload.type);
             }
 
             break;

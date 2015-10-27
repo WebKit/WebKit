@@ -89,9 +89,6 @@ enum class TimelineRecordType {
     Time,
     TimeEnd,
 
-    XHRReadyStateChange,
-    XHRLoad,
-
     FunctionCall,
     ProbeSample,
     ConsoleProfile,
@@ -141,8 +138,6 @@ public:
     void didFireTimer();
     void willCallFunction(const String& scriptName, int scriptLine, Frame*);
     void didCallFunction(Frame*);
-    void willDispatchXHRReadyStateChangeEvent(const String&, int, Frame*);
-    void didDispatchXHRReadyStateChangeEvent();
     void willDispatchEvent(const Event&, Frame*);
     void didDispatchEvent();
     void willEvaluateScript(const String&, int, Frame&);
@@ -150,8 +145,6 @@ public:
     void didInvalidateLayout(Frame&);
     void willLayout(Frame&);
     void didLayout(RenderObject*);
-    void willDispatchXHRLoadEvent(const String&, Frame*);
-    void didDispatchXHRLoadEvent();
     void willComposite(Frame&);
     void didComposite();
     void willPaint(Frame&);

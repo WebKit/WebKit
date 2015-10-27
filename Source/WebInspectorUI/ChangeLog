@@ -1,3 +1,15 @@
+2015-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused / duplicated XHR timeline instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=150605
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._processRecord):
+        Remove unused events and add an assert that we don't miss
+        any script embedders.
+
 2015-10-27  Matt Baker  <mattbaker@apple.com>
 
         REGRESSION: Web Inspector: DOM path bar blinks when modifying inline styles

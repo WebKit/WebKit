@@ -69,10 +69,6 @@ namespace WebCore {
 
         static Ref<Inspector::InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
 
-        static Ref<Inspector::InspectorObject> createXHRReadyStateChangeData(const String& url, int readyState);
-
-        static Ref<Inspector::InspectorObject> createXHRLoadData(const String& url);
-
         static Ref<Inspector::InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
 
         static Ref<Inspector::InspectorObject> createTimeStampData(const String&);

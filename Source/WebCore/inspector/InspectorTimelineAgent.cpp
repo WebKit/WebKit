@@ -449,26 +449,6 @@ void InspectorTimelineAgent::didFireTimer()
     didCompleteCurrentRecord(TimelineRecordType::TimerFire);
 }
 
-void InspectorTimelineAgent::willDispatchXHRReadyStateChangeEvent(const String& url, int readyState, Frame* frame)
-{
-    pushCurrentRecord(TimelineRecordFactory::createXHRReadyStateChangeData(url, readyState), TimelineRecordType::XHRReadyStateChange, false, frame);
-}
-
-void InspectorTimelineAgent::didDispatchXHRReadyStateChangeEvent()
-{
-    didCompleteCurrentRecord(TimelineRecordType::XHRReadyStateChange);
-}
-
-void InspectorTimelineAgent::willDispatchXHRLoadEvent(const String& url, Frame* frame)
-{
-    pushCurrentRecord(TimelineRecordFactory::createXHRLoadData(url), TimelineRecordType::XHRLoad, true, frame);
-}
-
-void InspectorTimelineAgent::didDispatchXHRLoadEvent()
-{
-    didCompleteCurrentRecord(TimelineRecordType::XHRLoad);
-}
-
 void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, Frame& frame)
 {
     pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, &frame);
@@ -627,11 +607,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Time;
     case TimelineRecordType::TimeEnd:
         return Inspector::Protocol::Timeline::EventType::TimeEnd;
-
-    case TimelineRecordType::XHRReadyStateChange:
-        return Inspector::Protocol::Timeline::EventType::XHRReadyStateChange;
-    case TimelineRecordType::XHRLoad:
-        return Inspector::Protocol::Timeline::EventType::XHRLoad;
 
     case TimelineRecordType::FunctionCall:
         return Inspector::Protocol::Timeline::EventType::FunctionCall;

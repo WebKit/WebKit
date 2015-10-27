@@ -146,8 +146,6 @@ public:
 
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
     static void didCallFunction(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
-    static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEvent(ScriptExecutionContext*, XMLHttpRequest&);
-    static void didDispatchXHRReadyStateChangeEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEvent(Document&, const Event&, bool hasEventListeners);
     static void didDispatchEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willHandleEvent(ScriptExecutionContext*, const Event&);
@@ -163,8 +161,6 @@ public:
     static InspectorInstrumentationCookie willLayout(Frame&);
     static void didLayout(const InspectorInstrumentationCookie&, RenderObject*);
     static void didScroll(Page&);
-    static InspectorInstrumentationCookie willDispatchXHRLoadEvent(ScriptExecutionContext*, XMLHttpRequest&);
-    static void didDispatchXHRLoadEvent(const InspectorInstrumentationCookie&);
     static void willComposite(Frame&);
     static void didComposite(Frame&);
     static void willPaint(RenderObject*);
@@ -327,8 +323,6 @@ private:
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, ScriptExecutionContext*);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&, ScriptExecutionContext*);
-    static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEventImpl(InstrumentingAgents&, XMLHttpRequest&, ScriptExecutionContext*);
-    static void didDispatchXHRReadyStateChangeEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&, bool hasEventListeners);
     static InspectorInstrumentationCookie willHandleEventImpl(InstrumentingAgents&, const Event&);
     static void didHandleEventImpl(const InspectorInstrumentationCookie&);
@@ -344,8 +338,6 @@ private:
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents&, Frame&);
     static void didLayoutImpl(const InspectorInstrumentationCookie&, RenderObject*);
     static void didScrollImpl(InstrumentingAgents&);
-    static InspectorInstrumentationCookie willDispatchXHRLoadEventImpl(InstrumentingAgents&, XMLHttpRequest&, ScriptExecutionContext*);
-    static void didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie&);
     static void willCompositeImpl(InstrumentingAgents&, Frame&);
     static void didCompositeImpl(InstrumentingAgents&);
     static void willPaintImpl(InstrumentingAgents&, RenderObject*);
@@ -705,21 +697,6 @@ inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumenta
         didCallFunctionImpl(cookie, context);
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRReadyStateChangeEvent(ScriptExecutionContext* context, XMLHttpRequest& request)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willDispatchXHRReadyStateChangeEventImpl(*instrumentingAgents, request, context);
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didDispatchXHRReadyStateChangeEvent(const InspectorInstrumentationCookie& cookie)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didDispatchXHRReadyStateChangeEventImpl(cookie);
-}
-
 inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEvent(Document& document, const Event& event, bool hasEventListeners)
 {
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
@@ -827,21 +804,6 @@ inline void InspectorInstrumentation::didScroll(Page& page)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didScrollImpl(instrumentingAgentsForPage(page));
-}
-
-inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchXHRLoadEvent(ScriptExecutionContext* context, XMLHttpRequest& request)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return willDispatchXHRLoadEventImpl(*instrumentingAgents, request, context);
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didDispatchXHRLoadEvent(const InspectorInstrumentationCookie& cookie)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didDispatchXHRLoadEventImpl(cookie);
 }
 
 inline void InspectorInstrumentation::willComposite(Frame& frame)

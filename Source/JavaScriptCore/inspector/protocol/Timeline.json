@@ -25,8 +25,6 @@
                 "TimeStamp",
                 "Time",
                 "TimeEnd",
-                "XHRReadyStateChange",
-                "XHRLoad",
                 "FunctionCall",
                 "ProbeSample",
                 "ConsoleProfile",
