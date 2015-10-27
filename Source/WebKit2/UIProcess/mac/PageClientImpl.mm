@@ -37,6 +37,7 @@
 #import "NativeWebWheelEvent.h"
 #import "NavigationState.h"
 #import "StringUtilities.h"
+#import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
@@ -514,7 +515,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 
 PassRefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot()
 {
-    return [m_wkView _takeViewSnapshot];
+    return m_impl->takeViewSnapshot();
 }
 
 void PageClientImpl::selectionDidChange()
@@ -524,7 +525,8 @@ void PageClientImpl::selectionDidChange()
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
 {
-    [m_wkView _wheelEventWasNotHandledByWebCore:event.nativeEvent()];
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->wheelEventWasNotHandledByWebCore(event.nativeEvent());
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -747,27 +749,32 @@ void PageClientImpl::didRemoveNavigationGestureSnapshot()
 
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
-    [m_wkView _didFirstVisuallyNonEmptyLayoutForMainFrame];
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->didFirstVisuallyNonEmptyLayoutForMainFrame();
 }
 
 void PageClientImpl::didFinishLoadForMainFrame()
 {
-    [m_wkView _didFinishLoadForMainFrame];
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->didFinishLoadForMainFrame();
 }
 
 void PageClientImpl::didFailLoadForMainFrame()
 {
-    [m_wkView _didFailLoadForMainFrame];
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->didFailLoadForMainFrame();
 }
 
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
-    [m_wkView _didSameDocumentNavigationForMainFrame:type];
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->didSameDocumentNavigationForMainFrame(type);
 }
 
 void PageClientImpl::removeNavigationGestureSnapshot()
 {
-    [m_wkView _removeNavigationGestureSnapshot];
+    if (auto gestureController = m_impl->gestureController())
+        gestureController->removeSwipeSnapshot();
 }
 
 void PageClientImpl::didChangeBackgroundColor()

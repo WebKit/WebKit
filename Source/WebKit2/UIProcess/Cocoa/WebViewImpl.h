@@ -52,6 +52,9 @@ OBJC_CLASS _WKThumbnailView;
 - (NSTextInputContext *)_superInputContext;
 - (void)_superQuickLookWithEvent:(NSEvent *)event;
 - (void)_superRemoveTrackingRect:(NSTrackingRectTag)tag;
+- (void)_superSwipeWithEvent:(NSEvent *)event;
+- (void)_superMagnifyWithEvent:(NSEvent *)event;
+- (void)_superSmartMagnifyWithEvent:(NSEvent *)event;
 
 // This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
 // They're not actually optional.
@@ -63,11 +66,13 @@ OBJC_CLASS _WKThumbnailView;
 - (void)_completeImmediateActionAnimation;
 - (void)_dismissContentRelativeChildWindows;
 - (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
+- (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
 @end
 
 namespace WebKit {
 
+class ViewGestureController;
 class WebEditCommandProxy;
 class WebPageProxy;
 struct ColorSpaceData;
@@ -250,6 +255,33 @@ public:
     void registerDraggedTypes();
 #endif
 
+    RefPtr<ViewSnapshot> takeViewSnapshot();
+
+    ViewGestureController* gestureController() { return m_gestureController.get(); }
+    ViewGestureController& ensureGestureController();
+    void resetGestureController();
+    void setAllowsBackForwardNavigationGestures(bool);
+    bool allowsBackForwardNavigationGestures() const { return m_allowsBackForwardNavigationGestures; }
+    void setAllowsMagnification(bool);
+    bool allowsMagnification() const { return m_allowsMagnification; }
+
+    void setMagnification(double, CGPoint centerPoint);
+    void setMagnification(double);
+    double magnification() const;
+    void setCustomSwipeViews(NSArray *);
+    void setCustomSwipeViewsTopContentInset(float);
+    bool tryToSwipeWithEvent(NSEvent *, bool ignoringPinnedState);
+    void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));
+
+    void scrollWheel(NSEvent *);
+    void swipeWithEvent(NSEvent *);
+    void magnifyWithEvent(NSEvent *);
+    void rotateWithEvent(NSEvent *);
+    void smartMagnifyWithEvent(NSEvent *);
+
+    void gestureEventWasNotHandledByWebCore(NSEvent *);
+    void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
+
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -346,6 +378,10 @@ private:
 #if WK_API_ENABLED
     _WKThumbnailView *m_thumbnailView { nullptr };
 #endif
+
+    std::unique_ptr<ViewGestureController> m_gestureController;
+    bool m_allowsBackForwardNavigationGestures { false };
+    bool m_allowsMagnification { false };
 };
     
 } // namespace WebKit

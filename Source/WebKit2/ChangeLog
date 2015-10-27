@@ -1,3 +1,76 @@
+2015-10-27  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView scrollWheel:]):
+        (-[WKView swipeWithEvent:]):
+        (-[WKView _superSwipeWithEvent:]):
+        (-[WKView _superMagnifyWithEvent:]):
+        (-[WKView _superSmartMagnifyWithEvent:]):
+        (-[WKView _processDidExit]):
+        (-[WKView setAllowsBackForwardNavigationGestures:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+        (-[WKView setAllowsMagnification:]):
+        (-[WKView allowsMagnification]):
+        (-[WKView magnifyWithEvent:]):
+        (-[WKView rotateWithEvent:]):
+        (-[WKView _gestureEventWasNotHandledByWebCore:]):
+        (-[WKView smartMagnifyWithEvent:]):
+        (-[WKView setMagnification:centeredAtPoint:]):
+        (-[WKView setMagnification:]):
+        (-[WKView magnification]):
+        (-[WKView _setCustomSwipeViews:]):
+        (-[WKView _setCustomSwipeViewsTopContentInset:]):
+        (-[WKView _tryToSwipeWithEvent:ignoringPinnedState:]):
+        (-[WKView _setDidMoveSwipeSnapshotCallback:]):
+        (-[WKView _ensureGestureController]): Deleted.
+        (takeWindowSnapshot): Deleted.
+        (-[WKView _takeViewSnapshot]): Deleted.
+        (-[WKView _wheelEventWasNotHandledByWebCore:]): Deleted.
+        (-[WKView _didFirstVisuallyNonEmptyLayoutForMainFrame]): Deleted.
+        (-[WKView _didFinishLoadForMainFrame]): Deleted.
+        (-[WKView _didFailLoadForMainFrame]): Deleted.
+        (-[WKView _didSameDocumentNavigationForMainFrame:]): Deleted.
+        (-[WKView _removeNavigationGestureSnapshot]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::gestureController):
+        (WebKit::WebViewImpl::allowsBackForwardNavigationGestures):
+        (WebKit::WebViewImpl::allowsMagnification):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::takeWindowSnapshot):
+        (WebKit::WebViewImpl::takeViewSnapshot):
+        (WebKit::WebViewImpl::ensureGestureController):
+        (WebKit::WebViewImpl::resetGestureController):
+        (WebKit::WebViewImpl::setAllowsBackForwardNavigationGestures):
+        (WebKit::WebViewImpl::setAllowsMagnification):
+        (WebKit::WebViewImpl::setMagnification):
+        (WebKit::WebViewImpl::magnification):
+        (WebKit::WebViewImpl::setCustomSwipeViews):
+        (WebKit::WebViewImpl::setCustomSwipeViewsTopContentInset):
+        (WebKit::WebViewImpl::tryToSwipeWithEvent):
+        (WebKit::WebViewImpl::setDidMoveSwipeSnapshotCallback):
+        (WebKit::WebViewImpl::scrollWheel):
+        (WebKit::WebViewImpl::swipeWithEvent):
+        (WebKit::WebViewImpl::magnifyWithEvent):
+        (WebKit::WebViewImpl::smartMagnifyWithEvent):
+        (WebKit::WebViewImpl::rotateWithEvent):
+        (WebKit::WebViewImpl::gestureEventWasNotHandledByWebCore):
+        (WebKit::WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+        (WebKit::PageClientImpl::removeNavigationGestureSnapshot):
+        Move swipe, zoom, rotate, and snapshotting code.
+
 2015-10-27  Zhuo Li  <zachli@apple.com>
 
         Add WebKit API to clear data type Search Field Recent Searches.

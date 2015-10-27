@@ -31,11 +31,14 @@
 #import "ColorSpaceData.h"
 #import "GenericCallback.h"
 #import "Logging.h"
+#import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
+#import "NativeWebWheelEvent.h"
 #import "PageClient.h"
 #import "PasteboardTypes.h"
 #import "StringUtilities.h"
+#import "ViewGestureController.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKTextInputWindowController.h"
@@ -47,6 +50,7 @@
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
@@ -1808,6 +1812,264 @@ void WebViewImpl::registerDraggedTypes()
     [m_view registerForDraggedTypes:[types allObjects]];
 }
 #endif // ENABLE(DRAG_SUPPORT)
+
+static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
+{
+    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
+    if (captureAtNominalResolution)
+        options |= kCGSWindowCaptureNominalResolution;
+    RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
+
+    if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
+        return (CGImageRef)CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0);
+
+    // Fall back to the non-hardware capture path if we didn't get a snapshot
+    // (which usually happens if the window is fully off-screen).
+    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
+    if (captureAtNominalResolution)
+        imageOptions |= kCGWindowImageNominalResolution;
+    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
+}
+
+RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
+{
+    NSWindow *window = m_view.window;
+
+    CGSWindowID windowID = (CGSWindowID)window.windowNumber;
+    if (!windowID || !window.isVisible)
+        return nullptr;
+
+    RetainPtr<CGImageRef> windowSnapshotImage = takeWindowSnapshot(windowID, false);
+    if (!windowSnapshotImage)
+        return nullptr;
+
+    // Work around <rdar://problem/17084993>; re-request the snapshot at kCGWindowImageNominalResolution if it was captured at the wrong scale.
+    CGFloat desiredSnapshotWidth = window.frame.size.width * window.screen.backingScaleFactor;
+    if (CGImageGetWidth(windowSnapshotImage.get()) != desiredSnapshotWidth)
+        windowSnapshotImage = takeWindowSnapshot(windowID, true);
+
+    if (!windowSnapshotImage)
+        return nullptr;
+
+    ViewGestureController& gestureController = ensureGestureController();
+
+    NSRect windowCaptureRect;
+    WebCore::FloatRect boundsForCustomSwipeViews = gestureController.windowRelativeBoundsForCustomSwipeViews();
+    if (!boundsForCustomSwipeViews.isEmpty())
+        windowCaptureRect = boundsForCustomSwipeViews;
+    else {
+        NSRect unobscuredBounds = m_view.bounds;
+        float topContentInset = m_page.topContentInset();
+        unobscuredBounds.origin.y += topContentInset;
+        unobscuredBounds.size.height -= topContentInset;
+        windowCaptureRect = [m_view convertRect:unobscuredBounds toView:nil];
+    }
+
+    NSRect windowCaptureScreenRect = [window convertRectToScreen:windowCaptureRect];
+    CGRect windowScreenRect;
+    CGSGetScreenRectForWindow(CGSMainConnectionID(), (CGSWindowID)[window windowNumber], &windowScreenRect);
+
+    NSRect croppedImageRect = windowCaptureRect;
+    croppedImageRect.origin.y = windowScreenRect.size.height - windowCaptureScreenRect.size.height - NSMinY(windowCaptureRect);
+
+    auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
+
+    auto surface = WebCore::IOSurface::createFromImage(croppedSnapshotImage.get());
+    if (!surface)
+        return nullptr;
+    surface->setIsVolatile(true);
+
+    return ViewSnapshot::create(WTF::move(surface));
+}
+
+ViewGestureController& WebViewImpl::ensureGestureController()
+{
+    if (!m_gestureController)
+        m_gestureController = std::make_unique<ViewGestureController>(m_page);
+    return *m_gestureController;
+}
+
+void WebViewImpl::resetGestureController()
+{
+    m_gestureController = nullptr;
+}
+
+void WebViewImpl::setAllowsBackForwardNavigationGestures(bool allowsBackForwardNavigationGestures)
+{
+    m_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
+    m_page.setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
+    m_page.setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
+}
+
+void WebViewImpl::setAllowsMagnification(bool allowsMagnification)
+{
+    m_allowsMagnification = allowsMagnification;
+}
+
+void WebViewImpl::setMagnification(double magnification, CGPoint centerPoint)
+{
+    if (magnification <= 0 || isnan(magnification) || isinf(magnification))
+        [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
+
+    dismissContentRelativeChildWindowsWithAnimation(false);
+
+    m_page.scalePageInViewCoordinates(magnification, WebCore::roundedIntPoint(centerPoint));
+}
+
+void WebViewImpl::setMagnification(double magnification)
+{
+    if (magnification <= 0 || isnan(magnification) || isinf(magnification))
+        [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
+
+    dismissContentRelativeChildWindowsWithAnimation(false);
+
+    WebCore::FloatPoint viewCenter(NSMidX([m_view bounds]), NSMidY([m_view bounds]));
+    m_page.scalePageInViewCoordinates(magnification, roundedIntPoint(viewCenter));
+}
+
+double WebViewImpl::magnification() const
+{
+    if (m_gestureController)
+        return m_gestureController->magnification();
+    return m_page.pageScaleFactor();
+}
+
+void WebViewImpl::setCustomSwipeViews(NSArray *customSwipeViews)
+{
+    if (!customSwipeViews.count && !m_gestureController)
+        return;
+
+    Vector<RetainPtr<NSView>> views;
+    views.reserveInitialCapacity(customSwipeViews.count);
+    for (NSView *view in customSwipeViews)
+        views.uncheckedAppend(view);
+
+    ensureGestureController().setCustomSwipeViews(views);
+}
+
+void WebViewImpl::setCustomSwipeViewsTopContentInset(float topContentInset)
+{
+    ensureGestureController().setCustomSwipeViewsTopContentInset(topContentInset);
+}
+
+bool WebViewImpl::tryToSwipeWithEvent(NSEvent *event, bool ignoringPinnedState)
+{
+    if (!m_allowsBackForwardNavigationGestures)
+        return false;
+
+    auto& gestureController = ensureGestureController();
+
+    bool wasIgnoringPinnedState = gestureController.shouldIgnorePinnedState();
+    gestureController.setShouldIgnorePinnedState(ignoringPinnedState);
+
+    bool handledEvent = gestureController.handleScrollWheelEvent(event);
+
+    gestureController.setShouldIgnorePinnedState(wasIgnoringPinnedState);
+    
+    return handledEvent;
+}
+
+void WebViewImpl::setDidMoveSwipeSnapshotCallback(void(^callback)(CGRect))
+{
+    if (!m_allowsBackForwardNavigationGestures)
+        return;
+
+    ensureGestureController().setDidMoveSwipeSnapshotCallback(callback);
+}
+
+void WebViewImpl::scrollWheel(NSEvent *event)
+{
+    if (m_ignoresAllEvents)
+        return;
+
+    if (event.phase == NSEventPhaseBegan)
+        dismissContentRelativeChildWindowsWithAnimation(false);
+
+    if (m_allowsBackForwardNavigationGestures && ensureGestureController().handleScrollWheelEvent(event))
+        return;
+
+    NativeWebWheelEvent webEvent = NativeWebWheelEvent(event, m_view);
+    m_page.handleWheelEvent(webEvent);
+}
+
+void WebViewImpl::swipeWithEvent(NSEvent *event)
+{
+    if (m_ignoresNonWheelEvents)
+        return;
+
+    if (!m_allowsBackForwardNavigationGestures) {
+        [m_view _superSwipeWithEvent:event];
+        return;
+    }
+
+    if (event.deltaX > 0.0)
+        m_page.goBack();
+    else if (event.deltaX < 0.0)
+        m_page.goForward();
+    else
+        [m_view _superSwipeWithEvent:event];
+}
+
+void WebViewImpl::magnifyWithEvent(NSEvent *event)
+{
+    if (!m_allowsMagnification) {
+#if ENABLE(MAC_GESTURE_EVENTS)
+        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
+        m_page.handleGestureEvent(webEvent);
+#endif
+        [m_view _superMagnifyWithEvent:event];
+        return;
+    }
+
+    dismissContentRelativeChildWindowsWithAnimation(false);
+
+    auto& gestureController = ensureGestureController();
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (gestureController.hasActiveMagnificationGesture()) {
+        gestureController.handleMagnificationGestureEvent(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
+        return;
+    }
+
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
+    m_page.handleGestureEvent(webEvent);
+#else
+    gestureController.handleMagnificationGestureEvent(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
+#endif
+}
+
+void WebViewImpl::smartMagnifyWithEvent(NSEvent *event)
+{
+    if (!m_allowsMagnification) {
+        [m_view _superSmartMagnifyWithEvent:event];
+        return;
+    }
+
+    dismissContentRelativeChildWindowsWithAnimation(false);
+
+    ensureGestureController().handleSmartMagnificationGesture([m_view convertPoint:event.locationInWindow fromView:nil]);
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+void WebViewImpl::rotateWithEvent(NSEvent *event)
+{
+    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
+    m_page.handleGestureEvent(webEvent);
+}
+#endif
+
+void WebViewImpl::gestureEventWasNotHandledByWebCore(NSEvent *event)
+{
+    [m_view _gestureEventWasNotHandledByWebCore:event];
+}
+
+void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
+{
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (m_gestureController)
+        m_gestureController->gestureEventWasNotHandledByWebCore(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
+#endif
+}
 
 } // namespace WebKit
 

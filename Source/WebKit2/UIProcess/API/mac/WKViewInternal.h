@@ -87,9 +87,6 @@ struct EditorState;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 
-- (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
-- (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event;
-
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 
 - (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
@@ -105,12 +102,6 @@ struct EditorState;
 
 - (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
 - (BOOL)_suppressVisibilityUpdates;
-
-- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame;
-- (void)_didFinishLoadForMainFrame;
-- (void)_didFailLoadForMainFrame;
-- (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)type;
-- (void)_removeNavigationGestureSnapshot;
 
 #if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;

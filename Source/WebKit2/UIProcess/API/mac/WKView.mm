@@ -41,7 +41,6 @@
 #import "EditorState.h"
 #import "LayerTreeContext.h"
 #import "Logging.h"
-#import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
 #import "NativeWebWheelEvent.h"
@@ -54,8 +53,6 @@
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
-#import "ViewGestureController.h"
-#import "ViewSnapshotStore.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKLayoutMode.h"
@@ -83,6 +80,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragController.h>
@@ -130,17 +128,6 @@
 - (BOOL)handleEventByKeyboardLayout:(NSEvent *)theEvent;
 @end
 #endif
-
-#if defined(__has_include) && __has_include(<CoreGraphics/CoreGraphicsPrivate.h>)
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-#endif
-
-extern "C" {
-typedef uint32_t CGSConnectionID;
-typedef uint32_t CGSWindowID;
-CGSConnectionID CGSMainConnectionID(void);
-CGError CGSGetScreenRectForWindow(CGSConnectionID cid, CGSWindowID wid, CGRect *rect);
-};
 
 using namespace WebKit;
 using namespace WebCore;
@@ -203,10 +190,6 @@ struct WKViewInterpretKeyEventsParameters {
     String _promisedURL;
 
     BOOL _windowOcclusionDetectionEnabled;
-
-    std::unique_ptr<ViewGestureController> _gestureController;
-    BOOL _allowsMagnification;
-    BOOL _allowsBackForwardNavigationGestures;
 
     CGFloat _totalHeightOfBanners;
 }
@@ -1010,48 +993,14 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 #undef NATIVE_MOUSE_EVENT_HANDLER
 
-- (void)_ensureGestureController
-{
-    if (_data->_gestureController)
-        return;
-
-    _data->_gestureController = std::make_unique<ViewGestureController>(*_data->_page);
-}
-
 - (void)scrollWheel:(NSEvent *)event
 {
-    if (_data->_impl->ignoresAllEvents())
-        return;
-
-    if (event.phase == NSEventPhaseBegan)
-        [self _dismissContentRelativeChildWindowsWithAnimation:NO];
-
-    if (_data->_allowsBackForwardNavigationGestures) {
-        [self _ensureGestureController];
-        if (_data->_gestureController->handleScrollWheelEvent(event))
-            return;
-    }
-
-    NativeWebWheelEvent webEvent = NativeWebWheelEvent(event, self);
-    _data->_page->handleWheelEvent(webEvent);
+    _data->_impl->scrollWheel(event);
 }
 
 - (void)swipeWithEvent:(NSEvent *)event
 {
-    if (_data->_impl->ignoresNonWheelEvents())
-        return;
-
-    if (!_data->_allowsBackForwardNavigationGestures) {
-        [super swipeWithEvent:event];
-        return;
-    }
-
-    if (event.deltaX > 0.0)
-        _data->_page->goBack();
-    else if (event.deltaX < 0.0)
-        _data->_page->goForward();
-    else
-        [super swipeWithEvent:event];
+    _data->_impl->swipeWithEvent(event);
 }
 
 - (void)mouseMoved:(NSEvent *)event
@@ -2078,6 +2027,21 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [super quickLookWithEvent:event];
 }
 
+- (void)_superSwipeWithEvent:(NSEvent *)event
+{
+    [super swipeWithEvent:event];
+}
+
+- (void)_superMagnifyWithEvent:(NSEvent *)event
+{
+    [super magnifyWithEvent:event];
+}
+
+- (void)_superSmartMagnifyWithEvent:(NSEvent *)event
+{
+    [super smartMagnifyWithEvent:event];
+}
+
 - (void)_superRemoveTrackingRect:(NSTrackingRectTag)tag
 {
     [super removeTrackingRect:tag];
@@ -2316,7 +2280,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     [self _updateRemoteAccessibilityRegistration:NO];
 
-    _data->_gestureController = nullptr;
+    _data->_impl->resetGestureController();
 }
 
 - (void)_pageClosed
@@ -2417,81 +2381,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
 {
     _data->_impl->toolTipChanged(oldToolTip, newToolTip);
-}
-
-static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
-{
-    CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
-    if (captureAtNominalResolution)
-        options |= kCGSWindowCaptureNominalResolution;
-    RetainPtr<CFArrayRef> windowSnapshotImages = adoptCF(CGSHWCaptureWindowList(CGSMainConnectionID(), &windowID, 1, options));
-
-    if (windowSnapshotImages && CFArrayGetCount(windowSnapshotImages.get()))
-        return (CGImageRef)CFArrayGetValueAtIndex(windowSnapshotImages.get(), 0);
-
-    // Fall back to the non-hardware capture path if we didn't get a snapshot
-    // (which usually happens if the window is fully off-screen).
-    CGWindowImageOption imageOptions = kCGWindowImageBoundsIgnoreFraming | kCGWindowImageShouldBeOpaque;
-    if (captureAtNominalResolution)
-        imageOptions |= kCGWindowImageNominalResolution;
-    return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
-}
-
-- (PassRefPtr<ViewSnapshot>)_takeViewSnapshot
-{
-    NSWindow *window = self.window;
-
-    CGSWindowID windowID = (CGSWindowID)[window windowNumber];
-    if (!windowID || ![window isVisible])
-        return nullptr;
-
-    RetainPtr<CGImageRef> windowSnapshotImage = takeWindowSnapshot(windowID, false);
-    if (!windowSnapshotImage)
-        return nullptr;
-
-    // Work around <rdar://problem/17084993>; re-request the snapshot at kCGWindowImageNominalResolution if it was captured at the wrong scale.
-    CGFloat desiredSnapshotWidth = window.frame.size.width * window.screen.backingScaleFactor;
-    if (CGImageGetWidth(windowSnapshotImage.get()) != desiredSnapshotWidth)
-        windowSnapshotImage = takeWindowSnapshot(windowID, true);
-
-    if (!windowSnapshotImage)
-        return nullptr;
-
-    [self _ensureGestureController];
-
-    NSRect windowCaptureRect;
-    FloatRect boundsForCustomSwipeViews = _data->_gestureController->windowRelativeBoundsForCustomSwipeViews();
-    if (!boundsForCustomSwipeViews.isEmpty())
-        windowCaptureRect = boundsForCustomSwipeViews;
-    else {
-        NSRect unobscuredBounds = self.bounds;
-        float topContentInset = _data->_page->topContentInset();
-        unobscuredBounds.origin.y += topContentInset;
-        unobscuredBounds.size.height -= topContentInset;
-        windowCaptureRect = [self convertRect:unobscuredBounds toView:nil];
-    }
-
-    NSRect windowCaptureScreenRect = [window convertRectToScreen:windowCaptureRect];
-    CGRect windowScreenRect;
-    CGSGetScreenRectForWindow(CGSMainConnectionID(), (CGSWindowID)[window windowNumber], &windowScreenRect);
-
-    NSRect croppedImageRect = windowCaptureRect;
-    croppedImageRect.origin.y = windowScreenRect.size.height - windowCaptureScreenRect.size.height - NSMinY(windowCaptureRect);
-
-    auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
-
-    auto surface = IOSurface::createFromImage(croppedSnapshotImage.get());
-    if (!surface)
-        return nullptr;
-    surface->setIsVolatile(true);
-
-    return ViewSnapshot::create(WTF::move(surface));
-}
-
-- (void)_wheelEventWasNotHandledByWebCore:(NSEvent *)event
-{
-    if (_data->_gestureController)
-        _data->_gestureController->wheelEventWasNotHandledByWebCore(event);
 }
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
@@ -2784,12 +2673,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 }
 #endif // WK_API_ENABLED
 
-- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame
-{
-    if (_data->_gestureController)
-        _data->_gestureController->didFirstVisuallyNonEmptyLayoutForMainFrame();
-}
-
 #if WK_API_ENABLED
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
@@ -2801,30 +2684,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_remoteObjectRegistry.get();
 }
 #endif
-
-- (void)_didFinishLoadForMainFrame
-{
-    if (_data->_gestureController)
-        _data->_gestureController->didFinishLoadForMainFrame();
-}
-
-- (void)_didFailLoadForMainFrame
-{
-    if (_data->_gestureController)
-        _data->_gestureController->didFailLoadForMainFrame();
-}
-
-- (void)_didSameDocumentNavigationForMainFrame:(SameDocumentNavigationType)type
-{
-    if (_data->_gestureController)
-        _data->_gestureController->didSameDocumentNavigationForMainFrame(type);
-}
-
-- (void)_removeNavigationGestureSnapshot
-{
-    if (_data->_gestureController)
-        _data->_gestureController->removeSwipeSnapshot();
-}
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 - (void)_startWindowDrag
@@ -3064,14 +2923,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
 {
-    _data->_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
-    _data->_page->setShouldRecordNavigationSnapshots(allowsBackForwardNavigationGestures);
-    _data->_page->setShouldUseImplicitRubberBandControl(allowsBackForwardNavigationGestures);
+    _data->_impl->setAllowsBackForwardNavigationGestures(allowsBackForwardNavigationGestures);
 }
 
 - (BOOL)allowsBackForwardNavigationGestures
 {
-    return _data->_allowsBackForwardNavigationGestures;
+    return _data->_impl->allowsBackForwardNavigationGestures();
 }
 
 - (BOOL)allowsLinkPreview
@@ -3271,145 +3128,69 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)setAllowsMagnification:(BOOL)allowsMagnification
 {
-    _data->_allowsMagnification = allowsMagnification;
+    _data->_impl->setAllowsMagnification(allowsMagnification);
 }
 
 - (BOOL)allowsMagnification
 {
-    return _data->_allowsMagnification;
+    return _data->_impl->allowsMagnification();
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event
 {
-    if (!_data->_allowsMagnification) {
-#if ENABLE(MAC_GESTURE_EVENTS)
-        NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
-        _data->_page->handleGestureEvent(webEvent);
-#endif
-        [super magnifyWithEvent:event];
-        return;
-    }
-
-    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
-
-    [self _ensureGestureController];
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-    if (_data->_gestureController->hasActiveMagnificationGesture()) {
-        _data->_gestureController->handleMagnificationGestureEvent(event, [self convertPoint:event.locationInWindow fromView:nil]);
-        return;
-    }
-
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
-    _data->_page->handleGestureEvent(webEvent);
-#else
-    _data->_gestureController->handleMagnificationGestureEvent(event, [self convertPoint:event.locationInWindow fromView:nil]);
-#endif
+    _data->_impl->magnifyWithEvent(event);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 - (void)rotateWithEvent:(NSEvent *)event
 {
-    NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, self);
-    _data->_page->handleGestureEvent(webEvent);
+    _data->_impl->rotateWithEvent(event);
 }
 #endif
 
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
-#if ENABLE(MAC_GESTURE_EVENTS)
-    if (_data->_gestureController)
-        _data->_gestureController->gestureEventWasNotHandledByWebCore(event, [self convertPoint:event.locationInWindow fromView:nil]);
-#endif
+    _data->_impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
 }
 
 - (void)smartMagnifyWithEvent:(NSEvent *)event
 {
-    if (!_data->_allowsMagnification) {
-        [super smartMagnifyWithEvent:event];
-        return;
-    }
-
-    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
-
-    [self _ensureGestureController];
-
-    _data->_gestureController->handleSmartMagnificationGesture([self convertPoint:event.locationInWindow fromView:nil]);
+    _data->_impl->smartMagnifyWithEvent(event);
 }
 
 - (void)setMagnification:(double)magnification centeredAtPoint:(NSPoint)point
 {
-    if (magnification <= 0 || isnan(magnification) || isinf(magnification))
-        [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
-
-    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
-
-    _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(point));
+    _data->_impl->setMagnification(magnification, NSPointToCGPoint(point));
 }
 
 - (void)setMagnification:(double)magnification
 {
-    if (magnification <= 0 || isnan(magnification) || isinf(magnification))
-        [NSException raise:NSInvalidArgumentException format:@"Magnification should be a positive number"];
-
-    [self _dismissContentRelativeChildWindowsWithAnimation:NO];
-
-    FloatPoint viewCenter(NSMidX([self bounds]), NSMidY([self bounds]));
-    _data->_page->scalePageInViewCoordinates(magnification, roundedIntPoint(viewCenter));
+    _data->_impl->setMagnification(magnification);
 }
 
 - (double)magnification
 {
-    if (_data->_gestureController)
-        return _data->_gestureController->magnification();
-
-    return _data->_page->pageScaleFactor();
+    return _data->_impl->magnification();
 }
 
 - (void)_setCustomSwipeViews:(NSArray *)customSwipeViews
 {
-    if (!customSwipeViews.count && !_data->_gestureController)
-        return;
-
-    [self _ensureGestureController];
-
-    Vector<RetainPtr<NSView>> views;
-    for (NSView *view in customSwipeViews)
-        views.append(view);
-
-    _data->_gestureController->setCustomSwipeViews(views);
+    _data->_impl->setCustomSwipeViews(customSwipeViews);
 }
 
 - (void)_setCustomSwipeViewsTopContentInset:(float)topContentInset
 {
-    [self _ensureGestureController];
-    _data->_gestureController->setCustomSwipeViewsTopContentInset(topContentInset);
+    _data->_impl->setCustomSwipeViewsTopContentInset(topContentInset);
 }
 
 - (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState
 {
-    if (!_data->_allowsBackForwardNavigationGestures)
-        return NO;
-
-    [self _ensureGestureController];
-
-    BOOL wasIgnoringPinnedState = _data->_gestureController->shouldIgnorePinnedState();
-    _data->_gestureController->setShouldIgnorePinnedState(ignoringPinnedState);
-
-    BOOL handledEvent = _data->_gestureController->handleScrollWheelEvent(event);
-
-    _data->_gestureController->setShouldIgnorePinnedState(wasIgnoringPinnedState);
-
-    return handledEvent;
+    return _data->_impl->tryToSwipeWithEvent(event, ignoringPinnedState);
 }
 
 - (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback
 {
-    if (!_data->_allowsBackForwardNavigationGestures)
-        return;
-
-    [self _ensureGestureController];
-    _data->_gestureController->setDidMoveSwipeSnapshotCallback(callback);
+    _data->_impl->setDidMoveSwipeSnapshotCallback(callback);
 }
 
 - (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData
