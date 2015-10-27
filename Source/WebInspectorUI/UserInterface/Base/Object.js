@@ -140,11 +140,15 @@ WebInspector.Object = class WebInspectorObject
 
         function dispatch(object)
         {
-            if (!object || !object._listeners || !object._listeners[eventType] || event._stoppedPropagation)
+            if (!object || !object.hasOwnProperty("_listeners") || event._stoppedPropagation)
+                return;
+
+            let listenersForThisEvent = object._listeners[eventType];
+            if (!listenersForThisEvent)
                 return;
 
             // Make a copy with slice so mutations during the loop doesn't affect us.
-            var listenersForThisEvent = object._listeners[eventType].slice(0);
+            listenersForThisEvent = listenersForThisEvent.slice(0);
 
             // Iterate over the listeners and call them. Stop if stopPropagation is called.
             for (var i = 0; i < listenersForThisEvent.length; ++i) {

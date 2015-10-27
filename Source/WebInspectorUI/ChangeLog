@@ -1,5 +1,21 @@
 2015-10-26  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: WebInspector.Object can dispatch constructor-level events multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=150579
+
+        Reviewed by Timothy Hatcher.
+
+        Use `hasOwnProperty` when checking for constructor event listeners when walking the
+        prototype chain. This prevents listeners registered with a base class constructor
+        from being dispatched multiple times by getting picked up higher in the prototype chain.
+
+        * UserInterface/Base/Object.js:
+        (WebInspector.Object.prototype.dispatchEventToListeners.dispatch):
+        (WebInspector.Object.prototype.dispatchEventToListeners):
+        (WebInspector.Object):
+
+2015-10-26  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Hundreds of failed assertions after switching to Rendering Frames after recording complete
         https://bugs.webkit.org/show_bug.cgi?id=150568
 
