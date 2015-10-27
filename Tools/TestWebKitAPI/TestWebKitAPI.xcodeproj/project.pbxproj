@@ -15,6 +15,8 @@
 		0FEAE3691B7D19D200CE17F2 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */; };
 		0FFC45A61B73EBEB0085BD62 /* Lock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFC45A41B73EBE20085BD62 /* Lock.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
+		1A4F81CC1BDFFD37004E672E /* RemoteObjectRegistry.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F81C81BDFFD18004E672E /* RemoteObjectRegistry.mm */; };
+		1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */; };
 		1A50AA201A2A51FC00F4C345 /* close-from-within-create-page.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */; };
 		1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */; };
 		1A7E8B3618120B2F00AEB74A /* FragmentNavigation.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A7E8B351812093600AEB74A /* FragmentNavigation.html */; };
@@ -35,7 +37,7 @@
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
 		2D1FE0B01AD465C1006CD9E6 /* FixedLayoutSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */; };
 		2D9A53AF1B31FA8D0074D5AA /* ShrinkToFit.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */; };
-		2DD355361BD08378005DF4A7 /* AutoLayoutIntegration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */; settings = {ASSET_TAGS = (); }; };
+		2DD355361BD08378005DF4A7 /* AutoLayoutIntegration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */; };
 		2DD7D3AF178227B30026E1E3 /* lots-of-text-vertical-lr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2DD7D3AE178227AC0026E1E3 /* lots-of-text-vertical-lr.html */; };
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
@@ -265,7 +267,7 @@
 		93F7E86F14DC8E5C00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */; };
 		9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B26FCB4159D15E700CC3765 /* HTMLFormCollectionNamedItem.html */; };
 		9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA6159D52CA002D9F94 /* HTMLCollectionNamedItem.html */; };
-		9B7916501BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B79164F1BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm */; settings = {ASSET_TAGS = (); }; };
+		9B7916501BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B79164F1BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm */; };
 		A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */; };
 		A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */; };
@@ -274,7 +276,7 @@
 		A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5861B8991B600D107EB /* ContentFiltering.mm */; };
 		A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */; };
 		A14FC5901B8AE36F00D107EB /* TestProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = A14FC58E1B8AE36500D107EB /* TestProtocol.mm */; };
-		A1C4FB6E1BACCE50003742D0 /* QuickLook.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */; settings = {ASSET_TAGS = (); }; };
+		A1C4FB6E1BACCE50003742D0 /* QuickLook.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */; };
 		A1C4FB731BACD1CA003742D0 /* pages.pages in Copy Resources */ = {isa = PBXBuildFile; fileRef = A1C4FB721BACD1B7003742D0 /* pages.pages */; };
 		A57A34F216AF6B2B00C2501F /* PageVisibilityStateWithWindowChanges.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A57A34F116AF69E200C2501F /* PageVisibilityStateWithWindowChanges.html */; };
 		A5E2027515B21F6E00C13E14 /* WindowlessWebViewWithMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = A5E2027015B2180600C13E14 /* WindowlessWebViewWithMedia.html */; };
@@ -458,6 +460,9 @@
 		14F3B11215E45EAB00210069 /* SaturatedArithmeticOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaturatedArithmeticOperations.cpp; sourceTree = "<group>"; };
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
 		1A02C84E125D4A8400E3F4BD /* Find.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Find.cpp; sourceTree = "<group>"; };
+		1A4F81C81BDFFD18004E672E /* RemoteObjectRegistry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteObjectRegistry.mm; sourceTree = "<group>"; };
+		1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteObjectRegistryPlugIn.mm; sourceTree = "<group>"; };
+		1A4F81D01BDFFDCF004E672E /* RemoteObjectRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteObjectRegistry.h; sourceTree = "<group>"; };
 		1A50AA1C1A2A4E7000F4C345 /* CloseFromWithinCreatePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CloseFromWithinCreatePage.cpp; sourceTree = "<group>"; };
 		1A50AA1F1A2A4EA500F4C345 /* close-from-within-create-page.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "close-from-within-create-page.html"; sourceTree = "<group>"; };
 		1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJavaScript.cpp; sourceTree = "<group>"; };
@@ -918,6 +923,9 @@
 				C95501BE19AD2FAF0049BE3E /* Preferences.mm */,
 				37D36F311B004DD400BAF5D9 /* ProvisionalURLChange.mm */,
 				A1C4FB6C1BACCE50003742D0 /* QuickLook.mm */,
+				1A4F81D01BDFFDCF004E672E /* RemoteObjectRegistry.h */,
+				1A4F81C81BDFFD18004E672E /* RemoteObjectRegistry.mm */,
+				1A4F81CD1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
 				7CC3E1FA197E234100BE6252 /* UserContentController.mm */,
@@ -1754,6 +1762,7 @@
 				41973B5B1AF2286A006C7B36 /* FileSystem.cpp in Sources */,
 				A1C4FB6E1BACCE50003742D0 /* QuickLook.mm in Sources */,
 				7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */,
+				1A4F81CC1BDFFD37004E672E /* RemoteObjectRegistry.mm in Sources */,
 				51CB4AD81B3A079C00C1B1C6 /* ModalAlertsSPI.cpp in Sources */,
 				9B7916501BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm in Sources */,
 				1CF0D3791BBF2F3D00B4EF54 /* WKRetainPtr.cpp in Sources */,
@@ -1769,6 +1778,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */,
+				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
