@@ -3270,3 +3270,11 @@ fast/forms/hidpi-textfield-background-bleeding.html [ Skip ]
 
 # USE_TYPO_METRICS is not implemented on the Windows platform
 webkit.org/b/131839 fonts/use-typo-metrics-1.html [ ImageOnlyFailure ]
+
+# webkit.org/b/150594 [Win] Newly imported W3C XMLHttpRequest tests failing
+imported/w3c/web-platform-tests/XMLHttpRequest/send-conditional.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-data-unexpected-tostring.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-no-location.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Pass Failure ]
