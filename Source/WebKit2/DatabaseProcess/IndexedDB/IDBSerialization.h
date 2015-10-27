@@ -32,9 +32,8 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+class IDBKeyData;
 class IDBKeyPath;
-
-struct IDBKeyData;
 }
 
 namespace WebKit {

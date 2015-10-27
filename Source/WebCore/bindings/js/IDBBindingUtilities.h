@@ -40,7 +40,7 @@ class IDBKeyPath;
 class SharedBuffer;
 
 struct IDBIndexMetadata;
-struct IDBKeyData;
+class IDBKeyData;
 
 IDBKeyPath idbKeyPathFromValue(JSC::ExecState*, JSC::JSValue);
 

@@ -762,7 +762,7 @@ bool UniqueIDBDatabaseBackingStoreSQLite::createIndex(const IDBIdentifier& trans
     m_cursors.set(cursor->identifier(), cursor);
 
     std::unique_ptr<JSLockHolder> locker;
-    while (!cursor->currentKey().isNull) {
+    while (!cursor->currentKey().isNull()) {
         const IDBKeyData& key = cursor->currentKey();
         const Vector<uint8_t>& valueBuffer = cursor->currentValueBuffer();
 

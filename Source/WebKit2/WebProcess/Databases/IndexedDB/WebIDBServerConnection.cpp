@@ -454,7 +454,7 @@ void WebIDBServerConnection::didPutRecord(uint64_t requestID, const WebCore::IDB
     if (!serverRequest)
         return;
 
-    serverRequest->completeRequest(resultKey.isNull ? nullptr : resultKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
+    serverRequest->completeRequest(resultKey.isNull() ? nullptr : resultKey.maybeCreateIDBKey(), errorCode ? IDBDatabaseError::create(errorCode, errorMessage) : nullptr);
 }
 
 void WebIDBServerConnection::didGetRecord(uint64_t requestID, const WebCore::IDBGetResult& getResult, uint32_t errorCode, const String& errorMessage)

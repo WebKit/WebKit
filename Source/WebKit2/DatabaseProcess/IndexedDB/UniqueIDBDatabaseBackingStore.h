@@ -33,12 +33,12 @@
 
 namespace WebCore {
 class IDBKey;
+class IDBKeyData;
 class IDBKeyRange;
 class SharedBuffer;
 
 struct IDBDatabaseMetadata;
 struct IDBGetResult;
-struct IDBKeyData;
 struct IDBObjectStoreMetadata;
 }
 

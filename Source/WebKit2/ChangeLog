@@ -1,3 +1,31 @@
+2015-10-26  Brady Eidson  <beidson@apple.com>
+
+        Make IDBKeyData from a struct to a class.
+        https://bugs.webkit.org/show_bug.cgi?id=150576
+
+        Reviewed by Alex Christensen.
+
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in:
+        * DatabaseProcess/IndexedDB/IDBSerialization.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecordInBackingStore):
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.h:
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabaseBackingStore.h:
+        * DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp:
+        (WebKit::buildIndexStatement):
+        (WebKit::buildObjectStoreStatement):
+        (WebKit::SQLiteIDBCursor::establishStatement):
+        (WebKit::SQLiteIDBCursor::createSQLiteStatement):
+        (WebKit::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebKit::SQLiteIDBCursor::iterate):
+        * DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp:
+        (WebKit::UniqueIDBDatabaseBackingStoreSQLite::createIndex):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::didPutRecord):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in:
+
 2015-10-26  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] [Stable] InstallMissingMediaPluginsPermissionRequest not defined when building without GStreamer

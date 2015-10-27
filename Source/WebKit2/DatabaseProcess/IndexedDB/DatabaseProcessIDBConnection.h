@@ -36,7 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-struct IDBKeyData;
+class IDBKeyData;
 struct IDBKeyRangeData;
 }
 

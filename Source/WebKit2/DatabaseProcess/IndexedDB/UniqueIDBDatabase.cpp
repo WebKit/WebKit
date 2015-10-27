@@ -829,7 +829,7 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
     IDBKeyData key;
     int64_t keyNumber = 0;
 
-    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && inputKeyData.isNull) {
+    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && inputKeyData.isNull()) {
         if (!m_backingStore->generateKeyNumber(transaction, objectStoreMetadata.id, keyNumber)) {
             postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error checking for key existence")));
             return;
@@ -875,7 +875,7 @@ void UniqueIDBDatabase::putRecordInBackingStore(uint64_t requestID, const IDBIde
 
     m_backingStore->notifyCursorsOfChanges(transaction, objectStoreMetadata.id);
 
-    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key.type == KeyType::Number) {
+    if (putMode != IDBDatabaseBackend::CursorUpdate && objectStoreMetadata.autoIncrement && key.type() == KeyType::Number) {
         if (!m_backingStore->updateKeyGeneratorNumber(transaction, objectStoreMetadata.id, keyNumber, keyWasGenerated)) {
             postMainThreadTask(createCrossThreadTask(*this, &UniqueIDBDatabase::didPutRecordInBackingStore, requestID, IDBKeyData(), IDBDatabaseException::UnknownError, ASCIILiteral("Internal backing store error updating key generator")));
             return;

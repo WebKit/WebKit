@@ -34,7 +34,7 @@
 #include <WebCore/IDBServerConnection.h>
 
 namespace WebCore {
-struct IDBKeyData;
+class IDBKeyData;
 class SecurityOrigin;
 }
 

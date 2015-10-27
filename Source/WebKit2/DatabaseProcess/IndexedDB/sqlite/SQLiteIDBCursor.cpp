@@ -72,13 +72,13 @@ static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::Cu
     StringBuilder builder;
 
     builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ");
-    if (!keyRange.lowerKey.isNull && !keyRange.lowerOpen)
+    if (!keyRange.lowerKey.isNull() && !keyRange.lowerOpen)
         builder.appendLiteral(">=");
     else
         builder.append('>');
 
     builder.appendLiteral(" CAST(? AS TEXT) AND key ");
-    if (!keyRange.upperKey.isNull && !keyRange.upperOpen)
+    if (!keyRange.upperKey.isNull() && !keyRange.upperOpen)
         builder.appendLiteral("<=");
     else
         builder.append('<');
@@ -102,14 +102,14 @@ static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, Indexed
 
     builder.appendLiteral("SELECT rowid, key, value FROM Records WHERE objectStoreID = ? AND key ");
 
-    if (!keyRange.lowerKey.isNull && !keyRange.lowerOpen)
+    if (!keyRange.lowerKey.isNull() && !keyRange.lowerOpen)
         builder.appendLiteral(">=");
     else
         builder.append('>');
 
     builder.appendLiteral(" CAST(? AS TEXT) AND key ");
 
-    if (!keyRange.upperKey.isNull && !keyRange.upperOpen)
+    if (!keyRange.upperKey.isNull() && !keyRange.upperOpen)
         builder.appendLiteral("<=");
     else
         builder.append('<');
@@ -137,8 +137,8 @@ bool SQLiteIDBCursor::establishStatement()
         m_boundID = m_objectStoreID;
     }
 
-    m_currentLowerKey = m_keyRange.lowerKey.isNull ? IDBKeyData::minimum() : m_keyRange.lowerKey;
-    m_currentUpperKey = m_keyRange.upperKey.isNull ? IDBKeyData::maximum() : m_keyRange.upperKey;
+    m_currentLowerKey = m_keyRange.lowerKey.isNull() ? IDBKeyData::minimum() : m_keyRange.lowerKey;
+    m_currentUpperKey = m_keyRange.upperKey.isNull() ? IDBKeyData::maximum() : m_keyRange.upperKey;
 
     return createSQLiteStatement(sql);
 }
@@ -147,8 +147,8 @@ bool SQLiteIDBCursor::createSQLiteStatement(const String& sql)
 {
     LOG(IDB, "Creating cursor with SQL query: \"%s\"", sql.utf8().data());
 
-    ASSERT(!m_currentLowerKey.isNull);
-    ASSERT(!m_currentUpperKey.isNull);
+    ASSERT(!m_currentLowerKey.isNull());
+    ASSERT(!m_currentUpperKey.isNull());
     ASSERT(m_transaction->sqliteTransaction());
 
     m_statement = std::make_unique<SQLiteStatement>(m_transaction->sqliteTransaction()->database(), sql);
@@ -171,8 +171,8 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
 
 void SQLiteIDBCursor::resetAndRebindStatement()
 {
-    ASSERT(!m_currentLowerKey.isNull);
-    ASSERT(!m_currentUpperKey.isNull);
+    ASSERT(!m_currentLowerKey.isNull());
+    ASSERT(!m_currentUpperKey.isNull());
     ASSERT(m_transaction->sqliteTransaction());
     ASSERT(m_statement);
     ASSERT(m_statementNeedsReset);
@@ -180,7 +180,7 @@ void SQLiteIDBCursor::resetAndRebindStatement()
     m_statementNeedsReset = false;
 
     // If this cursor never fetched any records, we don't need to reset the statement.
-    if (m_currentKey.isNull)
+    if (m_currentKey.isNull())
         return;
 
     // Otherwise update the lower key or upper key used for the cursor range.
@@ -368,7 +368,7 @@ bool SQLiteIDBCursor::iterate(const WebCore::IDBKeyData& targetKey)
     bool result = advance(1);
 
     // Iterating with no key is equivalent to advancing 1 step.
-    if (targetKey.isNull || !result)
+    if (targetKey.isNull() || !result)
         return result;
 
     while (!m_completed) {
