@@ -1042,10 +1042,14 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     ASSERT(!isFileUpload());
 
     // Renderer and our event handler are responsible for sanitizing values.
-    ASSERT(value == sanitizeValue(value) || sanitizeValue(value).isEmpty());
+    // Input types that support the selection API do *not* sanitize their
+    // user input in order to retain parity between what's in the model and
+    // what's on the screen.
+    ASSERT(m_inputType->supportsSelectionAPI() || value == sanitizeValue(value) || sanitizeValue(value).isEmpty());
 
     // Workaround for bug where trailing \n is included in the result of textContent.
-    // The assert macro above may also be simplified to: value == constrainValue(value)
+    // The assert macro above may also be simplified by removing the expression
+    // that calls isEmpty.
     // http://bugs.webkit.org/show_bug.cgi?id=9661
     m_valueIfDirty = value == "\n" ? emptyString() : value;
 
