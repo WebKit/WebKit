@@ -277,7 +277,7 @@ static WKRetainPtr<WKArrayRef> generateWhitelist()
     }
 
     for (NSString *hiddenFontFamily in systemHiddenFontFamilySet())
-        WKArrayAppendItem(result, WKStringCreateWithUTF8CString([hiddenFontFamily UTF8String]));
+        WKArrayAppendItem(result, adoptWK(WKStringCreateWithUTF8CString([hiddenFontFamily UTF8String])).get());
 
     return adoptWK(result);
 }

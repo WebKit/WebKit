@@ -1,3 +1,13 @@
+2015-10-27  Alexey Proskuryakov  <ap@apple.com>
+
+        WebKitTestRunner leaks in generateWhitelist()
+        https://bugs.webkit.org/show_bug.cgi?id=150563
+
+        Reviewed by Andreas Kling.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::generateWhitelist):
+
 2015-10-27  Anders Carlsson  <andersca@apple.com>
 
         Add an API test for _WKRemoteObjectRegistry
