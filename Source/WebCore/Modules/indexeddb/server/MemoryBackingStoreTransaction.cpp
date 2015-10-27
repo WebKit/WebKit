@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
 #include "MemoryObjectStore.h"
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -67,14 +68,50 @@ void MemoryBackingStoreTransaction::addNewObjectStore(MemoryObjectStore& objectS
     objectStore.writeTransactionStarted(*this);
 }
 
+void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key)
+{
+    ASSERT(m_objectStores.contains(&objectStore));
+
+    if (m_isAborting)
+        return;
+
+    auto originalAddResult = m_originalValues.add(&objectStore, nullptr);
+    if (originalAddResult.isNewEntry)
+        originalAddResult.iterator->value = std::make_unique<KeyValueMap>();
+
+    auto* map = originalAddResult.iterator->value.get();
+
+    auto addResult = map->add(key, ThreadSafeDataBuffer());
+    if (!addResult.isNewEntry)
+        return;
+
+    addResult.iterator->value = objectStore.valueForKey(key);
+}
+
 void MemoryBackingStoreTransaction::abort()
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
+
+    TemporaryChange<bool> change(m_isAborting, true);
 
     if (m_originalDatabaseInfo) {
         ASSERT(m_info.mode() == IndexedDB::TransactionMode::VersionChange);
         m_backingStore.setDatabaseInfo(*m_originalDatabaseInfo);
     }
+
+    for (auto objectStore : m_objectStores) {
+        auto keyValueMap = m_originalValues.get(objectStore);
+        if (!keyValueMap)
+            continue;
+
+        for (auto entry : *keyValueMap) {
+            objectStore->deleteRecord(entry.key);
+            objectStore->setKeyValue(entry.key, entry.value);
+        }
+
+        m_originalValues.remove(objectStore);
+    }
+
 
     finish();
 

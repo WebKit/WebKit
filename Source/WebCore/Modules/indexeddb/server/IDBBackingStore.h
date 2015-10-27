@@ -33,9 +33,11 @@
 
 namespace WebCore {
 
+class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBResourceIdentifier;
 class IDBTransactionInfo;
+class ThreadSafeDataBuffer;
 
 namespace IDBServer {
 
@@ -50,6 +52,10 @@ public:
     virtual IDBError commitTransaction(const IDBResourceIdentifier& transactionIdentifier) = 0;
 
     virtual IDBError createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&) = 0;
+    virtual IDBError keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, bool& keyExists) = 0;
+    virtual IDBError deleteRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&) = 0;
+    virtual IDBError putRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, const ThreadSafeDataBuffer& value) = 0;
+    virtual IDBError getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, ThreadSafeDataBuffer& outValue) = 0;
 };
 
 } // namespace IDBServer

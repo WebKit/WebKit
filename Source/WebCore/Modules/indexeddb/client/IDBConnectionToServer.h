@@ -47,6 +47,7 @@ namespace IDBClient {
 class IDBDatabase;
 class IDBOpenDBRequest;
 class IDBTransaction;
+class TransactionOperation;
 
 class IDBConnectionToServer : public RefCounted<IDBConnectionToServer> {
 public:
@@ -63,6 +64,12 @@ public:
     void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
     void didCreateObjectStore(const IDBResultData&);
 
+    void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
+    void didPutOrAdd(const IDBResultData&);
+
+    void getRecord(TransactionOperation&, RefPtr<IDBKey>&);
+    void didGetRecord(const IDBResultData&);
+
     void commitTransaction(IDBTransaction&);
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
@@ -77,7 +84,10 @@ public:
 
 private:
     IDBConnectionToServer(IDBConnectionToServerDelegate&);
-    
+
+    void saveOperation(TransactionOperation&);
+    void completeOperation(const IDBResultData&);
+
     Ref<IDBConnectionToServerDelegate> m_delegate;
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::IDBOpenDBRequest>> m_openDBRequestMap;

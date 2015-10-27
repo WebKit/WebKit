@@ -28,12 +28,21 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyData.h"
 #include "IDBObjectStoreInfo.h"
+#include "ThreadSafeDataBuffer.h"
+#include <set>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
+
+class IDBKeyData;
+
 namespace IDBServer {
 
 class MemoryBackingStoreTransaction;
+
+typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHashTraits> KeyValueMap;
 
 class MemoryObjectStore {
     friend std::unique_ptr<MemoryObjectStore> std::make_unique<MemoryObjectStore>(const WebCore::IDBObjectStoreInfo&);
@@ -45,6 +54,14 @@ public:
     void writeTransactionStarted(MemoryBackingStoreTransaction&);
     void writeTransactionFinished(MemoryBackingStoreTransaction&);
 
+    bool containsRecord(const IDBKeyData&);
+    void deleteRecord(const IDBKeyData&);
+    void putRecord(MemoryBackingStoreTransaction&, const IDBKeyData&, const ThreadSafeDataBuffer& value);
+
+    void setKeyValue(const IDBKeyData&, const ThreadSafeDataBuffer& value);
+
+    ThreadSafeDataBuffer valueForKey(const IDBKeyData&) const;
+
     const IDBObjectStoreInfo& info() const { return m_info; }
 
 private:
@@ -53,6 +70,9 @@ private:
     IDBObjectStoreInfo m_info;
 
     MemoryBackingStoreTransaction* m_writeTransaction { nullptr };
+
+    std::unique_ptr<KeyValueMap> m_keyValueStore;
+    std::unique_ptr<std::set<IDBKeyData>> m_orderedKeys;
 };
 
 } // namespace IDBServer

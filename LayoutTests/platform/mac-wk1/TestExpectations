@@ -73,9 +73,6 @@ inspector/indexeddb
 # But Modern IndexedDB is.
 storage/indexeddb/modern [ Pass ]
 
-# Flakey, skipped until https://bugs.webkit.org/show_bug.cgi?id=150468 lets us implement a proper fix
-storage/indexeddb/modern/createobjectstore-basic.html
-
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 

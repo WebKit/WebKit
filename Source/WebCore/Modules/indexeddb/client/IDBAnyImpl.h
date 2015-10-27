@@ -30,6 +30,7 @@
 
 #include "IDBAny.h"
 #include "IDBDatabaseImpl.h"
+#include "IDBObjectStoreImpl.h"
 
 namespace WebCore {
 namespace IDBClient {
@@ -39,6 +40,16 @@ public:
     static RefPtr<IDBAny> create(Ref<IDBDatabase>&& database)
     {
         return adoptRef(new IDBAny(WTF::move(database)));
+    }
+
+    static RefPtr<IDBAny> create(Ref<IDBObjectStore>&& objectStore)
+    {
+        return adoptRef(new IDBAny(WTF::move(objectStore)));
+    }
+
+    static RefPtr<IDBAny> create(const Deprecated::ScriptValue& value)
+    {
+        return adoptRef(new IDBAny(value));
     }
 
     virtual ~IDBAny();
@@ -57,11 +68,17 @@ public:
     virtual const String& string() override final;
     virtual const IDBKeyPath& keyPath() override final;
 
+    IDBObjectStore* modernIDBObjectStore();
+
 private:
-    IDBAny(Ref<IDBDatabase>&&);
+    explicit IDBAny(Ref<IDBDatabase>&&);
+    explicit IDBAny(Ref<IDBObjectStore>&&);
+    explicit IDBAny(const Deprecated::ScriptValue&);
+
 
     IDBAny::Type m_type { IDBAny::Type::Undefined };
     RefPtr<IDBDatabase> m_database;
+    RefPtr<IDBObjectStore> m_objectStore;
 
     const IDBKeyPath m_idbKeyPath;
     const Deprecated::ScriptValue m_scriptValue;

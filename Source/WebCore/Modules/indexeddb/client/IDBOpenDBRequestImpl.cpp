@@ -55,7 +55,6 @@ IDBOpenDBRequest::IDBOpenDBRequest(IDBConnectionToServer& connection, ScriptExec
     , m_databaseIdentifier(databaseIdentifier)
     , m_version(version)
 {
-    suspendIfNeeded();
 }
 
 IDBOpenDBRequest::~IDBOpenDBRequest()

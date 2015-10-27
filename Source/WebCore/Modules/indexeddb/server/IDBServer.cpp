@@ -168,6 +168,28 @@ void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBOb
     transaction->createObjectStore(requestData, info);
 }
 
+void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+{
+    LOG(IndexedDB, "IDBServer::putOrAdd");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    transaction->putOrAdd(requestData, keyData, valueData, overwriteMode);
+}
+
+void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyData& keyData)
+{
+    LOG(IndexedDB, "IDBServer::getRecord");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    transaction->getRecord(requestData, keyData);
+}
+
 void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::commitTransaction");

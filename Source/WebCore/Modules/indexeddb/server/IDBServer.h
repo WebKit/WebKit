@@ -60,6 +60,8 @@ public:
     void abortTransaction(const IDBResourceIdentifier&);
     void commitTransaction(const IDBResourceIdentifier&);
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
+    void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
+    void getRecord(const IDBRequestData&, const IDBKeyData&);
     void databaseConnectionClosed(uint64_t databaseConnectionIdentifier);
 
     void postDatabaseTask(std::unique_ptr<CrossThreadTask>&&);

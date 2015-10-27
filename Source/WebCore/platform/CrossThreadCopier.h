@@ -46,6 +46,7 @@ namespace WebCore {
     class ResourceRequest;
     class ResourceResponse;
     class SessionID;
+    class ThreadSafeDataBuffer;
     struct CrossThreadResourceResponseData;
     struct CrossThreadResourceRequestData;
     struct ThreadableLoaderOptions;
@@ -137,6 +138,11 @@ namespace WebCore {
     template<> struct CrossThreadCopierBase<false, false, SessionID> {
         typedef SessionID Type;
         static Type copy(const SessionID&);
+    };
+
+    template<> struct CrossThreadCopierBase<false, false, ThreadSafeDataBuffer> {
+        typedef ThreadSafeDataBuffer Type;
+        static Type copy(const ThreadSafeDataBuffer&);
     };
 
 #if ENABLE(INDEXED_DATABASE)

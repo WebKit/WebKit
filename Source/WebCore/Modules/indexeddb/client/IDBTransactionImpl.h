@@ -81,11 +81,18 @@ public:
     void didCommit(const IDBError&);
 
     bool isVersionChange() const { return m_info.mode() == IndexedDB::TransactionMode::VersionChange; }
+    bool isReadOnly() const { return m_info.mode() == IndexedDB::TransactionMode::ReadOnly; }
     bool isActive() const;
 
     Ref<IDBObjectStore> createObjectStore(const IDBObjectStoreInfo&);
 
+    Ref<IDBRequest> requestPutOrAdd(ScriptExecutionContext&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
+    Ref<IDBRequest> requestGetRecord(ScriptExecutionContext&, IDBObjectStore&, IDBKey&);
+
     IDBConnectionToServer& serverConnection();
+
+    void activate();
+    void deactivate();
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
@@ -108,6 +115,12 @@ private:
     void createObjectStoreOnServer(TransactionOperation&, const IDBObjectStoreInfo&);
     void didCreateObjectStoreOnServer(const IDBResultData&);
 
+    void putOrAddOnServer(TransactionOperation&, RefPtr<IDBKey>, RefPtr<SerializedScriptValue>, const IndexedDB::ObjectStoreOverwriteMode&);
+    void didPutOrAddOnServer(IDBRequest&, const IDBResultData&);
+
+    void getRecordOnServer(TransactionOperation&, RefPtr<IDBKey>);
+    void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
+
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
@@ -120,6 +133,26 @@ private:
 
     Deque<RefPtr<TransactionOperation>> m_transactionOperationQueue;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_transactionOperationMap;
+};
+
+class TransactionActivator {
+    WTF_MAKE_NONCOPYABLE(TransactionActivator);
+public:
+    TransactionActivator(IDBTransaction* transaction)
+        : m_transaction(transaction)
+    {
+        if (m_transaction)
+            m_transaction->activate();
+    }
+
+    ~TransactionActivator()
+    {
+        if (m_transaction)
+            m_transaction->deactivate();
+    }
+
+private:
+    IDBTransaction* m_transaction;
 };
 
 } // namespace IDBClient

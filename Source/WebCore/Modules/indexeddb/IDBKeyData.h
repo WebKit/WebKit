@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKey.h"
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -87,7 +88,48 @@ public:
 #endif
 
     bool isNull() const { return m_isNull; }
+    bool isValid() const { return m_type != KeyType::Invalid; }
     KeyType type() const { return m_type; }
+
+    bool operator<(const IDBKeyData&) const;
+    bool operator==(const IDBKeyData& other) const;
+    bool operator!=(const IDBKeyData& other) const
+    {
+        return !(*this == other);
+    }
+
+    unsigned hash() const
+    {
+        Vector<unsigned> hashCodes;
+        hashCodes.append(static_cast<unsigned>(m_type));
+        hashCodes.append(m_isNull ? 1 : 0);
+        hashCodes.append(m_isDeletedValue ? 1 : 0);
+        switch (m_type) {
+        case KeyType::Invalid:
+        case KeyType::Max:
+        case KeyType::Min:
+            break;
+        case KeyType::Number:
+        case KeyType::Date:
+            hashCodes.append(StringHasher::hashMemory<sizeof(double)>(&m_numberValue));
+            break;
+        case KeyType::String:
+            hashCodes.append(StringHash::hash(m_stringValue));
+            break;
+        case KeyType::Array:
+            for (auto& key : m_arrayValue)
+                hashCodes.append(key.hash());
+            break;
+        }
+
+        unsigned targetSize = WTF::roundUpToPowerOfTwo(hashCodes.size());
+        hashCodes.resize(targetSize);
+
+        return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
+    }
+
+    static IDBKeyData deletedValue();
+    bool isDeletedValue() const { return m_isDeletedValue; }
 
 private:
     KeyType m_type;
@@ -95,6 +137,38 @@ private:
     String m_stringValue;
     double m_numberValue { 0 };
     bool m_isNull { false };
+    bool m_isDeletedValue { false };
+};
+
+struct IDBKeyDataHash {
+    static unsigned hash(const IDBKeyData& a) { return a.hash(); }
+    static bool equal(const IDBKeyData& a, const IDBKeyData& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct IDBKeyDataHashTraits : public WTF::CustomHashTraits<IDBKeyData> {
+    static const bool emptyValueIsZero = false;
+    static const bool hasIsEmptyValueFunction = true;
+
+    static void constructDeletedValue(IDBKeyData& key)
+    {
+        key = IDBKeyData::deletedValue();
+    }
+
+    static bool isDeletedValue(const IDBKeyData& key)
+    {
+        return key.isDeletedValue();
+    }
+
+    static IDBKeyData emptyValue()
+    {
+        return IDBKeyData();
+    }
+
+    static bool isEmptyValue(const IDBKeyData& key)
+    {
+        return key.isNull();
+    }
 };
 
 template<class Encoder>

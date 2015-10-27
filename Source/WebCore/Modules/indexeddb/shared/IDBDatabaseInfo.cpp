@@ -77,6 +77,15 @@ void IDBDatabaseInfo::addExistingObjectStore(const IDBObjectStoreInfo& info)
     m_objectStoreMap.set(info.identifier(), info);
 }
 
+const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t objectStoreIdentifier) const
+{
+    auto iterator = m_objectStoreMap.find(objectStoreIdentifier);
+    if (iterator == m_objectStoreMap.end())
+        return nullptr;
+
+    return &iterator->value;
+}
+
 Vector<String> IDBDatabaseInfo::objectStoreNames() const
 {
     Vector<String> names;

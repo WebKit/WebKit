@@ -34,26 +34,37 @@
 namespace WebCore {
 
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionToServer& connection, const IDBClient::IDBOpenDBRequest& request)
-    : m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))
+    : m_serverConnectionIdentifier(connection.identifier())
+    , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(connection, request))
     , m_databaseIdentifier(request.databaseIdentifier())
     , m_requestedVersion(request.version())
 {
 }
 
 IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
-    : m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(operation.identifier()))
+    : m_serverConnectionIdentifier(operation.transaction().database().serverConnection().identifier())
+    , m_requestIdentifier(std::make_unique<IDBResourceIdentifier>(operation.identifier()))
     , m_transactionIdentifier(std::make_unique<IDBResourceIdentifier>(operation.transactionIdentifier()))
+    , m_objectStoreIdentifier(operation.objectStoreIdentifier())
 {
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& other)
-    : m_databaseIdentifier(other.m_databaseIdentifier)
+    : m_serverConnectionIdentifier(other.m_serverConnectionIdentifier)
+    , m_objectStoreIdentifier(other.m_objectStoreIdentifier)
+    , m_databaseIdentifier(other.m_databaseIdentifier)
     , m_requestedVersion(other.m_requestedVersion)
 {
     if (other.m_requestIdentifier)
         m_requestIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_requestIdentifier);
     if (other.m_transactionIdentifier)
         m_transactionIdentifier = std::make_unique<IDBResourceIdentifier>(*other.m_transactionIdentifier);
+}
+
+uint64_t IDBRequestData::serverConnectionIdentifier() const
+{
+    ASSERT(m_serverConnectionIdentifier);
+    return m_serverConnectionIdentifier;
 }
 
 IDBResourceIdentifier IDBRequestData::requestIdentifier() const
@@ -66,6 +77,12 @@ IDBResourceIdentifier IDBRequestData::transactionIdentifier() const
 {
     RELEASE_ASSERT(m_transactionIdentifier);
     return *m_transactionIdentifier;
+}
+
+uint64_t IDBRequestData::objectStoreIdentifier() const
+{
+    RELEASE_ASSERT(m_objectStoreIdentifier);
+    return m_objectStoreIdentifier;
 }
 
 uint64_t IDBRequestData::requestedVersion() const

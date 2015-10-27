@@ -319,6 +319,45 @@ void IDBKeyData::setNumberValue(double value)
     m_isNull = false;
 }
 
+IDBKeyData IDBKeyData::deletedValue()
+{
+    IDBKeyData result;
+    result.m_isNull = false;
+    result.m_isDeletedValue = true;
+    return WTF::move(result);
 }
+
+bool IDBKeyData::operator<(const IDBKeyData& rhs) const
+{
+    return compare(rhs) < 0;
+}
+
+bool IDBKeyData::operator==(const IDBKeyData& other) const
+{
+    if (m_type != other.m_type || m_isNull != other.m_isNull || m_isDeletedValue != other.m_isDeletedValue)
+        return false;
+    switch (m_type) {
+    case KeyType::Invalid:
+    case KeyType::Max:
+    case KeyType::Min:
+        return true;
+    case KeyType::Number:
+    case KeyType::Date:
+        return m_numberValue == other.m_numberValue;
+    case KeyType::String:
+        return m_stringValue == other.m_stringValue;
+    case KeyType::Array:
+        if (m_arrayValue.size() != other.m_arrayValue.size())
+            return false;
+        for (size_t i = 0; i < m_arrayValue.size(); ++i) {
+            if (m_arrayValue[0] != other.m_arrayValue[0])
+                return false;
+        }
+        return true;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

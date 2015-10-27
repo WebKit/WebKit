@@ -38,6 +38,7 @@
 #include "ResourceResponse.h"
 #include "SerializedScriptValue.h"
 #include "SessionID.h"
+#include "ThreadSafeDataBuffer.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -84,6 +85,11 @@ CrossThreadCopierBase<false, false, ResourceResponse>::Type CrossThreadCopierBas
 CrossThreadCopierBase<false, false, SessionID>::Type CrossThreadCopierBase<false, false, SessionID>::copy(const SessionID& sessionID)
 {
     return sessionID;
+}
+
+CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::Type CrossThreadCopierBase<false, false, ThreadSafeDataBuffer>::copy(const ThreadSafeDataBuffer& buffer)
+{
+    return ThreadSafeDataBuffer(buffer);
 }
 
 #if ENABLE(INDEXED_DATABASE)

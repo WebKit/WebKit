@@ -139,6 +139,20 @@ uint64_t UniqueIDBDatabase::storeCallback(ErrorCallback callback)
     return identifier;
 }
 
+uint64_t UniqueIDBDatabase::storeCallback(KeyDataCallback callback)
+{
+    uint64_t identifier = generateUniqueCallbackIdentifier();
+    m_keyDataCallbacks.set(identifier, callback);
+    return identifier;
+}
+
+uint64_t UniqueIDBDatabase::storeCallback(ValueDataCallback callback)
+{
+    uint64_t identifier = generateUniqueCallbackIdentifier();
+    m_valueDataCallbacks.set(identifier, callback);
+    return identifier;
+}
+
 void UniqueIDBDatabase::startVersionChangeTransaction()
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::startVersionChangeTransaction");
@@ -249,6 +263,108 @@ void UniqueIDBDatabase::didPerformCreateObjectStore(uint64_t callbackIdentifier,
         m_databaseInfo->addExistingObjectStore(info);
 
     performErrorCallback(callbackIdentifier, error);
+}
+
+void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode, KeyDataCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::putOrAdd");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPutOrAdd, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyData, valueData, overwriteMode));
+}
+
+void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performPutOrAdd");
+
+    ASSERT(m_backingStore);
+    ASSERT(objectStoreIdentifier);
+
+    IDBKeyData usedKey;
+    IDBError error;
+
+    auto objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+    if (!objectStoreInfo) {
+        error = IDBError(IDBExceptionCode::InvalidStateError, ASCIILiteral("Object store cannot be found in the backing store"));
+        m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+        return;
+    }
+
+    if (objectStoreInfo->autoIncrement() && !keyData.isValid()) {
+        // FIXME: This is where generated key support goes
+        error = IDBError(IDBExceptionCode::Unknown, ASCIILiteral("Key generators not supported yet"));
+        m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+        return;
+    }
+
+    usedKey = keyData;
+
+    if (overwriteMode == IndexedDB::ObjectStoreOverwriteMode::NoOverwrite) {
+        bool keyExists;
+        error = m_backingStore->keyExistsInObjectStore(transactionIdentifier, objectStoreIdentifier, usedKey, keyExists);
+        if (error.isNull() && keyExists)
+            error = IDBError(IDBExceptionCode::ConstraintError, ASCIILiteral("Key already exists in the object store"));
+
+        if (!error.isNull()) {
+            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+            return;
+        }
+    }
+
+    // 3.4.1 Object Store Storage Operation
+    // ...If a record already exists in store ...
+    // then remove the record from store using the steps for deleting records from an object store...
+    // This is important because formally deleting it from from the object store also removes it from the appropriate indexes.
+    error = m_backingStore->deleteRecord(transactionIdentifier, objectStoreIdentifier, usedKey);
+    if (!error.isNull()) {
+        m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+        return;
+    }
+
+    error = m_backingStore->putRecord(transactionIdentifier, objectStoreIdentifier, usedKey, valueData);
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+}
+
+void UniqueIDBDatabase::didPerformPutOrAdd(uint64_t callbackIdentifier, const IDBError& error, const IDBKeyData& resultKey)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformPutOrAdd");
+
+    performKeyDataCallback(callbackIdentifier, error, resultKey);
+}
+
+void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKeyData& keyData, ValueDataCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::getRecord");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyData));
+}
+
+void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performGetRecord");
+
+    ASSERT(m_backingStore);
+    ASSERT(objectStoreIdentifier);
+
+    ThreadSafeDataBuffer valueData;
+    IDBError error = m_backingStore->getRecord(transactionIdentifier, objectStoreIdentifier, keyData, valueData);
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetRecord, callbackIdentifier, error, valueData));
+}
+
+void UniqueIDBDatabase::didPerformGetRecord(uint64_t callbackIdentifier, const IDBError& error, const ThreadSafeDataBuffer& resultData)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformGetRecord");
+
+    performValueDataCallback(callbackIdentifier, error, resultData);
 }
 
 void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)
@@ -378,6 +494,20 @@ void UniqueIDBDatabase::performErrorCallback(uint64_t callbackIdentifier, const 
     auto callback = m_errorCallbacks.take(callbackIdentifier);
     ASSERT(callback);
     callback(error);
+}
+
+void UniqueIDBDatabase::performKeyDataCallback(uint64_t callbackIdentifier, const IDBError& error, const IDBKeyData& resultKey)
+{
+    auto callback = m_keyDataCallbacks.take(callbackIdentifier);
+    ASSERT(callback);
+    callback(error, resultKey);
+}
+
+void UniqueIDBDatabase::performValueDataCallback(uint64_t callbackIdentifier, const IDBError& error, const ThreadSafeDataBuffer& resultData)
+{
+    auto callback = m_valueDataCallbacks.take(callbackIdentifier);
+    ASSERT(callback);
+    callback(error, resultData);
 }
 
 } // namespace IDBServer

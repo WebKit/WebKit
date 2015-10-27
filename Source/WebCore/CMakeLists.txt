@@ -876,6 +876,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/client/IDBRequestImpl.cpp
     Modules/indexeddb/client/IDBTransactionImpl.cpp
     Modules/indexeddb/client/IDBVersionChangeEventImpl.cpp
+    Modules/indexeddb/client/TransactionOperation.cpp
 
     Modules/indexeddb/legacy/IDBCursorBackend.cpp
     Modules/indexeddb/legacy/IDBCursorBackendOperations.cpp

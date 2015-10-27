@@ -30,13 +30,18 @@ createRequest.onupgradeneeded = function(event) {
     var versionTransaction = createRequest.transaction;
     var database = event.target.result;
     var objectStore = database.createObjectStore("FirstAbortedObjectStore");
+    var request = objectStore.put("foo", "bar");
 
-    var f = function() {
+    request.onsuccess = function(event) {
+        alert("Put succeeded");
         versionTransaction.abort();
-    };
-
+    }
+    request.onerror = function(event) {
+        alert("Put failed - " + event);
+        done();
+    }
+    
     dumpObjectStores(database);    
-    setTimeout(f, 0);
     
     versionTransaction.onabort = function(event) {
         alert("Initial upgrade versionchange transaction aborted");

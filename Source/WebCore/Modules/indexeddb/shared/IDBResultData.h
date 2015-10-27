@@ -30,24 +30,29 @@
 
 #include "IDBDatabaseInfo.h"
 #include "IDBError.h"
+#include "IDBKeyData.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
+#include "ThreadSafeDataBuffer.h"
 
 namespace WebCore {
 
 class IDBResourceIdentifier;
-
-namespace IDBServer {
-class UniqueIDBDatabaseConnection;
-class UniqueIDBDatabaseTransaction;
-}
+class ThreadSafeDataBuffer;
 
 enum class IDBResultType {
     Error,
     OpenDatabaseSuccess,
     OpenDatabaseUpgradeNeeded,
     CreateObjectStoreSuccess,
+    PutOrAddSuccess,
+    GetRecordSuccess,
 };
+
+namespace IDBServer {
+class UniqueIDBDatabaseConnection;
+class UniqueIDBDatabaseTransaction;
+}
 
 class IDBResultData {
 public:
@@ -55,6 +60,8 @@ public:
     static IDBResultData openDatabaseSuccess(const IDBResourceIdentifier&, IDBServer::UniqueIDBDatabaseConnection&);
     static IDBResultData openDatabaseUpgradeNeeded(const IDBResourceIdentifier&, IDBServer::UniqueIDBDatabaseTransaction&);
     static IDBResultData createObjectStoreSuccess(const IDBResourceIdentifier&);
+    static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
+    static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const ThreadSafeDataBuffer& valueData);
 
     IDBResultData(const IDBResultData&);
 
@@ -67,6 +74,9 @@ public:
     const IDBDatabaseInfo& databaseInfo() const;
     const IDBTransactionInfo& transactionInfo() const;
 
+    const IDBKeyData* resultKey() const { return m_resultKey.get(); }
+    const ThreadSafeDataBuffer& resultData() const { return m_resultData; }
+
 private:
     IDBResultData(const IDBResourceIdentifier&);
     IDBResultData(IDBResultType, const IDBResourceIdentifier&);
@@ -78,6 +88,8 @@ private:
     uint64_t m_databaseConnectionIdentifier { 0 };
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBTransactionInfo> m_transactionInfo;
+    std::unique_ptr<IDBKeyData> m_resultKey;
+    ThreadSafeDataBuffer m_resultData;
 };
 
 } // namespace WebCore

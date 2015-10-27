@@ -30,8 +30,12 @@
 
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreInfo.h"
+#include "IndexedDB.h"
 
 namespace WebCore {
+
+class IDBKey;
+
 namespace IDBClient {
 
 class IDBTransaction;
@@ -72,11 +76,17 @@ public:
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
+    const IDBObjectStoreInfo& info() const { return m_info; }
+
 private:
     IDBObjectStore(const IDBObjectStoreInfo&, IDBTransaction&);
 
+    RefPtr<WebCore::IDBRequest> putOrAdd(JSC::ExecState&, Deprecated::ScriptValue&, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, ExceptionCode&);
+
     IDBObjectStoreInfo m_info;
     Ref<IDBTransaction> m_transaction;
+
+    bool m_deleted { false };
 };
 
 } // namespace IDBClient

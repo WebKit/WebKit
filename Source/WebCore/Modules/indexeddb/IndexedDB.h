@@ -41,7 +41,8 @@ const unsigned TransactionModeMaximum = 2;
 
 enum class TransactionState {
     Unstarted,
-    Running,
+    Active,
+    Inactive,
     Committing,
     Aborting,
     Finished,
@@ -71,7 +72,12 @@ enum class KeyPathType {
     String,
     Array,
 };
-    
+
+enum class ObjectStoreOverwriteMode {
+    Overwrite,
+    NoOverwrite,
+};
+
 // In order of the least to the highest precedent in terms of sort order.
 enum KeyType {
     Max = -1,

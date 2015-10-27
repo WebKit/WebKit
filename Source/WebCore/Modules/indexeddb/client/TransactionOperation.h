@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBRequestImpl.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionImpl.h"
 
@@ -51,6 +52,8 @@ public:
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
     IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
+    uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
+    IDBTransaction& transaction() { return m_transaction.get(); }
 
 protected:
     TransactionOperation(IDBTransaction& transaction)
@@ -59,8 +62,11 @@ protected:
     {
     }
 
+    TransactionOperation(IDBTransaction&, IDBRequest&);
+
     Ref<IDBTransaction> m_transaction;
     IDBResourceIdentifier m_identifier;
+    uint64_t m_objectStoreIdentifier { 0 };
     std::function<void ()> m_performFunction;
     std::function<void (const IDBResultData&)> m_completeFunction;
 };
@@ -81,6 +87,22 @@ public:
             (&m_transaction.get()->*completeMethod)(resultData);
         };
     }
+
+    TransactionOperationImpl(IDBTransaction& transaction, IDBRequest& request, void (IDBTransaction::*completeMethod)(IDBRequest&, const IDBResultData&), void (IDBTransaction::*performMethod)(TransactionOperation&, Arguments...), Arguments&&... arguments)
+        : TransactionOperation(transaction, request)
+    {
+        relaxAdoptionRequirement();
+
+        RefPtr<TransactionOperation> self(this);
+        m_performFunction = [self, this, performMethod, arguments...] {
+            (&m_transaction.get()->*performMethod)(*this, arguments...);
+        };
+
+        RefPtr<IDBRequest> refRequest(&request);
+        m_completeFunction = [self, this, refRequest, completeMethod](const IDBResultData& resultData) {
+            (&m_transaction.get()->*completeMethod)(*refRequest, resultData);
+        };
+    }
 };
 
 template<typename MP1, typename P1>
@@ -91,6 +113,32 @@ RefPtr<TransactionOperation> createTransactionOperation(
     const P1& parameter1)
 {
     auto operation = new TransactionOperationImpl<MP1>(transaction, complete, perform, parameter1);
+    return adoptRef(operation);
+}
+
+template<typename MP1, typename P1>
+RefPtr<TransactionOperation> createTransactionOperation(
+    IDBTransaction& transaction,
+    IDBRequest& request,
+    void (IDBTransaction::*complete)(IDBRequest&, const IDBResultData&),
+    void (IDBTransaction::*perform)(TransactionOperation&, MP1),
+    const P1& parameter1)
+{
+    auto operation = new TransactionOperationImpl<MP1>(transaction, request, complete, perform, parameter1);
+    return adoptRef(operation);
+}
+
+template<typename MP1, typename MP2, typename MP3, typename P1, typename P2, typename P3>
+RefPtr<TransactionOperation> createTransactionOperation(
+    IDBTransaction& transaction,
+    IDBRequest& request,
+    void (IDBTransaction::*complete)(IDBRequest&, const IDBResultData&),
+    void (IDBTransaction::*perform)(TransactionOperation&, MP1, MP2, MP3),
+    const P1& parameter1,
+    const P2& parameter2,
+    const P3& parameter3)
+{
+    auto operation = new TransactionOperationImpl<MP1, MP2, MP3>(transaction, request, complete, perform, parameter1, parameter2, parameter3);
     return adoptRef(operation);
 }
 

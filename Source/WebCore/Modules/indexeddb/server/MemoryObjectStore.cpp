@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Logging.h"
+#include "MemoryBackingStoreTransaction.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -62,6 +63,61 @@ void MemoryObjectStore::writeTransactionFinished(MemoryBackingStoreTransaction& 
 
     ASSERT_UNUSED(transaction, m_writeTransaction == &transaction);
     m_writeTransaction = nullptr;
+}
+
+bool MemoryObjectStore::containsRecord(const IDBKeyData& key)
+{
+    if (!m_keyValueStore)
+        return false;
+
+    return m_keyValueStore->contains(key);
+}
+
+void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
+{
+    LOG(IndexedDB, "MemoryObjectStore::deleteRecord");
+
+    ASSERT(m_writeTransaction);
+    m_writeTransaction->recordValueChanged(*this, key);
+
+    if (!m_keyValueStore)
+        return;
+
+    m_keyValueStore->remove(key);
+    if (m_orderedKeys)
+        m_orderedKeys->erase(key);
+}
+
+void MemoryObjectStore::putRecord(MemoryBackingStoreTransaction& transaction, const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+{
+    LOG(IndexedDB, "MemoryObjectStore::putRecord");
+
+    ASSERT(m_writeTransaction);
+    ASSERT_UNUSED(transaction, m_writeTransaction == &transaction);
+
+    m_writeTransaction->recordValueChanged(*this, keyData);
+
+    setKeyValue(keyData, value);
+}
+
+void MemoryObjectStore::setKeyValue(const IDBKeyData& keyData, const ThreadSafeDataBuffer& value)
+{
+    if (!m_keyValueStore)
+        m_keyValueStore = std::make_unique<KeyValueMap>();
+
+    auto result = m_keyValueStore->set(keyData, value);
+    if (result.isNewEntry && m_orderedKeys)
+        m_orderedKeys->insert(keyData);
+}
+
+ThreadSafeDataBuffer MemoryObjectStore::valueForKey(const IDBKeyData& keyData) const
+{
+    LOG(IndexedDB, "MemoryObjectStore::valueForKey");
+
+    if (!m_keyValueStore)
+        return ThreadSafeDataBuffer();
+
+    return m_keyValueStore->get(keyData);
 }
 
 } // namespace IDBServer
