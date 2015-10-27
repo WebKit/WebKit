@@ -1,3 +1,18 @@
+2015-10-27  Matt Baker  <mattbaker@apple.com>
+
+        REGRESSION: Web Inspector: DOM path bar blinks when modifying inline styles
+        https://bugs.webkit.org/show_bug.cgi?id=149258
+
+        Reviewed by Timothy Hatcher.
+
+        Now that Object now longer spams constructor event listeners, ContentBrowser can safely
+        update the NavigationBar synchronously. This fixes the issue, with zero impact on layout
+        responsiveness when selecting Rendering Frames tree elements.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._contentViewSelectionPathComponentDidChange):
+        Force NavigationBar to update synchronously.
+
 2015-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline current time marker does not start moving when starting recording after just opening inspector

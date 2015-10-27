@@ -447,7 +447,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.Object
 
         this._updateContentViewNavigationItems();
 
-        this._navigationBar.updateLayoutSoon();
+        this._navigationBar.updateLayout();
 
         this._dispatchCurrentRepresentedObjectsDidChangeEventSoon();
     }
