@@ -3278,3 +3278,9 @@ imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-no-location.htm [ P
 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Pass Failure ]
+
+# webkit.org/b/150596 [Win] Newly imported W3C html/semantics/forms tests failing on Win7
+imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Pass Failure ]
