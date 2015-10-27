@@ -540,6 +540,11 @@ private:
     return [_webView _zoomOutWithOrigin:origin animated:YES];
 }
 
+- (void)_zoomToInitialScaleWithOrigin:(CGPoint)origin
+{
+    return [_webView _zoomToInitialScaleWithOrigin:origin animated:YES];
+}
+
 - (void)_applicationWillResignActive:(NSNotification*)notification
 {
     _page->applicationWillResignActive();

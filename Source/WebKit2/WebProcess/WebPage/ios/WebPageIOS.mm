@@ -233,13 +233,8 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
     if (m_viewportConfiguration.viewportArguments() == viewportArguments)
         return;
 
-    float oldWidth = m_viewportConfiguration.viewportArguments().width;
-
     m_viewportConfiguration.setViewportArguments(viewportArguments);
     viewportConfigurationChanged();
-
-    if (oldWidth != viewportArguments.width)
-        send(Messages::WebPageProxy::ViewportMetaTagWidthDidChange(viewportArguments.width));
 }
 
 void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
@@ -664,22 +659,10 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation);
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get());
-    if (m_potentialTapNode) {
 #if ENABLE(TOUCH_EVENTS)
-        if (!m_potentialTapNode->allowsDoubleTapGesture()) {
-            send(Messages::WebPageProxy::DisableDoubleTapGesturesUntilTapIsFinishedIfNecessary(requestID, false, FloatRect(), false, 0, 0));
-            return;
-        }
+    if (m_potentialTapNode && !m_potentialTapNode->allowsDoubleTapGesture())
+        send(Messages::WebPageProxy::DisableDoubleTapGesturesDuringTapIfNecessary(requestID));
 #endif
-        FloatPoint origin = position;
-        FloatRect renderRect;
-        bool isReplaced;
-        double viewportMinimumScale;
-        double viewportMaximumScale;
-
-        m_viewGestureGeometryCollector.computeZoomInformationForNode(*m_potentialTapNode.get(), origin, renderRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
-        send(Messages::WebPageProxy::DisableDoubleTapGesturesUntilTapIsFinishedIfNecessary(requestID, true, renderRect, isReplaced, viewportMinimumScale, viewportMaximumScale));
-    }
 }
 
 void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)

@@ -93,7 +93,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
 {
     if (targetRect.isEmpty()) {
         // FIXME: If we don't zoom, send the tap along to text selection (see <rdar://problem/6810344>).
-        [m_contentView _zoomOutWithOrigin:origin];
+        [m_contentView _zoomToInitialScaleWithOrigin:origin];
         return;
     }
     double minimumScale = viewportMinimumScale;
@@ -119,7 +119,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
         return;
 
     // FIXME: If we still don't zoom, send the tap along to text selection (see <rdar://problem/6810344>).
-    [m_contentView _zoomOutWithOrigin:origin];
+    [m_contentView _zoomToInitialScaleWithOrigin:origin];
 }
 
 void SmartMagnificationController::magnify(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, double viewportMinimumScale, double viewportMaximumScale)

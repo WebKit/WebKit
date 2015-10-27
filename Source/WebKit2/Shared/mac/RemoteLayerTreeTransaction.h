@@ -224,6 +224,12 @@ public:
     double maximumScaleFactor() const { return m_maximumScaleFactor; }
     void setMaximumScaleFactor(double scale) { m_maximumScaleFactor = scale; }
 
+    double initialScaleFactor() const { return m_initialScaleFactor; }
+    void setInitialScaleFactor(double scale) { m_initialScaleFactor = scale; }
+
+    double viewportMetaTagWidth() const { return m_viewportMetaTagWidth; }
+    void setViewportMetaTagWidth(double width) { m_viewportMetaTagWidth = width; }
+
     bool allowsUserScaling() const { return m_allowsUserScaling; }
     void setAllowsUserScaling(bool allowsUserScaling) { m_allowsUserScaling = allowsUserScaling; }
 
@@ -258,6 +264,8 @@ private:
     double m_pageScaleFactor { 1 };
     double m_minimumScaleFactor { 1 };
     double m_maximumScaleFactor { 1 };
+    double m_initialScaleFactor { 1 };
+    double m_viewportMetaTagWidth { -1 };
     uint64_t m_renderTreeSize { 0 };
     uint64_t m_transactionID { 0 };
     WebCore::LayoutMilestones m_newlyReachedLayoutMilestones { 0 };

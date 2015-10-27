@@ -134,8 +134,7 @@ private:
     virtual void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect) override;
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
-    virtual void didChangeViewportMetaTagWidth(float) override;
-    virtual void disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(uint64_t requestID, bool allowsDoubleTapZoom, const WebCore::FloatRect& targetRect, bool isReplacedElement, double minimumScale, double maximumScale) override;
+    virtual void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID) override;
     virtual double minimumZoomScale() const override;
     virtual WebCore::FloatRect documentRect() const override;
 

@@ -932,14 +932,9 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     m_uiClient->didNotHandleTapAsClick(point);
 }
 
-void WebPageProxy::viewportMetaTagWidthDidChange(float width)
+void WebPageProxy::disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
 {
-    m_pageClient.didChangeViewportMetaTagWidth(width);
-}
-
-void WebPageProxy::disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(uint64_t requestID, bool allowsDoubleTapZoom, const WebCore::FloatRect& targetRect, bool isReplacedElement, double minimumScale, double maximumScale)
-{
-    m_pageClient.disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(requestID, allowsDoubleTapZoom, targetRect, isReplacedElement, minimumScale, maximumScale);
+    m_pageClient.disableDoubleTapGesturesDuringTapIfNecessary(requestID);
 }
 
 void WebPageProxy::didFinishDrawingPagesToPDF(const IPC::DataReference& pdfData)

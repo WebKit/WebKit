@@ -174,6 +174,9 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     CGSize _maximumUnobscuredSizeOverride;
     CGRect _inputViewBounds;
     CGFloat _viewportMetaTagWidth;
+    CGFloat _initialScaleFactor;
+    BOOL _fastClickingIsDisabled;
+
     BOOL _allowsLinkPreview;
 
     UIEdgeInsets _obscuredInsets;
@@ -353,7 +356,9 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     [_scrollView addSubview:[_contentView unscaledView]];
     [self _updateScrollViewBackground];
 
-    _viewportMetaTagWidth = -1;
+    _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
+    _initialScaleFactor = 1;
+    _fastClickingIsDisabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitFastClickingDisabled"];
 
     [self _frameOrBoundsChanged];
 
@@ -814,11 +819,6 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
-- (void)_setViewportMetaTagWidth:(float)newWidth
-{
-    _viewportMetaTagWidth = newWidth;
-}
-
 - (void)_willInvokeUIScrollViewDelegateCallback
 {
     _delayUpdateVisibleContentRects = YES;
@@ -931,7 +931,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
     [_scrollView setZoomScale:1];
 
-    _viewportMetaTagWidth = -1;
+    _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
+    _initialScaleFactor = 1;
     _hasCommittedLoadForMainFrame = NO;
     _needsResetViewStateAfterCommitLoadForMainFrame = NO;
     _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
@@ -1013,7 +1014,10 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
         [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
 
-    [_contentView _setDoubleTapGesturesEnabled:self._viewportIsUserScalable];
+    _viewportMetaTagWidth = layerTreeTransaction.viewportMetaTagWidth();
+    _initialScaleFactor = layerTreeTransaction.initialScaleFactor();
+    if (![_contentView _mayDisableDoubleTapGesturesDuringSingleTap])
+        [_contentView _setDoubleTapGesturesEnabled:self._allowsDoubleTapGestures];
 
     [self _updateScrollViewBackground];
 
@@ -1292,6 +1296,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale] animated:animated];
 }
 
+- (void)_zoomToInitialScaleWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
+{
+    ASSERT(_initialScaleFactor > 0);
+    [self _zoomToPoint:origin atScale:_initialScaleFactor animated:animated];
+}
+
 // focusedElementRect and selectionRect are both in document coordinates.
 - (void)_zoomToFocusRect:(WebCore::FloatRect)focusedElementRectInDocumentCoordinates selectionRect:(WebCore::FloatRect)selectionRectInDocumentCoordinates fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
 {
@@ -1409,11 +1419,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
                         scale:scale
                      duration:UIWebFormAnimationDuration
                         force:YES];
-}
-
-- (CGFloat)_contentZoomScale
-{
-    return contentZoomScale(self);
 }
 
 - (CGFloat)_targetContentZoomScaleForRect:(const WebCore::FloatRect&)targetRect currentScale:(double)currentScale fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale
@@ -3096,14 +3101,20 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return [(WKPDFView *)_customContentView.get() suggestedFilename];
 }
 
-- (CGFloat)_viewportMetaTagWidth
+- (BOOL)_allowsDoubleTapGestures
 {
-    return _viewportMetaTagWidth;
-}
+    if (_fastClickingIsDisabled)
+        return YES;
 
-- (BOOL)_viewportIsUserScalable
-{
-    return [_scrollView isZoomEnabled] && [_scrollView minimumZoomScale] < [_scrollView maximumZoomScale];
+    // If the page is not user scalable, we don't allow double tap gestures.
+    if (![_scrollView isZoomEnabled] || [_scrollView minimumZoomScale] >= [_scrollView maximumZoomScale])
+        return NO;
+
+    // For scalable viewports, only disable double tap gestures if the viewport width is device width.
+    if (_viewportMetaTagWidth != WebCore::ViewportArguments::ValueDeviceWidth)
+        return YES;
+
+    return !areEssentiallyEqualAsFloat(contentZoomScale(self), _initialScaleFactor);
 }
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter

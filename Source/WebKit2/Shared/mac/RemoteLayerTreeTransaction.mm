@@ -517,6 +517,8 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
     encoder << m_maximumScaleFactor;
+    encoder << m_initialScaleFactor;
+    encoder << m_viewportMetaTagWidth;
 
     encoder << m_renderTreeSize;
     encoder << m_transactionID;
@@ -595,6 +597,12 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
         return false;
 
     if (!decoder.decode(result.m_maximumScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.m_initialScaleFactor))
+        return false;
+
+    if (!decoder.decode(result.m_viewportMetaTagWidth))
         return false;
 
     if (!decoder.decode(result.m_renderTreeSize))

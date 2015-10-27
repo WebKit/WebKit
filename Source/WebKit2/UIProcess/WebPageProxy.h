@@ -510,8 +510,7 @@ public:
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
-    void viewportMetaTagWidthDidChange(float width);
-    void disableDoubleTapGesturesUntilTapIsFinishedIfNecessary(uint64_t requestID, bool allowsDoubleTapZoom, const WebCore::FloatRect& targetRect, bool isReplacedElement, double minimumScale, double maximumScale);
+    void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
     void didFinishDrawingPagesToPDF(const IPC::DataReference&);
     void contentSizeCategoryDidChange(const String& contentSizeCategory);
     void getLookupContextAtPoint(const WebCore::IntPoint&, std::function<void(const String&, CallbackBase::Error)>);
