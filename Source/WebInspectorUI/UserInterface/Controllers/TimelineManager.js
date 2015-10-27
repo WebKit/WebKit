@@ -153,6 +153,9 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
         this._isCapturing = true;
 
+        if (startTime)
+            this.activeRecording.initializeTimeBoundsIfNecessary(startTime);
+
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.CapturingStarted, {startTime});
     }
 

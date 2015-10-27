@@ -1,3 +1,31 @@
+2015-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline current time marker does not start moving when starting recording after just opening inspector
+        https://bugs.webkit.org/show_bug.cgi?id=150178
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.capturingStarted):
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.initializeTimeBoundsIfNecessary):
+        For a recording to start updating current time the recording itself
+        must have a start time. Provide a setter so that the start time can
+        be set without waiting for a timeline record. For example the
+        timestamp that the frontend receives when it starts a recording.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._startUpdatingCurrentTime):
+        When we have a startTime number (new backends) always use it as the current time.
+        Previously we were only doing this if current time was NaN, which would be when
+        re-starting a recording after it had stopped, but not for the initial recording
+        after opening the inspector.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.updateLayout):
+        Even if we do not need to create new time dividers we may need to perform
+        other updates like update the current time marker. So do work before bailing.
+
 2015-10-26  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: WebInspector.Object can dispatch constructor-level events multiple times
