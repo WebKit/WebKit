@@ -532,6 +532,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             return;
 
         this._toggleRecording();
+
+        event.preventDefault();
     }
 
     _toggleNewRecordingOnSpacebar(event)
@@ -540,6 +542,8 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
             return;
 
         this._toggleRecording(true);
+
+        event.preventDefault();
     }
 
     _toggleRecording(shouldCreateRecording)

@@ -1,3 +1,16 @@
+2015-10-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Spacebar to start recording should not cause system beep
+        https://bugs.webkit.org/show_bug.cgi?id=150573
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._toggleRecordingOnSpacebar):
+        (WebInspector.TimelineSidebarPanel.prototype._toggleNewRecordingOnSpacebar):
+        The keyboard shortcuts do not implicitly prevent default because they may bail.
+        So in cases where they do handle the key, prevent default to prevent system beeps.
+
 2015-10-26  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cleanup sidebar panels, reduce `delete` and use Maps instead of objects
