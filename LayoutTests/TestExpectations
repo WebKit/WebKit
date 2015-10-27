@@ -777,3 +777,7 @@ fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
 # Table vs. flex
 css3/flexbox/multiline-reverse-wrap-baseline.html [ ImageOnlyFailure ]
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure ]
+
+#
+webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
+
