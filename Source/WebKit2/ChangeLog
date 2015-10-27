@@ -1,3 +1,17 @@
+2015-10-26  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] [Stable] InstallMissingMediaPluginsPermissionRequest not defined when building without GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=148607
+
+        Unreviewed, build fix.
+
+        * UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.h:
+        Add a stub for the InstallMissingMediaPluginsPermissionRequest class
+        for the case when video is disabled or not using GStreamer. It's OK
+        that this class does nothing, because the associated C API contains
+        an assert_not_reached if video is disabled. We just need to define
+        the symbol so that the function signature will compile.
+
 2015-10-26  Anders Carlsson  <andersca@apple.com>
 
         Pipe custom context menu handling through to the UIDelegate object

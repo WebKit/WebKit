@@ -63,5 +63,11 @@ private:
 
 } // namespace WebKit
 
+#else
+
+namespace WebKit {
+class InstallMissingMediaPluginsPermissionRequest;
+} // namespace WebKit
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)
 #endif // InstallMissingMediaPluginsPermissionRequest_h
