@@ -704,6 +704,11 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
         TimelineRecordEntry entry = m_recordStack.last();
         m_recordStack.removeLast();
         ASSERT_UNUSED(type, entry.type == type);
+
+        // Don't send RenderingFrame records that have no children to reduce noise.
+        if (entry.type == TimelineRecordType::RenderingFrame && !entry.children->length())
+            return;
+
         didCompleteRecordEntry(entry);
     }
 }
