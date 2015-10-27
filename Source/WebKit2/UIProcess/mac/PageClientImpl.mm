@@ -264,7 +264,7 @@ void PageClientImpl::preferencesDidChange()
 
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
-    [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
+    m_impl->toolTipChanged(oldToolTip, newToolTip);
 }
 
 void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
@@ -474,8 +474,7 @@ void PageClientImpl::setTextIndicatorAnimationProgress(float progress)
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const IPC::DataReference& data)
 {
-    NSData* remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_wkView _setAccessibilityWebProcessToken:remoteToken];
+    m_impl->setAccessibilityWebProcessToken([NSData dataWithBytes:data.data() length:data.size()]);
 }
     
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
@@ -601,7 +600,7 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
         options |= NSTrackingActiveInKeyWindow;
 
     RetainPtr<NSTrackingArea> trackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:[m_wkView frame] options:options owner:m_wkView userInfo:nil]);
-    [m_wkView _setPrimaryTrackingArea:trackingArea.get()];
+    m_impl->setPrimaryTrackingArea(trackingArea.get());
 }
 
 void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
@@ -658,36 +657,36 @@ WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
 
 void PageClientImpl::closeFullScreenManager()
 {
-    [m_wkView _closeFullScreenWindowController];
+    m_impl->closeFullScreenWindowController();
 }
 
 bool PageClientImpl::isFullScreen()
 {
-    if (!m_wkView._hasFullScreenWindowController)
+    if (!m_impl->hasFullScreenWindowController())
         return false;
 
-    return m_wkView._fullScreenWindowController.isFullScreen;
+    return m_impl->fullScreenWindowController().isFullScreen;
 }
 
 void PageClientImpl::enterFullScreen()
 {
-    [m_wkView._fullScreenWindowController enterFullScreen:nil];
+    [m_impl->fullScreenWindowController() enterFullScreen:nil];
 }
 
 void PageClientImpl::exitFullScreen()
 {
-    [m_wkView._fullScreenWindowController exitFullScreen];
+    [m_impl->fullScreenWindowController() exitFullScreen];
 }
 
 void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
-    [m_wkView._fullScreenWindowController beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    [m_impl->fullScreenWindowController() beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
     m_impl->updateSupportsArbitraryLayoutModes();
 }
 
 void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
-    [m_wkView._fullScreenWindowController beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    [m_impl->fullScreenWindowController() beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
     m_impl->updateSupportsArbitraryLayoutModes();
 }
 

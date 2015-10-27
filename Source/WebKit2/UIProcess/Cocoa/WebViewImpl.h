@@ -55,6 +55,7 @@ OBJC_CLASS _WKThumbnailView;
 - (void)_superSwipeWithEvent:(NSEvent *)event;
 - (void)_superMagnifyWithEvent:(NSEvent *)event;
 - (void)_superSmartMagnifyWithEvent:(NSEvent *)event;
+- (id)_superAccessibilityAttributeValue:(NSString *)attribute;
 
 // This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
 // They're not actually optional.
@@ -225,7 +226,17 @@ public:
     void setIgnoresMouseDraggedEvents(bool);
     bool ignoresMouseDraggedEvents() const { return m_ignoresMouseDraggedEvents; }
 
+    void setAccessibilityWebProcessToken(NSData *);
     void accessibilityRegisterUIProcessTokens();
+    void updateRemoteAccessibilityRegistration(bool registerProcess);
+    id accessibilityFocusedUIElement();
+    bool accessibilityIsIgnored() const { return false; }
+    id accessibilityHitTest(CGPoint);
+    void enableAccessibilityIfNecessary();
+    id accessibilityAttributeValue(NSString *);
+
+    NSTrackingArea *primaryTrackingArea() const { return m_primaryTrackingArea.get(); }
+    void setPrimaryTrackingArea(NSTrackingArea *);
 
     NSTrackingRectTag addTrackingRect(CGRect, id owner, void* userData, bool assumeInside);
     NSTrackingRectTag addTrackingRectWithTrackingNum(CGRect, id owner, void* userData, bool assumeInside, int tag);
@@ -233,7 +244,7 @@ public:
     void removeTrackingRect(NSTrackingRectTag);
     void removeTrackingRects(NSTrackingRectTag *, int count);
     NSString *stringForToolTip(NSToolTipTag tag);
-    void toolTipChanged(NSString *oldToolTip, NSString *newToolTip);
+    void toolTipChanged(const String& oldToolTip, const String& newToolTip);
 
     void setAcceleratedCompositingRootLayer(CALayer *);
     CALayer *acceleratedCompositingRootLayer() const { return m_rootLayer.get(); }
@@ -368,6 +379,8 @@ private:
     bool m_allowsLinkPreview { true };
     bool m_didRegisterForLookupPopoverCloseNotifications { false };
 
+    RetainPtr<NSTrackingArea> m_primaryTrackingArea;
+
     NSToolTipTag m_lastToolTipTag { 0 };
     id m_trackingRectOwner { nil };
     void* m_trackingRectUserData { nullptr };
@@ -382,6 +395,8 @@ private:
     std::unique_ptr<ViewGestureController> m_gestureController;
     bool m_allowsBackForwardNavigationGestures { false };
     bool m_allowsMagnification { false };
+
+    RetainPtr<id> m_remoteAccessibilityChild;
 };
     
 } // namespace WebKit

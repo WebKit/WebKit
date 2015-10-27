@@ -321,6 +321,17 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 namespace WebKit {
 
+static NSTrackingAreaOptions trackingAreaOptions()
+{
+    // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
+    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
+    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+        options |= NSTrackingActiveAlways;
+    else
+        options |= NSTrackingActiveInKeyWindow;
+    return options;
+}
+
 WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WebPageProxy& page, PageClient& pageClient)
     : m_view(view)
     , m_page(page)
@@ -331,7 +342,10 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WebPageProxy& page,
     , m_layoutStrategy([WKViewLayoutStrategy layoutStrategyWithPage:m_page view:m_view viewImpl:*this mode:kWKLayoutModeViewSize])
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
     , m_windowVisibilityObserver(adoptNS([[WKWindowVisibilityObserver alloc] initWithView:view impl:*this]))
+    , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:m_view.frame options:trackingAreaOptions() owner:m_view userInfo:nil]))
 {
+    [m_view addTrackingArea:m_primaryTrackingArea.get()];
+
     m_page.setIntrinsicDeviceScaleFactor(intrinsicDeviceScaleFactor());
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
@@ -1464,6 +1478,28 @@ void WebViewImpl::setIgnoresMouseDraggedEvents(bool ignoresMouseDraggedEvents)
     m_ignoresMouseDraggedEvents = ignoresMouseDraggedEvents;
 }
 
+void WebViewImpl::setAccessibilityWebProcessToken(NSData *data)
+{
+    m_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
+    updateRemoteAccessibilityRegistration(true);
+}
+
+void WebViewImpl::updateRemoteAccessibilityRegistration(bool registerProcess)
+{
+    // When the tree is connected/disconnected, the remote accessibility registration
+    // needs to be updated with the pid of the remote process. If the process is going
+    // away, that information is not present in WebProcess
+    pid_t pid = 0;
+    if (registerProcess)
+        pid = m_page.process().processIdentifier();
+    else if (!registerProcess) {
+        pid = WKAXRemoteProcessIdentifier(m_remoteAccessibilityChild.get());
+        m_remoteAccessibilityChild = nil;
+    }
+    if (pid)
+        WKAXRegisterRemoteProcess(registerProcess, pid);
+}
+
 void WebViewImpl::accessibilityRegisterUIProcessTokens()
 {
     // Initialize remote accessibility when the window connection has been established.
@@ -1472,6 +1508,61 @@ void WebViewImpl::accessibilityRegisterUIProcessTokens()
     IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
     IPC::DataReference windowToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
     m_page.registerUIProcessAccessibilityTokens(elementToken, windowToken);
+}
+
+id WebViewImpl::accessibilityFocusedUIElement()
+{
+    enableAccessibilityIfNecessary();
+    return m_remoteAccessibilityChild.get();
+}
+
+id WebViewImpl::accessibilityHitTest(CGPoint)
+{
+    return accessibilityFocusedUIElement();
+}
+
+void WebViewImpl::enableAccessibilityIfNecessary()
+{
+    if (WebCore::AXObjectCache::accessibilityEnabled())
+        return;
+
+    // After enabling accessibility update the window frame on the web process so that the
+    // correct accessibility position is transmitted (when AX is off, that position is not calculated).
+    WebCore::AXObjectCache::enableAccessibility();
+    updateWindowAndViewFrames();
+}
+
+id WebViewImpl::accessibilityAttributeValue(NSString *attribute)
+{
+    enableAccessibilityIfNecessary();
+
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
+
+        id child = nil;
+        if (m_remoteAccessibilityChild)
+            child = m_remoteAccessibilityChild.get();
+
+            if (!child)
+                return nil;
+        return [NSArray arrayWithObject:child];
+    }
+    if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return NSAccessibilityGroupRole;
+    if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
+        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
+        if ([attribute isEqualToString:NSAccessibilityParentAttribute])
+            return NSAccessibilityUnignoredAncestor([m_view superview]);
+            if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+                return @YES;
+    
+    return [m_view _superAccessibilityAttributeValue:attribute];
+}
+
+void WebViewImpl::setPrimaryTrackingArea(NSTrackingArea *trackingArea)
+{
+    [m_view removeTrackingArea:m_primaryTrackingArea.get()];
+    m_primaryTrackingArea = trackingArea;
+    [m_view addTrackingArea:trackingArea];
 }
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.
@@ -1571,12 +1662,12 @@ NSString *WebViewImpl::stringForToolTip(NSToolTipTag tag)
     return nsStringFromWebCoreString(m_page.toolTip());
 }
 
-void WebViewImpl::toolTipChanged(NSString *oldToolTip, NSString *newToolTip)
+void WebViewImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
-    if (oldToolTip)
+    if (!oldToolTip.isNull())
         sendToolTipMouseExited();
     
-    if (newToolTip && [newToolTip length] > 0) {
+    if (!newToolTip.isEmpty()) {
         // See radar 3500217 for why we remove all tooltips rather than just the single one we created.
         [m_view removeAllToolTips];
         NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);

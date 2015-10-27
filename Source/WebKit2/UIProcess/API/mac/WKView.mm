@@ -162,10 +162,6 @@ struct WKViewInterpretKeyEventsParameters {
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 #endif
 
-    RetainPtr<NSTrackingArea> _primaryTrackingArea;
-
-    RetainPtr<id> _remoteAccessibilityChild;
-
     // For asynchronous validation.
     ValidationMap _validationMap;
 
@@ -2047,6 +2043,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [super removeTrackingRect:tag];
 }
 
+- (id)_superAccessibilityAttributeValue:(NSString *)attribute
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [super accessibilityAttributeValue:attribute];
+#pragma clang diagnostic pop
+}
+
 - (NSArray *)validAttributesForMarkedText
 {
     static NSArray *validAttributes;
@@ -2169,74 +2173,24 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
 
-- (void)_updateRemoteAccessibilityRegistration:(BOOL)registerProcess
-{
-    // When the tree is connected/disconnected, the remote accessibility registration
-    // needs to be updated with the pid of the remote process. If the process is going
-    // away, that information is not present in WebProcess
-    pid_t pid = 0;
-    if (registerProcess)
-        pid = _data->_page->process().processIdentifier();
-    else if (!registerProcess) {
-        pid = WKAXRemoteProcessIdentifier(_data->_remoteAccessibilityChild.get());
-        _data->_remoteAccessibilityChild = nil;
-    }
-    if (pid)
-        WKAXRegisterRemoteProcess(registerProcess, pid); 
-}
-
-- (void)enableAccessibilityIfNecessary
-{
-    if (WebCore::AXObjectCache::accessibilityEnabled())
-        return;
-
-    // After enabling accessibility update the window frame on the web process so that the
-    // correct accessibility position is transmitted (when AX is off, that position is not calculated).
-    WebCore::AXObjectCache::enableAccessibility();
-    _data->_impl->updateWindowAndViewFrames();
-}
-
 - (id)accessibilityFocusedUIElement
 {
-    [self enableAccessibilityIfNecessary];
-    return _data->_remoteAccessibilityChild.get();
+    return _data->_impl->accessibilityFocusedUIElement();
 }
 
 - (BOOL)accessibilityIsIgnored
 {
-    return NO;
+    return _data->_impl->accessibilityIsIgnored();
 }
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    [self enableAccessibilityIfNecessary];
-    return _data->_remoteAccessibilityChild.get();
+    return _data->_impl->accessibilityHitTest(NSPointToCGPoint(point));
 }
 
-- (id)accessibilityAttributeValue:(NSString*)attribute
+- (id)accessibilityAttributeValue:(NSString *)attribute
 {
-    [self enableAccessibilityIfNecessary];
-
-    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
-
-        id child = nil;
-        if (_data->_remoteAccessibilityChild)
-            child = _data->_remoteAccessibilityChild.get();
-        
-        if (!child)
-            return nil;
-        return [NSArray arrayWithObject:child];
-    }
-    if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
-        return NSAccessibilityGroupRole;
-    if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
-        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
-    if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-        return NSAccessibilityUnignoredAncestor([self superview]);
-    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
-        return [NSNumber numberWithBool:YES];
-    
-    return [super accessibilityAttributeValue:attribute];
+    return _data->_impl->accessibilityAttributeValue(attribute);
 }
 
 - (NSView *)hitTest:(NSPoint)point
@@ -2278,14 +2232,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (_data->_impl->layerHostingView())
         _data->_impl->setAcceleratedCompositingRootLayer(nil);
 
-    [self _updateRemoteAccessibilityRegistration:NO];
+    _data->_impl->updateRemoteAccessibilityRegistration(false);
 
     _data->_impl->resetGestureController();
 }
 
 - (void)_pageClosed
 {
-    [self _updateRemoteAccessibilityRegistration:NO];
+    _data->_impl->updateRemoteAccessibilityRegistration(false);
 }
 
 - (void)_didRelaunchProcess
@@ -2376,17 +2330,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (NSString *)view:(NSView *)view stringForToolTip:(NSToolTipTag)tag point:(NSPoint)point userData:(void *)data
 {
     return _data->_impl->stringForToolTip(tag);
-}
-
-- (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip
-{
-    _data->_impl->toolTipChanged(oldToolTip, newToolTip);
-}
-
-- (void)_setAccessibilityWebProcessToken:(NSData *)data
-{
-    _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);
-    [self _updateRemoteAccessibilityRegistration:YES];
 }
 
 - (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
@@ -2546,23 +2489,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
-#if ENABLE(FULLSCREEN_API)
-- (BOOL)_hasFullScreenWindowController
-{
-    return _data->_impl->hasFullScreenWindowController();
-}
-
-- (WKFullScreenWindowController *)_fullScreenWindowController
-{
-    return _data->_impl->fullScreenWindowController();
-}
-
-- (void)_closeFullScreenWindowController
-{
-    _data->_impl->closeFullScreenWindowController();
-}
-#endif
-
 - (bool)_executeSavedCommandBySelector:(SEL)selector
 {
     LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
@@ -2588,28 +2514,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->handleAlternativeTextUIResult(text);
 }
 
-- (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates
-{
-    _data->_page->setSuppressVisibilityUpdates(suppressVisibilityUpdates);
-}
-
-- (BOOL)_suppressVisibilityUpdates
-{
-    return _data->_page->suppressVisibilityUpdates();
-}
-
-- (NSTrackingArea *)_primaryTrackingArea
-{
-    return _data->_primaryTrackingArea.get();
-}
-
-- (void)_setPrimaryTrackingArea:(NSTrackingArea *)trackingArea
-{
-    [self removeTrackingArea:_data->_primaryTrackingArea.get()];
-    _data->_primaryTrackingArea = trackingArea;
-    [self addTrackingArea:trackingArea];
-}
-
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];
@@ -2620,16 +2524,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     InitializeWebKit2();
 
-    // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
-    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
-    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
-        options |= NSTrackingActiveAlways;
-    else
-        options |= NSTrackingActiveInKeyWindow;
-
     _data = [[WKViewData alloc] init];
-    _data->_primaryTrackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:frame options:options owner:self userInfo:nil]);
-    [self addTrackingArea:_data->_primaryTrackingArea.get()];
 
     _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
     _data->_page = processPool.createWebPage(*_data->_pageClient, WTF::move(configuration));

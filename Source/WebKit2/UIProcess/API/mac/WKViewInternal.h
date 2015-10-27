@@ -27,11 +27,6 @@
 
 #import "WKViewPrivate.h"
 
-#import "APIObject.h"
-#import "PluginComplexTextInputState.h"
-#import "SameDocumentNavigationType.h"
-#import "WebFindOptions.h"
-#import "WebHitTestResultData.h"
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -39,7 +34,6 @@
 @class _WKRemoteObjectRegistry;
 
 namespace API {
-class Object;
 class PageConfiguration;
 }
 
@@ -50,22 +44,14 @@ class DataReference;
 namespace WebCore {
 class Image;
 class SharedBuffer;
-class TextIndicator;
-enum class TextIndicatorWindowLifetime : uint8_t;
-enum class TextIndicatorWindowDismissalAnimation : uint8_t;
-struct KeypressCommand;
 }
 
 namespace WebKit {
 class DrawingAreaProxy;
-class LayerTreeContext;
-class ViewSnapshot;
 class WebProcessPool;
 struct ColorSpaceData;
-struct EditorState;
 }
 
-@class WKFullScreenWindowController;
 @class WKWebView;
 #if WK_API_ENABLED
 @class _WKThumbnailView;
@@ -80,14 +66,11 @@ struct EditorState;
 - (void)_processDidExit;
 - (void)_pageClosed;
 - (void)_didRelaunchProcess;
-- (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
 - (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (bool)_executeSavedCommandBySelector:(SEL)selector;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
-
-- (void)_setAccessibilityWebProcessToken:(NSData *)data;
 
 - (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
 - (void)_setPromisedDataForImage:(WebCore::Image *)image withFileName:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl withArchive:(WebCore::SharedBuffer*) archiveBuffer forPasteboard:(NSString *)pasteboardName;
@@ -100,25 +83,15 @@ struct EditorState;
 - (NSInteger)spellCheckerDocumentTag;
 - (void)handleAcceptedAlternativeText:(NSString*)text;
 
-- (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
-- (BOOL)_suppressVisibilityUpdates;
-
 #if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
 #endif
 
 - (void)_addFontPanelObserver;
-// FullScreen
-
-@property (readonly) BOOL _hasFullScreenWindowController;
-@property (readonly) WKFullScreenWindowController *_fullScreenWindowController;
-- (void)_closeFullScreenWindowController;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 - (void)_startWindowDrag;
 #endif
-
-@property (nonatomic, retain, setter=_setPrimaryTrackingArea:) NSTrackingArea *_primaryTrackingArea;
 
 #if WK_API_ENABLED
 @property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;

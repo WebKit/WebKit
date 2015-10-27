@@ -6,6 +6,60 @@
         Reviewed by Anders Carlsson.
 
         * UIProcess/API/mac/WKView.mm:
+        (-[WKView _superAccessibilityAttributeValue:]):
+        (-[WKView accessibilityFocusedUIElement]):
+        (-[WKView accessibilityIsIgnored]):
+        (-[WKView accessibilityHitTest:]):
+        (-[WKView accessibilityAttributeValue:]):
+        (-[WKView _processDidExit]):
+        (-[WKView _pageClosed]):
+        (-[WKView _updateRemoteAccessibilityRegistration:]): Deleted.
+        (-[WKView enableAccessibilityIfNecessary]): Deleted.
+        (-[WKView _toolTipChangedFrom:to:]): Deleted.
+        (-[WKView _setAccessibilityWebProcessToken:]): Deleted.
+        (-[WKView _hasFullScreenWindowController]): Deleted.
+        (-[WKView _fullScreenWindowController]): Deleted.
+        (-[WKView _closeFullScreenWindowController]): Deleted.
+        (-[WKView _setSuppressVisibilityUpdates:]): Deleted.
+        (-[WKView _suppressVisibilityUpdates]): Deleted.
+        (-[WKView _primaryTrackingArea]): Deleted.
+        (-[WKView _setPrimaryTrackingArea:]): Deleted.
+        (-[WKView initWithFrame:processPool:configuration:webView:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::accessibilityIsIgnored):
+        (WebKit::WebViewImpl::primaryTrackingArea):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::trackingAreaOptions):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setAccessibilityWebProcessToken):
+        (WebKit::WebViewImpl::updateRemoteAccessibilityRegistration):
+        (WebKit::WebViewImpl::accessibilityFocusedUIElement):
+        (WebKit::WebViewImpl::accessibilityHitTest):
+        (WebKit::WebViewImpl::enableAccessibilityIfNecessary):
+        (WebKit::WebViewImpl::accessibilityAttributeValue):
+        (WebKit::WebViewImpl::setPrimaryTrackingArea):
+        (WebKit::WebViewImpl::toolTipChanged):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::accessibilityWebProcessTokenReceived):
+        (WebKit::PageClientImpl::recommendedScrollbarStyleDidChange):
+        (WebKit::PageClientImpl::closeFullScreenManager):
+        (WebKit::PageClientImpl::isFullScreen):
+        (WebKit::PageClientImpl::enterFullScreen):
+        (WebKit::PageClientImpl::exitFullScreen):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        Move accessibility code, and fold in some internal-only methods.
+
+2015-10-27  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
         (-[WKView scrollWheel:]):
         (-[WKView swipeWithEvent:]):
         (-[WKView _superSwipeWithEvent:]):
