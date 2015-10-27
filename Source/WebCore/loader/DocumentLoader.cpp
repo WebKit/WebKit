@@ -142,7 +142,6 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_timeOfLastDataReceived(0.0)
     , m_identifierForLoadWithoutResourceLoader(0)
     , m_dataLoadTimer(*this, &DocumentLoader::handleSubstituteDataLoadNow)
-    , m_waitingForContentPolicy(false)
     , m_subresourceLoadersArePageCacheAcceptable(false)
     , m_applicationCacheHost(std::make_unique<ApplicationCacheHost>(*this))
 #if ENABLE(CONTENT_FILTERING)
@@ -167,6 +166,7 @@ DocumentLoader::~DocumentLoader()
 {
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !isLoading());
     ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback should never outlive its DocumentLoader.");
+    ASSERT_WITH_MESSAGE(!m_waitingForNavigationPolicy, "The navigation policy callback should never outlive its DocumentLoader.");
     if (m_iconLoadDecisionCallback)
         m_iconLoadDecisionCallback->invalidate();
     if (m_iconDataCallback)
@@ -570,6 +570,8 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     if (redirectResponse.isNull())
         return;
 
+    ASSERT(!m_waitingForNavigationPolicy);
+    m_waitingForNavigationPolicy = true;
     frameLoader()->policyChecker().checkNavigationPolicy(newRequest, [this](const ResourceRequest& request, PassRefPtr<FormState>, bool shouldContinue) {
         continueAfterNavigationPolicy(request, shouldContinue);
     });
@@ -577,6 +579,8 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
 
 void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue)
 {
+    ASSERT(m_waitingForNavigationPolicy);
+    m_waitingForNavigationPolicy = false;
     if (!shouldContinue)
         stopLoadingForPolicyChange();
     else if (m_substituteData.isValid()) {
@@ -1485,9 +1489,10 @@ void DocumentLoader::cancelPolicyCheckIfNeeded()
 {
     RELEASE_ASSERT(frameLoader());
 
-    if (m_waitingForContentPolicy) {
+    if (m_waitingForContentPolicy || m_waitingForNavigationPolicy) {
         frameLoader()->policyChecker().cancelCheck();
         m_waitingForContentPolicy = false;
+        m_waitingForNavigationPolicy = false;
     }
 }
 
