@@ -88,7 +88,23 @@ function close()
 {
     "use strict";
 
-    throw new EvalError("close not implemented");
+    if (!@isWritableStream(this))
+        return Promise.reject(new @TypeError("The WritableStream.close method can only be used on instances of WritableStream"));
+
+    if (this.@state === "closed" || this.@state === "closing")
+        return Promise.reject(new @TypeError("Cannot close a WritableString that is closed or closing"));
+
+    if (this.@state === "errored")
+        return Promise.reject(this.@storedError);
+
+    if (this.@state === "waiting")
+        @resolveStreamsPromise(this.@readyPromise, undefined);
+
+    this.@state = "closing";
+    @enqueueValueWithSize(this.@queue, "close", 0);
+    @callOrScheduleWritableStreamAdvanceQueue(this);
+
+    return this.@closedPromise;
 }
 
 function write(chunk)

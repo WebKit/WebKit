@@ -7,8 +7,8 @@ PASS Aborting a WritableStream passes through the given reason
 FAIL Aborting a WritableStream puts it in an errored state, with stored error equal to the abort reason write not implemented
 FAIL Aborting a WritableStream causes any outstanding ready promises to be fulfilled immediately write not implemented
 FAIL Aborting a WritableStream causes any outstanding write() promises to be rejected with the abort reason write not implemented
-FAIL Closing but then immediately aborting a WritableStream causes the stream to error close not implemented
-FAIL Closing a WritableStream and aborting it while it closes causes the stream to error close not implemented
-FAIL Aborting a WritableStream after it is closed is a no-op close not implemented
+PASS Closing but then immediately aborting a WritableStream causes the stream to error 
+PASS Closing a WritableStream and aborting it while it closes causes the stream to error 
+PASS Aborting a WritableStream after it is closed is a no-op 
 PASS WritableStream should call underlying sink's close if no abort is supplied 
 

@@ -1,6 +1,6 @@
 
 FAIL Piping from a ReadableStream from which lots of data are readable synchronously pipeTo is not implemented
-FAIL Piping from a ReadableStream in readable state to a WritableStream in closing state close not implemented
+FAIL Piping from a ReadableStream in readable state to a WritableStream in closing state pipeTo is not implemented
 FAIL Piping from a ReadableStream in readable state to a WritableStream in errored state write not implemented
 FAIL Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state pipeTo is not implemented
 FAIL Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state pipeTo is not implemented
@@ -17,7 +17,7 @@ FAIL Piping from an empty ReadableStream which becomes errored after a pipeTo ca
 FAIL Piping to a duck-typed asynchronous "writable stream" works pipeTo is not implemented
 FAIL Piping to a stream that has been aborted passes through the error as the cancellation reason pipeTo is not implemented
 FAIL Piping to a stream and then aborting it passes through the error as the cancellation reason pipeTo is not implemented
-FAIL Piping to a stream that has been closed propagates a TypeError cancellation reason backward close not implemented
+FAIL Piping to a stream that has been closed propagates a TypeError cancellation reason backward pipeTo is not implemented
 FAIL Piping to a stream and then closing it propagates a TypeError cancellation reason backward pipeTo is not implemented
 FAIL Piping to a stream that errors on write should pass through the error as the cancellation reason pipeTo is not implemented
 FAIL Piping to a stream that errors on write should not pass through the error if the stream is already closed pipeTo is not implemented

@@ -151,3 +151,11 @@ function enqueueValueWithSize(queue, value, size)
 
     return undefined;
 }
+
+function peekQueueValue(queue)
+{
+    // FIXME
+    // assert(queue.content.length > 0);
+
+    return queue.content[0].value;
+}

@@ -1,8 +1,8 @@
 
 PASS error argument is given to start method 
 FAIL Underlying sink's write won't be called until start finishes write not implemented
-FAIL Underlying sink's close won't be called until start finishes close not implemented
-FAIL Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value close not implemented
+PASS Underlying sink's close won't be called until start finishes 
+PASS Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value 
 PASS Underlying sink's write or close are never invoked if start throws 
 PASS Underlying sink's write or close are never invoked if the promise returned by start is rejected 
 PASS WritableStream can be constructed with no arguments 
