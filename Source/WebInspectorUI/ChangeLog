@@ -1,3 +1,22 @@
+2015-10-26  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Hundreds of failed assertions after switching to Rendering Frames after recording complete
+        https://bugs.webkit.org/show_bug.cgi?id=150568
+
+        Reviewed by Timothy Hatcher.
+
+        When the TimelineRecordingContentView responds to the current content view changing,
+        the TimelineOverview may be swapped out (if switching from a Timelines content view to a
+        Rendering Frames content view). This patch installs a new overview (if it's changing) prior
+        to setting the TimelineSidebarPanel's tree outline, as setting the tree outline forces
+        filters to run.
+
+        Filtering tree elements requires that the timeline overview is up to date, which was the
+        cause the assertion deluge.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+
 2015-10-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Spacebar to start recording should not cause system beep

@@ -328,20 +328,12 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _currentContentViewDidChange(event)
     {
-        var newTimelineOverview = this._linearTimelineOverview;
-        var timelineView = this.currentTimelineView;
-        if (timelineView) {
-            this._timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
-            this._timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
-            this._timelineSidebarPanel.contentTreeOutlineScopeBar = timelineView.navigationSidebarTreeOutlineScopeBar;
-
-            if (timelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-                newTimelineOverview = this._renderingFrameTimelineOverview;
-
-            timelineView.startTime = newTimelineOverview.selectionStartTime;
-            timelineView.endTime = newTimelineOverview.selectionStartTime + newTimelineOverview.selectionDuration;
-            timelineView.currentTime = this._currentTime;
-        }
+        let newTimelineOverview;
+        let timelineView = this.currentTimelineView;
+        if (timelineView && timelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
+            newTimelineOverview = this._renderingFrameTimelineOverview;
+        else
+            newTimelineOverview = this._linearTimelineOverview;
 
         if (newTimelineOverview !== this._currentTimelineOverview) {
             this._currentTimelineOverview.hidden();
@@ -353,6 +345,16 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
             this._currentTimelineOverview.shown();
 
             this._updateTimelineOverviewHeight();
+        }
+
+        if (timelineView) {
+            this._timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
+            this._timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
+            this._timelineSidebarPanel.contentTreeOutlineScopeBar = timelineView.navigationSidebarTreeOutlineScopeBar;
+
+            timelineView.startTime = newTimelineOverview.selectionStartTime;
+            timelineView.endTime = newTimelineOverview.selectionStartTime + newTimelineOverview.selectionDuration;
+            timelineView.currentTime = this._currentTime;
         }
 
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
