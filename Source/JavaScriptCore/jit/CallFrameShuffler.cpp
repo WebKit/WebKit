@@ -306,7 +306,6 @@ void CallFrameShuffler::emitDeltaCheck()
 void CallFrameShuffler::extendFrameIfNeeded()
 {
     ASSERT(!m_didExtendFrame);
-    ASSERT(!isUndecided());
 
     VirtualRegister firstRead { firstOld() };
     for (; firstRead <= virtualRegisterForLocal(0); firstRead += 1) {

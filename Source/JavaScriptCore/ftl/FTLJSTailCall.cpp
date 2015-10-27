@@ -77,6 +77,8 @@ ValueRecovery recoveryFor(const ExitValue& value, StackMaps::Record& record, Sta
             // Oh LLVM, you crazy...
             RELEASE_ASSERT(location.dwarfReg().reg() == Reg(MacroAssembler::framePointerRegister));
             RELEASE_ASSERT(!(location.offset() % sizeof(void*)));
+            // DataFormatInt32 and DataFormatBoolean should be already be boxed.
+            RELEASE_ASSERT(format != DataFormatInt32 && format != DataFormatBoolean);
             return ValueRecovery::displacedInJSStack(VirtualRegister { static_cast<int>(location.offset() / sizeof(void*)) }, format);
 
         case Location::Constant:

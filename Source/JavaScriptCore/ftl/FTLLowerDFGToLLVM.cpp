@@ -9007,13 +9007,11 @@ private:
 
         value = m_int32Values.get(node);
         if (isValid(value))
-            return exitArgument(arguments, DataFormatInt32, value.value());
+            return exitArgument(arguments, DataFormatJS, boxInt32(value.value()));
 
         value = m_booleanValues.get(node);
-        if (isValid(value)) {
-            LValue valueToPass = m_out.zeroExt(value.value(), m_out.int32);
-            return exitArgument(arguments, DataFormatBoolean, valueToPass);
-        }
+        if (isValid(value))
+            return exitArgument(arguments, DataFormatJS, boxBoolean(value.value()));
 
         // Doubles and Int52 have been converted by ValueRep()
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
