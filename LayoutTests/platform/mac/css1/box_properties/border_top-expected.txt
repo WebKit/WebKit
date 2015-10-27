@@ -33,11 +33,11 @@ layer at (0,0) size 785x959
                 text run at (439,3) width 316: "This is also true of the table-testing section in the"
                 text run at (2,21) width 179: "second half of the test page."
           RenderTableRow {TR} at (0,51) size 767x52
-            RenderTableCell {TD} at (5,65) size 190x23 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 54x18
-                text run at (2,3) width 54: "Cell one"
-            RenderTableCell {TD} at (200,51) size 562x52 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (2,3) size 558x18
+            RenderTableCell {TD} at (5,65) size 192x24 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,3) size 54x19
+                text run at (2,4) width 54: "Cell one"
+            RenderTableCell {TD} at (201,51) size 561x52 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (2,3) size 557x18
                 RenderText {#text} at (0,0) size 55x18
                   text run at (0,0) width 55: "Cell two"
               RenderTable {TABLE} at (2,21) size 166x29 [border: (1px outset #808080)]
@@ -81,7 +81,7 @@ layer at (0,0) size 785x959
                 RenderText {#text} at (4,5) size 161x18
                   text run at (4,5) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,27) size 767x399
-            RenderTableCell {TD} at (0,213) size 12x27 [bgcolor=#C0C0C0] [border: (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,213) size 13x27 [bgcolor=#C0C0C0] [border: (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,5) size 4x18
                 text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,27) size 755x399 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
@@ -105,9 +105,9 @@ layer at (0,0) size 785x959
                         text run at (439,3) width 292: "This is also true of the table-testing section in"
                         text run at (2,21) width 203: "the second half of the test page."
                   RenderTableRow {TR} at (0,51) size 745x52
-                    RenderTableCell {TD} at (5,65) size 185x23 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,3) size 54x18
-                        text run at (2,3) width 54: "Cell one"
+                    RenderTableCell {TD} at (5,65) size 186x24 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,3) size 54x19
+                        text run at (2,4) width 54: "Cell one"
                     RenderTableCell {TD} at (195,51) size 545x52 [border: (2px solid #008000) (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                       RenderBlock (anonymous) at (2,3) size 541x18
                         RenderText {#text} at (0,0) size 55x18

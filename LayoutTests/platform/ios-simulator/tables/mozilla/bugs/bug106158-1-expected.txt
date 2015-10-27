@@ -13,10 +13,10 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,2) size 436x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 23x19
                         text run at (1,1) width 23: "test"
-              RenderTable {TABLE} at (1,29) size 437x76 [border: (1px solid #000000)]
-                RenderTableSection {TBODY} at (1,1) size 435x74
-                  RenderTableRow {TR} at (0,2) size 435x70
-                    RenderTableCell {TD} at (2,2) size 431x70 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,29) size 438x76 [border: (1px solid #000000)]
+                RenderTableSection {TBODY} at (1,1) size 436x74
+                  RenderTableRow {TR} at (0,2) size 436x70
+                    RenderTableCell {TD} at (2,2) size 432x70 [r=0 c=0 rs=1 cs=1]
                       RenderTable {TABLE} at (1,1) size 315x68 [border: (1px solid #000000)]
                         RenderTableSection {TBODY} at (1,1) size 313x66
                           RenderTableRow {TR} at (0,2) size 313x62

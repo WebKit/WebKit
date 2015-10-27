@@ -1,8 +1,8 @@
 layer at (0,0) size 785x1729
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1729
-  RenderBlock {HTML} at (0,0) size 785x1730
-    RenderBody {BODY} at (8,8) size 769x1714 [bgcolor=#CCCCCC]
+  RenderBlock {HTML} at (0,0) size 785x1729
+    RenderBody {BODY} at (8,8) size 769x1713 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 363x18
           text run at (0,0) width 363: "The style declarations which apply to the text below are:"
@@ -73,7 +73,7 @@ layer at (0,0) size 785x1729
       RenderBlock {P} at (0,919) size 769x19 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 238x18
           text run at (0,0) width 238: "This element also has a class of zero."
-      RenderTable {TABLE} at (0,937) size 769x777 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,937) size 769x776 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x774
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -81,9 +81,9 @@ layer at (0,0) size 785x1729
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x748
-            RenderTableCell {TD} at (0,387) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
-                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (0,386) size 13x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
+                text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x748 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 208x18

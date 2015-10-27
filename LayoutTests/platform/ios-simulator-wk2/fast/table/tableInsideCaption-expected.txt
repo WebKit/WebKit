@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
               RenderTable {TABLE} at (1,27) size 87x52
                 RenderTableSection {THEAD} at (0,26) size 87x2
                 RenderBlock {CAPTION} at (0,0) size 87x26
-                  RenderTable {TABLE} at (15,0) size 57x26
+                  RenderTable {TABLE} at (14,0) size 58x26
                     RenderTableSection {TBODY} at (0,0) size 57x26
                       RenderTableRow {TR} at (0,2) size 57x22
                         RenderTableCell {TD} at (2,2) size 53x22 [r=0 c=0 rs=1 cs=1]
@@ -27,6 +27,6 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (2,0) size 51x22 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 49x19
                         text run at (1,1) width 49: "Bottom"
-                    RenderTableCell {TD} at (55,0) size 30x22 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (54,0) size 31x22 [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 28x19
                         text run at (1,1) width 28: "line."

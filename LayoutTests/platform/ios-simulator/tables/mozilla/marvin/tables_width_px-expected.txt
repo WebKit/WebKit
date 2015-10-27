@@ -11,20 +11,20 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,40) size 400x50
         RenderTableSection {TBODY} at (0,0) size 400x50
           RenderTableRow {TR} at (0,2) size 400x22
-            RenderTableCell {TD} at (2,2) size 131x22 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 132x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 64x19
                 text run at (1,1) width 64: "Navigator"
-            RenderTableCell {TD} at (135,2) size 139x22 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (135,2) size 140x22 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 70x19
                 text run at (1,1) width 70: "Messenger"
             RenderTableCell {TD} at (276,2) size 122x22 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 56x19
                 text run at (1,1) width 56: "Collabra"
           RenderTableRow {TR} at (0,26) size 400x22
-            RenderTableCell {TD} at (2,26) size 131x22 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 132x22 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 66x19
                 text run at (1,1) width 66: "Composer"
-            RenderTableCell {TD} at (135,26) size 139x22 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (135,26) size 140x22 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 58x19
                 text run at (1,1) width 58: "Calendar"
             RenderTableCell {TD} at (276,26) size 122x22 [r=1 c=2 rs=1 cs=1]
@@ -37,20 +37,20 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,130) size 300x50
         RenderTableSection {TBODY} at (0,0) size 300x50
           RenderTableRow {TR} at (0,2) size 300x22
-            RenderTableCell {TD} at (2,2) size 97x22 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 99x22 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 64x19
                 text run at (1,1) width 64: "Navigator"
-            RenderTableCell {TD} at (101,2) size 104x22 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (102,2) size 104x22 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 70x19
                 text run at (1,1) width 70: "Messenger"
             RenderTableCell {TD} at (207,2) size 91x22 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 56x19
                 text run at (1,1) width 56: "Collabra"
           RenderTableRow {TR} at (0,26) size 300x22
-            RenderTableCell {TD} at (2,26) size 97x22 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 99x22 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 66x19
                 text run at (1,1) width 66: "Composer"
-            RenderTableCell {TD} at (101,26) size 104x22 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (102,26) size 104x22 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 58x19
                 text run at (1,1) width 58: "Calendar"
             RenderTableCell {TD} at (207,26) size 91x22 [r=1 c=2 rs=1 cs=1]

@@ -65,8 +65,8 @@ for(var i = 1; i <=3; i++) {
     clonedTable = container.getElementsByTagName("TABLE")[0].cloneNode(true);
     clonedTable.style.display = 'table';
     container.appendChild(clonedTable);
-    shouldBe('clonedTable.getBoundingClientRect().width', '150');
-    shouldBe('clonedTable.getBoundingClientRect().height', '20');
+    shouldBe('Math.round(clonedTable.getBoundingClientRect().width)', '150');
+    shouldBe('Math.round(clonedTable.getBoundingClientRect().height)', '20');
 }    
 
 var testCasesContainer = document.getElementById('testCases');

@@ -6,7 +6,7 @@ layer at (0,0) size 800x68
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 8x18
           text run at (0,0) width 8: "a"
-        RenderTable {SPAN} at (7,0) size 25x36
+        RenderTable {SPAN} at (7,0) size 24x36
           RenderTableSection (anonymous) at (0,0) size 24x36
             RenderTableRow (anonymous) at (0,0) size 24x36
               RenderTableCell (anonymous) at (0,0) size 24x36 [r=0 c=0 rs=1 cs=1]
@@ -16,5 +16,5 @@ layer at (0,0) size 800x68
                 RenderBlock {SPAN} at (0,18) size 24x18
                   RenderText {#text} at (0,0) size 8x18
                     text run at (0,0) width 8: "x"
-        RenderText {#text} at (31,0) size 8x18
-          text run at (31,0) width 8: "e"
+        RenderText {#text} at (30,0) size 8x18
+          text run at (30,0) width 8: "e"

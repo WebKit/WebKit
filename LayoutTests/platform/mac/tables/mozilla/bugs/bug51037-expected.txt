@@ -27,7 +27,7 @@ layer at (46,86) size 130x13
   RenderBlock {DIV} at (3,3) size 131x13
     RenderText {#text} at (0,0) size 33x13
       text run at (0,0) width 33: "120px"
-layer at (250,120) size 30x48
+layer at (250,120) size 29x48
   RenderTable {TABLE} at (250,120) size 30x48 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 28x46
       RenderTableRow {TR} at (0,2) size 28x20

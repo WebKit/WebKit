@@ -16,13 +16,13 @@ layer at (0,0) size 800x297
         RenderTableSection {TBODY} at (0,0) size 140x79
           RenderTableRow {TR} at (0,2) size 140x23
             RenderTableCell {TD} at (2,2) size 136x23 [border: (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (37,4) size 62x18
-                text run at (37,4) width 62: "HERE \x{21E7}"
+              RenderText {#text} at (36,4) size 63x18
+                text run at (36,4) width 63: "HERE \x{21E7}"
           RenderTableRow {TR} at (0,27) size 140x50
-            RenderTableCell {TD} at (2,40) size 64x23 [border: (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 62x18
+            RenderTableCell {TD} at (2,40) size 64x24 [border: (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,3) size 62x20
                 text run at (1,4) width 62: "HERE \x{21E7}"
-            RenderTableCell {TD} at (68,27) size 70x50 [border: (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (67,27) size 71x50 [border: (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (1,3) size 68x19
                 RenderText {#text} at (3,1) size 62x18
                   text run at (3,1) width 62: "HERE \x{21E7}"

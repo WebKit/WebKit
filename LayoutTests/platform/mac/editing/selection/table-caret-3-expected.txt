@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,34) size 784x76
         RenderText {#text} at (0,9) size 22x18
           text run at (0,9) width 22: "foo"
-        RenderTable {TABLE} at (21,0) size 54x76 [border: (1px solid #999999)]
+        RenderTable {TABLE} at (21,0) size 53x76 [border: (1px solid #999999)]
           RenderTableSection {TBODY} at (1,1) size 51x74
             RenderTableRow {TR} at (0,2) size 51x22
               RenderTableCell {TD} at (2,2) size 47x22 [border: (1px solid #999999)] [r=0 c=0 rs=1 cs=1]
@@ -26,6 +26,6 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,50) size 47x22 [border: (1px solid #999999)] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 43x18
                   text run at (2,2) width 43: "a table"
-        RenderText {#text} at (74,9) size 23x18
-          text run at (74,9) width 23: "baz"
+        RenderText {#text} at (73,9) size 23x18
+          text run at (73,9) width 23: "baz"
 caret: position 1 of child 1 {TABLE} of child 2 {DIV} of body

@@ -59,9 +59,9 @@ public:
     RenderTable* table() const;
     unsigned rowIndex() const;
     Length styleOrColLogicalWidth() const;
-    int logicalHeightForRowSizing() const;
+    LayoutUnit logicalHeightForRowSizing() const;
 
-    void setCellLogicalWidth(int constrainedLogicalWidth);
+    void setCellLogicalWidth(LayoutUnit constrainedLogicalWidth);
 
     virtual LayoutUnit borderLeft() const override;
     virtual LayoutUnit borderRight() const override;
@@ -85,11 +85,11 @@ public:
     LayoutUnit cellBaselinePosition() const;
     bool isBaselineAligned() const;
 
-    void computeIntrinsicPadding(int rowHeight);
+    void computeIntrinsicPadding(LayoutUnit rowHeight);
     void clearIntrinsicPadding() { setIntrinsicPadding(0, 0); }
 
-    int intrinsicPaddingBefore() const { return m_intrinsicPaddingBefore; }
-    int intrinsicPaddingAfter() const { return m_intrinsicPaddingAfter; }
+    LayoutUnit intrinsicPaddingBefore() const { return m_intrinsicPaddingBefore; }
+    LayoutUnit intrinsicPaddingAfter() const { return m_intrinsicPaddingAfter; }
 
     virtual LayoutUnit paddingTop() const override;
     virtual LayoutUnit paddingBottom() const override;
@@ -155,19 +155,19 @@ private:
     virtual LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
     virtual LayoutRect computeRectForRepaint(const LayoutRect&, const RenderLayerModelObject* repaintContainer, bool fixed = false) const override;
 
-    int borderHalfLeft(bool outer) const;
-    int borderHalfRight(bool outer) const;
-    int borderHalfTop(bool outer) const;
-    int borderHalfBottom(bool outer) const;
+    LayoutUnit borderHalfLeft(bool outer) const;
+    LayoutUnit borderHalfRight(bool outer) const;
+    LayoutUnit borderHalfTop(bool outer) const;
+    LayoutUnit borderHalfBottom(bool outer) const;
 
-    int borderHalfStart(bool outer) const;
-    int borderHalfEnd(bool outer) const;
-    int borderHalfBefore(bool outer) const;
-    int borderHalfAfter(bool outer) const;
+    LayoutUnit borderHalfStart(bool outer) const;
+    LayoutUnit borderHalfEnd(bool outer) const;
+    LayoutUnit borderHalfBefore(bool outer) const;
+    LayoutUnit borderHalfAfter(bool outer) const;
 
-    void setIntrinsicPaddingBefore(int p) { m_intrinsicPaddingBefore = p; }
-    void setIntrinsicPaddingAfter(int p) { m_intrinsicPaddingAfter = p; }
-    void setIntrinsicPadding(int before, int after) { setIntrinsicPaddingBefore(before); setIntrinsicPaddingAfter(after); }
+    void setIntrinsicPaddingBefore(LayoutUnit p) { m_intrinsicPaddingBefore = p; }
+    void setIntrinsicPaddingAfter(LayoutUnit p) { m_intrinsicPaddingAfter = p; }
+    void setIntrinsicPadding(LayoutUnit before, LayoutUnit after) { setIntrinsicPaddingBefore(before); setIntrinsicPaddingAfter(after); }
 
     bool hasStartBorderAdjoiningTable() const;
     bool hasEndBorderAdjoiningTable() const;
@@ -206,8 +206,8 @@ private:
     mutable unsigned m_hasEmptyCollapsedAfterBorder: 1;
     mutable unsigned m_hasEmptyCollapsedStartBorder: 1;
     mutable unsigned m_hasEmptyCollapsedEndBorder: 1;
-    int m_intrinsicPaddingBefore { 0 };
-    int m_intrinsicPaddingAfter { 0 };
+    LayoutUnit m_intrinsicPaddingBefore { 0 };
+    LayoutUnit m_intrinsicPaddingAfter { 0 };
 };
 
 inline RenderTableCell* RenderTableCell::nextCell() const
@@ -280,15 +280,15 @@ inline Length RenderTableCell::styleOrColLogicalWidth() const
     return styleWidth;
 }
 
-inline int RenderTableCell::logicalHeightForRowSizing() const
+inline LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
 {
     // FIXME: This function does too much work, and is very hot during table layout!
-    int adjustedLogicalHeight = roundToInt(logicalHeight()) - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
-    int styleLogicalHeight = valueForLength(style().logicalHeight(), 0);
+    LayoutUnit adjustedLogicalHeight = logicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
+    LayoutUnit styleLogicalHeight = valueForLength(style().logicalHeight(), 0);
     // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
     // Call computedCSSPadding* directly to avoid including implicitPadding.
     if (!document().inQuirksMode() && style().boxSizing() != BORDER_BOX)
-        styleLogicalHeight += (computedCSSPaddingBefore() + computedCSSPaddingAfter()).floor() + (borderBefore() + borderAfter()).floor();
+        styleLogicalHeight += computedCSSPaddingBefore() + computedCSSPaddingAfter() + borderBefore() + borderAfter();
     return std::max(styleLogicalHeight, adjustedLogicalHeight);
 }
 

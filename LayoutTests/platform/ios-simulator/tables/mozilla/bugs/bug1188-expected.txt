@@ -70,25 +70,25 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,105) size 600x50
-              RenderTableCell {TD} at (2,113) size 159x34 [r=2 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 117x35 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 117x31 [color=#CC0033]
-                    RenderText {#text} at (21,1) size 117x31
-                      text run at (21,1) width 117: "Download Netscape"
+              RenderTableCell {TD} at (2,113) size 160x34 [r=2 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 118x35 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 118x31 [color=#CC0033]
+                    RenderText {#text} at (21,1) size 118x31
+                      text run at (21,1) width 118: "Download Netscape"
                       text run at (26,17) width 107: "Communicator 4.5"
-              RenderTableCell {TD} at (163,105) size 270x50 [r=2 c=1 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 232x28 [color=#0000EE]
-                  RenderImage {IMG} at (19,1) size 232x35 [border: (1px solid #0000EE)]
-                  RenderBR {BR} at (251,36) size 0x0
+              RenderTableCell {TD} at (163,105) size 272x50 [r=2 c=1 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 233x28 [color=#0000EE]
+                  RenderImage {IMG} at (19,1) size 233x35 [border: (1px solid #0000EE)]
+                  RenderBR {BR} at (251,36) size 1x0
                   RenderInline {FONT} at (0,0) size 48x12
                     RenderText {#text} at (111,36) size 48x12
                       text run at (111,36) width 48: "Click Here!"
                 RenderBR {BR} at (158,45) size 1x0
-              RenderTableCell {TD} at (435,121) size 161x18 [r=2 c=2 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 131x19 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 131x15 [color=#0066FF]
-                    RenderText {#text} at (15,1) size 131x15
-                      text run at (15,1) width 131: "Hassle-Free Upgrades"
+              RenderTableCell {TD} at (436,121) size 160x18 [r=2 c=2 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 132x19 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 132x15 [color=#0066FF]
+                    RenderText {#text} at (14,1) size 132x15
+                      text run at (14,1) width 132: "Hassle-Free Upgrades"
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,157) size 600x22
               RenderTableCell {TD} at (2,157) size 594x22 [r=3 c=0 rs=1 cs=3]
@@ -135,6 +135,6 @@ layer at (0,0) size 800x600
                 RenderTable {TABLE} at (1,1) size 1x1
                   RenderTableSection {TBODY} at (0,0) size 1x1
                     RenderTableRow {TR} at (0,0) size 1x1
-                      RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
+                      RenderTableCell {TD} at (0,0) size 1x0 [r=0 c=0 rs=1 cs=1]
 layer at (289,78) size 183x14
   RenderBlock {DIV} at (6,3) size 185x15

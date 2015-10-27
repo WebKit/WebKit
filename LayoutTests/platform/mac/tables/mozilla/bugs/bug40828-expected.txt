@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 244x18
         text run at (0,0) width 244: "The cell padding should not disappear"
       RenderText {#text} at (0,0) size 0x0
-layer at (120,120) size 107x88
+layer at (120,120) size 106x88
   RenderTable {TABLE} at (120,120) size 107x88 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 105x86
       RenderTableRow {TR} at (0,2) size 105x40

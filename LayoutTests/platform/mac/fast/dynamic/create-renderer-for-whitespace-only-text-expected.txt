@@ -23,9 +23,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,86) size 784x18
         RenderText {#text} at (0,0) size 358x18
           text run at (0,0) width 358: "The left column should be identical to the right column."
-      RenderTable {TABLE} at (0,120) size 201x98 [border: none]
-        RenderTableSection {TBODY} at (0,0) size 200x97
-          RenderTableRow {TR} at (0,0) size 200x27
+      RenderTable {TABLE} at (0,120) size 200x98 [border: none]
+        RenderTableSection {TBODY} at (0,0) size 199x97
+          RenderTableRow {TR} at (0,0) size 199x27
             RenderTableCell {TD} at (0,0) size 100x27 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 91x18
                 RenderText {#text} at (0,0) size 24x18
@@ -34,11 +34,11 @@ layer at (0,0) size 800x600
                   text run at (23,0) width 5: " "
                 RenderText {#text} at (27,0) size 24x18
                   text run at (27,0) width 24: "suit"
-            RenderTableCell {TD} at (100,0) size 100x27 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (99,0) size 100x27 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 91x18
                 RenderText {#text} at (0,0) size 51x18
                   text run at (0,0) width 51: "wet suit"
-          RenderTableRow {TR} at (0,27) size 200x43
+          RenderTableRow {TR} at (0,27) size 199x43
             RenderTableCell {TD} at (0,27) size 100x43 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {UL} at (5,5) size 91x18
                 RenderInline {LI} at (0,0) size 24x18
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (67,0) size 24x18
                     text run at (67,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (100,27) size 100x43 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (99,27) size 100x43 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (5,5) size 91x18
                 RenderInline {LI} at (0,0) size 24x18
                   RenderText {#text} at (40,0) size 24x18
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (67,0) size 24x18
                     text run at (67,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,70) size 200x27
+          RenderTableRow {TR} at (0,70) size 199x27
             RenderTableCell {TD} at (0,70) size 100x27 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 91x18
                 RenderInline {DIV} at (0,0) size 24x18
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (27,0) size 24x18
                     text run at (27,0) width 24: "suit"
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (100,70) size 100x27 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (99,70) size 100x27 [border: (1px solid #000000)] [r=2 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (5,5) size 91x18
                 RenderInline {DIV} at (0,0) size 24x18
                   RenderText {#text} at (0,0) size 24x18

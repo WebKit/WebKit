@@ -18,31 +18,31 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (392,61) size 0x19
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,82) size 784x24
-            RenderTableCell {TD} at (0,85) size 532x18 [r=1 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 141x15
-                RenderText {#text} at (390,1) size 141x15
-                  text run at (390,1) width 141: "I agree with the program"
+            RenderTableCell {TD} at (0,85) size 533x18 [r=1 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 142x15
+                RenderText {#text} at (390,1) size 142x15
+                  text run at (390,1) width 142: "I agree with the program"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (532,82) size 75x24 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (532,82) size 77x24 [r=1 c=1 rs=1 cs=1]
               RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderTableRow {TR} at (0,106) size 784x24
-            RenderTableCell {TD} at (0,109) size 532x18 [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,109) size 533x18 [r=2 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 153x15
-                RenderText {#text} at (378,1) size 153x15
-                  text run at (378,1) width 153: "I think vouchers are wrong"
+                RenderText {#text} at (379,1) size 153x15
+                  text run at (379,1) width 153: "I think vouchers are wrong"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (532,106) size 75x24 [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (532,106) size 77x24 [r=2 c=1 rs=1 cs=1]
               RenderBlock {INPUT} at (3,4) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
           RenderTableRow {TR} at (0,130) size 784x26
-            RenderTableCell {TD} at (0,134) size 607x18 [r=3 c=0 rs=1 cs=2]
-              RenderInline {A} at (0,0) size 75x19 [color=#0000EE]
-                RenderInline {FONT} at (0,0) size 75x15
-                  RenderText {#text} at (266,1) size 75x15
-                    text run at (266,1) width 75: "View Results"
+            RenderTableCell {TD} at (0,134) size 609x18 [r=3 c=0 rs=1 cs=2]
+              RenderInline {A} at (0,0) size 76x19 [color=#0000EE]
+                RenderInline {FONT} at (0,0) size 76x15
+                  RenderText {#text} at (266,1) size 76x15
+                    text run at (266,1) width 76: "View Results"
               RenderInline {FONT} at (0,0) size 1x15
                 RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (607,130) size 177x26 [r=3 c=2 rs=1 cs=2]
-              RenderButton {INPUT} at (66,3) size 45x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderTableCell {TD} at (608,130) size 176x26 [r=3 c=2 rs=1 cs=2]
+              RenderButton {INPUT} at (65,3) size 46x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
                 RenderBlock (anonymous) at (12,3) size 21x14
                   RenderText at (0,0) size 21x14
                     text run at (0,0) width 21: "vote"

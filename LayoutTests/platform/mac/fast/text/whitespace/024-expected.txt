@@ -54,7 +54,7 @@ layer at (0,0) size 785x1187
                   text run at (7,128) width 157: "21 22 23 24 25 26 27"
                   text run at (163,128) width 1: " "
                   text run at (7,143) width 63: "28 29 30"
-            RenderTableCell {TD} at (178,2) size 589x20 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (177,2) size 590x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 491x18
                 text run at (1,1) width 346: "The blank line between '2003' and the nested element "
                 text run at (346,1) width 146: "triggers the width bug."
@@ -89,12 +89,12 @@ layer at (0,0) size 785x1187
                   text run at (7,128) width 157: "21 22 23 24 25 26 27"
                   text run at (163,128) width 1: " "
                   text run at (7,143) width 63: "28 29 30"
-            RenderTableCell {TD} at (178,2) size 589x72 [r=0 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (1,1) size 587x18
+            RenderTableCell {TD} at (177,2) size 590x72 [r=0 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (1,1) size 588x18
                 RenderText {#text} at (0,0) size 491x18
                   text run at (0,0) width 346: "The blank line between '2003' and the nested element "
                   text run at (345,0) width 146: "triggers the width bug."
-              RenderBlock {P} at (1,35) size 587x36
+              RenderBlock {P} at (1,35) size 588x36
                 RenderText {#text} at (0,0) size 578x36
                   text run at (0,0) width 357: "Here, the excess whitespace is reduced by reducing the "
                   text run at (356,0) width 222: "number of characters contained by"
@@ -129,7 +129,7 @@ layer at (0,0) size 785x1187
                   text run at (7,113) width 157: "21 22 23 24 25 26 27"
                   text run at (163,113) width 1: " "
                   text run at (7,128) width 63: "28 29 30"
-            RenderTableCell {TD} at (178,2) size 589x38 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (177,2) size 590x38 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 575x36
                 text run at (1,1) width 346: "The blank line between '2003' and the nested element "
                 text run at (346,1) width 230: "has been removed, so the bug is not"
@@ -167,7 +167,7 @@ layer at (0,0) size 785x1187
                   text run at (7,128) width 157: "21 22 23 24 25 26 27"
                   text run at (163,128) width 1: " "
                   text run at (7,143) width 63: "28 29 30"
-            RenderTableCell {TD} at (178,2) size 589x38 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (177,2) size 590x38 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 585x36
                 text run at (1,1) width 346: "The blank line between '2003' and the nested element "
                 text run at (346,1) width 211: "no longer triggers the width bug,"

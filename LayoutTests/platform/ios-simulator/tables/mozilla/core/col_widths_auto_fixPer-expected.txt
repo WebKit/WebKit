@@ -9,13 +9,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 82x24 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 78x19
                 text run at (2,2) width 78: "fooooooooo"
-            RenderTableCell {TD} at (86,2) size 82x24 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (85,2) size 82x24 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 78x19
                 text run at (2,2) width 78: "fooooooooo"
-            RenderTableCell {TD} at (170,2) size 304x24 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (168,2) size 306x24 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 98x19
                 text run at (2,2) width 98: "foo foo foo foo"
-            RenderTableCell {TD} at (476,2) size 304x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (475,2) size 305x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 98x19
                 text run at (2,2) width 98: "foo foo foo foo"
       RenderBlock (anonymous) at (0,30) size 784x20
@@ -29,15 +29,15 @@ layer at (0,0) size 800x600
                 text run at (2,22) width 22: "foo"
                 text run at (2,42) width 22: "foo"
                 text run at (2,62) width 22: "foo"
-            RenderTableCell {TD} at (30,32) size 144x24 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (29,32) size 145x24 [bgcolor=#FFA500] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 98x19
                 text run at (2,2) width 98: "foo foo foo foo"
-            RenderTableCell {TD} at (176,32) size 144x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (175,32) size 146x24 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 98x19
                 text run at (2,2) width 98: "foo foo foo foo"
-            RenderTableCell {TD} at (322,32) size 430x24 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (330,2) size 98x19
-                text run at (330,2) width 98: "foo foo foo foo"
+            RenderTableCell {TD} at (322,32) size 431x24 [bgcolor=#008000] [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (330,2) size 99x19
+                text run at (330,2) width 99: "foo foo foo foo"
             RenderTableCell {TD} at (754,2) size 26x84 [bgcolor=#FF0000] [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x79
                 text run at (2,2) width 22: "foo"
@@ -54,10 +54,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (10,10) size 26x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 22x19
                 text run at (2,2) width 22: "1%"
-            RenderTableCell {TD} at (46,10) size 74x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (45,10) size 75x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "10%"
-            RenderTableCell {TD} at (130,10) size 642x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (129,10) size 643x24 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x19
                 text run at (2,2) width 32: "20px"
       RenderBlock (anonymous) at (0,226) size 784x20

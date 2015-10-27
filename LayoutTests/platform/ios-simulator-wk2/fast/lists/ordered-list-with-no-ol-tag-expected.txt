@@ -81,7 +81,7 @@ layer at (0,0) size 800x586
                   RenderTableCell {TD} at (2,2) size 94x24 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 90x19
                       text run at (2,2) width 90: "Table Cell A1"
-                  RenderTableCell {TD} at (98,2) size 93x24 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (97,2) size 94x24 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 89x19
                       text run at (2,2) width 89: "Table Cell B1"
           RenderListItem {TABLE} at (33,71) size 692x50 [border: (1px dashed #000000)]
@@ -93,7 +93,7 @@ layer at (0,0) size 800x586
                   RenderTableCell {TD} at (2,2) size 106x24 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 102x19
                       text run at (2,2) width 102: "Table 2 Cell A1"
-                  RenderTableCell {TD} at (110,2) size 105x24 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
+                  RenderTableCell {TD} at (109,2) size 106x24 [border: (1px dotted #000000)] [r=0 c=1 rs=1 cs=1]
                     RenderText {#text} at (2,2) size 101x19
                       text run at (2,2) width 101: "Table 2 Cell B1"
         RenderListItem {DIV} at (33,449) size 726x22 [border: (1px solid #000000)]

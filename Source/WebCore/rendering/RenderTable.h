@@ -50,8 +50,8 @@ public:
 
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns
     // and rows respectively, not necessarily the horizontal and vertical spacing respectively".
-    int hBorderSpacing() const { return m_hSpacing; }
-    int vBorderSpacing() const { return m_vSpacing; }
+    LayoutUnit hBorderSpacing() const { return m_hSpacing; }
+    LayoutUnit vBorderSpacing() const { return m_vSpacing; }
     
     bool collapseBorders() const { return style().borderCollapse(); }
 
@@ -90,41 +90,41 @@ public:
 
     Color bgColor() const { return style().visitedDependentColor(CSSPropertyBackgroundColor); }
 
-    int outerBorderBefore() const;
-    int outerBorderAfter() const;
-    int outerBorderStart() const;
-    int outerBorderEnd() const;
+    LayoutUnit outerBorderBefore() const;
+    LayoutUnit outerBorderAfter() const;
+    LayoutUnit outerBorderStart() const;
+    LayoutUnit outerBorderEnd() const;
 
-    int outerBorderLeft() const
+    LayoutUnit outerBorderLeft() const
     {
         if (style().isHorizontalWritingMode())
             return style().isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
         return style().isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
     }
 
-    int outerBorderRight() const
+    LayoutUnit outerBorderRight() const
     {
         if (style().isHorizontalWritingMode())
             return style().isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
         return style().isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
     }
 
-    int outerBorderTop() const
+    LayoutUnit outerBorderTop() const
     {
         if (style().isHorizontalWritingMode())
             return style().isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
         return style().isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
     }
 
-    int outerBorderBottom() const
+    LayoutUnit outerBorderBottom() const
     {
         if (style().isHorizontalWritingMode())
             return style().isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
         return style().isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
     }
 
-    int calcBorderStart() const;
-    int calcBorderEnd() const;
+    LayoutUnit calcBorderStart() const;
+    LayoutUnit calcBorderEnd() const;
     void recalcBordersInRowDirection();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0) override final;
@@ -145,8 +145,8 @@ public:
     }
 
     const Vector<ColumnStruct>& columns() const { return m_columns; }
-    const Vector<int>& columnPositions() const { return m_columnPos; }
-    void setColumnPosition(unsigned index, int position)
+    const Vector<LayoutUnit>& columnPositions() const { return m_columnPos; }
+    void setColumnPosition(unsigned index, LayoutUnit position)
     {
         // Note that if our horizontal border-spacing changed, our position will change but not
         // our column's width. In practice, horizontal border-spacing won't change often.
@@ -202,10 +202,6 @@ public:
 
         return 0;
     }
-
-    // Override paddingStart/End to return pixel values to match behavor of RenderTableCell.
-    virtual LayoutUnit paddingEnd() const override final { return static_cast<int>(RenderBlock::paddingEnd()); }
-    virtual LayoutUnit paddingStart() const override final { return static_cast<int>(RenderBlock::paddingStart()); }
 
     LayoutUnit bordersPaddingAndSpacingInRowDirection() const
     {
@@ -326,9 +322,9 @@ private:
     void recalcSections() const;
     void layoutCaption(RenderTableCaption*);
 
-    void distributeExtraLogicalHeight(int extraLogicalHeight);
+    void distributeExtraLogicalHeight(LayoutUnit extraLogicalHeight);
 
-    mutable Vector<int> m_columnPos;
+    mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
     mutable Vector<RenderTableCaption*> m_captions;
     mutable Vector<RenderTableCol*> m_columnRenderers;
@@ -366,8 +362,8 @@ private:
 
     short m_hSpacing;
     short m_vSpacing;
-    int m_borderStart;
-    int m_borderEnd;
+    LayoutUnit m_borderStart;
+    LayoutUnit m_borderEnd;
     mutable LayoutUnit m_columnOffsetTop;
     mutable LayoutUnit m_columnOffsetHeight;
 };

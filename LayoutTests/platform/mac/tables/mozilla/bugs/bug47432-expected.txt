@@ -10,7 +10,7 @@ layer at (0,0) size 800x224
               RenderText {#text} at (2,2) size 589x18
                 text run at (2,2) width 589: "lots of text goes here even more and more and more and more and more and more and more"
           RenderTableRow {TR} at (0,26) size 698x22
-            RenderTableCell {TD} at (2,26) size 681x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,26) size 682x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 514x18
                 text run at (2,2) width 514: "aaaaaaaaaaaa bbbbbbbbbbbbbbb cccccccccccccccccccccccccc dddddddddddddd"
             RenderTableCell {TD} at (685,26) size 11x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
@@ -24,7 +24,7 @@ layer at (0,0) size 800x224
               RenderText {#text} at (2,2) size 192x18
                 text run at (2,2) width 192: "lots of text goes here even mo"
           RenderTableRow {TR} at (0,26) size 698x22
-            RenderTableCell {TD} at (2,26) size 681x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,26) size 682x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 514x18
                 text run at (2,2) width 514: "aaaaaaaaaaaa bbbbbbbbbbbbbbb cccccccccccccccccccccccccc dddddddddddddd"
             RenderTableCell {TD} at (685,26) size 11x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
@@ -38,7 +38,7 @@ layer at (0,0) size 800x224
               RenderText {#text} at (2,2) size 184x18
                 text run at (2,2) width 184: "lots of text goes here even m"
           RenderTableRow {TR} at (0,26) size 698x22
-            RenderTableCell {TD} at (2,26) size 681x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (2,26) size 682x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
               RenderText {#text} at (2,2) size 514x18
                 text run at (2,2) width 514: "aaaaaaaaaaaa bbbbbbbbbbbbbbb cccccccccccccccccccccccccc dddddddddddddd"
             RenderTableCell {TD} at (685,26) size 11x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]

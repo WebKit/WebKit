@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
                       RenderBlock {DIV} at (21,21) size 35x22 [border: (1px dashed #FF0000)]
                         RenderText {#text} at (1,1) size 33x19
                           text run at (1,1) width 33: "FOO"
-            RenderTableCell {TD} at (140,2) size 252x126 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (139,2) size 253x126 [r=0 c=1 rs=1 cs=1]
               RenderBlock {P} at (10,10) size 232x20
                 RenderInline {B} at (0,0) size 232x19
                   RenderText {#text} at (0,0) size 232x19
@@ -35,9 +35,9 @@ layer at (0,0) size 800x600
                           text run at (1,1) width 33: "FOO"
       RenderBlock (anonymous) at (0,166) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,186) size 703x111
-        RenderTableSection {TBODY} at (0,0) size 703x111
-          RenderTableRow {TR} at (0,2) size 703x107
+      RenderTable {TABLE} at (0,186) size 701x111
+        RenderTableSection {TBODY} at (0,0) size 701x111
+          RenderTableRow {TR} at (0,2) size 701x107
             RenderTableCell {TD} at (2,2) size 164x88 [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (10,10) size 144x20
                 RenderInline {B} at (0,0) size 144x19
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
                       RenderBlock {DIV} at (21,2) size 35x22 [border: (1px dashed #FF0000)]
                         RenderText {#text} at (1,1) size 33x19
                           text run at (1,1) width 33: "FOO"
-            RenderTableCell {TD} at (168,2) size 175x88 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (167,2) size 175x88 [r=0 c=1 rs=1 cs=1]
               RenderBlock {P} at (10,10) size 155x20
                 RenderInline {B} at (0,0) size 155x19
                   RenderText {#text} at (0,0) size 155x19
@@ -62,7 +62,7 @@ layer at (0,0) size 800x600
                       RenderBlock {DIV} at (2,2) size 35x22 [border: (1px dashed #FF0000)]
                         RenderText {#text} at (1,1) size 33x19
                           text run at (1,1) width 33: "FOO"
-            RenderTableCell {TD} at (345,2) size 164x107 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (343,2) size 165x107 [r=0 c=2 rs=1 cs=1]
               RenderBlock {P} at (10,10) size 144x20
                 RenderInline {B} at (0,0) size 144x19
                   RenderText {#text} at (0,0) size 144x19
@@ -74,7 +74,7 @@ layer at (0,0) size 800x600
                       RenderBlock {DIV} at (2,21) size 35x22 [border: (1px dashed #FF0000)]
                         RenderText {#text} at (1,1) size 33x19
                           text run at (1,1) width 33: "FOO"
-            RenderTableCell {TD} at (511,2) size 190x107 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (509,2) size 190x107 [r=0 c=3 rs=1 cs=1]
               RenderBlock {P} at (10,10) size 170x20
                 RenderInline {B} at (0,0) size 170x19
                   RenderText {#text} at (0,0) size 170x19

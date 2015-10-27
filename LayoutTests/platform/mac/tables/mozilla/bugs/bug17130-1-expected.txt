@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,78) size 784x65
         RenderTableSection {TBODY} at (0,0) size 784x64
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#CCCCCC]
-            RenderTableCell {TD} at (2,2) size 704x20 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 705x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 101x18
                 text run at (1,1) width 101: "Re-sort by Title"
-            RenderTableCell {TD} at (708,2) size 33x20 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (708,2) size 34x20 [r=0 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 27x18
                 RenderText {#text} at (1,1) size 27x18
                   text run at (1,1) width 27: "Buy"
@@ -33,12 +33,12 @@ layer at (0,0) size 800x600
               RenderText {#text} at (33,1) size 5x18
                 text run at (33,1) width 5: " "
           RenderTableRow {TR} at (0,24) size 784x38
-            RenderTableCell {TD} at (2,24) size 704x38 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,24) size 705x38 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 678x36
                 text run at (1,1) width 446: "Norton AntiVirus Definitions Update 10/21/99 Update your NAV for "
                 text run at (446,1) width 233: "Windows 95/98/NT, Lotus Notes, or"
                 text run at (1,19) width 269: "Exchange with the latest virus definitions."
-            RenderTableCell {TD} at (708,33) size 33x20 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (708,33) size 34x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
             RenderTableCell {TD} at (743,33) size 39x20 [r=1 c=2 rs=1 cs=1]
@@ -52,22 +52,22 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,221) size 784x65
         RenderTableSection {TBODY} at (0,0) size 784x64
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#CCCCCC]
-            RenderTableCell {TD} at (2,2) size 704x20 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 705x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 101x18
                 text run at (1,1) width 101: "Re-sort by Title"
-            RenderTableCell {TD} at (708,2) size 33x20 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (708,2) size 34x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 31x18
                 text run at (1,1) width 31: "Buy "
             RenderTableCell {TD} at (743,2) size 39x20 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 37x18
                 text run at (1,1) width 37: " Pick "
           RenderTableRow {TR} at (0,24) size 784x38
-            RenderTableCell {TD} at (2,24) size 704x38 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,24) size 705x38 [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 678x36
                 text run at (1,1) width 446: "Norton AntiVirus Definitions Update 10/21/99 Update your NAV for "
                 text run at (446,1) width 233: "Windows 95/98/NT, Lotus Notes, or"
                 text run at (1,19) width 269: "Exchange with the latest virus definitions."
-            RenderTableCell {TD} at (708,33) size 33x20 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (708,33) size 34x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
             RenderTableCell {TD} at (743,33) size 39x20 [r=1 c=2 rs=1 cs=1]

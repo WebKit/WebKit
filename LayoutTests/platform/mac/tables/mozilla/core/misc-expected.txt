@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (7,1) size 580x42
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,48) size 600x38
-            RenderTableCell {TD} at (2,48) size 242x37 [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,48) size 243x38 [r=1 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 232x35 [border: (1px solid #000000)]
             RenderTableCell {TD} at (246,48) size 142x38 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (32,1) size 78x36

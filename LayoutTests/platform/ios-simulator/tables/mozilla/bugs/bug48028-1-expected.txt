@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderInline {FONT} at (0,0) size 0x0
       RenderTable {TABLE} at (0,0) size 114x50 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 114x20
-          RenderText {#text} at (33,0) size 48x19
-            text run at (33,0) width 48: "TEST1"
+          RenderText {#text} at (33,0) size 47x19
+            text run at (33,0) width 47: "TEST1"
         RenderTableSection {TBODY} at (1,21) size 112x28
           RenderTableRow {TR} at (0,2) size 112x24
             RenderTableCell {TD} at (2,2) size 108x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -26,8 +26,8 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 104: "TABLE TEXT2"
       RenderTable {TABLE} at (0,100) size 114x50 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 114x20
-          RenderText {#text} at (33,0) size 48x19
-            text run at (33,0) width 48: "TEST3"
+          RenderText {#text} at (33,0) size 47x19
+            text run at (33,0) width 47: "TEST3"
         RenderTableSection {TBODY} at (1,21) size 112x28
           RenderTableRow {TR} at (0,2) size 112x24
             RenderTableCell {TD} at (2,2) size 108x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

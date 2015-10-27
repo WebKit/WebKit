@@ -74,11 +74,11 @@ layer at (0,0) size 800x1457
                 text run at (415,3) width 316: "This is also true of the table-testing section in the"
                 text run at (3,23) width 179: "second half of the test page."
           RenderTableRow {TR} at (0,56) size 782x58
-            RenderTableCell {TD} at (5,72) size 195x26 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (5,72) size 197x26 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 54x19
                 text run at (3,3) width 54: "Cell one"
-            RenderTableCell {TD} at (205,56) size 572x58 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (3,3) size 566x20
+            RenderTableCell {TD} at (206,56) size 571x58 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (3,3) size 565x20
                 RenderText {#text} at (0,0) size 55x19
                   text run at (0,0) width 55: "Cell two"
               RenderTable {TABLE} at (3,23) size 168x32 [border: (1px outset #808080)]
@@ -98,9 +98,9 @@ layer at (0,0) size 800x1457
                 RenderText {#text} at (5,5) size 161x19
                   text run at (5,5) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,30) size 782x625
-            RenderTableCell {TD} at (0,327) size 14x30 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 4x19
-                text run at (5,5) width 4: " "
+            RenderTableCell {TD} at (0,327) size 15x31 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 4x20
+                text run at (5,6) width 4: " "
             RenderTableCell {TD} at (14,30) size 768x625 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (5,5) size 758x40
                 RenderText {#text} at (0,0) size 715x39
@@ -159,7 +159,7 @@ layer at (0,0) size 800x1457
                         text run at (415,3) width 316: "This is also true of the table-testing section in the"
                         text run at (3,23) width 179: "second half of the test page."
                   RenderTableRow {TR} at (0,56) size 756x58
-                    RenderTableCell {TD} at (5,72) size 189x26 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (5,72) size 190x26 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (3,3) size 54x19
                         text run at (3,3) width 54: "Cell one"
                     RenderTableCell {TD} at (199,56) size 552x58 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]

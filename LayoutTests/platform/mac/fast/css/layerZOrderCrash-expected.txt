@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 629x18
           text run at (0,0) width 629: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken, we will crash. "
         RenderBR {BR} at (628,14) size 1x0
-layer at (8,26) size 60x88
+layer at (8,26) size 59x88
   RenderTable {TABLE} at (0,18) size 60x88
     RenderTableSection {TBODY} at (0,0) size 60x88
       RenderTableRow {TR} at (0,2) size 60x20
@@ -17,7 +17,7 @@ layer at (8,26) size 60x88
               text run at (1,1) width 25: "link"
       RenderTableRow {TR} at (0,24) size 60x62
         RenderTableCell {TD} at (2,24) size 56x62 [r=1 c=0 rs=1 cs=1]
-layer at (11,51) size 54x60
+layer at (11,51) size 53x60
   RenderTable {TABLE} at (1,1) size 54x60
     RenderTableSection {TBODY} at (0,0) size 54x60
       RenderTableRow {TR} at (0,2) size 54x56

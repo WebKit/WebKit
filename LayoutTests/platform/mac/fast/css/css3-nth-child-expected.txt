@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 784x162
           RenderTableSection {TBODY} at (0,0) size 784x162
             RenderTableRow {TR} at (0,2) size 784x38 [color=#008000]
-              RenderTableCell {TD} at (2,2) size 382x38 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,2) size 383x38 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 352x36
                   text run at (1,1) width 352: "This is the first cell in the first row of this table, and"
                   text run at (1,19) width 176: "should be green, and bold"
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 370: "This is the second cell in the first row of this table, and"
                   text run at (1,19) width 172: "should be green and bold"
             RenderTableRow {TR} at (0,42) size 784x38 [color=#800080]
-              RenderTableCell {TD} at (2,42) size 382x38 [r=1 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,42) size 383x38 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 370x36
                   text run at (1,1) width 370: "This is the first cell in the second row of this table, and"
                   text run at (1,19) width 179: "should be purple and bold"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 389: "This is the second cell in the second row of this table, and"
                   text run at (1,19) width 179: "should be purple and bold"
             RenderTableRow {TR} at (0,82) size 784x38 [color=#008000]
-              RenderTableCell {TD} at (2,82) size 382x38 [r=2 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,82) size 383x38 [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 337x36
                   text run at (1,1) width 337: "This is the first cell in the third row of this table, and"
                   text run at (1,19) width 102: "should be green"
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 356: "This is the second cell in the third row of this table, and"
                   text run at (1,19) width 102: "should be green"
             RenderTableRow {TR} at (0,122) size 784x38 [color=#800080]
-              RenderTableCell {TD} at (2,122) size 382x38 [r=3 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (2,122) size 383x38 [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 346x36
                   text run at (1,1) width 346: "This is the first cell in the fourth row of this table, and"
                   text run at (1,19) width 107: "should be purple"

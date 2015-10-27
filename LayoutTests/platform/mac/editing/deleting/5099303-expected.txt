@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 342x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 338x18
                   text run at (2,2) width 338: "The caret should be between these two parenthesis: ("
-              RenderTableCell {TD} at (346,11) size 4x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (345,11) size 5x4 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
         RenderBlock {DIV} at (0,28) size 784x18
           RenderText {#text} at (0,0) size 10x18
             text run at (0,0) width 10: ")."

@@ -469,7 +469,7 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 
     // FIXME: Table cell adjustment is temporary until results can be updated.
     if (is<RenderTableCell>(*o.containingBlock()))
-        y -= downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore();
+        y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
         
     ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
     if (!run.isLeftToRightDirection() || run.dirOverride()) {
@@ -491,7 +491,7 @@ static void writeSimpleLine(TextStream& ts, const RenderText& o, const FloatRect
     int logicalWidth = ceilf(rect.x() + rect.width()) - x;
 
     if (is<RenderTableCell>(*o.containingBlock()))
-        y -= downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore();
+        y -= floorToInt(downcast<RenderTableCell>(*o.containingBlock()).intrinsicPaddingBefore());
         
     ts << "text run at (" << x << "," << y << ") width " << logicalWidth;
     ts << ": "

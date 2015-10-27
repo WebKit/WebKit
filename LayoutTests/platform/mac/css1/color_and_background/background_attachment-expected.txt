@@ -1,6 +1,6 @@
-layer at (0,0) size 858x1195
+layer at (0,0) size 858x1194
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1195
+layer at (0,0) size 785x1194
   RenderBlock {HTML} at (0,0) size 785x1195
     RenderBody {BODY} at (8,8) size 769x1179 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
@@ -91,9 +91,9 @@ layer at (0,0) size 785x1195
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x524
-            RenderTableCell {TD} at (0,275) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
-                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (0,274) size 13x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x19
+                text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x524 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x90
                 RenderText {#text} at (0,0) size 745x90

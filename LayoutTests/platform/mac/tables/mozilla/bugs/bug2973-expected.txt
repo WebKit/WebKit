@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
                         text run at (1,1) width 56: "inside of"
                         text run at (1,63) width 32: "table"
                       RenderImage {IMG} at (32,19) size 601x58
-            RenderTableCell {TD} at (644,27) size 138x38 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (643,27) size 139x38 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 121x36
                 text run at (1,1) width 121: "2nd row of outside"
                 text run at (1,19) width 32: "table"

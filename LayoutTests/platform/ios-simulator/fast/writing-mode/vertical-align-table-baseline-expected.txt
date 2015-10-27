@@ -6,7 +6,7 @@ layer at (0,0) size 298x600
       RenderTable {TABLE} at (0,0) size 282x584 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 278x580
           RenderTableRow {TR} at (0,2) size 274x580
-            RenderTableCell {TD} at (2,36) size 274x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,36) size 274x59 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (43,-32) size 122x144
                 text run at (43,-32) width 144: "\x{7B2C}\x{4E00}\x{6BB5}"
                 text run at (111,-32) width 48: "\x{843D}"

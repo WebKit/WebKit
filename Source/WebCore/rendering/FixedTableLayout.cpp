@@ -75,10 +75,10 @@ FixedTableLayout::FixedTableLayout(RenderTable* table)
 {
 }
 
-int FixedTableLayout::calcWidthArray()
+float FixedTableLayout::calcWidthArray()
 {
     // FIXME: We might want to wait until we have all of the first row before computing for the first time.
-    int usedWidth = 0;
+    float usedWidth = 0;
 
     // iterate over all <col> elements
     unsigned nEffCols = m_table->numEffCols();
@@ -97,7 +97,7 @@ int FixedTableLayout::calcWidthArray()
             continue;
 
         Length colStyleLogicalWidth = col->style().logicalWidth();
-        int effectiveColWidth = 0;
+        float effectiveColWidth = 0;
         if (colStyleLogicalWidth.isFixed() && colStyleLogicalWidth.value() > 0)
             effectiveColWidth = colStyleLogicalWidth.value();
 
@@ -138,7 +138,7 @@ int FixedTableLayout::calcWidthArray()
     for (RenderTableCell* cell = firstRow->firstCell(); cell; cell = cell->nextCell()) {
         Length logicalWidth = cell->styleOrColLogicalWidth();
         unsigned span = cell->colSpan();
-        int fixedBorderBoxLogicalWidth = 0;
+        float fixedBorderBoxLogicalWidth = 0;
         // FIXME: Support other length types. If the width is non-auto, it should probably just use
         // RenderBox::computeLogicalWidthInRegionUsing to compute the width.
         if (logicalWidth.isFixed() && logicalWidth.isPositive()) {
@@ -178,7 +178,7 @@ void FixedTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, La
 {
     Length tableLogicalWidth = m_table->style().logicalWidth();
     if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive())
-        minWidth = maxWidth = std::max<int>(minWidth, tableLogicalWidth.value() - m_table->bordersPaddingAndSpacingInRowDirection());
+        minWidth = maxWidth = std::max(minWidth, LayoutUnit(tableLogicalWidth.value()) - m_table->bordersPaddingAndSpacingInRowDirection());
 
     /*
         <table style="width:100%; background-color:red"><tr><td>
@@ -198,7 +198,7 @@ void FixedTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, La
 
 void FixedTableLayout::layout()
 {
-    int tableLogicalWidth = m_table->logicalWidth() - m_table->bordersPaddingAndSpacingInRowDirection();
+    float tableLogicalWidth = m_table->logicalWidth() - m_table->bordersPaddingAndSpacingInRowDirection();
     unsigned nEffCols = m_table->numEffCols();
 
     // FIXME: It is possible to be called without having properly updated our internal representation.
@@ -209,12 +209,12 @@ void FixedTableLayout::layout()
         nEffCols = m_table->numEffCols();
     }
 
-    Vector<int> calcWidth(nEffCols, 0);
+    Vector<float> calcWidth(nEffCols, 0);
 
     unsigned numAuto = 0;
     unsigned autoSpan = 0;
-    int totalFixedWidth = 0;
-    int totalPercentWidth = 0;
+    float totalFixedWidth = 0;
+    float totalPercentWidth = 0;
     float totalPercent = 0;
 
     // Compute requirements and try to satisfy fixed and percent widths.
@@ -235,8 +235,8 @@ void FixedTableLayout::layout()
         }
     }
 
-    int hspacing = m_table->hBorderSpacing();
-    int totalWidth = totalFixedWidth + totalPercentWidth;
+    float hspacing = m_table->hBorderSpacing();
+    float totalWidth = totalFixedWidth + totalPercentWidth;
     if (!numAuto || totalWidth > tableLogicalWidth) {
         // If there are no auto columns, or if the total is too wide, take
         // what we have and scale it to fit as necessary.
@@ -265,12 +265,12 @@ void FixedTableLayout::layout()
     } else {
         // Divide the remaining width among the auto columns.
         ASSERT(autoSpan >= numAuto);
-        int remainingWidth = tableLogicalWidth - totalFixedWidth - totalPercentWidth - hspacing * (autoSpan - numAuto);
+        float remainingWidth = tableLogicalWidth - totalFixedWidth - totalPercentWidth - hspacing * (autoSpan - numAuto);
         int lastAuto = 0;
         for (unsigned i = 0; i < nEffCols; i++) {
             if (m_width[i].isAuto()) {
                 unsigned span = m_table->spanOfEffCol(i);
-                int w = remainingWidth * span / autoSpan;
+                float w = remainingWidth * span / autoSpan;
                 calcWidth[i] = w + hspacing * (span - 1);
                 remainingWidth -= w;
                 if (!remainingWidth)
@@ -289,10 +289,10 @@ void FixedTableLayout::layout()
 
     if (totalWidth < tableLogicalWidth) {
         // Spread extra space over columns.
-        int remainingWidth = tableLogicalWidth - totalWidth;
+        float remainingWidth = tableLogicalWidth - totalWidth;
         int total = nEffCols;
         while (total) {
-            int w = remainingWidth / total;
+            float w = remainingWidth / total;
             remainingWidth -= w;
             calcWidth[--total] += w;
         }
@@ -300,12 +300,12 @@ void FixedTableLayout::layout()
             calcWidth[nEffCols - 1] += remainingWidth;
     }
     
-    int pos = 0;
+    float pos = 0;
     for (unsigned i = 0; i < nEffCols; i++) {
         m_table->setColumnPosition(i, pos);
         pos += calcWidth[i] + hspacing;
     }
-    int colPositionsSize = m_table->columnPositions().size();
+    float colPositionsSize = m_table->columnPositions().size();
     if (colPositionsSize > 0)
         m_table->setColumnPosition(colPositionsSize - 1, pos);
 }

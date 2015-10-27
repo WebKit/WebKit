@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             RenderTableCell (anonymous) at (0,0) size 100x56 [border: (3px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
               RenderText at (19,19) size 62x18
                 text run at (19,19) width 62: "BEFORE"
-            RenderTableCell (anonymous) at (100,19) size 75x18 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell (anonymous) at (99,19) size 76x18 [r=0 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 75x18
                 RenderText {#text} at (0,0) size 75x18
                   text run at (0,0) width 75: "CONTENT"

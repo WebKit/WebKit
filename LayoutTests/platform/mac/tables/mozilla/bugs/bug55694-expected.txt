@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (400,14) size 1x0
         RenderText {#text} at (0,18) size 142x18
           text run at (0,18) width 142: "No width has been set"
-layer at (8,70) size 141x28
+layer at (8,70) size 140x28
   RenderBlock (positioned) {DIV} at (8,70) size 141x28 [bgcolor=#CCFFCC]
     RenderTable {TABLE} at (0,0) size 141x28 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 139x26

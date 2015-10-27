@@ -16,13 +16,13 @@ layer at (0,0) size 800x600
                         text run at (1,21) width 89: "COLSPAN=2"
                         text run at (1,41) width 113: "WIDTH=\"100%\""
                   RenderTableRow {TR} at (0,62) size 115x22
-                    RenderTableCell {TD} at (0,62) size 57x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (0,62) size 58x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 38x19
                         text run at (1,1) width 38: "R2C1"
                     RenderTableCell {TD} at (57,62) size 58x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 38x19
                         text run at (1,1) width 38: "R2C2"
-            RenderTableCell {TD} at (117,0) size 483x100 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (116,0) size 484x100 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 198x19
                 text run at (0,0) width 198: "Quotes delayed by 20 minutes."
               RenderBR {BR} at (197,15) size 1x0

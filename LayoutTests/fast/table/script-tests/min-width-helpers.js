@@ -80,6 +80,15 @@ function createTableStyle(writingMode, logicalWidthsCombination)
     return widthStyle;
 }
 
+function parsePixelValue(str)
+{
+    if (typeof str != "string" || str.length < 3 || str.substr(str.length - 2) != "px") {
+        testFailed(str + " is unparsable.");
+        return -1;
+    }
+    return parseFloat(str);
+}
+
 function computeLogicalWidthHelper(tableType, display, writingMode, direction, tableStyle)
 {
     var isCSSTable = (tableType == "css");
@@ -121,6 +130,7 @@ function computeLogicalWidthHelper(tableType, display, writingMode, direction, t
 
     var logicalWidthPropertyName = (writingMode == "vertical" ? "height" : "width");
     var computedLogicalWidth = window.getComputedStyle(table, null).getPropertyValue(logicalWidthPropertyName);
+    computedLogicalWidth = Math.round(parsePixelValue(computedLogicalWidth)) + "px";
 
     document.body.removeChild(tableParent);
 

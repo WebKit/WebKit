@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,18) size 111x18
                 text run at (0,18) width 111: "ALIGN=\"LEFT\""
               RenderBR {BR} at (110,32) size 1x0
-      RenderTable {TABLE} at (111,0) size 111x36 [bgcolor=#0000FF]
+      RenderTable {TABLE} at (110,0) size 111x36 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (0,0) size 111x36
           RenderTableRow {TR} at (0,0) size 111x36
             RenderTableCell {TD} at (0,0) size 111x36 [r=0 c=0 rs=1 cs=1]
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,18) size 111x18
                 text run at (0,18) width 111: "ALIGN=\"LEFT\""
               RenderBR {BR} at (110,32) size 1x0
-      RenderTable {TABLE} at (222,0) size 111x36 [bgcolor=#0000FF]
+      RenderTable {TABLE} at (220,0) size 111x36 [bgcolor=#0000FF]
         RenderTableSection {TBODY} at (0,0) size 111x36
           RenderTableRow {TR} at (0,0) size 111x36
             RenderTableCell {TD} at (0,0) size 111x36 [r=0 c=0 rs=1 cs=1]
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,18) size 111x18
                 text run at (0,18) width 111: "ALIGN=\"LEFT\""
               RenderBR {BR} at (110,32) size 1x0
-      RenderBR {BR} at (333,0) size 0x18
+      RenderBR {BR} at (330,0) size 1x18
       RenderBR {BR} at (0,36) size 0x18
       RenderText {#text} at (0,54) size 493x18
         text run at (0,54) width 493: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."

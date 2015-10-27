@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x203
-  RenderBlock {HTML} at (0,0) size 800x203
-    RenderBody {BODY} at (8,16) size 784x171
+layer at (0,0) size 800x202
+  RenderBlock {HTML} at (0,0) size 800x202
+    RenderBody {BODY} at (8,16) size 784x170
       RenderTable {TABLE} at (16,0) size 60x86 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 54x80
           RenderTableRow {TR} at (0,2) size 50x80
@@ -19,7 +19,7 @@ layer at (0,0) size 800x203
                     RenderTableCell {TD} at (2,2) size 20x70 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 18x68
                         text run at (1,1) width 68: "Table Two"
-      RenderTable {TABLE} at (16,102) size 48x69 [border: (3px solid #FF0000)]
+      RenderTable {TABLE} at (16,101) size 48x69 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 42x63
           RenderTableRow {TR} at (0,2) size 38x63
             RenderTableCell {TD} at (2,2) size 38x59 [r=0 c=0 rs=1 cs=1]

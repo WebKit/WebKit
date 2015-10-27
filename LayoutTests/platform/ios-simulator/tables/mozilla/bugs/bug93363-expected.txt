@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 784x300 [border: (4px solid #0000FF)]
         RenderTableSection {TBODY} at (4,4) size 776x292
           RenderTableRow {TR} at (0,2) size 776x288
-            RenderTableCell {TD} at (2,2) size 599x120 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 595x116 [border: (4px solid #008000)]
-                RenderTableSection {TBODY} at (4,4) size 587x108
-                  RenderTableRow {TR} at (0,2) size 587x104
-                    RenderTableCell {TD} at (2,2) size 583x104 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 600x120 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 596x116 [border: (4px solid #008000)]
+                RenderTableSection {TBODY} at (4,4) size 588x108
+                  RenderTableRow {TR} at (0,2) size 588x104
+                    RenderTableCell {TD} at (2,2) size 584x104 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 578x99
                         text run at (2,2) width 578: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."
                         text run at (2,22) width 578: "this is a bunch of text. this is a bunch of text. this is a bunch of text. this is a bunch of text."

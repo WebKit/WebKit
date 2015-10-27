@@ -1,4 +1,4 @@
-layer at (0,0) size 7430x585
+layer at (0,0) size 7429x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x160
   RenderBlock {HTML} at (0,0) size 800x160
@@ -12,7 +12,7 @@ layer at (0,0) size 800x160
         RenderTableSection {TBODY} at (1,1) size 7420x64
           RenderTableRow {TR} at (0,2) size 7420x60
             RenderTableCell {TD} at (2,2) size 7416x60 [r=0 c=0 rs=1 cs=1]
-layer at (12,103) size 7414x32 clip at (13,104) size 7412x30
+layer at (12,103) size 7413x32 clip at (13,104) size 7411x30
   RenderBlock {PRE} at (1,14) size 7414x32 [border: (1px solid #0000FF)]
     RenderText {#text} at (1,1) size 7412x30
       text run at (1,1) width 3121: "this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line this is a very long line "

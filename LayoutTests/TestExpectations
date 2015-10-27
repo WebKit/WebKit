@@ -763,3 +763,17 @@ webkit.org/b/150183 fast/css/variables/test-suite/failures/163.html [ ImageOnlyF
 webkit.org/b/150183 fast/css/variables/test-suite/failures/169.html [ ImageOnlyFailure ]
 
 webkit.org/b/150541 imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
+
+# Subpixel table failures.
+# This test makes no sense (ceil on table and expect the same result)
+fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
+# These fail the same way on FF.
+fast/css-intrinsic-dimensions/height-css-tables.html [ ImageOnlyFailure ]
+fast/sub-pixel/input-caret-on-subpixel-bound.html [ ImageOnlyFailure ]
+fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
+# integral hittest vs. subpixel table
+fast/table/hittest-tablecell-with-borders-right-edge.html [ Pass Failure ]
+fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
+# Table vs. flex
+css3/flexbox/multiline-reverse-wrap-baseline.html [ ImageOnlyFailure ]
+ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure ]

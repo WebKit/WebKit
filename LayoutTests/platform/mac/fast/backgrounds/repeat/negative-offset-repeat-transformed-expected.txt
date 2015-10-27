@@ -1,4 +1,4 @@
-layer at (0,0) size 1133x1020
+layer at (0,0) size 1132x1020
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x1020
   RenderBlock {HTML} at (0,0) size 785x1020
@@ -52,7 +52,7 @@ layer at (0,0) size 785x1020
       RenderBlock (floating) {DIV} at (6,492) size 34x34 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (52,492) size 29x29 [border: (1px dotted #008000)]
       RenderBlock (floating) {DIV} at (93,492) size 24x24 [border: (1px dotted #008000)]
-layer at (8,548) size 475x464
+layer at (8,548) size 474x464
   RenderTable {TABLE} at (0,532) size 475x464 [border: (5px outset #808080)]
     RenderTableSection {TBODY} at (5,5) size 465x454
       RenderTableRow {TR} at (0,2) size 465x450

@@ -10,7 +10,7 @@ layer at (0,0) size 800x44
               RenderText {#text} at (2,2) size 333x18
                 text run at (2,2) width 251: "This heading cell should have a lime "
                 text run at (252,2) width 83: "background"
-            RenderTableCell {th} at (341,2) size 337x22 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {th} at (340,2) size 338x22 [bgcolor=#00FF00] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 333x18
                 text run at (2,2) width 251: "This heading cell should have a lime "
                 text run at (252,2) width 83: "background"

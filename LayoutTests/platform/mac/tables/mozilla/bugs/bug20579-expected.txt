@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 49: "Weekly"
                     text run at (0,18) width 26: "Poll"
                 RenderBlock {P} at (0,52) size 49x0
-            RenderTableCell {TD} at (49,1) size 1x50 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (48,1) size 2x50 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x50
-            RenderTableCell {TD} at (50,17) size 734x18 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (49,17) size 735x18 [r=0 c=2 rs=1 cs=1]
               RenderBR {BR} at (0,17) size 0x18

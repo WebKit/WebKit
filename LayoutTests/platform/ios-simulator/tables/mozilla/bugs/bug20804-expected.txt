@@ -18,20 +18,20 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,76) size 784x88 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x86
           RenderTableRow {TR} at (0,0) size 782x22
-            RenderTableCell {TD} at (0,0) size 297x62 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (0,0) size 299x62 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
               RenderImage {IMG} at (1,1) size 250x60
-            RenderTableCell {TD} at (297,0) size 21x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (2,1) size 18x20
-            RenderTableCell {TD} at (318,0) size 464x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=2]
-              RenderText {#text} at (74,1) size 389x19
-                text run at (74,1) width 175: "  All Products  |  Support  | "
-                text run at (248,1) width 215: "  Search  |  microsoft.com Home  "
+            RenderTableCell {TD} at (298,0) size 22x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (2,1) size 19x20
+            RenderTableCell {TD} at (319,0) size 463x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=2]
+              RenderText {#text} at (73,1) size 389x19
+                text run at (73,1) width 174: "  All Products  |  Support  | "
+                text run at (246,1) width 216: "  Search  |  microsoft.com Home  "
           RenderTableRow {TR} at (0,22) size 782x42
-            RenderTableCell {TD} at (297,22) size 21x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (298,22) size 22x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 19x40
-            RenderTableCell {TD} at (318,22) size 464x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=2]
-              RenderImage {IMG} at (151,1) size 200x40
-              RenderImage {IMG} at (351,1) size 112x40
+            RenderTableCell {TD} at (319,22) size 463x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=2]
+              RenderImage {IMG} at (149,1) size 201x40
+              RenderImage {IMG} at (349,1) size 113x40
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,64) size 782x22
             RenderTableCell {TD} at (0,64) size 782x22 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=4]
@@ -52,20 +52,20 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,236) size 784x88 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x86
           RenderTableRow {TR} at (0,0) size 782x22
-            RenderTableCell {TD} at (0,0) size 297x62 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
+            RenderTableCell {TD} at (0,0) size 299x62 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
               RenderImage {IMG} at (1,1) size 250x60
-            RenderTableCell {TD} at (297,0) size 21x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (2,1) size 18x20
-            RenderTableCell {TD} at (318,0) size 464x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (74,1) size 389x19
-                text run at (74,1) width 175: "  All Products  |  Support  | "
-                text run at (248,1) width 215: "  Search  |  microsoft.com Home  "
+            RenderTableCell {TD} at (298,0) size 22x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (2,1) size 19x20
+            RenderTableCell {TD} at (319,0) size 463x22 [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (73,1) size 389x19
+                text run at (73,1) width 174: "  All Products  |  Support  | "
+                text run at (246,1) width 216: "  Search  |  microsoft.com Home  "
           RenderTableRow {TR} at (0,22) size 782x42
-            RenderTableCell {TD} at (297,22) size 21x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (298,22) size 22x42 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 19x40
-            RenderTableCell {TD} at (318,22) size 464x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderImage {IMG} at (151,1) size 200x40
-              RenderImage {IMG} at (351,1) size 112x40
+            RenderTableCell {TD} at (319,22) size 463x42 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (149,1) size 201x40
+              RenderImage {IMG} at (349,1) size 113x40
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,64) size 782x22
             RenderTableCell {TD} at (0,64) size 782x22 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]

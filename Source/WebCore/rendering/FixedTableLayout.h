@@ -39,7 +39,7 @@ public:
     virtual void layout() override;
 
 private:
-    int calcWidthArray();
+    float calcWidthArray();
 
     Vector<Length> m_width;
 };

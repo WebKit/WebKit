@@ -60,7 +60,7 @@
             var autoCell = document.getElementById("firstCell");
             var autoExpectedWidth = String(autoCell.getBoundingClientRect().width);
             autoEl.style.width = autoEl.getBoundingClientRect().width + "px";
-            if (autoCell.getBoundingClientRect().width == autoExpectedWidth)
+            if (Math.floor(autoCell.getBoundingClientRect().width) == Math.floor(autoExpectedWidth))
                 testPassed('Cell in AutoTable has expected size');
             else
                 shouldBe('autoCell.getBoundingClientRect().width', autoExpectedWidth);
@@ -70,7 +70,7 @@
             var fixedCell = document.getElementById("firstFixedCell");
             var fixedExpectedWidth = String(fixedCell.getBoundingClientRect().width);
             fixedEl.style.width = fixedEl.getBoundingClientRect().width + "px";
-            if (fixedCell.getBoundingClientRect().width == fixedExpectedWidth)
+            if (Math.floor(fixedCell.getBoundingClientRect().width) == Math.floor(fixedExpectedWidth))
                 testPassed('Cell in FixedTable has expected size');
             else
                 shouldBe('fixedCell.getBoundingClientRect().width', fixedExpectedWidth);

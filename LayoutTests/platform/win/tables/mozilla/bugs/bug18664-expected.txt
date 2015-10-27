@@ -27,10 +27,10 @@ layer at (70,70) size 173x54
     RenderTable {TABLE} at (0,18) size 173x18
       RenderTableSection {TBODY} at (0,0) size 173x18
         RenderTableRow {TR} at (0,0) size 173x18
-          RenderTableCell {TD} at (0,0) size 11x18 [bgcolor=#666666] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (0,0) size 12x18 [bgcolor=#666666] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (0,0) size 4x18
               text run at (0,0) width 4: " "
-          RenderTableCell {TD} at (11,0) size 150x18 [bgcolor=#FF9900] [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (11,0) size 151x18 [bgcolor=#FF9900] [r=0 c=1 rs=1 cs=1]
             RenderText {#text} at (0,0) size 120x18
               text run at (0,0) width 120: "Test, test and test..."
           RenderTableCell {TD} at (161,0) size 12x18 [bgcolor=#666666] [r=0 c=2 rs=1 cs=1]
@@ -39,10 +39,10 @@ layer at (70,70) size 173x54
     RenderTable {TABLE} at (0,36) size 173x18 [bgcolor=#CC6600]
       RenderTableSection {TBODY} at (0,0) size 173x18
         RenderTableRow {TR} at (0,0) size 173x18
-          RenderTableCell {TD} at (0,0) size 57x18 [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (0,0) size 58x18 [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (0,0) size 4x18
               text run at (0,0) width 4: " "
-          RenderTableCell {TD} at (57,0) size 58x18 [r=0 c=1 rs=1 cs=1]
+          RenderTableCell {TD} at (57,0) size 59x18 [r=0 c=1 rs=1 cs=1]
             RenderText {#text} at (0,0) size 4x18
               text run at (0,0) width 4: " "
           RenderTableCell {TD} at (115,0) size 58x18 [r=0 c=2 rs=1 cs=1]

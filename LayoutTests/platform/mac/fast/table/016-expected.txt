@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
                 text run at (0,54) width 59: "curiosity,"
                 text run at (0,72) width 51: "freckles"
                 text run at (0,90) width 24: "and"
-            RenderTableCell {TD} at (74,0) size 710x18 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (73,0) size 711x18 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 200x18
                 text run at (0,0) width 200: "Animal Friends Rescue Project"

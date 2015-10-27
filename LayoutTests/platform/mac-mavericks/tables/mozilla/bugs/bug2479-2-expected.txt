@@ -9,22 +9,22 @@ layer at (0,0) size 800x553
           text run at (592,6) width 39: "have"
           text run at (0,38) width 155: "display: table-cell. "
           text run at (154,38) width 131: "They disappear:"
-      RenderTable at (3,67) size 304x19
-        RenderTableSection (anonymous) at (0,0) size 304x19
-          RenderTableRow {UL} at (0,0) size 304x19 [bgcolor=#00CC99]
+      RenderTable at (3,67) size 302x19
+        RenderTableSection (anonymous) at (0,0) size 302x19
+          RenderTableRow {UL} at (0,0) size 302x19 [bgcolor=#00CC99]
             RenderTableCell {LI} at (0,0) size 76x19 [r=0 c=0 rs=1 cs=1]
               RenderInline {A} at (0,0) size 54x19 [color=#0000EE]
                 RenderText {#text} at (11,0) size 54x19
                   text run at (11,0) width 54: "people"
-            RenderTableCell {LI} at (76,0) size 76x19 [r=0 c=1 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 52x19 [color=#0000EE]
-                RenderText {#text} at (12,0) size 52x19
-                  text run at (12,0) width 52: "places"
-            RenderTableCell {LI} at (152,0) size 76x19 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {LI} at (75,0) size 76x19 [r=0 c=1 rs=1 cs=1]
+              RenderInline {A} at (0,0) size 51x19 [color=#0000EE]
+                RenderText {#text} at (12,0) size 51x19
+                  text run at (12,0) width 51: "places"
+            RenderTableCell {LI} at (150,0) size 77x19 [r=0 c=2 rs=1 cs=1]
               RenderInline {A} at (0,0) size 76x19 [color=#0000EE]
                 RenderText {#text} at (0,0) size 76x19
                   text run at (0,0) width 76: "members"
-            RenderTableCell {LI} at (228,0) size 76x19 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {LI} at (226,0) size 76x19 [r=0 c=3 rs=1 cs=1]
               RenderInline {A} at (0,0) size 38x19 [color=#0000EE]
                 RenderText {#text} at (19,0) size 38x19
                   text run at (19,0) width 38: "links"
@@ -51,9 +51,9 @@ layer at (0,0) size 800x553
                 RenderTableRow (anonymous) at (0,28) size 134x32
                   RenderTableCell (anonymous) at (0,28) size 134x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,8) size 118x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderText {#text} at (134,6) size 6x19
-              text run at (134,6) width 6: " "
-            RenderTable {SPAN} at (139,3) size 134x60
+            RenderText {#text} at (133,6) size 6x19
+              text run at (133,6) width 6: " "
+            RenderTable {SPAN} at (138,3) size 133x60
               RenderTableSection (anonymous) at (0,0) size 133x60
                 RenderTableRow {SPAN} at (0,0) size 133x28
                   RenderTableCell (anonymous) at (0,0) size 133x28 [r=0 c=0 rs=1 cs=1]
@@ -84,9 +84,9 @@ layer at (0,0) size 800x553
                 RenderTableRow (anonymous) at (0,28) size 122x32
                   RenderTableCell (anonymous) at (0,28) size 122x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,8) size 118x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderText {#text} at (122,6) size 6x19
-              text run at (122,6) width 6: " "
-            RenderTable {SPAN} at (127,3) size 123x60
+            RenderText {#text} at (121,6) size 6x19
+              text run at (121,6) width 6: " "
+            RenderTable {SPAN} at (126,3) size 123x60
               RenderTableSection (anonymous) at (0,0) size 122x60
                 RenderTableRow {SPAN} at (0,0) size 122x28
                   RenderTableCell (anonymous) at (0,0) size 122x28 [r=0 c=0 rs=1 cs=1]
@@ -110,11 +110,11 @@ layer at (0,0) size 800x553
             RenderText {#text} at (0,0) size 0x0
 layer at (161,291) size 111x13
   RenderBlock {DIV} at (3,3) size 112x13
-layer at (301,291) size 111x13
+layer at (300,291) size 111x13
   RenderBlock {DIV} at (3,3) size 112x13
 layer at (161,354) size 278x13
   RenderBlock {DIV} at (3,3) size 279x13
 layer at (161,417) size 111x13
   RenderBlock {DIV} at (3,3) size 112x13
-layer at (289,417) size 111x13
+layer at (288,417) size 111x13
   RenderBlock {DIV} at (3,3) size 112x13

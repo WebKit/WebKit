@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,66) size 127x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (131,66) size 505x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,66) size 506x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x19
                   text run at (2,2) width 48: "SLmail"
       RenderBlock {HR} at (0,146) size 130x2 [border: (1px inset #000000)]
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,26) size 127x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (131,26) size 505x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,26) size 506x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x19
                   text run at (2,2) width 48: "SLmail"
       RenderBlock {HR} at (0,262) size 130x2 [border: (1px inset #000000)]
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,48) size 127x24 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 58x19
                   text run at (2,2) width 58: "MC Visa"
-              RenderTableCell {TD} at (131,48) size 505x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (130,48) size 506x24 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 48x19
                   text run at (2,2) width 48: "SLmail"
       RenderBlock {HR} at (0,400) size 130x2 [border: (1px inset #000000)]

@@ -24,7 +24,7 @@ function getComputedStyleForElement(element, cssPropertyName)
 
 function getWidth(id)
 {
-    return getComputedStyleForElement(document.getElementById(id), 'width');
+    return Math.round(parsePixelValue(getComputedStyleForElement(document.getElementById(id), 'width'))) + "px";
 }
 
 function getHeight(id)

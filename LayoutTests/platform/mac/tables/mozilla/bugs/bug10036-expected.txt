@@ -12,12 +12,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 12x22 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "a"
-            RenderTableCell {TD} at (16,2) size 12x22 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (15,2) size 13x22 [bgcolor=#00FFFF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "b"
           RenderTableRow {TR} at (0,26) size 30x22
             RenderTableCell {TD} at (2,26) size 12x22 [bgcolor=#FF00FF] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderBR {BR} at (2,2) size 0x18
-            RenderTableCell {TD} at (16,26) size 12x22 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (15,26) size 13x22 [bgcolor=#088880] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 8x18
                 text run at (2,2) width 8: "c"

@@ -15,13 +15,13 @@ layer at (0,0) size 800x246
         RenderTableSection {TBODY} at (0,0) size 304x127
           RenderTableRow {TR} at (0,2) size 304x39
             RenderTableCell {TD} at (2,2) size 300x39 [border: none (2px solid #0000FF) none] [r=0 c=0 rs=1 cs=2]
-              RenderText {#text} at (156,1) size 141x37
-                text run at (156,1) width 141: "THERE \x{2799}"
+              RenderText {#text} at (155,1) size 142x37
+                text run at (155,1) width 142: "THERE \x{2799}"
           RenderTableRow {TR} at (0,43) size 304x82
-            RenderTableCell {TD} at (2,64) size 145x39 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 141x37
+            RenderTableCell {TD} at (2,64) size 145x40 [border: none (2px solid #0000FF) none] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,0) size 141x39
                 text run at (1,1) width 141: "THERE \x{2799}"
-            RenderTableCell {TD} at (149,43) size 153x82 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (148,43) size 154x82 [border: none (2px solid #0000FF) none] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (1,1) size 149x37
                 RenderText {#text} at (13,0) size 136x37
                   text run at (13,0) width 136: "THERE \x{2798}"

@@ -60,7 +60,7 @@ layer at (0,0) size 800x684
                     text run at (187,6) width 5: " "
                   RenderBR {BR} at (191,21) size 1x0
                   RenderTextControl {INPUT} at (2,34) size 184x29 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
-              RenderTableCell {TD} at (198,2) size 291x628 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (197,2) size 292x628 [r=0 c=1 rs=1 cs=1]
                 RenderBlock {DIV} at (1,1) size 289x66
                   RenderTextControl {INPUT} at (2,2) size 196x30 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
                   RenderText {#text} at (199,7) size 5x19
@@ -145,31 +145,31 @@ layer at (218,53) size 178x20
   RenderBlock {DIV} at (9,4) size 178x21
 layer at (218,86) size 178x20
   RenderBlock {DIV} at (9,4) size 178x21
-layer at (219,119) size 189x21
+layer at (218,119) size 189x21
   RenderBlock {DIV} at (9,4) size 190x22
-layer at (219,154) size 189x21
+layer at (218,154) size 189x21
   RenderBlock {DIV} at (9,4) size 190x22
 layer at (219,190) size 200x22
   RenderBlock {DIV} at (10,4) size 201x23
 layer at (219,226) size 200x22
   RenderBlock {DIV} at (10,4) size 201x23
-layer at (220,262) size 211x23
+layer at (219,262) size 211x23
   RenderBlock {DIV} at (10,4) size 212x24
-layer at (220,300) size 211x23
+layer at (219,300) size 211x23
   RenderBlock {DIV} at (10,4) size 212x24
 layer at (220,338) size 222x25
   RenderBlock {DIV} at (11,5) size 223x25
 layer at (220,379) size 222x25
   RenderBlock {DIV} at (11,5) size 223x25
-layer at (221,420) size 233x26
+layer at (220,420) size 233x26
   RenderBlock {DIV} at (11,5) size 235x27
-layer at (221,462) size 233x26
+layer at (220,462) size 233x26
   RenderBlock {DIV} at (11,5) size 235x27
 layer at (221,504) size 245x27
   RenderBlock {DIV} at (12,5) size 245x28
 layer at (221,547) size 245x27
   RenderBlock {DIV} at (12,5) size 245x28
-layer at (222,591) size 255x28
+layer at (221,591) size 255x28
   RenderBlock {DIV} at (12,5) size 257x29
-layer at (222,636) size 255x28
+layer at (221,636) size 255x28
   RenderBlock {DIV} at (12,5) size 257x29
