@@ -331,7 +331,7 @@ public:
 
     void clipOut(const FloatRect&);
     void clipOutRoundedRect(const FloatRoundedRect&);
-    void clipPath(const Path&, WindRule);
+    void clipPath(const Path&, WindRule = RULE_EVENODD);
     void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);
     void clipToImageBuffer(ImageBuffer&, const FloatRect&);
     
@@ -412,8 +412,6 @@ public:
 
     void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.drawLuminanceMask = drawLuminanceMask; }
     bool drawLuminanceMask() const { return m_state.drawLuminanceMask; }
-
-    WEBCORE_EXPORT void clip(const Path&, WindRule = RULE_EVENODD);
 
     // This clip function is used only by <canvas> code. It allows
     // implementations to handle clipping on the canvas differently since

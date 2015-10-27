@@ -494,8 +494,13 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     cairo_t* cr = platformContext()->cr();
     if (!path.isNull())
         setPathOnCairoContext(cr, path.platformPath()->context());
+
+    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
+    cairo_set_fill_rule(cr, savedFillRule);
+
+    m_data->clip(path);
 }
 
 IntRect GraphicsContext::clipBounds() const
@@ -960,30 +965,9 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendM
     cairo_set_operator(platformContext()->cr(), cairo_op);
 }
 
-void GraphicsContext::clip(const Path& path, WindRule windRule)
-{
-    if (paintingDisabled())
-        return;
-
-    cairo_t* cr = platformContext()->cr();
-    if (!path.isNull()) {
-        cairo_path_t* pathCopy = cairo_copy_path(path.platformPath()->context());
-        cairo_append_path(cr, pathCopy);
-        cairo_path_destroy(pathCopy);
-    }
-    cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
-    if (windRule == RULE_NONZERO)
-        cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
-    else
-        cairo_set_fill_rule(cr, CAIRO_FILL_RULE_EVEN_ODD);
-    cairo_clip(cr);
-    cairo_set_fill_rule(cr, savedFillRule);
-    m_data->clip(path);
-}
-
 void GraphicsContext::canvasClip(const Path& path, WindRule windRule)
 {
-    clip(path, windRule);
+    clipPath(path, windRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)

@@ -152,14 +152,14 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
     GraphicsContextStateSaver maskStateSaver(info.context());
 
     // Build a mask to draw the thick part of the root.
-    Path mask;
+    Path maskPath;
 
-    mask.moveTo(overbarLeftPoint);
-    mask.addLineTo(bottomPoint);
-    mask.addLineTo(dipLeftPoint);
-    mask.addLineTo(FloatPoint(2 * dipLeftPoint.x() - leftEnd.x(), 2 * dipLeftPoint.y() - leftEnd.y()));
+    maskPath.moveTo(overbarLeftPoint);
+    maskPath.addLineTo(bottomPoint);
+    maskPath.addLineTo(dipLeftPoint);
+    maskPath.addLineTo(FloatPoint(2 * dipLeftPoint.x() - leftEnd.x(), 2 * dipLeftPoint.y() - leftEnd.y()));
 
-    info.context().clip(mask);
+    info.context().clipPath(maskPath);
 
     // Draw the thick part of the root.
     info.context().setStrokeThickness(gRadicalThickLineThicknessEms * style().fontSize());

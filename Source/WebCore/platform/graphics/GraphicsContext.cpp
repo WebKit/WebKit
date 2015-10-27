@@ -461,7 +461,7 @@ void GraphicsContext::clipRoundedRect(const FloatRoundedRect& rect)
 
     Path path;
     path.addRoundedRect(rect);
-    clip(path);
+    clipPath(path);
 }
 
 void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)

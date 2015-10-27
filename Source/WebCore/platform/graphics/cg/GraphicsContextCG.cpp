@@ -982,20 +982,20 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    // Why does clipping to an empty path do nothing?
-    // Why is this different from GraphicsContext::clip(const Path&).
-    if (path.isEmpty())
-        return;
-
     CGContextRef context = platformContext();
+    if (path.isEmpty())
+        CGContextClipToRect(context, CGRectZero);
+    else {
+        CGContextBeginPath(platformContext());
+        CGContextAddPath(platformContext(), path.platformPath());
 
-    CGContextBeginPath(platformContext());
-    CGContextAddPath(platformContext(), path.platformPath());
-
-    if (clipRule == RULE_EVENODD)
-        CGContextEOClip(context);
-    else
-        CGContextClip(context);
+        if (clipRule == RULE_EVENODD)
+            CGContextEOClip(context);
+        else
+            CGContextClip(context);
+    }
+    
+    m_data->clip(path);
 }
 
 IntRect GraphicsContext::clipBounds() const
@@ -1234,31 +1234,9 @@ void GraphicsContext::setLineJoin(LineJoin join)
     }
 }
 
-void GraphicsContext::clip(const Path& path, WindRule fillRule)
-{
-    if (paintingDisabled())
-        return;
-    CGContextRef context = platformContext();
-
-    // CGContextClip does nothing if the path is empty, so in this case, we
-    // instead clip against a zero rect to reduce the clipping region to
-    // nothing - which is the intended behavior of clip() if the path is empty.    
-    if (path.isEmpty())
-        CGContextClipToRect(context, CGRectZero);
-    else {
-        CGContextBeginPath(context);
-        CGContextAddPath(context, path.platformPath());
-        if (fillRule == RULE_NONZERO)
-            CGContextClip(context);
-        else
-            CGContextEOClip(context);
-    }
-    m_data->clip(path);
-}
-
 void GraphicsContext::canvasClip(const Path& path, WindRule fillRule)
 {
-    clip(path, fillRule);
+    clipPath(path, fillRule);
 }
 
 void GraphicsContext::clipOut(const Path& path)

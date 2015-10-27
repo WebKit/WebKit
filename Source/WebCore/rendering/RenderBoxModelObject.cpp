@@ -2346,9 +2346,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
             GraphicsContextStateSaver stateSaver(context);
             if (hasBorderRadius) {
-                Path path;
-                path.addRoundedRect(pixelSnappedBorderRect);
-                context.clip(path);
+                context.clipRoundedRect(pixelSnappedBorderRect);
                 pixelSnappedRoundedHole.shrinkRadii(shadowSpread);
             } else
                 context.clip(pixelSnappedBorderRect.rect());
