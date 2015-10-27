@@ -651,6 +651,11 @@ private:
         case PutByIdDirect:
         case PutByOffset:
         case MultiPutByOffset:
+        case PutGetterById:
+        case PutSetterById:
+        case PutGetterSetterById:
+        case PutGetterByVal:
+        case PutSetterByVal:
         case DFG::Jump:
         case Branch:
         case Switch:

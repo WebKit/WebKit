@@ -1,3 +1,147 @@
+2015-10-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add DFG/FTL support for accessor put operations
+        https://bugs.webkit.org/show_bug.cgi?id=148860
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces accessor defining ops into DFG and FTL.
+        The following DFG nodes are introduced.
+
+            op_put_getter_by_id  => PutGetterById
+            op_put_setter_by_id  => PutSetterById
+            op_put_getter_setter => PutGetterSetterById
+            op_put_getter_by_val => PutGetterByVal
+            op_put_setter_by_val => PutSetterByVal
+
+        These DFG nodes just call operations. But it does not prevent compiling in DFG/FTL.
+
+        To use operations defined for baseline JIT, we clean up existing operations.
+        And reuse these operations in DFG and FTL.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::hasAccessorAttributes):
+        (JSC::DFG::Node::accessorAttributes):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorById):
+        (JSC::DFG::SpeculativeJIT::compilePutGetterSetterById):
+        (JSC::DFG::SpeculativeJIT::compilePutAccessorByVal):
+        We should fill all GPRs before calling flushRegisters().
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutAccessorById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutGetterSetterById):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compilePutAccessorByVal):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter):
+        * tests/stress/dfg-put-accessors-by-id-class.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.Cocoa.prototype.get hello):
+        (getter.Cocoa):
+        (getter):
+        (setter.Cocoa):
+        (setter.Cocoa.prototype.set hello):
+        (setter):
+        (accessors.Cocoa):
+        (accessors.Cocoa.prototype.get hello):
+        (accessors.Cocoa.prototype.set hello):
+        (accessors):
+        * tests/stress/dfg-put-accessors-by-id.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.object.get hello):
+        (getter):
+        (setter.object.set hello):
+        (setter):
+        (accessors.object.get hello):
+        (accessors.object.set hello):
+        (accessors):
+        * tests/stress/dfg-put-getter-by-id-class.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.Cocoa):
+        (getter.Cocoa.prototype.get hello):
+        (getter.Cocoa.prototype.get name):
+        (getter):
+        * tests/stress/dfg-put-getter-by-id.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.object.get hello):
+        (getter):
+        * tests/stress/dfg-put-getter-by-val-class.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.Cocoa):
+        (getter.Cocoa.prototype.get name):
+        (getter):
+        * tests/stress/dfg-put-getter-by-val.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.object.get name):
+        (getter):
+        * tests/stress/dfg-put-setter-by-id-class.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (getter.Cocoa):
+        (getter.Cocoa.prototype.set hello):
+        (getter.Cocoa.prototype.get name):
+        (getter):
+        * tests/stress/dfg-put-setter-by-id.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (setter.object.set hello):
+        (setter):
+        * tests/stress/dfg-put-setter-by-val-class.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (setter.Cocoa):
+        (setter.Cocoa.prototype.set name):
+        (setter):
+        * tests/stress/dfg-put-setter-by-val.js: Added.
+        (shouldBe):
+        (testAttribute):
+        (setter.object.set name):
+        (setter):
+
 2015-10-26  Mark Lam  <mark.lam@apple.com>
 
         Add logging to warn about under-estimated FTL inline cache sizes.

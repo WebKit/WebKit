@@ -4170,6 +4170,23 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case PutGetterById:
+    case PutSetterById: {
+        compilePutAccessorById(node);
+        break;
+    }
+
+    case PutGetterSetterById: {
+        compilePutGetterSetterById(node);
+        break;
+    }
+
+    case PutGetterByVal:
+    case PutSetterByVal: {
+        compilePutAccessorByVal(node);
+        break;
+    }
+
     case GetGlobalLexicalVariable:
     case GetGlobalVar: {
         GPRTemporary resultPayload(this);

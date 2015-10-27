@@ -6742,6 +6742,79 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg scratch1, GPRReg scrat
     ownerIsRememberedOrInEden.link(&m_jit);
 }
 
+void SpeculativeJIT::compilePutAccessorById(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand accessor(this, node->child2());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg accessorGPR = accessor.gpr();
+
+    flushRegisters();
+    callOperation(node->op() == PutGetterById ? operationPutGetterById : operationPutSetterById, NoResult, baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), accessorGPR);
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
+void SpeculativeJIT::compilePutGetterSetterById(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    JSValueOperand getter(this, node->child2());
+    JSValueOperand setter(this, node->child3());
+
+#if USE(JSVALUE64)
+    GPRReg baseGPR = base.gpr();
+    GPRReg getterGPR = getter.gpr();
+    GPRReg setterGPR = setter.gpr();
+
+    flushRegisters();
+    callOperation(operationPutGetterSetter, NoResult, baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), getterGPR, setterGPR);
+#else
+    // These JSValues may be JSUndefined OR JSFunction*.
+    // At that time,
+    // 1. If the JSValue is JSUndefined, its payload becomes nullptr.
+    // 2. If the JSValue is JSFunction*, its payload becomes JSFunction*.
+    // So extract payload and pass it to operationPutGetterSetter. This hack is used as the same way in baseline JIT.
+    GPRReg baseGPR = base.gpr();
+    JSValueRegs getterRegs = getter.jsValueRegs();
+    JSValueRegs setterRegs = setter.jsValueRegs();
+
+    flushRegisters();
+    callOperation(operationPutGetterSetter, NoResult, baseGPR, identifierUID(node->identifierNumber()), node->accessorAttributes(), getterRegs.payloadGPR(), setterRegs.payloadGPR());
+#endif
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
+void SpeculativeJIT::compilePutAccessorByVal(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    JSValueOperand subscript(this, node->child2());
+    SpeculateCellOperand accessor(this, node->child3());
+
+    auto operation = node->op() == PutGetterByVal ? operationPutGetterByVal : operationPutSetterByVal;
+#if USE(JSVALUE64)
+    GPRReg baseGPR = base.gpr();
+    GPRReg subscriptGPR = subscript.gpr();
+    GPRReg accessorGPR = accessor.gpr();
+
+    flushRegisters();
+    callOperation(operation, NoResult, baseGPR, subscriptGPR, node->accessorAttributes(), accessorGPR);
+#else
+    GPRReg baseGPR = base.gpr();
+    JSValueRegs subscriptRegs = subscript.jsValueRegs();
+    GPRReg accessorGPR = accessor.gpr();
+
+    flushRegisters();
+    callOperation(operation, NoResult, baseGPR, subscriptRegs.tagGPR(), subscriptRegs.payloadGPR(), node->accessorAttributes(), accessorGPR);
+#endif
+    m_jit.exceptionCheck();
+
+    noResult(node);
+}
+
 } } // namespace JSC::DFG
 
 #endif

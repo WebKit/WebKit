@@ -1057,6 +1057,25 @@ private:
             break;
         }
 
+        case PutGetterById:
+        case PutSetterById: {
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownCellUse>(node->child2());
+            break;
+        }
+
+        case PutGetterSetterById: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
+
+        case PutGetterByVal:
+        case PutSetterByVal: {
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<KnownCellUse>(node->child3());
+            break;
+        }
+
         case GetExecutable: {
             fixEdge<FunctionUse>(node->child1());
             break;

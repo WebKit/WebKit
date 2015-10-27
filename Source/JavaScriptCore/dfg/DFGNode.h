@@ -853,6 +853,9 @@ struct Node {
         case PutById:
         case PutByIdFlush:
         case PutByIdDirect:
+        case PutGetterById:
+        case PutSetterById:
+        case PutGetterSetterById:
             return true;
         default:
             return false;
@@ -863,6 +866,37 @@ struct Node {
     {
         ASSERT(hasIdentifier());
         return m_opInfo;
+    }
+
+    bool hasAccessorAttributes()
+    {
+        switch (op()) {
+        case PutGetterById:
+        case PutSetterById:
+        case PutGetterSetterById:
+        case PutGetterByVal:
+        case PutSetterByVal:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    int32_t accessorAttributes()
+    {
+        ASSERT(hasAccessorAttributes());
+        switch (op()) {
+        case PutGetterById:
+        case PutSetterById:
+        case PutGetterSetterById:
+            return m_opInfo2;
+        case PutGetterByVal:
+        case PutSetterByVal:
+            return m_opInfo;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        }
     }
     
     bool hasPromotedLocationDescriptor()

@@ -66,7 +66,7 @@ void JIT::emit_op_put_getter_by_id(Instruction* currentInstruction)
 
     emitLoadPayload(base, regT1);
     emitLoadPayload(getter, regT3);
-    callOperation(operationPutGetterById, regT1, &m_codeBlock->identifier(property), options, regT3);
+    callOperation(operationPutGetterById, regT1, m_codeBlock->identifier(property).impl(), options, regT3);
 }
 
 void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
@@ -78,7 +78,7 @@ void JIT::emit_op_put_setter_by_id(Instruction* currentInstruction)
 
     emitLoadPayload(base, regT1);
     emitLoadPayload(setter, regT3);
-    callOperation(operationPutSetterById, regT1, &m_codeBlock->identifier(property), options, regT3);
+    callOperation(operationPutSetterById, regT1, m_codeBlock->identifier(property).impl(), options, regT3);
 }
 
 void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
@@ -92,7 +92,7 @@ void JIT::emit_op_put_getter_setter(Instruction* currentInstruction)
     emitLoadPayload(base, regT1);
     emitLoadPayload(getter, regT3);
     emitLoadPayload(setter, regT4);
-    callOperation(operationPutGetterSetter, regT1, &m_codeBlock->identifier(property), attribute, regT3, regT4);
+    callOperation(operationPutGetterSetter, regT1, m_codeBlock->identifier(property).impl(), attribute, regT3, regT4);
 }
 
 void JIT::emit_op_put_getter_by_val(Instruction* currentInstruction)

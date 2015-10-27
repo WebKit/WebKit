@@ -179,8 +179,13 @@ namespace JSC { namespace DFG {
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(GetByIdFlush, NodeResultJS | NodeMustGenerate) \
     macro(PutById, NodeMustGenerate) \
-    macro(PutByIdFlush, NodeMustGenerate | NodeMustGenerate) \
+    macro(PutByIdFlush, NodeMustGenerate) \
     macro(PutByIdDirect, NodeMustGenerate) \
+    macro(PutGetterById, NodeMustGenerate) \
+    macro(PutSetterById, NodeMustGenerate) \
+    macro(PutGetterSetterById, NodeMustGenerate) \
+    macro(PutGetterByVal, NodeMustGenerate) \
+    macro(PutSetterByVal, NodeMustGenerate) \
     macro(CheckStructure, NodeMustGenerate) \
     macro(GetExecutable, NodeResultJS) \
     macro(PutStructure, NodeMustGenerate) \
