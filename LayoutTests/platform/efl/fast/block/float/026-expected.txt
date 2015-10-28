@@ -20,14 +20,14 @@ layer at (0,0) size 785x1432
         RenderBlock {HR} at (0,0) size 569x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,608) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
-        RenderTable {TABLE} at (185,0) size 384x46 [border: (2px solid #008000)]
-          RenderTableSection {TBODY} at (2,2) size 380x42
-            RenderTableRow {TR} at (0,2) size 380x38
-              RenderTableCell {TD} at (2,2) size 376x38 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,1) size 373x35
-                  text run at (2,1) width 373: "This is a table. It should sit on the same line as the float and"
-                  text run at (39,19) width 4 RTL: "."
-                  text run at (43,19) width 332: "wrap as needed to fit within the remaining line width"
+        RenderTable {TABLE} at (184,0) size 385x46 [border: (2px solid #008000)]
+          RenderTableSection {TBODY} at (2,2) size 381x42
+            RenderTableRow {TR} at (0,2) size 381x38
+              RenderTableCell {TD} at (2,2) size 377x38 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,1) size 374x35
+                  text run at (2,1) width 374: "This is a table. It should sit on the same line as the float and"
+                  text run at (39,19) width 5 RTL: "."
+                  text run at (43,19) width 333: "wrap as needed to fit within the remaining line width"
       RenderBlock {DIV} at (0,808) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,1016) size 769x200
