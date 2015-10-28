@@ -123,6 +123,10 @@ private:
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
 #endif
         bool webViewImageOrMediaDocumentSizeChanged : 1;
+
+#if ENABLE(CONTEXT_MENUS)
+        bool webViewContextMenuForElement : 1;
+#endif
     } m_delegateMethods;
 };
 

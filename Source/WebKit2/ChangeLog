@@ -1,3 +1,27 @@
+2015-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Stub out more of the context menu SPI
+        https://bugs.webkit.org/show_bug.cgi?id=150606
+
+        Reviewed by Dan Bernstein.
+
+        Add a delegate method that will allow the client to modify the menu. Also,
+        add an empty _WKContextMenuElementInfo class and its _WKElementInfo superclass.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.h: Added.
+        * UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm: Added.
+        * UIProcess/API/Cocoa/_WKElementInfo.h: Added.
+        * UIProcess/API/Cocoa/_WKElementInfo.mm: Added.
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-10-28  Chris Dumez  <cdumez@apple.com>
 
         Use RunLoopTimer in DataURLDecoder to avoid issues related to runloops
