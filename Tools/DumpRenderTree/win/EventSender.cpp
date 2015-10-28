@@ -511,9 +511,10 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         virtualKeyCode = VK_MENU;
         keyData += makeKeyDataForScanCode(VK_RMENU);
     } else {
+        static const char shiftedUSCharacters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()_+{}|:\"<>?";
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));
-        if (WTF::isASCIIUpper(charCode))
+        if (strchr(shiftedUSCharacters, charCode))
             needsShiftKeyModifier = true;
     }
     JSStringRelease(character);
