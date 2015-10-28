@@ -8,8 +8,8 @@ if (window.testRunner) {
 The srcdoc iframe below should use this document's URL as its referrer.
 <iframe srcdoc="
 This iframe logs information about its referrer:<br>
-<iframe id='tg'></iframe>
-<form target='tg' id='fm' method='GET' action='resources/referrer-policy-log.php'></form>
+<iframe id='tg' name='tg'></iframe>
+<form target='tg' id='fm' name='fm' method='GET' action='resources/referrer-policy-log.php'></form>
 <script>
 document.getElementById('tg').addEventListener('load', function() {
     if (window.testRunner)

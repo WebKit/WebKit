@@ -42,8 +42,8 @@ Embed by id/name mixed: collection(4) EMBED(id) EMBED(name) EMBED(name) EMBED(id
 Nonexistent iframe name: undefined
 Iframe by name (unique): single WINDOW
 Iframe by name (multiple): single WINDOW
-Iframe by id (unique): single WINDOW
-Iframe by id (multiple): single WINDOW
+Iframe by id (unique): single IFRAME(id)
+Iframe by id (multiple): collection(2) IFRAME(id) IFRAME(id)
 Iframe by id/name mixed: single WINDOW
 
 Nonexistent span name: undefined
@@ -53,7 +53,7 @@ Span by id (unique): single SPAN(id)
 Span by id (multiple): collection(2) SPAN(id) SPAN(id)
 Span by id/name mixed: collection(2) SPAN(id) SPAN(id)
 
-Mixed by id: single WINDOW
+Mixed by id: collection(7) IMG(id) FORM(id) APPLET(id) EMBED(id) OBJECT(id) IFRAME(id) SPAN(id)
 Mixed by name: single WINDOW
 Mixed by id (no iframe): collection(6) IMG(id) FORM(id) APPLET(id) EMBED(id) OBJECT(id) SPAN(id)
 Mixed by name (no iframe): collection(5) IMG(name) FORM(name) APPLET(name) EMBED(name) OBJECT(name)

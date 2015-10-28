@@ -1,7 +1,7 @@
 <html>
 <body>
     <p>This tests that a javascript: URL loaded in an iframe inside another javascript: URL loaded iframe has access to the main frame.</p>
-    <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
+    <iframe id="aFrame" name='aFrame' style="width: 500px; height: 300px;"></iframe>
     <p id='accessMe'>FAIL: Cross frame access from a javascript: URL inside another javascript: URL was denied.</p>
     <script>
         if (window.testRunner) {

@@ -4,7 +4,7 @@
 </head>
 <body>
     <p>This tests that the main frame can access the contents of an iframe that contains a javascript: URL loaded page</p>
-    <iframe id="aFrame"></iframe>
+    <iframe id="aFrame" name="aFrame"></iframe>
     <pre id="console"></pre>
     <script>
         var url = "javascript:\"<html><scr" + "ipt>onload = function() { parent.postMessage(\'LOADED\', \'*\'); } </scr" + "ipt><body><p id=\'accessMe\'></p><p>Inner iframe.</p></body></html>\"";

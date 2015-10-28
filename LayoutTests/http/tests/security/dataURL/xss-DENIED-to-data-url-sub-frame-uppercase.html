@@ -5,7 +5,7 @@
 <body>
     <p>This tests that the main frame can't access the contents of an iframe that contains a data: URL loaded page using the
         uppercased variant DATA:</p>
-    <iframe id="aFrame"></iframe>
+    <iframe id="aFrame" name="aFrame"></iframe>
     <pre id="console"></pre>
     <script>
         var url = "DATA:text/html,<html><scr" + "ipt>onload = function() { parent.postMessage(\'LOADED\', \'*\'); } </scr" + "ipt><body><p id=\'accessMe\'></p><p>Inner iframe.</p></body></html>";

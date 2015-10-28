@@ -9,7 +9,7 @@ function clickLink() {
 }
 </script>
 <!-- Child iframe -->
-<iframe id="frame1" src="about:blank"></iframe>
+<iframe id="frame1" name="frame1" src="about:blank"></iframe>
 <br>
 <p>This test checks that the backForward list is not corrupted when a frame load is canceled.
 <p>If testing manually, <a id="link" href="slow-resource.pl?delay=250" target="frame1">click here</a> and then Back.  Then click Forward and quickly click Stop.  Ensure that Back and Forward still work.

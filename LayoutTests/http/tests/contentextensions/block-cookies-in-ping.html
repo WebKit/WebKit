@@ -49,7 +49,7 @@ function showPingResult() {
 This test sets a cookie, then follows a link with a ping attribute where the ping URL matches a 'block-cookie' rule.
 <img src="http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie"
     onerror="loadLinkWithPing();">
-<iframe id="link_frame"><!-- Will contain link with ping --></iframe>
-<iframe id="result_frame"><!-- Will contain ping data received by server --></iframe>
+<iframe id="link_frame" name="link_frame"><!-- Will contain link with ping --></iframe>
+<iframe id="result_frame" name="result_frame"><!-- Will contain ping data received by server --></iframe>
 </body>
 

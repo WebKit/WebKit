@@ -1,7 +1,7 @@
 <html><body>
 This tests behavior of "noreferrer" links in subframes. A referrer should not be sent and window.opener should remain null.<br/>
 <a id="link" href="resources/no-referrer-helper.php" rel="noreferrer" target="subframe">Load subframe</a>
-<iframe id="subframe" src="about:blank"></iframe>
+<iframe id="subframe" name="subframe" src="about:blank"></iframe>
 <script>
     window.name = "consoleWindow";
     if (window.testRunner) {

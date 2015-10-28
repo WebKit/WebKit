@@ -21,6 +21,7 @@ function createFrame(index)
     var iframe = document.createElement("iframe");
     iframe.setAttribute("testCode", testCodes[index]);
     iframe.setAttribute("id", index);
+    iframe.setAttribute("name", index);
     iframe.setAttribute("height", "90px");
     document.body.appendChild(iframe);
     iframe.src="resources/redirect-methods-form.html";

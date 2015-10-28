@@ -21,7 +21,7 @@
 Here lies an `iframe` with no content/src:
 &lt;p&gt;
 
-&lt;iframe id="emptyFrame" style="width: 100%; height: 100px; border: solid 2px red;"&gt;
+&lt;iframe name="emptyFrame" style="width: 100%; height: 100px; border: solid 2px red;"&gt;
 &lt;/iframe&gt;
 
 &lt;/body&gt;

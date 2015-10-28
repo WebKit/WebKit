@@ -39,7 +39,7 @@
 </head>
 <body onload="loaded();">
     <p>This tests that a data: URL loaded in an iframe inside another data: URL loaded iframe doesn't have access to the main frame.</p>
-    <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
+    <iframe id="aFrame" name="aFrame" style="width: 500px; height: 300px;"></iframe>
     <p id='accessMe'>PASS: Cross frame access from a data: URL inside another data: URL was denied.</p>
 </body>
 </html>

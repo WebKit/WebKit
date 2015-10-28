@@ -13,8 +13,8 @@ function log(str) {
     console.appendChild(li);
 }
 
-function imageSize(id) {
-    var img = window.frames[id].document.querySelector('img');
+function imageSize(name) {
+    var img = window.frames[name].document.querySelector('img');
     return [img.offsetWidth, img.offsetHeight];
 }
 
@@ -41,17 +41,17 @@ iframe { display: inline-block; margin-right: 20px; margin-bottom: 10px; width: 
 </head>
 <body onload="load()">
 <b>The images should be rotated respecting their EXIF orientation. In image documents, this happens independent of WebKitShouldRespectImageOrientation.</b><br><br>
-<iframe id="img1" src="resources/exif-orientation-1-ul.jpg" frameborder=0></iframe>
-<iframe id="img2" src="resources/exif-orientation-2-ur.jpg" frameborder=0></iframe>
-<iframe id="img3" src="resources/exif-orientation-3-lr.jpg" frameborder=0></iframe>
-<iframe id="img4" src="resources/exif-orientation-4-lol.jpg" frameborder=0></iframe>
+<iframe name="img1" src="resources/exif-orientation-1-ul.jpg" frameborder=0></iframe>
+<iframe name="img2" src="resources/exif-orientation-2-ur.jpg" frameborder=0></iframe>
+<iframe name="img3" src="resources/exif-orientation-3-lr.jpg" frameborder=0></iframe>
+<iframe name="img4" src="resources/exif-orientation-4-lol.jpg" frameborder=0></iframe>
 <br>
-<iframe id="img5" src="resources/exif-orientation-5-lu.jpg" frameborder=0></iframe>
-<iframe id="img6" src="resources/exif-orientation-6-ru.jpg" frameborder=0></iframe>
-<iframe id="img7" src="resources/exif-orientation-7-rl.jpg" frameborder=0></iframe>
-<iframe id="img8" src="resources/exif-orientation-8-llo.jpg" frameborder=0></iframe>
+<iframe name="img5" src="resources/exif-orientation-5-lu.jpg" frameborder=0></iframe>
+<iframe name="img6" src="resources/exif-orientation-6-ru.jpg" frameborder=0></iframe>
+<iframe name="img7" src="resources/exif-orientation-7-rl.jpg" frameborder=0></iframe>
+<iframe name="img8" src="resources/exif-orientation-8-llo.jpg" frameborder=0></iframe>
 <br>
-<iframe id="img9" src="resources/exif-orientation-9-u.jpg" frameborder=0></iframe>
+<iframe name="img9" src="resources/exif-orientation-9-u.jpg" frameborder=0></iframe>
 <br>
 <ul id="console"></ul>
 </body>

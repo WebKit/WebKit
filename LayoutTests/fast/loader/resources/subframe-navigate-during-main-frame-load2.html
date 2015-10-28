@@ -13,7 +13,7 @@ function runTest()
 <body onload="runTest();">
 This test navigates an iframe while it's onload handler is still running.<br>
 The iframe navigation should *not* result in a second back-history item being created for the top level navigation.<br>
-<iframe id="subframe" src="about:blank"></iframe><br>
+<iframe id="subframe" name="subframe" src="about:blank"></iframe><br>
 
 </body>
 

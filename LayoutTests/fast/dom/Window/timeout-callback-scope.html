@@ -37,6 +37,6 @@ function checkResult() {
 <p>Test verifies that a timeout callback is run in the proper execution context. 2 timeouts are set on a child iframe's window. 'Closure' callback should execute in the main page, 'string' callback should execute in the iframe. Test passes if you see 2 lines 'PASS' below.</p>
 <div id=closureResult>FAIL</div>
 <div id=stringResult>FAIL</div>
-<iframe style="display:none" src="about:blank" id=testIframe></iframe>
+<iframe style="display:none" src="about:blank" id=testIframe name=testIframe></iframe>
 </body>
 </html>
