@@ -70,17 +70,32 @@ function showSection(sectionIdentifier, pushState)
 function startBenchmark()
 {
     var enabledSuites = [];
-    var checkboxes = document.querySelectorAll("#suites input");
-    for (var i = 0; i < checkboxes.length; ++i) {
-        var checkbox = checkboxes[i];
-        if (checkbox.checked) {
-            enabledSuites.push(checkbox.suite);
+
+    localStorage.clear();
+    var suiteItems = document.querySelectorAll("#suites > ul > li");
+    for (var i = 0; i < suiteItems.length; ++i) {
+        var suiteItem = suiteItems[i];
+        var suiteCheckbox = suiteItem.querySelector("input");
+
+        if (!suiteCheckbox.checked)
+            continue;
+
+        var enabledTests = [];
+        var testCheckboxes = suiteItem.querySelector("ul").querySelectorAll("input");
+        for (var j = 0; j < testCheckboxes.length; ++j) {
+            var testCheckbox = testCheckboxes[j];
+            if (!testCheckbox.checked)
+                continue;
+
+            enabledTests.push(testCheckbox.test);
+            localStorage.setItem(localStorageNameForTest(suiteCheckbox.suite, testCheckbox.test), +testCheckbox.checked);
         }
-        localStorage.setItem(checkbox.suite.name, +checkbox.checked);
-        localStorage.setItem("test-interval", document.getElementById("test-interval").value);
+
+        enabledSuites.push(new Suite(suiteCheckbox.suite.name, enabledTests));
     }
 
-    var enabledSuites = Suites.filter(function (suite, index) { return !suite.disabled && checkboxes[index].checked; });
+    localStorage.setItem("test-interval", document.getElementById("test-interval").value);
+
     var testsCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
     benchmarkRunnerClient.testsCount = benchmarkRunnerClient.iterationCount * testsCount;
     benchmarkRunnerClient.options["testInterval"] = parseInt(document.getElementById("test-interval").value) * 1000;
@@ -154,24 +169,90 @@ function showTestJSON(testName, testResults)
     showSection("test-json", true);    
 }
 
+function initialize() {
+    populateSettings();
+
+    var toggleTestsCheckbox = document.getElementById("toggleTests");
+    toggleTestsCheckbox.onchange = function(event) {
+        if (event.target.checked)
+            document.getElementById("suites").classList.add("showTests");
+        else
+            document.getElementById("suites").classList.remove("showTests");
+    };
+}
+
+function updateSuiteSelection(event) {
+    var selected = event.target.checked;
+    var testCheckboxes = event.target.parentNode.parentNode.querySelector("ul").querySelectorAll("input");
+    for (var i = 0; i < testCheckboxes.length; ++i) {
+        testCheckboxes[i].checked = selected;
+    }
+}
+
+function updateTestSelection(event) {
+    var testsList = event.target.parentNode.parentNode.parentNode;
+    var suiteCheckbox = testsList.parentNode.querySelector("label > input");
+
+    updateSuiteCheckbox(testsList, suiteCheckbox);
+}
+
+function updateSuiteCheckbox(testsList, suiteCheckbox) {
+    var numberEnabledTests = 0;
+    var testCheckboxes = testsList.querySelectorAll("input");
+    var totalCheckboxes = testCheckboxes.length;
+    for (var i = 0; i < totalCheckboxes; ++i) {
+        if (testCheckboxes[i].checked)
+            ++numberEnabledTests;
+    }
+    suiteCheckbox.checked = numberEnabledTests > 0;
+    suiteCheckbox.indeterminate = numberEnabledTests > 0 && numberEnabledTests < totalCheckboxes;
+}
+
+function localStorageNameForTest(suite, test) {
+    return suite.name + "/" + test.name;
+}
+
 function populateSettings() {
     var suitesDiv = document.getElementById("suites");
+
+    var suitesList = document.createElement("ul");
+    suitesDiv.appendChild(suitesList);
+
     Suites.forEach(function(suite) {
-        var suiteDiv = document.createDocumentFragment();
+        var suiteItem = document.createElement("li");
+        suitesList.appendChild(suiteItem);
 
-        var label = document.createElement("label");
-        var checkbox = document.createElement("input");
-        checkbox.setAttribute("type", "checkbox");
-        checkbox.suite = suite;
-        if (+localStorage.getItem(suite.name)) {
-            checkbox.checked = true;
-        }
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(" " + suite.name));
+        var suiteLabel = document.createElement("label");
+        suiteItem.appendChild(suiteLabel);
 
-        suiteDiv.appendChild(label);
-        suiteDiv.appendChild(document.createElement("br"));
-        suitesDiv.appendChild(suiteDiv);
+        var suiteCheckbox = document.createElement("input");
+        suiteCheckbox.setAttribute("type", "checkbox");
+        suiteCheckbox.suite = suite;
+        suiteCheckbox.onchange = updateSuiteSelection;
+        suiteLabel.appendChild(suiteCheckbox);
+        suiteLabel.appendChild(document.createTextNode(" " + suite.name));
+
+        var testsList = document.createElement("ul");
+        suiteItem.appendChild(testsList);
+
+        suite.tests.forEach(function(test) {
+            var testItem = document.createElement("li");
+            testsList.appendChild(testItem);
+
+            var testLabel = document.createElement("label");
+            testItem.appendChild(testLabel);
+
+            var testCheckbox = document.createElement("input");
+            testCheckbox.setAttribute("type", "checkbox");
+            testCheckbox.test = test;
+            testCheckbox.onchange = updateTestSelection;
+            if (+localStorage.getItem(localStorageNameForTest(suite, test)))
+                testCheckbox.checked = true;
+            testLabel.appendChild(testCheckbox);
+            testLabel.appendChild(document.createTextNode(" " + test.name));
+        });
+
+        updateSuiteCheckbox(testsList, suiteCheckbox);
     });
 
     var interval = localStorage.getItem("test-interval");
@@ -179,4 +260,4 @@ function populateSettings() {
         document.getElementById("test-interval").value = interval;
     }
 }
-document.addEventListener("DOMContentLoaded", populateSettings);
+document.addEventListener("DOMContentLoaded", initialize);

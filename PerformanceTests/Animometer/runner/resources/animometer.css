@@ -131,15 +131,36 @@ section#json > textarea {
 .options {
     margin:0 auto;    
     margin-top: 30px;
-    width: 500px;
+    width: 600px;
     align: center;
 }
 
+.options p {
+    margin-top: 0;
+}
+
+#suites ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#suites ul ul {
+    padding-left: 1.5em;
+    display: none;
+}
+
+#suites ul ul input, #suites ul ul label {
+    font-size: .8em;
+}
+
+#suites.showTests ul ul {
+    display: block;
+}
+
 .column {
-    width: 45%;
+    width: 55%;
     float:left;
-    height: 120px;
-    padding:5px;
 }
 
 input[type="number"] {

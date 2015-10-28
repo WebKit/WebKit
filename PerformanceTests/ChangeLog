@@ -1,3 +1,38 @@
+2015-10-27  Jon Lee  <jonlee@apple.com>
+
+        Add an option to make the graphics benchmark runs a specific test
+        https://bugs.webkit.org/show_bug.cgi?id=150528
+        rdar://problem/23246614
+
+        Reviewed by Zalan Bujtas.
+
+        Add a checkbox that lets the user list all of the available tests, and select
+        the ones to run repeatedly. The test checkboxes will update the state of the suite
+        checkbox. The selected tests are stored in localStorage to make it easy to do
+        repeated runs.
+
+        * Animometer/runner/animometer.html: Add a checkbox to show individual tests.
+        Update other markup.
+        * Animometer/runner/resources/animometer.css: Make the settings area a little wider
+        to accommodate the longer names of the tests
+        * Animometer/runner/resources/animometer.js:
+        (startBenchmark): Change the way that the suites are fed into the benchmark
+        runner. Go through each of the suites and their tests, and create a new Suite
+        with just the enabled tests. While enumerating store the enabled tests into
+        localStorage.
+        (initialize): Initialization routine (taking over populateSettings). When the
+        checkbox for showing tests is toggled, add or remove a class on #suites to show
+        the individual tests.
+        (updateSuiteSelection): Called whenever the user toggles the checkbox for a suite.
+        Either select all or none of the tests.
+        (updateTestSelection): Called whenever the user toggles the checkbox for a test.
+        (updateSuiteCheckbox): Update the state of the test's suite's checkbox to
+        indeterminate if there is at least one enabled test, unchecked if none are selected,
+        and checked if all are selected.
+        (localStorageNameForTest): Helper function to get the name of the test to use as
+        a key to localStorage.
+        (populateSettings): Add the tests for each suite into an inner list.
+
 2015-10-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add an option to output the results of the graphics benchmark in JSON format
