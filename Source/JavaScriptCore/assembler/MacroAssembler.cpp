@@ -39,9 +39,9 @@ static void stdFunctionCallback(MacroAssembler::ProbeContext* context)
     (*func)(context);
 }
     
-void MacroAssembler::callProbe(std::function<void (MacroAssembler::ProbeContext*)> func)
+void MacroAssembler::probe(std::function<void (MacroAssembler::ProbeContext*)> func)
 {
-    probe(stdFunctionCallback, new std::function<void (MacroAssembler::ProbeContext*)>(func));
+    probe(stdFunctionCallback, new std::function<void (MacroAssembler::ProbeContext*)>(func), 0);
 }
 #endif // ENABLE(MASM_PROBE)
 

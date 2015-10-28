@@ -169,7 +169,7 @@ public:
     {
         auto argsList = std::make_unique<PrintArgsList>();
         appendPrintArg(argsList.get(), args...);
-        masm->probe(printCallback, argsList.release());
+        masm->probe(printCallback, argsList.release(), 0);
     }
     
 private:

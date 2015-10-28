@@ -1585,12 +1585,14 @@ public:
     }
 
 #if ENABLE(MASM_PROBE)
+    using MacroAssemblerBase::probe;
+
     // Let's you print from your JIT generated code.
     // See comments in MacroAssemblerPrinter.h for examples of how to use this.
     template<typename... Arguments>
     void print(Arguments... args);
 
-    void callProbe(std::function<void (ProbeContext*)>);
+    void probe(std::function<void (ProbeContext*)>);
 #endif
 };
 

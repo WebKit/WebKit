@@ -1,3 +1,32 @@
+2015-10-28  Mark Lam  <mark.lam@apple.com>
+
+        Rename MacroAssembler::callProbe() to probe().
+        https://bugs.webkit.org/show_bug.cgi?id=150641
+
+        Reviewed by Saam Barati.
+
+        To do this, I needed to disambiguate between the low-level probe() from the
+        high-level version that takes a std::function.  I did this by changing the low-
+        level version to not take default args anymore.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        (JSC::MacroAssembler::probe):
+        (JSC::MacroAssembler::callProbe): Deleted.
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::urshift32):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::repatchCall):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::repatchCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::repatchCall):
+        * assembler/MacroAssemblerPrinter.h:
+        (JSC::MacroAssemblerPrinter::print):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::maxJumpReplacementSize):
+
 2015-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: jsmin.py mistakenly removes whitespace from template literal strings

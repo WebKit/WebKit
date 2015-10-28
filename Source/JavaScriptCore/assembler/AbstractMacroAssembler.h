@@ -940,7 +940,7 @@ public:
     // Note: probe() should be implemented by the target specific MacroAssembler.
     // This prototype is only provided here to document the interface.
 
-    void probe(ProbeFunction, void* arg1 = 0, void* arg2 = 0);
+    void probe(ProbeFunction, void* arg1, void* arg2);
 
 #endif // ENABLE(MASM_PROBE)
 
