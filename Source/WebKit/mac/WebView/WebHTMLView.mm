@@ -3528,34 +3528,119 @@ static RetainPtr<NSArray> fixMenusReceivedFromOldClients(NSArray *delegateSuppli
     return newMenuItems;
 }
 
+static RetainPtr<NSMenuItem> createShareMenuItem(const HitTestResult& hitTestResult)
+{
+    if (![[NSMenuItem class] respondsToSelector:@selector(standardShareMenuItemWithItems:)])
+        return nil;
+
+    auto items = adoptNS([[NSMutableArray alloc] init]);
+
+    if (!hitTestResult.absoluteLinkURL().isEmpty()) {
+        NSURL *absoluteLinkURL = hitTestResult.absoluteLinkURL();
+        [items addObject:absoluteLinkURL];
+    }
+
+    if (!hitTestResult.absoluteMediaURL().isEmpty() && hitTestResult.isDownloadableMedia()) {
+        NSURL *downloadableMediaURL = hitTestResult.absoluteMediaURL();
+        [items addObject:downloadableMediaURL];
+    }
+
+    if (Image* image = hitTestResult.image()) {
+        if (RefPtr<SharedBuffer> buffer = image->data())
+            [items addObject:adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:buffer->data() length:buffer->size()]]).get()];
+    }
+
+    if (!hitTestResult.selectedText().isEmpty()) {
+        NSString *selectedText = hitTestResult.selectedText();
+        [items addObject:selectedText];
+    }
+
+    if (![items count])
+        return nil;
+
+    return [NSMenuItem standardShareMenuItemWithItems:items.get()];
+}
+
+static RetainPtr<NSMutableArray> createMenuItems(const HitTestResult&, const Vector<ContextMenuItem>&);
+
+static RetainPtr<NSMenuItem> createMenuItem(const HitTestResult& hitTestResult, const ContextMenuItem& item)
+{
+    if (item.action() == ContextMenuItemTagShareMenu)
+        return createShareMenuItem(hitTestResult);
+
+    switch (item.type()) {
+    case WebCore::ActionType:
+    case WebCore::CheckableActionType: {
+        auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
+
+        [menuItem setTag:item.action()];
+        [menuItem setEnabled:item.enabled()];
+        [menuItem setState:item.checked() ? NSOnState : NSOffState];
+        [menuItem setTarget:[WebMenuTarget sharedMenuTarget]];
+
+        return menuItem;
+    }
+
+    case SeparatorType:
+        return [NSMenuItem separatorItem];
+
+    case SubmenuType: {
+        auto menu = adoptNS([[NSMenu alloc] init]);
+
+        auto submenuItems = createMenuItems(hitTestResult, contextMenuItemVector(item.platformSubMenu()));
+        for (NSMenuItem *menuItem in submenuItems.get())
+            [menu addItem:menuItem];
+
+        auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:nullptr keyEquivalent:@""]);
+        [menuItem setEnabled:item.enabled()];
+        [menuItem setSubmenu:menu.get()];
+
+        return menuItem;
+    }
+    }
+}
+
+static RetainPtr<NSMutableArray> createMenuItems(const HitTestResult& hitTestResult, const Vector<ContextMenuItem>& items)
+{
+    auto menuItems = adoptNS([[NSMutableArray alloc] init]);
+
+    for (auto& item : items) {
+        if (auto menuItem = createMenuItem(hitTestResult, item))
+            [menuItems addObject:menuItem.get()];
+    }
+
+    return menuItems;
+}
+
 static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const ContextMenu& defaultMenu)
 {
+    const auto& hitTestResult = webView.page->contextMenuController().hitTestResult();
+    auto defaultMenuItems = createMenuItems(hitTestResult, contextMenuItemVector(defaultMenu.platformDescription()));
+
     id delegate = [webView UIDelegate];
     SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);
     if (![delegate respondsToSelector:selector])
-        return defaultMenu.platformDescription();
+        return defaultMenuItems;
 
-    auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:[webView page]->contextMenuController().hitTestResult()]);
+    auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:hitTestResult]);
 
     BOOL preVersion3Client = isPreVersion3Client();
     if (preVersion3Client) {
         DOMNode *node = [element objectForKey:WebElementDOMNodeKey];
         if ([node isKindOfClass:[DOMHTMLInputElement class]] && [(DOMHTMLInputElement *)node _isTextField])
-            return defaultMenu.platformDescription();
+            return defaultMenuItems;
         if ([node isKindOfClass:[DOMHTMLTextAreaElement class]])
-            return defaultMenu.platformDescription();
+            return defaultMenuItems;
     }
 
-    NSMutableArray *defaultMenuItems = defaultMenu.platformDescription();
-
-    for (NSMenuItem *menuItem in defaultMenuItems) {
+    for (NSMenuItem *menuItem in defaultMenuItems.get()) {
         if (!menuItem.representedObject)
             menuItem.representedObject = element.get();
     }
 
-    auto savedItems = fixMenusToSendToOldClients(defaultMenuItems);
+    auto savedItems = fixMenusToSendToOldClients(defaultMenuItems.get());
 
-    NSArray *delegateSuppliedItems = CallUIDelegate(webView, selector, element.get(), defaultMenuItems);
+    NSArray *delegateSuppliedItems = CallUIDelegate(webView, selector, element.get(), defaultMenuItems.get());
 
     return fixMenusReceivedFromOldClients(delegateSuppliedItems, savedItems.get()).autorelease();
 }
