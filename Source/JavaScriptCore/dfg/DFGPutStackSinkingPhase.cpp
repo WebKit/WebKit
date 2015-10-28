@@ -216,8 +216,9 @@ public:
             deferredAtTail[block] =
                 Operands<FlushFormat>(OperandsLike, block->variablesAtHead);
         }
-        
-        deferredAtHead.atIndex(0).fill(ConflictingFlush);
+
+        for (unsigned local = deferredAtHead.atIndex(0).numberOfLocals(); local--;)
+            deferredAtHead.atIndex(0).local(local) = ConflictingFlush;
         
         do {
             changed = false;
@@ -230,12 +231,18 @@ public:
                         dataLog("Deferred at ", node, ":", deferred, "\n");
                     
                     if (node->op() == GetStack) {
+                        DFG_ASSERT(
+                            m_graph, node,
+                            deferred.operand(node->stackAccessData()->local) != ConflictingFlush);
+                        
                         // A GetStack doesn't affect anything, since we know which local we are reading
                         // from.
                         continue;
                     }
                     
                     auto escapeHandler = [&] (VirtualRegister operand) {
+                        if (verbose)
+                            dataLog("For ", node, " escaping ", operand, "\n");
                         if (operand.isHeader())
                             return;
                         // We will materialize just before any reads.
@@ -406,6 +413,10 @@ public:
                     StackAccessData* data = node->stackAccessData();
                     FlushFormat format = deferred.operand(data->local);
                     if (!isConcrete(format)) {
+                        DFG_ASSERT(
+                            m_graph, node,
+                            deferred.operand(data->local) != ConflictingFlush);
+                        
                         // This means there is no deferral. No deferral means that the most
                         // authoritative value for this stack slot is what is stored in the stack. So,
                         // keep the GetStack.
@@ -427,12 +438,18 @@ public:
                 
                 default: {
                     auto escapeHandler = [&] (VirtualRegister operand) {
+                        if (verbose)
+                            dataLog("For ", node, " escaping ", operand, "\n");
+
                         if (operand.isHeader())
                             return;
                     
                         FlushFormat format = deferred.operand(operand);
-                        if (!isConcrete(format))
+                        if (!isConcrete(format)) {
+                            // It's dead now, rather than conflicting.
+                            deferred.operand(operand) = DeadFlush;
                             return;
+                        }
                     
                         // Gotta insert a PutStack.
                         if (verbose)
