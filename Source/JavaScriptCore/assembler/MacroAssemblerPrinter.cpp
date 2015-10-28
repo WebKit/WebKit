@@ -89,6 +89,22 @@ void printCPURegisters(CPUState& cpu, int indentation)
     #undef PRINT_FPREGISTER
 }
 
+static void printPC(CPUState& cpu)
+{
+    union {
+        void* voidPtr;
+        intptr_t intptrValue;
+    } u;
+#if CPU(X86) || CPU(X86_64)
+    u.voidPtr = cpu.eip;
+#elif CPU(ARM_TRADITIONAL) || CPU(ARM_THUMB2) || CPU(ARM64)
+    u.voidPtr = cpu.pc;
+#else
+#error "Unsupported CPU"
+#endif
+    dataLogF("pc:<%p %ld>", u.voidPtr, u.intptrValue);
+}
+
 void printRegister(CPUState& cpu, RegisterID regID)
 {
     const char* name = CPUState::gprName(regID);
@@ -177,6 +193,9 @@ void MacroAssemblerPrinter::printCallback(ProbeContext* context)
         switch (arg.type) {
         case Arg::Type::AllRegisters:
             printCPU(context->cpu, 1);
+            break;
+        case Arg::Type::PCRegister:
+            printPC(context->cpu);
             break;
         case Arg::Type::RegisterID:
             printRegister(context->cpu, arg.u.gpRegisterID);
