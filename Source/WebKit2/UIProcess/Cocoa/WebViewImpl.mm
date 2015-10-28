@@ -65,6 +65,7 @@
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
+#import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKitSystemInterface.h>
 
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
@@ -1168,6 +1169,19 @@ bool WebViewImpl::tryPostProcessPluginComplexTextInputKeyDown(NSEvent *event)
     return handlePluginComplexTextInputKeyDown(event);
 }
 
+void WebViewImpl::handleAcceptedAlternativeText(const String& acceptedAlternative)
+{
+    m_page.handleAlternativeTextUIResult(acceptedAlternative);
+}
+
+
+NSInteger WebViewImpl::spellCheckerDocumentTag()
+{
+    if (!m_spellCheckerDocumentTag)
+        m_spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];
+    return m_spellCheckerDocumentTag.value();
+}
+
 void WebViewImpl::pressureChangeWithEvent(NSEvent *event)
 {
 #if defined(__LP64__) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101003
@@ -1904,6 +1918,168 @@ void WebViewImpl::registerDraggedTypes()
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+void WebViewImpl::startWindowDrag()
+{
+    [m_view.window performWindowDragWithEvent:m_lastMouseDownEvent.get()];
+}
+#endif
+
+void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientPoint, bool linkDrag)
+{
+    // The call below could release the view.
+    RetainPtr<NSView> protector(m_view);
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [view dragImage:image
+                 at:clientPoint
+             offset:NSZeroSize
+              event:linkDrag ? [NSApp currentEvent] : m_lastMouseDownEvent.get()
+         pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
+             source:m_view
+          slideBack:YES];
+#pragma clang diagnostic pop
+}
+
+static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
+{
+    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
+    return hasCaseInsensitiveSuffix(filename, extensionAsSuffix) || (stringIsCaseInsensitiveEqualToString(extension, @"jpeg")
+        && hasCaseInsensitiveSuffix(filename, @".jpg"));
+}
+
+void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *pasteboard)
+{
+    if (!matchesExtensionOrEquivalent(filename, extension))
+        filename = [[filename stringByAppendingString:@"."] stringByAppendingString:extension];
+
+    [pasteboard setString:visibleURL forType:NSStringPboardType];
+    [pasteboard setString:visibleURL forType:PasteboardTypes::WebURLPboardType];
+    [pasteboard setString:title forType:PasteboardTypes::WebURLNamePboardType];
+    [pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:visibleURL], [NSArray arrayWithObject:title], nil] forType:PasteboardTypes::WebURLsWithTitlesPboardType];
+    [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
+    m_promisedFilename = filename;
+    m_promisedURL = url;
+}
+
+void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName)
+{
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
+
+    [types addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
+    [pasteboard declareTypes:types.get() owner:m_view];
+    setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
+
+    if (archiveBuffer)
+        [pasteboard setData:archiveBuffer->createNSData().get() forType:PasteboardTypes::WebArchivePboardType];
+
+    m_promisedImage = image;
+}
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebViewImpl::setPromisedDataForAttachment(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSString *pasteboardName)
+{
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
+    [types addObjectsFromArray:PasteboardTypes::forURL()];
+    [pasteboard declareTypes:types.get() owner:m_view];
+    setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
+    
+    RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
+    [paths addObject:title];
+    [pasteboard setPropertyList:paths.get() forType:NSFilenamesPboardType];
+    
+    m_promisedImage = nullptr;
+}
+#endif
+
+void WebViewImpl::pasteboardChangedOwner(NSPasteboard *pasteboard)
+{
+    m_promisedImage = nullptr;
+    m_promisedFilename = "";
+    m_promisedURL = "";
+}
+
+void WebViewImpl::provideDataForPasteboard(NSPasteboard *pasteboard, NSString *type)
+{
+    // FIXME: need to support NSRTFDPboardType
+
+    if ([type isEqual:NSTIFFPboardType] && m_promisedImage) {
+        [pasteboard setData:(NSData *)m_promisedImage->getTIFFRepresentation() forType:NSTIFFPboardType];
+        m_promisedImage = nullptr;
+    }
+}
+
+static BOOL fileExists(NSString *path)
+{
+    struct stat statBuffer;
+    return !lstat([path fileSystemRepresentation], &statBuffer);
+}
+
+static NSString *pathWithUniqueFilenameForPath(NSString *path)
+{
+    // "Fix" the filename of the path.
+    NSString *filename = filenameByFixingIllegalCharacters([path lastPathComponent]);
+    path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
+    
+    if (fileExists(path)) {
+        // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
+        NSString *extensions = nil;
+        NSString *pathWithoutExtensions;
+        NSString *lastPathComponent = [path lastPathComponent];
+        NSRange periodRange = [lastPathComponent rangeOfString:@"."];
+        
+        if (periodRange.location == NSNotFound) {
+            pathWithoutExtensions = path;
+        } else {
+            extensions = [lastPathComponent substringFromIndex:periodRange.location + 1];
+            lastPathComponent = [lastPathComponent substringToIndex:periodRange.location];
+            pathWithoutExtensions = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:lastPathComponent];
+        }
+        
+        for (unsigned i = 1; ; i++) {
+            NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
+            path = [extensions length] ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
+            if (!fileExists(path))
+                break;
+        }
+    }
+    
+    return path;
+}
+
+NSArray *WebViewImpl::namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination)
+{
+    RetainPtr<NSFileWrapper> wrapper;
+    RetainPtr<NSData> data;
+    
+    if (m_promisedImage) {
+        data = m_promisedImage->data()->createNSData();
+        wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
+    } else
+        wrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL URLWithString:m_promisedURL] options:NSFileWrapperReadingImmediate error:nil]);
+    
+    if (wrapper)
+        [wrapper setPreferredFilename:m_promisedFilename];
+    else {
+        LOG_ERROR("Failed to create image file.");
+        return nil;
+    }
+    
+    // FIXME: Report an error if we fail to create a file.
+    NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
+    path = pathWithUniqueFilenameForPath(path);
+    if (![wrapper writeToURL:[NSURL fileURLWithPath:path] options:NSFileWrapperWritingWithNameUpdating originalContentsURL:nil error:nullptr])
+        LOG_ERROR("Failed to create image file via -[NSFileWrapper writeToURL:options:originalContentsURL:error:]");
+
+    if (!m_promisedURL.isEmpty())
+        WebCore::setMetadataURL(m_promisedURL, "", String(path));
+    
+    return [NSArray arrayWithObject:[path lastPathComponent]];
+}
+
 static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captureAtNominalResolution)
 {
     CGSWindowCaptureOptions options = kCGSCaptureIgnoreGlobalClipShape;
@@ -2139,6 +2315,16 @@ void WebViewImpl::smartMagnifyWithEvent(NSEvent *event)
     dismissContentRelativeChildWindowsWithAnimation(false);
 
     ensureGestureController().handleSmartMagnificationGesture([m_view convertPoint:event.locationInWindow fromView:nil]);
+}
+
+void WebViewImpl::setLastMouseDownEvent(NSEvent *event)
+{
+    ASSERT(!event || event.type == NSLeftMouseDown || event.type == NSRightMouseDown || event.type == NSOtherMouseDown);
+
+    if (event == m_lastMouseDownEvent.get())
+        return;
+
+    m_lastMouseDownEvent = event;
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)

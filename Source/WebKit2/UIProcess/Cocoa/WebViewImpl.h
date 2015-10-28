@@ -176,6 +176,9 @@ public:
     bool tryPostProcessPluginComplexTextInputKeyDown(NSEvent *);
     PluginComplexTextInputState pluginComplexTextInputState() const { return m_pluginComplexTextInputState; }
     uint64_t pluginComplexTextInputIdentifier() const { return m_pluginComplexTextInputIdentifier; }
+    
+    void handleAcceptedAlternativeText(const String&);
+    NSInteger spellCheckerDocumentTag();
 
     void pressureChangeWithEvent(NSEvent *);
     NSEvent *lastPressureEvent() { return m_lastPressureEvent.get(); }
@@ -266,6 +269,20 @@ public:
     void registerDraggedTypes();
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    void startWindowDrag();
+#endif
+
+    void dragImageForView(NSView *, NSImage *, CGPoint clientPoint, bool linkDrag);
+    void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
+    void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void setPromisedDataForAttachment(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSString *pasteboardName);
+#endif
+    void pasteboardChangedOwner(NSPasteboard *);
+    void provideDataForPasteboard(NSPasteboard *, NSString *type);
+    NSArray *namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination);
+
     RefPtr<ViewSnapshot> takeViewSnapshot();
 
     ViewGestureController* gestureController() { return m_gestureController.get(); }
@@ -289,6 +306,8 @@ public:
     void magnifyWithEvent(NSEvent *);
     void rotateWithEvent(NSEvent *);
     void smartMagnifyWithEvent(NSEvent *);
+
+    void setLastMouseDownEvent(NSEvent *);
 
     void gestureEventWasNotHandledByWebCore(NSEvent *);
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
@@ -365,6 +384,7 @@ private:
 
     RetainPtr<NSColorSpace> m_colorSpace;
 
+    RetainPtr<NSEvent> m_lastMouseDownEvent;
     RetainPtr<NSEvent> m_lastPressureEvent;
 
     bool m_ignoresNonWheelEvents { false };
@@ -397,6 +417,12 @@ private:
     bool m_allowsMagnification { false };
 
     RetainPtr<id> m_remoteAccessibilityChild;
+
+    RefPtr<WebCore::Image> m_promisedImage;
+    String m_promisedFilename;
+    String m_promisedURL;
+
+    WTF::Optional<NSInteger> m_spellCheckerDocumentTag;
 };
     
 } // namespace WebKit

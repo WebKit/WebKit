@@ -236,7 +236,7 @@ void PageClientImpl::viewWillMoveToAnotherWindow()
 
 ColorSpaceData PageClientImpl::colorSpace()
 {
-    return [m_wkView _colorSpace];
+    return m_impl->colorSpace();
 }
 
 void PageClientImpl::processDidExit()
@@ -361,23 +361,23 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
 #if WK_API_ENABLED
     if (m_webView) {
         NSPoint webViewPosition = [m_wkView convertPoint:clientPosition toView:m_webView];
-        [m_wkView _dragImageForView:m_webView withImage:dragNSImage.get() at:webViewPosition linkDrag:isLinkDrag];
+        m_impl->dragImageForView(m_webView, dragNSImage.get(), webViewPosition, isLinkDrag);
     } else
 #endif
-        [m_wkView _dragImageForView:m_wkView withImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
+        m_impl->dragImageForView(m_wkView, dragNSImage.get(), clientPosition, isLinkDrag);
 }
 
-void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, PassRefPtr<SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleUrl, PassRefPtr<SharedBuffer> archiveBuffer)
+void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, PassRefPtr<SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, PassRefPtr<SharedBuffer> archiveBuffer)
 {
     RefPtr<Image> image = BitmapImage::create();
     image->setData(imageBuffer.get(), true);
-    [m_wkView _setPromisedDataForImage:image.get() withFileName:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl withArchive:archiveBuffer.get() forPasteboard:pasteboardName];
+    m_impl->setPromisedDataForImage(image.get(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-void PageClientImpl::setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleUrl)
+void PageClientImpl::setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL)
 {
-    [m_wkView _setPromisedDataForAttachment:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl forPasteboard:pasteboardName];
+    m_impl->setPromisedDataForAttachment(filename, extension, title, url, visibleURL, pasteboardName);
 }
 #endif
 
@@ -564,7 +564,7 @@ void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRe
 #if USE(AUTOCORRECTION_PANEL)
     if (!isViewVisible() || !isViewInWindow())
         return;
-    m_correctionPanel.show(m_wkView, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+    m_correctionPanel.show(m_wkView, *m_impl, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 #endif
 }
 
@@ -587,7 +587,7 @@ String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAl
 void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
     NSCorrectionResponse response = responseType == AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
-    CorrectionPanel::recordAutocorrectionResponse(m_wkView, response, replacedString, replacementString);
+    CorrectionPanel::recordAutocorrectionResponse(m_wkView, m_impl->spellCheckerDocumentTag(), response, replacedString, replacementString);
 }
 
 void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
@@ -635,8 +635,8 @@ void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundi
 {
     if (!isViewVisible() || !isViewInWindow())
         return;
-    m_alternativeTextUIController->showAlternatives(m_wkView, boundingBoxOfDictatedText, dictationContext, ^(NSString* acceptedAlternative){
-        [m_wkView handleAcceptedAlternativeText:acceptedAlternative];
+    m_alternativeTextUIController->showAlternatives(m_wkView, boundingBoxOfDictatedText, dictationContext, ^(NSString *acceptedAlternative) {
+        m_impl->handleAcceptedAlternativeText(acceptedAlternative);
     });
 }
 

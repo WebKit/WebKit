@@ -34,27 +34,28 @@
 #import <WebCore/AlternativeTextClient.h>
 #import <wtf/RetainPtr.h>
 
-@class WKView;
-
 namespace WebKit {
+
+class WebViewImpl;
 
 class CorrectionPanel {
 public:
     CorrectionPanel();
     ~CorrectionPanel();
-    void show(WKView*, WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
+    void show(NSView *, WebViewImpl&, WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     String dismiss(WebCore::ReasonForDismissingAlternativeText);
-    static void recordAutocorrectionResponse(WKView*, NSCorrectionResponse, const String& replacedString, const String& replacementString);
+    static void recordAutocorrectionResponse(NSView *, NSInteger spellCheckerDocumentTag, NSCorrectionResponse, const String& replacedString, const String& replacementString);
 
 private:
     bool isShowing() const { return m_view; }
     String dismissInternal(WebCore::ReasonForDismissingAlternativeText, bool dismissingExternally);
-    void handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
+    void handleAcceptedReplacement(WebViewImpl&, NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement, NSCorrectionIndicatorType);
 
     bool m_wasDismissedExternally;
     WebCore::ReasonForDismissingAlternativeText m_reasonForDismissing;
-    RetainPtr<WKView> m_view;
+    RetainPtr<NSView> m_view;
     RetainPtr<NSString> m_resultForDismissal;
+    NSInteger m_spellCheckerDocumentTag;
 };
 
 } // namespace WebKit

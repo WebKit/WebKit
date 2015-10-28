@@ -176,14 +176,6 @@ struct WKViewInterpretKeyEventsParameters {
 #endif
 
     BOOL _willBecomeFirstResponderAgain;
-    NSEvent *_mouseDownEvent;
-
-    BOOL _hasSpellCheckerDocumentTag;
-    NSInteger _spellCheckerDocumentTag;
-
-    RefPtr<WebCore::Image> _promisedImage;
-    String _promisedFilename;
-    String _promisedURL;
 
     BOOL _windowOcclusionDetectionEnabled;
 
@@ -896,17 +888,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
     return YES;
 }
 
-- (void)_setMouseDownEvent:(NSEvent *)event
-{
-    ASSERT(!event || [event type] == NSLeftMouseDown || [event type] == NSRightMouseDown || [event type] == NSOtherMouseDown);
-    
-    if (event == _data->_mouseDownEvent)
-        return;
-    
-    [_data->_mouseDownEvent release];
-    _data->_mouseDownEvent = [event retain];
-}
-
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
 #define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
     - (void)Selector:(NSEvent *)theEvent \
@@ -1016,7 +997,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     if (_data->_impl->ignoresNonWheelEvents())
         return;
 
-    [self _setMouseDownEvent:event];
+    _data->_impl->setLastMouseDownEvent(event);
     _data->_impl->setIgnoresMouseDraggedEvents(false);
 
     [self mouseDownInternal:event];
@@ -1027,7 +1008,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     if (_data->_impl->ignoresNonWheelEvents())
         return;
 
-    [self _setMouseDownEvent:nil];
+    _data->_impl->setLastMouseDownEvent(nil);
     [self mouseUpInternal:event];
 }
 
@@ -1056,9 +1037,9 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     if (![self hitTest:[event locationInWindow]])
         return NO;
     
-    [self _setMouseDownEvent:event];
+    _data->_impl->setLastMouseDownEvent(event);
     bool result = _data->_page->acceptsFirstMouse([event eventNumber], WebEventFactory::createWebMouseEvent(event, _data->_impl->lastPressureEvent(), self));
-    [self _setMouseDownEvent:nil];
+    _data->_impl->setLastMouseDownEvent(nil);
     return result;
 }
 
@@ -1077,9 +1058,9 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     if (![self hitTest:[event locationInWindow]])
         return NO;
     
-    [self _setMouseDownEvent:event];
+    _data->_impl->setLastMouseDownEvent(event);
     bool result = _data->_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, _data->_impl->lastPressureEvent(), self));
-    [self _setMouseDownEvent:nil];
+    _data->_impl->setLastMouseDownEvent(nil);
     return result;
 }
 
@@ -2220,11 +2201,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(*_data->_page);
 }
 
-- (WebKit::ColorSpaceData)_colorSpace
-{
-    return _data->_impl->colorSpace();
-}
-
 - (void)_processDidExit
 {
     _data->_impl->notifyInputContextAboutDiscardedComposition();
@@ -2332,161 +2308,19 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return _data->_impl->stringForToolTip(tag);
 }
 
-- (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
-{
-    // The call below could release this WKView.
-    RetainPtr<WKView> protector(self);
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [view dragImage:image
-                 at:clientPoint
-             offset:NSZeroSize
-              event:(linkDrag) ? [NSApp currentEvent] : _data->_mouseDownEvent
-         pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
-             source:self
-          slideBack:YES];
-#pragma clang diagnostic pop
-}
-
-static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
-{
-    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
-    return hasCaseInsensitiveSuffix(filename, extensionAsSuffix) || (stringIsCaseInsensitiveEqualToString(extension, @"jpeg")
-                                                                     && hasCaseInsensitiveSuffix(filename, @".jpg"));
-}
-
-- (void)_setFileAndURLTypes:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl forPasteboard:(NSPasteboard *)pasteboard
-{
-    if (!matchesExtensionOrEquivalent(filename, extension))
-        filename = [[filename stringByAppendingString:@"."] stringByAppendingString:extension];
-    
-    [pasteboard setString:visibleUrl forType:NSStringPboardType];
-    [pasteboard setString:visibleUrl forType:PasteboardTypes::WebURLPboardType];
-    [pasteboard setString:title forType:PasteboardTypes::WebURLNamePboardType];
-    [pasteboard setPropertyList:[NSArray arrayWithObjects:[NSArray arrayWithObject:visibleUrl], [NSArray arrayWithObject:title], nil] forType:PasteboardTypes::WebURLsWithTitlesPboardType];
-    [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
-    _data->_promisedFilename = filename;
-    _data->_promisedURL = url;
-}
-
-- (void)_setPromisedDataForImage:(WebCore::Image *)image withFileName:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl withArchive:(WebCore::SharedBuffer*) archiveBuffer forPasteboard:(NSString *)pasteboardName
-
-{
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
-    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
-    
-    [types addObjectsFromArray:archiveBuffer ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
-    [pasteboard declareTypes:types.get() owner:self];
-    [self _setFileAndURLTypes:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl forPasteboard:pasteboard];
-
-    if (archiveBuffer)
-        [pasteboard setData:archiveBuffer->createNSData().get() forType:PasteboardTypes::WebArchivePboardType];
-
-    _data->_promisedImage = image;
-}
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-- (void)_setPromisedDataForAttachment:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl forPasteboard:(NSString *)pasteboardName
-
-{
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
-    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
-    [types addObjectsFromArray:PasteboardTypes::forURL()];
-    [pasteboard declareTypes:types.get() owner:self];
-    [self _setFileAndURLTypes:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl forPasteboard:pasteboard];
-
-    RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
-    [paths addObject:title];
-    [pasteboard setPropertyList:paths.get() forType:NSFilenamesPboardType];
-
-    _data->_promisedImage = nullptr;
-}
-#endif
-
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
 {
-    _data->_promisedImage = nullptr;
-    _data->_promisedFilename = "";
-    _data->_promisedURL = "";
+    _data->_impl->pasteboardChangedOwner(pasteboard);
 }
 
 - (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
 {
-    // FIXME: need to support NSRTFDPboardType
-
-    if ([type isEqual:NSTIFFPboardType] && _data->_promisedImage) {
-        [pasteboard setData:(NSData *)_data->_promisedImage->getTIFFRepresentation() forType:NSTIFFPboardType];
-        _data->_promisedImage = nullptr;
-    }
-}
-
-static BOOL fileExists(NSString *path)
-{
-    struct stat statBuffer;
-    return !lstat([path fileSystemRepresentation], &statBuffer);
-}
-
-static NSString *pathWithUniqueFilenameForPath(NSString *path)
-{
-    // "Fix" the filename of the path.
-    NSString *filename = filenameByFixingIllegalCharacters([path lastPathComponent]);
-    path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
-    
-    if (fileExists(path)) {
-        // Don't overwrite existing file by appending "-n", "-n.ext" or "-n.ext.ext" to the filename.
-        NSString *extensions = nil;
-        NSString *pathWithoutExtensions;
-        NSString *lastPathComponent = [path lastPathComponent];
-        NSRange periodRange = [lastPathComponent rangeOfString:@"."];
-        
-        if (periodRange.location == NSNotFound) {
-            pathWithoutExtensions = path;
-        } else {
-            extensions = [lastPathComponent substringFromIndex:periodRange.location + 1];
-            lastPathComponent = [lastPathComponent substringToIndex:periodRange.location];
-            pathWithoutExtensions = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:lastPathComponent];
-        }
-        
-        for (unsigned i = 1; ; i++) {
-            NSString *pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtensions, i];
-            path = [extensions length] ? [pathWithAppendedNumber stringByAppendingPathExtension:extensions] : pathWithAppendedNumber;
-            if (!fileExists(path))
-                break;
-        }
-    }
-    
-    return path;
+    _data->_impl->provideDataForPasteboard(pasteboard, type);
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    RetainPtr<NSFileWrapper> wrapper;
-    RetainPtr<NSData> data;
-    
-    if (_data->_promisedImage) {
-        data = _data->_promisedImage->data()->createNSData();
-        wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data.get()]);
-    } else
-        wrapper = adoptNS([[NSFileWrapper alloc] initWithURL:[NSURL URLWithString:_data->_promisedURL] options:NSFileWrapperReadingImmediate error:nil]);
-    
-    if (wrapper)
-        [wrapper setPreferredFilename:_data->_promisedFilename];
-    else {
-        LOG_ERROR("Failed to create image file.");
-        return nil;
-    }
-    
-    // FIXME: Report an error if we fail to create a file.
-    NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
-    path = pathWithUniqueFilenameForPath(path);
-    if (![wrapper writeToURL:[NSURL fileURLWithPath:path] options:NSFileWrapperWritingWithNameUpdating originalContentsURL:nil error:nullptr])
-        LOG_ERROR("Failed to create image file via -[NSFileWrapper writeToURL:options:originalContentsURL:error:]");
-
-    if (!_data->_promisedURL.isEmpty())
-        WebCore::setMetadataURL(_data->_promisedURL, "", String(path));
-    
-    return [NSArray arrayWithObject:[path lastPathComponent]];
+    return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
 
 - (bool)_executeSavedCommandBySelector:(SEL)selector
@@ -2498,20 +2332,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [super doCommandBySelector:selector];
     [sink detach];
     return ![sink didReceiveUnhandledCommand];
-}
-
-- (NSInteger)spellCheckerDocumentTag
-{
-    if (!_data->_hasSpellCheckerDocumentTag) {
-        _data->_spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];
-        _data->_hasSpellCheckerDocumentTag = YES;
-    }
-    return _data->_spellCheckerDocumentTag;
-}
-
-- (void)handleAcceptedAlternativeText:(NSString*)text
-{
-    _data->_page->handleAlternativeTextUIResult(text);
 }
 
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
@@ -2536,7 +2356,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data->_page->initializeWebPage();
 
-    _data->_mouseDownEvent = nil;
     _data->_windowOcclusionDetectionEnabled = YES;
 
     _data->_impl->registerDraggedTypes();
@@ -2583,7 +2402,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 - (void)_startWindowDrag
 {
-    [[self window] performWindowDragWithEvent:_data->_mouseDownEvent];
+    _data->_impl->startWindowDrag();
 }
 #endif
 

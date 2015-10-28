@@ -37,19 +37,9 @@ namespace API {
 class PageConfiguration;
 }
 
-namespace IPC {
-class DataReference;
-}
-
-namespace WebCore {
-class Image;
-class SharedBuffer;
-}
-
 namespace WebKit {
 class DrawingAreaProxy;
 class WebProcessPool;
-struct ColorSpaceData;
 }
 
 @class WKWebView;
@@ -71,17 +61,6 @@ struct ColorSpaceData;
 - (bool)_executeSavedCommandBySelector:(SEL)selector;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
-
-- (void)_dragImageForView:(NSView *)view withImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
-- (void)_setPromisedDataForImage:(WebCore::Image *)image withFileName:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl withArchive:(WebCore::SharedBuffer*) archiveBuffer forPasteboard:(NSString *)pasteboardName;
-#if ENABLE(ATTACHMENT_ELEMENT)
-- (void)_setPromisedDataForAttachment:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl forPasteboard:(NSString *)pasteboardName;
-#endif
-
-- (WebKit::ColorSpaceData)_colorSpace;
-
-- (NSInteger)spellCheckerDocumentTag;
-- (void)handleAcceptedAlternativeText:(NSString*)text;
 
 #if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
