@@ -30,7 +30,7 @@ PASS testCollator(Intl.Collator('en-u-co-phonebk'), [{locale: 'en'}]) is true
 PASS testCollator(Intl.Collator('en-u-co-standard'), [{locale: 'en'}]) is true
 PASS testCollator(Intl.Collator('en-u-co-search'), [{locale: 'en'}]) is true
 PASS testCollator(Intl.Collator('en-u-co-abcd'), [{locale: 'en'}]) is true
-PASS testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}]) is true
+PASS testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}, {locale: 'de'}]) is true
 PASS testCollator(Intl.Collator('en-u-kn'), [{locale: 'en', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-true'), [{locale: 'en-u-kn-true', numeric: true}]) is true
 PASS testCollator(Intl.Collator('en-u-kn-false'), [{locale: 'en-u-kn-false', numeric: false}]) is true

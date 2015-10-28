@@ -56,7 +56,7 @@ shouldBeTrue("testCollator(Intl.Collator('en-u-co-phonebk'), [{locale: 'en'}])")
 shouldBeTrue("testCollator(Intl.Collator('en-u-co-standard'), [{locale: 'en'}])");
 shouldBeTrue("testCollator(Intl.Collator('en-u-co-search'), [{locale: 'en'}])");
 shouldBeTrue("testCollator(Intl.Collator('en-u-co-abcd'), [{locale: 'en'}])");
-shouldBeTrue("testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}])");
+shouldBeTrue("testCollator(Intl.Collator('de-u-co-phonebk'), [{locale: 'de-u-co-phonebk', collation: 'phonebk'}, {locale: 'de'}])");
 
 // The "kn" key is processed correctly.
 shouldBeTrue("testCollator(Intl.Collator('en-u-kn'), [{locale: 'en', numeric: true}])");
