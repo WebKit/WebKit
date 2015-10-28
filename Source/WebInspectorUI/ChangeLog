@@ -1,3 +1,14 @@
+2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline recording start button missing when WEB_REPLAY disabled (no ReplayAgent)
+        https://bugs.webkit.org/show_bug.cgi?id=150633
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._updateReplayInterfaceVisibility):
+        Ensure we pass a boolean to classList.toggle.
+
 2015-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove Timeline MarkDOMContent and MarkLoad, data is already available
