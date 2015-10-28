@@ -684,9 +684,6 @@ void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents&
 
 void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->didMarkDOMContentEvent(frame);
-
     if (!frame.isMainFrame())
         return;
 
@@ -699,13 +696,7 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgent
 
 void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame* frame)
 {
-    if (!frame)
-        return;
-
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->didMarkLoadEvent(*frame);
-
-    if (!frame->isMainFrame())
+    if (!frame || !frame->isMainFrame())
         return;
 
     if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())

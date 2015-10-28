@@ -82,9 +82,6 @@ enum class TimelineRecordType {
 
     EvaluateScript,
 
-    MarkLoad,
-    MarkDOMContent,
-
     TimeStamp,
     Time,
     TimeEnd,
@@ -155,8 +152,6 @@ public:
     void willWriteHTML(unsigned startLine, Frame*);
     void didWriteHTML(unsigned endLine);
     void didTimeStamp(Frame&, const String&);
-    void didMarkDOMContentEvent(Frame&);
-    void didMarkLoadEvent(Frame&);
     void didRequestAnimationFrame(int callbackId, Frame*);
     void didCancelAnimationFrame(int callbackId, Frame*);
     void willFireAnimationFrame(int callbackId, Frame*);

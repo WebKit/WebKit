@@ -140,13 +140,6 @@ Ref<InspectorObject> TimelineRecordFactory::createLayoutData(unsigned dirtyObjec
     return WTF::move(data);
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createMarkData(bool isMainFrame)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setBoolean("isMainFrame", isMainFrame);
-    return WTF::move(data);
-}
-
 Ref<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned startLine)
 {
     Ref<InspectorObject> data = InspectorObject::create();

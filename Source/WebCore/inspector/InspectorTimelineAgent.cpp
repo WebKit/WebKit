@@ -496,16 +496,6 @@ void InspectorTimelineAgent::timeEnd(Frame& frame, const String& message)
     appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, &frame);
 }
 
-void InspectorTimelineAgent::didMarkDOMContentEvent(Frame& frame)
-{
-    appendRecord(TimelineRecordFactory::createMarkData(frame.isMainFrame()), TimelineRecordType::MarkDOMContent, false, &frame);
-}
-
-void InspectorTimelineAgent::didMarkLoadEvent(Frame& frame)
-{
-    appendRecord(TimelineRecordFactory::createMarkData(frame.isMainFrame()), TimelineRecordType::MarkLoad, false, &frame);
-}
-
 void InspectorTimelineAgent::didCommitLoad()
 {
     clearRecordStack();
@@ -595,11 +585,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
 
     case TimelineRecordType::EvaluateScript:
         return Inspector::Protocol::Timeline::EventType::EvaluateScript;
-
-    case TimelineRecordType::MarkLoad:
-        return Inspector::Protocol::Timeline::EventType::MarkLoad;
-    case TimelineRecordType::MarkDOMContent:
-        return Inspector::Protocol::Timeline::EventType::MarkDOMContent;
 
     case TimelineRecordType::TimeStamp:
         return Inspector::Protocol::Timeline::EventType::TimeStamp;
