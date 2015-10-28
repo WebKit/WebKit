@@ -1,6 +1,6 @@
-layer at (0,0) size 785x2821
+layer at (0,0) size 785x2822
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2821
+layer at (0,0) size 785x2822
   RenderBlock {HTML} at (0,0) size 785x2822
     RenderBody {BODY} at (8,8) size 769x2806 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
@@ -128,15 +128,15 @@ layer at (0,0) size 785x2821
         RenderText {#text} at (0,0) size 673x17
           text run at (0,0) width 673: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
       RenderTable {TABLE} at (0,1575) size 769x1231 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x1228
+        RenderTableSection {TBODY} at (1,1) size 767x1229
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 767x1202
-            RenderTableCell {TD} at (0,614) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
+          RenderTableRow {TR} at (0,26) size 767x1203
+            RenderTableCell {TD} at (0,614) size 13x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,3) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x1203 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18

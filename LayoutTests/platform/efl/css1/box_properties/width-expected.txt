@@ -37,32 +37,32 @@ layer at (0,0) size 785x1342
         RenderText {#text} at (286,54) size 374x35
           text run at (286,54) width 57: " property"
           text run at (0,72) width 374: "without the need for the user to resize the viewing window."
-      RenderTable {TABLE} at (0,743) size 384x583 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 382x581
-          RenderTableRow {TR} at (0,0) size 382x26
-            RenderTableCell {TD} at (0,0) size 382x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,743) size 385x583 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 383x581
+          RenderTableRow {TR} at (0,0) size 383x26
+            RenderTableCell {TD} at (0,0) size 383x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 382x555
-            RenderTableCell {TD} at (0,290) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
-                text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 370x555 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock (anonymous) at (4,4) size 362x50
+          RenderTableRow {TR} at (0,26) size 383x555
+            RenderTableCell {TD} at (0,290) size 13x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x18
+                text run at (4,5) width 4: " "
+            RenderTableCell {TD} at (12,26) size 371x555 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock (anonymous) at (4,4) size 363x50
                 RenderImage {IMG} at (0,0) size 50x50
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,70) size 362x18
+              RenderBlock {P} at (4,70) size 363x18
                 RenderText {#text} at (0,0) size 287x17
                   text run at (0,0) width 287: "The square above should be fifty pixels wide."
-              RenderBlock (anonymous) at (4,104) size 362x181
-                RenderImage {IMG} at (0,0) size 181x181
+              RenderBlock (anonymous) at (4,104) size 363x181
+                RenderImage {IMG} at (0,0) size 182x181
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,301) size 362x36
+              RenderBlock {P} at (4,301) size 363x36
                 RenderText {#text} at (0,0) size 348x35
                   text run at (0,0) width 348: "The square above should be half as wide as the image's"
                   text run at (0,18) width 319: "parent element (either the BODY or the table cell)."
-              RenderBlock {P} at (4,353) size 181x198
+              RenderBlock {P} at (4,353) size 182x198
                 RenderText {#text} at (0,0) size 177x161
                   text run at (0,0) width 160: "This paragraph should be"
                   text run at (0,18) width 165: "half the width of its parent"
