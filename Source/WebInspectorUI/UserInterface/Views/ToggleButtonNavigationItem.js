@@ -29,11 +29,6 @@ WebInspector.ToggleButtonNavigationItem = class ToggleButtonNavigationItem exten
     {
         super(identifier, defaultToolTip, defaultImage, imageWidth, imageHeight, suppressEmboss);
 
-        // The image isn't cacheable because it dynamically changes and the same canvas identifier is reused.
-        // FIXME: We could try overriding _canvasIdentifier() to return different identifiers. If we did that
-        // we would also need to override generateStyleText() to use the different identifiers.
-        this._imageCacheable = false;
-
         this._toggled = false;
         this._defaultImage = defaultImage;
         this._alternateImage = alternateImage;

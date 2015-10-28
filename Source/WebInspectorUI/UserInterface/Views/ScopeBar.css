@@ -71,12 +71,8 @@
     margin-bottom: -1px;
 }
 
-.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .filled {
-    fill: white !important;
-}
-
-.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .stroked {
-    stroke: white !important;
+.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows {
+    color: white;
 }
 
 .scope-bar > li:matches(.selected, :active) {

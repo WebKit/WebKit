@@ -50,16 +50,12 @@ WebInspector.VisualStylePropertyEditorLink = class VisualStylePropertyEditorLink
         this._iconElement.addEventListener("mouseout", this._iconMouseout.bind(this));
         this._iconElement.addEventListener("click", this._iconClicked.bind(this));
 
-        wrappedSVGDocument("Images/VisualStylePropertyUnlinked.svg", "unlinked-icon", null, function(wrapper) {
-            this._iconElement.appendChild(wrapper);
-            this._unlinkedIcon = wrapper;
-        }.bind(this));
+        this._unlinkedIcon = useSVGSymbol("Images/VisualStylePropertyUnlinked.svg", "unlinked-icon");
+        this._iconElement.appendChild(this._unlinkedIcon);
 
-        wrappedSVGDocument("Images/VisualStylePropertyLinked.svg", "linked-icon", null, function(wrapper) {
-            this._iconElement.appendChild(wrapper);
-            this._linkedIcon = wrapper;
-            this._linkedIcon.hidden = true;
-        }.bind(this));
+        this._linkedIcon = useSVGSymbol("Images/VisualStylePropertyLinked.svg", "linked-icon");
+        this._linkedIcon.hidden = true;
+        this._iconElement.appendChild(this._linkedIcon);
 
         this._element.appendChild(this._iconElement);
 

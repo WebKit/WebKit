@@ -159,12 +159,8 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar {
     color: black;
 }
 
-.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple svg .filled {
-    fill: black !important;
-}
-
-.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple svg .stroked {
-    stroke: black !important;
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple .arrows {
+    color: black;
 }
 
 body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {

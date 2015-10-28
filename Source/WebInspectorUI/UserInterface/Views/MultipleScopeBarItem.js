@@ -40,9 +40,7 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
         this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
         this._element.appendChild(this._selectElement);
 
-        wrappedSVGDocument("Images/UpDownArrows.svg", "arrows", null, function(element) {
-            this._element.appendChild(element);
-        }.bind(this));
+        this._element.appendChild(useSVGSymbol("Images/UpDownArrows.svg", "arrows"));
 
         this.scopeBarItems = scopeBarItems;
     }

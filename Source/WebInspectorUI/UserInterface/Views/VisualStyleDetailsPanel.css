@@ -32,7 +32,7 @@
     right: 5px;
     width: 15px;
     height: 15px;
-    background-image: -webkit-canvas(navigation-item-clear-log-normal);
+    background-image: url(../Images/NavigationItemTrash.svg);
     background-size: 15px 15px;
     opacity: 0.7;
 }

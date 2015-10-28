@@ -156,21 +156,19 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         if (treeElement.status || !treeElement.treeOutline)
             return;
 
-        wrappedSVGDocument("Images/Close.svg", null, WebInspector.UIString("Close resource view"), function(element) {
-            var fragment = document.createDocumentFragment();
+        var fragment = document.createDocumentFragment();
 
-            var closeButton = new WebInspector.TreeElementStatusButton(element);
-            closeButton.element.classList.add("close");
-            closeButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementCloseButtonClicked, this);
-            fragment.appendChild(closeButton.element);
+        var closeButton = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/Close.svg", null, WebInspector.UIString("Close resource view")));
+        closeButton.element.classList.add("close");
+        closeButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementCloseButtonClicked, this);
+        fragment.appendChild(closeButton.element);
 
-            var goToButton = new WebInspector.TreeElementStatusButton(WebInspector.createGoToArrowButton());
-            goToButton.__treeElement = treeElement;
-            goToButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
-            fragment.appendChild(goToButton.element);
+        var goToButton = new WebInspector.TreeElementStatusButton(WebInspector.createGoToArrowButton());
+        goToButton.__treeElement = treeElement;
+        goToButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
+        fragment.appendChild(goToButton.element);
 
-            treeElement.status = fragment;
-        }.bind(this));
+        treeElement.status = fragment;
     }
 
     // Private

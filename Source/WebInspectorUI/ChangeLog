@@ -1,3 +1,155 @@
+2015-10-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Remove image generators and use SVG directly
+        https://bugs.webkit.org/show_bug.cgi?id=150602
+
+        Reviewed by Brain Burg.
+
+        This removes the code used to generate button image states as various canvas bitmaps.
+        With the simplification of the UI in Yosemite, we can now just style SVG images to change
+        the color used by the glyphs in these images. To do that we use the special "currentColor"
+        color keyword. That keyword represents the current value of the applied CSS text color.
+        This approach was used since it works across shadow DOM boundaries, which are there with
+        our new use of the SVG <use> element to import glyphs. This allows us to eliminate the
+        "stroked" and "filled" classes that were used to style some images that used the old
+        wrappedSVGDocument image utility.
+
+        Some of the SVG images had to be recreated -- specifically the removal of <clipPath> and
+        <text> elements. Those elements do not work or work well with the <use> element. We can
+        now only use graphical elements like <path>, <rect>, <circle>, etc.
+
+        * UserInterface/Images/*.svg: Added id to the top level for most images. Use currentColor instead of black. Sorted attributes.
+        * UserInterface/Images/gtk/*.svg: Added id to the top level for most images. Filed bug 150603 to track adopting currentColor.
+
+        * UserInterface/Base/ImageUtilities.js:
+        (useSVGSymbol): Added.
+        (catch): Deleted.
+        (_devicePixelRatioChanged): Deleted.
+        (_registerGeneratedImageUpdateFunction): Deleted.
+        (_logSQLError): Deleted.
+        (_logSQLTransactionError): Deleted.
+        (_prefetchCachedImagesAndUpdate): Deleted.
+        (_prefetchCachedImagesAndUpdate.): Deleted.
+        (else.): Deleted.
+        (restoreImageFromStorage): Deleted.
+        (imageLoaded): Deleted.
+        (ensureImageIsLoaded): Deleted.
+        (restoreImages.restoreActiveImages): Deleted.
+        (restoreImages): Deleted.
+        (restoreImage): Deleted.
+        (update): Deleted.
+        (generateImages.generateActiveImages): Deleted.
+        (generateImages): Deleted.
+        (generateImage): Deleted.
+        (_drawImageShadow): Deleted.
+        (_invertMaskImage): Deleted.
+        (_applyImageMask): Deleted.
+        (generateEmbossedImages): Deleted.
+        (invokeCallbackWithDocument): Deleted.
+        (imageLoad): Deleted.
+        (imageError): Deleted.
+        (wrappedSVGDocument): Deleted.
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WebInspector.ActivateButtonNavigationItem.prototype.set activated):
+        (WebInspector.ActivateButtonNavigationItem.prototype.generateStyleText): Deleted.
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button):
+        (.navigation-bar .item.button > .glyph):
+        (.navigation-bar .item.button:not(.disabled):active > .glyph):
+        (.navigation-bar .item.button:not(.disabled):matches(:focus, .activate.activated, .radio.selected) > .glyph):
+        (.navigation-bar .item.button:not(.disabled):active:matches(:focus, .activate.activated, .radio.selected) > .glyph):
+        (body.window-inactive .navigation-bar .item.button > .glyph):
+        (.navigation-bar .item.button.disabled > .glyph):
+        (body.window-inactive .navigation-bar .item.button.disabled > .glyph):
+        (.navigation-bar .item.button.text-only): Deleted.
+        (body.window-inactive .navigation-bar .item.button:not(.suppress-emboss) > .glyph): Deleted.
+        (body.window-inactive .navigation-bar .item.button.disabled:not(.suppress-emboss) > .glyph): Deleted.
+        (.navigation-bar .item.button.suppress-emboss): Deleted.
+        (.navigation-bar .item.button.suppress-emboss > .glyph): Deleted.
+        (.navigation-bar .item.button.suppress-emboss:active > .glyph): Deleted.
+        (.navigation-bar .item.button.suppress-emboss.disabled > .glyph): Deleted.
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem.prototype.set image):
+        (WebInspector.ButtonNavigationItem): Deleted.
+        (WebInspector.ButtonNavigationItem.prototype.get suppressBezel): Deleted.
+        (WebInspector.ButtonNavigationItem.prototype.set suppressBezel): Deleted.
+        (WebInspector.ButtonNavigationItem.prototype.generateStyleText): Deleted.
+        (WebInspector.ButtonNavigationItem.prototype._canvasIdentifier): Deleted.
+        (WebInspector.ButtonNavigationItem.prototype._updateImage): Deleted.
+        (WebInspector.ButtonNavigationItem.prototype._generateImages): Deleted.
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button > .glyph):
+        (.toolbar .item.button:not(.disabled):active > .glyph):
+        * UserInterface/Views/ControlToolbarItem.css:
+        (.toolbar .item.control):
+        (.toolbar .item.control:hover):
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WebInspector.MultipleScopeBarItem):
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype.updateLayoutSoon.update):
+        (WebInspector.NavigationBar.prototype.updateLayoutSoon):
+        (WebInspector.NavigationBar): Deleted.
+        (WebInspector.NavigationBar.prototype.insertNavigationItem): Deleted.
+        (WebInspector.NavigationBar.prototype.removeNavigationItem): Deleted.
+        (WebInspector.NavigationBar.prototype.updateLayout): Deleted.
+        (WebInspector.NavigationBar.prototype._updateStyle): Deleted.
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.treeElementAddedOrChanged):
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WebInspector.RadioButtonNavigationItem.prototype.set active):
+        (WebInspector.RadioButtonNavigationItem.prototype.generateStyleText): Deleted.
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows):
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .filled): Deleted.
+        (.scope-bar > li.multiple:matches(.selected, :hover, :active) > .arrows svg .stroked): Deleted.
+        * UserInterface/Views/ScopeBarItem.js:
+        (WebInspector.ScopeBarItem):
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.css:
+        (.scope-radio-button-navigation-item:hover > .arrows):
+        (.scope-radio-button-navigation-item.selected > .arrows > svg .stroked): Deleted.
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.js:
+        (WebInspector.ScopeRadioButtonNavigationItem):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple .arrows):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple svg .filled): Deleted.
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple svg .stroked): Deleted.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.treeElementAddedOrChanged):
+        (WebInspector.TimelineSidebarPanel.prototype._timelineAdded):
+        * UserInterface/Views/ToggleButtonNavigationItem.js:
+        (WebInspector.ToggleButtonNavigationItem): Deleted.
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (.item > .status > .status-button):
+        (:matches(:focus, .force-focus) .item.selected > .status > .status-button):
+        (.item > .status > .status-button > svg .filled): Deleted.
+        (:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .filled): Deleted.
+        (.item > .status > .status-button > svg .stroked): Deleted.
+        (:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .stroked): Deleted.
+        * UserInterface/Views/VisualStyleCommaSeparatedKeywordEditor.js:
+        (WebInspector.VisualStyleCommaSeparatedKeywordEditor):
+        * UserInterface/Views/VisualStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .visual > .details-section .details-section > .header > .visual-style-section-clear):
+        * UserInterface/Views/VisualStyleKeywordIconList.css:
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:not(.selected) > div):
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected svg .stroked): Deleted.
+        (.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected svg .filled): Deleted.
+        * UserInterface/Views/VisualStyleKeywordIconList.js:
+        (WebInspector.VisualStyleKeywordIconList.createListItem):
+        (WebInspector.VisualStyleKeywordIconList):
+        * UserInterface/Views/VisualStylePropertyEditorLink.css:
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > :matches(.linked-icon, .unlinked-icon)):
+        (.visual-style-property-editor-link:not(.linked) > .visual-style-property-editor-link-icon > :matches(.linked-icon, .unlinked-icon)):
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon): Deleted.
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon svg .filled): Deleted.
+        (.visual-style-property-editor-link > .visual-style-property-editor-link-icon > .unlinked-icon svg .stroked): Deleted.
+        * UserInterface/Views/VisualStylePropertyEditorLink.js:
+        (WebInspector.VisualStylePropertyEditorLink):
+        * UserInterface/Views/VisualStyleSelectorSection.css:
+        (.details-section.visual-style-selector-section > .header > .controls > .visual-style-selector-section-add-rule):
+        * UserInterface/Views/VisualStyleSelectorSection.js:
+        (WebInspector.VisualStyleSelectorSection):
+
 2015-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: jsmin.py mistakenly removes whitespace from template literal strings

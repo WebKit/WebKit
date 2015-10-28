@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 9 9">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
     <style>
         svg[id] {
             display: none;
@@ -8,14 +8,6 @@
 
         svg[id]:target {
             display: initial;
-        }
-
-        path {
-            fill: inherit;
-        }
-
-        svg[id $= "-mask"] {
-            fill: black;
         }
 
         svg[id $= "-normal"] {
@@ -28,15 +20,15 @@
     </style>
 
     <defs>
-        <path id="back-arrow-path" d="m6.3438 0c-0.1429 0.034005-0.2751 0.11116-0.375 0.21875l-3.75 3.75-0.5 0.53125 0.5 0.53125 3.75 3.75c0.1398 0.1379 0.3348 0.2182 0.5312 0.2188h0.03125 0.0625 0.65625v-0.5625-0.09375c0.0359-0.2367-0.048-0.4885-0.2188-0.6563l-3.1874-3.1875 3.1874-3.2188c0.1389-0.139 0.2195-0.33465 0.2188-0.5312v-0.15625-0.59375h-0.5938-0.0937-0.0625-0.0938z"/>
-        <path id="forward-arrow-path" d="m2.6436 0c0.14283 0.034005 0.27509 0.11116 0.375 0.21875l3.75 3.75 0.5 0.53125-0.5 0.53125-3.75 3.75c-0.1399 0.1379-0.3349 0.2182-0.5313 0.2188h-0.03125-0.0625-0.65625v-0.5625-0.09375c-0.0358-0.2367 0.0481-0.4885 0.2188-0.6563l3.1875-3.1875-3.1875-3.2188c-0.1389-0.139-0.2194-0.33465-0.2188-0.5312v-0.15625-0.59375h0.59375 0.09375 0.0625 0.09375z"/>
+        <symbol id="back-arrow-symbol" viewBox="0 0 9 9"><path fill="inherit" d="m6.3438 0c-0.1429 0.034005-0.2751 0.11116-0.375 0.21875l-3.75 3.75-0.5 0.53125 0.5 0.53125 3.75 3.75c0.1398 0.1379 0.3348 0.2182 0.5312 0.2188h0.03125 0.0625 0.65625v-0.5625-0.09375c0.0359-0.2367-0.048-0.4885-0.2188-0.6563l-3.1874-3.1875 3.1874-3.2188c0.1389-0.139 0.2195-0.33465 0.2188-0.5312v-0.15625-0.59375h-0.5938-0.0937-0.0625-0.0938z"/></symbol>
+        <symbol id="forward-arrow-symbol" viewBox="0 0 9 9"><path fill="inherit" d="m2.6436 0c0.14283 0.034005 0.27509 0.11116 0.375 0.21875l3.75 3.75 0.5 0.53125-0.5 0.53125-3.75 3.75c-0.1399 0.1379-0.3349 0.2182-0.5313 0.2188h-0.03125-0.0625-0.65625v-0.5625-0.09375c-0.0358-0.2367 0.0481-0.4885 0.2188-0.6563l3.1875-3.1875-3.1875-3.2188c-0.1389-0.139-0.2194-0.33465-0.2188-0.5312v-0.15625-0.59375h0.59375 0.09375 0.0625 0.09375z"/></symbol>
     </defs>
 
-    <svg id="back-arrow-mask"><use xlink:href="#back-arrow-path"/></svg>
-    <svg id="back-arrow-normal"><use xlink:href="#back-arrow-path"/></svg>
-    <svg id="back-arrow-active"><use xlink:href="#back-arrow-path"/></svg>
+    <svg id="back-arrow-mask"><use fill="currentColor" xlink:href="#back-arrow-symbol"/></svg>
+    <svg id="back-arrow-normal"><use xlink:href="#back-arrow-symbol"/></svg>
+    <svg id="back-arrow-active"><use xlink:href="#back-arrow-symbol"/></svg>
 
-    <svg id="forward-arrow-mask"><use xlink:href="#forward-arrow-path"/></svg>
-    <svg id="forward-arrow-normal"><use xlink:href="#forward-arrow-path"/></svg>
-    <svg id="forward-arrow-active"><use xlink:href="#forward-arrow-path"/></svg>
+    <svg id="forward-arrow-mask"><use fill="currentColor" xlink:href="#forward-arrow-symbol"/></svg>
+    <svg id="forward-arrow-normal"><use xlink:href="#forward-arrow-symbol"/></svg>
+    <svg id="forward-arrow-active"><use xlink:href="#forward-arrow-symbol"/></svg>
 </svg>

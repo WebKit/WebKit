@@ -43,10 +43,11 @@
     width: 32px;
     height: 32px;
 
-    background-size: 100% 100% !important;
+    color: hsl(0, 0%, 45%);
+}
 
-    background-repeat: no-repeat;
-    background-position: center center;
+.toolbar .item.button:not(.disabled):active > .glyph {
+    color: hsl(0, 0%, 30%);
 }
 
 .toolbar.small-size .item.button > .glyph {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright © 2015 Apple Inc. All rights reserved. -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 10 16">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
     <style>
         svg[id] {
             display: none;
@@ -8,14 +8,6 @@
 
         svg[id]:target {
             display: initial;
-        }
-
-        path {
-            fill: inherit;
-        }
-
-        svg[id $= "-mask"] {
-            fill: black;
         }
 
         svg[id $= "-normal"] {
@@ -28,15 +20,15 @@
     </style>
 
     <defs>
-        <path id="back-arrow-path" d="M 3.20540064 7.75983283 L 9.3448 1.6244 L 7.7388 0.0174 L -0.0002 7.7514 L 0.0091993759 7.76080523 L 0.0018 7.7682 L 7.7358 15.5072 L 9.3428 13.9012 L 3.20540064 7.75983283 Z"/>
-        <path id="forward-arrow-path" d="M 6.13924933 7.75978283 L 0.0018 13.9012 L 1.6088 15.5072 L 9.3428 7.7682 L 9.33545066 7.76085523 L 9.3449 7.7514 L 1.6059 0.0174 L -0.0001 1.6244 L 6.13924933 7.75978283 Z"/>
+        <symbol id="back-arrow-symbol" viewBox="0 0 10 16"><path fill="inherit" d="M 3.20540064 7.75983283 L 9.3448 1.6244 L 7.7388 0.0174 L -0.0002 7.7514 L 0.0091993759 7.76080523 L 0.0018 7.7682 L 7.7358 15.5072 L 9.3428 13.9012 L 3.20540064 7.75983283 Z"/></symbol>
+        <symbol id="forward-arrow-symbol" viewBox="0 0 10 16"><path fill="inherit" d="M 6.13924933 7.75978283 L 0.0018 13.9012 L 1.6088 15.5072 L 9.3428 7.7682 L 9.33545066 7.76085523 L 9.3449 7.7514 L 1.6059 0.0174 L -0.0001 1.6244 L 6.13924933 7.75978283 Z"/></symbol>
     </defs>
 
-    <svg id="back-arrow-mask"><use xlink:href="#back-arrow-path"/></svg>
-    <svg id="back-arrow-normal"><use xlink:href="#back-arrow-path"/></svg>
-    <svg id="back-arrow-active"><use xlink:href="#back-arrow-path"/></svg>
+    <svg id="back-arrow-mask"><use fill="currentColor" xlink:href="#back-arrow-symbol"/></svg>
+    <svg id="back-arrow-normal"><use xlink:href="#back-arrow-symbol"/></svg>
+    <svg id="back-arrow-active"><use xlink:href="#back-arrow-symbol"/></svg>
 
-    <svg id="forward-arrow-mask"><use xlink:href="#forward-arrow-path"/></svg>
-    <svg id="forward-arrow-normal"><use xlink:href="#forward-arrow-path"/></svg>
-    <svg id="forward-arrow-active"><use xlink:href="#forward-arrow-path"/></svg>
+    <svg id="forward-arrow-mask"><use fill="currentColor" xlink:href="#forward-arrow-symbol"/></svg>
+    <svg id="forward-arrow-normal"><use xlink:href="#forward-arrow-symbol"/></svg>
+    <svg id="forward-arrow-active"><use xlink:href="#forward-arrow-symbol"/></svg>
 </svg>

@@ -30,20 +30,12 @@
     vertical-align: middle;
 }
 
-.item > .status > .status-button > svg .filled {
-    fill: hsl(0, 0%, 50%);
+.item > .status > .status-button {
+    color: hsl(0, 0%, 50%);
 }
 
-:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .filled {
-    fill: white !important;
-}
-
-.item > .status > .status-button > svg .stroked {
-    stroke: hsl(0, 0%, 50%);
-}
-
-:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .stroked {
-    stroke: white !important;
+:matches(:focus, .force-focus) .item.selected > .status > .status-button {
+    color: white;
 }
 
 .item.selected > .status > .status-button:active {

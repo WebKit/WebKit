@@ -50,9 +50,7 @@ WebInspector.VisualStyleKeywordIconList = class VisualStyleKeywordIconList exten
             iconButtonElement.addEventListener("click", this._handleKeywordChanged.bind(this));
 
             let imageName = value === "none" ? "VisualStyleNone" : prettyPropertyReferenceName + title.replace(/\s/g, "");
-            wrappedSVGDocument("Images/" + imageName + ".svg", null, null, function(wrapper) {
-                iconButtonElement.appendChild(wrapper);
-            }.bind(this));
+            iconButtonElement.appendChild(useSVGSymbol("Images/" + imageName + ".svg"));
 
             return iconButtonElement;
         }

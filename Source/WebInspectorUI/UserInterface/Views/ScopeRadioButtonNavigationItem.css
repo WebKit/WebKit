@@ -57,7 +57,6 @@
     display: inline-block;
 }
 
-.scope-radio-button-navigation-item:hover > .arrows > svg .stroked,
-.scope-radio-button-navigation-item.selected > .arrows > svg .stroked {
-    stroke: white;
+.scope-radio-button-navigation-item:hover > .arrows {
+    color: white;
 }

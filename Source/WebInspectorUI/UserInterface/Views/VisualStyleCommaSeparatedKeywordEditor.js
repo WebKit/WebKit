@@ -44,15 +44,13 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
         controlContainer.classList.add("visual-style-comma-separated-keyword-controls");
         this.contentElement.appendChild(controlContainer);
 
-        wrappedSVGDocument("Images/Plus13.svg", "visual-style-add-comma-separated-keyword", WebInspector.UIString("Click to add a new item."), function(wrapper) {
-            wrapper.addEventListener("click", this._addEmptyCommaSeparatedKeyword.bind(this));
-            controlContainer.appendChild(wrapper);
-        }.bind(this));
+        let addGlyphElement = useSVGSymbol("Images/Plus13.svg", "visual-style-add-comma-separated-keyword");
+        addGlyphElement.addEventListener("click", this._addEmptyCommaSeparatedKeyword.bind(this));
+        controlContainer.appendChild(addGlyphElement);
 
-        wrappedSVGDocument("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WebInspector.UIString("Click to remove the selected item."), function(wrapper) {
-            wrapper.addEventListener("click", this._removeSelectedCommaSeparatedKeyword.bind(this));
-            controlContainer.appendChild(wrapper);
-        }.bind(this));
+        let removeGlyphElement = useSVGSymbol("Images/Minus.svg", "visual-style-remove-comma-separated-keyword", WebInspector.UIString("Click to remove the selected item."));
+        removeGlyphElement.addEventListener("click", this._removeSelectedCommaSeparatedKeyword.bind(this));
+        controlContainer.appendChild(removeGlyphElement);
     }
 
     // Public

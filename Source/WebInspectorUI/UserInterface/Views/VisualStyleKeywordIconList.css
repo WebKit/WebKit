@@ -59,14 +59,7 @@
 
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected {
     background-color: hsl(213, 92%, 55%);
-}
-
-.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected svg .stroked {
-    stroke: hsl(0, 100%, 100%);
-}
-
-.visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon.selected svg .filled {
-    fill: hsl(0, 100%, 100%);
+    color: hsl(0, 100%, 100%);
 }
 
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:matches(.computed, .selected) + .keyword-icon {
@@ -84,5 +77,5 @@
 }
 
 .visual-style-property-container.keyword-icon-list > .visual-style-property-value-container > .keyword-icon-list-container > .keyword-icon:not(.selected) > div {
-    filter: opacity(0.7);
+    opacity: 0.7;
 }

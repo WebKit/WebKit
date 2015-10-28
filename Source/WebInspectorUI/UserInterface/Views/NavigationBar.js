@@ -43,18 +43,12 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
         this._element.addEventListener("keydown", this._keyDown.bind(this), false);
         this._element.addEventListener("mousedown", this._mouseDown.bind(this), false);
 
-        document.addEventListener("load", this.updateLayout.bind(this), false);
-
-        this._styleElement = document.createElement("style");
-
         this._navigationItems = [];
 
         if (navigationItems) {
             for (var i = 0; i < navigationItems.length; ++i)
                 this.addNavigationItem(navigationItems[i]);
         }
-
-        document.head.appendChild(this._styleElement);
     }
 
     // Public
@@ -91,7 +85,6 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
         parentElement.insertBefore(navigationItem.element, nextSiblingElement);
 
         this._minimumWidthNeedsRecalculation = true;
-        this._needsStyleUpdated = true;
 
         this.updateLayoutSoon();
 
@@ -113,7 +106,6 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
         navigationItem.element.remove();
 
         this._minimumWidthNeedsRecalculation = true;
-        this._needsStyleUpdated = true;
 
         this.updateLayoutSoon();
 
@@ -131,7 +123,7 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
         {
             this._updateLayoutIdentifier = undefined;
 
-            if (this._needsLayout || this._needsStyleUpdated)
+            if (this._needsLayout)
                 this.updateLayout();
         }
 
@@ -144,9 +136,6 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
             cancelAnimationFrame(this._updateLayoutIdentifier);
             this._updateLayoutIdentifier = undefined;
         }
-
-        if (this._needsStyleUpdated)
-            this._updateStyle();
 
         this._needsLayout = false;
 
@@ -400,24 +389,6 @@ WebInspector.NavigationBar = class NavigationBar extends WebInspector.Object
     _blur(event)
     {
         this._focused = false;
-    }
-
-    _updateStyle()
-    {
-        this._needsStyleUpdated = false;
-
-        var parentSelector = "." + (this.constructor.StyleClassName || "navigation-bar");
-
-        var styleText = "";
-        for (var i = 0; i < this._navigationItems.length; ++i) {
-            if (!this._navigationItems[i].generateStyleText)
-                continue;
-            if (styleText)
-                styleText += "\n";
-            styleText += this._navigationItems[i].generateStyleText(parentSelector);
-        }
-
-        this._styleElement.textContent = styleText;
     }
 
     _calculateMinimumWidth()
