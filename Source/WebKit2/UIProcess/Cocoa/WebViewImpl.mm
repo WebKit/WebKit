@@ -1934,7 +1934,7 @@ void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientP
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [view dragImage:image
-                 at:clientPoint
+                 at:NSPointFromCGPoint(clientPoint)
              offset:NSZeroSize
               event:linkDrag ? [NSApp currentEvent] : m_lastMouseDownEvent.get()
          pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]

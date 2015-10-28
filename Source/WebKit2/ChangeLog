@@ -1,5 +1,12 @@
 2015-10-27  Tim Horton  <timothy_horton@apple.com>
 
+        Fix the 32-bit build.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::dragImageForView):
+
+2015-10-27  Tim Horton  <timothy_horton@apple.com>
+
         Fix the build.
 
         * UIProcess/Cocoa/WebViewImpl.mm:
