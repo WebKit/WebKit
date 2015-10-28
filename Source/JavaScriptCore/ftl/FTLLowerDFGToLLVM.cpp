@@ -1476,7 +1476,36 @@ private:
             setDouble(isSub ? m_out.doubleSub(C1, C2) : m_out.doubleAdd(C1, C2));
             break;
         }
+
+        case UntypedUse: {
+            if (!isSub) {
+                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                break;
+            }
             
+            unsigned stackmapID = m_stackmapIDs++;
+
+            if (Options::verboseCompilation())
+                dataLog("    Emitting ArithSub patchpoint with stackmap #", stackmapID, "\n");
+
+            LValue left = lowJSValue(m_node->child1());
+            LValue right = lowJSValue(m_node->child2());
+
+            // Arguments: id, bytes, target, numArgs, args...
+            LValue call = m_out.call(
+                m_out.patchpointInt64Intrinsic(),
+                m_out.constInt64(stackmapID), m_out.constInt32(sizeOfArithSub()),
+                constNull(m_out.ref8), m_out.constInt32(2), left, right);
+            setInstructionCallingConvention(call, LLVMAnyRegCallConv);
+
+            m_ftlState.arithSubs.append(ArithSubDescriptor(stackmapID, m_node->origin.semantic,
+                abstractValue(m_node->child1()).resultType(),
+                abstractValue(m_node->child2()).resultType()));
+
+            setJSValue(call);
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;

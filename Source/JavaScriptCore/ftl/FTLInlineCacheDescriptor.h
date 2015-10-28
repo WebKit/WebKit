@@ -123,6 +123,25 @@ public:
     Vector<CheckInGenerator> m_generators;
 };
 
+class ArithSubDescriptor : public InlineCacheDescriptor {
+public:
+    ArithSubDescriptor(unsigned stackmapID, CodeOrigin codeOrigin, ResultType leftType, ResultType rightType)
+        : InlineCacheDescriptor(stackmapID, codeOrigin, nullptr)
+        , m_leftType(leftType)
+        , m_rightType(rightType)
+    {
+    }
+
+    ResultType leftType() const { return m_leftType; }
+    ResultType rightType() const { return m_rightType; }
+    
+    Vector<MacroAssembler::Label> m_slowPathStarts;
+
+private:
+    ResultType m_leftType;
+    ResultType m_rightType;
+};
+
 // You can create a lazy slow path call in lowerDFGToLLVM by doing:
 // m_ftlState.lazySlowPaths.append(
 //     LazySlowPathDescriptor(

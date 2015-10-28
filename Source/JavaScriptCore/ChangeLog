@@ -1,5 +1,59 @@
 2015-10-28  Mark Lam  <mark.lam@apple.com>
 
+        Update FTL to support UntypedUse operands for op_sub.
+        https://bugs.webkit.org/show_bug.cgi?id=150562
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerARM64.h:
+        - make the dataTempRegister and memoryTempRegister public so that we can
+          move input registers out of them if needed.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        - We can now compile ArithSub.
+
+        * ftl/FTLCompile.cpp:
+        - Added BinaryArithGenerationContext to shuffle registers into a state that is
+          expected by the baseline snippet generator.  This includes:
+          1. Making sure that the input and output registers are not in the tag or
+             scratch registers.
+          2. Loading the tag registers with expected values.
+          3. Restoring the registers to their original value on return.
+        - Added code to implement the ArithSub inline cache.
+
+        * ftl/FTLInlineCacheDescriptor.h:
+        (JSC::FTL::ArithSubDescriptor::ArithSubDescriptor):
+        (JSC::FTL::ArithSubDescriptor::leftType):
+        (JSC::FTL::ArithSubDescriptor::rightType):
+
+        * ftl/FTLInlineCacheSize.cpp:
+        (JSC::FTL::sizeOfArithSub):
+        * ftl/FTLInlineCacheSize.h:
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileArithAddOrSub):
+        - Added handling for UnusedType for the ArithSub case.
+
+        * ftl/FTLState.h:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::reservedRegisters):
+
+        * jit/JITSubGenerator.h:
+        (JSC::JITSubGenerator::generateFastPath):
+        - When the result is in the same as one of the input registers, we'll end up
+          corrupting the input in fast path even if we determine that we need to go to
+          the slow path.  We now move the input into the scratch register and operate
+          on that instead and only move the result into the result register only after
+          the fast path has succeeded.
+
+        * tests/stress/op_sub.js:
+        (o1.valueOf):
+        (runTest):
+        - Added some debugging tools: flags for verbose logging, and eager abort on fail.
+
+2015-10-28  Mark Lam  <mark.lam@apple.com>
+
         Fix a typo in ProbeContext::fpr().
         https://bugs.webkit.org/show_bug.cgi?id=150629
 

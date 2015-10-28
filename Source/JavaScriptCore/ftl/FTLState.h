@@ -78,6 +78,7 @@ public:
     SegmentedVector<GetByIdDescriptor> getByIds;
     SegmentedVector<PutByIdDescriptor> putByIds;
     SegmentedVector<CheckInDescriptor> checkIns;
+    SegmentedVector<ArithSubDescriptor> arithSubs;
     SegmentedVector<LazySlowPathDescriptor> lazySlowPaths;
     Vector<JSCall> jsCalls;
     Vector<JSCallVarargs> jsCallVarargses;

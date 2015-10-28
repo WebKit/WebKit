@@ -34,6 +34,7 @@
 #include "CCallHelpers.h"
 #include "DFGCommon.h"
 #include "DFGGraphSafepoint.h"
+#include "DFGOperations.h"
 #include "DataView.h"
 #include "Disassembler.h"
 #include "FTLExitThunkGenerator.h"
@@ -41,12 +42,15 @@
 #include "FTLJITCode.h"
 #include "FTLThunks.h"
 #include "FTLUnwindInfo.h"
+#include "JITSubGenerator.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
 
 namespace JSC { namespace FTL {
 
 using namespace DFG;
+
+static RegisterSet usedRegistersFor(const StackMaps::Record&);
 
 static uint8_t* mmAllocateCodeSection(
     void* opaqueState, uintptr_t size, unsigned alignment, unsigned, const char* sectionName)
@@ -301,6 +305,157 @@ static void generateCheckInICFastPath(
     }
 }
 
+class BinarySnippetRegisterContext {
+    // The purpose of this class is to shuffle registers to get them into the state
+    // that baseline code expects so that we can use the baseline snippet generators i.e.
+    //    1. ensure that the inputs and outputs are not in tag or scratch registers.
+    //    2. tag registers are loaded with the expected values.
+    //
+    // We also need to:
+    //    1. restore the input and tag registers to the values that LLVM put there originally.
+    //    2. that is except when one of the input registers is also the result register.
+    //       In this case, we don't want to trash the result, and hence, should not restore into it.
+
+public:
+    BinarySnippetRegisterContext(ScratchRegisterAllocator& allocator, GPRReg& result, GPRReg& left, GPRReg& right)
+        : m_allocator(allocator)
+        , m_result(result)
+        , m_left(left)
+        , m_right(right)
+        , m_origResult(result)
+        , m_origLeft(left)
+        , m_origRight(right)
+    {
+        m_allocator.lock(m_result);
+        m_allocator.lock(m_left);
+        m_allocator.lock(m_right);
+
+        RegisterSet inputRegisters = RegisterSet(m_left, m_right);
+        RegisterSet inputAndOutputRegisters = RegisterSet(inputRegisters, m_result);
+
+        RegisterSet reservedRegisters;
+        for (GPRReg reg : GPRInfo::reservedRegisters())
+            reservedRegisters.set(reg);
+
+        if (reservedRegisters.get(m_left))
+            m_left = m_allocator.allocateScratchGPR();
+        if (reservedRegisters.get(m_right))
+            m_right = m_allocator.allocateScratchGPR();
+        if (!inputRegisters.get(m_result) && reservedRegisters.get(m_result))
+            m_result = m_allocator.allocateScratchGPR();
+        
+        if (!inputAndOutputRegisters.get(GPRInfo::tagMaskRegister))
+            m_savedTagMaskRegister = m_allocator.allocateScratchGPR();
+        if (!inputAndOutputRegisters.get(GPRInfo::tagTypeNumberRegister))
+            m_savedTagTypeNumberRegister = m_allocator.allocateScratchGPR();
+    }
+
+    void initializeRegisters(CCallHelpers& jit)
+    {
+        if (m_left != m_origLeft)
+            jit.move(m_origLeft, m_left);
+        if (m_right != m_origRight)
+            jit.move(m_origRight, m_right);
+
+        if (m_savedTagMaskRegister != InvalidGPRReg)
+            jit.move(GPRInfo::tagMaskRegister, m_savedTagMaskRegister);
+        if (m_savedTagTypeNumberRegister != InvalidGPRReg)
+            jit.move(GPRInfo::tagTypeNumberRegister, m_savedTagTypeNumberRegister);
+
+        jit.emitMaterializeTagCheckRegisters();
+    }
+
+    void restoreRegisters(CCallHelpers& jit)
+    {
+        if (m_origLeft != m_left && m_origLeft != m_origResult)
+            jit.move(m_left, m_origLeft);
+        if (m_origRight != m_right && m_origRight != m_origResult)
+            jit.move(m_right, m_origRight);
+        
+        if (m_savedTagMaskRegister != InvalidGPRReg)
+            jit.move(m_savedTagMaskRegister, GPRInfo::tagMaskRegister);
+        if (m_savedTagTypeNumberRegister != InvalidGPRReg)
+            jit.move(m_savedTagTypeNumberRegister, GPRInfo::tagTypeNumberRegister);
+    }
+
+private:
+    ScratchRegisterAllocator& m_allocator;
+
+    GPRReg& m_result;
+    GPRReg& m_left;
+    GPRReg& m_right;
+
+    GPRReg m_origResult;
+    GPRReg m_origLeft;
+    GPRReg m_origRight;
+
+    GPRReg m_savedTagMaskRegister { InvalidGPRReg };
+    GPRReg m_savedTagTypeNumberRegister { InvalidGPRReg };
+};
+
+static void generateArithSubICFastPath(
+    State& state, CodeBlock* codeBlock, GeneratedFunction generatedFunction,
+    StackMaps::RecordMap& recordMap, ArithSubDescriptor& ic)
+{
+    VM& vm = state.graph.m_vm;
+    size_t sizeOfIC = sizeOfArithSub();
+
+    StackMaps::RecordMap::iterator iter = recordMap.find(ic.stackmapID());
+    if (iter == recordMap.end())
+        return; // It was optimized out.
+
+    Vector<StackMaps::RecordAndIndex>& records = iter->value;
+
+    RELEASE_ASSERT(records.size() == ic.m_slowPathStarts.size());
+
+    for (unsigned i = records.size(); i--;) {
+        StackMaps::Record& record = records[i].record;
+
+        CCallHelpers fastPathJIT(&vm, codeBlock);
+
+        GPRReg result = record.locations[0].directGPR();
+        GPRReg left = record.locations[1].directGPR();
+        GPRReg right = record.locations[2].directGPR();
+
+        RegisterSet usedRegisters = usedRegistersFor(record);
+        ScratchRegisterAllocator allocator(usedRegisters);
+
+        BinarySnippetRegisterContext context(allocator, result, left, right);
+
+        GPRReg scratchGPR = allocator.allocateScratchGPR();
+        FPRReg leftFPR = allocator.allocateScratchFPR();
+        FPRReg rightFPR = allocator.allocateScratchFPR();
+        FPRReg scratchFPR = InvalidFPRReg;
+
+        JITSubGenerator gen(JSValueRegs(result), JSValueRegs(left), JSValueRegs(right), ic.leftType(), ic.rightType(), leftFPR, rightFPR, scratchGPR, scratchFPR);
+
+        auto numberOfBytesUsedToPreserveReusedRegisters =
+            allocator.preserveReusedRegistersByPushing(fastPathJIT, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+
+        context.initializeRegisters(fastPathJIT);
+        gen.generateFastPath(fastPathJIT);
+
+        gen.endJumpList().link(&fastPathJIT);
+        context.restoreRegisters(fastPathJIT);
+        allocator.restoreReusedRegistersByPopping(fastPathJIT, numberOfBytesUsedToPreserveReusedRegisters,
+            ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        CCallHelpers::Jump done = fastPathJIT.jump();
+
+        gen.slowPathJumpList().link(&fastPathJIT);
+        context.restoreRegisters(fastPathJIT);
+        allocator.restoreReusedRegistersByPopping(fastPathJIT, numberOfBytesUsedToPreserveReusedRegisters,
+            ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        CCallHelpers::Jump slowPathStart = fastPathJIT.jump();
+
+        char* startOfIC = bitwise_cast<char*>(generatedFunction) + record.instructionOffset;
+        generateInlineIfPossibleOutOfLineIfNot(state, vm, codeBlock, fastPathJIT, startOfIC, sizeOfIC, "ArithSub inline cache fast path", [&] (LinkBuffer& linkBuffer, CCallHelpers&, bool) {
+            linkBuffer.link(done, CodeLocationLabel(startOfIC + sizeOfIC));
+            state.finalizer->sideCodeLinkBuffer->link(ic.m_slowPathDone[i], CodeLocationLabel(startOfIC + sizeOfIC));
+            
+            linkBuffer.link(slowPathStart, state.finalizer->sideCodeLinkBuffer->locationOf(ic.m_slowPathStarts[i]));
+        });
+    }
+}
 
 static RegisterSet usedRegistersFor(const StackMaps::Record& record)
 {
@@ -460,6 +615,7 @@ static void fixFunctionBasedOnStackMaps(
     if (!state.getByIds.isEmpty()
         || !state.putByIds.isEmpty()
         || !state.checkIns.isEmpty()
+        || !state.arithSubs.isEmpty()
         || !state.lazySlowPaths.isEmpty()) {
         CCallHelpers slowPathJIT(&vm, codeBlock);
         
@@ -582,6 +738,34 @@ static void fixFunctionBasedOnStackMaps(
             }
         }
 
+        for (size_t i = state.arithSubs.size(); i--;) {
+            ArithSubDescriptor& arithSub = state.arithSubs[i];
+            
+            if (verboseCompilationEnabled())
+                dataLog("Handling ArithSub stackmap #", arithSub.stackmapID(), "\n");
+            
+            auto iter = recordMap.find(arithSub.stackmapID());
+            if (iter == recordMap.end())
+                continue; // It was optimized out.
+            
+            CodeOrigin codeOrigin = arithSub.codeOrigin();
+            for (unsigned i = 0; i < iter->value.size(); ++i) {
+                StackMaps::Record& record = iter->value[i].record;
+                RegisterSet usedRegisters = usedRegistersFor(record);
+
+                GPRReg result = record.locations[0].directGPR();
+                GPRReg left = record.locations[1].directGPR();
+                GPRReg right = record.locations[2].directGPR();
+
+                arithSub.m_slowPathStarts.append(slowPathJIT.label());
+
+                callOperation(state, usedRegisters, slowPathJIT, codeOrigin, &exceptionTarget,
+                    operationValueSub, result, left, right).call();
+
+                arithSub.m_slowPathDone.append(slowPathJIT.jump());
+            }
+        }
+
         for (unsigned i = state.lazySlowPaths.size(); i--;) {
             LazySlowPathDescriptor& descriptor = state.lazySlowPaths[i];
 
@@ -649,6 +833,10 @@ static void fixFunctionBasedOnStackMaps(
             generateCheckInICFastPath(
                 state, codeBlock, generatedFunction, recordMap, state.checkIns[i],
                 sizeOfIn()); 
+        }
+        for (unsigned i = state.arithSubs.size(); i--;) {
+            ArithSubDescriptor& arithSub = state.arithSubs[i];
+            generateArithSubICFastPath(state, codeBlock, generatedFunction, recordMap, arithSub);
         }
         for (unsigned i = state.lazySlowPaths.size(); i--;) {
             LazySlowPathDescriptor& lazySlowPath = state.lazySlowPaths[i];

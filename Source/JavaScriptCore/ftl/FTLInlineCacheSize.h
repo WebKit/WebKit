@@ -46,6 +46,7 @@ size_t sizeOfTailCallForwardVarargs();
 size_t sizeOfConstructVarargs();
 size_t sizeOfConstructForwardVarargs();
 size_t sizeOfIn();
+size_t sizeOfArithSub();
 
 size_t sizeOfICFor(DFG::Node*);
 

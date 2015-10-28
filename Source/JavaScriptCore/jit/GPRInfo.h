@@ -27,6 +27,7 @@
 #define GPRInfo_h
 
 #include "MacroAssembler.h"
+#include <array>
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -398,6 +399,8 @@ public:
     static const GPRReg callFrameRegister = X86Registers::ebp;
     static const GPRReg tagTypeNumberRegister = X86Registers::r14;
     static const GPRReg tagMaskRegister = X86Registers::r15;
+    static const GPRReg scratchRegister = MacroAssembler::scratchRegister;
+
     // Temporary registers.
     static const GPRReg regT0 = X86Registers::eax;
 #if !OS(WINDOWS)
@@ -500,6 +503,16 @@ public:
         return nameForRegister[reg];
     }
 
+    static const std::array<GPRReg, 3>& reservedRegisters()
+    {
+        static const std::array<GPRReg, 3> reservedRegisters { {
+            scratchRegister,
+            tagTypeNumberRegister,
+            tagMaskRegister,
+        } };
+        return reservedRegisters;
+    }
+    
     static const unsigned InvalidIndex = 0xffffffff;
 };
 
@@ -603,6 +616,8 @@ public:
     static const GPRReg callFrameRegister = ARM64Registers::fp;
     static const GPRReg tagTypeNumberRegister = ARM64Registers::x27;
     static const GPRReg tagMaskRegister = ARM64Registers::x28;
+    static const GPRReg dataTempRegister = MacroAssembler::dataTempRegister;
+    static const GPRReg memoryTempRegister = MacroAssembler::memoryTempRegister;
     // Temporary registers.
     static const GPRReg regT0 = ARM64Registers::x0;
     static const GPRReg regT1 = ARM64Registers::x1;
@@ -695,6 +710,17 @@ public:
         return nameForRegister[reg];
     }
 
+    static const std::array<GPRReg, 4>& reservedRegisters()
+    {
+        static const std::array<GPRReg, 4> reservedRegisters { {
+            dataTempRegister,
+            memoryTempRegister,
+            tagTypeNumberRegister,
+            tagMaskRegister,
+        } };
+        return reservedRegisters;
+    }
+    
     static const unsigned InvalidIndex = 0xffffffff;
 };
 

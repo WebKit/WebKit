@@ -28,9 +28,10 @@
 
 #include "CCallHelpers.h"
 #include "ResultType.h"
+#include "ScratchRegisterAllocator.h"
 
 namespace JSC {
-    
+
 class JITSubGenerator {
 public:
 
@@ -61,11 +62,11 @@ public:
         CCallHelpers::Jump leftNotInt = jit.branchIfNotInt32(m_left);
         CCallHelpers::Jump rightNotInt = jit.branchIfNotInt32(m_right);
 
-        jit.move(m_left.payloadGPR(), m_result.payloadGPR());
+        jit.move(m_left.payloadGPR(), m_scratchGPR);
         m_slowPathJumpList.append(
-            jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_result.payloadGPR()));
+            jit.branchSub32(CCallHelpers::Overflow, m_right.payloadGPR(), m_scratchGPR));
 
-        jit.boxInt32(m_result.payloadGPR(), m_result);
+        jit.boxInt32(m_scratchGPR, m_result);
 
         m_endJumpList.append(jit.jump());
 
@@ -74,7 +75,7 @@ public:
             m_slowPathJumpList.append(rightNotInt);
             return;
         }
-        
+
         leftNotInt.link(&jit);
         if (!m_leftType.definitelyIsNumber())
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));

@@ -19,6 +19,9 @@
 // If all goes well, this test module will terminate silently. If not, it will print
 // errors.
 
+var verbose = false;
+var abortOnFirstFail = false;
+
 var o1 = {
     valueOf: function() { return 10; }
 };
@@ -275,6 +278,9 @@ function runTest(test) {
         for (var i = 0; i < 10000; i++) {
             for (var scenarioID = 0; scenarioID < scenarios.length; scenarioID++) {
                 var scenario = scenarios[scenarioID];
+                if (verbose)
+                    print("Testing " + test.name + ":" + scenario.name + " on iteration " + i + ": expecting " + scenario.expected); 
+
                 var result = testFunc(scenario.x, scenario.y);
                 if (result == scenario.expected)
                     continue;
@@ -282,11 +288,15 @@ function runTest(test) {
                     continue;
                 if (!failedScenario[scenarioID]) {
                     errorReport += "FAIL: " + test.name + ":" + scenario.name + " started failing on iteration " + i + ": expected " + scenario.expected + ", actual " + result + "\n";
+                    if (abortOnFirstFail)
+                        throw errorReport;
                     failedScenario[scenarioID] = scenario;
                 }
             }
         }
     } catch(e) {
+        if (abortOnFirstFail)
+            throw e; // Negate the catch by re-throwing.
         errorReport += "Unexpected exception: " + e + "\n";
     }
 }
