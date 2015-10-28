@@ -3,7 +3,7 @@
         Web Inspector: Remove image generators and use SVG directly
         https://bugs.webkit.org/show_bug.cgi?id=150602
 
-        Reviewed by Brain Burg.
+        Reviewed by Brian Burg.
 
         This removes the code used to generate button image states as various canvas bitmaps.
         With the simplification of the UI in Yosemite, we can now just style SVG images to change
