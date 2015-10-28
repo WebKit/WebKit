@@ -1,3 +1,18 @@
+2015-10-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r191395. rdar://problem/22846455
+
+    2015-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+            Failures in PutStackSinkingPhase should be less severe
+            https://bugs.webkit.org/show_bug.cgi?id=150400
+
+            Reviewed by Geoffrey Garen.
+
+            Add a test mode for no PutStackSinkingPhase.
+
+            * Scripts/run-jsc-stress-tests:
+
 2015-10-21  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r191395. rdar://problem/22846455
