@@ -105,7 +105,7 @@ id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
 _WKRemoteObjectRegistry *WKPageGetObjectRegistry(WKPageRef pageRef)
 {
 #if WK_API_ENABLED && !TARGET_OS_IPHONE
-    return toImpl(pageRef)->wkView()._remoteObjectRegistry;
+    return toImpl(pageRef)->remoteObjectRegistry();
 #else
     return nil;
 #endif

@@ -1,3 +1,69 @@
+2015-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (WKPageGetObjectRegistry):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _remoteObjectRegistry]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView _inspectorAttachmentView]):
+        (-[WKView _setInspectorAttachmentView:]):
+        (-[WKView windowOcclusionDetectionEnabled]):
+        (-[WKView setWindowOcclusionDetectionEnabled:]):
+        (-[WKView _setTotalHeightOfBanners:]):
+        (-[WKView _totalHeightOfBanners]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]): Deleted.
+        (-[WKView _remoteObjectRegistry]): Deleted.
+        (-[WKView _startWindowDrag]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::setWindowOcclusionDetectionEnabled):
+        (WebKit::WebViewImpl::windowOcclusionDetectionEnabled):
+        (WebKit::WebViewImpl::setTotalHeightOfBanners):
+        (WebKit::WebViewImpl::totalHeightOfBanners):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::window):
+        (WebKit::WebViewImpl::setInspectorAttachmentView):
+        (WebKit::WebViewImpl::inspectorAttachmentView):
+        (WebKit::WebViewImpl::remoteObjectRegistry):
+        (WebKit::WebViewImpl::destroyRemoteObjectRegistry):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::createColorPicker):
+        (WebKit::PageClientImpl::startWindowDrag):
+        (WebKit::PageClientImpl::platformWindow):
+        (WebKit::PageClientImpl::inspectorAttachmentView):
+        (WebKit::PageClientImpl::remoteObjectRegistry):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        (WebKit::WebInspectorProxy::platformBringToFront):
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::startWindowDrag):
+        (WebKit::WebPageProxy::platformWindow):
+        (WebKit::WebPageProxy::inspectorAttachmentView):
+        (WebKit::WebPageProxy::remoteObjectRegistry):
+        (WebKit::WebPageProxy::wkView): Deleted.
+        Get rid of the wkView() getters on PageClientImpl and WebPageProxy, because
+        those can't be a thing in the brave new world. Instead, plumb the four
+        callers through PageClient to WebViewImpl.
+
+        Also, move a few more things (banners, window occlusion).
+
 2015-10-27  Anders Carlsson  <andersca@apple.com>
 
         Stub out more of the context menu SPI

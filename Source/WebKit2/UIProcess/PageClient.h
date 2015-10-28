@@ -260,8 +260,15 @@ public:
 
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) = 0;
 
+    virtual void startWindowDrag() = 0;
+    virtual NSWindow *platformWindow() = 0;
+
+#if WK_API_ENABLED
+    virtual NSView *inspectorAttachmentView() = 0;
+    virtual _WKRemoteObjectRegistry *remoteObjectRegistry() = 0;
+#endif
+
 #if USE(APPKIT)
-    virtual WKView* wkView() const = 0;
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) = 0;
 #if USE(DICTATION_ALTERNATIVES)
     virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&) = 0;

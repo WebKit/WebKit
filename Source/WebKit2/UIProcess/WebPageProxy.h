@@ -84,6 +84,9 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSView;
+OBJC_CLASS _WKRemoteObjectRegistry;
+
 #if ENABLE(DRAG_SUPPORT)
 #include <WebCore/DragActions.h>
 #endif
@@ -165,10 +168,6 @@ struct TextCheckingResult;
 struct ViewportAttributes;
 struct WindowFeatures;
 }
-
-#if USE(APPKIT)
-OBJC_CLASS WKView;
-#endif
 
 #if PLATFORM(GTK)
 typedef GtkWidget* PlatformWidget;
@@ -584,7 +583,14 @@ public:
     void cancelComposition();
 #endif // !USE(ASYNC_NSTEXTINPUTCLIENT)
 
-    WKView* wkView() const;
+    void startWindowDrag();
+    NSWindow *platformWindow();
+
+#if WK_API_ENABLED
+    NSView *inspectorAttachmentView();
+    _WKRemoteObjectRegistry *remoteObjectRegistry();
+#endif
+
     void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;
 #endif // PLATFORM(MAC)

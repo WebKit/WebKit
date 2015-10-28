@@ -41,7 +41,6 @@ class WebProcessPool;
 
 @class WKWebView;
 #if WK_API_ENABLED
-@class _WKRemoteObjectRegistry;
 @class _WKThumbnailView;
 #endif
 
@@ -49,15 +48,10 @@ class WebProcessPool;
 #if WK_API_ENABLED
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
-@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 #endif
 
 - (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (void)_addFontPanelObserver;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-- (void)_startWindowDrag;
-#endif
 
 @end
 

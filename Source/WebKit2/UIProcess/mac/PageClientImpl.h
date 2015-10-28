@@ -166,7 +166,6 @@ private:
 
     virtual void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle) override;
 
-    virtual WKView* wkView() const override { return m_wkView; }
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) override;
 
 #if USE(DICTATION_ALTERNATIVES)
@@ -216,6 +215,14 @@ private:
     virtual void showPlatformContextMenu(NSMenu *, WebCore::IntPoint) override;
 
     virtual void didChangeBackgroundColor() override;
+
+    virtual void startWindowDrag() override;
+    virtual NSWindow *platformWindow() override;
+
+#if WK_API_ENABLED
+    virtual NSView *inspectorAttachmentView() override;
+    virtual _WKRemoteObjectRegistry *remoteObjectRegistry() override;
+#endif
 
     WKView *m_wkView;
     WKWebView *m_webView;

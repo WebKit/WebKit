@@ -38,6 +38,8 @@
 #import "PageClient.h"
 #import "PasteboardTypes.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteObjectRegistry.h"
+#import "RemoteObjectRegistryMessages.h"
 #import "StringUtilities.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "ViewGestureController.h"
@@ -47,8 +49,11 @@
 #import "WKViewLayoutStrategy.h"
 #import "WKWebView.h"
 #import "WebEditCommandProxy.h"
+#import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
+#import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
 #import <WebCore/AXObjectCache.h>
@@ -441,6 +446,11 @@ WebViewImpl::~WebViewImpl()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_immediateActionController willDestroyView:m_view];
 #endif
+}
+
+NSWindow *WebViewImpl::window()
+{
+    return m_view.window;
 }
 
 std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy()
@@ -1861,6 +1871,42 @@ void WebViewImpl::updateThumbnailViewLayer()
 
     if (thumbnailView._waitingForSnapshot && m_view.window)
         reparentLayerTreeInThumbnailView();
+}
+
+void WebViewImpl::setInspectorAttachmentView(NSView *newView)
+{
+    NSView *oldView = m_inspectorAttachmentView.get();
+    if (oldView == newView)
+        return;
+
+    m_inspectorAttachmentView = newView;
+    m_page.inspector()->attachmentViewDidChange(oldView ? oldView : m_view, newView ? newView : m_view);
+}
+
+NSView *WebViewImpl::inspectorAttachmentView()
+{
+    NSView *attachmentView = m_inspectorAttachmentView.get();
+    return attachmentView ? attachmentView : m_view;
+}
+
+_WKRemoteObjectRegistry *WebViewImpl::remoteObjectRegistry()
+{
+    if (!m_remoteObjectRegistry) {
+        m_remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:m_page]);
+        m_page.process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.pageID(), [m_remoteObjectRegistry remoteObjectRegistry]);
+    }
+
+    return m_remoteObjectRegistry.get();
+}
+
+void WebViewImpl::destroyRemoteObjectRegistry()
+{
+    if (!m_remoteObjectRegistry)
+        return;
+
+    m_page.process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_page.pageID());
+    [m_remoteObjectRegistry _invalidate];
+    m_remoteObjectRegistry = nil;
 }
 #endif // WK_API_ENABLED
 

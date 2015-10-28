@@ -558,11 +558,6 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
     return result;
 }
 
-WKView* WebPageProxy::wkView() const
-{
-    return m_pageClient.wkView();
-}
-
 void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
 {
     m_pageClient.intrinsicContentSizeDidChange(intrinsicContentSize);
@@ -737,6 +732,28 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     }
 #endif
 }
+
+void WebPageProxy::startWindowDrag()
+{
+    m_pageClient.startWindowDrag();
+}
+
+NSWindow *WebPageProxy::platformWindow()
+{
+    return m_pageClient.platformWindow();
+}
+
+#if WK_API_ENABLED
+NSView *WebPageProxy::inspectorAttachmentView()
+{
+    return m_pageClient.inspectorAttachmentView();
+}
+
+_WKRemoteObjectRegistry *WebPageProxy::remoteObjectRegistry()
+{
+    return m_pageClient.remoteObjectRegistry();
+}
+#endif
 
 } // namespace WebKit
 

@@ -88,6 +88,8 @@ public:
 
     ~WebViewImpl();
 
+    NSWindow *window();
+
     void processDidExit();
     void pageClosed();
     void didRelaunchProcess();
@@ -167,6 +169,9 @@ public:
     void endDeferringViewInWindowChanges();
     void endDeferringViewInWindowChangesSync();
     bool isDeferringViewInWindowChanges() const { return m_shouldDeferViewInWindowChanges; }
+
+    void setWindowOcclusionDetectionEnabled(bool enabled) { m_windowOcclusionDetectionEnabled = enabled; }
+    bool windowOcclusionDetectionEnabled() const { return m_windowOcclusionDetectionEnabled; }
 
     void prepareForMoveToWindow(NSWindow *targetWindow, std::function<void()> completionHandler);
     NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation; }
@@ -263,6 +268,12 @@ public:
 #if WK_API_ENABLED
     void setThumbnailView(_WKThumbnailView *);
     _WKThumbnailView *thumbnailView() const { return m_thumbnailView; }
+
+    void setInspectorAttachmentView(NSView *);
+    NSView *inspectorAttachmentView();
+
+    _WKRemoteObjectRegistry *remoteObjectRegistry();
+    void destroyRemoteObjectRegistry(); // FIXME: Temporary. Can fold in after we move ownership of WebPageProxy here.
 #endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)
@@ -320,6 +331,9 @@ public:
 
     bool executeSavedCommandBySelector(SEL);
 
+    void setTotalHeightOfBanners(CGFloat totalHeightOfBanners) { m_totalHeightOfBanners = totalHeightOfBanners; }
+    CGFloat totalHeightOfBanners() const { return m_totalHeightOfBanners; }
+
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -353,6 +367,7 @@ private:
     bool m_needsViewFrameInWindowCoordinates;
     bool m_didScheduleWindowAndViewFrameUpdate { false };
     bool m_isDeferringViewInWindowChanges { false };
+    bool m_windowOcclusionDetectionEnabled { true };
 
     bool m_automaticallyAdjustsContentInsets { false };
     CGFloat m_topContentInset { 0 };
@@ -418,6 +433,8 @@ private:
 
 #if WK_API_ENABLED
     _WKThumbnailView *m_thumbnailView { nullptr };
+
+    RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
 
     std::unique_ptr<ViewGestureController> m_gestureController;
@@ -431,6 +448,10 @@ private:
     String m_promisedURL;
 
     WTF::Optional<NSInteger> m_spellCheckerDocumentTag;
+
+    CGFloat m_totalHeightOfBanners { 0 };
+
+    RetainPtr<NSView> m_inspectorAttachmentView;
 };
     
 } // namespace WebKit

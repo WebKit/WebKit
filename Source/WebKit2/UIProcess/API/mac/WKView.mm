@@ -46,8 +46,6 @@
 #import "NativeWebWheelEvent.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
-#import "RemoteObjectRegistry.h"
-#import "RemoteObjectRegistryMessages.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
@@ -64,7 +62,6 @@
 #import "WebBackForwardList.h"
 #import "WebEventFactory.h"
 #import "WebHitTestResultData.h"
-#import "WebInspectorProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebPage.h"
 #import "WebPageGroup.h"
@@ -74,7 +71,6 @@
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import "WebViewImpl.h"
-#import "_WKRemoteObjectRegistryInternal.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
@@ -155,9 +151,6 @@ struct WKViewInterpretKeyEventsParameters {
 
 #if WK_API_ENABLED
     RetainPtr<WKBrowsingContextController> _browsingContextController;
-    RetainPtr<NSView> _inspectorAttachmentView;
-
-    RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
 #endif
 
     // For asynchronous validation.
@@ -172,12 +165,6 @@ struct WKViewInterpretKeyEventsParameters {
 #else
     WKViewInterpretKeyEventsParameters* _interpretKeyEventsParameters;
 #endif
-
-    BOOL _willBecomeFirstResponderAgain;
-
-    BOOL _windowOcclusionDetectionEnabled;
-
-    CGFloat _totalHeightOfBanners;
 }
 
 @end
@@ -207,10 +194,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)dealloc
 {
 #if WK_API_ENABLED
-    if (_data->_remoteObjectRegistry) {
-        _data->_page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _data->_page->pageID());
-        [_data->_remoteObjectRegistry _invalidate];
-    }
+    _data->_impl->destroyRemoteObjectRegistry();
 #endif
 
     _data->_page->close();
@@ -2299,8 +2283,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     _data->_page->initializeWebPage();
 
-    _data->_windowOcclusionDetectionEnabled = YES;
-
     _data->_impl->registerDraggedTypes();
 
     self.wantsLayer = YES;
@@ -2330,24 +2312,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 }
 #endif // WK_API_ENABLED
 
-#if WK_API_ENABLED
-- (_WKRemoteObjectRegistry *)_remoteObjectRegistry
-{
-    if (!_data->_remoteObjectRegistry) {
-        _data->_remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_data->_page]);
-        _data->_page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _data->_page->pageID(), [_data->_remoteObjectRegistry remoteObjectRegistry]);
-    }
-
-    return _data->_remoteObjectRegistry.get();
-}
-#endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-- (void)_startWindowDrag
-{
-    _data->_impl->startWindowDrag();
-}
-#endif
 
 // FIXME: Get rid of this when we have better plumbing to WKViewLayoutStrategy.
 - (void)_updateViewExposedRect
@@ -2517,18 +2481,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #if WK_API_ENABLED
 - (NSView *)_inspectorAttachmentView
 {
-    NSView *attachmentView = _data->_inspectorAttachmentView.get();
-    return attachmentView ? attachmentView : self;
+    return _data->_impl->inspectorAttachmentView();
 }
 
 - (void)_setInspectorAttachmentView:(NSView *)newView
 {
-    NSView *oldView = _data->_inspectorAttachmentView.get();
-    if (oldView == newView)
-        return;
-
-    _data->_inspectorAttachmentView = newView;
-    _data->_page->inspector()->attachmentViewDidChange(oldView ? oldView : self, newView ? newView : self);
+    _data->_impl->setInspectorAttachmentView(newView);
 }
 #endif
 
@@ -2570,12 +2528,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (BOOL)windowOcclusionDetectionEnabled
 {
-    return _data->_windowOcclusionDetectionEnabled;
+    return _data->_impl->windowOcclusionDetectionEnabled();
 }
 
-- (void)setWindowOcclusionDetectionEnabled:(BOOL)flag
+- (void)setWindowOcclusionDetectionEnabled:(BOOL)enabled
 {
-    _data->_windowOcclusionDetectionEnabled = flag;
+    _data->_impl->setWindowOcclusionDetectionEnabled(enabled);
 }
 
 - (void)setAllowsBackForwardNavigationGestures:(BOOL)allowsBackForwardNavigationGestures
@@ -2676,12 +2634,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)_setTotalHeightOfBanners:(CGFloat)totalHeightOfBanners
 {
-    _data->_totalHeightOfBanners = totalHeightOfBanners;
+    _data->_impl->setTotalHeightOfBanners(totalHeightOfBanners);
 }
 
 - (CGFloat)_totalHeightOfBanners
 {
-    return _data->_totalHeightOfBanners;
+    return _data->_impl->totalHeightOfBanners();
 }
 
 - (void)_setOverlayScrollbarStyle:(_WKOverlayScrollbarStyle)scrollbarStyle

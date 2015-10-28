@@ -756,7 +756,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
 #if WK_API_ENABLED && !TARGET_OS_IPHONE
-    return _page->wkView()._remoteObjectRegistry;
+    return _page->remoteObjectRegistry();
 #else
     return nil;
 #endif

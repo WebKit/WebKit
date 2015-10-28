@@ -346,7 +346,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(!m_inspectorView);
     ASSERT(!m_inspectorProxyObjCAdapter);
 
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
 
     NSRect initialRect;
     if (m_isAttached) {
@@ -467,7 +467,7 @@ bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
     if ([m_inspectorWindow styleMask] & NSFullScreenWindowMask)
         return false;
 
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     if ([inspectedView isKindOfClass:[WKView class]])
         return webProcessCanAttach;
 
@@ -528,7 +528,7 @@ void WebInspectorProxy::platformBringToFront()
     // If the Web Inspector is no longer in the same window as the inspected view,
     // then we need to reopen the Inspector to get it attached to the right window.
     // This can happen when dragging tabs to another window in Safari.
-    if (m_isAttached && m_inspectorView.get().window != inspectedPage()->wkView().window) {
+    if (m_isAttached && m_inspectorView.get().window != inspectedPage()->platformWindow()) {
         platformOpen();
         return;
     }
@@ -668,7 +668,7 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         return;
     }
 
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     NSRect inspectedViewFrame = [inspectedView frame];
     NSRect inspectorFrame = NSZeroRect;
     NSRect parentBounds = [[inspectedView superview] bounds];
@@ -718,21 +718,21 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     NSRect inspectedViewRect = [inspectedView frame];
     return static_cast<unsigned>(inspectedViewRect.size.height);
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowWidth()
 {
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     NSRect inspectedViewRect = [inspectedView frame];
     return static_cast<unsigned>(inspectedViewRect.size.width);
 }
 
 void WebInspectorProxy::platformAttach()
 {
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
 
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
@@ -763,7 +763,7 @@ void WebInspectorProxy::platformAttach()
 
 void WebInspectorProxy::platformDetach()
 {
-    NSView *inspectedView = inspectedPage()->wkView()._inspectorAttachmentView;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
 
     [m_inspectorView removeFromSuperview];
 
@@ -808,7 +808,7 @@ void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
 void WebInspectorProxy::platformStartWindowDrag()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    [m_inspectorView->_page->wkView() _startWindowDrag];
+    m_inspectorView->_page->startWindowDrag();
 #endif
 }
 

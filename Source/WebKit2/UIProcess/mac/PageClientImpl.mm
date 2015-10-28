@@ -199,7 +199,7 @@ bool PageClientImpl::isViewVisible()
     if (activeView.isHiddenOrHasHiddenAncestor)
         return false;
 
-    if ([m_wkView windowOcclusionDetectionEnabled] && (activeViewWindow.occlusionState & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible)
+    if (m_impl->windowOcclusionDetectionEnabled() && (activeViewWindow.occlusionState & NSWindowOcclusionStateVisible) != NSWindowOcclusionStateVisible)
         return false;
 
     return true;
@@ -453,7 +453,7 @@ std::unique_ptr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebP
 #if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect& rect)
 {
-    return WebColorPickerMac::create(page, initialColor, rect, wkView());
+    return WebColorPickerMac::create(page, initialColor, rect, m_wkView);
 }
 #endif
 
@@ -826,6 +826,28 @@ void PageClientImpl::derefView()
 {
     CFRelease(m_wkView);
 }
+
+void PageClientImpl::startWindowDrag()
+{
+    m_impl->startWindowDrag();
+}
+
+NSWindow *PageClientImpl::platformWindow()
+{
+    return m_impl->window();
+}
+
+#if WK_API_ENABLED
+NSView *PageClientImpl::inspectorAttachmentView()
+{
+    return m_impl->inspectorAttachmentView();
+}
+
+_WKRemoteObjectRegistry *PageClientImpl::remoteObjectRegistry()
+{
+    return m_impl->remoteObjectRegistry();
+}
+#endif
 
 } // namespace WebKit
 
