@@ -325,7 +325,10 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
 {
     VM& vm = exec->vm();
     DeferGC deferGC(vm.heap);
-    
+
+    if (vm.getAndClearFailNextNewCodeBlock())
+        return createError(exec->callerFrame(), ASCIILiteral("Forced Failure"));
+
     JSObject* exception = 0;
     RefPtr<CodeBlock> codeBlock = newCodeBlockFor(kind, function, scope, exception);
     if (!codeBlock) {

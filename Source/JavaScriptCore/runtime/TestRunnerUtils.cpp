@@ -95,6 +95,13 @@ JSValue optimizeNextInvocation(JSValue theFunctionValue)
     return jsUndefined();
 }
 
+JSValue failNextNewCodeBlock(ExecState* exec)
+{
+    exec->vm().setFailNextNewCodeBlock();
+
+    return jsUndefined();
+}
+
 JSValue numberOfDFGCompiles(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
