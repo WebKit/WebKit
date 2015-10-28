@@ -29,9 +29,9 @@ layer at (120,550) size 120x50
   RenderTable {TABLE} at (120,550) size 120x50 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x48
       RenderTableRow {TR} at (0,2) size 118x44
-        RenderTableCell {TD} at (2,14) size 114x19 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 59x17
-            text run at (1,1) width 59: "Tall table"
+        RenderTableCell {TD} at (2,14) size 114x20 [r=0 c=0 rs=1 cs=1]
+          RenderText {#text} at (1,1) size 59x18
+            text run at (1,2) width 59: "Tall table"
 layer at (240,575) size 120x25
   RenderTable {TABLE} at (240,575) size 120x25 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x23
