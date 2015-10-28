@@ -26,7 +26,6 @@ for (var i = 0; i <= 100000; i++) {
     o2.i = i;
     result += foo(o1, o2);
 }
-print(result);
 
 if (result != 2000020)
     throw "Bad result: " + result;
