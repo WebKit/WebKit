@@ -1,0 +1,58 @@
+This test exercises the readonly attributes on an IDBObjectStore.
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var request = window.indexedDB.open("ObjectStoreAttributesTestDatabase");
+
+function done()
+{
+    alert("Done");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+request.onupgradeneeded = function(event)
+{
+    alert("First upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
+    
+    var tx = request.transaction;
+    var db = event.target.result;
+
+    alert(tx + " - " + tx.mode);
+    alert(db);
+
+    var os1 = db.createObjectStore('TestObjectStore1', { autoIncrement: true , keyPath: "foo" });
+    var os2 = db.createObjectStore('TestObjectStore2', { autoIncrement: false });
+
+    alert(os1.name);
+    alert(os2.name);
+    alert(os1.autoIncrement);
+    alert(os2.autoIncrement);
+    alert(os1.keyPath);
+    alert(os2.keyPath);
+    alert(os1.transaction);
+    alert(os2.transaction);
+    alert(os1.transaction == tx);
+    alert(os2.transaction == tx);
+    alert(os1.transaction == os2.transaction);
+    
+    tx.onabort = function(event) {
+        alert("First version change transaction unexpected abort");
+        done();
+    }
+
+    tx.oncomplete = function(event) {
+        alert("First version change transaction completed");
+        done();
+    }
+
+    tx.onerror = function(event) {
+        alert("First version change transaction unexpected error - " + event);
+        done();
+    }
+}
+</script>

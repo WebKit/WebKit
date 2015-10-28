@@ -56,24 +56,19 @@ IDBObjectStore::~IDBObjectStore()
 {
 }
 
-int64_t IDBObjectStore::id() const
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 const String IDBObjectStore::name() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return m_info.name();
 }
 
 RefPtr<WebCore::IDBAny> IDBObjectStore::keyPathAny() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return IDBAny::create(m_info.keyPath());
 }
 
 const IDBKeyPath IDBObjectStore::keyPath() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return m_info.keyPath();
 }
 
 RefPtr<DOMStringList> IDBObjectStore::indexNames() const
@@ -81,9 +76,9 @@ RefPtr<DOMStringList> IDBObjectStore::indexNames() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<WebCore::IDBTransaction> IDBObjectStore::transaction() const
+RefPtr<WebCore::IDBTransaction> IDBObjectStore::transaction()
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return &m_transaction.get();
 }
 
 bool IDBObjectStore::autoIncrement() const

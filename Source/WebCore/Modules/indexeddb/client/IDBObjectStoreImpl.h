@@ -47,12 +47,11 @@ public:
     virtual ~IDBObjectStore() override final;
 
     // Implement the IDBObjectStore IDL
-    virtual int64_t id() const override final;
     virtual const String name() const override final;
     virtual RefPtr<WebCore::IDBAny> keyPathAny() const override final;
     virtual const IDBKeyPath keyPath() const override final;
     virtual RefPtr<DOMStringList> indexNames() const override final;
-    virtual RefPtr<WebCore::IDBTransaction> transaction() const override final;
+    virtual RefPtr<WebCore::IDBTransaction> transaction() override final;
     virtual bool autoIncrement() const override final;
 
     virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;

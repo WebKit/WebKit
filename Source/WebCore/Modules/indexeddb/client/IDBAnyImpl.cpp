@@ -48,6 +48,12 @@ IDBAny::IDBAny(Ref<IDBObjectStore>&& objectStore)
 {
 }
 
+IDBAny::IDBAny(const IDBKeyPath& keyPath)
+    : m_type(IDBAny::Type::KeyPath)
+    , m_idbKeyPath(keyPath)
+{
+}
+
 IDBAny::IDBAny(const Deprecated::ScriptValue& value)
     : m_type(IDBAny::Type::ScriptValue)
     , m_scriptValue(value)

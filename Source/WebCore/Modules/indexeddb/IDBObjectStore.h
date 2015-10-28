@@ -59,12 +59,11 @@ public:
     virtual ~IDBObjectStore() { }
 
     // Implement the IDBObjectStore IDL
-    virtual int64_t id() const = 0;
     virtual const String name() const = 0;
     virtual RefPtr<IDBAny> keyPathAny() const = 0;
     virtual const IDBKeyPath keyPath() const = 0;
     virtual RefPtr<DOMStringList> indexNames() const = 0;
-    virtual RefPtr<IDBTransaction> transaction() const = 0;
+    virtual RefPtr<IDBTransaction> transaction() = 0;
     virtual bool autoIncrement() const = 0;
 
     virtual RefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;

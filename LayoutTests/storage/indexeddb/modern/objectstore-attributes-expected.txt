@@ -1,0 +1,17 @@
+ALERT: First upgrade needed: Old version - 0 New version - 1
+ALERT: [object IDBTransaction] - versionchange
+ALERT: [object IDBDatabase]
+ALERT: TestObjectStore1
+ALERT: TestObjectStore2
+ALERT: true
+ALERT: false
+ALERT: foo
+ALERT: null
+ALERT: [object IDBTransaction]
+ALERT: [object IDBTransaction]
+ALERT: true
+ALERT: true
+ALERT: true
+ALERT: First version change transaction completed
+ALERT: Done
+This test exercises the readonly attributes on an IDBObjectStore.

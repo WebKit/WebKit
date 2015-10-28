@@ -64,7 +64,7 @@ public:
     RefPtr<IDBAny> keyPathAny() const { return LegacyAny::create(m_metadata.keyPath); }
     const IDBKeyPath keyPath() const { return m_metadata.keyPath; }
     RefPtr<DOMStringList> indexNames() const;
-    RefPtr<IDBTransaction> transaction() const { return m_transaction; }
+    RefPtr<IDBTransaction> transaction() { return m_transaction; }
     bool autoIncrement() const { return m_metadata.autoIncrement; }
 
     RefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&);

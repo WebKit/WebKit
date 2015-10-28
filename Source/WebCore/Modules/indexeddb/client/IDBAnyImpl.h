@@ -47,6 +47,11 @@ public:
         return adoptRef(new IDBAny(WTF::move(objectStore)));
     }
 
+    static RefPtr<IDBAny> create(const IDBKeyPath& keyPath)
+    {
+        return adoptRef(new IDBAny(keyPath));
+    }
+
     static RefPtr<IDBAny> create(const Deprecated::ScriptValue& value)
     {
         return adoptRef(new IDBAny(value));
@@ -73,8 +78,8 @@ public:
 private:
     explicit IDBAny(Ref<IDBDatabase>&&);
     explicit IDBAny(Ref<IDBObjectStore>&&);
+    explicit IDBAny(const IDBKeyPath&);
     explicit IDBAny(const Deprecated::ScriptValue&);
-
 
     IDBAny::Type m_type { IDBAny::Type::Undefined };
     RefPtr<IDBDatabase> m_database;
