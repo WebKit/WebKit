@@ -1,3 +1,50 @@
+2015-10-28  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _superDoCommandBySelector:]):
+        (-[WKView _createDrawingAreaProxy]): Deleted.
+        (-[WKView _processDidExit]): Deleted.
+        (-[WKView _pageClosed]): Deleted.
+        (-[WKView _didRelaunchProcess]): Deleted.
+        (-[WKView _convertToDeviceSpace:]): Deleted.
+        (-[WKView _convertToUserSpace:]): Deleted.
+        (-[WKView _executeSavedCommandBySelector:]): Deleted.
+        (-[WKResponderChainSink initWithResponderChain:]): Deleted.
+        (-[WKResponderChainSink detach]): Deleted.
+        (-[WKResponderChainSink didReceiveUnhandledCommand]): Deleted.
+        (-[WKResponderChainSink noResponderFor:]): Deleted.
+        (-[WKResponderChainSink doCommandBySelector:]): Deleted.
+        (-[WKResponderChainSink tryToPerform:with:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKResponderChainSink initWithResponderChain:]):
+        (-[WKResponderChainSink detach]):
+        (-[WKResponderChainSink didReceiveUnhandledCommand]):
+        (-[WKResponderChainSink noResponderFor:]):
+        (-[WKResponderChainSink doCommandBySelector:]):
+        (-[WKResponderChainSink tryToPerform:with:]):
+        (WebKit::WebViewImpl::createDrawingAreaProxy):
+        (WebKit::WebViewImpl::processDidExit):
+        (WebKit::WebViewImpl::pageClosed):
+        (WebKit::WebViewImpl::didRelaunchProcess):
+        (WebKit::WebViewImpl::executeSavedCommandBySelector):
+        (WebKit::WebViewImpl::resetGestureController): Deleted.
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::processDidExit):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::executeSavedCommandBySelector):
+        Move most of the rest of WKViewInternal.h's methods to WebViewImpl.
+
 2015-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Compile and link with CMake on Mac

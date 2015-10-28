@@ -56,6 +56,7 @@ OBJC_CLASS _WKThumbnailView;
 - (void)_superMagnifyWithEvent:(NSEvent *)event;
 - (void)_superSmartMagnifyWithEvent:(NSEvent *)event;
 - (id)_superAccessibilityAttributeValue:(NSString *)attribute;
+- (void)_superDoCommandBySelector:(SEL)selector;
 
 // This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
 // They're not actually optional.
@@ -73,6 +74,7 @@ OBJC_CLASS _WKThumbnailView;
 
 namespace WebKit {
 
+class DrawingAreaProxy;
 class ViewGestureController;
 class WebEditCommandProxy;
 class WebPageProxy;
@@ -85,6 +87,10 @@ public:
     WebViewImpl(NSView <WebViewImplDelegate> *, WebPageProxy&, PageClient&);
 
     ~WebViewImpl();
+
+    void processDidExit();
+    void pageClosed();
+    void didRelaunchProcess();
 
     void setDrawsBackground(bool);
     bool drawsBackground() const;
@@ -110,6 +116,7 @@ public:
     void setFixedLayoutSize(CGSize);
     CGSize fixedLayoutSize() const;
 
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy();
     void setDrawingAreaSize(CGSize);
 
     void setAutomaticallyAdjustsContentInsets(bool);
@@ -287,7 +294,6 @@ public:
 
     ViewGestureController* gestureController() { return m_gestureController.get(); }
     ViewGestureController& ensureGestureController();
-    void resetGestureController();
     void setAllowsBackForwardNavigationGestures(bool);
     bool allowsBackForwardNavigationGestures() const { return m_allowsBackForwardNavigationGestures; }
     void setAllowsMagnification(bool);
@@ -311,6 +317,8 @@ public:
 
     void gestureEventWasNotHandledByWebCore(NSEvent *);
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
+
+    bool executeSavedCommandBySelector(SEL);
 
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }

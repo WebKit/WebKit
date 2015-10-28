@@ -111,7 +111,7 @@ PageClientImpl::~PageClientImpl()
 
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return [m_wkView _createDrawingAreaProxy];
+    return m_impl->createDrawingAreaProxy();
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
@@ -241,12 +241,12 @@ ColorSpaceData PageClientImpl::colorSpace()
 
 void PageClientImpl::processDidExit()
 {
-    [m_wkView _processDidExit];
+    m_impl->processDidExit();
 }
 
 void PageClientImpl::pageClosed()
 {
-    [m_wkView _pageClosed];
+    m_impl->pageClosed();
 #if USE(DICTATION_ALTERNATIVES)
     m_alternativeTextUIController->clear();
 #endif
@@ -254,7 +254,7 @@ void PageClientImpl::pageClosed()
 
 void PageClientImpl::didRelaunchProcess()
 {
-    [m_wkView _didRelaunchProcess];
+    m_impl->didRelaunchProcess();
 }
 
 void PageClientImpl::preferencesDidChange()
@@ -405,12 +405,12 @@ void PageClientImpl::notifyApplicationAboutInputContextChange()
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
-    return [m_wkView _convertToDeviceSpace:rect];
+    return toDeviceSpace(rect, [m_wkView window]);
 }
 
 FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
-    return [m_wkView _convertToUserSpace:rect];
+    return toUserSpace(rect, [m_wkView window]);
 }
    
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
@@ -617,7 +617,7 @@ void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicConte
 
 bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
 {
-    return [m_wkView _executeSavedCommandBySelector:NSSelectorFromString(selectorString)];
+    return m_impl->executeSavedCommandBySelector(NSSelectorFromString(selectorString));
 }
 
 #if USE(DICTATION_ALTERNATIVES)

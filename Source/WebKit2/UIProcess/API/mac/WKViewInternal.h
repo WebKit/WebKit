@@ -31,49 +31,32 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-@class _WKRemoteObjectRegistry;
-
 namespace API {
 class PageConfiguration;
 }
 
 namespace WebKit {
-class DrawingAreaProxy;
 class WebProcessPool;
 }
 
 @class WKWebView;
 #if WK_API_ENABLED
+@class _WKRemoteObjectRegistry;
 @class _WKThumbnailView;
 #endif
 
 @interface WKView ()
 #if WK_API_ENABLED
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
-#endif
-
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
-- (void)_processDidExit;
-- (void)_pageClosed;
-- (void)_didRelaunchProcess;
-- (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
-- (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
-- (bool)_executeSavedCommandBySelector:(SEL)selector;
-- (NSRect)_convertToDeviceSpace:(NSRect)rect;
-- (NSRect)_convertToUserSpace:(NSRect)rect;
-
-#if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
+@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 #endif
 
+- (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (void)_addFontPanelObserver;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 - (void)_startWindowDrag;
-#endif
-
-#if WK_API_ENABLED
-@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 #endif
 
 @end

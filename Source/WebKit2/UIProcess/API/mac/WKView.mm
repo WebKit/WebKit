@@ -46,13 +46,11 @@
 #import "NativeWebWheelEvent.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
-#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
-#import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKLayoutMode.h"
@@ -185,15 +183,6 @@ struct WKViewInterpretKeyEventsParameters {
 @end
 
 @implementation WKViewData
-@end
-
-@interface WKResponderChainSink : NSResponder {
-    NSResponder *_lastResponderInChain;
-    bool _didReceiveUnhandledCommand;
-}
-- (id)initWithResponderChain:(NSResponder *)chain;
-- (void)detach;
-- (bool)didReceiveUnhandledCommand;
 @end
 
 @interface WKView () <WebViewImplDelegate>
@@ -2032,6 +2021,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 #pragma clang diagnostic pop
 }
 
+- (void)_superDoCommandBySelector:(SEL)selector
+{
+    [super doCommandBySelector:selector];
+}
+
 - (NSArray *)validAttributesForMarkedText
 {
     static NSArray *validAttributes;
@@ -2193,36 +2187,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _data->_impl->quickLookWithEvent(event);
 }
 
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
-        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(*_data->_page);
-
-    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(*_data->_page);
-}
-
-- (void)_processDidExit
-{
-    _data->_impl->notifyInputContextAboutDiscardedComposition();
-
-    if (_data->_impl->layerHostingView())
-        _data->_impl->setAcceleratedCompositingRootLayer(nil);
-
-    _data->_impl->updateRemoteAccessibilityRegistration(false);
-
-    _data->_impl->resetGestureController();
-}
-
-- (void)_pageClosed
-{
-    _data->_impl->updateRemoteAccessibilityRegistration(false);
-}
-
-- (void)_didRelaunchProcess
-{
-    _data->_impl->accessibilityRegisterUIProcessTokens();
-}
-
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState
 {
     ValidationVector items = _data->_validationMap.take(commandName);
@@ -2258,16 +2222,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [NSApp sendEvent:event];
 
     _data->_keyDownEventBeingResent = nullptr;
-}
-
-- (NSRect)_convertToDeviceSpace:(NSRect)rect
-{
-    return toDeviceSpace(rect, [self window]);
-}
-
-- (NSRect)_convertToUserSpace:(NSRect)rect
-{
-    return toUserSpace(rect, [self window]);
 }
 
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside
@@ -2321,17 +2275,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
-}
-
-- (bool)_executeSavedCommandBySelector:(SEL)selector
-{
-    LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
-    // The sink does two things: 1) Tells us if the responder went unhandled, and
-    // 2) prevents any NSBeep; we don't ever want to beep here.
-    RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:self]);
-    [super doCommandBySelector:selector];
-    [sink detach];
-    return ![sink didReceiveUnhandledCommand];
 }
 
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
@@ -2951,62 +2894,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 }
 
 #endif
-
-@end
-
-@implementation WKResponderChainSink
-
-- (id)initWithResponderChain:(NSResponder *)chain
-{
-    self = [super init];
-    if (!self)
-        return nil;
-    _lastResponderInChain = chain;
-    while (NSResponder *next = [_lastResponderInChain nextResponder])
-        _lastResponderInChain = next;
-    [_lastResponderInChain setNextResponder:self];
-    return self;
-}
-
-- (void)detach
-{
-    // This assumes that the responder chain was either unmodified since
-    // -initWithResponderChain: was called, or was modified in such a way
-    // that _lastResponderInChain is still in the chain, and self was not
-    // moved earlier in the chain than _lastResponderInChain.
-    NSResponder *responderBeforeSelf = _lastResponderInChain;    
-    NSResponder *next = [responderBeforeSelf nextResponder];
-    for (; next && next != self; next = [next nextResponder])
-        responderBeforeSelf = next;
-    
-    // Nothing to be done if we are no longer in the responder chain.
-    if (next != self)
-        return;
-    
-    [responderBeforeSelf setNextResponder:[self nextResponder]];
-    _lastResponderInChain = nil;
-}
-
-- (bool)didReceiveUnhandledCommand
-{
-    return _didReceiveUnhandledCommand;
-}
-
-- (void)noResponderFor:(SEL)selector
-{
-    _didReceiveUnhandledCommand = true;
-}
-
-- (void)doCommandBySelector:(SEL)selector
-{
-    _didReceiveUnhandledCommand = true;
-}
-
-- (BOOL)tryToPerform:(SEL)action with:(id)object
-{
-    _didReceiveUnhandledCommand = true;
-    return YES;
-}
 
 @end
 

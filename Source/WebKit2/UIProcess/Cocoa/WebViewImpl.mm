@@ -37,7 +37,9 @@
 #import "NativeWebWheelEvent.h"
 #import "PageClient.h"
 #import "PasteboardTypes.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "StringUtilities.h"
+#import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "ViewGestureController.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
@@ -321,6 +323,72 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
+@interface WKResponderChainSink : NSResponder {
+    NSResponder *_lastResponderInChain;
+    bool _didReceiveUnhandledCommand;
+}
+
+- (id)initWithResponderChain:(NSResponder *)chain;
+- (void)detach;
+- (bool)didReceiveUnhandledCommand;
+@end
+
+@implementation WKResponderChainSink
+
+- (id)initWithResponderChain:(NSResponder *)chain
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _lastResponderInChain = chain;
+    while (NSResponder *next = [_lastResponderInChain nextResponder])
+        _lastResponderInChain = next;
+    [_lastResponderInChain setNextResponder:self];
+    return self;
+}
+
+- (void)detach
+{
+    // This assumes that the responder chain was either unmodified since
+    // -initWithResponderChain: was called, or was modified in such a way
+    // that _lastResponderInChain is still in the chain, and self was not
+    // moved earlier in the chain than _lastResponderInChain.
+    NSResponder *responderBeforeSelf = _lastResponderInChain;
+    NSResponder *next = [responderBeforeSelf nextResponder];
+    for (; next && next != self; next = [next nextResponder])
+        responderBeforeSelf = next;
+
+    // Nothing to be done if we are no longer in the responder chain.
+    if (next != self)
+        return;
+
+    [responderBeforeSelf setNextResponder:[self nextResponder]];
+    _lastResponderInChain = nil;
+}
+
+- (bool)didReceiveUnhandledCommand
+{
+    return _didReceiveUnhandledCommand;
+}
+
+- (void)noResponderFor:(SEL)selector
+{
+    _didReceiveUnhandledCommand = true;
+}
+
+- (void)doCommandBySelector:(SEL)selector
+{
+    _didReceiveUnhandledCommand = true;
+}
+
+- (BOOL)tryToPerform:(SEL)action with:(id)object
+{
+    _didReceiveUnhandledCommand = true;
+    return YES;
+}
+
+@end
+
 namespace WebKit {
 
 static NSTrackingAreaOptions trackingAreaOptions()
@@ -373,6 +441,36 @@ WebViewImpl::~WebViewImpl()
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [m_immediateActionController willDestroyView:m_view];
 #endif
+}
+
+std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy()
+{
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
+        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(m_page);
+
+    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(m_page);
+}
+
+void WebViewImpl::processDidExit()
+{
+    notifyInputContextAboutDiscardedComposition();
+
+    if (m_layerHostingView)
+        setAcceleratedCompositingRootLayer(nil);
+
+    updateRemoteAccessibilityRegistration(false);
+
+    m_gestureController = nullptr;
+}
+
+void WebViewImpl::pageClosed()
+{
+    updateRemoteAccessibilityRegistration(false);
+}
+
+void WebViewImpl::didRelaunchProcess()
+{
+    accessibilityRegisterUIProcessTokens();
 }
 
 void WebViewImpl::setDrawsBackground(bool drawsBackground)
@@ -2157,11 +2255,6 @@ ViewGestureController& WebViewImpl::ensureGestureController()
     return *m_gestureController;
 }
 
-void WebViewImpl::resetGestureController()
-{
-    m_gestureController = nullptr;
-}
-
 void WebViewImpl::setAllowsBackForwardNavigationGestures(bool allowsBackForwardNavigationGestures)
 {
     m_allowsBackForwardNavigationGestures = allowsBackForwardNavigationGestures;
@@ -2347,6 +2440,17 @@ void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
     if (m_gestureController)
         m_gestureController->gestureEventWasNotHandledByWebCore(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
 #endif
+}
+
+bool WebViewImpl::executeSavedCommandBySelector(SEL selector)
+{
+    LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
+    // The sink does two things: 1) Tells us if the responder went unhandled, and
+    // 2) prevents any NSBeep; we don't ever want to beep here.
+    RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:m_view]);
+    [m_view _superDoCommandBySelector:selector];
+    [sink detach];
+    return ![sink didReceiveUnhandledCommand];
 }
 
 } // namespace WebKit
