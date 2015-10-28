@@ -64,9 +64,9 @@ private:
     void showContextMenu();
 
 #if ENABLE(SERVICE_CONTROLS)
+    RetainPtr<NSMenuItem> createShareMenuItem();
     void showServicesMenu();
     void setupServicesMenu();
-    WebCore::ContextMenuItem shareMenuItem();
 #endif
 
     RetainPtr<NSMenu> m_menu;
