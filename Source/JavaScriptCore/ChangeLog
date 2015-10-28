@@ -1,5 +1,17 @@
 2015-10-28  Mark Lam  <mark.lam@apple.com>
 
+        Fix a typo in ProbeContext::fpr().
+        https://bugs.webkit.org/show_bug.cgi?id=150629
+
+        Reviewed by Yusuke Suzuki.
+
+        ProbeContext::fpr() should be calling CPUState::fpr(), not CPUState::gpr().
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::ProbeContext::fpr):
+
+2015-10-28  Mark Lam  <mark.lam@apple.com>
+
         Add ability to print the PC register from JIT'ed code.
         https://bugs.webkit.org/show_bug.cgi?id=150561
 

@@ -916,7 +916,7 @@ public:
 
         // Convenience methods:
         void* gpr(RegisterID regID) { return cpu.gpr(regID); }
-        double fpr(FPRegisterID regID) { return cpu.gpr(regID); }
+        double fpr(FPRegisterID regID) { return cpu.fpr(regID); }
         const char* gprName(RegisterID regID) { return cpu.gprName(regID); }
         const char* fprName(FPRegisterID regID) { return cpu.fprName(regID); }
     };
