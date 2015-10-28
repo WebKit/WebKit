@@ -1818,13 +1818,13 @@ WebInspector._copy = function(event)
 
 WebInspector._increaseZoom = function(event) {
     let currentZoom = InspectorFrontendHost.zoomFactor();
-    InspectorFrontendHost.setZoomFactor(currentZoom * 1.2);
+    InspectorFrontendHost.setZoomFactor(currentZoom + 0.2);
     event.preventDefault();
 };
 
 WebInspector._decreaseZoom = function(event) {
     let currentZoom = InspectorFrontendHost.zoomFactor();
-    InspectorFrontendHost.setZoomFactor(currentZoom * 0.8);
+    InspectorFrontendHost.setZoomFactor(currentZoom - 0.2);
     event.preventDefault();
 };
 

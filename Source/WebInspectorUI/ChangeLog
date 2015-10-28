@@ -1,3 +1,17 @@
+2015-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Zoom never goes back to 100% size
+        https://bugs.webkit.org/show_bug.cgi?id=150637
+
+        Add and subtract 20% from the zoom level so the zoom factor can return
+        to the 1 starting zoom factor if you go back the other direction.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._increaseZoom): Add 0.2 instead of multiplying 1.2.
+        (WebInspector._decreaseZoom): Subtract 0.2 instead of multiplying 0.8.
+
 2015-10-28  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frames pie chart does not update during initial selection of a timeline range
