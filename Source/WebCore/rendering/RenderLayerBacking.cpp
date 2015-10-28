@@ -1718,7 +1718,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleCo
 
     // An unset (invalid) color will remove the solid color.
     m_graphicsLayer->setContentsToSolidColor(backgroundColor);
-    FloatRect contentsRect = backgroundBoxForPainting();
+    FloatRect contentsRect = backgroundBoxForSimpleContainerPainting();
     m_graphicsLayer->setContentsRect(contentsRect);
     m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(contentsRect));
     didUpdateContentsRect = true;
@@ -1739,7 +1739,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
         return;
     }
 
-    FloatRect destRect = backgroundBoxForPainting();
+    FloatRect destRect = backgroundBoxForSimpleContainerPainting();
     FloatSize phase;
     FloatSize tileSize;
 
@@ -1798,21 +1798,15 @@ static bool supportsDirectBoxDecorationsComposition(const RenderLayerModelObject
     if (style.backgroundComposite() != CompositeSourceOver)
         return false;
 
-    if (style.backgroundClip() == TextFillBox)
-        return false;
-
     return true;
 }
 
-bool RenderLayerBacking::paintsBoxDecorations() const
+bool RenderLayerBacking::paintsNonDirectCompositedBoxDecoration() const
 {
     if (!m_owningLayer.hasVisibleBoxDecorations())
         return false;
 
-    if (!supportsDirectBoxDecorationsComposition(renderer()))
-        return true;
-
-    return false;
+    return !supportsDirectBoxDecorationsComposition(renderer());
 }
 
 bool RenderLayerBacking::paintsChildren() const
@@ -1854,9 +1848,12 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     if (renderer().isTextControl())
         return false;
 
-    if (paintsBoxDecorations() || paintsChildren())
+    if (paintsNonDirectCompositedBoxDecoration() || paintsChildren())
         return false;
 
+    if (renderer().style().backgroundClip() == TextFillBox)
+        return false;
+    
     if (renderer().isRenderNamedFlowFragmentContainer())
         return false;
 
@@ -2104,7 +2101,7 @@ static LayoutRect backgroundRectForBox(const RenderBox& box)
         return box.paddingBoxRect();
     case ContentFillBox:
         return box.contentBoxRect();
-    case TextFillBox:
+    default:
         break;
     }
 
@@ -2112,7 +2109,7 @@ static LayoutRect backgroundRectForBox(const RenderBox& box)
     return LayoutRect();
 }
 
-FloatRect RenderLayerBacking::backgroundBoxForPainting() const
+FloatRect RenderLayerBacking::backgroundBoxForSimpleContainerPainting() const
 {
     if (!is<RenderBox>(renderer()))
         return FloatRect();
