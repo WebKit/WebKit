@@ -1,3 +1,49 @@
+2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Timeline Markers again (DOMContentLoaded, Load, console.timeStamp)
+        https://bugs.webkit.org/show_bug.cgi?id=150612
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Tooltip strings for the timeline markers.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WebInspector.TimelineRecording.prototype.addEventMarker):
+        Dispatch an event so the views listening to this recording can add the markers.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView):
+        (WebInspector.OverviewTimelineView.prototype._markerAdded):
+        Add the marker to the OverviewTimelineView's ruler.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype._markerAdded):
+        (WebInspector.TimelineOverview.prototype.addMarker): Deleted.
+        Add the marker to the TimelineOverview's ruler. Remove the unused method.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.addMarker):
+        Give some marker's a tooltip based on their type.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .timeline-ruler > .markers):
+        (.timeline-overview.frames > .timeline-ruler > .markers > .marker:not(.current-time)):
+        Correct the height of markers in the timeline overview.
+        Hide markers non-current-time markers in the rendering frames view.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .markers > .marker::before):
+        Give markers a bit of width to make it easier to trigger their tooltip.
+
+        (.timeline-ruler > .markers > .marker.load-event):
+        (.timeline-ruler > .markers > .marker.dom-content-event):
+        (.timeline-ruler > .markers > .marker.timestamp):
+        Adjust coloring of the markers. hsla(0.5) was causing bleeding
+        with width 1px to 2px. hsl() with opacity it was always 1px.
+
 2015-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Zoom never goes back to 100% size

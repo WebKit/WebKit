@@ -53,6 +53,14 @@
     right: 0;
 }
 
+.timeline-overview > .timeline-ruler > .markers {
+    top: 28px;
+}
+
+.timeline-overview.frames > .timeline-ruler > .markers > .marker:not(.current-time) {
+    display: none;
+}
+
 .timeline-overview.frames > .timeline-ruler > .header > .divider,
 .timeline-overview.frames > .timeline-ruler > .markers > .divider {
     transform: translateX(0px);

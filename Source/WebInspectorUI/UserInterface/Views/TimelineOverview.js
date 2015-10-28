@@ -32,6 +32,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._recording = timelineRecording;
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineAdded, this._timelineAdded, this);
         this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
+        this._recording.addEventListener(WebInspector.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
 
         this._element = document.createElement("div");
         this._element.classList.add("timeline-overview", identifier);
@@ -269,11 +270,6 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         this._resetSelection();
     }
 
-    addMarker(marker)
-    {
-        this._timelineRuler.addMarker(marker);
-    }
-
     revealMarker(marker)
     {
         this.scrollStartTime = marker.time - (this.visibleDuration / 2);
@@ -492,6 +488,11 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.Obje
         var overviewGraph = this._timelineOverviewGraphsMap.take(timeline);
         overviewGraph.removeEventListener(WebInspector.TimelineOverviewGraph.Event.RecordSelected, this._recordSelected, this);
         this._graphsContainerElement.removeChild(overviewGraph.element);
+    }
+
+    _markerAdded(event)
+    {
+        this._timelineRuler.addMarker(event.data.marker);
     }
 
     _timelineRulerMouseDown(event)

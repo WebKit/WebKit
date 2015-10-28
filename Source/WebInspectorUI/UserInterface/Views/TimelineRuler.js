@@ -309,6 +309,18 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.Object
         var markerElement = document.createElement("div");
         markerElement.classList.add(marker.type, "marker");
 
+        switch (marker.type) {
+        case WebInspector.TimelineMarker.Type.LoadEvent:
+            markerElement.title = WebInspector.UIString("Load – %s").format(Number.secondsToString(marker.time));
+            break;
+        case WebInspector.TimelineMarker.Type.DOMContentEvent:
+            markerElement.title = WebInspector.UIString("DOMContentLoaded – %s").format(Number.secondsToString(marker.time));
+            break;
+        case WebInspector.TimelineMarker.Type.TimeStamp:
+            markerElement.title = WebInspector.UIString("Timestamp – %s").format(Number.secondsToString(marker.time));
+            break;
+        }
+
         this._markerElementMap.set(marker, markerElement);
 
         this._needsMarkerLayout();
