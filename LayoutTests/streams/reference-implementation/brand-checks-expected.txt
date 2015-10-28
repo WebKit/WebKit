@@ -21,7 +21,7 @@ PASS WritableStream.prototype.closed enforces a brand check
 PASS WritableStream.prototype.ready enforces a brand check 
 PASS WritableStream.prototype.state enforces a brand check 
 PASS WritableStream.prototype.abort enforces a brand check 
-FAIL WritableStream.prototype.write enforces a brand check write not implemented
+PASS WritableStream.prototype.write enforces a brand check 
 PASS WritableStream.prototype.close enforces a brand check 
 PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments 
 PASS CountQueuingStrategy.prototype.size should work generically on its this and its arguments 

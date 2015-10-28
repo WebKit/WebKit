@@ -111,7 +111,40 @@ function write(chunk)
 {
     "use strict";
 
-    throw new EvalError("write not implemented");
+    if (!@isWritableStream(this))
+        return Promise.reject(new @TypeError("The WritableStream.close method can only be used on instances of WritableStream"));
+
+    if (this.@state === "closed" || this.@state === "closing")
+        return Promise.reject(new @TypeError("Cannot write on a WritableString that is closed or closing"));
+
+    if (this.@state === "errored")
+        return Promise.reject(this.@storedError);
+
+    // FIXME
+    // assert(this.@state === "writable" || this.@state === "waiting" || this.@state === undefined);
+
+    let chunkSize = 1;
+    if (this.@strategy.size !== undefined) {
+        try {
+            chunkSize = this.@strategy.size.@call(undefined, chunk);
+        } catch(e) {
+            @errorWritableStream.@call(this, e);
+            return Promise.reject(e);
+        }
+    }
+
+    const promise = @createNewStreamsPromise();
+    try {
+        @enqueueValueWithSize(this.@queue, { promise: promise, chunk: chunk }, chunkSize);
+    } catch (e) {
+        @errorWritableStream.@call(this, e);
+        return Promise.reject(e);
+    }
+
+    @syncWritableStreamStateWithQueue(this);
+    @callOrScheduleWritableStreamAdvanceQueue(this);
+
+    return promise;
 }
 
 function closed()

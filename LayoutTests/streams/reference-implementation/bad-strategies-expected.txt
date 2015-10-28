@@ -5,8 +5,8 @@ PASS Readable stream: throwing strategy.highWaterMark getter
 PASS Readable stream: invalid strategy.highWaterMark 
 PASS Readable stream: invalid strategy.size return value 
 PASS Writable stream: throwing strategy.size getter 
-FAIL Writable stream: throwing strategy.size method write not implemented
-FAIL Writable stream: invalid strategy.size return value write not implemented
+PASS Writable stream: throwing strategy.size method 
+PASS Writable stream: invalid strategy.size return value 
 PASS Writable stream: throwing strategy.highWaterMark getter 
 PASS Writable stream: invalid strategy.highWaterMark 
 

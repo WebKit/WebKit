@@ -1,12 +1,12 @@
 
-FAIL Aborting a WritableStream immediately prevents future writes write not implemented
-FAIL Aborting a WritableStream prevents further writes after any that are in progress write not implemented
+PASS Aborting a WritableStream immediately prevents future writes 
+PASS Aborting a WritableStream prevents further writes after any that are in progress 
 PASS Fulfillment value of ws.abort() call must be undefined even if the underlying sink returns a non-undefined value 
 PASS WritableStream if sink's abort throws, the promise returned by ws.abort() rejects 
 PASS Aborting a WritableStream passes through the given reason 
-FAIL Aborting a WritableStream puts it in an errored state, with stored error equal to the abort reason write not implemented
-FAIL Aborting a WritableStream causes any outstanding ready promises to be fulfilled immediately write not implemented
-FAIL Aborting a WritableStream causes any outstanding write() promises to be rejected with the abort reason write not implemented
+PASS Aborting a WritableStream puts it in an errored state, with stored error equal to the abort reason 
+PASS Aborting a WritableStream causes any outstanding ready promises to be fulfilled immediately 
+PASS Aborting a WritableStream causes any outstanding write() promises to be rejected with the abort reason 
 PASS Closing but then immediately aborting a WritableStream causes the stream to error 
 PASS Closing a WritableStream and aborting it while it closes causes the stream to error 
 PASS Aborting a WritableStream after it is closed is a no-op 
