@@ -1,3 +1,21 @@
+2015-10-28  Per Arne Vollan  <peavo@outlook.com>
+
+        Add WinCairo to list of ports in run-webkit-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=150625
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        (WinPort.run_webkit_tests_command):
+        (WinCairoPort):
+        (GtkWK2Port):
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.find_system_pid):
+        (WinCairoPort):
+
 2015-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         WebKitTestRunner leaks in generateWhitelist()

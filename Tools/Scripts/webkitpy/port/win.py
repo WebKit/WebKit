@@ -348,3 +348,9 @@ class WinPort(ApplePort):
                 pass
 
         return system_pid
+
+
+class WinCairoPort(WinPort):
+    port_name = "wincairo"
+
+    VERSION_FALLBACK_ORDER = ["wincairo-xp", "wincairo-vista", "wincairo-7sp0", "wincairo-win10", "wincairo"]

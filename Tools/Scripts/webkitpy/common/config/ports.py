@@ -68,6 +68,7 @@ class DeprecatedPort(object):
             "mac": MacPort,
             "mac-wk2": MacWK2Port,
             "win": WinPort,
+            "wincairo": WinCairoPort,
             "efl-wk2": EflWK2Port,
         }
         default_port = {
@@ -153,6 +154,10 @@ class WinPort(DeprecatedPort):
         command = super(WinPort, self).run_webkit_tests_command(build_style)
         command.append("--dump-render-tree")
         return command
+
+
+class WinCairoPort(DeprecatedPort):
+    port_flag_name = "wincairo"
 
 
 class GtkWK2Port(DeprecatedPort):
