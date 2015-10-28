@@ -53,7 +53,8 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(Templates.DoNotEditWarning).substitute(args))
-        sections.append(self.generate_header_includes())
+        sections.append(self.generate_primary_header_includes())
+        sections.append(self.generate_secondary_header_includes())
         sections.append(Template(Templates.NamespaceTop).substitute(args))
         for function in self.model().all_functions():
             sections.append(self.generate_embedded_code_string_section_for_function(function))
@@ -65,7 +66,7 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
 
         return "\n\n".join(sections)
 
-    def generate_header_includes(self):
+    def generate_secondary_header_includes(self):
         header_includes = [
             (["JavaScriptCore"],
                 ("JavaScriptCore", "builtins/BuiltinExecutables.h"),

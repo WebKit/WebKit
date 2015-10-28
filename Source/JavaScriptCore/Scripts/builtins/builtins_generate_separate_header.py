@@ -55,11 +55,15 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
             'objectName': self.object.object_name.upper(),
         }
 
+        conditional_guard = self.object.annotations.get('conditional')
+
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(Templates.DoNotEditWarning).substitute(args))
         sections.append(Template(Templates.HeaderIncludeGuardTop).substitute(args))
-        sections.append(self.generate_header_includes())
+        if conditional_guard is not None:
+            sections.append("#if %s" % conditional_guard)
+        sections.append(self.generate_secondary_header_includes())
         sections.append(self.generate_forward_declarations())
         sections.append(Template(Templates.NamespaceTop).substitute(args))
         sections.append(self.generate_section_for_object(self.object))
@@ -67,6 +71,8 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
         sections.append(self.generate_section_for_code_name_macro())
         sections.append(Template(Templates.SeparateHeaderStaticMacros).substitute(args))
         sections.append(Template(Templates.NamespaceBottom).substitute(args))
+        if conditional_guard is not None:
+            sections.append("#endif // %s" % conditional_guard)
         sections.append(Template(Templates.HeaderIncludeGuardBottom).substitute(args))
 
         return "\n\n".join(sections)
@@ -76,7 +82,7 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
 class FunctionExecutable;
 }"""
 
-    def generate_header_includes(self):
+    def generate_secondary_header_includes(self):
         header_includes = [
             (["WebCore"],
                 ("JavaScriptCore", "builtins/BuiltinUtils.h"),

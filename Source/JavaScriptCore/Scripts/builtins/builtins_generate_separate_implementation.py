@@ -56,10 +56,15 @@ class BuiltinsSeparateImplementationGenerator(BuiltinsGenerator):
             'objectNameLC': WK_lcfirst(self.object.object_name),
         }
 
+        conditional_guard = self.object.annotations.get('conditional')
+
         sections = []
         sections.append(self.generate_license())
         sections.append(Template(Templates.DoNotEditWarning).substitute(args))
-        sections.append(self.generate_header_includes())
+        sections.append(self.generate_primary_header_includes())
+        if conditional_guard is not None:
+            sections.append("#if %s" % conditional_guard)
+        sections.append(self.generate_secondary_header_includes())
         sections.append(Template(Templates.NamespaceTop).substitute(args))
         for function in self.object.functions:
             sections.append(self.generate_embedded_code_string_section_for_function(function))
@@ -68,10 +73,12 @@ class BuiltinsSeparateImplementationGenerator(BuiltinsGenerator):
         elif self.model().framework is Frameworks.WebCore:
             sections.append(Template(Templates.SeparateWebCoreImplementationStaticMacros).substitute(args))
         sections.append(Template(Templates.NamespaceBottom).substitute(args))
+        if conditional_guard is not None:
+            sections.append("#endif // %s\n" % conditional_guard)
 
         return "\n\n".join(sections)
 
-    def generate_header_includes(self):
+    def generate_secondary_header_includes(self):
         header_includes = [
             (["JavaScriptCore"],
                 ("JavaScriptCore", "builtins/BuiltinExecutables.h"),

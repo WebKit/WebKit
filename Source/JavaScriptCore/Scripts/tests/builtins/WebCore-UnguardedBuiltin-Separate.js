@@ -29,34 +29,3 @@ function isReadableStreamLocked(stream)
 
     return !!stream.@reader;
 }
-
-
-function cancelReadableStream(stream, reason)
-{
-    "use strict";
-
-    if (stream.@state === @readableStreamClosed)
-        return Promise.resolve();
-    if (stream.@state === @readableStreamErrored)
-        return Promise.reject(stream.@storedError);
-    stream.@queue = [];
-    @finishClosingReadableStream(stream);
-    return @promiseInvokeOrNoop(stream.@underlyingSource, "cancel", [reason]).then(function() { });
-}
-
-
-function promiseInvokeOrNoop(object, key, args)
-{
-    "use strict";
-
-    try {
-        var method = object[key];
-        if (typeof method === "undefined")
-            return Promise.resolve();
-        var result = method.@apply(object, args);
-        return Promise.resolve(result);
-    }
-    catch(error) {
-        return Promise.reject(error);
-    }
-}

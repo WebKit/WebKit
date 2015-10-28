@@ -47,7 +47,8 @@ functionParameterFinder = re.compile(r"^(?:function|constructor)\s+(?:\w+)\s*\((
 
 multilineCommentRegExp = re.compile(r"\/\*.*?\*\/", re.MULTILINE | re.S)
 singleLineCommentRegExp = re.compile(r"\/\/.*?\n", re.MULTILINE | re.S)
-
+keyValueAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)=([^=]+?)\n", re.MULTILINE | re.S)
+flagAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)[^=]*?\n", re.MULTILINE | re.S)
 
 class ParseException(Exception):
     pass
@@ -78,8 +79,9 @@ class Frameworks:
 
 
 class BuiltinObject:
-    def __init__(self, object_name, functions):
+    def __init__(self, object_name, annotations, functions):
         self.object_name = object_name
+        self.annotations = annotations
         self.functions = functions
         self.collection = None  # Set by the owning BuiltinsCollection
 
@@ -132,6 +134,8 @@ class BuiltinsCollection:
             log.debug(line)
         log.debug("")
 
+        object_annotations = self._parse_annotations(text)
+
         object_name, ext = os.path.splitext(os.path.basename(filename))
         log.debug("Parsing object: %s" % object_name)
 
@@ -144,7 +148,7 @@ class BuiltinsCollection:
             log.debug(func)
         log.debug("")
 
-        new_object = BuiltinObject(object_name, parsed_functions)
+        new_object = BuiltinObject(object_name, object_annotations, parsed_functions)
         new_object.collection = self
         self.objects.append(new_object)
 
@@ -204,6 +208,27 @@ class BuiltinsCollection:
             copyrightLines.append(line)
 
         return copyrightLines
+
+    def _parse_annotations(self, text):
+        annotations = {}
+
+        for match in keyValueAnnotationCommentRegExp.finditer(text):
+            (key, value) = match.group(1, 2)
+            log.debug("Found annotation: '%s' => '%s'" % (key, value))
+            if key in annotations:
+                raise ParseException("Duplicate annotation found: %s" % key)
+
+            annotations[key] = value
+
+        for match in flagAnnotationCommentRegExp.finditer(text):
+            key = match.group(1)
+            log.debug("Found annotation: '%s' => 'TRUE'" % key)
+            if key in annotations:
+                raise ParseException("Duplicate annotation found: %s" % key)
+
+            annotations[key] = True
+
+        return annotations
 
     def _parse_functions(self, text):
         text = multilineCommentRegExp.sub("/**/", singleLineCommentRegExp.sub("//\n", text))

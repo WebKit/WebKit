@@ -43,31 +43,17 @@ namespace WebCore {
 extern const char* s_unguardedBuiltinIsReadableStreamLockedCode;
 extern const int s_unguardedBuiltinIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_unguardedBuiltinIsReadableStreamLockedCodeConstructAbility;
-extern const char* s_unguardedBuiltinCancelReadableStreamCode;
-extern const int s_unguardedBuiltinCancelReadableStreamCodeLength;
-extern const JSC::ConstructAbility s_unguardedBuiltinCancelReadableStreamCodeConstructAbility;
-extern const char* s_unguardedBuiltinPromiseInvokeOrNoopCode;
-extern const int s_unguardedBuiltinPromiseInvokeOrNoopCodeLength;
-extern const JSC::ConstructAbility s_unguardedBuiltinPromiseInvokeOrNoopCodeConstructAbility;
 
 #define WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, unguardedBuiltinIsReadableStreamLocked, 1) \
-    macro(cancelReadableStream, unguardedBuiltinCancelReadableStream, 2) \
-    macro(promiseInvokeOrNoop, unguardedBuiltinPromiseInvokeOrNoop, 3) \
 
 #define WEBCORE_BUILTIN_UNGUARDEDBUILTIN_ISREADABLESTREAMLOCKED 1
-#define WEBCORE_BUILTIN_UNGUARDEDBUILTIN_CANCELREADABLESTREAM 1
-#define WEBCORE_BUILTIN_UNGUARDEDBUILTIN_PROMISEINVOKEORNOOP 1
 
 #define WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_CODE(macro) \
     macro(unguardedBuiltinIsReadableStreamLockedCode, isReadableStreamLocked, s_unguardedBuiltinIsReadableStreamLockedCodeLength) \
-    macro(unguardedBuiltinCancelReadableStreamCode, cancelReadableStream, s_unguardedBuiltinCancelReadableStreamCodeLength) \
-    macro(unguardedBuiltinPromiseInvokeOrNoopCode, promiseInvokeOrNoop, s_unguardedBuiltinPromiseInvokeOrNoopCodeLength) \
 
 #define WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_FUNCTION_NAME(macro) \
-    macro(cancelReadableStream) \
     macro(isReadableStreamLocked) \
-    macro(promiseInvokeOrNoop) \
 
 #define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
@@ -133,43 +119,6 @@ const char* s_unguardedBuiltinIsReadableStreamLockedCode =
     "   \"use strict\";\n" \
     "\n" \
     "    return !!stream.@reader;\n" \
-    "})\n" \
-;
-
-const JSC::ConstructAbility s_unguardedBuiltinCancelReadableStreamCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_unguardedBuiltinCancelReadableStreamCodeLength = 402;
-const char* s_unguardedBuiltinCancelReadableStreamCode =
-    "(function (stream, reason)\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    if (stream.@state === @readableStreamClosed)\n" \
-    "        return Promise.resolve();\n" \
-    "    if (stream.@state === @readableStreamErrored)\n" \
-    "        return Promise.reject(stream.@storedError);\n" \
-    "    stream.@queue = [];\n" \
-    "    @finishClosingReadableStream(stream);\n" \
-    "    return @promiseInvokeOrNoop(stream.@underlyingSource, \"cancel\", [reason]).then(function() { });\n" \
-    "})\n" \
-;
-
-const JSC::ConstructAbility s_unguardedBuiltinPromiseInvokeOrNoopCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_unguardedBuiltinPromiseInvokeOrNoopCodeLength = 338;
-const char* s_unguardedBuiltinPromiseInvokeOrNoopCode =
-    "(function (object, key, args)\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    try {\n" \
-    "        var method = object[key];\n" \
-    "        if (typeof method === \"undefined\")\n" \
-    "            return Promise.resolve();\n" \
-    "        var result = method.@apply(object, args);\n" \
-    "        return Promise.resolve(result);\n" \
-    "    }\n" \
-    "    catch(error) {\n" \
-    "        return Promise.reject(error);\n" \
-    "    }\n" \
     "})\n" \
 ;
 

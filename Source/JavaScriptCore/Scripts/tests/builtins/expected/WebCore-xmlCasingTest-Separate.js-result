@@ -31,6 +31,8 @@
 #ifndef xmlCasingTestBuiltins_h
 #define xmlCasingTestBuiltins_h
 
+#if ENABLE(STREAMS_API)
+
 #include <builtins/BuiltinUtils.h>
 
 namespace JSC {
@@ -79,6 +81,8 @@ WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 } // namespace WebCore
 
+#endif // ENABLE(STREAMS_API)
+
 #endif // xmlCasingTestBuiltins_h
 
 ### End File: xmlCasingTestBuiltins.h
@@ -115,6 +119,8 @@ WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 #include "config.h"
 #include "xmlCasingTestBuiltins.h"
+
+#if ENABLE(STREAMS_API)
 
 #include "WebCoreJSClientData.h"
 #include <runtime/Executable.h>
@@ -185,6 +191,9 @@ WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 
 } // namespace WebCore
+
+#endif // ENABLE(STREAMS_API)
+
 ### End File: xmlCasingTestBuiltins.cpp
 
 ### Begin File: xmlCasingTestBuiltinsWrapper.h
@@ -219,6 +228,8 @@ WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 #ifndef xmlCasingTestBuiltinsWrapper_h
 #define xmlCasingTestBuiltinsWrapper_h
+
+#if ENABLE(STREAMS_API)
 
 #include "xmlCasingTestBuiltins.h"
 #include <builtins/BuiltinUtils.h>
@@ -312,6 +323,8 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 
 
 } // namespace WebCore
+
+#endif // ENABLE(STREAMS_API)
 
 #endif // xmlCasingTestBuiltinsWrapper_h
 

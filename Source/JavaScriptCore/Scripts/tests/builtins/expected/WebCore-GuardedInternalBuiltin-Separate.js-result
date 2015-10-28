@@ -31,6 +31,8 @@
 #ifndef GuardedInternalBuiltinBuiltins_h
 #define GuardedInternalBuiltinBuiltins_h
 
+#if ENABLE(STREAMS_API)
+
 #include <builtins/BuiltinUtils.h>
 
 namespace JSC {
@@ -43,31 +45,17 @@ namespace WebCore {
 extern const char* s_guardedInternalBuiltinIsReadableStreamLockedCode;
 extern const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength;
 extern const JSC::ConstructAbility s_guardedInternalBuiltinIsReadableStreamLockedCodeConstructAbility;
-extern const char* s_guardedInternalBuiltinCancelReadableStreamCode;
-extern const int s_guardedInternalBuiltinCancelReadableStreamCodeLength;
-extern const JSC::ConstructAbility s_guardedInternalBuiltinCancelReadableStreamCodeConstructAbility;
-extern const char* s_guardedInternalBuiltinPromiseInvokeOrNoopCode;
-extern const int s_guardedInternalBuiltinPromiseInvokeOrNoopCodeLength;
-extern const JSC::ConstructAbility s_guardedInternalBuiltinPromiseInvokeOrNoopCodeConstructAbility;
 
 #define WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_DATA(macro) \
     macro(isReadableStreamLocked, guardedInternalBuiltinIsReadableStreamLocked, 1) \
-    macro(cancelReadableStream, guardedInternalBuiltinCancelReadableStream, 2) \
-    macro(promiseInvokeOrNoop, guardedInternalBuiltinPromiseInvokeOrNoop, 3) \
 
 #define WEBCORE_BUILTIN_GUARDEDINTERNALBUILTIN_ISREADABLESTREAMLOCKED 1
-#define WEBCORE_BUILTIN_GUARDEDINTERNALBUILTIN_CANCELREADABLESTREAM 1
-#define WEBCORE_BUILTIN_GUARDEDINTERNALBUILTIN_PROMISEINVOKEORNOOP 1
 
 #define WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(macro) \
     macro(guardedInternalBuiltinIsReadableStreamLockedCode, isReadableStreamLocked, s_guardedInternalBuiltinIsReadableStreamLockedCodeLength) \
-    macro(guardedInternalBuiltinCancelReadableStreamCode, cancelReadableStream, s_guardedInternalBuiltinCancelReadableStreamCodeLength) \
-    macro(guardedInternalBuiltinPromiseInvokeOrNoopCode, promiseInvokeOrNoop, s_guardedInternalBuiltinPromiseInvokeOrNoopCodeLength) \
 
 #define WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(macro) \
-    macro(cancelReadableStream) \
     macro(isReadableStreamLocked) \
-    macro(promiseInvokeOrNoop) \
 
 #define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
@@ -78,6 +66,8 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #define WEBCORE_BUILTIN_GUARDEDINTERNALBUILTIN_EXISTS(object, func) defined WEBCORE_BUILTIN_ ## object ## _ ## func
 
 } // namespace WebCore
+
+#endif // ENABLE(STREAMS_API)
 
 #endif // GuardedInternalBuiltinBuiltins_h
 
@@ -116,6 +106,8 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #include "config.h"
 #include "GuardedInternalBuiltinBuiltins.h"
 
+#if ENABLE(STREAMS_API)
+
 #include "WebCoreJSClientData.h"
 #include <runtime/Executable.h>
 #include <runtime/JSCJSValueInlines.h>
@@ -136,43 +128,6 @@ const char* s_guardedInternalBuiltinIsReadableStreamLockedCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_guardedInternalBuiltinCancelReadableStreamCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_guardedInternalBuiltinCancelReadableStreamCodeLength = 402;
-const char* s_guardedInternalBuiltinCancelReadableStreamCode =
-    "(function (stream, reason)\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    if (stream.@state === @readableStreamClosed)\n" \
-    "        return Promise.resolve();\n" \
-    "    if (stream.@state === @readableStreamErrored)\n" \
-    "        return Promise.reject(stream.@storedError);\n" \
-    "    stream.@queue = [];\n" \
-    "    @finishClosingReadableStream(stream);\n" \
-    "    return @promiseInvokeOrNoop(stream.@underlyingSource, \"cancel\", [reason]).then(function() { });\n" \
-    "})\n" \
-;
-
-const JSC::ConstructAbility s_guardedInternalBuiltinPromiseInvokeOrNoopCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_guardedInternalBuiltinPromiseInvokeOrNoopCodeLength = 338;
-const char* s_guardedInternalBuiltinPromiseInvokeOrNoopCode =
-    "(function (object, key, args)\n" \
-    "{\n" \
-    "    \"use strict\";\n" \
-    "\n" \
-    "    try {\n" \
-    "        var method = object[key];\n" \
-    "        if (typeof method === \"undefined\")\n" \
-    "            return Promise.resolve();\n" \
-    "        var result = method.@apply(object, args);\n" \
-    "        return Promise.resolve(result);\n" \
-    "    }\n" \
-    "    catch(error) {\n" \
-    "        return Promise.reject(error);\n" \
-    "    }\n" \
-    "})\n" \
-;
-
 
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
@@ -185,6 +140,9 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 
 } // namespace WebCore
+
+#endif // ENABLE(STREAMS_API)
+
 ### End File: GuardedInternalBuiltinBuiltins.cpp
 
 ### Begin File: GuardedInternalBuiltinBuiltinsWrapper.h
@@ -219,6 +177,8 @@ WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 
 #ifndef GuardedInternalBuiltinBuiltinsWrapper_h
 #define GuardedInternalBuiltinBuiltinsWrapper_h
+
+#if ENABLE(STREAMS_API)
 
 #include "GuardedInternalBuiltinBuiltins.h"
 #include <builtins/BuiltinUtils.h>
@@ -312,6 +272,8 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 
 
 } // namespace WebCore
+
+#endif // ENABLE(STREAMS_API)
 
 #endif // GuardedInternalBuiltinBuiltinsWrapper_h
 

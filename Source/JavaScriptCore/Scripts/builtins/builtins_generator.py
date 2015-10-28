@@ -101,17 +101,14 @@ class BuiltinsGenerator:
             else:
                 includes.add("#include \"%s\"" % os.path.basename(header_path))
 
-        sorted_includes = sorted(list(includes))
-        # Always include config.h and the counterpart header before other headers.
-        name, ext = os.path.splitext(self.output_filename())
-        if ext != '.h':
-            sorted_includes[:0] = [
-                "#include \"config.h\"",
-                "#include \"%s.h\"" % name,
-                "",
-            ]
+        return sorted(list(includes))
 
-        return sorted_includes
+    def generate_primary_header_includes(self):
+        name, _ = os.path.splitext(self.output_filename())
+        return '\n'.join([
+            "#include \"config.h\"",
+            "#include \"%s.h\"" % name,
+        ])
 
     def generate_embedded_code_string_section_for_function(self, function):
         text = function.function_source
