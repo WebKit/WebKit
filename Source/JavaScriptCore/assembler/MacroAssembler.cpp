@@ -28,6 +28,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include <wtf/PrintStream.h>
+
 namespace JSC {
 
 const double MacroAssembler::twoToThe32 = (double)0x100000000ull;
@@ -46,6 +48,71 @@ void MacroAssembler::probe(std::function<void (MacroAssembler::ProbeContext*)> f
 #endif // ENABLE(MASM_PROBE)
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, MacroAssembler::RelationalCondition cond)
+{
+    switch (cond) {
+    case MacroAssembler::Equal:
+        out.print("Equal");
+        return;
+    case MacroAssembler::NotEqual:
+        out.print("NotEqual");
+        return;
+    case MacroAssembler::Above:
+        out.print("Above");
+        return;
+    case MacroAssembler::AboveOrEqual:
+        out.print("AboveOrEqual");
+        return;
+    case MacroAssembler::Below:
+        out.print("Below");
+        return;
+    case MacroAssembler::BelowOrEqual:
+        out.print("BelowOrEqual");
+        return;
+    case MacroAssembler::GreaterThan:
+        out.print("GreaterThan");
+        return;
+    case MacroAssembler::GreaterThanOrEqual:
+        out.print("GreaterThanOrEqual");
+        return;
+    case MacroAssembler::LessThan:
+        out.print("LessThan");
+        return;
+    case MacroAssembler::LessThanOrEqual:
+        out.print("LessThanOrEqual");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void printInternal(PrintStream& out, MacroAssembler::ResultCondition cond)
+{
+    switch (cond) {
+    case MacroAssembler::Overflow:
+        out.print("Overflow");
+        return;
+    case MacroAssembler::Signed:
+        out.print("Signed");
+        return;
+    case MacroAssembler::PositiveOrZero:
+        out.print("PositiveOrZero");
+        return;
+    case MacroAssembler::Zero:
+        out.print("Zero");
+        return;
+    case MacroAssembler::NonZero:
+        out.print("NonZero");
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // namespace WTF
 
 #endif // ENABLE(ASSEMBLER)
 

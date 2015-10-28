@@ -114,8 +114,9 @@ namespace WTF {
         template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, ValueType>::type take(typename GetPtrHelper<V>::PtrType);
 
         static bool isValidValue(const ValueType&);
-        
-        bool operator==(const HashSet&) const;
+
+        template<typename OtherCollection>
+        bool operator==(const OtherCollection&) const;
 
     private:
         HashTableType m_impl;
@@ -337,12 +338,13 @@ namespace WTF {
     }  
 
     template<typename T, typename U, typename V>
-    inline bool HashSet<T, U, V>::operator==(const HashSet& other) const
+    template<typename OtherCollection>
+    inline bool HashSet<T, U, V>::operator==(const OtherCollection& otherCollection) const
     {
-        if (size() != other.size())
+        if (size() != otherCollection.size())
             return false;
-        for (const_iterator iter = begin(); iter != end(); ++iter) {
-            if (!other.contains(*iter))
+        for (const auto& other : otherCollection) {
+            if (!contains(other))
                 return false;
         }
         return true;

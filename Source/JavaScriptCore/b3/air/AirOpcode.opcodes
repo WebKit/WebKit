@@ -1,0 +1,162 @@
+# Copyright (C) 2015 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# Syllabus:
+#
+# Roles and types:
+# U:G => use of a general-purpose register or value
+# D:G => def of a general-purpose register or value
+# UD:G => use and def of a general-purpose register or value
+# U:F => use of a float register or value
+# D:F => def of a float register or value
+# UD:F => use and def of a float register or value
+#
+# Argument kinds:
+# Tmp => temporary or register
+# Imm => 32-bit immediate int
+# Imm64 => TrustedImm64
+# Addr => address as temporary/register+offset
+# Index => BaseIndex address
+# Abs => AbsoluteAddress
+#
+# The parser views these things as keywords, and understands that they fall into two distinct classes
+# of things. So, although this file uses a particular indentation style, none of the whitespace or
+# even newlines are meaningful to the parser. For example, you could write:
+#
+# Foo42 U:G, UD:F Imm, Tmp Addr, Tmp
+#
+# And the parser would know that this is the same as:
+#
+# Foo42 U:G, UD:F
+#     Imm, Tmp
+#     Addr, Tmp
+#
+# I.e. a two-form instruction that uses a GPR or an int immediate and uses+defs a float register.
+
+# Note that the opcodes here have a leading capital (Add32) but must correspond to MacroAssembler
+# API that has a leading lower-case (add32).
+
+Nop
+
+Add32 U:G, UD:G
+    Tmp, Tmp
+    Imm, Addr
+    Imm, Tmp
+    Addr, Tmp
+    Tmp, Addr
+
+Add32 U:G, U:G, D:G
+    Imm, Tmp, Tmp
+
+Add64 U:G, UD:G
+    Tmp, Tmp
+    Imm, Addr
+    Imm, Tmp
+    Addr, Tmp
+
+Add64 U:G, U:G, D:G
+    Imm, Tmp, Tmp
+
+And32 U:G, UD:G
+    Tmp, Tmp
+    Imm, Tmp
+    Tmp, Addr
+    Addr, Tmp
+    Imm, Addr
+
+And64 U:G, UD:G
+    Tmp, Tmp
+    Imm, Tmp
+
+Lshift32 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
+Mul32 U:G, UD:G
+    Tmp, Tmp
+    Addr, Tmp
+
+# Note that Move operates over the full register size, which is either 32-bit or 64-bit depending on
+# the platform. I'm not entirely sure that this is a good thing; it might be better to just have a
+# Move64 instruction. OTOH, our MacroAssemblers already have this notion of "move()" that basically
+# means movePtr.
+Move U:G, D:G
+    Tmp, Tmp
+    Imm, Tmp
+    Imm64, Tmp
+    Addr, Tmp as loadPtr # This means that "Move Addr, Tmp" is code-generated as "load" not "move".
+    Index, Tmp as loadPtr
+    Tmp, Addr as storePtr
+    Tmp, Index as storePtr
+
+Move32 U:G, D:G
+    Tmp, Tmp as zeroExtend32ToPtr
+    Addr, Tmp as load32
+    Index, Tmp as load32
+    Tmp, Addr as store32
+    Tmp, Index as store32
+
+MoveDouble U:F, D:F
+    Tmp, Tmp
+    Addr, Tmp as loadDouble
+    Index, Tmp as loadDouble
+    Tmp, Addr as storeDouble
+    Tmp, Index as storeDouble
+
+Move64ToDouble U:G, D:F
+    Tmp, Tmp
+
+MoveDoubleTo64 U:F, D:G
+    Tmp, Tmp
+
+BranchAdd32 U:G, U:G, UD:G /branch
+    ResCond, Tmp, Tmp
+    ResCond, Imm, Tmp
+    ResCond, Imm, Addr
+    ResCond, Tmp, Addr
+    ResCond, Addr, Tmp
+
+BranchMul32 U:G, U:G, UD:G /branch
+    ResCond, Tmp, Tmp
+    ResCond, Addr, Tmp
+
+BranchSub32 U:G, U:G, UD:G /branch
+    ResCond, Tmp, Tmp
+    ResCond, Imm, Tmp
+    ResCond, Imm, Addr
+    ResCond, Tmp, Addr
+    ResCond, Addr, Tmp
+
+BranchNeg32 U:G, UD:G /branch
+    ResCond, Tmp
+
+Jump /branch
+
+Ret /terminal
+
+Breakpoint /terminal
+
+# Air allows for exotic behavior. A Patch's behavior is determined entirely by the Special operand,
+# which must be the first operand.
+special Patch
+

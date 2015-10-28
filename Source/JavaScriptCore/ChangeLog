@@ -1,3 +1,810 @@
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Create a super rough prototype of B3
+        https://bugs.webkit.org/show_bug.cgi?id=150280
+
+        Reviewed by Benjamin Poulain.
+
+        This changeset adds the basic scaffolding of the B3 compiler. B3 stands for Bare Bones
+        Backend. It's a low-level SSA-based language-agnostic compiler. The basic structure allows
+        for aggressive C-level optimizations and an awesome portable backend. The backend, called
+        Air (Assembly IR), is a reflective abstraction over our MacroAssembler. The abstraction is
+        defined using a spec file (AirOpcode.opcodes) which describes the various kinds of
+        instructions that we wish to support. Then, the B3::LowerToAir phase, which does our
+        instruction selection, reflectively selects Air opcodes by querying which instruction forms
+        are possible. Air allows for optimal register allocation and stack layout. Currently the
+        register allocator isn't written, but the stack layout is.
+
+        Of course this isn't done yet. It can only compile simple programs, seen in the "test suite"
+        called "testb3.cpp". There's a lot of optimizations that have to be written and a lot of
+        stuff added to the instruction selector. But it's a neat start.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.cpp:
+        (WTF::printInternal):
+        * assembler/MacroAssembler.h:
+        * b3: Added.
+        * b3/B3AddressMatcher.patterns: Added.
+        * b3/B3ArgumentRegValue.cpp: Added.
+        (JSC::B3::ArgumentRegValue::~ArgumentRegValue):
+        (JSC::B3::ArgumentRegValue::dumpMeta):
+        * b3/B3ArgumentRegValue.h: Added.
+        * b3/B3BasicBlock.cpp: Added.
+        (JSC::B3::BasicBlock::BasicBlock):
+        (JSC::B3::BasicBlock::~BasicBlock):
+        (JSC::B3::BasicBlock::append):
+        (JSC::B3::BasicBlock::addPredecessor):
+        (JSC::B3::BasicBlock::removePredecessor):
+        (JSC::B3::BasicBlock::replacePredecessor):
+        (JSC::B3::BasicBlock::removeNops):
+        (JSC::B3::BasicBlock::dump):
+        (JSC::B3::BasicBlock::deepDump):
+        * b3/B3BasicBlock.h: Added.
+        (JSC::B3::BasicBlock::index):
+        (JSC::B3::BasicBlock::begin):
+        (JSC::B3::BasicBlock::end):
+        (JSC::B3::BasicBlock::size):
+        (JSC::B3::BasicBlock::at):
+        (JSC::B3::BasicBlock::last):
+        (JSC::B3::BasicBlock::values):
+        (JSC::B3::BasicBlock::numPredecessors):
+        (JSC::B3::BasicBlock::predecessor):
+        (JSC::B3::BasicBlock::predecessors):
+        (JSC::B3::BasicBlock::frequency):
+        (JSC::B3::DeepBasicBlockDump::DeepBasicBlockDump):
+        (JSC::B3::DeepBasicBlockDump::dump):
+        (JSC::B3::deepDump):
+        * b3/B3BasicBlockInlines.h: Added.
+        (JSC::B3::BasicBlock::appendNew):
+        (JSC::B3::BasicBlock::numSuccessors):
+        (JSC::B3::BasicBlock::successor):
+        (JSC::B3::BasicBlock::successors):
+        (JSC::B3::BasicBlock::successorBlock):
+        (JSC::B3::BasicBlock::successorBlocks):
+        * b3/B3BasicBlockUtils.h: Added.
+        (JSC::B3::addPredecessor):
+        (JSC::B3::removePredecessor):
+        (JSC::B3::replacePredecessor):
+        (JSC::B3::resetReachability):
+        (JSC::B3::blocksInPreOrder):
+        (JSC::B3::blocksInPostOrder):
+        * b3/B3BlockWorklist.h: Added.
+        * b3/B3CheckSpecial.cpp: Added.
+        (JSC::B3::Air::numB3Args):
+        (JSC::B3::CheckSpecial::CheckSpecial):
+        (JSC::B3::CheckSpecial::~CheckSpecial):
+        (JSC::B3::CheckSpecial::hiddenBranch):
+        (JSC::B3::CheckSpecial::forEachArg):
+        (JSC::B3::CheckSpecial::isValid):
+        (JSC::B3::CheckSpecial::admitsStack):
+        (JSC::B3::CheckSpecial::generate):
+        (JSC::B3::CheckSpecial::dumpImpl):
+        (JSC::B3::CheckSpecial::deepDumpImpl):
+        * b3/B3CheckSpecial.h: Added.
+        * b3/B3CheckValue.cpp: Added.
+        (JSC::B3::CheckValue::~CheckValue):
+        (JSC::B3::CheckValue::dumpMeta):
+        * b3/B3CheckValue.h: Added.
+        * b3/B3Common.cpp: Added.
+        (JSC::B3::shouldDumpIR):
+        (JSC::B3::shouldDumpIRAtEachPhase):
+        (JSC::B3::shouldValidateIR):
+        (JSC::B3::shouldValidateIRAtEachPhase):
+        (JSC::B3::shouldSaveIRBeforePhase):
+        * b3/B3Common.h: Added.
+        (JSC::B3::is64Bit):
+        (JSC::B3::is32Bit):
+        * b3/B3Commutativity.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3Commutativity.h: Added.
+        * b3/B3Const32Value.cpp: Added.
+        (JSC::B3::Const32Value::~Const32Value):
+        (JSC::B3::Const32Value::negConstant):
+        (JSC::B3::Const32Value::addConstant):
+        (JSC::B3::Const32Value::subConstant):
+        (JSC::B3::Const32Value::dumpMeta):
+        * b3/B3Const32Value.h: Added.
+        * b3/B3Const64Value.cpp: Added.
+        (JSC::B3::Const64Value::~Const64Value):
+        (JSC::B3::Const64Value::negConstant):
+        (JSC::B3::Const64Value::addConstant):
+        (JSC::B3::Const64Value::subConstant):
+        (JSC::B3::Const64Value::dumpMeta):
+        * b3/B3Const64Value.h: Added.
+        * b3/B3ConstDoubleValue.cpp: Added.
+        (JSC::B3::ConstDoubleValue::~ConstDoubleValue):
+        (JSC::B3::ConstDoubleValue::negConstant):
+        (JSC::B3::ConstDoubleValue::addConstant):
+        (JSC::B3::ConstDoubleValue::subConstant):
+        (JSC::B3::ConstDoubleValue::dumpMeta):
+        * b3/B3ConstDoubleValue.h: Added.
+        (JSC::B3::ConstDoubleValue::accepts):
+        (JSC::B3::ConstDoubleValue::value):
+        (JSC::B3::ConstDoubleValue::ConstDoubleValue):
+        * b3/B3ConstPtrValue.h: Added.
+        (JSC::B3::ConstPtrValue::value):
+        (JSC::B3::ConstPtrValue::ConstPtrValue):
+        * b3/B3ControlValue.cpp: Added.
+        (JSC::B3::ControlValue::~ControlValue):
+        (JSC::B3::ControlValue::dumpMeta):
+        * b3/B3ControlValue.h: Added.
+        * b3/B3Effects.cpp: Added.
+        (JSC::B3::Effects::dump):
+        * b3/B3Effects.h: Added.
+        (JSC::B3::Effects::mustExecute):
+        * b3/B3FrequencyClass.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3FrequencyClass.h: Added.
+        * b3/B3FrequentedBlock.h: Added.
+        * b3/B3Generate.cpp: Added.
+        (JSC::B3::generate):
+        (JSC::B3::generateToAir):
+        * b3/B3Generate.h: Added.
+        * b3/B3GenericFrequentedBlock.h: Added.
+        (JSC::B3::GenericFrequentedBlock::GenericFrequentedBlock):
+        (JSC::B3::GenericFrequentedBlock::operator==):
+        (JSC::B3::GenericFrequentedBlock::operator!=):
+        (JSC::B3::GenericFrequentedBlock::operator bool):
+        (JSC::B3::GenericFrequentedBlock::block):
+        (JSC::B3::GenericFrequentedBlock::frequency):
+        (JSC::B3::GenericFrequentedBlock::dump):
+        * b3/B3HeapRange.cpp: Added.
+        (JSC::B3::HeapRange::dump):
+        * b3/B3HeapRange.h: Added.
+        (JSC::B3::HeapRange::HeapRange):
+        (JSC::B3::HeapRange::top):
+        (JSC::B3::HeapRange::operator==):
+        (JSC::B3::HeapRange::operator!=):
+        (JSC::B3::HeapRange::operator bool):
+        (JSC::B3::HeapRange::begin):
+        (JSC::B3::HeapRange::end):
+        (JSC::B3::HeapRange::overlaps):
+        * b3/B3IndexMap.h: Added.
+        (JSC::B3::IndexMap::IndexMap):
+        (JSC::B3::IndexMap::resize):
+        (JSC::B3::IndexMap::operator[]):
+        * b3/B3IndexSet.h: Added.
+        (JSC::B3::IndexSet::IndexSet):
+        (JSC::B3::IndexSet::add):
+        (JSC::B3::IndexSet::contains):
+        (JSC::B3::IndexSet::Iterable::Iterable):
+        (JSC::B3::IndexSet::Iterable::iterator::iterator):
+        (JSC::B3::IndexSet::Iterable::iterator::operator*):
+        (JSC::B3::IndexSet::Iterable::iterator::operator++):
+        (JSC::B3::IndexSet::Iterable::iterator::operator==):
+        (JSC::B3::IndexSet::Iterable::iterator::operator!=):
+        (JSC::B3::IndexSet::Iterable::begin):
+        (JSC::B3::IndexSet::Iterable::end):
+        (JSC::B3::IndexSet::values):
+        (JSC::B3::IndexSet::indices):
+        (JSC::B3::IndexSet::dump):
+        * b3/B3InsertionSet.cpp: Added.
+        (JSC::B3::InsertionSet::execute):
+        * b3/B3InsertionSet.h: Added.
+        (JSC::B3::InsertionSet::InsertionSet):
+        (JSC::B3::InsertionSet::code):
+        (JSC::B3::InsertionSet::appendInsertion):
+        (JSC::B3::InsertionSet::insertValue):
+        * b3/B3InsertionSetInlines.h: Added.
+        (JSC::B3::InsertionSet::insert):
+        * b3/B3LowerToAir.cpp: Added.
+        (JSC::B3::Air::LowerToAir::LowerToAir):
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::loadAddr):
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::immOrTmp):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::moveForType):
+        (JSC::B3::Air::LowerToAir::relaxedMoveForType):
+        (JSC::B3::Air::LowerToAir::append):
+        (JSC::B3::Air::LowerToAir::AddressSelector::AddressSelector):
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptRoot):
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptRootLate):
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptInternals):
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptInternalsLate):
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptOperands):
+        (JSC::B3::Air::LowerToAir::AddressSelector::acceptOperandsLate):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAddShift1):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAddShift2):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAdd):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryDirect):
+        (JSC::B3::Air::LowerToAir::acceptRoot):
+        (JSC::B3::Air::LowerToAir::acceptRootLate):
+        (JSC::B3::Air::LowerToAir::acceptInternals):
+        (JSC::B3::Air::LowerToAir::acceptInternalsLate):
+        (JSC::B3::Air::LowerToAir::acceptOperands):
+        (JSC::B3::Air::LowerToAir::acceptOperandsLate):
+        (JSC::B3::Air::LowerToAir::tryLoad):
+        (JSC::B3::Air::LowerToAir::tryAdd):
+        (JSC::B3::Air::LowerToAir::tryAnd):
+        (JSC::B3::Air::LowerToAir::tryStoreAddLoad):
+        (JSC::B3::Air::LowerToAir::tryStoreAndLoad):
+        (JSC::B3::Air::LowerToAir::tryStore):
+        (JSC::B3::Air::LowerToAir::tryTruncArgumentReg):
+        (JSC::B3::Air::LowerToAir::tryTrunc):
+        (JSC::B3::Air::LowerToAir::tryArgumentReg):
+        (JSC::B3::Air::LowerToAir::tryConst32):
+        (JSC::B3::Air::LowerToAir::tryConst64):
+        (JSC::B3::Air::LowerToAir::tryIdentity):
+        (JSC::B3::Air::LowerToAir::tryReturn):
+        (JSC::B3::lowerToAir):
+        * b3/B3LowerToAir.h: Added.
+        * b3/B3LoweringMatcher.patterns: Added.
+        * b3/B3MemoryValue.cpp: Added.
+        (JSC::B3::MemoryValue::~MemoryValue):
+        (JSC::B3::MemoryValue::dumpMeta):
+        * b3/B3MemoryValue.h: Added.
+        * b3/B3Opcode.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3Opcode.h: Added.
+        (JSC::B3::isCheckMath):
+        * b3/B3Origin.cpp: Added.
+        (JSC::B3::Origin::dump):
+        * b3/B3Origin.h: Added.
+        (JSC::B3::Origin::Origin):
+        (JSC::B3::Origin::operator bool):
+        (JSC::B3::Origin::data):
+        * b3/B3PatchpointSpecial.cpp: Added.
+        (JSC::B3::PatchpointSpecial::PatchpointSpecial):
+        (JSC::B3::PatchpointSpecial::~PatchpointSpecial):
+        (JSC::B3::PatchpointSpecial::forEachArg):
+        (JSC::B3::PatchpointSpecial::isValid):
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        (JSC::B3::PatchpointSpecial::generate):
+        (JSC::B3::PatchpointSpecial::dumpImpl):
+        (JSC::B3::PatchpointSpecial::deepDumpImpl):
+        * b3/B3PatchpointSpecial.h: Added.
+        * b3/B3PatchpointValue.cpp: Added.
+        (JSC::B3::PatchpointValue::~PatchpointValue):
+        (JSC::B3::PatchpointValue::dumpMeta):
+        * b3/B3PatchpointValue.h: Added.
+        (JSC::B3::PatchpointValue::accepts):
+        (JSC::B3::PatchpointValue::PatchpointValue):
+        * b3/B3PhaseScope.cpp: Added.
+        (JSC::B3::PhaseScope::PhaseScope):
+        (JSC::B3::PhaseScope::~PhaseScope):
+        * b3/B3PhaseScope.h: Added.
+        * b3/B3Procedure.cpp: Added.
+        (JSC::B3::Procedure::Procedure):
+        (JSC::B3::Procedure::~Procedure):
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::resetReachability):
+        (JSC::B3::Procedure::dump):
+        (JSC::B3::Procedure::blocksInPreOrder):
+        (JSC::B3::Procedure::blocksInPostOrder):
+        * b3/B3Procedure.h: Added.
+        (JSC::B3::Procedure::size):
+        (JSC::B3::Procedure::at):
+        (JSC::B3::Procedure::operator[]):
+        (JSC::B3::Procedure::iterator::iterator):
+        (JSC::B3::Procedure::iterator::operator*):
+        (JSC::B3::Procedure::iterator::operator++):
+        (JSC::B3::Procedure::iterator::operator==):
+        (JSC::B3::Procedure::iterator::operator!=):
+        (JSC::B3::Procedure::iterator::findNext):
+        (JSC::B3::Procedure::begin):
+        (JSC::B3::Procedure::end):
+        (JSC::B3::Procedure::ValuesCollection::ValuesCollection):
+        (JSC::B3::Procedure::ValuesCollection::iterator::iterator):
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator*):
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator++):
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator==):
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator!=):
+        (JSC::B3::Procedure::ValuesCollection::begin):
+        (JSC::B3::Procedure::ValuesCollection::end):
+        (JSC::B3::Procedure::ValuesCollection::size):
+        (JSC::B3::Procedure::ValuesCollection::at):
+        (JSC::B3::Procedure::ValuesCollection::operator[]):
+        (JSC::B3::Procedure::values):
+        (JSC::B3::Procedure::setLastPhaseName):
+        (JSC::B3::Procedure::lastPhaseName):
+        * b3/B3ProcedureInlines.h: Added.
+        (JSC::B3::Procedure::add):
+        * b3/B3ReduceStrength.cpp: Added.
+        (JSC::B3::reduceStrength):
+        * b3/B3ReduceStrength.h: Added.
+        * b3/B3StackSlotKind.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3StackSlotKind.h: Added.
+        * b3/B3StackSlotValue.cpp: Added.
+        (JSC::B3::StackSlotValue::~StackSlotValue):
+        (JSC::B3::StackSlotValue::dumpMeta):
+        * b3/B3StackSlotValue.h: Added.
+        (JSC::B3::StackSlotValue::accepts):
+        (JSC::B3::StackSlotValue::byteSize):
+        (JSC::B3::StackSlotValue::kind):
+        (JSC::B3::StackSlotValue::offsetFromFP):
+        (JSC::B3::StackSlotValue::setOffsetFromFP):
+        (JSC::B3::StackSlotValue::StackSlotValue):
+        * b3/B3Stackmap.cpp: Added.
+        (JSC::B3::Stackmap::Stackmap):
+        (JSC::B3::Stackmap::~Stackmap):
+        (JSC::B3::Stackmap::dump):
+        * b3/B3Stackmap.h: Added.
+        (JSC::B3::Stackmap::constrain):
+        (JSC::B3::Stackmap::reps):
+        (JSC::B3::Stackmap::clobber):
+        (JSC::B3::Stackmap::clobbered):
+        (JSC::B3::Stackmap::setGenerator):
+        * b3/B3StackmapSpecial.cpp: Added.
+        (JSC::B3::StackmapSpecial::StackmapSpecial):
+        (JSC::B3::StackmapSpecial::~StackmapSpecial):
+        (JSC::B3::StackmapSpecial::reportUsedRegisters):
+        (JSC::B3::StackmapSpecial::extraClobberedRegs):
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        (JSC::B3::StackmapSpecial::admitsStackImpl):
+        (JSC::B3::StackmapSpecial::appendRepsImpl):
+        (JSC::B3::StackmapSpecial::repForArg):
+        * b3/B3StackmapSpecial.h: Added.
+        * b3/B3SuccessorCollection.h: Added.
+        (JSC::B3::SuccessorCollection::SuccessorCollection):
+        (JSC::B3::SuccessorCollection::size):
+        (JSC::B3::SuccessorCollection::at):
+        (JSC::B3::SuccessorCollection::operator[]):
+        (JSC::B3::SuccessorCollection::iterator::iterator):
+        (JSC::B3::SuccessorCollection::iterator::operator*):
+        (JSC::B3::SuccessorCollection::iterator::operator++):
+        (JSC::B3::SuccessorCollection::iterator::operator==):
+        (JSC::B3::SuccessorCollection::iterator::operator!=):
+        (JSC::B3::SuccessorCollection::begin):
+        (JSC::B3::SuccessorCollection::end):
+        * b3/B3SwitchCase.cpp: Added.
+        (JSC::B3::SwitchCase::dump):
+        * b3/B3SwitchCase.h: Added.
+        (JSC::B3::SwitchCase::SwitchCase):
+        (JSC::B3::SwitchCase::operator bool):
+        (JSC::B3::SwitchCase::caseValue):
+        (JSC::B3::SwitchCase::target):
+        (JSC::B3::SwitchCase::targetBlock):
+        * b3/B3SwitchValue.cpp: Added.
+        (JSC::B3::SwitchValue::~SwitchValue):
+        (JSC::B3::SwitchValue::removeCase):
+        (JSC::B3::SwitchValue::appendCase):
+        (JSC::B3::SwitchValue::dumpMeta):
+        (JSC::B3::SwitchValue::SwitchValue):
+        * b3/B3SwitchValue.h: Added.
+        (JSC::B3::SwitchValue::accepts):
+        (JSC::B3::SwitchValue::numCaseValues):
+        (JSC::B3::SwitchValue::caseValue):
+        (JSC::B3::SwitchValue::caseValues):
+        (JSC::B3::SwitchValue::fallThrough):
+        (JSC::B3::SwitchValue::size):
+        (JSC::B3::SwitchValue::at):
+        (JSC::B3::SwitchValue::operator[]):
+        (JSC::B3::SwitchValue::iterator::iterator):
+        (JSC::B3::SwitchValue::iterator::operator*):
+        (JSC::B3::SwitchValue::iterator::operator++):
+        (JSC::B3::SwitchValue::iterator::operator==):
+        (JSC::B3::SwitchValue::iterator::operator!=):
+        (JSC::B3::SwitchValue::begin):
+        (JSC::B3::SwitchValue::end):
+        * b3/B3Type.cpp: Added.
+        (WTF::printInternal):
+        * b3/B3Type.h: Added.
+        (JSC::B3::isInt):
+        (JSC::B3::isFloat):
+        (JSC::B3::pointerType):
+        * b3/B3UpsilonValue.cpp: Added.
+        (JSC::B3::UpsilonValue::~UpsilonValue):
+        (JSC::B3::UpsilonValue::dumpMeta):
+        * b3/B3UpsilonValue.h: Added.
+        (JSC::B3::UpsilonValue::accepts):
+        (JSC::B3::UpsilonValue::phi):
+        (JSC::B3::UpsilonValue::UpsilonValue):
+        * b3/B3UseCounts.cpp: Added.
+        (JSC::B3::UseCounts::UseCounts):
+        (JSC::B3::UseCounts::~UseCounts):
+        * b3/B3UseCounts.h: Added.
+        (JSC::B3::UseCounts::operator[]):
+        * b3/B3Validate.cpp: Added.
+        (JSC::B3::validate):
+        * b3/B3Validate.h: Added.
+        * b3/B3Value.cpp: Added.
+        (JSC::B3::Value::~Value):
+        (JSC::B3::Value::replaceWithIdentity):
+        (JSC::B3::Value::replaceWithNop):
+        (JSC::B3::Value::dump):
+        (JSC::B3::Value::deepDump):
+        (JSC::B3::Value::negConstant):
+        (JSC::B3::Value::addConstant):
+        (JSC::B3::Value::subConstant):
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::performSubstitution):
+        (JSC::B3::Value::dumpMeta):
+        (JSC::B3::Value::typeFor):
+        * b3/B3Value.h: Added.
+        (JSC::B3::DeepValueDump::DeepValueDump):
+        (JSC::B3::DeepValueDump::dump):
+        (JSC::B3::deepDump):
+        * b3/B3ValueInlines.h: Added.
+        (JSC::B3::Value::as):
+        (JSC::B3::Value::isConstant):
+        (JSC::B3::Value::hasInt32):
+        (JSC::B3::Value::asInt32):
+        (JSC::B3::Value::hasInt64):
+        (JSC::B3::Value::asInt64):
+        (JSC::B3::Value::hasInt):
+        (JSC::B3::Value::asInt):
+        (JSC::B3::Value::isInt):
+        (JSC::B3::Value::hasIntPtr):
+        (JSC::B3::Value::asIntPtr):
+        (JSC::B3::Value::hasDouble):
+        (JSC::B3::Value::asDouble):
+        (JSC::B3::Value::stackmap):
+        * b3/B3ValueRep.cpp: Added.
+        (JSC::B3::ValueRep::dump):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h: Added.
+        (JSC::B3::ValueRep::ValueRep):
+        (JSC::B3::ValueRep::reg):
+        (JSC::B3::ValueRep::stack):
+        (JSC::B3::ValueRep::stackArgument):
+        (JSC::B3::ValueRep::constant):
+        (JSC::B3::ValueRep::constantDouble):
+        (JSC::B3::ValueRep::kind):
+        (JSC::B3::ValueRep::operator bool):
+        (JSC::B3::ValueRep::offsetFromFP):
+        (JSC::B3::ValueRep::offsetFromSP):
+        (JSC::B3::ValueRep::value):
+        (JSC::B3::ValueRep::doubleValue):
+        * b3/air: Added.
+        * b3/air/AirAllocateStack.cpp: Added.
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirAllocateStack.h: Added.
+        * b3/air/AirArg.cpp: Added.
+        (JSC::B3::Air::Arg::dump):
+        * b3/air/AirArg.h: Added.
+        (JSC::B3::Air::Arg::isUse):
+        (JSC::B3::Air::Arg::isDef):
+        (JSC::B3::Air::Arg::typeForB3Type):
+        (JSC::B3::Air::Arg::Arg):
+        (JSC::B3::Air::Arg::imm):
+        (JSC::B3::Air::Arg::imm64):
+        (JSC::B3::Air::Arg::addr):
+        (JSC::B3::Air::Arg::stack):
+        (JSC::B3::Air::Arg::callArg):
+        (JSC::B3::Air::Arg::isValidScale):
+        (JSC::B3::Air::Arg::logScale):
+        (JSC::B3::Air::Arg::index):
+        (JSC::B3::Air::Arg::relCond):
+        (JSC::B3::Air::Arg::resCond):
+        (JSC::B3::Air::Arg::special):
+        (JSC::B3::Air::Arg::operator==):
+        (JSC::B3::Air::Arg::operator!=):
+        (JSC::B3::Air::Arg::operator bool):
+        (JSC::B3::Air::Arg::kind):
+        (JSC::B3::Air::Arg::isTmp):
+        (JSC::B3::Air::Arg::isImm):
+        (JSC::B3::Air::Arg::isImm64):
+        (JSC::B3::Air::Arg::isAddr):
+        (JSC::B3::Air::Arg::isStack):
+        (JSC::B3::Air::Arg::isCallArg):
+        (JSC::B3::Air::Arg::isIndex):
+        (JSC::B3::Air::Arg::isRelCond):
+        (JSC::B3::Air::Arg::isResCond):
+        (JSC::B3::Air::Arg::isSpecial):
+        (JSC::B3::Air::Arg::isAlive):
+        (JSC::B3::Air::Arg::tmp):
+        (JSC::B3::Air::Arg::value):
+        (JSC::B3::Air::Arg::pointerValue):
+        (JSC::B3::Air::Arg::base):
+        (JSC::B3::Air::Arg::hasOffset):
+        (JSC::B3::Air::Arg::offset):
+        (JSC::B3::Air::Arg::stackSlot):
+        (JSC::B3::Air::Arg::scale):
+        (JSC::B3::Air::Arg::isGPTmp):
+        (JSC::B3::Air::Arg::isFPTmp):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::hasType):
+        (JSC::B3::Air::Arg::type):
+        (JSC::B3::Air::Arg::isType):
+        (JSC::B3::Air::Arg::isGPR):
+        (JSC::B3::Air::Arg::gpr):
+        (JSC::B3::Air::Arg::isFPR):
+        (JSC::B3::Air::Arg::fpr):
+        (JSC::B3::Air::Arg::isReg):
+        (JSC::B3::Air::Arg::reg):
+        (JSC::B3::Air::Arg::gpTmpIndex):
+        (JSC::B3::Air::Arg::fpTmpIndex):
+        (JSC::B3::Air::Arg::tmpIndex):
+        (JSC::B3::Air::Arg::withOffset):
+        (JSC::B3::Air::Arg::forEachTmpFast):
+        (JSC::B3::Air::Arg::forEachTmp):
+        (JSC::B3::Air::Arg::asTrustedImm32):
+        (JSC::B3::Air::Arg::asTrustedImm64):
+        (JSC::B3::Air::Arg::asTrustedImmPtr):
+        (JSC::B3::Air::Arg::asAddress):
+        (JSC::B3::Air::Arg::asBaseIndex):
+        (JSC::B3::Air::Arg::asRelationalCondition):
+        (JSC::B3::Air::Arg::asResultCondition):
+        (JSC::B3::Air::Arg::isHashTableDeletedValue):
+        (JSC::B3::Air::Arg::hash):
+        (JSC::B3::Air::ArgHash::hash):
+        (JSC::B3::Air::ArgHash::equal):
+        * b3/air/AirBasicBlock.cpp: Added.
+        (JSC::B3::Air::BasicBlock::addPredecessor):
+        (JSC::B3::Air::BasicBlock::removePredecessor):
+        (JSC::B3::Air::BasicBlock::replacePredecessor):
+        (JSC::B3::Air::BasicBlock::dump):
+        (JSC::B3::Air::BasicBlock::deepDump):
+        (JSC::B3::Air::BasicBlock::BasicBlock):
+        * b3/air/AirBasicBlock.h: Added.
+        (JSC::B3::Air::BasicBlock::index):
+        (JSC::B3::Air::BasicBlock::size):
+        (JSC::B3::Air::BasicBlock::begin):
+        (JSC::B3::Air::BasicBlock::end):
+        (JSC::B3::Air::BasicBlock::at):
+        (JSC::B3::Air::BasicBlock::last):
+        (JSC::B3::Air::BasicBlock::appendInst):
+        (JSC::B3::Air::BasicBlock::append):
+        (JSC::B3::Air::BasicBlock::numSuccessors):
+        (JSC::B3::Air::BasicBlock::successor):
+        (JSC::B3::Air::BasicBlock::successors):
+        (JSC::B3::Air::BasicBlock::successorBlock):
+        (JSC::B3::Air::BasicBlock::successorBlocks):
+        (JSC::B3::Air::BasicBlock::numPredecessors):
+        (JSC::B3::Air::BasicBlock::predecessor):
+        (JSC::B3::Air::BasicBlock::predecessors):
+        (JSC::B3::Air::DeepBasicBlockDump::DeepBasicBlockDump):
+        (JSC::B3::Air::DeepBasicBlockDump::dump):
+        (JSC::B3::Air::deepDump):
+        * b3/air/AirCCallSpecial.cpp: Added.
+        (JSC::B3::Air::CCallSpecial::CCallSpecial):
+        (JSC::B3::Air::CCallSpecial::~CCallSpecial):
+        (JSC::B3::Air::CCallSpecial::forEachArg):
+        (JSC::B3::Air::CCallSpecial::isValid):
+        (JSC::B3::Air::CCallSpecial::admitsStack):
+        (JSC::B3::Air::CCallSpecial::reportUsedRegisters):
+        (JSC::B3::Air::CCallSpecial::generate):
+        (JSC::B3::Air::CCallSpecial::extraClobberedRegs):
+        (JSC::B3::Air::CCallSpecial::dumpImpl):
+        (JSC::B3::Air::CCallSpecial::deepDumpImpl):
+        * b3/air/AirCCallSpecial.h: Added.
+        * b3/air/AirCode.cpp: Added.
+        (JSC::B3::Air::Code::Code):
+        (JSC::B3::Air::Code::~Code):
+        (JSC::B3::Air::Code::addBlock):
+        (JSC::B3::Air::Code::addStackSlot):
+        (JSC::B3::Air::Code::addSpecial):
+        (JSC::B3::Air::Code::cCallSpecial):
+        (JSC::B3::Air::Code::resetReachability):
+        (JSC::B3::Air::Code::dump):
+        (JSC::B3::Air::Code::findFirstBlockIndex):
+        (JSC::B3::Air::Code::findNextBlockIndex):
+        (JSC::B3::Air::Code::findNextBlock):
+        * b3/air/AirCode.h: Added.
+        (JSC::B3::Air::Code::newTmp):
+        (JSC::B3::Air::Code::numTmps):
+        (JSC::B3::Air::Code::callArgAreaSize):
+        (JSC::B3::Air::Code::requestCallArgAreaSize):
+        (JSC::B3::Air::Code::frameSize):
+        (JSC::B3::Air::Code::setFrameSize):
+        (JSC::B3::Air::Code::calleeSaveRegisters):
+        (JSC::B3::Air::Code::size):
+        (JSC::B3::Air::Code::at):
+        (JSC::B3::Air::Code::operator[]):
+        (JSC::B3::Air::Code::iterator::iterator):
+        (JSC::B3::Air::Code::iterator::operator*):
+        (JSC::B3::Air::Code::iterator::operator++):
+        (JSC::B3::Air::Code::iterator::operator==):
+        (JSC::B3::Air::Code::iterator::operator!=):
+        (JSC::B3::Air::Code::begin):
+        (JSC::B3::Air::Code::end):
+        (JSC::B3::Air::Code::StackSlotsCollection::StackSlotsCollection):
+        (JSC::B3::Air::Code::StackSlotsCollection::size):
+        (JSC::B3::Air::Code::StackSlotsCollection::at):
+        (JSC::B3::Air::Code::StackSlotsCollection::operator[]):
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::iterator):
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator*):
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator++):
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator==):
+        (JSC::B3::Air::Code::StackSlotsCollection::iterator::operator!=):
+        (JSC::B3::Air::Code::StackSlotsCollection::begin):
+        (JSC::B3::Air::Code::StackSlotsCollection::end):
+        (JSC::B3::Air::Code::stackSlots):
+        (JSC::B3::Air::Code::SpecialsCollection::SpecialsCollection):
+        (JSC::B3::Air::Code::SpecialsCollection::size):
+        (JSC::B3::Air::Code::SpecialsCollection::at):
+        (JSC::B3::Air::Code::SpecialsCollection::operator[]):
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::iterator):
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator*):
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator++):
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator==):
+        (JSC::B3::Air::Code::SpecialsCollection::iterator::operator!=):
+        (JSC::B3::Air::Code::SpecialsCollection::begin):
+        (JSC::B3::Air::Code::SpecialsCollection::end):
+        (JSC::B3::Air::Code::specials):
+        (JSC::B3::Air::Code::setLastPhaseName):
+        (JSC::B3::Air::Code::lastPhaseName):
+        * b3/air/AirFrequentedBlock.h: Added.
+        * b3/air/AirGenerate.cpp: Added.
+        (JSC::B3::Air::generate):
+        * b3/air/AirGenerate.h: Added.
+        * b3/air/AirGenerated.cpp: Added.
+        * b3/air/AirGenerationContext.h: Added.
+        * b3/air/AirHandleCalleeSaves.cpp: Added.
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirHandleCalleeSaves.h: Added.
+        * b3/air/AirInsertionSet.cpp: Added.
+        (JSC::B3::Air::InsertionSet::execute):
+        * b3/air/AirInsertionSet.h: Added.
+        (JSC::B3::Air::InsertionSet::InsertionSet):
+        (JSC::B3::Air::InsertionSet::code):
+        (JSC::B3::Air::InsertionSet::appendInsertion):
+        (JSC::B3::Air::InsertionSet::insertInst):
+        (JSC::B3::Air::InsertionSet::insert):
+        * b3/air/AirInst.cpp: Added.
+        (JSC::B3::Air::Inst::dump):
+        * b3/air/AirInst.h: Added.
+        (JSC::B3::Air::Inst::Inst):
+        (JSC::B3::Air::Inst::opcode):
+        (JSC::B3::Air::Inst::forEachTmpFast):
+        (JSC::B3::Air::Inst::forEachTmp):
+        * b3/air/AirInstInlines.h: Added.
+        (JSC::B3::Air::ForEach<Tmp>::forEach):
+        (JSC::B3::Air::ForEach<Arg>::forEach):
+        (JSC::B3::Air::Inst::forEach):
+        (JSC::B3::Air::Inst::hasSpecial):
+        (JSC::B3::Air::Inst::extraClobberedRegs):
+        (JSC::B3::Air::Inst::reportUsedRegisters):
+        (JSC::B3::Air::isShiftValid):
+        (JSC::B3::Air::isLshift32Valid):
+        * b3/air/AirLiveness.h: Added.
+        (JSC::B3::Air::Liveness::Liveness):
+        (JSC::B3::Air::Liveness::liveAtHead):
+        (JSC::B3::Air::Liveness::liveAtTail):
+        (JSC::B3::Air::Liveness::LocalCalc::LocalCalc):
+        (JSC::B3::Air::Liveness::LocalCalc::live):
+        (JSC::B3::Air::Liveness::LocalCalc::takeLive):
+        (JSC::B3::Air::Liveness::LocalCalc::execute):
+        * b3/air/AirOpcode.opcodes: Added.
+        * b3/air/AirPhaseScope.cpp: Added.
+        (JSC::B3::Air::PhaseScope::PhaseScope):
+        (JSC::B3::Air::PhaseScope::~PhaseScope):
+        * b3/air/AirPhaseScope.h: Added.
+        * b3/air/AirRegisterPriority.cpp: Added.
+        (JSC::B3::Air::gprsInPriorityOrder):
+        (JSC::B3::Air::fprsInPriorityOrder):
+        (JSC::B3::Air::regsInPriorityOrder):
+        * b3/air/AirRegisterPriority.h: Added.
+        (JSC::B3::Air::RegistersInPriorityOrder<GPRInfo>::inPriorityOrder):
+        (JSC::B3::Air::RegistersInPriorityOrder<FPRInfo>::inPriorityOrder):
+        (JSC::B3::Air::regsInPriorityOrder):
+        * b3/air/AirSpecial.cpp: Added.
+        (JSC::B3::Air::Special::Special):
+        (JSC::B3::Air::Special::~Special):
+        (JSC::B3::Air::Special::name):
+        (JSC::B3::Air::Special::dump):
+        (JSC::B3::Air::Special::deepDump):
+        * b3/air/AirSpecial.h: Added.
+        (JSC::B3::Air::DeepSpecialDump::DeepSpecialDump):
+        (JSC::B3::Air::DeepSpecialDump::dump):
+        (JSC::B3::Air::deepDump):
+        * b3/air/AirSpillEverything.cpp: Added.
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirSpillEverything.h: Added.
+        * b3/air/AirStackSlot.cpp: Added.
+        (JSC::B3::Air::StackSlot::setOffsetFromFP):
+        (JSC::B3::Air::StackSlot::dump):
+        (JSC::B3::Air::StackSlot::deepDump):
+        (JSC::B3::Air::StackSlot::StackSlot):
+        * b3/air/AirStackSlot.h: Added.
+        (JSC::B3::Air::StackSlot::byteSize):
+        (JSC::B3::Air::StackSlot::kind):
+        (JSC::B3::Air::StackSlot::index):
+        (JSC::B3::Air::StackSlot::alignment):
+        (JSC::B3::Air::StackSlot::value):
+        (JSC::B3::Air::StackSlot::offsetFromFP):
+        (JSC::B3::Air::DeepStackSlotDump::DeepStackSlotDump):
+        (JSC::B3::Air::DeepStackSlotDump::dump):
+        (JSC::B3::Air::deepDump):
+        * b3/air/AirTmp.cpp: Added.
+        (JSC::B3::Air::Tmp::dump):
+        * b3/air/AirTmp.h: Added.
+        (JSC::B3::Air::Tmp::Tmp):
+        (JSC::B3::Air::Tmp::gpTmpForIndex):
+        (JSC::B3::Air::Tmp::fpTmpForIndex):
+        (JSC::B3::Air::Tmp::operator bool):
+        (JSC::B3::Air::Tmp::isGP):
+        (JSC::B3::Air::Tmp::isFP):
+        (JSC::B3::Air::Tmp::isGPR):
+        (JSC::B3::Air::Tmp::isFPR):
+        (JSC::B3::Air::Tmp::isReg):
+        (JSC::B3::Air::Tmp::gpr):
+        (JSC::B3::Air::Tmp::fpr):
+        (JSC::B3::Air::Tmp::reg):
+        (JSC::B3::Air::Tmp::hasTmpIndex):
+        (JSC::B3::Air::Tmp::gpTmpIndex):
+        (JSC::B3::Air::Tmp::fpTmpIndex):
+        (JSC::B3::Air::Tmp::tmpIndex):
+        (JSC::B3::Air::Tmp::isAlive):
+        (JSC::B3::Air::Tmp::operator==):
+        (JSC::B3::Air::Tmp::operator!=):
+        (JSC::B3::Air::Tmp::isHashTableDeletedValue):
+        (JSC::B3::Air::Tmp::hash):
+        (JSC::B3::Air::Tmp::encodeGP):
+        (JSC::B3::Air::Tmp::encodeFP):
+        (JSC::B3::Air::Tmp::encodeGPR):
+        (JSC::B3::Air::Tmp::encodeFPR):
+        (JSC::B3::Air::Tmp::encodeGPTmp):
+        (JSC::B3::Air::Tmp::encodeFPTmp):
+        (JSC::B3::Air::Tmp::isEncodedGP):
+        (JSC::B3::Air::Tmp::isEncodedFP):
+        (JSC::B3::Air::Tmp::isEncodedGPR):
+        (JSC::B3::Air::Tmp::isEncodedFPR):
+        (JSC::B3::Air::Tmp::isEncodedGPTmp):
+        (JSC::B3::Air::Tmp::isEncodedFPTmp):
+        (JSC::B3::Air::Tmp::decodeGPR):
+        (JSC::B3::Air::Tmp::decodeFPR):
+        (JSC::B3::Air::Tmp::decodeGPTmp):
+        (JSC::B3::Air::Tmp::decodeFPTmp):
+        (JSC::B3::Air::TmpHash::hash):
+        (JSC::B3::Air::TmpHash::equal):
+        * b3/air/AirTmpInlines.h: Added.
+        (JSC::B3::Air::Tmp::Tmp):
+        * b3/air/AirValidate.cpp: Added.
+        (JSC::B3::Air::validate):
+        * b3/air/AirValidate.h: Added.
+        * b3/air/opcode_generator.rb: Added.
+        * b3/generate_pattern_matcher.rb: Added.
+        * b3/testb3.cpp: Added.
+        (JSC::B3::compileAndRun):
+        (JSC::B3::test42):
+        (JSC::B3::testLoad42):
+        (JSC::B3::testArg):
+        (JSC::B3::testAddArgs):
+        (JSC::B3::testAddArgs32):
+        (JSC::B3::testStore):
+        (JSC::B3::testTrunc):
+        (JSC::B3::testAdd1):
+        (JSC::B3::testStoreAddLoad):
+        (JSC::B3::testStoreAddAndLoad):
+        (JSC::B3::testAdd1Uncommuted):
+        (JSC::B3::testLoadOffset):
+        (JSC::B3::testLoadOffsetNotConstant):
+        (JSC::B3::testLoadOffsetUsingAdd):
+        (JSC::B3::testLoadOffsetUsingAddNotConstant):
+        (JSC::B3::run):
+        (run):
+        (main):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::specializationKind):
+        * jit/Reg.h:
+        (JSC::Reg::index):
+        (JSC::Reg::isSet):
+        (JSC::Reg::operator bool):
+        (JSC::Reg::isHashTableDeletedValue):
+        (JSC::Reg::AllRegsIterable::iterator::iterator):
+        (JSC::Reg::AllRegsIterable::iterator::operator*):
+        (JSC::Reg::AllRegsIterable::iterator::operator++):
+        (JSC::Reg::AllRegsIterable::iterator::operator==):
+        (JSC::Reg::AllRegsIterable::iterator::operator!=):
+        (JSC::Reg::AllRegsIterable::begin):
+        (JSC::Reg::AllRegsIterable::end):
+        (JSC::Reg::all):
+        (JSC::Reg::invalid):
+        (JSC::Reg::operator!): Deleted.
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::RegisterAtOffsetList):
+        * jit/RegisterAtOffsetList.h:
+        (JSC::RegisterAtOffsetList::clear):
+        (JSC::RegisterAtOffsetList::size):
+        (JSC::RegisterAtOffsetList::begin):
+        (JSC::RegisterAtOffsetList::end):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::operator==):
+        (JSC::RegisterSet::hash):
+        (JSC::RegisterSet::forEach):
+        (JSC::RegisterSet::setAny):
+
 2015-10-28  Mark Lam  <mark.lam@apple.com>
 
         Rename MacroAssembler::callProbe() to probe().

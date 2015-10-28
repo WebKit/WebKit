@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef B3StackmapSpecial_h
+#define B3StackmapSpecial_h
+
+#if ENABLE(B3_JIT)
+
+#include "AirSpecial.h"
+#include "B3Stackmap.h"
+
+namespace JSC { namespace B3 {
+
+namespace Air { class Code; }
+
+// This is a base class for specials that have stackmaps. Note that it can find the Stackmap by
+// asking for the Inst's origin. Hence, these objects don't need to even hold a reference to the
+// Stackmap.
+
+class StackmapSpecial : public Air::Special {
+public:
+    StackmapSpecial();
+    virtual ~StackmapSpecial();
+
+protected:
+    void reportUsedRegisters(Air::Inst&, const RegisterSet&) override;
+    const RegisterSet& extraClobberedRegs(Air::Inst&) override;
+
+    // Note that this does not override generate() or dumpImpl()/deepDumpImpl(). We have many some
+    // subclasses that implement that.
+
+    void forEachArgImpl(
+        unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
+        Air::Inst&, const ScopedLambda<Air::Inst::EachArgCallback>&);
+    bool isValidImpl(
+        unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
+        Air::Inst&);
+    bool admitsStackImpl(
+        unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs,
+        Air::Inst&, unsigned argIndex);
+
+    // Appends the reps for the Inst's args, starting with numIgnoredArgs, to the given vector.
+    void appendRepsImpl(Air::GenerationContext&, unsigned numIgnoredArgs, Air::Inst&, Vector<ValueRep>&);
+
+    static ValueRep repForArg(Air::Code&, const Air::Arg&);
+};
+
+} } // namespace JSC::B3
+
+#endif // ENABLE(B3_JIT)
+
+#endif // B3StackmapSpecial_h
+

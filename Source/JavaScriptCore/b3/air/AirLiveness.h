@@ -1,0 +1,135 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef AirLiveness_h
+#define AirLiveness_h
+
+#if ENABLE(B3_JIT)
+
+#include "AirBasicBlock.h"
+#include "B3IndexMap.h"
+#include "B3IndexSet.h"
+
+namespace JSC { namespace B3 { namespace Air {
+
+// You can compute liveness over Tmp's or over Arg's. If you compute over Arg's, you get both
+// stack liveness and tmp liveness.
+template<typename Thing>
+class Liveness {
+public:
+    Liveness(Code& code)
+    {
+        m_liveAtHead.resize(code.size());
+        m_liveAtTail.resize(code.size());
+
+        IndexSet<BasicBlock> seen;
+
+        bool changed = true;
+        while (changed) {
+            changed = false;
+
+            for (size_t blockIndex = code.size(); blockIndex--;) {
+                BasicBlock* block = code.at(blockIndex);
+                LocalCalc localCalc(*this, block);
+                for (size_t instIndex = block->size(); instIndex--;)
+                    localCalc.execute(block->at(instIndex));
+                bool firstTime = seen.add(block);
+                if (!firstTime && localCalc.live() == m_liveAtHead[block])
+                    continue;
+                changed = true;
+                for (BasicBlock* predecessor : block->predecessors()) {
+                    m_liveAtTail[predecessor].add(
+                        localCalc.live().begin(), localCalc.live().end());
+                }
+                m_liveAtHead[block] = localCalc.takeLive();
+            }
+        }
+    }
+
+    const HashSet<Thing>& liveAtHead(BasicBlock* block) const
+    {
+        return m_liveAtHead[block];
+    }
+
+    const HashSet<Thing>& liveAtTail(BasicBlock* block) const
+    {
+        return m_liveAtTail[block];
+    }
+
+    // This calculator has to be run in reverse.
+    class LocalCalc {
+    public:
+        LocalCalc(Liveness& liveness, BasicBlock* block)
+            : m_live(liveness.liveAtTail(block))
+        {
+        }
+
+        const HashSet<Thing>& live() const { return m_live; }
+        HashSet<Thing>&& takeLive() { return WTF::move(m_live); }
+
+        void execute(Inst& inst)
+        {
+            // First handle def's.
+            inst.forEach<Thing>(
+                [this] (Thing& arg, Arg::Role role, Arg::Type) {
+                    if (!arg.isAlive())
+                        return;
+                    if (Arg::isDef(role))
+                        m_live.remove(arg);
+                });
+
+            // Next handle clobbered registers.
+            if (inst.hasSpecial()) {
+                inst.extraClobberedRegs().forEach(
+                    [this] (Reg reg) {
+                        m_live.remove(Thing(Tmp(reg)));
+                    });
+            }
+            
+            // Finally handle use's.
+            inst.forEach<Thing>(
+                [this] (Thing& arg, Arg::Role role, Arg::Type) {
+                    if (!arg.isAlive())
+                        return;
+                    if (Arg::isUse(role))
+                        m_live.add(arg);
+                });
+        }
+
+    private:
+        HashSet<Thing> m_live;
+    };
+    
+private:
+    IndexMap<BasicBlock, HashSet<Thing>> m_liveAtHead;
+    IndexMap<BasicBlock, HashSet<Thing>> m_liveAtTail;
+};
+
+} } } // namespace JSC::B3::Air
+
+#endif // ENABLE(B3_JIT)
+
+#endif // AirLiveness_h
+

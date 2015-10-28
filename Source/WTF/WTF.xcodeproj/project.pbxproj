@@ -50,6 +50,7 @@
 		0FE4479D1B7AAA03009498EB /* WordLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE4479B1B7AAA03009498EB /* WordLock.h */; };
 		0FEB3DCF1BB5D684009D7AAD /* SharedTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */; };
 		0FEB3DD11BB7366B009D7AAD /* ParallelVectorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */; };
+		0FEC84B11BDACD390080FF74 /* ScopedLambda.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84B01BDACD390080FF74 /* ScopedLambda.h */; };
 		0FEC84AF1BD825310080FF74 /* GraphNodeWorklist.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC84AE1BD825310080FF74 /* GraphNodeWorklist.h */; };
 		0FED67B61B22D4D80066CE15 /* TinyPtrSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */; };
 		0FF860951BCCBD740045127F /* PointerComparison.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF860941BCCBD740045127F /* PointerComparison.h */; };
@@ -345,6 +346,7 @@
 		0FE4479B1B7AAA03009498EB /* WordLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordLock.h; sourceTree = "<group>"; };
 		0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTask.h; sourceTree = "<group>"; };
 		0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelVectorIterator.h; sourceTree = "<group>"; };
+		0FEC84B01BDACD390080FF74 /* ScopedLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedLambda.h; sourceTree = "<group>"; };
 		0FEC84AE1BD825310080FF74 /* GraphNodeWorklist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphNodeWorklist.h; sourceTree = "<group>"; };
 		0FED67B51B22D4D80066CE15 /* TinyPtrSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyPtrSet.h; sourceTree = "<group>"; };
 		0FF860941BCCBD740045127F /* PointerComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerComparison.h; sourceTree = "<group>"; };
@@ -870,6 +872,7 @@
 				1469419416EAAFF80024E146 /* SchedulePair.h */,
 				1469419816EAB0410024E146 /* SchedulePairCF.cpp */,
 				1469419516EAAFF80024E146 /* SchedulePairMac.mm */,
+				0FEC84B01BDACD390080FF74 /* ScopedLambda.h */,
 				A8A47306151A825B004123FF /* SegmentedVector.h */,
 				A8A47307151A825B004123FF /* SentinelLinkedList.h */,
 				A8A47308151A825B004123FF /* SHA1.cpp */,
@@ -1244,6 +1247,7 @@
 				A8A47449151A825B004123FF /* ThreadIdentifierDataPthreads.h in Headers */,
 				A8A4744B151A825B004123FF /* Threading.h in Headers */,
 				A8A4744D151A825B004123FF /* ThreadingPrimitives.h in Headers */,
+				0FEC84B11BDACD390080FF74 /* ScopedLambda.h in Headers */,
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
 				0FED67B61B22D4D80066CE15 /* TinyPtrSet.h in Headers */,

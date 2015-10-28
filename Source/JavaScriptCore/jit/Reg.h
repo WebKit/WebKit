@@ -105,7 +105,6 @@ public:
     unsigned index() const { return m_index; }
     
     bool isSet() const { return m_index != invalid(); }
-    bool operator!() const { return !isSet(); }
     explicit operator bool() const { return isSet(); }
 
     bool isHashTableDeletedValue() const { return m_index == deleted(); }
@@ -169,6 +168,46 @@ public:
     }
     
     void dump(PrintStream&) const;
+
+    class AllRegsIterable {
+    public:
+
+        class iterator {
+        public:
+            iterator() { }
+
+            explicit iterator(Reg reg)
+                : m_regIndex(reg.index())
+            {
+            }
+
+            Reg operator*() const { return Reg::fromIndex(m_regIndex); }
+
+            iterator& operator++()
+            {
+                m_regIndex = Reg::fromIndex(m_regIndex).next().index();
+                return *this;
+            }
+
+            bool operator==(const iterator& other) const
+            {
+                return m_regIndex == other.m_regIndex;
+            }
+
+            bool operator!=(const iterator& other) const
+            {
+                return !(*this == other);
+            }
+
+        private:
+            unsigned m_regIndex;
+        };
+
+        iterator begin() const { return iterator(Reg::first()); }
+        iterator end() const { return iterator(Reg()); }
+    };
+
+    static AllRegsIterable all() { return AllRegsIterable(); }
 
 private:
     static uint8_t invalid() { return 0xff; }

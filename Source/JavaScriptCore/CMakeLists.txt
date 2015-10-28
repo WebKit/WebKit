@@ -66,6 +66,61 @@ set(JavaScriptCore_SOURCES
     assembler/MacroAssemblerPrinter.cpp
     assembler/MacroAssemblerX86Common.cpp
 
+    b3/air/AirAllocateStack.cpp
+    b3/air/AirArg.cpp
+    b3/air/AirBasicBlock.cpp
+    b3/air/AirCCallSpecial.cpp
+    b3/air/AirCode.cpp
+    b3/air/AirGenerate.cpp
+    b3/air/AirGenerated.cpp
+    b3/air/AirHandleCalleeSaves.cpp
+    b3/air/AirInsertionSet.cpp
+    b3/air/AirInst.cpp
+    b3/air/AirPhaseScope.cpp
+    b3/air/AirRegisterPriority.cpp
+    b3/air/AirSpecial.cpp
+    b3/air/AirSpillEverything.cpp
+    b3/air/AirStackSlot.cpp
+    b3/air/AirTmp.cpp
+    b3/air/AirValidate.cpp
+
+    b3/B3ArgumentRegValue.cpp
+    b3/B3BasicBlock.cpp
+    b3/B3CheckSpecial.cpp
+    b3/B3CheckValue.cpp
+    b3/B3Common.cpp
+    b3/B3Commutativity.cpp
+    b3/B3Const32Value.cpp
+    b3/B3Const64Value.cpp
+    b3/B3ConstDoubleValue.cpp
+    b3/B3ControlValue.cpp
+    b3/B3Effects.cpp
+    b3/B3FrequencyClass.cpp
+    b3/B3Generate.cpp
+    b3/B3HeapRange.cpp
+    b3/B3InsertionSet.cpp
+    b3/B3LowerToAir.cpp
+    b3/B3MemoryValue.cpp
+    b3/B3Opcode.cpp
+    b3/B3Origin.cpp
+    b3/B3PatchpointSpecial.cpp
+    b3/B3PatchpointValue.cpp
+    b3/B3PhaseScope.cpp
+    b3/B3Procedure.cpp
+    b3/B3ReduceStrength.cpp
+    b3/B3Stackmap.cpp
+    b3/B3StackmapSpecial.cpp
+    b3/B3StackSlotKind.cpp
+    b3/B3StackSlotValue.cpp
+    b3/B3SwitchCase.cpp
+    b3/B3SwitchValue.cpp
+    b3/B3Type.cpp
+    b3/B3UpsilonValue.cpp
+    b3/B3UseCounts.cpp
+    b3/B3Validate.cpp
+    b3/B3Value.cpp
+    b3/B3ValueRep.cpp
+
     bindings/ScriptFunctionCall.cpp
     bindings/ScriptObject.cpp
     bindings/ScriptValue.cpp

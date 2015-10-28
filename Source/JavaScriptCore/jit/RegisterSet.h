@@ -118,6 +118,13 @@ public:
     
     bool operator==(const RegisterSet& other) const { return m_vector == other.m_vector; }
     unsigned hash() const { return m_vector.hash(); }
+
+    template<typename Functor>
+    void forEach(const Functor& functor) const
+    {
+        for (size_t index : m_vector.setBits())
+            functor(Reg::fromIndex(index));
+    }
     
 private:
     void setAny(Reg reg) { set(reg); }

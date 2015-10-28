@@ -1,3 +1,31 @@
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Create a super rough prototype of B3
+        https://bugs.webkit.org/show_bug.cgi?id=150280
+
+        Reviewed by Benjamin Poulain.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/HashSet.h:
+        (WTF::copyToVector):
+        (WTF::=):
+        * wtf/ListDump.h:
+        (WTF::PointerListDump::PointerListDump):
+        (WTF::PointerListDump::dump):
+        (WTF::MapDump::MapDump):
+        (WTF::listDump):
+        (WTF::pointerListDump):
+        (WTF::sortedListDump):
+        * wtf/MathExtras.h:
+        (WTF::leftShiftWithSaturation):
+        (WTF::rangesOverlap):
+        * wtf/Platform.h:
+        * wtf/ScopedLambda.h: Added.
+        (WTF::scopedLambda):
+        * wtf/SharedTask.h:
+        (WTF::createSharedTask):
+
 2015-10-28  Alberto Garcia  <berto@igalia.com>
 
         [SOUP] Cannot build the network process in glibc-based BSD systems

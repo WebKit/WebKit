@@ -1,0 +1,140 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef B3BasicBlockUtils_h
+#define B3BasicBlockUtils_h
+
+#if ENABLE(B3_JIT)
+
+#include "B3IndexSet.h"
+#include <wtf/GraphNodeWorklist.h>
+#include <wtf/Vector.h>
+
+namespace JSC { namespace B3 {
+
+template<typename BasicBlock>
+bool addPredecessor(BasicBlock* block, BasicBlock* predecessor)
+{
+    auto& predecessors = block->predecessors();
+
+    if (predecessors.contains(predecessor))
+        return false;
+
+    predecessors.append(predecessor);
+    return true;
+}
+
+template<typename BasicBlock>
+bool removePredecessor(BasicBlock* block, BasicBlock* predecessor)
+{
+    auto& predecessors = block->predecessors();
+    for (unsigned i = 0; i < predecessors.size(); ++i) {
+        if (predecessors[i] == predecessor) {
+            predecessors[i--] = predecessors.last();
+            predecessors.removeLast();
+            ASSERT(!predecessors.contains(predecessor));
+            return true;
+        }
+    }
+    return false;
+}
+
+template<typename BasicBlock>
+bool replacePredecessor(BasicBlock* block, BasicBlock* from, BasicBlock* to)
+{
+    auto& predecessors = block->predecessors();
+    for (unsigned i = 0; i < predecessors.size(); ++i) {
+        if (predecessors[i] == from) {
+            predecessors[i] = to;
+            return true;
+        }
+    }
+    return false;
+}
+
+// This recomputes predecessors and removes blocks that aren't reachable.
+template<typename BasicBlock>
+void resetReachability(Vector<std::unique_ptr<BasicBlock>>& blocks)
+{
+    // Clear all predecessor lists first.
+    for (auto& block : blocks)
+        block->predecessors().resize(0);
+
+    GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
+    worklist.push(blocks[0].get());
+    while (BasicBlock* block = worklist.pop()) {
+        for (BasicBlock* successor : block->successorBlocks()) {
+            if (worklist.push(successor))
+                addPredecessor(successor, block);
+        }
+    }
+
+    for (unsigned i = 1; i < blocks.size(); ++i) {
+        if (blocks[i]->predecessors().isEmpty())
+            blocks[i] = nullptr;
+    }
+}
+
+template<typename BasicBlock>
+Vector<BasicBlock*> blocksInPreOrder(BasicBlock* root)
+{
+    Vector<BasicBlock*> result;
+    GraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
+    worklist.push(root);
+    while (BasicBlock* block = worklist.pop()) {
+        result.append(block);
+        for (BasicBlock* successor : block->successorBlocks())
+            worklist.push(successor);
+    }
+    return result;
+}
+
+template<typename BasicBlock>
+Vector<BasicBlock*> blocksInPostOrder(BasicBlock* root)
+{
+    Vector<BasicBlock*> result;
+    PostOrderGraphNodeWorklist<BasicBlock*, IndexSet<BasicBlock>> worklist;
+    worklist.push(root);
+    while (GraphNodeWithOrder<BasicBlock*> item = worklist.pop()) {
+        switch (item.order) {
+        case GraphVisitOrder::Pre:
+            worklist.pushPost(item.node);
+            for (BasicBlock* successor : item.node->successorBlocks())
+                worklist.push(successor);
+            break;
+        case GraphVisitOrder::Post:
+            result.append(item.node);
+            break;
+        }
+    }
+    return result;
+}
+
+} } // namespace JSC::B3
+
+#endif // ENABLE(B3_JIT)
+
+#endif // B3BasicBlockUtils_h
+

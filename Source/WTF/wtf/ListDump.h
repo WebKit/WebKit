@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,26 @@ private:
 };
 
 template<typename T>
+class PointerListDump {
+public:
+    PointerListDump(const T& list, const char* comma)
+        : m_list(list)
+        , m_comma(comma)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        for (auto iter = m_list.begin(); iter != m_list.end(); ++iter)
+            out.print(m_comma, pointerDump(*iter));
+    }
+
+private:
+    const T& m_list;
+    CommaPrinter m_comma;
+};
+
+template<typename T>
 class MapDump {
 public:
     MapDump(const T& map, const char* arrow, const char* comma)
@@ -78,6 +98,12 @@ template<typename T>
 ListDump<T> listDump(const T& list, const char* comma = ", ")
 {
     return ListDump<T>(list, comma);
+}
+
+template<typename T>
+PointerListDump<T> pointerListDump(const T& list, const char* comma = ", ")
+{
+    return PointerListDump<T>(list, comma);
 }
 
 template<typename T, typename Comparator>

@@ -87,6 +87,7 @@ set(WTF_HEADERS
     SHA1.h
     SharedTask.h
     SaturatedArithmetic.h
+    ScopedLambda.h
     SegmentedVector.h
     StackBounds.h
     StackStats.h

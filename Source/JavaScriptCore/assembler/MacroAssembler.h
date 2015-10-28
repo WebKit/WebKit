@@ -1598,7 +1598,18 @@ public:
 
 } // namespace JSC
 
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::MacroAssembler::RelationalCondition);
+void printInternal(PrintStream&, JSC::MacroAssembler::ResultCondition);
+
+} // namespace WTF
+
 #else // ENABLE(ASSEMBLER)
+
+namespace JSC {
 
 // If there is no assembler for this platform, at least allow code to make references to
 // some of the things it would otherwise define, albeit without giving that code any way
@@ -1612,6 +1623,8 @@ public:
     enum RegisterID { NoRegister };
     enum FPRegisterID { NoFPRegister };
 };
+
+} // namespace JSC
 
 #endif // ENABLE(ASSEMBLER)
 

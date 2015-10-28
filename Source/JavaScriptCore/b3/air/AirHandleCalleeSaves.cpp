@@ -1,0 +1,101 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "AirHandleCalleeSaves.h"
+
+#if ENABLE(B3_JIT)
+
+#include "AirCode.h"
+#include "AirInsertionSet.h"
+#include "AirPhaseScope.h"
+
+namespace JSC { namespace B3 { namespace Air {
+
+void handleCalleeSaves(Code& code)
+{
+    PhaseScope phaseScope(code, "handleCalleeSaves");
+
+    RegisterSet usedCalleeSaves;
+
+    for (BasicBlock* block : code) {
+        for (Inst& inst : *block) {
+            inst.forEachTmpFast(
+                [&] (Tmp& tmp) {
+                    // At first we just record all used regs.
+                    usedCalleeSaves.set(tmp.reg());
+                });
+        }
+    }
+
+    // Now we filter to really get the callee saves.
+    usedCalleeSaves.filter(RegisterSet::calleeSaveRegisters());
+
+    if (!usedCalleeSaves.numberOfSetRegisters())
+        return;
+
+    code.calleeSaveRegisters() = RegisterAtOffsetList(usedCalleeSaves);
+
+    size_t byteSize = 0;
+    for (const RegisterAtOffset& entry : code.calleeSaveRegisters())
+        byteSize = std::max(static_cast<size_t>(-entry.offset()), byteSize);
+
+    StackSlot* savesArea = code.addStackSlot(byteSize, StackSlotKind::Locked);
+    // This is a bit weird since we could have already pinned a different stack slot to this
+    // area. Also, our runtime does not require us to pin the saves area. Maybe we shouldn't pin it?
+    savesArea->setOffsetFromFP(-byteSize);
+
+    auto argFor = [&] (const RegisterAtOffset& entry) -> Arg {
+        return Arg::stack(savesArea, entry.offset() + byteSize);
+    };
+
+    InsertionSet insertionSet(code);
+    
+    // First insert saving code in the prologue.
+    for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
+        insertionSet.insert(
+            0, entry.reg().isGPR() ? Move : MoveDouble, code[0]->at(0).origin,
+            Tmp(entry.reg()), argFor(entry));
+    }
+    insertionSet.execute(code[0]);
+
+    // Now insert restore code at epilogues.
+    for (BasicBlock* block : code) {
+        Inst& last = block->last();
+        if (last.opcode != Ret)
+            continue;
+
+        for (const RegisterAtOffset& entry : code.calleeSaveRegisters()) {
+            insertionSet.insert(
+                block->size() - 1, entry.reg().isGPR() ? Move : MoveDouble, last.origin,
+                argFor(entry), Tmp(entry.reg()));
+        }
+        insertionSet.execute(block);
+    }
+}
+
+} } } // namespace JSC::B3::Air
+
+#endif // ENABLE(B3_JIT)

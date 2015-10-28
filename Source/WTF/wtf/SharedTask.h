@@ -79,6 +79,11 @@ public:
     {
     }
 
+    SharedTaskFunctor(Functor&& functor)
+        : m_functor(WTF::move(functor))
+    {
+    }
+
 private:
     ResultType run(ArgumentTypes&&... arguments) override
     {
@@ -109,6 +114,11 @@ template<typename FunctionType, typename Functor>
 Ref<SharedTask<FunctionType>> createSharedTask(const Functor& functor)
 {
     return adoptRef(*new SharedTaskFunctor<FunctionType, Functor>(functor));
+}
+template<typename FunctionType, typename Functor>
+Ref<SharedTask<FunctionType>> createSharedTask(Functor&& functor)
+{
+    return adoptRef(*new SharedTaskFunctor<FunctionType, Functor>(WTF::move(functor)));
 }
 
 } // namespace WTF

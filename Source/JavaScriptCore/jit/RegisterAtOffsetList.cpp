@@ -42,7 +42,7 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseTy
     if (offsetBaseType == FramePointerBased)
         offset = -(static_cast<ptrdiff_t>(numberOfRegisters) * sizeof(void*));
 
-    for (Reg reg = Reg::first(); reg <= Reg::last();reg = reg.next()) {
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
         if (registerSet.get(reg)) {
             append(RegisterAtOffset(reg, offset));
             offset += sizeof(void*);

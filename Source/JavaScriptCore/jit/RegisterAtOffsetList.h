@@ -47,7 +47,7 @@ public:
         m_registers.clear();
     }
 
-    size_t size()
+    size_t size() const
     {
         return m_registers.size();
     }
@@ -65,6 +65,9 @@ public:
     void sort();
     RegisterAtOffset* find(Reg) const;
     unsigned indexOf(Reg) const; // Returns UINT_MAX if not found.
+
+    Vector<RegisterAtOffset>::const_iterator begin() const { return m_registers.begin(); }
+    Vector<RegisterAtOffset>::const_iterator end() const { return m_registers.end(); }
 
 private:
     Vector<RegisterAtOffset> m_registers;

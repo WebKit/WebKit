@@ -35,6 +35,7 @@ VPATH = \
 
 PYTHON = python
 PERL = perl
+RUBY = ruby
 
 JavaScriptCore_SCRIPTS_DIR = $(JavaScriptCore)/Scripts
 
@@ -59,6 +60,9 @@ all : \
     Lexer.lut.h \
     KeywordLookup.h \
     RegExpJitTables.h \
+    B3LoweringMatcher.h \
+    B3AddressMatcher.h \
+    AirOpcode.h \
 #
 
 # JavaScript builtins.
@@ -261,6 +265,14 @@ INPUT_GENERATOR_SPECIFICATIONS = \
 
 JSReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore)/replay/scripts/CodeGeneratorReplayInputs.py --outputDir . --framework JavaScriptCore $(INPUT_GENERATOR_SPECIFICATIONS)
+
+B3LoweringMatcher.h: $(JavaScriptCore)/b3/generate_pattern_matcher.rb $(JavaScriptCore)/b3/B3LoweringMatcher.patterns
+	$(RUBY) $^ 
+B3AddressMatcher.h: $(JavaScriptCore)/b3/generate_pattern_matcher.rb $(JavaScriptCore)/b3/B3AddressMatcher.patterns
+	$(RUBY) $^
+
+AirOpcode.h: $(JavaScriptCore)/b3/air/opcode_generator.rb $(JavaScriptCore)/b3/air/AirOpcode.opcodes
+	$(RUBY) $^
 
 # Dynamically-defined targets are listed below. Static targets belong up top.
 

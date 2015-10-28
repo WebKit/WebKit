@@ -170,7 +170,7 @@ public:
     }
 
     CodeBlock* alternativeForJettison();    
-    CodeBlock* baselineAlternative();
+    JS_EXPORT_PRIVATE CodeBlock* baselineAlternative();
     
     // FIXME: Get rid of this.
     // https://bugs.webkit.org/show_bug.cgi?id=123677

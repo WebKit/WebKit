@@ -1,0 +1,271 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "AirAllocateStack.h"
+
+#if ENABLE(B3_JIT)
+
+#include "AirCode.h"
+#include "AirInstInlines.h"
+#include "AirLiveness.h"
+#include "AirPhaseScope.h"
+#include "StackAlignment.h"
+#include <wtf/ListDump.h>
+
+namespace JSC { namespace B3 { namespace Air {
+
+namespace {
+
+const bool verbose = false;
+
+bool argumentIsOnStack(const Arg& arg)
+{
+    return arg.isStack() && arg.stackSlot()->kind() == StackSlotKind::Anonymous;
+}
+
+bool attemptAssignment(
+    StackSlot* slot, intptr_t offsetFromFP, const Vector<StackSlot*>& otherSlots)
+{
+    if (verbose)
+        dataLog("Attempting to assign ", pointerDump(slot), " to ", offsetFromFP, " with interference ", pointerListDump(otherSlots), "\n");
+
+    // Need to align it to the slot's desired alignment.
+    offsetFromFP = -WTF::roundUpToMultipleOf(slot->alignment(), -offsetFromFP);
+    
+    for (StackSlot* otherSlot : otherSlots) {
+        if (!otherSlot->offsetFromFP())
+            continue;
+        bool overlap = WTF::rangesOverlap(
+            offsetFromFP,
+            offsetFromFP + static_cast<intptr_t>(slot->byteSize()),
+            otherSlot->offsetFromFP(),
+            otherSlot->offsetFromFP() + static_cast<intptr_t>(otherSlot->byteSize()));
+        if (overlap)
+            return false;
+    }
+
+    if (verbose)
+        dataLog("Assigned ", pointerDump(slot), " to ", offsetFromFP, "\n");
+    slot->setOffsetFromFP(offsetFromFP);
+    return true;
+}
+
+void assign(StackSlot* slot, const Vector<StackSlot*>& otherSlots)
+{
+    if (verbose)
+        dataLog("Attempting to assign ", pointerDump(slot), " with interference ", pointerListDump(otherSlots), "\n");
+    
+    if (attemptAssignment(slot, -static_cast<intptr_t>(slot->byteSize()), otherSlots))
+        return;
+
+    for (StackSlot* otherSlot : otherSlots) {
+        if (!otherSlot->offsetFromFP())
+            continue;
+        bool didAssign = attemptAssignment(
+            slot, otherSlot->offsetFromFP() - static_cast<intptr_t>(slot->byteSize()), otherSlots);
+        if (didAssign)
+            return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+} // anonymous namespace
+
+void allocateStack(Code& code)
+{
+    PhaseScope phaseScope(code, "allocateStack");
+
+    // Allocate all of the locked slots in order. This is kind of a crazy algorithm to allow for
+    // the possibility of stack slots being assigned frame offsets before we even get here.
+    ASSERT(!code.frameSize());
+    Vector<StackSlot*> assignedLockedStackSlots;
+    Vector<StackSlot*> lockedStackSlotsWorklist;
+    for (StackSlot* slot : code.stackSlots()) {
+        switch (slot->kind()) {
+        case StackSlotKind::Locked:
+            if (slot->offsetFromFP())
+                assignedLockedStackSlots.append(slot);
+            else
+                lockedStackSlotsWorklist.append(slot);
+            break;
+        case StackSlotKind::Anonymous:
+            if (slot->offsetFromFP()) {
+                // As a matter of sanity, unassign this. Maybe it would be good to even have a
+                // validation rule that this cannot happen.
+                slot->setOffsetFromFP(0);
+            }
+            break;
+        }
+    }
+    // This is a fairly expensive loop, but it's OK because we'll usually only have a handful of
+    // locked stack slots.
+    while (!lockedStackSlotsWorklist.isEmpty()) {
+        StackSlot* slot = lockedStackSlotsWorklist.takeLast();
+        assign(slot, assignedLockedStackSlots);
+        assignedLockedStackSlots.append(slot);
+    }
+
+    // Now we handle the anonymous slots. Note that theoretically we should do an escape analysis
+    // here. But, currently Air doesn't support escaping a StackSlot!
+    // FIXME: Add support for escaping a StackSlot and add escape analysis to allocateStack().
+    // https://bugs.webkit.org/show_bug.cgi?id=150430
+
+    Liveness<Arg> liveness(code);
+    IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
+    Vector<StackSlot*> slots;
+
+    for (BasicBlock* block : code) {
+        Liveness<Arg>::LocalCalc localCalc(liveness, block);
+
+        auto interfere = [&] (Inst& inst) {
+            if (verbose)
+                dataLog("Interfering: ", listDump(localCalc.live()), "\n");
+            
+            // Form a clique of stack slots that interfere. First find the list of stack slots
+            // that are live right now.
+            slots.resize(0);
+            for (Arg arg : localCalc.live()) {
+                if (argumentIsOnStack(arg))
+                    slots.append(arg.stackSlot());
+            }
+
+            // We mustn't mandate that the input code is optimal. Therefore, it may have dead stores
+            // to the stack. We need to treat these as interfering.
+            inst.forEachArg(
+                [&] (Arg& arg, Arg::Role role, Arg::Type) {
+                    if (Arg::isDef(role) && argumentIsOnStack(arg)
+                        && !localCalc.live().contains(arg))
+                        slots.append(arg.stackSlot());
+                });
+            
+            if (verbose)
+                dataLog("    Slots: ", pointerListDump(slots), "\n");
+            for (unsigned i = 0; i < slots.size(); ++i) {
+                StackSlot* outer = slots[i];
+                for (unsigned j = i + 1; j < slots.size(); ++j) {
+                    StackSlot* inner = slots[j];
+
+                    interference[inner].add(outer);
+                    interference[outer].add(inner);
+                }
+            }
+        };
+
+        for (unsigned instIndex = block->size(); instIndex--;) {
+            if (verbose)
+                dataLog("Analyzing: ", block->at(instIndex), "\n");
+            Inst& inst = block->at(instIndex);
+            interfere(inst);
+            localCalc.execute(inst);
+        }
+        Inst nop;
+        interfere(nop);
+    }
+
+    if (verbose) {
+        for (StackSlot* slot : code.stackSlots())
+            dataLog("Interference of ", pointerDump(slot), ": ", pointerListDump(interference[slot]), "\n");
+    }
+
+    // Now we assign stack locations. At its heart this algorithm is just first-fit. For each
+    // StackSlot we just want to find the offsetFromFP that is closest to zero while ensuring no
+    // overlap with other StackSlots that this overlaps with.
+    Vector<StackSlot*> otherSlots = assignedLockedStackSlots;
+    for (StackSlot* slot : code.stackSlots()) {
+        if (slot->offsetFromFP()) {
+            // Already assigned an offset.
+            continue;
+        }
+
+        HashSet<StackSlot*>& interferingSlots = interference[slot];
+        otherSlots.resize(assignedLockedStackSlots.size());
+        otherSlots.resize(assignedLockedStackSlots.size() + interferingSlots.size());
+        unsigned nextIndex = assignedLockedStackSlots.size();
+        for (StackSlot* otherSlot : interferingSlots)
+            otherSlots[nextIndex++] = otherSlot;
+
+        assign(slot, otherSlots);
+    }
+
+    // Figure out how much stack we're using for stack slots.
+    unsigned frameSizeForStackSlots = 0;
+    for (StackSlot* slot : code.stackSlots()) {
+        frameSizeForStackSlots = std::max(
+            frameSizeForStackSlots,
+            static_cast<unsigned>(-slot->offsetFromFP()));
+    }
+
+    frameSizeForStackSlots = WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSizeForStackSlots);
+
+    // Now we need to deduce how much argument area we need.
+    for (BasicBlock* block : code) {
+        for (Inst& inst : *block) {
+            for (Arg& arg : inst.args) {
+                if (arg.isCallArg()) {
+                    // For now, we assume that we use 8 bytes of the call arg. But that's not
+                    // such an awesome assumption.
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150454
+                    ASSERT(arg.offset() >= 0);
+                    code.requestCallArgAreaSize(arg.offset() + 8);
+                }
+            }
+        }
+    }
+
+    code.setFrameSize(frameSizeForStackSlots + code.callArgAreaSize());
+
+    // Finally, transform the code to use Addr's instead of StackSlot's. This is a lossless
+    // transformation since we can search the StackSlots array to figure out which StackSlot any
+    // offset-from-FP refers to.
+
+    for (BasicBlock* block : code) {
+        for (Inst& inst : *block) {
+            for (Arg& arg : inst.args) {
+                switch (arg.kind()) {
+                case Arg::Stack:
+                    arg = Arg::addr(
+                        Tmp(GPRInfo::callFrameRegister),
+                        arg.offset() + arg.stackSlot()->offsetFromFP());
+                    break;
+                case Arg::CallArg:
+                    arg = Arg::addr(
+                        Tmp(GPRInfo::callFrameRegister),
+                        arg.offset() - code.frameSize());
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
+}
+
+} } } // namespace JSC::B3::Air
+
+#endif // ENABLE(B3_JIT)
+
+

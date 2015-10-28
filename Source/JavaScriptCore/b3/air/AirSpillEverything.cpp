@@ -1,0 +1,156 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "AirSpillEverything.h"
+
+#if ENABLE(B3_JIT)
+
+#include "AirCode.h"
+#include "AirInsertionSet.h"
+#include "AirInstInlines.h"
+#include "AirLiveness.h"
+#include "AirPhaseScope.h"
+#include "AirRegisterPriority.h"
+#include "B3IndexMap.h"
+
+namespace JSC { namespace B3 { namespace Air {
+
+void spillEverything(Code& code)
+{
+    PhaseScope phaseScope(code, "spillEverything");
+
+    // We want to know the set of registers used at every point in every basic block.
+    IndexMap<BasicBlock, Vector<RegisterSet>> usedRegisters(code.size());
+    Liveness<Tmp> liveness(code);
+    for (BasicBlock* block : code) {
+        Liveness<Tmp>::LocalCalc localCalc(liveness, block);
+        usedRegisters[block].resize(block->size() + 1);
+
+        auto setUsedRegisters = [&] (unsigned index, Inst& inst) {
+            RegisterSet& registerSet = usedRegisters[block][index];
+            for (Tmp tmp : localCalc.live()) {
+                if (tmp.isReg())
+                    registerSet.set(tmp.reg());
+            }
+
+            // Gotta account for dead assignments to registers. These may happen because the input
+            // code is suboptimal.
+            inst.forEachArg(
+                [&] (Arg& arg, Arg::Role role, Arg::Type) {
+                    if (Arg::isDef(role) && arg.isReg())
+                        registerSet.set(arg.reg());
+                });
+        };
+
+        for (unsigned instIndex = block->size(); instIndex--;) {
+            Inst& inst = block->at(instIndex);
+            setUsedRegisters(instIndex + 1, inst);
+            localCalc.execute(inst);
+        }
+
+        Inst nop;
+        setUsedRegisters(0, nop);
+    }
+
+    // Allocate a stack slot for each tmp.
+    Vector<StackSlot*> allStackSlots[Arg::numTypes];
+    for (unsigned typeIndex = 0; typeIndex < Arg::numTypes; ++typeIndex) {
+        Vector<StackSlot*>& stackSlots = allStackSlots[typeIndex];
+        Arg::Type type = static_cast<Arg::Type>(typeIndex);
+        stackSlots.resize(code.numTmps(type));
+        for (unsigned tmpIndex = code.numTmps(type); tmpIndex--;)
+            stackSlots[tmpIndex] = code.addStackSlot(8, StackSlotKind::Anonymous);
+    }
+
+    InsertionSet insertionSet(code);
+    for (BasicBlock* block : code) {
+        for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
+            RegisterSet& setBefore = usedRegisters[block][instIndex];
+            RegisterSet& setAfter = usedRegisters[block][instIndex + 1];
+            Inst& inst = block->at(instIndex);
+            inst.forEachTmp(
+                [&] (Tmp& tmp, Arg::Role role, Arg::Type type) {
+                    if (tmp.isReg())
+                        return;
+
+                    StackSlot* stackSlot = allStackSlots[type][tmp.tmpIndex()];
+                    Arg arg = Arg::stack(stackSlot);
+
+                    // Need to figure out a register to use. How we do that depends on the role.
+                    Reg chosenReg;
+                    switch (role) {
+                    case Arg::Use:
+                        for (Reg reg : regsInPriorityOrder(type)) {
+                            if (!setBefore.get(reg)) {
+                                setBefore.set(reg);
+                                chosenReg = reg;
+                                break;
+                            }
+                        }
+                        break;
+                    case Arg::Def:
+                        for (Reg reg : regsInPriorityOrder(type)) {
+                            if (!setAfter.get(reg)) {
+                                setAfter.set(reg);
+                                chosenReg = reg;
+                                break;
+                            }
+                        }
+                        break;
+                    case Arg::UseDef:
+                        for (Reg reg : regsInPriorityOrder(type)) {
+                            if (!setBefore.get(reg) && !setAfter.get(reg)) {
+                                setAfter.set(reg);
+                                setBefore.set(reg);
+                                chosenReg = reg;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    RELEASE_ASSERT(chosenReg);
+
+                    tmp = Tmp(chosenReg);
+
+                    Opcode move = type == Arg::GP ? Move : MoveDouble;
+
+                    if (Arg::isUse(role)) {
+                        insertionSet.insert(
+                            instIndex, move, inst.origin, arg, tmp);
+                    }
+                    if (Arg::isDef(role)) {
+                        insertionSet.insert(
+                            instIndex + 1, move, inst.origin, tmp, arg);
+                    }
+                });
+        }
+        insertionSet.execute(block);
+    }
+}
+
+} } } // namespace JSC::B3::Air
+
+#endif // ENABLE(B3_JIT)
