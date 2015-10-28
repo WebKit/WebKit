@@ -1,8 +1,8 @@
-layer at (0,0) size 785x2194
+layer at (0,0) size 785x2193
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2194
-  RenderBlock {HTML} at (0,0) size 785x2194
-    RenderBody {BODY} at (8,8) size 769x2178 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x2193
+  RenderBlock {HTML} at (0,0) size 785x2193
+    RenderBody {BODY} at (8,8) size 769x2177 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x17
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -43,7 +43,7 @@ layer at (0,0) size 785x2194
           text run at (0,0) width 541: "This element should have no padding, since negative padding values are not allowed. "
           text run at (541,0) width 210: "Both the content background and"
           text run at (0,17) width 298: "the normal padding should be aqua (light blue)."
-      RenderTable {TABLE} at (0,1161) size 769x1017 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,1161) size 769x1016 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x1014
           RenderTableRow {TR} at (0,0) size 767x25
             RenderTableCell {TD} at (0,0) size 767x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -51,9 +51,9 @@ layer at (0,0) size 785x2194
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,25) size 767x989
-            RenderTableCell {TD} at (0,507) size 12x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x17
-                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (0,506) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x18
+                text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,25) size 755x989 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x17 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 203x17

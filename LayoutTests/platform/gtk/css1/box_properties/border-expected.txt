@@ -74,17 +74,17 @@ layer at (0,0) size 785x1364
                 text run at (408,3) width 306: "This is also true of the table-testing section in the"
                 text run at (3,20) width 175: "second half of the test page."
           RenderTableRow {TR} at (0,50) size 767x52
-            RenderTableCell {TD} at (5,64) size 194x23 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 53x17
-                text run at (3,3) width 53: "Cell one"
+            RenderTableCell {TD} at (5,64) size 195x24 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 53x18
+                text run at (3,4) width 53: "Cell one"
             RenderTableCell {TD} at (204,50) size 558x52 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (3,3) size 552x17
                 RenderText {#text} at (0,0) size 54x17
                   text run at (0,0) width 54: "Cell two"
-              RenderTable {TABLE} at (3,20) size 163x29 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 161x27
-                  RenderTableRow {TR} at (0,2) size 161x23
-                    RenderTableCell {TD} at (2,2) size 157x23 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (3,20) size 164x29 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 162x27
+                  RenderTableRow {TR} at (0,2) size 162x23
+                    RenderTableCell {TD} at (2,2) size 158x23 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (3,3) size 151x17
                         text run at (3,3) width 151: "Nested single-cell table!"
       RenderBlock {P} at (0,712) size 769x17
@@ -98,9 +98,9 @@ layer at (0,0) size 785x1364
                 RenderText {#text} at (5,5) size 163x17
                   text run at (5,5) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,27) size 767x574
-            RenderTableCell {TD} at (0,300) size 14x27 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 4x17
-                text run at (5,5) width 4: " "
+            RenderTableCell {TD} at (0,300) size 15x28 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (5,5) size 4x18
+                text run at (5,6) width 4: " "
             RenderTableCell {TD} at (14,27) size 753x574 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (5,5) size 743x34
                 RenderText {#text} at (0,0) size 700x34
@@ -159,17 +159,17 @@ layer at (0,0) size 785x1364
                         text run at (408,3) width 306: "This is also true of the table-testing section in the"
                         text run at (3,20) width 175: "second half of the test page."
                   RenderTableRow {TR} at (0,50) size 741x52
-                    RenderTableCell {TD} at (5,64) size 187x23 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 53x17
-                        text run at (3,3) width 53: "Cell one"
+                    RenderTableCell {TD} at (5,64) size 188x24 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (3,3) size 53x18
+                        text run at (3,4) width 53: "Cell one"
                     RenderTableCell {TD} at (197,50) size 539x52 [border: (2px solid #008000)] [r=1 c=1 rs=1 cs=1]
                       RenderBlock (anonymous) at (3,3) size 533x17
                         RenderText {#text} at (0,0) size 54x17
                           text run at (0,0) width 54: "Cell two"
-                      RenderTable {TABLE} at (3,20) size 163x29 [border: (1px outset #808080)]
-                        RenderTableSection {TBODY} at (1,1) size 161x27
-                          RenderTableRow {TR} at (0,2) size 161x23
-                            RenderTableCell {TD} at (2,2) size 157x23 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (3,20) size 164x29 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 162x27
+                          RenderTableRow {TR} at (0,2) size 162x23
+                            RenderTableCell {TD} at (2,2) size 158x23 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (3,3) size 151x17
                                 text run at (3,3) width 151: "Nested single-cell table!"
               RenderBlock {P} at (5,552) size 743x17
