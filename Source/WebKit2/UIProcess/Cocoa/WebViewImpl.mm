@@ -67,6 +67,7 @@
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKitSystemInterface.h>
+#import <sys/stat.h>
 
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
 
