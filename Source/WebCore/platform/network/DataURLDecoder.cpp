@@ -29,6 +29,7 @@
 #include "DecodeEscapeSequences.h"
 #include "HTTPParsers.h"
 #include "SharedBuffer.h"
+#include "Timer.h"
 #include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -48,9 +49,52 @@ struct DecodeTask {
     const String urlString;
     const StringView encodedData;
     const bool isBase64;
+    const ScheduleContext scheduleContext;
     const DecodeCompletionHandler completionHandler;
 
     Result result;
+};
+
+class DecodingResultDispatcher {
+public:
+    static void dispatch(std::unique_ptr<DecodeTask> decodeTask)
+    {
+        auto& dispatcher = *new DecodingResultDispatcher(WTF::move(decodeTask));
+        dispatcher.startTimer();
+    }
+
+private:
+    DecodingResultDispatcher(std::unique_ptr<DecodeTask> decodeTask)
+        : m_timer(*this, &DecodingResultDispatcher::timerFired)
+        , m_decodeTask(WTF::move(decodeTask))
+    {
+    }
+
+    void startTimer()
+    {
+        m_timer.startOneShot(0);
+#if HAVE(RUNLOOP_TIMER)
+        m_timer.schedule(m_decodeTask->scheduleContext.scheduledPairs);
+#endif
+    }
+
+    void timerFired()
+    {
+        if (m_decodeTask->result.data)
+            m_decodeTask->completionHandler(WTF::move(m_decodeTask->result));
+        else
+            m_decodeTask->completionHandler({ });
+
+        delete this;
+    }
+
+#if HAVE(RUNLOOP_TIMER)
+    typedef RunLoopTimer<DecodingResultDispatcher> DecodingResultDispatcherTimer;
+#else
+    typedef Timer DecodingResultDispatcherTimer;
+#endif
+    DecodingResultDispatcherTimer m_timer;
+    std::unique_ptr<DecodeTask> m_decodeTask;
 };
 
 static Result parseMediaType(const String& mediaType)
@@ -69,7 +113,7 @@ static Result parseMediaType(const String& mediaType)
     return { mimeType, charset, nullptr };
 }
 
-static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, DecodeCompletionHandler completionHandler)
+static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler completionHandler)
 {
     const char dataString[] = "data:";
     const char base64String[] = ";base64";
@@ -89,6 +133,7 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, DecodeComple
         WTF::move(urlString),
         WTF::move(encodedData),
         isBase64,
+        scheduleContext,
         WTF::move(completionHandler),
         parseMediaType(mediaType)
     });
@@ -118,12 +163,11 @@ static void decodeEscaped(DecodeTask& task)
     task.result.data = SharedBuffer::adoptVector(buffer);
 }
 
-void decode(const URL& url, DecodeCompletionHandler completionHandler)
+void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeCompletionHandler completionHandler)
 {
     ASSERT(url.protocolIsData());
 
-    auto decodeTask = createDecodeTask(url, WTF::move(completionHandler));
-
+    auto decodeTask = createDecodeTask(url, scheduleContext, WTF::move(completionHandler));
     auto* decodeTaskPtr = decodeTask.release();
     decodeQueue().dispatch([decodeTaskPtr] {
         auto& decodeTask = *decodeTaskPtr;
@@ -133,14 +177,7 @@ void decode(const URL& url, DecodeCompletionHandler completionHandler)
         else
             decodeEscaped(decodeTask);
 
-        callOnMainThread([decodeTaskPtr] {
-            std::unique_ptr<DecodeTask> decodeTask(decodeTaskPtr);
-            if (!decodeTask->result.data) {
-                decodeTask->completionHandler({ });
-                return;
-            }
-            decodeTask->completionHandler(WTF::move(decodeTask->result));
-        });
+        DecodingResultDispatcher::dispatch(std::unique_ptr<DecodeTask>(decodeTaskPtr));
     });
 }
 

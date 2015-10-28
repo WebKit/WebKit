@@ -31,6 +31,10 @@
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
+#if HAVE(RUNLOOP_TIMER)
+#include <wtf/RunLoopTimer.h>
+#endif
+
 namespace WebCore {
 
 class SharedBuffer;
@@ -45,8 +49,13 @@ struct Result {
 };
 
 using DecodeCompletionHandler = std::function<void (Optional<Result>)>;
+struct ScheduleContext {
+#if HAVE(RUNLOOP_TIMER)
+    SchedulePairHashSet scheduledPairs;
+#endif
+};
 
-void decode(const URL&, DecodeCompletionHandler);
+void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler);
 
 }
 

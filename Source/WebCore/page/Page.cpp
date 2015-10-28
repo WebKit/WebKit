@@ -248,6 +248,10 @@ Page::Page(PageConfiguration& pageConfiguration)
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorDebuggable->init();
 #endif
+
+#if PLATFORM(COCOA)
+    platformInitialize();
+#endif
 }
 
 Page::~Page()

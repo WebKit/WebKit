@@ -26,15 +26,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Page.h"
+#import "config.h"
+#import "Page.h"
 
-#include "DocumentLoader.h"
-#include "FrameLoader.h"
-#include "FrameTree.h"
-#include "MainFrame.h"
+#import "DocumentLoader.h"
+#import "FrameLoader.h"
+#import "FrameTree.h"
+#import "MainFrame.h"
 
 namespace WebCore {
+
+void Page::platformInitialize()
+{
+#if USE(CFNETWORK)
+    addSchedulePair(SchedulePair::create([[NSRunLoop currentRunLoop] getCFRunLoop], kCFRunLoopCommonModes));
+#else
+    addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
+#endif
+}
 
 void Page::addSchedulePair(Ref<SchedulePair>&& pair)
 {

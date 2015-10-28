@@ -1,3 +1,18 @@
+2015-10-28  Chris Dumez  <cdumez@apple.com>
+
+        Use RunLoopTimer in DataURLDecoder to avoid issues related to runloops
+        https://bugs.webkit.org/show_bug.cgi?id=150609
+        <rdar://problem/22702894>
+
+        Reviewed by Antti Koivisto.
+
+        Move addSchedulePair() call to Page::platformInitialize() so that
+        RunLoopTimer can be used by any Page, even those that don't have
+        a WebPage wrapper.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformInitialize): Deleted.
+
 2015-10-27  Tim Horton  <timothy_horton@apple.com>
 
         Fix the 32-bit build.

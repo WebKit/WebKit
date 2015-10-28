@@ -249,7 +249,12 @@ void ResourceLoader::loadDataURL()
     ASSERT(url.protocolIsData());
 
     RefPtr<ResourceLoader> loader(this);
-    DataURLDecoder::decode(url, [loader, url] (Optional<DataURLDecoder::Result> decodeResult) {
+    DataURLDecoder::ScheduleContext scheduleContext;
+#if HAVE(RUNLOOP_TIMER)
+    if (auto* scheduledPairs = m_frame->page()->scheduledRunLoopPairs())
+        scheduleContext.scheduledPairs = *scheduledPairs;
+#endif
+    DataURLDecoder::decode(url, scheduleContext, [loader, url] (Optional<DataURLDecoder::Result> decodeResult) {
         if (loader->reachedTerminalState())
             return;
         if (!decodeResult) {
