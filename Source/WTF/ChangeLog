@@ -1,3 +1,13 @@
+2015-10-28  Alberto Garcia  <berto@igalia.com>
+
+        [SOUP] Cannot build the network process in glibc-based BSD systems
+        https://bugs.webkit.org/show_bug.cgi?id=150618
+
+        Reviewed by Carlos Garcia Campos.
+
+        * wtf/Platform.h: Don't enable HAVE_STAT_BIRTHTIME if the system
+        is using glibc.
+
 2015-10-21  Filip Pizlo  <fpizlo@apple.com>
 
         Factor out the graph node worklists from DFG into WTF
