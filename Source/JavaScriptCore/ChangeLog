@@ -1,3 +1,13 @@
+2015-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: jsmin.py mistakenly removes whitespace from template literal strings
+        https://bugs.webkit.org/show_bug.cgi?id=148728
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/jsmin.py:
+        (JavascriptMinify.minify): Make backtick a quoting character.
+
 2015-10-28  Brian Burg  <bburg@apple.com>
 
         Builtins generator should emit ENABLE(FEATURE) guards based on @conditional annotation
