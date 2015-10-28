@@ -1,0 +1,11 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: [object IDBTransaction] - versionchange
+ALERT: [object IDBDatabase]
+ALERT: Caught attempt to access empty-named object store on the transaction
+ALERT: Caught attempt to access null-named object store on the transaction
+ALERT: Caught attempt to access non-existant object store on the transaction
+ALERT: Caught attempt to access valid object store on a transaction that is already finishing
+ALERT: First version change transaction abort
+ALERT: Done
+This tests some obvious failures that can happen while calling transaction.objectStore()
+

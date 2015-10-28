@@ -169,7 +169,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState&, Deprecated::Scr
 RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
     auto idbKey = scriptValueToIDBKey(execState, key);
-    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
+    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, Deprecated::ScriptValue& value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, ExceptionCode& ec)

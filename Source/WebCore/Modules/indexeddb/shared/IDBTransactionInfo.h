@@ -30,6 +30,7 @@
 
 #include "IDBResourceIdentifier.h"
 #include "IndexedDB.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace IDBServer {
@@ -47,6 +48,8 @@ public:
     IndexedDB::TransactionMode mode() const { return m_mode; }
     uint64_t newVersion() const { return m_newVersion; }
 
+    const Vector<String>& objectStores() const { return m_objectStores; }
+
 private:
     IDBTransactionInfo(const IDBResourceIdentifier&);
 
@@ -54,6 +57,7 @@ private:
 
     IndexedDB::TransactionMode m_mode { IndexedDB::TransactionMode::ReadOnly };
     uint64_t m_newVersion { 0 };
+    Vector<String> m_objectStores;
 };
 
 } // namespace WebCore

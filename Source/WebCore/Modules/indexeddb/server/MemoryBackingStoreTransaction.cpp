@@ -68,6 +68,18 @@ void MemoryBackingStoreTransaction::addNewObjectStore(MemoryObjectStore& objectS
     objectStore.writeTransactionStarted(*this);
 }
 
+void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& objectStore)
+{
+    LOG(IndexedDB, "MemoryBackingStoreTransaction::addExistingObjectStore");
+
+    ASSERT(isWriting());
+
+    ASSERT(!m_objectStores.contains(&objectStore));
+    m_objectStores.add(&objectStore);
+
+    objectStore.writeTransactionStarted(*this);
+}
+
 void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key)
 {
     ASSERT(m_objectStores.contains(&objectStore));

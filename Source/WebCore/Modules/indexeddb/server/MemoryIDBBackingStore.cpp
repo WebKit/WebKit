@@ -72,6 +72,13 @@ IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
         return IDBError(IDBExceptionCode::InvalidStateError, "Backing store asked to create transaction it already has a record of");
 
     auto transaction = MemoryBackingStoreTransaction::create(*this, info);
+
+    // VersionChange transactions are scoped to "every object store".
+    if (transaction->isVersionChange()) {
+        for (auto& objectStore : m_objectStores.values())
+            transaction->addExistingObjectStore(*objectStore);
+    }
+
     m_transactions.set(info.identifier(), WTF::move(transaction));
 
     return IDBError();

@@ -50,6 +50,7 @@ public:
     IDBObjectStoreInfo createNewObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
     const IDBObjectStoreInfo* infoForExistingObjectStore(uint64_t objectStoreIdentifier) const;
+    const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
 
     Vector<String> objectStoreNames() const;
 

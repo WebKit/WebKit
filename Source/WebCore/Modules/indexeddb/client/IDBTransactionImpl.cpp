@@ -99,10 +99,48 @@ RefPtr<DOMError> IDBTransaction::error() const
     return nullptr;
 }
 
-RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String&, ExceptionCode&)
+RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& objectStoreName, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    LOG(IndexedDB, "IDBTransaction::objectStore");
+
+    if (objectStoreName.isEmpty()) {
+        ec = NOT_FOUND_ERR;
+        return nullptr;
+    }
+
+    if (isFinishedOrFinishing()) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    auto iterator = m_referencedObjectStores.find(objectStoreName);
+    if (iterator != m_referencedObjectStores.end())
+        return iterator->value;
+
+    bool found = false;
+    for (auto& objectStore : m_info.objectStores()) {
+        if (objectStore == objectStoreName) {
+            found = true;
+            break;
+        }
+    }
+
+    auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
+    if (!info) {
+        ec = NOT_FOUND_ERR;
+        return nullptr;
+    }
+
+    // Version change transactions are scoped to every object store in the database.
+    if (!found && !isVersionChange()) {
+        ec = NOT_FOUND_ERR;
+        return nullptr;
+    }
+
+    auto objectStore = IDBObjectStore::create(*info, *this);
+    m_referencedObjectStores.set(objectStoreName, &objectStore.get());
+
+    return adoptRef(&objectStore.leakRef());
 }
 
 void IDBTransaction::abort(ExceptionCode& ec)
@@ -297,8 +335,10 @@ void IDBTransaction::createObjectStoreOnServer(TransactionOperation& operation, 
 {
     LOG(IndexedDB, "IDBTransaction::createObjectStoreOnServer");
 
-    ASSERT(!isFinishedOrFinishing());
     ASSERT(isVersionChange());
+
+    if (isFinishedOrFinishing())
+        return;
 
     m_database->serverConnection().createObjectStore(operation, info);
 }

@@ -56,6 +56,7 @@ public:
     const IDBDatabaseInfo& originalDatabaseInfo() const;
 
     void addNewObjectStore(MemoryObjectStore&);
+    void addExistingObjectStore(MemoryObjectStore&);
     void recordValueChanged(MemoryObjectStore&, const IDBKeyData&);
 
     void abort();

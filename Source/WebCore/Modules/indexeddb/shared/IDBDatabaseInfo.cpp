@@ -86,6 +86,16 @@ const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(uint64_t o
     return &iterator->value;
 }
 
+const IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& name) const
+{
+    for (auto& objectStore : m_objectStoreMap.values()) {
+        if (objectStore.name() == name)
+            return &objectStore;
+    }
+
+    return nullptr;
+}
+
 Vector<String> IDBDatabaseInfo::objectStoreNames() const
 {
     Vector<String> names;

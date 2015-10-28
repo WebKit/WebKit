@@ -133,6 +133,8 @@ private:
 
     Deque<RefPtr<TransactionOperation>> m_transactionOperationQueue;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_transactionOperationMap;
+
+    HashMap<String, RefPtr<IDBObjectStore>> m_referencedObjectStores;
 };
 
 class TransactionActivator {
