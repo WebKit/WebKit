@@ -298,8 +298,6 @@
         },
         "StreamsAPI": {
             "filename": r"Source/WebCore/Modules/streams/"
-                        r"|Source/WebCore/bindings/js/.*Readable.*Stream.*"
-                        r"|Source/WebCore/bindings/js/.*QueuingStrategy.*"
                         r"|LayoutTests/streams/",
         },
         "MacAndIOSTextLayoutAndRendering": {

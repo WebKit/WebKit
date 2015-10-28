@@ -1,3 +1,9 @@
+2015-10-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist: Removed dead files from Streams API watchlist.
+
 2015-10-28  Per Arne Vollan  <peavo@outlook.com>
 
         Add WinCairo to list of ports in run-webkit-tests.
