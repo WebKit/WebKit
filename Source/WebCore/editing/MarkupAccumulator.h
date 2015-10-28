@@ -60,7 +60,7 @@ enum EntityMask {
 // FIXME: Noncopyable?
 class MarkupAccumulator {
 public:
-    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = 0, EFragmentSerialization = HTMLFragmentSerialization);
+    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = nullptr, EFragmentSerialization = HTMLFragmentSerialization);
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node& targetNode, EChildrenOnly, Vector<QualifiedName>* tagNamesToSkip = nullptr);
@@ -85,7 +85,7 @@ protected:
     virtual void appendText(StringBuilder&, const Text&);
     virtual void appendElement(StringBuilder&, const Element&, Namespaces*);
 
-    void appendStartTag(const Node&, Namespaces* = 0);
+    void appendStartTag(const Node&, Namespaces* = nullptr);
 
     void appendOpenTag(StringBuilder&, const Element&, Namespaces*);
     void appendCloseTag(StringBuilder&, const Element&);

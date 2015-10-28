@@ -63,7 +63,7 @@ void replaceChildrenWithFragment(ContainerNode&, Ref<DocumentFragment>&&, Except
 void replaceChildrenWithText(ContainerNode&, const String&, ExceptionCode&);
 
 String createMarkup(const Range&, Vector<Node*>* = nullptr, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
-String createMarkup(const Node&, EChildrenOnly = IncludeNode, Vector<Node*>* = nullptr, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = 0, EFragmentSerialization = HTMLFragmentSerialization);
+String createMarkup(const Node&, EChildrenOnly = IncludeNode, Vector<Node*>* = nullptr, EAbsoluteURLs = DoNotResolveURLs, Vector<QualifiedName>* tagNamesToSkip = nullptr, EFragmentSerialization = HTMLFragmentSerialization);
 
 WEBCORE_EXPORT String createFullMarkup(const Node&);
 WEBCORE_EXPORT String createFullMarkup(const Range&);

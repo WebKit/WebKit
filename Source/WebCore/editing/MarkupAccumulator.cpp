@@ -327,7 +327,7 @@ EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
     if (!text.document().isHTMLDocument())
         return EntityMaskInPCDATA;
 
-    const QualifiedName* parentName = 0;
+    const QualifiedName* parentName = nullptr;
     if (text.parentElement())
         parentName = &text.parentElement()->tagQName();
 

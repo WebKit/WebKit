@@ -1677,7 +1677,6 @@ bool Editor::commandIsSupportedFromMenuOrKeyBinding(const String& commandName)
 }
 
 Editor::Command::Command()
-    : m_command(0)
 {
 }
 

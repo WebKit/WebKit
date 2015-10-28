@@ -77,11 +77,11 @@ private:
     bool isStyledInlineElementToRemove(Element*) const;
     bool shouldApplyInlineStyleToRun(EditingStyle*, Node* runStart, Node* pastEndNode);
     void removeConflictingInlineStyleFromRun(EditingStyle*, RefPtr<Node>& runStart, RefPtr<Node>& runEnd, PassRefPtr<Node> pastEndNode);
-    bool removeInlineStyleFromElement(EditingStyle*, PassRefPtr<HTMLElement>, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = 0);
+    bool removeInlineStyleFromElement(EditingStyle*, PassRefPtr<HTMLElement>, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
     inline bool shouldRemoveInlineStyleFromElement(EditingStyle* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
     bool removeImplicitlyStyledElement(EditingStyle*, HTMLElement*, InlineStyleRemovalMode, EditingStyle* extractedStyle);
-    bool removeCSSStyle(EditingStyle*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = 0);
+    bool removeCSSStyle(EditingStyle*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
     HTMLElement* highestAncestorWithConflictingInlineStyle(EditingStyle*, Node*);
     void applyInlineStyleToPushDown(Node*, EditingStyle*);
     void pushDownInlineStyleAroundNode(EditingStyle*, Node*);
@@ -127,7 +127,7 @@ private:
     bool m_useEndingSelection;
     RefPtr<Element> m_styledInlineElement;
     bool m_removeOnly;
-    IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction;
+    IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction { nullptr };
 };
 
 enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeShouldBeEmpty };

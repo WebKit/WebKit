@@ -36,8 +36,8 @@ namespace WebCore {
 
 static CFMutableCharacterSetRef getSmartSet(bool isPreviousCharacter)
 {
-    static CFMutableCharacterSetRef preSmartSet = NULL; 
-    static CFMutableCharacterSetRef postSmartSet = NULL;
+    static CFMutableCharacterSetRef preSmartSet;
+    static CFMutableCharacterSetRef postSmartSet;
     CFMutableCharacterSetRef smartSet = isPreviousCharacter ? preSmartSet : postSmartSet;
     if (!smartSet) {
         smartSet = CFCharacterSetCreateMutable(kCFAllocatorDefault);

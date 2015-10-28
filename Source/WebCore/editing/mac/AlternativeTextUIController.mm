@@ -47,10 +47,7 @@ uint64_t AlternativeTextUIController::AlernativeTextContextController::addAltern
 
 NSTextAlternatives* AlternativeTextUIController::AlernativeTextContextController::alternativesForContext(uint64_t context)
 {
-    HashMapType::const_iterator itr = m_alternativesObjectMap.find(context);
-    if (itr == m_alternativesObjectMap.end())
-        return NULL;
-    return itr->value.get();
+    return m_alternativesObjectMap.get(context).get();
 }
 
 void AlternativeTextUIController::AlernativeTextContextController::removeAlternativesForContext(uint64_t context)

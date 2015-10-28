@@ -67,7 +67,7 @@ public:
     Position positionAtLeftBoundaryOfBiDiRun() const;
     Position positionAtRightBoundaryOfBiDiRun() const;
 
-    IntRect absoluteRect(LayoutUnit* extraWidthToEndOfLine = 0) const;
+    IntRect absoluteRect(LayoutUnit* extraWidthToEndOfLine = nullptr) const;
 
 private:
     bool operator==(const RenderedPosition&) const { return false; }
@@ -80,8 +80,8 @@ private:
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
-    RenderObject* m_renderer;
-    InlineBox* m_inlineBox;
+    RenderObject* m_renderer { nullptr };
+    InlineBox* m_inlineBox { nullptr };
     int m_offset;
 
     static InlineBox* uncachedInlineBox() { return reinterpret_cast<InlineBox*>(1); }
@@ -92,9 +92,7 @@ private:
 };
 
 inline RenderedPosition::RenderedPosition()
-    : m_renderer(0)
-    , m_inlineBox(0)
-    , m_offset(0)
+    : m_offset(0)
     , m_prevLeafChild(uncachedInlineBox())
     , m_nextLeafChild(uncachedInlineBox())
 {

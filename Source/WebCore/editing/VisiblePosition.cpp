@@ -173,7 +173,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
             if (box->direction() == primaryDirection) {
                 if (!prevBox) {
-                    InlineBox* logicalStart = 0;
+                    InlineBox* logicalStart = nullptr;
                     if (primaryDirection == LTR ? box->root().getLogicalStartBoxWithNode(logicalStart) : box->root().getLogicalEndBoxWithNode(logicalStart)) {
                         box = logicalStart;
                         renderer = &box->renderer();
@@ -338,7 +338,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
             if (box->direction() == primaryDirection) {
                 if (!nextBox) {
-                    InlineBox* logicalEnd = 0;
+                    InlineBox* logicalEnd = nullptr;
                     if (primaryDirection == LTR ? box->root().getLogicalEndBoxWithNode(logicalEnd) : box->root().getLogicalStartBoxWithNode(logicalEnd)) {
                         box = logicalEnd;
                         renderer = &box->renderer();
@@ -600,7 +600,7 @@ UChar32 VisiblePosition::characterAfter() const
 LayoutRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
 {
     if (m_deepPosition.isNull()) {
-        renderer = 0;
+        renderer = nullptr;
         return IntRect();
     }
     Node* node = m_deepPosition.anchorNode();
@@ -714,7 +714,7 @@ bool setEnd(Range *r, const VisiblePosition &visiblePosition)
 Element* enclosingBlockFlowElement(const VisiblePosition& visiblePosition)
 {
     if (visiblePosition.isNull())
-        return NULL;
+        return nullptr;
 
     return deprecatedEnclosingBlockFlowElement(visiblePosition.deepEquivalent().deprecatedNode());
 }

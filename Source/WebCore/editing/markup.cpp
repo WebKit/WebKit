@@ -118,7 +118,7 @@ class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = 0);
+    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
 
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);

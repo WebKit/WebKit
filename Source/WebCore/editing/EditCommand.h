@@ -79,7 +79,7 @@ private:
     Ref<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
-    CompositeEditCommand* m_parent;
+    CompositeEditCommand* m_parent { nullptr };
     EditAction m_editingAction { EditActionUnspecified };
 };
 

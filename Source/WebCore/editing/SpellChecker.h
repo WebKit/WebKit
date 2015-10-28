@@ -63,7 +63,7 @@ public:
 private:
     SpellCheckRequest(PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String&, TextCheckingTypeMask, TextCheckingProcessType);
 
-    SpellChecker* m_checker;
+    SpellChecker* m_checker { nullptr };
     RefPtr<Range> m_checkingRange;
     RefPtr<Range> m_paragraphRange;
     RefPtr<Element> m_rootEditableElement;

@@ -44,8 +44,7 @@
 namespace WebCore {
 
 SpellCheckRequest::SpellCheckRequest(PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String& text, TextCheckingTypeMask mask, TextCheckingProcessType processType)
-    : m_checker(0)
-    , m_checkingRange(checkingRange)
+    : m_checkingRange(checkingRange)
     , m_paragraphRange(paragraphRange)
     , m_rootEditableElement(m_checkingRange->startContainer().rootEditableElement())
     , m_requestData(unrequestedTextCheckingSequence, text, mask, processType)
@@ -79,7 +78,7 @@ void SpellCheckRequest::didSucceed(const Vector<TextCheckingResult>& results)
     if (!m_checker)
         return;
     m_checker->didCheckSucceed(m_requestData.sequence(), results);
-    m_checker = 0;
+    m_checker = nullptr;
 }
 
 void SpellCheckRequest::didCancel()
@@ -87,7 +86,7 @@ void SpellCheckRequest::didCancel()
     if (!m_checker)
         return;
     m_checker->didCheckCancel(m_requestData.sequence());
-    m_checker = 0;
+    m_checker = nullptr;
 }
 
 void SpellCheckRequest::setCheckerAndSequence(SpellChecker* requester, int sequence)
@@ -100,7 +99,7 @@ void SpellCheckRequest::setCheckerAndSequence(SpellChecker* requester, int seque
 
 void SpellCheckRequest::requesterDestroyed()
 {
-    m_checker = 0;
+    m_checker = nullptr;
 }
 
 SpellChecker::SpellChecker(Frame& frame)

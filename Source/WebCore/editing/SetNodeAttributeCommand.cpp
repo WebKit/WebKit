@@ -49,7 +49,7 @@ void SetNodeAttributeCommand::doApply()
 void SetNodeAttributeCommand::doUnapply()
 {
     m_element->setAttribute(m_attribute, m_oldValue);
-    AtomicStringImpl* nullString = 0;
+    AtomicStringImpl* nullString = nullptr;
     m_oldValue = nullString;
 }
 

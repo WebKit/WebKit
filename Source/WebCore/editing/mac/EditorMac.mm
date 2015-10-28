@@ -127,7 +127,7 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
         return result;
     }
 
-    const Font* font = 0;
+    const Font* font = nullptr;
     RefPtr<Range> range = m_frame.selection().toNormalizedRange();
     Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection().selection()).deprecatedNode();
     if (range && startNode) {

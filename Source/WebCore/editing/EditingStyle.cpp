@@ -170,12 +170,11 @@ protected:
     HTMLElementEquivalent(CSSPropertyID, const QualifiedName& tagName);
     const CSSPropertyID m_propertyID;
     const RefPtr<CSSPrimitiveValue> m_primitiveValue;
-    const QualifiedName* m_tagName; // We can store a pointer because HTML tag names are const global.
+    const QualifiedName* m_tagName { nullptr }; // We can store a pointer because HTML tag names are const global.
 };
 
 HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id)
     : m_propertyID(id)
-    , m_tagName(0)
 {
 }
 

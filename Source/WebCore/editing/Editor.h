@@ -204,19 +204,19 @@ public:
         WEBCORE_EXPORT Command();
         Command(const EditorInternalCommand*, EditorCommandSource, PassRefPtr<Frame>);
 
-        WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = 0) const;
+        WEBCORE_EXPORT bool execute(const String& parameter = String(), Event* triggeringEvent = nullptr) const;
         WEBCORE_EXPORT bool execute(Event* triggeringEvent) const;
 
         WEBCORE_EXPORT bool isSupported() const;
-        WEBCORE_EXPORT bool isEnabled(Event* triggeringEvent = 0) const;
+        WEBCORE_EXPORT bool isEnabled(Event* triggeringEvent = nullptr) const;
 
-        WEBCORE_EXPORT TriState state(Event* triggeringEvent = 0) const;
-        String value(Event* triggeringEvent = 0) const;
+        WEBCORE_EXPORT TriState state(Event* triggeringEvent = nullptr) const;
+        String value(Event* triggeringEvent = nullptr) const;
 
         WEBCORE_EXPORT bool isTextInsertion() const;
 
     private:
-        const EditorInternalCommand* m_command;
+        const EditorInternalCommand* m_command { nullptr };
         EditorCommandSource m_source;
         RefPtr<Frame> m_frame;
     };

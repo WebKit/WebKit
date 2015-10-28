@@ -130,7 +130,6 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
     , m_end(endingSelection().end().upstream())
     , m_useEndingSelection(true)
     , m_removeOnly(false)
-    , m_isInlineElementToRemoveFunction(0)
 {
 }
 
@@ -142,7 +141,6 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
     , m_end(end)
     , m_useEndingSelection(false)
     , m_removeOnly(false)
-    , m_isInlineElementToRemoveFunction(0)
 {
 }
 
@@ -155,7 +153,6 @@ ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnl
     , m_useEndingSelection(true)
     , m_styledInlineElement(element)
     , m_removeOnly(removeOnly)
-    , m_isInlineElementToRemoveFunction(0)
 {
 }
 
@@ -468,8 +465,8 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     if (!block || block == node)
         return 0;
 
-    Node* highestAncestorWithUnicodeBidi = 0;
-    Node* nextHighestAncestorWithUnicodeBidi = 0;
+    Node* highestAncestorWithUnicodeBidi = nullptr;
+    Node* nextHighestAncestorWithUnicodeBidi = nullptr;
     int highestAncestorUnicodeBidi = 0;
     for (Node* n = node->parentNode(); n != block; n = n->parentNode()) {
         int unicodeBidi = toIdentifier(ComputedStyleExtractor(n).propertyValue(CSSPropertyUnicodeBidi));
@@ -483,7 +480,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     if (!highestAncestorWithUnicodeBidi)
         return 0;
 
-    HTMLElement* unsplitAncestor = 0;
+    HTMLElement* unsplitAncestor = nullptr;
 
     WritingDirection highestAncestorDirection;
     if (allowedDirection != NaturalWritingDirection
@@ -559,8 +556,8 @@ static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 
 void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
 {
-    RefPtr<ContainerNode> startDummySpanAncestor = 0;
-    RefPtr<ContainerNode> endDummySpanAncestor = 0;
+    RefPtr<ContainerNode> startDummySpanAncestor;
+    RefPtr<ContainerNode> endDummySpanAncestor;
 
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call

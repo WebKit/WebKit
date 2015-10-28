@@ -39,7 +39,7 @@ namespace WebCore {
 static inline RenderObject* rendererFromPosition(const Position& position)
 {
     ASSERT(position.isNotNull());
-    Node* rendererNode = 0;
+    Node* rendererNode = nullptr;
     switch (position.anchorType()) {
     case Position::PositionIsOffsetInAnchor:
         rendererNode = position.computeNodeAfterPosition();
@@ -64,9 +64,7 @@ static inline RenderObject* rendererFromPosition(const Position& position)
 }
 
 RenderedPosition::RenderedPosition(const VisiblePosition& position)
-    : m_renderer(0)
-    , m_inlineBox(0)
-    , m_offset(0)
+    : m_offset(0)
     , m_prevLeafChild(uncachedInlineBox())
     , m_nextLeafChild(uncachedInlineBox())
 {
@@ -80,9 +78,7 @@ RenderedPosition::RenderedPosition(const VisiblePosition& position)
 }
 
 RenderedPosition::RenderedPosition(const Position& position, EAffinity affinity)
-    : m_renderer(0)
-    , m_inlineBox(0)
-    , m_offset(0)
+    : m_offset(0)
     , m_prevLeafChild(uncachedInlineBox())
     , m_nextLeafChild(uncachedInlineBox())
 {

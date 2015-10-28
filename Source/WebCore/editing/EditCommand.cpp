@@ -40,7 +40,6 @@ namespace WebCore {
 
 EditCommand::EditCommand(Document& document, EditAction editingAction)
     : m_document(document)
-    , m_parent(0)
     , m_editingAction(editingAction)
 {
     ASSERT(document.frame());
@@ -50,7 +49,6 @@ EditCommand::EditCommand(Document& document, EditAction editingAction)
 
 EditCommand::EditCommand(Document& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
     : m_document(document)
-    , m_parent(0)
 {
     ASSERT(document.frame());
     setStartingSelection(startingSelection);

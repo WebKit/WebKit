@@ -181,7 +181,7 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
         invalidateCaretRect(node);
     m_position = position;
     setCaretRectNeedsUpdate();
-    Document* document = 0;
+    Document* document = nullptr;
     if (Node* node = m_position.deepEquivalent().deprecatedNode()) {
         invalidateCaretRect(node);
         document = &node->document();
@@ -552,8 +552,8 @@ TextDirection FrameSelection::directionOfEnclosingBlock()
 
 TextDirection FrameSelection::directionOfSelection()
 {
-    InlineBox* startBox = 0;
-    InlineBox* endBox = 0;
+    InlineBox* startBox = nullptr;
+    InlineBox* endBox = nullptr;
     int unusedOffset;
     // Cache the VisiblePositions because visibleStart() and visibleEnd()
     // can cause layout, which has the potential to invalidate lineboxes.

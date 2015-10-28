@@ -122,7 +122,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     if (!value)
         return;
         
-    const char *newValue = NULL;
+    const char *newValue = nullptr;
     ETextAlign textAlign = *value;
     switch (textAlign) {
         case TASTART:
@@ -204,7 +204,7 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
         return result;
     }
 
-    const Font* font = 0;
+    const Font* font = nullptr;
     RefPtr<Range> range = m_frame.selection().toNormalizedRange();
     if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection().selection()).deprecatedNode()) {
         Node* pastEnd = range->pastLastNode();

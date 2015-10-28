@@ -83,10 +83,6 @@ DeleteSelectionCommand::DeleteSelectionCommand(Document& document, bool smartDel
     , m_pruneStartBlockIfNecessary(false)
     , m_startsAtEmptyLine(false)
     , m_sanitizeMarkup(sanitizeMarkup)
-    , m_startBlock(0)
-    , m_endBlock(0)
-    , m_typingStyle(0)
-    , m_deleteIntoBlockquoteStyle(0)
 {
 }
 
@@ -102,17 +98,13 @@ DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection
     , m_startsAtEmptyLine(false)
     , m_sanitizeMarkup(sanitizeMarkup)
     , m_selectionToDelete(selection)
-    , m_startBlock(0)
-    , m_endBlock(0)
-    , m_typingStyle(0)
-    , m_deleteIntoBlockquoteStyle(0)
 {
 }
 
 void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
 {
-    Node* startSpecialContainer = 0;
-    Node* endSpecialContainer = 0;
+    Node* startSpecialContainer = nullptr;
+    Node* endSpecialContainer = nullptr;
  
     start = m_selectionToDelete.start();
     end = m_selectionToDelete.end();
@@ -129,8 +121,8 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
         return;
     
     while (1) {
-        startSpecialContainer = 0;
-        endSpecialContainer = 0;
+        startSpecialContainer = nullptr;
+        endSpecialContainer = nullptr;
     
         Position s = positionBeforeContainingSpecialElement(start, &startSpecialContainer);
         Position e = positionAfterContainingSpecialElement(end, &endSpecialContainer);

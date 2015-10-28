@@ -277,7 +277,7 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCo
     command->setParent(this);
     command->doApply();
     if (command->isSimpleEditCommand()) {
-        command->setParent(0);
+        command->setParent(nullptr);
         ensureComposition()->append(toSimpleEditCommand(command.get()));
     }
     m_commands.append(command.release());
@@ -825,7 +825,7 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
         return;
 
     unsigned removed = 0;
-    InlineTextBox* prevBox = 0;
+    InlineTextBox* prevBox = nullptr;
     String str;
 
     // This loop structure works to process all gaps preceding a box,
@@ -854,7 +854,7 @@ void CompositeEditCommand::deleteInsignificantText(PassRefPtr<Text> textNode, un
             if (++sortedTextBoxesPosition < sortedTextBoxes.size())
                 box = sortedTextBoxes[sortedTextBoxesPosition];
             else
-                box = 0;
+                box = nullptr;
         }
     }
 

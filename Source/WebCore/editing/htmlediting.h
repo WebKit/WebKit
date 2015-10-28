@@ -57,7 +57,7 @@ Node* highestAncestor(Node*);
 Node* highestEditableRoot(const Position&, EditableType = ContentIsEditable);
 
 Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*),
-    EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = 0);
+    EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = nullptr);
 Node* highestNodeToRemoveInPruning(Node*);
 Node* lowestEditableAncestor(Node*);
 
@@ -143,9 +143,9 @@ Position nextVisuallyDistinctCandidate(const Position&);
 Position previousVisuallyDistinctCandidate(const Position&);
 
 Position positionOutsideTabSpan(const Position&);
-Position positionBeforeContainingSpecialElement(const Position&, Node** containingSpecialElement = 0);
-Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement = 0);
-Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement = 0);
+Position positionBeforeContainingSpecialElement(const Position&, Node** containingSpecialElement = nullptr);
+Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement = nullptr);
+Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement = nullptr);
 
 inline Position firstPositionInOrBeforeNode(Node* node)
 {
@@ -215,7 +215,7 @@ Ref<HTMLElement> createHTMLElement(Document&, const QualifiedName&);
 Ref<HTMLElement> createHTMLElement(Document&, const AtomicString&);
 
 HTMLElement* enclosingList(Node*);
-HTMLElement* outermostEnclosingList(Node*, Node* rootList = 0);
+HTMLElement* outermostEnclosingList(Node*, Node* rootList = nullptr);
 Node* enclosingListChild(Node*);
 
 // -------------------------------------------------------------------------
