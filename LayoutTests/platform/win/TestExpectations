@@ -3278,6 +3278,7 @@ webkit.org/b/150594 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect
 webkit.org/b/150594 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect.htm [ Pass Failure ]
 webkit.org/b/150594 imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm [ Pass Failure ]
 webkit.org/b/150594 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm [ Pass Failure ]
+webkit.org/b/150594 imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm [ Pass Failure ]
 
 # [Win] Newly imported W3C html/semantics/forms tests failing on Win7
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Pass Failure ]
