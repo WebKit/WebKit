@@ -145,6 +145,8 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Storage/StorageManager.cpp
 
+    UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
+
     UIProcess/cairo/BackingStoreCairo.cpp
 
     UIProcess/efl/BatteryProvider.cpp

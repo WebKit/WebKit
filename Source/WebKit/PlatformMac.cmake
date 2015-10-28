@@ -333,8 +333,6 @@ set(C99_FILES
     mac/DefaultDelegates/WebDefaultPolicyDelegate.m
     mac/DefaultDelegates/WebDefaultUIDelegate.m
 
-    mac/History/WebURLsWithTitles.m
-
     mac/Misc/OldWebAssertions.c
 
     mac/Misc/WebKitErrors.m
@@ -369,7 +367,7 @@ set(C99_FILES
 foreach (_file ${WebKit_SOURCES})
     list(FIND C99_FILES ${_file} _c99_index)
     if (${_c99_index} EQUAL -1)
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -ObjC++)
+        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++11")
     else ()
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c99)
     endif ()

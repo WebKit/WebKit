@@ -494,8 +494,6 @@ set(WebKit2_SOURCES
     UIProcess/WebsiteData/WebsiteDataRecord.cpp
     UIProcess/WebsiteData/WebsiteDataStore.cpp
 
-    UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
-
     WebProcess/WebConnectionToUIProcess.cpp
     WebProcess/WebProcess.cpp
 

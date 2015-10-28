@@ -1,4 +1,4 @@
-add_definitions(-ObjC++)
+add_definitions("-ObjC++ -std=c++11")
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
@@ -80,6 +80,8 @@ list(APPEND WebKit2_SOURCES
     Platform/mac/MenuUtilities.mm
     Platform/mac/SharedMemoryMac.cpp
     Platform/mac/StringUtilities.mm
+
+    Platform/unix/EnvironmentUtilities.cpp
 
     PluginProcess/mac/PluginControllerProxyMac.mm
     PluginProcess/mac/PluginProcessMac.mm
@@ -176,6 +178,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/ViewGestureController.cpp
 
     UIProcess/API/APIUserScript.cpp
+    UIProcess/API/APIUserStyleSheet.cpp
     UIProcess/API/APIWebsiteDataRecord.cpp
 
     UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
@@ -215,6 +218,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/_WKThumbnailView.mm
     UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm
     UIProcess/API/Cocoa/_WKUserContentFilter.mm
+    UIProcess/API/Cocoa/_WKUserStyleSheet.mm
     UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
     UIProcess/API/Cocoa/_WKWebsiteDataStore.mm
 
@@ -254,6 +258,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Scrolling/RemoteScrollingTree.cpp
 
     UIProcess/Storage/StorageManager.cpp
+
+    UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 
     UIProcess/mac/CorrectionPanel.mm
     UIProcess/mac/LegacySessionStateCoding.cpp
@@ -389,6 +395,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API/c/mac"
     "${WEBKIT2_DIR}/Shared/cf"
     "${WEBKIT2_DIR}/Shared/Cocoa"
+    "${WEBKIT2_DIR}/Shared/EntryPointUtilities/mac/XPCService"
     "${WEBKIT2_DIR}/Shared/mac"
     "${WEBKIT2_DIR}/Shared/Plugins/mac"
     "${WEBKIT2_DIR}/Shared/Scrolling"
@@ -416,20 +423,30 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
 set(WEBKIT2_EXTRA_DEPENDENCIES
      WebKit2-forwarding-headers
 )
+
+set(XPCService_SOURCES
+    Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm
+    Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm
+)
+
 set(WebProcess_SOURCES
     WebProcess/EntryPoint/mac/XPCService/WebContentServiceEntryPoint.mm
+    ${XPCService_SOURCES}
 )
 
 set(PluginProcess_SOURCES
     PluginProcess/EntryPoint/mac/XPCService/PluginServiceEntryPoint.mm
+    ${XPCService_SOURCES}
 )
 
 list(APPEND NetworkProcess_SOURCES
-     ${NetworkProcess_COMMON_SOURCES}
+    NetworkProcess/EntryPoint/mac/XPCService/NetworkServiceEntryPoint.mm
+    ${XPCService_SOURCES}
 )
 
 list(APPEND DatabaseProcess_SOURCES
     DatabaseProcess/EntryPoint/mac/XPCService/DatabaseServiceEntryPoint.mm
+    ${XPCService_SOURCES}
 )
 
 add_definitions("-include WebKit2Prefix.h")
@@ -460,12 +477,15 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/Cocoa
     Shared/API/c
 
+    Shared/API/c/cf
+
     Shared/API/c/mac
 
     UIProcess/Cocoa
 
     UIProcess/API/C
     UIProcess/API/Cocoa
+    UIProcess/API/cpp
 
     WebProcess/WebPage
 

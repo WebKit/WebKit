@@ -1,3 +1,15 @@
+2015-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Compile and link with CMake on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=150632
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+
 2015-10-27  Anders Carlsson  <andersca@apple.com>
 
         Stub out more of the context menu SPI
