@@ -32,7 +32,7 @@
 #include "AirInst.h"
 #include "B3SuccessorCollection.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

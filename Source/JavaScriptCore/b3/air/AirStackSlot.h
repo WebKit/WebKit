@@ -30,7 +30,7 @@
 
 #include "B3StackSlotKind.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC { namespace B3 {

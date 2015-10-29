@@ -1,5 +1,12 @@
 2015-10-28  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix the build for case sensitive file systems.
+
+        * b3/air/AirBasicBlock.h:
+        * b3/air/AirStackSlot.h:
+
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
         Create a super rough prototype of B3
         https://bugs.webkit.org/show_bug.cgi?id=150280
 
