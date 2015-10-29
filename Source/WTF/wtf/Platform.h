@@ -777,8 +777,8 @@
 #endif
 
 /* The B3 compiler is an experimental backend that is still in development. We will keep it building
-   on Darwin/x86-64 for now, though it is unused except for tests. */
-#if OS(DARWIN) && CPU(X86_64)
+   on Mac/x86-64 for now, though it is unused except for tests. */
+#if PLATFORM(MAC) && CPU(X86_64)
 #define ENABLE_B3_JIT 1
 #endif
 

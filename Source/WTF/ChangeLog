@@ -1,5 +1,11 @@
 2015-10-28  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, make sure B3 is disabled on iOS for now.
+
+        * wtf/Platform.h:
+
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
         Create a super rough prototype of B3
         https://bugs.webkit.org/show_bug.cgi?id=150280
 
