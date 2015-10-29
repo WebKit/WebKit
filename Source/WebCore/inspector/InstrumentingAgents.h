@@ -51,8 +51,8 @@ class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorLayerTreeAgent;
+class InspectorNetworkAgent;
 class InspectorPageAgent;
-class InspectorResourceAgent;
 class InspectorReplayAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
@@ -93,8 +93,8 @@ public:
     InspectorDOMAgent* inspectorDOMAgent() const { return m_inspectorDOMAgent; }
     void setInspectorDOMAgent(InspectorDOMAgent* agent) { m_inspectorDOMAgent = agent; }
 
-    InspectorResourceAgent* inspectorResourceAgent() const { return m_inspectorResourceAgent; }
-    void setInspectorResourceAgent(InspectorResourceAgent* agent) { m_inspectorResourceAgent = agent; }
+    InspectorNetworkAgent* inspectorNetworkAgent() const { return m_inspectorNetworkAgent; }
+    void setInspectorNetworkAgent(InspectorNetworkAgent* agent) { m_inspectorNetworkAgent = agent; }
 
     PageRuntimeAgent* pageRuntimeAgent() const { return m_pageRuntimeAgent; }
     void setPageRuntimeAgent(PageRuntimeAgent* agent) { m_pageRuntimeAgent = agent; }
@@ -148,7 +148,7 @@ private:
     InspectorLayerTreeAgent* m_inspectorLayerTreeAgent { nullptr };
     WebConsoleAgent* m_webConsoleAgent { nullptr };
     InspectorDOMAgent* m_inspectorDOMAgent { nullptr };
-    InspectorResourceAgent* m_inspectorResourceAgent { nullptr };
+    InspectorNetworkAgent* m_inspectorNetworkAgent { nullptr };
     PageRuntimeAgent* m_pageRuntimeAgent { nullptr };
     WorkerRuntimeAgent* m_workerRuntimeAgent { nullptr };
     InspectorTimelineAgent* m_inspectorTimelineAgent { nullptr };

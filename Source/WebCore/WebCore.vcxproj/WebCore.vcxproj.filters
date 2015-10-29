@@ -4679,13 +4679,16 @@
     <ClCompile Include="..\inspector\InspectorLayerTreeAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\inspector\InspectorNetworkAgent.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inspector\InspectorNodeFinder.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
     <ClCompile Include="..\inspector\InspectorOverlay.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\InspectorPageAgent.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\InspectorResourceAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\inspector\InspectorStyleSheet.cpp">
@@ -7022,9 +7025,6 @@
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBKeyData.cpp">
       <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inspector\InspectorNodeFinder.cpp">
-      <Filter>inspector</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\ISOVTTCue.cpp">
       <Filter>platform\graphics</Filter>
@@ -11965,6 +11965,9 @@
     <ClInclude Include="..\inspector\InspectorLayerTreeAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
+    <ClInclude Include="..\inspector\InspectorNetworkAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
     <ClInclude Include="..\inspector\InspectorNodeFinder.h">
       <Filter>inspector</Filter>
     </ClInclude>
@@ -11972,9 +11975,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorPageAgent.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\InspectorResourceAgent.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorStyleSheet.h">

@@ -36,9 +36,7 @@
 #include <inspector/InspectorAgentRegistry.h>
 #include <inspector/InspectorEnvironment.h>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -46,7 +44,6 @@ class BackendDispatcher;
 class FrontendChannel;
 class FrontendRouter;
 class InspectorAgent;
-class InspectorObject;
 
 namespace Protocol {
 namespace OverlayTypes {
@@ -62,11 +59,9 @@ class Frame;
 class GraphicsContext;
 class InspectorClient;
 class InspectorDOMAgent;
-class InspectorDOMDebuggerAgent;
 class InspectorFrontendClient;
 class InspectorInstrumentation;
 class InspectorPageAgent;
-class InspectorResourceAgent;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
 class Node;
@@ -150,9 +145,7 @@ private:
 
     Inspector::InspectorAgent* m_inspectorAgent { nullptr };
     InspectorDOMAgent* m_domAgent { nullptr };
-    InspectorResourceAgent* m_resourceAgent { nullptr };
     InspectorPageAgent* m_pageAgent { nullptr };
-    InspectorDOMDebuggerAgent* m_domDebuggerAgent { nullptr };
     InspectorTimelineAgent* m_timelineAgent { nullptr };
 
     bool m_isUnderTest { false };

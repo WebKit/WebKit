@@ -29,19 +29,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorResourceAgent_h
-#define InspectorResourceAgent_h
+#ifndef InspectorNetworkAgent_h
+#define InspectorNetworkAgent_h
 
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
-class InspectorArray;
 class InspectorObject;
 }
 
@@ -50,20 +47,14 @@ namespace WebCore {
 class CachedResource;
 class Document;
 class DocumentLoader;
-class FormData;
-class Frame;
-class HTTPHeaderMap;
 class InspectorPageAgent;
 class NetworkResourcesData;
-class Page;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
-class SharedBuffer;
 class ThreadableLoaderClient;
 class URL;
-class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
 struct WebSocketFrame;
@@ -71,11 +62,11 @@ struct WebSocketFrame;
 
 typedef String ErrorString;
 
-class InspectorResourceAgent final : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
+class InspectorNetworkAgent final : public InspectorAgentBase, public Inspector::NetworkBackendDispatcherHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorResourceAgent(WebAgentContext&, InspectorPageAgent*);
-    virtual ~InspectorResourceAgent();
+    InspectorNetworkAgent(WebAgentContext&, InspectorPageAgent*);
+    virtual ~InspectorNetworkAgent();
 
     virtual void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
@@ -85,7 +76,7 @@ public:
     void didRecalculateStyle();
     void willSendRequest(unsigned long identifier, DocumentLoader&, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
-    void didReceiveResponse(unsigned long identifier, DocumentLoader& loader, const ResourceResponse&, ResourceLoader*);
+    void didReceiveResponse(unsigned long identifier, DocumentLoader&, const ResourceResponse&, ResourceLoader*);
     void didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void didFinishLoading(unsigned long identifier, DocumentLoader&, double finishTime);
     void didFailLoading(unsigned long identifier, DocumentLoader&, const ResourceError&);
@@ -105,10 +96,8 @@ public:
     void didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
 #endif
-
     void mainFrameNavigated(DocumentLoader&);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
-
     void didScheduleStyleRecalculation(Document&);
 
     RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
@@ -130,17 +119,18 @@ private:
     RefPtr<Inspector::NetworkBackendDispatcher> m_backendDispatcher;
     InspectorPageAgent* m_pageAgent { nullptr };
 
+    // FIXME: InspectorNetworkAgent should not be aware of style recalculation.
+    RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;
+    bool m_isRecalculatingStyle { false };
+
     std::unique_ptr<NetworkResourcesData> m_resourcesData;
     bool m_enabled { false };
     bool m_cacheDisabled { false };
     bool m_loadingXHRSynchronously { false };
     HashMap<String, String> m_extraRequestHeaders;
     HashSet<unsigned long> m_hiddenRequestIdentifiers;
-    // FIXME: InspectorResourceAgent should now be aware of style recalculation.
-    RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;
-    bool m_isRecalculatingStyle { false };
 };
 
 } // namespace WebCore
 
-#endif // !defined(InspectorResourceAgent_h)
+#endif // !defined(InspectorNetworkAgent_h)

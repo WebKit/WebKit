@@ -29,23 +29,17 @@
 #ifndef NetworkResourcesData_h
 #define NetworkResourcesData_h
 
-#include "HTTPHeaderMap.h"
 #include "InspectorPageAgent.h"
-#include "URL.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CachedResource;
-class FormData;
 class ResourceResponse;
 class SharedBuffer;
-class TextResourceDecoder;
 
 class NetworkResourcesData {
     WTF_MAKE_FAST_ALLOCATED;

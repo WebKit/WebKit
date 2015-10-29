@@ -30,11 +30,10 @@
 #define InspectorLayerTreeAgent_h
 
 #include "InspectorWebAgentBase.h"
+#include "RenderLayer.h"
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorProtocolObjects.h>
-#include "RenderLayer.h"
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

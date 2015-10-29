@@ -1,3 +1,12 @@
+2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename InspectorResourceAgent to InspectorNetworkAgent
+        https://bugs.webkit.org/show_bug.cgi?id=150654
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/scripts/codegen/generator.py:
+
 2015-10-28  Filip Pizlo  <fpizlo@apple.com>
 
         B3::reduceStrength() should do DCE

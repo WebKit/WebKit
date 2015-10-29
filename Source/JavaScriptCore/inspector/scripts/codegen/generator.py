@@ -67,7 +67,7 @@ _TYPES_WITH_OPEN_FIELDS = set([
     "Timeline.TimelineEvent",
     # InspectorStyleSheet not only creates this property but wants to read it and modify it.
     "CSS.CSSProperty",
-    # InspectorResourceAgent needs to update mime-type.
+    # InspectorNetworkAgent needs to update mime-type.
     "Network.Response",
     # For testing purposes only.
     "Test.OpenParameterBundle"

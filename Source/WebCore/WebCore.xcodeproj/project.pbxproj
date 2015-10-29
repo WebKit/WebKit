@@ -2774,8 +2774,8 @@
 		82AB1744124B99EC00C5069D /* InspectorCSSAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */; };
 		82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */; };
 		82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1770125C826700C5069D /* InspectorStyleSheet.h */; };
-		82AB1775125C826700C5069D /* InspectorResourceAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB1771125C826700C5069D /* InspectorResourceAgent.cpp */; };
-		82AB1776125C826700C5069D /* InspectorResourceAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1772125C826700C5069D /* InspectorResourceAgent.h */; };
+		82AB1775125C826700C5069D /* InspectorNetworkAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB1771125C826700C5069D /* InspectorNetworkAgent.cpp */; };
+		82AB1776125C826700C5069D /* InspectorNetworkAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1772125C826700C5069D /* InspectorNetworkAgent.h */; };
 		82E3D8DE122EA0D1003AE5BC /* CSSPropertySourceData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */; };
 		82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */ = {isa = PBXBuildFile; fileRef = 82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		830030F51B7D33B500ED3AAC /* GenericCachedHTMLCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830030F31B7D33A600ED3AAC /* GenericCachedHTMLCollection.cpp */; };
@@ -10255,8 +10255,8 @@
 		82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCSSAgent.h; sourceTree = "<group>"; };
 		82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorStyleSheet.cpp; sourceTree = "<group>"; };
 		82AB1770125C826700C5069D /* InspectorStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorStyleSheet.h; sourceTree = "<group>"; };
-		82AB1771125C826700C5069D /* InspectorResourceAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorResourceAgent.cpp; sourceTree = "<group>"; };
-		82AB1772125C826700C5069D /* InspectorResourceAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorResourceAgent.h; sourceTree = "<group>"; };
+		82AB1771125C826700C5069D /* InspectorNetworkAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorNetworkAgent.cpp; sourceTree = "<group>"; };
+		82AB1772125C826700C5069D /* InspectorNetworkAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorNetworkAgent.h; sourceTree = "<group>"; };
 		82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertySourceData.cpp; sourceTree = "<group>"; };
 		82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertySourceData.h; sourceTree = "<group>"; };
 		830030F31B7D33A600ED3AAC /* GenericCachedHTMLCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenericCachedHTMLCollection.cpp; sourceTree = "<group>"; };
@@ -15943,6 +15943,8 @@
 				A5840E1B187B74D500843B10 /* InspectorInstrumentationCookie.h */,
 				71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */,
 				71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */,
+				82AB1771125C826700C5069D /* InspectorNetworkAgent.cpp */,
+				82AB1772125C826700C5069D /* InspectorNetworkAgent.h */,
 				504AACCB1834455900E3D9BC /* InspectorNodeFinder.cpp */,
 				504AACCC1834455900E3D9BC /* InspectorNodeFinder.h */,
 				7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */,
@@ -15954,8 +15956,6 @@
 				4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */,
 				99CC0B6418BE9F15006CEBCC /* InspectorReplayAgent.cpp */,
 				99CC0B6518BE9F15006CEBCC /* InspectorReplayAgent.h */,
-				82AB1771125C826700C5069D /* InspectorResourceAgent.cpp */,
-				82AB1772125C826700C5069D /* InspectorResourceAgent.h */,
 				82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */,
 				82AB1770125C826700C5069D /* InspectorStyleSheet.h */,
 				754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */,
@@ -25847,7 +25847,7 @@
 				0F03C0751884805500A5F8CA /* InspectorOverlay.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
 				99CC0B6718BE9F15006CEBCC /* InspectorReplayAgent.h in Headers */,
-				82AB1776125C826700C5069D /* InspectorResourceAgent.h in Headers */,
+				82AB1776125C826700C5069D /* InspectorNetworkAgent.h in Headers */,
 				82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */,
 				754133A8102E00E800075D00 /* InspectorTimelineAgent.h in Headers */,
 				A593CF8B1840535200BFCE27 /* InspectorWebAgentBase.h in Headers */,
@@ -29436,7 +29436,7 @@
 				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
 				99CC0B6618BE9F15006CEBCC /* InspectorReplayAgent.cpp in Sources */,
-				82AB1775125C826700C5069D /* InspectorResourceAgent.cpp in Sources */,
+				82AB1775125C826700C5069D /* InspectorNetworkAgent.cpp in Sources */,
 				82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */,
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,

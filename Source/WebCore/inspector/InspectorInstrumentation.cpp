@@ -41,15 +41,15 @@
 #include "Event.h"
 #include "EventDispatcher.h"
 #include "InspectorApplicationCacheAgent.h"
-#include "InspectorController.h"
 #include "InspectorCSSAgent.h"
+#include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorLayerTreeAgent.h"
+#include "InspectorNetworkAgent.h"
 #include "InspectorPageAgent.h"
-#include "InspectorResourceAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
@@ -501,8 +501,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyleImp
         timelineAgent->willRecalculateStyle(document.frame());
         timelineAgentId = timelineAgent->id();
     }
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->willRecalculateStyle();
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->willRecalculateStyle();
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
@@ -515,8 +515,8 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
 
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didRecalculateStyle();
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didRecalculateStyle();
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didRecalculateStyle();
     if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())
         pageAgent->didRecalculateStyle();
 }
@@ -525,8 +525,8 @@ void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAg
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->didScheduleStyleRecalculation(document.frame());
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didScheduleStyleRecalculation(document);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didScheduleStyleRecalculation(document);
 }
 
 void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instrumentingAgents, String& media)
@@ -540,8 +540,8 @@ void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrume
     if (!loader)
         return;
 
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->willSendRequest(identifier, *loader, request, redirectResponse);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->willSendRequest(identifier, *loader, request, redirectResponse);
 }
 
 void InspectorInstrumentation::continueAfterPingLoaderImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& response)
@@ -551,8 +551,8 @@ void InspectorInstrumentation::continueAfterPingLoaderImpl(InstrumentingAgents& 
 
 void InspectorInstrumentation::markResourceAsCachedImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->markResourceAsCached(identifier);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->markResourceAsCached(identifier);
 }
 
 void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)
@@ -563,8 +563,8 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
     if (!loader || !cachedResource)
         return;
 
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didLoadResourceFromMemoryCache(*loader, *cachedResource);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didLoadResourceFromMemoryCache(*loader, *cachedResource);
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents)
@@ -582,8 +582,8 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
 
     InstrumentingAgents& instrumentingAgents = *cookie.instrumentingAgents();
 
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveResponse(identifier, *loader, response, resourceLoader);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveResponse(identifier, *loader, response, resourceLoader);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
 }
@@ -614,8 +614,8 @@ void InspectorInstrumentation::continueWithPolicyIgnoreImpl(Frame* frame, Docume
 
 void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveData(identifier, data, dataLength, encodedDataLength);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveData(identifier, data, dataLength, encodedDataLength);
 }
 
 void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, double finishTime)
@@ -623,8 +623,8 @@ void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrum
     if (!loader)
         return;
 
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didFinishLoading(identifier, *loader, finishTime);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didFinishLoading(identifier, *loader, finishTime);
 }
 
 void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
@@ -632,8 +632,8 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumen
     if (!loader)
         return;
 
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didFailLoading(identifier, *loader, error);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didFailLoading(identifier, *loader, error);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
@@ -642,32 +642,32 @@ void InspectorInstrumentation::didFinishXHRLoadingImpl(InstrumentingAgents& inst
 {
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didFinishXHRLoading(identifier, url, sendURL, sendLineNumber, sendColumnNumber);
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didFinishXHRLoading(client, identifier, sourceString);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didFinishXHRLoading(client, identifier, sourceString);
 }
 
 void InspectorInstrumentation::didReceiveXHRResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveXHRResponse(identifier);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveXHRResponse(identifier);
 }
 
 void InspectorInstrumentation::willLoadXHRSynchronouslyImpl(InstrumentingAgents& instrumentingAgents)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->willLoadXHRSynchronously();
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->willLoadXHRSynchronously();
 }
 
 void InspectorInstrumentation::didLoadXHRSynchronouslyImpl(InstrumentingAgents& instrumentingAgents)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didLoadXHRSynchronously();
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didLoadXHRSynchronously();
 }
 
 void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const String& sourceString)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->setInitialScriptContent(identifier, sourceString);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->setInitialScriptContent(identifier, sourceString);
 }
 
 void InspectorInstrumentation::scriptExecutionBlockedByCSPImpl(InstrumentingAgents& instrumentingAgents, const String& directiveText)
@@ -678,8 +678,8 @@ void InspectorInstrumentation::scriptExecutionBlockedByCSPImpl(InstrumentingAgen
 
 void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveScriptResponse(identifier);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveScriptResponse(identifier);
 }
 
 void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
@@ -729,8 +729,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
         if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
             consoleAgent->reset();
 
-        if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-            resourceAgent->mainFrameNavigated(*loader);
+        if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+            networkAgent->mainFrameNavigated(*loader);
 
         if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
             cssAgent->reset();
@@ -827,8 +827,8 @@ void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cac
         return;
 
     for (auto* instrumentingAgent : *s_instrumentingAgentsSet) {
-        if (InspectorResourceAgent* inspectorResourceAgent = instrumentingAgent->inspectorResourceAgent())
-            inspectorResourceAgent->willDestroyCachedResource(cachedResource);
+        if (InspectorNetworkAgent* inspectorNetworkAgent = instrumentingAgent->inspectorNetworkAgent())
+            inspectorNetworkAgent->willDestroyCachedResource(cachedResource);
     }
 }
 
@@ -965,44 +965,44 @@ void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents& instr
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
         return;
 
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didCreateWebSocket(identifier, requestURL);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didCreateWebSocket(identifier, requestURL);
 }
 
 void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const ResourceRequest& request)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->willSendWebSocketHandshakeRequest(identifier, request);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->willSendWebSocketHandshakeRequest(identifier, request);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const ResourceResponse& response)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
 }
 
 void InspectorInstrumentation::didCloseWebSocketImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didCloseWebSocket(identifier);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didCloseWebSocket(identifier);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketFrameImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const WebSocketFrame& frame)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveWebSocketFrame(identifier, frame);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveWebSocketFrame(identifier, frame);
 }
 
 void InspectorInstrumentation::didReceiveWebSocketFrameErrorImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const String& errorMessage)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didReceiveWebSocketFrameError(identifier, errorMessage);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveWebSocketFrameError(identifier, errorMessage);
 }
 
 void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const WebSocketFrame& frame)
 {
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
-        resourceAgent->didSendWebSocketFrame(identifier, frame);
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didSendWebSocketFrame(identifier, frame);
 }
 #endif
 
