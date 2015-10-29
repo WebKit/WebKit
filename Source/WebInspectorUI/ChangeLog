@@ -1,3 +1,19 @@
+2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add "revert" to CSS value autocompletion
+        https://bugs.webkit.org/show_bug.cgi?id=150652
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSCompletions.js:
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        * UserInterface/Views/VisualStyleDetailsPanel.js:
+        (WebInspector.VisualStyleDetailsPanel):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateDisplaySection):
+        (WebInspector.VisualStyleDetailsPanel.prototype._populateAlignmentSection):
+        Treat "revert" like initial and unset. It is valid on all properties.
+
 2015-10-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r191071): Web Inspector: Can't resize split console when the window is too narrow
