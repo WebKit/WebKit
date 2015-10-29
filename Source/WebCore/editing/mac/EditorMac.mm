@@ -529,10 +529,8 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
         attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
         fragment->appendChild(WTF::move(attachment));
 #else
-        text = frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text]);
-
         Ref<HTMLElement> paragraph = createDefaultParagraphElement(document);
-        paragraph->appendChild(document.createTextNode(text));
+        paragraph->appendChild(document.createTextNode(frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text])));
         fragment->appendChild(WTF::move(paragraph));
 #endif
     }

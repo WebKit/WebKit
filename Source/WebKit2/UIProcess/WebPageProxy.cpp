@@ -1282,7 +1282,7 @@ void WebPageProxy::viewWillStartLiveResize()
 {
     if (!isValid())
         return;
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
     if (m_colorPicker)
         endColorPicker();
 #endif
@@ -1376,7 +1376,7 @@ void WebPageProxy::viewStateDidChange(ViewState::Flags mayHaveChanged, bool want
 
 void WebPageProxy::viewDidLeaveWindow()
 {
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER) && ENABLE(INPUT_TYPE_COLOR)
     // When leaving the current page, close the popover color well.
     if (m_colorPicker)
         endColorPicker();
@@ -3917,10 +3917,12 @@ void WebPageProxy::didEndColorPicker()
     if (!isValid())
         return;
 
+#if ENABLE(INPUT_TYPE_COLOR)
     if (m_colorPicker) {
         m_colorPicker->invalidate();
         m_colorPicker = nullptr;
     }
+#endif
 
     m_process->send(Messages::WebPage::DidEndColorPicker(), m_pageID);
 }

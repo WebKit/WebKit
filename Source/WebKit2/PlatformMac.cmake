@@ -198,6 +198,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKNavigationData.mm
     UIProcess/API/Cocoa/WKNavigationResponse.mm
     UIProcess/API/Cocoa/WKPreferences.mm
+    UIProcess/API/Cocoa/WKProcessGroup.mm
     UIProcess/API/Cocoa/WKProcessPool.mm
     UIProcess/API/Cocoa/WKScriptMessage.mm
     UIProcess/API/Cocoa/WKSecurityOrigin.mm
@@ -210,8 +211,10 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKWebsiteDataStore.mm
     UIProcess/API/Cocoa/WKWindowFeatures.mm
     UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
+    UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm
     UIProcess/API/Cocoa/_WKDownload.mm
     UIProcess/API/Cocoa/_WKElementAction.mm
+    UIProcess/API/Cocoa/_WKElementInfo.mm
     UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
     UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
     UIProcess/API/Cocoa/_WKSessionState.mm
@@ -219,6 +222,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm
     UIProcess/API/Cocoa/_WKUserContentFilter.mm
     UIProcess/API/Cocoa/_WKUserStyleSheet.mm
+    UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm
     UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
     UIProcess/API/Cocoa/_WKWebsiteDataStore.mm
 

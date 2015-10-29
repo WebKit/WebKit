@@ -1,3 +1,16 @@
+2015-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build fix.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        I mistakenly added some mac-specific files to the shared CMakeLists.txt.  This puts them in the right place.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewWillStartLiveResize):
+        (WebKit::WebPageProxy::viewDidLeaveWindow):
+        (WebKit::WebPageProxy::didEndColorPicker):
+        Add preprocessor enable checks.
+
 2015-10-29  Tim Horton  <timothy_horton@apple.com>
 
         WKView being inside WKWebView leads to weird API issues
