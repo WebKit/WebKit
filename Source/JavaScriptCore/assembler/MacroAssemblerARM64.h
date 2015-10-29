@@ -1002,7 +1002,7 @@ public:
 
     void store64(TrustedImm32 imm, ImplicitAddress address)
     {
-        store64(TrustedImm64(imm), address);
+        store64(TrustedImm64(imm.m_value), address);
     }
 
     void store64(TrustedImm64 imm, ImplicitAddress address)

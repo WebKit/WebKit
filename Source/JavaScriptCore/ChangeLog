@@ -1,3 +1,10 @@
+2015-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix iOS build.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::store64):
+
 2015-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build
