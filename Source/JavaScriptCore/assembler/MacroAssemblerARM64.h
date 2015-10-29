@@ -1000,6 +1000,11 @@ public:
         store<64>(src, address);
     }
 
+    void store64(TrustedImm32 imm, ImplicitAddress address)
+    {
+        store64(TrustedImm64(imm), address);
+    }
+
     void store64(TrustedImm64 imm, ImplicitAddress address)
     {
         if (!imm.m_value) {

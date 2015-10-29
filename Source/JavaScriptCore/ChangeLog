@@ -1,3 +1,33 @@
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::spillEverything() should try to replace tmps with spill slots without using registers whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=150657
+
+        Reviewed by Geoffrey Garen.
+
+        Also added the ability to store an immediate to memory.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::storePtr):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::store64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::store64):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::immAnyInt):
+        (JSC::B3::Air::LowerToAir::immOrTmp):
+        (JSC::B3::Air::LowerToAir::tryStore):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/testb3.cpp:
+        (JSC::B3::testStore):
+        (JSC::B3::testStoreConstant):
+        (JSC::B3::testStoreConstantPtr):
+        (JSC::B3::testTrunc):
+        (JSC::B3::run):
+
 2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename InspectorResourceAgent to InspectorNetworkAgent

@@ -880,6 +880,11 @@ public:
         store64(TrustedImm64(imm), address);
     }
 
+    void storePtr(TrustedImm32 imm, ImplicitAddress address)
+    {
+        store64(imm, address);
+    }
+
     void storePtr(TrustedImmPtr imm, BaseIndex address)
     {
         store64(TrustedImm64(imm), address);

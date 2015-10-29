@@ -148,6 +148,42 @@ void testStore(int value)
     CHECK(slot == value);
 }
 
+void testStoreConstant(int value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slot = 0xbaadbeef;
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), value),
+        root->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == value);
+}
+
+void testStoreConstantPtr(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    intptr_t slot;
+    if (is64Bit())
+        slot = (static_cast<intptr_t>(0xbaadbeef) << 32) + static_cast<intptr_t>(0xbaadbeef);
+    else
+        slot = 0xbaadbeef;
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), value),
+        root->appendNew<ConstPtrValue>(proc, Origin(), &slot));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc));
+    CHECK(slot == value);
+}
+
 void testTrunc(int64_t value)
 {
     Procedure proc;
@@ -337,6 +373,8 @@ void run()
     RUN(testAddArgs32(1, 1));
     RUN(testAddArgs32(1, 2));
     RUN(testStore(44));
+    RUN(testStoreConstant(49));
+    RUN(testStoreConstantPtr(49));
     RUN(testTrunc((static_cast<int64_t>(1) << 40) + 42));
     RUN(testAdd1(45));
     RUN(testStoreAddLoad(46));

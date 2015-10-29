@@ -91,11 +91,29 @@ void spillEverything(Code& code)
             RegisterSet& setBefore = usedRegisters[block][instIndex];
             RegisterSet& setAfter = usedRegisters[block][instIndex + 1];
             Inst& inst = block->at(instIndex);
+
+            // First try to spill directly.
+            for (unsigned i = 0; i < inst.args.size(); ++i) {
+                Arg& arg = inst.args[i];
+
+                if (arg.isTmp()) {
+                    if (arg.isReg())
+                        continue;
+
+                    if (inst.admitsStack(i)) { 
+                        StackSlot* stackSlot = allStackSlots[arg.type()][arg.tmpIndex()];
+                        arg = Arg::stack(stackSlot);
+                        continue;
+                    }
+                }
+            }
+
+            // Now fall back on spilling using separate Move's to load/store the tmp.
             inst.forEachTmp(
                 [&] (Tmp& tmp, Arg::Role role, Arg::Type type) {
                     if (tmp.isReg())
                         return;
-
+                    
                     StackSlot* stackSlot = allStackSlots[type][tmp.tmpIndex()];
                     Arg arg = Arg::stack(stackSlot);
 

@@ -108,6 +108,7 @@ Move U:G, D:G
     Index, Tmp as loadPtr
     Tmp, Addr as storePtr
     Tmp, Index as storePtr
+    Imm, Addr as storePtr
 
 Move32 U:G, D:G
     Tmp, Tmp as zeroExtend32ToPtr

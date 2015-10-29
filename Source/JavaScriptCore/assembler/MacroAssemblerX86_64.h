@@ -480,14 +480,20 @@ public:
         }
     }
 
+    void store64(TrustedImm32 imm, ImplicitAddress address)
+    {
+        m_assembler.movq_i32m(imm.m_value, address.offset, address.base);
+    }
+
     void store64(TrustedImm64 imm, ImplicitAddress address)
     {
-        if (CAN_SIGN_EXTEND_32_64(imm.m_value))
-            m_assembler.movq_i32m(static_cast<int>(imm.m_value), address.offset, address.base);
-        else {
-            move(imm, scratchRegister);
-            store64(scratchRegister, address);
+        if (CAN_SIGN_EXTEND_32_64(imm.m_value)) {
+            store64(TrustedImm32(static_cast<int32_t>(imm.m_value)), address);
+            return;
         }
+
+        move(imm, scratchRegister);
+        store64(scratchRegister, address);
     }
 
     void store64(TrustedImm64 imm, BaseIndex address)

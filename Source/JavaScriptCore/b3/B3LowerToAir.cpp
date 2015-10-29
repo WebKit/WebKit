@@ -187,6 +187,17 @@ public:
         return Arg();
     }
 
+    Arg immAnyInt(Value* value)
+    {
+        if (value->hasInt()) {
+            int64_t fullValue = value->asInt();
+            int32_t immediateValue = static_cast<int32_t>(fullValue);
+            if (fullValue == immediateValue)
+                return Arg::imm(immediateValue);
+        }
+        return Arg();
+    }
+
     Arg immOrTmp(Value* value)
     {
         if (Arg result = imm(value))
@@ -541,6 +552,15 @@ public:
     
     bool tryStore(Value* value, Value* address)
     {
+        Air::Opcode move = moveForType(value->type());
+        Arg destination = effectiveAddr(address);
+
+        Arg imm = immAnyInt(value);
+        if (imm && isValidForm(move, Arg::Imm, destination.kind())) {
+            append(moveForType(value->type()), imm, effectiveAddr(address, currentValue));
+            return true;
+        }
+        
         append(moveForType(value->type()), tmp(value), effectiveAddr(address, currentValue));
         return true;
     }
