@@ -91,15 +91,6 @@ void WebContextMenuClient::contextMenuDestroyed()
 
 void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const ContextMenu* parentMenu)
 {
-    id delegate = [m_webView UIDelegate];
-    SEL selector = @selector(webView:contextMenuItemSelected:forElement:);
-    if ([delegate respondsToSelector:selector]) {
-        NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController().hitTestResult()];
-
-        CallUIDelegate(m_webView, selector, item->platformDescription(), element);
-
-        [element release];
-    }
 }
 
 void WebContextMenuClient::downloadURL(const URL& url)

@@ -242,6 +242,10 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard
 {
 }
+
+- (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu
+{
+}
 #endif
 
 - (void)webView:(WebView *)sender didDrawRect:(NSRect)rect
@@ -251,16 +255,6 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webView:(WebView *)sender didScrollDocumentInFrameView:(WebFrameView *)frameView
 {
 }
-
-#if !PLATFORM(IOS)
-- (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu
-{
-}
-
-- (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element
-{
-}
-#endif
 
 - (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
 {

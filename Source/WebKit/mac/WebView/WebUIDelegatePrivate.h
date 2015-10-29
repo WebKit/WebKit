@@ -216,7 +216,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webView:(WebView *)sender didScrollDocumentInFrameView:(WebFrameView *)frameView;
 #if !TARGET_OS_IPHONE
 - (void)webView:(WebView *)sender willPopupMenu:(NSMenu *)menu;
-- (void)webView:(WebView *)sender contextMenuItemSelected:(NSMenuItem *)item forElement:(NSDictionary *)element;
 - (void)webView:(WebView *)sender saveFrameView:(WebFrameView *)frameView showingPanel:(BOOL)showingPanel;
 
 // FIXME: Rename this because it's only used by immediate action code.
