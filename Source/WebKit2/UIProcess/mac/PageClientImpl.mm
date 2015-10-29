@@ -829,7 +829,9 @@ void PageClientImpl::derefView()
 
 void PageClientImpl::startWindowDrag()
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     m_impl->startWindowDrag();
+#endif
 }
 
 NSWindow *PageClientImpl::platformWindow()
