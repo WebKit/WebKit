@@ -1933,6 +1933,7 @@
 		FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */; };
 		FE3913551B794F8A00EDAF71 /* LiveObjectData.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913511B794AC900EDAF71 /* LiveObjectData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3913561B794F8F00EDAF71 /* LiveObjectList.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3913531B794AC900EDAF71 /* LiveObjectList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
 		FE4BFF2B1AD476E700088F87 /* FunctionOverrides.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */; };
 		FE4BFF2C1AD476E700088F87 /* FunctionOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */; };
 		FE4D55B81AE716CA0052E459 /* IterationStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4D55B71AE716CA0052E459 /* IterationStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4021,6 +4022,7 @@
 		FE3913511B794AC900EDAF71 /* LiveObjectData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectData.h; sourceTree = "<group>"; };
 		FE3913521B794AC900EDAF71 /* LiveObjectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveObjectList.cpp; sourceTree = "<group>"; };
 		FE3913531B794AC900EDAF71 /* LiveObjectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveObjectList.h; sourceTree = "<group>"; };
+		FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITSubGenerator.cpp; sourceTree = "<group>"; };
 		FE4BFF291AD476E700088F87 /* FunctionOverrides.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionOverrides.cpp; sourceTree = "<group>"; };
 		FE4BFF2A1AD476E700088F87 /* FunctionOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionOverrides.h; sourceTree = "<group>"; };
 		FE4D55B71AE716CA0052E459 /* IterationStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterationStatus.h; sourceTree = "<group>"; };
@@ -4659,6 +4661,7 @@
 				A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */,
 				0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */,
 				0F766D1C15A5028D008F363E /* JITStubRoutine.h */,
+				FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */,
 				FE98B5B61BB9AE110073E7A6 /* JITSubGenerator.h */,
 				0F5EF91B16878F78003E5C25 /* JITThunks.cpp */,
 				0F5EF91C16878F78003E5C25 /* JITThunks.h */,
@@ -8651,6 +8654,7 @@
 				86F3EEBE168CDE930077B92A /* ObjCCallbackFunction.mm in Sources */,
 				14469DE5107EC7E700650446 /* ObjectConstructor.cpp in Sources */,
 				0FD3E4091B618B6600C80E1E /* ObjectPropertyCondition.cpp in Sources */,
+				FE4238901BE18C3C00514737 /* JITSubGenerator.cpp in Sources */,
 				0FD3E40B1B618B6600C80E1E /* ObjectPropertyConditionSet.cpp in Sources */,
 				14469DE6107EC7E700650446 /* ObjectPrototype.cpp in Sources */,
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,

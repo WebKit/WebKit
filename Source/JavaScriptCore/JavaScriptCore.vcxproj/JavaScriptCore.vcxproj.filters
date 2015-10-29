@@ -456,6 +456,9 @@
     <ClCompile Include="..\jit\JITStubRoutine.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\JITSubGenerator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JITThunks.cpp">
       <Filter>jit</Filter>
     </ClCompile>

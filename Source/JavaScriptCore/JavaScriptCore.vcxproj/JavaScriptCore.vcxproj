@@ -653,6 +653,7 @@
     <ClCompile Include="..\jit\JITPropertyAccess.cpp" />
     <ClCompile Include="..\jit\JITPropertyAccess32_64.cpp" />
     <ClCompile Include="..\jit\JITStubRoutine.cpp" />
+    <ClCompile Include="..\jit\JITSubGenerator.cpp" />
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
     <ClCompile Include="..\jit\SetupVarargsFrame.cpp" />

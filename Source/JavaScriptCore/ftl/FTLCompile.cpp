@@ -45,6 +45,7 @@
 #include "JITSubGenerator.h"
 #include "LLVMAPI.h"
 #include "LinkBuffer.h"
+#include "ScratchRegisterAllocator.h"
 
 namespace JSC { namespace FTL {
 

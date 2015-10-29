@@ -444,6 +444,7 @@ set(JavaScriptCore_SOURCES
     jit/JITPropertyAccess.cpp
     jit/JITPropertyAccess32_64.cpp
     jit/JITStubRoutine.cpp
+    jit/JITSubGenerator.cpp
     jit/JITThunks.cpp
     jit/JITToDFGDeferredCompilationCallback.cpp
     jit/PolymorphicCallStubRoutine.cpp
