@@ -1,5 +1,12 @@
 2015-10-29  Alex Christensen  <achristensen@webkit.org>
 
+        Fix build-jsc on Mac after r191749.
+
+        * Scripts/build-jsc:
+        Use isCMakeBuild to determine if we are building with CMake instead of cmakeBasedPortName.
+
+2015-10-29  Alex Christensen  <achristensen@webkit.org>
+
         Fix Mac CMake build
         https://bugs.webkit.org/show_bug.cgi?id=150686
 

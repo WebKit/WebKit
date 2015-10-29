@@ -94,7 +94,7 @@ if ($forceCLoop) {
     $ftlJIT = 0;
 }
 
-if (cmakeBasedPortName()) {
+if (isCMakeBuild()) {
     $cmakeArgs .= $forceCLoop ? " -DENABLE_JIT=OFF" : " -DENABLE_JIT=ON";
     $cmakeArgs .= $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
     # By default we build using all of the available CPUs
