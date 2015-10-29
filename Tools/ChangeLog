@@ -1,3 +1,11 @@
+2015-10-29  Lucas Forschler  <lforschler@apple.com>
+
+        Teach JSC bots to build 32bit instead of x86_64
+        
+        Reviewed by Mark Lam.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2015-10-29  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Fall back to AppleWin results in layout tests.

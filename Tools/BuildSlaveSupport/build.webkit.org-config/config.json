@@ -179,7 +179,7 @@
                       "slavenames": ["bot136"]
                     },
                     { "name": "Apple Mavericks 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "mavericks-32bitJSC-debug",
-                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-mavericks", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["bot629"]
                     },
                     { "name": "Apple Mavericks Release (Build)", "type": "Build", "builddir": "mavericks-release",
@@ -226,7 +226,7 @@
                       "slavenames": ["bot186"]
                     },
                     { "name": "Apple Yosemite 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "yosemite-32bitJSC-debug",
-                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
+                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["bot187"]
                     },
                     { "name": "Apple Yosemite Release (Build)", "type": "Build", "builddir": "yosemite-release",
