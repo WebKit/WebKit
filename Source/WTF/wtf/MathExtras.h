@@ -428,6 +428,13 @@ inline bool rangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
 {
     ASSERT(leftMin <= leftMax);
     ASSERT(rightMin <= rightMax);
+    
+    // Empty ranges interfere with nothing.
+    if (leftMin == leftMax)
+        return false;
+    if (rightMin == rightMax)
+        return false;
+    
     if (leftMin <= rightMin && leftMax > rightMin)
         return true;
     if (rightMin <= leftMin && rightMax > leftMin)

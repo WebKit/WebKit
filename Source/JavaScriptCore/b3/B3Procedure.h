@@ -53,6 +53,7 @@ public:
     template<typename ValueType, typename... Arguments>
     ValueType* add(Arguments...);
 
+    void resetValueOwners();
     void resetReachability();
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;

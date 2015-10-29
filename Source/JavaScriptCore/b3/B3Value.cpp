@@ -168,7 +168,6 @@ Effects Value::effects() const
     case Below:
     case AboveEqual:
     case BelowEqual:
-    case Phi:
         break;
     case Div:
         result.controlDependent = true;
@@ -208,6 +207,9 @@ Effects Value::effects() const
         break;
     case Upsilon:
         result.writesSSAState = true;
+        break;
+    case Phi:
+        result.readsSSAState = true;
         break;
     case Jump:
     case Branch:

@@ -29,8 +29,52 @@
 #if ENABLE(B3_JIT)
 
 #include <wtf/CommaPrinter.h>
+#include <wtf/DataLog.h>
 
 namespace JSC { namespace B3 {
+
+namespace {
+
+// These helpers cascade in such a way that after the helper for terminal, we don't have to worry
+// about terminal again, since the terminal case considers all ways that a terminal may interfere
+// with something else. And after the exit sideways case, we don't have to worry about either
+// exitsSideways or terminal. And so on...
+
+bool interferesWithTerminal(const Effects& terminal, const Effects& other)
+{
+    if (!terminal.terminal)
+        return false;
+    return other.terminal || other.controlDependent || other.writesSSAState || other.writes;
+}
+
+bool interferesWithExitSideways(const Effects& exitsSideways, const Effects& other)
+{
+    if (!exitsSideways.exitsSideways)
+        return false;
+    return other.controlDependent || other.writes;
+}
+
+bool interferesWithWritesSSAState(const Effects& writesSSAState, const Effects& other)
+{
+    if (!writesSSAState.writesSSAState)
+        return false;
+    return other.writesSSAState || other.readsSSAState;
+}
+
+} // anonymous namespace
+
+bool Effects::interferes(const Effects& other) const
+{
+    if (interferesWithTerminal(*this, other) || interferesWithTerminal(other, *this))
+        return true;
+    if (interferesWithExitSideways(*this, other) || interferesWithExitSideways(other, *this))
+        return true;
+    if (interferesWithWritesSSAState(*this, other) || interferesWithWritesSSAState(other, *this))
+        return true;
+    return writes.overlaps(other.writes)
+        || writes.overlaps(other.reads)
+        || reads.overlaps(other.writes);
+}
 
 void Effects::dump(PrintStream& out) const
 {
@@ -43,6 +87,8 @@ void Effects::dump(PrintStream& out) const
         out.print(comma, "ControlDependent");
     if (writesSSAState)
         out.print(comma, "WritesSSAState");
+    if (readsSSAState)
+        out.print(comma, "ReadsSSAState");
     if (writes)
         out.print(comma, "Writes:", writes);
     if (reads)

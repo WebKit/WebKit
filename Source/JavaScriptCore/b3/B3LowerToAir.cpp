@@ -74,15 +74,19 @@ public:
                 stackToStack.add(stackSlotValue, code.addStackSlot(stackSlotValue));
         }
 
+        procedure.resetValueOwners(); // Used by crossesInterference().
+
         // Lower defs before uses on a global level. This is a good heuristic to lock down a
         // hoisted address expression before we duplicate it back into the loop.
         for (B3::BasicBlock* block : procedure.blocksInPreOrder()) {
+            currentBlock = block;
             // Reset some state.
             insts.resize(0);
             
             // Process blocks in reverse order so we see uses before defs. That's what allows us
             // to match patterns effectively.
             for (unsigned i = block->size(); i--;) {
+                currentIndex = i;
                 currentValue = block->at(i);
                 if (locked.contains(currentValue))
                     continue;
@@ -144,6 +148,29 @@ public:
         locked.add(value);
     }
 
+    bool crossesInterference(Value* value)
+    {
+        // If it's in a foreign block, then be conservative. We could handle this if we were
+        // willing to do heavier analysis. For example, if we had liveness, then we could label
+        // values as "crossing interference" if they interfere with anything that they are live
+        // across. But, it's not clear how useful this would be.
+        if (value->owner != currentValue->owner)
+            return true;
+
+        Effects effects = value->effects();
+
+        for (unsigned i = currentIndex; i--;) {
+            Value* otherValue = currentBlock->at(i);
+            if (otherValue == value)
+                return false;
+            if (effects.interferes(otherValue->effects()))
+                return true;
+        }
+
+        ASSERT_NOT_REACHED();
+        return true;
+    }
+
     // This turns the given operand into an address.
     Arg effectiveAddr(Value* address)
     {
@@ -179,11 +206,13 @@ public:
 
     Arg loadAddr(Value* loadValue)
     {
+        if (loadValue->opcode() != Load)
+            return Arg();
         if (!canBeInternal(loadValue))
             return Arg();
-        if (loadValue->opcode() == Load)
-            return addr(loadValue);
-        return Arg();
+        if (crossesInterference(loadValue))
+            return Arg();
+        return addr(loadValue);
     }
 
     Arg imm(Value* value)
@@ -289,11 +318,6 @@ public:
     template<Air::Opcode opcode, Commutativity commutativity = NotCommutative>
     bool tryAppendStoreBinOp(Value* left, Value* right)
     {
-        // FIXME: This fails to check if there are any effects between the Load and the Store that
-        // could clobber the loaded value. We need to check such things because we are effectively
-        // sinking the load.
-        // https://bugs.webkit.org/show_bug.cgi?id=150534
-        
         Arg storeAddr = addr(currentValue);
         ASSERT(storeAddr);
 
@@ -366,6 +390,8 @@ public:
     Vector<Vector<Inst, 4>> insts;
     Vector<Inst> prologue;
 
+    B3::BasicBlock* currentBlock;
+    unsigned currentIndex;
     Value* currentValue;
 
     // The address selector will match any pattern where the input operands are available as Tmps.

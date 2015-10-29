@@ -49,6 +49,9 @@ struct Effects {
     // anyway.
     bool writesSSAState { false };
 
+    // True if this reads from the SSA state. This is only used for Phi.
+    bool readsSSAState { false };
+
     HeapRange writes;
     HeapRange reads;
 
@@ -56,6 +59,10 @@ struct Effects {
     {
         return terminal || exitsSideways || writesSSAState || writes;
     }
+
+    // Returns true if reordering instructions with these respective effects would change program
+    // behavior in an observable way.
+    bool interferes(const Effects&) const;
 
     void dump(PrintStream& out) const;
 };

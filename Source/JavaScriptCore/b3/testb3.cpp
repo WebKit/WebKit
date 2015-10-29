@@ -235,6 +235,33 @@ void testStoreAddLoad(int amount)
     CHECK(slot == 37 + amount);
 }
 
+void testStoreAddLoadInterference(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int slot = 37;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    ArgumentRegValue* otherSlotPtr =
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    MemoryValue* load = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 666),
+        otherSlotPtr);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            load, root->appendNew<Const32Value>(proc, Origin(), amount)),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, &slot));
+    CHECK(slot == 37 + amount);
+}
+
 void testStoreAddAndLoad(int amount, int mask)
 {
     Procedure proc;
@@ -329,6 +356,39 @@ void testLoadOffsetUsingAdd()
                     root->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))))));
     
     CHECK(compileAndRun<int>(proc) == array[0] + array[1]);
+}
+
+void testLoadOffsetUsingAddInterference()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int array[] = { 1, 2 };
+    ConstPtrValue* arrayPtr = root->appendNew<ConstPtrValue>(proc, Origin(), array);
+    ArgumentRegValue* otherArrayPtr =
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Const32Value* theNumberOfTheBeast = root->appendNew<Const32Value>(proc, Origin(), 666);
+    MemoryValue* left = root->appendNew<MemoryValue>(
+        proc, Load, Int32, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(), arrayPtr,
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0)));
+    MemoryValue* right = root->appendNew<MemoryValue>(
+        proc, Load, Int32, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(), arrayPtr,
+            root->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))));
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(), theNumberOfTheBeast, otherArrayPtr, 0);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(), theNumberOfTheBeast, otherArrayPtr, sizeof(int));
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(), left, right));
+    
+    CHECK(compileAndRun<int>(proc, &array[0]) == 1 + 2);
+    CHECK(array[0] == 666);
+    CHECK(array[1] == 666);
 }
 
 void testLoadOffsetUsingAddNotConstant()
@@ -443,12 +503,14 @@ void run()
     RUN(testTrunc((static_cast<int64_t>(1) << 40) + 42));
     RUN(testAdd1(45));
     RUN(testStoreAddLoad(46));
+    RUN(testStoreAddLoadInterference(52));
     RUN(testStoreAddAndLoad(47, 0xffff));
     RUN(testStoreAddAndLoad(470000, 0xffff));
     RUN(testAdd1Uncommuted(48));
     RUN(testLoadOffset());
     RUN(testLoadOffsetNotConstant());
     RUN(testLoadOffsetUsingAdd());
+    RUN(testLoadOffsetUsingAddInterference());
     RUN(testLoadOffsetUsingAddNotConstant());
     RUN(testFramePointer());
     RUN(testStackSlot());

@@ -197,7 +197,7 @@ private:
     AdjacencyList m_children;
 
 public:
-    BasicBlock* owner { nullptr }; // computed lazily.
+    BasicBlock* owner { nullptr }; // computed by Procedure::resetValueOwners().
 };
 
 class DeepValueDump {

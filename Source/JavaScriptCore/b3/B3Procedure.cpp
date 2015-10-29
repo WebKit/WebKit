@@ -52,6 +52,14 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
+void Procedure::resetValueOwners()
+{
+    for (BasicBlock* block : *this) {
+        for (Value* value : *block)
+            value->owner = block;
+    }
+}
+
 void Procedure::resetReachability()
 {
     B3::resetReachability(m_blocks);

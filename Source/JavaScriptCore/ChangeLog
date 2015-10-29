@@ -1,3 +1,59 @@
+2015-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        StoreOpLoad pattern matching should check effects between the Store and Load
+        https://bugs.webkit.org/show_bug.cgi?id=150534
+
+        Reviewed by Geoffrey Garen.
+
+        If we turn:
+
+            a = Load(addr)
+            b = Add(a, 42)
+            Store(b, addr)
+
+        Into:
+
+            Add $42, (addr)
+
+        Then we must make sure that we didn't really have this to begin with:
+
+            a = Load(addr)
+            Store(666, addr)
+            b = Add(a, 42)
+            Store(b, addr)
+
+        That's because pattern matching doesn't care about control flow, and it finds the Load
+        just using data flow. This patch fleshes out B3's aliasing analysis, and makes it powerful
+        enough to broadly ask questions about whether such a code motion of the Load is legal.
+
+        * b3/B3Effects.cpp:
+        (JSC::B3::Effects::interferes):
+        (JSC::B3::Effects::dump):
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::mustExecute):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::commitInternal):
+        (JSC::B3::Air::LowerToAir::crossesInterference):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::loadAddr):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBlock):
+        (JSC::B3::Procedure::resetValueOwners):
+        (JSC::B3::Procedure::resetReachability):
+        * b3/B3Procedure.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        * b3/B3Value.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testStoreAddLoad):
+        (JSC::B3::testStoreAddLoadInterference):
+        (JSC::B3::testStoreAddAndLoad):
+        (JSC::B3::testLoadOffsetUsingAdd):
+        (JSC::B3::testLoadOffsetUsingAddInterference):
+        (JSC::B3::testLoadOffsetUsingAddNotConstant):
+        (JSC::B3::run):
+
 2015-10-29  Brady Eidson  <beidson@apple.com>
 
         Modern IDB: deleteObjectStore support.
