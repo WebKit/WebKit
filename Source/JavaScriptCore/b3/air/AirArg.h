@@ -44,22 +44,62 @@ public:
     // These enum members are intentionally terse because we have to mention them a lot.
     enum Kind : int8_t {
         Invalid,
+
+        // This is either an unassigned temporary or a register. All unassigned temporaries
+        // eventually become registers.
         Tmp,
+
+        // This is an immediate that the instruction will materialize.
         Imm,
         Imm64,
+
+        // These are the addresses. Instructions may load from (Use), store to (Def), or evaluate
+        // (UseAddr) addresses.
         Addr,
         Stack,
         CallArg,
         Index,
+
+        // Immediate operands that customize the behavior of an operation. You can think of them as
+        // secondary opcodes. They are always "Use"'d.
         RelCond,
         ResCond,
         Special
     };
 
     enum Role : int8_t {
+        // Use means that the Inst will read from this value before doing anything else.
+        //
+        // For Tmp: The Inst will read this Tmp.
+        // For Arg::addr and friends: The Inst will load from this address.
+        // For Arg::imm and friends: The Inst will materialize and use this immediate.
+        // For RelCond/ResCond/Special: This is the only valid role for these kinds.
+        //
+        // Note that Use of an address does not mean escape. It only means that the instruction will
+        // load from the address before doing anything else. This is a bit tricky; for example
+        // Specials could theoretically squirrel away the address and effectively escape it. However,
+        // this is not legal. On the other hand, any address other than Stack is presumed to be
+        // always escaping, and Stack is presumed to be always escaping if it's Locked.
         Use,
+
+        // Def means that the Inst will write to this value after doing everything else.
+        //
+        // For Tmp: The Inst will write to this Tmp.
+        // For Arg::addr and friends: The Inst will store to this address.
+        // This isn't valid for any other kinds.
+        //
+        // Like Use of address, Def of address does not mean escape.
         Def,
-        UseDef
+
+        // This is a combined Use and Def. It means that both things happen.
+        UseDef,
+
+        // This is a special kind of use that is only valid for addresses. It means that the
+        // instruction will evaluate the address expression and consume the effective address, but it
+        // will neither load nor store. This is an escaping use, because now the address may be
+        // passed along to who-knows-where. Note that this isn't really a Use of the Arg, but it does
+        // imply that we're Use'ing any registers that the Arg contains.
+        UseAddr
     };
 
     enum Type : int8_t {
@@ -69,6 +109,8 @@ public:
 
     static const unsigned numTypes = 2;
 
+    // Returns true if the Role implies that the Inst will Use the Arg. It's deliberately false for
+    // UseAddr, since isUse() for an Arg::addr means that we are loading from the address.
     static bool isUse(Role role)
     {
         switch (role) {
@@ -76,14 +118,17 @@ public:
         case UseDef:
             return true;
         case Def:
+        case UseAddr:
             return false;
         }
     }
 
+    // Returns true if the Role implies that the Inst will Def the Arg.
     static bool isDef(Role role)
     {
         switch (role) {
         case Use:
+        case UseAddr:
             return false;
         case Def:
         case UseDef:
@@ -553,6 +598,7 @@ public:
     {
         switch (m_kind) {
         case Tmp:
+            ASSERT(isUse(argRole) || isDef(argRole));
             functor(m_base, argRole, argType);
             break;
         case Addr:

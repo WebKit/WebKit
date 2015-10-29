@@ -45,6 +45,9 @@ ArgumentReg = ArgumentReg()
 Const32 = Const32()
 Const64 = Const64()
 
+StackSlot = StackSlot()
+FramePointer = FramePointer()
+
 # It would be fantastic to not have to have this here, but the philosophy of our lowering is that
 # it should be sound even if we haven't run optimizations.
 Identity = Identity(value)

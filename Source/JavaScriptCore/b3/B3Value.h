@@ -64,6 +64,9 @@ public:
     Value*& child(unsigned index) { return m_children[index]; }
     Value* child(unsigned index) const { return m_children[index]; }
 
+    Value*& lastChild() { return m_children.last(); }
+    Value* lastChild() const { return m_children.last(); }
+
     unsigned numChildren() const { return m_children.size(); }
 
     // This computes the type using the opcode.

@@ -172,7 +172,7 @@ def lex(str, fileName)
 end
 
 def isUD(token)
-    token =~ /\A((U)|(D)|(UD))\Z/
+    token =~ /\A((U)|(D)|(UD)|(UA))\Z/
 end
 
 def isGF(token)
@@ -232,7 +232,7 @@ class Parser
 
     def consumeRole
         result = token.string
-        parseError("Expected role (U, D, or UD)") unless isUD(result)
+        parseError("Expected role (U, D, UD, or UA)") unless isUD(result)
         advance
         result
     end
@@ -528,6 +528,8 @@ writeH("OpcodeUtils") {
                     role = "Def"
                 when "UD"
                     role = "UseDef"
+                when "UA"
+                    role = "UseAddr"
                 else
                     raise
                 end

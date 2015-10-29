@@ -34,6 +34,30 @@ MemoryValue::~MemoryValue()
 {
 }
 
+size_t MemoryValue::accessByteSize() const
+{
+    switch (opcode()) {
+    case Load8Z:
+    case Load8S:
+    case Store8:
+        return 1;
+    case Load16Z:
+    case Load16S:
+    case Store16:
+        return 2;
+    case LoadFloat:
+    case StoreFloat:
+        return 4;
+    case Load:
+        return sizeofType(type());
+    case Store:
+        return sizeofType(child(0)->type());
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 void MemoryValue::dumpMeta(PrintStream& out) const
 {
     if (m_offset)

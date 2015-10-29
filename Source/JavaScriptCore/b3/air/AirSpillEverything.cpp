@@ -148,6 +148,10 @@ void spillEverything(Code& code)
                             }
                         }
                         break;
+                    case Arg::UseAddr:
+                        // We will never UseAddr a Tmp, that doesn't make sense.
+                        RELEASE_ASSERT_NOT_REACHED();
+                        break;
                     }
                     RELEASE_ASSERT(chosenReg);
 

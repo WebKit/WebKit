@@ -62,6 +62,8 @@ public:
     int32_t offset() const { return m_offset; }
     void setOffset(int32_t offset) { m_offset = offset; }
 
+    size_t accessByteSize() const;
+
 protected:
     void dumpMeta(PrintStream&) const override;
 

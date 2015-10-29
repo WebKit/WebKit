@@ -57,6 +57,19 @@ inline Type pointerType()
     return Int64;
 }
 
+inline size_t sizeofType(Type type)
+{
+    switch (type) {
+    case Void:
+        return 0;
+    case Int32:
+        return 4;
+    case Int64:
+    case Double:
+        return 8;
+    }
+}
+
 } } // namespace JSC::B3
 
 namespace WTF {

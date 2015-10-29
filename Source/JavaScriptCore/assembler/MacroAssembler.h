@@ -1231,6 +1231,11 @@ public:
 
 #endif // !CPU(X86_64)
 
+    void lea(Address address, RegisterID dest)
+    {
+        addPtr(TrustedImm32(address.offset), address.base, dest);
+    }
+
     bool shouldBlind(Imm32 imm)
     {
 #if ENABLE(FORCED_JIT_BLINDING)

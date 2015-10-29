@@ -33,6 +33,7 @@
 #include "B3Generate.h"
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
+#include "B3StackSlotValue.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "InitializeThreading.h"
@@ -354,6 +355,70 @@ void testLoadOffsetUsingAddNotConstant()
     CHECK(compileAndRun<int>(proc, &array[0]) == array[0] + array[1]);
 }
 
+void testFramePointer()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, FramePointer, Origin()));
+
+    void* fp = compileAndRun<void*>(proc);
+    CHECK(fp < &proc);
+    CHECK(fp >= bitwise_cast<char*>(&proc) - 10000);
+}
+
+void testStackSlot()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<StackSlotValue>(proc, Origin(), 1, StackSlotKind::Anonymous));
+
+    void* stackSlot = compileAndRun<void*>(proc);
+    CHECK(stackSlot < &proc);
+    CHECK(stackSlot >= bitwise_cast<char*>(&proc) - 10000);
+}
+
+void testLoadFromFramePointer()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, pointerType(), Origin(),
+            root->appendNew<Value>(proc, FramePointer, Origin())));
+
+    void* fp = compileAndRun<void*>(proc);
+    void* myFP = __builtin_frame_address(0);
+    CHECK(fp <= myFP);
+    CHECK(fp >= bitwise_cast<char*>(myFP) - 10000);
+}
+
+void testStoreLoadStackSlot(int value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    StackSlotValue* stack = root->appendNew<StackSlotValue>(
+        proc, Origin(), sizeof(int), StackSlotKind::Anonymous);
+
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        stack);
+    
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), stack));
+
+    CHECK(compileAndRun<int>(proc, value) == value);
+}
+
 #define RUN(test) do {                          \
         dataLog(#test ":\n");                   \
         test;                                   \
@@ -385,6 +450,10 @@ void run()
     RUN(testLoadOffsetNotConstant());
     RUN(testLoadOffsetUsingAdd());
     RUN(testLoadOffsetUsingAddNotConstant());
+    RUN(testFramePointer());
+    RUN(testStackSlot());
+    RUN(testLoadFromFramePointer());
+    RUN(testStoreLoadStackSlot(50));
 }
 
 } // anonymous namespace

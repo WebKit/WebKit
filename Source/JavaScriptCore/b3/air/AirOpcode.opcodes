@@ -27,6 +27,7 @@
 # U:G => use of a general-purpose register or value
 # D:G => def of a general-purpose register or value
 # UD:G => use and def of a general-purpose register or value
+# UA:G => UseAddr (see comment in Arg.h)
 # U:F => use of a float register or value
 # D:F => def of a float register or value
 # UD:F => use and def of a float register or value
@@ -76,6 +77,9 @@ Add64 U:G, UD:G
 
 Add64 U:G, U:G, D:G
     Imm, Tmp, Tmp
+
+Lea UA:G, D:G
+    Addr, Tmp
 
 And32 U:G, UD:G
     Tmp, Tmp

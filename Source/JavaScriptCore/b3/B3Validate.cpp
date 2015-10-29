@@ -30,7 +30,9 @@
 
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
+#include "B3MemoryValue.h"
 #include "B3Procedure.h"
+#include "B3StackSlotValue.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include <wtf/HashSet.h>
@@ -224,16 +226,19 @@ public:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Int32, ("At ", *value));
+                validateStackAccess(value);
                 break;
             case LoadFloat:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Double, ("At ", *value));
+                validateStackAccess(value);
                 break;
             case Load:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() != Void, ("At ", *value));
+                validateStackAccess(value);
                 break;
             case Store8:
             case Store16:
@@ -241,17 +246,20 @@ public:
                 VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
                 VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
+                validateStackAccess(value);
                 break;
             case StoreFloat:
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Double, ("At ", *value));
                 VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
+                validateStackAccess(value);
                 break;
             case Store:
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));
+                validateStackAccess(value);
                 break;
             case CCall:
                 // This is a wildcard. You can pass any non-void arguments and you can select any
@@ -308,6 +316,17 @@ private:
             else
                 VALIDATE(isFloat(value->child(i)->type()), ("At ", *value));
         }
+    }
+
+    void validateStackAccess(Value* value)
+    {
+        MemoryValue* memory = value->as<MemoryValue>();
+        StackSlotValue* stack = value->lastChild()->as<StackSlotValue>();
+        if (!stack)
+            return;
+
+        VALIDATE(memory->offset() >= 0, ("At ", *value));
+        VALIDATE(memory->offset() + memory->accessByteSize() <= stack->byteSize(), ("At ", *value));
     }
     
     NO_RETURN_DUE_TO_CRASH void fail(

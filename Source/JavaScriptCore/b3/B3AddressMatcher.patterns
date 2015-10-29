@@ -36,4 +36,7 @@ AddShift2 = Add(base, Shl(index, $logScale))
 
 Add = Add(left, right)
 
+FramePointer = FramePointer()
+StackSlot = StackSlot()
+
 Direct

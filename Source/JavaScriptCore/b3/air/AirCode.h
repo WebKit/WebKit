@@ -56,6 +56,7 @@ public:
     BasicBlock* addBlock(double frequency = PNaN);
 
     StackSlot* addStackSlot(unsigned byteSize, StackSlotKind, StackSlotValue* = nullptr);
+    StackSlot* addStackSlot(StackSlotValue*);
 
     Special* addSpecial(std::unique_ptr<Special>);
 

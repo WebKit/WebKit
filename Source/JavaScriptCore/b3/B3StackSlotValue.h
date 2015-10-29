@@ -37,7 +37,7 @@ namespace Air {
 class StackSlot;
 } // namespace Air
 
-class StackSlotValue : public Value {
+class JS_EXPORT_PRIVATE StackSlotValue : public Value {
 public:
     static bool accepts(Opcode opcode) { return opcode == StackSlot; }
 

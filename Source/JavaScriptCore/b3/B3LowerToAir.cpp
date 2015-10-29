@@ -31,6 +31,7 @@
 #include "AirCode.h"
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
+#include "AirStackSlot.h"
 #include "B3AddressMatcher.h"
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
@@ -41,6 +42,7 @@
 #include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
+#include "B3StackSlotValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
 #include <wtf/ListDump.h>
@@ -67,6 +69,10 @@ public:
     {
         for (B3::BasicBlock* block : procedure)
             blockToBlock[block] = code.addBlock(block->frequency());
+        for (Value* value : procedure.values()) {
+            if (StackSlotValue* stackSlotValue = value->as<StackSlotValue>())
+                stackToStack.add(stackSlotValue, code.addStackSlot(stackSlotValue));
+        }
 
         // Lower defs before uses on a global level. This is a good heuristic to lock down a
         // hoisted address expression before we duplicate it back into the loop.
@@ -168,7 +174,7 @@ public:
         if (!value)
             return Arg();
 
-        return effectiveAddr(value->children().last(), value);
+        return effectiveAddr(value->lastChild(), value);
     }
 
     Arg loadAddr(Value* loadValue)
@@ -353,6 +359,7 @@ public:
     IndexSet<Value> locked; // These are values that will have no Tmp in Air.
     IndexMap<Value, Tmp> valueToTmp; // These are values that must have a Tmp in Air. We say that a Value* with a non-null Tmp is "pinned".
     IndexMap<B3::BasicBlock, Air::BasicBlock*> blockToBlock;
+    HashMap<StackSlotValue*, Air::StackSlot*> stackToStack;
 
     UseCounts useCounts;
 
@@ -432,6 +439,18 @@ public:
             }
 
             selectedAddress = Arg::index(lower.tmp(left), lower.tmp(right));
+            return true;
+        }
+
+        bool tryFramePointer()
+        {
+            selectedAddress = Arg::addr(Tmp(GPRInfo::callFrameRegister));
+            return true;
+        }
+
+        bool tryStackSlot()
+        {
+            selectedAddress = Arg::stack(lower.stackToStack.get(root->as<StackSlotValue>()));
             return true;
         }
 
@@ -598,6 +617,21 @@ public:
     bool tryConst64()
     {
         append(Move, Arg::imm64(currentValue->asInt64()), tmp(currentValue));
+        return true;
+    }
+
+    bool tryFramePointer()
+    {
+        append(Move, Tmp(GPRInfo::callFrameRegister), tmp(currentValue));
+        return true;
+    }
+
+    bool tryStackSlot()
+    {
+        append(
+            Lea,
+            Arg::stack(stackToStack.get(currentValue->as<StackSlotValue>())),
+            tmp(currentValue));
         return true;
     }
 

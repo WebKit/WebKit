@@ -131,7 +131,7 @@ private:
         case Store16:
         case StoreFloat:
         case Store: {
-            Value* address = m_value->children().last();
+            Value* address = m_value->lastChild();
             MemoryValue* memory = m_value->as<MemoryValue>();
 
             // Turn this: Load(Add(address, offset1), offset = offset2)
@@ -146,7 +146,7 @@ private:
                     int32_t smallOffset = static_cast<int32_t>(offset);
                     if (smallOffset == offset) {
                         address = address->child(0);
-                        memory->children().last() = address;
+                        memory->lastChild() = address;
                         memory->setOffset(smallOffset);
                         m_changed = true;
                     }
@@ -164,7 +164,7 @@ private:
                 if (Value* newAddress = address->addConstant(m_proc, memory->offset())) {
                     m_insertionSet.insertValue(m_index, newAddress);
                     address = newAddress;
-                    memory->children().last() = newAddress;
+                    memory->lastChild() = newAddress;
                     memory->setOffset(0);
                     m_changed = true;
                 }

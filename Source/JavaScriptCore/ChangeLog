@@ -1,3 +1,79 @@
+2015-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Air needs syntax for escaping StackSlots
+        https://bugs.webkit.org/show_bug.cgi?id=150430
+
+        Reviewed by Geoffrey Garen.
+
+        This adds lowering for FramePointer and StackSlot, and to enable this, it adds the Lea
+        instruction for getting the value of an address. This is necessary to support arbitrary
+        lowerings of StackSlot, since the only way to get the "value" of a StackSlot in Air is with
+        this new instruction.
+
+        Lea uses a new Role, called UseAddr. This describes exactly what the Intel-style LEA opcode
+        would do: it evaluates an address, but does not load from it or store to it.
+
+        Lea is also the only way to escape a StackSlot. Well, more accurately, UseAddr is the only
+        way to escape and UseAddr is only used by Lea. The stack allocation phase now understands
+        that StackSlots may escape, and factors this into its analysis.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::lea):
+        * b3/B3AddressMatcher.patterns:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::run):
+        (JSC::B3::Air::LowerToAir::addr):
+        (JSC::B3::Air::LowerToAir::loadAddr):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryAdd):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryFramePointer):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryStackSlot):
+        (JSC::B3::Air::LowerToAir::AddressSelector::tryDirect):
+        (JSC::B3::Air::LowerToAir::tryConst64):
+        (JSC::B3::Air::LowerToAir::tryFramePointer):
+        (JSC::B3::Air::LowerToAir::tryStackSlot):
+        (JSC::B3::Air::LowerToAir::tryIdentity):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::~MemoryValue):
+        (JSC::B3::MemoryValue::accessByteSize):
+        (JSC::B3::MemoryValue::dumpMeta):
+        * b3/B3MemoryValue.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackSlotValue.h:
+        (JSC::B3::StackSlotValue::accepts): Deleted.
+        * b3/B3Type.h:
+        (JSC::B3::pointerType):
+        (JSC::B3::sizeofType):
+        * b3/B3Validate.cpp:
+        * b3/B3Value.h:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::isUse):
+        (JSC::B3::Air::Arg::isDef):
+        (JSC::B3::Air::Arg::forEachTmp):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addStackSlot):
+        (JSC::B3::Air::Code::addSpecial):
+        * b3/air/AirCode.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/AirStackSlot.h:
+        (JSC::B3::Air::StackSlot::byteSize):
+        (JSC::B3::Air::StackSlot::kind):
+        (JSC::B3::Air::StackSlot::isLocked):
+        (JSC::B3::Air::StackSlot::index):
+        (JSC::B3::Air::StackSlot::alignment):
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::testLoadOffsetUsingAddNotConstant):
+        (JSC::B3::testFramePointer):
+        (JSC::B3::testStackSlot):
+        (JSC::B3::testLoadFromFramePointer):
+        (JSC::B3::testStoreLoadStackSlot):
+        (JSC::B3::run):
+
 2015-10-29  Saam barati  <sbarati@apple.com>
 
         we're incorrectly adjusting a stack location with respect to the localsOffset in FTLCompile

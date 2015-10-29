@@ -30,6 +30,7 @@
 
 #include "AirCCallSpecial.h"
 #include "B3BasicBlockUtils.h"
+#include "B3StackSlotValue.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -56,6 +57,11 @@ StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, StackSlotVa
     StackSlot* result = slot.get();
     m_stackSlots.append(WTF::move(slot));
     return result;
+}
+
+StackSlot* Code::addStackSlot(StackSlotValue* value)
+{
+    return addStackSlot(value->byteSize(), value->kind(), value);
 }
 
 Special* Code::addSpecial(std::unique_ptr<Special> special)

@@ -99,41 +99,48 @@ void allocateStack(Code& code)
 {
     PhaseScope phaseScope(code, "allocateStack");
 
-    // Allocate all of the locked slots in order. This is kind of a crazy algorithm to allow for
+    // Perform an escape analysis over stack slots. An escaping stack slot is one that is locked or
+    // is explicitly escaped in the code.
+    IndexSet<StackSlot> escapingStackSlots;
+    for (StackSlot* slot : code.stackSlots()) {
+        if (slot->isLocked())
+            escapingStackSlots.add(slot);
+    }
+    for (BasicBlock* block : code) {
+        for (Inst& inst : *block) {
+            inst.forEachArg(
+                [&] (Arg& arg, Arg::Role role, Arg::Type) {
+                    if (role == Arg::UseAddr && arg.isStack())
+                        escapingStackSlots.add(arg.stackSlot());
+                });
+        }
+    }
+
+    // Allocate all of the escaped slots in order. This is kind of a crazy algorithm to allow for
     // the possibility of stack slots being assigned frame offsets before we even get here.
     ASSERT(!code.frameSize());
-    Vector<StackSlot*> assignedLockedStackSlots;
-    Vector<StackSlot*> lockedStackSlotsWorklist;
+    Vector<StackSlot*> assignedEscapedStackSlots;
+    Vector<StackSlot*> escapedStackSlotsWorklist;
     for (StackSlot* slot : code.stackSlots()) {
-        switch (slot->kind()) {
-        case StackSlotKind::Locked:
+        if (escapingStackSlots.contains(slot)) {
             if (slot->offsetFromFP())
-                assignedLockedStackSlots.append(slot);
+                assignedEscapedStackSlots.append(slot);
             else
-                lockedStackSlotsWorklist.append(slot);
-            break;
-        case StackSlotKind::Anonymous:
-            if (slot->offsetFromFP()) {
-                // As a matter of sanity, unassign this. Maybe it would be good to even have a
-                // validation rule that this cannot happen.
-                slot->setOffsetFromFP(0);
-            }
-            break;
+                escapedStackSlotsWorklist.append(slot);
+        } else {
+            // It would be super strange to have an unlocked stack slot that has an offset already.
+            ASSERT(!slot->offsetFromFP());
         }
     }
     // This is a fairly expensive loop, but it's OK because we'll usually only have a handful of
-    // locked stack slots.
-    while (!lockedStackSlotsWorklist.isEmpty()) {
-        StackSlot* slot = lockedStackSlotsWorklist.takeLast();
-        assign(slot, assignedLockedStackSlots);
-        assignedLockedStackSlots.append(slot);
+    // escaped stack slots.
+    while (!escapedStackSlotsWorklist.isEmpty()) {
+        StackSlot* slot = escapedStackSlotsWorklist.takeLast();
+        assign(slot, assignedEscapedStackSlots);
+        assignedEscapedStackSlots.append(slot);
     }
 
-    // Now we handle the anonymous slots. Note that theoretically we should do an escape analysis
-    // here. But, currently Air doesn't support escaping a StackSlot!
-    // FIXME: Add support for escaping a StackSlot and add escape analysis to allocateStack().
-    // https://bugs.webkit.org/show_bug.cgi?id=150430
-
+    // Now we handle the anonymous slots.
     Liveness<Arg> liveness(code);
     IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
     Vector<StackSlot*> slots;
@@ -194,7 +201,7 @@ void allocateStack(Code& code)
     // Now we assign stack locations. At its heart this algorithm is just first-fit. For each
     // StackSlot we just want to find the offsetFromFP that is closest to zero while ensuring no
     // overlap with other StackSlots that this overlaps with.
-    Vector<StackSlot*> otherSlots = assignedLockedStackSlots;
+    Vector<StackSlot*> otherSlots = assignedEscapedStackSlots;
     for (StackSlot* slot : code.stackSlots()) {
         if (slot->offsetFromFP()) {
             // Already assigned an offset.
@@ -202,9 +209,9 @@ void allocateStack(Code& code)
         }
 
         HashSet<StackSlot*>& interferingSlots = interference[slot];
-        otherSlots.resize(assignedLockedStackSlots.size());
-        otherSlots.resize(assignedLockedStackSlots.size() + interferingSlots.size());
-        unsigned nextIndex = assignedLockedStackSlots.size();
+        otherSlots.resize(assignedEscapedStackSlots.size());
+        otherSlots.resize(assignedEscapedStackSlots.size() + interferingSlots.size());
+        unsigned nextIndex = assignedEscapedStackSlots.size();
         for (StackSlot* otherSlot : interferingSlots)
             otherSlots[nextIndex++] = otherSlot;
 

@@ -45,6 +45,7 @@ class StackSlot {
 public:
     unsigned byteSize() const { return m_byteSize; }
     StackSlotKind kind() const { return m_kind; }
+    bool isLocked() const { return m_kind == StackSlotKind::Locked; }
     unsigned index() const { return m_index; }
 
     unsigned alignment() const
