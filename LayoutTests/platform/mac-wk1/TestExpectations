@@ -139,6 +139,11 @@ webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/oes-texture-half-float.html 
 
 [ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
+# storage/indexeddb/modern tests crashing frequently on mac-wk1
+webkit.org/b/150678 storage/indexeddb/modern/createobjectstore-basic.html [ Pass Crash ]
+webkit.org/b/150678 storage/indexeddb/modern/objectstore-attributes.html [ Pass Crash ]
+webkit.org/b/150678 storage/indexeddb/modern/transaction-scheduler-1.html [ Pass Crash ]
+
 ### END OF (2) Failures without bug reports
 ########################################
 
