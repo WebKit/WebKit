@@ -1,3 +1,14 @@
+2015-10-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=150686
+
+        Reviewed by Filip Pizlo.
+
+        * API/ObjCCallbackFunction.mm:
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
 2015-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         Air needs syntax for escaping StackSlots

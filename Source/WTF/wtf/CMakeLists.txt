@@ -290,3 +290,5 @@ endif ()
 if (WTF_OUTPUT_NAME)
     set_target_properties(WTF PROPERTIES OUTPUT_NAME ${WTF_OUTPUT_NAME})
 endif ()
+
+WEBKIT_FRAMEWORK(WTF)

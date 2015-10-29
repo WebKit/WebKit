@@ -39,6 +39,7 @@
 #import "JSValueInternal.h"
 #import "ObjCCallbackFunction.h"
 #import "ObjcRuntimeExtras.h"
+#import "StructureInlines.h"
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 

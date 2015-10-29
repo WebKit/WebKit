@@ -242,6 +242,12 @@ macro(WEBKIT_WRAP_SOURCELIST)
     source_group("DerivedSources" REGULAR_EXPRESSION "${DERIVED_SOURCES_WEBCORE_DIR}")
 endmacro()
 
+macro(WEBKIT_FRAMEWORK _target)
+    if (APPLE)
+        set_target_properties(${_target} PROPERTIES FRAMEWORK TRUE)
+        install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
+    endif ()
+endmacro()
 
 macro(WEBKIT_CREATE_FORWARDING_HEADER _target_directory _file)
     get_filename_component(_source_path "${CMAKE_SOURCE_DIR}/Source/" ABSOLUTE)

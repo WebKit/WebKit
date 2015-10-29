@@ -224,7 +224,7 @@ list(APPEND WebCore_SOURCES
     page/mac/ChromeMac.mm
     page/mac/DragControllerMac.mm
     page/mac/EventHandlerMac.mm
-    page/mac/PageMac.cpp
+    page/mac/PageMac.mm
     page/mac/ServicesOverlayController.mm
     page/mac/SettingsMac.mm
     page/mac/TextIndicatorWindow.mm

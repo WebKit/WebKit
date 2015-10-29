@@ -28,6 +28,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess"
     "${WEBKIT2_DIR}/UIProcess/API"
     "${WEBKIT2_DIR}/UIProcess/API/C"
+    "${WEBKIT2_DIR}/UIProcess/API/Cocoa"
     "${WEBKIT2_DIR}/UIProcess/API/cpp"
     "${WEBKIT2_DIR}/UIProcess/Authentication"
     "${WEBKIT2_DIR}/UIProcess/Databases"
@@ -455,6 +456,51 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKViewportAttributes.cpp
     UIProcess/API/C/WKWindowFeaturesRef.cpp
 
+    UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
+    UIProcess/API/Cocoa/APIUserContentExtensionStoreCocoa.mm
+    UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
+    UIProcess/API/Cocoa/LegacyBundleForClass.mm
+    UIProcess/API/Cocoa/WKBackForwardList.mm
+    UIProcess/API/Cocoa/WKBackForwardListItem.mm
+    UIProcess/API/Cocoa/WKBrowsingContextController.mm
+    UIProcess/API/Cocoa/WKBrowsingContextGroup.mm
+    UIProcess/API/Cocoa/WKConnection.mm
+    UIProcess/API/Cocoa/WKError.mm
+    UIProcess/API/Cocoa/WKFrameInfo.mm
+    UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm
+    UIProcess/API/Cocoa/WKNavigation.mm
+    UIProcess/API/Cocoa/WKNavigationAction.mm
+    UIProcess/API/Cocoa/WKNavigationData.mm
+    UIProcess/API/Cocoa/WKNavigationResponse.mm
+    UIProcess/API/Cocoa/WKPreferences.mm
+    UIProcess/API/Cocoa/WKProcessGroup.mm
+    UIProcess/API/Cocoa/WKProcessPool.mm
+    UIProcess/API/Cocoa/WKScriptMessage.mm
+    UIProcess/API/Cocoa/WKSecurityOrigin.mm
+    UIProcess/API/Cocoa/WKTypeRefWrapper.mm
+    UIProcess/API/Cocoa/WKUserContentController.mm
+    UIProcess/API/Cocoa/WKUserScript.mm
+    UIProcess/API/Cocoa/WKWebView.mm
+    UIProcess/API/Cocoa/WKWebViewConfiguration.mm
+    UIProcess/API/Cocoa/WKWebsiteDataRecord.mm
+    UIProcess/API/Cocoa/WKWebsiteDataStore.mm
+    UIProcess/API/Cocoa/WKWindowFeatures.mm
+    UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
+    UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm
+    UIProcess/API/Cocoa/_WKDownload.mm
+    UIProcess/API/Cocoa/_WKElementAction.mm
+    UIProcess/API/Cocoa/_WKElementInfo.mm
+    UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
+    UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
+    UIProcess/API/Cocoa/_WKSessionState.mm
+    UIProcess/API/Cocoa/_WKThumbnailView.mm
+    UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm
+    UIProcess/API/Cocoa/_WKUserContentFilter.mm
+    UIProcess/API/Cocoa/_WKUserStyleSheet.mm
+    UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm
+    UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
+    UIProcess/API/Cocoa/_WKWebsiteDataStore.mm
+
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp
     UIProcess/Authentication/AuthenticationDecisionListener.cpp
     UIProcess/Authentication/WebCredential.cpp
@@ -839,7 +885,11 @@ endif ()
 POPULATE_LIBRARY_VERSION(WEBKIT2)
 set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${WEBKIT2_VERSION_MAJOR})
 
-install(TARGETS WebKit2 WebProcess
+if (APPLE)
+    WEBKIT_FRAMEWORK(WebKit2)
+else ()
+    install(TARGETS WebKit2 WebProcess
         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
         RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
-)
+    )
+endif ()

@@ -271,7 +271,7 @@ if (isAppleWinWebKit() || isWinCairo()) {
         }
         exit exitStatus($result);
     }
-} elsif (isAppleMacWebKit()) {
+} elsif (isAppleMacWebKit() && !isCMakeBuild()) {
     # Build, and abort if the build fails.
     for my $dir (@projects) {
         chdir $dir or die;

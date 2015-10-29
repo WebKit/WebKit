@@ -473,12 +473,16 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
 )
 
 set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
+    Platform
     Shared
+
+    Shared/API
+    Shared/Cocoa
+
     Shared/API/Cocoa
     Shared/API/c
 
     Shared/API/c/cf
-
     Shared/API/c/mac
 
     UIProcess/Cocoa

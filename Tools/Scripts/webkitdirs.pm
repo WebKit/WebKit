@@ -118,6 +118,7 @@ my $nmPath;
 my $osXVersion;
 my $iosVersion;
 my $generateDsym;
+my $isCMakeBuild;
 my $isGtk;
 my $isWinCairo;
 my $isWin64;
@@ -1792,10 +1793,13 @@ sub isCachedArgumentfileOutOfDate($@)
     return 0;
 }
 
-sub jhbuildWrapperPrefixIfNeeded()
+sub wrapperPrefixIfNeeded()
 {
     if (isWindows() || isCygwin()) {
         return ();
+    }
+    if (isAppleMacWebKit()) {
+        return ("xcrun");
     }
     if (-e getJhbuildPath()) {
         my @prefix = (File::Spec->catfile(sourceDir(), "Tools", "jhbuild", "jhbuild-wrapper"));
@@ -1954,7 +1958,7 @@ sub generateBuildSystemFromCMakeProject
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
-    my $wrapper = join(" ", jhbuildWrapperPrefixIfNeeded()) . " ";
+    my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
     my $returnCode = system($wrapper . "cmake @args");
 
     chdir($originalWorkingDirectory);
@@ -1988,7 +1992,7 @@ sub buildCMakeGeneratedProject($)
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters. In particular, $makeArgs may contain such metacharacters.
-    my $wrapper = join(" ", jhbuildWrapperPrefixIfNeeded()) . " ";
+    my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
     return system($wrapper . "$command @args");
 
 }
@@ -2035,12 +2039,23 @@ sub cmakeBasedPortName()
 {
     return "Efl" if isEfl();
     return "GTK" if isGtk();
+    return "Mac" if isAppleMacWebKit();
     return "";
+}
+
+sub determineIsCMakeBuild()
+{
+    return if defined($isCMakeBuild);
+    $isCMakeBuild = checkForArgumentAndRemoveFromARGV("--cmake");
 }
 
 sub isCMakeBuild()
 {
-    return isEfl() || isGtk();
+    if (isEfl() || isGtk()) {
+        return 1;
+    }
+    determineIsCMakeBuild();
+    return $isCMakeBuild;
 }
 
 sub promptUser
