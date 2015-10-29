@@ -1,3 +1,19 @@
+2015-10-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a persistent main loop source in RunLoop glib implementation
+        https://bugs.webkit.org/show_bug.cgi?id=150590
+
+        Reviewed by Žan Doberšek.
+
+        Use RunLoop::dispatch() instead of
+        GMainLoopSource::scheduleAndDeleteOnDestroy in a couple of simple
+        cases.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::runTaskInQueue):
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::dragLeave):
+
 2015-10-28  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build
