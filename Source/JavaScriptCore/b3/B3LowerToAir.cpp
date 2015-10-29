@@ -217,13 +217,6 @@ public:
 
     Arg imm(Value* value)
     {
-        if (value->hasInt32())
-            return Arg::imm(value->asInt32());
-        return Arg();
-    }
-
-    Arg immAnyInt(Value* value)
-    {
         if (value->hasInt()) {
             int64_t fullValue = value->asInt();
             int32_t immediateValue = static_cast<int32_t>(fullValue);
@@ -600,9 +593,8 @@ public:
         Air::Opcode move = moveForType(value->type());
         Arg destination = effectiveAddr(address);
 
-        Arg imm = immAnyInt(value);
-        if (imm && isValidForm(move, Arg::Imm, destination.kind())) {
-            append(moveForType(value->type()), imm, effectiveAddr(address, currentValue));
+        if (imm(value) && isValidForm(move, Arg::Imm, destination.kind())) {
+            append(moveForType(value->type()), imm(value), effectiveAddr(address, currentValue));
             return true;
         }
         
@@ -642,6 +634,10 @@ public:
     
     bool tryConst64()
     {
+        if (imm(currentValue)) {
+            append(Move, imm(currentValue), tmp(currentValue));
+            return true;
+        }
         append(Move, Arg::imm64(currentValue->asInt64()), tmp(currentValue));
         return true;
     }

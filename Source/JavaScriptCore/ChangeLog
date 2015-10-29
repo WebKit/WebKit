@@ -1,5 +1,36 @@
 2015-10-29  Filip Pizlo  <fpizlo@apple.com>
 
+        B3::LowerToAir::imm() should work for both 32-bit and 64-bit immediates
+        https://bugs.webkit.org/show_bug.cgi?id=150685
+
+        Reviewed by Geoffrey Garen.
+
+        In B3, a constant must match the type of its use. In Air, immediates don't have type, they
+        only have representation. A 32-bit immediate (i.e. Arg::imm) can be used either for 32-bit
+        operations or for 64-bit operations. The only difference from a Arg::imm64 is that it
+        requires fewer bits.
+
+        In the B3->Air lowering, we have a lot of code that is effectively polymorphic over integer
+        type. That code should still be able to use Arg::imm, and it should work even for 64-bit
+        immediates - so long as they are representable as 32-bit immediates. Therefore, the imm()
+        helper should happily accept either Const32Value or Const64Value.
+
+        We already sort of had this with immAnyType(), but it just turns out that anyone using
+        immAnyType() should really be using imm().
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::tryStore):
+        (JSC::B3::Air::LowerToAir::tryConst64):
+        (JSC::B3::Air::LowerToAir::immAnyInt): Deleted.
+        * b3/testb3.cpp:
+        (JSC::B3::testAdd1):
+        (JSC::B3::testAdd1Ptr):
+        (JSC::B3::testStoreAddLoad):
+        (JSC::B3::run):
+
+2015-10-29  Filip Pizlo  <fpizlo@apple.com>
+
         StoreOpLoad pattern matching should check effects between the Store and Load
         https://bugs.webkit.org/show_bug.cgi?id=150534
 

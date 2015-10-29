@@ -214,6 +214,20 @@ void testAdd1(int value)
     CHECK(compileAndRun<int>(proc, value) == value + 1);
 }
 
+void testAdd1Ptr(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ConstPtrValue>(proc, Origin(), 1)));
+
+    CHECK(compileAndRun<intptr_t>(proc, value) == value + 1);
+}
+
 void testStoreAddLoad(int amount)
 {
     Procedure proc;
@@ -502,6 +516,8 @@ void run()
     RUN(testStoreConstantPtr(49));
     RUN(testTrunc((static_cast<int64_t>(1) << 40) + 42));
     RUN(testAdd1(45));
+    RUN(testAdd1Ptr(51));
+    RUN(testAdd1Ptr(bitwise_cast<intptr_t>(vm)));
     RUN(testStoreAddLoad(46));
     RUN(testStoreAddLoadInterference(52));
     RUN(testStoreAddAndLoad(47, 0xffff));
