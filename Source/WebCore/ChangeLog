@@ -1,3 +1,20 @@
+2015-10-29  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r191706. rdar://problem/23319292
+
+    2015-10-28  Andy Estes  <aestes@apple.com>
+
+            [Content Filtering] Crash when allowing a 0-byte resource to load
+            https://bugs.webkit.org/show_bug.cgi?id=150644
+            <rdar://problem/23288538>
+
+            Reviewed by Darin Adler.
+
+            Test: contentfiltering/allow-empty-document.html
+
+            * loader/ContentFilter.cpp:
+            (WebCore::ContentFilter::deliverResourceData): resourceBuffer will be null if the resource contained no data.
+
 2015-10-27  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r191636. rdar://problem/23078059

@@ -259,8 +259,8 @@ void ContentFilter::didDecide(State state)
 void ContentFilter::deliverResourceData(CachedResource& resource)
 {
     ASSERT(resource.dataBufferingPolicy() == BufferData);
-    const SharedBuffer& resourceBuffer = *resource.resourceBuffer();
-    m_documentLoader.dataReceived(&resource, resourceBuffer.data(), resourceBuffer.size());
+    if (auto* resourceBuffer = resource.resourceBuffer())
+        m_documentLoader.dataReceived(&resource, resourceBuffer->data(), resourceBuffer->size());
 }
 
 } // namespace WebCore
