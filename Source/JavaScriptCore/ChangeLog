@@ -1,3 +1,16 @@
+2015-10-29  Mark Lam  <mark.lam@apple.com>
+
+        cdjs-tests.yaml/main.js.ftl fails due to FTL ArithSub code for supporting UntypedUse operands.
+        https://bugs.webkit.org/show_bug.cgi?id=150687
+
+        Unreviewed.
+
+        Disabling the feature while it is being debugged.  I'm doing this by effectively
+        rolling out only the changes in FTLCapabilities.cpp.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+
 2015-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix iOS build.

@@ -84,7 +84,6 @@ inline CapabilityLevel canCompile(Node* node)
     case StrCat:
     case ArithAdd:
     case ArithClz32:
-    case ArithSub:
     case ArithMul:
     case ArithDiv:
     case ArithMod:
@@ -211,6 +210,10 @@ inline CapabilityLevel canCompile(Node* node)
     case PutGetterByVal:
     case PutSetterByVal:
         // These are OK.
+        break;
+    case ArithSub:
+        if (node->result() == NodeResultJS)
+            return CannotCompile;
         break;
 
     case Identity:
