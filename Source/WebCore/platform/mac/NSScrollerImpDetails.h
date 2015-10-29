@@ -62,6 +62,7 @@
 - (void)drawKnob;
 - (void)mouseEnteredScroller;
 - (void)mouseExitedScroller;
+- (void)setTracking:(BOOL)tracking;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (void)setNeedsDisplay:(BOOL)flag;
 #endif

@@ -853,6 +853,20 @@ void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
         [painter mouseExitedScroller];
 }
 
+void ScrollAnimatorMac::mouseIsDownInScrollbar(Scrollbar* scrollbar, bool mouseIsDown) const
+{
+    if ([m_scrollbarPainterController overlayScrollerStateIsLocked])
+        return;
+
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(*scrollbar)) {
+        [painter setTracking:mouseIsDown];
+        if (mouseIsDown)
+            [m_scrollbarPainterController beginScrollGesture];
+        else
+            [m_scrollbarPainterController endScrollGesture];
+    }
+}
+
 void ScrollAnimatorMac::willStartLiveResize()
 {
     if ([m_scrollbarPainterController overlayScrollerStateIsLocked])

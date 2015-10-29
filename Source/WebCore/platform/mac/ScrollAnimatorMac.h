@@ -100,6 +100,7 @@ private:
     virtual void mouseMovedInContentArea() const override;
     virtual void mouseEnteredScrollbar(Scrollbar*) const override;
     virtual void mouseExitedScrollbar(Scrollbar*) const override;
+    virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const override;
     virtual void willStartLiveResize() override;
     virtual void contentsResized() const override;
     virtual void willEndLiveResize() override;

@@ -108,6 +108,7 @@ public:
     WEBCORE_EXPORT void mouseMovedInContentArea() const;
     WEBCORE_EXPORT void mouseEnteredScrollbar(Scrollbar*) const;
     void mouseExitedScrollbar(Scrollbar*) const;
+    void mouseIsDownInScrollbar(Scrollbar*, bool) const;
     void contentAreaDidShow() const;
     void contentAreaDidHide() const;
 

@@ -272,6 +272,11 @@ void ScrollableArea::mouseExitedScrollbar(Scrollbar* scrollbar) const
     scrollAnimator().mouseExitedScrollbar(scrollbar);
 }
 
+void ScrollableArea::mouseIsDownInScrollbar(Scrollbar* scrollbar, bool mouseIsDown) const
+{
+    scrollAnimator().mouseIsDownInScrollbar(scrollbar, mouseIsDown);
+}
+
 void ScrollableArea::contentAreaDidShow() const
 {
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())

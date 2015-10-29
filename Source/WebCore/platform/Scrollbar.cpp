@@ -368,6 +368,8 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
     m_draggingDocument = false;
     stopTimerIfNeeded();
 
+    m_scrollableArea.mouseIsDownInScrollbar(this, false);
+
     // m_hoveredPart won't be updated until the next mouseMoved or mouseDown, so we have to hit test
     // to really know if the mouse has exited the scrollbar on a mouseUp.
     ScrollbarPart part = theme().hitTest(*this, mouseEvent.position());
@@ -383,6 +385,7 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
     if (evt.button() == RightButton)
         return true; // FIXME: Handled as context menu by Qt right now.  Should just avoid even calling this method on a right click though.
 
+    m_scrollableArea.mouseIsDownInScrollbar(this, true);
     setPressedPart(theme().hitTest(*this, evt.position()));
     int pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
     

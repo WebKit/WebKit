@@ -96,6 +96,7 @@ public:
     virtual void mouseMovedInContentArea() const { }
     virtual void mouseEnteredScrollbar(Scrollbar*) const { }
     virtual void mouseExitedScrollbar(Scrollbar*) const { }
+    virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
     virtual void willStartLiveResize() { }
     virtual void contentsResized() const { }
     virtual void willEndLiveResize() { }
