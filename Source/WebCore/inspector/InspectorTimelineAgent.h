@@ -93,11 +93,6 @@ enum class TimelineRecordType {
     RequestAnimationFrame,
     CancelAnimationFrame,
     FireAnimationFrame,
-
-    WebSocketCreate,
-    WebSocketSendHandshakeRequest,
-    WebSocketReceiveHandshakeResponse,
-    WebSocketDestroy
 };
 
 class InspectorTimelineAgent final
@@ -158,12 +153,6 @@ public:
     void didFireAnimationFrame();
     void time(Frame&, const String&);
     void timeEnd(Frame&, const String&);
-#if ENABLE(WEB_SOCKETS)
-    void didCreateWebSocket(unsigned long identifier, const URL&, const String& protocol, Frame*);
-    void willSendWebSocketHandshakeRequest(unsigned long identifier, Frame*);
-    void didReceiveWebSocketHandshakeResponse(unsigned long identifier, Frame*);
-    void didDestroyWebSocket(unsigned long identifier, Frame*);
-#endif
 
 protected:
     // ScriptDebugListener

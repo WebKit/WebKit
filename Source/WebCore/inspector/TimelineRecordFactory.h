@@ -85,24 +85,6 @@ namespace WebCore {
 
         static void appendProfile(Inspector::InspectorObject*, RefPtr<JSC::Profile>&&);
 
-#if ENABLE(WEB_SOCKETS)
-        static inline Ref<Inspector::InspectorObject> createWebSocketCreateData(unsigned long identifier, const URL& url, const String& protocol)
-        {
-            Ref<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
-            data->setInteger("identifier", identifier);
-            data->setString("url", url.string());
-            if (!protocol.isNull())
-                data->setString("webSocketProtocol", protocol);
-            return WTF::move(data);
-        }
-
-        static inline Ref<Inspector::InspectorObject> createGenericWebSocketData(unsigned long identifier)
-        {
-            Ref<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
-            data->setInteger("identifier", identifier);
-            return WTF::move(data);
-        }
-#endif
     private:
         TimelineRecordFactory() { }
     };

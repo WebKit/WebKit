@@ -28,11 +28,7 @@
                 "ConsoleProfile",
                 "RequestAnimationFrame",
                 "CancelAnimationFrame",
-                "FireAnimationFrame",
-                "WebSocketCreate",
-                "WebSocketSendHandshakeRequest",
-                "WebSocketReceiveHandshakeResponse",
-                "WebSocketDestroy"
+                "FireAnimationFrame"
             ],
             "description": "Timeline record type."
         },

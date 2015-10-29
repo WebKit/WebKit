@@ -104,7 +104,7 @@ void WebSocketChannel::connect(const URL& url, const String& protocol)
     if (m_deflateFramer.canDeflate())
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
-        InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url(), protocol);
+        InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url);
 
     if (Frame* frame = m_document->frame()) {
         if (NetworkingContext* networkingContext = frame->loader().networkingContext()) {

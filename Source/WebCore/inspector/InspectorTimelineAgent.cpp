@@ -521,28 +521,6 @@ void InspectorTimelineAgent::didFireAnimationFrame()
     didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
-#if ENABLE(WEB_SOCKETS)
-void InspectorTimelineAgent::didCreateWebSocket(unsigned long identifier, const URL& url, const String& protocol, Frame* frame)
-{
-    appendRecord(TimelineRecordFactory::createWebSocketCreateData(identifier, url, protocol), TimelineRecordType::WebSocketCreate, true, frame);
-}
-
-void InspectorTimelineAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, Frame* frame)
-{
-    appendRecord(TimelineRecordFactory::createGenericWebSocketData(identifier), TimelineRecordType::WebSocketSendHandshakeRequest, true, frame);
-}
-
-void InspectorTimelineAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, Frame* frame)
-{
-    appendRecord(TimelineRecordFactory::createGenericWebSocketData(identifier), TimelineRecordType::WebSocketReceiveHandshakeResponse, false, frame);
-}
-
-void InspectorTimelineAgent::didDestroyWebSocket(unsigned long identifier, Frame* frame)
-{
-    appendRecord(TimelineRecordFactory::createGenericWebSocketData(identifier), TimelineRecordType::WebSocketDestroy, true, frame);
-}
-#endif // ENABLE(WEB_SOCKETS)
-
 // ScriptDebugListener
 
 void InspectorTimelineAgent::breakpointActionProbe(JSC::ExecState* exec, const Inspector::ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue&)
@@ -606,15 +584,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::CancelAnimationFrame;
     case TimelineRecordType::FireAnimationFrame:
         return Inspector::Protocol::Timeline::EventType::FireAnimationFrame;
-
-    case TimelineRecordType::WebSocketCreate:
-        return Inspector::Protocol::Timeline::EventType::WebSocketCreate;
-    case TimelineRecordType::WebSocketSendHandshakeRequest:
-        return Inspector::Protocol::Timeline::EventType::WebSocketSendHandshakeRequest;
-    case TimelineRecordType::WebSocketReceiveHandshakeResponse:
-        return Inspector::Protocol::Timeline::EventType::WebSocketReceiveHandshakeResponse;
-    case TimelineRecordType::WebSocketDestroy:
-        return Inspector::Protocol::Timeline::EventType::WebSocketDestroy;
     }
 
     return Inspector::Protocol::Timeline::EventType::TimeStamp;
