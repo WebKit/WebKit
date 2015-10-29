@@ -59,6 +59,7 @@ public:
     virtual void abortTransaction(IDBResourceIdentifier&) override final;
     virtual void commitTransaction(IDBResourceIdentifier&) override final;
     virtual void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) override final;
+    virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) override final;
     virtual void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) override final;
     virtual void getRecord(const IDBRequestData&, IDBKey*) override final;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) override final;
@@ -71,6 +72,7 @@ public:
     virtual void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
     virtual void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) override final;
     virtual void didCreateObjectStore(const IDBResultData&) override final;
+    virtual void didDeleteObjectStore(const IDBResultData&) override final;
     virtual void didPutOrAdd(const IDBResultData&) override final;
     virtual void didGetRecord(const IDBResultData&) override final;
     virtual void fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection&, uint64_t requestedVersion) override final;

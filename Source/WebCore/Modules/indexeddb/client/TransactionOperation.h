@@ -48,6 +48,7 @@ public:
     void completed(const IDBResultData& data)
     {
         m_completeFunction(data);
+        m_transaction->scheduleOperationTimer();
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }
@@ -84,7 +85,8 @@ public:
         };
 
         m_completeFunction = [self, this, completeMethod](const IDBResultData& resultData) {
-            (&m_transaction.get()->*completeMethod)(resultData);
+            if (completeMethod)
+                (&m_transaction.get()->*completeMethod)(resultData);
         };
     }
 
@@ -100,10 +102,20 @@ public:
 
         RefPtr<IDBRequest> refRequest(&request);
         m_completeFunction = [self, this, refRequest, completeMethod](const IDBResultData& resultData) {
-            (&m_transaction.get()->*completeMethod)(*refRequest, resultData);
+            if (completeMethod)
+                (&m_transaction.get()->*completeMethod)(*refRequest, resultData);
         };
     }
 };
+
+inline RefPtr<TransactionOperation> createTransactionOperation(
+    IDBTransaction& transaction,
+    void (IDBTransaction::*complete)(const IDBResultData&),
+    void (IDBTransaction::*perform)(TransactionOperation&))
+{
+    auto operation = new TransactionOperationImpl<>(transaction, complete, perform);
+    return adoptRef(operation);
+}
 
 template<typename MP1, typename P1>
 RefPtr<TransactionOperation> createTransactionOperation(

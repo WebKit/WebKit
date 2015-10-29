@@ -294,6 +294,11 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext*, const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void IDBObjectStore::markAsDeleted()
+{
+    m_deleted = true;
+}
+
 } // namespace IDBClient
 } // namespace WebCore
 

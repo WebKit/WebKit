@@ -68,6 +68,11 @@ void IDBConnectionToClient::didCreateObjectStore(const IDBResultData& result)
     m_delegate->didCreateObjectStore(result);
 }
 
+void IDBConnectionToClient::didDeleteObjectStore(const IDBResultData& result)
+{
+    m_delegate->didDeleteObjectStore(result);
+}
+
 void IDBConnectionToClient::didPutOrAdd(const IDBResultData& result)
 {
     m_delegate->didPutOrAdd(result);

@@ -64,6 +64,9 @@ public:
     void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);
     void didCreateObjectStore(const IDBResultData&);
 
+    void deleteObjectStore(TransactionOperation&, const String& objectStoreName);
+    void didDeleteObjectStore(const IDBResultData&);
+
     void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
     void didPutOrAdd(const IDBResultData&);
 

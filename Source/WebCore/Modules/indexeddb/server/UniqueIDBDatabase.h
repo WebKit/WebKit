@@ -70,6 +70,7 @@ public:
     IDBServer& server() { return m_server; }
 
     void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback);
+    void deleteObjectStore(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback);
     void getRecord(const IDBRequestData&, const IDBKeyData&, ValueDataCallback);
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
@@ -98,6 +99,7 @@ private:
     void performAbortTransaction(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier);
     void beginTransactionInBackingStore(const IDBTransactionInfo&);
     void performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo&);
+    void performDeleteObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const String& objectStoreName);
     void performPutOrAdd(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData&);
     void performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo&);
@@ -105,6 +107,7 @@ private:
     // Main thread callbacks
     void didOpenBackingStore(const IDBDatabaseInfo&);
     void didPerformCreateObjectStore(uint64_t callbackIdentifier, const IDBError&, const IDBObjectStoreInfo&);
+    void didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError&, const String& objectStoreName);
     void didPerformPutOrAdd(uint64_t callbackIdentifier, const IDBError&, const IDBKeyData&);
     void didPerformGetRecord(uint64_t callbackIdentifier, const IDBError&, const ThreadSafeDataBuffer&);
     void didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError&, const IDBResourceIdentifier& transactionIdentifier);

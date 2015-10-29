@@ -168,6 +168,18 @@ void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBOb
     transaction->createObjectStore(requestData, info);
 }
 
+void IDBServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
+{
+    LOG(IndexedDB, "IDBServer::deleteObjectStore");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    ASSERT(transaction->isVersionChange());
+    transaction->deleteObjectStore(requestData, objectStoreName);
+}
+
 void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBServer::putOrAdd");

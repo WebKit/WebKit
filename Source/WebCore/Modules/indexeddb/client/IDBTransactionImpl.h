@@ -90,10 +90,14 @@ public:
     Ref<IDBRequest> requestPutOrAdd(ScriptExecutionContext&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(ScriptExecutionContext&, IDBObjectStore&, IDBKey&);
 
+    void deleteObjectStore(const String& objectStoreName);
+
     IDBConnectionToServer& serverConnection();
 
     void activate();
     void deactivate();
+
+    void scheduleOperationTimer();
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
@@ -105,13 +109,14 @@ private:
     void finishAbortOrCommit();
 
     void scheduleOperation(RefPtr<TransactionOperation>&&);
-    void scheduleOperationTimer();
     void operationTimerFired();
-    void activationTimerFired();
 
     void fireOnComplete();
     void fireOnAbort();
     void enqueueEvent(Ref<Event>);
+
+    void commitOnServer(TransactionOperation&);
+    void abortOnServer(TransactionOperation&);
 
     void createObjectStoreOnServer(TransactionOperation&, const IDBObjectStoreInfo&);
     void didCreateObjectStoreOnServer(const IDBResultData&);
@@ -122,13 +127,16 @@ private:
     void getRecordOnServer(TransactionOperation&, RefPtr<IDBKey>);
     void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
 
+    void deleteObjectStoreOnServer(TransactionOperation&, const String& objectStoreName);
+    void didDeleteObjectStoreOnServer(const IDBResultData&);
+
     void establishOnServer();
 
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
-    IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Active };
+    IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Inactive };
     bool m_startedOnServer { false };
 
     IDBError m_idbError;

@@ -80,6 +80,17 @@ void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& ob
     objectStore.writeTransactionStarted(*this);
 }
 
+void MemoryBackingStoreTransaction::objectStoreDeleted(std::unique_ptr<MemoryObjectStore> objectStore)
+{
+    ASSERT(objectStore);
+    ASSERT(m_objectStores.contains(objectStore.get()));
+    m_objectStores.remove(objectStore.get());
+
+    auto addResult = m_deletedObjectStores.add(objectStore->info().name(), nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = WTF::move(objectStore);
+}
+
 void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key)
 {
     ASSERT(m_objectStores.contains(&objectStore));
@@ -105,6 +116,19 @@ void MemoryBackingStoreTransaction::abort()
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
 
     TemporaryChange<bool> change(m_isAborting, true);
+
+    // This loop moves the underlying unique_ptrs from out of the m_deleteObjectStores map,
+    // but the entries in the map still remain.
+    for (auto& objectStore : m_deletedObjectStores.values()) {
+        MemoryObjectStore* rawObjectStore = objectStore.get();
+        m_backingStore.restoreObjectStoreForVersionChangeAbort(WTF::move(objectStore));
+
+        ASSERT(!m_objectStores.contains(rawObjectStore));
+        m_objectStores.add(rawObjectStore);
+    }
+
+    // This clears the entries from the map.
+    m_deletedObjectStores.clear();
 
     if (m_originalDatabaseInfo) {
         ASSERT(m_info.mode() == IndexedDB::TransactionMode::VersionChange);
@@ -145,7 +169,9 @@ void MemoryBackingStoreTransaction::finish()
     if (!isWriting())
         return;
 
-    for (auto objectStore : m_objectStores)
+    for (auto& objectStore : m_objectStores)
+        objectStore->writeTransactionFinished(*this);
+    for (auto& objectStore : m_deletedObjectStores.values())
         objectStore->writeTransactionFinished(*this);
 }
 

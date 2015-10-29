@@ -109,6 +109,21 @@ void IDBConnectionToServer::didCreateObjectStore(const IDBResultData& resultData
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::deleteObjectStore");
+
+    saveOperation(operation);
+
+    m_delegate->deleteObjectStore(IDBRequestData(operation), objectStoreName);
+}
+
+void IDBConnectionToServer::didDeleteObjectStore(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didDeleteObjectStore");
+    completeOperation(resultData);
+}
+
 void IDBConnectionToServer::putOrAdd(TransactionOperation& operation, RefPtr<IDBKey>& key, RefPtr<SerializedScriptValue>& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");

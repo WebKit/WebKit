@@ -113,6 +113,24 @@ void UniqueIDBDatabaseTransaction::createObjectStore(const IDBRequestData& reque
     });
 }
 
+void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteObjectStore");
+
+    ASSERT(isVersionChange());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> self(this);
+    m_databaseConnection->database().deleteObjectStore(*this, objectStoreName, [this, self, requestData](const IDBError& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteObjectStore (callback)");
+        if (error.isNull())
+            m_databaseConnection->didDeleteObjectStore(IDBResultData::deleteObjectStoreSuccess(requestData.requestIdentifier()));
+        else
+            m_databaseConnection->didDeleteObjectStore(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
+
 void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd");

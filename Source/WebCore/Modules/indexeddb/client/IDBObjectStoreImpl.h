@@ -75,6 +75,8 @@ public:
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> count(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
 
+    void markAsDeleted();
+
     const IDBObjectStoreInfo& info() const { return m_info; }
 
 private:

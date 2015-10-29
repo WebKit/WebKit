@@ -237,19 +237,17 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::createObjectStore");
 
-    ASSERT(m_backingStore);
-    m_backingStore->createObjectStore(transaction.info().identifier(), info);
-
     uint64_t callbackID = storeCallback(callback);
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performCreateObjectStore, callbackID, transaction.info().identifier(), info));
 }
 
-void UniqueIDBDatabase::performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier&, const IDBObjectStoreInfo& info)
+void UniqueIDBDatabase::performCreateObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& info)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performCreateObjectStore");
 
-    // FIXME: Create object store in backing store, once that exists.
+    ASSERT(m_backingStore);
+    m_backingStore->createObjectStore(transactionIdentifier, info);
 
     IDBError error;
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCreateObjectStore, callbackIdentifier, error, info));
@@ -262,6 +260,38 @@ void UniqueIDBDatabase::didPerformCreateObjectStore(uint64_t callbackIdentifier,
 
     if (error.isNull())
         m_databaseInfo->addExistingObjectStore(info);
+
+    performErrorCallback(callbackIdentifier, error);
+}
+
+void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transaction, const String& objectStoreName, ErrorCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteObjectStore");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performDeleteObjectStore, callbackID, transaction.info().identifier(), objectStoreName));
+}
+
+void UniqueIDBDatabase::performDeleteObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, const String& objectStoreName)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performDeleteObjectStore");
+
+    ASSERT(m_backingStore);
+    m_backingStore->deleteObjectStore(transactionIdentifier, objectStoreName);
+
+    IDBError error;
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformDeleteObjectStore, callbackIdentifier, error, objectStoreName));
+}
+
+void UniqueIDBDatabase::didPerformDeleteObjectStore(uint64_t callbackIdentifier, const IDBError& error, const String& objectStoreName)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformDeleteObjectStore");
+
+    if (error.isNull())
+        m_databaseInfo->deleteObjectStore(objectStoreName);
 
     performErrorCallback(callbackIdentifier, error);
 }

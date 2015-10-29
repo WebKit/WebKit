@@ -58,6 +58,7 @@ public:
     void addNewObjectStore(MemoryObjectStore&);
     void addExistingObjectStore(MemoryObjectStore&);
     void recordValueChanged(MemoryObjectStore&, const IDBKeyData&);
+    void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
 
     void abort();
     void commit();
@@ -78,6 +79,7 @@ private:
     HashSet<MemoryObjectStore*> m_objectStores;
     HashSet<MemoryObjectStore*> m_versionChangeAddedObjectStores;
 
+    HashMap<String, std::unique_ptr<MemoryObjectStore>> m_deletedObjectStores;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
 
 };

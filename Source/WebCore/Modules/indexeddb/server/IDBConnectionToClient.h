@@ -53,6 +53,7 @@ public:
     void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
     void didCreateObjectStore(const IDBResultData&);
+    void didDeleteObjectStore(const IDBResultData&);
     void didPutOrAdd(const IDBResultData&);
     void didGetRecord(const IDBResultData&);
 

@@ -117,7 +117,7 @@ IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& t
 
 IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& info)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::createObjectStore");
+    LOG(IndexedDB, "MemoryIDBBackingStore::createObjectStore - adding OS %s with ID %llu", info.name().utf8().data(), info.identifier());
 
     ASSERT(m_databaseInfo);
     if (m_databaseInfo->hasObjectStore(info.name()))
@@ -138,6 +138,29 @@ IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
     return IDBError();
 }
 
+IDBError MemoryIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& transactionIdentifier, const String& objectStoreName)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::deleteObjectStore");
+
+    ASSERT(m_databaseInfo);
+    if (!m_databaseInfo->hasObjectStore(objectStoreName))
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    auto transaction = m_transactions.get(transactionIdentifier);
+    ASSERT(transaction);
+    ASSERT(transaction->isVersionChange());
+
+    auto objectStore = takeObjectStoreByName(objectStoreName);
+    ASSERT(objectStore);
+    if (!objectStore)
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    m_databaseInfo->deleteObjectStore(objectStoreName);
+    transaction->objectStoreDeleted(WTF::move(objectStore));
+
+    return IDBError();
+}
+
 void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");
@@ -146,6 +169,11 @@ void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectS
     ASSERT(m_objectStoresByIdentifier.get(objectStore.info().identifier()) == &objectStore);
 
     unregisterObjectStore(objectStore);
+}
+
+void MemoryIDBBackingStore::restoreObjectStoreForVersionChangeAbort(std::unique_ptr<MemoryObjectStore>&& objectStore)
+{
+    registerObjectStore(WTF::move(objectStore));
 }
 
 IDBError MemoryIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifier&, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, bool& keyExists)
@@ -227,6 +255,18 @@ void MemoryIDBBackingStore::unregisterObjectStore(MemoryObjectStore& objectStore
 
     m_objectStoresByName.remove(objectStore.info().name());
     m_objectStoresByIdentifier.remove(objectStore.info().identifier());
+}
+
+std::unique_ptr<MemoryObjectStore> MemoryIDBBackingStore::takeObjectStoreByName(const String& name)
+{
+    auto rawObjectStore = m_objectStoresByName.take(name);
+    if (!rawObjectStore)
+        return nullptr;
+
+    auto objectStore = m_objectStoresByIdentifier.take(rawObjectStore->info().identifier());
+    ASSERT(objectStore);
+
+    return objectStore;
 }
 
 } // namespace IDBServer

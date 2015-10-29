@@ -178,9 +178,27 @@ RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*
     return transaction(context, objectStores, mode, ec);
 }
 
-void IDBDatabase::deleteObjectStore(const String&, ExceptionCode&)
+void IDBDatabase::deleteObjectStore(const String& objectStoreName, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBDatabase::deleteObjectStore");
+
+    if (!m_versionChangeTransaction) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!m_versionChangeTransaction->isActive()) {
+        ec = IDBDatabaseException::TransactionInactiveError;
+        return;
+    }
+
+    if (!m_info.hasObjectStore(objectStoreName)) {
+        ec = IDBDatabaseException::NotFoundError;
+        return;
+    }
+
+    m_info.deleteObjectStore(objectStoreName);
+    m_versionChangeTransaction->deleteObjectStore(objectStoreName);
 }
 
 void IDBDatabase::close()
@@ -239,15 +257,13 @@ void IDBDatabase::didStartTransaction(IDBTransaction& transaction)
     m_activeTransactions.set(transaction.info().identifier(), &transaction);
 }
 
-void IDBDatabase::commitTransaction(IDBTransaction& transaction)
+void IDBDatabase::willCommitTransaction(IDBTransaction& transaction)
 {
-    LOG(IndexedDB, "IDBDatabase::commitTransaction");
+    LOG(IndexedDB, "IDBDatabase::willCommitTransaction");
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     ASSERT(refTransaction);
     m_committingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
-
-    m_serverConnection->commitTransaction(transaction);
 }
 
 void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
@@ -260,15 +276,13 @@ void IDBDatabase::didCommitTransaction(IDBTransaction& transaction)
     didCommitOrAbortTransaction(transaction);
 }
 
-void IDBDatabase::abortTransaction(IDBTransaction& transaction)
+void IDBDatabase::willAbortTransaction(IDBTransaction& transaction)
 {
-    LOG(IndexedDB, "IDBDatabase::abortTransaction");
+    LOG(IndexedDB, "IDBDatabase::willAbortTransaction");
 
     auto refTransaction = m_activeTransactions.take(transaction.info().identifier());
     ASSERT(refTransaction);
     m_abortingTransactions.set(transaction.info().identifier(), WTF::move(refTransaction));
-
-    m_serverConnection->abortTransaction(transaction);
 }
 
 void IDBDatabase::didAbortTransaction(IDBTransaction& transaction)

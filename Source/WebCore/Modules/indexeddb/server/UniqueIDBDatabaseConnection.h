@@ -67,6 +67,7 @@ public:
     void didAbortTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCommitTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCreateObjectStore(const IDBResultData&);
+    void didDeleteObjectStore(const IDBResultData&);
 
 private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, IDBConnectionToClient&);

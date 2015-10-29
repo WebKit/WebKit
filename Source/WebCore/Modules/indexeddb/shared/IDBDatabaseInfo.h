@@ -54,6 +54,8 @@ public:
 
     Vector<String> objectStoreNames() const;
 
+    void deleteObjectStore(const String& objectStoreName);
+
 private:
     IDBDatabaseInfo();
 

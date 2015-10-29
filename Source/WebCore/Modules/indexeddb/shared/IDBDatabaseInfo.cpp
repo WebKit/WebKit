@@ -106,6 +106,15 @@ Vector<String> IDBDatabaseInfo::objectStoreNames() const
     return WTF::move(names);
 }
 
+void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)
+{
+    auto* info = infoForExistingObjectStore(objectStoreName);
+    if (!info)
+        return;
+
+    m_objectStoreMap.remove(info->identifier());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

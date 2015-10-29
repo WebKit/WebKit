@@ -63,6 +63,7 @@ public:
     void commit();
 
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
+    void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const IDBRequestData&, const IDBKeyData&);
 

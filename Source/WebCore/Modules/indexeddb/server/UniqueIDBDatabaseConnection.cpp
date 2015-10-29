@@ -139,6 +139,13 @@ void UniqueIDBDatabaseConnection::didCreateObjectStore(const IDBResultData& resu
     m_connectionToClient.didCreateObjectStore(resultData);
 }
 
+void UniqueIDBDatabaseConnection::didDeleteObjectStore(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::didDeleteObjectStore");
+
+    m_connectionToClient.didDeleteObjectStore(resultData);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 
