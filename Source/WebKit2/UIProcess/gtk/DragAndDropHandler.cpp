@@ -35,7 +35,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PasteboardHelper.h>
 #include <gtk/gtk.h>
-#include <wtf/RunLoop.h>
+#include <wtf/glib/GMainLoopSource.h>
 #include <wtf/glib/GUniquePtr.h>
 
 using namespace WebCore;
@@ -221,7 +221,7 @@ void DragAndDropHandler::dragLeave(GdkDragContext* context)
     // During a drop GTK+ will fire a drag-leave signal right before firing
     // the drag-drop signal. We want the actions for drag-leave to happen after
     // those for drag-drop, so schedule them to happen asynchronously here.
-    RunLoop::main().dispatch([this, droppingContext]() {
+    GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] handleDragLeaveLater", [this, droppingContext]() {
         auto it = m_droppingContexts.find(droppingContext->gdkContext);
         if (it == m_droppingContexts.end())
             return;

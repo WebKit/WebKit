@@ -30,7 +30,7 @@
 #include "config.h"
 #include "MainThread.h"
 
-#include <wtf/RunLoop.h>
+#include <wtf/glib/GMainLoopSource.h>
 
 namespace WTF {
 
@@ -40,7 +40,7 @@ void initializeMainThreadPlatform()
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    RunLoop::main().dispatch(std::function<void()>(dispatchFunctionsFromMainThread));
+    GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] dispatchFunctionsFromMainThread", std::function<void()>(dispatchFunctionsFromMainThread));
 }
 
 } // namespace WTF
