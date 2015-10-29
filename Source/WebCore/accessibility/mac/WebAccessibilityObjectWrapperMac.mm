@@ -74,6 +74,9 @@
 #import "WebCoreSystemInterface.h"
 #import "htmlediting.h"
 #import <wtf/ObjcRuntimeExtras.h>
+#if ENABLE(TREE_DEBUGGING)
+#import <wtf/text/StringBuilder.h>
+#endif
 
 using namespace WebCore;
 using namespace HTMLNames;

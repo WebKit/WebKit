@@ -50,6 +50,9 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>
+#if ENABLE(TREE_DEBUGGING)
+#include <wtf/text/StringBuilder.h>
+#endif
 
 namespace WebCore {
 
