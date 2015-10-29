@@ -37,12 +37,12 @@
 namespace WebCore {
 namespace IDBServer {
 
-Ref<UniqueIDBDatabaseTransaction> UniqueIDBDatabaseTransaction::create(UniqueIDBDatabaseConnection& connection, IDBTransactionInfo& info)
+Ref<UniqueIDBDatabaseTransaction> UniqueIDBDatabaseTransaction::create(UniqueIDBDatabaseConnection& connection, const IDBTransactionInfo& info)
 {
     return adoptRef(*new UniqueIDBDatabaseTransaction(connection, info));
 }
 
-UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection& connection, IDBTransactionInfo& info)
+UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection& connection, const IDBTransactionInfo& info)
     : m_databaseConnection(connection)
     , m_transactionInfo(info)
 {
@@ -146,6 +146,32 @@ void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, 
         else
             m_databaseConnection->connectionToClient().didGetRecord(IDBResultData::error(requestData.requestIdentifier(), error));
     });
+}
+
+const Vector<uint64_t>& UniqueIDBDatabaseTransaction::objectStoreIdentifiers()
+{
+    if (!m_objectStoreIdentifiers.isEmpty())
+        return m_objectStoreIdentifiers;
+
+    auto& info = m_databaseConnection->database().info();
+    for (auto objectStoreName : info.objectStoreNames()) {
+        auto objectStoreInfo = info.infoForExistingObjectStore(objectStoreName);
+        ASSERT(objectStoreInfo);
+        if (!objectStoreInfo)
+            continue;
+
+        if (m_transactionInfo.objectStores().contains(objectStoreName))
+            m_objectStoreIdentifiers.append(objectStoreInfo->identifier());
+    }
+
+    return m_objectStoreIdentifiers;
+}
+
+void UniqueIDBDatabaseTransaction::didActivateInBackingStore(const IDBError& error)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::didActivateInBackingStore");
+
+    m_databaseConnection->connectionToClient().didStartTransaction(m_transactionInfo.identifier(), error);
 }
 
 } // namespace IDBServer

@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class IDBDatabaseInfo;
+class IDBError;
 class IDBKeyData;
 class IDBObjectStoreInfo;
 class IDBRequestData;
@@ -47,7 +48,7 @@ class UniqueIDBDatabaseConnection;
 
 class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransaction> {
 public:
-    static Ref<UniqueIDBDatabaseTransaction> create(UniqueIDBDatabaseConnection&, IDBTransactionInfo&);
+    static Ref<UniqueIDBDatabaseTransaction> create(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
     ~UniqueIDBDatabaseTransaction();
 
@@ -65,13 +66,19 @@ public:
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const IDBRequestData&, const IDBKeyData&);
 
+    void didActivateInBackingStore(const IDBError&);
+
+    const Vector<uint64_t>& objectStoreIdentifiers();
+
 private:
-    UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, IDBTransactionInfo&);
+    UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
     Ref<UniqueIDBDatabaseConnection> m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
+
+    Vector<uint64_t> m_objectStoreIdentifiers;
 };
 
 } // namespace IDBServer

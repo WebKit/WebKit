@@ -33,12 +33,18 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+namespace IDBClient {
+class IDBConnectionToServer;
+}
+
 namespace IDBServer {
 class IDBConnectionToClient;
 }
 
 class IDBTransactionInfo {
 public:
+    static IDBTransactionInfo clientTransaction(const IDBClient::IDBConnectionToServer&, const Vector<String>& objectStores, IndexedDB::TransactionMode);
     static IDBTransactionInfo versionChange(const IDBServer::IDBConnectionToClient&, uint64_t newVersion);
 
     IDBTransactionInfo isolatedCopy() const;

@@ -63,6 +63,7 @@ public:
     void fireVersionChangeEvent(uint64_t requestedVersion);
     UniqueIDBDatabaseTransaction& createVersionChangeTransaction(uint64_t newVersion);
 
+    void establishTransaction(const IDBTransactionInfo&);
     void didAbortTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCommitTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCreateObjectStore(const IDBResultData&);

@@ -55,14 +55,18 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     , m_operationTimer(*this, &IDBTransaction::operationTimerFired)
 
 {
-    m_activationTimer = std::make_unique<Timer>(*this, &IDBTransaction::activationTimerFired);
-    m_activationTimer->startOneShot(0);
+    relaxAdoptionRequirement();
 
-    if (m_info.mode() == IndexedDB::TransactionMode::VersionChange)
+    if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
+        m_activationTimer = std::make_unique<Timer>(*this, &IDBTransaction::activationTimerFired);
+        m_activationTimer->startOneShot(0);
         m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_database->info());
+        m_state = IndexedDB::TransactionState::Inactive;
+        m_startedOnServer = true;
+    } else
+        establishOnServer();
 
     suspendIfNeeded();
-    m_state = IndexedDB::TransactionState::Inactive;
 }
 
 IDBTransaction::~IDBTransaction()
@@ -213,7 +217,7 @@ void IDBTransaction::operationTimerFired()
 {
     LOG(IndexedDB, "IDBTransaction::operationTimerFired");
 
-    if (m_state == IndexedDB::TransactionState::Unstarted)
+    if (!m_startedOnServer)
         return;
 
     if (!m_transactionOperationQueue.isEmpty()) {
@@ -245,6 +249,24 @@ void IDBTransaction::finishAbortOrCommit()
     m_state = IndexedDB::TransactionState::Finished;
 
     m_originalDatabaseInfo = nullptr;
+}
+
+void IDBTransaction::didStart(const IDBError& error)
+{
+    LOG(IndexedDB, "IDBTransaction::didStart");
+
+    m_database->didStartTransaction(*this);
+
+    m_startedOnServer = true;
+
+    // It's possible the transaction failed to start on the server.
+    // That equates to an abort.
+    if (!error.isNull()) {
+        didAbort(error);
+        return;
+    }
+
+    scheduleOperationTimer();
 }
 
 void IDBTransaction::didAbort(const IDBError& error)
@@ -416,15 +438,22 @@ void IDBTransaction::didPutOrAddOnServer(IDBRequest& request, const IDBResultDat
     request.requestCompleted(resultData);
 }
 
+void IDBTransaction::establishOnServer()
+{
+    LOG(IndexedDB, "IDBTransaction::establishOnServer");
+
+    serverConnection().establishTransaction(*this);
+}
+
 void IDBTransaction::activate()
 {
-    ASSERT(m_state == IndexedDB::TransactionState::Unstarted || m_state == IndexedDB::TransactionState::Inactive);
+    ASSERT(!isFinishedOrFinishing());
     m_state = IndexedDB::TransactionState::Active;
 }
 
 void IDBTransaction::deactivate()
 {
-    if (m_state == IndexedDB::TransactionState::Unstarted || m_state == IndexedDB::TransactionState::Active)
+    if (m_state == IndexedDB::TransactionState::Active)
         m_state = IndexedDB::TransactionState::Inactive;
 
     scheduleOperationTimer();

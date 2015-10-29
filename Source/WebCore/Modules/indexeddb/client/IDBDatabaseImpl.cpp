@@ -128,16 +128,54 @@ RefPtr<WebCore::IDBObjectStore> IDBDatabase::createObjectStore(const String& nam
     return adoptRef(&objectStore.leakRef());
 }
 
-RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*, const Vector<String>&, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*, const Vector<String>& objectStores, const String& modeString, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    LOG(IndexedDB, "IDBDatabase::transaction");
+
+    if (m_closePending) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (objectStores.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return nullptr;
+    }
+
+    IndexedDB::TransactionMode mode = IDBTransaction::stringToMode(modeString, ec);
+    if (ec)
+        return nullptr;
+
+    if (mode != IndexedDB::TransactionMode::ReadOnly && mode != IndexedDB::TransactionMode::ReadWrite) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    if (m_versionChangeTransaction) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    for (auto& objectStoreName : objectStores) {
+        if (m_info.hasObjectStore(objectStoreName))
+            continue;
+        ec = NOT_FOUND_ERR;
+        return nullptr;
+    }
+
+    auto info = IDBTransactionInfo::clientTransaction(m_serverConnection.get(), objectStores, mode);
+    auto transaction = IDBTransaction::create(*this, info);
+
+    m_activeTransactions.set(info.identifier(), &transaction.get());
+
+    return adoptRef(&transaction.leakRef());
 }
 
-RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext*, const String&, const String&, ExceptionCode&)
+RefPtr<WebCore::IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const String& objectStore, const String& mode, ExceptionCode& ec)
 {
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    Vector<String> objectStores(1);
+    objectStores[0] = objectStore;
+    return transaction(context, objectStores, mode, ec);
 }
 
 void IDBDatabase::deleteObjectStore(const String&, ExceptionCode&)
@@ -191,6 +229,14 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
     m_activeTransactions.set(transaction->info().identifier(), &transaction.get());
 
     return WTF::move(transaction);
+}
+
+void IDBDatabase::didStartTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBDatabase::didStartTransaction");
+    ASSERT(!m_versionChangeTransaction);
+
+    m_activeTransactions.set(transaction.info().identifier(), &transaction);
 }
 
 void IDBDatabase::commitTransaction(IDBTransaction& transaction)

@@ -92,7 +92,7 @@ JSC::ExecState* execStateFromNode(DOMWrapperWorld& world, Node* node)
 
 JSC::ExecState* execStateFromPage(DOMWrapperWorld& world, Page* page)
 {
-    return page->mainFrame().script().globalObject(world)->globalExec();
+    return page ? page->mainFrame().script().globalObject(world)->globalExec() : nullptr;
 }
 
 JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)

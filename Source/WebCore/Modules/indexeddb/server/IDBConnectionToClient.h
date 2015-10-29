@@ -57,6 +57,7 @@ public:
     void didGetRecord(const IDBResultData&);
 
     void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion);
+    void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
 private:
     IDBConnectionToClient(IDBConnectionToClientDelegate&);

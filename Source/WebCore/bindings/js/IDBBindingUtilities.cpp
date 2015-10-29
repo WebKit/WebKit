@@ -346,6 +346,9 @@ Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext& context,
     DOMRequestState state(&context);
     auto* execState = state.exec();
 
+    if (!execState)
+        return Deprecated::ScriptValue();
+
     if (!valueData.data())
         return Deprecated::ScriptValue(execState->vm(), jsUndefined());
 

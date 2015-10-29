@@ -40,7 +40,6 @@ enum class TransactionMode {
 const unsigned TransactionModeMaximum = 2;
 
 enum class TransactionState {
-    Unstarted,
     Active,
     Inactive,
     Committing,

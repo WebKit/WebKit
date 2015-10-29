@@ -1,0 +1,7 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: versionchange transaction completed
+ALERT: Success opening database connection - request 1
+ALERT: Success opening database connection - request 2
+ALERT: Two transactions open at once. Yay.
+ALERT: Done
+This test makes sure that two read-only transactions to an object store are active at the same time.

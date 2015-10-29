@@ -190,6 +190,17 @@ void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyData& k
     transaction->getRecord(requestData, keyData);
 }
 
+void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
+{
+    LOG(IndexedDB, "IDBServer::establishTransaction");
+
+    auto databaseConnection = m_databaseConnections.get(databaseConnectionIdentifier);
+    if (!databaseConnection)
+        return;
+
+    databaseConnection->establishTransaction(info);
+}
+
 void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
     LOG(IndexedDB, "IDBServer::commitTransaction");

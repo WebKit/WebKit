@@ -171,6 +171,7 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
 
     m_versionChangeTransaction = &m_versionChangeDatabaseConnection->createVersionChangeTransaction(requestedVersion);
+    m_inProgressTransactions.set(m_versionChangeTransaction->info().identifier(), m_versionChangeTransaction);
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::beginTransactionInBackingStore, m_versionChangeTransaction->info()));
 
     auto result = IDBResultData::openDatabaseUpgradeNeeded(operation->requestData().requestIdentifier(), *m_versionChangeTransaction);
@@ -391,16 +392,15 @@ void UniqueIDBDatabase::performCommitTransaction(uint64_t callbackIdentifier, co
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performCommitTransaction");
 
     IDBError error = m_backingStore->commitTransaction(transactionIdentifier);
-    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCommitTransaction, callbackIdentifier, error));
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCommitTransaction, callbackIdentifier, error, transactionIdentifier));
 }
 
-void UniqueIDBDatabase::didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError& error)
+void UniqueIDBDatabase::didPerformCommitTransaction(uint64_t callbackIdentifier, const IDBError& error, const IDBResourceIdentifier& transactionIdentifier)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformCommitTransaction");
 
-    // Previously blocked transactions might now be unblocked.
-    invokeTransactionScheduler();
+    inProgressTransactionCompleted(transactionIdentifier);
 
     performErrorCallback(callbackIdentifier, error);
 }
@@ -430,7 +430,7 @@ void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, 
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformAbortTransaction");
 
-    if (m_versionChangeTransaction || m_versionChangeTransaction->info().identifier() == transactionIdentifier) {
+    if (m_versionChangeTransaction && m_versionChangeTransaction->info().identifier() == transactionIdentifier) {
         ASSERT(&m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_versionChangeTransaction->originalDatabaseInfo());
         m_databaseInfo = std::make_unique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
@@ -439,8 +439,7 @@ void UniqueIDBDatabase::didPerformAbortTransaction(uint64_t callbackIdentifier, 
         m_versionChangeDatabaseConnection = nullptr;
     }
 
-    // Previously blocked transactions might now be unblocked.
-    invokeTransactionScheduler();
+    inProgressTransactionCompleted(transactionIdentifier);
 
     performErrorCallback(callbackIdentifier, error);
 }
@@ -471,6 +470,17 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     invokeTransactionScheduler();
 }
 
+void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& transaction)
+{
+    LOG(IndexedDB, "UniqueIDBDatabase::enqueueTransaction");
+
+    ASSERT(transaction->info().mode() != IndexedDB::TransactionMode::VersionChange);
+
+    m_pendingTransactions.append(WTF::move(transaction));
+
+    invokeTransactionScheduler();
+}
+
 void UniqueIDBDatabase::invokeTransactionScheduler()
 {
     if (!m_transactionSchedulingTimer.isActive())
@@ -481,12 +491,130 @@ void UniqueIDBDatabase::transactionSchedulingTimerFired()
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::transactionSchedulingTimerFired");
 
-    if (!hasAnyOpenConnections() && m_versionChangeOperation) {
-        startVersionChangeTransaction();
-        return;
+    if (m_pendingTransactions.isEmpty()) {
+        if (!hasAnyOpenConnections() && m_versionChangeOperation) {
+            startVersionChangeTransaction();
+            return;
+        }
     }
 
-    // FIXME: Handle starting other pending transactions here.
+    bool hadDeferredTransactions = false;
+    auto transaction = takeNextRunnableTransaction(hadDeferredTransactions);
+
+    if (transaction) {
+        m_inProgressTransactions.set(transaction->info().identifier(), transaction);
+        for (auto objectStore : transaction->objectStoreIdentifiers())
+            m_objectStoreTransactionCounts.add(objectStore);
+
+        activateTransactionInBackingStore(*transaction);
+
+        // If no transactions were deferred, it's possible we can start another transaction right now.
+        if (!hadDeferredTransactions)
+            invokeTransactionScheduler();
+    }
+}
+
+void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTransaction& transaction)
+{
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::activateTransactionInBackingStore");
+
+    RefPtr<UniqueIDBDatabase> self(this);
+    RefPtr<UniqueIDBDatabaseTransaction> refTransaction(&transaction);
+
+    auto callback = [this, self, refTransaction](const IDBError& error) {
+        refTransaction->didActivateInBackingStore(error);
+    };
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performActivateTransactionInBackingStore, callbackID, transaction.info()));
+}
+
+void UniqueIDBDatabase::performActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBTransactionInfo& info)
+{
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performActivateTransactionInBackingStore");
+
+    IDBError error = m_backingStore->beginTransaction(info);
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformActivateTransactionInBackingStore, callbackIdentifier, error));
+}
+
+void UniqueIDBDatabase::didPerformActivateTransactionInBackingStore(uint64_t callbackIdentifier, const IDBError& error)
+{
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformActivateTransactionInBackingStore");
+
+    invokeTransactionScheduler();
+
+    performErrorCallback(callbackIdentifier, error);
+}
+
+template<typename T> bool scopesOverlap(const T& aScopes, const Vector<uint64_t>& bScopes)
+{
+    for (auto scope : bScopes) {
+        if (aScopes.contains(scope))
+            return true;
+    }
+
+    return false;
+}
+
+RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransaction(bool& hadDeferredTransactions)
+{
+    Deque<RefPtr<UniqueIDBDatabaseTransaction>> deferredTransactions;
+    RefPtr<UniqueIDBDatabaseTransaction> currentTransaction;
+
+    while (!m_pendingTransactions.isEmpty()) {
+        currentTransaction = m_pendingTransactions.takeFirst();
+
+        switch (currentTransaction->info().mode()) {
+        case IndexedDB::TransactionMode::ReadOnly:
+            // If there are any deferred transactions, the first one is a read-write transaction we need to unblock.
+            // Therefore, skip this read-only transaction if its scope overlaps with that read-write transaction.
+            if (!deferredTransactions.isEmpty()) {
+                ASSERT(deferredTransactions.first()->info().mode() == IndexedDB::TransactionMode::ReadWrite);
+                if (scopesOverlap(deferredTransactions.first()->objectStoreIdentifiers(), currentTransaction->objectStoreIdentifiers()))
+                    deferredTransactions.append(WTF::move(currentTransaction));
+            }
+
+            break;
+        case IndexedDB::TransactionMode::ReadWrite:
+            // If this read-write transaction's scope overlaps with running transactions, it must be deferred.
+            if (scopesOverlap(m_objectStoreTransactionCounts, currentTransaction->objectStoreIdentifiers()))
+                deferredTransactions.append(WTF::move(currentTransaction));
+
+            break;
+        case IndexedDB::TransactionMode::VersionChange:
+            // Version change transactions should never be scheduled in the traditional manner.
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        // If we didn't defer the currentTransaction above, it can be run now.
+        if (currentTransaction)
+            break;
+    }
+
+    hadDeferredTransactions = !deferredTransactions.isEmpty();
+    if (!hadDeferredTransactions)
+        return WTF::move(currentTransaction);
+
+    // Prepend the deferred transactions back on the beginning of the deque for future scheduling passes.
+    while (!deferredTransactions.isEmpty())
+        m_pendingTransactions.prepend(deferredTransactions.takeLast());
+
+    return WTF::move(currentTransaction);
+}
+
+void UniqueIDBDatabase::inProgressTransactionCompleted(const IDBResourceIdentifier& transactionIdentifier)
+{
+    auto transaction = m_inProgressTransactions.take(transactionIdentifier);
+    ASSERT(transaction);
+
+    if (m_versionChangeTransaction == transaction)
+        m_versionChangeTransaction = nullptr;
+
+    for (auto objectStore : transaction->objectStoreIdentifiers())
+        m_objectStoreTransactionCounts.remove(objectStore);
+
+    // Previously blocked transactions might now be unblocked.
+    invokeTransactionScheduler();
 }
 
 void UniqueIDBDatabase::performErrorCallback(uint64_t callbackIdentifier, const IDBError& error)

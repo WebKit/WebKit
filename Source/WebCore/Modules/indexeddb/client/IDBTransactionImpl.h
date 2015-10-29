@@ -77,6 +77,7 @@ public:
     const IDBDatabase& database() const { return m_database.get(); }
     IDBDatabaseInfo* originalDatabaseInfo() const { return m_originalDatabaseInfo.get(); }
 
+    void didStart(const IDBError&);
     void didAbort(const IDBError&);
     void didCommit(const IDBError&);
 
@@ -121,11 +122,15 @@ private:
     void getRecordOnServer(TransactionOperation&, RefPtr<IDBKey>);
     void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
 
+    void establishOnServer();
+
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 
-    IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Unstarted };
+    IndexedDB::TransactionState m_state { IndexedDB::TransactionState::Active };
+    bool m_startedOnServer { false };
+
     IDBError m_idbError;
 
     Timer m_operationTimer;

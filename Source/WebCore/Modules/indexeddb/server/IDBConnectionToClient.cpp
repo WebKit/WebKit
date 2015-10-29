@@ -88,6 +88,11 @@ void IDBConnectionToClient::fireVersionChangeEvent(UniqueIDBDatabaseConnection& 
     m_delegate->fireVersionChangeEvent(connection, requestedVersion);
 }
 
+void IDBConnectionToClient::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    m_delegate->didStartTransaction(transactionIdentifier, error);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

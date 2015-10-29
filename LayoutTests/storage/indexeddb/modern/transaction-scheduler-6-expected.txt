@@ -1,0 +1,12 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: versionchange transaction completed
+ALERT: Starting a readonly transaction
+ALERT: Starting a readonly transaction
+ALERT: readonly transaction completed
+ALERT: readonly transaction completed
+ALERT: Write in readwrite transaction succeeded
+ALERT: readwrite transaction completed
+ALERT: Done
+This test starts two read-only transactions to an object store followed by a read-write transaction.
+It verifies that the read-write doesn't start until both read-onlys have finished.
+

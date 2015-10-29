@@ -75,8 +75,13 @@ IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
 
     // VersionChange transactions are scoped to "every object store".
     if (transaction->isVersionChange()) {
-        for (auto& objectStore : m_objectStores.values())
+        for (auto& objectStore : m_objectStoresByIdentifier.values())
             transaction->addExistingObjectStore(*objectStore);
+    } else if (transaction->isWriting()) {
+        for (auto& iterator : m_objectStoresByName) {
+            if (info.objectStores().contains(iterator.key))
+                transaction->addExistingObjectStore(*iterator.value);
+        }
     }
 
     m_transactions.set(info.identifier(), WTF::move(transaction));
@@ -118,7 +123,7 @@ IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
     if (m_databaseInfo->hasObjectStore(info.name()))
         return IDBError(IDBExceptionCode::ConstraintError);
 
-    ASSERT(!m_objectStores.contains(info.identifier()));
+    ASSERT(!m_objectStoresByIdentifier.contains(info.identifier()));
     auto objectStore = MemoryObjectStore::create(info);
 
     m_databaseInfo->addExistingObjectStore(info);
@@ -128,7 +133,7 @@ IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
     ASSERT(rawTransaction->isVersionChange());
 
     rawTransaction->addNewObjectStore(*objectStore);
-    m_objectStores.set(info.identifier(), WTF::move(objectStore));
+    registerObjectStore(WTF::move(objectStore));
 
     return IDBError();
 }
@@ -137,12 +142,11 @@ void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectS
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");
 
-    ASSERT(m_objectStores.contains(objectStore.info().identifier()));
-    ASSERT(m_objectStores.get(objectStore.info().identifier()) == &objectStore);
+    ASSERT(m_objectStoresByIdentifier.contains(objectStore.info().identifier()));
+    ASSERT(m_objectStoresByIdentifier.get(objectStore.info().identifier()) == &objectStore);
 
-    m_objectStores.remove(objectStore.info().identifier());
+    unregisterObjectStore(objectStore);
 }
-
 
 IDBError MemoryIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifier&, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, bool& keyExists)
 {
@@ -150,7 +154,7 @@ IDBError MemoryIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifi
 
     ASSERT(objectStoreIdentifier);
 
-    MemoryObjectStore* objectStore = m_objectStores.get(objectStoreIdentifier);
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     RELEASE_ASSERT(objectStore);
 
     keyExists = objectStore->containsRecord(keyData);
@@ -163,7 +167,7 @@ IDBError MemoryIDBBackingStore::deleteRecord(const IDBResourceIdentifier& transa
 
     ASSERT(objectStoreIdentifier);
 
-    MemoryObjectStore* objectStore = m_objectStores.get(objectStoreIdentifier);
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     RELEASE_ASSERT(objectStore);
     RELEASE_ASSERT(m_transactions.contains(transactionIdentifier));
 
@@ -181,7 +185,7 @@ IDBError MemoryIDBBackingStore::putRecord(const IDBResourceIdentifier& transacti
     if (!transaction)
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store transaction found to get record"));
 
-    MemoryObjectStore* objectStore = m_objectStores.get(objectStoreIdentifier);
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     if (!objectStore)
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found to put record"));
 
@@ -198,12 +202,31 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!m_transactions.contains(transactionIdentifier))
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store transaction found to get record"));
 
-    MemoryObjectStore* objectStore = m_objectStores.get(objectStoreIdentifier);
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     if (!objectStore)
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found"));
 
     outValue = objectStore->valueForKey(keyData);
     return IDBError();
+}
+
+void MemoryIDBBackingStore::registerObjectStore(std::unique_ptr<MemoryObjectStore>&& objectStore)
+{
+    ASSERT(objectStore);
+    ASSERT(!m_objectStoresByIdentifier.contains(objectStore->info().identifier()));
+    ASSERT(!m_objectStoresByName.contains(objectStore->info().name()));
+
+    m_objectStoresByName.set(objectStore->info().name(), objectStore.get());
+    m_objectStoresByIdentifier.set(objectStore->info().identifier(), WTF::move(objectStore));
+}
+
+void MemoryIDBBackingStore::unregisterObjectStore(MemoryObjectStore& objectStore)
+{
+    ASSERT(m_objectStoresByIdentifier.contains(objectStore.info().identifier()));
+    ASSERT(m_objectStoresByName.contains(objectStore.info().name()));
+
+    m_objectStoresByName.remove(objectStore.info().name());
+    m_objectStoresByIdentifier.remove(objectStore.info().identifier());
 }
 
 } // namespace IDBServer

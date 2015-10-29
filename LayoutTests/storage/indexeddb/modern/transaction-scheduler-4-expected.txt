@@ -1,0 +1,20 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: versionchange transaction completed
+ALERT: Success opening database connection - Starting readonly transaction
+ALERT: Other objectstore read transaction get success - [object Event]
+ALERT: Other objectstore read transaction complete - [object Event]
+ALERT: Read transaction complete - [object Event]
+ALERT: Write transaction first put success
+ALERT: Second read-only transaction get success - [object Event]
+ALERT: Write transaction complete - [object Event]
+ALERT: Second read-only transaction complete - [object Event]
+ALERT: Done
+This test opens a long running read-only transaction to an object store, and then a read-write transaction to the same object store.
+The read-write transaction should be blocked while the long running read-only transaction is in progress.
+It also queues up a second read-only transaction to that same object store behind the blocked read-write transaction.
+Even though that second read-only transaction could start while the first is in progress and the read-write transaction is blocked,
+it should *not* start because doing so would risk continuing to block the read-write transaction.
+It also queues up a read-only to a different object store behind those first three transactions.
+That last read-only transaction *should* start while the read-write transaction is still blocked,
+as doing so won't risk blocking the read-write transaction further.
+

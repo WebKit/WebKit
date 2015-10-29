@@ -35,6 +35,15 @@ IDBTransactionInfo::IDBTransactionInfo(const IDBResourceIdentifier& identifier)
 {
 }
 
+IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionToServer& connection, const Vector<String>& objectStores, IndexedDB::TransactionMode mode)
+{
+    IDBTransactionInfo result((IDBResourceIdentifier(connection)));
+    result.m_mode = mode;
+    result.m_objectStores = objectStores;
+
+    return result;
+}
+
 IDBTransactionInfo IDBTransactionInfo::versionChange(const IDBServer::IDBConnectionToClient& connection, uint64_t newVersion)
 {
     IDBTransactionInfo result((IDBResourceIdentifier(connection)));
@@ -49,6 +58,10 @@ IDBTransactionInfo IDBTransactionInfo::isolatedCopy() const
     IDBTransactionInfo result(m_identifier);
     result.m_mode = m_mode;
     result.m_newVersion = m_newVersion;
+
+    result.m_objectStores.reserveCapacity(m_objectStores.size());
+    for (auto& objectStore : m_objectStores)
+        result.m_objectStores.uncheckedAppend(objectStore.isolatedCopy());
 
     return WTF::move(result);
 }

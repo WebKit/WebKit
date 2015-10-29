@@ -139,6 +139,16 @@ void IDBConnectionToServer::didGetRecord(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::establishTransaction(IDBTransaction& transaction)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::establishTransaction");
+
+    ASSERT(!hasRecordOfTransaction(transaction));
+    m_pendingTransactions.set(transaction.info().identifier(), &transaction);
+
+    m_delegate->establishTransaction(transaction.database().databaseConnectionIdentifier(), transaction.info());
+}
+
 void IDBConnectionToServer::commitTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBConnectionToServer::commitTransaction");
@@ -190,6 +200,16 @@ void IDBConnectionToServer::fireVersionChangeEvent(uint64_t databaseConnectionId
     connection->fireVersionChangeEvent(requestedVersion);
 }
 
+void IDBConnectionToServer::didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didStartTransaction");
+
+    auto transaction = m_pendingTransactions.take(transactionIdentifier);
+    ASSERT(transaction);
+
+    transaction->didStart(error);
+}
+
 void IDBConnectionToServer::databaseConnectionClosed(IDBDatabase& database)
 {
     LOG(IndexedDB, "IDBConnectionToServer::databaseConnectionClosed");
@@ -222,6 +242,12 @@ void IDBConnectionToServer::completeOperation(const IDBResultData& resultData)
     ASSERT(operation);
 
     operation->completed(resultData);
+}
+
+bool IDBConnectionToServer::hasRecordOfTransaction(const IDBTransaction& transaction) const
+{
+    auto identifier = transaction.info().identifier();
+    return m_pendingTransactions.contains(identifier) || m_committingTransactions.contains(identifier) || m_abortingTransactions.contains(identifier);
 }
 
 } // namespace IDBClient

@@ -1,0 +1,10 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: Failed to start a transaction while a versionChange transaction was in progress - Error: InvalidStateError: DOM Exception 11
+ALERT: versionchange transaction completed
+ALERT: Failed to start a transaction with an empty set of object stores - Error: InvalidAccessError: DOM Exception 15
+ALERT: Failed to start a transaction to a nonexistent object store - Error: NotFoundError: DOM Exception 8
+ALERT: Failed to start a transaction with an invalid mode - TypeError: Type error
+ALERT: Failed to explicitly start a versionchange transaction - TypeError: Type error
+ALERT: Failed to explicitly start a transaction with the close pending flag set - Error: InvalidStateError: DOM Exception 11
+ALERT: Done
+This tests some obvious failures that can happen while calling IDBDatabase.transaction()

@@ -1,0 +1,14 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: versionchange transaction completed
+ALERT: Success opening database connection - Starting transactions
+ALERT: Starting write transaction
+ALERT: Read transaction complete - [object Event]
+ALERT: Read transaction complete - [object Event]
+ALERT: Write to OS1 successful
+ALERT: Write to OS2 successful
+ALERT: Done
+This test creates two object stores.
+It then opens two long running read-only transactions, one per object store.
+It then opens a read-write transaction to both object stores.
+The read-only transactions both need to finish before the read-write transaction starts.
+

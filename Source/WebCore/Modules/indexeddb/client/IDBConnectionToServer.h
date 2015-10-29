@@ -77,6 +77,9 @@ public:
     void didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
 
     void fireVersionChangeEvent(uint64_t databaseConnectionIdentifier, uint64_t requestedVersion);
+    void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&);
+
+    void establishTransaction(IDBTransaction&);
 
     void databaseConnectionClosed(IDBDatabase&);
     void registerDatabaseConnection(IDBDatabase&);
@@ -88,10 +91,13 @@ private:
     void saveOperation(TransactionOperation&);
     void completeOperation(const IDBResultData&);
 
+    bool hasRecordOfTransaction(const IDBTransaction&) const;
+
     Ref<IDBConnectionToServerDelegate> m_delegate;
 
     HashMap<IDBResourceIdentifier, RefPtr<IDBClient::IDBOpenDBRequest>> m_openDBRequestMap;
     HashMap<uint64_t, IDBDatabase*> m_databaseConnectionMap;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_activeOperations;

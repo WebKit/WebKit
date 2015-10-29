@@ -1,0 +1,11 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: versionchange transaction completed
+ALERT: Success opening database connection - Starting readonly transaction
+ALERT: Creating write transaction
+ALERT: Read transaction complete - [object Event]
+ALERT: Write transaction put success
+ALERT: Write transaction complete - [object Event]
+ALERT: Done
+This test makes sure that a write transaction is blocked by a read transaction with overlapping scope.
+It also makes sure the write transaction starts after the read transaction completes.
+
