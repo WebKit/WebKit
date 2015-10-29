@@ -180,9 +180,10 @@ void RenderSVGRoot::layout()
 
     if (!m_resourcesNeedingToInvalidateClients.isEmpty()) {
         // Invalidate resource clients, which may mark some nodes for layout.
-        HashSet<RenderSVGResourceContainer*>::iterator end = m_resourcesNeedingToInvalidateClients.end();
-        for (HashSet<RenderSVGResourceContainer*>::iterator it = m_resourcesNeedingToInvalidateClients.begin(); it != end; ++it)
-            (*it)->removeAllClientsFromCache();
+        for (auto& resource :  m_resourcesNeedingToInvalidateClients) {
+            resource->removeAllClientsFromCache();
+            SVGResourcesCache::clientStyleChanged(*resource, StyleDifferenceLayout, resource->style());
+        }
 
         m_isLayoutSizeChanged = false;
         SVGRenderSupport::layoutChildren(*this, false);
