@@ -921,10 +921,10 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         var lastRecord = records.lastValue;
 
         if (records.length > 1) {
-            this._frameSelectionChartRow.title = WebInspector.UIString("Frames: %d – %d (%s – %s)").format(firstRecord.frameNumber, lastRecord.frameNumber,
+            this._frameSelectionChartRow.title = WebInspector.UIString("Frames: %d \u2013 %d (%s \u2013 %s)").format(firstRecord.frameNumber, lastRecord.frameNumber,
                 Number.secondsToString(firstRecord.startTime), Number.secondsToString(lastRecord.endTime));
         } else {
-            this._frameSelectionChartRow.title = WebInspector.UIString("Frame: %d (%s – %s)").format(firstRecord.frameNumber,
+            this._frameSelectionChartRow.title = WebInspector.UIString("Frame: %d (%s \u2013 %s)").format(firstRecord.frameNumber,
                 Number.secondsToString(firstRecord.startTime), Number.secondsToString(lastRecord.endTime));
         }
     }

@@ -25,7 +25,7 @@
 
 WebInspector.TimelineMarker = class TimelineMarker extends WebInspector.Object
 {
-    constructor(time, type)
+    constructor(time, type, details)
     {
         super();
 
@@ -33,6 +33,7 @@ WebInspector.TimelineMarker = class TimelineMarker extends WebInspector.Object
 
         this._time = time || 0;
         this._type = type;
+        this._details = details || null;
     }
 
     // Public
@@ -55,6 +56,11 @@ WebInspector.TimelineMarker = class TimelineMarker extends WebInspector.Object
     get type()
     {
         return this._type;
+    }
+
+    get details()
+    {
+        return this._details;
     }
 };
 

@@ -1,3 +1,30 @@
+2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Display console.timeStamp(title) title in timeline markers
+        https://bugs.webkit.org/show_bug.cgi?id=150691
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._processRecord):
+        (WebInspector.TimelineManager.prototype._processEvent):
+        Detect unused timeline records.
+
+        * UserInterface/Models/TimelineMarker.js:
+        (WebInspector.TimelineMarker):
+        (WebInspector.TimelineMarker.prototype.get details):
+        Give markers an optional details argument.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype.addMarker):
+        When a marker is a TimeStamp, use the details title in
+        the tooltip if one is available.
+
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype._refreshFrameSelectionChart):
+        Used \u in localized string. Kept this an endash since it is a range.
+
 2015-10-29  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Navigation bar icons are missing
