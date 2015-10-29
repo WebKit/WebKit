@@ -12,7 +12,7 @@ layer at (0,0) size 785x1320
         RenderText {#text} at (410,32) size 242x36
           text run at (410,32) width 242: " Table Testcase"
       RenderTable {TABLE} at (16,158) size 737x1130
-        RenderTableSection {TBODY} at (0,0) size 737x1129
+        RenderTableSection {TBODY} at (0,0) size 737x1130
           RenderTableRow {TR} at (0,2) size 737x379
             RenderTableCell {TD} at (2,2) size 135x683 [bgcolor=#FFFFFF] [r=0 c=0 rs=2 cs=1]
               RenderBlock {H2} at (5,18) size 125x18
@@ -188,8 +188,8 @@ layer at (0,0) size 785x1320
                   text run at (0,30) width 108: "blah blah blah blah"
                   text run at (0,45) width 108: "blah blah blah blah"
                   text run at (0,60) width 52: "blah blah"
-          RenderTableRow {TR} at (0,383) size 737x744
-            RenderTableCell {TD} at (600,968) size 135x159 [bgcolor=#FFFFFF] [r=1 c=2 rs=1 cs=1]
+          RenderTableRow {TR} at (0,382) size 737x746
+            RenderTableCell {TD} at (600,968) size 135x160 [bgcolor=#FFFFFF] [r=1 c=2 rs=1 cs=1]
               RenderBlock {H2} at (5,18) size 125x35
                 RenderText {#text} at (0,0) size 88x34
                   text run at (0,0) width 88: "Community"
