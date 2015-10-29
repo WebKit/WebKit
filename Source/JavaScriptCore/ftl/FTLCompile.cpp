@@ -563,6 +563,11 @@ static void fixFunctionBasedOnStackMaps(
             continue;
         }
 
+        for (unsigned j = exitDescriptor.m_values.size(); j--;)
+            exitDescriptor.m_values[j] = exitDescriptor.m_values[j].withLocalsOffset(localsOffset);
+        for (ExitTimeObjectMaterialization* materialization : exitDescriptor.m_materializations)
+            materialization->accountForLocalsOffset(localsOffset);
+
         for (unsigned j = 0; j < iter->value.size(); j++) {
             uint32_t stackmapRecordIndex = iter->value[j].index;
             OSRExit exit(exitDescriptor, stackmapRecordIndex);
@@ -593,11 +598,6 @@ static void fixFunctionBasedOnStackMaps(
 
             info.m_thunkAddress = linkBuffer->locationOf(info.m_thunkLabel);
             exit.m_patchableCodeOffset = linkBuffer->offsetOf(info.m_thunkJump);
-            
-            for (unsigned j = exit.m_descriptor.m_values.size(); j--;)
-                exit.m_descriptor.m_values[j] = exit.m_descriptor.m_values[j].withLocalsOffset(localsOffset);
-            for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor.m_materializations)
-                materialization->accountForLocalsOffset(localsOffset);
             
             if (verboseCompilationEnabled()) {
                 DumpContext context;
