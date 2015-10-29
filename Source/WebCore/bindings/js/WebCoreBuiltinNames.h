@@ -41,9 +41,6 @@ namespace WebCore {
     macro(pulling) \
     macro(pullAgain) \
     macro(queue) \
-    macro(readableStreamClosed) \
-    macro(readableStreamErrored) \
-    macro(readableStreamReadable) \
     macro(reader) \
     macro(readRequests) \
     macro(readyPromise) \
@@ -52,6 +49,12 @@ namespace WebCore {
     macro(startedPromise) \
     macro(storedError) \
     macro(strategy) \
+    macro(streamClosed) \
+    macro(streamClosing) \
+    macro(streamErrored) \
+    macro(streamReadable) \
+    macro(streamWaiting) \
+    macro(streamWritable) \
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(writing) \

@@ -38,17 +38,17 @@ function syncWritableStreamStateWithQueue(stream)
 {
     "use strict";
 
-    if (stream.@state === "closing")
+    if (stream.@state === @streamClosing)
         return undefined;
 
-    // TODO
-    // assert(stream.@state === "writable" || stream.@state === "waiting" || stream.@state === undefined);
+    // FIXME
+    // assert(stream.@state === @streamWritable || stream.@state === @streamWaiting);
 
     if (stream.@queue.size > stream.@strategy.highWaterMark) {
-        stream.@state = "waiting";
+        stream.@state = @streamWaiting;
         stream.@readyPromise = @createNewStreamsPromise();
     } else {
-        stream.@state = "writable";
+        stream.@state = @streamWritable;
         @resolveStreamsPromise(stream.@readyPromise, undefined);
     }
 
@@ -59,7 +59,7 @@ function errorWritableStream(e)
 {
     "use strict";
 
-    if (this.@state === "closed" || this.@state === "errored")
+    if (this.@state === @streamClosed || this.@state === @streamErrored)
         return undefined;
     while (this.@queue.content.length > 0) {
         var writeRecord = @dequeueValue(this.@queue);
@@ -67,10 +67,10 @@ function errorWritableStream(e)
             @rejectStreamsPromise(writeRecord.promise, e);
     }
     this.@storedError = e;
-    if (this.@state === "waiting")
+    if (this.@state === @streamWaiting)
         @resolveStreamsPromise(this.@readyPromise, undefined);
     @rejectStreamsPromise(this.@closedPromise, e);
-    this.@state = "errored";
+    this.@state = @streamErrored;
     return undefined;
 }
 
@@ -92,7 +92,7 @@ function writableStreamAdvanceQueue(stream)
     const writeRecord = @peekQueueValue(stream.@queue);
     if (writeRecord === "close") {
         // FIXME
-        // assert(stream.@state === "closing");
+        // assert(stream.@state === @streamClosing);
         @dequeueValue(stream.@queue);
         // FIXME
         // assert(stream.@queue.content.length === 0);
@@ -103,7 +103,7 @@ function writableStreamAdvanceQueue(stream)
     stream.@writing = true;
     @promiseInvokeOrNoop(stream.@underlyingSink, "write", [writeRecord.chunk]).then(
         function() {
-            if (stream.@state === "errored")
+            if (stream.@state === @streamErrored)
                 return;
             stream.@writing = false;
             @resolveStreamsPromise(writeRecord.promise, undefined);
@@ -122,15 +122,15 @@ function writableStreamAdvanceQueue(stream)
 function closeWritableStream(stream)
 {
     // FIXME
-    // assert(stream.@state === "closing");
+    // assert(stream.@state === @streamClosing);
     @promiseInvokeOrNoop(stream.@underlyingSink, "close").then(
         function() {
-            if (stream.@state === "errored")
+            if (stream.@state === @streamErrored)
                 return;
             // FIXME
-            // assert(stream.@state === "closing");
+            // assert(stream.@state === @streamClosing);
             @resolveStreamsPromise(stream.@closedPromise, undefined);
-            stream.@state = "closed";
+            stream.@state = @streamClosed;
         },
         function(r) {
             @errorWritableStream.@apply(stream, [r]);

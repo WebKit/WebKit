@@ -38,20 +38,20 @@ function privateInitializeReadableStreamReader(stream)
 
     this.@state = stream.@state;
     this.@readRequests = [];
-    if (stream.@state === @readableStreamReadable) {
+    if (stream.@state === @streamReadable) {
         this.@ownerReadableStream = stream;
         this.@storedError = undefined;
         stream.@reader = this;
         this.@closedPromise = @createNewStreamsPromise();
         return this;
     }
-    if (stream.@state === @readableStreamClosed) {
+    if (stream.@state === @streamClosed) {
         this.@ownerReadableStream = null;
         this.@storedError = undefined;
         this.@closedPromise = Promise.resolve();
         return this;
     }
-    // TODO: ASSERT(stream.@state === @readableStreamErrored);
+    // FIXME: ASSERT(stream.@state === @streamErrored);
     this.@ownerReadableStream = null;
     this.@storedError = stream.@storedError;
     this.@closedPromise = Promise.reject(stream.@storedError);
@@ -196,10 +196,10 @@ function errorReadableStream(stream, error)
 {
     "use strict";
 
-    // TODO: ASSERT(stream.@state === @readableStreamReadable);
+    // FIXME: ASSERT(stream.@state === @streamReadable);
     stream.@queue = @newQueue();
     stream.@storedError = error;
-    stream.@state = @readableStreamErrored;
+    stream.@state = @streamErrored;
 
     if (!stream.@reader)
         return;
@@ -212,7 +212,7 @@ function errorReadableStream(stream, error)
 
     @releaseReadableStreamReader(reader);
     reader.@storedError = error;
-    reader.@state = @readableStreamErrored;
+    reader.@state = @streamErrored;
 
     @rejectStreamsPromise(reader.@closedPromise, error);
 }
@@ -221,7 +221,7 @@ function requestReadableStreamPull(stream)
 {
     "use strict";
 
-    if (stream.@state !== @readableStreamReadable)
+    if (stream.@state !== @streamReadable)
         return;
     if (stream.@closeRequested)
         return;
@@ -275,9 +275,9 @@ function cancelReadableStream(stream, reason)
 {
     "use strict";
 
-    if (stream.@state === @readableStreamClosed)
+    if (stream.@state === @streamClosed)
         return Promise.resolve();
-    if (stream.@state === @readableStreamErrored)
+    if (stream.@state === @streamErrored)
         return Promise.reject(stream.@storedError);
     stream.@queue = @newQueue();
     @finishClosingReadableStream(stream);
@@ -288,8 +288,8 @@ function finishClosingReadableStream(stream)
 {
     "use strict";
 
-    // TODO: ASSERT(stream.@state ===  @readableStreamReadable);
-    stream.@state = @readableStreamClosed;
+    // FIXME: ASSERT(stream.@state ===  @streamReadable);
+    stream.@state = @streamClosed;
     var reader = stream.@reader;
     if (reader)
         @closeReadableStreamReader(reader);
@@ -299,9 +299,9 @@ function closeReadableStream(stream)
 {
     "use strict";
 
-    // TODO. ASSERT(!stream.@closeRequested);
-    // TODO: ASSERT(stream.@state !== @readableStreamErrored);
-    if (stream.@state === @readableStreamClosed)
+    // FIXME: ASSERT(!stream.@closeRequested);
+    // FIXME: ASSERT(stream.@state !== @streamErrored);
+    if (stream.@state === @streamClosed)
         return; 
     stream.@closeRequested = true;
     if (!stream.@queue.content.length)
@@ -317,7 +317,7 @@ function closeReadableStreamReader(reader)
         @resolveStreamsPromise(requests[index], {value:undefined, done: true});
     reader.@readRequests = [];
     @releaseReadableStreamReader(reader);
-    reader.@state = @readableStreamClosed;
+    reader.@state = @streamClosed;
     @resolveStreamsPromise(reader.@closedPromise);
 }
 
@@ -325,9 +325,9 @@ function enqueueInReadableStream(stream, chunk)
 {
     "use strict";
 
-    // TODO: ASSERT(!stream.@closeRequested);
-    // TODO: ASSERT(stream.@state !== @readableStreamErrored);
-    if (stream.@state === @readableStreamClosed)
+    // FIXME: ASSERT(!stream.@closeRequested);
+    // FIXME: ASSERT(stream.@state !== @streamErrored);
+    if (stream.@state === @streamClosed)
         return undefined;
     if (@isReadableStreamLocked(stream) && stream.@reader.@readRequests.length) {
         @resolveStreamsPromise(stream.@reader.@readRequests.shift(), {value: chunk, done: false});
@@ -354,12 +354,12 @@ function readFromReadableStreamReader(reader)
 {
     "use strict";
 
-    if (reader.@state === @readableStreamClosed)
+    if (reader.@state === @streamClosed)
         return Promise.resolve({value: undefined, done: true});
-    if (reader.@state === @readableStreamErrored)
+    if (reader.@state === @streamErrored)
         return Promise.reject(reader.@storedError);
-    // TODO: ASSERT(!!reader.@ownerReadableStream);
-    // TODO: ASSERT(reader.@ownerReadableStream.@state === @readableStreamReadable);
+    // FIXME: ASSERT(!!reader.@ownerReadableStream);
+    // FIXME: ASSERT(reader.@ownerReadableStream.@state === @streamReadable);
     var stream = reader.@ownerReadableStream;
     if (stream.@queue.content.length) {
         var chunk = @dequeueValue(stream.@queue);

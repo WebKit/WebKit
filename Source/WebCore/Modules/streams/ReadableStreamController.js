@@ -33,7 +33,7 @@ function enqueue(chunk)
         throw new @TypeError("Function should be called on a ReadableStreamController");
 
     var stream = this.@controlledReadableStream;
-    if (stream.@state === @readableStreamErrored)
+    if (stream.@state === @streamErrored)
         throw stream.@storedError;
 
     if (stream.@closeRequested)
@@ -50,7 +50,7 @@ function error(error)
         throw new @TypeError("Function should be called on a ReadableStreamController");
 
     var stream = this.@controlledReadableStream;
-    if (stream.@state !== @readableStreamReadable)
+    if (stream.@state !== @streamReadable)
         throw new @TypeError("ReaableStream is not readable");
 
     @errorReadableStream(stream, error);
@@ -67,7 +67,7 @@ function close()
     if (stream.@closeRequested)
         throw new @TypeError("ReadableStream is already requested to close");
 
-    if (stream.@state === @readableStreamErrored)
+    if (stream.@state === @streamErrored)
         throw new @TypeError("ReadableStream is already errored");
 
     @closeReadableStream(stream);

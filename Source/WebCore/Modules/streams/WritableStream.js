@@ -45,6 +45,7 @@ function initializeWritableStream(underlyingSink, strategy)
     this.@closedPromise = @createNewStreamsPromise();
     this.@readyPromise = Promise.resolve(undefined);
     this.@queue = @newQueue();
+    this.@state = @streamWritable;
     this.@started = false;
     this.@writing = false;
 
@@ -71,10 +72,10 @@ function abort(reason)
     if (!@isWritableStream(this))
         return Promise.reject(new @TypeError("The WritableStream.abort method can only be used on instances of WritableStream"));
 
-    if (this.@state === "closed")
+    if (this.@state === @streamClosed)
         return Promise.resolve(undefined);
 
-    if (this.@state === "errored")
+    if (this.@state === @streamErrored)
         return Promise.reject(this.@storedError);
 
     @errorWritableStream.@apply(this, [reason]);
@@ -91,16 +92,16 @@ function close()
     if (!@isWritableStream(this))
         return Promise.reject(new @TypeError("The WritableStream.close method can only be used on instances of WritableStream"));
 
-    if (this.@state === "closed" || this.@state === "closing")
+    if (this.@state === @streamClosed || this.@state === @streamClosing)
         return Promise.reject(new @TypeError("Cannot close a WritableString that is closed or closing"));
 
-    if (this.@state === "errored")
+    if (this.@state === @streamErrored)
         return Promise.reject(this.@storedError);
 
-    if (this.@state === "waiting")
+    if (this.@state === @streamWaiting)
         @resolveStreamsPromise(this.@readyPromise, undefined);
 
-    this.@state = "closing";
+    this.@state = @streamClosing;
     @enqueueValueWithSize(this.@queue, "close", 0);
     @callOrScheduleWritableStreamAdvanceQueue(this);
 
@@ -114,14 +115,14 @@ function write(chunk)
     if (!@isWritableStream(this))
         return Promise.reject(new @TypeError("The WritableStream.close method can only be used on instances of WritableStream"));
 
-    if (this.@state === "closed" || this.@state === "closing")
+    if (this.@state === @streamClosed || this.@state === @streamClosing)
         return Promise.reject(new @TypeError("Cannot write on a WritableString that is closed or closing"));
 
-    if (this.@state === "errored")
+    if (this.@state === @streamErrored)
         return Promise.reject(this.@storedError);
 
     // FIXME
-    // assert(this.@state === "writable" || this.@state === "waiting" || this.@state === undefined);
+    // assert(this.@state === @streamWritable || this.@state === @streamWaiting);
 
     let chunkSize = 1;
     if (this.@strategy.size !== undefined) {
@@ -174,5 +175,21 @@ function state()
     if (!@isWritableStream(this))
         throw new @TypeError("The WritableStream.state getter can only be used on instances of WritableStream");
 
-    return this.@state;
+    switch(this.@state) {
+    case @streamClosed:
+        return "closed";
+    case @streamClosing:
+        return "closing";
+    case @streamErrored:
+        return "errored";
+    case @streamWaiting:
+        return "waiting";
+    case @streamWritable:
+        return "writable";
+    }
+
+    // FIXME
+    // assert_not_reached();
+
+    return undefined;
 }

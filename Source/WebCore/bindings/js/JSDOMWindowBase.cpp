@@ -87,9 +87,12 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowShell* shell)
         GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->window, m_shell, DontDelete | ReadOnly),
 #if ENABLE(STREAMS_API)
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().readableStreamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().readableStreamErroredPrivateName(), jsNumber(2), DontDelete | ReadOnly),
-        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().readableStreamReadablePrivateName(), jsNumber(3), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamClosedPrivateName(), jsNumber(1), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamClosingPrivateName(), jsNumber(2), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamErroredPrivateName(), jsNumber(3), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamReadablePrivateName(), jsNumber(4), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamWaitingPrivateName(), jsNumber(5), DontDelete | ReadOnly),
+        GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().streamWritablePrivateName(), jsNumber(6), DontDelete | ReadOnly),
         GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().ReadableStreamControllerPrivateName(), createReadableStreamControllerPrivateConstructor(vm, *this), DontDelete | ReadOnly),
         GlobalPropertyInfo(static_cast<JSVMClientData*>(vm.clientData)->builtinNames().ReadableStreamReaderPrivateName(), createReadableStreamReaderPrivateConstructor(vm, *this), DontDelete | ReadOnly),
 #define DECLARE_GLOBAL_STATIC(name)\
