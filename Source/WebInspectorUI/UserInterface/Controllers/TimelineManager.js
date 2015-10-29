@@ -384,6 +384,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
+            // FIXME: Make use of "timeout" and "singleShot" payload properties.
             return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.TimerInstalled, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId);
 
         case TimelineAgent.EventType.TimerRemove:
@@ -396,13 +397,13 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId);
+            return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.id);
 
         case TimelineAgent.EventType.CancelAnimationFrame:
             console.assert(isNaN(endTime));
 
             // Pass the startTime as the endTime since this record type has no duration.
-            return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.timerId);
+            return new WebInspector.ScriptTimelineRecord(WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.id);
         }
 
         return null;
@@ -412,6 +413,7 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
     {
         switch (recordPayload.type) {
         case TimelineAgent.EventType.TimeStamp:
+            // FIXME: Make use of "message" payload properties.
             var timestamp = this.activeRecording.computeElapsedTime(recordPayload.startTime);
             var eventMarker = new WebInspector.TimelineMarker(timestamp, WebInspector.TimelineMarker.Type.TimeStamp);
             this._activeRecording.addEventMarker(eventMarker);

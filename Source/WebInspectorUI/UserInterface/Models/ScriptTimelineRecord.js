@@ -365,10 +365,16 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
             return WebInspector.UIString("Timer %s Removed").format(details);
         return WebInspector.UIString("Timer Removed");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameFired:
+        if (details && includeDetailsInMainTitle)
+            return WebInspector.UIString("Animation Frame %s Fired").format(details);
         return WebInspector.UIString("Animation Frame Fired");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameRequested:
+        if (details && includeDetailsInMainTitle)
+            return WebInspector.UIString("Animation Frame %s Requested").format(details);
         return WebInspector.UIString("Animation Frame Requested");
     case WebInspector.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
+        if (details && includeDetailsInMainTitle)
+            return WebInspector.UIString("Animation Frame %s Canceled").format(details);
         return WebInspector.UIString("Animation Frame Canceled");
     }
 };

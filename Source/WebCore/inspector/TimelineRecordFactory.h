@@ -32,7 +32,6 @@
 #ifndef TimelineRecordFactory_h
 #define TimelineRecordFactory_h
 
-#include "URL.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -47,47 +46,31 @@ struct ScriptBreakpointAction;
 
 namespace WebCore {
 
-    class Event;
-    class FloatQuad;
-    class ResourceRequest;
-    class ResourceResponse;
-    class ScriptProfile;
+class Event;
+class FloatQuad;
 
-    class TimelineRecordFactory {
-    public:
-        static Ref<Inspector::InspectorObject> createGenericRecord(double startTime, int maxCallStackDepth);
-        static Ref<Inspector::InspectorObject> createBackgroundRecord(double startTime, const String& thread);
+class TimelineRecordFactory {
+public:
+    static Ref<Inspector::InspectorObject> createGenericRecord(double startTime, int maxCallStackDepth);
 
-        static Ref<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
-        static Ref<Inspector::InspectorObject> createConsoleProfileData(const String& title);
+    static Ref<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
+    static Ref<Inspector::InspectorObject> createConsoleProfileData(const String& title);
+    static Ref<Inspector::InspectorObject> createProbeSampleData(const Inspector::ScriptBreakpointAction&, unsigned sampleId);
+    static Ref<Inspector::InspectorObject> createEventDispatchData(const Event&);
+    static Ref<Inspector::InspectorObject> createGenericTimerData(int timerId);
+    static Ref<Inspector::InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
+    static Ref<Inspector::InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
+    static Ref<Inspector::InspectorObject> createTimeStampData(const String&);
+    static Ref<Inspector::InspectorObject> createParseHTMLData(unsigned startLine);
+    static Ref<Inspector::InspectorObject> createAnimationFrameData(int callbackId);
+    static Ref<Inspector::InspectorObject> createPaintData(const FloatQuad&);
 
-        static Ref<Inspector::InspectorObject> createProbeSampleData(const Inspector::ScriptBreakpointAction&, unsigned sampleId);
+    static void appendLayoutRoot(Inspector::InspectorObject* data, const FloatQuad&);
+    static void appendProfile(Inspector::InspectorObject*, RefPtr<JSC::Profile>&&);
 
-        static Ref<Inspector::InspectorObject> createEventDispatchData(const Event&);
-
-        static Ref<Inspector::InspectorObject> createGenericTimerData(int timerId);
-
-        static Ref<Inspector::InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
-
-        static Ref<Inspector::InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
-
-        static Ref<Inspector::InspectorObject> createTimeStampData(const String&);
-
-        static Ref<Inspector::InspectorObject> createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout);
-
-        static Ref<Inspector::InspectorObject> createParseHTMLData(unsigned startLine);
-
-        static Ref<Inspector::InspectorObject> createAnimationFrameData(int callbackId);
-
-        static Ref<Inspector::InspectorObject> createPaintData(const FloatQuad&);
-
-        static void appendLayoutRoot(Inspector::InspectorObject* data, const FloatQuad&);
-
-        static void appendProfile(Inspector::InspectorObject*, RefPtr<JSC::Profile>&&);
-
-    private:
-        TimelineRecordFactory() { }
-    };
+private:
+    TimelineRecordFactory() { }
+};
 
 } // namespace WebCore
 

@@ -35,23 +35,16 @@
 
 #include "Event.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "IntRect.h"
 #include "JSDOMWindow.h"
-#include "MainFrame.h"
 #include "PageScriptDebugServer.h"
-#include "RenderElement.h"
 #include "RenderView.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
 #include "ScriptState.h"
 #include "TimelineRecordFactory.h"
-#include <inspector/IdentifiersFactory.h>
 #include <inspector/ScriptBreakpoint.h>
 #include <profiler/LegacyProfiler.h>
-#include <wtf/CurrentTime.h>
+#include <wtf/Stopwatch.h>
 
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecksIOS.h"
@@ -340,20 +333,7 @@ void InspectorTimelineAgent::didInvalidateLayout(Frame& frame)
 
 void InspectorTimelineAgent::willLayout(Frame& frame)
 {
-    auto* root = frame.view()->layoutRoot();
-    bool partialLayout = !!root;
-
-    if (!partialLayout)
-        root = frame.contentRenderer();
-
-    unsigned dirtyObjects = 0;
-    unsigned totalObjects = 0;
-    for (RenderObject* o = root; o; o = o->nextInPreOrder(root)) {
-        ++totalObjects;
-        if (o->needsLayout())
-            ++dirtyObjects;
-    }
-    pushCurrentRecord(TimelineRecordFactory::createLayoutData(dirtyObjects, totalObjects, partialLayout), TimelineRecordType::Layout, true, &frame);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, &frame);
 }
 
 void InspectorTimelineAgent::didLayout(RenderObject* root)

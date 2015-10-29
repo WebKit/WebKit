@@ -39,9 +39,7 @@
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/ScriptDebugListener.h>
-#include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class Profile;
@@ -53,13 +51,8 @@ class Event;
 class FloatQuad;
 class Frame;
 class InspectorPageAgent;
-class IntRect;
-class URL;
-class Page;
 class PageScriptDebugServer;
 class RenderObject;
-class ResourceRequest;
-class ResourceResponse;
 class RunLoopObserver;
 
 typedef String ErrorString;
