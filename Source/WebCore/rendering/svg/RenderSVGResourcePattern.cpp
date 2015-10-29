@@ -27,6 +27,7 @@
 #include "RenderSVGRoot.h"
 #include "SVGFitToViewBox.h"
 #include "SVGRenderingContext.h"
+#include "SVGResources.h"
 #include "SVGResourcesCache.h"
 
 namespace WebCore {
