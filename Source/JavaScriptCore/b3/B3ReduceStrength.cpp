@@ -76,10 +76,6 @@ private:
         
         switch (m_value->opcode()) {
         case Add:
-            // Turn this: Add(constant, value)
-            // Into this: Add(value, constant)
-            //
-            // FIXME: If both non-constant, we should sort the operands.
             handleCommutativity();
 
             // Turn this: Add(Add(value, constant1), constant2)
@@ -174,11 +170,31 @@ private:
         }
     }
 
+    // Turn this: Add(constant, value)
+    // Into this: Add(value, constant)
+    //
+    // Also:
+    // Turn this: Add(value1, value2)
+    // Into this: Add(value2, value1)
+    // If we decide that value2 coming first is the canonical ordering.
     void handleCommutativity()
     {
-        if (m_value->child(0)->isConstant() && !m_value->child(1)->isConstant()) {
+        // Leave it alone if the right child is a constant.
+        if (m_value->child(1)->isConstant())
+            return;
+        
+        if (m_value->child(0)->isConstant()) {
             std::swap(m_value->child(0), m_value->child(1));
             m_changed = true;
+            return;
+        }
+
+        // Sort the operands. This is an important canonicalization. We use the index instead of
+        // the address to make this at least slightly deterministic.
+        if (m_value->child(0)->index() > m_value->child(1)->index()) {
+            std::swap(m_value->child(0), m_value->child(1));
+            m_changed = true;
+            return;
         }
     }
 
