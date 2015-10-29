@@ -25,9 +25,9 @@
 
 WebInspector.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WebInspector.ButtonNavigationItem
 {
-    constructor(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
+    constructor(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, role)
     {
-        super(identifier, defaultToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
+        super(identifier, defaultToolTip, image, imageWidth, imageHeight, role);
 
         this._defaultToolTip = defaultToolTip;
         this._activatedToolTip = activatedToolTip || defaultToolTip;

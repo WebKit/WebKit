@@ -84,9 +84,9 @@ WebInspector.FilterBar = class FilterBar extends WebInspector.Object
             this._handleFilterChanged();
     }
 
-    addFilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss)
+    addFilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight)
     {
-        var filterBarButton = new WebInspector.FilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss);
+        var filterBarButton = new WebInspector.FilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight);
         filterBarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._handleFilterBarButtonClicked, this);
         filterBarButton.addEventListener(WebInspector.FilterBarButton.Event.ActivatedStateToggled, this._handleFilterButtonToggled, this);
         this._filtersNavigationBar.addNavigationItem(filterBarButton);

@@ -29,8 +29,8 @@ function useSVGSymbol(url, className, title)
     const xlinkNamespace = "http://www.w3.org/1999/xlink";
 
     let svgElement = document.createElementNS(svgNamespace, "svg");
-    svgElement.setAttribute("width", "100%");
-    svgElement.setAttribute("height", "100%");
+    svgElement.style.width = "100%";
+    svgElement.style.height = "100%";
 
     // URL must contain a fragment reference to a graphical element, like a symbol. If none is given
     // append #root which all of our SVGs have on the top level <svg> element.
@@ -45,9 +45,9 @@ function useSVGSymbol(url, className, title)
     wrapper.appendChild(svgElement);
 
     if (className)
-        wrapper.setAttribute("class", className); // Can't use className property since this is the SVG DOM.
+        wrapper.className = className;
     if (title)
-        wrapper.setAttribute("title", title); // Can't use title property since this is the SVG DOM.
+        wrapper.title = title;
 
     return wrapper;
 }

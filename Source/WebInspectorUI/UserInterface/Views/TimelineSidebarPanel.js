@@ -148,7 +148,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         toolTip = WebInspector.UIString("Start Playback");
         altToolTip = WebInspector.UIString("Pause Playback");
-        this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, "Images/Resume.svg", "Images/Pause.svg", 15, 15, true);
+        this._replayPauseResumeButtonItem = new WebInspector.ToggleButtonNavigationItem("replay-pause-resume", toolTip, altToolTip, "Images/Resume.svg", "Images/Pause.svg", 15, 15);
         this._replayPauseResumeButtonItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._replayPauseResumeButtonClicked, this);
         this._replayPauseResumeButtonItem.enabled = false;
         this._replayNavigationBar.addNavigationItem(this._replayPauseResumeButtonItem);

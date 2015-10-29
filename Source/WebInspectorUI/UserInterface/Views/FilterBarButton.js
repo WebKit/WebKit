@@ -25,9 +25,9 @@
 
 WebInspector.FilterBarButton = class FilterBarButton extends WebInspector.ActivateButtonNavigationItem
 {
-    constructor(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
+    constructor(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, role)
     {
-        super(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
+        super(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, role);
 
         this._filterFunction = filterFunction;
 

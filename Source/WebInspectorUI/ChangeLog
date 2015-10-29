@@ -1,3 +1,43 @@
+2015-10-29  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Navigation bar icons are missing
+        https://bugs.webkit.org/show_bug.cgi?id=150677
+
+        Reviewed by Joseph Pecoraro.
+
+        The glyph width and height were not being set correctly and it broke NavigationBar buttons.
+        The width and height attribute was being set on a div, when it should have used the style property.
+        Also remove the suppressEmboss flag, which is no longer used but the clients and subclasses still did.
+
+        * UserInterface/Base/ImageUtilities.js:
+        (useSVGSymbol): Use style property instead of setting width and height. The attributes
+        didn't accomplish the same thing in all cases. Use title and className property on the
+        wrapper element and remove the comments, which applied when there wasn't a wrapper.
+
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WebInspector.ActivateButtonNavigationItem): Remove suppressEmboss.
+        * UserInterface/Views/ActivateButtonToolbarItem.js:
+        (WebInspector.ActivateButtonToolbarItem): Remove suppressEmboss.
+
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem): Remove suppressEmboss.
+        (WebInspector.ButtonNavigationItem.prototype.set image): Use style property instead of setting
+        width and height attributes. This assumed the SVG element was the glyph element, which changed
+        at one point without me remembering to fix this client.
+
+        * UserInterface/Views/ButtonToolbarItem.js:
+        (WebInspector.ButtonToolbarItem):  Remove suppressEmboss.
+        * UserInterface/Views/DebuggerDashboardView.js:
+        (WebInspector.DebuggerDashboardView): Remove suppressEmboss use.
+        * UserInterface/Views/FilterBar.js:
+        (WebInspector.FilterBar.prototype.addFilterBarButton): Remove suppressEmboss.
+        * UserInterface/Views/FilterBarButton.js:
+        (WebInspector.FilterBarButton): Remove suppressEmboss.
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel):  Remove suppressEmboss use.
+        * UserInterface/Views/ToggleButtonNavigationItem.js:
+        (WebInspector.ToggleButtonNavigationItem): Remove suppressEmboss.
+
 2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clean up and audit TimelineRecordFactory records
