@@ -41,8 +41,11 @@
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
 #import "StringUtilities.h"
+#import "TextChecker.h"
+#import "TextCheckerState.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "ViewGestureController.h"
+#import "WKBrowsingContextControllerInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
 #import "WKTextInputWindowController.h"
@@ -57,11 +60,14 @@
 #import "_WKThumbnailViewInternal.h"
 #import <HIToolbox/CarbonEventsCore.h>
 #import <WebCore/AXObjectCache.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/DataDetectorsSPI.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
+#import <WebCore/Editor.h>
 #import <WebCore/KeypressCommand.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSImmediateActionGestureRecognizerSPI.h>
 #import <WebCore/NSWindowSPI.h>
@@ -453,14 +459,6 @@ NSWindow *WebViewImpl::window()
     return m_view.window;
 }
 
-std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy()
-{
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
-        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(m_page);
-
-    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(m_page);
-}
-
 void WebViewImpl::processDidExit()
 {
     notifyInputContextAboutDiscardedComposition();
@@ -682,6 +680,20 @@ CGSize WebViewImpl::fixedLayoutSize() const
     return m_page.fixedLayoutSize();
 }
 
+std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy()
+{
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseRemoteLayerTreeDrawingArea"] boolValue])
+        return std::make_unique<RemoteLayerTreeDrawingAreaProxy>(m_page);
+
+    return std::make_unique<TiledCoreAnimationDrawingAreaProxy>(m_page);
+}
+
+bool WebViewImpl::isUsingUISideCompositing() const
+{
+    auto* drawingArea = m_page.drawingArea();
+    return drawingArea && drawingArea->type() == DrawingAreaTypeRemoteLayerTree;
+}
+
 void WebViewImpl::setDrawingAreaSize(CGSize size)
 {
     if (!m_page.drawingArea())
@@ -689,6 +701,64 @@ void WebViewImpl::setDrawingAreaSize(CGSize size)
 
     m_page.drawingArea()->setSize(WebCore::IntSize(size), WebCore::IntSize(), WebCore::IntSize(m_resizeScrollOffset));
     m_resizeScrollOffset = CGSizeZero;
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+// This method forces a drawing area geometry update, even if frame size updates are disabled.
+// The updated is performed asynchronously; we don't wait for the geometry update before returning.
+// The area drawn need not match the current frame size - if it differs it will be anchored to the
+// frame according to the current contentAnchor.
+void WebViewImpl::forceAsyncDrawingAreaSizeUpdate(CGSize size)
+{
+    // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+    if (m_clipsToVisibleRect)
+        updateViewExposedRect();
+    setDrawingAreaSize(size);
+
+    // If a geometry update is pending the new update won't be sent. Poll without waiting for any
+    // pending did-update message now, such that the new update can be sent. We do so after setting
+    // the drawing area size such that the latest update is sent.
+    if (DrawingAreaProxy* drawingArea = m_page.drawingArea())
+        drawingArea->waitForPossibleGeometryUpdate(std::chrono::milliseconds::zero());
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void WebViewImpl::waitForAsyncDrawingAreaSizeUpdate()
+{
+    // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
+    if (DrawingAreaProxy* drawingArea = m_page.drawingArea()) {
+        // If a geometry update is still pending then the action of receiving the
+        // first geometry update may result in another update being scheduled -
+        // we should wait for this to complete too.
+        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
+        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
+    }
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+#pragma clang diagnostic pop
+
+void WebViewImpl::updateLayer()
+{
+    if (drawsBackground() && !drawsTransparentBackground())
+        m_view.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+    else
+        m_view.layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
+
+    // If asynchronous geometry updates have been sent by forceAsyncDrawingAreaSizeUpdate,
+    // then subsequent calls to setFrameSize should not result in us waiting for the did
+    // udpate response if setFrameSize is called.
+    if (frameSizeUpdatesDisabled())
+        return;
+
+    if (DrawingAreaProxy* drawingArea = m_page.drawingArea())
+        drawingArea->waitForPossibleGeometryUpdate();
 }
 
 void WebViewImpl::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)
@@ -761,6 +831,31 @@ void WebViewImpl::setClipsToVisibleRect(bool clipsToVisibleRect)
 {
     m_clipsToVisibleRect = clipsToVisibleRect;
     updateViewExposedRect();
+}
+
+void WebViewImpl::setMinimumSizeForAutoLayout(CGSize minimumSizeForAutoLayout)
+{
+    bool expandsToFit = minimumSizeForAutoLayout.width > 0;
+
+    m_page.setMinimumLayoutSize(WebCore::IntSize(minimumSizeForAutoLayout));
+    m_page.setMainFrameIsScrollable(!expandsToFit);
+
+    setClipsToVisibleRect(expandsToFit);
+}
+
+CGSize WebViewImpl::minimumSizeForAutoLayout() const
+{
+    return m_page.minimumLayoutSize();
+}
+
+void WebViewImpl::setShouldExpandToViewHeightForAutoLayout(bool shouldExpandToViewHeightForAutoLayout)
+{
+    m_page.setAutoSizingShouldExpandToViewHeight(shouldExpandToViewHeightForAutoLayout);
+}
+
+bool WebViewImpl::shouldExpandToViewHeightForAutoLayout() const
+{
+    return m_page.autoSizingShouldExpandToViewHeight();
 }
 
 void WebViewImpl::setIntrinsicContentSize(CGSize intrinsicContentSize)
@@ -1050,6 +1145,39 @@ ColorSpaceData WebViewImpl::colorSpace()
     colorSpaceData.cgColorSpace = [m_colorSpace CGColorSpace];
     
     return colorSpaceData;
+}
+
+void WebViewImpl::setUnderlayColor(NSColor *underlayColor)
+{
+    m_page.setUnderlayColor(WebCore::colorFromNSColor(underlayColor));
+}
+
+NSColor *WebViewImpl::underlayColor() const
+{
+    WebCore::Color webColor = m_page.underlayColor();
+    if (!webColor.isValid())
+        return nil;
+
+    return WebCore::nsColor(webColor);
+}
+
+NSColor *WebViewImpl::pageExtendedBackgroundColor() const
+{
+    WebCore::Color color = m_page.pageExtendedBackgroundColor();
+    if (!color.isValid())
+        return nil;
+
+    return WebCore::nsColor(color);
+}
+
+void WebViewImpl::setOverlayScrollbarStyle(WTF::Optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle)
+{
+    m_page.setOverlayScrollbarStyle(scrollbarStyle);
+}
+
+WTF::Optional<WebCore::ScrollbarOverlayStyle> WebViewImpl::overlayScrollbarStyle() const
+{
+    return m_page.overlayScrollbarStyle();
 }
 
 void WebViewImpl::beginDeferringViewInWindowChanges()
@@ -1357,9 +1485,69 @@ bool WebViewImpl::isEditable() const
     return m_page.isEditable();
 }
 
-void WebViewImpl::executeEditCommand(const String& commandName, const String& argument)
+typedef HashMap<SEL, String> SelectorNameMap;
+
+// Map selectors into Editor command names.
+// This is not needed for any selectors that have the same name as the Editor command.
+static const SelectorNameMap& selectorExceptionMap()
 {
-    m_page.executeEditCommand(commandName, argument);
+    static NeverDestroyed<SelectorNameMap> map;
+
+    struct SelectorAndCommandName {
+        SEL selector;
+        ASCIILiteral commandName;
+    };
+
+    static const SelectorAndCommandName names[] = {
+        { @selector(insertNewlineIgnoringFieldEditor:), ASCIILiteral("InsertNewline") },
+        { @selector(insertParagraphSeparator:), ASCIILiteral("InsertNewline") },
+        { @selector(insertTabIgnoringFieldEditor:), ASCIILiteral("InsertTab") },
+        { @selector(pageDown:), ASCIILiteral("MovePageDown") },
+        { @selector(pageDownAndModifySelection:), ASCIILiteral("MovePageDownAndModifySelection") },
+        { @selector(pageUp:), ASCIILiteral("MovePageUp") },
+        { @selector(pageUpAndModifySelection:), ASCIILiteral("MovePageUpAndModifySelection") },
+        { @selector(scrollPageDown:), ASCIILiteral("ScrollPageForward") },
+        { @selector(scrollPageUp:), ASCIILiteral("ScrollPageBackward") }
+    };
+
+    for (auto& name : names)
+        map.get().add(name.selector, name.commandName);
+
+    return map;
+}
+
+static String commandNameForSelector(SEL selector)
+{
+    // Check the exception map first.
+    static const SelectorNameMap& exceptionMap = selectorExceptionMap();
+    SelectorNameMap::const_iterator it = exceptionMap.find(selector);
+    if (it != exceptionMap.end())
+        return it->value;
+
+    // Remove the trailing colon.
+    // No need to capitalize the command name since Editor command names are
+    // not case sensitive.
+    const char* selectorName = sel_getName(selector);
+    size_t selectorNameLength = strlen(selectorName);
+    if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
+        return String();
+    return String(selectorName, selectorNameLength - 1);
+}
+
+bool WebViewImpl::executeSavedCommandBySelector(SEL selector)
+{
+    LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
+    // The sink does two things: 1) Tells us if the responder went unhandled, and
+    // 2) prevents any NSBeep; we don't ever want to beep here.
+    RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:m_view]);
+    [m_view _superDoCommandBySelector:selector];
+    [sink detach];
+    return ![sink didReceiveUnhandledCommand];
+}
+
+void WebViewImpl::executeEditCommandForSelector(SEL selector, const String& argument)
+{
+    m_page.executeEditCommand(commandNameForSelector(selector), argument);
 }
 
 void WebViewImpl::registerEditCommand(RefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
@@ -1421,6 +1609,141 @@ void WebViewImpl::updateFontPanelIfNeeded()
             if (font)
                 [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:selectionHasMultipleFonts];
         });
+    }
+}
+
+static NSMenuItem *menuItem(id <NSValidatedUserInterfaceItem> item)
+{
+    if (![(NSObject *)item isKindOfClass:[NSMenuItem class]])
+        return nil;
+    return (NSMenuItem *)item;
+}
+
+static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
+{
+    if (![(NSObject *)item isKindOfClass:[NSToolbarItem class]])
+        return nil;
+    return (NSToolbarItem *)item;
+}
+
+bool WebViewImpl::validateUserInterfaceItem(id <NSValidatedUserInterfaceItem> item)
+{
+    SEL action = [item action];
+
+    if (action == @selector(showGuessPanel:)) {
+        if (NSMenuItem *menuItem = WebKit::menuItem(item))
+            [menuItem setTitle:WebCore::contextMenuItemTagShowSpellingPanel(![[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible])];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(checkSpelling:) || action == @selector(changeSpelling:))
+        return m_page.editorState().isContentEditable;
+
+    if (action == @selector(toggleContinuousSpellChecking:)) {
+        bool enabled = TextChecker::isContinuousSpellCheckingAllowed();
+        bool checked = enabled && TextChecker::state().isContinuousSpellCheckingEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return enabled;
+    }
+
+    if (action == @selector(toggleGrammarChecking:)) {
+        bool checked = TextChecker::state().isGrammarCheckingEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return true;
+    }
+
+    if (action == @selector(toggleAutomaticSpellingCorrection:)) {
+        bool checked = TextChecker::state().isAutomaticSpellingCorrectionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(orderFrontSubstitutionsPanel:)) {
+        if (NSMenuItem *menuItem = WebKit::menuItem(item))
+            [menuItem setTitle:WebCore::contextMenuItemTagShowSubstitutions(![[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible])];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(toggleSmartInsertDelete:)) {
+        bool checked = m_page.isSmartInsertDeleteEnabled();
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
+        bool checked = TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticDashSubstitution:)) {
+        bool checked = TextChecker::state().isAutomaticDashSubstitutionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticLinkDetection:)) {
+        bool checked = TextChecker::state().isAutomaticLinkDetectionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticTextReplacement:)) {
+        bool checked = TextChecker::state().isAutomaticTextReplacementEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return m_page.editorState().isContentEditable;
+    }
+
+    if (action == @selector(uppercaseWord:) || action == @selector(lowercaseWord:) || action == @selector(capitalizeWord:))
+        return m_page.editorState().selectionIsRange && m_page.editorState().isContentEditable;
+
+    if (action == @selector(stopSpeaking:))
+        return [NSApp isSpeaking];
+
+    // The centerSelectionInVisibleArea: selector is enabled if there's a selection range or if there's an insertion point in an editable area.
+    if (action == @selector(centerSelectionInVisibleArea:))
+        return m_page.editorState().selectionIsRange || (m_page.editorState().isContentEditable && !m_page.editorState().selectionIsNone);
+
+    // Next, handle editor commands. Start by returning true for anything that is not an editor command.
+    // Returning true is the default thing to do in an AppKit validate method for any selector that is not recognized.
+    String commandName = commandNameForSelector([item action]);
+    if (!WebCore::Editor::commandIsSupportedFromMenuOrKeyBinding(commandName))
+        return true;
+
+    // Add this item to the vector of items for a given command that are awaiting validation.
+    ValidationMap::AddResult addResult = m_validationMap.add(commandName, ValidationVector());
+    addResult.iterator->value.append(item);
+    if (addResult.isNewEntry) {
+        // If we are not already awaiting validation for this command, start the asynchronous validation process.
+        // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
+        // we asked for the same command; there is no guarantee the answer is still valid.
+        auto weakThis = createWeakPtr();
+        m_page.validateCommand(commandName, [weakThis](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
+            if (!weakThis)
+                return;
+
+            // If the process exits before the command can be validated, we'll be called back with an error.
+            if (error != WebKit::CallbackBase::Error::None)
+                return;
+
+            weakThis->setUserInterfaceItemState(commandName, isEnabled, state);
+        });
+    }
+
+    // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.
+    // FIXME <rdar://problem/8803459>: This means disabled items will flash enabled at first for a moment.
+    // But returning NO here would be worse; that would make keyboard commands such as command-C fail.
+    return true;
+}
+
+void WebViewImpl::setUserInterfaceItemState(NSString *commandName, bool enabled, int state)
+{
+    ValidationVector items = m_validationMap.take(commandName);
+    for (auto& item : items) {
+        [menuItem(item.get()) setState:state];
+        [menuItem(item.get()) setEnabled:enabled];
+        [toolbarItem(item.get()) setEnabled:enabled];
+        // FIXME <rdar://problem/8803392>: If the item is neither a menu nor toolbar item, it will be left enabled.
     }
 }
 
@@ -1908,6 +2231,14 @@ void WebViewImpl::destroyRemoteObjectRegistry()
     [m_remoteObjectRegistry _invalidate];
     m_remoteObjectRegistry = nil;
 }
+
+WKBrowsingContextController *WebViewImpl::browsingContextController()
+{
+    if (!m_browsingContextController)
+        m_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:toAPI(&m_page)]);
+
+    return m_browsingContextController.get();
+}
 #endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)
@@ -2294,6 +2625,16 @@ RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
     return ViewSnapshot::create(WTF::move(surface));
 }
 
+void WebViewImpl::saveBackForwardSnapshotForCurrentItem()
+{
+    m_page.recordNavigationSnapshot();
+}
+
+void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
+{
+    m_page.recordNavigationSnapshot(item);
+}
+
 ViewGestureController& WebViewImpl::ensureGestureController()
 {
     if (!m_gestureController)
@@ -2486,17 +2827,6 @@ void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
     if (m_gestureController)
         m_gestureController->gestureEventWasNotHandledByWebCore(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
 #endif
-}
-
-bool WebViewImpl::executeSavedCommandBySelector(SEL selector)
-{
-    LOG(TextInput, "Executing previously saved command %s", sel_getName(selector));
-    // The sink does two things: 1) Tells us if the responder went unhandled, and
-    // 2) prevents any NSBeep; we don't ever want to beep here.
-    RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:m_view]);
-    [m_view _superDoCommandBySelector:selector];
-    [sink detach];
-    return ![sink didReceiveUnhandledCommand];
 }
 
 } // namespace WebKit

@@ -31,6 +31,7 @@
 #include "PluginComplexTextInputState.h"
 #include "WKLayoutMode.h"
 #include "WebPageProxy.h"
+#include "_WKOverlayScrollbarStyle.h"
 #include <WebCore/TextIndicatorWindow.h>
 #include <functional>
 #include <wtf/RetainPtr.h>
@@ -40,6 +41,7 @@
 OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
+OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKEditorUndoTargetObjC;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
@@ -80,6 +82,10 @@ class WebEditCommandProxy;
 class WebPageProxy;
 struct ColorSpaceData;
 
+typedef id <NSValidatedUserInterfaceItem> ValidationItem;
+typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
+typedef HashMap<String, ValidationVector> ValidationMap;
+
 class WebViewImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
@@ -119,7 +125,11 @@ public:
     CGSize fixedLayoutSize() const;
 
     std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy();
+    bool isUsingUISideCompositing() const;
     void setDrawingAreaSize(CGSize);
+    void forceAsyncDrawingAreaSizeUpdate(CGSize);
+    void waitForAsyncDrawingAreaSizeUpdate();
+    void updateLayer();
 
     void setAutomaticallyAdjustsContentInsets(bool);
     bool automaticallyAdjustsContentInsets() const { return m_automaticallyAdjustsContentInsets; }
@@ -132,6 +142,10 @@ public:
     void setClipsToVisibleRect(bool);
     bool clipsToVisibleRect() const { return m_clipsToVisibleRect; }
 
+    void setMinimumSizeForAutoLayout(CGSize);
+    CGSize minimumSizeForAutoLayout() const;
+    void setShouldExpandToViewHeightForAutoLayout(bool);
+    bool shouldExpandToViewHeightForAutoLayout() const;
     void setIntrinsicContentSize(CGSize);
     CGSize intrinsicContentSize() const;
 
@@ -163,6 +177,13 @@ public:
     void viewDidChangeBackingProperties();
 
     ColorSpaceData colorSpace();
+
+    void setUnderlayColor(NSColor *);
+    NSColor *underlayColor() const;
+    NSColor *pageExtendedBackgroundColor() const;
+
+    void setOverlayScrollbarStyle(WTF::Optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
+    WTF::Optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const;
 
     void beginDeferringViewInWindowChanges();
     // FIXME: Merge these two?
@@ -204,7 +225,8 @@ public:
     NSWindow *createFullScreenWindow();
 
     bool isEditable() const;
-    void executeEditCommand(const String& commandName, const String& argument = String());
+    bool executeSavedCommandBySelector(SEL);
+    void executeEditCommandForSelector(SEL, const String& argument = String());
     void registerEditCommand(RefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();
     bool writeSelectionToPasteboard(NSPasteboard *, NSArray *types);
@@ -212,6 +234,7 @@ public:
     void selectionDidChange();
     void startObservingFontPanel();
     void updateFontPanelIfNeeded();
+    bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
 
     void preferencesDidChange();
 
@@ -274,6 +297,8 @@ public:
 
     _WKRemoteObjectRegistry *remoteObjectRegistry();
     void destroyRemoteObjectRegistry(); // FIXME: Temporary. Can fold in after we move ownership of WebPageProxy here.
+
+    WKBrowsingContextController *browsingContextController();
 #endif // WK_API_ENABLED
 
 #if ENABLE(DRAG_SUPPORT)
@@ -302,6 +327,8 @@ public:
     NSArray *namesOfPromisedFilesDroppedAtDestination(NSURL *dropDestination);
 
     RefPtr<ViewSnapshot> takeViewSnapshot();
+    void saveBackForwardSnapshotForCurrentItem();
+    void saveBackForwardSnapshotForItem(WebBackForwardListItem&);
 
     ViewGestureController* gestureController() { return m_gestureController.get(); }
     ViewGestureController& ensureGestureController();
@@ -329,8 +356,6 @@ public:
     void gestureEventWasNotHandledByWebCore(NSEvent *);
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
 
-    bool executeSavedCommandBySelector(SEL);
-
     void setTotalHeightOfBanners(CGFloat totalHeightOfBanners) { m_totalHeightOfBanners = totalHeightOfBanners; }
     CGFloat totalHeightOfBanners() const { return m_totalHeightOfBanners; }
 
@@ -350,6 +375,8 @@ private:
 
     void reparentLayerTreeInThumbnailView();
     void updateThumbnailViewLayer();
+
+    void setUserInterfaceItemState(NSString *commandName, bool enabled, int state);
 
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;
@@ -384,6 +411,8 @@ private:
 
     bool m_inSecureInputState { false };
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
+
+    ValidationMap m_validationMap;
 
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
     uint64_t m_pluginComplexTextInputIdentifier { 0 };
@@ -435,6 +464,8 @@ private:
     _WKThumbnailView *m_thumbnailView { nullptr };
 
     RetainPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
+
+    RetainPtr<WKBrowsingContextController> m_browsingContextController;
 #endif
 
     std::unique_ptr<ViewGestureController> m_gestureController;

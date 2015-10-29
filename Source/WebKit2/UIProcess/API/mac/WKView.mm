@@ -106,7 +106,6 @@
 #import <wtf/RunLoop.h>
 
 /* API internals. */
-#import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKProcessGroupPrivate.h"
 
@@ -126,14 +125,6 @@
 using namespace WebKit;
 using namespace WebCore;
 
-namespace WebKit {
-
-typedef id <NSValidatedUserInterfaceItem> ValidationItem;
-typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
-typedef HashMap<String, ValidationVector> ValidationMap;
-
-}
-
 #if !USE(ASYNC_NSTEXTINPUTCLIENT)
 struct WKViewInterpretKeyEventsParameters {
     bool eventInterpretationHadSideEffects;
@@ -148,13 +139,6 @@ struct WKViewInterpretKeyEventsParameters {
     std::unique_ptr<PageClientImpl> _pageClient;
     RefPtr<WebPageProxy> _page;
     std::unique_ptr<WebViewImpl> _impl;
-
-#if WK_API_ENABLED
-    RetainPtr<WKBrowsingContextController> _browsingContextController;
-#endif
-
-    // For asynchronous validation.
-    ValidationMap _validationMap;
 
     // We keep here the event when resending it to
     // the application to distinguish the case of a new event from one 
@@ -213,15 +197,10 @@ struct WKViewInterpretKeyEventsParameters {
 }
 
 #if WK_API_ENABLED
-
 - (WKBrowsingContextController *)browsingContextController
 {
-    if (!_data->_browsingContextController)
-        _data->_browsingContextController = adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:toAPI(_data->_page.get())]);
-
-    return _data->_browsingContextController.get();
+    return _data->_impl->browsingContextController();
 }
-
 #endif // WK_API_ENABLED
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
@@ -297,48 +276,7 @@ struct WKViewInterpretKeyEventsParameters {
     [super renewGState];
 }
 
-typedef HashMap<SEL, String> SelectorNameMap;
-
-// Map selectors into Editor command names.
-// This is not needed for any selectors that have the same name as the Editor command.
-static const SelectorNameMap* createSelectorExceptionMap()
-{
-    SelectorNameMap* map = new HashMap<SEL, String>;
-    
-    map->add(@selector(insertNewlineIgnoringFieldEditor:), "InsertNewline");
-    map->add(@selector(insertParagraphSeparator:), "InsertNewline");
-    map->add(@selector(insertTabIgnoringFieldEditor:), "InsertTab");
-    map->add(@selector(pageDown:), "MovePageDown");
-    map->add(@selector(pageDownAndModifySelection:), "MovePageDownAndModifySelection");
-    map->add(@selector(pageUp:), "MovePageUp");
-    map->add(@selector(pageUpAndModifySelection:), "MovePageUpAndModifySelection");
-    map->add(@selector(scrollPageDown:), "ScrollPageForward");
-    map->add(@selector(scrollPageUp:), "ScrollPageBackward");
-    
-    return map;
-}
-
-static String commandNameForSelector(SEL selector)
-{
-    // Check the exception map first.
-    static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
-    SelectorNameMap::const_iterator it = exceptionMap->find(selector);
-    if (it != exceptionMap->end())
-        return it->value;
-    
-    // Remove the trailing colon.
-    // No need to capitalize the command name since Editor command names are
-    // not case sensitive.
-    const char* selectorName = sel_getName(selector);
-    size_t selectorNameLength = strlen(selectorName);
-    if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
-        return String();
-    return String(selectorName, selectorNameLength - 1);
-}
-
-// Editing commands
-
-#define WEBCORE_COMMAND(command) - (void)command:(id)sender { _data->_impl->executeEditCommand(commandNameForSelector(_cmd)); }
+#define WEBCORE_COMMAND(command) - (void)command:(id)sender { _data->_impl->executeEditCommandForSelector(_cmd); }
 
 WEBCORE_COMMAND(alignCenter)
 WEBCORE_COMMAND(alignJustified)
@@ -530,126 +468,9 @@ Some other editing-related methods still unimplemented:
 
 */
 
-// Menu items validation
-
-static NSMenuItem *menuItem(id <NSValidatedUserInterfaceItem> item)
-{
-    if (![(NSObject *)item isKindOfClass:[NSMenuItem class]])
-        return nil;
-    return (NSMenuItem *)item;
-}
-
-static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
-{
-    if (![(NSObject *)item isKindOfClass:[NSToolbarItem class]])
-        return nil;
-    return (NSToolbarItem *)item;
-}
-
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
-    SEL action = [item action];
-
-    if (action == @selector(showGuessPanel:)) {
-        if (NSMenuItem *menuItem = ::menuItem(item))
-            [menuItem setTitle:contextMenuItemTagShowSpellingPanel(![[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible])];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(checkSpelling:) || action == @selector(changeSpelling:))
-        return _data->_page->editorState().isContentEditable;
-
-    if (action == @selector(toggleContinuousSpellChecking:)) {
-        bool enabled = TextChecker::isContinuousSpellCheckingAllowed();
-        bool checked = enabled && TextChecker::state().isContinuousSpellCheckingEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return enabled;
-    }
-
-    if (action == @selector(toggleGrammarChecking:)) {
-        bool checked = TextChecker::state().isGrammarCheckingEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return YES;
-    }
-
-    if (action == @selector(toggleAutomaticSpellingCorrection:)) {
-        bool checked = TextChecker::state().isAutomaticSpellingCorrectionEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(orderFrontSubstitutionsPanel:)) {
-        if (NSMenuItem *menuItem = ::menuItem(item))
-            [menuItem setTitle:contextMenuItemTagShowSubstitutions(![[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible])];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(toggleSmartInsertDelete:)) {
-        bool checked = _data->_page->isSmartInsertDeleteEnabled();
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
-        bool checked = TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(toggleAutomaticDashSubstitution:)) {
-        bool checked = TextChecker::state().isAutomaticDashSubstitutionEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(toggleAutomaticLinkDetection:)) {
-        bool checked = TextChecker::state().isAutomaticLinkDetectionEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(toggleAutomaticTextReplacement:)) {
-        bool checked = TextChecker::state().isAutomaticTextReplacementEnabled;
-        [menuItem(item) setState:checked ? NSOnState : NSOffState];
-        return _data->_page->editorState().isContentEditable;
-    }
-
-    if (action == @selector(uppercaseWord:) || action == @selector(lowercaseWord:) || action == @selector(capitalizeWord:))
-        return _data->_page->editorState().selectionIsRange && _data->_page->editorState().isContentEditable;
-    
-    if (action == @selector(stopSpeaking:))
-        return [NSApp isSpeaking];
-    
-    // The centerSelectionInVisibleArea: selector is enabled if there's a selection range or if there's an insertion point in an editable area.
-    if (action == @selector(centerSelectionInVisibleArea:))
-        return _data->_page->editorState().selectionIsRange || (_data->_page->editorState().isContentEditable && !_data->_page->editorState().selectionIsNone);
-
-    // Next, handle editor commands. Start by returning YES for anything that is not an editor command.
-    // Returning YES is the default thing to do in an AppKit validate method for any selector that is not recognized.
-    String commandName = commandNameForSelector([item action]);
-    if (!Editor::commandIsSupportedFromMenuOrKeyBinding(commandName))
-        return YES;
-
-    // Add this item to the vector of items for a given command that are awaiting validation.
-    ValidationMap::AddResult addResult = _data->_validationMap.add(commandName, ValidationVector());
-    addResult.iterator->value.append(item);
-    if (addResult.isNewEntry) {
-        // If we are not already awaiting validation for this command, start the asynchronous validation process.
-        // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
-        // we asked for the same command; there is no guarantee the answer is still valid.
-        _data->_page->validateCommand(commandName, [self](const String& commandName, bool isEnabled, int32_t state, WebKit::CallbackBase::Error error) {
-            // If the process exits before the command can be validated, we'll be called back with an error.
-            if (error != WebKit::CallbackBase::Error::None)
-                return;
-            
-            [self _setUserInterfaceItemState:commandName enabled:isEnabled state:state];
-        });
-    }
-
-    // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.
-    // FIXME <rdar://problem/8803459>: This means disabled items will flash enabled at first for a moment.
-    // But returning NO here would be worse; that would make keyboard commands such as command-C fail.
-    return YES;
+    return _data->_impl->validateUserInterfaceItem(item);
 }
 
 - (IBAction)startSpeaking:(id)sender
@@ -2171,19 +1992,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _data->_impl->quickLookWithEvent(event);
 }
 
-- (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState
-{
-    ValidationVector items = _data->_validationMap.take(commandName);
-    size_t size = items.size();
-    for (size_t i = 0; i < size; ++i) {
-        ValidationItem item = items[i].get();
-        [menuItem(item) setState:newState];
-        [menuItem(item) setEnabled:isEnabled];
-        [toolbarItem(item) setEnabled:isEnabled];
-        // FIXME <rdar://problem/8803392>: If the item is neither a menu nor toolbar item, it will be left enabled.
-    }
-}
-
 - (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled
 {
     if ([event type] != NSKeyDown)
@@ -2325,12 +2133,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)saveBackForwardSnapshotForCurrentItem
 {
-    _data->_page->recordNavigationSnapshot();
+    _data->_impl->saveBackForwardSnapshotForCurrentItem();
 }
 
 - (void)saveBackForwardSnapshotForItem:(WKBackForwardListItemRef)item
 {
-    _data->_page->recordNavigationSnapshot(*toImpl(item));
+    _data->_impl->saveBackForwardSnapshotForItem(*toImpl(item));
 }
 
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
@@ -2363,19 +2171,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)updateLayer
 {
-    if ([self drawsBackground] && ![self drawsTransparentBackground])
-        self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-    else
-        self.layer.backgroundColor = CGColorGetConstantColor(kCGColorClear);
-
-    // If asynchronous geometry updates have been sent by forceAsyncDrawingAreaSizeUpdate,
-    // then subsequent calls to setFrameSize should not result in us waiting for the did
-    // udpate response if setFrameSize is called.
-    if ([self frameSizeUpdatesDisabled])
-        return;
-
-    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
-        drawingArea->waitForPossibleGeometryUpdate();
+    _data->_impl->updateLayer();
 }
 
 - (WKPageRef)pageRef
@@ -2431,27 +2227,22 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSSize)minimumSizeForAutoLayout
 {
-    return _data->_page->minimumLayoutSize();
+    return NSSizeFromCGSize(_data->_impl->minimumSizeForAutoLayout());
 }
 
 - (void)setMinimumSizeForAutoLayout:(NSSize)minimumSizeForAutoLayout
 {
-    BOOL expandsToFit = minimumSizeForAutoLayout.width > 0;
-
-    _data->_page->setMinimumLayoutSize(IntSize(minimumSizeForAutoLayout.width, minimumSizeForAutoLayout.height));
-    _data->_page->setMainFrameIsScrollable(!expandsToFit);
-
-    [self setShouldClipToVisibleRect:expandsToFit];
+    _data->_impl->setMinimumSizeForAutoLayout(NSSizeToCGSize(minimumSizeForAutoLayout));
 }
 
 - (BOOL)shouldExpandToViewHeightForAutoLayout
 {
-    return _data->_page->autoSizingShouldExpandToViewHeight();
+    return _data->_impl->shouldExpandToViewHeightForAutoLayout();
 }
 
 - (void)setShouldExpandToViewHeightForAutoLayout:(BOOL)shouldExpand
 {
-    return _data->_page->setAutoSizingShouldExpandToViewHeight(shouldExpand);
+    return _data->_impl->setShouldExpandToViewHeightForAutoLayout(shouldExpand);
 }
 
 - (BOOL)shouldClipToVisibleRect
@@ -2466,16 +2257,12 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSColor *)underlayColor
 {
-    Color webColor = _data->_page->underlayColor();
-    if (!webColor.isValid())
-        return nil;
-
-    return nsColor(webColor);
+    return _data->_impl->underlayColor();
 }
 
 - (void)setUnderlayColor:(NSColor *)underlayColor
 {
-    _data->_page->setUnderlayColor(colorFromNSColor(underlayColor));
+    _data->_impl->setUnderlayColor(underlayColor);
 }
 
 #if WK_API_ENABLED
@@ -2642,103 +2429,68 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return _data->_impl->totalHeightOfBanners();
 }
 
-- (void)_setOverlayScrollbarStyle:(_WKOverlayScrollbarStyle)scrollbarStyle
+static WTF::Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScrollbarStyle scrollbarStyle)
 {
-    WTF::Optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle;
-
     switch (scrollbarStyle) {
     case _WKOverlayScrollbarStyleDark:
-        coreScrollbarStyle = ScrollbarOverlayStyleDark;
-        break;
+        return WebCore::ScrollbarOverlayStyleDark;
     case _WKOverlayScrollbarStyleLight:
-        coreScrollbarStyle = ScrollbarOverlayStyleLight;
-        break;
+        return WebCore::ScrollbarOverlayStyleLight;
     case _WKOverlayScrollbarStyleDefault:
-        coreScrollbarStyle = ScrollbarOverlayStyleDefault;
-        break;
+        return WebCore::ScrollbarOverlayStyleDefault;
     case _WKOverlayScrollbarStyleAutomatic:
     default:
         break;
     }
 
-    _data->_page->setOverlayScrollbarStyle(coreScrollbarStyle);
+    return Nullopt;
 }
 
-- (_WKOverlayScrollbarStyle)_overlayScrollbarStyle
+static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
-    WTF::Optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle = _data->_page->overlayScrollbarStyle();
-
     if (!coreScrollbarStyle)
         return _WKOverlayScrollbarStyleAutomatic;
 
     switch (coreScrollbarStyle.value()) {
-    case ScrollbarOverlayStyleDark:
+    case WebCore::ScrollbarOverlayStyleDark:
         return _WKOverlayScrollbarStyleDark;
-    case ScrollbarOverlayStyleLight:
+    case WebCore::ScrollbarOverlayStyleLight:
         return _WKOverlayScrollbarStyleLight;
-    case ScrollbarOverlayStyleDefault:
+    case WebCore::ScrollbarOverlayStyleDefault:
         return _WKOverlayScrollbarStyleDefault;
     default:
         return _WKOverlayScrollbarStyleAutomatic;
     }
 }
 
-- (NSColor *)_pageExtendedBackgroundColor
+- (void)_setOverlayScrollbarStyle:(_WKOverlayScrollbarStyle)scrollbarStyle
 {
-    WebCore::Color color = _data->_page->pageExtendedBackgroundColor();
-    if (!color.isValid())
-        return nil;
-
-    return nsColor(color);
+    _data->_impl->setOverlayScrollbarStyle(toCoreScrollbarStyle(scrollbarStyle));
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-noreturn"
-// This method forces a drawing area geometry update, even if frame size updates are disabled.
-// The updated is performed asynchronously; we don't wait for the geometry update before returning.
-// The area drawn need not match the current frame size - if it differs it will be anchored to the
-// frame according to the current contentAnchor.
+- (_WKOverlayScrollbarStyle)_overlayScrollbarStyle
+{
+    return toAPIScrollbarStyle(_data->_impl->overlayScrollbarStyle());
+}
+
+- (NSColor *)_pageExtendedBackgroundColor
+{
+    return _data->_impl->pageExtendedBackgroundColor();
+}
+
 - (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size
 {
-    // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    if (_data->_impl->clipsToVisibleRect())
-        _data->_impl->updateViewExposedRect();
-    _data->_impl->setDrawingAreaSize(NSSizeToCGSize(size));
-
-    // If a geometry update is pending the new update won't be sent. Poll without waiting for any
-    // pending did-update message now, such that the new update can be sent. We do so after setting
-    // the drawing area size such that the latest update is sent.
-    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
-        drawingArea->waitForPossibleGeometryUpdate(std::chrono::milliseconds::zero());
-#else
-    ASSERT_NOT_REACHED();
-#endif
+    _data->_impl->forceAsyncDrawingAreaSizeUpdate(NSSizeToCGSize(size));
 }
 
 - (void)waitForAsyncDrawingAreaSizeUpdate
 {
-    // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
-    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea()) {
-        // If a geometry update is still pending then the action of receiving the
-        // first geometry update may result in another update being scheduled -
-        // we should wait for this to complete too.
-        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
-        drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
-    }
-#else
-    ASSERT_NOT_REACHED();
-#endif
+    _data->_impl->waitForAsyncDrawingAreaSizeUpdate();
 }
-#pragma clang diagnostic pop
 
 - (BOOL)isUsingUISideCompositing
 {
-    if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
-        return drawingArea->type() == DrawingAreaTypeRemoteLayerTree;
-
-    return NO;
+    return _data->_impl->isUsingUISideCompositing();
 }
 
 - (void)setAllowsMagnification:(BOOL)allowsMagnification

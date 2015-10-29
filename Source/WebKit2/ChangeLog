@@ -1,3 +1,63 @@
+2015-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView browsingContextController]):
+        (-[WKView validateUserInterfaceItem:]):
+        (-[WKView saveBackForwardSnapshotForCurrentItem]):
+        (-[WKView saveBackForwardSnapshotForItem:]):
+        (-[WKView updateLayer]):
+        (-[WKView minimumSizeForAutoLayout]):
+        (-[WKView setMinimumSizeForAutoLayout:]):
+        (-[WKView shouldExpandToViewHeightForAutoLayout]):
+        (-[WKView setShouldExpandToViewHeightForAutoLayout:]):
+        (-[WKView underlayColor]):
+        (-[WKView setUnderlayColor:]):
+        (-[WKView _setOverlayScrollbarStyle:]):
+        (-[WKView _overlayScrollbarStyle]):
+        (-[WKView _pageExtendedBackgroundColor]):
+        (-[WKView forceAsyncDrawingAreaSizeUpdate:]):
+        (-[WKView waitForAsyncDrawingAreaSizeUpdate]):
+        (-[WKView isUsingUISideCompositing]):
+        (createSelectorExceptionMap): Deleted.
+        (commandNameForSelector): Deleted.
+        (menuItem): Deleted.
+        (toolbarItem): Deleted.
+        (-[WKView _setUserInterfaceItemState:enabled:state:]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::createDrawingAreaProxy):
+        (WebKit::WebViewImpl::isUsingUISideCompositing):
+        (WebKit::WebViewImpl::forceAsyncDrawingAreaSizeUpdate):
+        (WebKit::WebViewImpl::waitForAsyncDrawingAreaSizeUpdate):
+        (WebKit::WebViewImpl::updateLayer):
+        (WebKit::WebViewImpl::setMinimumSizeForAutoLayout):
+        (WebKit::WebViewImpl::minimumSizeForAutoLayout):
+        (WebKit::WebViewImpl::setShouldExpandToViewHeightForAutoLayout):
+        (WebKit::WebViewImpl::shouldExpandToViewHeightForAutoLayout):
+        (WebKit::WebViewImpl::setUnderlayColor):
+        (WebKit::WebViewImpl::underlayColor):
+        (WebKit::WebViewImpl::pageExtendedBackgroundColor):
+        (WebKit::WebViewImpl::setOverlayScrollbarStyle):
+        (WebKit::WebViewImpl::overlayScrollbarStyle):
+        (WebKit::createSelectorExceptionMap):
+        (WebKit::commandNameForSelector):
+        (WebKit::WebViewImpl::executeSavedCommandBySelector):
+        (WebKit::WebViewImpl::executeEditCommandForSelector):
+        (WebKit::menuItem):
+        (WebKit::toolbarItem):
+        (WebKit::WebViewImpl::validateUserInterfaceItem):
+        (WebKit::WebViewImpl::setUserInterfaceItemState):
+        (WebKit::WebViewImpl::browsingContextController):
+        (WebKit::WebViewImpl::saveBackForwardSnapshotForCurrentItem):
+        (WebKit::WebViewImpl::saveBackForwardSnapshotForItem):
+        (WebKit::WebViewImpl::executeEditCommand): Deleted.
+        Move UI validation and a grab-bag of other things.
+
 2015-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build
