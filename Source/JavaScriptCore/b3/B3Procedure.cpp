@@ -73,6 +73,24 @@ Vector<BasicBlock*> Procedure::blocksInPostOrder()
     return B3::blocksInPostOrder(at(0));
 }
 
+void Procedure::deleteValue(Value* value)
+{
+    ASSERT(m_values[value->index()].get() == value);
+    m_valueIndexFreeList.append(value->index());
+    m_values[value->index()] = nullptr;
+}
+
+size_t Procedure::addValueIndex()
+{
+    if (m_valueIndexFreeList.isEmpty()) {
+        size_t index = m_values.size();
+        m_values.append(nullptr);
+        return index;
+    }
+    
+    return m_valueIndexFreeList.takeLast();
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

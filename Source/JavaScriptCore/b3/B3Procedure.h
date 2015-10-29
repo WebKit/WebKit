@@ -132,7 +132,7 @@ public:
 
             iterator(const Procedure& procedure, unsigned index)
                 : m_procedure(&procedure)
-                , m_index(index)
+                , m_index(findNext(index))
             {
             }
 
@@ -143,7 +143,7 @@ public:
 
             iterator& operator++()
             {
-                m_index++;
+                m_index = findNext(m_index + 1);
                 return *this;
             }
 
@@ -159,6 +159,12 @@ public:
             }
 
         private:
+            unsigned findNext(unsigned index)
+            {
+                while (index < m_procedure->m_values.size() && !m_procedure->m_values[index])
+                    index++;
+                return index;
+            }
 
             const Procedure* m_procedure;
             unsigned m_index;
@@ -177,6 +183,8 @@ public:
 
     ValuesCollection values() const { return ValuesCollection(*this); }
 
+    void deleteValue(Value*);
+
     // The name has to be a string literal, since we don't do any memory management for the string.
     void setLastPhaseName(const char* name)
     {
@@ -186,8 +194,11 @@ public:
     const char* lastPhaseName() const { return m_lastPhaseName; }
 
 private:
+    JS_EXPORT_PRIVATE size_t addValueIndex();
+    
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     Vector<std::unique_ptr<Value>> m_values;
+    Vector<size_t> m_valueIndexFreeList;
     const char* m_lastPhaseName;
 };
 

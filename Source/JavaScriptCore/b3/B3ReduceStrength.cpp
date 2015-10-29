@@ -32,6 +32,7 @@
 #include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
+#include "B3UseCounts.h"
 #include "B3ValueInlines.h"
 
 namespace JSC { namespace B3 {
@@ -59,8 +60,15 @@ public:
                     process();
                 m_insertionSet.execute(m_block);
 
-                // FIXME: This should also do DCE.
-                block->removeNops();
+                block->removeNops(m_proc);
+            }
+
+            UseCounts useCounts(m_proc);
+            for (Value* value : m_proc.values()) {
+                if (!useCounts[value] && !value->effects().mustExecute()) {
+                    value->replaceWithNop();
+                    m_changed = true;
+                }
             }
             
             result |= m_changed;

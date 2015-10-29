@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3BasicBlockUtils.h"
+#include "B3Procedure.h"
 #include "B3Value.h"
 #include <wtf/ListDump.h>
 
@@ -66,13 +67,15 @@ bool BasicBlock::replacePredecessor(BasicBlock* from, BasicBlock* to)
     return B3::replacePredecessor(this, from, to);
 }
 
-void BasicBlock::removeNops()
+void BasicBlock::removeNops(Procedure& procedure)
 {
     unsigned sourceIndex = 0;
     unsigned targetIndex = 0;
     while (sourceIndex < size()) {
         Value* value = m_values[sourceIndex++];
-        if (value->opcode() != Nop)
+        if (value->opcode() == Nop)
+            procedure.deleteValue(value);
+        else
             m_values[targetIndex++] = value;
     }
     m_values.resize(targetIndex);

@@ -1,3 +1,26 @@
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::reduceStrength() should do DCE
+        https://bugs.webkit.org/show_bug.cgi?id=150656
+
+        Reviewed by Saam Barati.
+
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::removeNops): This now deletes the values from the procedure, to preserve the invariant that valuesInProc == valuesInBlocks.
+        * b3/B3BasicBlock.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::deleteValue): Add a utility used by removeNops().
+        (JSC::B3::Procedure::addValueIndex): Make sure that we reuse Value indices so that m_values doesn't get too sparse.
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::ValuesCollection::iterator::iterator): Teach this that m_values can be slightly sparse.
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator++):
+        (JSC::B3::Procedure::ValuesCollection::iterator::operator!=):
+        (JSC::B3::Procedure::ValuesCollection::iterator::findNext):
+        (JSC::B3::Procedure::values):
+        * b3/B3ProcedureInlines.h:
+        (JSC::B3::Procedure::add): Use addValueIndex() instead of always creating a new index.
+        * b3/B3ReduceStrength.cpp: Implement the optimization using UseCounts and Effects.
+
 2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused / duplicate WebSocket timeline records
