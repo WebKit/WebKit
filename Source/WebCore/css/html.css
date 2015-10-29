@@ -526,12 +526,14 @@ input[type="week"] {
 #endif
 #endif
 
-#if !(defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS)
 input::-webkit-date-and-time-value {
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    margin-right: 18px;
+#else
     margin: 1px 24px 1px 4px;
     white-space: pre;
-}
 #endif
+}
 
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
