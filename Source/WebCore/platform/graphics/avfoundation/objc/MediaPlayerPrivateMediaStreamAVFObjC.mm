@@ -28,18 +28,14 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "AVAudioCaptureSource.h"
 #import "AVVideoCaptureSource.h"
-#import "FileSystem.h"
+#import "Clock.h"
+#import "GraphicsContext.h"
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
-#import "MediaStreamPrivateAVFObjC.h"
-#import "MediaTimeAVFoundation.h"
-#import "PlatformClockCM.h"
-#import "WebCoreSystemInterface.h"
-#import <AVFoundation/AVAsset.h>
-#import <AVFoundation/AVCaptureVideoPreviewLayer.h>
-#import <AVFoundation/AVTime.h>
 #import <QuartzCore/CALayer.h>
+#import <QuartzCore/CATransaction.h>
 #import <objc_runtime.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
@@ -50,18 +46,6 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAsset)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVCaptureVideoPreviewLayer)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
-
-#pragma mark -
-#pragma mark AVStreamSession
-
-@interface AVStreamSession : NSObject
-- (instancetype)initWithStorageDirectoryAtURL:(NSURL *)storageDirectory;
-@end
-
 namespace WebCore {
 
 #pragma mark -
@@ -70,19 +54,16 @@ namespace WebCore {
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
     , m_weakPtrFactory(this)
-    , m_networkState(MediaPlayer::Idle)
-    , m_readyState(MediaPlayer::HaveNothing)
-    , m_rate(1)
-    , m_playing(0)
-    , m_seeking(false)
-    , m_seekCompleted(true)
-    , m_loadingProgressed(false)
+    , m_clock(Clock::create())
 {
-
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 {
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
+    if (m_mediaStreamPrivate)
+        m_mediaStreamPrivate->removeObserver(*this);
 }
 
 #pragma mark -
@@ -97,29 +78,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
 {
-    return AVFoundationLibrary()
-        && isCoreMediaFrameworkAvailable();
-}
-
-static const HashSet<String>& mimeTypeCache()
-{
-    static NeverDestroyed<HashSet<String>> cache;
-    static bool typeListInitialized = false;
-
-    if (typeListInitialized)
-        return cache;
-    typeListInitialized = true;
-
-    NSArray *types = [getAVURLAssetClass() audiovisualMIMETypes];
-    for (NSString *mimeType in types)
-        cache.get().add(mimeType);
-
-    return cache;
+    return AVFoundationLibrary() && isCoreMediaFrameworkAvailable();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String>& types)
 {
-    types = mimeTypeCache();
+    static NeverDestroyed<HashSet<String>> cache;
+    types = cache;
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
@@ -133,146 +98,174 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 #pragma mark -
 #pragma mark MediaPlayerPrivateInterface Overrides
 
+void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&)
+{
+    // This media engine only supports MediaStream URLs.
+    scheduleDeferredTask([this] {
+        setNetworkState(MediaPlayer::FormatError);
+    });
+}
+
+#if ENABLE(MEDIA_SOURCE)
+void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&, MediaSourcePrivateClient*)
+{
+    // This media engine only supports MediaStream URLs.
+    scheduleDeferredTask([this] {
+        setNetworkState(MediaPlayer::FormatError);
+    });
+}
+#endif
+
 void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::load(%p)", this);
 
-    m_MediaStreamPrivate = MediaStreamPrivateAVFObjC::create(*this, stream);
-    for (auto track : stream.tracks()) {
-        m_MediaStreamPrivate->addTrack(WTF::move(track));
-        if (!track->ended()) {
-            track->source()->startProducingData();
-            track->setEnabled(true);
-        }
-    }
+    m_mediaStreamPrivate = &stream;
+    m_mediaStreamPrivate->addObserver(*this);
+    m_mediaStreamPrivate->startProducingData();
+
     m_previewLayer = nullptr;
-    for (auto& track : m_MediaStreamPrivate->tracks()) {
-        if (track->type() == RealtimeMediaSource::Type::Video)
-            m_previewLayer = static_cast<AVVideoCaptureSource*>(track->source())->previewLayer();
-    }
-    m_player->client().mediaPlayerRenderingModeChanged(m_player);
+
+    scheduleDeferredTask([this] {
+        setNetworkState(MediaPlayer::Idle);
+        if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
+            this->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+    });
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad()
 {
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad(%p)", this);
+    pause();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
 {
-}
-
-PlatformMedia MediaPlayerPrivateMediaStreamAVFObjC::platformMedia() const
-{
-    PlatformMedia pm;
-    pm.type = PlatformMedia::AVFoundationAssetType;
-    pm.media.avfAsset = m_asset.get();
-    return pm;
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay(%p)", this);
 }
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
 {
-    if (!m_previewLayer)
+    if (!m_videoBackgroundLayer)
         return nullptr;
-    return static_cast<PlatformLayer*>(m_previewLayer);
+
+    return m_videoBackgroundLayer.get();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setPausedImageVisible(bool visible)
+{
+    if (!metaDataAvailable() || !m_videoBackgroundLayer)
+        return;
+
+    if (visible == m_previewLayer.get().hidden)
+        return;
+
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:0];
+    [CATransaction setDisableActions:YES];
+
+    do {
+        if (visible) {
+            m_clock->stop();
+
+            RefPtr<Image> image = m_mediaStreamPrivate->currentFrameImage();
+            if (!image)
+                break;
+
+            m_pausedImage = image->getCGImageRef();
+            if (!m_pausedImage)
+                break;
+
+            m_videoBackgroundLayer.get().contents = (id)m_pausedImage.get();
+            m_previewLayer.get().hidden = true;
+            m_waitingForNewFrame = false;
+        } else {
+            if (!m_mediaStreamPrivate->isProducingData()) {
+                m_waitingForNewFrame = true;
+                break;
+            }
+
+            m_clock->start();
+            m_waitingForNewFrame = false;
+            m_previewLayer.get().hidden = false;
+            m_videoBackgroundLayer.get().contents = nil;
+            m_pausedImage = nullptr;
+        }
+    } while (0);
+
+    [CATransaction commit];
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::play()
 {
-    auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis] {
-        if (!weakThis)
-            return;
-        weakThis.get()->playInternal();
-    });
-}
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::play(%p)", this);
 
-void MediaPlayerPrivateMediaStreamAVFObjC::playInternal()
-{
+    if (!metaDataAvailable())
+        return;
+
     m_playing = true;
-
-    for (auto& track : m_MediaStreamPrivate->tracks())
-        track->source()->startProducingData();
+    m_haveEverPlayed = true;
+    setPausedImageVisible(false);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 {
-    auto weakThis = createWeakPtr();
-    callOnMainThread([weakThis] {
-        if (!weakThis)
-            return;
-        weakThis.get()->pauseInternal();
-    });
-}
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::pause(%p)", this);
 
-void MediaPlayerPrivateMediaStreamAVFObjC::pauseInternal()
-{
+    if (!metaDataAvailable())
+        return;
+
+    setPausedImageVisible(true);
     m_playing = false;
-
-    for (auto& track : m_MediaStreamPrivate->tracks())
-        track->source()->stopProducingData();
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::paused() const
 {
-    // Shouldn't be able to pause streams
-    return false;
+    return !m_playing;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float)
+void MediaPlayerPrivateMediaStreamAVFObjC::internalSetVolume(float volume, bool internal)
 {
+    if (!internal)
+        m_volume = volume;
+
+    if (!metaDataAvailable())
+        return;
+
+    // FIXME: Set volume once we actually play audio.
 }
 
-bool MediaPlayerPrivateMediaStreamAVFObjC::supportsScanning() const
+void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float volume)
 {
-    return true;
+    internalSetVolume(volume, false);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
 {
-    for (auto& track : m_MediaStreamPrivate->tracks()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio)
-            track->source()->setMuted(muted);
-    }
-}
+    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::setMuted(%p)", this);
 
-FloatSize MediaPlayerPrivateMediaStreamAVFObjC::naturalSize() const
-{
-    FloatSize floatSize(0, 0);
-    for (auto& track : m_MediaStreamPrivate->tracks()) {
-        if (track->type() == RealtimeMediaSource::Type::Video) {
-            AVVideoCaptureSource* source = (AVVideoCaptureSource*)track->source();
-            if (!source->stopped() && track->enabled()) {
-                if (source->width() > floatSize.width())
-                    floatSize.setWidth(source->width());
-                if (source->height() > floatSize.height())
-                    floatSize.setHeight(source->height());
-            }
-        }
-    }
-    return floatSize;
+    if (muted == m_muted)
+        return;
+
+    m_muted = muted;
+    
+    internalSetVolume(muted ? 0 : m_volume, true);
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
 {
-    for (auto& track : m_MediaStreamPrivate->tracks()) {
-        if (track->type() == RealtimeMediaSource::Type::Video)
-            return true;
-    }
-    return false;
+    if (!metaDataAvailable())
+        return false;
+    
+    return m_mediaStreamPrivate->hasVideo();
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
 {
-    for (auto& track : m_MediaStreamPrivate->tracks()) {
-        if (track->type() == RealtimeMediaSource::Type::Audio)
-            return true;
-    }
-    return false;
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool)
-{
-    // No-op.
+    if (!metaDataAvailable())
+        return false;
+    
+    return m_mediaStreamPrivate->hasAudio();
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
@@ -282,19 +275,7 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
 {
-    // FIXME(147125): Must implement this later
-    return MediaTime::zeroTime();
-}
-
-bool MediaPlayerPrivateMediaStreamAVFObjC::seeking() const
-{
-    // MediaStream is unseekable
-    return false;
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::setRateDouble(double)
-{
-    // MediaStream is unseekable; therefore, cannot set rate
+    return MediaTime::createWithDouble(m_clock->currentTime());
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaStreamAVFObjC::networkState() const
@@ -307,24 +288,102 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::readyState() const
     return m_readyState;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::sizeChanged()
+MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState()
 {
-    m_player->sizeChanged();
+    if (m_mediaStreamPrivate) {
+        if (m_mediaStreamPrivate->active())
+            return MediaPlayer::ReadyState::HaveEnoughData;
+
+        return MediaPlayer::ReadyState::HaveCurrentData;
+    }
+
+    return MediaPlayer::ReadyState::HaveNothing;
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
+{
+    MediaPlayer::ReadyState newReadyState = currentReadyState();
+
+    scheduleDeferredTask([this, newReadyState] {
+        if (newReadyState != m_readyState)
+            setReadyState(newReadyState);
+    });
+}
+
+MediaPlayerPrivateMediaStreamAVFObjC::RenderingModeStatus MediaPlayerPrivateMediaStreamAVFObjC::updateIntrinsicSize(const FloatSize& size)
+{
+    if (size == m_intrinsicSize)
+        return RenderingModeUnchanged;
+
+    m_intrinsicSize = size;
+
+    if (m_videoBackgroundLayer || !m_player || !m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
+        return RenderingModeUnchanged;
+
+    if (!m_mediaStreamPrivate || !m_mediaStreamPrivate->platformLayer())
+        return RenderingModeUnchanged;
+
+    createPreviewLayers();
+
+    return RenderingModeChanged;
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::createPreviewLayers()
+{
+    if (m_videoBackgroundLayer)
+        return;
+
+    m_videoBackgroundLayer = adoptNS([[CALayer alloc] init]);
+#ifndef NDEBUG
+    m_videoBackgroundLayer.get().name = @"MediaPlayerPrivateMediaStreamAVFObjC preview background layer";
+#endif
+
+    m_previewLayer = m_mediaStreamPrivate->platformLayer();
+    m_previewLayer.get().contentsGravity = kCAGravityResize;
+    m_previewLayer.get().anchorPoint = CGPointZero;
+#if !PLATFORM(IOS)
+    m_previewLayer.get().autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
+#endif
+    if (!m_playing)
+        m_previewLayer.get().hidden = true;
+
+    [m_videoBackgroundLayer addSublayer:m_previewLayer.get()];
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
+{
+    RenderingModeStatus status = RenderingModeUnchanged;
+    bool sizeChanged = false;
+
+    FloatSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
+    if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
+        status = updateIntrinsicSize(intrinsicSize);
+        sizeChanged = true;
+    }
+
+    if (m_waitingForNewFrame && m_mediaStreamPrivate->isProducingData())
+        setPausedImageVisible(false);
+
+    MediaPlayer::ReadyState newReadyState = currentReadyState();
+    scheduleDeferredTask([this, sizeChanged, newReadyState, status] {
+        if (newReadyState != m_readyState)
+            setReadyState(newReadyState);
+
+        if (!m_player)
+            return;
+
+        m_player->characteristicChanged();
+        if (sizeChanged) {
+            m_player->sizeChanged();
+            if (status == RenderingModeChanged)
+                m_player->client().mediaPlayerRenderingModeChanged(m_player);
+        }
+    });
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const
 {
-    return std::make_unique<PlatformTimeRanges>(minMediaTimeSeekable(), maxMediaTimeSeekable());
-}
-
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::maxMediaTimeSeekable() const
-{
-    return durationMediaTime();
-}
-
-MediaTime MediaPlayerPrivateMediaStreamAVFObjC::minMediaTimeSeekable() const
-{
-    return startTime();
+    return std::make_unique<PlatformTimeRanges>();
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::buffered() const
@@ -332,77 +391,32 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::buffer
     return std::make_unique<PlatformTimeRanges>();
 }
 
-bool MediaPlayerPrivateMediaStreamAVFObjC::didLoadingProgress() const
-{
-    bool loadingProgressed = m_loadingProgressed;
-    m_loadingProgressed = false;
-    return loadingProgressed;
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::setSize(const IntSize&)
-{
-    // No-op.
-}
-
-RetainPtr<CGImageRef> MediaPlayerPrivateMediaStreamAVFObjC::createImageFromSampleBuffer(CMSampleBufferRef sampleBuffer)
-{
-    CVPixelBufferRef imageBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sampleBuffer));
-    CVPixelBufferLockBaseAddress(imageBuffer, 0);
-    
-    void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-    size_t width = CVPixelBufferGetWidth(imageBuffer);
-    size_t height = CVPixelBufferGetHeight(imageBuffer);
-    
-    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(NULL, baseAddress, bytesPerRow * height, NULL));
-    RetainPtr<CGImageRef> quartzImage = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, colorSpace.get(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider.get(), NULL, true, kCGRenderingIntentDefault));
-    
-    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
-    
-    return quartzImage;
-}
-
 void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)
 {
     paintCurrentFrameInContext(context, rect);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext&, const FloatRect&)
+void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    // FIXME(125157): Implement painting.
-}
+    if (!metaDataAvailable() || context.paintingDisabled() || !m_haveEverPlayed)
+        return;
 
-bool MediaPlayerPrivateMediaStreamAVFObjC::supportsAcceleratedRendering() const
-{
-    return true;
-}
-
-MediaPlayer::MovieLoadType MediaPlayerPrivateMediaStreamAVFObjC::movieLoadType() const
-{
-    return MediaPlayer::LiveStream;
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::prepareForRendering()
-{
-    // No-op.
+    if (m_playing)
+        m_mediaStreamPrivate->paintCurrentFrameInContext(context, rect);
+    else if (m_pausedImage) {
+        GraphicsContextStateSaver stateSaver(context);
+        context.translate(rect.x(), rect.y() + rect.height());
+        context.scale(FloatSize(1, -1));
+        context.setImageInterpolationQuality(InterpolationLow);
+        IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
+        CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), m_pausedImage.get());
+    }
 }
 
 String MediaPlayerPrivateMediaStreamAVFObjC::engineDescription() const
 {
     static NeverDestroyed<String> description(ASCIILiteral("AVFoundation MediaStream Engine"));
     return description;
-}
-
-String MediaPlayerPrivateMediaStreamAVFObjC::languageOfPrimaryAudioTrack() const
-{
-    // FIXME(125158): implement languageOfPrimaryAudioTrack()
-    return emptyString();
-}
-
-size_t MediaPlayerPrivateMediaStreamAVFObjC::extraMemoryCost() const
-{
-    return 0;
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::shouldBePlaying() const
@@ -418,6 +432,27 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setReadyState(MediaPlayer::ReadyState
     m_readyState = readyState;
 
     m_player->readyStateChanged();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setNetworkState(MediaPlayer::NetworkState networkState)
+{
+    if (m_networkState == networkState)
+        return;
+
+    m_networkState = networkState;
+    m_player->networkStateChanged();
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::scheduleDeferredTask(std::function<void()> function)
+{
+    ASSERT(function);
+    auto weakThis = createWeakPtr();
+    callOnMainThread([weakThis, function] {
+        if (!weakThis)
+            return;
+
+        function();
+    });
 }
 
 }

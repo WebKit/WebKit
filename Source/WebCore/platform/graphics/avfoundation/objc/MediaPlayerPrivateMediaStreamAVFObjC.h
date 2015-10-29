@@ -29,24 +29,22 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivate.h"
-#include "MediaStreamPrivateAVFObjC.h"
-#include "SourceBufferPrivateClient.h"
+#include "MediaStreamPrivate.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-OBJC_CLASS AVAsset;
-OBJC_CLASS AVCaptureVideoPreviewLayer;
 OBJC_CLASS AVSampleBufferAudioRenderer;
-OBJC_CLASS AVSampleBufferDisplayLayer;
-OBJC_CLASS AVSampleBufferRenderSynchronizer;
 OBJC_CLASS AVStreamSession;
-
-typedef struct OpaqueCMTimebase* CMTimebaseRef;
+typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class MediaPlayerPrivateMediaStreamAVFObjC : public MediaPlayerPrivateInterface {
+class AVVideoCaptureSource;
+class Clock;
+class MediaSourcePrivateClient;
+
+class MediaPlayerPrivateMediaStreamAVFObjC : public MediaPlayerPrivateInterface, public MediaStreamPrivate::Observer {
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaStreamAVFObjC();
@@ -58,116 +56,109 @@ public:
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
-    void addDisplayLayer(AVSampleBufferDisplayLayer*);
-    void removeDisplayLayer(AVSampleBufferDisplayLayer*);
-
-    void addAudioRenderer(AVSampleBufferAudioRenderer*);
-    void removeAudioRenderer(AVSampleBufferAudioRenderer*);
-
     MediaPlayer::NetworkState networkState() const override;
+    void setNetworkState(MediaPlayer::NetworkState);
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
-
-    void sizeChanged();
-    void characteristicsChanged();
 
     WeakPtr<MediaPlayerPrivateMediaStreamAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 private:
-        // MediaPlayerPrivateInterface
-        // FIXME(146853): Implement necessary conformations to standard in HTMLMediaElement for MediaStream 
-    void load(const String&) override { };
+    // MediaPlayerPrivateInterface
+
+    // FIXME(146853): Implement necessary conformations to standard in HTMLMediaElement for MediaStream
+
+    void load(const String&) override;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const String&, MediaSourcePrivateClient*) override { };
+    void load(const String&, MediaSourcePrivateClient*) override;
 #endif
-#if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
-#endif
     void cancelLoad() override;
 
     void prepareToPlay() override;
-    PlatformMedia platformMedia() const override;
     PlatformLayer* platformLayer() const override;
 
     bool supportsFullscreen() const override { return true; }
 
     void play() override;
-    void playInternal();
-
     void pause() override;
-    void pauseInternal();
-
     bool paused() const override;
 
     void setVolume(float) override;
-    bool supportsMuting() const override { return true; }
+    void internalSetVolume(float, bool);
     void setMuted(bool) override;
+    bool supportsMuting() const override { return true; }
 
-    bool supportsScanning() const override;
+    bool supportsScanning() const override { return false; }
 
-    FloatSize naturalSize() const override;
+    FloatSize naturalSize() const override { return m_intrinsicSize; }
 
     bool hasVideo() const override;
     bool hasAudio() const override;
 
-    void setVisible(bool) override;
+    void setVisible(bool) override { /* No-op */ }
 
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override;
 
-    void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override { };
-    bool seeking() const override;
-    void setRateDouble(double) override;
+    bool seeking() const override { return false; }
 
     std::unique_ptr<PlatformTimeRanges> seekable() const override;
-    MediaTime maxMediaTimeSeekable() const override;
-    MediaTime minMediaTimeSeekable() const override;
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
 
-    bool didLoadingProgress() const override;
+    bool didLoadingProgress() const override { return m_playing; }
 
-    void setSize(const IntSize&) override;
+    void setSize(const IntSize&) override { /* No-op */ }
 
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
+    bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::HaveMetadata; }
 
-    bool supportsAcceleratedRendering() const override;
+    bool supportsAcceleratedRendering() const override { return true; }
 
-    MediaPlayer::MovieLoadType movieLoadType() const override;
+    bool hasSingleSecurityOrigin() const override { return true; }
 
-    void prepareForRendering() override;
+    MediaPlayer::MovieLoadType movieLoadType() const override { return MediaPlayer::LiveStream; }
 
     String engineDescription() const override;
 
-    String languageOfPrimaryAudioTrack() const override;
-
-    size_t extraMemoryCost() const override;
+    size_t extraMemoryCost() const override { return 0; }
 
     bool shouldBePlaying() const;
 
-    RetainPtr<CGImageRef> createImageFromSampleBuffer(CMSampleBufferRef);
+    MediaPlayer::ReadyState currentReadyState();
 
-    friend class MediaStreamPrivateAVFObjC;
+    enum RenderingModeStatus {
+        RenderingModeUnchanged,
+        RenderingModeChanged,
+    };
+    RenderingModeStatus updateIntrinsicSize(const FloatSize&);
 
-    MediaPlayer* m_player;
+    void createPreviewLayers();
+
+    void setPausedImageVisible(bool);
+
+    void scheduleDeferredTask(std::function<void()>);
+
+    // MediaStreamPrivate::Observer
+    void activeStatusChanged() override;
+    void characteristicsChanged() override;
+
+    MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
-    RefPtr<MediaStreamPrivateAVFObjC> m_MediaStreamPrivate;
-    RetainPtr<AVAsset> m_asset;
-    RetainPtr<AVCaptureVideoPreviewLayer> m_previewLayer;
-    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
-    RetainPtr<CGImageRef> m_lastImage;
-    RetainPtr<id> m_timeJumpedObserver;
-    RetainPtr<id> m_durationObserver;
-    RetainPtr<AVStreamSession> m_streamSession;
-    MediaPlayer::NetworkState m_networkState;
-    MediaPlayer::ReadyState m_readyState;
-    MediaTime m_lastSeekTime;
-    double m_rate;
-    bool m_playing;
-    bool m_seeking;
-    bool m_seekCompleted;
-    mutable bool m_loadingProgressed;
+    RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
+    mutable RetainPtr<CALayer> m_previewLayer;
+    mutable RetainPtr<PlatformLayer> m_videoBackgroundLayer;
+    RetainPtr<CGImageRef> m_pausedImage;
+    std::unique_ptr<Clock> m_clock;
+    MediaPlayer::NetworkState m_networkState { MediaPlayer::Empty };
+    MediaPlayer::ReadyState m_readyState { MediaPlayer::HaveNothing };
+    FloatSize m_intrinsicSize;
+    float m_volume { 1 };
+    bool m_playing { false };
+    bool m_muted { false };
+    bool m_waitingForNewFrame {false };
+    bool m_haveEverPlayed { false };
 };
     
 }

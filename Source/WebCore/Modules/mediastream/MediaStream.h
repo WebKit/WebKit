@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class MediaStream final : public URLRegistrable, public ScriptWrappable, public MediaStreamPrivateClient, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer {
+class MediaStream final : public URLRegistrable, public ScriptWrappable, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer, public MediaStreamPrivate::Observer, public RefCounted<MediaStream> {
 public:
     class Observer {
     public:
@@ -54,6 +54,8 @@ public:
 
     static void setRegistry(URLRegistry&);
     static MediaStream* lookUp(const URL&);
+
+    static MediaStream* lookUp(const MediaStreamPrivate&);
 
     static Ref<MediaStream> create(ScriptExecutionContext&);
     static Ref<MediaStream> create(ScriptExecutionContext&, MediaStream*);
@@ -81,8 +83,8 @@ public:
     virtual EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    using RefCounted<MediaStreamPrivateClient>::ref;
-    using RefCounted<MediaStreamPrivateClient>::deref;
+    using RefCounted<MediaStream>::ref;
+    using RefCounted<MediaStream>::deref;
 
     // URLRegistrable
     virtual URLRegistry& registry() const override;
@@ -107,7 +109,7 @@ private:
     // MediaStreamTrack::Observer
     virtual void trackDidEnd() override final;
 
-    // MediaStreamPrivateClient
+    // MediaStreamPrivate::Observer
     virtual void activeStatusChanged() override final;
     virtual void didAddTrack(MediaStreamTrackPrivate&) override final;
     virtual void didRemoveTrack(MediaStreamTrackPrivate&) override final;

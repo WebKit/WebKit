@@ -51,7 +51,7 @@ public:
 
     virtual ~MockSource() { }
 
-    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const { return m_capabilities; }
+    virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() { return m_capabilities; }
     virtual const RealtimeMediaSourceStates& states() { return m_currentStates; }
 
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;

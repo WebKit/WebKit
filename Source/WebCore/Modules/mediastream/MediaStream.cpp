@@ -40,6 +40,36 @@
 
 namespace WebCore {
 
+static Vector<MediaStream*>& mediaStreams()
+{
+    static NeverDestroyed<Vector<MediaStream*>> streams;
+    return streams;
+}
+
+static void registerMediaStream(MediaStream* stream)
+{
+    mediaStreams().append(stream);
+}
+
+static void unRegisterMediaStream(MediaStream* stream)
+{
+    Vector<MediaStream*>& allStreams = mediaStreams();
+    size_t pos = allStreams.find(stream);
+    if (pos != notFound)
+        allStreams.remove(pos);
+}
+
+MediaStream* MediaStream::lookUp(const MediaStreamPrivate& privateStream)
+{
+    Vector<MediaStream*>& allStreams = mediaStreams();
+    for (auto& stream : allStreams) {
+        if (stream->m_private == &privateStream)
+            return stream;
+    }
+
+    return nullptr;
+}
+
 static URLRegistry* s_registry;
 
 void MediaStream::setRegistry(URLRegistry& registry)
@@ -58,7 +88,7 @@ MediaStream* MediaStream::lookUp(const URL& url)
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {
-    return MediaStream::create(context);
+    return MediaStream::create(context, MediaStreamPrivate::create(Vector<RefPtr<MediaStreamTrackPrivate>>()));
 }
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context, MediaStream* stream)
@@ -95,7 +125,8 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
 
     m_private = MediaStreamPrivate::create(trackPrivates);
     m_isActive = m_private->active();
-    m_private->setClient(this);
+    m_private->addObserver(*this);
+    registerMediaStream(this);
 }
 
 MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPrivate>&& streamPrivate)
@@ -105,7 +136,8 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
     , m_activityEventTimer(*this, &MediaStream::activityEventTimerFired)
 {
     ASSERT(m_private);
-    m_private->setClient(this);
+    m_private->addObserver(*this);
+    registerMediaStream(this);
 
     for (auto& trackPrivate : m_private->tracks()) {
         RefPtr<MediaStreamTrack> track = MediaStreamTrack::create(context, *trackPrivate);
@@ -116,7 +148,10 @@ MediaStream::MediaStream(ScriptExecutionContext& context, RefPtr<MediaStreamPriv
 
 MediaStream::~MediaStream()
 {
-    m_private->setClient(nullptr);
+    unRegisterMediaStream(this);
+    m_private->removeObserver(*this);
+    for (auto& track : m_trackSet.values())
+        track->removeObserver(this);
 }
 
 RefPtr<MediaStream> MediaStream::clone()
@@ -199,12 +234,14 @@ void MediaStream::didAddTrack(MediaStreamTrackPrivate& trackPrivate)
     if (!context)
         return;
 
-    internalAddTrack(MediaStreamTrack::create(*context, trackPrivate), StreamModifier::Platform);
+    if (!getTrackById(trackPrivate.id()))
+        internalAddTrack(MediaStreamTrack::create(*context, trackPrivate), StreamModifier::Platform);
 }
 
 void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 {
     RefPtr<MediaStreamTrack> track = getTrackById(trackPrivate.id());
+    ASSERT(track);
     internalRemoveTrack(WTF::move(track), StreamModifier::Platform);
 }
 
@@ -254,6 +291,7 @@ void MediaStream::activityEventTimerFired()
     events.swap(m_scheduledActivityEvents);
 
     for (auto& event : events) {
+        // FIXME: This can't be right, the event type is set from m_isActive in scheduleActiveStateChange! - https://webkit.org/b/150635
         m_isActive = event->type() == eventNames().activeEvent;
         dispatchEvent(event.release());
     }

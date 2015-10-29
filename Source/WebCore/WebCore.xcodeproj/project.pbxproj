@@ -654,8 +654,6 @@
 		14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */; };
 		150524F41B712FF600696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 150524F01B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h */; };
 		150524F51B712FF900696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */; };
-		150524F61B712FFC00696AA9 /* MediaStreamPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */; };
-		150524F71B712FFF00696AA9 /* MediaStreamPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */; };
 		15145B901B3A1CE000662BF7 /* MediaDeviceInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		15739BBA1B42012A00D258C1 /* JSMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15739BB81B42012200D258C1 /* JSMediaDevices.cpp */; };
 		15739BBB1B42012D00D258C1 /* JSMediaDevices.h in Headers */ = {isa = PBXBuildFile; fileRef = 15739BB91B42012200D258C1 /* JSMediaDevices.h */; };
@@ -7931,8 +7929,6 @@
 		14FFE31C0AE1963300136BF5 /* HTMLFrameElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFrameElementBase.cpp; sourceTree = "<group>"; };
 		150524F01B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateMediaStreamAVFObjC.h; sourceTree = "<group>"; };
 		150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateMediaStreamAVFObjC.mm; sourceTree = "<group>"; };
-		150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamPrivateAVFObjC.h; sourceTree = "<group>"; };
-		150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaStreamPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		15145B8F1B3A1B3E00662BF7 /* MediaDeviceInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaDeviceInfo.h; sourceTree = "<group>"; };
 		15145B911B3A1D4C00662BF7 /* MediaDeviceInfo.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaDeviceInfo.idl; sourceTree = "<group>"; };
 		15739BB81B42012200D258C1 /* JSMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaDevices.cpp; sourceTree = "<group>"; };
@@ -22750,8 +22746,6 @@
 				150524F11B712FF000696AA9 /* MediaPlayerPrivateMediaStreamAVFObjC.mm */,
 				CDC8B5A5180474F70016E685 /* MediaSourcePrivateAVFObjC.h */,
 				CDC8B5A4180474F70016E685 /* MediaSourcePrivateAVFObjC.mm */,
-				150524F21B712FF000696AA9 /* MediaStreamPrivateAVFObjC.h */,
-				150524F31B712FF000696AA9 /* MediaStreamPrivateAVFObjC.mm */,
 				7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */,
 				CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */,
 				CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */,
@@ -26617,7 +26611,6 @@
 				078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */,
 				078E091617D14D1C00420AA1 /* MediaStreamEvent.h in Headers */,
 				078E093717D16B2C00420AA1 /* MediaStreamPrivate.h in Headers */,
-				150524F61B712FFC00696AA9 /* MediaStreamPrivateAVFObjC.h in Headers */,
 				078E091717D14D1C00420AA1 /* MediaStreamRegistry.h in Headers */,
 				078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */,
 				078E091917D14D1C00420AA1 /* MediaStreamTrackEvent.h in Headers */,
@@ -30298,7 +30291,6 @@
 				0705851517FB0EEA005F2BCB /* MediaStreamCapabilities.cpp in Sources */,
 				078E090017D14CEE00420AA1 /* MediaStreamEvent.cpp in Sources */,
 				0711589117DF6F6600EDFE2B /* MediaStreamPrivate.cpp in Sources */,
-				150524F71B712FFF00696AA9 /* MediaStreamPrivateAVFObjC.mm in Sources */,
 				078E090117D14CEE00420AA1 /* MediaStreamRegistry.cpp in Sources */,
 				078E090217D14CEE00420AA1 /* MediaStreamTrack.cpp in Sources */,
 				078E090317D14CEE00420AA1 /* MediaStreamTrackEvent.cpp in Sources */,

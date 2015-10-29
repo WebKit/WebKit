@@ -649,14 +649,12 @@ void RTCPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamPrivate> privat
 void RTCPeerConnection::didRemoveRemoteStream(MediaStreamPrivate* privateStream)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
-    ASSERT(privateStream->client());
-
-    // FIXME: this class shouldn't know that the private stream client is a MediaStream!
-    RefPtr<MediaStream> stream = static_cast<MediaStream*>(privateStream->client());
 
     if (m_signalingState == SignalingStateClosed)
         return;
 
+    RefPtr<MediaStream> stream = MediaStream::lookUp(*privateStream);
+    ASSERT(stream);
     size_t pos = m_remoteStreams.find(stream);
     ASSERT(pos != notFound);
     m_remoteStreams.remove(pos);

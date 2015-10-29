@@ -40,14 +40,16 @@
 
 #import "CoreMediaSoftLink.h"
 
+typedef AVCaptureAudioChannel AVCaptureAudioChannelType;
+typedef AVCaptureAudioDataOutput AVCaptureAudioDataOutputType;
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
 typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
 typedef AVCaptureOutput AVCaptureOutputType;
-typedef AVCaptureAudioDataOutput AVCaptureAudioDataOutputType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
+SOFT_LINK_CLASS(AVFoundation, AVCaptureAudioChannel)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureAudioDataOutput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureConnection)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
@@ -77,10 +79,10 @@ AVAudioCaptureSource::~AVAudioCaptureSource()
 {
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> AVAudioCaptureSource::capabilities() const
+void AVAudioCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities&capabilities)
 {
-    notImplemented();
-    return nullptr;
+    // FIXME: finish this implementation - https://webkit.org/b/122430
+    capabilities.addSourceType(RealtimeMediaSourceStates::Microphone);
 }
 
 void AVAudioCaptureSource::updateStates()
@@ -90,11 +92,8 @@ void AVAudioCaptureSource::updateStates()
 
 void AVAudioCaptureSource::addObserver(AVAudioCaptureSource::Observer* observer)
 {
-    {
-        LockHolder lock(m_lock);
-        m_observers.append(observer);
-    }
-
+    LockHolder lock(m_lock);
+    m_observers.append(observer);
     if (m_inputDescription->mSampleRate)
         observer->prepare(m_inputDescription.get());
 }
@@ -110,16 +109,40 @@ void AVAudioCaptureSource::removeObserver(AVAudioCaptureSource::Observer* observ
 void AVAudioCaptureSource::setupCaptureSession()
 {
     RetainPtr<AVCaptureDeviceInputType> audioIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:nil]);
-    ASSERT([session() canAddInput:audioIn.get()]);
-    if ([session() canAddInput:audioIn.get()])
-        [session() addInput:audioIn.get()];
-    
+
+    if (![session() canAddInput:audioIn.get()]) {
+        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add audio input device", this);
+        return;
+    }
+    [session() addInput:audioIn.get()];
+
     RetainPtr<AVCaptureAudioDataOutputType> audioOutput = adoptNS([allocAVCaptureAudioDataOutputInstance() init]);
     setAudioSampleBufferDelegate(audioOutput.get());
-    ASSERT([session() canAddOutput:audioOutput.get()]);
-    if ([session() canAddOutput:audioOutput.get()])
-        [session() addOutput:audioOutput.get()];
-    m_audioConnection = adoptNS([audioOutput.get() connectionWithMediaType:AVMediaTypeAudio]);
+
+    if (![session() canAddOutput:audioOutput.get()]) {
+        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add audio sample buffer output delegate", this);
+        return;
+    }
+    [session() addOutput:audioOutput.get()];
+    m_audioConnection = [audioOutput.get() connectionWithMediaType:AVMediaTypeAudio];
+}
+
+void AVAudioCaptureSource::shutdownCaptureSession()
+{
+    {
+        LockHolder lock(m_lock);
+
+        m_audioConnection = nullptr;
+        m_inputDescription = std::make_unique<AudioStreamBasicDescription>();
+
+        for (auto& observer : m_observers)
+            observer->unprepare();
+        m_observers.shrink(0);
+    }
+
+    // Don't hold the lock when destroying the audio provider, it will call back into this object
+    // to remove itself as an observer.
+    m_audioSourceProvider = nullptr;
 }
 
 static bool operator==(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b)
@@ -141,27 +164,30 @@ static bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBa
 
 void AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType*)
 {
-    Vector<Observer*> observers;
-    {
-        LockHolder lock(m_lock);
-        if (m_observers.isEmpty())
-            return;
-
-        copyToVector(m_observers, observers);
-    }
+    if (!enabled())
+        return;
 
     CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
     if (!formatDescription)
         return;
 
+    std::unique_lock<Lock> lock(m_lock, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Failed to acquire the lock, just return instead of blocking.
+        return;
+    }
+
+    if (m_observers.isEmpty())
+        return;
+
     const AudioStreamBasicDescription* streamDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription);
     if (*m_inputDescription != *streamDescription) {
         m_inputDescription = std::make_unique<AudioStreamBasicDescription>(*streamDescription);
-        for (auto& observer : observers)
+        for (auto& observer : m_observers)
             observer->prepare(m_inputDescription.get());
     }
 
-    for (auto& observer : observers)
+    for (auto& observer : m_observers)
         observer->process(formatDescription, sampleBuffer);
 }
 

@@ -52,45 +52,52 @@ public:
 
     virtual void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) = 0;
 
-    virtual void captureSessionStoppedRunning();
+    virtual void captureSessionIsRunningDidChange(bool);
     
     AVCaptureSession *session() const { return m_session.get(); }
 
+    const RealtimeMediaSourceStates& states() override;
+
     void startProducingData() override;
     void stopProducingData() override;
+    bool isProducingData() const override { return m_isRunning; }
+
+    WeakPtr<AVMediaCaptureSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type, PassRefPtr<MediaConstraints>);
 
-    const RealtimeMediaSourceStates& states() override;
     AudioSourceProvider* audioSourceProvider() override;
 
     virtual void setupCaptureSession() = 0;
+    virtual void shutdownCaptureSession() = 0;
     virtual void updateStates() = 0;
+    virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
 
     AVCaptureDevice *device() const { return m_device.get(); }
+
     RealtimeMediaSourceStates* currentStates() { return &m_currentStates; }
     MediaConstraints* constraints() { return m_constraints.get(); }
+
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
 
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
 
     void scheduleDeferredTask(std::function<void ()>);
 
-    void statesDidChanged() { }
-    
 private:
     void setupSession();
-    WeakPtr<AVMediaCaptureSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    void reset() override;
 
     WeakPtrFactory<AVMediaCaptureSource> m_weakPtrFactory;
     RetainPtr<WebCoreAVMediaCaptureSourceObserver> m_objcObserver;
     RefPtr<MediaConstraints> m_constraints;
+    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
     RealtimeMediaSourceStates m_currentStates;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
-    
-    bool m_isRunning;
+    bool m_isRunning { false};
 };
 
 } // namespace WebCore

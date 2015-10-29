@@ -72,6 +72,10 @@
 #include "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#include "MediaPlayerPrivateMediaStreamAVFObjC.h"
+#endif
+
 #endif // PLATFORM(COCOA)
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION) && !USE(GSTREAMER)
@@ -188,6 +192,10 @@ static void buildMediaEnginesVector()
 
 #if ENABLE(MEDIA_SOURCE)
         MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(addMediaEngine);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+        MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine(addMediaEngine);
 #endif
 
 #if PLATFORM(WIN)

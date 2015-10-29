@@ -94,11 +94,13 @@ using namespace WebCore;
 
 -(id)initWithCallback:(AVMediaCaptureSource*)callback;
 -(void)disconnect;
--(void)captureSessionStoppedRunning:(NSNotification *)notification;
 -(void)captureOutput:(AVCaptureOutputType *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType *)connection;
+-(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context;
 @end
 
 namespace WebCore {
+
+static NSArray* sessionKVOProperties();
 
 static dispatch_queue_t globaAudioCaptureSerialQueue()
 {
@@ -127,7 +129,6 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceType* device, const At
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_constraints(constraints)
     , m_device(device)
-    , m_isRunning(false)
 {
     setName(device.localizedName);
     setPersistentID(device.uniqueID);
@@ -136,9 +137,13 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceType* device, const At
 
 AVMediaCaptureSource::~AVMediaCaptureSource()
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     [m_objcObserver disconnect];
-    [m_session.get() stopRunning];
+
+    if (m_session) {
+        for (NSString *keyName in sessionKVOProperties())
+            [m_session.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
+        [m_session.get() stopRunning];
+    }
 }
 
 void AVMediaCaptureSource::startProducingData()
@@ -150,8 +155,6 @@ void AVMediaCaptureSource::startProducingData()
         return;
     
     [m_session.get() startRunning];
-
-    m_isRunning = true;
 }
 
 void AVMediaCaptureSource::stopProducingData()
@@ -160,8 +163,6 @@ void AVMediaCaptureSource::stopProducingData()
         return;
 
     [m_session.get() stopRunning];
-
-    m_isRunning = true;
 }
 
 const RealtimeMediaSourceStates& AVMediaCaptureSource::states()
@@ -170,21 +171,47 @@ const RealtimeMediaSourceStates& AVMediaCaptureSource::states()
     return m_currentStates;
 }
 
+RefPtr<RealtimeMediaSourceCapabilities> AVMediaCaptureSource::capabilities()
+{
+    if (!m_capabilities) {
+        m_capabilities = RealtimeMediaSourceCapabilities::create();
+        m_capabilities->setSourceId(m_currentStates.sourceId());
+        initializeCapabilities(*m_capabilities.get());
+    }
+    return m_capabilities;
+}
+
 void AVMediaCaptureSource::setupSession()
 {
     if (m_session)
         return;
 
     m_session = adoptNS([allocAVCaptureSessionInstance() init]);
-    
-    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(captureSessionStoppedRunning:) name:AVCaptureSessionDidStopRunningNotification object:nil];
-    
+    for (NSString *keyName in sessionKVOProperties())
+        [m_session.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)nil];
+
     setupCaptureSession();
 }
- 
-void AVMediaCaptureSource::captureSessionStoppedRunning()
+
+void AVMediaCaptureSource::reset()
 {
-    stopProducingData();
+    RealtimeMediaSource::reset();
+    m_isRunning = false;
+    for (NSString *keyName in sessionKVOProperties())
+        [m_session.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
+    shutdownCaptureSession();
+    m_session = nullptr;
+}
+
+void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)
+{
+    scheduleDeferredTask([this, state] {
+        if (state == m_isRunning)
+            return;
+
+        m_isRunning = state;
+        isProducingDataDidChange();
+    });
 }
 
 void AVMediaCaptureSource::setVideoSampleBufferDelegate(AVCaptureVideoDataOutputType* videoOutput)
@@ -216,6 +243,12 @@ AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
     return nullptr;
 }
 
+NSArray* sessionKVOProperties()
+{
+    static NSArray* keys = [@[@"running"] retain];
+    return keys;
+}
+
 } // namespace WebCore
 
 @implementation WebCoreAVMediaCaptureSourceObserver
@@ -225,6 +258,7 @@ AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
     self = [super init];
     if (!self)
         return nil;
+
     m_callback = callback;
     return self;
 }
@@ -235,25 +269,37 @@ AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
     m_callback = 0;
 }
 
-- (void)captureSessionStoppedRunning:(NSNotification *)notification
-{
-    UNUSED_PARAM(notification);
-
-    if (!m_callback)
-        return;
-
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (m_callback)
-            m_callback->captureSessionStoppedRunning();
-    });
-}
-
 - (void)captureOutput:(AVCaptureOutputType *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnectionType *)connection
 {
     if (!m_callback)
         return;
 
     m_callback->captureOutputDidOutputSampleBufferFromConnection(captureOutput, sampleBuffer, connection);
+}
+
+-(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
+{
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(context);
+
+    if (!m_callback)
+        return;
+
+    id newValue = [change valueForKey:NSKeyValueChangeNewKey];
+
+#if !LOG_DISABLED
+    bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
+
+    if (willChange)
+        LOG(Media, "WebCoreAVMediaCaptureSourceObserver::observeValueForKeyPath(%p) - will change, keyPath = %s", self, [keyPath UTF8String]);
+    else {
+        RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
+        LOG(Media, "WebCoreAVMediaCaptureSourceObserver::observeValueForKeyPath(%p) - did change, keyPath = %s, value = %s", self, [keyPath UTF8String], [valueString.get() UTF8String]);
+    }
+#endif
+
+    if ([keyPath isEqualToString:@"running"])
+        m_callback->captureSessionIsRunningDidChange([newValue boolValue]);
 }
 
 @end

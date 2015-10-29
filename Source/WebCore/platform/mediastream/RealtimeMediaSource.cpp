@@ -101,6 +101,22 @@ void RealtimeMediaSource::statesDidChanged()
         observer->sourceStatesChanged();
 }
 
+void RealtimeMediaSource::isProducingDataDidChange()
+{
+    for (auto& observer : m_observers)
+        observer->sourceProducingDataChanged();
+}
+
+void RealtimeMediaSource::setEnabled(bool enabled)
+{
+    if (m_enabled == enabled)
+        return;
+
+    m_enabled = enabled;
+    for (auto& observer : m_observers)
+        observer->sourceEnabledChanged();
+}
+
 bool RealtimeMediaSource::readonly() const
 {
     return m_readonly;
@@ -119,6 +135,7 @@ void RealtimeMediaSource::stop(Observer* callingObserver)
     }
 
     stopProducingData();
+    reset();
 }
 
 void RealtimeMediaSource::requestStop(Observer* callingObserver)

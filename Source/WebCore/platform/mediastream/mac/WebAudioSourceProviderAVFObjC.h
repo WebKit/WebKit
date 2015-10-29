@@ -68,7 +68,7 @@ private:
 
     size_t m_listBufferSize { 0 };
     std::unique_ptr<AudioBufferList> m_list;
-    RetainPtr<AudioConverterRef> m_converter;
+    AudioConverterRef m_converter;
     std::unique_ptr<AudioStreamBasicDescription> m_inputDescription;
     std::unique_ptr<AudioStreamBasicDescription> m_outputDescription;
     std::unique_ptr<CARingBuffer> m_ringBuffer;

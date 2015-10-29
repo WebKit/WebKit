@@ -31,10 +31,12 @@
 #import "AVCaptureDeviceManager.h"
 #import "BlockExceptions.h"
 #import "GraphicsContextCG.h"
+#import "ImageBuffer.h"
 #import "IntRect.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "NotImplemented.h"
+#import "PlatformLayer.h"
 #import "RealtimeMediaSourceStates.h"
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
@@ -98,9 +100,6 @@ RefPtr<AVMediaCaptureSource> AVVideoCaptureSource::create(AVCaptureDeviceType* d
 
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDeviceType* device, const AtomicString& id, PassRefPtr<MediaConstraints> constraint)
     : AVMediaCaptureSource(device, id, RealtimeMediaSource::Video, constraint)
-    , m_frameRate(0)
-    , m_width(0)
-    , m_height(0)
 {
     currentStates()->setSourceId(id);
     currentStates()->setSourceType(RealtimeMediaSourceStates::Camera);
@@ -110,10 +109,11 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
 {
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> AVVideoCaptureSource::capabilities() const
+void AVVideoCaptureSource::initializeCapabilities(RealtimeMediaSourceCapabilities& capabilities)
 {
-    notImplemented();
-    return 0;
+    // FIXME: finish this implementation
+    capabilities.setSourceId(currentStates()->sourceId());
+    capabilities.addSourceType(RealtimeMediaSourceStates::Camera);
 }
 
 void AVVideoCaptureSource::updateStates()
@@ -218,9 +218,13 @@ bool AVVideoCaptureSource::applyConstraints(MediaConstraints* constraints)
 void AVVideoCaptureSource::setupCaptureSession()
 {
     RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:nil]);
-    ASSERT([session() canAddInput:videoIn.get()]);
-    if ([session() canAddInput:videoIn.get()])
-        [session() addInput:videoIn.get()];
+
+    if (![session() canAddInput:videoIn.get()]) {
+        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video input device", this);
+        return;
+    }
+
+    [session() addInput:videoIn.get()];
 
     if (constraints())
         applyConstraints(constraints());
@@ -231,15 +235,26 @@ void AVVideoCaptureSource::setupCaptureSession()
                                                          , nil]);
     [videoOutput setVideoSettings:settingsDictionary.get()];
     setVideoSampleBufferDelegate(videoOutput.get());
-    ASSERT([session() canAddOutput:videoOutput.get()]);
-    if ([session() canAddOutput:videoOutput.get()])
-        [session() addOutput:videoOutput.get()];
 
-    m_videoConnection = adoptNS([videoOutput.get() connectionWithMediaType:AVMediaTypeVideo]);
-    m_videoPreviewLayer = adoptNS([[AVCaptureVideoPreviewLayer alloc] initWithSession:session()]);
+    if (![session() canAddOutput:videoOutput.get()]) {
+        LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video sample buffer output delegate", this);
+        return;
+    }
+    [session() addOutput:videoOutput.get()];
 }
 
-bool AVVideoCaptureSource::calculateFramerate(CMSampleBufferRef sampleBuffer)
+void AVVideoCaptureSource::shutdownCaptureSession()
+{
+    m_videoPreviewLayer = nullptr;
+    m_buffer = nullptr;
+    m_lastImage = nullptr;
+    m_videoFrameTimeStamps.clear();
+    m_frameRate = 0;
+    m_width = 0;
+    m_height = 0;
+}
+
+bool AVVideoCaptureSource::updateFramerate(CMSampleBufferRef sampleBuffer)
 {
     CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     if (!CMTIME_IS_NUMERIC(sampleTime))
@@ -261,13 +276,19 @@ bool AVVideoCaptureSource::calculateFramerate(CMSampleBufferRef sampleBuffer)
 
 void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBuffer)
 {
+    // Ignore frames delivered when the session is not running, we want to hang onto the last image
+    // delivered before it stopped.
+    if (m_lastImage && (!isProducingData() || !enabled()))
+        return;
+
     CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer.get());
     if (!formatDescription)
         return;
 
+    updateFramerate(sampleBuffer.get());
+
     bool statesChanged = false;
 
-    statesChanged = calculateFramerate(sampleBuffer.get());
     m_buffer = sampleBuffer;
     m_lastImage = nullptr;
 
@@ -291,7 +312,23 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     });
 }
 
-RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameImage()
+RefPtr<Image> AVVideoCaptureSource::currentFrameImage()
+{
+    if (!currentFrameCGImage())
+        return nullptr;
+
+    FloatRect imageRect(0, 0, m_width, m_height);
+    std::unique_ptr<ImageBuffer> imageBuffer = ImageBuffer::create(imageRect.size(), Unaccelerated);
+
+    if (!imageBuffer)
+        return nullptr;
+
+    paintCurrentFrameInContext(imageBuffer->context(), imageRect);
+
+    return imageBuffer->copyImage();
+}
+
+RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameCGImage()
 {
     if (m_lastImage)
         return m_lastImage;
@@ -318,7 +355,7 @@ RetainPtr<CGImageRef> AVVideoCaptureSource::currentFrameImage()
 
 void AVVideoCaptureSource::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& rect)
 {
-    if (context.paintingDisabled() || !currentFrameImage())
+    if (context.paintingDisabled() || !currentFrameCGImage())
         return;
 
     GraphicsContextStateSaver stateSaver(context);
@@ -327,6 +364,19 @@ void AVVideoCaptureSource::paintCurrentFrameInContext(GraphicsContext& context, 
     context.setImageInterpolationQuality(InterpolationLow);
     IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
     CGContextDrawImage(context.platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), m_lastImage.get());
+}
+
+PlatformLayer* AVVideoCaptureSource::platformLayer() const
+{
+    if (m_videoPreviewLayer)
+        return m_videoPreviewLayer.get();
+
+    m_videoPreviewLayer = adoptNS([allocAVCaptureVideoPreviewLayerInstance() initWithSession:session()]);
+#ifndef NDEBUG
+    m_videoPreviewLayer.get().name = @"AVVideoCaptureSource preview layer";
+#endif
+
+    return m_videoPreviewLayer.get();
 }
 
 } // namespace WebCore

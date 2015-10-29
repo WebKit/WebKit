@@ -47,7 +47,7 @@ public:
 
     ~MediaStreamAudioSource() { }
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
+    RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
     const RealtimeMediaSourceStates& states() override;
     
     const String& deviceId() const { return m_deviceId; }

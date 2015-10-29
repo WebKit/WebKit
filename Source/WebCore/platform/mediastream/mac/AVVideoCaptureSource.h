@@ -30,7 +30,7 @@
 
 #include "AVMediaCaptureSource.h"
 
-OBJC_CLASS AVCaptureVideoPreviewLayer;
+OBJC_CLASS CALayer;
 
 typedef struct CGImage *CGImageRef;
 typedef const struct opaqueCMFormatDescription *CMFormatDescriptionRef;
@@ -48,36 +48,38 @@ public:
     int32_t width() const { return m_width; }
     int32_t height() const { return m_height; }
 
-    AVCaptureVideoPreviewLayer* previewLayer() { return m_videoPreviewLayer.get(); }
-    CMSampleBufferRef currentFrameSampleBuffer() const { return m_buffer.get(); }
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
-    RetainPtr<CGImageRef> currentFrameImage();
-
 private:
     AVVideoCaptureSource(AVCaptureDevice*, const AtomicString&, PassRefPtr<MediaConstraints>);
     virtual ~AVVideoCaptureSource();
 
     void setupCaptureSession() override;
+    void shutdownCaptureSession() override;
+
     void updateStates() override;
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override;
+    void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
 
     bool applyConstraints(MediaConstraints*);
     bool setFrameRateConstraint(float minFrameRate, float maxFrameRate);
 
-    bool calculateFramerate(CMSampleBufferRef);
+    bool updateFramerate(CMSampleBufferRef);
 
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) override;
     void processNewFrame(RetainPtr<CMSampleBufferRef>);
 
-    RetainPtr<AVCaptureConnection> m_videoConnection;
-    RetainPtr<AVCaptureVideoPreviewLayer> m_videoPreviewLayer;
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
+    PlatformLayer* platformLayer() const override;
+
+    RetainPtr<CGImageRef> currentFrameCGImage();
+    RefPtr<Image> currentFrameImage() override;
+
     RetainPtr<CMSampleBufferRef> m_buffer;
     RetainPtr<CGImageRef> m_lastImage;
     Vector<Float64> m_videoFrameTimeStamps;
-    Float64 m_frameRate;
-    int32_t m_width;
-    int32_t m_height;
+    mutable RetainPtr<PlatformLayer> m_videoPreviewLayer;
+    Float64 m_frameRate { 0 };
+    int32_t m_width { 0 };
+    int32_t m_height { 0 };
 };
 
 } // namespace WebCore

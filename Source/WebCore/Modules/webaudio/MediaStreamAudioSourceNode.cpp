@@ -69,37 +69,38 @@ MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode()
 void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
     float sampleRate = this->sampleRate();
-    if (numberOfChannels != m_sourceNumberOfChannels || sourceSampleRate != sampleRate) {
-        // The sample-rate must be equal to the context's sample-rate.
-        if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || sourceSampleRate != sampleRate) {
-            // process() will generate silence for these uninitialized values.
-            LOG(Media, "MediaStreamAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
-            m_sourceNumberOfChannels = 0;
-            return;
-        }
+    if (numberOfChannels == m_sourceNumberOfChannels && sourceSampleRate == sampleRate)
+        return;
 
-        // Synchronize with process().
-        std::lock_guard<Lock> lock(m_processMutex);
+    // The sample-rate must be equal to the context's sample-rate.
+    if (!numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || sourceSampleRate != sampleRate) {
+        // process() will generate silence for these uninitialized values.
+        LOG(Media, "MediaStreamAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
+        m_sourceNumberOfChannels = 0;
+        return;
+    }
 
-        m_sourceNumberOfChannels = numberOfChannels;
-        m_sourceSampleRate = sourceSampleRate;
+    // Synchronize with process().
+    std::lock_guard<Lock> lock(m_processMutex);
 
-        if (sourceSampleRate == sampleRate)
-            m_multiChannelResampler = nullptr;
-        else {
-            double scaleFactor = sourceSampleRate / sampleRate;
-            m_multiChannelResampler = std::make_unique<MultiChannelResampler>(scaleFactor, numberOfChannels);
-        }
+    m_sourceNumberOfChannels = numberOfChannels;
+    m_sourceSampleRate = sourceSampleRate;
 
-        m_sourceNumberOfChannels = numberOfChannels;
+    if (sourceSampleRate == sampleRate)
+        m_multiChannelResampler = nullptr;
+    else {
+        double scaleFactor = sourceSampleRate / sampleRate;
+        m_multiChannelResampler = std::make_unique<MultiChannelResampler>(scaleFactor, numberOfChannels);
+    }
 
-        {
-            // The context must be locked when changing the number of output channels.
-            AudioContext::AutoLocker contextLocker(*context());
+    m_sourceNumberOfChannels = numberOfChannels;
 
-            // Do any necesssary re-configuration to the output's number of channels.
-            output(0)->setNumberOfChannels(numberOfChannels);
-        }
+    {
+        // The context must be locked when changing the number of output channels.
+        AudioContext::AutoLocker contextLocker(*context());
+
+        // Do any necesssary re-configuration to the output's number of channels.
+        output(0)->setNumberOfChannels(numberOfChannels);
     }
 }
 

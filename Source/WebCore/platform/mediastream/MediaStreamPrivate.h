@@ -2,6 +2,7 @@
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,28 +36,32 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "FloatSize.h"
 #include "MediaStreamTrack.h"
 #include "MediaStreamTrackPrivate.h"
 #include <wtf/HashMap.h>
+#include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class MediaStreamTrackPrivate;
-
-class MediaStreamPrivateClient : public RefCounted<MediaStreamPrivateClient> {
-public:
-    virtual ~MediaStreamPrivateClient() { }
-
-    virtual void activeStatusChanged() = 0;
-    virtual void didAddTrack(MediaStreamTrackPrivate&) = 0;
-    virtual void didRemoveTrack(MediaStreamTrackPrivate&) = 0;
-};
+class MediaStream;
 
 class MediaStreamPrivate : public MediaStreamTrackPrivate::Observer, public RefCounted<MediaStreamPrivate> {
 public:
+    class Observer {
+    public:
+        virtual ~Observer() { }
+
+        virtual void characteristicsChanged() { }
+        virtual void activeStatusChanged() { }
+        virtual void didAddTrack(MediaStreamTrackPrivate&) { }
+        virtual void didRemoveTrack(MediaStreamTrackPrivate&) { }
+    };
+
     static RefPtr<MediaStreamPrivate> create(const Vector<RefPtr<RealtimeMediaSource>>& audioSources, const Vector<RefPtr<RealtimeMediaSource>>& videoSources);
     static RefPtr<MediaStreamPrivate> create(const MediaStreamTrackPrivateVector&);
 
@@ -64,8 +69,8 @@ public:
 
     enum class NotifyClientOption { Notify, DontNotify };
 
-    MediaStreamPrivateClient* client() const { return m_client; }
-    void setClient(MediaStreamPrivateClient* client) { m_client = client; }
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
 
     String id() const { return m_id; }
 
@@ -77,21 +82,40 @@ public:
     void addTrack(RefPtr<MediaStreamTrackPrivate>&&, NotifyClientOption = NotifyClientOption::Notify);
     void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption = NotifyClientOption::Notify);
 
-protected:
-    explicit MediaStreamPrivate(MediaStreamPrivateClient&);
+    void startProducingData();
+    void stopProducingData();
+    bool isProducingData() const;
+
+    PlatformLayer* platformLayer() const;
+    RefPtr<Image> currentFrameImage();
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
+
+    bool hasVideo();
+    bool hasAudio();
+
+    FloatSize intrinsicSize() const;
+
+    WeakPtr<MediaStreamPrivate> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 private:
     MediaStreamPrivate(const String&, const MediaStreamTrackPrivateVector&);
 
     void trackEnded(MediaStreamTrackPrivate&) override { }
-    void trackMutedChanged(MediaStreamTrackPrivate&) override { }
-    void trackStatesChanged(MediaStreamTrackPrivate&) override { }
+    void trackMutedChanged(MediaStreamTrackPrivate&) override;
+    void trackStatesChanged(MediaStreamTrackPrivate&) override;
+    void trackProducingDataChanged(MediaStreamTrackPrivate&) override;
+    void trackEnabledChanged(MediaStreamTrackPrivate&) override;
 
-    MediaStreamPrivateClient* m_client { nullptr };
+    void characteristicsChanged();
+
+    void scheduleDeferredTask(std::function<void()>);
+
+    WeakPtrFactory<MediaStreamPrivate> m_weakPtrFactory;
+    Vector<Observer*> m_observers;
     String m_id;
-    bool m_isActive { false };
-
+    MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
     HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;
+    bool m_isActive { false };
 };
 
 typedef Vector<RefPtr<MediaStreamPrivate>> MediaStreamPrivateVector;

@@ -213,6 +213,16 @@ void MediaStreamTrack::trackStatesChanged(MediaStreamTrackPrivate&)
     configureTrackRendering();
 }
 
+void MediaStreamTrack::trackProducingDataChanged(MediaStreamTrackPrivate&)
+{
+    configureTrackRendering();
+}
+
+void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
+{
+    configureTrackRendering();
+}
+
 void MediaStreamTrack::configureTrackRendering()
 {
     // 4.3.1

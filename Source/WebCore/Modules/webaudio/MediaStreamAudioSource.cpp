@@ -44,7 +44,7 @@ MediaStreamAudioSource::MediaStreamAudioSource()
 {
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> MediaStreamAudioSource::capabilities() const
+RefPtr<RealtimeMediaSourceCapabilities> MediaStreamAudioSource::capabilities()
 {
     // FIXME: implement this.
     // https://bugs.webkit.org/show_bug.cgi?id=122430

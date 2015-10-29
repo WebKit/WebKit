@@ -73,6 +73,11 @@ WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(AVAudioCaptureSourc
 
 WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
 {
+    if (m_converter) {
+        // FIXME: make and use a smart pointer for AudioConverter
+        AudioConverterDispose(m_converter);
+        m_converter = nullptr;
+    }
     if (m_connected)
         m_captureSource->removeObserver(this);
 }
@@ -123,7 +128,7 @@ void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToP
     m_readCount += framesToProcess;
 
     if (m_converter)
-        AudioConverterConvertComplexBuffer(m_converter.get(), framesToProcess, m_list.get(), m_list.get());
+        AudioConverterConvertComplexBuffer(m_converter, framesToProcess, m_list.get(), m_list.get());
 }
 
 void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
@@ -180,9 +185,19 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* f
     m_outputDescription->mBytesPerFrame = sizeof(Float32);
     m_outputDescription->mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
 
+    if (m_converter) {
+        // FIXME: make and use a smart pointer for AudioConverter
+        AudioConverterDispose(m_converter);
+        m_converter = nullptr;
+    }
+
     if (*m_inputDescription != *m_outputDescription) {
         AudioConverterRef outConverter = nullptr;
-        AudioConverterNew(m_inputDescription.get(), m_outputDescription.get(), &outConverter);
+        OSStatus err = AudioConverterNew(m_inputDescription.get(), m_outputDescription.get(), &outConverter);
+        if (err) {
+            LOG(Media, "WebAudioSourceProviderAVFObjC::prepare(%p) - AudioConverterNew returned error %i", this, err);
+            return;
+        }
         m_converter = outConverter;
     }
 
@@ -221,6 +236,11 @@ void WebAudioSourceProviderAVFObjC::unprepare()
     m_ringBuffer = nullptr;
     m_list = nullptr;
     m_listBufferSize = 0;
+    if (m_converter) {
+        // FIXME: make and use a smart pointer for AudioConverter
+        AudioConverterDispose(m_converter);
+        m_converter = nullptr;
+    }
 }
 
 void WebAudioSourceProviderAVFObjC::process(CMFormatDescriptionRef, CMSampleBufferRef sampleBuffer)
@@ -234,7 +254,7 @@ void WebAudioSourceProviderAVFObjC::process(CMFormatDescriptionRef, CMSampleBuff
     OSStatus err = CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer, nullptr, m_list.get(), m_listBufferSize, kCFAllocatorSystemDefault, kCFAllocatorSystemDefault, kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment, &buffer);
 
     if (err) {
-        LOG(Media, "WebAudioSourceProviderAVFObjC::proess(%p) - CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer returned error %i", this, err);
+        LOG(Media, "WebAudioSourceProviderAVFObjC::process(%p) - CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer returned error %i", this, err);
         return;
     }
 
