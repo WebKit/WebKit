@@ -6238,7 +6238,12 @@ Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTar
                 rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
         } else if (is<Element>(keyValuePair.key)) {
             Element* element = downcast<Element>(keyValuePair.key);
-            rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
+            if (is<HTMLBodyElement>(element)) {
+                // For the body, just use the document bounds.
+                // The body may not cover this whole area, but it's OK for this region to be an overestimate.
+                rootRelativeBounds = absoluteEventHandlerBounds(insideFixedPosition);
+            } else
+                rootRelativeBounds = element->absoluteEventHandlerBounds(insideFixedPosition);
         }
         
         if (!rootRelativeBounds.isEmpty())
