@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AppKitSPI.h"
 #import "ColorSpaceData.h"
 #import "GenericCallback.h"
 #import "Logging.h"
@@ -1583,6 +1584,35 @@ bool WebViewImpl::writeSelectionToPasteboard(NSPasteboard *pasteboard, NSArray *
     return true;
 }
 
+bool WebViewImpl::readSelectionFromPasteboard(NSPasteboard *pasteboard)
+{
+    return m_page.readSelectionFromPasteboard([pasteboard name]);
+}
+
+id WebViewImpl::validRequestorForSendAndReturnTypes(NSString *sendType, NSString *returnType)
+{
+    EditorState editorState = m_page.editorState();
+    bool isValidSendType = false;
+
+    if (sendType && !editorState.selectionIsNone) {
+        if (editorState.isInPlugin)
+            isValidSendType = [sendType isEqualToString:NSStringPboardType];
+        else
+            isValidSendType = [PasteboardTypes::forSelection() containsObject:sendType];
+    }
+
+    bool isValidReturnType = false;
+    if (!returnType)
+        isValidReturnType = true;
+    else if ([PasteboardTypes::forEditing() containsObject:returnType] && editorState.isContentEditable) {
+        // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
+        isValidReturnType = editorState.isContentRichlyEditable || [returnType isEqualToString:NSStringPboardType];
+    }
+    if (isValidSendType && isValidReturnType)
+        return m_view;
+    return [[m_view nextResponder] validRequestorForSendType:sendType returnType:returnType];
+}
+
 void WebViewImpl::centerSelectionInVisibleArea()
 {
     m_page.centerSelectionInVisibleArea();
@@ -1610,6 +1640,15 @@ void WebViewImpl::updateFontPanelIfNeeded()
                 [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:selectionHasMultipleFonts];
         });
     }
+}
+
+void WebViewImpl::changeFontFromFontPanel()
+{
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    NSFont *font = [fontManager convertFont:fontManager.selectedFont];
+    if (!font)
+        return;
+    m_page.setFont(font.familyName, font.pointSize, font.fontDescriptor.symbolicTraits);
 }
 
 static NSMenuItem *menuItem(id <NSValidatedUserInterfaceItem> item)
@@ -1745,6 +1784,206 @@ void WebViewImpl::setUserInterfaceItemState(NSString *commandName, bool enabled,
         [toolbarItem(item.get()) setEnabled:enabled];
         // FIXME <rdar://problem/8803392>: If the item is neither a menu nor toolbar item, it will be left enabled.
     }
+}
+
+void WebViewImpl::startSpeaking()
+{
+    m_page.getSelectionOrContentsAsString([](const String& string, WebKit::CallbackBase::Error error) {
+        if (error != WebKit::CallbackBase::Error::None)
+            return;
+        if (!string)
+            return;
+
+        [NSApp speakString:string];
+    });
+}
+
+void WebViewImpl::stopSpeaking(id sender)
+{
+    [NSApp stopSpeaking:sender];
+}
+
+void WebViewImpl::showGuessPanel(id sender)
+{
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        LOG_ERROR("No NSSpellChecker");
+        return;
+    }
+
+    NSPanel *spellingPanel = [checker spellingPanel];
+    if ([spellingPanel isVisible]) {
+        [spellingPanel orderOut:sender];
+        return;
+    }
+
+    m_page.advanceToNextMisspelling(true);
+    [spellingPanel orderFront:sender];
+}
+
+void WebViewImpl::checkSpelling()
+{
+    m_page.advanceToNextMisspelling(false);
+}
+
+void WebViewImpl::changeSpelling(id sender)
+{
+    NSString *word = [[sender selectedCell] stringValue];
+
+    m_page.changeSpellingToWord(word);
+}
+
+void WebViewImpl::toggleContinuousSpellChecking()
+{
+    bool spellCheckingEnabled = !TextChecker::state().isContinuousSpellCheckingEnabled;
+    TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
+
+    m_page.process().updateTextCheckerState();
+}
+
+bool WebViewImpl::isGrammarCheckingEnabled()
+{
+    return TextChecker::state().isGrammarCheckingEnabled;
+}
+
+void WebViewImpl::setGrammarCheckingEnabled(bool flag)
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isGrammarCheckingEnabled)
+        return;
+
+    TextChecker::setGrammarCheckingEnabled(flag);
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::toggleGrammarChecking()
+{
+    bool grammarCheckingEnabled = !TextChecker::state().isGrammarCheckingEnabled;
+    TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
+
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::toggleAutomaticSpellingCorrection()
+{
+    TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
+
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::orderFrontSubstitutionsPanel(id sender)
+{
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        LOG_ERROR("No NSSpellChecker");
+        return;
+    }
+
+    NSPanel *substitutionsPanel = [checker substitutionsPanel];
+    if ([substitutionsPanel isVisible]) {
+        [substitutionsPanel orderOut:sender];
+        return;
+    }
+    [substitutionsPanel orderFront:sender];
+}
+
+void WebViewImpl::toggleSmartInsertDelete()
+{
+    m_page.setSmartInsertDeleteEnabled(!m_page.isSmartInsertDeleteEnabled());
+}
+
+bool WebViewImpl::isAutomaticQuoteSubstitutionEnabled()
+{
+    return TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
+}
+
+void WebViewImpl::setAutomaticQuoteSubstitutionEnabled(bool flag)
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticQuoteSubstitutionEnabled)
+        return;
+
+    TextChecker::setAutomaticQuoteSubstitutionEnabled(flag);
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::toggleAutomaticQuoteSubstitution()
+{
+    TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+    m_page.process().updateTextCheckerState();
+}
+
+bool WebViewImpl::isAutomaticDashSubstitutionEnabled()
+{
+    return TextChecker::state().isAutomaticDashSubstitutionEnabled;
+}
+
+void WebViewImpl::setAutomaticDashSubstitutionEnabled(bool flag)
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticDashSubstitutionEnabled)
+        return;
+
+    TextChecker::setAutomaticDashSubstitutionEnabled(flag);
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::toggleAutomaticDashSubstitution()
+{
+    TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+    m_page.process().updateTextCheckerState();
+}
+
+bool WebViewImpl::isAutomaticLinkDetectionEnabled()
+{
+    return TextChecker::state().isAutomaticLinkDetectionEnabled;
+}
+
+void WebViewImpl::setAutomaticLinkDetectionEnabled(bool flag)
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticLinkDetectionEnabled)
+        return;
+
+    TextChecker::setAutomaticLinkDetectionEnabled(flag);
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::toggleAutomaticLinkDetection()
+{
+    TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+    m_page.process().updateTextCheckerState();
+}
+
+bool WebViewImpl::isAutomaticTextReplacementEnabled()
+{
+    return TextChecker::state().isAutomaticTextReplacementEnabled;
+}
+
+void WebViewImpl::setAutomaticTextReplacementEnabled(bool flag)
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticTextReplacementEnabled)
+        return;
+    
+    TextChecker::setAutomaticTextReplacementEnabled(flag);
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::toggleAutomaticTextReplacement()
+{
+    TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
+    m_page.process().updateTextCheckerState();
+}
+
+void WebViewImpl::uppercaseWord()
+{
+    m_page.uppercaseWord();
+}
+
+void WebViewImpl::lowercaseWord()
+{
+    m_page.lowercaseWord();
+}
+
+void WebViewImpl::capitalizeWord()
+{
+    m_page.capitalizeWord();
 }
 
 void WebViewImpl::preferencesDidChange()

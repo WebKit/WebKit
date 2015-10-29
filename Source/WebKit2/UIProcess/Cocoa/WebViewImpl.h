@@ -230,11 +230,44 @@ public:
     void registerEditCommand(RefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();
     bool writeSelectionToPasteboard(NSPasteboard *, NSArray *types);
+    bool readSelectionFromPasteboard(NSPasteboard *);
+    id validRequestorForSendAndReturnTypes(NSString *sendType, NSString *returnType);
     void centerSelectionInVisibleArea();
     void selectionDidChange();
     void startObservingFontPanel();
     void updateFontPanelIfNeeded();
+    void changeFontFromFontPanel();
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
+
+    void startSpeaking();
+    void stopSpeaking(id);
+
+    void showGuessPanel(id);
+    void checkSpelling();
+    void changeSpelling(id);
+    void toggleContinuousSpellChecking();
+
+    bool isGrammarCheckingEnabled();
+    void setGrammarCheckingEnabled(bool);
+    void toggleGrammarChecking();
+    void toggleAutomaticSpellingCorrection();
+    void orderFrontSubstitutionsPanel(id);
+    void toggleSmartInsertDelete();
+    bool isAutomaticQuoteSubstitutionEnabled();
+    void setAutomaticQuoteSubstitutionEnabled(bool);
+    void toggleAutomaticQuoteSubstitution();
+    bool isAutomaticDashSubstitutionEnabled();
+    void setAutomaticDashSubstitutionEnabled(bool);
+    void toggleAutomaticDashSubstitution();
+    bool isAutomaticLinkDetectionEnabled();
+    void setAutomaticLinkDetectionEnabled(bool);
+    void toggleAutomaticLinkDetection();
+    bool isAutomaticTextReplacementEnabled();
+    void setAutomaticTextReplacementEnabled(bool);
+    void toggleAutomaticTextReplacement();
+    void uppercaseWord();
+    void lowercaseWord();
+    void capitalizeWord();
 
     void preferencesDidChange();
 

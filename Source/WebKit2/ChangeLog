@@ -1,3 +1,75 @@
+2015-10-29  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/spi/mac/AppKitSPI.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validRequestorForSendType:returnType:]):
+        (-[WKView readSelectionFromPasteboard:]):
+        (-[WKView changeFont:]):
+        (-[WKView startSpeaking:]):
+        (-[WKView stopSpeaking:]):
+        (-[WKView showGuessPanel:]):
+        (-[WKView checkSpelling:]):
+        (-[WKView changeSpelling:]):
+        (-[WKView toggleContinuousSpellChecking:]):
+        (-[WKView isGrammarCheckingEnabled]):
+        (-[WKView setGrammarCheckingEnabled:]):
+        (-[WKView toggleGrammarChecking:]):
+        (-[WKView toggleAutomaticSpellingCorrection:]):
+        (-[WKView orderFrontSubstitutionsPanel:]):
+        (-[WKView toggleSmartInsertDelete:]):
+        (-[WKView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WKView setAutomaticQuoteSubstitutionEnabled:]):
+        (-[WKView toggleAutomaticQuoteSubstitution:]):
+        (-[WKView isAutomaticDashSubstitutionEnabled]):
+        (-[WKView setAutomaticDashSubstitutionEnabled:]):
+        (-[WKView toggleAutomaticDashSubstitution:]):
+        (-[WKView isAutomaticLinkDetectionEnabled]):
+        (-[WKView setAutomaticLinkDetectionEnabled:]):
+        (-[WKView toggleAutomaticLinkDetection:]):
+        (-[WKView isAutomaticTextReplacementEnabled]):
+        (-[WKView setAutomaticTextReplacementEnabled:]):
+        (-[WKView toggleAutomaticTextReplacement:]):
+        (-[WKView uppercaseWord:]):
+        (-[WKView lowercaseWord:]):
+        (-[WKView capitalizeWord:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::readSelectionFromPasteboard):
+        (WebKit::WebViewImpl::validRequestorForSendAndReturnTypes):
+        (WebKit::WebViewImpl::changeFontFromFontPanel):
+        (WebKit::WebViewImpl::startSpeaking):
+        (WebKit::WebViewImpl::stopSpeaking):
+        (WebKit::WebViewImpl::showGuessPanel):
+        (WebKit::WebViewImpl::checkSpelling):
+        (WebKit::WebViewImpl::changeSpelling):
+        (WebKit::WebViewImpl::toggleContinuousSpellChecking):
+        (WebKit::WebViewImpl::isGrammarCheckingEnabled):
+        (WebKit::WebViewImpl::setGrammarCheckingEnabled):
+        (WebKit::WebViewImpl::toggleGrammarChecking):
+        (WebKit::WebViewImpl::toggleAutomaticSpellingCorrection):
+        (WebKit::WebViewImpl::orderFrontSubstitutionsPanel):
+        (WebKit::WebViewImpl::toggleSmartInsertDelete):
+        (WebKit::WebViewImpl::isAutomaticQuoteSubstitutionEnabled):
+        (WebKit::WebViewImpl::setAutomaticQuoteSubstitutionEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticQuoteSubstitution):
+        (WebKit::WebViewImpl::isAutomaticDashSubstitutionEnabled):
+        (WebKit::WebViewImpl::setAutomaticDashSubstitutionEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticDashSubstitution):
+        (WebKit::WebViewImpl::isAutomaticLinkDetectionEnabled):
+        (WebKit::WebViewImpl::setAutomaticLinkDetectionEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticLinkDetection):
+        (WebKit::WebViewImpl::setAutomaticTextReplacementEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticTextReplacement):
+        (WebKit::WebViewImpl::uppercaseWord):
+        (WebKit::WebViewImpl::lowercaseWord):
+        (WebKit::WebViewImpl::capitalizeWord):
+        Move spellcheck and related bits.
+
 2015-10-29  Eric Carlson  <eric.carlson@apple.com>
 
         Revert inadvertent changes

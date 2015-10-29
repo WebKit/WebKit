@@ -35,6 +35,7 @@
 
 #import "APILegacyContextHistoryClient.h"
 #import "APIPageConfiguration.h"
+#import "AppKitSPI.h"
 #import "AttributedString.h"
 #import "DataReference.h"
 #import "EditingRange.h"
@@ -108,11 +109,6 @@
 /* API internals. */
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKProcessGroupPrivate.h"
-
-@interface NSApplication (WKNSApplicationDetails)
-- (void)speakString:(NSString *)string;
-- (void)_setCurrentEvent:(NSEvent *)event;
-@end
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
 @interface NSTextInputContext (WKNSTextInputContextDetails)
@@ -381,8 +377,6 @@ WEBCORE_COMMAND(yankAndSelect)
 
 #undef WEBCORE_COMMAND
 
-// This method is needed to support Mac OS X services.
-
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
     return _data->_impl->writeSelectionToPasteboard(pasteboard, types);
@@ -393,48 +387,19 @@ WEBCORE_COMMAND(yankAndSelect)
     _data->_impl->centerSelectionInVisibleArea();
 }
 
-// This method is needed to support Mac OS X services.
-
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    EditorState editorState = _data->_page->editorState();
-    BOOL isValidSendType = NO;
-
-    if (sendType && !editorState.selectionIsNone) {
-        if (editorState.isInPlugin)
-            isValidSendType = [sendType isEqualToString:NSStringPboardType];
-        else
-            isValidSendType = [PasteboardTypes::forSelection() containsObject:sendType];
-    }
-
-    BOOL isValidReturnType = NO;
-    if (!returnType)
-        isValidReturnType = YES;
-    else if ([PasteboardTypes::forEditing() containsObject:returnType] && editorState.isContentEditable) {
-        // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
-        isValidReturnType = editorState.isContentRichlyEditable || [returnType isEqualToString:NSStringPboardType];
-    }
-    if (isValidSendType && isValidReturnType)
-        return self;
-    return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
+    return _data->_impl->validRequestorForSendAndReturnTypes(sendType, returnType);
 }
-
-// This method is needed to support Mac OS X services.
 
 - (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard 
 {
-    return _data->_page->readSelectionFromPasteboard([pasteboard name]);
+    return _data->_impl->readSelectionFromPasteboard(pasteboard);
 }
-
-// Font panel support.
 
 - (void)changeFont:(id)sender
 {
-    NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    NSFont *font = [fontManager convertFont:[fontManager selectedFont]];
-    if (!font)
-        return;
-    _data->_page->setFont([font familyName], [font pointSize], [[font fontDescriptor] symbolicTraits]);
+    _data->_impl->changeFontFromFontPanel();
 }
 
 /*
@@ -475,202 +440,137 @@ Some other editing-related methods still unimplemented:
 
 - (IBAction)startSpeaking:(id)sender
 {
-    _data->_page->getSelectionOrContentsAsString([self](const String& string, WebKit::CallbackBase::Error error) {
-        if (error != WebKit::CallbackBase::Error::None)
-            return;
-        if (!string)
-            return;
-
-        [NSApp speakString:string];
-    });
+    _data->_impl->startSpeaking();
 }
 
 - (IBAction)stopSpeaking:(id)sender
 {
-    [NSApp stopSpeaking:sender];
+    _data->_impl->stopSpeaking(sender);
 }
 
 - (IBAction)showGuessPanel:(id)sender
 {
-    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    if (!checker) {
-        LOG_ERROR("No NSSpellChecker");
-        return;
-    }
-    
-    NSPanel *spellingPanel = [checker spellingPanel];
-    if ([spellingPanel isVisible]) {
-        [spellingPanel orderOut:sender];
-        return;
-    }
-    
-    _data->_page->advanceToNextMisspelling(true);
-    [spellingPanel orderFront:sender];
+    _data->_impl->showGuessPanel(sender);
 }
 
 - (IBAction)checkSpelling:(id)sender
 {
-    _data->_page->advanceToNextMisspelling(false);
+    _data->_impl->checkSpelling();
 }
 
 - (void)changeSpelling:(id)sender
 {
-    NSString *word = [[sender selectedCell] stringValue];
-
-    _data->_page->changeSpellingToWord(word);
+    _data->_impl->changeSpelling(sender);
 }
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender
 {
-    bool spellCheckingEnabled = !TextChecker::state().isContinuousSpellCheckingEnabled;
-    TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
-
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleContinuousSpellChecking();
 }
 
 - (BOOL)isGrammarCheckingEnabled
 {
-    return TextChecker::state().isGrammarCheckingEnabled;
+    return _data->_impl->isGrammarCheckingEnabled();
 }
 
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
-    if (static_cast<bool>(flag) == TextChecker::state().isGrammarCheckingEnabled)
-        return;
-    
-    TextChecker::setGrammarCheckingEnabled(flag);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->setGrammarCheckingEnabled(flag);
 }
 
 - (IBAction)toggleGrammarChecking:(id)sender
 {
-    bool grammarCheckingEnabled = !TextChecker::state().isGrammarCheckingEnabled;
-    TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
-
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleGrammarChecking();
 }
 
 - (IBAction)toggleAutomaticSpellingCorrection:(id)sender
 {
-    TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
-
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleAutomaticSpellingCorrection();
 }
 
 - (void)orderFrontSubstitutionsPanel:(id)sender
 {
-    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    if (!checker) {
-        LOG_ERROR("No NSSpellChecker");
-        return;
-    }
-    
-    NSPanel *substitutionsPanel = [checker substitutionsPanel];
-    if ([substitutionsPanel isVisible]) {
-        [substitutionsPanel orderOut:sender];
-        return;
-    }
-    [substitutionsPanel orderFront:sender];
+    _data->_impl->orderFrontSubstitutionsPanel(sender);
 }
 
 - (IBAction)toggleSmartInsertDelete:(id)sender
 {
-    _data->_page->setSmartInsertDeleteEnabled(!_data->_page->isSmartInsertDeleteEnabled());
+    _data->_impl->toggleSmartInsertDelete();
 }
 
 - (BOOL)isAutomaticQuoteSubstitutionEnabled
 {
-    return TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
+    return _data->_impl->isAutomaticQuoteSubstitutionEnabled();
 }
 
 - (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag
 {
-    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticQuoteSubstitutionEnabled)
-        return;
-
-    TextChecker::setAutomaticQuoteSubstitutionEnabled(flag);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->setAutomaticQuoteSubstitutionEnabled(flag);
 }
 
 - (void)toggleAutomaticQuoteSubstitution:(id)sender
 {
-    TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleAutomaticQuoteSubstitution();
 }
 
 - (BOOL)isAutomaticDashSubstitutionEnabled
 {
-    return TextChecker::state().isAutomaticDashSubstitutionEnabled;
+    return _data->_impl->isAutomaticDashSubstitutionEnabled();
 }
 
 - (void)setAutomaticDashSubstitutionEnabled:(BOOL)flag
 {
-    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticDashSubstitutionEnabled)
-        return;
-
-    TextChecker::setAutomaticDashSubstitutionEnabled(flag);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->setAutomaticDashSubstitutionEnabled(flag);
 }
 
 - (void)toggleAutomaticDashSubstitution:(id)sender
 {
-    TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleAutomaticDashSubstitution();
 }
 
 - (BOOL)isAutomaticLinkDetectionEnabled
 {
-    return TextChecker::state().isAutomaticLinkDetectionEnabled;
+    return _data->_impl->isAutomaticLinkDetectionEnabled();
 }
 
 - (void)setAutomaticLinkDetectionEnabled:(BOOL)flag
 {
-    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticLinkDetectionEnabled)
-        return;
-
-    TextChecker::setAutomaticLinkDetectionEnabled(flag);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->setAutomaticLinkDetectionEnabled(flag);
 }
 
 - (void)toggleAutomaticLinkDetection:(id)sender
 {
-    TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleAutomaticLinkDetection();
 }
 
 - (BOOL)isAutomaticTextReplacementEnabled
 {
-    return TextChecker::state().isAutomaticTextReplacementEnabled;
+    return _data->_impl->isAutomaticTextReplacementEnabled();
 }
 
 - (void)setAutomaticTextReplacementEnabled:(BOOL)flag
 {
-    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticTextReplacementEnabled)
-        return;
-
-    TextChecker::setAutomaticTextReplacementEnabled(flag);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->setAutomaticTextReplacementEnabled(flag);
 }
 
 - (void)toggleAutomaticTextReplacement:(id)sender
 {
-    TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
-    _data->_page->process().updateTextCheckerState();
+    _data->_impl->toggleAutomaticTextReplacement();
 }
 
 - (void)uppercaseWord:(id)sender
 {
-    _data->_page->uppercaseWord();
+    _data->_impl->uppercaseWord();
 }
 
 - (void)lowercaseWord:(id)sender
 {
-    _data->_page->lowercaseWord();
+    _data->_impl->lowercaseWord();
 }
 
 - (void)capitalizeWord:(id)sender
 {
-    _data->_page->capitalizeWord();
+    _data->_impl->capitalizeWord();
 }
 
 // Events

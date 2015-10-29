@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APIUIClient.h"
+#import "AppKitSPI.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
@@ -56,10 +57,6 @@
 #import <mach-o/dyld.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringConcatenate.h>
-
-@interface NSApplication ()
-- (void)speakString:(NSString *)string;
-@end
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())

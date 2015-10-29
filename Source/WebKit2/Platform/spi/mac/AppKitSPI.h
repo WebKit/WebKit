@@ -36,3 +36,10 @@
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@interface NSApplication ()
+
+- (void)speakString:(NSString *)string;
+- (void)_setCurrentEvent:(NSEvent *)event;
+
+@end
