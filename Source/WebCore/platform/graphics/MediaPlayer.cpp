@@ -865,8 +865,11 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
 
 void MediaPlayer::getSupportedTypes(HashSet<String>& types)
 {
-    for (auto& engine : installedMediaEngines())
-        engine.getSupportedTypes(types);
+    for (auto& engine : installedMediaEngines()) {
+        HashSet<String> engineTypes;
+        engine.getSupportedTypes(engineTypes);
+        types.add(engineTypes.begin(), engineTypes.end());
+    }
 } 
 
 bool MediaPlayer::isAvailable()
