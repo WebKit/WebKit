@@ -1,3 +1,14 @@
+2015-10-29  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Fall back to AppleWin results in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=150672
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinCairoPort):
+        (WinCairoPort.default_baseline_search_path):
+
 2015-10-28  Keith Rollin  <krollin@apple.com>
 
         Do not sanitize user input for input[type=url]
