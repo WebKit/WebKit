@@ -1,3 +1,41 @@
+2015-10-28  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::LowerToAir should not duplicate Loads
+        https://bugs.webkit.org/show_bug.cgi?id=150651
+
+        Reviewed by Benjamin Poulain.
+
+        The instruction selector may decide to fuse two Values into one. This ordinarily only happens
+        if we haven't already emitted code that uses the Value and the Value has only one direct
+        user. Once we have emitted such code, we ensure that everyone knows that we have "locked" the
+        Value: we won't emit any more code for it in the future.
+
+        The optimization to fuse Loads was forgetting to do all of these things, and so generated
+        code would have a lot of duplicated Loads. That's bad and this change fixes that.
+
+        Ordinarily, this is far less tricky because the pattern matcher does this for us via
+        acceptInternals() and acceptInternalsLate(). I added a comment to this effect. I hope that we
+        won't need to do this manually very often.
+
+        Also found an uninitialized value bug in UseCounts. That was making all of this super hard to
+        debug.
+
+        * b3/B3IndexMap.h:
+        (JSC::B3::IndexMap::IndexMap):
+        (JSC::B3::IndexMap::resize):
+        (JSC::B3::IndexMap::operator[]):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tmp):
+        (JSC::B3::Air::LowerToAir::canBeInternal):
+        (JSC::B3::Air::LowerToAir::commitInternal):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::loadAddr):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::acceptInternals):
+        * b3/B3UseCounts.cpp:
+        (JSC::B3::UseCounts::UseCounts):
+
 2015-10-28  Mark Lam  <mark.lam@apple.com>
 
         JITSubGenerator::generateFastPath() does not need to be inlined.

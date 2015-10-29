@@ -115,6 +115,29 @@ public:
         return tmp;
     }
 
+    bool canBeInternal(Value* value)
+    {
+        // If one of the internal things has already been computed, then we don't want to cause
+        // it to be recomputed again.
+        if (valueToTmp[value])
+            return false;
+        
+        // We require internals to have only one use - us.
+        if (useCounts[value] != 1)
+            return false;
+
+        return true;
+    }
+
+    // If you ask canBeInternal() and then construct something from that, and you commit to emitting
+    // that code, then you must commitInternal() on that value. This is tricky, and you only need to
+    // do it if you're pattern matching by hand rather than using the patterns language. Long story
+    // short, you should avoid this by using the pattern matcher to match patterns.
+    void commitInternal(Value* value)
+    {
+        locked.add(value);
+    }
+
     // This turns the given operand into an address.
     Arg effectiveAddr(Value* address)
     {
@@ -150,6 +173,8 @@ public:
 
     Arg loadAddr(Value* loadValue)
     {
+        if (!canBeInternal(loadValue))
+            return Arg();
         if (loadValue->opcode() == Load)
             return addr(loadValue);
         return Arg();
@@ -214,6 +239,7 @@ public:
         if (commutativity == Commutative) {
             Arg leftAddr = loadAddr(left);
             if (isValidForm(opcode, leftAddr.kind(), Arg::Tmp)) {
+                commitInternal(left);
                 append(relaxedMoveForType(currentValue->type()), tmp(right), result);
                 append(opcode, leftAddr, result);
                 return;
@@ -222,6 +248,7 @@ public:
 
         Arg rightAddr = loadAddr(right);
         if (isValidForm(opcode, rightAddr.kind(), Arg::Tmp)) {
+            commitInternal(right);
             append(relaxedMoveForType(currentValue->type()), tmp(left), result);
             append(opcode, rightAddr, result);
             return;
@@ -253,15 +280,19 @@ public:
         Arg storeAddr = addr(currentValue);
         ASSERT(storeAddr);
 
+        Value* loadValue;
         Value* otherValue;
-        if (addr(left) == storeAddr)
+        if (loadAddr(left) == storeAddr) {
+            loadValue = left;
             otherValue = right;
-        else if (commutativity == Commutative && addr(right) == storeAddr)
+        } else if (commutativity == Commutative && loadAddr(right) == storeAddr) {
+            loadValue = right;
             otherValue = left;
-        else
+        } else
             return false;
 
         if (isValidForm(opcode, Arg::Imm, storeAddr.kind()) && imm(otherValue)) {
+            commitInternal(loadValue);
             append(opcode, imm(otherValue), storeAddr);
             return true;
         }
@@ -269,6 +300,7 @@ public:
         if (!isValidForm(opcode, Arg::Tmp, storeAddr.kind()))
             return false;
 
+        commitInternal(loadValue);
         append(opcode, tmp(otherValue), storeAddr);
         return true;
     }
@@ -420,13 +452,7 @@ public:
     template<typename... Arguments>
     bool acceptInternals(Value* value, Arguments... arguments)
     {
-        // If one of the internal things has already been computed, then we don't want to cause
-        // it to be recomputed again.
-        if (valueToTmp[value])
-            return false;
-        
-        // We require internals to have only one use - us.
-        if (useCounts[value] != 1)
+        if (!canBeInternal(value))
             return false;
         
         return acceptInternals(arguments...);
@@ -436,7 +462,7 @@ public:
     template<typename... Arguments>
     void acceptInternalsLate(Value* value, Arguments... arguments)
     {
-        locked.add(value);
+        commitInternal(value);
         acceptInternalsLate(arguments...);
     }
     void acceptInternalsLate() { }

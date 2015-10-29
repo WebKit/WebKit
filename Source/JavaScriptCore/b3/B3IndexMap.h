@@ -41,12 +41,12 @@ class IndexMap {
 public:
     explicit IndexMap(size_t size = 0)
     {
-        m_vector.resize(size);
+        m_vector.fill(Value(), size);
     }
 
     void resize(size_t size)
     {
-        m_vector.resize(size);
+        m_vector.fill(Value(), size);
     }
 
     Value& operator[](Key* key)

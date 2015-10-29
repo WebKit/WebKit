@@ -35,6 +35,8 @@ namespace JSC { namespace B3 {
 UseCounts::UseCounts(Procedure& procedure)
     : m_counts(procedure.values().size())
 {
+    for (Value* value : procedure.values())
+        ASSERT_UNUSED(value, !m_counts[value]);
     for (Value* value : procedure.values()) {
         for (Value* child : value->children())
             m_counts[child]++;
