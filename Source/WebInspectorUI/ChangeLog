@@ -1,3 +1,15 @@
+2015-10-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r191071): Web Inspector: Can't resize split console when the window is too narrow
+        https://bugs.webkit.org/show_bug.cgi?id=150492
+
+        Reviewed by Timothy Hatcher.
+
+        Make some items inside of the navigation bar click-through to incsease the draggable area.
+
+        * UserInterface/Views/Main.css:
+        (#split-content-browser > .navigation-bar > :matches(.hierarchical-path, .log-scope-bar)):
+
 2015-10-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Timeline Markers again (DOMContentLoaded, Load, console.timeStamp)
