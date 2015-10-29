@@ -29,7 +29,6 @@
 #include "DecodeEscapeSequences.h"
 #include "HTTPParsers.h"
 #include "SharedBuffer.h"
-#include "Timer.h"
 #include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
@@ -55,6 +54,8 @@ struct DecodeTask {
     Result result;
 };
 
+#if HAVE(RUNLOOP_TIMER)
+
 class DecodingResultDispatcher {
 public:
     static void dispatch(std::unique_ptr<DecodeTask> decodeTask)
@@ -73,9 +74,7 @@ private:
     void startTimer()
     {
         m_timer.startOneShot(0);
-#if HAVE(RUNLOOP_TIMER)
         m_timer.schedule(m_decodeTask->scheduleContext.scheduledPairs);
-#endif
     }
 
     void timerFired()
@@ -88,14 +87,11 @@ private:
         delete this;
     }
 
-#if HAVE(RUNLOOP_TIMER)
-    typedef RunLoopTimer<DecodingResultDispatcher> DecodingResultDispatcherTimer;
-#else
-    typedef Timer DecodingResultDispatcherTimer;
-#endif
-    DecodingResultDispatcherTimer m_timer;
+    RunLoopTimer<DecodingResultDispatcher> m_timer;
     std::unique_ptr<DecodeTask> m_decodeTask;
 };
+
+#endif // HAVE(RUNLOOP_TIMER)
 
 static Result parseMediaType(const String& mediaType)
 {
@@ -177,7 +173,18 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, DecodeComple
         else
             decodeEscaped(decodeTask);
 
+#if HAVE(RUNLOOP_TIMER)
         DecodingResultDispatcher::dispatch(std::unique_ptr<DecodeTask>(decodeTaskPtr));
+#else
+        callOnMainThread([decodeTaskPtr] {
+            std::unique_ptr<DecodeTask> decodeTask(decodeTaskPtr);
+            if (!decodeTask->result.data) {
+                decodeTask->completionHandler({ });
+                return;
+            }
+            decodeTask->completionHandler(WTF::move(decodeTask->result));
+        });
+#endif
     });
 }
 
