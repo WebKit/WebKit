@@ -272,7 +272,7 @@ function filter(callback /*, thisArg */)
 
 function toLocaleString()
 {
-    "use strint";
+    "use strict";
 
     var length = @typedArrayLength(this);
 
