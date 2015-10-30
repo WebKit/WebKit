@@ -2040,8 +2040,6 @@ sub cmakeBasedPortName()
     return "Efl" if isEfl();
     return "GTK" if isGtk();
     return "Mac" if isAppleMacWebKit();
-    return "WinCairo" if isWinCairo();
-    return "AppleWin" if isAppleWinWebKit();
     return "";
 }
 
@@ -2053,7 +2051,7 @@ sub determineIsCMakeBuild()
 
 sub isCMakeBuild()
 {
-    if (isEfl() || isGtk() || isAnyWindows()) {
+    if (isEfl() || isGtk()) {
         return 1;
     }
     determineIsCMakeBuild();

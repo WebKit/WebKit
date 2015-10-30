@@ -101,8 +101,7 @@ if (isCMakeBuild()) {
     $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
 
     # This call only returns if nothing wrong happened
-    my $testapi = (isAnyWindows() ? "testapi" : "");
-    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc $testapi $makeArgs", (cmakeBasedPortArguments(), $cmakeArgs));
+    buildCMakeProjectOrExit(0, cmakeBasedPortName(), undef, "jsc $makeArgs", (cmakeBasedPortArguments(), $cmakeArgs));
     writeCongrats();
     exit exitStatus(0);
 }

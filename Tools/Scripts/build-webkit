@@ -252,15 +252,15 @@ if (isCMakeBuild()) {
 my $baseProductDir = baseProductDir();
 if (isAppleWinWebKit() || isWinCairo()) {
     chdirWebKit();
-    if (exitStatus(generateBuildSystemFromCMakeProject(cmakeBasedPortName()))) {
-        die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
+    if (exitStatus(generateBuildSystemFromCMakeProject(isWinCairo() ? "WinCairo" : "AppleWin"))) {
+        die "Run \"C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/vcvarsall.bat\" before build-webkit when using ninja";
     }
     chdirWebKit();
     if (canUseNinja()) {
-        chdir File::Spec->catdir("WebKitBuild", configuration());
+        chdir "WebKitBuild/" . configuration();
         $result = system("ninja");
     } else {
-        $result = buildVisualStudioProject(File::Spec->catfile("WebKitBuild", configuration(), "WebKit.sln"), $clean);
+        $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
     }
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
