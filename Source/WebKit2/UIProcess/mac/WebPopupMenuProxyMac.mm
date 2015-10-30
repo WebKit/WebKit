@@ -32,7 +32,6 @@
 #import "PageClientImpl.h"
 #import "PlatformPopupMenuData.h"
 #import "StringUtilities.h"
-#import "WKView.h"
 #import "WebPopupItem.h"
 #import <WebKitSystemInterface.h>
 
@@ -40,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebPopupMenuProxyMac::WebPopupMenuProxyMac(WKView *webView, WebPopupMenuProxy::Client& client)
+WebPopupMenuProxyMac::WebPopupMenuProxyMac(NSView *webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
     , m_wasCanceled(false)

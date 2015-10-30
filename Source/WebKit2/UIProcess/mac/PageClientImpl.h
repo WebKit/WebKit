@@ -51,7 +51,7 @@ class PageClientImpl final : public PageClient
 #endif
     {
 public:
-    PageClientImpl(WKView *, WKWebView *);
+    PageClientImpl(NSView *, WKWebView *);
     virtual ~PageClientImpl();
 
     // FIXME: Eventually WebViewImpl should become the PageClient.
@@ -224,7 +224,7 @@ private:
     virtual _WKRemoteObjectRegistry *remoteObjectRegistry() override;
 #endif
 
-    WKView *m_wkView;
+    NSView *m_view;
     WKWebView *m_webView;
     WebViewImpl* m_impl { nullptr };
 #if USE(AUTOCORRECTION_PANEL)

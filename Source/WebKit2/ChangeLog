@@ -1,3 +1,267 @@
+2015-10-30  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:relatedToView:]):
+        (-[WKView prepareContentInRect:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView pageRef]):
+        (-[WKView _web_immediateActionAnimationControllerForHitTestResultInternal:withType:userData:]):
+        (-[WKView dealloc]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::page):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKWindowVisibilityObserver initWithView:impl:]):
+        (-[WKWindowVisibilityObserver dealloc]):
+        (-[WKWindowVisibilityObserver _activeSpaceDidChange:]):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::~WebViewImpl):
+        (WebKit::WebViewImpl::setDrawsBackground):
+        (WebKit::WebViewImpl::drawsBackground):
+        (WebKit::WebViewImpl::setDrawsTransparentBackground):
+        (WebKit::WebViewImpl::drawsTransparentBackground):
+        (WebKit::WebViewImpl::isOpaque):
+        (WebKit::WebViewImpl::acceptsFirstMouse):
+        (WebKit::WebViewImpl::becomeFirstResponder):
+        (WebKit::WebViewImpl::resignFirstResponder):
+        (WebKit::WebViewImpl::viewWillStartLiveResize):
+        (WebKit::WebViewImpl::viewDidEndLiveResize):
+        (WebKit::WebViewImpl::updateWindowAndViewFrames):
+        (WebKit::WebViewImpl::setFixedLayoutSize):
+        (WebKit::WebViewImpl::fixedLayoutSize):
+        (WebKit::WebViewImpl::isUsingUISideCompositing):
+        (WebKit::WebViewImpl::setDrawingAreaSize):
+        (WebKit::WebViewImpl::forceAsyncDrawingAreaSizeUpdate):
+        (WebKit::WebViewImpl::waitForAsyncDrawingAreaSizeUpdate):
+        (WebKit::WebViewImpl::updateLayer):
+        (WebKit::WebViewImpl::drawRect):
+        (WebKit::WebViewImpl::dispatchSetTopContentInset):
+        (WebKit::WebViewImpl::prepareContentInRect):
+        (WebKit::WebViewImpl::updateViewExposedRect):
+        (WebKit::WebViewImpl::setMinimumSizeForAutoLayout):
+        (WebKit::WebViewImpl::minimumSizeForAutoLayout):
+        (WebKit::WebViewImpl::setShouldExpandToViewHeightForAutoLayout):
+        (WebKit::WebViewImpl::shouldExpandToViewHeightForAutoLayout):
+        (WebKit::WebViewImpl::setIntrinsicContentSize):
+        (WebKit::WebViewImpl::setViewScale):
+        (WebKit::WebViewImpl::viewScale):
+        (WebKit::WebViewImpl::supportsArbitraryLayoutModes):
+        (WebKit::WebViewImpl::setOverrideDeviceScaleFactor):
+        (WebKit::WebViewImpl::windowDidOrderOffScreen):
+        (WebKit::WebViewImpl::windowDidOrderOnScreen):
+        (WebKit::WebViewImpl::windowDidBecomeKey):
+        (WebKit::WebViewImpl::windowDidResignKey):
+        (WebKit::WebViewImpl::windowDidMiniaturize):
+        (WebKit::WebViewImpl::windowDidDeminiaturize):
+        (WebKit::WebViewImpl::windowDidChangeBackingProperties):
+        (WebKit::WebViewImpl::windowDidChangeScreen):
+        (WebKit::WebViewImpl::windowDidChangeLayerHosting):
+        (WebKit::WebViewImpl::windowDidChangeOcclusionState):
+        (WebKit::WebViewImpl::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+        (WebKit::WebViewImpl::viewDidChangeBackingProperties):
+        (WebKit::WebViewImpl::viewDidHide):
+        (WebKit::WebViewImpl::viewDidUnhide):
+        (WebKit::WebViewImpl::activeSpaceDidChange):
+        (WebKit::WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent):
+        (WebKit::WebViewImpl::setUnderlayColor):
+        (WebKit::WebViewImpl::underlayColor):
+        (WebKit::WebViewImpl::pageExtendedBackgroundColor):
+        (WebKit::WebViewImpl::setOverlayScrollbarStyle):
+        (WebKit::WebViewImpl::overlayScrollbarStyle):
+        (WebKit::WebViewImpl::endDeferringViewInWindowChanges):
+        (WebKit::WebViewImpl::endDeferringViewInWindowChangesSync):
+        (WebKit::WebViewImpl::prepareForMoveToWindow):
+        (WebKit::WebViewImpl::updateSecureInputState):
+        (WebKit::WebViewImpl::setPluginComplexTextInputState):
+        (WebKit::WebViewImpl::handlePluginComplexTextInputKeyDown):
+        (WebKit::WebViewImpl::handleAcceptedAlternativeText):
+        (WebKit::WebViewImpl::pressureChangeWithEvent):
+        (WebKit::WebViewImpl::isEditable):
+        (WebKit::WebViewImpl::executeEditCommandForSelector):
+        (WebKit::WebViewImpl::writeSelectionToPasteboard):
+        (WebKit::WebViewImpl::readSelectionFromPasteboard):
+        (WebKit::WebViewImpl::validRequestorForSendAndReturnTypes):
+        (WebKit::WebViewImpl::centerSelectionInVisibleArea):
+        (WebKit::WebViewImpl::updateFontPanelIfNeeded):
+        (WebKit::WebViewImpl::changeFontFromFontPanel):
+        (WebKit::WebViewImpl::validateUserInterfaceItem):
+        (WebKit::WebViewImpl::startSpeaking):
+        (WebKit::WebViewImpl::showGuessPanel):
+        (WebKit::WebViewImpl::checkSpelling):
+        (WebKit::WebViewImpl::changeSpelling):
+        (WebKit::WebViewImpl::toggleContinuousSpellChecking):
+        (WebKit::WebViewImpl::setGrammarCheckingEnabled):
+        (WebKit::WebViewImpl::toggleGrammarChecking):
+        (WebKit::WebViewImpl::toggleAutomaticSpellingCorrection):
+        (WebKit::WebViewImpl::toggleSmartInsertDelete):
+        (WebKit::WebViewImpl::setAutomaticQuoteSubstitutionEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticQuoteSubstitution):
+        (WebKit::WebViewImpl::setAutomaticDashSubstitutionEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticDashSubstitution):
+        (WebKit::WebViewImpl::setAutomaticLinkDetectionEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticLinkDetection):
+        (WebKit::WebViewImpl::setAutomaticTextReplacementEnabled):
+        (WebKit::WebViewImpl::toggleAutomaticTextReplacement):
+        (WebKit::WebViewImpl::uppercaseWord):
+        (WebKit::WebViewImpl::lowercaseWord):
+        (WebKit::WebViewImpl::capitalizeWord):
+        (WebKit::WebViewImpl::preferencesDidChange):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+        (WebKit::WebViewImpl::quickLookWithEvent):
+        (WebKit::WebViewImpl::immediateActionAnimationControllerForHitTestResult):
+        (WebKit::WebViewImpl::didChangeContentSize):
+        (WebKit::WebViewImpl::setIgnoresNonWheelEvents):
+        (WebKit::WebViewImpl::updateRemoteAccessibilityRegistration):
+        (WebKit::WebViewImpl::accessibilityRegisterUIProcessTokens):
+        (WebKit::WebViewImpl::stringForToolTip):
+        (WebKit::WebViewImpl::setInspectorAttachmentView):
+        (WebKit::WebViewImpl::remoteObjectRegistry):
+        (WebKit::WebViewImpl::browsingContextController):
+        (WebKit::WebViewImpl::draggedImage):
+        (WebKit::WebViewImpl::draggingEntered):
+        (WebKit::WebViewImpl::draggingUpdated):
+        (WebKit::WebViewImpl::draggingExited):
+        (WebKit::WebViewImpl::performDragOperation):
+        (WebKit::WebViewImpl::takeViewSnapshot):
+        (WebKit::WebViewImpl::saveBackForwardSnapshotForCurrentItem):
+        (WebKit::WebViewImpl::saveBackForwardSnapshotForItem):
+        (WebKit::WebViewImpl::setAllowsBackForwardNavigationGestures):
+        (WebKit::WebViewImpl::setMagnification):
+        (WebKit::WebViewImpl::magnification):
+        (WebKit::WebViewImpl::scrollWheel):
+        (WebKit::WebViewImpl::swipeWithEvent):
+        (WebKit::WebViewImpl::magnifyWithEvent):
+        (WebKit::WebViewImpl::rotateWithEvent):
+        (WebKit::WebViewImpl::doCommandBySelector):
+        (WebKit::WebViewImpl::insertText):
+        (WebKit::WebViewImpl::selectedRangeWithCompletionHandler):
+        (WebKit::WebViewImpl::markedRangeWithCompletionHandler):
+        (WebKit::WebViewImpl::hasMarkedTextWithCompletionHandler):
+        (WebKit::WebViewImpl::attributedSubstringForProposedRange):
+        (WebKit::WebViewImpl::firstRectForCharacterRange):
+        (WebKit::WebViewImpl::characterIndexForPoint):
+        (WebKit::WebViewImpl::inputContext):
+        (WebKit::WebViewImpl::unmarkText):
+        (WebKit::WebViewImpl::setMarkedText):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        (WebKit::WebViewImpl::keyUp):
+        (WebKit::WebViewImpl::keyDown):
+        (WebKit::WebViewImpl::flagsChanged):
+        (WebKit::WebViewImpl::executeSavedKeypressCommands):
+        (WebKit::WebViewImpl::selectedRange):
+        (WebKit::WebViewImpl::hasMarkedText):
+        (WebKit::WebViewImpl::markedRange):
+        (WebKit::WebViewImpl::setContentPreparationRect): Deleted.
+        (WebKit::WebViewImpl::immediateActionAnimationControllerForHitTestResultFromViewOnly): Deleted.
+        (WebKit::WebViewImpl::destroyRemoteObjectRegistry): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::scrollPinningBehavior):
+        (WebKit::WebPageProxy::overlayScrollbarStyle):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::activeView):
+        (WebKit::PageClientImpl::activeWindow):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::makeFirstResponder):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::colorSpace):
+        (WebKit::PageClientImpl::processDidExit):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::preferencesDidChange):
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didChangeContentSize):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::registerInsertionUndoGrouping):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        (WebKit::PageClientImpl::setDragImage):
+        (WebKit::PageClientImpl::setPromisedDataForImage):
+        (WebKit::PageClientImpl::setPromisedDataForAttachment):
+        (WebKit::PageClientImpl::updateSecureInputState):
+        (WebKit::PageClientImpl::resetSecureInputState):
+        (WebKit::PageClientImpl::notifyInputContextAboutDiscardedComposition):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::screenToRootView):
+        (WebKit::PageClientImpl::rootViewToScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::createColorPicker):
+        (WebKit::PageClientImpl::setTextIndicator):
+        (WebKit::PageClientImpl::clearTextIndicator):
+        (WebKit::PageClientImpl::setTextIndicatorAnimationProgress):
+        (WebKit::PageClientImpl::accessibilityWebProcessTokenReceived):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::setAcceleratedCompositingRootLayer):
+        (WebKit::PageClientImpl::acceleratedCompositingRootLayer):
+        (WebKit::PageClientImpl::takeViewSnapshot):
+        (WebKit::PageClientImpl::selectionDidChange):
+        (WebKit::PageClientImpl::wheelEventWasNotHandledByWebCore):
+        (WebKit::PageClientImpl::gestureEventWasNotHandledByWebCore):
+        (WebKit::PageClientImpl::pluginFocusOrWindowFocusChanged):
+        (WebKit::PageClientImpl::setPluginComplexTextInputState):
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        (WebKit::PageClientImpl::dismissContentRelativeChildWindows):
+        (WebKit::PageClientImpl::showCorrectionPanel):
+        (WebKit::PageClientImpl::recordAutocorrectionResponse):
+        (WebKit::PageClientImpl::recommendedScrollbarStyleDidChange):
+        (WebKit::PageClientImpl::intrinsicContentSizeDidChange):
+        (WebKit::PageClientImpl::executeSavedCommandBySelector):
+        (WebKit::PageClientImpl::showDictationAlternativeUI):
+        (WebKit::PageClientImpl::closeFullScreenManager):
+        (WebKit::PageClientImpl::isFullScreen):
+        (WebKit::PageClientImpl::enterFullScreen):
+        (WebKit::PageClientImpl::exitFullScreen):
+        (WebKit::PageClientImpl::beganEnterFullScreen):
+        (WebKit::PageClientImpl::beganExitFullScreen):
+        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadForMainFrame):
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame):
+        (WebKit::PageClientImpl::removeNavigationGestureSnapshot):
+        (WebKit::PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates):
+        (WebKit::PageClientImpl::didPerformImmediateActionHitTest):
+        (WebKit::PageClientImpl::immediateActionAnimationControllerForHitTestResult):
+        (WebKit::PageClientImpl::showPlatformContextMenu):
+        (WebKit::PageClientImpl::refView):
+        (WebKit::PageClientImpl::derefView):
+        (WebKit::PageClientImpl::startWindowDrag):
+        (WebKit::PageClientImpl::platformWindow):
+        (WebKit::PageClientImpl::inspectorAttachmentView):
+        (WebKit::PageClientImpl::remoteObjectRegistry):
+        * UIProcess/mac/WebColorPickerMac.h:
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::create):
+        (WebKit::WebColorPickerMac::WebColorPickerMac):
+        (-[WKColorPopoverMac initWithFrame:inView:]):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::WebContextMenuProxyMac):
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        (WebKit::WebPopupMenuProxyMac::create):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::WebPopupMenuProxyMac):
+        Move ownership of WebPageProxy and PageClientImpl to WebViewImpl.
+
 2015-10-30  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build after rr191810.

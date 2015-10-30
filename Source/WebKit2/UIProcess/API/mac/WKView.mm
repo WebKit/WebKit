@@ -24,105 +24,25 @@
  */
 
 #import "config.h"
-#import "WKView.h"
+#import "WKViewInternal.h"
 
 #if PLATFORM(MAC)
 
-#if USE(DICTATION_ALTERNATIVES)
-#import <AppKit/NSTextAlternatives.h>
-#import <AppKit/NSAttributedString.h>
-#endif
-
-#import "APILegacyContextHistoryClient.h"
+#import "APIHitTestResult.h"
 #import "APIPageConfiguration.h"
-#import "AppKitSPI.h"
-#import "AttributedString.h"
-#import "DataReference.h"
-#import "EditingRange.h"
-#import "EditorState.h"
-#import "LayerTreeContext.h"
-#import "Logging.h"
-#import "NativeWebKeyboardEvent.h"
-#import "NativeWebMouseEvent.h"
-#import "NativeWebWheelEvent.h"
-#import "PageClientImpl.h"
-#import "PasteboardTypes.h"
-#import "StringUtilities.h"
-#import "TextChecker.h"
-#import "TextCheckerState.h"
-#import "WKAPICast.h"
-#import "WKFullScreenWindowController.h"
-#import "WKLayoutMode.h"
-#import "WKProcessPoolInternal.h"
-#import "WKStringCF.h"
-#import "WKTextInputWindowController.h"
-#import "WKViewInternal.h"
-#import "WKViewPrivate.h"
-#import "WKWebView.h"
-#import "WebBackForwardList.h"
-#import "WebEventFactory.h"
-#import "WebHitTestResultData.h"
-#import "WebKit2Initialize.h"
-#import "WebPage.h"
-#import "WebPageGroup.h"
-#import "WebPageProxy.h"
-#import "WebPreferences.h"
-#import "WebProcessPool.h"
-#import "WebProcessProxy.h"
-#import "WebSystemInterface.h"
-#import "WebViewImpl.h"
-#import <QuartzCore/QuartzCore.h>
-#import <WebCore/AXObjectCache.h>
-#import <WebCore/ColorMac.h>
-#import <WebCore/CoreGraphicsSPI.h>
-#import <WebCore/DataDetectorsSPI.h>
-#import <WebCore/DragController.h>
-#import <WebCore/DragData.h>
-#import <WebCore/FloatRect.h>
-#import <WebCore/Image.h>
-#import <WebCore/IntRect.h>
-#import <WebCore/FileSystem.h>
-#import <WebCore/KeyboardEvent.h>
-#import <WebCore/LocalizedStrings.h>
-#import <WebCore/NSMenuSPI.h>
-#import <WebCore/PlatformEventFactoryMac.h>
-#import <WebCore/PlatformScreen.h>
-#import <WebCore/Region.h>
-#import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/SharedBuffer.h>
-#import <WebCore/TextAlternativeWithRange.h>
-#import <WebCore/TextIndicator.h>
-#import <WebCore/TextIndicatorWindow.h>
-#import <WebCore/TextUndoInsertionMarkupMac.h>
-#import <WebCore/WebCoreCALayerExtras.h>
-#import <WebCore/WebCoreFullScreenPlaceholderView.h>
-#import <WebCore/WebCoreFullScreenWindow.h>
-#import <WebCore/WebCoreNSStringExtras.h>
-#import <WebKitSystemInterface.h>
-#import <sys/stat.h>
-#import <wtf/RefPtr.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/RunLoop.h>
-
-/* API internals. */
 #import "WKBrowsingContextGroupPrivate.h"
 #import "WKProcessGroupPrivate.h"
+#import "WebBackForwardListItem.h"
+#import "WebKit2Initialize.h"
+#import "WebPageGroup.h"
+#import "WebProcessPool.h"
+#import "WebViewImpl.h"
 
 using namespace WebKit;
 using namespace WebCore;
 
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
-@interface NSTextInputContext (WKNSTextInputContextDetails)
-- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
-- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
-- (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
-@end
-#endif
-
 @interface WKViewData : NSObject {
 @public
-    std::unique_ptr<PageClientImpl> _pageClient;
-    RefPtr<WebPageProxy> _page;
     std::unique_ptr<WebViewImpl> _impl;
 }
 
@@ -145,28 +65,17 @@ using namespace WebCore;
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView
 {
-    return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:relatedView ? toAPI(relatedView->_data->_page.get()) : nil];
+    return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef relatedToPage:relatedView ? relatedView.pageRef : nil];
 }
 
 #endif // WK_API_ENABLED
 
 - (void)dealloc
 {
-#if WK_API_ENABLED
-    _data->_impl->destroyRemoteObjectRegistry();
-#endif
-
-    _data->_page->close();
-
     _data->_impl = nullptr;
 
     [_data release];
     _data = nil;
-
-    NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
-    [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
-
-    WebProcessPool::statistics().wkViewCount--;
 
     [super dealloc];
 }
@@ -235,8 +144,7 @@ using namespace WebCore;
 
 - (void)prepareContentInRect:(NSRect)rect
 {
-    _data->_impl->setContentPreparationRect(NSRectToCGRect(rect));
-    _data->_impl->updateViewExposedRect();
+    _data->_impl->prepareContentInRect(NSRectToCGRect(rect));
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -1007,33 +915,10 @@ Some other editing-related methods still unimplemented:
     if (!self)
         return nil;
 
-    [NSApp registerServicesMenuSendTypes:PasteboardTypes::forSelection() returnTypes:PasteboardTypes::forEditing()];
-
     InitializeWebKit2();
 
     _data = [[WKViewData alloc] init];
-
-    _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
-    _data->_page = processPool.createWebPage(*_data->_pageClient, WTF::move(configuration));
-
-    _data->_impl = std::make_unique<WebViewImpl>(self, *_data->_page, *_data->_pageClient);
-    static_cast<PageClientImpl&>(*_data->_pageClient).setImpl(*_data->_impl);
-
-    _data->_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
-
-    _data->_page->initializeWebPage();
-
-    _data->_impl->registerDraggedTypes();
-
-    self.wantsLayer = YES;
-
-    // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
-    self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
-
-    WebProcessPool::statistics().wkViewCount++;
-
-    NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
-    [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
+    _data->_impl = std::make_unique<WebViewImpl>(self, webView, processPool, WTF::move(configuration));
 
     return self;
 }
@@ -1101,7 +986,7 @@ Some other editing-related methods still unimplemented:
 
 - (WKPageRef)pageRef
 {
-    return toAPI(_data->_page.get());
+    return toAPI(&_data->_impl->page());
 }
 
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
@@ -1472,6 +1357,11 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::Scrol
 - (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback
 {
     _data->_impl->setDidMoveSwipeSnapshotCallback(callback);
+}
+
+- (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
+{
+    return [self _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult) withType:type userData:toAPI(userData)];
 }
 
 - (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData

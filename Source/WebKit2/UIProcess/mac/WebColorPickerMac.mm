@@ -58,7 +58,7 @@ using namespace WebKit;
     WebColorPickerMac *_picker;
     RetainPtr<NSPopoverColorWell> _popoverWell;
 }
-- (id)initWithFrame:(const WebCore::IntRect &)rect inView:(WKView *)view;
+- (id)initWithFrame:(const WebCore::IntRect &)rect inView:(NSView *)view;
 @end
 
 #else
@@ -75,7 +75,7 @@ using namespace WebKit;
 
 namespace WebKit {
 
-Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)
+Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, NSView* view)
 {
     return adoptRef(*new WebColorPickerMac(client, initialColor, rect, view));
 }
@@ -86,7 +86,7 @@ WebColorPickerMac::~WebColorPickerMac()
         endPicker();
 }
 
-WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)
+WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, NSView* view)
     : WebColorPicker(client)
 {
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
@@ -136,7 +136,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
 
 @implementation WKColorPopoverMac
-- (id)initWithFrame:(const WebCore::IntRect &)rect inView:(WKView *)view
+- (id)initWithFrame:(const WebCore::IntRect &)rect inView:(NSView *)view
 {
     if(!(self = [super init]))
         return self;

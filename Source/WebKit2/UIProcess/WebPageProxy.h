@@ -986,10 +986,10 @@ public:
     void didSaveToPageCache();
         
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
-    WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
+    WebCore::ScrollPinningBehavior scrollPinningBehavior() const { return m_scrollPinningBehavior; }
 
     void setOverlayScrollbarStyle(WTF::Optional<WebCore::ScrollbarOverlayStyle>);
-    WTF::Optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() { return m_scrollbarOverlayStyle; }
+    WTF::Optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const { return m_scrollbarOverlayStyle; }
 
     bool shouldRecordNavigationSnapshots() const { return m_shouldRecordNavigationSnapshots; }
     void setShouldRecordNavigationSnapshots(bool shouldRecordSnapshots) { m_shouldRecordNavigationSnapshots = shouldRecordSnapshots; }

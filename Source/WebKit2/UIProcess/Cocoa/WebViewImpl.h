@@ -46,6 +46,7 @@ OBJC_CLASS WKEditorUndoTargetObjC;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKViewLayoutStrategy;
+OBJC_CLASS WKWebView;
 OBJC_CLASS WKWindowVisibilityObserver;
 OBJC_CLASS _WKThumbnailView;
 
@@ -67,13 +68,15 @@ OBJC_CLASS _WKThumbnailView;
 // They're not actually optional.
 @optional
 
-- (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData;
+- (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData;
+
 - (void)_prepareForImmediateActionAnimation;
 - (void)_cancelImmediateActionAnimation;
 - (void)_completeImmediateActionAnimation;
 - (void)_dismissContentRelativeChildWindows;
 - (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
+- (void)_didChangeContentSize:(NSSize)newSize;
 
 @end
 
@@ -83,6 +86,7 @@ struct KeyPressCommand;
 
 namespace WebKit {
 
+class PageClientImpl;
 class DrawingAreaProxy;
 class ViewGestureController;
 class WebEditCommandProxy;
@@ -106,11 +110,13 @@ class WebViewImpl {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebViewImpl);
 public:
-    WebViewImpl(NSView <WebViewImplDelegate> *, WebPageProxy&, PageClient&);
+    WebViewImpl(NSView <WebViewImplDelegate> *, WKWebView *outerWebView, WebProcessPool&, Ref<API::PageConfiguration>&&);
 
     ~WebViewImpl();
 
     NSWindow *window();
+
+    WebPageProxy& page() { return m_page.get(); }
 
     void processDidExit();
     void pageClosed();
@@ -160,7 +166,7 @@ public:
     void setTopContentInset(CGFloat);
     CGFloat topContentInset() const { return m_topContentInset; }
 
-    void setContentPreparationRect(CGRect);
+    void prepareContentInRect(CGRect);
     void updateViewExposedRect();
     void setClipsToVisibleRect(bool);
     bool clipsToVisibleRect() const { return m_clipsToVisibleRect; }
@@ -318,12 +324,12 @@ public:
     void prepareForDictionaryLookup();
     void setAllowsLinkPreview(bool);
     bool allowsLinkPreview() const { return m_allowsLinkPreview; }
-    void* immediateActionAnimationControllerForHitTestResult(WKHitTestResultRef, uint32_t type, WKTypeRef userData);
-    void* immediateActionAnimationControllerForHitTestResultFromViewOnly(WKHitTestResultRef, uint32_t type, WKTypeRef userData);
+    void* immediateActionAnimationControllerForHitTestResult(API::HitTestResult*, uint32_t type, API::Object* userData);
     void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object* userData);
     void prepareForImmediateActionAnimation();
     void cancelImmediateActionAnimation();
     void completeImmediateActionAnimation();
+    void didChangeContentSize(CGSize);
 
     void setIgnoresNonWheelEvents(bool);
     bool ignoresNonWheelEvents() const { return m_ignoresNonWheelEvents; }
@@ -363,7 +369,6 @@ public:
     NSView *inspectorAttachmentView();
 
     _WKRemoteObjectRegistry *remoteObjectRegistry();
-    void destroyRemoteObjectRegistry(); // FIXME: Temporary. Can fold in after we move ownership of WebPageProxy here.
 
     WKBrowsingContextController *browsingContextController();
 #endif // WK_API_ENABLED
@@ -504,8 +509,8 @@ private:
     void mouseDraggedInternal(NSEvent *);
 
     NSView <WebViewImplDelegate> *m_view;
-    WebPageProxy& m_page;
-    PageClient& m_pageClient;
+    std::unique_ptr<PageClient> m_pageClient;
+    Ref<WebPageProxy> m_page;
 
     WeakPtrFactory<WebViewImpl> m_weakPtrFactory;
 

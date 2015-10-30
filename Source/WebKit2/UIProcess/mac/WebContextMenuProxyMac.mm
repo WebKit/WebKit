@@ -36,7 +36,6 @@
 #import "ShareableBitmap.h"
 #import "StringUtilities.h"
 #import "WKSharingServicePickerDelegate.h"
-#import "WKView.h"
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
 #import "WebProcessProxy.h"
@@ -152,7 +151,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebContextMenuProxyMac::WebContextMenuProxyMac(WKView* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+WebContextMenuProxyMac::WebContextMenuProxyMac(NSView* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
     : WebContextMenuProxy(context, userData)
     , m_webView(webView)
     , m_page(page)

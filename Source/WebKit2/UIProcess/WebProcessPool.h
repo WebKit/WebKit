@@ -171,7 +171,7 @@ public:
 
     API::WebsiteDataStore* websiteDataStore() const { return m_websiteDataStore.get(); }
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
+    Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 

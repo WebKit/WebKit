@@ -93,8 +93,8 @@ using namespace WebKit;
 
 namespace WebKit {
 
-PageClientImpl::PageClientImpl(WKView* wkView, WKWebView *webView)
-    : m_wkView(wkView)
+PageClientImpl::PageClientImpl(NSView* view, WKWebView *webView)
+    : m_view(view)
     , m_webView(webView)
 #if USE(DICTATION_ALTERNATIVES)
     , m_alternativeTextUIController(std::make_unique<AlternativeTextUIController>())
@@ -141,27 +141,27 @@ void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPo
 
 IntSize PageClientImpl::viewSize()
 {
-    return IntSize([m_wkView bounds].size);
+    return IntSize([m_view bounds].size);
 }
 
 NSView *PageClientImpl::activeView() const
 {
 #if WK_API_ENABLED
-    return m_wkView._thumbnailView ? (NSView *)m_wkView._thumbnailView : (NSView *)m_wkView;
+    return (m_impl && m_impl->thumbnailView()) ? (NSView *)m_impl->thumbnailView() : m_view;
 #else
-    return m_wkView;
+    return m_view;
 #endif
 }
 
 NSWindow *PageClientImpl::activeWindow() const
 {
 #if WK_API_ENABLED
-    if (m_wkView._thumbnailView)
-        return m_wkView._thumbnailView.window;
+    if (m_impl && m_impl->thumbnailView())
+        return m_impl->thumbnailView().window;
 #endif
     if (m_impl && m_impl->targetWindowForMovePreparation())
         return m_impl->targetWindowForMovePreparation();
-    return m_wkView.window;
+    return m_view.window;
 }
 
 bool PageClientImpl::isViewWindowActive()
@@ -182,7 +182,7 @@ bool PageClientImpl::isViewFocused()
 
 void PageClientImpl::makeFirstResponder()
 {
-     [[m_wkView window] makeFirstResponder:m_wkView];
+     [[m_view window] makeFirstResponder:m_view];
 }
     
 bool PageClientImpl::isViewVisible()
@@ -287,7 +287,7 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 
 void PageClientImpl::didChangeContentSize(const WebCore::IntSize& newSize)
 {
-    [m_wkView _didChangeContentSize:newSize];
+    m_impl->didChangeContentSize(newSize);
 }
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
@@ -297,10 +297,10 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
     if ([NSApp _cursorRectCursor])
         return;
 
-    if (!m_wkView)
+    if (!m_view)
         return;
 
-    NSWindow *window = [m_wkView window];
+    NSWindow *window = [m_view window];
     if (!window)
         return;
 
@@ -331,7 +331,7 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
 #if USE(INSERTION_UNDO_GROUPING)
 void PageClientImpl::registerInsertionUndoGrouping()
 {
-    registerInsertionUndoGroupingWithUndoManager([m_wkView undoManager]);
+    registerInsertionUndoGroupingWithUndoManager([m_view undoManager]);
 }
 #endif
 
@@ -342,12 +342,12 @@ void PageClientImpl::clearAllEditCommands()
 
 bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    return (undoOrRedo == WebPageProxy::Undo) ? [[m_wkView undoManager] canUndo] : [[m_wkView undoManager] canRedo];
+    return (undoOrRedo == WebPageProxy::Undo) ? [[m_view undoManager] canUndo] : [[m_view undoManager] canRedo];
 }
 
 void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    return (undoOrRedo == WebPageProxy::Undo) ? [[m_wkView undoManager] undo] : [[m_wkView undoManager] redo];
+    return (undoOrRedo == WebPageProxy::Undo) ? [[m_view undoManager] undo] : [[m_view undoManager] redo];
 }
 
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
@@ -355,16 +355,16 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();
     RetainPtr<NSImage> dragNSImage = adoptNS([[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImage->size()]);
     IntSize size([dragNSImage size]);
-    size.scale(1.0 / toImpl([m_wkView pageRef])->deviceScaleFactor());
+    size.scale(1.0 / m_impl->page().deviceScaleFactor());
     [dragNSImage setSize:size];
 
 #if WK_API_ENABLED
     if (m_webView) {
-        NSPoint webViewPosition = [m_wkView convertPoint:clientPosition toView:m_webView];
+        NSPoint webViewPosition = [m_view convertPoint:clientPosition toView:m_webView];
         m_impl->dragImageForView(m_webView, dragNSImage.get(), webViewPosition, isLinkDrag);
     } else
 #endif
-        m_impl->dragImageForView(m_wkView, dragNSImage.get(), clientPosition, isLinkDrag);
+        m_impl->dragImageForView(m_view, dragNSImage.get(), clientPosition, isLinkDrag);
 }
 
 void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, PassRefPtr<SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, PassRefPtr<SharedBuffer> archiveBuffer)
@@ -405,30 +405,30 @@ void PageClientImpl::notifyApplicationAboutInputContextChange()
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
-    return toDeviceSpace(rect, [m_wkView window]);
+    return toDeviceSpace(rect, [m_view window]);
 }
 
 FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
-    return toUserSpace(rect, [m_wkView window]);
+    return toUserSpace(rect, [m_view window]);
 }
    
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSPoint windowCoord = [[m_wkView window] convertScreenToBase:point];
+    NSPoint windowCoord = [[m_view window] convertScreenToBase:point];
 #pragma clang diagnostic pop
-    return IntPoint([m_wkView convertPoint:windowCoord fromView:nil]);
+    return IntPoint([m_view convertPoint:windowCoord fromView:nil]);
 }
     
 IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
 {
     NSRect tempRect = rect;
-    tempRect = [m_wkView convertRect:tempRect toView:nil];
+    tempRect = [m_view convertRect:tempRect toView:nil];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    tempRect.origin = [[m_wkView window] convertBaseToScreen:tempRect.origin];
+    tempRect.origin = [[m_view window] convertBaseToScreen:tempRect.origin];
 #pragma clang diagnostic pop
     return enclosingIntRect(tempRect);
 }
@@ -440,20 +440,20 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuProxyMac::create(m_wkView, page);
+    return WebPopupMenuProxyMac::create(m_view, page);
 }
 
 #if ENABLE(CONTEXT_MENUS)
 std::unique_ptr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
 {
-    return std::make_unique<WebContextMenuProxyMac>(m_wkView, page, context, userData);
+    return std::make_unique<WebContextMenuProxyMac>(m_view, page, context, userData);
 }
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect& rect)
 {
-    return WebColorPickerMac::create(page, initialColor, rect, m_wkView);
+    return WebColorPickerMac::create(page, initialColor, rect, m_view);
 }
 #endif
 
@@ -531,7 +531,7 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
 #if ENABLE(MAC_GESTURE_EVENTS)
 void PageClientImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent& event)
 {
-    [m_wkView _gestureEventWasNotHandledByWebCore:event.nativeEvent()];
+    m_impl->gestureEventWasNotHandledByWebCore(event.nativeEvent());
 }
 #endif
 
@@ -549,14 +549,14 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
 {
     m_impl->prepareForDictionaryLookup();
 
-    DictionaryLookup::showPopup(dictionaryPopupInfo, m_wkView, [this](TextIndicator& textIndicator) {
+    DictionaryLookup::showPopup(dictionaryPopupInfo, m_view, [this](TextIndicator& textIndicator) {
         m_impl->setTextIndicator(textIndicator, TextIndicatorWindowLifetime::Permanent);
     });
 }
 
 void PageClientImpl::dismissContentRelativeChildWindows(bool withAnimation)
 {
-    [m_wkView _dismissContentRelativeChildWindowsWithAnimation:withAnimation];
+    m_impl->dismissContentRelativeChildWindowsWithAnimation(withAnimation);
 }
 
 void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
@@ -564,7 +564,7 @@ void PageClientImpl::showCorrectionPanel(AlternativeTextType type, const FloatRe
 #if USE(AUTOCORRECTION_PANEL)
     if (!isViewVisible() || !isViewInWindow())
         return;
-    m_correctionPanel.show(m_wkView, *m_impl, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+    m_correctionPanel.show(m_view, *m_impl, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 #endif
 }
 
@@ -587,7 +587,7 @@ String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingAl
 void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
     NSCorrectionResponse response = responseType == AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
-    CorrectionPanel::recordAutocorrectionResponse(m_wkView, m_impl->spellCheckerDocumentTag(), response, replacedString, replacementString);
+    CorrectionPanel::recordAutocorrectionResponse(m_view, m_impl->spellCheckerDocumentTag(), response, replacedString, replacementString);
 }
 
 void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
@@ -599,7 +599,7 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
     else
         options |= NSTrackingActiveInKeyWindow;
 
-    RetainPtr<NSTrackingArea> trackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:[m_wkView frame] options:options owner:m_wkView userInfo:nil]);
+    RetainPtr<NSTrackingArea> trackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:[m_view frame] options:options owner:m_view userInfo:nil]);
     m_impl->setPrimaryTrackingArea(trackingArea.get());
 }
 
@@ -635,7 +635,7 @@ void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundi
 {
     if (!isViewVisible() || !isViewInWindow())
         return;
-    m_alternativeTextUIController->showAlternatives(m_wkView, boundingBoxOfDictatedText, dictationContext, ^(NSString *acceptedAlternative) {
+    m_alternativeTextUIController->showAlternatives(m_view, boundingBoxOfDictatedText, dictationContext, ^(NSString *acceptedAlternative) {
         m_impl->handleAcceptedAlternativeText(acceptedAlternative);
     });
 }
@@ -783,7 +783,7 @@ void PageClientImpl::didChangeBackgroundColor()
 
 CGRect PageClientImpl::boundsOfLayerInLayerBackedWindowCoordinates(CALayer *layer) const
 {
-    CALayer *windowContentLayer = static_cast<NSView *>(m_wkView.window.contentView).layer;
+    CALayer *windowContentLayer = static_cast<NSView *>(m_view.window.contentView).layer;
     ASSERT(windowContentLayer);
 
     return [windowContentLayer convertRect:layer.bounds fromLayer:layer];
@@ -802,12 +802,12 @@ void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<
     if (m_webView)
         return [m_webView _immediateActionAnimationControllerForHitTestResult:wrapper(*hitTestResult) withType:(_WKImmediateActionType)type userData:(id)(userData.get())];
 #endif
-    return m_impl->immediateActionAnimationControllerForHitTestResult(toAPI(hitTestResult.get()), type, toAPI(userData.get()));
+    return m_impl->immediateActionAnimationControllerForHitTestResult(hitTestResult.get(), type, userData.get());
 }
 
 void PageClientImpl::showPlatformContextMenu(NSMenu *menu, IntPoint location)
 {
-    [menu popUpMenuPositioningItem:nil atLocation:location inView:m_wkView];
+    [menu popUpMenuPositioningItem:nil atLocation:location inView:m_view];
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -819,12 +819,12 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 
 void PageClientImpl::refView()
 {
-    CFRetain(m_wkView);
+    CFRetain(m_view);
 }
 
 void PageClientImpl::derefView()
 {
-    CFRelease(m_wkView);
+    CFRelease(m_view);
 }
 
 void PageClientImpl::startWindowDrag()

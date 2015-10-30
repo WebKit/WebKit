@@ -836,7 +836,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(
     return *process;
 }
 
-PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
+Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     if (!pageConfiguration->pageGroup())
         pageConfiguration->setPageGroup(m_defaultPageGroup.ptr());
