@@ -53,7 +53,6 @@
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKLayoutMode.h"
-#import "WKPrintingView.h"
 #import "WKProcessPoolInternal.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
@@ -77,7 +76,6 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/DataDetectorsSPI.h>
-#import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
 #import <WebCore/FloatRect.h>
@@ -554,13 +552,9 @@ Some other editing-related methods still unimplemented:
     _data->_impl->capitalizeWord();
 }
 
-// Events
-
-// Override this so that AppKit will send us arrow keys as key down events so we can
-// support them via the key bindings mechanism.
 - (BOOL)_wantsKeyDownForEvent:(NSEvent *)event
 {
-    return YES;
+    return _data->_impl->wantsKeyDownForEvent(event);
 }
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
@@ -704,39 +698,12 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
-    // There's a chance that responding to this event will run a nested event loop, and
-    // fetching a new event might release the old one. Retaining and then autoreleasing
-    // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
-    
-    if (![self hitTest:[event locationInWindow]])
-        return NO;
-    
-    _data->_impl->setLastMouseDownEvent(event);
-    bool result = _data->_page->acceptsFirstMouse([event eventNumber], WebEventFactory::createWebMouseEvent(event, _data->_impl->lastPressureEvent(), self));
-    _data->_impl->setLastMouseDownEvent(nil);
-    return result;
+    return _data->_impl->acceptsFirstMouse(event);
 }
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
 {
-    // If this is the active window or we don't have a range selection, there is no need to perform additional checks
-    // and we can avoid making a synchronous call to the WebProcess.
-    if ([[self window] isKeyWindow] || _data->_page->editorState().selectionIsNone || !_data->_page->editorState().selectionIsRange)
-        return NO;
-
-    // There's a chance that responding to this event will run a nested event loop, and
-    // fetching a new event might release the old one. Retaining and then autoreleasing
-    // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
-    
-    if (![self hitTest:[event locationInWindow]])
-        return NO;
-    
-    _data->_impl->setLastMouseDownEvent(event);
-    bool result = _data->_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, _data->_impl->lastPressureEvent(), self));
-    _data->_impl->setLastMouseDownEvent(nil);
-    return result;
+    return _data->_impl->shouldDelayWindowOrderingForEvent(event);
 }
 
 - (void)doCommandBySelector:(SEL)selector
@@ -906,29 +873,14 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     [super keyDown:event];
 }
 
+- (NSView *)_superHitTest:(NSPoint)point
+{
+    return [super hitTest:point];
+}
+
 - (NSArray *)validAttributesForMarkedText
 {
-    static NSArray *validAttributes;
-    if (!validAttributes) {
-        validAttributes = [[NSArray alloc] initWithObjects:
-                           NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
-                           NSMarkedClauseSegmentAttributeName,
-#if USE(DICTATION_ALTERNATIVES)
-                           NSTextAlternativesAttributeName,
-#endif
-#if USE(INSERTION_UNDO_GROUPING)
-                           NSTextInsertionUndoableAttributeName,
-#endif
-                           nil];
-        // NSText also supports the following attributes, but it's
-        // hard to tell which are really required for text input to
-        // work well; I have not seen any input method make use of them yet.
-        //     NSFontAttributeName, NSForegroundColorAttributeName,
-        //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
-        CFRetain(validAttributes);
-    }
-    LOG(TextInput, "validAttributesForMarkedText -> (...)");
-    return validAttributes;
+    return _data->_impl->validAttributesForMarkedText();
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -968,11 +920,9 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-- (BOOL)_windowResizeMouseLocationIsInVisibleScrollerThumb:(NSPoint)loc
+- (BOOL)_windowResizeMouseLocationIsInVisibleScrollerThumb:(NSPoint)point
 {
-    NSPoint localPoint = [self convertPoint:loc fromView:nil];
-    NSRect visibleThumbRect = NSRect(_data->_page->visibleScrollerThumbRect());
-    return NSMouseInRect(localPoint, visibleThumbRect, [self isFlipped]);
+    return _data->_impl->windowResizeMouseLocationIsInVisibleScrollerThumb(NSPointToCGPoint(point));
 }
 
 - (void)_addFontPanelObserver
@@ -992,30 +942,27 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (void)drawRect:(NSRect)rect
 {
-    LOG(Printing, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-    _data->_page->endPrinting();
+    _data->_impl->drawRect(NSRectToCGRect(rect));
 }
 
 - (BOOL)isOpaque
 {
-    return _data->_page->drawsBackground();
+    return _data->_impl->isOpaque();
 }
 
 - (BOOL)mouseDownCanMoveWindow
 {
-    // -[NSView mouseDownCanMoveWindow] returns YES when the NSView is transparent,
-    // but we don't want a drag in the NSView to move the window, even if it's transparent.
-    return NO;
+    return WebViewImpl::mouseDownCanMoveWindow();
 }
 
 - (void)viewDidHide
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_impl->viewDidHide();
 }
 
 - (void)viewDidUnhide
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_impl->viewDidUnhide();
 }
 
 - (void)viewDidChangeBackingProperties
@@ -1025,7 +972,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (void)_activeSpaceDidChange:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(ViewState::IsVisible);
+    _data->_impl->activeSpaceDidChange();
 }
 
 - (id)accessibilityFocusedUIElement
@@ -1050,11 +997,9 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (NSView *)hitTest:(NSPoint)point
 {
-    NSView *hitView = [super hitTest:point];
-    if (hitView && _data && hitView == _data->_impl->layerHostingView())
-        hitView = self;
-
-    return hitView;
+    if (!_data)
+        return [super hitTest:point];
+    return _data->_impl->hitTest(NSPointToCGPoint(point));
 }
 
 - (NSInteger)conversationIdentifier
@@ -1217,7 +1162,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (BOOL)wantsUpdateLayer
 {
-    return YES;
+    return WebViewImpl::wantsUpdateLayer();
 }
 
 - (void)updateLayer
@@ -1232,23 +1177,12 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
 {
-    // PDF documents are already paginated, so we can't change them to add headers and footers.
-    return !toImpl(frameRef)->isDisplayingPDFDocument();
+    return _data->_impl->canChangeFrameLayout(*toImpl(frameRef));
 }
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
 {
-    LOG(Printing, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
-
-    // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
-    // printing), this function should return nil.
-    RetainPtr<WKPrintingView> printingView = adoptNS([[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
-    // NSPrintOperation takes ownership of the view.
-    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get() printInfo:printInfo];
-    [printOperation setCanSpawnSeparateThread:YES];
-    [printOperation setJobTitle:toImpl(frameRef)->title()];
-    printingView->_printOperation = printOperation;
-    return printOperation;
+    return _data->_impl->printOperationWithPrintInfo(printInfo, *toImpl(frameRef));
 }
 
 - (void)setFrame:(NSRect)rect andScrollBy:(NSSize)offset
@@ -1273,7 +1207,7 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 + (void)hideWordDefinitionWindow
 {
-    DictionaryLookup::hidePopup();
+    WebViewImpl::hideWordDefinitionWindow();
 }
 
 - (NSSize)minimumSizeForAutoLayout

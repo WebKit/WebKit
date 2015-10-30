@@ -1,3 +1,48 @@
+2015-10-30  Tim Horton  <timothy_horton@apple.com>
+
+        WKView being inside WKWebView leads to weird API issues
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _wantsKeyDownForEvent:]):
+        (-[WKView acceptsFirstMouse:]):
+        (-[WKView shouldDelayWindowOrderingForEvent:]):
+        (-[WKView validAttributesForMarkedText]):
+        (-[WKView _windowResizeMouseLocationIsInVisibleScrollerThumb:]):
+        (-[WKView drawRect:]):
+        (-[WKView isOpaque]):
+        (-[WKView mouseDownCanMoveWindow]):
+        (-[WKView viewDidHide]):
+        (-[WKView viewDidUnhide]):
+        (-[WKView _activeSpaceDidChange:]):
+        (-[WKView hitTest:]):
+        (-[WKView wantsUpdateLayer]):
+        (-[WKView canChangeFrameLayout:]):
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        (+[WKView hideWordDefinitionWindow]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::wantsUpdateLayer):
+        (WebKit::WebViewImpl::mouseDownCanMoveWindow):
+        (WebKit::WebViewImpl::wantsKeyDownForEvent):
+        (WebKit::WebViewImpl::layerHostingView): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::isOpaque):
+        (WebKit::WebViewImpl::acceptsFirstMouse):
+        (WebKit::WebViewImpl::drawRect):
+        (WebKit::WebViewImpl::canChangeFrameLayout):
+        (WebKit::WebViewImpl::printOperationWithPrintInfo):
+        (WebKit::WebViewImpl::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb):
+        (WebKit::WebViewImpl::viewDidHide):
+        (WebKit::WebViewImpl::viewDidUnhide):
+        (WebKit::WebViewImpl::activeSpaceDidChange):
+        (WebKit::WebViewImpl::hitTest):
+        (WebKit::WebViewImpl::hideWordDefinitionWindow):
+        (WebKit::WebViewImpl::validAttributesForMarkedText):
+        Printing and random bits.
+
 2015-10-30  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r191691): Unexpected "Share" context menu when right clicking around inspector

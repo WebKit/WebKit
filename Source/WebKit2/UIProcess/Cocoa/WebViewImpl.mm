@@ -49,10 +49,12 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKFullScreenWindowController.h"
 #import "WKImmediateActionController.h"
+#import "WKPrintingView.h"
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebView.h"
 #import "WebEditCommandProxy.h"
+#import "WebEventFactory.h"
 #import "WebInspectorProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
@@ -513,6 +515,27 @@ bool WebViewImpl::drawsTransparentBackground() const
     return m_page.drawsTransparentBackground();
 }
 
+bool WebViewImpl::isOpaque() const
+{
+    return m_page.drawsBackground();
+}
+
+bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
+{
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    if (![m_view hitTest:event.locationInWindow])
+        return false;
+
+    setLastMouseDownEvent(event);
+    bool result = m_page.acceptsFirstMouse(event.eventNumber, WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view));
+    setLastMouseDownEvent(nil);
+    return result;
+}
+
 bool WebViewImpl::acceptsFirstResponder()
 {
     return true;
@@ -771,6 +794,33 @@ void WebViewImpl::updateLayer()
 
     if (DrawingAreaProxy* drawingArea = m_page.drawingArea())
         drawingArea->waitForPossibleGeometryUpdate();
+}
+
+void WebViewImpl::drawRect(CGRect rect)
+{
+    LOG(Printing, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    m_page.endPrinting();
+}
+
+bool WebViewImpl::canChangeFrameLayout(WebFrameProxy& frame)
+{
+    // PDF documents are already paginated, so we can't change them to add headers and footers.
+    return !frame.isDisplayingPDFDocument();
+}
+
+NSPrintOperation *WebViewImpl::printOperationWithPrintInfo(NSPrintInfo *printInfo, WebFrameProxy& frame)
+{
+    LOG(Printing, "Creating an NSPrintOperation for frame '%s'", frame.url().utf8().data());
+
+    // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
+    // printing), this function should return nil.
+    RetainPtr<WKPrintingView> printingView = adoptNS([[WKPrintingView alloc] initWithFrameProxy:&frame view:m_view]);
+    // NSPrintOperation takes ownership of the view.
+    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get() printInfo:printInfo];
+    [printOperation setCanSpawnSeparateThread:YES];
+    [printOperation setJobTitle:frame.title()];
+    printingView->_printOperation = printOperation;
+    return printOperation;
 }
 
 void WebViewImpl::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)
@@ -1050,6 +1100,34 @@ void WebViewImpl::windowDidChangeOcclusionState()
     m_page.viewStateDidChange(WebCore::ViewState::IsVisible);
 }
 
+bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
+{
+    // If this is the active window or we don't have a range selection, there is no need to perform additional checks
+    // and we can avoid making a synchronous call to the WebProcess.
+    if (m_view.window.isKeyWindow || m_page.editorState().selectionIsNone || !m_page.editorState().selectionIsRange)
+        return false;
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    if (![m_view hitTest:event.locationInWindow])
+        return false;
+
+    setLastMouseDownEvent(event);
+    bool result = m_page.shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view));
+    setLastMouseDownEvent(nil);
+    return result;
+}
+
+bool WebViewImpl::windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint point)
+{
+    NSPoint localPoint = [m_view convertPoint:NSPointFromCGPoint(point) fromView:nil];
+    NSRect visibleThumbRect = NSRect(m_page.visibleScrollerThumbRect());
+    return NSMouseInRect(localPoint, visibleThumbRect, m_view.isFlipped);
+}
+
 void WebViewImpl::viewWillMoveToWindow(NSWindow *window)
 {
     // If we're in the middle of preparing to move to a window, we should only be moved to that window.
@@ -1131,6 +1209,30 @@ void WebViewImpl::viewDidChangeBackingProperties()
     m_colorSpace = nullptr;
     if (DrawingAreaProxy *drawingArea = m_page.drawingArea())
         drawingArea->colorSpaceDidChange();
+}
+
+void WebViewImpl::viewDidHide()
+{
+    m_page.viewStateDidChange(WebCore::ViewState::IsVisible);
+}
+
+void WebViewImpl::viewDidUnhide()
+{
+    m_page.viewStateDidChange(WebCore::ViewState::IsVisible);
+}
+
+void WebViewImpl::activeSpaceDidChange()
+{
+    m_page.viewStateDidChange(WebCore::ViewState::IsVisible);
+}
+
+NSView *WebViewImpl::hitTest(CGPoint point)
+{
+    NSView *hitView = [m_view _superHitTest:NSPointFromCGPoint(point)];
+    if (hitView && hitView == m_layerHostingView)
+        hitView = m_view;
+
+    return hitView;
 }
 
 void WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *flagsChangedEvent)
@@ -2070,6 +2172,11 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
 #endif
     
     m_pageClient.dismissCorrectionPanel(WebCore::ReasonForDismissingAlternativeTextIgnored);
+}
+
+void WebViewImpl::hideWordDefinitionWindow()
+{
+    WebCore::DictionaryLookup::hidePopup();
 }
 
 void WebViewImpl::quickLookWithEvent(NSEvent *event)
@@ -3101,6 +3208,29 @@ void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
     [NSApp sendEvent:event];
     
     m_keyDownEventBeingResent = nullptr;
+}
+
+NSArray *WebViewImpl::validAttributesForMarkedText()
+{
+    static NSArray *validAttributes;
+    if (!validAttributes) {
+        validAttributes = @[ NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName, NSMarkedClauseSegmentAttributeName,
+#if USE(DICTATION_ALTERNATIVES)
+            NSTextAlternativesAttributeName,
+#endif
+#if USE(INSERTION_UNDO_GROUPING)
+            NSTextInsertionUndoableAttributeName,
+#endif
+        ];
+        // NSText also supports the following attributes, but it's
+        // hard to tell which are really required for text input to
+        // work well; I have not seen any input method make use of them yet.
+        //     NSFontAttributeName, NSForegroundColorAttributeName,
+        //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
+        CFRetain(validAttributes);
+    }
+    LOG(TextInput, "validAttributesForMarkedText -> (...)");
+    return validAttributes;
 }
 
 static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)

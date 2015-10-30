@@ -61,6 +61,7 @@ OBJC_CLASS _WKThumbnailView;
 - (void)_superDoCommandBySelector:(SEL)selector;
 - (BOOL)_superPerformKeyEquivalent:(NSEvent *)event;
 - (void)_superKeyDown:(NSEvent *)event;
+- (NSView *)_superHitTest:(NSPoint)point;
 
 // This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
 // They're not actually optional.
@@ -119,7 +120,9 @@ public:
     bool drawsBackground() const;
     void setDrawsTransparentBackground(bool);
     bool drawsTransparentBackground() const;
+    bool isOpaque() const;
 
+    bool acceptsFirstMouse(NSEvent *);
     bool acceptsFirstResponder();
     bool becomeFirstResponder();
     bool resignFirstResponder();
@@ -145,6 +148,11 @@ public:
     void forceAsyncDrawingAreaSizeUpdate(CGSize);
     void waitForAsyncDrawingAreaSizeUpdate();
     void updateLayer();
+    static bool wantsUpdateLayer() { return true; }
+
+    void drawRect(CGRect);
+    bool canChangeFrameLayout(WebFrameProxy&);
+    NSPrintOperation *printOperationWithPrintInfo(NSPrintInfo *, WebFrameProxy&);
 
     void setAutomaticallyAdjustsContentInsets(bool);
     bool automaticallyAdjustsContentInsets() const { return m_automaticallyAdjustsContentInsets; }
@@ -186,10 +194,21 @@ public:
     void windowDidChangeScreen();
     void windowDidChangeLayerHosting();
     void windowDidChangeOcclusionState();
+    bool shouldDelayWindowOrderingForEvent(NSEvent *);
+    bool windowResizeMouseLocationIsInVisibleScrollerThumb(CGPoint);
+
+    // -[NSView mouseDownCanMoveWindow] returns YES when the NSView is transparent,
+    // but we don't want a drag in the NSView to move the window, even if it's transparent.
+    static bool mouseDownCanMoveWindow() { return false; }
 
     void viewWillMoveToWindow(NSWindow *);
     void viewDidMoveToWindow();
     void viewDidChangeBackingProperties();
+    void viewDidHide();
+    void viewDidUnhide();
+    void activeSpaceDidChange();
+
+    NSView *hitTest(CGPoint);
 
     ColorSpaceData colorSpace();
 
@@ -293,6 +312,7 @@ public:
     void dismissContentRelativeChildWindowsFromViewOnly();
     void dismissContentRelativeChildWindowsWithAnimation(bool);
     void dismissContentRelativeChildWindowsWithAnimationFromViewOnly(bool);
+    static void hideWordDefinitionWindow();
 
     void quickLookWithEvent(NSEvent *);
     void prepareForDictionaryLookup();
@@ -334,7 +354,6 @@ public:
 
     void setAcceleratedCompositingRootLayer(CALayer *);
     CALayer *acceleratedCompositingRootLayer() const { return m_rootLayer.get(); }
-    NSView *layerHostingView() const { return m_layerHostingView.get(); }
 
 #if WK_API_ENABLED
     void setThumbnailView(_WKThumbnailView *);
@@ -408,6 +427,7 @@ public:
     CGFloat totalHeightOfBanners() const { return m_totalHeightOfBanners; }
 
     void doneWithKeyEvent(NSEvent *, bool eventWasHandled);
+    NSArray *validAttributesForMarkedText();
     void doCommandBySelector(SEL);
     void insertText(id string);
     void insertText(id string, NSRange replacementRange);
@@ -424,6 +444,10 @@ public:
     void keyUp(NSEvent *);
     void keyDown(NSEvent *);
     void flagsChanged(NSEvent *);
+
+    // Override this so that AppKit will send us arrow keys as key down events so we can
+    // support them via the key bindings mechanism.
+    static bool wantsKeyDownForEvent(NSEvent *) { return true; }
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
     void selectedRangeWithCompletionHandler(void(^)(NSRange));
