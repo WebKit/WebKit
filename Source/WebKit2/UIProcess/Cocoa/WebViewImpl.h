@@ -59,6 +59,8 @@ OBJC_CLASS _WKThumbnailView;
 - (void)_superSmartMagnifyWithEvent:(NSEvent *)event;
 - (id)_superAccessibilityAttributeValue:(NSString *)attribute;
 - (void)_superDoCommandBySelector:(SEL)selector;
+- (BOOL)_superPerformKeyEquivalent:(NSEvent *)event;
+- (void)_superKeyDown:(NSEvent *)event;
 
 // This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
 // They're not actually optional.
@@ -74,6 +76,10 @@ OBJC_CLASS _WKThumbnailView;
 
 @end
 
+namespace WebCore {
+struct KeyPressCommand;
+}
+
 namespace WebKit {
 
 class DrawingAreaProxy;
@@ -85,6 +91,15 @@ struct ColorSpaceData;
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
+
+#if !USE(ASYNC_NSTEXTINPUTCLIENT)
+struct WKViewInterpretKeyEventsParameters {
+    bool eventInterpretationHadSideEffects;
+    bool consumedByIM;
+    bool executingSavedKeypressCommands;
+    Vector<WebCore::KeypressCommand>* commands;
+};
+#endif
 
 class WebViewImpl {
     WTF_MAKE_FAST_ALLOCATED;
@@ -392,6 +407,33 @@ public:
     void setTotalHeightOfBanners(CGFloat totalHeightOfBanners) { m_totalHeightOfBanners = totalHeightOfBanners; }
     CGFloat totalHeightOfBanners() const { return m_totalHeightOfBanners; }
 
+    void doneWithKeyEvent(NSEvent *, bool eventWasHandled);
+    void doCommandBySelector(SEL);
+    void insertText(id string);
+    void insertText(id string, NSRange replacementRange);
+    NSTextInputContext *inputContext();
+    void unmarkText();
+    void setMarkedText(id string, NSRange selectedRange, NSRange replacementRange);
+    NSRange selectedRange();
+    bool hasMarkedText();
+    NSRange markedRange();
+    NSAttributedString *attributedSubstringForProposedRange(NSRange, NSRangePointer actualRange);
+    NSUInteger characterIndexForPoint(NSPoint);
+    NSRect firstRectForCharacterRange(NSRange, NSRangePointer actualRange);
+    bool performKeyEquivalent(NSEvent *);
+    void keyUp(NSEvent *);
+    void keyDown(NSEvent *);
+    void flagsChanged(NSEvent *);
+
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+    void selectedRangeWithCompletionHandler(void(^)(NSRange));
+    void hasMarkedTextWithCompletionHandler(void(^)(BOOL hasMarkedText));
+    void markedRangeWithCompletionHandler(void(^)(NSRange));
+    void attributedSubstringForProposedRange(NSRange, void(^)(NSAttributedString *attrString, NSRange actualRange));
+    void firstRectForCharacterRange(NSRange, void(^)(NSRect firstRect, NSRange actualRange));
+    void characterIndexForPoint(NSPoint, void(^)(NSUInteger));
+#endif // USE(ASYNC_NSTEXTINPUTCLIENT)
+
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -410,6 +452,14 @@ private:
     void updateThumbnailViewLayer();
 
     void setUserInterfaceItemState(NSString *commandName, bool enabled, int state);
+
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+    void collectKeyboardLayoutCommandsForEvent(NSEvent *, Vector<WebCore::KeypressCommand>&);
+    void interpretKeyEvent(NSEvent *, void(^completionHandler)(BOOL handled, const Vector<WebCore::KeypressCommand>&));
+#else
+    void executeSavedKeypressCommands();
+    bool interpretKeyEvent(NSEvent *, Vector<WebCore::KeypressCommand>&);
+#endif
 
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;
@@ -516,6 +566,16 @@ private:
     CGFloat m_totalHeightOfBanners { 0 };
 
     RetainPtr<NSView> m_inspectorAttachmentView;
+
+    // We keep here the event when resending it to
+    // the application to distinguish the case of a new event from one
+    // that has been already sent to WebCore.
+    RetainPtr<NSEvent> m_keyDownEventBeingResent;
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+    Vector<WebCore::KeypressCommand>* m_collectedKeypressCommands;
+#else
+    WKViewInterpretKeyEventsParameters* m_interpretKeyEventsParameters;
+#endif
 };
     
 } // namespace WebKit

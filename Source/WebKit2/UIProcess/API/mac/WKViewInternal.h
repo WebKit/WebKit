@@ -50,7 +50,6 @@ class WebProcessPool;
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
 #endif
 
-- (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
 - (void)_addFontPanelObserver;
 
 @end

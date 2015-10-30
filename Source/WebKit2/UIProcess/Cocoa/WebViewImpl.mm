@@ -74,6 +74,8 @@
 #import <WebCore/NSWindowSPI.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/ViewState.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>
@@ -84,6 +86,15 @@
 #import <sys/stat.h>
 
 SOFT_LINK_CONSTANT_MAY_FAIL(Lookup, LUNotificationPopoverWillClose, NSString *)
+
+// FIXME: Move to an SPI header.
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+@interface NSTextInputContext (WKNSTextInputContextDetails)
+- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
+@end
+#endif
 
 @interface WKWindowVisibilityObserver : NSObject {
     NSView *_view;
@@ -532,7 +543,7 @@ bool WebViewImpl::becomeFirstResponder()
         NSEvent *keyboardEvent = nil;
         if ([event type] == NSKeyDown || [event type] == NSKeyUp)
             keyboardEvent = event;
-        m_page.setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, Vector<WebCore::KeypressCommand>()), [](WebKit::CallbackBase::Error) { });
+        m_page.setInitialFocus(direction == NSSelectingNext, keyboardEvent != nil, NativeWebKeyboardEvent(keyboardEvent, false, { }), [](WebKit::CallbackBase::Error) { });
     }
     return true;
 }
@@ -3067,6 +3078,966 @@ void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
         m_gestureController->gestureEventWasNotHandledByWebCore(event, [m_view convertPoint:event.locationInWindow fromView:nil]);
 #endif
 }
+
+void WebViewImpl::doneWithKeyEvent(NSEvent *event, bool eventWasHandled)
+{
+    if ([event type] != NSKeyDown)
+        return;
+
+    if (tryPostProcessPluginComplexTextInputKeyDown(event))
+        return;
+
+    if (eventWasHandled) {
+        [NSCursor setHiddenUntilMouseMoves:YES];
+        return;
+    }
+
+    // resending the event may destroy this WKView
+    RetainPtr<NSView> protector(m_view);
+
+    ASSERT(!m_keyDownEventBeingResent);
+    m_keyDownEventBeingResent = event;
+    [NSApp _setCurrentEvent:event];
+    [NSApp sendEvent:event];
+    
+    m_keyDownEventBeingResent = nullptr;
+}
+
+static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
+{
+    Vector<WebCore::CompositionUnderline> result;
+    int length = string.string.length;
+
+    for (int i = 0; i < length;) {
+        NSRange range;
+        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&range inRange:NSMakeRange(i, length - i)];
+
+        if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
+            WebCore::Color color = WebCore::Color::black;
+            if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName])
+                color = WebCore::colorFromNSColor(colorAttr);
+            result.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), color, style.intValue > 1));
+        }
+        
+        i = range.location + range.length;
+    }
+
+    return result;
+}
+
+static bool eventKeyCodeIsZeroOrNumLockOrFn(NSEvent *event)
+{
+    unsigned short keyCode = [event keyCode];
+    return !keyCode || keyCode == 10 || keyCode == 63;
+}
+
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+
+Vector<WebCore::KeypressCommand> WebViewImpl::collectKeyboardLayoutCommandsForEvent(NSEvent *event)
+{
+    Vector<WebCore::KeypressCommand>& commands;
+
+    if ([event type] != NSKeyDown)
+        return;
+
+    ASSERT(!m_collectedKeypressCommands);
+    m_collectedKeypressCommands = &commands;
+
+    if (NSTextInputContext *context = inputContext())
+        [context handleEventByKeyboardLayout:event];
+    else
+        [m_view interpretKeyEvents:[NSArray arrayWithObject:event]];
+
+    m_collectedKeypressCommands = nullptr;
+
+    return commands;
+}
+
+void WebViewImpl::interpretKeyEvent(NSEvent *event, void(^completionHandler)(BOOL handled, const Vector<WebCore::KeypressCommand>& commands))
+{
+    // For regular Web content, input methods run before passing a keydown to DOM, but plug-ins get an opportunity to handle the event first.
+    // There is no need to collect commands, as the plug-in cannot execute them.
+    if (pluginComplexTextInputIdentifier()) {
+        completionHandler(NO, { });
+        return;
+    }
+
+    if (!inputContext()) {
+        auto commands = collectKeyboardLayoutCommandsForEvent(event);
+        completionHandler(NO, commands);
+        return;
+    }
+
+    LOG(TextInput, "-> handleEventByInputMethod:%p %@", event, event);
+    [inputContext() handleEventByInputMethod:event completionHandler:^(BOOL handled) {
+        
+        LOG(TextInput, "... handleEventByInputMethod%s handled", handled ? "" : " not");
+        if (handled) {
+            completionHandler(YES, { });
+            return;
+        }
+
+        auto commands = collectKeyboardLayoutCommandsForEvent(event);
+        completionHandler(NO, commands);
+    }];
+}
+
+void WebViewImpl::doCommandBySelector(SEL selector)
+{
+    LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
+
+    if (auto* keypressCommands = m_collectedKeypressCommands) {
+        WebCore::KeypressCommand command(NSStringFromSelector(selector));
+        keypressCommands->append(command);
+        LOG(TextInput, "...stored");
+        m_page.registerKeypressCommandName(command.commandName);
+    } else {
+        // FIXME: Send the command to Editor synchronously and only send it along the
+        // responder chain if it's a selector that does not correspond to an editing command.
+        [m_view _superDoCommandBySelector:selector];
+    }
+}
+
+void WebViewImpl::insertText(id string)
+{
+    // Unlike an NSTextInputClient variant with replacementRange, this NSResponder method is called when there is no input context,
+    // so text input processing isn't performed. We are not going to actually insert any text in that case, but saving an insertText
+    // command ensures that a keypress event is dispatched as appropriate.
+    insertText(string, NSMakeRange(NSNotFound, 0));
+}
+
+void WebViewImpl::insertText(id string, NSRange replacementRange)
+{
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
+    if (replacementRange.location != NSNotFound)
+        LOG(TextInput, "insertText:\"%@\" replacementRange:(%u, %u)", isAttributedString ? [string string] : string, replacementRange.location, replacementRange.length);
+    else
+        LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
+
+    NSString *text;
+    Vector<WebCore::TextAlternativeWithRange> dictationAlternatives;
+
+    bool registerUndoGroup = false;
+    if (isAttributedString) {
+#if USE(DICTATION_ALTERNATIVES)
+        WebCore::collectDictationTextAlternatives(string, dictationAlternatives);
+#endif
+#if USE(INSERTION_UNDO_GROUPING)
+        registerUndoGroup = WebCore::shouldRegisterInsertionUndoGroup(string);
+#endif
+        // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
+        text = [string string];
+    } else
+        text = string;
+
+    // insertText can be called for several reasons:
+    // - If it's from normal key event processing (including key bindings), we save the action to perform it later.
+    // - If it's from an input method, then we should insert the text now.
+    // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
+    // then we also execute it immediately, as there will be no other chance.
+    Vector<WebCore::KeypressCommand>* keypressCommands = m_collectedKeypressCommands;
+    if (keypressCommands) {
+        ASSERT(replacementRange.location == NSNotFound);
+        WebCore::KeypressCommand command("insertText:", text);
+        keypressCommands->append(command);
+        LOG(TextInput, "...stored");
+        m_page.registerKeypressCommandName(command.commandName);
+        return;
+    }
+
+    String eventText = text;
+    eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    if (!dictationAlternatives.isEmpty())
+        m_page.insertDictatedTextAsync(eventText, replacementRange, dictationAlternatives, registerUndoGroup);
+    else
+        m_page.insertTextAsync(eventText, replacementRange, registerUndoGroup);
+}
+
+void WebViewImpl::selectedRangeWithCompletionHandler(void(^completionHandlerPtr)(NSRange selectedRange))
+{
+    auto completionHandler = adoptNS([completionHandlerPtr copy]);
+
+    LOG(TextInput, "selectedRange");
+    m_page.getSelectedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            LOG(TextInput, "    ...selectedRange failed.");
+            completionHandlerBlock(NSMakeRange(NSNotFound, 0));
+            return;
+        }
+        NSRange result = editingRangeResult;
+        if (result.location == NSNotFound)
+            LOG(TextInput, "    -> selectedRange returned (NSNotFound, %llu)", result.length);
+        else
+            LOG(TextInput, "    -> selectedRange returned (%llu, %llu)", result.location, result.length);
+        completionHandlerBlock(result);
+    });
+}
+
+void WebViewImpl::markedRangeWithCompletionHandler(void(^completionHandlerPtr)(NSRange markedRange))
+{
+    auto completionHandler = adoptNS([completionHandlerPtr copy]);
+
+    LOG(TextInput, "markedRange");
+    m_page.getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(NSRange) = (void (^)(NSRange))completionHandler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            LOG(TextInput, "    ...markedRange failed.");
+            completionHandlerBlock(NSMakeRange(NSNotFound, 0));
+            return;
+        }
+        NSRange result = editingRangeResult;
+        if (result.location == NSNotFound)
+            LOG(TextInput, "    -> markedRange returned (NSNotFound, %llu)", result.length);
+        else
+            LOG(TextInput, "    -> markedRange returned (%llu, %llu)", result.location, result.length);
+        completionHandlerBlock(result);
+    });
+}
+
+void WebViewImpl::hasMarkedTextWithCompletionHandler(void(^completionHandlerPtr)(BOOL hasMarkedText))
+{
+    auto completionHandler = adoptNS([completionHandlerPtr copy]);
+
+    LOG(TextInput, "hasMarkedText");
+    m_page.getMarkedRangeAsync([completionHandler](const EditingRange& editingRangeResult, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(BOOL) = (void (^)(BOOL))completionHandler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            LOG(TextInput, "    ...hasMarkedText failed.");
+            completionHandlerBlock(NO);
+            return;
+        }
+        BOOL hasMarkedText = editingRangeResult.location != notFound;
+        LOG(TextInput, "    -> hasMarkedText returned %u", hasMarkedText);
+        completionHandlerBlock(hasMarkedText);
+    });
+}
+
+void WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, void(^completionHandlerPtr)(NSAttributedString *attrString, NSRange actualRange))
+{
+    auto completionHandler = adoptNS([completionHandlerPtr copy]);
+
+    LOG(TextInput, "attributedSubstringFromRange:(%u, %u)", proposedRange.location, proposedRange.length);
+    m_page.attributedSubstringForCharacterRangeAsync(proposedRange, [completionHandler](const AttributedString& string, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(NSAttributedString *, NSRange) = (void (^)(NSAttributedString *, NSRange))completionHandler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            LOG(TextInput, "    ...attributedSubstringFromRange failed.");
+            completionHandlerBlock(0, NSMakeRange(NSNotFound, 0));
+            return;
+        }
+        LOG(TextInput, "    -> attributedSubstringFromRange returned %@", [string.string.get() string]);
+        completionHandlerBlock([[string.string.get() retain] autorelease], actualRange);
+    });
+}
+
+void WebViewImpl::firstRectForCharacterRange(NSRange range, void(^completionHandlerPtr)(NSRect firstRect, NSRange actualRange))
+{
+    auto completionHandler = adoptNS([completionHandlerPtr copy]);
+
+    LOG(TextInput, "firstRectForCharacterRange:(%u, %u)", range.location, range.length);
+
+    // Just to match NSTextView's behavior. Regression tests cannot detect this;
+    // to reproduce, use a test application from http://bugs.webkit.org/show_bug.cgi?id=4682
+    // (type something; try ranges (1, -1) and (2, -1).
+    if ((range.location + range.length < range.location) && (range.location + range.length != 0))
+        range.length = 0;
+
+    if (range.location == NSNotFound) {
+        LOG(TextInput, "    -> NSZeroRect");
+        completionHandlerPtr(NSZeroRect, range);
+        return;
+    }
+
+    auto weakThis = createWeakPtr();
+    m_page.firstRectForCharacterRangeAsync(range, [weakThis, completionHandler](const WebCore::IntRect& rect, const EditingRange& actualRange, WebKit::CallbackBase::Error error) {
+        if (!weakThis)
+            return;
+
+        void (^completionHandlerBlock)(NSRect, NSRange) = (void (^)(NSRect, NSRange))completionHandler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            LOG(TextInput, "    ...firstRectForCharacterRange failed.");
+            completionHandlerBlock(NSZeroRect, NSMakeRange(NSNotFound, 0));
+            return;
+        }
+
+        NSRect resultRect = [weakThis->m_view convertRect:rect toView:nil];
+        resultRect = [weakThis->m_view.window convertRectToScreen:resultRect];
+
+        LOG(TextInput, "    -> firstRectForCharacterRange returned (%f, %f, %f, %f)", resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
+        completionHandlerBlock(resultRect, actualRange);
+    });
+}
+
+void WebViewImpl::characterIndexForPoint(NSPoint point, void(^completionHandlerPtr)(NSUInteger))
+{
+    auto completionHandler = adoptNS([completionHandlerPtr copy]);
+
+    LOG(TextInput, "characterIndexForPoint:(%f, %f)", point.x, point.y);
+
+    NSWindow *window = m_view.window;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (window)
+        point = [window convertScreenToBase:point];
+#pragma clang diagnostic pop
+    point = [m_view convertPoint:point fromView:nil];  // the point is relative to the main frame
+
+    m_page.characterIndexForPointAsync(WebCore::IntPoint(point), [completionHandler](uint64_t result, WebKit::CallbackBase::Error error) {
+        void (^completionHandlerBlock)(NSUInteger) = (void (^)(NSUInteger))completionHandler.get();
+        if (error != WebKit::CallbackBase::Error::None) {
+            LOG(TextInput, "    ...characterIndexForPoint failed.");
+            completionHandlerBlock(0);
+            return;
+        }
+        if (result == notFound)
+            result = NSNotFound;
+        LOG(TextInput, "    -> characterIndexForPoint returned %lu", result);
+        completionHandlerBlock(result);
+    });
+}
+
+NSTextInputContext *WebViewImpl::inputContext()
+{
+    if (pluginComplexTextInputIdentifier()) {
+        ASSERT(!m_collectedKeypressCommands); // Should not get here from -_interpretKeyEvent:completionHandler:, we only use WKTextInputWindowController after giving the plug-in a chance to handle keydown natively.
+        return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
+    }
+
+    // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
+    if (!m_page.editorState().isContentEditable)
+        return nil;
+
+    return [m_view _superInputContext];
+}
+
+void WebViewImpl::unmarkText()
+{
+    LOG(TextInput, "unmarkText");
+
+    m_page.confirmCompositionAsync();
+}
+
+void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replacementRange)
+{
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", isAttributedString ? [string string] : string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
+
+    Vector<WebCore::CompositionUnderline> underlines;
+    NSString *text;
+
+    if (isAttributedString) {
+        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
+        text = [string string];
+        underlines = extractUnderlines(string);
+    } else
+        text = string;
+
+    if (inSecureInputState()) {
+        // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
+        // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
+        ASSERT(!m_page.editorState().hasComposition);
+        notifyInputContextAboutDiscardedComposition();
+        // FIXME: We should store the command to handle it after DOM event processing, as it's regular keyboard input now, not a composition.
+        if ([text length] == 1 && isASCII([text characterAtIndex:0]))
+            m_page.insertTextAsync(text, replacementRange);
+        else
+            NSBeep();
+        return;
+    }
+
+    m_page.setCompositionAsync(text, underlines, selectedRange, replacementRange);
+}
+
+// Synchronous NSTextInputClient is still implemented to catch spurious sync calls. Remove when that is no longer needed.
+
+NSRange WebViewImpl::selectedRange()
+{
+    ASSERT_NOT_REACHED();
+    return NSMakeRange(NSNotFound, 0);
+}
+
+bool WebViewImpl::hasMarkedText()
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
+NSRange WebViewImpl::markedRange()
+{
+    ASSERT_NOT_REACHED();
+    return NSMakeRange(NSNotFound, 0);
+}
+
+NSAttributedString *WebViewImpl::attributedSubstringForProposedRange(NSRange nsRange, NSRangePointer actualRange)
+{
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+NSUInteger WebViewImpl::characterIndexForPoint(NSPoint point)
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+NSRect WebViewImpl::firstRectForCharacterRange(NSRange range, NSRangePointer actualRange)
+{
+    ASSERT_NOT_REACHED();
+    return NSZeroRect;
+}
+
+bool WebViewImpl::performKeyEquivalent(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return NO;
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    // We get Esc key here after processing either Esc or Cmd+period. The former starts as a keyDown, and the latter starts as a key equivalent,
+    // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.
+    // Don't interpret this event again, avoiding re-entrancy and infinite loops.
+    if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
+        return [m_view _superPerformKeyEquivalent:event];
+
+    if (m_keyDownEventBeingResent) {
+        // WebCore has already seen the event, no need for custom processing.
+        // Note that we can get multiple events for each event being re-sent. For example, for Cmd+'=' AppKit
+        // first performs the original key equivalent, and if that isn't handled, it dispatches a synthetic Cmd+'+'.
+        return [m_view _superPerformKeyEquivalent:event];
+    }
+
+    ASSERT(event == [NSApp currentEvent]);
+
+    disableComplexTextInputIfNecessary();
+
+    // Pass key combos through WebCore if there is a key binding available for
+    // this event. This lets webpages have a crack at intercepting key-modified keypresses.
+    // FIXME: Why is the firstResponder check needed?
+    if (m_view == m_view.window.firstResponder) {
+        interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+            m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+        });
+        return YES;
+    }
+    
+    return [m_view _superPerformKeyEquivalent:event];
+}
+
+void WebViewImpl::keyUp(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return;
+
+    LOG(TextInput, "keyUp:%p %@", event, event);
+
+    interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+        ASSERT(!handledByInputMethod || commands.isEmpty());
+        m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+    });
+}
+
+void WebViewImpl::keyDown(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return;
+
+    LOG(TextInput, "keyDown:%p %@%s", event, event, (event == m_keyDownEventBeingResent) ? " (re-sent)" : "");
+
+    if (tryHandlePluginComplexTextInputKeyDown(event)) {
+        LOG(TextInput, "...handled by plug-in");
+        return;
+    }
+
+    // We could be receiving a key down from AppKit if we have re-sent an event
+    // that maps to an action that is currently unavailable (for example a copy when
+    // there is no range selection).
+    // If this is the case we should ignore the key down.
+    if (m_keyDownEventBeingResent == event) {
+        [m_view _superKeyDown:event];
+        return;
+    }
+
+    interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+        ASSERT(!handledByInputMethod || commands.isEmpty());
+        m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+    });
+}
+
+void WebViewImpl::flagsChanged(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return;
+
+    LOG(TextInput, "flagsChanged:%p %@", event, event);
+
+    // Don't make an event from the num lock and function keys
+    if (eventKeyCodeIsZeroOrNumLockOrFn(event))
+        return;
+
+    interpretKeyEvent(event, ^(BOOL handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands) {
+        m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+    });
+}
+
+#else // USE(ASYNC_NSTEXTINPUTCLIENT)
+
+bool WebViewImpl::interpretKeyEvent(NSEvent *event, Vector<WebCore::KeypressCommand>& commands)
+{
+    ASSERT(!m_interpretKeyEventsParameters);
+    ASSERT(commands.isEmpty());
+
+    if ([event type] == NSFlagsChanged)
+        return NO;
+
+    WKViewInterpretKeyEventsParameters parameters;
+    parameters.eventInterpretationHadSideEffects = false;
+    parameters.executingSavedKeypressCommands = false;
+    // We assume that an input method has consumed the event, and only change this assumption if one of the NSTextInput methods is called.
+    // We assume the IM will *not* consume hotkey sequences.
+    parameters.consumedByIM = !([event modifierFlags] & NSCommandKeyMask);
+    parameters.commands = &commands;
+    m_interpretKeyEventsParameters = &parameters;
+
+    LOG(TextInput, "-> interpretKeyEvents:%p %@", event, event);
+    [m_view interpretKeyEvents:[NSArray arrayWithObject:event]];
+
+    m_interpretKeyEventsParameters = nullptr;
+
+    // An input method may consume an event and not tell us (e.g. when displaying a candidate window),
+    // in which case we should not bubble the event up the DOM.
+    if (parameters.consumedByIM) {
+        ASSERT(commands.isEmpty());
+        LOG(TextInput, "...event %p was consumed by an input method", event);
+        return YES;
+    }
+
+    LOG(TextInput, "...interpretKeyEvents for event %p done, returns %d", event, parameters.eventInterpretationHadSideEffects);
+
+    // If we have already executed all or some of the commands, the event is "handled". Note that there are additional checks on web process side.
+    return parameters.eventInterpretationHadSideEffects;
+}
+
+void WebViewImpl::executeSavedKeypressCommands()
+{
+    auto* parameters = m_interpretKeyEventsParameters;
+    if (!parameters || parameters->commands->isEmpty())
+        return;
+
+    // We could be called again if the execution of one command triggers a call to selectedRange.
+    // In this case, the state is up to date, and we don't need to execute any more saved commands to return a result.
+    if (parameters->executingSavedKeypressCommands)
+        return;
+
+    LOG(TextInput, "Executing %u saved keypress commands...", parameters->commands->size());
+
+    parameters->executingSavedKeypressCommands = true;
+    parameters->eventInterpretationHadSideEffects |= m_page.executeKeypressCommands(*parameters->commands);
+    parameters->commands->clear();
+    parameters->executingSavedKeypressCommands = false;
+
+    LOG(TextInput, "...done executing saved keypress commands.");
+}
+
+void WebViewImpl::doCommandBySelector(SEL selector)
+{
+    LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
+
+    auto* parameters = m_interpretKeyEventsParameters;
+    if (parameters)
+        parameters->consumedByIM = false;
+
+    // As in insertText:replacementRange:, we assume that the call comes from an input method if there is marked text.
+    bool isFromInputMethod = m_page.editorState().hasComposition;
+
+    if (parameters && !isFromInputMethod) {
+        WebCore::KeypressCommand command(NSStringFromSelector(selector));
+        parameters->commands->append(command);
+        LOG(TextInput, "...stored");
+        m_page.registerKeypressCommandName(command.commandName);
+    } else {
+        // FIXME: Send the command to Editor synchronously and only send it along the
+        // responder chain if it's a selector that does not correspond to an editing command.
+        [m_view _superDoCommandBySelector:selector];
+    }
+}
+
+void WebViewImpl::insertText(id string)
+{
+    // Unlike an NSTextInputClient variant with replacementRange, this NSResponder method is called when there is no input context,
+    // so text input processing isn't performed. We are not going to actually insert any text in that case, but saving an insertText
+    // command ensures that a keypress event is dispatched as appropriate.
+    insertText(string, NSMakeRange(NSNotFound, 0));
+}
+
+void WebViewImpl::insertText(id string, NSRange replacementRange)
+{
+    bool isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
+    if (replacementRange.location != NSNotFound)
+        LOG(TextInput, "insertText:\"%@\" replacementRange:(%u, %u)", isAttributedString ? [string string] : string, replacementRange.location, replacementRange.length);
+    else
+        LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
+    auto* parameters = m_interpretKeyEventsParameters;
+    if (parameters)
+        parameters->consumedByIM = false;
+
+    NSString *text;
+    bool isFromInputMethod = m_page.editorState().hasComposition;
+
+    Vector<WebCore::TextAlternativeWithRange> dictationAlternatives;
+
+    if (isAttributedString) {
+#if USE(DICTATION_ALTERNATIVES)
+        WebCore::collectDictationTextAlternatives(string, dictationAlternatives);
+#endif
+        // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
+        text = [string string];
+    } else
+        text = string;
+
+    // insertText can be called for several reasons:
+    // - If it's from normal key event processing (including key bindings), we may need to save the action to perform it later.
+    // - If it's from an input method, then we should insert the text now. We assume it's from the input method if we have marked text.
+    // FIXME: In theory, this could be wrong for some input methods, so we should try to find another way to determine if the call is from the input method.
+    // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
+    // then we also execute it immediately, as there will be no other chance.
+    if (parameters && !isFromInputMethod) {
+        // FIXME: Handle replacementRange in this case, too. It's known to occur in practice when canceling Press and Hold (see <rdar://11940670>).
+        ASSERT(replacementRange.location == NSNotFound);
+        WebCore::KeypressCommand command("insertText:", text);
+        parameters->commands->append(command);
+        m_page.registerKeypressCommandName(command.commandName);
+        return;
+    }
+
+    String eventText = text;
+    eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    bool eventHandled;
+    if (!dictationAlternatives.isEmpty())
+        eventHandled = m_page.insertDictatedText(eventText, replacementRange, dictationAlternatives);
+    else
+        eventHandled = m_page.insertText(eventText, replacementRange);
+
+    if (parameters)
+        parameters->eventInterpretationHadSideEffects |= eventHandled;
+}
+
+NSTextInputContext *WebViewImpl::inputContext()
+{
+    auto* parameters = m_interpretKeyEventsParameters;
+
+    if (pluginComplexTextInputIdentifier() && !parameters)
+        return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
+
+    // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
+    if (!m_page.editorState().isContentEditable)
+        return nil;
+
+    return [m_view _superInputContext];
+}
+
+NSRange WebViewImpl::selectedRange()
+{
+    executeSavedKeypressCommands();
+
+    EditingRange selectedRange;
+    m_page.getSelectedRange(selectedRange);
+
+    NSRange result = selectedRange;
+    if (result.location == NSNotFound)
+        LOG(TextInput, "selectedRange -> (NSNotFound, %u)", result.length);
+    else
+        LOG(TextInput, "selectedRange -> (%u, %u)", result.location, result.length);
+
+    return result;
+}
+
+bool WebViewImpl::hasMarkedText()
+{
+    auto* parameters = m_interpretKeyEventsParameters;
+
+    BOOL result;
+    if (parameters) {
+        result = m_page.editorState().hasComposition;
+        if (result) {
+            // A saved command can confirm a composition, but it cannot start a new one.
+            executeSavedKeypressCommands();
+            result = m_page.editorState().hasComposition;
+        }
+    } else {
+        EditingRange markedRange;
+        m_page.getMarkedRange(markedRange);
+        result = markedRange.location != notFound;
+    }
+
+    LOG(TextInput, "hasMarkedText -> %u", result);
+    return result;
+}
+
+void WebViewImpl::unmarkText()
+{
+    executeSavedKeypressCommands();
+
+    LOG(TextInput, "unmarkText");
+
+    auto* parameters = m_interpretKeyEventsParameters;
+
+    if (parameters) {
+        parameters->eventInterpretationHadSideEffects = true;
+        parameters->consumedByIM = false;
+    }
+
+    m_page.confirmComposition();
+}
+
+void WebViewImpl::setMarkedText(id string, NSRange newSelectedRange, NSRange replacementRange)
+{
+    executeSavedKeypressCommands();
+
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
+    LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelectedRange.location, newSelectedRange.length);
+
+    auto* parameters = m_interpretKeyEventsParameters;
+
+    if (parameters) {
+        parameters->eventInterpretationHadSideEffects = true;
+        parameters->consumedByIM = false;
+    }
+    
+    Vector<WebCore::CompositionUnderline> underlines;
+    NSString *text;
+
+    if (isAttributedString) {
+        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
+        text = [string string];
+        underlines = extractUnderlines(string);
+    } else
+        text = string;
+
+    if (m_page.editorState().isInPasswordField) {
+        // In password fields, we only allow ASCII dead keys, and don't allow inline input, matching NSSecureTextInputField.
+        // Allowing ASCII dead keys is necessary to enable full Roman input when using a Vietnamese keyboard.
+        ASSERT(!m_page.editorState().hasComposition);
+        notifyInputContextAboutDiscardedComposition();
+        if ([text length] == 1 && [[text decomposedStringWithCanonicalMapping] characterAtIndex:0] < 0x80) {
+            m_page.insertText(text, replacementRange);
+        } else
+            NSBeep();
+        return;
+    }
+
+    m_page.setComposition(text, underlines, newSelectedRange, replacementRange);
+}
+
+NSRange WebViewImpl::markedRange()
+{
+    executeSavedKeypressCommands();
+
+    EditingRange markedRange;
+    m_page.getMarkedRange(markedRange);
+
+    NSRange result = markedRange;
+    if (result.location == NSNotFound)
+        LOG(TextInput, "markedRange -> (NSNotFound, %u)", result.length);
+    else
+        LOG(TextInput, "markedRange -> (%u, %u)", result.location, result.length);
+
+    return result;
+}
+
+NSAttributedString *WebViewImpl::attributedSubstringForProposedRange(NSRange proposedRange, NSRangePointer actualRange)
+{
+    executeSavedKeypressCommands();
+
+    if (!m_page.editorState().isContentEditable) {
+        LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", proposedRange.location, proposedRange.length);
+        return nil;
+    }
+
+    if (m_page.editorState().isInPasswordField)
+        return nil;
+
+    AttributedString result;
+    m_page.getAttributedSubstringFromRange(proposedRange, result);
+
+    if (actualRange) {
+        *actualRange = proposedRange;
+        actualRange->length = [result.string length];
+    }
+
+    LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", proposedRange.location, proposedRange.length, [result.string string]);
+    return [[result.string retain] autorelease];
+}
+
+NSUInteger WebViewImpl::characterIndexForPoint(NSPoint point)
+{
+    executeSavedKeypressCommands();
+
+    NSWindow *window = m_view.window;
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if (window)
+        point = [window convertScreenToBase:point];
+#pragma clang diagnostic pop
+    point = [m_view convertPoint:point fromView:nil];  // the point is relative to the main frame
+    
+    uint64_t result = m_page.characterIndexForPoint(WebCore::IntPoint(point));
+    if (result == notFound)
+        result = NSNotFound;
+    LOG(TextInput, "characterIndexForPoint:(%f, %f) -> %u", point.x, point.y, result);
+    return result;
+}
+
+NSRect WebViewImpl::firstRectForCharacterRange(NSRange range, NSRangePointer actualRange)
+{
+    executeSavedKeypressCommands();
+
+    // Just to match NSTextView's behavior. Regression tests cannot detect this;
+    // to reproduce, use a test application from http://bugs.webkit.org/show_bug.cgi?id=4682
+    // (type something; try ranges (1, -1) and (2, -1).
+    if ((range.location + range.length < range.location) && (range.location + range.length != 0))
+        range.length = 0;
+
+    if (range.location == NSNotFound) {
+        if (actualRange)
+            *actualRange = range;
+        LOG(TextInput, "firstRectForCharacterRange:(NSNotFound, %u) -> NSZeroRect", range.length);
+        return NSZeroRect;
+    }
+
+    NSRect resultRect = m_page.firstRectForCharacterRange(range);
+    resultRect = [m_view convertRect:resultRect toView:nil];
+    resultRect = [m_view.window convertRectToScreen:resultRect];
+
+    if (actualRange) {
+        // FIXME: Update actualRange to match the range of first rect.
+        *actualRange = range;
+    }
+
+    LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", range.location, range.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
+    return resultRect;
+}
+
+bool WebViewImpl::performKeyEquivalent(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return false;
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    // We get Esc key here after processing either Esc or Cmd+period. The former starts as a keyDown, and the latter starts as a key equivalent,
+    // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.
+    // Don't interpret this event again, avoiding re-entrancy and infinite loops.
+    if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
+        return [m_view _superPerformKeyEquivalent:event];
+
+    if (m_keyDownEventBeingResent) {
+        // WebCore has already seen the event, no need for custom processing.
+        // Note that we can get multiple events for each event being re-sent. For example, for Cmd+'=' AppKit
+        // first performs the original key equivalent, and if that isn't handled, it dispatches a synthetic Cmd+'+'.
+        return [m_view _superPerformKeyEquivalent:event];
+    }
+
+    ASSERT(event == [NSApp currentEvent]);
+
+    disableComplexTextInputIfNecessary();
+
+    // Pass key combos through WebCore if there is a key binding available for
+    // this event. This lets webpages have a crack at intercepting key-modified keypresses.
+    // FIXME: Why is the firstResponder check needed?
+    if (m_view == m_view.window.firstResponder) {
+        Vector<WebCore::KeypressCommand> commands;
+        bool handledByInputMethod = interpretKeyEvent(event, commands);
+        m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+        return true;
+    }
+    
+    return [m_view _superPerformKeyEquivalent:event];
+}
+
+void WebViewImpl::keyUp(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return;
+
+    LOG(TextInput, "keyUp:%p %@", event, event);
+    // We don't interpret the keyUp event, as this breaks key bindings (see <https://bugs.webkit.org/show_bug.cgi?id=130100>).
+    m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, false, { }));
+}
+
+void WebViewImpl::keyDown(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return;
+
+    LOG(TextInput, "keyDown:%p %@%s", event, event, (event == m_keyDownEventBeingResent) ? " (re-sent)" : "");
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    if (tryHandlePluginComplexTextInputKeyDown(event)) {
+        LOG(TextInput, "...handled by plug-in");
+        return;
+    }
+
+    // We could be receiving a key down from AppKit if we have re-sent an event
+    // that maps to an action that is currently unavailable (for example a copy when
+    // there is no range selection).
+    // If this is the case we should ignore the key down.
+    if (m_keyDownEventBeingResent == event) {
+        [m_view _superKeyDown:event];
+        return;
+    }
+
+    Vector<WebCore::KeypressCommand> commands;
+    bool handledByInputMethod = interpretKeyEvent(event, commands);
+    if (!commands.isEmpty()) {
+        // An input method may make several actions per keypress. For example, pressing Return with Korean IM both confirms it and sends a newline.
+        // IM-like actions are handled immediately (so the return value from UI process is true), but there are saved commands that
+        // should be handled like normal text input after DOM event dispatch.
+        handledByInputMethod = false;
+    }
+
+    m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, handledByInputMethod, commands));
+}
+
+void WebViewImpl::flagsChanged(NSEvent *event)
+{
+    if (ignoresNonWheelEvents())
+        return;
+
+    LOG(TextInput, "flagsChanged:%p %@", event, event);
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+
+    // Don't make an event from the num lock and function keys
+    if (eventKeyCodeIsZeroOrNumLockOrFn(event))
+        return;
+
+    m_page.handleKeyboardEvent(NativeWebKeyboardEvent(event, false, { }));
+}
+
+#endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
 } // namespace WebKit
 
