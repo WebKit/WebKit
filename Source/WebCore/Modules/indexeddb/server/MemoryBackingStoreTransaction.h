@@ -79,6 +79,7 @@ private:
     HashSet<MemoryObjectStore*> m_objectStores;
     HashSet<MemoryObjectStore*> m_versionChangeAddedObjectStores;
 
+    HashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
     HashMap<String, std::unique_ptr<MemoryObjectStore>> m_deletedObjectStores;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
 

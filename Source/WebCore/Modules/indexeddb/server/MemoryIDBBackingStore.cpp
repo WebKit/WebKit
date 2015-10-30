@@ -211,7 +211,7 @@ IDBError MemoryIDBBackingStore::putRecord(const IDBResourceIdentifier& transacti
 
     auto transaction = m_transactions.get(transactionIdentifier);
     if (!transaction)
-        return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store transaction found to get record"));
+        return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store transaction found to put record"));
 
     MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     if (!objectStore)
@@ -235,6 +235,22 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found"));
 
     outValue = objectStore->valueForKey(keyData);
+    return IDBError();
+}
+
+IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::generateKeyNumber");
+    ASSERT(objectStoreIdentifier);
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.contains(transactionIdentifier));
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.get(transactionIdentifier)->isWriting());
+
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    RELEASE_ASSERT(objectStore);
+
+    keyNumber = objectStore->currentKeyGeneratorValue();
+    objectStore->setKeyGeneratorValue(keyNumber + 1);
+
     return IDBError();
 }
 

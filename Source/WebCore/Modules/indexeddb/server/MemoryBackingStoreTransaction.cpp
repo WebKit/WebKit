@@ -60,12 +60,9 @@ void MemoryBackingStoreTransaction::addNewObjectStore(MemoryObjectStore& objectS
     LOG(IndexedDB, "MemoryBackingStoreTransaction::addNewObjectStore()");
 
     ASSERT(isVersionChange());
-
-    ASSERT(!m_objectStores.contains(&objectStore));
-    m_objectStores.add(&objectStore);
     m_versionChangeAddedObjectStores.add(&objectStore);
 
-    objectStore.writeTransactionStarted(*this);
+    addExistingObjectStore(objectStore);
 }
 
 void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& objectStore)
@@ -78,6 +75,8 @@ void MemoryBackingStoreTransaction::addExistingObjectStore(MemoryObjectStore& ob
     m_objectStores.add(&objectStore);
 
     objectStore.writeTransactionStarted(*this);
+
+    m_originalKeyGenerators.add(&objectStore, objectStore.currentKeyGeneratorValue());
 }
 
 void MemoryBackingStoreTransaction::objectStoreDeleted(std::unique_ptr<MemoryObjectStore> objectStore)
@@ -136,6 +135,9 @@ void MemoryBackingStoreTransaction::abort()
     }
 
     for (auto objectStore : m_objectStores) {
+        ASSERT(m_originalKeyGenerators.contains(objectStore));
+        objectStore->setKeyGeneratorValue(m_originalKeyGenerators.get(objectStore));
+
         auto keyValueMap = m_originalValues.get(objectStore);
         if (!keyValueMap)
             continue;
@@ -147,7 +149,6 @@ void MemoryBackingStoreTransaction::abort()
 
         m_originalValues.remove(objectStore);
     }
-
 
     finish();
 

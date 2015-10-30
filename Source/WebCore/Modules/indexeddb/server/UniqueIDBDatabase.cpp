@@ -313,6 +313,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     ASSERT(m_backingStore);
     ASSERT(objectStoreIdentifier);
 
+    bool keyWasGenerated = false;
     IDBKeyData usedKey;
     IDBError error;
 
@@ -324,13 +325,17 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     }
 
     if (objectStoreInfo->autoIncrement() && !keyData.isValid()) {
-        // FIXME: This is where generated key support goes
-        error = IDBError(IDBExceptionCode::Unknown, ASCIILiteral("Key generators not supported yet"));
-        m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
-        return;
-    }
-
-    usedKey = keyData;
+        uint64_t keyNumber;
+        error = m_backingStore->generateKeyNumber(transactionIdentifier, objectStoreIdentifier, keyNumber);
+        if (!error.isNull()) {
+            m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+            return;
+        }
+        
+        usedKey.setNumberValue(keyNumber);
+        keyWasGenerated = true;
+    } else
+        usedKey = keyData;
 
     if (overwriteMode == IndexedDB::ObjectStoreOverwriteMode::NoOverwrite) {
         bool keyExists;

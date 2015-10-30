@@ -60,6 +60,9 @@ public:
 
     void setKeyValue(const IDBKeyData&, const ThreadSafeDataBuffer& value);
 
+    uint64_t currentKeyGeneratorValue() const { return m_keyGeneratorValue; }
+    void setKeyGeneratorValue(uint64_t value) { m_keyGeneratorValue = value; }
+
     ThreadSafeDataBuffer valueForKey(const IDBKeyData&) const;
 
     const IDBObjectStoreInfo& info() const { return m_info; }
@@ -70,6 +73,7 @@ private:
     IDBObjectStoreInfo m_info;
 
     MemoryBackingStoreTransaction* m_writeTransaction { nullptr };
+    uint64_t m_keyGeneratorValue { 1 };
 
     std::unique_ptr<KeyValueMap> m_keyValueStore;
     std::unique_ptr<std::set<IDBKeyData>> m_orderedKeys;
