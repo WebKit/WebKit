@@ -113,6 +113,14 @@
 using namespace WebKit;
 using namespace WebCore;
 
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+@interface NSTextInputContext (WKNSTextInputContextDetails)
+- (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
+- (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
+@end
+#endif
+
 @interface WKViewData : NSObject {
 @public
     std::unique_ptr<PageClientImpl> _pageClient;

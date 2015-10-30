@@ -2,6 +2,12 @@
 
         Fix the build
 
+        * UIProcess/API/mac/WKView.mm:
+
+2015-10-30  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
         * UIProcess/Cocoa/WebViewImpl.h:
         * UIProcess/Cocoa/WebViewImpl.mm:
         (WebKit::WebViewImpl::collectKeyboardLayoutCommandsForEvent):
