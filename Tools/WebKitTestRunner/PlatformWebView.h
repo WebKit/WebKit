@@ -29,7 +29,7 @@
 #include "TestOptions.h"
 #include <WebKit/WKRetainPtr.h>
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !defined(BUILDING_GTK__)
 #include <WebKit/WKFoundation.h>
 OBJC_CLASS NSView;
 OBJC_CLASS UIView;

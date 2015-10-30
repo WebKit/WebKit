@@ -1,3 +1,15 @@
+2015-10-30  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Fix MacCLang build errors in Tools
+        https://bugs.webkit.org/show_bug.cgi?id=150031
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/PlatformWebView.h: Fix PlatformWindow typedef on OSX flavor of the GTK port.
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp: Include WKView.h for WKViewCreate().
+        * WebKitTestRunner/PlatformWebView.h: Fix PlatformWindow typedef on OSX flavor of the GTK port.
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp: Include WKView.h for WKViewCreate().
+
 2015-10-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] MiniBrowser didn't work after r191749.

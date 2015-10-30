@@ -34,7 +34,7 @@
 #include <objc/objc.h>
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !PLATFORM(GTK)
 #ifdef __OBJC__
 @class WKView;
 @class NSWindow;

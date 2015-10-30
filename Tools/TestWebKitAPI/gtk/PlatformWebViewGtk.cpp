@@ -28,6 +28,7 @@
 
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKView.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
