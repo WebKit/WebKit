@@ -1,5 +1,11 @@
 2015-10-30  Beth Dakin  <bdakin@apple.com>
 
+        Another speculative build fix.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+
+2015-10-30  Beth Dakin  <bdakin@apple.com>
+
         Speculative build fix.
 
         * Platform/spi/ios/UIKitSPI.h:

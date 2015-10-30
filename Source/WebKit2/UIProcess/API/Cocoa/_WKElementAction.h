@@ -43,8 +43,8 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeAddToReadingList,
     _WKElementActionTypeOpenInDefaultBrowser WK_ENUM_AVAILABLE(NA, 9_0),
     _WKElementActionTypeOpenInExternalApplication WK_ENUM_AVAILABLE(NA, 9_0),
-    _WKElementActionTypeShare WK_ENUM_AVAILABLE(NA, WK_IOS_TBA),
 #endif
+    _WKElementActionTypeShare WK_ENUM_AVAILABLE(NA, WK_IOS_TBA),
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 
 WK_CLASS_AVAILABLE(10_10, 8_0)
