@@ -94,6 +94,7 @@ void MathObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(vm, Identifier::fromString(&vm, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Math"), DontEnum | ReadOnly);
 
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "abs"), 1, mathProtoFuncAbs, AbsIntrinsic, DontEnum);
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, "acos"), 1, mathProtoFuncACos, NoIntrinsic, DontEnum);

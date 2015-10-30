@@ -69,6 +69,7 @@ void SetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->values, values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->keys, values, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, values, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Set"), DontEnum | ReadOnly);
 
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), setProtoFuncSize);

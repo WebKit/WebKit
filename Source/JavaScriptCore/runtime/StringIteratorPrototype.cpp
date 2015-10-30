@@ -54,6 +54,7 @@ void StringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "String Iterator"), DontEnum | ReadOnly);
     vm.prototypeMap.addPrototype(this);
 }
 

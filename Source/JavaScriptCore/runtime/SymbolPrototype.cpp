@@ -29,6 +29,7 @@
 
 #include "Error.h"
 #include "JSCInlines.h"
+#include "JSString.h"
 
 namespace JSC {
 
@@ -58,6 +59,7 @@ SymbolPrototype::SymbolPrototype(VM& vm, Structure* structure)
 void SymbolPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Symbol"), DontEnum | ReadOnly);
     ASSERT(inherits(info()));
 }
 

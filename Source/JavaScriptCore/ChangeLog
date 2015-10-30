@@ -1,3 +1,65 @@
+2015-10-30  Keith Miller  <keith_miller@apple.com>
+
+        [ES6] Add support for toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=150696
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds support for Symbol.toStringTag. This is a simple
+        feature, if an object passed to Object.prototype.toString() has a
+        toStringTag we use the tag in the string rather than the class info.
+        Added a test that checks this works for all the default supported classes
+        along with the corresponding prototype and custom cases.
+
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::finishCreation):
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewProtoGetterFuncToStringTag):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::SmallStrings):
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::objectStringStart):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        * tests/modules/namespace.js:
+        * tests/stress/symbol-tostringtag.js: Added.
+        (toStr):
+        (strName):
+        (classes.string_appeared_here):
+
 2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Do not show JavaScriptCore builtins in inspector
