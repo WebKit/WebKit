@@ -1,3 +1,11 @@
+2015-10-30  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build.
+
+        * Plugins/WebPluginController.mm:
+        (WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_):
+        (WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_):
+
 2015-10-29  Anders Carlsson  <andersca@apple.com>
 
         Remove a never used SPI delegate method

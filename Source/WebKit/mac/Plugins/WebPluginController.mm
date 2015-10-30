@@ -653,15 +653,21 @@ static alertDidEndIMP original_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_
 
 static void WebKit_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_(id object, SEL selector, NSAlert *alert, NSInteger returnCode, void* contextInfo)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[(TSUpdateCheck *)object delegate] autorelease];
+#pragma clang diagnostic pop
 
     original_TSUpdateCheck_alertDidEnd_returnCode_contextInfo_(object, selector, alert, returnCode, contextInfo);
 }
 
 static void WebKit_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_(id object, SEL selector, NSWindow *window, id modalDelegate, SEL didEndSelector, void* contextInfo)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (isKindOfClass(modalDelegate, @"TSUpdateCheck"))
         [[(TSUpdateCheck *)modalDelegate delegate] retain];
+#pragma clang diagnostic pop
 
     original_NSAlert_beginSheetModalForWindow_modalDelegate_didEndSelector_contextInfo_(object, selector, window, modalDelegate, didEndSelector, contextInfo);
 }
