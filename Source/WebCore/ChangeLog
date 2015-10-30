@@ -1,3 +1,26 @@
+2015-10-29  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r191756.
+
+    2015-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+            Very slow typing on pages with wheel event handlers on the body, and deep content
+            https://bugs.webkit.org/show_bug.cgi?id=150692
+            rdar://problem/23242631
+
+            Reviewed by Zalan Bujtas.
+
+            On a large page with a wheel event handler on the body, we would call
+            Element::absoluteEventHandlerBounds() for every element under the body,
+            and compute an absolute bounds for each one. This is very slow.
+
+            For now, optimize computing a region for the <body> by just using the document
+            bounds, which will always be as big or larger. It's OK for this region to
+            be an overestimate.
+
+            * dom/Document.cpp:
+            (WebCore::Document::absoluteRegionForEventTargets):
+
 2015-10-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge r191706. rdar://problem/23319292
