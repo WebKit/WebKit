@@ -1,3 +1,13 @@
+2015-10-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Add Shadow DOM feature
+        https://bugs.webkit.org/show_bug.cgi?id=150611
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/WebKitFeatures.cmake: Add ENABLE_SHADOW_DOM cmake variable.
+
 2015-10-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build
