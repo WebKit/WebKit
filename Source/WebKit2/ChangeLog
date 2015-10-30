@@ -1,3 +1,16 @@
+2015-10-30  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r191691): Unexpected "Share" context menu when right clicking around inspector
+        https://bugs.webkit.org/show_bug.cgi?id=150699
+        rdar://problem/23324522
+
+        Reviewed by Tim Horton.
+
+        Don't create a share menu item if we have nothing to share.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem):
+
 2015-10-30  Tim Horton  <timothy_horton@apple.com>
 
         Initialize some new WebViewImpl members

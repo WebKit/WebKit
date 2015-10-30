@@ -282,6 +282,9 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
         [items addObject:image.get()];
     }
 
+    if (![items count])
+        return nil;
+
     RetainPtr<NSMenuItem> item = [NSMenuItem standardShareMenuItemWithItems:items.get()];
     if (!item)
         return nil;
