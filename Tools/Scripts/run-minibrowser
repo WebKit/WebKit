@@ -48,7 +48,7 @@ if (isGtk() || isEfl()) {
 
     $launcherPath = catdir(productDir(), "bin", "MiniBrowser");
     die "Can't find $launcherPath" unless -x $launcherPath;
-    @jhbuildWrapper = jhbuildWrapperPrefixIfNeeded();
+    @jhbuildWrapper = wrapperPrefixIfNeeded();
     print "Starting MiniBrowser.\n";
     exec @jhbuildWrapper, $launcherPath, @ARGV or die;
 } elsif (isAppleMacWebKit()) {
