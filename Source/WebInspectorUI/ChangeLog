@@ -1,5 +1,40 @@
 2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make use of other Timer details in Timeline (timeout, singleShot)
+        https://bugs.webkit.org/show_bug.cgi?id=150697
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._processRecord):
+        Create a small object for timer details.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.EventType.displayName):
+        New details object requires new path to timer identifier.
+
+        * UserInterface/Views/ScriptTimelineView.css:
+        (.sidebar > .panel.navigation.timeline:not(.timeline-recording-content-view-showing) .navigation-sidebar-panel-content-tree-outline.script .item .alternate-subtitle):
+        (.navigation-sidebar-panel-content-tree-outline .item .alternate-subtitle):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .alternate-subtitle):
+        (.navigation-sidebar-panel-content-tree-outline .item.small:not(.two-line) .alternate-subtitle::before):
+        Styles for an alternate-subtitle, a subtitle to show when the timeline
+        content view is showing and not a resource content view.
+
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        Create alternate subtitle for Timers with the timeout millisecond details.
+        Differentiate between setTimeout / setInterval.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.createCellContent): Deleted.
+        (WebInspector.ScriptTimelineDataGridNode): Deleted.
+        Remove dead code. Normally there would be a filter / scope bar for an eventType
+        column but no such column exists.
+
+2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Display console.timeStamp(title) title in timeline markers
         https://bugs.webkit.org/show_bug.cgi?id=150691
 

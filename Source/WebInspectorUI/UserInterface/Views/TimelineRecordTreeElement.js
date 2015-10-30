@@ -32,7 +32,8 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
         sourceCodeLocation = sourceCodeLocation || timelineRecord.sourceCodeLocation || null;
 
         var title = "";
-        var subtitle = "";
+        var subtitle = null;
+        var alternateSubtitle = null;
 
         if (sourceCodeLocation) {
             subtitle = document.createElement("span");
@@ -90,8 +91,20 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             case WebInspector.ScriptTimelineRecord.EventType.GarbageCollected:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.GarbageCollectionIconStyleClass;
                 break;
-            case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
             case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
+                if (includeDetailsInMainTitle) {
+                    let timeoutString =  Number.secondsToString(timelineRecord.details.timeout / 1000);
+                    alternateSubtitle = subtitle.appendChild(document.createElement("span"));
+                    alternateSubtitle.classList.add("alternate-subtitle");
+                    if (timelineRecord.details.repeating)
+                        alternateSubtitle.textContent = WebInspector.UIString("%s interval").format(timeoutString);
+                    else
+                        alternateSubtitle.textContent = WebInspector.UIString("%s delay").format(timeoutString);
+                }
+
+                iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
+                break;
+            case WebInspector.ScriptTimelineRecord.EventType.TimerFired:
             case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.TimerRecordIconStyleClass;
                 break;
@@ -124,6 +137,9 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
 
         if (this._sourceCodeLocation)
             this.tooltipHandledSeparately = true;
+
+        if (alternateSubtitle)
+            this.titlesElement.appendChild(alternateSubtitle);
     }
 
     // Public

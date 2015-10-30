@@ -358,7 +358,7 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         return WebInspector.UIString("Timer Fired");
     case WebInspector.ScriptTimelineRecord.EventType.TimerInstalled:
         if (details && includeDetailsInMainTitle)
-            return WebInspector.UIString("Timer %s Installed").format(details);
+            return WebInspector.UIString("Timer %s Installed").format(details.timerId);
         return WebInspector.UIString("Timer Installed");
     case WebInspector.ScriptTimelineRecord.EventType.TimerRemoved:
         if (details && includeDetailsInMainTitle)
