@@ -52,6 +52,10 @@
 #include "PlatformProcessIdentifier.h"
 #endif
 
+#if PLATFORM(GTK)
+#include <wtf/glib/GMainLoopSource.h>
+#endif
+
 namespace IPC {
 
 struct WaitForMessageState;
@@ -354,6 +358,9 @@ private:
     Vector<int> m_fileDescriptors;
     size_t m_fileDescriptorsSize;
     int m_socketDescriptor;
+#if PLATFORM(GTK)
+    GMainLoopSource m_socketEventSource;
+#endif
 #endif
 };
 

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-#include <gio/gio.h>
+#include <glib.h>
 #include <string.h>
 
 namespace WTF {
@@ -82,33 +82,6 @@ void WorkQueue::platformInvalidate()
     }
 
     m_eventContext = nullptr;
-}
-
-void WorkQueue::registerSocketEventHandler(int fileDescriptor, std::function<void ()> function, std::function<void ()> closeFunction)
-{
-    GRefPtr<GSocket> socket = adoptGRef(g_socket_new_from_fd(fileDescriptor, 0));
-    ref();
-    m_socketEventSource.schedule("[WebKit] WorkQueue::SocketEventHandler", [function, closeFunction](GIOCondition condition) {
-            if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
-                closeFunction();
-                return GMainLoopSource::Stop;
-            }
-
-            if (condition & G_IO_IN) {
-                function();
-                return GMainLoopSource::Continue;
-            }
-
-            ASSERT_NOT_REACHED();
-            return GMainLoopSource::Stop;
-        }, socket.get(), G_IO_IN,
-        [this] { deref(); },
-        m_eventContext.get());
-}
-
-void WorkQueue::unregisterSocketEventHandler(int)
-{
-    m_socketEventSource.cancel();
 }
 
 void WorkQueue::dispatch(std::function<void ()> function)

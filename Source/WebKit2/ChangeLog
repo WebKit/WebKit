@@ -1,5 +1,20 @@
 2015-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Move the socket polling off the WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=150593
+
+        Reviewed by Anders Carlsson.
+
+        Create the socket poll source in Connection::open and attach it to
+        the connection work queue context.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::open):
+
+2015-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use RunLoop::Timer instead of GMainLoopSource
         https://bugs.webkit.org/show_bug.cgi?id=150592
 

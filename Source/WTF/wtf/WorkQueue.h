@@ -76,8 +76,7 @@ public:
 #if OS(DARWIN)
     dispatch_queue_t dispatchQueue() const { return m_dispatchQueue; }
 #elif PLATFORM(GTK)
-    void registerSocketEventHandler(int, std::function<void ()>, std::function<void ()>);
-    void unregisterSocketEventHandler(int);
+    GMainContext* mainContext() const { return m_eventContext.get(); }
 #elif PLATFORM(EFL)
     void registerSocketEventHandler(int, std::function<void ()>);
     void unregisterSocketEventHandler(int);
@@ -109,7 +108,6 @@ private:
     ThreadIdentifier m_workQueueThread;
     GRefPtr<GMainContext> m_eventContext;
     GRefPtr<GMainLoop> m_eventLoop;
-    GMainLoopSource m_socketEventSource;
 #elif PLATFORM(EFL)
     RefPtr<DispatchQueue> m_dispatchQueue;
 #elif OS(WINDOWS)

@@ -40,7 +40,7 @@
 #include <wtf/UniStdExtras.h>
 
 #if PLATFORM(GTK)
-#include <glib.h>
+#include <gio/gio.h>
 #endif
 
 #ifdef SOCK_SEQPACKET
@@ -147,7 +147,9 @@ void Connection::platformInvalidate()
     if (!m_isConnected)
         return;
 
-#if PLATFORM(GTK) || PLATFORM(EFL)
+#if PLATFORM(GTK)
+    m_socketEventSource.cancel();
+#elif PLATFORM(EFL)
     m_connectionQueue->unregisterSocketEventHandler(m_socketDescriptor);
 #endif
 
@@ -374,13 +376,21 @@ bool Connection::open()
     RefPtr<Connection> protectedThis(this);
     m_isConnected = true;
 #if PLATFORM(GTK)
-    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
-        [protectedThis] {
-            protectedThis->readyReadHandler();
-        },
-        [protectedThis] {
+    GRefPtr<GSocket> socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
+    m_socketEventSource.schedule("[WebKit] Connection::SocketEventHandler", [protectedThis] (GIOCondition condition) {
+        if (condition & G_IO_HUP || condition & G_IO_ERR || condition & G_IO_NVAL) {
             protectedThis->connectionDidClose();
-        });
+            return GMainLoopSource::Stop;
+        }
+
+        if (condition & G_IO_IN) {
+            protectedThis->readyReadHandler();
+            return GMainLoopSource::Continue;
+        }
+
+        ASSERT_NOT_REACHED();
+        return GMainLoopSource::Stop;
+    }, socket.get(), G_IO_IN, nullptr, m_connectionQueue->mainContext());
 #elif PLATFORM(EFL)
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
         [protectedThis] {
