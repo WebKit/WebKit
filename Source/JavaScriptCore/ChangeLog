@@ -1,3 +1,15 @@
+2015-10-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::handleCalleeSaves shouldn't save/restore the frame pointer
+        https://bugs.webkit.org/show_bug.cgi?id=150688
+
+        Reviewed by Michael Saboff.
+
+        We save/restore the FP inside Air::generate().
+
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+
 2015-10-29  Michael Saboff  <msaboff@apple.com>
 
         Crash making a tail call from a getter to a host function
