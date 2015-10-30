@@ -45,6 +45,7 @@
                     { "name": "bot162", "platform": "mac-elcapitan" },
                     { "name": "bot165", "platform": "mac-elcapitan" },
                     { "name": "bot169", "platform": "mac-elcapitan" },
+                    { "name": "bot170", "platform": "mac-elcapitan" },
                     { "name": "bot173", "platform": "mac-elcapitan" },
                     { "name": "bot174", "platform": "mac-elcapitan" },
                     { "name": "bot205", "platform": "mac-elcapitan" },
@@ -94,6 +95,11 @@
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["elcapitan-debug-tests-jsc", "elcapitan-debug-tests-wk1", "elcapitan-debug-tests-wk2"],
                       "slavenames": ["bot415", "bot416"]
+                    },
+                    { "name": "Apple El Capitan CMake Debug (Build)", "type": "Build", "builddir": "elcapitan-cmake-debug",
+                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
+                      "additionalArguments": ["--cmake"],
+                      "slavenames": ["bot170"]
                     },
                     { "name": "Apple El Capitan Debug JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-debug-tests-jsc",
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
@@ -384,7 +390,7 @@
                       "builderNames": ["Apple Yosemite Release (Build)", "Apple Yosemite Debug (Build)", "Apple Yosemite LLINT CLoop (BuildAndTest)", "Apple Yosemite 32-bit JSC (BuildAndTest)", "Apple Yosemite Release (32-bit Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-elcapitan", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple El Capitan Release (Build)", "Apple El Capitan Debug (Build)", "Apple El Capitan LLINT CLoop (BuildAndTest)", "Apple El Capitan 32-bit JSC (BuildAndTest)", "Apple El Capitan Release (32-bit Build)"]
+                      "builderNames": ["Apple El Capitan Release (Build)", "Apple El Capitan Debug (Build)", "Apple El Capitan LLINT CLoop (BuildAndTest)", "Apple El Capitan 32-bit JSC (BuildAndTest)", "Apple El Capitan Release (32-bit Build)", "Apple El Capitan CMake Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "ios-9", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple iOS 9 Release (Build)"]
