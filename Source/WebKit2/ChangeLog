@@ -1,3 +1,10 @@
+2015-10-30  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after rr191810.
+
+        * PlatformMac.cmake:
+        Add RemoteObjectInvocation.mm.
+
 2015-10-30  Anders Carlsson  <andersca@apple.com>
 
         Add a separate object that represents a remote object invocation

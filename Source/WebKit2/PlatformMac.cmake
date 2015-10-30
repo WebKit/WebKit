@@ -47,6 +47,7 @@ list(APPEND WebKit2_SOURCES
     Shared/APIWebArchive.mm
     Shared/APIWebArchiveResource.mm
 
+    Shared/API/Cocoa/RemoteObjectInvocation.mm
     Shared/API/Cocoa/RemoteObjectRegistry.mm
     Shared/API/Cocoa/WKBrowsingContextHandle.mm
     Shared/API/Cocoa/WKRemoteObject.mm
