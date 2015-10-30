@@ -218,8 +218,8 @@ AuthorStyleSheets::StyleResolverUpdateType AuthorStyleSheets::analyzeStyleSheetC
     // Stylesheets of <style> elements that @import stylesheets are active but loading. We need to trigger a full recalc when such loads are done.
     bool hasActiveLoadingStylesheet = false;
     unsigned newStylesheetCount = newStylesheets.size();
-    for (unsigned i = 0; i < newStylesheetCount; ++i) {
-        if (newStylesheets[i]->isLoading())
+    for (auto& sheet : newStylesheets) {
+        if (sheet->isLoading())
             hasActiveLoadingStylesheet = true;
     }
     if (m_hadActiveLoadingStylesheet && !hasActiveLoadingStylesheet) {
@@ -277,15 +277,15 @@ AuthorStyleSheets::StyleResolverUpdateType AuthorStyleSheets::analyzeStyleSheetC
 
 static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& result, const Vector<RefPtr<StyleSheet>>& sheets)
 {
-    for (unsigned i = 0; i < sheets.size(); ++i) {
-        if (!is<CSSStyleSheet>(*sheets[i]))
+    for (auto& sheet : sheets) {
+        if (!is<CSSStyleSheet>(*sheet))
             continue;
-        CSSStyleSheet& sheet = downcast<CSSStyleSheet>(*sheets[i]);
-        if (sheet.disabled())
+        CSSStyleSheet& styleSheet = downcast<CSSStyleSheet>(*sheet);
+        if (styleSheet.disabled())
             continue;
-        if (!sheet.length())
+        if (!styleSheet.length())
             continue;
-        result.append(&sheet);
+        result.append(&styleSheet);
     }
 }
 
@@ -387,8 +387,8 @@ bool AuthorStyleSheets::activeStyleSheetsContains(const CSSStyleSheet* sheet) co
 {
     if (!m_weakCopyOfActiveStyleSheetListForFastLookup) {
         m_weakCopyOfActiveStyleSheetListForFastLookup = std::make_unique<HashSet<const CSSStyleSheet*>>();
-        for (unsigned i = 0; i < m_activeStyleSheets.size(); ++i)
-            m_weakCopyOfActiveStyleSheetListForFastLookup->add(m_activeStyleSheets[i].get());
+        for (auto& activeStyleSheet : m_activeStyleSheets)
+            m_weakCopyOfActiveStyleSheetListForFastLookup->add(activeStyleSheet.get());
     }
     return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
 }

@@ -57,8 +57,8 @@ EventListenerMap::EventListenerMap()
 
 bool EventListenerMap::contains(const AtomicString& eventType) const
 {
-    for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].first == eventType)
+    for (auto& entry : m_entries) {
+        if (entry.first == eventType)
             return true;
     }
     return false;
@@ -66,11 +66,10 @@ bool EventListenerMap::contains(const AtomicString& eventType) const
 
 bool EventListenerMap::containsCapturing(const AtomicString& eventType) const
 {
-    for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].first == eventType) {
-            const EventListenerVector* vector = m_entries[i].second.get();
-            for (unsigned j = 0; j < vector->size(); ++j) {
-                if (vector->at(j).useCapture)
+    for (auto& entry : m_entries) {
+        if (entry.first == eventType) {
+            for (auto& eventListener : *entry.second) {
+                if (eventListener.useCapture)
                     return true;
             }
         }
@@ -90,8 +89,8 @@ Vector<AtomicString> EventListenerMap::eventTypes() const
     Vector<AtomicString> types;
     types.reserveInitialCapacity(m_entries.size());
 
-    for (unsigned i = 0; i < m_entries.size(); ++i)
-        types.uncheckedAppend(m_entries[i].first);
+    for (auto& entry : m_entries)
+        types.uncheckedAppend(entry.first);
 
     return types;
 }
@@ -111,9 +110,9 @@ bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListen
 {
     assertNoActiveIterators();
 
-    for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].first == eventType)
-            return addListenerToVector(m_entries[i].second.get(), listener, useCapture);
+    for (auto& entry : m_entries) {
+        if (entry.first == eventType)
+            return addListenerToVector(entry.second.get(), listener, useCapture);
     }
 
     m_entries.append(std::make_pair(eventType, std::make_unique<EventListenerVector>()));
@@ -150,9 +149,9 @@ EventListenerVector* EventListenerMap::find(const AtomicString& eventType)
 {
     assertNoActiveIterators();
 
-    for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].first == eventType)
-            return m_entries[i].second.get();
+    for (auto& entry : m_entries) {
+        if (entry.first == eventType)
+            return entry.second.get();
     }
 
     return nullptr;
@@ -182,11 +181,11 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomicStr
 
 static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventType, EventListenerVector* listenerVector, EventTarget* target)
 {
-    for (size_t i = 0; i < listenerVector->size(); ++i) {
+    for (auto& listener : *listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
-        if ((*listenerVector)[i].listener->wasCreatedFromMarkup())
+        if (listener.listener->wasCreatedFromMarkup())
             continue;
-        target->addEventListener(eventType, (*listenerVector)[i].listener.copyRef(), (*listenerVector)[i].useCapture);
+        target->addEventListener(eventType, listener.listener.copyRef(), listener.useCapture);
     }
 }
 
@@ -194,8 +193,8 @@ void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarge
 {
     assertNoActiveIterators();
 
-    for (unsigned i = 0; i < m_entries.size(); ++i)
-        copyListenersNotCreatedFromMarkupToTarget(m_entries[i].first, m_entries[i].second.get(), target);
+    for (auto& entry : m_entries)
+        copyListenersNotCreatedFromMarkupToTarget(entry.first, entry.second.get(), target);
 }
 
 EventListenerIterator::EventListenerIterator()

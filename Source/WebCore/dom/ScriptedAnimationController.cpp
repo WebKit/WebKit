@@ -149,8 +149,7 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
     // reference to us, so take a defensive reference.
     Ref<ScriptedAnimationController> protect(*this);
 
-    for (size_t i = 0; i < callbacks.size(); ++i) {
-        RequestAnimationFrameCallback* callback = callbacks[i].get();
+    for (auto& callback : callbacks) {
         if (!callback->m_firedOrCancelled) {
             callback->m_firedOrCancelled = true;
             InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireAnimationFrame(m_document, callback->m_id);

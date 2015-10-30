@@ -88,9 +88,9 @@ void MutationObserver::observe(Node* node, const Dictionary& optionsDictionary, 
     };
     MutationObserverOptions options = 0;
     bool value = false;
-    for (unsigned i = 0; i < sizeof(booleanOptions) / sizeof(booleanOptions[0]); ++i) {
-        if (optionsDictionary.get(booleanOptions[i].name, value) && value)
-            options |= booleanOptions[i].value;
+    for (auto& booleanOption : booleanOptions) {
+        if (optionsDictionary.get(booleanOption.name, value) && value)
+            options |= booleanOption.value;
     }
 
     HashSet<AtomicString> attributeFilter;
@@ -191,8 +191,8 @@ void MutationObserver::deliver()
         if (registration->hasTransientRegistrations())
             transientRegistrations.append(registration);
     }
-    for (size_t i = 0; i < transientRegistrations.size(); ++i)
-        transientRegistrations[i]->clearTransientRegistrations();
+    for (auto& registration : transientRegistrations)
+        registration->clearTransientRegistrations();
 
     if (m_records.isEmpty())
         return;
@@ -214,12 +214,12 @@ void MutationObserver::deliverAllMutations()
     if (!suspendedMutationObservers().isEmpty()) {
         Vector<RefPtr<MutationObserver>> suspended;
         copyToVector(suspendedMutationObservers(), suspended);
-        for (size_t i = 0; i < suspended.size(); ++i) {
-            if (!suspended[i]->canDeliver())
+        for (auto& observer : suspended) {
+            if (!observer->canDeliver())
                 continue;
 
-            suspendedMutationObservers().remove(suspended[i]);
-            activeMutationObservers().add(suspended[i]);
+            suspendedMutationObservers().remove(observer);
+            activeMutationObservers().add(observer);
         }
     }
 
@@ -231,11 +231,11 @@ void MutationObserver::deliverAllMutations()
             return lhs->m_priority < rhs->m_priority;
         });
 
-        for (size_t i = 0; i < observers.size(); ++i) {
-            if (observers[i]->canDeliver())
-                observers[i]->deliver();
+        for (auto& observer : observers) {
+            if (observer->canDeliver())
+                observer->deliver();
             else
-                suspendedMutationObservers().add(observers[i]);
+                suspendedMutationObservers().add(observer);
         }
     }
 

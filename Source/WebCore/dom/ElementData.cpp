@@ -180,9 +180,9 @@ bool ElementData::isEquivalent(const ElementData* other) const
 
 Attribute* UniqueElementData::findAttributeByName(const QualifiedName& name)
 {
-    for (unsigned i = 0, count = m_attributeVector.size(); i < count; ++i) {
-        if (m_attributeVector.at(i).name().matches(name))
-            return &m_attributeVector.at(i);
+    for (auto& attribute : m_attributeVector) {
+        if (attribute.name().matches(name))
+            return &attribute;
     }
     return nullptr;
 }

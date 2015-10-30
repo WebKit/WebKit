@@ -65,15 +65,15 @@ void IdTargetObserverRegistry::notifyObserversInternal(const AtomicStringImpl& i
 
     Vector<IdTargetObserver*> copy;
     copyToVector(*m_notifyingObserversInSet, copy);
-    for (Vector<IdTargetObserver*>::const_iterator it = copy.begin(); it != copy.end(); ++it) {
-        if (m_notifyingObserversInSet->contains(*it))
-            (*it)->idTargetChanged();
+    for (auto& observer : copy) {
+        if (m_notifyingObserversInSet->contains(observer))
+            observer->idTargetChanged();
     }
 
     if (m_notifyingObserversInSet->isEmpty())
         m_registry.remove(&id);
 
-    m_notifyingObserversInSet = 0;
+    m_notifyingObserversInSet = nullptr;
 }
 
 } // namespace WebCore

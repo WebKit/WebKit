@@ -39,8 +39,8 @@ ClientRectList::ClientRectList()
 ClientRectList::ClientRectList(const Vector<FloatQuad>& quads)
 {
     m_list.reserveInitialCapacity(quads.size());
-    for (size_t i = 0; i < quads.size(); ++i)
-        m_list.append(ClientRect::create(quads[i].enclosingBoundingBox()));
+    for (auto& quad : quads)
+        m_list.uncheckedAppend(ClientRect::create(quad.enclosingBoundingBox()));
 }
 
 ClientRectList::~ClientRectList()

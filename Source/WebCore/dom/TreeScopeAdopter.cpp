@@ -64,9 +64,8 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
             continue;
 
         if (node->hasSyntheticAttrChildNodes()) {
-            const Vector<RefPtr<Attr>>& attrs = downcast<Element>(*node).attrNodeList();
-            for (unsigned i = 0; i < attrs.size(); ++i)
-                moveTreeToNewScope(attrs[i].get());
+            for (auto& attr : downcast<Element>(*node).attrNodeList())
+                moveTreeToNewScope(attr.get());
         }
 
         if (ShadowRoot* shadow = node->shadowRoot()) {

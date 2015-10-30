@@ -2074,9 +2074,8 @@ void Node::notifyMutationObserversNodeWillDetach()
 
     for (Node* node = parentNode(); node; node = node->parentNode()) {
         if (auto* registry = node->mutationObserverRegistry()) {
-            const size_t size = registry->size();
-            for (size_t i = 0; i < size; ++i)
-                registry->at(i)->observedSubtreeNodeWillDetach(this);
+            for (auto& registration : *registry)
+                registration->observedSubtreeNodeWillDetach(this);
         }
 
         if (auto* transientRegistry = node->transientMutationObserverRegistry()) {

@@ -484,9 +484,8 @@ bool EventPath::updateTouchLists(const TouchEvent& touchEvent)
     addRelatedNodeResolversForTouchList(touchTargetResolvers, touchEvent.changedTouches(), TouchEventContext::ChangedTouches);
 
     ASSERT(touchTargetResolvers.size() == touchNodeCount);
-    size_t eventPathSize = m_path.size();
-    for (size_t i = 0; i < eventPathSize; ++i) {
-        TouchEventContext& context = toTouchEventContext(*m_path[i]);
+    for (auto& eventPath : m_path) {
+        TouchEventContext& context = toTouchEventContext(*eventPath);
         Node& nodeToMoveTo = *context.node();
         for (size_t resolverIndex = 0; resolverIndex < touchNodeCount; ++resolverIndex) {
             EventRelatedNodeResolver& currentResolver = touchTargetResolvers[resolverIndex];
@@ -667,8 +666,8 @@ void EventPath::setRelatedTarget(Node& origin, EventTarget& relatedTarget)
 
 bool EventPath::hasEventListeners(const AtomicString& eventType) const
 {
-    for (size_t i = 0; i < m_path.size(); i++) {
-        if (m_path[i]->node()->hasEventListeners(eventType))
+    for (auto& eventPath : m_path) {
+        if (eventPath->node()->hasEventListeners(eventType))
             return true;
     }
 

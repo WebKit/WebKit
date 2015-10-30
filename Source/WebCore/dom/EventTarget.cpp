@@ -94,8 +94,7 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
     // they have one less listener to invoke.
     if (!d->firingEventIterators)
         return true;
-    for (size_t i = 0; i < d->firingEventIterators->size(); ++i) {
-        FiringEventIterator& firingIterator = d->firingEventIterators->at(i);
+    for (auto& firingIterator : *d->firingEventIterators) {
         if (eventType != firingIterator.eventType)
             continue;
 
@@ -120,10 +119,9 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, PassR
 
 EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventType)
 {
-    const EventListenerVector& entry = getEventListeners(eventType);
-    for (size_t i = 0; i < entry.size(); ++i) {
-        if (entry[i].listener->isAttribute())
-            return entry[i].listener.get();
+    for (auto& eventListener : getEventListeners(eventType)) {
+        if (eventListener.listener->isAttribute())
+            return eventListener.listener.get();
     }
     return 0;
 }
@@ -280,9 +278,9 @@ void EventTarget::removeAllEventListeners()
     // Notify firing events planning to invoke the listener at 'index' that
     // they have one less listener to invoke.
     if (d->firingEventIterators) {
-        for (size_t i = 0; i < d->firingEventIterators->size(); ++i) {
-            d->firingEventIterators->at(i).iterator = 0;
-            d->firingEventIterators->at(i).size = 0;
+        for (auto& firingEventIterator : *d->firingEventIterators) {
+            firingEventIterator.iterator = 0;
+            firingEventIterator.size = 0;
         }
     }
 }

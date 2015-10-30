@@ -150,10 +150,7 @@ void RadioButtonGroup::remove(HTMLInputElement* button)
 
 void RadioButtonGroup::updateValidityForAllButtons()
 {
-    typedef HashSet<HTMLInputElement*>::const_iterator Iterator;
-    Iterator end = m_members.end();
-    for (Iterator it = m_members.begin(); it != end; ++it) {
-        HTMLInputElement* button = *it;
+    for (auto& button : m_members) {
         ASSERT(button->isRadioButton());
         button->updateValidity();
     }

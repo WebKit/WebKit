@@ -390,9 +390,7 @@ void DocumentMarkerController::copyMarkers(Node* srcNode, unsigned startOffset, 
 
     bool docDirty = false;
     unsigned endOffset = startOffset + length - 1;
-    for (size_t i = 0; i != list->size(); ++i) {
-        DocumentMarker marker = list->at(i);
-
+    for (auto& marker : *list) {
         // stop if we are now past the specified range
         if (marker.startOffset() > endOffset)
             break;
@@ -561,9 +559,8 @@ void DocumentMarkerController::removeMarkers(DocumentMarker::MarkerTypes markerT
 
     Vector<RefPtr<Node>> nodesWithMarkers;
     copyKeysToVector(m_markers, nodesWithMarkers);
-    unsigned size = nodesWithMarkers.size();
-    for (unsigned i = 0; i < size; ++i) {
-        MarkerMap::iterator iterator = m_markers.find(nodesWithMarkers[i]);
+    for (auto& node : nodesWithMarkers) {
+        auto iterator = m_markers.find(node);
         if (iterator != m_markers.end())
             removeMarkersFromList(iterator, markerTypes);
     }
@@ -619,15 +616,13 @@ void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerTypes marker
     ASSERT(!m_markers.isEmpty());
 
     // outer loop: process each markered node in the document
-    MarkerMap::iterator end = m_markers.end();
-    for (MarkerMap::iterator i = m_markers.begin(); i != end; ++i) {
-        Node* node = i->key.get();
+    for (auto& marker : m_markers) {
+        Node* node = marker.key.get();
 
         // inner loop: process each marker in the current node
-        MarkerList* list = i->value.get();
         bool nodeNeedsRepaint = false;
-        for (auto& marker : *list) {
-            if (markerTypes.contains(marker.type())) {
+        for (auto& documentMarker : *marker.value) {
+            if (markerTypes.contains(documentMarker.type())) {
                 nodeNeedsRepaint = true;
                 break;
             }
@@ -798,15 +793,11 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
 void DocumentMarkerController::showMarkers() const
 {
     fprintf(stderr, "%d nodes have markers:\n", m_markers.size());
-    MarkerMap::const_iterator end = m_markers.end();
-    for (MarkerMap::const_iterator nodeIterator = m_markers.begin(); nodeIterator != end; ++nodeIterator) {
-        Node* node = nodeIterator->key.get();
+    for (auto& marker : m_markers) {
+        Node* node = marker.key.get();
         fprintf(stderr, "%p", node);
-        MarkerList* list = nodeIterator->value.get();
-        for (unsigned markerIndex = 0; markerIndex < list->size(); ++markerIndex) {
-            const DocumentMarker& marker = list->at(markerIndex);
-            fprintf(stderr, " %d:[%d:%d](%d)", marker.type(), marker.startOffset(), marker.endOffset(), marker.activeMatch());
-        }
+        for (auto& documentMarker : *marker.value)
+            fprintf(stderr, " %d:[%d:%d](%d)", documentMarker.type(), documentMarker.startOffset(), documentMarker.endOffset(), documentMarker.activeMatch());
 
         fprintf(stderr, "\n");
     }

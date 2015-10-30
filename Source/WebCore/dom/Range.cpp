@@ -755,16 +755,16 @@ RefPtr<Node> Range::processContentsBetweenOffsets(ActionType action, PassRefPtr<
 
 void Range::processNodes(ActionType action, Vector<RefPtr<Node>>& nodes, PassRefPtr<Node> oldContainer, PassRefPtr<Node> newContainer, ExceptionCode& ec)
 {
-    for (unsigned i = 0; i < nodes.size(); i++) {
+    for (auto& node : nodes) {
         switch (action) {
         case Delete:
-            oldContainer->removeChild(nodes[i].get(), ec);
+            oldContainer->removeChild(node.get(), ec);
             break;
         case Extract:
-            newContainer->appendChild(nodes[i].release(), ec); // will remove n from its parent
+            newContainer->appendChild(node.release(), ec); // will remove n from its parent
             break;
         case Clone:
-            newContainer->appendChild(nodes[i]->cloneNode(true), ec);
+            newContainer->appendChild(node->cloneNode(true), ec);
             break;
         }
     }
@@ -780,8 +780,7 @@ RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* co
         ancestors.append(n);
 
     RefPtr<Node> firstChildInAncestorToProcess = direction == ProcessContentsForward ? container->nextSibling() : container->previousSibling();
-    for (Vector<RefPtr<Node>>::const_iterator it = ancestors.begin(); it != ancestors.end(); ++it) {
-        RefPtr<Node> ancestor = *it;
+    for (auto& ancestor : ancestors) {
         if (action == Extract || action == Clone) {
             if (RefPtr<Node> clonedAncestor = ancestor->cloneNode(false)) { // Might have been removed already during mutation event.
                 clonedAncestor->appendChild(clonedContainer, ec);
@@ -799,17 +798,16 @@ RefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* co
             child = (direction == ProcessContentsForward) ? child->nextSibling() : child->previousSibling())
             nodes.append(child);
 
-        for (NodeVector::const_iterator it = nodes.begin(); it != nodes.end(); ++it) {
-            Node* child = it->get();
+        for (auto& child : nodes) {
             switch (action) {
             case Delete:
-                ancestor->removeChild(child, ec);
+                ancestor->removeChild(child.get(), ec);
                 break;
             case Extract: // will remove child from ancestor
                 if (direction == ProcessContentsForward)
-                    clonedContainer->appendChild(child, ec);
+                    clonedContainer->appendChild(child.get(), ec);
                 else
-                    clonedContainer->insertBefore(child, clonedContainer->firstChild(), ec);
+                    clonedContainer->insertBefore(child.get(), clonedContainer->firstChild(), ec);
                 break;
             case Clone:
                 if (direction == ProcessContentsForward)
@@ -1182,9 +1180,8 @@ IntRect Range::absoluteBoundingBox() const
     IntRect result;
     Vector<IntRect> rects;
     absoluteTextRects(rects);
-    const size_t n = rects.size();
-    for (size_t i = 0; i < n; ++i)
-        result.unite(rects[i]);
+    for (auto& rect : rects)
+        result.unite(rect);
     return result;
 }
 
@@ -1316,15 +1313,13 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
             int beginSelectionOffset = isStartNode ? startOffset : 0;
             int endSelectionOffset = isEndNode ? endOffset : std::numeric_limits<int>::max();
             renderer->collectSelectionRects(newRects, beginSelectionOffset, endSelectionOffset);
-            size_t numberOfNewRects = newRects.size();
-            for (size_t i = 0; i < numberOfNewRects; ++i) {
-                SelectionRect& selectionRect = newRects[i];
+            for (auto& selectionRect : newRects) {
                 if (selectionRect.containsStart() && !isStartNode)
                     selectionRect.setContainsStart(false);
                 if (selectionRect.containsEnd() && !isEndNode)
                     selectionRect.setContainsEnd(false);
                 if (selectionRect.logicalWidth() || selectionRect.logicalHeight())
-                    rects.append(newRects[i]);
+                    rects.append(selectionRect);
             }
             newRects.shrink(0);
         }

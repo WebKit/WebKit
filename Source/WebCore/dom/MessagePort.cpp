@@ -69,9 +69,8 @@ void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const M
     std::unique_ptr<MessagePortChannelArray> channels;
     // Make sure we aren't connected to any of the passed-in ports.
     if (ports) {
-        for (unsigned int i = 0; i < ports->size(); ++i) {
-            MessagePort* dataPort = (*ports)[i].get();
-            if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort)) {
+        for (auto& dataPort : *ports) {
+            if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort.get())) {
                 ec = DATA_CLONE_ERR;
                 return;
             }
@@ -192,13 +191,12 @@ std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(const Mes
     HashSet<MessagePort*> portSet;
 
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
-    for (unsigned int i = 0; i < ports->size(); ++i) {
-        MessagePort* port = (*ports)[i].get();
-        if (!port || port->isNeutered() || portSet.contains(port)) {
+    for (auto& port : *ports) {
+        if (!port || port->isNeutered() || portSet.contains(port.get())) {
             ec = DATA_CLONE_ERR;
             return nullptr;
         }
-        portSet.add(port);
+        portSet.add(port.get());
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.

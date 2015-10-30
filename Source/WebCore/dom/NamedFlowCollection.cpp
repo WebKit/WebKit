@@ -47,11 +47,11 @@ Vector<RefPtr<WebKitNamedFlow>> NamedFlowCollection::namedFlows()
 {
     Vector<RefPtr<WebKitNamedFlow>> namedFlows;
 
-    for (NamedFlowSet::iterator it = m_namedFlows.begin(); it != m_namedFlows.end(); ++it) {
-        if ((*it)->flowState() == WebKitNamedFlow::FlowStateNull)
+    for (auto& namedFlow : m_namedFlows) {
+        if (namedFlow->flowState() == WebKitNamedFlow::FlowStateNull)
             continue;
 
-        namedFlows.append(RefPtr<WebKitNamedFlow>(*it));
+        namedFlows.append(RefPtr<WebKitNamedFlow>(namedFlow));
     }
 
     return namedFlows;
@@ -107,9 +107,10 @@ Document* NamedFlowCollection::document() const
 PassRefPtr<DOMNamedFlowCollection> NamedFlowCollection::createCSSOMSnapshot()
 {
     Vector<WebKitNamedFlow*> createdFlows;
-    for (NamedFlowSet::iterator it = m_namedFlows.begin(); it != m_namedFlows.end(); ++it)
-        if ((*it)->flowState() == WebKitNamedFlow::FlowStateCreated)
-            createdFlows.append(*it);
+    for (auto& namedFlow : m_namedFlows) {
+        if (namedFlow->flowState() == WebKitNamedFlow::FlowStateCreated)
+            createdFlows.append(namedFlow);
+    }
     return DOMNamedFlowCollection::create(createdFlows);
 }
 
