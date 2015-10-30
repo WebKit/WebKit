@@ -2104,7 +2104,6 @@ set(WebCore_SOURCES
     platform/FileChooser.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp
-    platform/KillRingNone.cpp
     platform/Language.cpp
     platform/Length.cpp
     platform/LengthSize.cpp
@@ -2345,7 +2344,6 @@ set(WebCore_SOURCES
 
     platform/text/BidiContext.cpp
     platform/text/DateTimeFormat.cpp
-    platform/text/Hyphenation.cpp
     platform/text/LineEnding.cpp
     platform/text/LocaleToScriptMappingDefault.cpp
     platform/text/PlatformLocale.cpp
@@ -3772,3 +3770,5 @@ endif ()
 if ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND WTF_CPU_ARM AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.9") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9.3"))
     set_source_files_properties(svg/SVGPathElement.cpp PROPERTIES COMPILE_FLAGS "-O2")
 endif ()
+
+WEBKIT_FRAMEWORK(WebCore)

@@ -1,54 +1,11 @@
 add_definitions("-ObjC++ -std=c++11")
-
-if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
-elif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
-else ()
-set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
-endif ()
 link_directories(../../WebKitLibraries)
-
-find_library(ACCELERATE_LIBRARY accelerate)
-find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox)
-find_library(AUDIOUNIT_LIBRARY AudioUnit)
 find_library(CARBON_LIBRARY Carbon)
-find_library(COCOA_LIBRARY Cocoa)
-find_library(COREAUDIO_LIBRARY CoreAudio)
-find_library(DISKARBITRATION_LIBRARY DiskArbitration)
-find_library(IOKIT_LIBRARY IOKit)
-find_library(IOSURFACE_LIBRARY IOSurface)
-find_library(OPENGL_LIBRARY OpenGL)
 find_library(QUARTZ_LIBRARY Quartz)
-find_library(QUARTZCORE_LIBRARY QuartzCore)
-find_library(SECURITY_LIBRARY Security)
-find_library(SYSTEMCONFIGURATION_LIBRARY SystemConfiguration)
-find_library(SQLITE3_LIBRARY sqlite3)
-find_library(XML2_LIBRARY XML2)
-find_package(ZLIB REQUIRED)
-
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 
 list(APPEND WebKit2_LIBRARIES
-    ${ACCELERATE_LIBRARY}
-    ${AUDIOTOOLBOX_LIBRARY}
-    ${AUDIOUNIT_LIBRARY}
-    ${CARBON_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${COREAUDIO_LIBRARY}
-    ${DISKARBITRATION_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${IOSURFACE_LIBRARY}
-    ${OPENGL_LIBRARY}
-    ${QUARTZ_LIBRARY}
-    ${QUARTZCORE_LIBRARY}
-    ${SECURITY_LIBRARY}
-    ${SQLITE3_LIBRARY}
-    ${SYSTEMCONFIGURATION_LIBRARY}
-    ${WEBKITSYSTEMINTERFACE_LIBRARY}
-    ${XML2_LIBRARY}
-    ${ZLIB_LIBRARIES}
     WebKit
 )
 
@@ -492,7 +449,6 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/Cocoa
 
     UIProcess/API/C
-    UIProcess/API/Cocoa
     UIProcess/API/cpp
 
     WebProcess/WebPage
@@ -501,6 +457,18 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     WebProcess/InjectedBundle/API/c
     WebProcess/InjectedBundle/API/mac
 )
+
+# This is needed right now to import ObjC headers instead of including them.
+# FIXME: Forwarding headers should be copies of actual headers.
+file(GLOB ObjCHeaders UIProcess/API/Cocoa/*.h)
+foreach (_file ${ObjCHeaders})
+    get_filename_component(_name ${_file} NAME)
+    if (NOT EXISTS ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/${_name})
+        file(WRITE ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit/${_name} "#import <WebKit2/UIProcess/API/Cocoa/${_name}>")
+    endif ()
+endforeach ()
+
+set(WebKit2_OUTPUT_NAME WebKit)
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/MessageRecorderProbes.h

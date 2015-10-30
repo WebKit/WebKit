@@ -89,6 +89,7 @@ list(APPEND WebCore_SOURCES
 
     platform/ContextMenuItemNone.cpp
     platform/ContextMenuNone.cpp
+    platform/KillRingNone.cpp
 
     platform/audio/efl/AudioBusEfl.cpp
 
@@ -275,6 +276,7 @@ list(APPEND WebCore_SOURCES
     platform/soup/SharedBufferSoup.cpp
     platform/soup/URLSoup.cpp
 
+    platform/text/Hyphenation.cpp
     platform/text/LocaleICU.cpp
 
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp

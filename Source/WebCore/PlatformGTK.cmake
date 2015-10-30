@@ -74,6 +74,7 @@ list(APPEND WebCore_SOURCES
     loader/soup/CachedRawResourceSoup.cpp
     loader/soup/SubresourceLoaderSoup.cpp
 
+    platform/KillRingNone.cpp
     platform/PlatformStrategies.cpp
 
     platform/audio/gstreamer/AudioDestinationGStreamer.cpp
@@ -214,6 +215,7 @@ list(APPEND WebCore_SOURCES
     platform/soup/SharedBufferSoup.cpp
     platform/soup/URLSoup.cpp
 
+    platform/text/Hyphenation.cpp
     platform/text/LocaleICU.cpp
 
     platform/text/enchant/TextCheckerEnchant.cpp

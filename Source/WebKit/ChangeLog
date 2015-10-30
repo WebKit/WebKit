@@ -1,5 +1,14 @@
 2015-10-29  Alex Christensen  <achristensen@webkit.org>
 
+        Make WebCore a framework in Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=150702
+
+        Reviewed by Geoffrey Garen.
+
+        * PlatformMac.cmake:
+
+2015-10-29  Alex Christensen  <achristensen@webkit.org>
+
         Fix Mac CMake build
         https://bugs.webkit.org/show_bug.cgi?id=150686
 
