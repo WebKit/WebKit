@@ -572,9 +572,9 @@ private:
     // that has been already sent to WebCore.
     RetainPtr<NSEvent> m_keyDownEventBeingResent;
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
-    Vector<WebCore::KeypressCommand>* m_collectedKeypressCommands;
+    Vector<WebCore::KeypressCommand>* m_collectedKeypressCommands { nullptr };
 #else
-    WKViewInterpretKeyEventsParameters* m_interpretKeyEventsParameters;
+    WKViewInterpretKeyEventsParameters* m_interpretKeyEventsParameters { nullptr };
 #endif
 };
     

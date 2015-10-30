@@ -1,5 +1,12 @@
 2015-10-30  Tim Horton  <timothy_horton@apple.com>
 
+        Initialize some new WebViewImpl members
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        Oh well.
+
+2015-10-30  Tim Horton  <timothy_horton@apple.com>
+
         Fix the build
 
         * UIProcess/API/mac/WKView.mm:
