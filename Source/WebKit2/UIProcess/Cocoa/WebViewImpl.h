@@ -458,6 +458,19 @@ public:
     void characterIndexForPoint(NSPoint, void(^)(NSUInteger));
 #endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
+    void mouseMoved(NSEvent *);
+    void mouseDown(NSEvent *);
+    void mouseUp(NSEvent *);
+    void mouseDragged(NSEvent *);
+    void mouseEntered(NSEvent *);
+    void mouseExited(NSEvent *);
+    void otherMouseDown(NSEvent *);
+    void otherMouseDragged(NSEvent *);
+    void otherMouseUp(NSEvent *);
+    void rightMouseDown(NSEvent *);
+    void rightMouseDragged(NSEvent *);
+    void rightMouseUp(NSEvent *);
+
 private:
     WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
@@ -484,6 +497,11 @@ private:
     void executeSavedKeypressCommands();
     bool interpretKeyEvent(NSEvent *, Vector<WebCore::KeypressCommand>&);
 #endif
+
+    void mouseMovedInternal(NSEvent *);
+    void mouseDownInternal(NSEvent *);
+    void mouseUpInternal(NSEvent *);
+    void mouseDraggedInternal(NSEvent *);
 
     NSView <WebViewImplDelegate> *m_view;
     WebPageProxy& m_page;

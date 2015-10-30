@@ -4169,6 +4169,140 @@ void WebViewImpl::flagsChanged(NSEvent *event)
 
 #endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
+#if USE(ASYNC_NSTEXTINPUTCLIENT)
+#define NATIVE_MOUSE_EVENT_HANDLER(EventName) \
+    void WebViewImpl::EventName(NSEvent *event) \
+    { \
+        if (m_ignoresNonWheelEvents) \
+            return; \
+        if (NSTextInputContext *context = m_view.inputContext) { \
+            auto weakThis = createWeakPtr(); \
+            RetainPtr<NSEvent> retainedEvent = event; \
+            [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) { \
+                if (!weakThis) \
+                    return; \
+                if (handled) \
+                    LOG(TextInput, "%s was handled by text input context", String(#EventName).substring(0, String(#EventName).find("Internal")).ascii().data()); \
+                else { \
+                    NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view); \
+                    weakThis->m_page.handleMouseEvent(webEvent); \
+                } \
+            }]; \
+            return; \
+        } \
+        NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view); \
+        m_page.handleMouseEvent(webEvent); \
+    }
+#define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(EventName) \
+    void WebViewImpl::EventName(NSEvent *event) \
+    { \
+        if (m_ignoresNonWheelEvents) \
+            return; \
+        if (NSTextInputContext *context = m_view.inputContext) { \
+            auto weakThis = createWeakPtr(); \
+            RetainPtr<NSEvent> retainedEvent = event; \
+            [context handleEvent:event completionHandler:[weakThis, retainedEvent] (BOOL handled) { \
+                if (!weakThis) \
+                    return; \
+                if (handled) \
+                    LOG(TextInput, "%s was handled by text input context", String(#EventName).substring(0, String(#EventName).find("Internal")).ascii().data()); \
+                else { \
+                    NativeWebMouseEvent webEvent(retainedEvent.get(), weakThis->m_lastPressureEvent.get(), weakThis->m_view); \
+                    weakThis->m_page.handleMouseEvent(webEvent); \
+                } \
+            }]; \
+            return; \
+        } \
+        NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view); \
+        m_page.handleMouseEvent(webEvent); \
+    }
+    
+#else // USE(ASYNC_NSTEXTINPUTCLIENT)
+#define NATIVE_MOUSE_EVENT_HANDLER(EventName) \
+    void WebViewImpl::EventName(NSEvent *event) \
+    { \
+        if (m_ignoresNonWheelEvents) \
+            return; \
+        if ([m_view.inputContext handleEvent:event]) { \
+            LOG(TextInput, "%s was handled by text input context", String(#EventName).substring(0, String(#EventName).find("Internal")).ascii().data()); \
+            return; \
+        } \
+        NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view); \
+        m_page.handleMouseEvent(webEvent); \
+    }
+#define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(EventName) \
+    void WebViewImpl::EventName(NSEvent *event) \
+    { \
+        if (m_ignoresNonWheelEvents) \
+            return; \
+        if ([m_view.inputContext handleEvent:event]) { \
+            LOG(TextInput, "%s was handled by text input context", String(#EventName).substring(0, String(#EventName).find("Internal")).ascii().data()); \
+            return; \
+        } \
+        NativeWebMouseEvent webEvent(event, m_lastPressureEvent.get(), m_view); \
+        m_page.handleMouseEvent(webEvent); \
+    }
+#endif // USE(ASYNC_NSTEXTINPUTCLIENT)
+
+NATIVE_MOUSE_EVENT_HANDLER(mouseEntered)
+NATIVE_MOUSE_EVENT_HANDLER(mouseExited)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseDown)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseDragged)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseUp)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseDown)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseDragged)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
+
+NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseMovedInternal)
+NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDownInternal)
+NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseUpInternal)
+NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
+
+#undef NATIVE_MOUSE_EVENT_HANDLER
+#undef NATIVE_MOUSE_EVENT_HANDLER_INTERNAL
+
+void WebViewImpl::mouseMoved(NSEvent *event)
+{
+    if (m_ignoresNonWheelEvents)
+        return;
+
+    // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
+    if (m_view == m_view.window.firstResponder && !NSPointInRect([m_view convertPoint:[event locationInWindow] fromView:nil], m_view.visibleRect))
+        return;
+
+    mouseMovedInternal(event);
+}
+
+void WebViewImpl::mouseDown(NSEvent *event)
+{
+    if (m_ignoresNonWheelEvents)
+        return;
+
+    setLastMouseDownEvent(event);
+    setIgnoresMouseDraggedEvents(false);
+
+    mouseDownInternal(event);
+}
+
+void WebViewImpl::mouseUp(NSEvent *event)
+{
+    if (m_ignoresNonWheelEvents)
+        return;
+
+    setLastMouseDownEvent(nil);
+    mouseUpInternal(event);
+}
+
+void WebViewImpl::mouseDragged(NSEvent *event)
+{
+    if (m_ignoresNonWheelEvents)
+        return;
+    if (ignoresMouseDraggedEvents())
+        return;
+
+    mouseDraggedInternal(event);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

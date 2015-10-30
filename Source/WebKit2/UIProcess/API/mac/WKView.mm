@@ -557,88 +557,6 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->wantsKeyDownForEvent(event);
 }
 
-#if USE(ASYNC_NSTEXTINPUTCLIENT)
-#define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
-    - (void)Selector:(NSEvent *)theEvent \
-    { \
-        if (_data->_impl->ignoresNonWheelEvents()) \
-            return; \
-        if (NSTextInputContext *context = [self inputContext]) { \
-            [context handleEvent:theEvent completionHandler:^(BOOL handled) { \
-                if (handled) \
-                    LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
-                else { \
-                    NativeWebMouseEvent webEvent(theEvent, _data->_impl->lastPressureEvent(), self); \
-                    _data->_page->handleMouseEvent(webEvent); \
-                } \
-            }]; \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(theEvent, _data->_impl->lastPressureEvent(), self); \
-        _data->_page->handleMouseEvent(webEvent); \
-    }
-#define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(Selector) \
-    - (void)Selector:(NSEvent *)theEvent \
-    { \
-        if (_data->_impl->ignoresNonWheelEvents()) \
-            return; \
-        if (NSTextInputContext *context = [self inputContext]) { \
-            [context handleEvent:theEvent completionHandler:^(BOOL handled) { \
-                if (handled) \
-                    LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
-                else { \
-                    NativeWebMouseEvent webEvent(theEvent, _data->_impl->lastPressureEvent(), self); \
-                    _data->_page->handleMouseEvent(webEvent); \
-                } \
-            }]; \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(theEvent, _data->_impl->lastPressureEvent(), self); \
-        _data->_page->handleMouseEvent(webEvent); \
-    }
-#else
-#define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
-    - (void)Selector:(NSEvent *)theEvent \
-    { \
-        if (_data->_impl->ignoresNonWheelEvents()) \
-            return; \
-        if ([[self inputContext] handleEvent:theEvent]) { \
-            LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(theEvent, _data->_impl->lastPressureEvent(), self); \
-        _data->_page->handleMouseEvent(webEvent); \
-    }
-#define NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(Selector) \
-    - (void)Selector:(NSEvent *)theEvent \
-    { \
-        if (_data->_impl->ignoresNonWheelEvents()) \
-            return; \
-        if ([[self inputContext] handleEvent:theEvent]) { \
-            LOG(TextInput, "%s was handled by text input context", String(#Selector).substring(0, String(#Selector).find("Internal")).ascii().data()); \
-            return; \
-        } \
-        NativeWebMouseEvent webEvent(theEvent, _data->_impl->lastPressureEvent(), self); \
-        _data->_page->handleMouseEvent(webEvent); \
-    }
-#endif
-
-NATIVE_MOUSE_EVENT_HANDLER(mouseEntered)
-NATIVE_MOUSE_EVENT_HANDLER(mouseExited)
-NATIVE_MOUSE_EVENT_HANDLER(otherMouseDown)
-NATIVE_MOUSE_EVENT_HANDLER(otherMouseDragged)
-NATIVE_MOUSE_EVENT_HANDLER(otherMouseUp)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseDown)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseDragged)
-NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
-
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseMovedInternal)
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDownInternal)
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseUpInternal)
-NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
-
-#undef NATIVE_MOUSE_EVENT_HANDLER
-
 - (void)scrollWheel:(NSEvent *)event
 {
     _data->_impl->scrollWheel(event);
@@ -651,44 +569,62 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
 
 - (void)mouseMoved:(NSEvent *)event
 {
-    if (_data->_impl->ignoresNonWheelEvents())
-        return;
-
-    // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
-    if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
-        return;
-
-    [self mouseMovedInternal:event];
+    _data->_impl->mouseMoved(event);
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
-    if (_data->_impl->ignoresNonWheelEvents())
-        return;
-
-    _data->_impl->setLastMouseDownEvent(event);
-    _data->_impl->setIgnoresMouseDraggedEvents(false);
-
-    [self mouseDownInternal:event];
+    _data->_impl->mouseDown(event);
 }
 
 - (void)mouseUp:(NSEvent *)event
 {
-    if (_data->_impl->ignoresNonWheelEvents())
-        return;
-
-    _data->_impl->setLastMouseDownEvent(nil);
-    [self mouseUpInternal:event];
+    _data->_impl->mouseUp(event);
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    if (_data->_impl->ignoresNonWheelEvents())
-        return;
-    if (_data->_impl->ignoresMouseDraggedEvents())
-        return;
+    _data->_impl->mouseDragged(event);
+}
 
-    [self mouseDraggedInternal:event];
+- (void)mouseEntered:(NSEvent *)event
+{
+    _data->_impl->mouseEntered(event);
+}
+
+- (void)mouseExited:(NSEvent *)event
+{
+    _data->_impl->mouseExited(event);
+}
+
+- (void)otherMouseDown:(NSEvent *)event
+{
+    _data->_impl->otherMouseDown(event);
+}
+
+- (void)otherMouseDragged:(NSEvent *)event
+{
+    _data->_impl->otherMouseDragged(event);
+}
+
+- (void)otherMouseUp:(NSEvent *)event
+{
+    _data->_impl->otherMouseUp(event);
+}
+
+- (void)rightMouseDown:(NSEvent *)event
+{
+    _data->_impl->rightMouseDown(event);
+}
+
+- (void)rightMouseDragged:(NSEvent *)event
+{
+    _data->_impl->rightMouseDragged(event);
+}
+
+- (void)rightMouseUp:(NSEvent *)event
+{
+    _data->_impl->rightMouseUp(event);
 }
 
 - (void)pressureChangeWithEvent:(NSEvent *)event
@@ -1115,13 +1051,6 @@ NATIVE_MOUSE_EVENT_HANDLER_INTERNAL(mouseDraggedInternal)
     return _data->_impl->thumbnailView();
 }
 #endif // WK_API_ENABLED
-
-
-// FIXME: Get rid of this when we have better plumbing to WKViewLayoutStrategy.
-- (void)_updateViewExposedRect
-{
-    _data->_impl->updateViewExposedRect();
-}
 
 @end
 
