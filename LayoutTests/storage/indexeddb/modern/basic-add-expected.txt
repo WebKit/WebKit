@@ -1,0 +1,10 @@
+ALERT: Upgrade needed: Old version - 0 New version - 1
+ALERT: [object IDBTransaction] - versionchange
+ALERT: [object IDBDatabase]
+ALERT: put 1 succeeded - key was 'foo'
+ALERT: put 2 failed - error
+ALERT: get succeeded - key was 'bar'
+ALERT: version change transaction completed
+ALERT: Done
+This test does basic testing of IDBObjectStore.add(), making sure that an attempt to overwrite an already-existing key fails with the appropriate error.
+

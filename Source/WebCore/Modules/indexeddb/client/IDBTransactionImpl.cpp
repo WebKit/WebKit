@@ -387,7 +387,7 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
 
 Ref<IDBRequest> IDBTransaction::requestGetRecord(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBKey& key)
 {
-    LOG(IndexedDB, "IDBTransaction::requestPutOrAdd");
+    LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
     ASSERT(key.isValid());
 

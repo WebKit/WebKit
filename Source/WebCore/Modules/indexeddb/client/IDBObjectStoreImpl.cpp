@@ -86,9 +86,9 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
@@ -156,9 +156,10 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext*, IDBKeyR
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    auto idbKey = scriptValueToIDBKey(execState, key);
+    return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
