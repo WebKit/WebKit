@@ -1703,7 +1703,6 @@
 		46233EEE1BA0F187000EBEBB /* AttributeDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 46233EED1BA0F17A000EBEBB /* AttributeDOMTokenList.h */; };
 		46233EEF1BA0F18B000EBEBB /* AttributeDOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46233EEC1BA0F17A000EBEBB /* AttributeDOMTokenList.cpp */; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
-		4634592E1AC2273C00ECB71C /* SharedTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
 		4669B2871B852A0B000F905F /* JSDOMNamedFlowCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */; };
@@ -2643,6 +2642,9 @@
 		7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AE335F11ACB09E200E401EF /* WheelEventTestTrigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */; };
 		7AE335F21ACB09E200E401EF /* WheelEventTestTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7AE6C9381BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AE6C9371BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp */; };
+		7AE6C93B1BE0C60100E19E03 /* MainThreadSharedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */; };
+		7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */; };
 		7AF9B20218CFB2DF00C64BEF /* VTTRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FC18CFB2DF00C64BEF /* VTTRegion.cpp */; };
 		7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AF9B1FD18CFB2DF00C64BEF /* VTTRegion.h */; };
 		7AF9B20518CFB2DF00C64BEF /* VTTRegionList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF9B1FF18CFB2DF00C64BEF /* VTTRegionList.cpp */; };
@@ -9064,7 +9066,6 @@
 		46233EEC1BA0F17A000EBEBB /* AttributeDOMTokenList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AttributeDOMTokenList.cpp; path = ../AttributeDOMTokenList.cpp; sourceTree = "<group>"; };
 		46233EED1BA0F17A000EBEBB /* AttributeDOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttributeDOMTokenList.h; path = ../AttributeDOMTokenList.h; sourceTree = "<group>"; };
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
-		4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedTimerCF.cpp; sourceTree = "<group>"; };
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileMetadata.h; sourceTree = "<group>"; };
@@ -10105,6 +10106,9 @@
 		7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMenuProvider.h; sourceTree = "<group>"; };
 		7AE335EF1ACB09E200E401EF /* WheelEventTestTrigger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WheelEventTestTrigger.cpp; sourceTree = "<group>"; };
 		7AE335F01ACB09E200E401EF /* WheelEventTestTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WheelEventTestTrigger.h; sourceTree = "<group>"; };
+		7AE6C9371BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThreadSharedTimerCF.cpp; sourceTree = "<group>"; };
+		7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThreadSharedTimer.cpp; sourceTree = "<group>"; };
+		7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadSharedTimer.h; sourceTree = "<group>"; };
 		7AF9B1FC18CFB2DF00C64BEF /* VTTRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTRegion.cpp; sourceTree = "<group>"; };
 		7AF9B1FD18CFB2DF00C64BEF /* VTTRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VTTRegion.h; sourceTree = "<group>"; };
 		7AF9B1FE18CFB2DF00C64BEF /* VTTRegion.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VTTRegion.idl; sourceTree = "<group>"; };
@@ -15764,6 +15768,7 @@
 		1AE42F670AA4B8CB00C8612D /* cf */ = {
 			isa = PBXGroup;
 			children = (
+				7AE6C9371BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp */,
 				E1A8E56417552B2A007488E7 /* CFURLExtras.cpp */,
 				E1A8E56517552B2A007488E7 /* CFURLExtras.h */,
 				443817FD1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp */,
@@ -15778,7 +15783,6 @@
 				2D76BB8319456F8100CFD29A /* RunLoopObserver.cpp */,
 				2D76BB801945632400CFD29A /* RunLoopObserver.h */,
 				512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */,
-				4634592D1AC2273C00ECB71C /* SharedTimerCF.cpp */,
 				1A98956A0AA78F80005EF5EF /* URLCF.cpp */,
 			);
 			path = cf;
@@ -22366,6 +22370,8 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				7AE6C9391BE0C60100E19E03 /* MainThreadSharedTimer.cpp */,
+				7AE6C93A1BE0C60100E19E03 /* MainThreadSharedTimer.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
@@ -27852,6 +27858,7 @@
 				AAA728F716D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h in Headers */,
 				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */,
+				7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */,
 				07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */,
 				A5A7AA43132F0ECC00D3A3C2 /* WebAutocapitalize.h in Headers */,
 				A56C5B9B189F34570082D13C /* WebConsoleAgent.h in Headers */,
@@ -29252,6 +29259,7 @@
 				0779BF0D18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp in Sources */,
 				A8EA79F80A1916DF00A8EF5F /* HTMLMenuElement.cpp in Sources */,
 				2BE8E2C912A58A0100FAD550 /* HTMLMetaCharsetParser.cpp in Sources */,
+				7AE6C9381BE0C5C800E19E03 /* MainThreadSharedTimerCF.cpp in Sources */,
 				A871DC270A15205700B12A68 /* HTMLMetaElement.cpp in Sources */,
 				A454424A119B3661009BE912 /* HTMLMeterElement.cpp in Sources */,
 				A8CFF7A90A156978000A4234 /* HTMLModElement.cpp in Sources */,
@@ -30796,7 +30804,6 @@
 				512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */,
 				97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */,
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
-				4634592E1AC2273C00ECB71C /* SharedTimerCF.cpp in Sources */,
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */,
 				585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */,
@@ -31363,6 +31370,7 @@
 				BC8243E80D0CFD7500460C8F /* WindowFeatures.cpp in Sources */,
 				7E99AF510B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp in Sources */,
 				A14832BD187F64B400DA63A6 /* WKContentObservation.cpp in Sources */,
+				7AE6C93B1BE0C60100E19E03 /* MainThreadSharedTimer.cpp in Sources */,
 				A14832C0187F656600DA63A6 /* WKGraphics.mm in Sources */,
 				A14832C2187F65C700DA63A6 /* WKUtilities.c in Sources */,
 				A14832C5187F668300DA63A6 /* WKView.mm in Sources */,

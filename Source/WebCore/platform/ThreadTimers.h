@@ -51,8 +51,6 @@ namespace WebCore {
         void fireTimersInNestedEventLoop();
 
     private:
-        static void sharedTimerFired();
-
         void sharedTimerFiredInternal();
         void fireTimersInNestedEventLoopInternal();
 

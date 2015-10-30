@@ -114,13 +114,13 @@ list(APPEND WebCore_SOURCES
     platform/efl/LocalizedStringsEfl.cpp
     platform/efl/LoggingEfl.cpp
     platform/efl/MIMETypeRegistryEfl.cpp
+    platform/efl/MainThreadSharedTimerEfl.cpp
     platform/efl/PasteboardEfl.cpp
     platform/efl/PlatformKeyboardEventEfl.cpp
     platform/efl/PlatformMouseEventEfl.cpp
     platform/efl/PlatformScreenEfl.cpp
     platform/efl/PlatformWheelEventEfl.cpp
     platform/efl/ScrollbarThemeEfl.cpp
-    platform/efl/SharedTimerEfl.cpp
     platform/efl/SoundEfl.cpp
     platform/efl/TemporaryLinkStubs.cpp
     platform/efl/WidgetEfl.cpp

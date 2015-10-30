@@ -312,10 +312,10 @@ list(APPEND WebCore_SOURCES
     platform/cf/FileSystemCF.cpp
     platform/cf/KeyedDecoderCF.cpp
     platform/cf/KeyedEncoderCF.cpp
+    platform/cf/MainThreadSharedTimerCF.cpp
     platform/cf/MediaAccessibilitySoftLink.cpp
     platform/cf/RunLoopObserver.cpp
     platform/cf/SharedBufferCF.cpp
-    platform/cf/SharedTimerCF.cpp
     platform/cf/URLCF.cpp
 
     platform/cocoa/ContentFilterUnblockHandlerCocoa.mm

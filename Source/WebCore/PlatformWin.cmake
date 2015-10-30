@@ -124,6 +124,7 @@ list(APPEND WebCore_SOURCES
     platform/win/LoggingWin.cpp
     platform/win/MemoryPressureHandlerWin.cpp
     platform/win/MIMETypeRegistryWin.cpp
+    platform/win/MainThreadSharedTimerWin.cpp
     platform/win/PasteboardWin.cpp
     platform/win/PathWalker.cpp
     platform/win/PlatformMouseEventWin.cpp
@@ -133,7 +134,6 @@ list(APPEND WebCore_SOURCES
     platform/win/ScrollbarThemeWin.cpp
     platform/win/SearchPopupMenuWin.cpp
     platform/win/SharedBufferWin.cpp
-    platform/win/SharedTimerWin.cpp
     platform/win/SoundWin.cpp
     platform/win/StructuredExceptionHandlerSuppressor.cpp
     platform/win/SystemInfo.cpp

@@ -41,26 +41,20 @@
 
 namespace WebCore {
 
-class WorkerSharedTimer : public SharedTimer {
+class WorkerSharedTimer final : public SharedTimer {
 public:
-    WorkerSharedTimer()
-        : m_sharedTimerFunction(0)
-        , m_nextFireTime(0)
-    {
-    }
-
     // SharedTimer interface.
-    virtual void setFiredFunction(void (*function)()) { m_sharedTimerFunction = function; }
-    virtual void setFireInterval(double interval) { m_nextFireTime = interval + currentTime(); }
-    virtual void stop() { m_nextFireTime = 0; }
+    virtual void setFiredFunction(std::function<void()>&& function) override { m_sharedTimerFunction = WTF::move(function); }
+    virtual void setFireInterval(double interval) override { m_nextFireTime = interval + currentTime(); }
+    virtual void stop() override { m_nextFireTime = 0; }
 
     bool isActive() { return m_sharedTimerFunction && m_nextFireTime; }
     double fireTime() { return m_nextFireTime; }
     void fire() { m_sharedTimerFunction(); }
 
 private:
-    void (*m_sharedTimerFunction)();
-    double m_nextFireTime;
+    std::function<void()> m_sharedTimerFunction;
+    double m_nextFireTime { 0 };
 };
 
 class ModePredicate {
