@@ -313,7 +313,6 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     ASSERT(m_backingStore);
     ASSERT(objectStoreIdentifier);
 
-    bool keyWasGenerated = false;
     IDBKeyData usedKey;
     IDBError error;
 
@@ -333,7 +332,6 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
         }
         
         usedKey.setNumberValue(keyNumber);
-        keyWasGenerated = true;
     } else
         usedKey = keyData;
 
