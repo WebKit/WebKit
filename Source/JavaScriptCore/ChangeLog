@@ -1,3 +1,9 @@
+2015-10-30  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, forgot to mark tests as passing for new feature.
+
+        * tests/es6.yaml:
+
 2015-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile a control flow diamond

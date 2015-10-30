@@ -1199,6 +1199,6 @@
 - path: es6/well-known_symbols_Symbol.toPrimitive.js
   cmd: runES6 :fail
 - path: es6/well-known_symbols_Symbol.toStringTag.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
 - path: es6/well-known_symbols_Symbol.toStringTag_misc._built-ins.js
-  cmd: runES6 :fail
+  cmd: runES6 :normal
