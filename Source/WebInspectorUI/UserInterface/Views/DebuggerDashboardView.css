@@ -53,6 +53,9 @@
     height: 16px;
     cursor: pointer;
     padding: 0;
+    border: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
 }
 
 .dashboard.debugger .navigation-bar .item.button > .glyph {
@@ -63,7 +66,7 @@
     animation-timing-function: ease-out;
     animation-iteration-count: infinite;
     animation-direction: alternate;
-    background-color: hsl(207, 46%, 59%) !important;
+    color: hsl(207, 46%, 59%);
 }
 
 body.window-inactive .dashboard.debugger .navigation-bar .item.button > .glyph {
