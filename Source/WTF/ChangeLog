@@ -1,3 +1,18 @@
+2015-10-30  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r191673): Crash in RunLoopTimer::schedule()
+        https://bugs.webkit.org/show_bug.cgi?id=150723
+
+        Reviewed by Anders Carlsson.
+
+        We were crashing in RunLoopTimer::schedule() when iterating over the
+        SchedulePairHashSet. The reason is that we were passing this
+        SchedulePairHashSet from the main thread to a background thread, which
+        was not safe because the SchedulePair objects inside the HashSet were
+        not ThreadSafeRefCounted. This patch makes them ThreadSafeRefCounted.
+
+        * wtf/SchedulePair.h:
+
 2015-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move the socket polling off the WorkQueue

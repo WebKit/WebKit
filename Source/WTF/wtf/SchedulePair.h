@@ -30,8 +30,8 @@
 #define SchedulePair_h
 
 #include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +41,7 @@ OBJC_CLASS NSRunLoop;
 
 namespace WTF {
 
-class SchedulePair : public RefCounted<SchedulePair> {
+class SchedulePair : public ThreadSafeRefCounted<SchedulePair> {
 public:
     static Ref<SchedulePair> create(CFRunLoopRef runLoop, CFStringRef mode) { return adoptRef(*new SchedulePair(runLoop, mode)); }
 
