@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteObjectRegistry.h"
+#include "config.h"
+#include "RemoteObjectInvocation.h"
 
-#if WK_API_ENABLED
-
-namespace IPC {
-class MessageSender;
-}
+#include "ArgumentCoders.h"
+#include "UserData.h"
 
 namespace WebKit {
-class RemoteObjectInvocation;
-class RemoteObjectRegistry;
+
+RemoteObjectInvocation::RemoteObjectInvocation()
+{
 }
 
-@interface _WKRemoteObjectRegistry ()
+RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation)
+    : m_interfaceIdentifier(interfaceIdentifier)
+    , m_encodedInvocation(WTF::move(encodedInvocation))
+{
+}
 
-@property (nonatomic, readonly) WebKit::RemoteObjectRegistry& remoteObjectRegistry;
+void RemoteObjectInvocation::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << m_interfaceIdentifier;
+    UserData::encode(encoder, m_encodedInvocation.get());
+}
 
-- (id)_initWithMessageSender:(IPC::MessageSender&)messageSender;
-- (void)_invalidate;
+bool RemoteObjectInvocation::decode(IPC::ArgumentDecoder& decoder, RemoteObjectInvocation& result)
+{
+    if (!decoder.decode(result.m_interfaceIdentifier))
+        return false;
 
-- (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface;
-- (BOOL)_invokeMethod:(const WebKit::RemoteObjectInvocation&)invocation;
+    RefPtr<API::Object> encodedInvocation;
+    if (!UserData::decode(decoder, encodedInvocation))
+        return false;
 
-@end
+    if (!encodedInvocation || encodedInvocation->type() != API::Object::Type::Dictionary)
+        return false;
 
-#endif // WK_API_ENABLED
+    result.m_encodedInvocation = static_cast<API::Dictionary*>(encodedInvocation.get());
+
+    return true;
+}
+
+}

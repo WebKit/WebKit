@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRemoteObjectRegistry.h"
+#ifndef RemoteObjectInvocation_h
+#define RemoteObjectInvocation_h
 
-#if WK_API_ENABLED
+#include "APIDictionary.h"
+#include <wtf/text/WTFString.h>
 
 namespace IPC {
-class MessageSender;
+class ArgumentEncoder;
+class ArgumentDecoder;
 }
 
 namespace WebKit {
-class RemoteObjectInvocation;
-class RemoteObjectRegistry;
+
+class RemoteObjectInvocation {
+public:
+    RemoteObjectInvocation();
+    RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation);
+
+    const String& interfaceIdentifier() const { return m_interfaceIdentifier; }
+    const API::Dictionary* encodedInvocation() const { return m_encodedInvocation.get(); }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RemoteObjectInvocation&);
+
+private:
+    String m_interfaceIdentifier;
+    RefPtr<API::Dictionary> m_encodedInvocation;
+};
+
 }
 
-@interface _WKRemoteObjectRegistry ()
-
-@property (nonatomic, readonly) WebKit::RemoteObjectRegistry& remoteObjectRegistry;
-
-- (id)_initWithMessageSender:(IPC::MessageSender&)messageSender;
-- (void)_invalidate;
-
-- (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface;
-- (BOOL)_invokeMethod:(const WebKit::RemoteObjectInvocation&)invocation;
-
-@end
-
-#endif // WK_API_ENABLED
+#endif // RemoteObjectInvocation_h

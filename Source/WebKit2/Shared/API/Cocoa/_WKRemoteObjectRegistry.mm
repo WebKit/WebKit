@@ -30,17 +30,14 @@
 
 #import "APIDictionary.h"
 #import "Connection.h"
+#import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistry.h"
-#import "UserData.h"
 #import "WKConnectionRef.h"
 #import "WKRemoteObject.h"
 #import "WKRemoteObjectCoder.h"
 #import "WKSharedAPICast.h"
 #import "WebConnection.h"
 #import "_WKRemoteObjectInterface.h"
-
-const char* const encodedInvocationKey = "encodedInvocation";
-const char* const interfaceIdentifierKey = "interfaceIdentifier";
 
 NSString * const invocationKey = @"invocation";
 
@@ -99,17 +96,13 @@ using namespace WebKit;
 
 - (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface
 {
-    RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
+    auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
     [encoder encodeObject:invocation forKey:invocationKey];
-
-    Ref<API::Dictionary> body = API::Dictionary::create();
-    body->set(interfaceIdentifierKey, API::String::create(interface.identifier));
-    body->set(encodedInvocationKey, [encoder rootObjectDictionary]);
 
     if (!_remoteObjectRegistry)
         return;
 
-    _remoteObjectRegistry->sendInvocation(UserData(body.ptr()));
+    _remoteObjectRegistry->sendInvocation(RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary]));
 }
 
 - (WebKit::RemoteObjectRegistry&)remoteObjectRegistry
@@ -117,22 +110,9 @@ using namespace WebKit;
     return *_remoteObjectRegistry;
 }
 
-- (BOOL)_invokeMethod:(const UserData&)invocation
+- (BOOL)_invokeMethod:(const RemoteObjectInvocation&)invocation
 {
-    if (!invocation.object() || invocation.object()->type() != API::Object::Type::Dictionary)
-        return NO;
-    
-    const API::Dictionary& dictionary = static_cast<const API::Dictionary&>(*invocation.object());
-
-    API::String* interfaceIdentifier = dictionary.get<API::String>(interfaceIdentifierKey);
-    if (!interfaceIdentifier)
-        return NO;
-
-    const API::Dictionary* encodedInvocation = dictionary.get<API::Dictionary>(encodedInvocationKey);
-    if (!encodedInvocationKey)
-        return NO;
-
-    [self _invokeMessageWithInterfaceIdentifier:interfaceIdentifier->string() encodedInvocation:encodedInvocation];
+    [self _invokeMessageWithInterfaceIdentifier:invocation.interfaceIdentifier() encodedInvocation:invocation.encodedInvocation()];
 
     return YES;
 }
