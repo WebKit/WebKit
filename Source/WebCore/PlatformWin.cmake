@@ -57,6 +57,7 @@ list(APPEND WebCore_SOURCES
     page/win/FrameWin.cpp
 
     platform/Cursor.cpp
+    platform/KillRingNone.cpp
     platform/LocalizedStrings.cpp
     platform/PlatformStrategies.cpp
     platform/VNodeTracker.cpp
@@ -102,6 +103,8 @@ list(APPEND WebCore_SOURCES
     platform/network/win/NetworkStateNotifierWin.cpp
 
     platform/text/LocaleNone.cpp
+
+    platform/text/cf/HyphenationCF.cpp
 
     platform/text/win/TextBreakIteratorInternalICUWin.cpp
 
