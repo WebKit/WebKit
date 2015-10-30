@@ -25,13 +25,18 @@ use Getopt::Long qw(:config pass_through);
 my $platform = "";
 $platform = "efl" if isEfl();
 $platform = "gtk" if isGtk();
-my $wipeOnChange = $ENV{JHBUILD_WIPE_ON_CHANGE} // 1;
 
 if (!$platform) {
     die "No platform specified for " . basename($0) .". Use --gtk or --efl.\n";
 }
 
-GetOptions('wipe-on-change!' => \$wipeOnChange,);
+my $wipeOnChange = $ENV{JHBUILD_WIPE_ON_CHANGE} // 1;
+my $force = 0;
+
+GetOptions(
+    'wipe-on-change!' => \$wipeOnChange,
+    'force' => \$force
+);
 
 sub getMD5HashForFile($)
 {
@@ -85,12 +90,23 @@ sub saveJhbuildMd5() {
     }
 }
 
+sub deleteJhbuildMd5() {
+    my $jhbuildPath = getJhbuildPath();
+    if (!-d $jhbuildPath) {
+        return;
+    }
+    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
+        my $md5File = join('/', $jhbuildPath, $file) . ".md5sum";
+        unlink($md5File) if -e $md5File;
+    }
+}
+
 sub runJhbuild
 {
     my $command = shift;
     my @jhbuildArgs = ("./jhbuild-wrapper", "--".$platform, $command);
     push(@jhbuildArgs, @ARGV[0..$#ARGV]);
-    system(@jhbuildArgs) == 0 or die "Running jhbuild-wrapper " . $command . " failed.\n";
+    return system(@jhbuildArgs);
 }
 
 sub cleanJhbuild()
@@ -114,11 +130,19 @@ chdir(relativeScriptsDir() . "/../jhbuild") or die $!;
 
 my %prettyPlatform = ( "efl" => "EFL", "gtk" => "GTK+" );
 
-if ($wipeOnChange && -e getJhbuildPath() && jhbuildConfigurationChanged()) {
+if (!$force && !jhbuildConfigurationChanged()) {
+    print $prettyPlatform{$platform} . " port dependencies are already up to date\n";
+    exit 0;
+}
+
+if ($wipeOnChange && -e getJhbuildPath()) {
     cleanJhbuild();
 }
 
-saveJhbuildMd5();
-
 print "Updating " . $prettyPlatform{$platform} . " port dependencies using jhbuild...\n";
-runJhbuild("build");
+if (runJhbuild("build") == 0) {
+    saveJhbuildMd5();
+} else {
+    deleteJhbuildMd5();
+    die "Failed to build " . $prettyPlatform{$platform} . " port dependencies with jhbuild\n";
+}

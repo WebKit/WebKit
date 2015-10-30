@@ -1,3 +1,25 @@
+2015-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [JHBuild] Do not try to update the dependencies if jhbuild configuration hasn't changed
+        https://bugs.webkit.org/show_bug.cgi?id=150665
+
+        Reviewed by Csaba Osztrogonác.
+
+        We check it only to wipe the directory or not, but we are still
+        tryihng to update every module even when the configuration hasn't
+        changed. This is problematic because it makes the whole build fail
+        when any repository fails to checkout an already checked out
+        revision, because the server is down for example. This is even
+        more problematic for the bots that skip perfectly valid revisions.
+        It's still possible to force an update passing --force command
+        line argument.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (deleteJhbuildMd5): Delete the md5sum files if exist.
+        (runJhbuild): Return early if the md5sum files haven't
+        changed. Only write them after a successful build and delete them
+        if the build fails to ensure we don't skip next run.
+
 2015-10-30  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Fix MacCLang build errors in Tools
