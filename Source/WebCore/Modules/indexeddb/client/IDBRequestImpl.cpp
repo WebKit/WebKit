@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMRequestState.h"
 #include "EventQueue.h"
 #include "IDBBindingUtilities.h"
 #include "IDBEventDispatcher.h"
@@ -189,6 +190,17 @@ void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueDat
 
     Deprecated::ScriptValue value = deserializeIDBValueData(*context, valueData);
     m_result = IDBAny::create(WTF::move(value));
+}
+
+void IDBRequest::setResultToUndefined()
+{
+    auto context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    DOMRequestState state(context);
+    if (auto* execState = state.exec())
+        m_result = IDBAny::create(Deprecated::ScriptValue(execState->vm(), JSC::jsUndefined()));
 }
 
 void IDBRequest::requestCompleted(const IDBResultData& resultData)

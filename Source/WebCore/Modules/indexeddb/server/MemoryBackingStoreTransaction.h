@@ -52,6 +52,7 @@ public:
 
     bool isVersionChange() const { return m_info.mode() == IndexedDB::TransactionMode::VersionChange; }
     bool isWriting() const { return m_info.mode() != IndexedDB::TransactionMode::ReadOnly; }
+    bool isAborting() const { return m_isAborting; }
 
     const IDBDatabaseInfo& originalDatabaseInfo() const;
 
@@ -59,6 +60,7 @@ public:
     void addExistingObjectStore(MemoryObjectStore&);
     void recordValueChanged(MemoryObjectStore&, const IDBKeyData&);
     void objectStoreDeleted(std::unique_ptr<MemoryObjectStore>);
+    void objectStoreCleared(MemoryObjectStore&, std::unique_ptr<KeyValueMap>&&);
 
     void abort();
     void commit();
@@ -82,7 +84,7 @@ private:
     HashMap<MemoryObjectStore*, uint64_t> m_originalKeyGenerators;
     HashMap<String, std::unique_ptr<MemoryObjectStore>> m_deletedObjectStores;
     HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_originalValues;
-
+    HashMap<MemoryObjectStore*, std::unique_ptr<KeyValueMap>> m_clearedKeyValueMaps;
 };
 
 } // namespace IDBServer

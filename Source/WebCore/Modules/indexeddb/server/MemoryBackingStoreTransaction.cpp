@@ -90,11 +90,37 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(std::unique_ptr<MemoryObj
         addResult.iterator->value = WTF::move(objectStore);
 }
 
+void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& objectStore, std::unique_ptr<KeyValueMap>&& keyValueMap)
+{
+    ASSERT(m_objectStores.contains(&objectStore));
+
+    auto addResult = m_clearedKeyValueMaps.add(&objectStore, nullptr);
+
+    // If this object store has already been cleared during this transaction, we don't need to remember this clearing.
+    if (!addResult.isNewEntry)
+        return;
+
+    // If values had previously been changed during this transaction, fold those changes back into the
+    // cleared key-value map now, so we have exactly the map that will need to be restored if the transaction is aborted.
+    auto originalValues = m_originalValues.take(&objectStore);
+    if (originalValues) {
+        for (auto iterator : *originalValues)
+            keyValueMap->set(iterator.key, iterator.value);
+    }
+
+    addResult.iterator->value = WTF::move(keyValueMap);
+}
+
 void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& objectStore, const IDBKeyData& key)
 {
     ASSERT(m_objectStores.contains(&objectStore));
 
     if (m_isAborting)
+        return;
+
+    // If this object store had been cleared during the transaction, no point in recording this
+    // individual key/value change as its entire key/value map will be restored upon abort.
+    if (m_clearedKeyValueMaps.contains(&objectStore))
         return;
 
     auto originalAddResult = m_originalValues.add(&objectStore, nullptr);
@@ -138,7 +164,13 @@ void MemoryBackingStoreTransaction::abort()
         ASSERT(m_originalKeyGenerators.contains(objectStore));
         objectStore->setKeyGeneratorValue(m_originalKeyGenerators.get(objectStore));
 
-        auto keyValueMap = m_originalValues.get(objectStore);
+        auto clearedKeyValueMap = m_clearedKeyValueMaps.take(objectStore);
+        if (clearedKeyValueMap) {
+            objectStore->replaceKeyValueStore(WTF::move(clearedKeyValueMap));
+            continue;
+        }
+
+        auto keyValueMap = m_originalValues.take(objectStore);
         if (!keyValueMap)
             continue;
 
@@ -146,8 +178,6 @@ void MemoryBackingStoreTransaction::abort()
             objectStore->deleteRecord(entry.key);
             objectStore->setKeyValue(entry.key, entry.value);
         }
-
-        m_originalValues.remove(objectStore);
     }
 
     finish();

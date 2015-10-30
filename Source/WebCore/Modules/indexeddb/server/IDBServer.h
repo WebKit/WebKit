@@ -61,6 +61,7 @@ public:
     void commitTransaction(const IDBResourceIdentifier&);
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&);
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName);
+    void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const IDBRequestData&, const IDBKeyData&);
     void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&);

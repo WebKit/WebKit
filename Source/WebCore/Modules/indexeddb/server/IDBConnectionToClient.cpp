@@ -73,6 +73,11 @@ void IDBConnectionToClient::didDeleteObjectStore(const IDBResultData& result)
     m_delegate->didDeleteObjectStore(result);
 }
 
+void IDBConnectionToClient::didClearObjectStore(const IDBResultData& result)
+{
+    m_delegate->didClearObjectStore(result);
+}
+
 void IDBConnectionToClient::didPutOrAdd(const IDBResultData& result)
 {
     m_delegate->didPutOrAdd(result);

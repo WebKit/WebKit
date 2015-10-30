@@ -79,6 +79,7 @@ public:
 
     void setResult(const IDBKeyData*);
     void setResultToStructuredClone(const ThreadSafeDataBuffer&);
+    void setResultToUndefined();
 
 protected:
     IDBRequest(IDBConnectionToServer&, ScriptExecutionContext*);

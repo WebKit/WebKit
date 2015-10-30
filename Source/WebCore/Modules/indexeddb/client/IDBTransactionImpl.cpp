@@ -414,6 +414,35 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
     request.requestCompleted(resultData);
 }
 
+Ref<IDBRequest> IDBTransaction::requestClearObjectStore(ScriptExecutionContext& context, IDBObjectStore& objectStore)
+{
+    LOG(IndexedDB, "IDBTransaction::requestClearObjectStore");
+    ASSERT(isActive());
+
+    Ref<IDBRequest> request = IDBRequest::create(context, objectStore, *this);
+
+    uint64_t objectStoreIdentifier = objectStore.info().identifier();
+    auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didClearObjectStoreOnServer, &IDBTransaction::clearObjectStoreOnServer, objectStoreIdentifier);
+    scheduleOperation(WTF::move(operation));
+
+    return WTF::move(request);
+}
+
+void IDBTransaction::clearObjectStoreOnServer(TransactionOperation& operation, const uint64_t& objectStoreIdentifier)
+{
+    LOG(IndexedDB, "IDBTransaction::clearObjectStoreOnServer");
+
+    serverConnection().clearObjectStore(operation, objectStoreIdentifier);
+}
+
+void IDBTransaction::didClearObjectStoreOnServer(IDBRequest& request, const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didClearObjectStoreOnServer");
+
+    request.setResultToUndefined();
+    request.requestCompleted(resultData);
+}
+
 Ref<IDBRequest> IDBTransaction::requestPutOrAdd(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBKey* key, SerializedScriptValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBTransaction::requestPutOrAdd");

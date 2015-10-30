@@ -98,6 +98,11 @@ IDBResultData IDBResultData::deleteObjectStoreSuccess(const IDBResourceIdentifie
     return { IDBResultType::DeleteObjectStoreSuccess, requestIdentifier };
 }
 
+IDBResultData IDBResultData::clearObjectStoreSuccess(const IDBResourceIdentifier& requestIdentifier)
+{
+    return { IDBResultType::ClearObjectStoreSuccess, requestIdentifier };
+}
+
 IDBResultData IDBResultData::putOrAddSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBKeyData& resultKey)
 {
     IDBResultData result(IDBResultType::PutOrAddSuccess, requestIdentifier);

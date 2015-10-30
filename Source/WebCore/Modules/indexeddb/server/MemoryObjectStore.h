@@ -63,6 +63,9 @@ public:
     uint64_t currentKeyGeneratorValue() const { return m_keyGeneratorValue; }
     void setKeyGeneratorValue(uint64_t value) { m_keyGeneratorValue = value; }
 
+    void clear();
+    void replaceKeyValueStore(std::unique_ptr<KeyValueMap>&&);
+
     ThreadSafeDataBuffer valueForKey(const IDBKeyData&) const;
 
     const IDBObjectStoreInfo& info() const { return m_info; }

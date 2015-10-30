@@ -67,6 +67,9 @@ public:
     void deleteObjectStore(TransactionOperation&, const String& objectStoreName);
     void didDeleteObjectStore(const IDBResultData&);
 
+    void clearObjectStore(TransactionOperation&, uint64_t objectStoreIdentifier);
+    void didClearObjectStore(const IDBResultData&);
+
     void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
     void didPutOrAdd(const IDBResultData&);
 

@@ -260,9 +260,27 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContex
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::clear");
+
+    if (m_transaction->isReadOnly()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::ReadOnlyError);
+        return nullptr;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    if (m_deleted) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::InvalidStateError);
+        return nullptr;
+    }
+
+    Ref<IDBRequest> request = m_transaction->requestClearObjectStore(*context, *this);
+    return adoptRef(request.leakRef());
 }
 
 RefPtr<WebCore::IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext*, const String&, const IDBKeyPath&, bool, bool, ExceptionCode&)

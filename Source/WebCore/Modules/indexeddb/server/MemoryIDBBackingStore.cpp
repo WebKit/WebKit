@@ -161,6 +161,27 @@ IDBError MemoryIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
     return IDBError();
 }
 
+IDBError MemoryIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::clearObjectStore");
+    ASSERT(objectStoreIdentifier);
+
+    ASSERT_UNUSED(transactionIdentifier, m_transactions.contains(transactionIdentifier));
+
+#ifndef NDEBUG
+    auto transaction = m_transactions.get(transactionIdentifier);
+    ASSERT(transaction->isWriting());
+#endif
+
+    auto objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    if (!objectStore)
+        return IDBError(IDBExceptionCode::ConstraintError);
+
+    objectStore->clear();
+
+    return IDBError();
+}
+
 void MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort(MemoryObjectStore& objectStore)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::removeObjectStoreForVersionChangeAbort");

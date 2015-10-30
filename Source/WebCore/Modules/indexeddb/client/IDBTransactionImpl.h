@@ -89,6 +89,7 @@ public:
 
     Ref<IDBRequest> requestPutOrAdd(ScriptExecutionContext&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(ScriptExecutionContext&, IDBObjectStore&, IDBKey&);
+    Ref<IDBRequest> requestClearObjectStore(ScriptExecutionContext&, IDBObjectStore&);
 
     void deleteObjectStore(const String& objectStoreName);
 
@@ -120,6 +121,9 @@ private:
 
     void createObjectStoreOnServer(TransactionOperation&, const IDBObjectStoreInfo&);
     void didCreateObjectStoreOnServer(const IDBResultData&);
+
+    void clearObjectStoreOnServer(TransactionOperation&, const uint64_t& objectStoreIdentifier);
+    void didClearObjectStoreOnServer(IDBRequest&, const IDBResultData&);
 
     void putOrAddOnServer(TransactionOperation&, RefPtr<IDBKey>, RefPtr<SerializedScriptValue>, const IndexedDB::ObjectStoreOverwriteMode&);
     void didPutOrAddOnServer(IDBRequest&, const IDBResultData&);

@@ -46,6 +46,7 @@ enum class IDBResultType {
     OpenDatabaseUpgradeNeeded,
     CreateObjectStoreSuccess,
     DeleteObjectStoreSuccess,
+    ClearObjectStoreSuccess,
     PutOrAddSuccess,
     GetRecordSuccess,
 };
@@ -62,6 +63,7 @@ public:
     static IDBResultData openDatabaseUpgradeNeeded(const IDBResourceIdentifier&, IDBServer::UniqueIDBDatabaseTransaction&);
     static IDBResultData createObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData deleteObjectStoreSuccess(const IDBResourceIdentifier&);
+    static IDBResultData clearObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
     static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const ThreadSafeDataBuffer& valueData);
 

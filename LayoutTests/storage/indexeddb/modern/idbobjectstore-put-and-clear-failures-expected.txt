@@ -1,0 +1,11 @@
+ALERT: Initial upgrade needed: Old version - 0 New version - 1
+ALERT: Failed to put record into object store with an invalid key
+ALERT: Failed to put record into object store that has been deleted
+ALERT: Failed to clear object store that has been deleted
+ALERT: Initial upgrade versionchange transaction complete
+ALERT: Failed to clear object store in read-only transaction
+ALERT: Failed to put record into object store with inactive transaction
+ALERT: Failed to clear object store with inactive transaction
+ALERT: readwrite transaction complete
+ALERT: Done
+This tests some obvious failures that can happen while calling IDBObjectStore.put() and IDBObjectStore.clear().

@@ -73,6 +73,22 @@ bool MemoryObjectStore::containsRecord(const IDBKeyData& key)
     return m_keyValueStore->contains(key);
 }
 
+void MemoryObjectStore::clear()
+{
+    LOG(IndexedDB, "MemoryObjectStore::clear");
+    ASSERT(m_writeTransaction);
+
+    m_writeTransaction->objectStoreCleared(*this, WTF::move(m_keyValueStore));
+}
+
+void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& store)
+{
+    ASSERT(m_writeTransaction);
+    ASSERT(m_writeTransaction->isAborting());
+
+    m_keyValueStore = WTF::move(store);
+}
+
 void MemoryObjectStore::deleteRecord(const IDBKeyData& key)
 {
     LOG(IndexedDB, "MemoryObjectStore::deleteRecord");
