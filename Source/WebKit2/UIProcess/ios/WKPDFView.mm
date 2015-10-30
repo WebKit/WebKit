@@ -105,6 +105,8 @@ typedef struct {
     _WKFindOptions _nextCachedFindOptionsAffectingResults;
 
     dispatch_queue_t _findQueue;
+
+    RetainPtr<UIWKSelectionAssistant> _webSelectionAssistant;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -716,6 +718,13 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 {
     CGPoint screenPoint = [self.window convertPoint:[self convertPoint:location toView:nil] toWindow:nil];
     _webView->_page->navigateToPDFLinkWithSimulatedClick(_positionInformation.url, roundedIntPoint(location), roundedIntPoint(screenPoint));
+}
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
+{
+    _webSelectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:self]);
+    [_webSelectionAssistant showShareSheetFor:url.absoluteString fromRect:boundingRect];
+    _webSelectionAssistant = nil;
 }
 
 #if HAVE(APP_LINKS)

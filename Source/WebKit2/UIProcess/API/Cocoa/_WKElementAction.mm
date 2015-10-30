@@ -127,6 +127,12 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         };
         break;
 #endif
+    case _WKElementActionTypeShare:
+        title = WEB_UI_STRING("Share…", "Title for Share action button");
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant.delegate actionSheetAssistant:assistant shareElementWithURL:actionInfo.URL rect:actionInfo.boundingRect];
+        };
+        break;
     default:
         [NSException raise:NSInvalidArgumentException format:@"There is no standard web element action of type %ld.", (long)type];
         return nil;

@@ -3370,6 +3370,14 @@ static bool isAssistableInputType(InputType type)
     [self _attemptClickAtLocation:location];
 }
 
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
+{
+    if (_textSelectionAssistant)
+        [_textSelectionAssistant showShareSheetFor:url.absoluteString fromRect:boundingRect];
+    else if (_webSelectionAssistant)
+        [_webSelectionAssistant showShareSheetFor:url.absoluteString fromRect:boundingRect];
+}
+
 #if HAVE(APP_LINKS)
 - (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element
 {

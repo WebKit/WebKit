@@ -496,6 +496,9 @@
 /* Undo action name */
 "Set Writing Direction (Undo action name)" = "Set Writing Direction";
 
+/* Title for Share action button */
+"Share…" = "Share…";
+
 /* Show colors context menu item */
 "Show Colors" = "Show Colors";
 

@@ -1,3 +1,33 @@
+2015-10-30  Beth Dakin  <bdakin@apple.com>
+
+        Tapping and holding a link should have a share option
+        https://bugs.webkit.org/show_bug.cgi?id=150693
+        -and corresponding-
+        rdar://problem/21319702
+
+        Reviewed by Tim Horton.
+
+        New _WKElementActionType called _WKElementActionTypeShare.
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+
+        _WKElementActionTypeShare is part of the default actions for links.
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+
+        Handle the sharing part!
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:shareElementWithURL:rect:]):
+
+        To support this in PDF, PDF need to create a _webSelectionAssistant.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:]):
+        (-[WKPDFView actionSheetAssistant:openElementAtLocation:]):
+        (-[WKPDFView actionSheetAssistant:shareElementWithURL:rect:]):
+        (-[WKPDFView actionSheetAssistant:shouldIncludeAppLinkActionsForElement:]):
+
 2015-10-30  Tim Horton  <timothy_horton@apple.com>
 
         WKView being inside WKWebView leads to weird API issues
