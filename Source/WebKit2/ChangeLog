@@ -1,3 +1,24 @@
+2015-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use RunLoop::Timer instead of GMainLoopSource
+        https://bugs.webkit.org/show_bug.cgi?id=150592
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::didReceiveData):
+        (WebKit::DownloadClient::handleResponseLater):
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::DragGesture::begin):
+        (WebKit::GestureController::DragGesture::update):
+        (WebKit::GestureController::DragGesture::end):
+        (WebKit::GestureController::DragGesture::longPressFired):
+        (WebKit::GestureController::DragGesture::DragGesture):
+        (WebKit::GestureController::ZoomGesture::scaleChanged):
+        (WebKit::GestureController::ZoomGesture::ZoomGesture):
+        * UIProcess/gtk/GestureController.h:
+
 2015-10-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use a persistent main loop source in RunLoop glib implementation

@@ -127,9 +127,7 @@ void GestureController::DragGesture::begin(DragGesture* dragGesture, double x, d
     GtkWidget* widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
     unsigned delay;
     g_object_get(gtk_widget_get_settings(widget), "gtk-long-press-time", &delay, nullptr);
-    dragGesture->m_longPressTimeout.scheduleAfterDelay("[WebKit] DragGesture long press timeout", [dragGesture]() {
-        dragGesture->m_inDrag = true;
-    }, std::chrono::milliseconds(delay));
+    dragGesture->m_longPressTimeout.startOneShot(delay / 1000.0);
 }
 
 void GestureController::DragGesture::update(DragGesture* dragGesture, double x, double y, GtkGesture* gesture)
@@ -140,7 +138,7 @@ void GestureController::DragGesture::update(DragGesture* dragGesture, double x, 
     GtkWidget* widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
     if (!dragGesture->m_inDrag && gtk_drag_check_threshold(widget, dragGesture->m_start.x(), dragGesture->m_start.y(), dragGesture->m_start.x() + x, dragGesture->m_start.y() + y)) {
         dragGesture->m_inDrag = true;
-        dragGesture->m_longPressTimeout.cancel();
+        dragGesture->m_longPressTimeout.stop();
     }
 
     if (dragGesture->m_inDrag)
@@ -150,7 +148,7 @@ void GestureController::DragGesture::update(DragGesture* dragGesture, double x, 
 
 void GestureController::DragGesture::end(DragGesture* dragGesture, GdkEventSequence* sequence, GtkGesture* gesture)
 {
-    dragGesture->m_longPressTimeout.cancel();
+    dragGesture->m_longPressTimeout.stop();
     if (!dragGesture->m_inDrag) {
         dragGesture->handleTap(gtk_gesture_get_last_event(gesture, sequence));
         gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_DENIED);
@@ -158,8 +156,14 @@ void GestureController::DragGesture::end(DragGesture* dragGesture, GdkEventSeque
         gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_DENIED);
 }
 
+void GestureController::DragGesture::longPressFired()
+{
+    m_inDrag = true;
+}
+
 GestureController::DragGesture::DragGesture(WebPageProxy& page)
     : Gesture(gtk_gesture_drag_new(page.viewWidget()), page)
+    , m_longPressTimeout(RunLoop::main(), this, &GestureController::DragGesture::longPressFired)
     , m_inDrag(false)
 {
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(m_gesture.get()), TRUE);
@@ -199,16 +203,17 @@ void GestureController::ZoomGesture::scaleChanged(ZoomGesture* zoomGesture, doub
 {
     zoomGesture->m_scale = zoomGesture->m_initialScale * scale;
     zoomGesture->m_viewPoint = zoomGesture->center();
-    if (zoomGesture->m_idle.isScheduled())
+    if (zoomGesture->m_idle.isActive())
         return;
 
-    zoomGesture->m_idle.schedule("[WebKit] Zoom Gesture Idle", std::bind(&GestureController::ZoomGesture::handleZoom, zoomGesture));
+    zoomGesture->m_idle.startOneShot(0);
 }
 
 GestureController::ZoomGesture::ZoomGesture(WebPageProxy& page)
     : Gesture(gtk_gesture_zoom_new(page.viewWidget()), page)
     , m_initialScale(0)
     , m_scale(0)
+    , m_idle(RunLoop::main(), this, &GestureController::ZoomGesture::handleZoom)
 {
     g_signal_connect_swapped(m_gesture.get(), "begin", G_CALLBACK(begin), this);
     g_signal_connect_swapped(m_gesture.get(), "scale-changed", G_CALLBACK(scaleChanged), this);

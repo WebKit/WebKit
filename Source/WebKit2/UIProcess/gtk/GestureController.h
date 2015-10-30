@@ -30,7 +30,7 @@
 
 #include <WebCore/FloatPoint.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef union _GdkEvent GdkEvent;
@@ -69,6 +69,7 @@ private:
     private:
         void handleDrag(const GdkEvent*, double x, double y);
         void handleTap(const GdkEvent*);
+        void longPressFired();
 
         static void begin(DragGesture*, double x, double y, GtkGesture*);
         static void update(DragGesture*, double x, double y, GtkGesture*);
@@ -76,7 +77,7 @@ private:
 
         WebCore::FloatPoint m_start;
         WebCore::FloatPoint m_offset;
-        GMainLoopSource m_longPressTimeout;
+        RunLoop::Timer<DragGesture> m_longPressTimeout;
         GRefPtr<GtkGesture> m_longPress;
         bool m_inDrag;
     };
@@ -96,7 +97,7 @@ private:
         gdouble m_scale;
         WebCore::IntPoint m_initialPoint;
         WebCore::IntPoint m_viewPoint;
-        GMainLoopSource m_idle;
+        RunLoop::Timer<ZoomGesture> m_idle;
     };
 
     DragGesture m_dragGesture;

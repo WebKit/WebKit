@@ -601,7 +601,7 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         d->m_soupMessage.clear();
     }
 
-    d->m_timeoutSource.cancel();
+    d->m_timeoutSource.stop();
 
     if (!isDestroying)
         handle->deref();
@@ -1049,19 +1049,20 @@ RefPtr<ResourceHandle> ResourceHandle::releaseForDownload(ResourceHandleClient* 
     return newHandle;
 }
 
+void ResourceHandle::timeoutFired()
+{
+    client()->didFail(this, ResourceError::timeoutError(firstRequest().url().string()));
+    cancel();
+}
+
 void ResourceHandle::sendPendingRequest()
 {
 #if ENABLE(WEB_TIMING)
     m_requestTime = monotonicallyIncreasingTime();
 #endif
 
-    if (d->m_firstRequest.timeoutInterval() > 0) {
-        d->m_timeoutSource.scheduleAfterDelay("[WebKit] ResourceHandle request timeout", [this] {
-            client()->didFail(this, ResourceError::timeoutError(firstRequest().url().string()));
-            cancel();
-        }, std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(d->m_firstRequest.timeoutInterval())),
-        G_PRIORITY_DEFAULT, nullptr, g_main_context_get_thread_default());
-    }
+    if (d->m_firstRequest.timeoutInterval() > 0)
+        d->m_timeoutSource.startOneShot(d->m_firstRequest.timeoutInterval());
 
     // Balanced by a deref() in cleanupSoupRequestOperation, which should always run.
     ref();
@@ -1265,7 +1266,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
 
     // Except when canceling a possible timeout timer, we only need to take action here to UN-defer loading.
     if (defersLoading) {
-        d->m_timeoutSource.cancel();
+        d->m_timeoutSource.stop();
         return;
     }
 

@@ -32,7 +32,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandleInternal.h>
 #include <gio/gio.h>
-#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -50,6 +50,7 @@ class DownloadClient : public ResourceHandleClient {
 public:
     DownloadClient(Download* download)
         : m_download(download)
+        , m_handleResponseLater(RunLoop::main(), this, &DownloadClient::handleResponse)
         , m_allowOverwrite(false)
     {
     }
@@ -131,8 +132,8 @@ public:
 
     void didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*encodedDataLength*/)
     {
-        if (m_handleResponseLater.isScheduled()) {
-            m_handleResponseLater.cancel();
+        if (m_handleResponseLater.isActive()) {
+            m_handleResponseLater.stop();
             handleResponse();
         }
 
@@ -197,13 +198,13 @@ public:
     void handleResponseLater(const ResourceResponse& response)
     {
         ASSERT(m_response.isNull());
-        ASSERT(!m_handleResponseLater.isScheduled());
+        ASSERT(!m_handleResponseLater.isActive());
 
         m_delayedResponse = response;
 
         // Call didReceiveResponse in an idle to make sure the download is added
         // to the DownloadManager downloads map.
-        m_handleResponseLater.schedule("[WebKit] DownloadHandleResponseLater", std::function<void()>(std::bind(&DownloadClient::handleResponse, this)));
+        m_handleResponseLater.startOneShot(0);
     }
 
     Download* m_download;
@@ -212,7 +213,7 @@ public:
     GRefPtr<GFile> m_destinationFile;
     GRefPtr<GFile> m_intermediateFile;
     ResourceResponse m_delayedResponse;
-    GMainLoopSource m_handleResponseLater;
+    RunLoop::Timer<DownloadClient> m_handleResponseLater;
     bool m_allowOverwrite;
 };
 

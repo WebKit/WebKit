@@ -52,7 +52,7 @@
 #if USE(SOUP)
 #include "GUniquePtrSoup.h"
 #include <libsoup/soup.h>
-#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -91,6 +91,7 @@ namespace WebCore {
 #endif
 #if USE(SOUP)
             , m_cancelled(false)
+            , m_timeoutSource(RunLoop::main(), loader, &ResourceHandle::timeoutFired)
             , m_bodySize(0)
             , m_bodyDataSent(0)
             , m_redirectCount(0)
@@ -169,7 +170,7 @@ namespace WebCore {
         GRefPtr<SoupMultipartInputStream> m_multipartInputStream;
         GRefPtr<GCancellable> m_cancellable;
         GRefPtr<GAsyncResult> m_deferredResult;
-        GMainLoopSource m_timeoutSource;
+        RunLoop::Timer<ResourceHandle> m_timeoutSource;
         GUniquePtr<SoupBuffer> m_soupBuffer;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
