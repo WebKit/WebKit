@@ -145,7 +145,7 @@ if (!defined($root) && $buildJSC) {
     push(@buildArgs, argumentsForConfiguration());
 
     print "Running: build-jsc " . join(" ", @buildArgs) . "\n";
-    my $buildResult = system "perl", "Tools/Scripts/build-jsc", @buildArgs;
+    my $buildResult = system "perl", File::Spec->catfile("Tools", "Scripts", "build-jsc"), @buildArgs;
     if ($buildResult) {
         print STDERR "Compiling jsc failed!\n";
         exit exitStatus($buildResult);
@@ -171,7 +171,7 @@ sub testapiPath($)
     my ($productDir) = @_;
     my $jscName = "testapi";
     $jscName .= "_debug" if configuration() eq "Debug_All";
-    return "$productDir/$jscName";
+    return File::Spec->catfile($productDir, $jscName);
 }
 
 #run api tests

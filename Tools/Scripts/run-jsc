@@ -44,7 +44,7 @@ GetOptions("count|c=i" => \$count);
 
 setConfiguration();
 
-my $jsc = jscProductDir() . "/jsc @ARGV";
+my $jsc = File::Spec->catfile(jscProductDir(), "jsc ") . "@ARGV";
 
 my $dyld = jscProductDir();
 

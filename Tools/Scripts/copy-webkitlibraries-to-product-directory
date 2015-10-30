@@ -93,7 +93,7 @@ if ($productDir) {
     $productDir = $ENV{BUILT_PRODUCTS_DIR} || productDir();
 }
 
-if (!isIOSWebKit() && !$osxVersion) {
+if (!isIOSWebKit() && !$osxVersion &&!isAnyWindows()) {
     $osxVersion = `sw_vers -productVersion | cut -d. -f-2`;
     chomp($osxVersion);
 }

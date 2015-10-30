@@ -253,7 +253,7 @@ sub determineBaseProductDir
     }
 
     if (!defined($baseProductDir)) { # Port-specific checks failed, use default
-        $baseProductDir = "$sourceDir/WebKitBuild";
+        $baseProductDir = File::Spec->catdir($sourceDir, "WebKitBuild");
     }
 
     if (isGit() && isGitBranchBuild()) {
@@ -277,7 +277,7 @@ sub determineBaseProductDir
         $ENV{"WEBKIT_OUTPUTDIR"} = $dosBuildPath;
         my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
         chomp $unixBuildPath;
-        $baseProductDir = $unixBuildPath;
+        $baseProductDir = $dosBuildPath;
     }
 }
 
@@ -1994,7 +1994,6 @@ sub buildCMakeGeneratedProject($)
     # parsed for shell metacharacters. In particular, $makeArgs may contain such metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
     return system($wrapper . "$command @args");
-
 }
 
 sub cleanCMakeGeneratedProject()
@@ -2040,6 +2039,8 @@ sub cmakeBasedPortName()
     return "Efl" if isEfl();
     return "GTK" if isGtk();
     return "Mac" if isAppleMacWebKit();
+    return "WinCairo" if isWinCairo();
+    return "AppleWin" if isAppleWinWebKit();
     return "";
 }
 
@@ -2051,7 +2052,7 @@ sub determineIsCMakeBuild()
 
 sub isCMakeBuild()
 {
-    if (isEfl() || isGtk()) {
+    if (isEfl() || isGtk() || isAnyWindows()) {
         return 1;
     }
     determineIsCMakeBuild();
