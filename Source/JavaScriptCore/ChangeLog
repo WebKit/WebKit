@@ -1,3 +1,12 @@
+2015-10-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][Mac] disable OBJC JSC API
+        https://bugs.webkit.org/show_bug.cgi?id=150500
+
+        Reviewed by Alex Christensen.
+
+        * API/JSBase.h: Disable the Objective-C API on Mac for the GTK port.
+
 2015-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         Air::handleCalleeSaves shouldn't save/restore the frame pointer
