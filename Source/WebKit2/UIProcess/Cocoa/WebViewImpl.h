@@ -454,7 +454,7 @@ private:
     void setUserInterfaceItemState(NSString *commandName, bool enabled, int state);
 
 #if USE(ASYNC_NSTEXTINPUTCLIENT)
-    void collectKeyboardLayoutCommandsForEvent(NSEvent *, Vector<WebCore::KeypressCommand>&);
+    Vector<WebCore::KeypressCommand> collectKeyboardLayoutCommandsForEvent(NSEvent *);
     void interpretKeyEvent(NSEvent *, void(^completionHandler)(BOOL handled, const Vector<WebCore::KeypressCommand>&));
 #else
     void executeSavedKeypressCommands();

@@ -3135,10 +3135,10 @@ static bool eventKeyCodeIsZeroOrNumLockOrFn(NSEvent *event)
 
 Vector<WebCore::KeypressCommand> WebViewImpl::collectKeyboardLayoutCommandsForEvent(NSEvent *event)
 {
-    Vector<WebCore::KeypressCommand>& commands;
+    Vector<WebCore::KeypressCommand> commands;
 
     if ([event type] != NSKeyDown)
-        return;
+        return commands;
 
     ASSERT(!m_collectedKeypressCommands);
     m_collectedKeypressCommands = &commands;
