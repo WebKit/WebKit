@@ -36,7 +36,7 @@
 #include <wtf/Threading.h>
 
 #if USE(GLIB)
-#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/glib/GRefPtr.h>
 #endif
 
 #if PLATFORM(EFL)
@@ -100,7 +100,10 @@ public:
         Ecore_Timer* m_timer;
         bool m_isRepeating;
 #elif USE(GLIB)
-        GMainLoopSource m_timerSource;
+        void updateReadyTime();
+        GRefPtr<GSource> m_source;
+        bool m_isRepeating { false };
+        std::chrono::microseconds m_fireInterval { 0 };
 #endif
     };
 
@@ -155,11 +158,9 @@ private:
 
     static void wakeUpEvent(void* data, void*, unsigned);
 #elif USE(GLIB)
-public:
-    static gboolean queueWork(RunLoop*);
-private:
     GRefPtr<GMainContext> m_mainContext;
     Vector<GRefPtr<GMainLoop>> m_mainLoops;
+    GRefPtr<GSource> m_source;
 #endif
 };
 

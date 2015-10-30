@@ -30,8 +30,7 @@
 
 #include "NetworkCacheFileSystem.h"
 #include <wtf/MainThread.h>
-#include <wtf/glib/GMainLoopSource.h>
-#include <wtf/glib/GMutexLocker.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -78,7 +77,7 @@ static inline void runTaskInQueue(std::function<void ()> task, WorkQueue* queue)
     }
 
     // Using nullptr as queue submits the result to the main context.
-    GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] IOChannel task", WTF::move(task));
+    RunLoop::main().dispatch(WTF::move(task));
 }
 
 static void fillDataFromReadBuffer(SoupBuffer* readBuffer, size_t size, Data& data)
