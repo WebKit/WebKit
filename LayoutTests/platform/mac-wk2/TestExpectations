@@ -281,6 +281,8 @@ webkit.org/b/150378 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-wor
 webkit.org/b/150378 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html [ Pass Failure ]
 webkit.org/b/150378 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Pass Failure ]
 
+webkit.org/b/150736 http/tests/notifications/legacy/events.html [ Pass Crash ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
