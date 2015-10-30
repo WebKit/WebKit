@@ -1,3 +1,20 @@
+2015-10-30  Beth Dakin  <bdakin@apple.com>
+
+        Link preview doesn't work on XHTML pages with Content-Type header as 
+        ‘application/xhtml+xml’
+        https://bugs.webkit.org/show_bug.cgi?id=150740
+        -and corresponding-
+        rdar://problem/23063585
+
+        Reviewed by Tim Horton.
+
+        For XHTML pages, the element names are lowercase. This patch uses 
+        equalIgnoringCase to fix the bug.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _actionForLongPress]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+
 2015-10-30  Tim Horton  <timothy_horton@apple.com>
 
         WKView being inside WKWebView leads to weird API issues

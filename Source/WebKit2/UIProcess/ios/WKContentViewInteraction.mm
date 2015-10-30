@@ -1048,14 +1048,16 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (!_positionInformation.touchCalloutEnabled)
         return nil;
 
-    if (_positionInformation.clickableElementName == "IMG")
+    if (equalIgnoringCase(_positionInformation.clickableElementName, "IMG"))
         return @selector(_showImageSheet);
-    else if (_positionInformation.clickableElementName == "A") {
+
+    if (equalIgnoringCase(_positionInformation.clickableElementName, "A")) {
         NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
         if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
             return @selector(_showDataDetectorsSheet);
         return @selector(_showLinkSheet);
     }
+
     return nil;
 }
 
@@ -3431,11 +3433,11 @@ static bool isAssistableInputType(InputType type)
         return NO;
 
     [self ensurePositionInformationIsUpToDate:position];
-    if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
+    if (equalIgnoringCase(_positionInformation.clickableElementName, "A") && equalIgnoringCase(_positionInformation.clickableElementName, "IMG"))
         return NO;
     
     String absoluteLinkURL = _positionInformation.url;
-    if (_positionInformation.clickableElementName == "A") {
+    if (equalIgnoringCase(_positionInformation.clickableElementName, "A")) {
         if (absoluteLinkURL.isEmpty())
             return NO;
         if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
@@ -3454,8 +3456,8 @@ static bool isAssistableInputType(InputType type)
 
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     BOOL supportsImagePreview = [uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)];
-    BOOL canShowImagePreview = _positionInformation.clickableElementName == "IMG" && supportsImagePreview;
-    BOOL canShowLinkPreview = _positionInformation.clickableElementName == "A" || canShowImagePreview;
+    BOOL canShowImagePreview = equalIgnoringCase(_positionInformation.clickableElementName, "IMG") && supportsImagePreview;
+    BOOL canShowLinkPreview = equalIgnoringCase(_positionInformation.clickableElementName, "A") || canShowImagePreview;
     BOOL useImageURLForLink = NO;
 
     if (canShowImagePreview && _positionInformation.isAnimatedImage) {
