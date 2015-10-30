@@ -64,6 +64,29 @@ public:
     const SuccessorList& successors() const { return m_successors; }
     SuccessorList& successors() { return m_successors; }
 
+    const FrequentedBlock& taken() const
+    {
+        ASSERT(opcode() == Jump || opcode() == Branch);
+        return successor(0);
+    }
+    FrequentedBlock& taken()
+    {
+        ASSERT(opcode() == Jump || opcode() == Branch);
+        return successor(0);
+    }
+    const FrequentedBlock& notTaken() const
+    {
+        ASSERT(opcode() == Branch);
+        return successor(1);
+    }
+    FrequentedBlock& notTaken()
+    {
+        ASSERT(opcode() == Branch);
+        return successor(1);
+    }
+
+    void convertToJump(const FrequentedBlock& destination);
+
 protected:
     JS_EXPORT_PRIVATE void dumpMeta(PrintStream&) const override;
 

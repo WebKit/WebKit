@@ -32,25 +32,37 @@
 
 namespace JSC { namespace B3 {
 
-class UpsilonValue : public Value {
+class JS_EXPORT_PRIVATE UpsilonValue : public Value {
 public:
     static bool accepts(Opcode opcode) { return opcode == Upsilon; }
 
     ~UpsilonValue();
 
     Value* phi() const { return m_phi; }
+    void setPhi(Value* phi)
+    {
+        ASSERT(child(0)->type() == phi->type());
+        ASSERT(phi->opcode() == Phi);
+        m_phi = phi;
+    }
 
 protected:
     void dumpMeta(PrintStream&) const override;
 
 private:
     friend class Procedure;
-    
-    UpsilonValue(unsigned index, Origin origin, Value* value, Value* phi)
-        : Value(index, Phi, Void, origin, value)
+
+    // Note that passing the Phi during construction is optional. A valid pattern is to first create
+    // the Upsilons without the Phi, then create the Phi, then go back and tell the Upsilons about
+    // the Phi. This allows you to emit code in its natural order.
+    UpsilonValue(unsigned index, Origin origin, Value* value, Value* phi = nullptr)
+        : Value(index, Upsilon, Void, origin, value)
         , m_phi(phi)
     {
-        ASSERT(value->type() == phi->type());
+        if (phi) {
+            ASSERT(value->type() == phi->type());
+            ASSERT(phi->opcode() == Phi);
+        }
     }
 
     Value* m_phi;

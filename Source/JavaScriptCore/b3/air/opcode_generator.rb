@@ -180,7 +180,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(Imm64)|(Addr)|(Index)|(RelCond)|(ResCond))\Z/
+    token =~ /\A((Tmp)|(Imm)|(Imm64)|(Addr)|(Index)|(RelCond)|(ResCond)|(DoubleCond))\Z/
 end
 
 def isKeyword(token)
@@ -246,7 +246,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, Imm64, Tmp, Addr, Index, RelCond, or ResCond)") unless isKind(result)
+        parseError("Expected kind (Imm, Imm64, Tmp, Addr, Index, RelCond, ResCond, or DoubleCond)") unless isKind(result)
         advance
         result
     end
@@ -830,6 +830,8 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asRelationalCondition()"
                 when "ResCond"
                     outp.print "args[#{index}].asResultCondition()"
+                when "DoubleCond"
+                    outp.print "args[#{index}].asDoubleCondition()"
                 end
             }
 

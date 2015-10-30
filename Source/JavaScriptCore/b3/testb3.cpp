@@ -34,12 +34,23 @@
 #include "B3MemoryValue.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
+#include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
 #include "CCallHelpers.h"
 #include "InitializeThreading.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
 #include "VM.h"
+
+// We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
+static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
+
+static void usage()
+{
+    dataLog("Usage: testb3 [<filter>]\n");
+    if (hiddenTruthBecauseNoReturnIsStupid())
+        exit(1);
+}
 
 #if ENABLE(B3_JIT)
 
@@ -53,15 +64,25 @@ namespace {
 
 VM* vm;
 
-template<typename T, typename... Arguments>
-T compileAndRun(Procedure& procedure, Arguments... arguments)
+MacroAssemblerCodeRef compile(Procedure& procedure)
 {
     CCallHelpers jit(vm);
     generate(procedure, jit);
     LinkBuffer linkBuffer(*vm, jit, nullptr);
-    MacroAssemblerCodeRef code = FINALIZE_CODE(linkBuffer, ("testb3"));
+    return FINALIZE_CODE(linkBuffer, ("testb3"));
+}
+
+template<typename T, typename... Arguments>
+T invoke(const MacroAssemblerCodeRef& code, Arguments... arguments)
+{
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(code.code().executableAddress());
     return function(arguments...);
+}
+
+template<typename T, typename... Arguments>
+T compileAndRun(Procedure& procedure, Arguments... arguments)
+{
+    return invoke<T>(compile(procedure), arguments...);
 }
 
 void test42()
@@ -493,16 +514,432 @@ void testStoreLoadStackSlot(int value)
     CHECK(compileAndRun<int>(proc, value) == value);
 }
 
+void testBranch()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchPtr()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, static_cast<intptr_t>(42)) == 1);
+    CHECK(invoke<int>(code, static_cast<intptr_t>(0)) == 0);
+}
+
+void testDiamond()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Trunc, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    UpsilonValue* thenResult = thenCase->appendNew<UpsilonValue>(
+        proc, Origin(), thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+    thenCase->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(done));
+
+    UpsilonValue* elseResult = elseCase->appendNew<UpsilonValue>(
+        proc, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+    elseCase->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(done));
+
+    Value* phi = done->appendNew<Value>(proc, Phi, Int32, Origin());
+    thenResult->setPhi(phi);
+    elseResult->setPhi(phi);
+    done->appendNew<ControlValue>(proc, Return, Origin(), phi);
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchNotEqual()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, NotEqual, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), 0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchNotEqualCommute()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, NotEqual, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), 0),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchNotEqualNotEqual()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, NotEqual, Origin(),
+            root->appendNew<Value>(
+                proc, NotEqual, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)),
+            root->appendNew<Const32Value>(proc, Origin(), 0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchEqual()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Equal, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), 0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchEqualEqual()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Equal, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)),
+            root->appendNew<Const32Value>(proc, Origin(), 0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchEqualCommute()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Equal, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), 0),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchEqualEqual1()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Equal, Origin(),
+            root->appendNew<Value>(
+                proc, Equal, Origin(),
+                root->appendNew<Value>(
+                    proc, Trunc, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+                root->appendNew<Const32Value>(proc, Origin(), 0)),
+            root->appendNew<Const32Value>(proc, Origin(), 1)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    auto code = compile(proc);
+    CHECK(invoke<int>(code, 42) == 1);
+    CHECK(invoke<int>(code, 0) == 0);
+}
+
+void testBranchFold(int value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), value),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(compileAndRun<int>(proc) == !!value);
+}
+
+void testDiamondFold(int value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* done = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), value),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    UpsilonValue* thenResult = thenCase->appendNew<UpsilonValue>(
+        proc, Origin(), thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+    thenCase->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(done));
+
+    UpsilonValue* elseResult = elseCase->appendNew<UpsilonValue>(
+        proc, Origin(), elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+    elseCase->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(done));
+
+    Value* phi = done->appendNew<Value>(proc, Phi, Int32, Origin());
+    thenResult->setPhi(phi);
+    elseResult->setPhi(phi);
+    done->appendNew<ControlValue>(proc, Return, Origin(), phi);
+
+    CHECK(compileAndRun<int>(proc) == !!value);
+}
+
+void testBranchNotEqualFoldPtr(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, NotEqual, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), value),
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(compileAndRun<int>(proc) == !!value);
+}
+
+void testBranchEqualFoldPtr(intptr_t value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+
+    root->appendNew<ControlValue>(
+        proc, Branch, Origin(),
+        root->appendNew<Value>(
+            proc, Equal, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), value),
+            root->appendNew<ConstPtrValue>(proc, Origin(), 0)),
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    thenCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        thenCase->appendNew<Const32Value>(proc, Origin(), 1));
+
+    elseCase->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        elseCase->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(compileAndRun<int>(proc) == !value);
+}
+
 #define RUN(test) do {                          \
+        if (!shouldRun(#test))                  \
+            break;                              \
         dataLog(#test ":\n");                   \
         test;                                   \
         dataLog("    OK!\n");                   \
+        didRun++;                               \
     } while (false);
 
-void run()
+void run(const char* filter)
 {
     JSC::initializeThreading();
     vm = &VM::create(LargeHeap).leakRef();
+
+    auto shouldRun = [&] (const char* testName) -> bool {
+        return !!strcasestr(testName, filter);
+    };
+    unsigned didRun = 0;
 
     RUN(test42());
     RUN(testLoad42());
@@ -532,13 +969,34 @@ void run()
     RUN(testStackSlot());
     RUN(testLoadFromFramePointer());
     RUN(testStoreLoadStackSlot(50));
+    RUN(testBranch());
+    RUN(testBranchPtr());
+    RUN(testDiamond());
+    RUN(testBranchNotEqual());
+    RUN(testBranchNotEqualCommute());
+    RUN(testBranchNotEqualNotEqual());
+    RUN(testBranchEqual());
+    RUN(testBranchEqualEqual());
+    RUN(testBranchEqualCommute());
+    RUN(testBranchEqualEqual1());
+    RUN(testBranchFold(42));
+    RUN(testBranchFold(0));
+    RUN(testDiamondFold(42));
+    RUN(testDiamondFold(0));
+    RUN(testBranchNotEqualFoldPtr(42));
+    RUN(testBranchNotEqualFoldPtr(0));
+    RUN(testBranchEqualFoldPtr(42));
+    RUN(testBranchEqualFoldPtr(0));
+
+    if (!didRun)
+        usage();
 }
 
 } // anonymous namespace
 
 #else // ENABLE(B3_JIT)
 
-static void run()
+static void run(const char*)
 {
     dataLog("B3 JIT is not enabled.\n");
 }
@@ -547,10 +1005,19 @@ static void run()
 
 int main(int argc, char** argv)
 {
-    UNUSED_PARAM(argc);
-    UNUSED_PARAM(argv);
+    const char* filter = "";
+    switch (argc) {
+    case 1:
+        break;
+    case 2:
+        filter = argv[1];
+        break;
+    default:
+        usage();
+        break;
+    }
     
-    run();
+    run(filter);
     return 0;
 }
 

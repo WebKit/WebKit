@@ -75,8 +75,9 @@ bool replacePredecessor(BasicBlock* block, BasicBlock* from, BasicBlock* to)
 }
 
 // This recomputes predecessors and removes blocks that aren't reachable.
-template<typename BasicBlock>
-void resetReachability(Vector<std::unique_ptr<BasicBlock>>& blocks)
+template<typename BasicBlock, typename DeleteFunctor>
+void resetReachability(
+    Vector<std::unique_ptr<BasicBlock>>& blocks, const DeleteFunctor& deleteFunctor)
 {
     // Clear all predecessor lists first.
     for (auto& block : blocks)
@@ -86,14 +87,16 @@ void resetReachability(Vector<std::unique_ptr<BasicBlock>>& blocks)
     worklist.push(blocks[0].get());
     while (BasicBlock* block = worklist.pop()) {
         for (BasicBlock* successor : block->successorBlocks()) {
-            if (worklist.push(successor))
-                addPredecessor(successor, block);
+            addPredecessor(successor, block);
+            worklist.push(successor);
         }
     }
 
     for (unsigned i = 1; i < blocks.size(); ++i) {
-        if (blocks[i]->predecessors().isEmpty())
+        if (blocks[i]->predecessors().isEmpty()) {
+            deleteFunctor(blocks[i].get());
             blocks[i] = nullptr;
+        }
     }
 }
 

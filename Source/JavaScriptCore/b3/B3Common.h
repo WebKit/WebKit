@@ -39,6 +39,43 @@ bool shouldValidateIR();
 bool shouldValidateIRAtEachPhase();
 bool shouldSaveIRBeforePhase();
 
+template<typename ResultType, typename InputType, typename BitsType>
+inline bool isRepresentableAsImpl(InputType originalValue)
+{
+    // Get the raw bits of the original value.
+    BitsType originalBits = bitwise_cast<BitsType>(originalValue);
+
+    // Convert the original value to the desired result type.
+    ResultType result = static_cast<ResultType>(originalValue);
+
+    // Convert the converted value back to the original type. The original value is representable
+    // using the new type if such round-tripping doesn't lose bits.
+    InputType newValue = static_cast<InputType>(result);
+
+    // Get the raw bits of the round-tripped value.
+    BitsType newBits = bitwise_cast<BitsType>(newValue);
+    
+    return originalBits == newBits;
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(int32_t value)
+{
+    return isRepresentableAsImpl<ResultType, int32_t, int32_t>(value);
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(int64_t value)
+{
+    return isRepresentableAsImpl<ResultType, int64_t, int64_t>(value);
+}
+
+template<typename ResultType>
+inline bool isRepresentableAs(double value)
+{
+    return isRepresentableAsImpl<ResultType, double, int64_t>(value);
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

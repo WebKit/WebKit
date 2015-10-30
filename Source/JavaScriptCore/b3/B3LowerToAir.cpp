@@ -43,6 +43,7 @@
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
 #include "B3StackSlotValue.h"
+#include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
 #include <wtf/ListDump.h>
@@ -217,12 +218,8 @@ public:
 
     Arg imm(Value* value)
     {
-        if (value->hasInt()) {
-            int64_t fullValue = value->asInt();
-            int32_t immediateValue = static_cast<int32_t>(fullValue);
-            if (fullValue == immediateValue)
-                return Arg::imm(immediateValue);
-        }
+        if (value->representableAs<int32_t>())
+            return Arg::imm(value->asNumber<int32_t>());
         return Arg();
     }
 
@@ -654,6 +651,72 @@ public:
             Lea,
             Arg::stack(stackToStack.get(currentValue->as<StackSlotValue>())),
             tmp(currentValue));
+        return true;
+    }
+
+    bool tryUpsilon(Value* value)
+    {
+        append(
+            relaxedMoveForType(value->type()),
+            immOrTmp(value),
+            tmp(currentValue->as<UpsilonValue>()->phi()));
+        return true;
+    }
+
+    bool tryPhi()
+    {
+        // Our semantics are determined by Upsilons, so we have nothing to do here.
+        return true;
+    }
+
+    bool tryBranch(Value* value)
+    {
+        // FIXME: Implement branch fusion by delegating to a pattern matcher for comparisons.
+        // https://bugs.webkit.org/show_bug.cgi?id=150721
+
+        // In B3 it's possible to branch on any value. The semantics of:
+        //
+        //     Branch(value)
+        //
+        // Are guaranteed to be identical to:
+        //
+        //     Branch(NotEqual(value, 0))
+
+        if (!isInt(value->type())) {
+            // FIXME: Implement double branches.
+            // https://bugs.webkit.org/show_bug.cgi?id=150727
+            return false;
+        }
+
+        Air::Opcode opcode;
+        switch (value->type()) {
+        case Int32:
+            opcode = BranchTest32;
+            break;
+        case Int64:
+            opcode = BranchTest64;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        Arg resCond = Arg::resCond(MacroAssembler::NonZero);
+
+        Arg addr = loadAddr(value);
+        if (isValidForm(opcode, resCond.kind(), addr.kind(), Arg::Imm)) {
+            commitInternal(value);
+            append(opcode, resCond, addr, Arg::imm(-1));
+            return true;
+        }
+
+        append(opcode, resCond, tmp(value), Arg::imm(-1));
+        return true;
+    }
+
+    bool tryJump()
+    {
+        append(Air::Jump);
         return true;
     }
 

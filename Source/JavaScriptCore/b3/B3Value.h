@@ -98,18 +98,30 @@ public:
     template<typename T>
     const T* as() const;
 
+    // What follows are a bunch of helpers for inspecting and modifying values. Note that we have a
+    // bunch of different idioms for implementing such helpers. You can use virtual methods, and
+    // override from the various Value subclasses. You can put the method inside Value and make it
+    // non-virtual, and the implementation can switch on opcode. The method could be inline or not.
+    // If a method is specific to some Value subclass, you could put it in the subclass, or you could
+    // put it on Value anyway. It's fine to pick whatever feels right, and we shouldn't restrict
+    // ourselves to any particular idiom.
+
     bool isConstant() const;
     
     virtual Value* negConstant(Procedure&) const;
     virtual Value* addConstant(Procedure&, int32_t other) const;
     virtual Value* addConstant(Procedure&, Value* other) const;
     virtual Value* subConstant(Procedure&, Value* other) const;
+    virtual Value* equalConstant(Procedure&, Value* other) const;
+    virtual Value* notEqualConstant(Procedure&, Value* other) const;
 
     bool hasInt32() const;
     int32_t asInt32() const;
+    bool isInt32(int32_t) const;
     
     bool hasInt64() const;
     int64_t asInt64() const;
+    bool isInt64(int64_t) const;
 
     bool hasInt() const;
     int64_t asInt() const;
@@ -117,10 +129,24 @@ public:
 
     bool hasIntPtr() const;
     intptr_t asIntPtr() const;
+    bool isIntPtr(intptr_t) const;
 
     bool hasDouble() const;
     double asDouble() const;
+    bool isEqualToDouble(double) const; // We say "isEqualToDouble" because "isDouble" would be a bit equality.
 
+    bool hasNumber() const;
+    template<typename T> bool representableAs() const;
+    template<typename T> T asNumber() const;
+
+    // Booleans in B3 are Const32(0) or Const32(1). So this is true if the type is Int32 and the only
+    // possible return values are 0 or 1. It's OK for this method to conservatively return false.
+    bool returnsBool() const;
+
+    TriState asTriState() const;
+    bool isLikeZero() const { return asTriState() == FalseTriState; }
+    bool isLikeNonZero() const { return asTriState() == TrueTriState; }
+    
     Effects effects() const;
 
     Stackmap* stackmap();

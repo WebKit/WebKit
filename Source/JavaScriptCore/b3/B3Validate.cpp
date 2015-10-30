@@ -281,6 +281,7 @@ public:
                 break;
             case Upsilon:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->as<UpsilonValue>()->phi(), ("At ", *value));
                 VALIDATE(value->child(0)->type() == value->as<UpsilonValue>()->phi()->type(), ("At ", *value));
                 VALIDATE(valueInProc.contains(value->as<UpsilonValue>()->phi()), ("At ", *value));
                 break;

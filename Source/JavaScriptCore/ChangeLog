@@ -1,3 +1,127 @@
+2015-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should be able to compile a control flow diamond
+        https://bugs.webkit.org/show_bug.cgi?id=150720
+
+        Reviewed by Benjamin Poulain.
+
+        Adds support for Branch, Jump, Upsilon, and Phi. Adds some basic strength reduction for
+        comparisons and boolean-like operations.
+
+        * assembler/MacroAssembler.cpp:
+        (WTF::printInternal):
+        * assembler/MacroAssembler.h:
+        * b3/B3BasicBlockUtils.h:
+        (JSC::B3::replacePredecessor):
+        (JSC::B3::resetReachability):
+        * b3/B3CheckValue.h:
+        * b3/B3Common.h:
+        (JSC::B3::isRepresentableAsImpl):
+        (JSC::B3::isRepresentableAs):
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::subConstant):
+        (JSC::B3::Const32Value::equalConstant):
+        (JSC::B3::Const32Value::notEqualConstant):
+        (JSC::B3::Const32Value::dumpMeta):
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::subConstant):
+        (JSC::B3::Const64Value::equalConstant):
+        (JSC::B3::Const64Value::notEqualConstant):
+        (JSC::B3::Const64Value::dumpMeta):
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::subConstant):
+        (JSC::B3::ConstDoubleValue::equalConstant):
+        (JSC::B3::ConstDoubleValue::notEqualConstant):
+        (JSC::B3::ConstDoubleValue::dumpMeta):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ControlValue.cpp:
+        (JSC::B3::ControlValue::~ControlValue):
+        (JSC::B3::ControlValue::convertToJump):
+        (JSC::B3::ControlValue::dumpMeta):
+        * b3/B3ControlValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::tryStackSlot):
+        (JSC::B3::Air::LowerToAir::tryUpsilon):
+        (JSC::B3::Air::LowerToAir::tryPhi):
+        (JSC::B3::Air::LowerToAir::tryBranch):
+        (JSC::B3::Air::LowerToAir::tryJump):
+        (JSC::B3::Air::LowerToAir::tryIdentity):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::resetReachability):
+        (JSC::B3::Procedure::dump):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3UpsilonValue.cpp:
+        (JSC::B3::UpsilonValue::dumpMeta):
+        * b3/B3UpsilonValue.h:
+        (JSC::B3::UpsilonValue::accepts): Deleted.
+        (JSC::B3::UpsilonValue::phi): Deleted.
+        (JSC::B3::UpsilonValue::UpsilonValue): Deleted.
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::subConstant):
+        (JSC::B3::Value::equalConstant):
+        (JSC::B3::Value::notEqualConstant):
+        (JSC::B3::Value::returnsBool):
+        (JSC::B3::Value::asTriState):
+        (JSC::B3::Value::effects):
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::asInt32):
+        (JSC::B3::Value::isInt32):
+        (JSC::B3::Value::hasInt64):
+        (JSC::B3::Value::asInt64):
+        (JSC::B3::Value::isInt64):
+        (JSC::B3::Value::hasInt):
+        (JSC::B3::Value::asIntPtr):
+        (JSC::B3::Value::isIntPtr):
+        (JSC::B3::Value::hasDouble):
+        (JSC::B3::Value::asDouble):
+        (JSC::B3::Value::isEqualToDouble):
+        (JSC::B3::Value::hasNumber):
+        (JSC::B3::Value::representableAs):
+        (JSC::B3::Value::asNumber):
+        (JSC::B3::Value::stackmap):
+        * b3/air/AirArg.cpp:
+        (JSC::B3::Air::Arg::dump):
+        * b3/air/AirArg.h:
+        (JSC::B3::Air::Arg::resCond):
+        (JSC::B3::Air::Arg::doubleCond):
+        (JSC::B3::Air::Arg::special):
+        (JSC::B3::Air::Arg::isResCond):
+        (JSC::B3::Air::Arg::isDoubleCond):
+        (JSC::B3::Air::Arg::isSpecial):
+        (JSC::B3::Air::Arg::isGP):
+        (JSC::B3::Air::Arg::isFP):
+        (JSC::B3::Air::Arg::asResultCondition):
+        (JSC::B3::Air::Arg::asDoubleCondition):
+        (JSC::B3::Air::Arg::Arg):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::resetReachability):
+        (JSC::B3::Air::Code::dump):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (hiddenTruthBecauseNoReturnIsStupid):
+        (usage):
+        (JSC::B3::compile):
+        (JSC::B3::invoke):
+        (JSC::B3::compileAndRun):
+        (JSC::B3::test42):
+        (JSC::B3::testStoreLoadStackSlot):
+        (JSC::B3::testBranch):
+        (JSC::B3::testDiamond):
+        (JSC::B3::testBranchNotEqual):
+        (JSC::B3::testBranchFold):
+        (JSC::B3::testDiamondFold):
+        (JSC::B3::run):
+        (run):
+        (main):
+
 2015-10-30  Keith Miller  <keith_miller@apple.com>
 
         [ES6] Add support for toStringTag

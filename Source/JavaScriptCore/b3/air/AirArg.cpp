@@ -77,6 +77,9 @@ void Arg::dump(PrintStream& out) const
     case ResCond:
         out.print(asResultCondition());
         return;
+    case DoubleCond:
+        out.print(asDoubleCondition());
+        return;
     case Special:
         out.print(pointerDump(special()));
         return;

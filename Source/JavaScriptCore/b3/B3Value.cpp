@@ -127,6 +127,60 @@ Value* Value::subConstant(Procedure&, Value*) const
     return nullptr;
 }
 
+Value* Value::equalConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::notEqualConstant(Procedure&, Value*) const
+{
+    return nullptr;
+}
+
+bool Value::returnsBool() const
+{
+    if (type() != Int32)
+        return false;
+    switch (opcode()) {
+    case Const32:
+        return asInt32() == 0 || asInt32() == 1;
+    case BitAnd:
+        return child(1)->isInt32(1);
+    case Equal:
+    case NotEqual:
+    case LessThan:
+    case GreaterThan:
+    case LessEqual:
+    case GreaterEqual:
+    case Above:
+    case Below:
+    case AboveEqual:
+    case BelowEqual:
+        return true;
+    case Phi:
+        // FIXME: We should have a story here.
+        // https://bugs.webkit.org/show_bug.cgi?id=150725
+        return false;
+    default:
+        return false;
+    }
+}
+
+TriState Value::asTriState() const
+{
+    switch (opcode()) {
+    case Const32:
+        return triState(!!asInt32());
+    case Const64:
+        return triState(!!asInt64());
+    case ConstDouble:
+        // Use "!= 0" to really emphasize what this mean with respect to NaN and such.
+        return triState(asDouble() != 0);
+    default:
+        return MixedTriState;
+    }
+}
+
 Effects Value::effects() const
 {
     Effects result;

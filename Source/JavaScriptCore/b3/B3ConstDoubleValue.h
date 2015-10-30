@@ -44,6 +44,8 @@ public:
     Value* addConstant(Procedure& proc, int32_t other) const override;
     Value* addConstant(Procedure& proc, Value* other) const override;
     Value* subConstant(Procedure& proc, Value* other) const override;
+    Value* equalConstant(Procedure& proc, Value* other) const override;
+    Value* notEqualConstant(Procedure& proc, Value* other) const override;
 
 protected:
     void dumpMeta(PrintStream&) const override;

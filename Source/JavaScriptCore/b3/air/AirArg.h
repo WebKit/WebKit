@@ -64,6 +64,7 @@ public:
         // secondary opcodes. They are always "Use"'d.
         RelCond,
         ResCond,
+        DoubleCond,
         Special
     };
 
@@ -266,6 +267,14 @@ public:
         return result;
     }
 
+    static Arg doubleCond(MacroAssembler::DoubleCondition condition)
+    {
+        Arg result;
+        result.m_kind = DoubleCond;
+        result.m_offset = condition;
+        return result;
+    }
+
     static Arg special(Air::Special* special)
     {
         Arg result;
@@ -338,6 +347,11 @@ public:
     bool isResCond() const
     {
         return kind() == ResCond;
+    }
+
+    bool isDoubleCond() const
+    {
+        return kind() == DoubleCond;
     }
 
     bool isSpecial() const
@@ -446,6 +460,7 @@ public:
         case CallArg:
         case RelCond:
         case ResCond:
+        case DoubleCond:
         case Special:
             return true;
         case Tmp:
@@ -462,6 +477,7 @@ public:
         case Imm:
         case RelCond:
         case ResCond:
+        case DoubleCond:
         case Special:
         case Invalid:
             return false;
@@ -660,6 +676,12 @@ public:
     {
         ASSERT(isResCond());
         return static_cast<MacroAssembler::ResultCondition>(m_offset);
+    }
+
+    MacroAssembler::DoubleCondition asDoubleCondition() const
+    {
+        ASSERT(isDoubleCond());
+        return static_cast<MacroAssembler::DoubleCondition>(m_offset);
     }
 
     void dump(PrintStream&) const;

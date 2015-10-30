@@ -62,7 +62,7 @@ private:
     CheckValue(unsigned index, Opcode opcode, Origin origin, Value* left, Value* right)
         : Value(index, opcode, left->type(), origin, left, right)
     {
-        ASSERT(isInt(type()));
+        ASSERT(B3::isInt(type()));
         ASSERT(left->type() == right->type());
         ASSERT(opcode == CheckAdd || opcode == CheckSub || opcode == CheckMul);
     }

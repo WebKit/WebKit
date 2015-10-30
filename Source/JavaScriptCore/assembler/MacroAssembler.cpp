@@ -112,6 +112,50 @@ void printInternal(PrintStream& out, MacroAssembler::ResultCondition cond)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void printInternal(PrintStream& out, MacroAssembler::DoubleCondition cond)
+{
+    switch (cond) {
+    case MacroAssembler::DoubleEqual:
+        out.print("DoubleEqual");
+        return;
+    case MacroAssembler::DoubleNotEqual:
+        out.print("DoubleNotEqual");
+        return;
+    case MacroAssembler::DoubleGreaterThan:
+        out.print("DoubleGreaterThan");
+        return;
+    case MacroAssembler::DoubleGreaterThanOrEqual:
+        out.print("DoubleGreaterThanOrEqual");
+        return;
+    case MacroAssembler::DoubleLessThan:
+        out.print("DoubleLessThan");
+        return;
+    case MacroAssembler::DoubleLessThanOrEqual:
+        out.print("DoubleLessThanOrEqual");
+        return;
+    case MacroAssembler::DoubleEqualOrUnordered:
+        out.print("DoubleEqualOrUnordered");
+        return;
+    case MacroAssembler::DoubleNotEqualOrUnordered:
+        out.print("DoubleNotEqualOrUnordered");
+        return;
+    case MacroAssembler::DoubleGreaterThanOrUnordered:
+        out.print("DoubleGreaterThanOrUnordered");
+        return;
+    case MacroAssembler::DoubleGreaterThanOrEqualOrUnordered:
+        out.print("DoubleGreaterThanOrEqualOrUnordered");
+        return;
+    case MacroAssembler::DoubleLessThanOrUnordered:
+        out.print("DoubleLessThanOrUnordered");
+        return;
+    case MacroAssembler::DoubleLessThanOrEqualOrUnordered:
+        out.print("DoubleLessThanOrEqualOrUnordered");
+        return;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace WTF
 
 #endif // ENABLE(ASSEMBLER)

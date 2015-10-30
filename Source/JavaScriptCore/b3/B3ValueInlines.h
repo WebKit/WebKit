@@ -74,6 +74,11 @@ inline int32_t Value::asInt32() const
     return as<Const32Value>()->value();
 }
 
+inline bool Value::isInt32(int32_t value) const
+{
+    return hasInt32() && asInt32() == value;
+}
+
 inline bool Value::hasInt64() const
 {
     return !!as<Const64Value>();
@@ -82,6 +87,11 @@ inline bool Value::hasInt64() const
 inline int64_t Value::asInt64() const
 {
     return as<Const64Value>()->value();
+}
+
+inline bool Value::isInt64(int64_t value) const
+{
+    return hasInt64() && asInt64() == value;
 }
 
 inline bool Value::hasInt() const
@@ -113,6 +123,11 @@ inline intptr_t Value::asIntPtr() const
     return asInt32();
 }
 
+inline bool Value::isIntPtr(intptr_t value) const
+{
+    return hasIntPtr() && asIntPtr() == value;
+}
+
 inline bool Value::hasDouble() const
 {
     return !!as<ConstDoubleValue>();
@@ -121,6 +136,46 @@ inline bool Value::hasDouble() const
 inline double Value::asDouble() const
 {
     return as<ConstDoubleValue>()->value();
+}
+
+inline bool Value::isEqualToDouble(double value) const
+{
+    return hasDouble() && asDouble() == value;
+}
+
+inline bool Value::hasNumber() const
+{
+    return hasInt() || hasDouble();
+}
+
+template<typename T>
+inline bool Value::representableAs() const
+{
+    switch (opcode()) {
+    case Const32:
+        return isRepresentableAs<T>(asInt32());
+    case Const64:
+        return isRepresentableAs<T>(asInt64());
+    case ConstDouble:
+        return isRepresentableAs<T>(asDouble());
+    default:
+        return false;
+    }
+}
+
+template<typename T>
+inline T Value::asNumber() const
+{
+    switch (opcode()) {
+    case Const32:
+        return static_cast<T>(asInt32());
+    case Const64:
+        return static_cast<T>(asInt64());
+    case ConstDouble:
+        return static_cast<T>(asDouble());
+    default:
+        return T();
+    }
 }
 
 inline Stackmap* Value::stackmap()

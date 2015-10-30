@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3ControlValue.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
@@ -52,6 +53,7 @@ public:
         bool result = false;
         do {
             m_changed = false;
+            m_changedCFG = false;
 
             for (BasicBlock* block : m_proc.blocksInPreOrder()) {
                 m_block = block;
@@ -61,6 +63,11 @@ public:
                 m_insertionSet.execute(m_block);
 
                 block->removeNops(m_proc);
+            }
+
+            if (m_changedCFG) {
+                m_proc.resetReachability();
+                m_changed = true;
             }
 
             UseCounts useCounts(m_proc);
@@ -109,10 +116,9 @@ private:
             if (isInt(m_value->type())) {
                 if (Value* negatedConstant = m_value->child(1)->negConstant(m_proc)) {
                     m_insertionSet.insertValue(m_index, negatedConstant);
-                    Value* add = m_insertionSet.insert<Value>(
-                        m_index, Add, m_value->origin(), m_value->child(0), negatedConstant);
-                    m_value->replaceWithIdentity(add);
-                    m_changed = true;
+                    replaceWithNew<Value>(
+                        Add, m_value->origin(), m_value->child(0), negatedConstant);
+                    break;
                 }
             }
 
@@ -172,6 +178,101 @@ private:
             
             break;
         }
+
+        case Equal:
+            handleCommutativity();
+
+            // Turn this: Equal(Equal(x, 0), 0)
+            // Into this: NotEqual(x, 0)
+            if (m_value->child(0)->opcode() == Equal && m_value->child(1)->isInt32(0)
+                && m_value->child(0)->child(1)->isLikeZero()) {
+                replaceWithNew<Value>(
+                    NotEqual, m_value->origin(),
+                    m_value->child(0)->child(0), m_value->child(0)->child(1));
+                break;
+            }
+
+            // Turn this Equal(bool, 1)
+            // Into this: bool
+            if (m_value->child(0)->returnsBool() && m_value->child(1)->isInt32(1)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
+
+            // FIXME: Have a compare-flipping optimization, like Equal(LessThan(a, b), 0) turns into
+            // GreaterEqual(a, b).
+            // https://bugs.webkit.org/show_bug.cgi?id=150726
+
+            // Turn this: Equal(const1, const2)
+            // Into this: const1 == const2
+            replaceWithNewValue(m_value->child(0)->equalConstant(m_proc, m_value->child(1)));
+            break;
+            
+        case NotEqual:
+            handleCommutativity();
+
+            if (m_value->child(0)->returnsBool()) {
+                // Turn this: NotEqual(bool, 0)
+                // Into this: bool
+                if (m_value->child(1)->isInt32(0)) {
+                    m_value->replaceWithIdentity(m_value->child(0));
+                    m_changed = true;
+                    break;
+                }
+                
+                // Turn this: NotEqual(bool, 1)
+                // Into this: Equal(bool, 0)
+                if (m_value->child(1)->isInt32(1)) {
+                    replaceWithNew<Value>(
+                        Equal, m_value->origin(), m_value->child(0), m_value->child(1));
+                    break;
+                }
+            }
+
+            // Turn this: NotEqual(const1, const2)
+            // Into this: const1 != const2
+            replaceWithNewValue(m_value->child(0)->notEqualConstant(m_proc, m_value->child(1)));
+            break;
+
+        case Branch: {
+            ControlValue* branch = m_value->as<ControlValue>();
+
+            // Turn this: Branch(NotEqual(x, 0))
+            // Into this: Branch(x)
+            if (branch->child(0)->opcode() == NotEqual && branch->child(0)->child(1)->isLikeZero()) {
+                branch->child(0) = branch->child(0)->child(0);
+                m_changed = true;
+            }
+
+            // Turn this: Branch(Equal(x, 0), then, else)
+            // Into this: Branch(x, else, then)
+            if (branch->child(0)->opcode() == Equal && branch->child(0)->child(1)->isLikeZero()) {
+                branch->child(0) = branch->child(0)->child(0);
+                std::swap(branch->taken(), branch->notTaken());
+                m_changed = true;
+            }
+            
+            TriState triState = branch->child(0)->asTriState();
+
+            // Turn this: Branch(0, then, else)
+            // Into this: Jump(else)
+            if (triState == FalseTriState) {
+                branch->convertToJump(branch->notTaken());
+                m_changedCFG = true;
+                break;
+            }
+
+            // Turn this: Branch(not 0, then, else)
+            // Into this: Jump(then)
+            if (triState == TrueTriState) {
+                branch->convertToJump(branch->taken());
+                m_changedCFG = true;
+                break;
+            }
+            
+            break;
+        }
             
         default:
             break;
@@ -206,6 +307,12 @@ private:
         }
     }
 
+    template<typename ValueType, typename... Arguments>
+    void replaceWithNew(Arguments... arguments)
+    {
+        replaceWithNewValue(m_proc.add<ValueType>(arguments...));
+    }
+
     void replaceWithNewValue(Value* newValue)
     {
         if (!newValue)
@@ -221,6 +328,7 @@ private:
     unsigned m_index;
     Value* m_value;
     bool m_changed;
+    bool m_changedCFG;
 };
 
 } // anonymous namespace

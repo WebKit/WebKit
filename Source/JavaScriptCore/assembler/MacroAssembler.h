@@ -1614,6 +1614,7 @@ class PrintStream;
 
 void printInternal(PrintStream&, JSC::MacroAssembler::RelationalCondition);
 void printInternal(PrintStream&, JSC::MacroAssembler::ResultCondition);
+void printInternal(PrintStream&, JSC::MacroAssembler::DoubleCondition);
 
 } // namespace WTF
 

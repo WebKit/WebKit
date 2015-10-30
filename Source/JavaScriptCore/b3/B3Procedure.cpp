@@ -62,7 +62,13 @@ void Procedure::resetValueOwners()
 
 void Procedure::resetReachability()
 {
-    B3::resetReachability(m_blocks);
+    B3::resetReachability(
+        m_blocks,
+        [&] (BasicBlock* deleted) {
+            // Gotta delete the values in this block.
+            for (Value* value : *deleted)
+                deleteValue(value);
+        });
 }
 
 void Procedure::dump(PrintStream& out) const

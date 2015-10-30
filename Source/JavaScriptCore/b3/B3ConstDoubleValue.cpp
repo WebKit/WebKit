@@ -61,6 +61,20 @@ Value* ConstDoubleValue::subConstant(Procedure& proc, Value* other) const
     return proc.add<ConstDoubleValue>(origin(), m_value - other->asDouble());
 }
 
+Value* ConstDoubleValue::equalConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasDouble())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), m_value == other->asDouble());
+}
+
+Value* ConstDoubleValue::notEqualConstant(Procedure& proc, Value* other) const
+{
+    if (!other->hasDouble())
+        return nullptr;
+    return proc.add<Const32Value>(origin(), m_value != other->asDouble());
+}
+
 void ConstDoubleValue::dumpMeta(PrintStream& out) const
 {
     out.printf("%le", m_value);

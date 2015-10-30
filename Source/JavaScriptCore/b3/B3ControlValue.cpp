@@ -37,6 +37,19 @@ ControlValue::~ControlValue()
 {
 }
 
+void ControlValue::convertToJump(const FrequentedBlock& destination)
+{
+    unsigned index = this->index();
+    Origin origin = this->origin();
+    BasicBlock* owner = this->owner;
+
+    this->ControlValue::~ControlValue();
+
+    new (this) ControlValue(index, Jump, origin, destination);
+
+    this->owner = owner;
+}
+
 void ControlValue::dumpMeta(PrintStream& out) const
 {
     out.print(listDump(m_successors));

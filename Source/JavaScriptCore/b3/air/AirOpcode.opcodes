@@ -134,6 +134,22 @@ Move64ToDouble U:G, D:F
 MoveDoubleTo64 U:F, D:G
     Tmp, Tmp
 
+BranchTest32 U:G, U:G, U:G /branch
+    ResCond, Tmp, Tmp
+    ResCond, Tmp, Imm
+    ResCond, Addr, Imm
+    ResCond, Index, Imm
+
+BranchTest64 U:G, U:G, U:G /branch
+    ResCond, Tmp, Tmp
+    ResCond, Tmp, Imm
+    ResCond, Addr, Imm
+    ResCond, Addr, Tmp
+    ResCond, Index, Imm
+
+BranchDouble U:G, U:F, U:F /branch
+    DoubleCond, Tmp, Tmp
+
 BranchAdd32 U:G, U:G, UD:G /branch
     ResCond, Tmp, Tmp
     ResCond, Imm, Tmp

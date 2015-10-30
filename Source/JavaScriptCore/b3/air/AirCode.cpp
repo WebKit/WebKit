@@ -83,7 +83,11 @@ CCallSpecial* Code::cCallSpecial()
 
 void Code::resetReachability()
 {
-    B3::resetReachability(m_blocks);
+    B3::resetReachability(
+        m_blocks,
+        [&] (BasicBlock*) {
+            // We don't have to do anything special for deleted blocks.
+        });
 }
 
 void Code::dump(PrintStream& out) const
