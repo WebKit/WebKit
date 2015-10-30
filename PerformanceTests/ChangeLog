@@ -1,3 +1,17 @@
+2015-10-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Animometer computes frame rate incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=150698
+
+        Reviewed by Tim Horton.
+        
+        The existing code incremented this._frameCount after checking against this._dropFrameCount.
+        This has the effect of setting this._measureTimeOffset one frame too late, so
+        we were measuring only two frames, not three, and thus computing an incorrect fps.
+
+        * Animometer/tests/resources/main.js:
+        (Animator.prototype.animate):
+
 2015-10-27  Jon Lee  <jonlee@apple.com>
 
         Add an option to make the graphics benchmark runs a specific test

@@ -94,11 +94,11 @@ Animator.prototype =
         if (!this._frameCount)
             this._startTimeOffset = this._currentTimeOffset;
 
+        ++this._frameCount;
+
         // Start measuring after dropping _dropFrameCount frames.
         if (this._frameCount == this._dropFrameCount)
             this._measureTimeOffset = this._currentTimeOffset;
-
-        ++this._frameCount;
 
         // Drop _dropFrameCount frames and measure the average of _measureFrameCount frames.
         if (this._frameCount < this._dropFrameCount + this._measureFrameCount)
