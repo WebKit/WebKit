@@ -1,3 +1,15 @@
+2015-10-29  Michael Saboff  <msaboff@apple.com>
+
+        Crash making a tail call from a getter to a host function
+        https://bugs.webkit.org/show_bug.cgi?id=150663
+
+        Reviewed by Geoffrey Garen.
+
+        Change the inline assembly versions of getHostCallReturnValue() to pass the location of the callee
+        call frame to getHostCallReturnValueWithExecState().  We were passing the caller's frame address.
+
+        * jit/JITOperations.cpp:
+
 2015-10-29  Filip Pizlo  <fpizlo@apple.com>
 
         B3::LowerToAir::imm() should work for both 32-bit and 64-bit immediates

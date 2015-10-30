@@ -2135,7 +2135,7 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov %rbp, %rdi\n"
+    "lea -8(%rsp), %rdi\n"
     "jmp " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -2146,8 +2146,9 @@ asm (
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "push %ebp\n"
+    "mov %esp, %eax\n"
     "leal -4(%esp), %esp\n"
-    "push %ebp\n"
+    "push %eax\n"
     "call " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
     "leal 8(%esp), %esp\n"
     "pop %ebp\n"
@@ -2163,7 +2164,7 @@ HIDE_SYMBOL(getHostCallReturnValue) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov r0, r7" "\n"
+    "sub r0, sp, #8" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -2174,7 +2175,7 @@ asm (
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 INLINE_ARM_FUNCTION(getHostCallReturnValue)
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov r0, r11" "\n"
+    "sub r0, sp, #8" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -2185,7 +2186,7 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-     "mov x0, x29" "\n"
+     "sub x0, sp, #16" "\n"
      "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -2207,7 +2208,7 @@ asm (
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     LOAD_FUNCTION_TO_T9(getHostCallReturnValueWithExecState)
-    "move $a0, $fp" "\n"
+    "subi $a0, $sp, 8" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
@@ -2220,7 +2221,8 @@ asm (
 ".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
 HIDE_SYMBOL(getHostCallReturnValue) "\n"
 SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov r14, r4" "\n"
+    "mov r15, r4" "\n"
+    "add -8, r4" "\n"
     "mov.l 2f, " SH4_SCRATCH_REGISTER "\n"
     "braf " SH4_SCRATCH_REGISTER "\n"
     "nop" "\n"
@@ -2232,7 +2234,8 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
 extern "C" {
     __declspec(naked) EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValue()
     {
-        __asm mov [esp + 4], ebp;
+        __asm lea eax, [esp - 4]
+        __asm mov [esp + 4], eax;
         __asm jmp getHostCallReturnValueWithExecState
     }
 }
