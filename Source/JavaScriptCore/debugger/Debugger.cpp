@@ -58,6 +58,9 @@ struct GatherSourceProviders : public MarkedBlock::VoidFunctor {
         if (!function->executable()->isFunctionExecutable())
             return IterationStatus::Continue;
 
+        if (function->isHostOrBuiltinFunction())
+            return IterationStatus::Continue;
+
         sourceProviders.add(
             jsCast<FunctionExecutable*>(function->executable())->source().provider());
         return IterationStatus::Continue;

@@ -1,5 +1,17 @@
 2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Do not show JavaScriptCore builtins in inspector
+        https://bugs.webkit.org/show_bug.cgi?id=146049
+
+        Reviewed by Geoffrey Garen.
+
+        * debugger/Debugger.cpp:
+        When gathering scripts to notify the inspector / debuggers about
+        skip over sources containing host / built-in functions as those
+        for those won't contain source code developers expect to see.
+
+2015-10-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Fix typo in "use strict" in TypedArray builtins
         https://bugs.webkit.org/show_bug.cgi?id=150709
 
