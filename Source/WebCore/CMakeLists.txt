@@ -3607,7 +3607,6 @@ set(BUILTINS_GENERATOR_SCRIPTS
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_combined_implementation.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_header.py
     ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_implementation.py
-    ${JavaScriptCore_SCRIPTS_DIR}/builtins_generate_separate_wrapper.py
     ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
     ${JavaScriptCore_SCRIPTS_DIR}/lazywriter.py
 )
@@ -3617,14 +3616,12 @@ foreach (_builtinSource ${WebCore_BUILTINS_SOURCES})
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.cpp
                ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h
-               ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}BuiltinsWrapper.h 
         MAIN_DEPENDENCY ${_builtinSource}
         DEPENDS ${BUILTINS_GENERATOR_SCRIPTS}
         COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework WebCore --output-directory ${DERIVED_SOURCES_WEBCORE_DIR} ${_builtinSource}
         VERBATIM)
     list(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}Builtins.h
-        ${DERIVED_SOURCES_WEBCORE_DIR}/${_objectName}BuiltinsWrapper.h
     )
     ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/bindings/js/WebCoreJSBuiltins.cpp ${_objectName}Builtins.cpp)
 endforeach ()

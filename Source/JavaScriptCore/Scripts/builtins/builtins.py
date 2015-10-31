@@ -9,4 +9,3 @@ from builtins_generate_combined_header import *
 from builtins_generate_combined_implementation import *
 from builtins_generate_separate_header import *
 from builtins_generate_separate_implementation import *
-from builtins_generate_separate_wrapper import *

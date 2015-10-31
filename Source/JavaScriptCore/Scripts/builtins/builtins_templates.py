@@ -83,10 +83,10 @@ ${macroPrefix}_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
     """#define DECLARE_BUILTIN_GENERATOR(codeName, functionName, argumentCount) \\
     JSC::FunctionExecutable* codeName##Generator(JSC::VM&);
 
-${macroPrefix}_FOREACH_${objectName}_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
+${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 #undef DECLARE_BUILTIN_GENERATOR
 
-#define ${macroPrefix}_BUILTIN_${objectName}_EXISTS(object, func) defined ${macroPrefix}_BUILTIN_ ## object ## _ ## func""")
+#define ${macroPrefix}_BUILTIN_${objectMacro}_EXISTS(object, func) defined ${macroPrefix}_BUILTIN_ ## object ## _ ## func""")
 
     CombinedJSCImplementationStaticMacros = (
     """
@@ -134,7 +134,7 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
 """)
 
-    SeparateWrapperHeaderBoilerplate = (
+    SeparateHeaderWrapperBoilerplate = (
     """class ${objectName}BuiltinsWrapper : private JSC::WeakHandleOwner {
 public:
     explicit ${objectName}BuiltinsWrapper(JSC::VM* vm)

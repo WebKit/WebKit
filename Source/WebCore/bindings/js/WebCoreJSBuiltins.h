@@ -28,19 +28,19 @@
 #define WebCoreJSBuiltins_h
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaDevicesBuiltinsWrapper.h"
+#include "MediaDevicesBuiltins.h"
 #endif
 
 #if ENABLE(STREAMS_API)
-#include "ByteLengthQueuingStrategyBuiltinsWrapper.h"
-#include "CountQueuingStrategyBuiltinsWrapper.h"
-#include "ReadableStreamBuiltinsWrapper.h"
-#include "ReadableStreamControllerBuiltinsWrapper.h"
-#include "ReadableStreamInternalsBuiltinsWrapper.h"
-#include "ReadableStreamReaderBuiltinsWrapper.h"
-#include "StreamInternalsBuiltinsWrapper.h"
-#include "WritableStreamBuiltinsWrapper.h"
-#include "WritableStreamInternalsBuiltinsWrapper.h"
+#include "ByteLengthQueuingStrategyBuiltins.h"
+#include "CountQueuingStrategyBuiltins.h"
+#include "ReadableStreamBuiltins.h"
+#include "ReadableStreamControllerBuiltins.h"
+#include "ReadableStreamInternalsBuiltins.h"
+#include "ReadableStreamReaderBuiltins.h"
+#include "StreamInternalsBuiltins.h"
+#include "WritableStreamBuiltins.h"
+#include "WritableStreamInternalsBuiltins.h"
 #endif
 
 #include <runtime/VM.h>

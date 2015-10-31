@@ -1,3 +1,29 @@
+2015-10-31  Brian Burg  <bburg@apple.com>
+
+        Builtins generator should put WebCore-only wrappers in the per-builtin header
+        https://bugs.webkit.org/show_bug.cgi?id=150539
+
+        Reviewed by Youenn Fablet.
+
+        If generating for WebCore, put the XXXWrapper and related boilerplate
+        in the per-builtin header instead of making a separate XXXWrapper.h.
+
+        Rebaseline the tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Scripts/builtins/builtins.py:
+        * Scripts/builtins/builtins_generate_separate_header.py:
+        (BuiltinsSeparateHeaderGenerator.generate_output):
+        (generate_header_includes):
+        * Scripts/builtins/builtins_generate_separate_wrapper.py: Deleted.
+        * Scripts/builtins/builtins_templates.py: Be consistent with variables.
+        * Scripts/generate-js-builtins.py:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+
 2015-10-31  Saam barati  <sbarati@apple.com>
 
         JSC should have a forceGCSlowPaths option

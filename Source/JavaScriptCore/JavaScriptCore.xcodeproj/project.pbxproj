@@ -1372,7 +1372,6 @@
 		99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		99DA00AB1BD5993100F4575C /* builtins_generate_separate_wrapper.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00A21BD5992700F4575C /* builtins_generate_separate_wrapper.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AD1BD5993E00F4575C /* lazywriter.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AE1BD5993E00F4575C /* UpdateContents.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3432,7 +3431,6 @@
 		99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_combined_implementation.py; sourceTree = "<group>"; };
 		99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_header.py; sourceTree = "<group>"; };
 		99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_implementation.py; sourceTree = "<group>"; };
-		99DA00A21BD5992700F4575C /* builtins_generate_separate_wrapper.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_separate_wrapper.py; sourceTree = "<group>"; };
 		99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-js-builtins.py"; sourceTree = "<group>"; };
 		99DA00AD1BD5993E00F4575C /* lazywriter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = lazywriter.py; sourceTree = "<group>"; };
 		99DA00AE1BD5993E00F4575C /* UpdateContents.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = UpdateContents.py; sourceTree = "<group>"; };
@@ -6232,7 +6230,6 @@
 				99DA009F1BD5992700F4575C /* builtins_generate_combined_implementation.py */,
 				99DA00A01BD5992700F4575C /* builtins_generate_separate_header.py */,
 				99DA00A11BD5992700F4575C /* builtins_generate_separate_implementation.py */,
-				99DA00A21BD5992700F4575C /* builtins_generate_separate_wrapper.py */,
 				99DA009A1BD5992700F4575C /* builtins_generator.py */,
 				99DA009B1BD5992700F4575C /* builtins_model.py */,
 				99DA009C1BD5992700F4575C /* builtins_templates.py */,
@@ -6542,7 +6539,6 @@
 				99DA00A81BD5993100F4575C /* builtins_generate_combined_implementation.py in Headers */,
 				99DA00A91BD5993100F4575C /* builtins_generate_separate_header.py in Headers */,
 				99DA00AA1BD5993100F4575C /* builtins_generate_separate_implementation.py in Headers */,
-				99DA00AB1BD5993100F4575C /* builtins_generate_separate_wrapper.py in Headers */,
 				99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */,
 				99DA00A41BD5993100F4575C /* builtins_model.py in Headers */,
 				99DA00A51BD5993100F4575C /* builtins_templates.py in Headers */,

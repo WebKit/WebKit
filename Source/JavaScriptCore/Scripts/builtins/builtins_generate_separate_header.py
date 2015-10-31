@@ -31,6 +31,7 @@ import string
 from string import Template
 
 from builtins_generator import BuiltinsGenerator
+from builtins_model import Frameworks
 from builtins_templates import BuiltinsGeneratorTemplates as Templates
 
 log = logging.getLogger('global')
@@ -52,7 +53,8 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
             'namespace': self.model().framework.setting('namespace'),
             'headerGuard': self.output_filename().replace('.', '_'),
             'macroPrefix': self.macro_prefix(),
-            'objectName': self.object.object_name.upper(),
+            'objectName': self.object.object_name,
+            'objectMacro': self.object.object_name.upper(),
         }
 
         conditional_guard = self.object.annotations.get('conditional')
@@ -70,6 +72,8 @@ class BuiltinsSeparateHeaderGenerator(BuiltinsGenerator):
         sections.append(self.generate_section_for_code_table_macro())
         sections.append(self.generate_section_for_code_name_macro())
         sections.append(Template(Templates.SeparateHeaderStaticMacros).substitute(args))
+        if self.model().framework is Frameworks.WebCore:
+            sections.append(Template(Templates.SeparateHeaderWrapperBoilerplate).substitute(args))
         sections.append(Template(Templates.NamespaceBottom).substitute(args))
         if conditional_guard is not None:
             sections.append("#endif // %s" % conditional_guard)
@@ -85,7 +89,19 @@ class FunctionExecutable;
     def generate_secondary_header_includes(self):
         header_includes = [
             (["WebCore"],
+                ("JavaScriptCore", "bytecode/UnlinkedFunctionExecutable.h"),
+            ),
+
+            (["WebCore"],
                 ("JavaScriptCore", "builtins/BuiltinUtils.h"),
+            ),
+
+            (["WebCore"],
+                ("JavaScriptCore", "runtime/Identifier.h"),
+            ),
+
+            (["WebCore"],
+                ("JavaScriptCore", "runtime/JSFunction.h"),
             ),
         ]
 

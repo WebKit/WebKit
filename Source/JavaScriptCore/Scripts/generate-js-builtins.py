@@ -74,9 +74,6 @@ def generate_bindings_for_builtins_files(builtins_files=[],
             generators.append(BuiltinsSeparateHeaderGenerator(model, object))
             generators.append(BuiltinsSeparateImplementationGenerator(model, object))
 
-            if model.framework is Frameworks.WebCore:
-                generators.append(BuiltinsSeparateWrapperGenerator(model, object))
-
     log.debug("")
     log.debug("Generating bindings for builtins.")
 

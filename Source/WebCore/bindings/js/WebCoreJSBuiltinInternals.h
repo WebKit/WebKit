@@ -28,9 +28,9 @@
 #define WebCoreJSBuiltinInternals_h
 
 #if ENABLE(STREAMS_API)
-#include "ReadableStreamInternalsBuiltinsWrapper.h"
-#include "StreamInternalsBuiltinsWrapper.h"
-#include "WritableStreamInternalsBuiltinsWrapper.h"
+#include "ReadableStreamInternalsBuiltins.h"
+#include "StreamInternalsBuiltins.h"
+#include "WritableStreamInternalsBuiltins.h"
 #endif
 
 namespace WebCore {
