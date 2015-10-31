@@ -1,3 +1,13 @@
+2015-10-30  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Add the Air Opcode definitions to the Xcode project file
+        https://bugs.webkit.org/show_bug.cgi?id=150701
+
+        Reviewed by Geoffrey Garen.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Easier for those who use Xcode :)
+
 2015-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, removing FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=150540.
