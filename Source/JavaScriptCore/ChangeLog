@@ -1,3 +1,18 @@
+2015-10-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Test Debugger.scriptParsed events received after opening inspector frontend
+        https://bugs.webkit.org/show_bug.cgi?id=150753
+
+        Reviewed by Timothy Hatcher.
+
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        Only set the directives on the SourceProvider if we were parsing the
+        entire file (Program or Module), not if we are in function parsing mode.
+        This was inadvertently clearing the directives stored on the
+        SourceProvider when the function parse didn't see directives and reset
+        the values on the source provider.
+
 2015-10-30  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Add lowering for B3's Sub operation with integers
