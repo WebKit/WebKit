@@ -57,11 +57,13 @@ public:
     InstList::const_iterator begin() const { return m_insts.begin(); }
     InstList::const_iterator end() const { return m_insts.end(); }
 
-    const Inst& at(size_t index) const { return m_insts[index]; }
-    Inst& at(size_t index) { return m_insts[index]; }
+    const Inst& at(unsigned index) const { return m_insts[index]; }
+    Inst& at(unsigned index) { return m_insts[index]; }
 
     const Inst& last() const { return m_insts.last(); }
     Inst& last() { return m_insts.last(); }
+
+    void resize(unsigned size) { m_insts.resize(size); }
 
     template<typename Inst>
     void appendInst(Inst&& inst)

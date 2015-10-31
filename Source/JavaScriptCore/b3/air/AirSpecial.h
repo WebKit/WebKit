@@ -82,6 +82,9 @@ public:
 
     virtual const RegisterSet& extraClobberedRegs(Inst&) = 0;
 
+    // By default, this returns true.
+    virtual bool hasNonArgNonControlEffects();
+
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;
 

@@ -27,12 +27,12 @@ require "pathname"
 
 class Opcode
     attr_reader :name, :special, :overloads
-    attr_accessor :kind
+    attr_reader :attributes
 
     def initialize(name, special)
         @name = name
         @special = special
-        @kind = :inst
+        @attributes = {}
         unless special
             @overloads = []
         end
@@ -291,13 +291,15 @@ class Parser
                     }
                 end
 
-                if token == "/"
+                while token == "/"
                     consume("/")
                     case token.string
                     when "branch"
-                        opcode.kind = :branch
+                        opcode.attributes[:branch] = true
                     when "terminal"
-                        opcode.kind = :terminal
+                        opcode.attributes[:terminal] = true
+                    when "effects"
+                        opcode.attributes[:effects] = true
                     else
                         parseError("Bad / directive")
                     end
@@ -580,7 +582,7 @@ writeH("OpcodeUtils") {
     outp.puts "switch (opcode) {"
     $opcodes.values.each {
         | opcode |
-        if opcode.kind == :terminal or opcode.kind == :branch
+        if opcode.attributes[:terminal] or opcode.attributes[:branch]
             outp.puts "case #{opcode.name}:"
         end
     }
@@ -786,6 +788,50 @@ writeH("OpcodeGenerated") {
     outp.puts "return false;"
     outp.puts "}"
 
+    outp.puts "bool Inst::hasNonArgNonControlEffects()"
+    outp.puts "{"
+    outp.puts "switch (opcode) {"
+    $opcodes.values.each {
+        | opcode |
+        if opcode.attributes[:effects]
+            outp.puts "case #{opcode.name}:"
+        end
+    }
+    outp.puts "return true;"
+    $opcodes.values.each {
+        | opcode |
+        if opcode.special
+            outp.puts "case #{opcode.name}:"
+        end
+    }
+    outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
+    outp.puts "default:"
+    outp.puts "return false;"
+    outp.puts "}"
+    outp.puts "}"
+    
+    outp.puts "bool Inst::hasNonArgEffects()"
+    outp.puts "{"
+    outp.puts "switch (opcode) {"
+    $opcodes.values.each {
+        | opcode |
+        if opcode.attributes[:branch] or opcode.attributes[:terminal] or opcode.attributes[:effects]
+            outp.puts "case #{opcode.name}:"
+        end
+    }
+    outp.puts "return true;"
+    $opcodes.values.each {
+        | opcode |
+        if opcode.special
+            outp.puts "case #{opcode.name}:"
+        end
+    }
+    outp.puts "return args[0].special()->hasNonArgNonControlEffects();"
+    outp.puts "default:"
+    outp.puts "return false;"
+    outp.puts "}"
+    outp.puts "}"
+    
     outp.puts "CCallHelpers::Jump Inst::generate(CCallHelpers& jit, GenerationContext& context)"
     outp.puts "{"
     outp.puts "UNUSED_PARAM(jit);"
@@ -801,7 +847,7 @@ writeH("OpcodeGenerated") {
             else
                 methodName = opcode.masmName
             end
-            if opcode.kind == :branch
+            if opcode.attributes[:branch]
                 outp.print "result = "
             end
             outp.print "jit.#{methodName}("

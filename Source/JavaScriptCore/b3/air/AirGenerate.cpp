@@ -30,6 +30,7 @@
 
 #include "AirAllocateStack.h"
 #include "AirCode.h"
+#include "AirEliminateDeadCode.h"
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirReportUsedRegisters.h"
@@ -58,6 +59,8 @@ void generate(Code& code, CCallHelpers& jit)
     // This is where we run our optimizations and transformations.
     // FIXME: Add Air optimizations.
     // https://bugs.webkit.org/show_bug.cgi?id=150456
+    
+    eliminateDeadCode(code);
 
     // This is where we would have a real register allocator. Then, we could use spillEverything()
     // in place of the register allocator only for testing.

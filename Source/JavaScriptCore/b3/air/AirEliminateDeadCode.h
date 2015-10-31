@@ -23,52 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirSpecial.h"
+#ifndef AirEliminateDeadCode_h
+#define AirEliminateDeadCode_h
 
 #if ENABLE(B3_JIT)
 
-#include <wtf/StringPrintStream.h>
-
 namespace JSC { namespace B3 { namespace Air {
 
-const char* const Special::dumpPrefix = "&";
+class Code;
 
-Special::Special()
-    : m_index(UINT_MAX)
-{
-}
+// This eliminates instructions that have no observable effect. These are instructions whose only
+// effect would be storing to some Arg, except that we proved that the location specified by the Arg
+// is never loaded from. The only Args for which we can do such analysis are non-Reg Tmps and
+// anonymous StackSlots.
 
-Special::~Special()
-{
-}
-
-CString Special::name() const
-{
-    StringPrintStream out;
-    dumpImpl(out);
-    return out.toCString();
-}
-
-bool Special::hasNonArgNonControlEffects()
-{
-    return true;
-}
-
-void Special::dump(PrintStream& out) const
-{
-    out.print(dumpPrefix);
-    dumpImpl(out);
-    if (m_index != UINT_MAX)
-        out.print(m_index);
-}
-
-void Special::deepDump(PrintStream& out) const
-{
-    out.print(*this, ": ");
-    deepDumpImpl(out);
-}
+bool eliminateDeadCode(Code&);
 
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
+
+#endif // AirEliminateDeadCode_h
+

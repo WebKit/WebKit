@@ -1,3 +1,46 @@
+2015-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should eliminate dead code
+        https://bugs.webkit.org/show_bug.cgi?id=150746
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a very simple dead code elimination to Air. It simply looks at whether a Tmp or
+        StackSlot has ever been used by a live instruction. An instruction is live if it has non-arg
+        effects (branching, returning, calling, etc) or if it stores to a live Arg. An Arg is live if
+        it references a live Tmp or StackSlot, or if it is neither a Tmp nor a StackSlot. The phase
+        runs these rules to fixpoint, and then removes the dead instructions.
+
+        This also changes the AirOpcodes parser to handle multiple attributes per opcode, so that we
+        could conceivably say things like "FooBar /branch /effects". It also adds the /effects
+        attribute, which we currently use for Breakpoint and nothing else. C calls, patchpoints, and
+        checks are all Specials, and the Special base class by default always claims that the
+        instruction has effects. In the future, we could have B3 use a Patch in Air to implement
+        exotic math constructs; then the Special associated with that thing would claim that there
+        are no effects.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirBasicBlock.h:
+        (JSC::B3::Air::BasicBlock::begin):
+        (JSC::B3::Air::BasicBlock::end):
+        (JSC::B3::Air::BasicBlock::at):
+        (JSC::B3::Air::BasicBlock::last):
+        (JSC::B3::Air::BasicBlock::resize):
+        (JSC::B3::Air::BasicBlock::appendInst):
+        * b3/air/AirEliminateDeadCode.cpp: Added.
+        (JSC::B3::Air::eliminateDeadCode):
+        * b3/air/AirEliminateDeadCode.h: Added.
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirInst.h:
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirSpecial.cpp:
+        (JSC::B3::Air::Special::name):
+        (JSC::B3::Air::Special::hasNonArgNonControlEffects):
+        (JSC::B3::Air::Special::dump):
+        * b3/air/AirSpecial.h:
+        * b3/air/opcode_generator.rb:
+
 2015-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         Air needs a late register liveness phase that calls Special::reportUsedRegisters()
