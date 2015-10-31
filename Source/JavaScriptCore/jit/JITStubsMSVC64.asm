@@ -30,7 +30,7 @@ PUBLIC getHostCallReturnValue
 _TEXT   SEGMENT
 
 getHostCallReturnValue PROC
-    mov rcx, rbp
+    lea rcx, [rsp - 8]
     ; Allocate space for all 4 parameter registers, and align stack pointer to 16 bytes boundary by allocating another 8 bytes.
     ; The stack alignment is needed to fix a crash in the CRT library on a floating point instruction.
     sub rsp, 40
