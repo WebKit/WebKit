@@ -107,10 +107,28 @@ private:
 
             // Turn this: Add(constant1, constant2)
             // Into this: constant1 + constant2
-            replaceWithNewValue(m_value->child(0)->addConstant(m_proc, m_value->child(1)));
+            if (Value* constantAdd = m_value->child(0)->addConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constantAdd);
+                break;
+            }
+
+            // Turn this: Add(value, zero)
+            // Into an Identity.
+            if (m_value->child(1)->isInt(0)) {
+                m_value->replaceWithIdentity(m_value->child(0));
+                m_changed = true;
+                break;
+            }
             break;
 
         case Sub:
+            // Turn this: Sub(constant1, constant2)
+            // Into this: constant1 - constant2
+            if (Value* constantSub = m_value->child(0)->subConstant(m_proc, m_value->child(1))) {
+                replaceWithNewValue(constantSub);
+                break;
+            }
+
             // Turn this: Sub(value, constant)
             // Into this: Add(value, -constant)
             if (isInt(m_value->type())) {
@@ -122,9 +140,6 @@ private:
                 }
             }
 
-            // Turn this: Sub(constant1, constant2)
-            // Into this: constant1 - constant2
-            replaceWithNewValue(m_value->child(0)->subConstant(m_proc, m_value->child(1)));
             break;
 
         case Load8Z:

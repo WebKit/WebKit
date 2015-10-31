@@ -547,6 +547,21 @@ public:
             return false;
         }
     }
+
+    bool trySub(Value* left, Value* right)
+    {
+        switch (left->type()) {
+        case Int32:
+            appendBinOp<Sub32>(left, right);
+            return true;
+        case Int64:
+            appendBinOp<Sub64>(left, right);
+            return true;
+        default:
+            // FIXME: Implement more types!
+            return false;
+        }
+    }
     
     bool tryAnd(Value* left, Value* right)
     {
@@ -573,7 +588,18 @@ public:
             return false;
         }
     }
-    
+
+    bool tryStoreSubLoad(Value* left, Value* right, Value*)
+    {
+        switch (left->type()) {
+        case Int32:
+            return tryAppendStoreBinOp<Sub32, NotCommutative>(left, right);
+        default:
+            // FIXME: Implement more types!
+            return false;
+        }
+    }
+
     bool tryStoreAndLoad(Value* left, Value* right, Value*)
     {
         switch (left->type()) {

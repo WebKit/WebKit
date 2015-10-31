@@ -78,6 +78,17 @@ Add64 U:G, UD:G
 Add64 U:G, U:G, D:G
     Imm, Tmp, Tmp
 
+Sub32 U:G, UD:G
+    Tmp, Tmp
+    Imm, Addr
+    Imm, Tmp
+    Addr, Tmp
+    Tmp, Addr
+
+Sub64 U:G, UD:G
+    Tmp, Tmp
+    Imm, Tmp
+
 Lea UA:G, D:G
     Addr, Tmp
 

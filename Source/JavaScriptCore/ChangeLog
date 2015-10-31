@@ -1,5 +1,37 @@
 2015-10-30  Benjamin Poulain  <bpoulain@apple.com>
 
+        [JSC] Add lowering for B3's Sub operation with integers
+        https://bugs.webkit.org/show_bug.cgi?id=150749
+
+        Reviewed by Filip Pizlo.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::trySub):
+        (JSC::B3::Air::LowerToAir::tryStoreSubLoad):
+        * b3/B3LoweringMatcher.patterns:
+        Identical to Add but obviously NotCommutative.
+
+        * b3/B3ReduceStrength.cpp:
+        Turn Add/Sub with zero into an identity. I only added for
+        Add since Sub with a constant is always turned into an Add.
+
+        Also switched the Sub optimizations to put the strongest first.
+
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testAddArgImm):
+        (JSC::B3::testAddImmArg):
+        (JSC::B3::testSubArgs):
+        (JSC::B3::testSubArgImm):
+        (JSC::B3::testSubImmArg):
+        (JSC::B3::testSubArgs32):
+        (JSC::B3::testSubArgImm32):
+        (JSC::B3::testSubImmArg32):
+        (JSC::B3::testStoreSubLoad):
+        (JSC::B3::run):
+
+2015-10-30  Benjamin Poulain  <bpoulain@apple.com>
+
         [JSC] Add the Air Opcode definitions to the Xcode project file
         https://bugs.webkit.org/show_bug.cgi?id=150701
 

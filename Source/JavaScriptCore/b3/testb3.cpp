@@ -134,6 +134,34 @@ void testAddArgs(int a, int b)
     CHECK(compileAndRun<int>(proc, a, b) == a + b);
 }
 
+void testAddArgImm(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc, a) == a + b);
+}
+
+void testAddImmArg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<int>(proc, b) == a + b);
+}
+
 void testAddArgs32(int a, int b)
 {
     Procedure proc;
@@ -150,6 +178,98 @@ void testAddArgs32(int a, int b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
 
     CHECK(compileAndRun<int>(proc, a, b) == a + b);
+}
+
+void testSubArgs(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a - b);
+}
+
+void testSubArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Const64Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int64_t>(proc, a) == a - b);
+}
+
+void testSubImmArg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Const64Value>(proc, Origin(), a),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)));
+
+    CHECK(compileAndRun<int>(proc, b) == a - b);
+}
+
+void testSubArgs32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1))));
+
+    CHECK(compileAndRun<int>(proc, a, b) == a - b);
+}
+
+void testSubArgImm32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+            root->appendNew<Const32Value>(proc, Origin(), b)));
+
+    CHECK(compileAndRun<int>(proc, a) == a - b);
+}
+
+void testSubImmArg32(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<Const32Value>(proc, Origin(), a),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))));
+
+    CHECK(compileAndRun<int>(proc, b) == a - b);
 }
 
 void testStore(int value)
@@ -268,6 +388,30 @@ void testStoreAddLoad(int amount)
 
     CHECK(!compileAndRun<int>(proc));
     CHECK(slot == 37 + amount);
+}
+
+void testStoreSubLoad(int amount)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int32_t startValue = std::numeric_limits<int32_t>::min();
+    int32_t slot = startValue;
+    ConstPtrValue* slotPtr = root->appendNew<ConstPtrValue>(proc, Origin(), &slot);
+    root->appendNew<MemoryValue>(
+        proc, Store, Origin(),
+        root->appendNew<Value>(
+            proc, Sub, Origin(),
+            root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), slotPtr),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0))),
+        slotPtr);
+    root->appendNew<ControlValue>(
+        proc, Return, Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 0));
+
+    CHECK(!compileAndRun<int>(proc, amount));
+    CHECK(slot == startValue - amount);
 }
 
 void testStoreAddLoadInterference(int amount)
@@ -944,10 +1088,45 @@ void run(const char* filter)
     RUN(test42());
     RUN(testLoad42());
     RUN(testArg(43));
+
     RUN(testAddArgs(1, 1));
     RUN(testAddArgs(1, 2));
+    RUN(testAddArgImm(1, 2));
+    RUN(testAddArgImm(0, 2));
+    RUN(testAddArgImm(1, 0));
+    RUN(testAddImmArg(1, 2));
+    RUN(testAddImmArg(0, 2));
+    RUN(testAddImmArg(1, 0));
     RUN(testAddArgs32(1, 1));
     RUN(testAddArgs32(1, 2));
+
+    RUN(testSubArgs(1, 1));
+    RUN(testSubArgs(1, 2));
+    RUN(testSubArgs(13, -42));
+    RUN(testSubArgs(-13, 42));
+    RUN(testSubArgImm(1, 1));
+    RUN(testSubArgImm(1, 2));
+    RUN(testSubArgImm(13, -42));
+    RUN(testSubArgImm(-13, 42));
+    RUN(testSubArgImm(42, 0));
+    RUN(testSubImmArg(1, 1));
+    RUN(testSubImmArg(1, 2));
+    RUN(testSubImmArg(13, -42));
+    RUN(testSubImmArg(-13, 42));
+
+    RUN(testSubArgs32(1, 1));
+    RUN(testSubArgs32(1, 2));
+    RUN(testSubArgs32(13, -42));
+    RUN(testSubArgs32(-13, 42));
+    RUN(testSubArgImm32(1, 1));
+    RUN(testSubArgImm32(1, 2));
+    RUN(testSubArgImm32(13, -42));
+    RUN(testSubArgImm32(-13, 42));
+    RUN(testSubImmArg32(1, 1));
+    RUN(testSubImmArg32(1, 2));
+    RUN(testSubImmArg32(13, -42));
+    RUN(testSubImmArg32(-13, 42));
+
     RUN(testStore(44));
     RUN(testStoreConstant(49));
     RUN(testStoreConstantPtr(49));
@@ -956,6 +1135,7 @@ void run(const char* filter)
     RUN(testAdd1Ptr(51));
     RUN(testAdd1Ptr(bitwise_cast<intptr_t>(vm)));
     RUN(testStoreAddLoad(46));
+    RUN(testStoreSubLoad(46));
     RUN(testStoreAddLoadInterference(52));
     RUN(testStoreAddAndLoad(47, 0xffff));
     RUN(testStoreAddAndLoad(470000, 0xffff));
