@@ -32,6 +32,7 @@
 #include "AirCode.h"
 #include "AirGenerationContext.h"
 #include "AirHandleCalleeSaves.h"
+#include "AirReportUsedRegisters.h"
 #include "AirSpillEverything.h"
 #include "AirValidate.h"
 #include "B3Common.h"
@@ -75,9 +76,7 @@ void generate(Code& code, CCallHelpers& jit)
     // FIXME: We should really have a code layout optimization here.
     // https://bugs.webkit.org/show_bug.cgi?id=150478
 
-    // FIXME: We need a late liveness analysis over registers to fill in the
-    // Special::reportUsedRegisters().
-    // https://bugs.webkit.org/show_bug.cgi?id=150511
+    reportUsedRegisters(code);
 
     if (shouldValidateIR())
         validate(code);

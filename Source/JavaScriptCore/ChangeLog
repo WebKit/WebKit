@@ -1,3 +1,22 @@
+2015-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Air needs a late register liveness phase that calls Special::reportUsedRegisters()
+        https://bugs.webkit.org/show_bug.cgi?id=150511
+
+        Reviewed by Saam Barati.
+
+        This change adds such a phase. In the process of writing it, I was reminded about the
+        glaring efficiency bugs in Air::Liveness and so I filed a bug and added FIXMEs.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirReportUsedRegisters.cpp: Added.
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/air/AirReportUsedRegisters.h: Added.
+
 2015-10-31  Brian Burg  <bburg@apple.com>
 
         Builtins generator should put WebCore-only wrappers in the per-builtin header

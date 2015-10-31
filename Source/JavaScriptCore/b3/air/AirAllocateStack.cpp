@@ -141,6 +141,8 @@ void allocateStack(Code& code)
     }
 
     // Now we handle the anonymous slots.
+    // FIXME: We should tell Liveness to only track StackSlots.
+    // https://bugs.webkit.org/show_bug.cgi?id=150751
     Liveness<Arg> liveness(code);
     IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
     Vector<StackSlot*> slots;
