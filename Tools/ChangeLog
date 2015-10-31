@@ -1,3 +1,18 @@
+2015-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on supporting reply blocks in _WKRemoteObjectRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=150739
+
+        Reviewed by Tim Horton.
+
+        Add a test. We only test the encoding right now.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistry.h:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistry.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/RemoteObjectRegistryPlugIn.mm:
+        (-[RemoteObjectRegistryPlugIn sayHello:completionHandler:]):
+
 2015-10-30  Lucas Forschler  <lforschler@apple.com>
 
         Add CMAke builder to build.webkit.org

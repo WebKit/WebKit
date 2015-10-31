@@ -1,3 +1,31 @@
+2015-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Begin work on supporting reply blocks in _WKRemoteObjectRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=150739
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/Cocoa/BlockSPI.h:
+        Add SPI header.
+
+        * Shared/API/Cocoa/RemoteObjectInvocation.h:
+        (WebKit::RemoteObjectInvocation::ReplyInfo::ReplyInfo):
+        (WebKit::RemoteObjectInvocation::replyInfo):
+        * Shared/API/Cocoa/RemoteObjectInvocation.mm:
+        (WebKit::RemoteObjectInvocation::RemoteObjectInvocation):
+        (WebKit::RemoteObjectInvocation::encode):
+        (WebKit::RemoteObjectInvocation::decode):
+        Add an optional ReplyInfo struct to RemoteObjectInvocation.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (generateReplyIdentifier):
+        Helper function to generate a reply identifier.
+
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        Do some block parameter validation.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-10-30  Beth Dakin  <bdakin@apple.com>
 
         Link preview doesn't work on XHTML pages with Content-Type header as 

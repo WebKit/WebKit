@@ -35,9 +35,10 @@ RemoteObjectInvocation::RemoteObjectInvocation()
 {
 }
 
-RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation)
+RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&& replyInfo)
     : m_interfaceIdentifier(interfaceIdentifier)
     , m_encodedInvocation(WTF::move(encodedInvocation))
+    , m_replyInfo(WTF::move(replyInfo))
 {
 }
 
@@ -45,6 +46,11 @@ void RemoteObjectInvocation::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_interfaceIdentifier;
     UserData::encode(encoder, m_encodedInvocation.get());
+    if (m_replyInfo) {
+        encoder << true;
+        encoder << m_replyInfo->replyID;
+        encoder << m_replyInfo->blockSignature;
+    }
 }
 
 bool RemoteObjectInvocation::decode(IPC::ArgumentDecoder& decoder, RemoteObjectInvocation& result)
@@ -60,6 +66,22 @@ bool RemoteObjectInvocation::decode(IPC::ArgumentDecoder& decoder, RemoteObjectI
         return false;
 
     result.m_encodedInvocation = static_cast<API::Dictionary*>(encodedInvocation.get());
+
+    bool hasReplyInfo;
+    if (!decoder.decode(hasReplyInfo))
+        return false;
+
+    if (hasReplyInfo) {
+        uint64_t replyID;
+        if (!decoder.decode(replyID))
+            return false;
+
+        String blockSignature;
+        if (!decoder.decode(blockSignature))
+            return false;
+
+        result.m_replyInfo = std::make_unique<ReplyInfo>(replyID, WTF::move(blockSignature));
+    }
 
     return true;
 }
