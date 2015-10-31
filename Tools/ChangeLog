@@ -1,3 +1,12 @@
+2015-10-31  Lucas Forschler  <lforschler@apple.com>
+
+        Teach the CompileWebKit step to look for additional arguments.
+        
+        Unreviewed config change.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (CompileWebKit.start):
+
 2015-10-30  Anders Carlsson  <andersca@apple.com>
 
         Begin work on supporting reply blocks in _WKRemoteObjectRegistry
