@@ -242,7 +242,7 @@ IDBError MemoryIDBBackingStore::putRecord(const IDBResourceIdentifier& transacti
     return IDBError();
 }
 
-IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData, ThreadSafeDataBuffer& outValue)
+IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData, ThreadSafeDataBuffer& outValue)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::getRecord");
 
@@ -255,7 +255,7 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!objectStore)
         return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found"));
 
-    outValue = objectStore->valueForKey(keyData);
+    outValue = objectStore->valueForKeyRange(keyRangeData);
     return IDBError();
 }
 

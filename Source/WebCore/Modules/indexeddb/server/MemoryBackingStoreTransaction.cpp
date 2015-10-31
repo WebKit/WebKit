@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyRangeData.h"
 #include "IndexedDB.h"
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
@@ -133,7 +134,7 @@ void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& object
     if (!addResult.isNewEntry)
         return;
 
-    addResult.iterator->value = objectStore.valueForKey(key);
+    addResult.iterator->value = objectStore.valueForKeyRange(IDBKeyRangeData(key));
 }
 
 void MemoryBackingStoreTransaction::abort()

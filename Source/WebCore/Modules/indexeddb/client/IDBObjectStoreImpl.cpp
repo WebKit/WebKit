@@ -32,6 +32,7 @@
 #include "IDBBindingUtilities.h"
 #include "IDBError.h"
 #include "IDBKey.h"
+#include "IDBKeyRangeData.h"
 #include "IDBRequestImpl.h"
 #include "IDBTransactionImpl.h"
 #include "IndexedDB.h"
@@ -147,13 +148,39 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
         return nullptr;
     }
 
-    Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, *idbKey);
-    return adoptRef(request.leakRef());
+    Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, idbKey.get());
+    return WTF::move(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, IDBKeyRange* keyRange, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::get");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    if (m_deleted) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    IDBKeyRangeData keyRangeData(keyRange);
+    if (keyRangeData.isNull
+        || (!keyRangeData.lowerKey.isValid() && !keyRangeData.lowerKey.isNull())
+        || (!keyRangeData.upperKey.isValid() && !keyRangeData.upperKey.isNull())) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    Ref<IDBRequest> request = m_transaction->requestGetRecord(*context, *this, keyRangeData);
+    return WTF::move(request);
 }
 
 RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)

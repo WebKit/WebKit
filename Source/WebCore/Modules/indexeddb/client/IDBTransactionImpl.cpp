@@ -33,6 +33,7 @@
 #include "IDBDatabaseImpl.h"
 #include "IDBError.h"
 #include "IDBEventDispatcher.h"
+#include "IDBKeyRangeData.h"
 #include "IDBObjectStore.h"
 #include "IDBRequestImpl.h"
 #include "IDBResultData.h"
@@ -385,25 +386,25 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess);
 }
 
-Ref<IDBRequest> IDBTransaction::requestGetRecord(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBKey& key)
+Ref<IDBRequest> IDBTransaction::requestGetRecord(ScriptExecutionContext& context, IDBObjectStore& objectStore, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBTransaction::requestGetRecord");
     ASSERT(isActive());
-    ASSERT(key.isValid());
+    ASSERT(!keyRangeData.isNull);
 
     Ref<IDBRequest> request = IDBRequest::create(context, objectStore, *this);
 
-    auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, &key);
+    auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, keyRangeData);
     scheduleOperation(WTF::move(operation));
 
     return WTF::move(request);
 }
 
-void IDBTransaction::getRecordOnServer(TransactionOperation& operation, RefPtr<IDBKey> key)
+void IDBTransaction::getRecordOnServer(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
 {
     LOG(IndexedDB, "IDBTransaction::getRecordOnServer");
 
-    serverConnection().getRecord(operation, key);
+    serverConnection().getRecord(operation, keyRange);
 }
 
 void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultData& resultData)

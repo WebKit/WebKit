@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyRangeData.h"
 #include "IDBResultData.h"
 #include "IDBServer.h"
 #include "IDBTransactionInfo.h"
@@ -399,16 +400,16 @@ void UniqueIDBDatabase::didPerformPutOrAdd(uint64_t callbackIdentifier, const ID
     performKeyDataCallback(callbackIdentifier, error, resultKey);
 }
 
-void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKeyData& keyData, ValueDataCallback callback)
+void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData, ValueDataCallback callback)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getRecord");
 
     uint64_t callbackID = storeCallback(callback);
-    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyData));
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetRecord, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), keyRangeData));
 }
 
-void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyData& keyData)
+void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performGetRecord");
@@ -417,7 +418,7 @@ void UniqueIDBDatabase::performGetRecord(uint64_t callbackIdentifier, const IDBR
     ASSERT(objectStoreIdentifier);
 
     ThreadSafeDataBuffer valueData;
-    IDBError error = m_backingStore->getRecord(transactionIdentifier, objectStoreIdentifier, keyData, valueData);
+    IDBError error = m_backingStore->getRecord(transactionIdentifier, objectStoreIdentifier, keyRangeData, valueData);
 
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetRecord, callbackIdentifier, error, valueData));
 }

@@ -202,7 +202,7 @@ void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& ke
     transaction->putOrAdd(requestData, keyData, valueData, overwriteMode);
 }
 
-void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyData& keyData)
+void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBServer::getRecord");
 
@@ -210,7 +210,7 @@ void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyData& k
     if (!transaction)
         return;
 
-    transaction->getRecord(requestData, keyData);
+    transaction->getRecord(requestData, keyRangeData);
 }
 
 void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)

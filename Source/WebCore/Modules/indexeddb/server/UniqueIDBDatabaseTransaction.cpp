@@ -164,14 +164,14 @@ void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, c
     });
 }
 
-void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, const IDBKeyData& keyData)
+void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getRecord");
 
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     RefPtr<UniqueIDBDatabaseTransaction> self(this);
-    m_databaseConnection->database().getRecord(requestData, keyData, [this, self, requestData](const IDBError& error, const ThreadSafeDataBuffer& valueData) {
+    m_databaseConnection->database().getRecord(requestData, keyRangeData, [this, self, requestData](const IDBError& error, const ThreadSafeDataBuffer& valueData) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getRecord (callback)");
 
         if (error.isNull())

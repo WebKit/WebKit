@@ -73,7 +73,7 @@ public:
     void putOrAdd(TransactionOperation&, RefPtr<IDBKey>&, RefPtr<SerializedScriptValue>&, const IndexedDB::ObjectStoreOverwriteMode);
     void didPutOrAdd(const IDBResultData&);
 
-    void getRecord(TransactionOperation&, RefPtr<IDBKey>&);
+    void getRecord(TransactionOperation&, const IDBKeyRangeData&);
     void didGetRecord(const IDBResultData&);
 
     void commitTransaction(IDBTransaction&);

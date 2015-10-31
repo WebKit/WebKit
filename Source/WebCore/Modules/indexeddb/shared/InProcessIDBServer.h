@@ -62,7 +62,7 @@ public:
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) override final;
     virtual void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) override final;
     virtual void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) override final;
-    virtual void getRecord(const IDBRequestData&, IDBKey*) override final;
+    virtual void getRecord(const IDBRequestData&, const IDBKeyRangeData&) override final;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) override final;
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) override final;
 

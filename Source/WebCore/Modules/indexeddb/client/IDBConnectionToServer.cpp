@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequestImpl.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
@@ -153,14 +154,14 @@ void IDBConnectionToServer::didPutOrAdd(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
-void IDBConnectionToServer::getRecord(TransactionOperation& operation, RefPtr<IDBKey>& key)
+void IDBConnectionToServer::getRecord(TransactionOperation& operation, const IDBKeyRangeData& keyRangeData)
 {
     LOG(IndexedDB, "IDBConnectionToServer::getRecord");
 
-    ASSERT(key);
+    ASSERT(!keyRangeData.isNull);
 
     saveOperation(operation);
-    m_delegate->getRecord(IDBRequestData(operation), key.get());
+    m_delegate->getRecord(IDBRequestData(operation), keyRangeData);
 }
 
 void IDBConnectionToServer::didGetRecord(const IDBResultData& resultData)

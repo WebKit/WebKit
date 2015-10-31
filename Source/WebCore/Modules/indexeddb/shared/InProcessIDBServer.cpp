@@ -30,7 +30,7 @@
 
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
-#include "IDBKeyData.h"
+#include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequestImpl.h"
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
@@ -210,13 +210,12 @@ void InProcessIDBServer::putOrAdd(const IDBRequestData& requestData, IDBKey* key
     });
 }
 
-void InProcessIDBServer::getRecord(const IDBRequestData& requestData, IDBKey* key)
+void InProcessIDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     RefPtr<InProcessIDBServer> self(this);
-    IDBKeyData keyData(key);
 
-    RunLoop::current().dispatch([this, self, requestData, keyData] {
-        m_server->getRecord(requestData, keyData);
+    RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
+        m_server->getRecord(requestData, keyRangeData);
     });
 }
 

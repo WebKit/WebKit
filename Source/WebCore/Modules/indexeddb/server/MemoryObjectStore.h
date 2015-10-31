@@ -38,6 +38,8 @@ namespace WebCore {
 
 class IDBKeyData;
 
+struct IDBKeyRangeData;
+
 namespace IDBServer {
 
 class MemoryBackingStoreTransaction;
@@ -66,7 +68,7 @@ public:
     void clear();
     void replaceKeyValueStore(std::unique_ptr<KeyValueMap>&&);
 
-    ThreadSafeDataBuffer valueForKey(const IDBKeyData&) const;
+    ThreadSafeDataBuffer valueForKeyRange(const IDBKeyRangeData&) const;
 
     const IDBObjectStoreInfo& info() const { return m_info; }
 

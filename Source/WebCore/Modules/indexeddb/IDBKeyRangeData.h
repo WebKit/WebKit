@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class IDBKey;
+
 struct IDBKeyRangeData {
     IDBKeyRangeData()
         : isNull(true)
@@ -40,6 +42,9 @@ struct IDBKeyRangeData {
         , upperOpen(false)
     {
     }
+
+    IDBKeyRangeData(IDBKey*);
+    IDBKeyRangeData(const IDBKeyData&);
 
     IDBKeyRangeData(IDBKeyRange* keyRange)
         : isNull(!keyRange)

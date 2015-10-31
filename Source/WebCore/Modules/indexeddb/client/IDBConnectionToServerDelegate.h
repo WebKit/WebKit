@@ -43,6 +43,8 @@ namespace IndexedDB {
 enum class ObjectStoreOverwriteMode;
 }
 
+struct IDBKeyRangeData;
+
 namespace IDBClient {
 
 class IDBConnectionToServerDelegate {
@@ -58,7 +60,7 @@ public:
     virtual void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) = 0;
     virtual void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) = 0;
     virtual void putOrAdd(const IDBRequestData&, IDBKey*, SerializedScriptValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
-    virtual void getRecord(const IDBRequestData&, IDBKey*) = 0;
+    virtual void getRecord(const IDBRequestData&, const IDBKeyRangeData&) = 0;
     virtual void establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo&) = 0;
 
     virtual void databaseConnectionClosed(uint64_t databaseConnectionIdentifier) = 0;

@@ -43,6 +43,8 @@ namespace WebCore {
 class IDBObjectStoreInfo;
 class IDBResultData;
 
+struct IDBKeyRangeData;
+
 namespace IDBClient {
 
 class IDBDatabase;
@@ -88,7 +90,7 @@ public:
     Ref<IDBObjectStore> createObjectStore(const IDBObjectStoreInfo&);
 
     Ref<IDBRequest> requestPutOrAdd(ScriptExecutionContext&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
-    Ref<IDBRequest> requestGetRecord(ScriptExecutionContext&, IDBObjectStore&, IDBKey&);
+    Ref<IDBRequest> requestGetRecord(ScriptExecutionContext&, IDBObjectStore&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestClearObjectStore(ScriptExecutionContext&, IDBObjectStore&);
 
     void deleteObjectStore(const String& objectStoreName);
@@ -128,7 +130,7 @@ private:
     void putOrAddOnServer(TransactionOperation&, RefPtr<IDBKey>, RefPtr<SerializedScriptValue>, const IndexedDB::ObjectStoreOverwriteMode&);
     void didPutOrAddOnServer(IDBRequest&, const IDBResultData&);
 
-    void getRecordOnServer(TransactionOperation&, RefPtr<IDBKey>);
+    void getRecordOnServer(TransactionOperation&, const IDBKeyRangeData&);
     void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
 
     void deleteObjectStoreOnServer(TransactionOperation&, const String& objectStoreName);
