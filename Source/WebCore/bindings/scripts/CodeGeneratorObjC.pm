@@ -539,6 +539,7 @@ sub SkipFunction
     return 1 if $codeGenerator->GetArrayType($function->signature->type);
 
     return 1 if $function->signature->type eq "Promise";
+    return 1 if $function->signature->type eq "Symbol";
     return 1 if $function->signature->extendedAttributes->{"CustomBinding"};
 
     foreach my $param (@{$function->parameters}) {
@@ -562,6 +563,7 @@ sub SkipAttribute
     return 1 if $codeGenerator->IsTypedArrayType($type);
     return 1 if $codeGenerator->IsEnumType($type);
     return 1 if $type eq "EventHandler";
+    return 1 if $type eq "Symbol";
     return 1 if $attribute->isStatic;
 
     # This is for DynamicsCompressorNode.idl.

@@ -262,6 +262,8 @@ sub SkipAttribute {
 
     return 1 if $attribute->signature->type eq "EventHandler";
 
+    return 1 if $attribute->signature->type eq "Symbol";
+
     if ($attribute->signature->type eq "MediaQueryListListener") {
         return 1;
     }
@@ -370,6 +372,8 @@ sub SkipFunction {
     }
 
     return 1 if $function->signature->type eq "Promise";
+
+    return 1 if $function->signature->type eq "Symbol";
 
     return 1 if $function->signature->type eq "Date";
 

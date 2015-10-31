@@ -3938,6 +3938,7 @@ my %nativeType = (
     "byte" => "int8_t",
     "octet" => "uint8_t",
     "DOMTimeStamp" => "DOMTimeStamp",
+    "Symbol" => "PrivateName"
 );
 
 sub GetNativeType
@@ -4150,6 +4151,11 @@ sub NativeToJSValue
             die "Unknown value for TreatReturnedNaNDateAs extended attribute";
         }
         return "jsDateOrNull(state, $value)";
+    }
+
+    if ($type eq "Symbol") {
+        AddToImplIncludes("<runtime/Symbol.h>", $conditional);
+        return "Symbol::create(state->vm(), *($value).uid())";
     }
 
     if ($signature->extendedAttributes->{"Reflect"} and ($type eq "unsigned long" or $type eq "unsigned short")) {
