@@ -166,6 +166,10 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> prpEvent)
 
     m_hasPendingActivity = false;
 
+    // FIXME: When we implement reusable requests (for cursors) it will be incorrect to always remove the request from the transaction.
+    if (m_transaction)
+        m_transaction->removeRequest(*this);
+
     return dontPreventDefault;
 }
 

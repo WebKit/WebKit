@@ -48,7 +48,7 @@ public:
     void completed(const IDBResultData& data)
     {
         m_completeFunction(data);
-        m_transaction->scheduleOperationTimer();
+        m_transaction->operationDidComplete(*this);
     }
 
     const IDBResourceIdentifier& identifier() const { return m_identifier; }

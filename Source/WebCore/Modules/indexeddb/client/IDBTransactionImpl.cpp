@@ -207,6 +207,18 @@ bool IDBTransaction::isFinishedOrFinishing() const
         || m_state == IndexedDB::TransactionState::Finished;
 }
 
+void IDBTransaction::addRequest(IDBRequest& request)
+{
+    ASSERT(!m_openRequests.contains(&request));
+    m_openRequests.add(&request);
+}
+
+void IDBTransaction::removeRequest(IDBRequest& request)
+{
+    ASSERT(m_openRequests.contains(&request));
+    m_openRequests.remove(&request);
+}
+
 void IDBTransaction::scheduleOperation(RefPtr<TransactionOperation>&& operation)
 {
     ASSERT(!m_transactionOperationMap.contains(operation->identifier()));
@@ -236,6 +248,9 @@ void IDBTransaction::operationTimerFired()
 
         return;
     }
+
+    if (!m_transactionOperationMap.isEmpty() || !m_openRequests.isEmpty())
+        return;
 
     if (!isFinishedOrFinishing())
         commit();
@@ -393,6 +408,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(ScriptExecutionContext& context
     ASSERT(!keyRangeData.isNull);
 
     Ref<IDBRequest> request = IDBRequest::create(context, objectStore, *this);
+    addRequest(request.get());
 
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, keyRangeData);
     scheduleOperation(WTF::move(operation));
@@ -421,6 +437,7 @@ Ref<IDBRequest> IDBTransaction::requestClearObjectStore(ScriptExecutionContext& 
     ASSERT(isActive());
 
     Ref<IDBRequest> request = IDBRequest::create(context, objectStore, *this);
+    addRequest(request.get());
 
     uint64_t objectStoreIdentifier = objectStore.info().identifier();
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didClearObjectStoreOnServer, &IDBTransaction::clearObjectStoreOnServer, objectStoreIdentifier);
@@ -452,6 +469,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(ScriptExecutionContext& context,
     ASSERT(objectStore.info().autoIncrement() || key);
 
     Ref<IDBRequest> request = IDBRequest::create(context, objectStore, *this);
+    addRequest(request.get());
 
     auto operation = createTransactionOperation(*this, request.get(), &IDBTransaction::didPutOrAddOnServer, &IDBTransaction::putOrAddOnServer, key, &value, overwriteMode);
     scheduleOperation(WTF::move(operation));
@@ -501,6 +519,14 @@ void IDBTransaction::didDeleteObjectStoreOnServer(const IDBResultData& resultDat
 {
     LOG(IndexedDB, "IDBTransaction::didDeleteObjectStoreOnServer");
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::DeleteObjectStoreSuccess);
+}
+
+void IDBTransaction::operationDidComplete(TransactionOperation& operation)
+{
+    ASSERT(m_transactionOperationMap.get(operation.identifier()) == &operation);
+    m_transactionOperationMap.remove(operation.identifier());
+
+    scheduleOperationTimer();
 }
 
 void IDBTransaction::establishOnServer()

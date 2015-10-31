@@ -96,6 +96,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
     m_result = IDBAny::create(WTF::move(database));
     m_readyState = IDBRequestReadyState::Done;
     m_transaction = adoptRef(&transaction.leakRef());
+    m_transaction->addRequest(*this);
 
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, newVersion, eventNames().upgradeneededEvent));
 }

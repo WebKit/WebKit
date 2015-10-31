@@ -95,12 +95,15 @@ public:
 
     void deleteObjectStore(const String& objectStoreName);
 
+    void addRequest(IDBRequest&);
+    void removeRequest(IDBRequest&);
+
     IDBConnectionToServer& serverConnection();
 
     void activate();
     void deactivate();
 
-    void scheduleOperationTimer();
+    void operationDidComplete(TransactionOperation&);
 
 private:
     IDBTransaction(IDBDatabase&, const IDBTransactionInfo&);
@@ -138,6 +141,8 @@ private:
 
     void establishOnServer();
 
+    void scheduleOperationTimer();
+
     Ref<IDBDatabase> m_database;
     IDBTransactionInfo m_info;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
@@ -154,6 +159,8 @@ private:
     HashMap<IDBResourceIdentifier, RefPtr<TransactionOperation>> m_transactionOperationMap;
 
     HashMap<String, RefPtr<IDBObjectStore>> m_referencedObjectStores;
+
+    HashSet<RefPtr<IDBRequest>> m_openRequests;
 };
 
 class TransactionActivator {
