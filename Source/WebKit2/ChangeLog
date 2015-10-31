@@ -1,3 +1,35 @@
+2015-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Inner height behavior when the keyboard is shown should match on WKWebView and MobileSafari
+        https://bugs.webkit.org/show_bug.cgi?id=150634
+        <rdar://problem/23202254>
+
+        Reviewed by Benjamin Poulain.
+
+        Make WKWebView match behavior in Safari by not firing resize events and changing the inner height when showing
+        or hiding the keyboard. Previously, the WKWebView would do both of the above because we use the scroll view's
+        contentInset property when no unobscured insets are explicitly set for the WKWebView. To fix this, when updating
+        the visible content rect of a WKWebView for computing the inner height, we readjust the computed bottom inset
+        to not take the keyboard height into account. To know how much we need to readjust the inset by, we store the
+        total amount by which the scroll view's bottom inset has been adjusted due to the keyboard.
+
+        We perform this readjustment in _updateVisibleContentRects rather than in _computedContentInset since some users
+        of _computedContentInset may still expect the bottom inset to account for the keyboard height. However, when
+        updating visible content rects, we should not account for the keyboard height since we don't want the inner height
+        to change when showing or hiding the keyboard.
+
+        Lastly, while calling _adjustForAutomaticKeyboardInfo, we may end up calling _updateVisibleContentRects. This call
+        is unnecessary since we call it again immediately after _adjustForAutomaticKeyboardInfo, and it also complicates
+        the readjustment logic, so it makes sense to prevent the update from happening altogether while we are adjusting
+        the scroll view's insets due to keyboard changes. Altogether, these changes mean that the computed inner height
+        will no longer be adjusted for the keyboard height on WKWebViews, matching the behavior observed on mobile Safari.
+
+        Test: LayoutTests/fast/events/ios/keyboard-should-not-trigger-resize.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+
 2015-10-30  Anders Carlsson  <andersca@apple.com>
 
         Begin work on supporting reply blocks in _WKRemoteObjectRegistry

@@ -1,0 +1,8 @@
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Before showing the keyboard, window.innerHeight = 480
+After showing the keyboard, window.innerHeight = 480
+After hiding the keyboard, window.innerHeight = 480
+

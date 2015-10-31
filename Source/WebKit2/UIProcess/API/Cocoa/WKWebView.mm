@@ -86,6 +86,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TemporaryChange.h>
 
 #if PLATFORM(IOS)
 #import "_WKFrameHandleInternal.h"
@@ -211,6 +212,12 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     RetainPtr<UIView> _customContentFixedOverlayView;
 
     WebCore::Color _scrollViewBackgroundColor;
+
+    // This value tracks the current adjustment added to the bottom inset due to the keyboard sliding out from the bottom
+    // when computing obscured content insets. This is used when updating the visible content rects where we should not
+    // include this adjustment.
+    CGFloat _totalScrollViewBottomInsetAdjustmentForKeyboard;
+    BOOL _currentlyAdjustingScrollViewInsetsForKeyboard;
 
     BOOL _delayUpdateVisibleContentRects;
     BOOL _hadDelayedUpdateVisibleContentRects;
@@ -1671,19 +1678,20 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
     }
 
-    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)
-        return;
-
-    if (_needsResetViewStateAfterCommitLoadForMainFrame)
-        return;
-
-    if ([_scrollView isZoomBouncing])
+    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing
+        || _needsResetViewStateAfterCommitLoadForMainFrame
+        || [_scrollView isZoomBouncing]
+        || _currentlyAdjustingScrollViewInsetsForKeyboard)
         return;
 
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = _frozenVisibleContentRect ? _frozenVisibleContentRect.value() : [self convertRect:fullViewRect toView:_contentView.get()];
 
-    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+    UIEdgeInsets computedContentInsetUnadjustedForKeyboard = [self _computedContentInset];
+    if (!_haveSetObscuredInsets)
+        computedContentInsetUnadjustedForKeyboard.bottom -= _totalScrollViewBottomInsetAdjustmentForKeyboard;
+
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
     CGRect unobscuredRectInContentCoordinates = _frozenUnobscuredContentRect ? _frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()];
 
     CGFloat scaleFactor = contentZoomScale(self);
@@ -1699,7 +1707,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
         if (coordinator && coordinator->hasActiveSnapPoint()) {
             CGRect fullViewRect = self.bounds;
-            CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+            CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
             
             CGPoint currentPoint = [_scrollView contentOffset];
             CGPoint activePoint = coordinator->nearestActiveContentInsetAdjustedSnapPoint(unobscuredRect.origin.y, currentPoint);
@@ -1755,10 +1763,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     else
         _inputViewBounds = [self.window convertRect:CGRectIntersection([endFrameValue CGRectValue], self.window.screen.bounds) fromWindow:nil];
 
-    [self _updateVisibleContentRects];
-
-    if (adjustScrollView)
+    if (adjustScrollView) {
+        CGFloat bottomInsetBeforeAdjustment = [_scrollView contentInset].bottom;
+        TemporaryChange<BOOL> insetAdjustmentGuard(_currentlyAdjustingScrollViewInsetsForKeyboard, YES);
         [_scrollView _adjustForAutomaticKeyboardInfo:keyboardInfo animated:YES lastAdjustment:&_lastAdjustmentForScroller];
+        CGFloat bottomInsetAfterAdjustment = [_scrollView contentInset].bottom;
+        if (bottomInsetBeforeAdjustment != bottomInsetAfterAdjustment)
+            _totalScrollViewBottomInsetAdjustmentForKeyboard += bottomInsetAfterAdjustment - bottomInsetBeforeAdjustment;
+    }
+
+    [self _updateVisibleContentRects];
 }
 
 - (BOOL)_shouldUpdateKeyboardWithInfo:(NSDictionary *)keyboardInfo
