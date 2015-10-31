@@ -508,6 +508,7 @@ static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionAddressOf(ExecState*);
 #ifndef NDEBUG
@@ -668,6 +669,7 @@ protected:
         addFunction(vm, "gc", functionGCAndSweep, 0);
         addFunction(vm, "fullGC", functionFullGC, 0);
         addFunction(vm, "edenGC", functionEdenGC, 0);
+        addFunction(vm, "forceGCSlowPaths", functionForceGCSlowPaths, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
         addFunction(vm, "addressOf", functionAddressOf, 1);
 #ifndef NDEBUG
@@ -1184,6 +1186,14 @@ EncodedJSValue JSC_HOST_CALL functionEdenGC(ExecState* exec)
     JSLockHolder lock(exec);
     exec->heap()->collect(EdenCollection);
     return JSValue::encode(jsNumber(exec->heap()->sizeAfterLastEdenCollection()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionForceGCSlowPaths(ExecState*)
+{
+    // It's best for this to be the first thing called in the 
+    // JS program so the option is set to true before we JIT.
+    Options::forceGCSlowPaths() = true;
+    return JSValue::encode(jsUndefined());
 }
 
 EncodedJSValue JSC_HOST_CALL functionHeapSize(ExecState* exec)

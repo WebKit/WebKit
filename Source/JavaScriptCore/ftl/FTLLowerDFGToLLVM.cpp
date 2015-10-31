@@ -6411,18 +6411,25 @@ private:
     LValue allocateCell(LValue allocator, LBasicBlock slowPath)
     {
         LBasicBlock success = FTL_NEW_BLOCK(m_out, ("object allocation success"));
-        
-        LValue result = m_out.loadPtr(
-            allocator, m_heaps.MarkedAllocator_freeListHead);
-        
-        m_out.branch(m_out.notNull(result), usually(success), rarely(slowPath));
+    
+        LValue result;
+        LValue condition;
+        if (Options::forceGCSlowPaths()) {
+            result = getUndef(m_out.int64);
+            condition = m_out.booleanFalse;
+        } else {
+            result = m_out.loadPtr(
+                allocator, m_heaps.MarkedAllocator_freeListHead);
+            condition = m_out.notNull(result);
+        }
+        m_out.branch(condition, usually(success), rarely(slowPath));
         
         m_out.appendTo(success);
         
         m_out.storePtr(
             m_out.loadPtr(result, m_heaps.JSCell_freeListNext),
             allocator, m_heaps.MarkedAllocator_freeListHead);
-        
+
         return result;
     }
     

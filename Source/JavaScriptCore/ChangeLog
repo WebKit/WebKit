@@ -1,3 +1,36 @@
+2015-10-31  Saam barati  <sbarati@apple.com>
+
+        JSC should have a forceGCSlowPaths option
+        https://bugs.webkit.org/show_bug.cgi?id=150744
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements the forceGCSlowPaths option.
+        It defaults to false, but when it is set to true,
+        the JITs will always allocate objects along the slow
+        path. This will be helpful for writing a certain class
+        of tests. This may also come in handy for debugging
+        later.
+
+        This patch also adds the "forceGCSlowPaths" function
+        in jsc.cpp which sets the option to true. If you
+        use this function in a jsc stress test, it's best
+        to call it as the first thing in the program before
+        we JIT anything.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::allocateCell):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitAllocateJSObject):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionEdenGC):
+        (functionForceGCSlowPaths):
+        (functionHeapSize):
+        * runtime/Options.h:
+
 2015-10-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Test Debugger.scriptParsed events received after opening inspector frontend

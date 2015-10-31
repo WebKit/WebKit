@@ -880,8 +880,12 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(int src)
 template<typename StructureType>
 inline void JIT::emitAllocateJSObject(RegisterID allocator, StructureType structure, RegisterID result, RegisterID scratch)
 {
-    loadPtr(Address(allocator, MarkedAllocator::offsetOfFreeListHead()), result);
-    addSlowCase(branchTestPtr(Zero, result));
+    if (Options::forceGCSlowPaths())
+        addSlowCase(jump());
+    else {
+        loadPtr(Address(allocator, MarkedAllocator::offsetOfFreeListHead()), result);
+        addSlowCase(branchTestPtr(Zero, result));
+    }
 
     // remove the object from the free list
     loadPtr(Address(result), scratch);
