@@ -1,3 +1,9 @@
+2015-10-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, removing FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=150540.
+
+        * b3/B3ValueRep.h:
+
 2015-10-30  Michael Saboff  <msaboff@apple.com>
 
         Windows X86-64 change for Crash making a tail call from a getter to a host function

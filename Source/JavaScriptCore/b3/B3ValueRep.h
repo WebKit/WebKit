@@ -60,9 +60,6 @@ public:
 
         // As an input representation, this forces the value to end up in the argument area at some
         // offset.
-        // FIXME: The StackmapSpecial class needs to account for the fact that these don't turn into
-        // Air operands.
-        // https://bugs.webkit.org/show_bug.cgi?id=150540
         StackArgument,
 
         // As an output representation, this tells us that B3 constant-folded the value.
