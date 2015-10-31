@@ -88,7 +88,7 @@ private:
     double m_a1;
     double m_a2;
 
-#if OS(DARWIN)
+#if USE(ACCELERATE)
     void processFast(const float* sourceP, float* destP, size_t framesToProcess);
     void processSliceFast(double* sourceP, double* destP, double* coefficientsP, size_t framesToProcess);
 
