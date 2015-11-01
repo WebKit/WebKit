@@ -1076,13 +1076,13 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, %d, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), n0, registerName(r1).data());
             break;
         }
-        case op_put_getter_setter: {
+        case op_put_getter_setter_by_id: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
             int n0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "put_getter_setter");
+            printLocationAndOp(out, exec, location, it, "put_getter_setter_by_id");
             out.printf("%s, %s, %d, %s, %s", registerName(r0).data(), idName(id0, identifier(id0)).data(), n0, registerName(r1).data(), registerName(r2).data());
             break;
         }

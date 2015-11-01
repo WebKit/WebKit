@@ -1,3 +1,39 @@
+2015-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Rename op_put_getter_setter to op_put_getter_setter_by_id
+        https://bugs.webkit.org/show_bug.cgi?id=150773
+
+        Reviewed by Mark Lam.
+
+        Renaming op_put_getter_setter to op_put_getter_setter_by_id makes this op name consistent with
+        the other ops' names like op_put_getter_by_id etc.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutGetterSetter):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_getter_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+
 2015-10-31  Andreas Kling  <akling@apple.com>
 
         Add a debug overlay with information about web process resource usage.

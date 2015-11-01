@@ -67,7 +67,7 @@
             { "name" : "op_put_by_index", "length" : 4 },
             { "name" : "op_put_getter_by_id", "length" : 5 },
             { "name" : "op_put_setter_by_id", "length" : 5 },
-            { "name" : "op_put_getter_setter", "length" : 6 },
+            { "name" : "op_put_getter_setter_by_id", "length" : 6 },
             { "name" : "op_put_getter_by_val", "length" : 5 },
             { "name" : "op_put_setter_by_val", "length" : 5 },
             { "name" : "op_jmp", "length" : 2 },
