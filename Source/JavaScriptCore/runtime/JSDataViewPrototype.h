@@ -38,6 +38,8 @@ public:
 protected:
     JSDataViewPrototype(VM&, Structure*);
 
+    void finishCreation(VM&);
+
 public:
     static JSDataViewPrototype* create(VM&, Structure*);
     

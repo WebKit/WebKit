@@ -48,6 +48,8 @@ void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->deleteKeyword, protoFuncWeakSetDelete, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakSetHas, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->add, protoFuncWeakSetAdd, DontEnum, 1);
+
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakSet"), DontEnum | ReadOnly);
 }
 
 static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)

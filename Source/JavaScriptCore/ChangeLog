@@ -1,3 +1,70 @@
+2015-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        [ES6] Add support for toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=150696
+
+        Re-landing, as this wasn't the culprit.
+
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        (JSC::JSArrayBufferPrototype::create):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::create):
+        (JSC::JSDataViewPrototype::finishCreation):
+        (JSC::JSDataViewPrototype::createStructure):
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::finishCreation):
+        (JSC::JSPromisePrototype::getOwnPropertySlot):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::typedArrayViewProtoFuncValues):
+        (JSC::typedArrayViewProtoGetterFuncToStringTag):
+        (JSC::JSTypedArrayViewPrototype::JSTypedArrayViewPrototype):
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        (JSC::MapIteratorPrototypeFuncNext):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        (JSC::SetIteratorPrototypeFuncNext):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::SmallStrings):
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::typeString):
+        (JSC::SmallStrings::objectStringStart):
+        (JSC::SmallStrings::nullObjectString):
+        (JSC::SmallStrings::undefinedObjectString):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        (JSC::getWeakMapData):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        (JSC::getWeakMapData):
+        * tests/es6.yaml:
+        * tests/modules/namespace.js:
+        * tests/stress/symbol-tostringtag.js: Copied from Source/JavaScriptCore/tests/stress/symbol-tostringtag.js.
+
 2015-11-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r191815 and r191821.

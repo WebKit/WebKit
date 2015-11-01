@@ -26,6 +26,7 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSCInlines.h"
+#include "PropertySlot.h"
 #include "StructureRareDataInlines.h"
 
 namespace JSC {
@@ -242,6 +243,15 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(exec);
+
+    JSValue stringTag = thisObject->get(exec, exec->propertyNames().toStringTagSymbol);
+    if (stringTag.isString()) {
+        JSRopeString::RopeBuilder ropeBuilder(vm);
+        ropeBuilder.append(vm.smallStrings.objectStringStart());
+        ropeBuilder.append(jsCast<JSString*>(stringTag));
+        ropeBuilder.append(vm.smallStrings.singleCharacterString(']'));
+        return JSValue::encode(ropeBuilder.release());
+    }
 
     JSString* result = thisObject->structure(vm)->objectToStringValue();
     if (!result) {

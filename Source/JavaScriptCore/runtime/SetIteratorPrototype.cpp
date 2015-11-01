@@ -45,6 +45,7 @@ void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION(vm.propertyNames->next, SetIteratorPrototypeFuncNext, DontEnum, 0);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Set Iterator"), DontEnum | ReadOnly);
 }
 
 EncodedJSValue JSC_HOST_CALL SetIteratorPrototypeFuncNext(CallFrame* callFrame)
