@@ -271,51 +271,8 @@ void NetworkResourceLoader::abort()
     cleanup();
 }
 
-#if USE(NETWORK_SESSION)
-
-void NetworkResourceLoader::willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest& request, std::function<void(const WebCore::ResourceRequest&)> completionHandler)
+NetworkResourceLoader::ShouldContinueDidReceiveResponse NetworkResourceLoader::sharedDidReceiveResponse(const WebCore::ResourceResponse& receivedResponse)
 {
-    notImplemented();
-    completionHandler(request);
-}
-
-void NetworkResourceLoader::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> completionHandler)
-{
-    notImplemented();
-    completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, WebCore::Credential());
-}
-
-void NetworkResourceLoader::didReceiveResponse(WebCore::ResourceResponse& response, std::function<void(ResponseDisposition)> completionHandler)
-{
-    ASSERT(isMainThread());
-    m_response = response;
-    m_response.setSource(ResourceResponse::Source::Network);
-    if (m_parameters.needsCertificateInfo)
-        m_response.includeCertificateInfo();
-    
-    bool shouldWaitContinueDidReceiveResponse = originalRequest().requester() == ResourceRequest::Requester::Main;
-    if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse)))
-        return;
-    completionHandler(ResponseDisposition::Allow);
-}
-
-void NetworkResourceLoader::didReceiveData(RefPtr<WebCore::SharedBuffer> buffer)
-{
-    ASSERT(buffer);
-    sendBufferMaybeAborting(*buffer, buffer->size());
-}
-
-void NetworkResourceLoader::didCompleteWithError(const WebCore::ResourceError&)
-{
-    send(Messages::WebResourceLoader::DidFinishResourceLoad(WTF::monotonicallyIncreasingTime()));
-}
-
-#else
-
-void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)
-{
-    ASSERT_UNUSED(handle, handle == m_handle);
-
     m_response = receivedResponse;
 
     m_response.setSource(ResourceResponse::Source::Network);
@@ -350,7 +307,7 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
             m_synchronousLoadData->response = m_response;
         else {
             if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(m_response, shouldWaitContinueDidReceiveResponse)))
-                return;
+                return ShouldContinueDidReceiveResponse::No;
         }
     }
 
@@ -360,21 +317,12 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
     shouldContinueDidReceiveResponse = shouldContinueDidReceiveResponse || m_cacheEntryForValidation;
 #endif
     if (!shouldContinueDidReceiveResponse)
-        return;
-
-    m_handle->continueDidReceiveResponse();
+        return ShouldContinueDidReceiveResponse::No;
+    return ShouldContinueDidReceiveResponse::Yes;
 }
 
-void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int /* encodedDataLength */)
+void NetworkResourceLoader::sharedDidReceiveBuffer(RefPtr<WebCore::SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
-    // The NetworkProcess should never get a didReceiveData callback.
-    // We should always be using didReceiveBuffer.
-    ASSERT_NOT_REACHED();
-}
-
-void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<SharedBuffer> buffer, int reportedEncodedDataLength)
-{
-    ASSERT_UNUSED(handle, handle == m_handle);
 #if ENABLE(NETWORK_CACHE)
     ASSERT(!m_cacheEntryForValidation);
 
@@ -400,10 +348,8 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
     sendBufferMaybeAborting(*buffer, encodedDataLength);
 }
 
-void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double finishTime)
+void NetworkResourceLoader::sharedDidFinishLoading(double finishTime)
 {
-    ASSERT_UNUSED(handle, handle == m_handle);
-
 #if ENABLE(NETWORK_CACHE)
     if (NetworkCache::singleton().isEnabled()) {
         if (m_cacheEntryForValidation) {
@@ -457,9 +403,9 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
     cleanup();
 }
 
-void NetworkResourceLoader::didFail(ResourceHandle* handle, const ResourceError& error)
+void NetworkResourceLoader::sharedDidFail(const WebCore::ResourceError& error)
 {
-    ASSERT_UNUSED(handle, !handle || handle == m_handle);
+    ASSERT(!error.isNull());
 
 #if ENABLE(NETWORK_CACHE)
     m_cacheEntryForValidation = nullptr;
@@ -474,10 +420,8 @@ void NetworkResourceLoader::didFail(ResourceHandle* handle, const ResourceError&
     cleanup();
 }
 
-void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& redirectResponse)
+void NetworkResourceLoader::sharedWillSendRedirectedRequest(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
-    ASSERT_UNUSED(handle, handle == m_handle);
-
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
@@ -500,6 +444,81 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
         return;
     }
     sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(m_currentRequest, redirectResponse));
+}
+    
+#if USE(NETWORK_SESSION)
+
+void NetworkResourceLoader::willPerformHTTPRedirection(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, std::function<void(const WebCore::ResourceRequest&)> completionHandler)
+{
+    sharedWillSendRedirectedRequest(request, response);
+    completionHandler(request);
+}
+
+void NetworkResourceLoader::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> completionHandler)
+{
+    notImplemented();
+    completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, WebCore::Credential());
+}
+
+void NetworkResourceLoader::didReceiveResponse(const WebCore::ResourceResponse& response, std::function<void(ResponseDisposition)> completionHandler)
+{
+    ASSERT(isMainThread());
+    sharedDidReceiveResponse(response);
+    completionHandler(ResponseDisposition::Allow);
+}
+
+void NetworkResourceLoader::didReceiveData(RefPtr<WebCore::SharedBuffer>&& buffer)
+{
+    ASSERT(buffer);
+    sharedDidReceiveBuffer(WTF::move(buffer), buffer->size());
+}
+
+void NetworkResourceLoader::didCompleteWithError(const WebCore::ResourceError& error)
+{
+    if (error.isNull())
+        sharedDidFinishLoading(WTF::monotonicallyIncreasingTime());
+    else
+        sharedDidFail(error);
+}
+
+#else
+
+void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse& receivedResponse)
+{
+    ASSERT_UNUSED(handle, handle == m_handle);
+    if (sharedDidReceiveResponse(receivedResponse) == ShouldContinueDidReceiveResponse::Yes)
+        m_handle->continueDidReceiveResponse();
+}
+
+void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* /* data */, unsigned /* length */, int /* encodedDataLength */)
+{
+    // The NetworkProcess should never get a didReceiveData callback.
+    // We should always be using didReceiveBuffer.
+    ASSERT_NOT_REACHED();
+}
+
+void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<WebCore::SharedBuffer> buffer, int reportedEncodedDataLength)
+{
+    ASSERT_UNUSED(handle, handle == m_handle);
+    sharedDidReceiveBuffer(WTF::move(buffer), reportedEncodedDataLength);
+}
+
+void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double finishTime)
+{
+    ASSERT_UNUSED(handle, handle == m_handle);
+    sharedDidFinishLoading(finishTime);
+}
+
+void NetworkResourceLoader::didFail(ResourceHandle* handle, const ResourceError& error)
+{
+    ASSERT_UNUSED(handle, !handle || handle == m_handle);
+    sharedDidFail(error);
+}
+
+void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    ASSERT_UNUSED(handle, handle == m_handle);
+    sharedWillSendRedirectedRequest(request, redirectResponse);
 }
 
 #endif // USE(NETWORK_SESSION)

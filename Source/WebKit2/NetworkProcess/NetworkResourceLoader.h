@@ -133,12 +133,22 @@ private:
     virtual IPC::Connection* messageSenderConnection() override;
     virtual uint64_t messageSenderDestinationID() override { return m_parameters.identifier; }
 
+    enum ShouldContinueDidReceiveResponse {
+        Yes,
+        No
+    };
+    ShouldContinueDidReceiveResponse sharedDidReceiveResponse(const WebCore::ResourceResponse&);
+        void sharedWillSendRedirectedRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+    void sharedDidReceiveBuffer(RefPtr<WebCore::SharedBuffer>&&, int reportedEncodedDataLength);
+    void sharedDidFail(const WebCore::ResourceError&);
+    void sharedDidFinishLoading(double finishTime);
+
 #if USE(NETWORK_SESSION)
     // NetworkSessionTaskClient.
     virtual void willPerformHTTPRedirection(const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, std::function<void(const WebCore::ResourceRequest&)>) final override;
     virtual void didReceiveChallenge(const WebCore::AuthenticationChallenge&, std::function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>) final override;
-    virtual void didReceiveResponse(WebCore::ResourceResponse&, std::function<void(ResponseDisposition)>) final override;
-    virtual void didReceiveData(RefPtr<WebCore::SharedBuffer>) final override;
+    virtual void didReceiveResponse(const WebCore::ResourceResponse&, std::function<void(ResponseDisposition)>) final override;
+    virtual void didReceiveData(RefPtr<WebCore::SharedBuffer>&&) final override;
     virtual void didCompleteWithError(const WebCore::ResourceError&) final override;
 #else
     // ResourceHandleClient

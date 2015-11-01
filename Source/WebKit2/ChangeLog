@@ -1,3 +1,36 @@
+2015-10-31  Alex Christensen  <achristensen@webkit.org>
+
+        Share more code between NETWORK_SESSION and non-NETWORK_SESSION NetworkResourceLoaders
+        https://bugs.webkit.org/show_bug.cgi?id=150742
+
+        Reviewed by Darin Adler.
+
+        r191457 added enough code to NetworkResourceLoader to load most resources successfully if there are no errors.
+        It passed about 80% of LayoutTests/http and crashed sometimes.
+        This passes about 95% of LayoutTests/http and does not crash on any of the LayoutTests/http.
+        It should not change behavior of the non-NETWORK_SESSION code which is currently the default in trunk.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::abort):
+        (WebKit::NetworkResourceLoader::sharedDidReceiveResponse):
+        (WebKit::NetworkResourceLoader::sharedDidReceiveBuffer):
+        (WebKit::NetworkResourceLoader::sharedDidFinishLoading):
+        (WebKit::NetworkResourceLoader::sharedDidFail):
+        (WebKit::NetworkResourceLoader::sharedWillSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::willPerformHTTPRedirection):
+        (WebKit::NetworkResourceLoader::didReceiveChallenge):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveData):
+        (WebKit::NetworkResourceLoader::didCompleteWithError):
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::NetworkResourceLoader::willSendRequestAsync):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSessionTaskClient::~NetworkSessionTaskClient):
+
 2015-10-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Inner height behavior when the keyboard is shown should match on WKWebView and MobileSafari
