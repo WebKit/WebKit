@@ -99,12 +99,6 @@ JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, Structure* structure)
     return prototype;
 }
 
-void JSDataViewPrototype::finishCreation(JSC::VM& vm)
-{
-    Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "DataView"), DontEnum | ReadOnly);
-}
-
 Structure* JSDataViewPrototype::createStructure(
     VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

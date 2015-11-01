@@ -109,7 +109,6 @@ public:
         return nullptr;
     }
 
-    JSString* objectStringStart() const { return m_objectStringStart; }
     JSString* nullObjectString() const { return m_nullObjectString; }
     JSString* undefinedObjectString() const { return m_undefinedObjectString; }
 
@@ -132,7 +131,6 @@ private:
 #define JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION(name) JSString* m_##name;
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION
-    JSString* m_objectStringStart;
     JSString* m_nullObjectString;
     JSString* m_undefinedObjectString;
     JSString* m_singleCharacterStrings[singleCharacterStringCount];

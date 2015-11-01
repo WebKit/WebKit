@@ -50,8 +50,6 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION(vm.propertyNames->get, protoFuncWeakMapGet, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->has, protoFuncWeakMapHas, DontEnum, 1);
     JSC_NATIVE_FUNCTION(vm.propertyNames->set, protoFuncWeakMapSet, DontEnum, 2);
-
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakMap"), DontEnum | ReadOnly);
 }
 
 static WeakMapData* getWeakMapData(CallFrame* callFrame, JSValue value)

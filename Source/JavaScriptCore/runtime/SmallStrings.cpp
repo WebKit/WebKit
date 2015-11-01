@@ -66,7 +66,6 @@ SmallStrings::SmallStrings()
 #define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) , m_##name(0)
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
-    , m_objectStringStart(nullptr)
     , m_nullObjectString(nullptr)
     , m_undefinedObjectString(nullptr)
     , m_needsToBeVisited(true)
@@ -85,7 +84,6 @@ void SmallStrings::initializeCommonStrings(VM& vm)
 #define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&vm, m_##name, #name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
-    initialize(&vm, m_objectStringStart, "[object ");
     initialize(&vm, m_nullObjectString, "[object Null]");
     initialize(&vm, m_undefinedObjectString, "[object Undefined]");
 }
@@ -99,7 +97,6 @@ void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
 #define JSC_COMMON_STRINGS_ATTRIBUTE_VISIT(name) visitor.appendUnbarrieredPointer(&m_##name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_VISIT)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_VISIT
-    visitor.appendUnbarrieredPointer(&m_objectStringStart);
     visitor.appendUnbarrieredPointer(&m_nullObjectString);
     visitor.appendUnbarrieredPointer(&m_undefinedObjectString);
 }

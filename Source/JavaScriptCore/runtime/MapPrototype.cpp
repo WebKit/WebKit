@@ -75,7 +75,6 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSFunction* entries = JSFunction::create(vm, globalObject, 0, vm.propertyNames->entries.string(), mapProtoFuncEntries);
     putDirectWithoutTransition(vm, vm.propertyNames->entries, entries, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, entries, DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Map"), DontEnum | ReadOnly);
 
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     JSFunction* function = JSFunction::create(vm, globalObject, 0, vm.propertyNames->size.string(), mapProtoFuncSize);

@@ -256,12 +256,12 @@
     macro(search) \
     macro(species) \
     macro(split) \
-    macro(toPrimitive)
+    macro(toPrimitive) \
+    macro(toStringTag)
 
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_WELL_KNOWN_SYMBOL(macro) \
     macro(iterator) \
-    macro(unscopables) \
-    macro(toStringTag)
+    macro(unscopables)
 
 #define JSC_COMMON_BYTECODE_INTRINSICS_EACH_NAME(macro) \
     macro(putByValDirect) \

@@ -72,7 +72,6 @@ void JSModuleNamespaceObject::finishCreation(VM& vm, JSGlobalObject* globalObjec
 
     m_moduleRecord.set(vm, this, moduleRecord);
     JSC_NATIVE_FUNCTION(vm.propertyNames->iteratorSymbol, moduleNamespaceObjectSymbolIterator, DontEnum, 0);
-    putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), DontEnum | ReadOnly);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getprototypeof
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-setprototypeof-v

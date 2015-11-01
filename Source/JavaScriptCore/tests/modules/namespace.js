@@ -55,9 +55,8 @@ shouldBe(Reflect.getPrototypeOf(namespace), null);
 
 // These names should be shown in the code point order.
 shouldBe(JSON.stringify(Object.getOwnPropertyNames(namespace)), `["Cappuccino","Cocoa","Matcha","Mocha","default"]`);
-shouldBe(Object.getOwnPropertySymbols(namespace).length, 2);
+shouldBe(Object.getOwnPropertySymbols(namespace).length, 1);
 shouldBe(Object.getOwnPropertySymbols(namespace)[0], Symbol.iterator);
-shouldBe(Object.getOwnPropertySymbols(namespace)[1], Symbol.toStringTag);
 
 shouldBe(typeof namespace[Symbol.iterator], 'function');
 var array = Array.from(namespace);

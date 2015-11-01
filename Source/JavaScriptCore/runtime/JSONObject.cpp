@@ -63,8 +63,6 @@ void JSONObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "JSON"), DontEnum | ReadOnly);
 }
 
 // PropertyNameForFunctionCall objects must be on the stack, since the JSValue that they create is not marked.

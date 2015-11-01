@@ -74,7 +74,6 @@ JSPromisePrototype::JSPromisePrototype(VM& vm, Structure* structure)
 void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Promise"), DontEnum | ReadOnly);
 }
 
 bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
