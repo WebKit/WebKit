@@ -44,8 +44,11 @@ PluginInfoCache& PluginInfoCache::singleton()
 
 PluginInfoCache::PluginInfoCache()
     : m_cacheFile(g_key_file_new())
+    , m_saveToFileIdle(RunLoop::main(), this, &PluginInfoCache::saveToFile)
     , m_readOnlyMode(false)
 {
+    m_saveToFileIdle.setPriority(G_PRIORITY_DEFAULT_IDLE);
+
     GUniquePtr<char> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", nullptr));
     if (WebCore::makeAllDirectories(cacheDirectory.get())) {
         m_cachePath.reset(g_build_filename(cacheDirectory.get(), "plugins", nullptr));
@@ -71,16 +74,10 @@ PluginInfoCache::PluginInfoCache()
 
 PluginInfoCache::~PluginInfoCache()
 {
-    if (m_saveToFileIdle.isScheduled()) {
-        m_saveToFileIdle.cancel();
-        saveToFile();
-    }
 }
 
 void PluginInfoCache::saveToFile()
 {
-    std::lock_guard<Lock> lock(m_mutex);
-
     gsize dataLength;
     GUniquePtr<char> data(g_key_file_to_data(m_cacheFile.get(), &dataLength, nullptr));
     if (!data)
@@ -142,11 +139,10 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
     if (m_cachePath && !m_readOnlyMode) {
         // Save the cache file in an idle to make sure it happens in the main thread and
         // it's done only once when this is called multiple times in a very short time.
-        std::lock_guard<Lock> lock(m_mutex);
-        if (m_saveToFileIdle.isScheduled())
+        if (m_saveToFileIdle.isActive())
             return;
 
-        m_saveToFileIdle.schedule("[WebKit] PluginInfoCache::saveToFile", std::bind(&PluginInfoCache::saveToFile, this), G_PRIORITY_DEFAULT_IDLE);
+        m_saveToFileIdle.startOneShot(0);
     }
 }
 

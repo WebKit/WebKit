@@ -1,5 +1,28 @@
 2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use RunLoop::Timer in PluginInfoCache
+        https://bugs.webkit.org/show_bug.cgi?id=150757
+
+        Reviewed by Darin Adler.
+
+        Use RunLoop::Timer instead of GMainLoopSource to save the cache
+        contents in an idle. Also remove the mutex, since RunLoop::Timer
+        is thread safe and saveToFile() is private and only called by the
+        main thread loop. Also removed the code to save the file in the
+        destructor since PluginInfoCache is a singleton and never
+        destroyed. It's very unlikely that the program finished before the
+        cache is saved, but even if that happens it would be harmless, the
+        cache will be saved at some point the next time.
+
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::PluginInfoCache):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        (WebKit::PluginInfoCache::~PluginInfoCache):
+        (WebKit::PluginInfoCache::saveToFile):
+        * UIProcess/Plugins/gtk/PluginInfoCache.h:
+
+2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use a RunLoop::Timer to schedule rendering frames in accelerated compositing mode
         https://bugs.webkit.org/show_bug.cgi?id=150756
 
