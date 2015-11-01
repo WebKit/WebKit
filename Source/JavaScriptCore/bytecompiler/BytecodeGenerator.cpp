@@ -2170,7 +2170,7 @@ void BytecodeGenerator::emitPutGetterSetter(RegisterID* base, const Identifier& 
 
     m_staticPropertyAnalyzer.putById(base->index(), propertyIndex);
 
-    emitOpcode(op_put_getter_setter_by_id);
+    emitOpcode(op_put_getter_setter);
     instructions().append(base->index());
     instructions().append(propertyIndex);
     instructions().append(attributes);

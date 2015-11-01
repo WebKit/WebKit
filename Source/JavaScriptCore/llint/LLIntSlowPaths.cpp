@@ -861,7 +861,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_id)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter_by_id)
+LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
 {
     LLINT_BEGIN();
     ASSERT(LLINT_OP(1).jsValue().isObject());

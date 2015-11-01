@@ -1,3 +1,16 @@
+2015-11-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r191858.
+        https://bugs.webkit.org/show_bug.cgi?id=150780
+
+        Broke the build (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Rename op_put_getter_setter to op_put_getter_setter_by_id"
+        https://bugs.webkit.org/show_bug.cgi?id=150773
+        http://trac.webkit.org/changeset/191858
+
 2015-11-01  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, add a FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=150777.
