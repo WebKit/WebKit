@@ -41,6 +41,7 @@ class ScriptValue;
 
 namespace JSC {
 class ExecState;
+class JSValue;
 }
 
 namespace WebCore {
@@ -66,8 +67,8 @@ public:
     virtual RefPtr<IDBTransaction> transaction() = 0;
     virtual bool autoIncrement() const = 0;
 
-    virtual RefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
@@ -76,8 +77,8 @@ public:
 
     virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
-    virtual RefPtr<IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) = 0;
+    virtual RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) = 0;
     virtual RefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) = 0;

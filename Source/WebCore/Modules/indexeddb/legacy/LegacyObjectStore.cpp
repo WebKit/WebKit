@@ -96,28 +96,33 @@ RefPtr<IDBRequest> LegacyObjectStore::get(ScriptExecutionContext* context, const
     return get(context, keyRange.get(), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
-    return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, value, key, ec);
+    auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
+    auto dKey = Deprecated::ScriptValue(state.vm(), key);
+    return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, deprecatedValue, dKey, ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::add");
-    return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
+    auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
+    return put(IDBDatabaseBackend::AddOnly, LegacyAny::create(this), state, deprecatedValue, static_cast<IDBKey*>(nullptr), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
-    return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, value, key, ec);
+    auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
+    return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, deprecatedValue, Deprecated::ScriptValue(state.vm(), key), ec);
 }
 
-RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
+RefPtr<IDBRequest> LegacyObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
 {
     LOG(StorageAPI, "LegacyObjectStore::put");
-    return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, value, static_cast<IDBKey*>(nullptr), ec);
+    auto deprecatedValue = Deprecated::ScriptValue(state.vm(), value);
+    return put(IDBDatabaseBackend::AddOrUpdate, LegacyAny::create(this), state, deprecatedValue, static_cast<IDBKey*>(nullptr), ec);
 }
 
 RefPtr<IDBRequest> LegacyObjectStore::put(IDBDatabaseBackend::PutMode putMode, RefPtr<LegacyAny> source, JSC::ExecState& state, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& keyValue, ExceptionCode& ec)

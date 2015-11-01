@@ -54,8 +54,8 @@ public:
     virtual RefPtr<WebCore::IDBTransaction> transaction() override final;
     virtual bool autoIncrement() const override final;
 
-    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
@@ -63,8 +63,8 @@ public:
     virtual RefPtr<WebCore::IDBRequest> openCursor(ScriptExecutionContext*, const Deprecated::ScriptValue& key, const String& direction, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> get(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
-    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, Deprecated::ScriptValue&, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) override final;
+    virtual RefPtr<WebCore::IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> deleteFunction(ScriptExecutionContext*, const Deprecated::ScriptValue& key, ExceptionCode&) override final;
     virtual RefPtr<WebCore::IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&) override final;
@@ -82,7 +82,7 @@ public:
 private:
     IDBObjectStore(const IDBObjectStoreInfo&, IDBTransaction&);
 
-    RefPtr<WebCore::IDBRequest> putOrAdd(JSC::ExecState&, Deprecated::ScriptValue&, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, ExceptionCode&);
+    RefPtr<WebCore::IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, ExceptionCode&);
 
     IDBObjectStoreInfo m_info;
     Ref<IDBTransaction> m_transaction;

@@ -36,12 +36,62 @@
 #include "IDBObjectStore.h"
 #include "JSDOMBinding.h"
 #include "JSIDBIndex.h"
+#include "JSIDBRequest.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
+{
+    JSValue thisValue = state.thisValue();
+    JSIDBObjectStore* castedThis = jsDynamicCast<JSIDBObjectStore*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return JSValue::decode(throwThisTypeError(state, "IDBObjectStore", "put"));
+
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSIDBObjectStore::info());
+    auto& impl = castedThis->impl();
+
+    size_t argsCount = state.argumentCount();
+    if (UNLIKELY(argsCount < 1))
+        return JSValue::decode(throwVMError(&state, createNotEnoughArgumentsError(&state)));
+
+    ExceptionCode ec = 0;
+    auto value = state.uncheckedArgument(0);
+
+    if (argsCount == 1) {
+        JSValue result;
+        if (overwrite)
+            result = toJS(&state, castedThis->globalObject(), impl.put(state, value, ec).get());
+        else
+            result = toJS(&state, castedThis->globalObject(), impl.add(state, value, ec).get());
+
+        setDOMException(&state, ec);
+        return result;
+    }
+
+    auto key = state.uncheckedArgument(1);
+    JSValue result;
+    if (overwrite)
+        result = toJS(&state, castedThis->globalObject(), impl.put(state, value, key, ec).get());
+    else
+        result = toJS(&state, castedThis->globalObject(), impl.add(state, value, key, ec).get());
+
+    setDOMException(&state, ec);
+    return result;
+}
+
+JSValue JSIDBObjectStore::putFunction(JSC::ExecState& state)
+{
+    return putOrAdd(state, true);
+}
+
+JSValue JSIDBObjectStore::add(JSC::ExecState& state)
+{
+    return putOrAdd(state, false);
+}
 
 JSValue JSIDBObjectStore::createIndex(ExecState& state)
 {

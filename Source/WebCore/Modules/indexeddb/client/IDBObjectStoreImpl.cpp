@@ -87,16 +87,6 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
-{
-    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
-}
-
-RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& state, Deprecated::ScriptValue& value, ExceptionCode& ec)
-{
-    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::Overwrite, ec);
-}
-
 RefPtr<WebCore::IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext*, ExceptionCode&)
 {
     RELEASE_ASSERT_NOT_REACHED();
@@ -183,19 +173,29 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context,
     return WTF::move(request);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
+{
+    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBObjectStore::add(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
 {
     auto idbKey = scriptValueToIDBKey(execState, key);
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::NoOverwrite, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, Deprecated::ScriptValue& value, const Deprecated::ScriptValue& key, ExceptionCode& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& execState, JSC::JSValue value, JSC::JSValue key, ExceptionCode& ec)
 {
     auto idbKey = scriptValueToIDBKey(execState, key);
     return putOrAdd(execState, value, idbKey, IndexedDB::ObjectStoreOverwriteMode::Overwrite, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, Deprecated::ScriptValue& value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, ExceptionCode& ec)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::put(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
+{
+    return putOrAdd(state, value, nullptr, IndexedDB::ObjectStoreOverwriteMode::Overwrite, ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, JSC::JSValue value, RefPtr<IDBKey> key, IndexedDB::ObjectStoreOverwriteMode overwriteMode, ExceptionCode& ec)
 {
     LOG(IndexedDB, "IDBObjectStore::putOrAdd");
 
@@ -214,7 +214,7 @@ RefPtr<WebCore::IDBRequest> IDBObjectStore::putOrAdd(JSC::ExecState& state, Depr
         return nullptr;
     }
 
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value.jsValue(), nullptr, nullptr);
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value, nullptr, nullptr);
     if (state.hadException()) {
         ec = DATA_CLONE_ERR;
         return nullptr;

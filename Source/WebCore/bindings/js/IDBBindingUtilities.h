@@ -49,17 +49,18 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState*, PassRefPtr<IDBKey>, Deprecate
 
 RefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(JSC::ExecState*, const Deprecated::ScriptValue&, const IDBKeyPath&);
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::ExecState&, const Deprecated::ScriptValue&, const IDBKeyPath&);
+RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);
 
-bool canInjectIDBKeyIntoScriptValue(DOMRequestState*, const Deprecated::ScriptValue&, const IDBKeyPath&);
-bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const Deprecated::ScriptValue&, const IDBKeyPath&);
+bool canInjectIDBKeyIntoScriptValue(DOMRequestState*, const JSC::JSValue&, const IDBKeyPath&);
+bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);
 
 Deprecated::ScriptValue deserializeIDBValue(DOMRequestState*, PassRefPtr<SerializedScriptValue>);
 Deprecated::ScriptValue deserializeIDBValueData(ScriptExecutionContext&, const ThreadSafeDataBuffer& valueData);
 Deprecated::ScriptValue deserializeIDBValueBuffer(DOMRequestState*, PassRefPtr<SharedBuffer>, bool keyIsDefined);
 WEBCORE_EXPORT Deprecated::ScriptValue deserializeIDBValueBuffer(JSC::ExecState*, const Vector<uint8_t>&, bool keyIsDefined);
 Deprecated::ScriptValue idbKeyToScriptValue(DOMRequestState*, PassRefPtr<IDBKey>);
-RefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState*, const Deprecated::ScriptValue&);
-RefPtr<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const Deprecated::ScriptValue&);
+RefPtr<IDBKey> scriptValueToIDBKey(DOMRequestState*, const JSC::JSValue&);
+RefPtr<IDBKey> scriptValueToIDBKey(JSC::ExecState&, const JSC::JSValue&);
 WEBCORE_EXPORT void generateIndexKeysForValue(JSC::ExecState*, const IDBIndexMetadata&, const Deprecated::ScriptValue& objectValue, Vector<IDBKeyData>& indexKeys);
 
 Deprecated::ScriptValue idbKeyDataToScriptValue(ScriptExecutionContext*, const IDBKeyData&);

@@ -77,11 +77,11 @@ ALERT: Result is undefined
 ALERT: Success getting keyRange [Infinity (Closed), a (Closed)]
 ALERT: Result is PosInf
 ALERT: Success getting keyRange [Infinity (Open), a (Closed)]
-ALERT: Result is A
+ALERT: Result is Flux capacitor
 ALERT: Success getting keyRange [Infinity (Closed), a (Open)]
 ALERT: Result is PosInf
 ALERT: Success getting keyRange [Infinity (Open), a (Open)]
-ALERT: Result is A
+ALERT: Result is Flux capacitor
 ALERT: Success getting keyRange [AS (Closed), a (Closed)]
 ALERT: Result is AS
 ALERT: Success getting keyRange [AS (Open), a (Closed)]
@@ -93,11 +93,35 @@ ALERT: Result is As
 ALERT: Success getting keyRange [Infinity (Closed),  (Closed)]
 ALERT: Result is PosInf
 ALERT: Success getting keyRange [Infinity (Open),  (Closed)]
-ALERT: Result is A
+ALERT: Result is Flux capacitor
 ALERT: Success getting keyRange [Infinity (Closed),  (Open)]
 ALERT: Result is PosInf
 ALERT: Success getting keyRange [Infinity (Open),  (Open)]
-ALERT: Result is A
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Infinity (Closed), a (Closed)]
+ALERT: Result is PosInf
+ALERT: Success getting keyRange [Infinity (Open), a (Closed)]
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Infinity (Closed), a (Open)]
+ALERT: Result is PosInf
+ALERT: Success getting keyRange [Infinity (Open), a (Open)]
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Infinity (Closed), a (Closed)]
+ALERT: Result is PosInf
+ALERT: Success getting keyRange [Infinity (Open), a (Closed)]
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Infinity (Closed), a (Open)]
+ALERT: Result is PosInf
+ALERT: Success getting keyRange [Infinity (Open), a (Open)]
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Closed)]
+ALERT: Result is Fish under the sea
+ALERT: Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Closed), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
+ALERT: Result is Flux capacitor
+ALERT: Success getting keyRange [Fri Nov 04 1955 17:00:00 GMT-0700 (PDT) (Open), Wed Oct 21 2015 09:00:00 GMT-0700 (PDT) (Open)]
+ALERT: Result is Fish under the sea
 ALERT: readonly transaction complete
 ALERT: Done
 This test exercises IDBObjectStore.get() with an IDBKeyRange as the parameter.
