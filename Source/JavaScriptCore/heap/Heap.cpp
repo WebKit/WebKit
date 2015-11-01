@@ -363,7 +363,7 @@ Heap::Heap(VM* vm, HeapType heapType)
 Heap::~Heap()
 {
     for (WeakBlock* block : m_logicallyEmptyWeakBlocks)
-        WeakBlock::destroy(block);
+        WeakBlock::destroy(*this, block);
 }
 
 bool Heap::isPagedOut(double deadline)
@@ -1572,7 +1572,7 @@ bool Heap::sweepNextLogicallyEmptyWeakBlock()
     if (block->isEmpty()) {
         std::swap(m_logicallyEmptyWeakBlocks[m_indexOfNextLogicallyEmptyWeakBlockToSweep], m_logicallyEmptyWeakBlocks.last());
         m_logicallyEmptyWeakBlocks.removeLast();
-        WeakBlock::destroy(block);
+        WeakBlock::destroy(*this, block);
     } else
         m_indexOfNextLogicallyEmptyWeakBlockToSweep++;
 

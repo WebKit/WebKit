@@ -307,7 +307,25 @@ inline void Heap::unregisterWeakGCMap(void* weakGCMap)
 {
     m_weakGCMaps.remove(weakGCMap);
 }
-    
+
+inline void Heap::didAllocateBlock(size_t capacity)
+{
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+    m_blockBytesAllocated += capacity;
+#else
+    UNUSED_PARAM(capacity);
+#endif
+}
+
+inline void Heap::didFreeBlock(size_t capacity)
+{
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+    m_blockBytesAllocated -= capacity;
+#else
+    UNUSED_PARAM(capacity);
+#endif
+}
+
 } // namespace JSC
 
 #endif // HeapInlines_h

@@ -1,3 +1,57 @@
+2015-10-31  Andreas Kling  <akling@apple.com>
+
+        Add a debug overlay with information about web process resource usage.
+        <https://webkit.org/b/150599>
+
+        Reviewed by Darin Adler.
+
+        Have Heap track the exact number of bytes allocated in CopiedBlock, MarkedBlock and
+        WeakBlock objects, keeping them in a single location that can be sampled by the
+        resource usage overlay thread.
+
+        The bulk of these changes is threading a Heap& through from sites where blocks are
+        allocated or freed.
+
+        * heap/CopiedBlock.cpp:
+        (JSC::CopiedBlock::createNoZeroFill):
+        (JSC::CopiedBlock::destroy):
+        (JSC::CopiedBlock::create):
+        * heap/CopiedBlock.h:
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::~CopiedSpace):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::recycleEvacuatedBlock):
+        (JSC::CopiedSpace::recycleBorrowedBlock):
+        (JSC::CopiedSpace::allocateBlockForCopyingPhase):
+        (JSC::CopiedSpace::allocateBlock):
+        (JSC::CopiedSpace::startedCopying):
+        * heap/Heap.cpp:
+        (JSC::Heap::~Heap):
+        (JSC::Heap::sweepNextLogicallyEmptyWeakBlock):
+        * heap/Heap.h:
+        (JSC::Heap::blockBytesAllocated):
+        * heap/HeapInlines.h:
+        (JSC::Heap::didAllocateBlock):
+        (JSC::Heap::didFreeBlock):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::destroy):
+        * heap/WeakBlock.h:
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::~WeakSet):
+        (JSC::WeakSet::addAllocator):
+        (JSC::WeakSet::removeAllocator):
+
 2015-10-30  Filip Pizlo  <fpizlo@apple.com>
 
         Air should eliminate dead code

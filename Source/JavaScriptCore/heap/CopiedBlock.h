@@ -41,9 +41,9 @@ class CopiedBlock : public DoublyLinkedListNode<CopiedBlock> {
     friend class CopiedSpace;
     friend class CopiedAllocator;
 public:
-    static CopiedBlock* create(size_t = blockSize);
-    static CopiedBlock* createNoZeroFill(size_t = blockSize);
-    static void destroy(CopiedBlock*);
+    static CopiedBlock* create(Heap&, size_t = blockSize);
+    static CopiedBlock* createNoZeroFill(Heap&, size_t = blockSize);
+    static void destroy(Heap&, CopiedBlock*);
 
     void pin();
     bool isPinned();

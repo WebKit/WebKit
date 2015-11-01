@@ -110,6 +110,8 @@ public:
     RGBA32 backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(RGBA32);
 
+    void setShouldIgnoreMouseEventsOutsideBounds(bool flag) { m_shouldIgnoreMouseEventsOutsideBounds = flag; }
+
     // FIXME: PageOverlay should own its layer, instead of PageOverlayController.
     WEBCORE_EXPORT GraphicsLayer& layer();
 
@@ -140,6 +142,8 @@ private:
 
     RGBA32 m_backgroundColor;
     PageOverlayID m_pageOverlayID;
+
+    bool m_shouldIgnoreMouseEventsOutsideBounds { true };
 };
 
 } // namespace WebKit

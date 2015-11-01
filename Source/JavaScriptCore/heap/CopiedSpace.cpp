@@ -44,22 +44,22 @@ CopiedSpace::CopiedSpace(Heap* heap)
 CopiedSpace::~CopiedSpace()
 {
     while (!m_oldGen.toSpace->isEmpty())
-        CopiedBlock::destroy(m_oldGen.toSpace->removeHead());
+        CopiedBlock::destroy(*heap(), m_oldGen.toSpace->removeHead());
 
     while (!m_oldGen.fromSpace->isEmpty())
-        CopiedBlock::destroy(m_oldGen.fromSpace->removeHead());
+        CopiedBlock::destroy(*heap(), m_oldGen.fromSpace->removeHead());
 
     while (!m_oldGen.oversizeBlocks.isEmpty())
-        CopiedBlock::destroy(m_oldGen.oversizeBlocks.removeHead());
+        CopiedBlock::destroy(*heap(), m_oldGen.oversizeBlocks.removeHead());
 
     while (!m_newGen.toSpace->isEmpty())
-        CopiedBlock::destroy(m_newGen.toSpace->removeHead());
+        CopiedBlock::destroy(*heap(), m_newGen.toSpace->removeHead());
 
     while (!m_newGen.fromSpace->isEmpty())
-        CopiedBlock::destroy(m_newGen.fromSpace->removeHead());
+        CopiedBlock::destroy(*heap(), m_newGen.fromSpace->removeHead());
 
     while (!m_newGen.oversizeBlocks.isEmpty())
-        CopiedBlock::destroy(m_newGen.oversizeBlocks.removeHead());
+        CopiedBlock::destroy(*heap(), m_newGen.oversizeBlocks.removeHead());
 
     ASSERT(m_oldGen.toSpace->isEmpty());
     ASSERT(m_oldGen.fromSpace->isEmpty());
@@ -98,7 +98,7 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
 {
     ASSERT(isOversize(bytes));
     
-    CopiedBlock* block = CopiedBlock::create(WTF::roundUpToMultipleOf<sizeof(double)>(sizeof(CopiedBlock) + bytes));
+    CopiedBlock* block = CopiedBlock::create(*m_heap, WTF::roundUpToMultipleOf<sizeof(double)>(sizeof(CopiedBlock) + bytes));
     m_newGen.oversizeBlocks.push(block);
     m_newGen.blockFilter.add(reinterpret_cast<Bits>(block));
     m_blockSet.add(block);
@@ -164,7 +164,7 @@ CheckedBoolean CopiedSpace::tryReallocateOversize(void** ptr, size_t oldSize, si
         } else
             m_newGen.oversizeBlocks.remove(oldBlock);
         m_blockSet.remove(oldBlock);
-        CopiedBlock::destroy(oldBlock);
+        CopiedBlock::destroy(*heap(), oldBlock);
     }
     
     *ptr = newPtr;

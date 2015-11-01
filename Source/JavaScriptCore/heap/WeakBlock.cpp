@@ -34,15 +34,17 @@
 
 namespace JSC {
 
-WeakBlock* WeakBlock::create(MarkedBlock& markedBlock)
+WeakBlock* WeakBlock::create(Heap& heap, MarkedBlock& markedBlock)
 {
+    heap.didAllocateBlock(WeakBlock::blockSize);
     return new (NotNull, fastMalloc(blockSize)) WeakBlock(markedBlock);
 }
 
-void WeakBlock::destroy(WeakBlock* block)
+void WeakBlock::destroy(Heap& heap, WeakBlock* block)
 {
     block->~WeakBlock();
     fastFree(block);
+    heap.didFreeBlock(WeakBlock::blockSize);
 }
 
 WeakBlock::WeakBlock(MarkedBlock& markedBlock)

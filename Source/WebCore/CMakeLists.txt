@@ -2045,6 +2045,7 @@ set(WebCore_SOURCES
     page/PerformanceUserTiming.cpp
     page/PointerLockController.cpp
     page/PrintContext.cpp
+    page/ResourceUsageOverlay.cpp
     page/Screen.cpp
     page/SecurityOrigin.cpp
     page/SecurityOriginData.cpp

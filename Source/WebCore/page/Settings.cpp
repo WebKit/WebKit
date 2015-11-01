@@ -531,6 +531,18 @@ void Settings::setShowTiledScrollingIndicator(bool enabled)
     m_showTiledScrollingIndicator = enabled;
 }
 
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+void Settings::setResourceUsageOverlayVisible(bool visible)
+{
+    if (m_resourceUsageOverlayVisible == visible)
+        return;
+
+    m_resourceUsageOverlayVisible = visible;
+    if (m_page)
+        m_page->setResourceUsageOverlayVisible(visible);
+}
+#endif
+
 #if PLATFORM(WIN)
 void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {

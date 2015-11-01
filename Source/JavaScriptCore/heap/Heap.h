@@ -178,7 +178,7 @@ public:
     JS_EXPORT_PRIVATE void protect(JSValue);
     JS_EXPORT_PRIVATE bool unprotect(JSValue); // True when the protect count drops to 0.
     
-    size_t extraMemorySize(); // Non-GC memory referenced by GC objects.
+    JS_EXPORT_PRIVATE size_t extraMemorySize(); // Non-GC memory referenced by GC objects.
     JS_EXPORT_PRIVATE size_t size();
     JS_EXPORT_PRIVATE size_t capacity();
     JS_EXPORT_PRIVATE size_t objectCount();
@@ -235,6 +235,13 @@ public:
     void unregisterWeakGCMap(void* weakGCMap);
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
+
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+    size_t blockBytesAllocated() const { return m_blockBytesAllocated; }
+#endif
+
+    void didAllocateBlock(size_t capacity);
+    void didFreeBlock(size_t capacity);
 
 private:
     friend class CodeBlock;
@@ -439,6 +446,10 @@ private:
     ListableHandler<UnconditionalFinalizer>::List m_unconditionalFinalizers;
 
     ParallelHelperClient m_helperClient;
+
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+    size_t m_blockBytesAllocated { 0 };
+#endif
 };
 
 } // namespace JSC

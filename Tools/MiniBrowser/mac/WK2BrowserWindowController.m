@@ -342,6 +342,7 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     preferences._compositingRepaintCountersVisible = settings.layerBordersVisible;
     preferences._simpleLineLayoutDebugBordersEnabled = settings.simpleLineLayoutDebugBordersEnabled;
     preferences._acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled;
+    preferences._resourceUsageOverlayVisible = settings.resourceUsageOverlayVisible;
 
     BOOL useTransparentWindows = settings.useTransparentWindows;
     if (useTransparentWindows != _webView._drawsTransparentBackground) {

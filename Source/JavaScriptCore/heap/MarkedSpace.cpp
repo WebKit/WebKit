@@ -209,7 +209,7 @@ void MarkedSpace::freeBlock(MarkedBlock* block)
     block->allocator()->removeBlock(block);
     m_capacity -= block->capacity();
     m_blocks.remove(block);
-    MarkedBlock::destroy(block);
+    MarkedBlock::destroy(*m_heap, block);
 }
 
 void MarkedSpace::freeOrShrinkBlock(MarkedBlock* block)

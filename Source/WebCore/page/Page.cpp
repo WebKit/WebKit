@@ -73,6 +73,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ResourceUsageOverlay.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
@@ -1779,6 +1780,19 @@ IDBClient::IDBConnectionToServer& Page::idbConnection()
     }
     
     return *m_idbIDBConnectionToServer;
+}
+#endif
+
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+void Page::setResourceUsageOverlayVisible(bool visible)
+{
+    if (!visible) {
+        m_resourceUsageOverlay = nullptr;
+        return;
+    }
+
+    if (!m_resourceUsageOverlay)
+        m_resourceUsageOverlay = std::make_unique<ResourceUsageOverlay>(*this);
 }
 #endif
 

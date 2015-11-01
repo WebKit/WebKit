@@ -35,25 +35,29 @@ namespace JSC {
 static const bool computeBalance = false;
 static size_t balance;
 
-MarkedBlock* MarkedBlock::create(MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction)
+MarkedBlock* MarkedBlock::create(Heap& heap, MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction)
 {
     if (computeBalance) {
         balance++;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    return new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, needsDestruction);
+    MarkedBlock* block = new (NotNull, fastAlignedMalloc(blockSize, capacity)) MarkedBlock(allocator, capacity, cellSize, needsDestruction);
+    heap.didAllocateBlock(capacity);
+    return block;
 }
 
-void MarkedBlock::destroy(MarkedBlock* block)
+void MarkedBlock::destroy(Heap& heap, MarkedBlock* block)
 {
     if (computeBalance) {
         balance--;
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
+    size_t capacity = block->capacity();
     block->~MarkedBlock();
     fastAlignedFree(block);
+    heap.didFreeBlock(capacity);
 }
 
 MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t capacity, size_t cellSize, bool needsDestruction)

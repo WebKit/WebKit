@@ -1,3 +1,21 @@
+2015-10-31  Andreas Kling  <akling@apple.com>
+
+        Add a debug overlay with information about web process resource usage.
+        <https://webkit.org/b/150599>
+
+        Reviewed by Darin Adler.
+
+        Add a menu item to the MiniBrowser so we can toggle the resource usage overlay on/off.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleShowResourceUsageOverlay:]):
+        (-[SettingsController resourceUsageOverlayVisible]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+
 2015-10-31  Lucas Forschler  <lforschler@apple.com>
 
         Teach the CompileWebKit step to look for additional arguments.

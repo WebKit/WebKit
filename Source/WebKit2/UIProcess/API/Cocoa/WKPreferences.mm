@@ -217,6 +217,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setTiledScrollingIndicatorVisible(tiledScrollingIndicatorVisible);
 }
 
+- (BOOL)_resourceUsageOverlayVisible
+{
+    return _preferences->resourceUsageOverlayVisible();
+}
+
+- (void)_setResourceUsageOverlayVisible:(BOOL)resourceUsageOverlayVisible
+{
+    _preferences->setResourceUsageOverlayVisible(resourceUsageOverlayVisible);
+}
+
 - (_WKDebugOverlayRegions)_visibleDebugOverlayRegions
 {
     return _preferences->visibleDebugOverlayRegions();

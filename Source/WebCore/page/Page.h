@@ -109,6 +109,7 @@ class Range;
 class RenderObject;
 class RenderTheme;
 class ReplayController;
+class ResourceUsageOverlay;
 class VisibleSelection;
 class ScrollableArea;
 class ScrollingCoordinator;
@@ -332,6 +333,10 @@ public:
 
     void dnsPrefetchingStateChanged();
     void storageBlockingStateChanged();
+
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+    void setResourceUsageOverlayVisible(bool);
+#endif
 
     void setDebugger(JSC::Debugger*);
     JSC::Debugger* debugger() const { return m_debugger; }
@@ -630,6 +635,10 @@ private:
     RefPtr<WheelEventTestTrigger> m_testTrigger;
 
     HashSet<ViewStateChangeObserver*> m_viewStateChangeObservers;
+
+#if ENABLE(RESOURCE_USAGE_OVERLAY)
+    std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;
+#endif
 
     SessionID m_sessionID;
 

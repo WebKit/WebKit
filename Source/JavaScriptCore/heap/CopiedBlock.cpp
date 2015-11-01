@@ -33,30 +33,34 @@ namespace JSC {
 static const bool computeBalance = false;
 static size_t balance;
 
-CopiedBlock* CopiedBlock::createNoZeroFill(size_t capacity)
+CopiedBlock* CopiedBlock::createNoZeroFill(Heap& heap, size_t capacity)
 {
     if (computeBalance) {
         balance++;
         if (!(balance % 10))
             dataLog("CopiedBlock Balance: ", balance, "\n");
     }
-    return new(NotNull, fastAlignedMalloc(CopiedBlock::blockSize, capacity)) CopiedBlock(capacity);
+    CopiedBlock* block = new (NotNull, fastAlignedMalloc(CopiedBlock::blockSize, capacity)) CopiedBlock(capacity);
+    heap.didAllocateBlock(capacity);
+    return block;
 }
 
-void CopiedBlock::destroy(CopiedBlock* copiedBlock)
+void CopiedBlock::destroy(Heap& heap, CopiedBlock* copiedBlock)
 {
     if (computeBalance) {
         balance--;
         if (!(balance % 10))
             dataLog("CopiedBlock Balance: ", balance, "\n");
     }
+    size_t capacity = copiedBlock->capacity();
     copiedBlock->~CopiedBlock();
     fastAlignedFree(copiedBlock);
+    heap.didFreeBlock(capacity);
 }
 
-CopiedBlock* CopiedBlock::create(size_t capacity)
+CopiedBlock* CopiedBlock::create(Heap& heap, size_t capacity)
 {
-    CopiedBlock* newBlock = createNoZeroFill(capacity);
+    CopiedBlock* newBlock = createNoZeroFill(heap, capacity);
     newBlock->zeroFillWilderness();
     return newBlock;
 }

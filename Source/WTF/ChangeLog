@@ -1,3 +1,14 @@
+2015-10-31  Andreas Kling  <akling@apple.com>
+
+        Add a debug overlay with information about web process resource usage.
+        <https://webkit.org/b/150599>
+
+        Reviewed by Darin Adler.
+
+        Add ENABLE(RESOURCE_USAGE_OVERLAY) flag, enabled on Mac by default.
+
+        * wtf/Platform.h:
+
 2015-10-30  Chris Dumez  <cdumez@apple.com>
 
         Regression(r191673): Crash in RunLoopTimer::schedule()

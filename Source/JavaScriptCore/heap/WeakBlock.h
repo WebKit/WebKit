@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+class Heap;
 class HeapRootVisitor;
 class MarkedBlock;
 
@@ -52,8 +53,8 @@ public:
         FreeCell* freeList { nullptr };
     };
 
-    static WeakBlock* create(MarkedBlock&);
-    static void destroy(WeakBlock*);
+    static WeakBlock* create(Heap&, MarkedBlock&);
+    static void destroy(Heap&, WeakBlock*);
 
     static WeakImpl* asWeakImpl(FreeCell*);
 

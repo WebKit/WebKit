@@ -34,10 +34,11 @@ namespace JSC {
 
 WeakSet::~WeakSet()
 {
+    Heap& heap = *this->heap();
     WeakBlock* next = 0;
     for (WeakBlock* block = m_blocks.head(); block; block = next) {
         next = block->next();
-        WeakBlock::destroy(block);
+        WeakBlock::destroy(heap, block);
     }
     m_blocks.clear();
 }
@@ -85,7 +86,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
-    WeakBlock* block = WeakBlock::create(m_markedBlock);
+    WeakBlock* block = WeakBlock::create(*heap(), m_markedBlock);
     heap()->didAllocate(WeakBlock::blockSize);
     m_blocks.append(block);
     WeakBlock::SweepResult sweepResult = block->takeSweepResult();
@@ -96,7 +97,7 @@ WeakBlock::FreeCell* WeakSet::addAllocator()
 void WeakSet::removeAllocator(WeakBlock* block)
 {
     m_blocks.remove(block);
-    WeakBlock::destroy(block);
+    WeakBlock::destroy(*heap(), block);
 }
 
 } // namespace JSC

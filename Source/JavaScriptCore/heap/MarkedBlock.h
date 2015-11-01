@@ -106,8 +106,8 @@ namespace JSC {
             ReturnType m_count;
         };
 
-        static MarkedBlock* create(MarkedAllocator*, size_t capacity, size_t cellSize, bool needsDestruction);
-        static void destroy(MarkedBlock*);
+        static MarkedBlock* create(Heap&, MarkedAllocator*, size_t capacity, size_t cellSize, bool needsDestruction);
+        static void destroy(Heap&, MarkedBlock*);
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);

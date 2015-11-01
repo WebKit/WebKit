@@ -269,6 +269,7 @@ list(APPEND WebCore_SOURCES
     page/PageDebuggable.cpp
 
     page/cocoa/UserAgent.mm
+    page/cocoa/ResourceUsageOverlayCocoa.mm
 
     page/mac/ChromeMac.mm
     page/mac/DragControllerMac.mm

@@ -383,6 +383,10 @@ WK_EXPORT bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferences);
 WK_EXPORT void WKPreferencesSetHTTPEquivEnabled(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetHTTPEquivEnabled(WKPreferencesRef preferences);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetResourceUsageOverlayVisible(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetResourceUsageOverlayVisible(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif
