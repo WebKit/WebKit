@@ -636,6 +636,8 @@ public:
 
     bool tryTrunc(Value* value)
     {
+        // FIXME: This could just be a copy propagation rule.
+        // https://bugs.webkit.org/show_bug.cgi?id=150775
         append(Move, tmp(value), tmp(currentValue));
         return true;
     }

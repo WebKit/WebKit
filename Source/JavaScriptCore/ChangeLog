@@ -1,3 +1,10 @@
+2015-11-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add a FIXME referencing https://bugs.webkit.org/show_bug.cgi?id=150775.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryTrunc):
+
 2015-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Rename op_put_getter_setter to op_put_getter_setter_by_id
