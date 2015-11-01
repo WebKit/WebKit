@@ -39,12 +39,11 @@ ResourceUsageOverlay::ResourceUsageOverlay(Page& page)
     : m_page(page)
     , m_overlay(PageOverlay::create(*this, PageOverlay::OverlayType::View))
 {
-    m_overlay->setFrame(IntRect(80, 80, 500, 120));
-    m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
-
-    m_page.mainFrame().pageOverlayController().installPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
-
-    platformInitialize();
+    // Let the event loop cycle before continuing with initialization.
+    // This way we'll have access to the FrameView's dimensions.
+    callOnMainThread([this] {
+        initialize();
+    });
 }
 
 ResourceUsageOverlay::~ResourceUsageOverlay()
@@ -54,6 +53,18 @@ ResourceUsageOverlay::~ResourceUsageOverlay()
     // FIXME: This is a hack so we don't try to uninstall the PageOverlay during Page destruction.
     if (m_page.mainFrame().page())
         m_page.mainFrame().pageOverlayController().uninstallPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
+}
+
+void ResourceUsageOverlay::initialize()
+{
+    if (!m_page.mainFrame().view())
+        return;
+
+    FrameView& frameView = *m_page.mainFrame().view();
+    m_overlay->setFrame(IntRect(frameView.width() / 2 - normalWidth / 2, frameView.height() - normalHeight - 20, normalWidth, normalHeight));
+    m_overlay->setShouldIgnoreMouseEventsOutsideBounds(false);
+    m_page.mainFrame().pageOverlayController().installPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
+    platformInitialize();
 }
 
 bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)

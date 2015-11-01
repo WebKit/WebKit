@@ -170,7 +170,7 @@ void ResourceUsageOverlay::platformInitialize()
 
     [m_layer.get() setContentsScale:2.0];
     [m_layer.get() setBackgroundColor:adoptCF(CGColorCreateGenericRGB(0, 0, 0, 0.8)).get()];
-    [m_layer.get() setFrame:CGRectMake(0, 0, 500, 120)];
+    [m_layer.get() setFrame:CGRectMake(0, 0, normalWidth, normalHeight)];
 
     data.overlayLayers.add(m_layer.get());
 }

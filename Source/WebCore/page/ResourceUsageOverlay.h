@@ -64,6 +64,8 @@ private:
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
     void didScrollFrame(PageOverlay&, Frame&) override { }
 
+    void initialize();
+
     void platformInitialize();
     void platformDestroy();
 
@@ -76,6 +78,9 @@ private:
     ThreadIdentifier m_threadID { 0 };
     RetainPtr<CALayer> m_layer;
 #endif
+
+    static const int normalWidth = 500;
+    static const int normalHeight = 120;
 };
 
 }
