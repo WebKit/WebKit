@@ -1,3 +1,31 @@
+2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a RunLoop::Timer to schedule rendering frames in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=150756
+
+        Reviewed by Darin Adler.
+
+        Use a RunLoop::Timer instead of a GMainLoopSource for the
+        accelerated compositing render loop to improve the performance,
+        since RunLoop::Timer uses a persistent source.
+        All the logic to schedule rames has been moved to a helper
+        internal class RenderFrameScheduler.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::RenderFrameScheduler::RenderFrameScheduler):
+        (WebKit::LayerTreeHostGtk::RenderFrameScheduler::~RenderFrameScheduler):
+        (WebKit::LayerTreeHostGtk::RenderFrameScheduler::start):
+        (WebKit::LayerTreeHostGtk::RenderFrameScheduler::stop):
+        (WebKit::shouldSkipNextFrameBecauseOfContinousImmediateFlushes):
+        (WebKit::LayerTreeHostGtk::RenderFrameScheduler::nextFrame):
+        (WebKit::LayerTreeHostGtk::RenderFrameScheduler::renderFrame):
+        (WebKit::LayerTreeHostGtk::LayerTreeHostGtk):
+        (WebKit::LayerTreeHostGtk::renderFrame):
+        (WebKit::LayerTreeHostGtk::scheduleLayerFlush):
+        (WebKit::LayerTreeHostGtk::cancelPendingLayerFlush):
+        (WebKit::LayerTreeHostGtk::layerFlushTimerFired): Deleted.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2015-10-31  Andreas Kling  <akling@apple.com>
 
         Add a debug overlay with information about web process resource usage.

@@ -35,7 +35,7 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/TransformationMatrix.h>
-#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
@@ -65,6 +65,25 @@ protected:
     virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;
 
 private:
+
+    class RenderFrameScheduler {
+    public:
+        RenderFrameScheduler(std::function<bool()>);
+        ~RenderFrameScheduler();
+
+        void start();
+        void stop();
+
+    private:
+        void renderFrame();
+        void nextFrame();
+
+        std::function<bool()> m_renderer;
+        RunLoop::Timer<RenderFrameScheduler> m_timer;
+        double m_fireTime { 0 };
+        double m_lastImmediateFlushTime { 0 };
+    };
+
     // LayerTreeHost
     virtual const LayerTreeContext& layerTreeContext() override;
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) override;
@@ -87,7 +106,7 @@ private:
     void flushAndRenderLayers();
     void cancelPendingLayerFlush();
 
-    void layerFlushTimerFired();
+    bool renderFrame();
 
     bool makeContextCurrent();
 
@@ -100,9 +119,9 @@ private:
     std::unique_ptr<WebCore::GLContext> m_context;
     double m_lastImmediateFlushTime;
     bool m_layerFlushSchedulingEnabled;
-    GMainLoopSource m_layerFlushTimerCallback;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
     WebCore::TransformationMatrix m_scaleMatrix;
+    RenderFrameScheduler m_renderFrameScheduler;
 };
 
 } // namespace WebKit

@@ -61,6 +61,71 @@ using namespace WebCore;
 
 namespace WebKit {
 
+LayerTreeHostGtk::RenderFrameScheduler::RenderFrameScheduler(std::function<bool()> renderer)
+    : m_renderer(WTF::move(renderer))
+    , m_timer(RunLoop::main(), this, &LayerTreeHostGtk::RenderFrameScheduler::renderFrame)
+{
+    // We use a RunLoop timer because otherwise GTK+ event handling during dragging can starve WebCore timers, which have a lower priority.
+    // Use a higher priority than WebCore timers.
+    m_timer.setPriority(GDK_PRIORITY_REDRAW - 1);
+}
+
+LayerTreeHostGtk::RenderFrameScheduler::~RenderFrameScheduler()
+{
+}
+
+void LayerTreeHostGtk::RenderFrameScheduler::start()
+{
+    if (m_timer.isActive())
+        return;
+    m_fireTime = 0;
+    nextFrame();
+}
+
+void LayerTreeHostGtk::RenderFrameScheduler::stop()
+{
+    m_timer.stop();
+}
+
+static inline bool shouldSkipNextFrameBecauseOfContinousImmediateFlushes(double current, double lastImmediateFlushTime)
+{
+    // 100ms is about a perceptable delay in UI, so when scheduling layer flushes immediately for more than 100ms,
+    // we skip the next frame to ensure pending timers have a change to be fired.
+    static const double maxDurationOfImmediateFlushes = 0.100;
+    if (!lastImmediateFlushTime)
+        return false;
+    return lastImmediateFlushTime + maxDurationOfImmediateFlushes < current;
+}
+
+void LayerTreeHostGtk::RenderFrameScheduler::nextFrame()
+{
+    static const double targetFramerate = 1 / 60.0;
+    // When rendering layers takes more time than the target delay (0.016), we end up scheduling layer flushes
+    // immediately. Since the layer flush timer has a higher priority than WebCore timers, these are never
+    // fired while we keep scheduling layer flushes immediately.
+    double current = monotonicallyIncreasingTime();
+    double timeToNextFlush = std::max(targetFramerate - (current - m_fireTime), 0.0);
+    if (timeToNextFlush)
+        m_lastImmediateFlushTime = 0;
+    else if (!m_lastImmediateFlushTime)
+        m_lastImmediateFlushTime = current;
+
+    if (shouldSkipNextFrameBecauseOfContinousImmediateFlushes(current, m_lastImmediateFlushTime)) {
+        timeToNextFlush = targetFramerate;
+        m_lastImmediateFlushTime = 0;
+    }
+
+    m_timer.startOneShot(timeToNextFlush);
+}
+
+void LayerTreeHostGtk::RenderFrameScheduler::renderFrame()
+{
+    m_fireTime = monotonicallyIncreasingTime();
+    if (!m_renderer() || m_timer.isActive())
+        return;
+    nextFrame();
+}
+
 PassRefPtr<LayerTreeHostGtk> LayerTreeHostGtk::create(WebPage* webPage)
 {
     RefPtr<LayerTreeHostGtk> host = adoptRef(new LayerTreeHostGtk(webPage));
@@ -72,9 +137,9 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
     : LayerTreeHost(webPage)
     , m_isValid(true)
     , m_notifyAfterScheduledLayerFlush(false)
-    , m_lastImmediateFlushTime(0)
     , m_layerFlushSchedulingEnabled(true)
     , m_viewOverlayRootLayer(nullptr)
+    , m_renderFrameScheduler(std::bind(&LayerTreeHostGtk::renderFrame, this))
 {
 }
 
@@ -237,44 +302,10 @@ float LayerTreeHostGtk::pageScaleFactor() const
     return m_webPage->pageScaleFactor();
 }
 
-static inline bool shouldSkipNextFrameBecauseOfContinousImmediateFlushes(double current, double lastImmediateFlushTime)
+bool LayerTreeHostGtk::renderFrame()
 {
-    // 100ms is about a perceptable delay in UI, so when scheduling layer flushes immediately for more than 100ms,
-    // we skip the next frame to ensure pending timers have a change to be fired.
-    static const double maxDurationOfImmediateFlushes = 0.100;
-    if (!lastImmediateFlushTime)
-        return false;
-    return lastImmediateFlushTime + maxDurationOfImmediateFlushes < current;
-}
-
-// Use a higher priority than WebCore timers.
-static const int layerFlushTimerPriority = GDK_PRIORITY_REDRAW - 1;
-
-void LayerTreeHostGtk::layerFlushTimerFired()
-{
-    double fireTime = monotonicallyIncreasingTime();
     flushAndRenderLayers();
-    if (m_layerFlushTimerCallback.isScheduled() || !downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().descendantsOrSelfHaveRunningAnimations())
-        return;
-
-    static const double targetFramerate = 1 / 60.0;
-    // When rendering layers takes more time than the target delay (0.016), we end up scheduling layer flushes
-    // immediately. Since the layer flush timer has a higher priority than WebCore timers, these are never
-    // fired while we keep scheduling layer flushes immediately.
-    double current = monotonicallyIncreasingTime();
-    double timeToNextFlush = std::max(targetFramerate - (current - fireTime), 0.0);
-    if (timeToNextFlush)
-        m_lastImmediateFlushTime = 0;
-    else if (!m_lastImmediateFlushTime)
-        m_lastImmediateFlushTime = current;
-
-    if (shouldSkipNextFrameBecauseOfContinousImmediateFlushes(current, m_lastImmediateFlushTime)) {
-        timeToNextFlush = targetFramerate;
-        m_lastImmediateFlushTime = 0;
-    }
-
-    m_layerFlushTimerCallback.scheduleAfterDelay("[WebKit] layerFlushTimer", std::bind(&LayerTreeHostGtk::layerFlushTimerFired, this),
-        std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(timeToNextFlush)), layerFlushTimerPriority);
+    return downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().descendantsOrSelfHaveRunningAnimations();
 }
 
 bool LayerTreeHostGtk::flushPendingLayerChanges()
@@ -348,9 +379,7 @@ void LayerTreeHostGtk::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled || !m_textureMapper)
         return;
 
-    // We use a GLib timer because otherwise GTK+ event handling during dragging can starve WebCore timers, which have a lower priority.
-    if (!m_layerFlushTimerCallback.isScheduled())
-        m_layerFlushTimerCallback.schedule("[WebKit] layerFlushTimer", std::bind(&LayerTreeHostGtk::layerFlushTimerFired, this), layerFlushTimerPriority);
+    m_renderFrameScheduler.start();
 }
 
 void LayerTreeHostGtk::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
@@ -375,7 +404,7 @@ void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 
 void LayerTreeHostGtk::cancelPendingLayerFlush()
 {
-    m_layerFlushTimerCallback.cancel();
+    m_renderFrameScheduler.stop();
 }
 
 void LayerTreeHostGtk::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverlayRootLayer)
