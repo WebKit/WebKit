@@ -34,9 +34,11 @@ MainThreadSharedTimer& MainThreadSharedTimer::singleton()
     return instance;
 }
 
+#if !PLATFORM(GTK)
 MainThreadSharedTimer::MainThreadSharedTimer()
 {
 }
+#endif
 
 void MainThreadSharedTimer::setFiredFunction(std::function<void()>&& firedFunction)
 {
@@ -44,7 +46,7 @@ void MainThreadSharedTimer::setFiredFunction(std::function<void()>&& firedFuncti
     m_firedFunction = WTF::move(firedFunction);
 }
 
-void MainThreadSharedTimer::fired() const
+void MainThreadSharedTimer::fired()
 {
     ASSERT(m_firedFunction);
     m_firedFunction();

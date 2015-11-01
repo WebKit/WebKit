@@ -141,6 +141,11 @@ RunLoop::TimerBase::~TimerBase()
     g_source_destroy(m_source.get());
 }
 
+void RunLoop::TimerBase::setPriority(int priority)
+{
+    g_source_set_priority(m_source.get(), priority);
+}
+
 void RunLoop::TimerBase::updateReadyTime()
 {
     g_source_set_ready_time(m_source.get(), m_fireInterval.count() ? g_get_monotonic_time() + m_fireInterval.count() : 0);

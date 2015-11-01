@@ -83,6 +83,10 @@ public:
 
         virtual void fired() = 0;
 
+#if USE(GLIB) && !PLATFORM(EFL)
+        void setPriority(int);
+#endif
+
     private:
         WTF_EXPORT_PRIVATE void start(double nextFireInterval, bool repeat);
 

@@ -30,6 +30,10 @@
 #include "SharedTimer.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(GTK)
+#include <wtf/RunLoop.h>
+#endif
+
 namespace WebCore {
 
 class MainThreadSharedTimer final : public SharedTimer {
@@ -44,12 +48,15 @@ public:
 
     // FIXME: This should be private, but CF and Windows implementations
     // need to call this from non-member functions at the moment.
-    void fired() const;
+    void fired();
 
 private:
     MainThreadSharedTimer();
 
     std::function<void()> m_firedFunction;
+#if PLATFORM(GTK)
+    RunLoop::Timer<MainThreadSharedTimer> m_timer;
+#endif
 };
 
 } // namespace WebCore
