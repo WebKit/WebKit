@@ -29,7 +29,6 @@
 #if WK_API_ENABLED
 
 #import "APIDictionary.h"
-#import "BlockSPI.h"
 #import "Connection.h"
 #import "RemoteObjectInvocation.h"
 #import "RemoteObjectRegistry.h"
@@ -95,52 +94,15 @@ using namespace WebKit;
     _remoteObjectRegistry = nullptr;
 }
 
-static uint64_t generateReplyIdentifier()
-{
-    static uint64_t identifier;
-
-    return ++identifier;
-}
-
 - (void)_sendInvocation:(NSInvocation *)invocation interface:(_WKRemoteObjectInterface *)interface
 {
-    std::unique_ptr<RemoteObjectInvocation::ReplyInfo> replyInfo;
-
-    NSMethodSignature *methodSignature = invocation.methodSignature;
-    for (NSUInteger i = 0, count = methodSignature.numberOfArguments; i < count; ++i) {
-        const char *type = [methodSignature getArgumentTypeAtIndex:i];
-
-        if (strcmp(type, "@?"))
-            continue;
-
-        if (replyInfo)
-            [NSException raise:NSInvalidArgumentException format:@"Only one reply block is allowed per message send. (%s)", sel_getName(invocation.selector)];
-
-        id block = nullptr;
-        [invocation getArgument:&block atIndex:i];
-        if (!block)
-            [NSException raise:NSInvalidArgumentException format:@"A NULL reply block was passed into a message. (%s)", sel_getName(invocation.selector)];
-
-        const char* replyBlockSignature = _Block_signature(block);
-
-        if (strcmp([NSMethodSignature signatureWithObjCTypes:replyBlockSignature].methodReturnType, "v"))
-            [NSException raise:NSInvalidArgumentException format:@"Return value of block argument must be 'void'. (%s)", sel_getName(invocation.selector)];
-
-        replyInfo = std::make_unique<RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), replyBlockSignature);
-
-        // Replace the block object so we won't try to encode it.
-        id null = nullptr;
-        [invocation setArgument:&null atIndex:i];
-    }
-
-    RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
-
+    auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
     [encoder encodeObject:invocation forKey:invocationKey];
 
     if (!_remoteObjectRegistry)
         return;
 
-    _remoteObjectRegistry->sendInvocation(RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTF::move(replyInfo)));
+    _remoteObjectRegistry->sendInvocation(RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary]));
 }
 
 - (WebKit::RemoteObjectRegistry&)remoteObjectRegistry

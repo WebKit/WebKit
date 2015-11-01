@@ -58,11 +58,8 @@ TEST(WebKit2, RemoteObjectRegistry)
             EXPECT_WK_STREQ(result, @"Hello, World!");
             isDone = true;
         }];
-        TestWebKitAPI::Util::run(&isDone);
 
-        [object sayHello:@"Hello Again!" completionHandler:^(NSString *) {
-            // FIXME: Check the string here.
-        }];
+        TestWebKitAPI::Util::run(&isDone);
     }
 }
 

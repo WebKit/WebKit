@@ -62,12 +62,6 @@
     [jsContext setObject:helloString forKeyedSubscript:@"helloString"];
 }
 
-- (void)sayHello:(NSString *)hello completionHandler:(void (^)(NSString *))completionHandler
-{
-    // FIXME: Actually call this.
-    // completionHandler([NSString stringWithFormat:@"Your string was '%@'", hello]);
-}
-
 @end
 
 #endif // WK_API_ENABLED
