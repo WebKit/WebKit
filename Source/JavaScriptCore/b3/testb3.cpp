@@ -1066,6 +1066,141 @@ void testBranchEqualFoldPtr(intptr_t value)
     CHECK(compileAndRun<int>(proc) == !value);
 }
 
+void testComplex(unsigned numVars, unsigned numConstructs)
+{
+    double before = monotonicallyIncreasingTimeMS();
+    
+    Procedure proc;
+    BasicBlock* current = proc.addBlock();
+
+    Const32Value* one = current->appendNew<Const32Value>(proc, Origin(), 1);
+
+    Vector<int32_t> varSlots;
+    for (unsigned i = numVars; i--;)
+        varSlots.append(i);
+
+    Vector<Value*> vars;
+    for (int32_t& varSlot : varSlots) {
+        Value* varSlotPtr = current->appendNew<ConstPtrValue>(proc, Origin(), &varSlot);
+        vars.append(current->appendNew<MemoryValue>(proc, Load, Int32, Origin(), varSlotPtr));
+    }
+
+    for (unsigned i = 0; i < numConstructs; ++i) {
+        if (i & 1) {
+            // Control flow diamond.
+            unsigned predicateVarIndex = (i >> 1) % numVars;
+            unsigned thenIncVarIndex = ((i >> 1) + 1) % numVars;
+            unsigned elseIncVarIndex = ((i >> 1) + 2) % numVars;
+
+            BasicBlock* thenBlock = proc.addBlock();
+            BasicBlock* elseBlock = proc.addBlock();
+            BasicBlock* continuation = proc.addBlock();
+
+            current->appendNew<ControlValue>(
+                proc, Branch, Origin(), vars[predicateVarIndex],
+                FrequentedBlock(thenBlock), FrequentedBlock(elseBlock));
+
+            UpsilonValue* thenThenResult = thenBlock->appendNew<UpsilonValue>(
+                proc, Origin(),
+                thenBlock->appendNew<Value>(proc, Add, Origin(), vars[thenIncVarIndex], one));
+            UpsilonValue* thenElseResult = thenBlock->appendNew<UpsilonValue>(
+                proc, Origin(), vars[elseIncVarIndex]);
+            thenBlock->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(continuation));
+
+            UpsilonValue* elseElseResult = elseBlock->appendNew<UpsilonValue>(
+                proc, Origin(),
+                elseBlock->appendNew<Value>(proc, Add, Origin(), vars[elseIncVarIndex], one));
+            UpsilonValue* elseThenResult = elseBlock->appendNew<UpsilonValue>(
+                proc, Origin(), vars[thenIncVarIndex]);
+            elseBlock->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(continuation));
+
+            Value* thenPhi = continuation->appendNew<Value>(proc, Phi, Int32, Origin());
+            thenThenResult->setPhi(thenPhi);
+            elseThenResult->setPhi(thenPhi);
+            vars[thenIncVarIndex] = thenPhi;
+            
+            Value* elsePhi = continuation->appendNew<Value>(proc, Phi, Int32, Origin());
+            thenElseResult->setPhi(elsePhi);
+            elseElseResult->setPhi(elsePhi);
+            vars[elseIncVarIndex] = thenPhi;
+            
+            current = continuation;
+        } else {
+            // Loop.
+
+            BasicBlock* loopEntry = proc.addBlock();
+            BasicBlock* loopReentry = proc.addBlock();
+            BasicBlock* loopBody = proc.addBlock();
+            BasicBlock* loopExit = proc.addBlock();
+            BasicBlock* loopSkip = proc.addBlock();
+            BasicBlock* continuation = proc.addBlock();
+            
+            Value* startIndex = vars[(i >> 1) % numVars];
+            Value* startSum = current->appendNew<Const32Value>(proc, Origin(), 0);
+            current->appendNew<ControlValue>(
+                proc, Branch, Origin(), startIndex,
+                FrequentedBlock(loopEntry), FrequentedBlock(loopSkip));
+
+            UpsilonValue* startIndexForBody = loopEntry->appendNew<UpsilonValue>(
+                proc, Origin(), startIndex);
+            UpsilonValue* startSumForBody = loopEntry->appendNew<UpsilonValue>(
+                proc, Origin(), startSum);
+            loopEntry->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(loopBody));
+
+            Value* bodyIndex = loopBody->appendNew<Value>(proc, Phi, Int32, Origin());
+            startIndexForBody->setPhi(bodyIndex);
+            Value* bodySum = loopBody->appendNew<Value>(proc, Phi, Int32, Origin());
+            startSumForBody->setPhi(bodySum);
+            Value* newBodyIndex = loopBody->appendNew<Value>(proc, Sub, Origin(), bodyIndex, one);
+            Value* newBodySum = loopBody->appendNew<Value>(
+                proc, Add, Origin(),
+                bodySum,
+                loopBody->appendNew<MemoryValue>(
+                    proc, Load, Int32, Origin(),
+                    loopBody->appendNew<Value>(
+                        proc, Add, Origin(),
+                        loopBody->appendNew<ConstPtrValue>(proc, Origin(), varSlots.data()),
+                        loopBody->appendNew<Value>(
+                            proc, Shl, Origin(),
+                            loopBody->appendNew<Value>(
+                                proc, ZExt32, Origin(),
+                                loopBody->appendNew<Value>(
+                                    proc, BitAnd, Origin(),
+                                    newBodyIndex,
+                                    loopBody->appendNew<Const32Value>(
+                                        proc, Origin(), numVars - 1))),
+                            loopBody->appendNew<Const32Value>(proc, Origin(), 2)))));
+            loopBody->appendNew<ControlValue>(
+                proc, Branch, Origin(), newBodyIndex,
+                FrequentedBlock(loopReentry), FrequentedBlock(loopExit));
+
+            loopReentry->appendNew<UpsilonValue>(proc, Origin(), newBodyIndex, bodyIndex);
+            loopReentry->appendNew<UpsilonValue>(proc, Origin(), newBodySum, bodySum);
+            loopReentry->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(loopBody));
+
+            UpsilonValue* exitSum = loopExit->appendNew<UpsilonValue>(proc, Origin(), newBodySum);
+            loopExit->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(continuation));
+
+            UpsilonValue* skipSum = loopSkip->appendNew<UpsilonValue>(proc, Origin(), startSum);
+            loopSkip->appendNew<ControlValue>(proc, Jump, Origin(), FrequentedBlock(continuation));
+
+            Value* finalSum = continuation->appendNew<Value>(proc, Phi, Int32, Origin());
+            exitSum->setPhi(finalSum);
+            skipSum->setPhi(finalSum);
+
+            current = continuation;
+            vars[((i >> 1) + 1) % numVars] = finalSum;
+        }
+    }
+
+    current->appendNew<ControlValue>(proc, Return, Origin(), vars[0]);
+
+    compile(proc);
+
+    double after = monotonicallyIncreasingTimeMS();
+    dataLog("    That took ", after - before, " ms.\n");
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -1167,6 +1302,13 @@ void run(const char* filter)
     RUN(testBranchNotEqualFoldPtr(0));
     RUN(testBranchEqualFoldPtr(42));
     RUN(testBranchEqualFoldPtr(0));
+
+    RUN(testComplex(64, 128));
+    RUN(testComplex(64, 256));
+    RUN(testComplex(64, 384));
+    RUN(testComplex(4, 128));
+    RUN(testComplex(4, 256));
+    RUN(testComplex(4, 384));
 
     if (!didRun)
         usage();

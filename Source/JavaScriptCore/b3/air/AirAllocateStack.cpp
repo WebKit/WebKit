@@ -41,11 +41,6 @@ namespace {
 
 const bool verbose = false;
 
-bool argumentIsOnStack(const Arg& arg)
-{
-    return arg.isStack() && arg.stackSlot()->kind() == StackSlotKind::Anonymous;
-}
-
 bool attemptAssignment(
     StackSlot* slot, intptr_t offsetFromFP, const Vector<StackSlot*>& otherSlots)
 {
@@ -141,34 +136,35 @@ void allocateStack(Code& code)
     }
 
     // Now we handle the anonymous slots.
-    // FIXME: We should tell Liveness to only track StackSlots.
-    // https://bugs.webkit.org/show_bug.cgi?id=150751
-    Liveness<Arg> liveness(code);
+    Liveness<StackSlot*> liveness(code);
     IndexMap<StackSlot, HashSet<StackSlot*>> interference(code.stackSlots().size());
     Vector<StackSlot*> slots;
 
     for (BasicBlock* block : code) {
-        Liveness<Arg>::LocalCalc localCalc(liveness, block);
+        Liveness<StackSlot*>::LocalCalc localCalc(liveness, block);
 
         auto interfere = [&] (Inst& inst) {
             if (verbose)
-                dataLog("Interfering: ", listDump(localCalc.live()), "\n");
+                dataLog("Interfering: ", pointerListDump(localCalc.live()), "\n");
             
             // Form a clique of stack slots that interfere. First find the list of stack slots
             // that are live right now.
             slots.resize(0);
-            for (Arg arg : localCalc.live()) {
-                if (argumentIsOnStack(arg))
-                    slots.append(arg.stackSlot());
+            for (StackSlot* slot : localCalc.live()) {
+                if (slot->kind() == StackSlotKind::Anonymous)
+                    slots.append(slot);
             }
 
             // We mustn't mandate that the input code is optimal. Therefore, it may have dead stores
             // to the stack. We need to treat these as interfering.
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Arg::Type) {
-                    if (Arg::isDef(role) && argumentIsOnStack(arg)
-                        && !localCalc.live().contains(arg))
-                        slots.append(arg.stackSlot());
+                    if (Arg::isDef(role) && arg.isStack()) {
+                        StackSlot* slot = arg.stackSlot();
+                        if (slot->kind() == StackSlotKind::Anonymous
+                            && !localCalc.live().contains(slot))
+                            slots.append(slot);
+                    }
                 });
             
             if (verbose)

@@ -35,12 +35,15 @@
 #include "B3LowerToAir.h"
 #include "B3Procedure.h"
 #include "B3ReduceStrength.h"
+#include "B3TimingScope.h"
 #include "B3Validate.h"
 
 namespace JSC { namespace B3 {
 
 void generate(Procedure& procedure, CCallHelpers& jit)
 {
+    TimingScope timingScope("generate");
+
     Air::Code code;
     generateToAir(procedure, code);
     Air::generate(code, jit);
@@ -48,6 +51,8 @@ void generate(Procedure& procedure, CCallHelpers& jit)
 
 void generateToAir(Procedure& procedure, Air::Code& code)
 {
+    TimingScope timingScope("generateToAir");
+    
     // We don't require the incoming IR to have predecessors computed.
     procedure.resetReachability();
     

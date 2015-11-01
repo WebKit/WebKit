@@ -59,6 +59,11 @@ bool shouldSaveIRBeforePhase()
     return Options::verboseValidationFailure();
 }
 
+bool shouldMeasurePhaseTiming()
+{
+    return Options::logB3PhaseTimes();
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

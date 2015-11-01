@@ -38,6 +38,7 @@ bool shouldDumpIRAtEachPhase();
 bool shouldValidateIR();
 bool shouldValidateIRAtEachPhase();
 bool shouldSaveIRBeforePhase();
+bool shouldMeasurePhaseTiming();
 
 template<typename ResultType, typename InputType, typename BitsType>
 inline bool isRepresentableAsImpl(InputType originalValue)

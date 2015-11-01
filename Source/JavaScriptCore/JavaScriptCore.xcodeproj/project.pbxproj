@@ -315,6 +315,8 @@
 		0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */; };
 		0F45703C1BE45F0A0062A629 /* AirReportUsedRegisters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F45703A1BE45F0A0062A629 /* AirReportUsedRegisters.cpp */; };
 		0F45703D1BE45F0A0062A629 /* AirReportUsedRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45703B1BE45F0A0062A629 /* AirReportUsedRegisters.h */; };
+		0F4570401BE584CA0062A629 /* B3TimingScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F45703E1BE584CA0062A629 /* B3TimingScope.cpp */; };
+		0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45703F1BE584CA0062A629 /* B3TimingScope.h */; };
 		0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F46808014BA572700BFE272 /* JITExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F46808314BA573100BFE272 /* JITExceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F46807F14BA572700BFE272 /* JITExceptions.cpp */; };
 		0F4680A314BA7F8D00BFE272 /* LLIntExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F46809E14BA7F8200BFE272 /* LLIntExceptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2333,6 +2335,8 @@
 		0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirEliminateDeadCode.h; path = b3/air/AirEliminateDeadCode.h; sourceTree = "<group>"; };
 		0F45703A1BE45F0A0062A629 /* AirReportUsedRegisters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirReportUsedRegisters.cpp; path = b3/air/AirReportUsedRegisters.cpp; sourceTree = "<group>"; };
 		0F45703B1BE45F0A0062A629 /* AirReportUsedRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirReportUsedRegisters.h; path = b3/air/AirReportUsedRegisters.h; sourceTree = "<group>"; };
+		0F45703E1BE584CA0062A629 /* B3TimingScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3TimingScope.cpp; path = b3/B3TimingScope.cpp; sourceTree = "<group>"; };
+		0F45703F1BE584CA0062A629 /* B3TimingScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3TimingScope.h; path = b3/B3TimingScope.h; sourceTree = "<group>"; };
 		0F46807F14BA572700BFE272 /* JITExceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITExceptions.cpp; sourceTree = "<group>"; };
 		0F46808014BA572700BFE272 /* JITExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITExceptions.h; sourceTree = "<group>"; };
 		0F46809D14BA7F8200BFE272 /* LLIntExceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntExceptions.cpp; path = llint/LLIntExceptions.cpp; sourceTree = "<group>"; };
@@ -4455,6 +4459,8 @@
 				0FEC84EE1BDACDAC0080FF74 /* B3SwitchCase.h */,
 				0FEC84EF1BDACDAC0080FF74 /* B3SwitchValue.cpp */,
 				0FEC84F01BDACDAC0080FF74 /* B3SwitchValue.h */,
+				0F45703E1BE584CA0062A629 /* B3TimingScope.cpp */,
+				0F45703F1BE584CA0062A629 /* B3TimingScope.h */,
 				0FEC84F11BDACDAC0080FF74 /* B3Type.cpp */,
 				0FEC84F21BDACDAC0080FF74 /* B3Type.h */,
 				0FEC84F31BDACDAC0080FF74 /* B3UpsilonValue.cpp */,
@@ -6608,6 +6614,7 @@
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				996B731D1BDA08EF00331B84 /* JSGlobalObject.lut.h in Headers */,
+				0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */,
 				996B731F1BDA08EF00331B84 /* JSPromisePrototype.lut.h in Headers */,
 				0F6FC751196110A800E1D02D /* ComplexGetStatus.h in Headers */,
 				0FDB2CEA174896C7007B3C1B /* ConcurrentJITLock.h in Headers */,
@@ -8575,6 +8582,7 @@
 				7C184E1A17BEDBD3007CB63A /* JSPromise.cpp in Sources */,
 				7C184E2217BEE240007CB63A /* JSPromiseConstructor.cpp in Sources */,
 				7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */,
+				0F4570401BE584CA0062A629 /* B3TimingScope.cpp in Sources */,
 				7C184E1E17BEE22E007CB63A /* JSPromisePrototype.cpp in Sources */,
 				2A05ABD51961DF2400341750 /* JSPropertyNameEnumerator.cpp in Sources */,
 				E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */,

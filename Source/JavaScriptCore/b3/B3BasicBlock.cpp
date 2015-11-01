@@ -67,20 +67,6 @@ bool BasicBlock::replacePredecessor(BasicBlock* from, BasicBlock* to)
     return B3::replacePredecessor(this, from, to);
 }
 
-void BasicBlock::removeNops(Procedure& procedure)
-{
-    unsigned sourceIndex = 0;
-    unsigned targetIndex = 0;
-    while (sourceIndex < size()) {
-        Value* value = m_values[sourceIndex++];
-        if (value->opcode() == Nop)
-            procedure.deleteValue(value);
-        else
-            m_values[targetIndex++] = value;
-    }
-    m_values.resize(targetIndex);
-}
-
 void BasicBlock::dump(PrintStream& out) const
 {
     out.print(dumpPrefix, m_index);

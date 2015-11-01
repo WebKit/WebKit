@@ -29,12 +29,15 @@
 #if ENABLE(B3_JIT)
 
 #include "B3ControlValue.h"
+#include "B3IndexSet.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
+#include "B3UpsilonValue.h"
 #include "B3UseCounts.h"
 #include "B3ValueInlines.h"
+#include <wtf/GraphNodeWorklist.h>
 
 namespace JSC { namespace B3 {
 
@@ -61,8 +64,6 @@ public:
                 for (m_index = 0; m_index < block->size(); ++m_index)
                     process();
                 m_insertionSet.execute(m_block);
-
-                block->removeNops(m_proc);
             }
 
             if (m_changedCFG) {
@@ -70,13 +71,7 @@ public:
                 m_changed = true;
             }
 
-            UseCounts useCounts(m_proc);
-            for (Value* value : m_proc.values()) {
-                if (!useCounts[value] && !value->effects().mustExecute()) {
-                    value->replaceWithNop();
-                    m_changed = true;
-                }
-            }
+            killDeadCode();
             
             result |= m_changed;
         } while (m_changed);
@@ -335,6 +330,64 @@ private:
         m_insertionSet.insertValue(m_index, newValue);
         m_value->replaceWithIdentity(newValue);
         m_changed = true;
+    }
+
+    void killDeadCode()
+    {
+        GraphNodeWorklist<Value*, IndexSet<Value>> worklist;
+        Vector<UpsilonValue*, 64> upsilons;
+        for (BasicBlock* block : m_proc) {
+            for (Value* value : *block) {
+                Effects effects = value->effects();
+                // We don't care about SSA Effects, since we model them more accurately than the
+                // effects() method does.
+                effects.writesSSAState = false;
+                effects.readsSSAState = false;
+                if (effects.mustExecute())
+                    worklist.push(value);
+                if (UpsilonValue* upsilon = value->as<UpsilonValue>())
+                    upsilons.append(upsilon);
+            }
+        }
+        for (;;) {
+            while (Value* value = worklist.pop()) {
+                for (Value* child : value->children())
+                    worklist.push(child);
+            }
+            
+            bool didPush = false;
+            for (size_t upsilonIndex = 0; upsilonIndex < upsilons.size(); ++upsilonIndex) {
+                UpsilonValue* upsilon = upsilons[upsilonIndex];
+                if (worklist.saw(upsilon->phi())) {
+                    worklist.push(upsilon);
+                    upsilons[upsilonIndex--] = upsilons.last();
+                    upsilons.takeLast();
+                    didPush = true;
+                }
+            }
+            if (!didPush)
+                break;
+        }
+
+        for (BasicBlock* block : m_proc) {
+            size_t sourceIndex = 0;
+            size_t targetIndex = 0;
+            while (sourceIndex < block->size()) {
+                Value* value = block->at(sourceIndex++);
+                if (worklist.saw(value))
+                    block->at(targetIndex++) = value;
+                else {
+                    m_proc.deleteValue(value);
+                    
+                    // It's not entirely clear if this is needed. I think it makes sense to have
+                    // this force a rerun of the fixpoint for now, since that will make it easier
+                    // to do peephole optimizations: removing dead code will make the peephole
+                    // easier to spot.
+                    m_changed = true;
+                }
+            }
+            block->values().resize(targetIndex);
+        }
     }
 
     Procedure& m_proc;

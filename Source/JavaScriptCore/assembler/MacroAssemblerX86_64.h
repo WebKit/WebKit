@@ -329,6 +329,20 @@ public:
         m_assembler.shlq_i8r(imm.m_value, dest);
     }
     
+    void lshift64(RegisterID src, RegisterID dest)
+    {
+        ASSERT(src != dest);
+        
+        if (src == X86Registers::ecx)
+            m_assembler.shlq_CLr(dest);
+        else {
+            // Can only shift by ecx, so we do some swapping if we see anything else.
+            swap(src, X86Registers::ecx);
+            m_assembler.shlq_CLr(dest);
+            swap(src, X86Registers::ecx);
+        }
+    }
+    
     void rshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.sarq_i8r(imm.m_value, dest);

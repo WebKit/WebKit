@@ -910,6 +910,11 @@ public:
             m_formatter.immediate8(imm);
         }
     }
+
+    void shlq_CLr(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP2_EvCL, GROUP2_OP_SHL, dst);
+    }
 #endif // CPU(X86_64)
 
     void imull_rr(RegisterID src, RegisterID dst)

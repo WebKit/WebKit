@@ -61,12 +61,12 @@ public:
     {
         HashSet<BasicBlock*> blocks;
         HashSet<Value*> valueInProc;
-        HashSet<Value*> valueInBlock;
+        HashMap<Value*, unsigned> valueInBlock;
 
         for (BasicBlock* block : m_procedure) {
             blocks.add(block);
             for (Value* value : *block)
-                valueInBlock.add(value);
+                valueInBlock.add(value, 0).iterator->value++;
         }
 
         for (Value* value : m_procedure.values())
@@ -74,8 +74,10 @@ public:
 
         for (Value* value : valueInProc)
             VALIDATE(valueInBlock.contains(value), ("At ", *value));
-        for (Value* value : valueInBlock)
-            VALIDATE(valueInProc.contains(value), ("At ", *value));
+        for (auto& entry : valueInBlock) {
+            VALIDATE(valueInProc.contains(entry.key), ("At ", *entry.key));
+            VALIDATE(entry.value == 1, ("At ", *entry.key));
+        }
 
         for (Value* value : valueInProc) {
             for (Value* child : value->children())

@@ -23,38 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AirPhaseScope.h"
+#ifndef B3TimingScope_h
+#define B3TimingScope_h
 
 #if ENABLE(B3_JIT)
 
-#include "AirCode.h"
-#include "AirValidate.h"
-#include "B3Common.h"
+#include <wtf/Noncopyable.h>
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-PhaseScope::PhaseScope(Code& code, const char* name)
-    : m_code(code)
-    , m_name(name)
-    , m_timingScope(name)
-{
-    if (shouldDumpIRAtEachPhase()) {
-        dataLog("Air after ", code.lastPhaseName(), ", before ", name, ":\n");
-        dataLog(code);
-    }
+class TimingScope {
+    WTF_MAKE_NONCOPYABLE(TimingScope);
+public:
+    TimingScope(const char* name);
+    ~TimingScope();
 
-    if (shouldSaveIRBeforePhase())
-        m_dumpBefore = toCString(code);
-}
+private:
+    const char* m_name;
+    double m_before;
+};
 
-PhaseScope::~PhaseScope()
-{
-    m_code.setLastPhaseName(m_name);
-    if (shouldValidateIRAtEachPhase())
-        validate(m_code, m_dumpBefore.data());
-}
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
+#endif // B3TimingScope_h
+

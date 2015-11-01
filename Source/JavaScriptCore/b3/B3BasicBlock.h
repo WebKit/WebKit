@@ -95,8 +95,6 @@ public:
 
     double frequency() const { return m_frequency; }
 
-    void removeNops(Procedure&);
-
     void dump(PrintStream&) const;
     void deepDump(PrintStream&) const;
 

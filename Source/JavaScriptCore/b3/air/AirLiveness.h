@@ -39,6 +39,11 @@ namespace JSC { namespace B3 { namespace Air {
 template<typename Thing>
 class Liveness {
 public:
+    template<typename T>
+    static bool isAlive(const T& thing) { return thing.isAlive(); }
+
+    static bool isAlive(StackSlot* slot) { return slot->kind() == StackSlotKind::Anonymous; }
+    
     Liveness(Code& code)
     {
         m_liveAtHead.resize(code.size());
@@ -94,24 +99,16 @@ public:
             // First handle def's.
             inst.forEach<Thing>(
                 [this] (Thing& arg, Arg::Role role, Arg::Type) {
-                    if (!arg.isAlive())
+                    if (!isAlive(arg))
                         return;
                     if (Arg::isDef(role))
                         m_live.remove(arg);
                 });
 
-            // Next handle clobbered registers.
-            if (inst.hasSpecial()) {
-                inst.extraClobberedRegs().forEach(
-                    [this] (Reg reg) {
-                        m_live.remove(Thing(Tmp(reg)));
-                    });
-            }
-            
             // Finally handle use's.
             inst.forEach<Thing>(
                 [this] (Thing& arg, Arg::Role role, Arg::Type) {
-                    if (!arg.isAlive())
+                    if (!isAlive(arg))
                         return;
                     if (Arg::isUse(role))
                         m_live.add(arg);

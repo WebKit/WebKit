@@ -585,6 +585,22 @@ public:
             return false;
         }
     }
+
+    bool tryShl(Value* value, Value* amount)
+    {
+        Air::Opcode opcode = value->type() == Int32 ? Lshift32 : Lshift64;
+
+        if (imm(amount)) {
+            append(Move, tmp(value), tmp(currentValue));
+            append(opcode, imm(amount), tmp(currentValue));
+            return true;
+        }
+
+        append(Move, tmp(value), tmp(currentValue));
+        append(Move, tmp(amount), Tmp(X86Registers::ecx));
+        append(opcode, Tmp(X86Registers::ecx), tmp(currentValue));
+        return true;
+    }
     
     bool tryStoreAddLoad(Value* left, Value* right, Value*)
     {
@@ -647,6 +663,14 @@ public:
         // FIXME: This could just be a copy propagation rule.
         // https://bugs.webkit.org/show_bug.cgi?id=150775
         append(Move, tmp(value), tmp(currentValue));
+        return true;
+    }
+
+    bool tryZExt32(Value* value)
+    {
+        // FIXME: This could just be a copy propagation rule, with caveats. ;-)
+        // https://bugs.webkit.org/show_bug.cgi?id=150775
+        append(Move32, tmp(value), tmp(currentValue));
         return true;
     }
 

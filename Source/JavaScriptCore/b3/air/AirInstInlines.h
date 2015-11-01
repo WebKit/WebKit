@@ -51,6 +51,20 @@ template<> struct ForEach<Arg> {
         inst.forEachArg(functor);
     }
 };
+template<> struct ForEach<StackSlot*> {
+    template<typename Functor>
+    static void forEach(Inst& inst, const Functor& functor)
+    {
+        inst.forEachArg(
+            [&] (Arg& arg, Arg::Role role, Arg::Type type) {
+                if (!arg.isStack())
+                    return;
+                StackSlot* stackSlot = arg.stackSlot();
+                functor(stackSlot, role, type);
+                arg = Arg::stack(stackSlot);
+            });
+    }
+};
 
 template<typename Thing, typename Functor>
 void Inst::forEach(const Functor& functor)
@@ -86,6 +100,11 @@ inline bool isShiftValid(const Inst& inst)
 }   
 
 inline bool isLshift32Valid(const Inst& inst)
+{
+    return isShiftValid(inst);
+}
+
+inline bool isLshift64Valid(const Inst& inst)
 {
     return isShiftValid(inst);
 }

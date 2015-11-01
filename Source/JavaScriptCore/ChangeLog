@@ -1,3 +1,91 @@
+2015-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::reduceStrength's DCE should be more agro and less wrong
+        https://bugs.webkit.org/show_bug.cgi?id=150748
+
+        Reviewed by Geoffrey Garen.
+
+        First of all, our DCE had a bug where it would keep Upsilons after it deleted the Phis that
+        they referenced. But our B3 DCE was also not aggressive enough. It would not eliminate
+        cycles. It was also probably slower than it needed to be, since it would eliminate all
+        never-referenced things on each fixpoint.
+
+        This adds a presume-everyone-is-dead-and-find-live-things style DCE. This is very natural to
+        write, except for Upsilons. For everything but Upsilons, it's just a worklist algorithm. For
+        Upsilons, it's a fixpoint. It works fine in the end.
+
+        I kept finding bugs in this algorithm when I tested it against my "Complex" test that I was
+        writing as a compile time benchmark. So, I include that test in this change. I also include
+        the small lowering extensions that it needed - shifting and zero extending.
+
+        This change also adds an LLVM version of the Complex test. Though the LLVM version feels
+        more natural to write because LLVM has traditional Phi's rather than our quirky Phi's, in
+        the end LLVM ends up performing very badly - 10x to 20x worse than B3. Some of that gap will
+        close once we give B3 a register allocator, but still, that's pretty good news for our B3
+        strategy.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::lshift64):
+        (JSC::MacroAssemblerX86_64::rshift64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::shlq_i8r):
+        (JSC::X86Assembler::shlq_CLr):
+        (JSC::X86Assembler::imull_rr):
+        * b3/B3BasicBlock.cpp:
+        (JSC::B3::BasicBlock::replacePredecessor):
+        (JSC::B3::BasicBlock::dump):
+        (JSC::B3::BasicBlock::removeNops): Deleted.
+        * b3/B3BasicBlock.h:
+        (JSC::B3::BasicBlock::frequency):
+        * b3/B3Common.cpp:
+        (JSC::B3::shouldSaveIRBeforePhase):
+        (JSC::B3::shouldMeasurePhaseTiming):
+        * b3/B3Common.h:
+        (JSC::B3::isRepresentableAsImpl):
+        * b3/B3Generate.cpp:
+        (JSC::B3::generate):
+        (JSC::B3::generateToAir):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::tryAnd):
+        (JSC::B3::Air::LowerToAir::tryShl):
+        (JSC::B3::Air::LowerToAir::tryStoreAddLoad):
+        (JSC::B3::Air::LowerToAir::tryTrunc):
+        (JSC::B3::Air::LowerToAir::tryZExt32):
+        (JSC::B3::Air::LowerToAir::tryArgumentReg):
+        * b3/B3LoweringMatcher.patterns:
+        * b3/B3PhaseScope.cpp:
+        (JSC::B3::PhaseScope::PhaseScope):
+        * b3/B3PhaseScope.h:
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3TimingScope.cpp: Added.
+        (JSC::B3::TimingScope::TimingScope):
+        (JSC::B3::TimingScope::~TimingScope):
+        * b3/B3TimingScope.h: Added.
+        * b3/B3Validate.cpp:
+        * b3/air/AirAllocateStack.cpp:
+        (JSC::B3::Air::allocateStack):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::ForEach<Arg>::forEach):
+        (JSC::B3::Air::Inst::forEach):
+        (JSC::B3::Air::isLshift32Valid):
+        (JSC::B3::Air::isLshift64Valid):
+        * b3/air/AirLiveness.h:
+        (JSC::B3::Air::Liveness::isAlive):
+        (JSC::B3::Air::Liveness::Liveness):
+        (JSC::B3::Air::Liveness::LocalCalc::execute):
+        * b3/air/AirOpcode.opcodes:
+        * b3/air/AirPhaseScope.cpp:
+        (JSC::B3::Air::PhaseScope::PhaseScope):
+        * b3/air/AirPhaseScope.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testBranchEqualFoldPtr):
+        (JSC::B3::testComplex):
+        (JSC::B3::run):
+        * runtime/Options.h:
+
 2015-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         [ES6] Add support for toStringTag

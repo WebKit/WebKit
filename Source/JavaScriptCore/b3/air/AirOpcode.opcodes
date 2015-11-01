@@ -107,6 +107,10 @@ Lshift32 U:G, UD:G
     Tmp*, Tmp
     Imm, Tmp
 
+Lshift64 U:G, UD:G
+    Tmp*, Tmp
+    Imm, Tmp
+
 Mul32 U:G, UD:G
     Tmp, Tmp
     Addr, Tmp

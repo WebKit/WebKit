@@ -1,3 +1,13 @@
+2015-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::reduceStrength's DCE should be more agro and less wrong
+        https://bugs.webkit.org/show_bug.cgi?id=150748
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/GraphNodeWorklist.h:
+        (WTF::GraphNodeWorklist::saw): This method is super useful.
+
 2015-11-01  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] Fix combinations of PLATFORM(GTK) and OS(DARWIN)

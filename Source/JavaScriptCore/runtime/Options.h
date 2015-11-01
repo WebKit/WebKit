@@ -337,6 +337,8 @@ typedef const char* optionString;
     v(unsigned, fireOSRExitFuzzAt, 0, nullptr) \
     v(unsigned, fireOSRExitFuzzAtOrAfter, 0, nullptr) \
     \
+    v(bool, logB3PhaseTimes, false, nullptr) \
+    \
     v(bool, useDollarVM, false, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
     \

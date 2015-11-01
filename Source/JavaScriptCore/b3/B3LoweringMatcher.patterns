@@ -34,6 +34,8 @@ Add = Add(left, right)
 Sub = Sub(left, right)
 And = BitAnd(left, right)
 
+Shl = Shl(value, amount)
+
 StoreAddLoad = Store(Add(left, right), address)
 StoreSubLoad = Store(Add(left, right), address)
 StoreAndLoad = Store(BitAnd(left, right), address)
@@ -41,6 +43,8 @@ Store = Store(value, address)
 
 TruncArgumentReg = Trunc(argumentReg = ArgumentReg())
 Trunc = Trunc(value)
+
+ZExt32 = ZExt32(value)
 
 ArgumentReg = ArgumentReg()
 

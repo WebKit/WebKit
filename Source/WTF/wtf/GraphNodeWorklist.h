@@ -54,6 +54,8 @@ public:
         return m_stack.takeLast();
     }
 
+    bool saw(Node node) { return m_seen.contains(node); }
+
 private:
     Set m_seen;
     Vector<Node, 16> m_stack;

@@ -24,37 +24,32 @@
  */
 
 #include "config.h"
-#include "AirPhaseScope.h"
+#include "B3TimingScope.h"
 
 #if ENABLE(B3_JIT)
 
-#include "AirCode.h"
-#include "AirValidate.h"
 #include "B3Common.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/DataLog.h>
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC { namespace B3 {
 
-PhaseScope::PhaseScope(Code& code, const char* name)
-    : m_code(code)
-    , m_name(name)
-    , m_timingScope(name)
+TimingScope::TimingScope(const char* name)
+    : m_name(name)
 {
-    if (shouldDumpIRAtEachPhase()) {
-        dataLog("Air after ", code.lastPhaseName(), ", before ", name, ":\n");
-        dataLog(code);
+    if (shouldMeasurePhaseTiming())
+        m_before = monotonicallyIncreasingTimeMS();
+}
+
+TimingScope::~TimingScope()
+{
+    if (shouldMeasurePhaseTiming()) {
+        double after = monotonicallyIncreasingTimeMS();
+        dataLog("[B3] ", m_name, " took: ", after - m_before, " ms.\n");
     }
-
-    if (shouldSaveIRBeforePhase())
-        m_dumpBefore = toCString(code);
 }
 
-PhaseScope::~PhaseScope()
-{
-    m_code.setLastPhaseName(m_name);
-    if (shouldValidateIRAtEachPhase())
-        validate(m_code, m_dumpBefore.data());
-}
-
-} } } // namespace JSC::B3::Air
+} } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+
