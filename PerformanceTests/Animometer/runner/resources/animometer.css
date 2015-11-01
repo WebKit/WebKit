@@ -1,64 +1,312 @@
+/* -------------------------------------------------------------------------- */
+/*                                HTML and Body                               */
+/* -------------------------------------------------------------------------- */
+
+html,body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
 body {
     background-color: rgb(96, 96, 96);
     color: rgb(235, 235, 235);
     font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
 }
 
-main {
-    display: block;
+/* -------------------------------------------------------------------------- */
+/*                              Buttons                                       */
+/* -------------------------------------------------------------------------- */
+
+button {
+    -webkit-appearance: none;
+    -webkit-user-select: none;
+    background-color: transparent;
+}
+
+button.large-button {
+    border: 3px solid rgb(235, 235, 235);
+    border-radius: 10px;
+    min-width: 200px;
+    padding: .5em 2em;
+    margin: 0 1em;
+    font-size: 25px;
+    color: rgb(235, 235, 235);
+}
+
+button.large-button:active {
+    background-color: rgb(235, 235, 235);
+    color: rgb(46, 51, 55);
+    border-color: rgb(235, 235, 235) !important;
+}
+
+button.large-button:disabled {
+    background-color: rgb(96, 96, 96);
+    color: rgb(128, 128, 128);
+}
+
+button.small-button {
+    border: 1px solid DarkCyan;
+    border-radius: 2px;
+    padding: 1px 4px;
+    margin: 0 4px;
+    font-size: 9px;
+    color: black;
+}
+
+button.small-button:active {
+    background-color: DarkCyan;
+    color: rgb(46, 51, 55);
+    border-color: DarkCyan !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               Tree                                         */
+/* -------------------------------------------------------------------------- */
+
+.tree {
+    margin: 1em;
+    overflow-y: scroll;
+    height: 80%;
+}
+
+.tree .expand-button {
     position: absolute;
+    clip: rect(0, 0, 0, 0);
+}
+
+.tree .expand-button ~ ul {
+    display: none;
+}
+
+.tree .expand-button:checked ~ ul {
+    display: block;
+}
+
+.tree ul {
+    list-style-type:none;
+}
+
+.tree li {
+    position: relative;
+    padding: 0 0 1em 1em;
+}
+
+.tree ul li {
+    list-style:none;
+    padding: 1em 0 0 0em;
+}
+
+.tree > li:last-child {
+    padding-bottom: 0;
+}
+
+.tree-label {
+  position: relative;
+  display: inline-block;
+}
+
+label.tree-label {
+    cursor: pointer;
+}
+
+label.tree-label:before {
+    background: black;
+    color: white;
+    position: relative;
+    z-index: 1;
+    float: left;
+    margin: 0 1em 0 -2.1em;
+    width: 1em;
+    height: 1em;
+    border-radius: 1em;
+    content: '+';
+    text-align: center;
+    line-height: .9em;
+}
+
+:checked ~ label.tree-label:before {
+    content: '\2013';
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Results Table                                 */
+/* -------------------------------------------------------------------------- */
+
+table.results-table {
+    width: 100%;
+    border: 2px solid DarkCyan;
+    border-collapse: collapse;
+}
+
+.results-table th,
+.results-table td {
+    font-size: 11px;
+    padding: 3px 4px 2px 4px;
+}
+
+.results-table th {
+    background: DarkCyan;
+    border-left: 1px solid LightCyan;
+    border-right: 1px solid LightCyan;
+    border-top: 1px solid LightCyan;
+}
+
+.results-table td {
+    background: white;
+    border-bottom: none;
+    border-left: none;
+    border-right: 1px solid DarkCyan;
+    border-top: 1px solid DarkCyan;
+    color: black;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Results JSON                                  */
+/* -------------------------------------------------------------------------- */
+
+div.results-json {
+    width: 100%;
+    background-color: rgb(128, 128, 128);
+    color: rgb(235, 235, 235);
+    white-space: pre;
+    font-size: 12px;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Main Layout                                */
+/* -------------------------------------------------------------------------- */
+
+main {
+    width: 100%;
+    height: 100%;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+section {
     width: 800px;
     height: 600px;
-    top: 50%;
-    left: 50%;
-    margin-top: -321px;
-    margin-left: -421px;
-    padding: 15px;
+    display: none;
+    padding: 10px;
     border: 6px solid rgb(235, 235, 235);
     border-radius: 20px;
 }
 
-iframe {
-    width: 800px;
-    height: 600px;
-    border: 0px none;
-    position: absolute;
+section.selected {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
 }
 
-label, p {
-    font-size: 16px;
-    line-height: 21px;
+section > header,
+section > footer {
+    margin: 10px;
+    padding: 10px;
+    -webkit-flex: 0 1 100%;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+    max-height: 15%;
 }
 
-section {
-    display: none;
+section > footer {
+    text-align: center;
+    clear: both;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
 }
 
-section > p {
-    margin: 10px 20px;
+/* -------------------------------------------------------------------------- */
+/*                                 Home Section                               */
+/* -------------------------------------------------------------------------- */
+
+section#home {
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-align-content: center;
+    -ms-flex-line-pack: center;
+    align-content: center;
 }
 
-section#home > p {
+section#home > suites,
+section#home > options {
+    padding: 10px;
+    margin: 10px;
+    height: 50%;
+}
+
+section#home > suites {
+    padding-left: 80px;
+    -webkit-flex: 0 1 40%;
+    -ms-flex: 0 1 40%;
+    flex: 0 1 40%;
+}
+
+section#home > options {
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+section#home > options > label {
+    margin: 2em;
+    line-height: 2;
+}
+
+section#home > header > h2 {
     margin: 0 auto;
     width: 70%;
     text-align: center;
 }
 
-section#home > p:first-child {
-    margin-top: 160px;
-    text-align: center;
+section#home > options > label > input[type="number"] {
+   width: 50px;
 }
 
-section.selected {
-    display: block;
+/* -------------------------------------------------------------------------- */
+/*                           Running Section                                  */
+/* -------------------------------------------------------------------------- */
+
+section#running {
+    position: relative;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
 }
 
-#testContainer {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 800px;
-    height: 600px;
+section#running > #running-test {
+    width: 100%;
+    height: 100%;
+}
+
+section#running > #running-test > iframe {
+    width: 100%;
+    height: 100%;
+    border: 0px none;
 }
 
 section#running > #progress {
@@ -72,7 +320,7 @@ section#running > #progress {
     border-right: 6px solid rgb(46, 51, 55);
 }
 
-section#running #progress-completed {
+section#running > #progress > #progress-completed {
     position: absolute;
     top: 0;
     left: 0;
@@ -83,173 +331,102 @@ section#running #progress-completed {
 
 section#running > #record {
     position: absolute;
-    bottom: -130px;
+    bottom: -95px;
     left: 0px;
     right: 0px;
-    height: 75px;
-    color: rgb(128, 128, 128);
-    padding: 15px;
-    border: 6px solid rgb(235, 235, 235);
-    border-radius: 20px;
+    padding: 16px;
 }
 
-section#running > #record > table,
-section#results > table {
-    width: 100%;
+/* -------------------------------------------------------------------------- */
+/*                           Results Section                                  */
+/* -------------------------------------------------------------------------- */
+
+section#results,
+section#json,
+section#test-json,
+section#test-graph {
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-align-content: space-between;
+    -ms-flex-line-pack: justify;
+    align-content: space-between;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
 }
 
-section#running > #record > table td, th,
-section#results > table td, th {
-    font-size: 11px;
-    border: 1px solid #98bf21;
-    padding: 3px 4px 2px 4px;
-}
-                                           
-section#running > #record > table tr.alt, td
-section#results > table tr.alt, td {
-    color: #000000;
-    background-color: #EAF2D3;
-}
-                                             
-section#running > #record > table th,
-section#results > table th {
-    background-color: #A7C942; 
-    text-align: center;
+section#results > data,
+section#json > data,
+section#test-json > data,
+section#test-graph > data {
+    overflow-y: scroll;
+    height: 70%;
+    -webkit-flex: 0 1 100%;
+    -ms-flex: 0 1 100%;
+    flex: 0 1 100%;
+    -webkit-align-self: stretch;
+    -ms-flex-item-align: stretch;
+    align-self: stretch;
 }
 
-section#test-json > textarea,
-section#json > textarea {
-    width: 800px;
-    height: 460px;
-    background-color: rgb(128, 128, 128);
-    border: 1px solid rgb(235, 235, 235);
-    color: white;
-    white-space: pre;
-    overflow: scroll;
-}
+/* -------------------------------------------------------------------------- */
+/*                           Graph Section                                    */
+/* -------------------------------------------------------------------------- */
 
-.options {
-    margin:0 auto;    
-    margin-top: 30px;
-    width: 600px;
-    align: center;
-}
-
-.options p {
-    margin-top: 0;
-}
-
-#suites ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-#suites ul ul {
-    padding-left: 1.5em;
-    display: none;
-}
-
-#suites ul ul input, #suites ul ul label {
-    font-size: .8em;
-}
-
-#suites.showTests ul ul {
-    display: block;
-}
-
-.column {
-    width: 55%;
-    float:left;
-}
-
-input[type="number"] {
-   width:50px;
-}
-
-.buttons {
-    margin-top: 10px;
-    text-align: center;
-    clear: both;
-}
-
-button {
-    -webkit-appearance: none;
-    border: 3px solid rgb(235, 235, 235);
-    border-radius: 10px;
-    min-width: 200px;
-    padding: 5px 20px;
-    margin: 0 40px;
-    font-size: 25px;
+section#test-graph > data {
+    font: 10px sans-serif;
     color: rgb(235, 235, 235);
-    background-color: transparent;
-
-    -webkit-user-select: none;
 }
 
-button:active {
-    background-color: rgb(235, 235, 235);
-    color: rgb(46, 51, 55);
-    border-color: rgb(235, 235, 235) !important;
-}
-
-button:focus {
-    outline: none;
-    border-color: rgb(232, 79, 79);
-}
-
-.small-button {
-    -webkit-appearance: none;
-    border: 1px solid rgb(96, 96, 96);
-    border-radius: 2px;
-    padding: 1px 4px;
-    margin: 0 4px;
-    background-color: transparent;
-    cursor: pointer;
-    text-align: center;
-    -webkit-user-select: none;
-}
-
-#graphContainer {
-  font: 10px sans-serif;
-  color: rgb(235, 235, 235);  
+section#test-graph > data > svg {
+    fill: none;
+    shape-rendering: crispEdges;  
 }
 
 .axis path,
 .axis line {
-  fill: none;
-  stroke: #999;
-  shape-rendering: crispEdges;
+    fill: none;
+    stroke: #999999;
+    shape-rendering: crispEdges;
 }
 
 .left-samples {
-  fill: none;
-  stroke: #7ADD49;
-  stroke-width: 1.5px;
+    stroke: #7ADD49;
+    stroke-width: 1.5px;
 }
 
 .right-samples {
-    fill: none;
     stroke: #FA4925;
     stroke-width: 1.5px;
 }
 
 .sample-time {
-    fill: none;
     stroke: #5493D6;
-    stroke-width: 1px;
 }
 
 .left-mean {
-    fill: none;
     stroke: #7ADD49;
-    stroke-width: 1px;
     opacity: .8;
 }
 
 .right-mean {
-    fill: none;
     stroke: #FA4925;
-    stroke-width: 1px;
     opacity: .8;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                           JSON Section                                  */
+/* -------------------------------------------------------------------------- */
+
+section#json > data,
+section#test-json > data {
+    border: 1px solid rgb(235, 235, 235);
+    box-sizing: border-box;
 }

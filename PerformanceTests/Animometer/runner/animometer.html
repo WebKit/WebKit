@@ -14,70 +14,84 @@
 <body>
     <main>
         <section id="home" class="selected">
-            <p>
-                Animometer is a browser benchmark that measures the complexity of an animation for
-                which a browser can achieve 50 FPS (frame per second). It uses adaptive animations
-                to tune their complexities to stay close to 50 FPS.
-            </p>
-            <div class="options">
-                <div id="suites" class="column">
-                <p>
-                    <label><input type="checkbox" id="toggleTests"> Show individual tests</label>
-                </p>
-                Suites:<br>
-                </div>
-                <div>
-                    <label>Test interval: <input id="test-interval" type="number" value="30"> seconds</label><br>
-                    <label>Frame rate: <input id="frame-rate" type="number" value="50"> fps</label><br>
-                    <label><input id="estimated-frame-rate" type="checkbox" checked> Estimated Frame Rate</label><br>
-                    <label><input id="fix-test-complexity" type="checkbox"> Fix test complexity after warmup</label><br>
-                    <label><input id="show-running-results" type="checkbox"> Show running results</label>
-                </div>
-            </div>
-            <div class="buttons">
-                <button onclick="startTest()">Start Test</button>
-            </div>
+            <header>
+                <h2>
+                    Animometer is a browser benchmark that measures the complexity of an animation for
+                    which a browser can achieve 50 FPS (frame per second). It uses adaptive animations
+                    to tune their complexities to stay close to 50 FPS.
+                </h2>
+            </header>
+            <suites>
+                <h2>Suites:</h2>
+                <ul class="tree"></ul>
+            </suites>
+            <options>
+                <h2>Options:</h2>
+                <label>Test interval: <input id="test-interval" type="number" value="30"> seconds</label><br>
+                <label>Frame rate: <input id="frame-rate" type="number" value="50"> fps</label><br>
+                <label><input id="estimated-frame-rate" type="checkbox" checked> Estimated Frame Rate</label><br>
+                <label><input id="fix-test-complexity" type="checkbox"> Fix test complexity after warmup</label><br>
+                <label><input id="show-running-results" type="checkbox"> Show running results</label><br>
+                <label><input id="normalize-for-device-scale-factor" type="checkbox"> Normalize for device scale factor</label>
+            </options>
+            <footer>
+                <button class="large-button" onclick="benchmarkController.startTest()">Start Test</button>
+            </footer>
         </section>
         <section id="running">
-            <div id="testContainer"></div>
+            <div id="running-test"></div>
             <div id="progress">
                 <div id="progress-completed"></div>
             </div>
             <div id="record">
-                <table class="record-table"></table>
+                <table class="results-table"></table>
             </div>
         </section>
         <section id="results">
-            <h1>Results:</h1>
-            <table class="results-table"></table>
-            <div class="buttons">
-                <button onclick="showJson()">JSON</button>
-                <button onclick="startTest()">Test Again</button>
-            </div>
+            <header>
+                <h1>Results:</h1>
+            </header>
+            <data>
+                <table class="results-table"></table>
+            </data>
+            <footer>
+                <button class="large-button" onclick="benchmarkController.showJson()">JSON</button>
+                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
+            </footer>
         </section>  
         <section id="json">
-            <h1>JSON:</h1>
-            <textarea class="results-json"></textarea>
-            <div class="buttons">
-                <button onclick="showResults()">Results</button>
-                <button onclick="startTest()">Test Again</button>
-            </div>
-        </section>  
-        <section id="test-graph">
-            <h1>Graph:</h1>
-            <div id="graphContainer"></div>
-            <div class="buttons">
-                <button onclick="showResults()">Results</button>
-                <button onclick="startTest()">Test Again</button>        
-            </div>
+            <header>
+                <h1>JSON:</h1>
+            </header>
+            <data>
+                <div class="results-json" contentEditable="true"></div>
+            </data>
+            <footer>
+                <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
+                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>
+            </footer>
         </section>  
         <section id="test-json">
-            <h1>JSON:</h1>
-            <textarea class="results-json"></textarea>
-            <div class="buttons">
-                <button onclick="showResults()">Results</button>
-                <button onclick="startTest()">Test Again</button>        
-            </div>
+            <header>
+                <h1>JSON:</h1>
+            </header>
+            <data>
+                <div class="results-json" contentEditable="true"></div>
+            </data>
+            <footer>
+                <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
+                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>        
+            </footer>
+        </section>
+        <section id="test-graph">
+            <header>
+                <h1>Graph:</h1>
+            </header>
+            <data></data>
+            <footer>
+                <button class="large-button" onclick="benchmarkController.showResults()">Results</button>
+                <button class="large-button" onclick="benchmarkController.startTest()">Test Again</button>        
+            </footer>
         </section>  
     </main>
 </body>

@@ -39,7 +39,7 @@ BouncingSvgParticlesStage.prototype.constructor = BouncingSvgParticlesStage;
 
 BouncingSvgParticlesStage.prototype._createDefs = function()
 {
-    return Utilities.createSvgElement("defs", {}, {}, this.element);
+    return DocumentExtension.createSvgElement("defs", {}, {}, this.element);
 }
                                                                
 BouncingSvgParticlesStage.prototype._ensureDefsIsCreated = function()
@@ -50,10 +50,10 @@ BouncingSvgParticlesStage.prototype._ensureDefsIsCreated = function()
 BouncingSvgParticlesStage.prototype._createClipStar = function()
 {
     var attrs = { id: "star-clip", clipPathUnits: "objectBoundingBox" };
-    var clipPath  = Utilities.createSvgElement("clipPath", attrs, {}, this._ensureDefsIsCreated());
+    var clipPath  = DocumentExtension.createSvgElement("clipPath", attrs, {}, this._ensureDefsIsCreated());
 
     attrs = { d: "M.50,0L.38,.38L0,.38L.30,.60L.18,1L.50,.75L.82,1L.70,.60L1,.38L.62,.38z" };
-    Utilities.createSvgElement("path", attrs, {}, clipPath);
+    DocumentExtension.createSvgElement("path", attrs, {}, clipPath);
     return clipPath;
 }
 

@@ -14,6 +14,11 @@ Point.pointOnEllipse = function(angle, radiuses)
     return new Point(radiuses.x * Math.cos(angle), radiuses.y * Math.sin(angle));
 }
 
+Point.elementClientSize = function(element)
+{
+    return new Point(element.clientWidth, element.clientHeight);
+}
+
 Point.prototype =
 {
     // Used when the point object is used as a size object.
@@ -65,12 +70,19 @@ function Insets(top, right, bottom, left)
 
 Insets.prototype =
 {
-    get width() {
+    get width()
+    {
         return this.left + this.right;
     },
 
-    get height() {
+    get height()
+    {
         return this.top + this.bottom;
+    },
+    
+    get size()
+    {
+        return new Point(this.width, this.height);
     }
 }
 
@@ -110,10 +122,51 @@ SimplePromise.prototype.resolve = function (value)
         this._chainedPromise.resolve(result);
 }
 
-function Options(testInterval, frameRate)
+window.DocumentExtension =
 {
-    this.testInterval = testInterval;
-    this.frameRate = frameRate;
+    createElement : function(name, attrs, parentElement)
+    {
+        var element = document.createElement(name);
+
+        for (var key in attrs)
+            element.setAttribute(key, attrs[key]);
+
+        parentElement.appendChild(element);
+        return element;
+    },
+
+    createSvgElement: function(name, attrs, xlinkAttrs, parentElement)
+    {
+        const svgNamespace = "http://www.w3.org/2000/svg";
+        const xlinkNamespace = "http://www.w3.org/1999/xlink";
+
+        var element = document.createElementNS(svgNamespace, name);
+        
+        for (var key in attrs)
+            element.setAttribute(key, attrs[key]);
+            
+        for (var key in xlinkAttrs)
+            element.setAttributeNS(xlinkNamespace, key, xlinkAttrs[key]);
+            
+        parentElement.appendChild(element);
+        return element;
+    },
+    
+    insertCssRuleAfter: function(newRule, referenceRule)
+    {
+        var styleSheets = document.styleSheets;
+
+        for (var i = 0; i < styleSheets.length; ++i) {       
+            for (var j = 0; j < styleSheets[i].cssRules.length; ++j) {
+                if (styleSheets[i].cssRules[j].selectorText == referenceRule) {
+                    styleSheets[i].insertRule(newRule, j + 1);
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
 }
 
 function ProgressBar(element, ranges)
@@ -227,11 +280,11 @@ ResultsTable.prototype =
 
     _showHeader: function(message)
     {
-        var row = document.createElement("tr");
+        var thead = DocumentExtension.createElement("thead", {}, this.element);
+        var row = DocumentExtension.createElement("tr", {}, thead);
 
         var queue = [];
         this._showHeaderRow(row, queue, this._headers, message);
-        this.element.appendChild(row);
 
         while (queue.length) {
             var row = null;
@@ -246,14 +299,13 @@ ResultsTable.prototype =
                 }
 
                 if (!row)
-                    var row = document.createElement("tr");
+                    row = DocumentExtension.createElement("tr", {}, thead);
 
                 this._showHeaderRow(row, queue, entry.headers, "");
                 entry.element.colSpan = entry.headers.length;
             }
 
             if (row) {
-                this.element.appendChild(row);
                 entries.forEach(function(entry) {
                     ++entry.rowSpan;
                 });
@@ -290,14 +342,14 @@ ResultsTable.prototype =
         }
         
         var td = document.createElement("td");
-        var button = document.createElement("div");
+        var button = document.createElement("button");
         button.className = "small-button";
 
         button.addEventListener("click", function() {
             var samples = data[Strings["JSON_GRAPH"][0]];
             var samplingTimeOffset = data[Strings["JSON_GRAPH"][1]];
             var axes = Strings["TEXT_EXPERIMENTS"];
-            window.showTestGraph(testName, axes, samples, samplingTimeOffset);
+            benchmarkController.showTestGraph(testName, axes, samples, samplingTimeOffset);
         });
             
         button.textContent = Strings["TEXT_RESULTS"][1] + "...";
@@ -314,11 +366,11 @@ ResultsTable.prototype =
         }
         
         var td = document.createElement("td");
-        var button = document.createElement("div");
+        var button = document.createElement("button");
         button.className = "small-button";
 
         button.addEventListener("click", function() {
-            window.showTestJSON(testName, testResults);
+            benchmarkController.showTestJSON(testName, testResults);
         });
             
         button.textContent = Strings["TEXT_RESULTS"][2] + "...";
@@ -390,3 +442,4 @@ ResultsTable.prototype =
         }, this);
     }
 }
+

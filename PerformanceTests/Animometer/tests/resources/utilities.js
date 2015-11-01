@@ -39,22 +39,5 @@ window.Utilities =
     mergeObjects: function(obj1, obj2)
     {
         return this.extendObject(this.copyObject(obj1), obj2);
-    },
-    
-    createSvgElement: function(name, attrs, xlinkAttrs, parent)
-    {
-        const svgNamespace = "http://www.w3.org/2000/svg";
-        const xlinkNamespace = "http://www.w3.org/1999/xlink";
-
-        var element = document.createElementNS(svgNamespace, name);
-        
-        for (var key in attrs)
-            element.setAttribute(key, attrs[key]);
-            
-        for (var key in xlinkAttrs)
-            element.setAttributeNS(xlinkNamespace, key, xlinkAttrs[key]);
-            
-        parent.appendChild(element);
-        return element;
     }
 }

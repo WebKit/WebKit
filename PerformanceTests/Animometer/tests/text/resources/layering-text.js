@@ -6,6 +6,7 @@ function LayeringTextStage(element, options)
     this._textItemIndex = 0;
     this._colorIndex = 0;
     this._animateCounts = 0;
+    this._setFontSize();
 }
 
 LayeringTextStage.textItems = [
@@ -136,6 +137,14 @@ LayeringTextStage.colorIndexToTextElementIndex = function(colorIndex)
 
 LayeringTextStage.prototype = Object.create(Stage.prototype);
 LayeringTextStage.prototype.constructor = LayeringTextStage;
+
+LayeringTextStage.prototype._setFontSize = function()
+{
+    var lineHeight = this.size.height / LayeringTextStage.colorableTextItems;
+    var fontHeight = lineHeight / 1.5;
+    var fontSize = fontHeight * 72.0 / 96.0;
+    DocumentExtension.insertCssRuleAfter(".text-layer", ".text-layer { font-size: " + fontSize.toFixed(2) + "px; }");
+}
 
 LayeringTextStage.prototype._nextTextItem = function(textItemFlags)
 {

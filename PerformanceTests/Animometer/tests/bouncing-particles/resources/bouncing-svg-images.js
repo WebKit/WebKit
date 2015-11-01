@@ -5,7 +5,7 @@ function BouncingSvgImage(stage)
     
     var attrs = { x: 0, y: 0, width: this._size.x, height: this._size.y };
     var xlinkAttrs = { href: stage.imageSrc };
-    this.element = Utilities.createSvgElement("image", attrs, xlinkAttrs, stage.element);
+    this.element = DocumentExtension.createSvgElement("image", attrs, xlinkAttrs, stage.element);
     this._move();
 }
 

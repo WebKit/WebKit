@@ -50,10 +50,11 @@ BenchmarkRunnerState.prototype.prepareCurrentTest = function(runner, frame)
     return promise;
 }
 
-function BenchmarkRunner(suites, client)
+function BenchmarkRunner(suites, frameContainer, client)
 {
     this._suites = suites;
     this._client = client;
+    this._frameContainer = frameContainer;
 }
 
 BenchmarkRunner.prototype.waitForElement = function(selector)
@@ -72,25 +73,15 @@ BenchmarkRunner.prototype.waitForElement = function(selector)
     return promise;
 }
 
-BenchmarkRunner.prototype._appendFrame = function(src)
+BenchmarkRunner.prototype._appendFrame = function()
 {
     var frame = document.createElement("iframe");
     frame.setAttribute("scrolling", "no");
 
-    var marginLeft = parseInt(getComputedStyle(document.body).marginLeft);
-    var marginTop = parseInt(getComputedStyle(document.body).marginTop);
-    if (window.innerWidth > 800 + marginLeft && window.innerHeight > 600 + marginTop) {
-        frame.style.left = marginLeft + "px";
-        frame.style.top = marginTop + "px";
-    } else {
-        frame.style.left = "0px";
-        frame.style.top = "0px";
-    }
-
     if (this._client && this._client.willAddTestFrame)
         this._client.willAddTestFrame(frame);
 
-    document.body.insertBefore(frame, document.body.firstChild);
+    this._frameContainer.insertBefore(frame, this._frameContainer.firstChild);
     this._frame = frame;
     return frame;
 }
@@ -167,21 +158,21 @@ BenchmarkRunner.prototype.runAllSteps = function(startingState)
     });
 }
 
-BenchmarkRunner.prototype.runMultipleIterations = function(iterationCount)
+BenchmarkRunner.prototype.runMultipleIterations = function()
 {
     var self = this;
     var currentIteration = 0;
 
     this._runNextIteration = function() {
         currentIteration++;
-        if (currentIteration < iterationCount)
+        if (currentIteration < self._client.iterationCount)
             self.runAllSteps();
         else if (this._client && this._client.didFinishLastIteration)
             self._client.didFinishLastIteration();
     }
 
     if (self._client && self._client.willStartFirstIteration)
-        self._client.willStartFirstIteration(iterationCount);
+        self._client.willStartFirstIteration();
 
     self.runAllSteps();
 }

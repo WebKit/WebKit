@@ -3,11 +3,17 @@ window.benchmarkRunnerClient = {
     testsCount: null,
     progressBar: null,
     recordTable: null,
-    options: { testInterval: 30000, frameRate: 50, estimatedFrameRate: true, fixTestComplexity : false },
+    options: null,
     score: 0,
     _resultsDashboard: null,
     _resultsTable: null,
     
+    initialize: function(suites, options)
+    {
+        this.testsCount = this.iterationCount * suites.reduce(function (count, suite) { return count + suite.tests.length; }, 0);
+        this.options = options;
+    },
+
     willAddTestFrame: function (frame)
     {
         var main = document.querySelector("main");
@@ -24,10 +30,10 @@ window.benchmarkRunnerClient = {
     willStartFirstIteration: function ()
     {
         this._resultsDashboard = new ResultsDashboard();
-        this._resultsTable = new ResultsTable(document.querySelector(".results-table"), Headers);
+        this._resultsTable = new ResultsTable(document.querySelector("section#results > data > table"), Headers);
         
         this.progressBar = new ProgressBar(document.getElementById("progress-completed"), this.testsCount);
-        this.recordTable = new ResultsTable(document.querySelector(".record-table"), Headers);
+        this.recordTable = new ResultsTable(document.querySelector("section#running > #record > table"), Headers);
     },
     
     didRunSuites: function (suitesSamplers)
@@ -38,226 +44,365 @@ window.benchmarkRunnerClient = {
     didFinishLastIteration: function ()
     {
         var json = this._resultsDashboard.toJSON(true, true);
+        this.score = json[Strings["JSON_SCORE"]];
         this._resultsTable.showIterations(json[Strings["JSON_RESULTS"][0]]);
-        
-        var element = document.querySelector("#json > textarea");
-        element.innerHTML = JSON.stringify(json[Strings["JSON_RESULTS"][0]][0], function(key, value) { 
+        sectionsManager.showJSON("json", json[Strings["JSON_RESULTS"][0]][0]);
+        benchmarkController.showResults();
+    }
+}
+
+window.sectionsManager =
+{
+    _sectionHeaderH1Element: function(sectionIdentifier)
+    {
+        return document.querySelector("#" + sectionIdentifier + " > header > h1");
+    },
+    
+    _sectionDataDivElement: function(sectionIdentifier)
+    {
+        return document.querySelector("#" + sectionIdentifier + " >  data > div");
+    },
+    
+    showScore: function(sectionIdentifier, title)
+    {
+        var element = this._sectionHeaderH1Element(sectionIdentifier);
+        element.textContent = title + ":";
+
+        var score = benchmarkRunnerClient.score.toFixed(2);
+        element.textContent += " [Score = " + score + "]";
+    },
+    
+    showTestName: function(sectionIdentifier, title, testName)
+    {
+        var element = this._sectionHeaderH1Element(sectionIdentifier);
+        element.textContent = title + ":";
+
+        if (!testName.length)
+            return;
+            
+        element.textContent += " [test = " + testName + "]";
+    },
+    
+    showJSON: function(sectionIdentifier, json)
+    {
+        var element = this._sectionDataDivElement(sectionIdentifier);
+        element.textContent = JSON.stringify(json, function(key, value) { 
             if (typeof value == "number")
                 return value.toFixed(2);
             return value;
         }, 4);
-        
-        this.score = json[Strings["JSON_SCORE"]];
-        showResults();
+    },
+    
+    showSection: function(sectionIdentifier, pushState)
+    {
+        var currentSectionElement = document.querySelector("section.selected");
+        console.assert(currentSectionElement);
+
+        var newSectionElement = document.getElementById(sectionIdentifier);
+        console.assert(newSectionElement);
+
+        currentSectionElement.classList.remove("selected");
+        newSectionElement.classList.add("selected");
+
+        if (pushState)
+            history.pushState({section: sectionIdentifier}, document.title);
+    },
+
+    setupSectionStyle: function()
+    {
+        if (screen.width >= 1800 && screen.height >= 1000)
+            DocumentExtension.insertCssRuleAfter(" section { width: 1600px; height: 800px; }", "section");
+        else
+            DocumentExtension.insertCssRuleAfter(" section { width: 800px; height: 600px; }", "section");
+    },
+    
+    setupRunningSectionStyle: function(options)
+    {
+        if (!options["show-running-results"])
+            document.getElementById("record").style.display = "none";
+
+        if (options["normalize-for-device-scale-factor"] && window.devicePixelRatio != 1) {
+            var percentage = window.devicePixelRatio * 100;
+            var rule = "section#running > #running-test > iframe";
+            var newRule = rule;
+            newRule += " { ";
+            newRule += "width: " + percentage + "%; ";
+            newRule += "height: " + percentage + "%; ";
+            newRule += "transform: scale(" + 100 / percentage + ") translate(" + (100 - percentage) / 2 + "%," + (100 - percentage) / 2 + "%);";
+            newRule += " }";
+            DocumentExtension.insertCssRuleAfter(newRule, rule);
+        }
     }
 }
 
-function showSection(sectionIdentifier, pushState)
+window.optionsManager =
 {
-    var currentSectionElement = document.querySelector("section.selected");
-    console.assert(currentSectionElement);
+    _optionsElements : function()
+    {
+        return document.querySelectorAll("section#home > options input");;
+    },
+    
+    updateUIFromLocalStorage: function()
+    {
+        var optionsElements = this._optionsElements();
 
-    var newSectionElement = document.getElementById(sectionIdentifier);
-    console.assert(newSectionElement);
-
-    currentSectionElement.classList.remove("selected");
-    newSectionElement.classList.add("selected");
-
-    if (pushState)
-        history.pushState({section: sectionIdentifier}, document.title);
-}
-
-function startBenchmark()
-{
-    var enabledSuites = [];
-
-    localStorage.clear();
-    var suiteItems = document.querySelectorAll("#suites > ul > li");
-    for (var i = 0; i < suiteItems.length; ++i) {
-        var suiteItem = suiteItems[i];
-        var suiteCheckbox = suiteItem.querySelector("input");
-
-        if (!suiteCheckbox.checked)
-            continue;
-
-        var enabledTests = [];
-        var testCheckboxes = suiteItem.querySelector("ul").querySelectorAll("input");
-        for (var j = 0; j < testCheckboxes.length; ++j) {
-            var testCheckbox = testCheckboxes[j];
-            if (!testCheckbox.checked)
+        for (var i = 0; i < optionsElements.length; ++i) {
+            var optionElement = optionsElements[i];
+            
+            var value = localStorage.getItem(optionElement.id);
+            if (value === null)
                 continue;
 
-            enabledTests.push(testCheckbox.test);
-            localStorage.setItem(localStorageNameForTest(suiteCheckbox.suite, testCheckbox.test), +testCheckbox.checked);
+            if (optionElement.getAttribute("type") == "number")
+                optionElement.value = +value;
+            else if (optionElement.getAttribute("type") == "checkbox")
+                optionElement.checked = value == "true";
+        }
+    },
+
+    updateLocalStorageFromUI: function()
+    {
+        var optionsElements = this._optionsElements();
+        var options = {};        
+
+        for (var i = 0; i < optionsElements.length; ++i) {
+            var optionElement = optionsElements[i];
+        
+            if (optionElement.getAttribute("type") == "number")
+                options[optionElement.id] = optionElement.value;
+            else if (optionElement.getAttribute("type") == "checkbox")
+                options[optionElement.id] = optionElement.checked;
+    
+            localStorage.setItem(optionElement.id, options[optionElement.id]);
+        }
+        
+        return options;
+    }
+}
+
+window.suitesManager =
+{
+    _treeElement : function()
+    {
+        return document.querySelector("suites > .tree");
+    },
+    
+    _suitesElements : function()
+    {
+        return document.querySelectorAll("#home > suites > ul > li");
+    },
+    
+    _checkboxElement: function(element)
+    {
+        return element.querySelector("input[type='checkbox']:not(.expand-button)");
+    },
+
+    _localStorageNameForTest: function(suite, test)
+    {
+        return suite.name + "/" + test.name;
+    },
+
+    _updateSuiteCheckboxState: function(suiteCheckbox)
+    {
+        var numberEnabledTests = 0;
+        suiteCheckbox.testsElements.forEach(function(testElement) {
+            var testCheckbox = this._checkboxElement(testElement);
+            if (testCheckbox.checked)
+                ++numberEnabledTests;
+        }, this);
+        suiteCheckbox.checked = numberEnabledTests > 0;
+        suiteCheckbox.indeterminate = numberEnabledTests > 0 && numberEnabledTests < suiteCheckbox.testsElements.length;
+    },
+
+    _updateStartButtonState: function()
+    {
+        var suitesElements = this._suitesElements();
+        var startButton = document.querySelector("#home > footer > button");
+        
+        for (var i = 0; i < suitesElements.length; ++i) {
+            var suiteElement = suitesElements[i];
+            var suiteCheckbox = this._checkboxElement(suiteElement);
+            
+            if (suiteCheckbox.checked) {
+                startButton.disabled = false;
+                return;
+            }
+        }
+    
+        startButton.disabled = true;
+    },
+
+    _onChangeSuiteCheckbox: function(event)
+    {
+        var selected = event.target.checked;
+        event.target.testsElements.forEach(function(testElement) {
+            var testCheckbox = this._checkboxElement(testElement);
+            testCheckbox.checked = selected;        
+        }, this);
+        this._updateStartButtonState();
+    },
+
+    _onChangeTestCheckbox: function(event)
+    {
+        var suiteCheckbox = event.target.suiteCheckbox;
+        this._updateSuiteCheckboxState(suiteCheckbox);
+        this._updateStartButtonState();
+    },
+
+    _createSuiteElement: function(treeElement, suite, id)
+    {
+        var suiteElement = DocumentExtension.createElement("li", {}, treeElement);
+        var expand = DocumentExtension.createElement("input", { type: "checkbox",  class: "expand-button", id: id }, suiteElement);
+        var label = DocumentExtension.createElement("label", { class: "tree-label", for: id }, suiteElement);
+
+        var suiteCheckbox = DocumentExtension.createElement("input", { type: "checkbox" }, label);
+        suiteCheckbox.suite = suite;
+        suiteCheckbox.onchange = this._onChangeSuiteCheckbox.bind(this);
+        suiteCheckbox.testsElements = [];
+
+        label.appendChild(document.createTextNode(" " + suite.name));
+        return suiteElement;
+    },
+
+    _createTestElement: function(listElement, test, suiteCheckbox)
+    {
+        var testElement = DocumentExtension.createElement("li", {}, listElement);
+        var span = DocumentExtension.createElement("span", { class: "tree-label" }, testElement);
+
+        var testCheckbox = DocumentExtension.createElement("input", { type: "checkbox" }, span);
+        testCheckbox.test = test;
+        testCheckbox.onchange = this._onChangeTestCheckbox.bind(this);
+        testCheckbox.suiteCheckbox = suiteCheckbox;
+
+        suiteCheckbox.testsElements.push(testElement);
+        span.appendChild(document.createTextNode(" " + test.name));
+        return testElement;
+    },
+
+    createElements: function()
+    {
+        var treeElement = this._treeElement();
+
+        Suites.forEach(function(suite, index) {
+            var suiteElement = this._createSuiteElement(treeElement, suite, "suite-" + index);
+            var listElement = DocumentExtension.createElement("ul", {}, suiteElement);
+            var suiteCheckbox = this._checkboxElement(suiteElement);
+
+            suite.tests.forEach(function(test) {
+                var testElement = this._createTestElement(listElement, test, suiteCheckbox);
+            }, this);
+        }, this);
+    },
+    
+    updateUIFromLocalStorage: function()
+    {
+        var suitesElements = this._suitesElements();
+        
+        for (var i = 0; i < suitesElements.length; ++i) {
+            var suiteElement = suitesElements[i];
+            var suiteCheckbox = this._checkboxElement(suiteElement);
+            var suite = suiteCheckbox.suite;
+            
+            suiteCheckbox.testsElements.forEach(function(testElement) {
+                var testCheckbox = this._checkboxElement(testElement);
+                var test = testCheckbox.test;
+                
+                var str = localStorage.getItem(this._localStorageNameForTest(suite, test));
+                if (str === null)
+                    return;
+
+                var value = JSON.parse(str);
+                testCheckbox.checked = value.checked;
+            }, this);
+
+            this._updateSuiteCheckboxState(suiteCheckbox);
+        }
+        
+        this._updateStartButtonState();
+    },
+
+    updateLocalStorageFromUI: function()
+    {
+        var suitesElements = this._suitesElements();
+        var suites = [];
+        
+        for (var i = 0; i < suitesElements.length; ++i) {
+            var suiteElement = suitesElements[i];
+            var suiteCheckbox = this._checkboxElement(suiteElement);
+            var suite = suiteCheckbox.suite;
+
+            var tests = [];
+            suiteCheckbox.testsElements.forEach(function(testElement) {
+                var testCheckbox = this._checkboxElement(testElement);
+                var test = testCheckbox.test;
+                
+                if (testCheckbox.checked)
+                    tests.push(test);
+
+                var value = { checked: testCheckbox.checked }; 
+                localStorage.setItem(this._localStorageNameForTest(suite, test), JSON.stringify(value));
+            }, this);
+
+            if (tests.length)
+                suites.push(new Suite(suiteCheckbox.suite.name, tests));
         }
 
-        enabledSuites.push(new Suite(suiteCheckbox.suite.name, enabledTests));
+        return suites;
     }
+}
 
-    localStorage.setItem("test-interval", document.getElementById("test-interval").value);
+window.benchmarkController =
+{
+    initialize: function()
+    {
+        sectionsManager.setupSectionStyle();
+        optionsManager.updateUIFromLocalStorage();
+        suitesManager.createElements();
+        suitesManager.updateUIFromLocalStorage();
+    },
 
-    var testsCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
-    benchmarkRunnerClient.testsCount = benchmarkRunnerClient.iterationCount * testsCount;
-    benchmarkRunnerClient.options["testInterval"] = parseInt(document.getElementById("test-interval").value) * 1000;
-    benchmarkRunnerClient.options["frameRate"] = parseInt(document.getElementById("frame-rate").value);
-    benchmarkRunnerClient.options["estimatedFrameRate"] = document.getElementById("estimated-frame-rate").checked;    
-    benchmarkRunnerClient.options["fixTestComplexity"] = document.getElementById("fix-test-complexity").checked;
-    benchmarkRunnerClient.options["showRunningResults"] = document.getElementById("show-running-results").checked;
+    _runBenchmark: function(suites, options)
+    {
+        benchmarkRunnerClient.initialize(suites, options);
+        var frameContainer = document.querySelector("#running > #running-test");
+        var runner = new BenchmarkRunner(suites, frameContainer || document.body, benchmarkRunnerClient);
+        runner.runMultipleIterations();
+    },
+
+    startTest: function()
+    {
+        var options = optionsManager.updateLocalStorageFromUI();
+        var suites = suitesManager.updateLocalStorageFromUI();
+        sectionsManager.setupRunningSectionStyle(options);
+        this._runBenchmark(suites, options);
+        sectionsManager.showSection("running");
+    },
     
-    if (!benchmarkRunnerClient.options["showRunningResults"])
-        document.getElementById("record").style.display = "none";
-
-    var runner = new BenchmarkRunner(enabledSuites, benchmarkRunnerClient);
-    runner.runMultipleIterations(benchmarkRunnerClient.iterationCount);
-}
-
-function startTest()
-{
-    showSection("running");
-    startBenchmark();
-}
-
-function showResults()
-{
-    var element = document.querySelector("#results > h1");
-    element.textContent = Strings["TEXT_RESULTS"][0] + ":";
+    showResults: function()
+    {
+        sectionsManager.showScore("results", Strings["TEXT_RESULTS"][0]);
+        sectionsManager.showSection("results", true);
+    },
     
-    var score = benchmarkRunnerClient.score.toFixed(2);
-    element.textContent += " [Score = " + score + "]";
-        
-    showSection("results", true);
-}
-
-function showJson()
-{
-    var element = document.querySelector("#json > h1");
-    element.textContent = Strings["TEXT_RESULTS"][2] + ":";
+    showJson: function()
+    {
+        sectionsManager.showScore("json", Strings["TEXT_RESULTS"][0]);
+        sectionsManager.showSection("json", true);
+    },
     
-    var score = benchmarkRunnerClient.score.toFixed(2);
-    element.textContent += " [Score = " + score + "]";
+    showTestGraph: function(testName, axes, samples, samplingTimeOffset)
+    {
+        sectionsManager.showTestName("test-graph", Strings["TEXT_RESULTS"][1], testName);
+        sectionsManager.showSection("test-graph", true);
+        graph("section#test-graph > data", new Insets(20, 50, 20, 50), axes, samples, samplingTimeOffset);
+    },
 
-    showSection("json", true);
-}
-
-function showTestGraph(testName, axes, samples, samplingTimeOffset)
-{
-    var element = document.querySelector("#test-graph > h1");
-    element.textContent = Strings["TEXT_RESULTS"][1] + ":";
-
-    if (testName.length)
-        element.textContent += " [test = " + testName + "]";
-            
-    graph("#graphContainer", new Point(700, 400), new Insets(20, 50, 20, 50), axes, samples, samplingTimeOffset);
-    showSection("test-graph", true);    
-}
-
-function showTestJSON(testName, testResults)
-{
-    var element = document.querySelector("#test-json > h1");
-    element.textContent = Strings["TEXT_RESULTS"][2] + ":";
-
-    if (testName.length)
-        element.textContent += " [test = " + testName + "]";
-            
-    var element = document.querySelector("#test-json > textarea");
-    element.innerHTML = JSON.stringify(testResults, function(key, value) { 
-        if (typeof value == "number")
-            return value.toFixed(2);
-        return value;
-    }, 4);
-
-    showSection("test-json", true);    
-}
-
-function initialize() {
-    populateSettings();
-
-    var toggleTestsCheckbox = document.getElementById("toggleTests");
-    toggleTestsCheckbox.onchange = function(event) {
-        if (event.target.checked)
-            document.getElementById("suites").classList.add("showTests");
-        else
-            document.getElementById("suites").classList.remove("showTests");
-    };
-}
-
-function updateSuiteSelection(event) {
-    var selected = event.target.checked;
-    var testCheckboxes = event.target.parentNode.parentNode.querySelector("ul").querySelectorAll("input");
-    for (var i = 0; i < testCheckboxes.length; ++i) {
-        testCheckboxes[i].checked = selected;
+    showTestJSON: function(testName, json)
+    {
+        sectionsManager.showTestName("test-json", Strings["TEXT_RESULTS"][1], testName);
+        sectionsManager.showJSON("test-json", json);
+        sectionsManager.showSection("test-json", true);
     }
 }
 
-function updateTestSelection(event) {
-    var testsList = event.target.parentNode.parentNode.parentNode;
-    var suiteCheckbox = testsList.parentNode.querySelector("label > input");
-
-    updateSuiteCheckbox(testsList, suiteCheckbox);
-}
-
-function updateSuiteCheckbox(testsList, suiteCheckbox) {
-    var numberEnabledTests = 0;
-    var testCheckboxes = testsList.querySelectorAll("input");
-    var totalCheckboxes = testCheckboxes.length;
-    for (var i = 0; i < totalCheckboxes; ++i) {
-        if (testCheckboxes[i].checked)
-            ++numberEnabledTests;
-    }
-    suiteCheckbox.checked = numberEnabledTests > 0;
-    suiteCheckbox.indeterminate = numberEnabledTests > 0 && numberEnabledTests < totalCheckboxes;
-}
-
-function localStorageNameForTest(suite, test) {
-    return suite.name + "/" + test.name;
-}
-
-function populateSettings() {
-    var suitesDiv = document.getElementById("suites");
-
-    var suitesList = document.createElement("ul");
-    suitesDiv.appendChild(suitesList);
-
-    Suites.forEach(function(suite) {
-        var suiteItem = document.createElement("li");
-        suitesList.appendChild(suiteItem);
-
-        var suiteLabel = document.createElement("label");
-        suiteItem.appendChild(suiteLabel);
-
-        var suiteCheckbox = document.createElement("input");
-        suiteCheckbox.setAttribute("type", "checkbox");
-        suiteCheckbox.suite = suite;
-        suiteCheckbox.onchange = updateSuiteSelection;
-        suiteLabel.appendChild(suiteCheckbox);
-        suiteLabel.appendChild(document.createTextNode(" " + suite.name));
-
-        var testsList = document.createElement("ul");
-        suiteItem.appendChild(testsList);
-
-        suite.tests.forEach(function(test) {
-            var testItem = document.createElement("li");
-            testsList.appendChild(testItem);
-
-            var testLabel = document.createElement("label");
-            testItem.appendChild(testLabel);
-
-            var testCheckbox = document.createElement("input");
-            testCheckbox.setAttribute("type", "checkbox");
-            testCheckbox.test = test;
-            testCheckbox.onchange = updateTestSelection;
-            if (+localStorage.getItem(localStorageNameForTest(suite, test)))
-                testCheckbox.checked = true;
-            testLabel.appendChild(testCheckbox);
-            testLabel.appendChild(document.createTextNode(" " + test.name));
-        });
-
-        updateSuiteCheckbox(testsList, suiteCheckbox);
-    });
-
-    var interval = localStorage.getItem("test-interval");
-    if (interval) {
-        document.getElementById("test-interval").value = interval;
-    }
-}
-document.addEventListener("DOMContentLoaded", initialize);
+document.addEventListener("DOMContentLoaded", benchmarkController.initialize());

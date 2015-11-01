@@ -1,7 +1,9 @@
-function graph(selector, size, margins, axes, samples, samplingTimeOffset)
+function graph(selector, margins, axes, samples, samplingTimeOffset)
 {
     var element = document.querySelector(selector);
-    element.textContent = null;
+    element.innerHTML = '';
+
+    var size = Point.elementClientSize(element).subtract(margins.size);
 
     var x = d3.scale.linear()
             .range([0, size.width])
