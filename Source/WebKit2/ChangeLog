@@ -1,3 +1,60 @@
+2015-11-01  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] Fix combinations of PLATFORM(GTK) and OS(DARWIN)
+        https://bugs.webkit.org/show_bug.cgi?id=144560
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        Change order of OS(DARWIN) and USE(UNIX_DOMAIN_SOCKETS) checks,
+        so that we can use Unix domain sockets even on Darwin for the GTK
+        platform.
+        * Platform/IPC/Attachment.cpp: Add USE(UNIX_DOMAIN_SOCKETS) check
+        to OS(DARWIN) check, in order to support GTK platform on OSX.
+        * Platform/IPC/Attachment.h: Change order of OS(DARWIN) and
+        USE(UNIX_DOMAIN_SOCKETS) checks throughout.
+        (IPC::Attachment::size):
+        (IPC::Attachment::releaseFileDescriptor):
+        (IPC::Attachment::fileDescriptor):
+        (IPC::Attachment::disposition):
+        (IPC::Attachment::port): 
+        * Platform/IPC/Connection.h: Ditto.
+        (IPC::Connection::identifierIsNull):
+        (IPC::Connection::Identifier::Identifier): 
+        (IPC::Connection::xpcConnection): 
+        * Platform/IPC/unix/ConnectionUnix.cpp: Only use SOCK_SEQPACKET
+        if the platform is not GTK, because otherwise the PLATFORM(GTK)
+        check below is never reached.
+        * Platform/SharedMemory.h: Change order of OS(DARWIN) and
+        USE(UNIX_DOMAIN_SOCKETS) checks.
+        * PluginProcess/PluginProcess.cpp: Ditto.
+        (WebKit::PluginProcess::createWebProcessConnection):
+        * Shared/API/c/WKBase.h: Don't include WKBaseMac.h if building
+        GTK.
+        * UIProcess/API/C/WKNativeEvent.h: Don't use Apple API if
+        building GTK.
+        * UIProcess/Launcher/ProcessLauncher.cpp: Change to
+        OS(DARWIN) && !PLATFORM(GTK), in the absence of a better platform
+        macro such as USE(MACH).
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess):
+        * UIProcess/Launcher/ProcessLauncher.h: Ditto.
+        * UIProcess/Network/NetworkProcessProxy.cpp: Change order of
+        OS(DARWIN) and PLATFORM(GTK) checks.
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch):
+        (WebKit::NetworkProcessProxy::didCreateNetworkConnectionToWebProcess):
+        * UIProcess/Plugins/PluginProcessProxy.cpp: Ditto.
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp: Ditto.
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        * WebProcess/WebPage/WebInspector.cpp: Ditto.
+        (WebKit::WebInspector::createInspectorPage):
+        * WebProcess/WebPage/WebInspectorUI.cpp: Ditto.
+        (WebKit::WebInspectorUI::establishConnection):
+        * WebProcess/WebProcess.cpp: Ditto.
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use RunLoop::Timer in PluginInfoCache

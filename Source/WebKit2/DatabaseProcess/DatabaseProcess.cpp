@@ -184,7 +184,11 @@ void DatabaseProcess::performNextDatabaseTask()
 
 void DatabaseProcess::createDatabaseToWebProcessConnection()
 {
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
+    m_databaseToWebProcessConnections.append(DatabaseToWebProcessConnection::create(socketPair.server));
+    parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(IPC::Attachment(socketPair.client)), 0);
+#elif OS(DARWIN)
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -195,10 +199,6 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(clientPort), 0);
-#elif USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-    m_databaseToWebProcessConnections.append(DatabaseToWebProcessConnection::create(socketPair.server));
-    parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(IPC::Attachment(socketPair.client)), 0);
 #else
     notImplemented();
 #endif

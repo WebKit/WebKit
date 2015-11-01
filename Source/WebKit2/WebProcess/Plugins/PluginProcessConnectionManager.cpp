@@ -36,7 +36,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include "MachPort.h"
 #endif
 
@@ -74,10 +74,10 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
                                                      Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier, supportsAsynchronousInitialization), 0))
         return 0;
 
-#if OS(DARWIN)
-    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
+#elif OS(DARWIN)
+    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
 #endif
     if (IPC::Connection::identifierIsNull(connectionIdentifier))
         return nullptr;

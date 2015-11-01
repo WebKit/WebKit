@@ -42,13 +42,16 @@
 #endif
 
 #if PLATFORM(GTK)
-#if PLATFORM(X11)
+#include <gdk/gdk.h>
+#endif
+
+#if PLATFORM(GTK) && PLATFORM(X11)
 #include <gdk/gdkx.h>
 #endif
-#if PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
+
+#if PLATFORM(GTK) && PLATFORM(WAYLAND) && !defined(GTK_API_VERSION_2)
 #include <gdk/gdkwayland.h>
 #endif
-#endif // PLATFORM(GTK)
 
 #if PLATFORM(EFL) && defined(HAVE_ECORE_X)
 #include <Ecore_X.h>

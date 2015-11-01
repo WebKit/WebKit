@@ -42,7 +42,7 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include <mach/mach_port.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -104,7 +104,22 @@ public:
     class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
     };
 
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    typedef int Identifier;
+    static bool identifierIsNull(Identifier identifier) { return identifier == -1; }
+
+    struct SocketPair {
+        int client;
+        int server;
+    };
+
+    enum ConnectionOptions {
+        SetCloexecOnClient = 1 << 0,
+        SetCloexecOnServer = 1 << 1,
+    };
+
+    static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
+#elif OS(DARWIN)
     struct Identifier {
         Identifier()
             : port(MACH_PORT_NULL)
@@ -129,21 +144,6 @@ public:
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     bool getAuditToken(audit_token_t&);
     pid_t remoteProcessID() const;
-#elif USE(UNIX_DOMAIN_SOCKETS)
-    typedef int Identifier;
-    static bool identifierIsNull(Identifier identifier) { return identifier == -1; }
-
-    struct SocketPair {
-        int client;
-        int server;
-    };
-
-    enum ConnectionOptions {
-        SetCloexecOnClient = 1 << 0,
-        SetCloexecOnServer = 1 << 1,
-    };
-
-    static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
 #endif
 
     static Ref<Connection> createServerConnection(Identifier, Client&);
@@ -326,7 +326,20 @@ private:
     bool m_shouldBoostMainThreadOnSyncMessage { false };
 #endif
 
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    // Called on the connection queue.
+    void readyReadHandler();
+    bool processMessage();
+
+    Vector<uint8_t> m_readBuffer;
+    size_t m_readBufferSize;
+    Vector<int> m_fileDescriptors;
+    size_t m_fileDescriptorsSize;
+    int m_socketDescriptor;
+#if PLATFORM(GTK)
+    GMainLoopSource m_socketEventSource;
+#endif
+#elif OS(DARWIN)
     // Called on the connection queue.
     void receiveSourceEventHandler();
     void initializeDeadNameSource();
@@ -347,20 +360,6 @@ private:
 #endif
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
-
-#elif USE(UNIX_DOMAIN_SOCKETS)
-    // Called on the connection queue.
-    void readyReadHandler();
-    bool processMessage();
-
-    Vector<uint8_t> m_readBuffer;
-    size_t m_readBufferSize;
-    Vector<int> m_fileDescriptors;
-    size_t m_fileDescriptorsSize;
-    int m_socketDescriptor;
-#if PLATFORM(GTK)
-    GMainLoopSource m_socketEventSource;
-#endif
 #endif
 };
 

@@ -72,16 +72,16 @@ WebInspector::~WebInspector()
 // Called from WebInspectorClient
 void WebInspector::openFrontendConnection(bool underTest)
 {
-#if OS(DARWIN)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
+    IPC::Connection::Identifier connectionIdentifier(socketPair.server);
+    IPC::Attachment connectionClientPort(socketPair.client);
+#elif OS(DARWIN)
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
     IPC::Connection::Identifier connectionIdentifier(listeningPort);
     IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-#elif USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-    IPC::Connection::Identifier connectionIdentifier(socketPair.server);
-    IPC::Attachment connectionClientPort(socketPair.client);
 #else
     notImplemented();
     return;

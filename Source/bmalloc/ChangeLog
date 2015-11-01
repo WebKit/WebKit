@@ -1,3 +1,15 @@
+2015-11-01  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] Fix combinations of PLATFORM(GTK) and OS(DARWIN)
+        https://bugs.webkit.org/show_bug.cgi?id=144560
+
+        Reviewed by Darin Adler.
+
+        * PlatformGTK.cmake: Added. This adds Zone.cpp to the PlatformGTK
+        build, on Darwin only. Since there was previously nothing for the
+        build system to do that was specific to the GTK platform in
+        bmalloc, we need to create this file.
+
 2015-10-29  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: AsyncTask should handle destruction

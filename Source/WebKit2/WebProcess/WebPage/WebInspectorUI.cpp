@@ -54,10 +54,10 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 
 void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest)
 {
-#if OS(DARWIN)
-    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-#elif USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.releaseFileDescriptor());
+#elif OS(DARWIN)
+    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
 #else
     notImplemented();
     return;

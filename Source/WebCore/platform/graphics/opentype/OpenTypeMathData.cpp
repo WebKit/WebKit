@@ -40,7 +40,7 @@ namespace WebCore {
 #if ENABLE(OPENTYPE_MATH)
 namespace OpenType {
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
 const FourCharCode MATHTag = 'MATH';
 #else
 const uint32_t MATHTag = OT_MAKE_TAG('M', 'A', 'T', 'H');

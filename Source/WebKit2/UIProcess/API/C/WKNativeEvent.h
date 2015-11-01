@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-#if defined(__APPLE__) && !TARGET_OS_IPHONE
+#if defined(__APPLE__) && !TARGET_OS_IPHONE && !defined(BUILDING_GTK__)
 #ifdef __OBJC__
 @class NSEvent;
 #elif __cplusplus
