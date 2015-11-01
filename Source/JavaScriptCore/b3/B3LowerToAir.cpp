@@ -400,7 +400,15 @@ public:
         {
             this->root = root;
             // We don't want to match an address expression that has already been computed
-            // explicitly.
+            // explicitly. This mostly makes sense. Note that we never hoist basic address
+            // expressions like offset(base), because those are sunk into the MemoryValue. So,
+            // this is mainly just relevant to Index expressions and other more complicated
+            // things. It stands to reason that most of the time, we won't hoist an Index
+            // expression. And if we do, then probably it's a good thing to compute it outside
+            // a loop. That being said, this might turn into a problem. For example, it will
+            // require an extra register to be live. That's unlikely to be profitable.
+            // FIXME: Consider matching an address expression even if we've already assigned a
+            // Tmp to it. https://bugs.webkit.org/show_bug.cgi?id=150777
             return !lower.valueToTmp[root];
         }
 
