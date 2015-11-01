@@ -50,6 +50,10 @@ ResourceUsageOverlay::ResourceUsageOverlay(Page& page)
 ResourceUsageOverlay::~ResourceUsageOverlay()
 {
     platformDestroy();
+
+    // FIXME: This is a hack so we don't try to uninstall the PageOverlay during Page destruction.
+    if (m_page.mainFrame().page())
+        m_page.mainFrame().pageOverlayController().uninstallPageOverlay(m_overlay.get(), PageOverlay::FadeMode::DoNotFade);
 }
 
 bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
