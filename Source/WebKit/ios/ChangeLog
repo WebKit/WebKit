@@ -1,3 +1,17 @@
+2015-11-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r191902.
+        https://bugs.webkit.org/show_bug.cgi?id=150811
+
+        This change broke iOS builders (Requested by ryanhaddad on
+        #webkit).
+
+        Reverted changeset:
+
+        "Replace iOS-only WebKitSystemInterface calls with SPI"
+        https://bugs.webkit.org/show_bug.cgi?id=150763
+        http://trac.webkit.org/changeset/191902
+
 2015-10-31  Andy Estes  <aestes@apple.com>
 
         Replace iOS-only WebKitSystemInterface calls with SPI

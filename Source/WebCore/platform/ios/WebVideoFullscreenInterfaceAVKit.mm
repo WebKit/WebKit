@@ -26,9 +26,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
-
-#if HAVE(AVKIT)
+#if PLATFORM(IOS) && HAVE(AVKIT)
 
 #import "WebVideoFullscreenInterfaceAVKit.h"
 
@@ -59,7 +57,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResizeAspect, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVLayerVideoGravityResizeAspectFill, NSString *)
 
 SOFT_LINK_FRAMEWORK(AVKit)
-SOFT_LINK_CLASS(AVKit, AVPictureInPictureController)
 SOFT_LINK_CLASS(AVKit, AVPlayerController)
 SOFT_LINK_CLASS(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS(AVKit, AVValueTiming)
@@ -1305,7 +1302,7 @@ void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, co
 
 bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoPictureInPicture() const
 {
-    return [m_playerController isPlaying] && m_mode == HTMLMediaElementEnums::VideoFullscreenModeStandard && supportsPictureInPicture();
+    return [m_playerController isPlaying] && m_mode == HTMLMediaElementEnums::VideoFullscreenModeStandard && wkIsOptimizedFullscreenSupported();
 }
 
 void WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline(std::function<void(bool)> callback)
@@ -1441,15 +1438,4 @@ void WebVideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElementEnums::VideoFul
         m_videoFullscreenModel->fullscreenModeChanged(m_mode);
 }
 
-#endif // HAVE(AVKIT)
-
-bool WebCore::supportsPictureInPicture()
-{
-#if PLATFORM(IOS) && HAVE(AVKIT)
-    return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
-#else
-    return false;
 #endif
-}
-
-#endif // PLATFORM(IOS)

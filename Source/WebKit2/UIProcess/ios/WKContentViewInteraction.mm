@@ -72,6 +72,7 @@
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
+#import <WebKitSystemInterfaceIOS.h>
 #import <wtf/RetainPtr.h>
 
 @interface UIEvent(UIEventInternal)

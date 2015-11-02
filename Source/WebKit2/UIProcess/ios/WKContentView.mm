@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "APIPageConfiguration.h"
-#import "AccessibilityIOS.h"
 #import "ApplicationStateTracker.h"
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -45,6 +44,7 @@
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
 #import "WebKit2Initialize.h"
+#import "WebKitSystemInterfaceIOS.h"
 #import "WebPageGroup.h"
 #import "WebProcessPool.h"
 #import "WebSystemInterface.h"
@@ -53,7 +53,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/NotImplemented.h>
-#import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/RetainPtr.h>
@@ -189,7 +188,7 @@ private:
 
     _page = processPool.createWebPage(*_pageClient, WTF::move(configuration));
     _page->initializeWebPage();
-    _page->setIntrinsicDeviceScaleFactor(screenScaleFactor([UIScreen mainScreen]));
+    _page->setIntrinsicDeviceScaleFactor(WKGetScaleFactorForScreen([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);
     _page->setDelegatesScrolling(true);
 
@@ -420,7 +419,7 @@ private:
 - (void)_updateForScreen:(UIScreen *)screen
 {
     ASSERT(screen);
-    _page->setIntrinsicDeviceScaleFactor(screenScaleFactor(screen));
+    _page->setIntrinsicDeviceScaleFactor(WKGetScaleFactorForScreen(screen));
     [self _accessibilityRegisterUIProcessTokens];
 }
 
@@ -430,23 +429,15 @@ private:
     [self _accessibilityRegisterUIProcessTokens];
 }
 
-static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid, mach_port_t sendPort, NSUUID *uuid)
-{
-    // The accessibility bundle needs to know the uuid, pid and mach_port that this object will refer to.
-    objc_setAssociatedObject(element, (void*)[@"ax-uuid" hash], uuid, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(element, (void*)[@"ax-pid" hash], @(pid), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(element, (void*)[@"ax-machport" hash], @(sendPort), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
 - (void)_accessibilityRegisterUIProcessTokens
 {
-    auto uuid = [NSUUID UUID];
-    NSData *remoteElementToken = newAccessibilityRemoteToken(uuid);
+    RetainPtr<CFUUIDRef> uuid = adoptCF(CFUUIDCreate(kCFAllocatorDefault));
+    NSData *remoteElementToken = WKAXRemoteToken(uuid.get());
 
     // Store information about the WebProcess that can later be retrieved by the iOS Accessibility runtime.
     if (_page->process().state() == WebProcessProxy::State::Running) {
         IPC::Connection* connection = _page->process().connection();
-        storeAccessibilityRemoteConnectionInformation(self, _page->process().processIdentifier(), connection->identifier().port, uuid);
+        WKAXStoreRemoteConnectionInformation(self, _page->process().processIdentifier(), connection->identifier().port, uuid.get());
 
         IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
         _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);

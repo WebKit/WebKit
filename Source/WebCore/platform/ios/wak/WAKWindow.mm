@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "LegacyTileCache.h"
-#import "PlatformScreen.h"
 #import "WAKViewInternal.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThreadRun.h"
@@ -68,7 +67,7 @@ static id<OrientationProvider> gOrientationProvider;
     _hostLayer = [layer retain];
 
     _frame = [_hostLayer frame];
-    _screenScale = screenScaleFactor();
+    _screenScale = wkGetScreenScaleFactor();
     
     _tileCache = new LegacyTileCache(self);
 
@@ -87,7 +86,7 @@ static id<OrientationProvider> gOrientationProvider;
         return nil;
 
     _frame = frame;
-    _screenScale = screenScaleFactor();
+    _screenScale = wkGetScreenScaleFactor();
 
     _exposedScrollViewRect = CGRectNull;
 

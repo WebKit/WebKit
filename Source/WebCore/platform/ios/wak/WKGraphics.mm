@@ -30,7 +30,7 @@
 
 #import "CoreGraphicsSPI.h"
 #import "FontCascade.h"
-#import "PlatformScreen.h"
+#import "WebCoreSystemInterface.h"
 #import "WebCoreThread.h"
 #import <ImageIO/ImageIO.h>
 #import <wtf/StdLibExtras.h>
@@ -113,9 +113,9 @@ CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file)
 
     CGImageRef image = nullptr;
     NSData *imageData = nullptr;
-    for (unsigned scaleFactor = screenScaleFactor(); scaleFactor > 0; --scaleFactor) {
+    for (unsigned scaleFactor = wkGetScreenScaleFactor(); scaleFactor > 0; --scaleFactor) {
         imageData = [NSData dataWithContentsOfFile:imageResourcePath(image_file, scaleFactor)];
-        ASSERT(scaleFactor != screenScaleFactor() || imageData);
+        ASSERT(scaleFactor != wkGetScreenScaleFactor() || imageData);
         if (imageData)
             break;
     }
@@ -131,7 +131,7 @@ CGImageRef WKGraphicsCreateImageFromBundleWithName(const char *image_file)
 static void WKDrawPatternBitmap(void *info, CGContextRef c) 
 {
     CGImageRef image = (CGImageRef)info;
-    CGFloat scale = screenScaleFactor();
+    CGFloat scale = wkGetScreenScaleFactor();
     CGContextDrawImage(c, CGRectMake(0, 0, CGImageGetWidth(image) / scale, CGImageGetHeight(image) / scale), image);    
 }
 
@@ -150,7 +150,7 @@ CGPatternRef WKCreatePatternFromCGImage(CGImageRef imageRef)
     // retain image since it's freed by our callback
     CGImageRetain(imageRef);
 
-    CGFloat scale = screenScaleFactor();
+    CGFloat scale = wkGetScreenScaleFactor();
     return CGPatternCreate((void*)imageRef, CGRectMake(0, 0, CGImageGetWidth(imageRef) / scale, CGImageGetHeight(imageRef) / scale), CGAffineTransformIdentity, CGImageGetWidth(imageRef) / scale, CGImageGetHeight(imageRef) / scale, kCGPatternTilingConstantSpacing, 1 /*isColored*/, &WKPatternBitmapCallbacks);
 }
 

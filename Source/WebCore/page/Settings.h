@@ -282,10 +282,6 @@ public:
 
     WEBCORE_EXPORT void setForcePendingWebGLPolicy(bool);
     bool isForcePendingWebGLPolicy() const { return m_forcePendingWebGLPolicy; }
-    
-#if PLATFORM(IOS)
-    WEBCORE_EXPORT static float defaultMinimumZoomFontSize();
-#endif
 
 private:
     explicit Settings(Page*);

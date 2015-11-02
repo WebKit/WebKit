@@ -57,7 +57,7 @@
 #endif
 
 #if PLATFORM(IOS)
-#include "Device.h"
+#include "WebCoreSystemInterface.h"
 #endif
 
 namespace WebCore {
@@ -631,8 +631,8 @@ static bool view_modeMediaFeatureEval(CSSValue* value, const CSSToLengthConversi
 static inline bool isRunningOnIPhoneOrIPod()
 {
 #if PLATFORM(IOS)
-    static bool runningOnIPhoneOrIPod = deviceClass() == MGDeviceClassiPhone || deviceClass() == MGDeviceClassiPod;
-    return runningOnIPhoneOrIPod;
+    static wkDeviceClass deviceClass = iosDeviceClass();
+    return deviceClass == wkDeviceClassiPhone || deviceClass == wkDeviceClassiPod;
 #else
     return false;
 #endif

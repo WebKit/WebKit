@@ -33,6 +33,10 @@
 #include <WebCore/TextEncodingRegistry.h>
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(IOS)
+#import <WebKitSystemInterfaceIOS.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {

@@ -40,7 +40,7 @@
 
 #if PLATFORM(IOS)
 #import "UIKitSPI.h"
-#import <WebCore/Device.h>
+#import "WebKitSystemInterfaceIOS.h"
 #endif
 
 template<typename T> class LazyInitialized {
@@ -109,7 +109,7 @@ private:
 #if PLATFORM(IOS)
     _requiresUserActionForMediaPlayback = YES;
     _allowsPictureInPictureMediaPlayback = YES;
-    _allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
+    _allowsInlineMediaPlayback = WKGetDeviceClass() == WKDeviceClassiPad;
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = NO;
 #endif

@@ -36,12 +36,12 @@
 #endif
 
 #if PLATFORM(IOS)
-#include "Device.h"
+#include "WebCoreSystemInterface.h"
 #endif
 
 #ifndef WEBCORE_NAVIGATOR_PLATFORM
 #if PLATFORM(IOS)
-#define WEBCORE_NAVIGATOR_PLATFORM deviceName()
+#define WEBCORE_NAVIGATOR_PLATFORM ""
 #elif OS(MAC_OS_X) && (CPU(PPC) || CPU(PPC64))
 #define WEBCORE_NAVIGATOR_PLATFORM "MacPPC"
 #elif OS(MAC_OS_X) && (CPU(X86) || CPU(X86_64))
@@ -68,6 +68,7 @@
 #ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
 #define WEBCORE_NAVIGATOR_VENDOR_SUB ""
 #endif // ifndef WEBCORE_NAVIGATOR_VENDOR_SUB
+
 
 namespace WebCore {
 

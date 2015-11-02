@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#import "AccessibilityIOS.h"
 #import "AssistedNodeInformation.h"
 #import "DataReference.h"
 #import "DrawingArea.h"
@@ -46,6 +45,7 @@
 #import "WebFrame.h"
 #import "WebImage.h"
 #import "WebKitSystemInterface.h"
+#import "WebKitSystemInterfaceIOS.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <CoreText/CTFont.h>
@@ -119,7 +119,9 @@ void WebPage::platformInitializeAccessibility()
     m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
     [m_mockAccessibilityElement setWebPage:this];
     
-    NSData *remoteToken = newAccessibilityRemoteToken([NSUUID UUID]);
+    RetainPtr<CFUUIDRef> uuid = adoptCF(CFUUIDCreate(kCFAllocatorDefault));
+    NSData *remoteToken = WKAXRemoteToken(uuid.get());
+    
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
     send(Messages::WebPageProxy::RegisterWebProcessAccessibilityToken(dataToken));
 }
