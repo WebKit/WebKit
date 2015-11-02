@@ -1,3 +1,10 @@
+2015-11-02  Andy Estes  <aestes@apple.com>
+
+        Fixed the iOS build after r191904.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::screenSize):
+
 2015-10-31  Andy Estes  <aestes@apple.com>
 
         Replace iOS-only WebKitSystemInterface calls with SPI

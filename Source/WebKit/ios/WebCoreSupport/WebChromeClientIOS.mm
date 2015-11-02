@@ -171,7 +171,7 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
 
 FloatSize WebChromeClientIOS::screenSize() const
 {
-    return FloatSize(screenSize());
+    return FloatSize(WebCore::screenSize());
 }
 
 FloatSize WebChromeClientIOS::availableScreenSize() const
