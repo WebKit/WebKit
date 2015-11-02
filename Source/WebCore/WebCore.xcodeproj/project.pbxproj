@@ -1359,7 +1359,6 @@
 		31DEA4551B39F4D900F77178 /* WebSystemBackdropLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */; };
 		31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */; };
 		31DF63571AF187DD0078FD91 /* NSColorSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DF63561AF187DD0078FD91 /* NSColorSPI.h */; };
-		31DF63591AF194F00078FD91 /* UIColorSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DF63581AF194F00078FD91 /* UIColorSPI.h */; };
 		31EAF97E121435A400E7C1BF /* DeviceMotionClientIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31EAF97C121435A400E7C1BF /* DeviceMotionClientIOS.h */; };
 		31EAF97F121435A400E7C1BF /* DeviceMotionClientIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31EAF97D121435A400E7C1BF /* DeviceMotionClientIOS.mm */; };
 		31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31EC1E2614FF60EE00C94662 /* JSNotificationPermissionCallback.cpp */; };
@@ -1675,7 +1674,6 @@
 		44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAE12DFB8BF00AE923B /* MathMLNames.h */; };
 		44C363F00FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C363EE0FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44C363F10FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44C363EF0FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.mm */; };
-		44C3CFE81556BE5D00013609 /* WebCoreSystemInterfaceIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C3CFE71556BE5D00013609 /* WebCoreSystemInterfaceIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44C991820F3D1E0D00586670 /* ScrollbarThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44C991810F3D1E0D00586670 /* ScrollbarThemeIOS.mm */; };
 		44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */; };
 		44C9919F0F3D210E00586670 /* ThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C9919D0F3D210E00586670 /* ThemeIOS.h */; };
@@ -4029,6 +4027,7 @@
 		A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
+		A182D5B71BE722670087A7CC /* SettingsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = A182D5B61BE722620087A7CC /* SettingsCocoa.mm */; };
 		A18890AE1AA13F250026C301 /* ParentalControlsContentFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */; };
 		A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */; };
 		A19AEA211AAA808600B52B25 /* JSMockContentFilterSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */; };
@@ -4054,6 +4053,9 @@
 		A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154513015C4E0054AC8C /* PointLightSource.cpp */; };
 		A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */; };
 		A1E5B31F1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1E5B31D1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp */; };
+		A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1ED778A1BE3293F00DC1791 /* Device.cpp */; };
+		A1ED778D1BE3294000DC1791 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778B1BE3294000DC1791 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1ED778F1BE4291800DC1791 /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ED778E1BE4291800DC1791 /* UIKitSPI.h */; };
 		A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B9217216C5CC420041DCD9 /* IntRectExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */; };
 		A31C4E4F16E02AB4002F7957 /* OESTextureHalfFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = A31C4E4E16E02AB4002F7957 /* OESTextureHalfFloat.h */; };
@@ -6061,7 +6063,7 @@
 		CE12523D1A1676CD00864480 /* QuartzCoreSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252411A16B1B600864480 /* MediaPlayerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252401A16B1B600864480 /* MediaPlayerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252431A16C01A00864480 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252421A16C01A00864480 /* CoreUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252441A16C22500864480 /* DynamicLinkerSPI.h */; };
+		CE1252451A16C22500864480 /* DynamicLinkerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252441A16C22500864480 /* DynamicLinkerSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE1252471A16C2C200864480 /* NSPointerFunctionsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252461A16C2C200864480 /* NSPointerFunctionsSPI.h */; };
 		CE1252491A16C3BC00864480 /* MobileGestaltSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */; };
@@ -6350,7 +6352,6 @@
 		E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */; };
 		E1C266DE18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */; };
 		E1C266DF18319F31003F8B33 /* CryptoKeyDataRSAComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DD18319F31003F8B33 /* CryptoKeyDataRSAComponents.h */; };
-		E1C2F24A1533A2120083F974 /* SettingsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C2F2481533A2120083F974 /* SettingsMac.mm */; };
 		E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */; };
 		E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */; };
 		E1C36C030EB076D6007410BC /* JSDOMGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8698,7 +8699,6 @@
 		31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemBackdropLayer.mm; sourceTree = "<group>"; };
 		31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemBackdropLayer.h; sourceTree = "<group>"; };
 		31DF63561AF187DD0078FD91 /* NSColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorSPI.h; sourceTree = "<group>"; };
-		31DF63581AF194F00078FD91 /* UIColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorSPI.h; sourceTree = "<group>"; };
 		31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSnapshottedPlugIn.cpp; sourceTree = "<group>"; };
 		31E8D8BB160BC94C004CE8F5 /* RenderSnapshottedPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSnapshottedPlugIn.h; sourceTree = "<group>"; };
 		31EAF97C121435A400E7C1BF /* DeviceMotionClientIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMotionClientIOS.h; sourceTree = "<group>"; };
@@ -9039,7 +9039,6 @@
 		44A28AAE12DFB8BF00AE923B /* MathMLNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLNames.h; sourceTree = "<group>"; };
 		44C363EE0FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecksIOS.h; sourceTree = "<group>"; };
 		44C363EF0FAA7BB30097F8CC /* RuntimeApplicationChecksIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecksIOS.mm; sourceTree = "<group>"; };
-		44C3CFE71556BE5D00013609 /* WebCoreSystemInterfaceIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSystemInterfaceIOS.h; sourceTree = "<group>"; };
 		44C991810F3D1E0D00586670 /* ScrollbarThemeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollbarThemeIOS.mm; sourceTree = "<group>"; };
 		44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeIOS.h; sourceTree = "<group>"; };
 		44C9919D0F3D210E00586670 /* ThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeIOS.h; sourceTree = "<group>"; };
@@ -11560,6 +11559,7 @@
 		A14978701ABAF3A500CEF7E4 /* PlatformContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformContentFilter.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
+		A182D5B61BE722620087A7CC /* SettingsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsCocoa.mm; sourceTree = "<group>"; };
 		A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ParentalControlsContentFilter.mm; sourceTree = "<group>"; };
 		A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParentalControlsContentFilter.h; sourceTree = "<group>"; };
 		A19AEA1C1AAA7C4900B52B25 /* MockContentFilterSettings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MockContentFilterSettings.idl; sourceTree = "<group>"; };
@@ -11581,6 +11581,9 @@
 		A1E1154513015C4E0054AC8C /* PointLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLightSource.cpp; sourceTree = "<group>"; };
 		A1E1154713015C5D0054AC8C /* SpotLightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpotLightSource.cpp; sourceTree = "<group>"; };
 		A1E5B31D1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockContentFilterSettingsCustom.cpp; sourceTree = "<group>"; };
+		A1ED778A1BE3293F00DC1791 /* Device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Device.cpp; sourceTree = "<group>"; };
+		A1ED778B1BE3294000DC1791 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		A1ED778E1BE4291800DC1791 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		A208E222A56A0C7575F2A72E /* RenderMathMLMenclose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMathMLMenclose.h; sourceTree = "<group>"; };
 		A2B9217216C5CC420041DCD9 /* IntRectExtent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectExtent.h; sourceTree = "<group>"; };
 		A31C4E4C16E02AA6002F7957 /* OESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESTextureHalfFloat.cpp; sourceTree = "<group>"; };
@@ -14214,7 +14217,6 @@
 		E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaKeyParamsWithHash.h; sourceTree = "<group>"; };
 		E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyDataRSAComponents.cpp; sourceTree = "<group>"; };
 		E1C266DD18319F31003F8B33 /* CryptoKeyDataRSAComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyDataRSAComponents.h; sourceTree = "<group>"; };
-		E1C2F2481533A2120083F974 /* SettingsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsMac.mm; sourceTree = "<group>"; };
 		E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerLocation.h; sourceTree = "<group>"; };
 		E1C362EE0EAF2AA9007410BC /* JSWorkerLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerLocation.cpp; sourceTree = "<group>"; };
 		E1C36C020EB076D6007410BC /* JSDOMGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObject.h; sourceTree = "<group>"; };
@@ -17082,6 +17084,7 @@
 			isa = PBXGroup;
 			children = (
 				ADFE2B541BD5F41200DAB457 /* ResourceUsageOverlayCocoa.mm */,
+				A182D5B61BE722620087A7CC /* SettingsCocoa.mm */,
 				26255F0118878E110006E1FD /* UserAgent.h */,
 				5D5975B61963637B00D00878 /* UserAgent.mm */,
 			);
@@ -18600,7 +18603,6 @@
 				834DD4F31BE08989002C9C3E /* PageMac.mm */,
 				2D93AEE119DF5641002A86C3 /* ServicesOverlayController.h */,
 				2D93AEE219DF5641002A86C3 /* ServicesOverlayController.mm */,
-				E1C2F2481533A2120083F974 /* SettingsMac.mm */,
 				2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */,
 				2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */,
 				26255F0218878E110006E1FD /* UserAgentMac.mm */,
@@ -19471,7 +19473,7 @@
 				CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */,
 				6FAD4A561A9D0FAE009F7D3C /* OpenGLESSPI.h */,
 				CE1252381A166FA000864480 /* QuickLookSPI.h */,
-				31DF63581AF194F00078FD91 /* UIColorSPI.h */,
+				A1ED778E1BE4291800DC1791 /* UIKitSPI.h */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -19490,6 +19492,8 @@
 			children = (
 				A148328B187F506800DA63A6 /* wak */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
+				A1ED778A1BE3293F00DC1791 /* Device.cpp */,
+				A1ED778B1BE3294000DC1791 /* Device.h */,
 				31EAF97C121435A400E7C1BF /* DeviceMotionClientIOS.h */,
 				31EAF97D121435A400E7C1BF /* DeviceMotionClientIOS.mm */,
 				31403799124BEA7F00AF40E4 /* DeviceOrientationClientIOS.h */,
@@ -19538,7 +19542,6 @@
 				1F72BF09187FD4270009BCB3 /* TileControllerMemoryHandlerIOS.h */,
 				31403797124BEA7F00AF40E4 /* WebCoreMotionManager.h */,
 				31403798124BEA7F00AF40E4 /* WebCoreMotionManager.mm */,
-				44C3CFE71556BE5D00013609 /* WebCoreSystemInterfaceIOS.h */,
 				E45390380EAFD637003695C8 /* WebCoreSystemInterfaceIOS.mm */,
 				FE0D84E810484348001A179E /* WebEvent.h */,
 				FE0D84EA1048436E001A179E /* WebEvent.mm */,
@@ -25284,6 +25287,7 @@
 				85526CD20AB0B7D9000302EA /* DOMTreeWalker.h in Headers */,
 				850B41C30AD9E7E700A6ED4F /* DOMTreeWalkerInternal.h in Headers */,
 				85C7F4910AAF79DC004014DD /* DOMUIEvent.h in Headers */,
+				A1ED778F1BE4291800DC1791 /* UIKitSPI.h in Headers */,
 				85989DD00ACC8BBD00A0BC51 /* DOMUIEventInternal.h in Headers */,
 				FED13D2A0CEA91DF00D89466 /* DOMUIKitExtensions.h in Headers */,
 				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
@@ -27676,6 +27680,7 @@
 				C105DA640F3AA6B8001DD44F /* TextEncodingDetector.h in Headers */,
 				B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */,
 				933A14300B7D188600A53FFD /* TextEvent.h in Headers */,
+				A1ED778D1BE3294000DC1791 /* Device.h in Headers */,
 				A77B41A012E675A90054343D /* TextEventInputType.h in Headers */,
 				F55B3DD81251F12D003EF269 /* TextFieldInputType.h in Headers */,
 				B2C3DA450D006C1D00EF6F26 /* TextFlags.h in Headers */,
@@ -27755,7 +27760,6 @@
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 				E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */,
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
-				31DF63591AF194F00078FD91 /* UIColorSPI.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
 				AA4739D21757AFEC00E76767 /* UIRequestEvent.h in Headers */,
@@ -27866,7 +27870,6 @@
 				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
 				E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */,
 				93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */,
-				44C3CFE81556BE5D00013609 /* WebCoreSystemInterfaceIOS.h in Headers */,
 				A14832C7187F66C800DA63A6 /* WebCoreThread.h in Headers */,
 				A14832C9187F676B00DA63A6 /* WebCoreThreadInternal.h in Headers */,
 				A14832CA187F678000DA63A6 /* WebCoreThreadMessage.h in Headers */,
@@ -28652,6 +28655,7 @@
 				409EBDB216B7EE7400CBA3FC /* CSSFontFaceLoadEvent.cpp in Sources */,
 				A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */,
 				BC64B4D70CB4298A005F2B62 /* CSSFontFaceSource.cpp in Sources */,
+				A1ED778C1BE3294000DC1791 /* Device.cpp in Sources */,
 				BC64B4D90CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp in Sources */,
 				4A6E9FC313C17D1D0046A7F8 /* CSSFontFeatureValue.cpp in Sources */,
 				BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */,
@@ -30780,7 +30784,6 @@
 				93309E0F099E64920056E581 /* SetNodeAttributeCommand.cpp in Sources */,
 				B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */,
 				14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */,
-				E1C2F24A1533A2120083F974 /* SettingsMac.mm in Sources */,
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
@@ -30858,6 +30861,7 @@
 				1A37636B1A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp in Sources */,
 				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,
 				B23540F20D00782E002382FA /* StringTruncator.cpp in Sources */,
+				A182D5B71BE722670087A7CC /* SettingsCocoa.mm in Sources */,
 				BC5EB6A20E81DC4F00B25965 /* StyleBackgroundData.cpp in Sources */,
 				BC5EB67D0E81D42000B25965 /* StyleBoxData.cpp in Sources */,
 				8386A97019F61E4F00E1EC4A /* StyleBuilder.cpp in Sources */,

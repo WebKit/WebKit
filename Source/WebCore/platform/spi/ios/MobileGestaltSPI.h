@@ -41,6 +41,20 @@
 EXTERN_C const CFStringRef kMGQAppleInternalInstallCapability = CFSTR("apple-internal-install");
 EXTERN_C const CFStringRef kMGQMainScreenPitch = CFSTR("main-screen-pitch");
 EXTERN_C const CFStringRef kMGQMainScreenScale = CFSTR("main-screen-scale");
+EXTERN_C const CFStringRef kMGQiPadCapability = CFSTR("ipad");
+EXTERN_C const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
+EXTERN_C const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
+
+typedef enum {
+    MGDeviceClassInvalid = -1,
+    /* 0 is intentionally not in this enum */
+    MGDeviceClassiPhone  = 1,
+    MGDeviceClassiPod    = 2,
+    MGDeviceClassiPad    = 3,
+    MGDeviceClassAppleTV = 4,
+    /* 5 is intentionally not in this enum */
+    MGDeviceClassWatch   = 6,
+} MGDeviceClass;
 
 #endif
 
@@ -48,6 +62,14 @@ EXTERN_C CFTypeRef MGCopyAnswer(CFStringRef question, CFDictionaryRef options);
 
 #ifndef MGGetBoolAnswer
 EXTERN_C bool MGGetBoolAnswer(CFStringRef question);
+#endif
+
+#ifndef MGGetSInt32Answer
+EXTERN_C SInt32 MGGetSInt32Answer(CFStringRef question, SInt32 defaultValue);
+#endif
+
+#ifndef MGGetFloat32Answer
+EXTERN_C Float32 MGGetFloat32Answer(CFStringRef question, Float32 defaultValue);
 #endif
 
 #endif

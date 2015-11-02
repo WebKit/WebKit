@@ -56,7 +56,7 @@
 #import "RenderThemeIOS.h"
 #import "RenderView.h"
 #import "SoftLinking.h"
-#import "UIColorSPI.h"
+#import "UIKitSPI.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import "WebCoreThreadRun.h"
@@ -71,13 +71,6 @@ SOFT_LINK_CLASS(UIKit, UIApplication)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CONSTANT(UIKit, UIContentSizeCategoryDidChangeNotification, CFStringRef)
 #define UIContentSizeCategoryDidChangeNotification getUIContentSizeCategoryDidChangeNotification()
-
-#if !USE(APPLE_INTERNAL_SDK)
-@interface UIApplication
-+ (UIApplication *)sharedApplication;
-@property (nonatomic, copy) NSString *preferredContentSizeCategory;
-@end
-#endif
 
 @interface WebCoreRenderThemeBundle : NSObject
 @end

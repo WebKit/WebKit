@@ -40,6 +40,10 @@ typedef struct _NSPoint NSPoint;
 #endif
 #endif
 
+#if PLATFORM(IOS)
+OBJC_CLASS UIScreen;
+#endif
+
 typedef uint32_t PlatformDisplayID;
 
 typedef WTF::Vector<char> ColorProfile;
@@ -47,6 +51,7 @@ typedef WTF::Vector<char> ColorProfile;
 namespace WebCore {
 
     class FloatRect;
+    class FloatSize;
     class Widget;
 
     int screenDepth(Widget*);
@@ -69,6 +74,9 @@ namespace WebCore {
 
 #if PLATFORM(IOS)
     float screenPPIFactor();
+    WEBCORE_EXPORT FloatSize screenSize();
+    WEBCORE_EXPORT FloatSize availableScreenSize();
+    WEBCORE_EXPORT float screenScaleFactor(UIScreen * = nullptr);
 #endif
 
 } // namespace WebCore

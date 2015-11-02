@@ -26,16 +26,47 @@
 #import "config.h"
 #import "UserAgent.h"
 
+#import "Device.h"
+#import "MobileGestaltSPI.h"
+#import "SoftLinking.h"
 #import "SystemVersion.h"
+#import "UIKitSPI.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/RetainPtr.h>
+
+SOFT_LINK_FRAMEWORK(UIKit);
+SOFT_LINK_CLASS(UIKit, UIApplication);
 
 namespace WebCore {
 
+static inline bool isClassic()
+{
+    return [[getUIApplicationClass() sharedApplication] _isClassic];
+}
+
+static inline NSString *osNameForUserAgent()
+{
+    if (deviceHasIPadCapability() && !isClassic())
+        return @"OS";
+    return @"iPhone OS";
+}
+
+static inline NSString *deviceNameForUserAgent()
+{
+    if (isClassic())
+        return @"iPhone";
+    
+    auto name = retainPtr((NSString *)deviceName());
+#if PLATFORM(IOS_SIMULATOR)
+    NSUInteger location = [name rangeOfString:@" Simulator" options:NSBackwardsSearch].location;
+    if (location != NSNotFound && location > 0)
+        return [name substringToIndex:location];
+#endif
+    return name.autorelease();
+}
+
 String standardUserAgentWithApplicationName(const String& applicationName, const String& fullWebKitVersionString)
 {
-    if (CFStringRef overrideUserAgent = wkGetUserAgent())
-        return overrideUserAgent;
-
     // Check to see if there is a user agent override for all WebKit clients.
     CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
     if (override) {
@@ -44,13 +75,12 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
         CFRelease(override);
     }
 
+    // FIXME: We should implement this with String and/or StringBuilder instead.
     NSString *webKitVersion = userAgentBundleVersionFromFullVersionString(fullWebKitVersionString);
-    CFStringRef deviceName = wkGetDeviceName();
-    CFStringRef osNameForUserAgent = wkGetOSNameForUserAgent();
     NSString *osMarketingVersionString = systemMarketingVersionForUserAgentString();
     if (applicationName.isEmpty())
-        return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko)", deviceName, osNameForUserAgent, osMarketingVersionString, webKitVersion];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko) %@", deviceName, osNameForUserAgent, osMarketingVersionString, webKitVersion, static_cast<NSString *>(applicationName)];
+        return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko)", deviceNameForUserAgent(), osNameForUserAgent(), osMarketingVersionString, webKitVersion];
+    return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko) %@", deviceNameForUserAgent(), osNameForUserAgent(), osMarketingVersionString, webKitVersion, static_cast<NSString *>(applicationName)];
 }
 
 } // namespace WebCore.

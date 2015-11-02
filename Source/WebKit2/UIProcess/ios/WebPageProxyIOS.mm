@@ -40,12 +40,12 @@
 #import "UserData.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WebKitSystemInterfaceIOS.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import "WebVideoFullscreenManagerProxy.h"
 #import <WebCore/FrameView.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
 
@@ -765,17 +765,17 @@ void WebPageProxy::blurAssistedNode()
 
 FloatSize WebPageProxy::screenSize()
 {
-    return FloatSize(WKGetScreenSize());
+    return WebCore::screenSize();
 }
 
 FloatSize WebPageProxy::availableScreenSize()
 {
-    return FloatSize(WKGetAvailableScreenSize());
+    return WebCore::availableScreenSize();
 }
     
 float WebPageProxy::textAutosizingWidth()
 {
-    return WKGetScreenSize().width;
+    return WebCore::screenSize().width();
 }
 
 void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t dynamicViewportSizeUpdateID)

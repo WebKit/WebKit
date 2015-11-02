@@ -104,6 +104,7 @@
 #import "WebVideoFullscreenManagerProxy.h"
 #import <UIKit/UIApplication.h>
 #import <WebCore/CoreGraphicsSPI.h>
+#import <WebCore/DynamicLinkerSPI.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>
@@ -280,7 +281,7 @@ static int32_t deviceOrientation()
 
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
-    static bool shouldAllowPictureInPictureMediaPlayback = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
+    static bool shouldAllowPictureInPictureMediaPlayback = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_9_0;
     return shouldAllowPictureInPictureMediaPlayback;
 }
 
@@ -1136,7 +1137,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
 - (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot
 {
-    float deviceScale = WKGetScreenScaleFactor();
+    float deviceScale = WebCore::screenScaleFactor();
     WebCore::FloatSize snapshotSize(self.bounds.size);
     snapshotSize.scale(deviceScale, deviceScale);
 

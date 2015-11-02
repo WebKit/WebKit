@@ -32,7 +32,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS)
-#include "WebCoreSystemInterface.h"
+#include "PlatformScreen.h"
 #endif
 
 namespace WebCore {
@@ -213,7 +213,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::textDocumentParameters(
     Parameters parameters;
 
 #if PLATFORM(IOS)
-    parameters.width = static_cast<int>(wkGetScreenSize().width);
+    parameters.width = static_cast<int>(screenSize().width());
 #else
     // FIXME: this needs to be unified with ViewportArguments on all ports.
     parameters.width = 320;

@@ -59,6 +59,7 @@ using namespace WebCore;
 
 #if PLATFORM(IOS)
 #import <AudioToolbox/AudioSession.h>
+#import <WebCore/Device.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/ImageSource.h>
 #import <WebCore/WebCoreThreadMessage.h>
@@ -396,7 +397,7 @@ public:
     WTF::initializeMainThreadToProcessMainThread();
     RunLoop::initializeMainRunLoop();
 #else
-    bool allowsInlineMediaPlayback = WKGetDeviceClass() == WKDeviceClassiPad;
+    bool allowsInlineMediaPlayback = WebCore::deviceClass() == MGDeviceClassiPad;
     bool requiresPlaysInlineAttribute = !allowsInlineMediaPlayback;
 #endif
     InitWebCoreSystemInterface();
@@ -576,7 +577,7 @@ public:
         @"",                              WebKitNetworkInterfaceNamePreferenceKey,
 #endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-        [NSNumber numberWithFloat:WKGetMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
+        [NSNumber numberWithFloat:Settings::defaultMinimumZoomFontSize()], WebKitMinimumZoomFontSizePreferenceKey,
 #endif
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,

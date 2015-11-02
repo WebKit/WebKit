@@ -111,16 +111,6 @@ void InitWebCoreSystemInterface(void)
     INIT(QTClearMediaDownloadCache);
 #endif
 
-#if PLATFORM(IOS)
-    INIT(ExecutableWasLinkedOnOrAfterIOSVersion);
-    INIT(GetDeviceClass);
-    INIT(GetScreenSize);
-    INIT(GetAvailableScreenSize);
-    INIT(GetScreenScaleFactor);
-    INIT(IsGB18030ComplianceRequired);
-    INIT(IsOptimizedFullscreenSupported);
-#endif
-
 #if !PLATFORM(IOS)
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
     INIT(CopyDefaultSearchProviderDisplayName);
@@ -169,14 +159,6 @@ void InitWebCoreSystemInterface(void)
 #endif
 
     INIT(CFURLRequestAllowAllPostCaching);
-
-#if PLATFORM(IOS)
-    INIT(GetUserAgent);
-    INIT(GetDeviceName);
-    INIT(GetOSNameForUserAgent);
-    INIT(GetPlatformNameForNavigator);
-    INIT(GetVendorNameForNavigator);
-#endif
 
 #if !PLATFORM(IOS)
     INIT(NSElasticDeltaForTimeDelta);

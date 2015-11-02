@@ -151,27 +151,10 @@ void InitWebCoreSystemInterface(void)
 
         INIT(CFURLRequestAllowAllPostCaching);
 
-#if PLATFORM(IOS)
-        INIT(GetUserAgent);
-        INIT(GetDeviceName);
-        INIT(GetOSNameForUserAgent);
-        INIT(GetPlatformNameForNavigator);
-        INIT(GetVendorNameForNavigator);
-#endif
-
 #if !PLATFORM(IOS)
         INIT(NSElasticDeltaForTimeDelta);
         INIT(NSElasticDeltaForReboundDelta);
         INIT(NSReboundDeltaForElasticDelta);
-#endif
-#if PLATFORM(IOS)
-        INIT(ExecutableWasLinkedOnOrAfterIOSVersion);
-        INIT(GetDeviceClass);
-        INIT(GetScreenSize);
-        INIT(GetAvailableScreenSize);
-        INIT(GetScreenScaleFactor);
-        INIT(IsGB18030ComplianceRequired);
-        INIT(IsOptimizedFullscreenSupported);
 #endif
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
