@@ -53,6 +53,7 @@ public:
     virtual void didClearObjectStore(const IDBResultData&) = 0;
     virtual void didPutOrAdd(const IDBResultData&) = 0;
     virtual void didGetRecord(const IDBResultData&) = 0;
+    virtual void didGetCount(const IDBResultData&) = 0;
 
     virtual void fireVersionChangeEvent(UniqueIDBDatabaseConnection&, uint64_t requestedVersion) = 0;
     virtual void didStartTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;

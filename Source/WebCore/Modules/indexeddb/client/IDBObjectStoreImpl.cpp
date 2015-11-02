@@ -325,19 +325,69 @@ void IDBObjectStore::deleteIndex(const String&, ExceptionCode&)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::count");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    IDBKeyRangeData range;
+    range.isNull = false;
+    return doCount(*context, range, ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext*, IDBKeyRange*, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, const Deprecated::ScriptValue& key, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::count");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    DOMRequestState requestState(context);
+    RefPtr<IDBKey> idbKey = scriptValueToIDBKey(&requestState, key);
+    if (!idbKey || idbKey->type() == KeyType::Invalid) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    return doCount(*context, IDBKeyRangeData(idbKey.get()), ec);
 }
 
-RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext*, const Deprecated::ScriptValue&, ExceptionCode&)
+RefPtr<WebCore::IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, IDBKeyRange* range, ExceptionCode& ec)
 {
-    RELEASE_ASSERT_NOT_REACHED();
+    LOG(IndexedDB, "IDBObjectStore::count");
+
+    if (!context) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    return doCount(*context, IDBKeyRangeData(range), ec);
+}
+
+RefPtr<WebCore::IDBRequest> IDBObjectStore::doCount(ScriptExecutionContext& context, const IDBKeyRangeData& range, ExceptionCode& ec)
+{
+    if (!m_transaction->isActive()) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::TransactionInactiveError);
+        return nullptr;
+    }
+
+    if (m_deleted) {
+        ec = INVALID_STATE_ERR;
+        return nullptr;
+    }
+
+    if (range.isNull) {
+        ec = static_cast<ExceptionCode>(IDBExceptionCode::DataError);
+        return nullptr;
+    }
+
+    return m_transaction->requestCount(context, *this, range);
 }
 
 void IDBObjectStore::markAsDeleted()

@@ -69,6 +69,7 @@ public:
     void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier);
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const ThreadSafeDataBuffer& valueData, IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const IDBRequestData&, const IDBKeyRangeData&);
+    void getCount(const IDBRequestData&, const IDBKeyRangeData&);
 
     void didActivateInBackingStore(const IDBError&);
 

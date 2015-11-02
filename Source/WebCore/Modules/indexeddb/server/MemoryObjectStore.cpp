@@ -131,37 +131,69 @@ void MemoryObjectStore::setKeyValue(const IDBKeyData& keyData, const ThreadSafeD
         m_orderedKeys->insert(keyData);
 }
 
+uint64_t MemoryObjectStore::countForKeyRange(const IDBKeyRangeData& inRange) const
+{
+    LOG(IndexedDB, "MemoryObjectStore::countForKeyRange");
+
+    if (!m_keyValueStore)
+        return 0;
+
+    uint64_t count = 0;
+    IDBKeyRangeData range = inRange;
+    while (true) {
+        auto key = lowestKeyWithRecordInRange(range);
+        if (key.isNull())
+            break;
+
+        ++count;
+        range.lowerKey = key;
+        range.lowerOpen = true;
+    }
+
+    return count;
+}
+
 ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& keyRangeData) const
 {
     LOG(IndexedDB, "MemoryObjectStore::valueForKey");
 
-    if (!m_keyValueStore)
+    IDBKeyData key = lowestKeyWithRecordInRange(keyRangeData);
+    if (key.isNull())
         return ThreadSafeDataBuffer();
 
-    if (keyRangeData.isExactlyOneKey())
-        return m_keyValueStore->get(keyRangeData.lowerKey);
+    ASSERT(m_keyValueStore);
+    return m_keyValueStore->get(key);
+}
+
+IDBKeyData MemoryObjectStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& keyRangeData) const
+{
+    if (!m_keyValueStore)
+        return { };
+
+    if (keyRangeData.isExactlyOneKey() && m_keyValueStore->contains(keyRangeData.lowerKey))
+        return keyRangeData.lowerKey;
 
     ASSERT(m_orderedKeys);
 
     auto lowestInRange = m_orderedKeys->lower_bound(keyRangeData.lowerKey);
 
     if (lowestInRange == m_orderedKeys->end())
-        return ThreadSafeDataBuffer();
+        return { };
 
     if (keyRangeData.lowerOpen && *lowestInRange == keyRangeData.lowerKey)
         ++lowestInRange;
 
     if (lowestInRange == m_orderedKeys->end())
-        return ThreadSafeDataBuffer();
+        return { };
 
     if (!keyRangeData.upperKey.isNull()) {
         if (lowestInRange->compare(keyRangeData.upperKey) > 0)
-            return ThreadSafeDataBuffer();
+            return { };
         if (keyRangeData.upperOpen && *lowestInRange == keyRangeData.upperKey)
-            return ThreadSafeDataBuffer();
+            return { };
     }
 
-    return m_keyValueStore->get(*lowestInRange);
+    return *lowestInRange;
 }
 
 } // namespace IDBServer

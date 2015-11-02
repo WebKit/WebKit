@@ -259,6 +259,23 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     return IDBError();
 }
 
+IDBError MemoryIDBBackingStore::getCount(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& range, uint64_t& outCount)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::getCount");
+
+    ASSERT(objectStoreIdentifier);
+
+    if (!m_transactions.contains(transactionIdentifier))
+        return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store transaction found to get count"));
+
+    MemoryObjectStore* objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    if (!objectStore)
+        return IDBError(IDBExceptionCode::Unknown, WTF::ASCIILiteral("No backing store object store found"));
+
+    outCount = objectStore->countForKeyRange(range);
+    return IDBError();
+}
+
 IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t& keyNumber)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::generateKeyNumber");

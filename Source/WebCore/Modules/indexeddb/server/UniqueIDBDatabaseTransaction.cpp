@@ -181,6 +181,23 @@ void UniqueIDBDatabaseTransaction::getRecord(const IDBRequestData& requestData, 
     });
 }
 
+void UniqueIDBDatabaseTransaction::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getCount");
+
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> self(this);
+    m_databaseConnection->database().getCount(requestData, keyRangeData, [this, self, requestData](const IDBError& error, uint64_t count) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::getCount (callback)");
+
+        if (error.isNull())
+            m_databaseConnection->connectionToClient().didGetCount(IDBResultData::getCountSuccess(requestData.requestIdentifier(), count));
+        else
+            m_databaseConnection->connectionToClient().didGetCount(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
 const Vector<uint64_t>& UniqueIDBDatabaseTransaction::objectStoreIdentifiers()
 {
     if (!m_objectStoreIdentifiers.isEmpty())

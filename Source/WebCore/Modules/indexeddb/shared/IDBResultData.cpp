@@ -50,6 +50,7 @@ IDBResultData::IDBResultData(const IDBResultData& other)
     , m_requestIdentifier(other.m_requestIdentifier)
     , m_error(other.m_error)
     , m_databaseConnectionIdentifier(other.m_databaseConnectionIdentifier)
+    , m_resultInteger(other.m_resultInteger)
     , m_resultData(other.m_resultData)
 {
     if (other.m_databaseInfo)
@@ -114,6 +115,13 @@ IDBResultData IDBResultData::getRecordSuccess(const IDBResourceIdentifier& reque
 {
     IDBResultData result(IDBResultType::GetRecordSuccess, requestIdentifier);
     result.m_resultData = valueData;
+    return result;
+}
+
+IDBResultData IDBResultData::getCountSuccess(const IDBResourceIdentifier& requestIdentifier, uint64_t count)
+{
+    IDBResultData result(IDBResultType::GetRecordSuccess, requestIdentifier);
+    result.m_resultInteger = count;
     return result;
 }
 

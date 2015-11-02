@@ -69,11 +69,14 @@ public:
     void replaceKeyValueStore(std::unique_ptr<KeyValueMap>&&);
 
     ThreadSafeDataBuffer valueForKeyRange(const IDBKeyRangeData&) const;
+    uint64_t countForKeyRange(const IDBKeyRangeData&) const;
 
     const IDBObjectStoreInfo& info() const { return m_info; }
 
 private:
     MemoryObjectStore(const IDBObjectStoreInfo&);
+
+    IDBKeyData lowestKeyWithRecordInRange(const IDBKeyRangeData&) const;
 
     IDBObjectStoreInfo m_info;
 

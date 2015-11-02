@@ -170,6 +170,22 @@ void IDBConnectionToServer::didGetRecord(const IDBResultData& resultData)
     completeOperation(resultData);
 }
 
+void IDBConnectionToServer::getCount(TransactionOperation& operation, const IDBKeyRangeData& keyRangeData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::getCount");
+
+    ASSERT(!keyRangeData.isNull);
+
+    saveOperation(operation);
+    m_delegate->getCount(IDBRequestData(operation), keyRangeData);
+}
+
+void IDBConnectionToServer::didGetCount(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didGetCount");
+    completeOperation(resultData);
+}
+
 void IDBConnectionToServer::establishTransaction(IDBTransaction& transaction)
 {
     LOG(IndexedDB, "IDBConnectionToServer::establishTransaction");

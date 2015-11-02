@@ -213,6 +213,17 @@ void IDBServer::getRecord(const IDBRequestData& requestData, const IDBKeyRangeDa
     transaction->getRecord(requestData, keyRangeData);
 }
 
+void IDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    LOG(IndexedDB, "IDBServer::getCount");
+
+    auto transaction = m_transactions.get(requestData.transactionIdentifier());
+    if (!transaction)
+        return;
+
+    transaction->getCount(requestData, keyRangeData);
+}
+
 void IDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     LOG(IndexedDB, "IDBServer::establishTransaction");

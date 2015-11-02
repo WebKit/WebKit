@@ -431,6 +431,35 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
     request.requestCompleted(resultData);
 }
 
+Ref<IDBRequest> IDBTransaction::requestCount(ScriptExecutionContext& context, IDBObjectStore& objectStore, const IDBKeyRangeData& range)
+{
+    LOG(IndexedDB, "IDBTransaction::requestCount");
+    ASSERT(isActive());
+    ASSERT(!range.isNull);
+
+    Ref<IDBRequest> request = IDBRequest::create(context, objectStore, *this);
+    addRequest(request.get());
+
+    scheduleOperation(createTransactionOperation(*this, request.get(), &IDBTransaction::didGetCountOnServer, &IDBTransaction::getCountOnServer, range));
+
+    return request;
+}
+
+void IDBTransaction::getCountOnServer(TransactionOperation& operation, const IDBKeyRangeData& keyRange)
+{
+    LOG(IndexedDB, "IDBTransaction::getCountOnServer");
+
+    serverConnection().getCount(operation, keyRange);
+}
+
+void IDBTransaction::didGetCountOnServer(IDBRequest& request, const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didGetCountOnServer");
+
+    request.setResult(resultData.resultInteger());
+    request.requestCompleted(resultData);
+}
+
 Ref<IDBRequest> IDBTransaction::requestClearObjectStore(ScriptExecutionContext& context, IDBObjectStore& objectStore)
 {
     LOG(IndexedDB, "IDBTransaction::requestClearObjectStore");

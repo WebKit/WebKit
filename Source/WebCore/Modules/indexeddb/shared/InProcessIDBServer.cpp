@@ -159,6 +159,14 @@ void InProcessIDBServer::didGetRecord(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didGetCount(const IDBResultData& resultData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, resultData] {
+        m_connectionToServer->didGetCount(resultData);
+    });
+}
+
 void InProcessIDBServer::abortTransaction(IDBResourceIdentifier& resourceIdentifier)
 {
     RefPtr<InProcessIDBServer> self(this);
@@ -219,6 +227,13 @@ void InProcessIDBServer::getRecord(const IDBRequestData& requestData, const IDBK
     });
 }
 
+void InProcessIDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    RefPtr<InProcessIDBServer> self(this);
+    RunLoop::current().dispatch([this, self, requestData, keyRangeData] {
+        m_server->getCount(requestData, keyRangeData);
+    });
+}
 void InProcessIDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     RefPtr<InProcessIDBServer> self(this);

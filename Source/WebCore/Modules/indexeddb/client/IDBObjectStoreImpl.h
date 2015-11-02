@@ -36,6 +36,8 @@ namespace WebCore {
 
 class IDBKey;
 
+struct IDBKeyRangeData;
+
 namespace IDBClient {
 
 class IDBTransaction;
@@ -83,6 +85,7 @@ private:
     IDBObjectStore(const IDBObjectStoreInfo&, IDBTransaction&);
 
     RefPtr<WebCore::IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, ExceptionCode&);
+    RefPtr<WebCore::IDBRequest> doCount(ScriptExecutionContext&, const IDBKeyRangeData&, ExceptionCode&);
 
     IDBObjectStoreInfo m_info;
     Ref<IDBTransaction> m_transaction;

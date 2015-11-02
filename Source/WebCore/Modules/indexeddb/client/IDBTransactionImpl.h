@@ -92,6 +92,7 @@ public:
     Ref<IDBRequest> requestPutOrAdd(ScriptExecutionContext&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(ScriptExecutionContext&, IDBObjectStore&, const IDBKeyRangeData&);
     Ref<IDBRequest> requestClearObjectStore(ScriptExecutionContext&, IDBObjectStore&);
+    Ref<IDBRequest> requestCount(ScriptExecutionContext&, IDBObjectStore&, const IDBKeyRangeData&);
 
     void deleteObjectStore(const String& objectStoreName);
 
@@ -135,6 +136,9 @@ private:
 
     void getRecordOnServer(TransactionOperation&, const IDBKeyRangeData&);
     void didGetRecordOnServer(IDBRequest&, const IDBResultData&);
+
+    void getCountOnServer(TransactionOperation&, const IDBKeyRangeData&);
+    void didGetCountOnServer(IDBRequest&, const IDBResultData&);
 
     void deleteObjectStoreOnServer(TransactionOperation&, const String& objectStoreName);
     void didDeleteObjectStoreOnServer(const IDBResultData&);

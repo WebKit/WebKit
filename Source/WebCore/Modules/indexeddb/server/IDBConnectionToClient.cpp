@@ -88,6 +88,11 @@ void IDBConnectionToClient::didGetRecord(const IDBResultData& result)
     m_delegate->didGetRecord(result);
 }
 
+void IDBConnectionToClient::didGetCount(const IDBResultData& result)
+{
+    m_delegate->didGetCount(result);
+}
+
 void IDBConnectionToClient::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
     m_delegate->didCommitTransaction(transactionIdentifier, error);

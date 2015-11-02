@@ -136,21 +136,32 @@ static uint64_t generateUniqueCallbackIdentifier()
 uint64_t UniqueIDBDatabase::storeCallback(ErrorCallback callback)
 {
     uint64_t identifier = generateUniqueCallbackIdentifier();
-    m_errorCallbacks.set(identifier, callback);
+    ASSERT(!m_errorCallbacks.contains(identifier));
+    m_errorCallbacks.add(identifier, callback);
     return identifier;
 }
 
 uint64_t UniqueIDBDatabase::storeCallback(KeyDataCallback callback)
 {
     uint64_t identifier = generateUniqueCallbackIdentifier();
-    m_keyDataCallbacks.set(identifier, callback);
+    ASSERT(!m_keyDataCallbacks.contains(identifier));
+    m_keyDataCallbacks.add(identifier, callback);
     return identifier;
 }
 
 uint64_t UniqueIDBDatabase::storeCallback(ValueDataCallback callback)
 {
     uint64_t identifier = generateUniqueCallbackIdentifier();
-    m_valueDataCallbacks.set(identifier, callback);
+    ASSERT(!m_valueDataCallbacks.contains(identifier));
+    m_valueDataCallbacks.add(identifier, callback);
+    return identifier;
+}
+
+uint64_t UniqueIDBDatabase::storeCallback(CountCallback callback)
+{
+    uint64_t identifier = generateUniqueCallbackIdentifier();
+    ASSERT(!m_countCallbacks.contains(identifier));
+    m_countCallbacks.add(identifier, callback);
     return identifier;
 }
 
@@ -431,6 +442,37 @@ void UniqueIDBDatabase::didPerformGetRecord(uint64_t callbackIdentifier, const I
     performValueDataCallback(callbackIdentifier, error, resultData);
 }
 
+void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& range, CountCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::getCount");
+
+    uint64_t callbackID = storeCallback(callback);
+    m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performGetCount, callbackID, requestData.transactionIdentifier(), requestData.objectStoreIdentifier(), range));
+}
+
+void UniqueIDBDatabase::performGetCount(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const IDBKeyRangeData& keyRangeData)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performGetCount");
+
+    ASSERT(m_backingStore);
+    ASSERT(objectStoreIdentifier);
+
+    uint64_t count;
+    IDBError error = m_backingStore->getCount(transactionIdentifier, objectStoreIdentifier, keyRangeData, count);
+
+    m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformGetCount, callbackIdentifier, error, count));
+}
+
+void UniqueIDBDatabase::didPerformGetCount(uint64_t callbackIdentifier, const IDBError& error, uint64_t count)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformGetCount");
+
+    performCountCallback(callbackIdentifier, error, count);
+}
+
 void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)
 {
     ASSERT(isMainThread());
@@ -699,6 +741,13 @@ void UniqueIDBDatabase::performValueDataCallback(uint64_t callbackIdentifier, co
     auto callback = m_valueDataCallbacks.take(callbackIdentifier);
     ASSERT(callback);
     callback(error, resultData);
+}
+
+void UniqueIDBDatabase::performCountCallback(uint64_t callbackIdentifier, const IDBError& error, uint64_t count)
+{
+    auto callback = m_countCallbacks.take(callbackIdentifier);
+    ASSERT(callback);
+    callback(error, count);
 }
 
 } // namespace IDBServer

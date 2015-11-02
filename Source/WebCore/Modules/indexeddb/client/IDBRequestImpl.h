@@ -78,6 +78,7 @@ public:
     void requestCompleted(const IDBResultData&);
 
     void setResult(const IDBKeyData*);
+    void setResult(uint64_t);
     void setResultToStructuredClone(const ThreadSafeDataBuffer&);
     void setResultToUndefined();
 

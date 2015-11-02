@@ -49,6 +49,7 @@ enum class IDBResultType {
     ClearObjectStoreSuccess,
     PutOrAddSuccess,
     GetRecordSuccess,
+    GetCountSuccess,
 };
 
 namespace IDBServer {
@@ -66,6 +67,7 @@ public:
     static IDBResultData clearObjectStoreSuccess(const IDBResourceIdentifier&);
     static IDBResultData putOrAddSuccess(const IDBResourceIdentifier&, const IDBKeyData&);
     static IDBResultData getRecordSuccess(const IDBResourceIdentifier&, const ThreadSafeDataBuffer& valueData);
+    static IDBResultData getCountSuccess(const IDBResourceIdentifier&, uint64_t count);
 
     IDBResultData(const IDBResultData&);
 
@@ -80,6 +82,7 @@ public:
 
     const IDBKeyData* resultKey() const { return m_resultKey.get(); }
     const ThreadSafeDataBuffer& resultData() const { return m_resultData; }
+    uint64_t resultInteger() const { return m_resultInteger; }
 
 private:
     IDBResultData(const IDBResourceIdentifier&);
@@ -93,6 +96,7 @@ private:
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBTransactionInfo> m_transactionInfo;
     std::unique_ptr<IDBKeyData> m_resultKey;
+    uint64_t m_resultInteger { 0 };
     ThreadSafeDataBuffer m_resultData;
 };
 

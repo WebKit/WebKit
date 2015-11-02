@@ -184,6 +184,12 @@ void IDBRequest::setResult(const IDBKeyData* keyData)
     m_result = IDBAny::create(WTF::move(value));
 }
 
+void IDBRequest::setResult(uint64_t number)
+{
+    ASSERT(scriptExecutionContext());
+    m_result = IDBAny::create(Deprecated::ScriptValue(scriptExecutionContext()->vm(), JSC::JSValue(number)));
+}
+
 void IDBRequest::setResultToStructuredClone(const ThreadSafeDataBuffer& valueData)
 {
     LOG(IndexedDB, "IDBRequest::setResultToStructuredClone");
