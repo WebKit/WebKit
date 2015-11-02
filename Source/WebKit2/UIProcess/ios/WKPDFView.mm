@@ -41,6 +41,7 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -723,7 +724,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
     _webSelectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:self]);
-    [_webSelectionAssistant showShareSheetFor:url.absoluteString fromRect:boundingRect];
+    [_webSelectionAssistant showShareSheetFor:userVisibleString(url) fromRect:boundingRect];
     _webSelectionAssistant = nil;
 }
 

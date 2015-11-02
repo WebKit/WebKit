@@ -1,3 +1,18 @@
+2015-11-02  Beth Dakin  <bdakin@apple.com>
+
+        Tapping and holding a link should have a share option
+        https://bugs.webkit.org/show_bug.cgi?id=150693
+
+        Reviewed by Dan Bernstein.
+
+        This is a follow-up to the original change. This change fixes non-ascii URLs. 
+        They should maintain their non-ascii characters when they are shared.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:shareElementWithURL:rect:]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView actionSheetAssistant:shareElementWithURL:rect:]):
+
 2015-11-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Rename JSDOMWrapper.impl to JSDOMWrapper.wrapped

@@ -69,6 +69,7 @@
 #import <WebCore/Scrollbar.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <WebKitSystemInterfaceIOS.h>
@@ -3374,9 +3375,9 @@ static bool isAssistableInputType(InputType type)
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
     if (_textSelectionAssistant)
-        [_textSelectionAssistant showShareSheetFor:url.absoluteString fromRect:boundingRect];
+        [_textSelectionAssistant showShareSheetFor:userVisibleString(url) fromRect:boundingRect];
     else if (_webSelectionAssistant)
-        [_webSelectionAssistant showShareSheetFor:url.absoluteString fromRect:boundingRect];
+        [_webSelectionAssistant showShareSheetFor:userVisibleString(url) fromRect:boundingRect];
 }
 
 #if HAVE(APP_LINKS)
