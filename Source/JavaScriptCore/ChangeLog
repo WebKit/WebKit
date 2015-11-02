@@ -1,3 +1,21 @@
+2015-11-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] MiniBrowser unable to use WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=150810
+        <rdar://problem/23358514>
+
+        Reviewed by Timothy Hatcher.
+
+        The CMakeList rule for creating the InjectedScriptSource.min.js was improperly including
+        the quote characters in the text prepended to InjectedScriptSource.min.js. This caused a
+        parsing error in the JS file.
+        
+        The solution was to switch from using "COMMAND echo" to use the more cross-platform
+        compatible command "COMMAND ${CMAKE_COMMAND} -E echo ...", which handles the string
+        escaping properly on all platforms.
+
+        * CMakeLists.txt: Switch the 'echo' command syntax to be more cross-platform.
+
 2015-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should be able to compile a Patchpoint
