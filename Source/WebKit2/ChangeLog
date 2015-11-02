@@ -1,3 +1,24 @@
+2015-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused API client callback code
+        https://bugs.webkit.org/show_bug.cgi?id=150813
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::interactionOccurredWhileProcessUnresponsive): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): Deleted.
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::timerFired):
+        * UIProcess/ResponsivenessTimer.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::interactionOccurredWhileProcessUnresponsive): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::interactionOccurredWhileUnresponsive): Deleted.
+        * UIProcess/WebProcessProxy.h:
+
 2015-10-31  Andy Estes  <aestes@apple.com>
 
         Replace iOS-only WebKitSystemInterface calls with SPI

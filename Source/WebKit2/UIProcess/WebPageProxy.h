@@ -809,7 +809,6 @@ public:
 #endif
 
     void processDidBecomeUnresponsive();
-    void interactionOccurredWhileProcessUnresponsive();
     void processDidBecomeResponsive();
     void processDidCrash();
 #if PLATFORM(IOS)

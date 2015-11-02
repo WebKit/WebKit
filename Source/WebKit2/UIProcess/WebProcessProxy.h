@@ -207,7 +207,6 @@ private:
 
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive(ResponsivenessTimer*) override;
-    void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) override;
     void didBecomeResponsive(ResponsivenessTimer*) override;
 
     // ProcessThrottlerClient

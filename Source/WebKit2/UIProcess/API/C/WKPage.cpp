@@ -1146,14 +1146,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
             m_client.processDidBecomeUnresponsive(toAPI(&page), m_client.base.clientInfo);
         }
 
-        virtual void interactionOccurredWhileProcessUnresponsive(WebPageProxy& page) override
-        {
-            if (!m_client.interactionOccurredWhileProcessUnresponsive)
-                return;
-
-            m_client.interactionOccurredWhileProcessUnresponsive(toAPI(&page), m_client.base.clientInfo);
-        }
-
         virtual void processDidBecomeResponsive(WebPageProxy& page) override
         {
             if (!m_client.processDidBecomeResponsive)

@@ -49,13 +49,11 @@ void ResponsivenessTimer::invalidate()
 
 void ResponsivenessTimer::timerFired()
 {
-    if (m_isResponsive) {
-        m_isResponsive = false;
-        m_client->didBecomeUnresponsive(this);
-    } else {
-        // The timer fired while unresponsive.
-        m_client->interactionOccurredWhileUnresponsive(this);
-    }
+    if (!m_isResponsive)
+        return;
+
+    m_isResponsive = false;
+    m_client->didBecomeUnresponsive(this);
 }
     
 void ResponsivenessTimer::start()
