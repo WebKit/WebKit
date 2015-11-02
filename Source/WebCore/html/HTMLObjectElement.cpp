@@ -55,8 +55,8 @@
 #include <wtf/Ref.h>
 
 #if PLATFORM(IOS)
+#include "DynamicLinkerSPI.h"
 #include "RuntimeApplicationChecksIOS.h"
-#include "WebCoreSystemInterface.h"
 #endif
 
 namespace WebCore {
@@ -159,7 +159,7 @@ static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramV
 #if PLATFORM(IOS)
 static bool shouldNotPerformURLAdjustment()
 {
-    static bool shouldNotPerformURLAdjustment = applicationIsNASAHD() && !iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_5_0);
+    static bool shouldNotPerformURLAdjustment = applicationIsNASAHD() && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_5_0;
     return shouldNotPerformURLAdjustment;
 }
 #endif

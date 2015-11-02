@@ -1,3 +1,18 @@
+2015-10-31  Andy Estes  <aestes@apple.com>
+
+        Replace iOS-only WebKitSystemInterface calls with SPI
+        https://bugs.webkit.org/show_bug.cgi?id=150763
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Deleted.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Used deviceClass() and Settings::defaultMinimumZoomFontSize() instead of WKGetDeviceClass() and WKGetMinimumZoomFontSize().
+        * WebView/WebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback): Used dyld_get_program_sdk_version() instead of iosExecutableWasLinkedOnOrAfterVersion().
+        (-[WebView _updateScreenScaleFromWindow]): Used screenScaleFactor() instead of WKGetScreenScaleFactor().
+
 2015-11-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Rename JSDOMWrapper.impl to JSDOMWrapper.wrapped

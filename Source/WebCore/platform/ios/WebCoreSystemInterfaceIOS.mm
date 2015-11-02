@@ -46,13 +46,7 @@ WEBCORE_EXPORT void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef p
 WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 WEBCORE_EXPORT void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
-WEBCORE_EXPORT bool (*wkExecutableWasLinkedOnOrAfterIOSVersion)(int);
-WEBCORE_EXPORT int (*wkGetDeviceClass)(void);
-WEBCORE_EXPORT CGSize (*wkGetScreenSize)(void);
-WEBCORE_EXPORT CGSize (*wkGetAvailableScreenSize)(void);
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
-WEBCORE_EXPORT float (*wkGetScreenScaleFactor)(void);
-WEBCORE_EXPORT bool (*wkIsGB18030ComplianceRequired)(void);
 WEBCORE_EXPORT void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 WEBCORE_EXPORT CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 WEBCORE_EXPORT CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);
@@ -103,14 +97,6 @@ WEBCORE_EXPORT bool (*wkIsPublicSuffix)(NSString *host);
 #if ENABLE(CACHE_PARTITIONING)
 WEBCORE_EXPORT CFStringRef (*wkCachePartitionKey)(void);
 #endif
-
-WEBCORE_EXPORT CFStringRef (*wkGetUserAgent)(void);
-WEBCORE_EXPORT CFStringRef (*wkGetDeviceName)(void);
-WEBCORE_EXPORT CFStringRef (*wkGetOSNameForUserAgent)(void);
-WEBCORE_EXPORT CFStringRef (*wkGetPlatformNameForNavigator)(void);
-WEBCORE_EXPORT CFStringRef (*wkGetVendorNameForNavigator)(void);
-
-WEBCORE_EXPORT bool (*wkIsOptimizedFullscreenSupported)(void);
 
 WEBCORE_EXPORT int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

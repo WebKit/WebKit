@@ -116,11 +116,6 @@ typedef float CGFloat;
 #endif
 #endif /* USE(CG) */
 
-#if PLATFORM(IOS)
-#define WEBCORE_NAVIGATOR_PLATFORM wkGetPlatformNameForNavigator();
-#define WEBCORE_NAVIGATOR_VENDOR wkGetVendorNameForNavigator();
-#endif
-
 // FIXME: Move this to JavaScriptCore/wtf/Platform.h, which is where we define USE_AVFOUNDATION on the Mac.
 // https://bugs.webkit.org/show_bug.cgi?id=67334
 #if PLATFORM(WIN) && USE(CG) && HAVE(AVCF)

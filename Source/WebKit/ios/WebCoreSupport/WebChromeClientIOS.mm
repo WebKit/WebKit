@@ -54,16 +54,13 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/Node.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/RenderBox.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/ScrollingConstraints.h>
 #import <WebCore/WAKWindow.h>
 #import <WebCore/WebCoreThreadMessage.h>
-
-#if PLATFORM(IOS)
-#include "WebKitSystemInterface.h"
-#endif
 
 using namespace WebCore;
 
@@ -174,7 +171,7 @@ static inline NSDictionary* dictionaryForViewportArguments(const WebCore::Viewpo
 
 FloatSize WebChromeClientIOS::screenSize() const
 {
-    return FloatSize(WKGetScreenSize());
+    return FloatSize(screenSize());
 }
 
 FloatSize WebChromeClientIOS::availableScreenSize() const

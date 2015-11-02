@@ -28,10 +28,6 @@
 
 #include <objc/objc.h>
 
-#if PLATFORM(IOS)
-#include "WebCoreSystemInterfaceIOS.h"
-#endif
-
 typedef const struct __CFString * CFStringRef;
 typedef const struct __CFNumber * CFNumberRef;
 typedef const struct __CFDictionary * CFDictionaryRef;
@@ -237,10 +233,7 @@ extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 #endif // !PLATFORM(IOS)
 
 #if PLATFORM(IOS)
-extern CGSize (*wkGetScreenSize)(void);
-extern CGSize (*wkGetAvailableScreenSize)(void);
 extern void (*wkSetLayerContentsScale)(CALayer *);
-extern float (*wkGetScreenScaleFactor)(void);
 #endif
 
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;

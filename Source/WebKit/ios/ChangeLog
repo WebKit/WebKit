@@ -1,3 +1,16 @@
+2015-10-31  Andy Estes  <aestes@apple.com>
+
+        Replace iOS-only WebKitSystemInterface calls with SPI
+        https://bugs.webkit.org/show_bug.cgi?id=150763
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebUIKitSupport.mm:
+        (linkedOnOrAfterIOS5): Used dyld_get_program_sdk_version() instead of iosExecutableWasLinkedOnOrAfterVersion().
+        (WebKitGetMinimumZoomFontSize): Used Settings::defaultMinimumZoomFontSize() instead of WKGetMinimumZoomFontSize().
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::screenSize): Used screenSize() instead of WKGetScreenSize().
+
 2015-10-14  Zhuo Li  <zachli@apple.com>
 
         Augment <input type=search>’s recent search history with the time each entry was added,

@@ -33,8 +33,10 @@
 #import "WebPlatformStrategies.h"
 #import "WebSystemInterface.h"
 #import "WebViewPrivate.h"
+#import <WebCore/DynamicLinkerSPI.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/Settings.h>
 #import <WebCore/TextBreakIterator.h>
 #import <WebCore/WebCoreSystemInterface.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -46,7 +48,7 @@ using namespace WebCore;
 
 static inline bool linkedOnOrAfterIOS5()
 {
-    static bool s_linkedOnOrAfterIOS5 = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_5_0);
+    static bool s_linkedOnOrAfterIOS5 = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_5_0;
     return s_linkedOnOrAfterIOS5;
 }
 
@@ -83,7 +85,7 @@ void WebKitSetIsClassic(BOOL flag)
 
 float WebKitGetMinimumZoomFontSize(void)
 {
-    return WKGetMinimumZoomFontSize();
+    return Settings::defaultMinimumZoomFontSize();
 }
 
 int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length)

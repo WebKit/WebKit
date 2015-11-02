@@ -243,6 +243,7 @@
 #import "WebStorageManagerPrivate.h"
 #import "WebUIKitSupport.h"
 #import "WebVisiblePosition.h"
+#import <WebCore/DynamicLinkerSPI.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/GraphicsLayer.h>
@@ -250,6 +251,7 @@
 #import <WebCore/LegacyTileCache.h>
 #import <WebCore/MobileGestaltSPI.h>
 #import <WebCore/NetworkStateNotifier.h>
+#import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecksIOS.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
@@ -850,7 +852,7 @@ static bool shouldAllowDisplayAndRunningOfInsecureContent()
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
 #if PLATFORM(IOS)
-    static bool shouldAllowPictureInPictureMediaPlayback = iosExecutableWasLinkedOnOrAfterVersion(wkIOSSystemVersion_9_0);
+    static bool shouldAllowPictureInPictureMediaPlayback = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_9_0;
     return shouldAllowPictureInPictureMediaPlayback;
 #else
     return false;
@@ -5398,7 +5400,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (WAKWindow *window = [self window])
         scaleFactor = [window screenScale];
     else
-        scaleFactor = WKGetScreenScaleFactor();
+        scaleFactor = screenScaleFactor();
 
     _private->page->setDeviceScaleFactor(scaleFactor);
 }

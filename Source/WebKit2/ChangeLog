@@ -1,3 +1,36 @@
+2015-10-31  Andy Estes  <aestes@apple.com>
+
+        Replace iOS-only WebKitSystemInterface calls with SPI
+        https://bugs.webkit.org/show_bug.cgi?id=150763
+
+        Reviewed by Darin Adler.
+
+        * Platform/ios/AccessibilityIOS.h: Added.
+        * Platform/ios/AccessibilityIOS.mm: Added.
+        (WebKit::newAccessibilityRemoteToken): Upstreamed the implementation of WKAXRemoteToken() from WebKitSystemInterface.
+        * Shared/WebPreferencesDefinitions.h: Used Settings::defaultMinimumZoomFontSize() instead of WKGetMinimumZoomFontSize().
+        * Shared/WebPreferencesStore.cpp:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback): Used dyld_get_program_sdk_version() instead of iosExecutableWasLinkedOnOrAfterVersion().
+        (-[WKWebView _takeViewSnapshot]): Used screenScaleFactor() instead of WKGetScreenScaleFactor().
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]): Used deviceClass() instead of WKGetDeviceClass().
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]): Used screenScaleFactor() instead of WKGetScaleFactorForScreen().
+        (-[WKContentView _updateForScreen:]): Ditto.
+        (storeAccessibilityRemoteConnectionInformation): Upstreamed the implementation of WKAXStoreRemoteConnectionInformation() from WebKitSystemInterface.
+        (-[WKContentView _accessibilityRegisterUIProcessTokens]): Used newAccessibilityRemoteToken() and storeAccessibilityRemoteConnectionInformation() instead of WKAXRemoteToken() and WKAXStoreRemoteConnectionInformation().
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::screenSize): Used screenSize() instead of WKGetScreenSize().
+        (WebKit::WebPageProxy::availableScreenSize): Used availableScreenSize() instead of WKGetAvailableScreenSize().
+        (WebKit::WebPageProxy::textAutosizingWidth): Used screenSize() instead of WKGetScreenSize().
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformInitializeAccessibility): Used newAccessibilityRemoteToken() instead of WKAXRemoteToken().
+
 2015-11-02  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Add objC delegate callback for webProcessDidBecomeResponsive and webProcessDidBecomeUnresponsive.
