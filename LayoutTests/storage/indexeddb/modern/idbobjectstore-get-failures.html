@@ -65,17 +65,23 @@ function continueTest1()
     var transaction = database.transaction("TestObjectStore", "readonly");
     var objectStore = transaction.objectStore("TestObjectStore");
 
-    // Queue up some gets to keep the transaction alive long enough for the setTimeout to fire.
-    objectStore.get("foo").onsuccess = function() {
-        objectStore.get("foo");
+    // Spin the transaction with get requests to keep it alive long enough for the setTimeout to fire.
+    var canFinish = false;
+    var spinGet = function() { 
+        objectStore.get("foo").onsuccess = function() {
+            if (!canFinish)
+                spinGet();
+        }
     }
+    spinGet();
 
     var getWhileInactive = function() {
         try {
             objectStore.get("foo");
         } catch(e) {
             alert("Failed to get record from object store while the transaction is inactive");
-        } 
+        }
+        canFinish = true;
     }
     
     setTimeout(getWhileInactive, 0);

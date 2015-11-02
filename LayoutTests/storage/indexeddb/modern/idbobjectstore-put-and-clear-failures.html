@@ -80,10 +80,15 @@ function continueTest1()
     var transaction = database.transaction("TestObjectStore", "readwrite");
     var objectStore = transaction.objectStore("TestObjectStore");
 
-    // Queue up some gets to keep the transaction alive long enough for the setTimeout to fire.
-    objectStore.get("foo").onsuccess = function() {
-        objectStore.get("foo");
+    // Spin the transaction with get requests to keep it alive long enough for the setTimeout to fire.
+    var canFinish = false;
+    var spinGet = function() { 
+        objectStore.get("foo").onsuccess = function() {
+            if (!canFinish)
+                spinGet();
+        }
     }
+    spinGet();
 
     var testWhileInactive = function() {
         try {
@@ -96,7 +101,9 @@ function continueTest1()
             objectStore.clear();
         } catch(e) {
             alert("Failed to clear object store with inactive transaction");
-        } 
+        }
+        
+        canFinish = true;
     }
     
     setTimeout(testWhileInactive, 0);
