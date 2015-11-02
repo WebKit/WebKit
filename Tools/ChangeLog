@@ -1,3 +1,13 @@
+2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix EFL jhbuild module build on Ubuntu 15.10
+        https://bugs.webkit.org/show_bug.cgi?id=150621
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/patches/efl-remove-XPrint.patch: Added.
+
 2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Remove delete on destroy GMainLoopSources

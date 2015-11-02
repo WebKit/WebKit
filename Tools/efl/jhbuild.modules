@@ -220,6 +220,7 @@
             repo="download.enlightenment.org"
             hash="sha256:2552e364e83b8b747ba6f6fcca699a025751a65407055faa9a2afce29d12b6f4">
       <patch file="ecore_remove_warnings.patch" strip="1"/>
+      <patch file="efl-remove-XPrint.patch" strip="1"/>
     </branch>
   </autotools>
 
