@@ -99,6 +99,29 @@ END
 undef],
     expectedNextLine => undef,
 },
+####
+#    Unified patch cases
+##
+{
+    diffName => "Unified: Modified file",
+    inputText => <<'END',
+--- Foo/bar.h
++++ Foo/bar.h
+END
+    expectedReturn => [
+{
+    svnConvertedText => <<'END',
+Index: Foo/bar.h
+index 0000000..0000000
+--- Foo/bar.h
++++ Foo/bar.h
+END
+    indexPath => 'Foo/bar.h',
+    isUnified => 1,
+},
+undef],
+    expectedNextLine => undef,
+}
 );
 
 my $testCasesCount = @testCaseHashRefs;
