@@ -1,5 +1,15 @@
 2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] gnutls-3.3.0 jhbuild module build fails on Ubuntu 15.10
+        https://bugs.webkit.org/show_bug.cgi?id=150622
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/install-dependencies:
+        * efl/jhbuild.modules:
+
+2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix EFL jhbuild module build on Ubuntu 15.10
         https://bugs.webkit.org/show_bug.cgi?id=150621
 
