@@ -1,3 +1,12 @@
+2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the FTL JIT build with system LLVM on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=150795
+
+        Reviewed by Filip Pizlo.
+
+        * Source/cmake/FindLLVM.cmake:
+
 2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Bump GTK+ versions numbers.

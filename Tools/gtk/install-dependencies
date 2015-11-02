@@ -64,6 +64,7 @@ function installDependenciesWithApt {
         intltool \
         itstool \
         libatk1.0-dev \
+        libedit-dev \
         libenchant-dev \
         libfaad-dev \
         libgeoclue-dev \
@@ -171,6 +172,7 @@ function installDependenciesWithPacman {
         automake \
         bison \
         cmake \
+        libedit \
         file \
         findutils \
         flex \
@@ -323,6 +325,7 @@ function installFedoraDependencies {
 	json-glib-devel \
         libXt-devel \
         libXtst-devel \
+        libedit-devel \
         libgudev1-devel \
         libicu-devel \
         libjpeg-turbo-devel \

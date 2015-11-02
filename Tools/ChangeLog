@@ -1,5 +1,15 @@
 2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix the FTL JIT build with system LLVM on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=150795
+
+        Reviewed by Filip Pizlo.
+
+        * efl/install-dependencies:
+        * gtk/install-dependencies:
+
+2015-11-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Bump harfbuzz versions to 0.9.35
         https://bugs.webkit.org/show_bug.cgi?id=150448
 

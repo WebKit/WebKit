@@ -60,6 +60,7 @@ function installDependenciesWithApt {
         gtk-doc-tools \
         libatk1.0-dev \
         libdbus-1-dev \
+        libedit-dev \
         libenchant-dev \
         libespeak-dev \
         libfaad-dev \
