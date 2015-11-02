@@ -591,6 +591,8 @@ public:
     String sourceApplicationIdentifier() const;
     Vector<String> preferredAudioCharacteristics() const;
 
+    bool ended() const;
+
 private:
     const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;
     void loadWithNextMediaEngine(const MediaPlayerFactory*);

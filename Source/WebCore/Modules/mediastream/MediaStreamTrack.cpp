@@ -42,6 +42,7 @@
 #include "MediaStreamPrivate.h"
 #include "MediaTrackConstraints.h"
 #include "NotImplemented.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/Functional.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -136,10 +137,23 @@ void MediaStreamTrack::stopProducingData()
     // the "ImplementedAs" IDL attribute. This is done because ActiveDOMObject requires
     // a "stop" method.
 
+    // http://w3c.github.io/mediacapture-main/#widl-MediaStreamTrack-stop-void
+    // 4.3.3.2 Methods
+    // When a MediaStreamTrack object's stop() method is invoked, the User Agent must run following steps:
+    // 1. Let track be the current MediaStreamTrack object.
+    // 2. If track is sourced by a non-local source, then abort these steps.
     if (remote() || ended())
         return;
 
+    // 3. Notify track's source that track is ended so that the source may be stopped, unless other
+    // MediaStreamTrack objects depend on it.
+    // 4. Set track's readyState attribute to ended.
     m_private->endTrack();
+
+    // MediaStreamPrivate::endTrack will not result in a call to MediaStreamTrack::trackEnded, so
+    // notify observers now or they won't know about the change.
+    for (auto& observer : m_observers)
+        observer->trackDidEnd();
 }
 
 RefPtr<MediaTrackConstraints> MediaStreamTrack::getConstraints() const
@@ -192,6 +206,9 @@ void MediaStreamTrack::removeObserver(MediaStreamTrack::Observer* observer)
 
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
+    if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped())
+        return;
+
     dispatchEvent(Event::create(eventNames().endedEvent, false, false));
 
     for (auto& observer : m_observers)
@@ -202,6 +219,9 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     
 void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 {
+    if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped())
+        return;
+
     AtomicString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;
     dispatchEvent(Event::create(eventType, false, false));
 

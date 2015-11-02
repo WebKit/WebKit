@@ -1338,6 +1338,11 @@ unsigned long long MediaPlayer::fileSize() const
     return m_private->fileSize();
 }
 
+bool MediaPlayer::ended() const
+{
+    return m_private->ended();
+}
+
 #if ENABLE(MEDIA_SOURCE)
 unsigned long MediaPlayer::totalVideoFrames()
 {

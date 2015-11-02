@@ -124,9 +124,12 @@ private:
 
     size_t extraMemoryCost() const override { return 0; }
 
+    bool ended() const override { return m_ended; }
+
     bool shouldBePlaying() const;
 
     MediaPlayer::ReadyState currentReadyState();
+    void updateReadyState();
 
     enum RenderingModeStatus {
         RenderingModeUnchanged,
@@ -159,6 +162,7 @@ private:
     bool m_muted { false };
     bool m_waitingForNewFrame {false };
     bool m_haveEverPlayed { false };
+    bool m_ended { false };
 };
     
 }

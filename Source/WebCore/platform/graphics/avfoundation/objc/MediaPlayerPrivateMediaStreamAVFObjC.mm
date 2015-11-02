@@ -125,18 +125,19 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
     m_mediaStreamPrivate->startProducingData();
 
     m_previewLayer = nullptr;
+    m_ended = !m_mediaStreamPrivate->active();
 
     scheduleDeferredTask([this] {
         setNetworkState(MediaPlayer::Idle);
-        if (m_readyState < MediaPlayer::ReadyState::HaveMetadata)
-            this->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        updateReadyState();
     });
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad()
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad(%p)", this);
-    pause();
+    if (m_playing)
+        pause();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
@@ -200,19 +201,20 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::play(%p)", this);
 
-    if (!metaDataAvailable())
+    if (!metaDataAvailable() || m_playing || m_ended)
         return;
 
     m_playing = true;
     m_haveEverPlayed = true;
     setPausedImageVisible(false);
+    updateReadyState();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 {
     LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::pause(%p)", this);
 
-    if (!metaDataAvailable())
+    if (!metaDataAvailable() || !m_playing || m_ended)
         return;
 
     setPausedImageVisible(true);
@@ -290,23 +292,46 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::readyState() const
 
 MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState()
 {
-    if (m_mediaStreamPrivate) {
-        if (m_mediaStreamPrivate->active())
-            return MediaPlayer::ReadyState::HaveEnoughData;
+    if (!m_mediaStreamPrivate)
+        return MediaPlayer::ReadyState::HaveNothing;
 
-        return MediaPlayer::ReadyState::HaveCurrentData;
+    if (m_mediaStreamPrivate->active()) {
+        if (!m_haveEverPlayed)
+            return MediaPlayer::ReadyState::HaveFutureData;
+        return MediaPlayer::ReadyState::HaveEnoughData;
     }
 
-    return MediaPlayer::ReadyState::HaveNothing;
+    if (!m_pausedImage)
+        setPausedImageVisible(true);
+
+    if (m_pausedImage)
+        return MediaPlayer::ReadyState::HaveCurrentData;
+
+    return MediaPlayer::ReadyState::HaveMetadata;
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::updateReadyState()
+{
+    MediaPlayer::ReadyState newReadyState = currentReadyState();
+
+    if (newReadyState != m_readyState)
+        setReadyState(newReadyState);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
 {
-    MediaPlayer::ReadyState newReadyState = currentReadyState();
+    scheduleDeferredTask([this] {
+        bool ended = !m_mediaStreamPrivate->active();
+        if (ended && m_playing)
+            pause();
 
-    scheduleDeferredTask([this, newReadyState] {
-        if (newReadyState != m_readyState)
-            setReadyState(newReadyState);
+        updateReadyState();
+
+        if (ended != m_ended) {
+            m_ended = ended;
+            if (m_player)
+                m_player->timeChanged();
+        }
     });
 }
 
@@ -364,10 +389,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
     if (m_waitingForNewFrame && m_mediaStreamPrivate->isProducingData())
         setPausedImageVisible(false);
 
-    MediaPlayer::ReadyState newReadyState = currentReadyState();
-    scheduleDeferredTask([this, sizeChanged, newReadyState, status] {
-        if (newReadyState != m_readyState)
-            setReadyState(newReadyState);
+    scheduleDeferredTask([this, sizeChanged, status] {
+        updateReadyState();
 
         if (!m_player)
             return;

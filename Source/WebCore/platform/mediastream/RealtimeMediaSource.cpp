@@ -135,7 +135,6 @@ void RealtimeMediaSource::stop(Observer* callingObserver)
     }
 
     stopProducingData();
-    reset();
 }
 
 void RealtimeMediaSource::requestStop(Observer* callingObserver)

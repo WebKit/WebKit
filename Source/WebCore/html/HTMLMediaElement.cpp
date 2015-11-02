@@ -2793,11 +2793,31 @@ bool HTMLMediaElement::paused() const
 
 double HTMLMediaElement::defaultPlaybackRate() const
 {
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // "defaultPlaybackRate" - On setting: ignored. On getting: return 1.0
+    // A MediaStream is not seekable. Therefore, this attribute must always have the
+    // value 1.0 and any attempt to alter it must be ignored. Note that this also means
+    // that the ratechange event will not fire.
+    if (m_mediaStreamSrcObject)
+        return 1;
+#endif
+
     return m_defaultPlaybackRate;
 }
 
 void HTMLMediaElement::setDefaultPlaybackRate(double rate)
 {
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // "defaultPlaybackRate" - On setting: ignored. On getting: return 1.0
+    // A MediaStream is not seekable. Therefore, this attribute must always have the
+    // value 1.0 and any attempt to alter it must be ignored. Note that this also means
+    // that the ratechange event will not fire.
+    if (m_mediaStreamSrcObject)
+        return;
+#endif
+
     if (m_defaultPlaybackRate != rate) {
         LOG(Media, "HTMLMediaElement::setDefaultPlaybackRate(%p) - %f", this, rate);
         m_defaultPlaybackRate = rate;
@@ -2817,12 +2837,30 @@ double HTMLMediaElement::requestedPlaybackRate() const
 
 double HTMLMediaElement::playbackRate() const
 {
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // "playbackRate" - A MediaStream is not seekable. Therefore, this attribute must always
+    // have the value 1.0 and any attempt to alter it must be ignored. Note that this also
+    // means that the ratechange event will not fire.
+    if (m_mediaStreamSrcObject)
+        return 1;
+#endif
+
     return m_requestedPlaybackRate;
 }
 
 void HTMLMediaElement::setPlaybackRate(double rate)
 {
     LOG(Media, "HTMLMediaElement::setPlaybackRate(%p) - %f", this, rate);
+
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // "playbackRate" - A MediaStream is not seekable. Therefore, this attribute must always
+    // have the value 1.0 and any attempt to alter it must be ignored. Note that this also
+    // means that the ratechange event will not fire.
+    if (m_mediaStreamSrcObject)
+        return;
+#endif
 
     if (m_player && potentiallyPlaying() && m_player->rate() != rate && !m_mediaController)
         m_player->setRate(rate);
@@ -2860,6 +2898,14 @@ void HTMLMediaElement::setWebkitPreservesPitch(bool preservesPitch)
 
 bool HTMLMediaElement::ended() const
 {
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // When the MediaStream state moves from the active to the inactive state, the User Agent
+    // must raise an ended event on the HTMLMediaElement and set its ended attribute to true.
+    if (m_mediaStreamSrcObject && m_player && m_player->ended())
+        return true;
+#endif
+
     // 4.8.10.8 Playing the media resource
     // The ended attribute must return true if the media element has ended 
     // playback and the direction of playback is forwards, and false otherwise.
@@ -2873,6 +2919,13 @@ bool HTMLMediaElement::autoplay() const
 
 String HTMLMediaElement::preload() const
 {
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // "preload" - On getting: none. On setting: ignored.
+    if (m_mediaStreamSrcObject)
+        return ASCIILiteral("none");
+#endif
+
     switch (m_preload) {
     case MediaPlayer::None:
         return ASCIILiteral("none");
@@ -2889,6 +2942,13 @@ String HTMLMediaElement::preload() const
 void HTMLMediaElement::setPreload(const String& preload)
 {
     LOG(Media, "HTMLMediaElement::setPreload(%p) - %s", this, preload.utf8().data());
+#if ENABLE(MEDIA_STREAM)
+    // http://w3c.github.io/mediacapture-main/#mediastreams-in-media-elements
+    // "preload" - On getting: none. On setting: ignored.
+    if (m_mediaStreamSrcObject)
+        return;
+#endif
+
     setAttribute(preloadAttr, preload);
 }
 
@@ -4231,9 +4291,9 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     MediaTime now = currentMediaTime();
     MediaTime dur = durationMediaTime();
     double playbackRate = requestedPlaybackRate();
-    
+
     // When the current playback position reaches the end of the media resource then the user agent must follow these steps:
-    if (dur.isValid() && dur) {
+    if (dur && dur.isValid() && !dur.isIndefinite()) {
         // If the media element has a loop attribute specified and does not have a current media controller,
         if (loop() && !m_mediaController && playbackRate > 0) {
             m_sentEndEvent = false;
@@ -4261,10 +4321,23 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
         } else
             m_sentEndEvent = false;
     } else {
-#if PLATFORM(IOS)
-        // The controller changes movie time directly instead of calling through here so we need
-        // to post timeupdate events in response to time changes.
-        scheduleTimeupdateEvent(false);
+#if ENABLE(MEDIA_STREAM)
+        if (m_mediaStreamSrcObject) {
+            // http://w3c.github.io/mediacapture-main/#event-mediastream-inactive
+            // 6. MediaStreams in Media Elements
+            // When the MediaStream state moves from the active to the inactive state, the User Agent
+            // must raise an ended event on the HTMLMediaElement and set its ended attribute to true.
+            // Note that once ended equals true the HTMLMediaElement will not play media even if new
+            // MediaStreamTrack's are added to the MediaStream (causing it to return to the active
+            // state) unless autoplay is true or the web application restarts the element, e.g.,
+            // by calling play()
+            if (!m_sentEndEvent && m_player && m_player->ended()) {
+                m_sentEndEvent = true;
+                scheduleEvent(eventNames().endedEvent);
+                m_paused = true;
+                setPlaying(false);
+            }
+        } else
 #endif
         m_sentEndEvent = false;
     }

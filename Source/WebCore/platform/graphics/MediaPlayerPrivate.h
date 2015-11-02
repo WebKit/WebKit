@@ -260,6 +260,8 @@ public:
 
     virtual unsigned long long fileSize() const { return 0; }
 
+    virtual bool ended() const { return false; }
+
 #if ENABLE(MEDIA_SOURCE)
     virtual unsigned long totalVideoFrames() { return 0; }
     virtual unsigned long droppedVideoFrames() { return 0; }

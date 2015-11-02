@@ -268,6 +268,7 @@ void MediaStreamPrivate::trackStatesChanged(MediaStreamTrackPrivate&)
 void MediaStreamPrivate::trackEnabledChanged(MediaStreamTrackPrivate&)
 {
     scheduleDeferredTask([this] {
+        updateActiveState(NotifyClientOption::Notify);
         characteristicsChanged();
     });
 }

@@ -278,6 +278,18 @@ bool MediaStream::internalRemoveTrack(RefPtr<MediaStreamTrack>&& track, StreamMo
 
 void MediaStream::scheduleActiveStateChange()
 {
+    bool active = false;
+    for (auto& track : m_trackSet.values()) {
+        if (!track->ended()) {
+            active = true;
+            break;
+        }
+    }
+    if (m_isActive == active)
+        return;
+
+    m_isActive = active;
+
     const AtomicString& eventName = m_isActive ? eventNames().inactiveEvent : eventNames().activeEvent;
     m_scheduledActivityEvents.append(Event::create(eventName, false, false));
 
@@ -290,11 +302,8 @@ void MediaStream::activityEventTimerFired()
     Vector<RefPtr<Event>> events;
     events.swap(m_scheduledActivityEvents);
 
-    for (auto& event : events) {
-        // FIXME: This can't be right, the event type is set from m_isActive in scheduleActiveStateChange! - https://webkit.org/b/150635
-        m_isActive = event->type() == eventNames().activeEvent;
+    for (auto& event : events)
         dispatchEvent(event.release());
-    }
 
     events.clear();
 }
