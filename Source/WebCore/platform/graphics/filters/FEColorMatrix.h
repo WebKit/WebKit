@@ -48,9 +48,6 @@ public:
     bool setValues(const Vector<float>&);
 
     virtual void platformApplySoftware();
-#if ENABLE(OPENCL)
-    virtual bool platformApplyOpenCL();
-#endif
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;

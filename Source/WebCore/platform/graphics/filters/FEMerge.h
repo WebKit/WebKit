@@ -33,9 +33,6 @@ public:
     static Ref<FEMerge> create(Filter&);
 
     virtual void platformApplySoftware();
-#if ENABLE(OPENCL)
-    virtual bool platformApplyOpenCL();
-#endif
     virtual void dump();
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;

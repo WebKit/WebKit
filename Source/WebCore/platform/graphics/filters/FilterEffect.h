@@ -25,18 +25,10 @@
 #include "ColorSpace.h"
 #include "FloatRect.h"
 #include "IntRect.h"
-
 #include <runtime/Uint8ClampedArray.h>
-
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(OPENCL)
-#include "FilterContextOpenCL.h"
-#endif
-
 
 namespace WebCore {
 

@@ -38,9 +38,6 @@ public:
     static Ref<FEImage> createWithIRIReference(Filter&, Document&, const String&, const SVGPreserveAspectRatio&);
 
     virtual void platformApplySoftware() override;
-#if ENABLE(OPENCL)
-    virtual bool platformApplyOpenCL();
-#endif
     virtual void dump() override;
 
     virtual void determineAbsolutePaintRect() override;

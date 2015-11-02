@@ -1,3 +1,12 @@
+2015-11-01  Darin Adler  <darin@apple.com>
+
+        Remove some dead and unneeded code (ScrollbarThemeSafari, RenderThemeSafari, OPENCL, a little color space logic)
+        https://bugs.webkit.org/show_bug.cgi?id=150783
+
+        Reviewed by Tim Horton.
+
+        * wtf/FeatureDefines.h: Removed the OPENCL feature, no longer supported.
+
 2015-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         B3::reduceStrength's DCE should be more agro and less wrong

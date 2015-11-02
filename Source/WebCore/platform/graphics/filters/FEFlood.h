@@ -46,9 +46,6 @@ public:
 #endif
 
     virtual void platformApplySoftware() override;
-#if ENABLE(OPENCL)
-    virtual bool platformApplyOpenCL() override;
-#endif
     virtual void dump() override;
 
     virtual void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }

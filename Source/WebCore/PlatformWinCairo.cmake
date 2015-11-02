@@ -138,7 +138,6 @@ list(APPEND WebCore_SOURCES
     platform/win/LoggingWin.cpp
     platform/win/PEImage.cpp
     platform/win/PathWalker.cpp
-    platform/win/ScrollbarThemeSafari.cpp
     platform/win/WebCoreBundleWin.cpp
     platform/win/WebCoreTextRenderer.cpp
     platform/win/WindowMessageBroadcaster.cpp
