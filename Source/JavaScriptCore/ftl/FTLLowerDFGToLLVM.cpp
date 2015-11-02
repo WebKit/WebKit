@@ -30,6 +30,7 @@
 
 #include "CodeBlockWithJITType.h"
 #include "DFGAbstractInterpreterInlines.h"
+#include "DFGDominators.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSRExitFuzz.h"
@@ -121,7 +122,7 @@ public:
         } else
             name = "jsBody";
         
-        m_graph.m_dominators.computeIfNecessary(m_graph);
+        m_graph.ensureDominators();
         
         m_ftlState.module =
             moduleCreateWithNameInContext(name.data(), m_ftlState.context);
@@ -382,7 +383,7 @@ private:
             BasicBlock* target = m_graph.block(blockIndex);
             if (!target)
                 continue;
-            if (m_graph.m_dominators.dominates(m_highBlock, target)) {
+            if (m_graph.m_dominators->dominates(m_highBlock, target)) {
                 if (verboseCompilationEnabled())
                     dataLog("Block ", *target, " will bail also.\n");
                 target->cfaHasVisited = false;
@@ -9156,7 +9157,7 @@ private:
     {
         if (!value)
             return false;
-        if (!m_graph.m_dominators.dominates(value.block(), m_highBlock))
+        if (!m_graph.m_dominators->dominates(value.block(), m_highBlock))
             return false;
         return true;
     }

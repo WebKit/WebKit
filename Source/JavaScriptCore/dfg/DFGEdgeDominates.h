@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGDominators.h"
 #include "DFGGraph.h"
 
 namespace JSC { namespace DFG {
@@ -45,7 +46,7 @@ public:
     
     void operator()(Node*, Edge edge)
     {
-        bool result = m_graph.m_dominators.dominates(edge.node()->owner, m_block);
+        bool result = m_graph.m_dominators->dominates(edge.node()->owner, m_block);
         if (verbose) {
             dataLog(
                 "Checking if ", edge, " in ", *edge.node()->owner,

@@ -54,7 +54,7 @@ public:
         RELEASE_ASSERT(bytecodeIndex != UINT_MAX);
         
         // Needed by createPreHeader().
-        m_graph.m_dominators.computeIfNecessary(m_graph);
+        m_graph.ensureDominators();
         
         CodeBlock* baseline = m_graph.m_profiledBlock;
         

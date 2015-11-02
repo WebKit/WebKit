@@ -99,8 +99,8 @@ void link(State& state)
             Profiler::OriginStack(),
             toCString("Generated FTL JIT code for ", CodeBlockWithJITType(codeBlock, JITCode::FTLJIT), ", instruction count = ", graph.m_codeBlock->instructionCount(), ":\n"));
         
-        graph.m_dominators.computeIfNecessary(graph);
-        graph.m_naturalLoops.computeIfNecessary(graph);
+        graph.ensureDominators();
+        graph.ensureNaturalLoops();
         
         const char* prefix = "    ";
         

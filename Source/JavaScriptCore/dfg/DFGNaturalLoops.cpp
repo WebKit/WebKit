@@ -42,16 +42,10 @@ void NaturalLoop::dump(PrintStream& out) const
     out.print("]");
 }
 
-NaturalLoops::NaturalLoops() { }
-NaturalLoops::~NaturalLoops() { }
-
-void NaturalLoops::computeDependencies(Graph& graph)
+NaturalLoops::NaturalLoops(Graph& graph)
 {
-    graph.m_dominators.computeIfNecessary(graph);
-}
+    ASSERT(graph.m_dominators);
 
-void NaturalLoops::compute(Graph& graph)
-{
     // Implement the classic dominator-based natural loop finder. The first
     // step is to find all control flow edges A -> B where B dominates A.
     // Then B is a loop header and A is a backward branching block. We will
@@ -64,7 +58,7 @@ void NaturalLoops::compute(Graph& graph)
     
     if (verbose) {
         dataLog("Dominators:\n");
-        graph.m_dominators.dump(WTF::dataFile());
+        graph.m_dominators->dump(WTF::dataFile());
     }
     
     m_loops.resize(0);
@@ -76,7 +70,7 @@ void NaturalLoops::compute(Graph& graph)
         
         for (unsigned i = block->numSuccessors(); i--;) {
             BasicBlock* successor = block->successor(i);
-            if (!graph.m_dominators.dominates(successor, block))
+            if (!graph.m_dominators->dominates(successor, block))
                 continue;
             bool found = false;
             for (unsigned j = m_loops.size(); j--;) {
@@ -198,6 +192,8 @@ void NaturalLoops::compute(Graph& graph)
     if (verbose)
         dataLog("Results: ", *this, "\n");
 }
+
+NaturalLoops::~NaturalLoops() { }
 
 Vector<const NaturalLoop*> NaturalLoops::loopsOf(BasicBlock* block) const
 {

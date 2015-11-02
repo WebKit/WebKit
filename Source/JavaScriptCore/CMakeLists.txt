@@ -233,7 +233,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGDesiredWeakReferences.cpp
     dfg/DFGDisassembler.cpp
     dfg/DFGDoesGC.cpp
-    dfg/DFGDominators.cpp
     dfg/DFGDriver.cpp
     dfg/DFGEdge.cpp
     dfg/DFGEpoch.cpp
@@ -270,7 +269,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGMinifiedNode.cpp
     dfg/DFGMovHintRemovalPhase.cpp
     dfg/DFGMultiGetByOffsetData.cpp
-    dfg/DFGNaiveDominators.cpp
     dfg/DFGNaturalLoops.cpp
     dfg/DFGNode.cpp
     dfg/DFGNodeFlags.cpp

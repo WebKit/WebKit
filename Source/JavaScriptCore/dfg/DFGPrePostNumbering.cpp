@@ -34,10 +34,7 @@
 
 namespace JSC { namespace DFG {
 
-PrePostNumbering::PrePostNumbering() { }
-PrePostNumbering::~PrePostNumbering() { }
-
-void PrePostNumbering::compute(Graph& graph)
+PrePostNumbering::PrePostNumbering(Graph& graph)
 {
     m_map = BlockMap<Numbering>(graph);
     
@@ -59,6 +56,8 @@ void PrePostNumbering::compute(Graph& graph)
         }
     }
 }
+
+PrePostNumbering::~PrePostNumbering() { }
 
 } } // namespace JSC::DFG
 

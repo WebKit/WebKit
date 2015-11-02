@@ -28,9 +28,11 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAnalysis.h"
 #include "DFGBasicBlock.h"
 #include "DFGCommon.h"
+#include "DFGDominators.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC { namespace DFG {
 
@@ -88,22 +90,19 @@ private:
     unsigned m_index;
 };
 
-class NaturalLoops : public Analysis<NaturalLoops> {
+class NaturalLoops {
+    WTF_MAKE_NONCOPYABLE(NaturalLoops);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    NaturalLoops();
+    NaturalLoops(Graph&);
     ~NaturalLoops();
-    
-    void computeDependencies(Graph&);
-    void compute(Graph&);
     
     unsigned numLoops() const
     {
-        ASSERT(isValid());
         return m_loops.size();
     }
     const NaturalLoop& loop(unsigned i) const
     {
-        ASSERT(isValid());
         return m_loops[i];
     }
     
@@ -111,7 +110,6 @@ public:
     // loop it belongs to.
     const NaturalLoop* headerOf(BasicBlock* block) const
     {
-        ASSERT(isValid());
         const NaturalLoop* loop = innerMostLoopOf(block);
         if (!loop)
             return 0;
@@ -126,7 +124,6 @@ public:
     
     const NaturalLoop* innerMostLoopOf(BasicBlock* block) const
     {
-        ASSERT(isValid());
         unsigned index = block->innerMostLoopIndices[0];
         if (index == UINT_MAX)
             return 0;
@@ -135,7 +132,6 @@ public:
     
     const NaturalLoop* innerMostOuterLoop(const NaturalLoop& loop) const
     {
-        ASSERT(isValid());
         if (loop.m_outerLoopIndex == UINT_MAX)
             return 0;
         return &m_loops[loop.m_outerLoopIndex];
@@ -143,7 +139,6 @@ public:
     
     bool belongsTo(BasicBlock* block, const NaturalLoop& candidateLoop) const
     {
-        ASSERT(isValid());
         // It's faster to do this test using the loop itself, if it's small.
         if (candidateLoop.size() < 4)
             return candidateLoop.contains(block);

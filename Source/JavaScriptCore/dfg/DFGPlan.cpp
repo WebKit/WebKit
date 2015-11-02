@@ -344,9 +344,9 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     // If we're doing validation, then run some analyses, to give them an opportunity
     // to self-validate. Now is as good a time as any to do this.
     if (validationEnabled()) {
-        dfg.m_dominators.computeIfNecessary(dfg);
-        dfg.m_naturalLoops.computeIfNecessary(dfg);
-        dfg.m_prePostNumbering.computeIfNecessary(dfg);
+        dfg.ensureDominators();
+        dfg.ensureNaturalLoops();
+        dfg.ensurePrePostNumbering();
     }
 
     switch (mode) {

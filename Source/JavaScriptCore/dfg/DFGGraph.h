@@ -33,14 +33,11 @@
 #include "CodeBlock.h"
 #include "DFGArgumentPosition.h"
 #include "DFGBasicBlock.h"
-#include "DFGDominators.h"
 #include "DFGFrozenValue.h"
 #include "DFGLongLivedState.h"
-#include "DFGNaturalLoops.h"
 #include "DFGNode.h"
 #include "DFGNodeAllocator.h"
 #include "DFGPlan.h"
-#include "DFGPrePostNumbering.h"
 #include "DFGPropertyTypeKey.h"
 #include "DFGScannable.h"
 #include "FullBytecodeLiveness.h"
@@ -58,6 +55,11 @@ class CodeBlock;
 class ExecState;
 
 namespace DFG {
+
+class CFG;
+class Dominators;
+class NaturalLoops;
+class PrePostNumbering;
 
 #define DFG_NODE_DO_TO_CHILDREN(graph, node, thingToDo) do {            \
         Node* _node = (node);                                           \
@@ -820,6 +822,10 @@ public:
 
     bool hasDebuggerEnabled() const { return m_hasDebuggerEnabled; }
 
+    void ensureDominators();
+    void ensurePrePostNumbering();
+    void ensureNaturalLoops();
+
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;
@@ -885,9 +891,10 @@ public:
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
     HashSet<std::pair<JSObject*, PropertyOffset>> m_safeToLoad;
     HashMap<PropertyTypeKey, InferredType::Descriptor> m_inferredTypes;
-    Dominators m_dominators;
-    PrePostNumbering m_prePostNumbering;
-    NaturalLoops m_naturalLoops;
+    std::unique_ptr<Dominators> m_dominators;
+    std::unique_ptr<PrePostNumbering> m_prePostNumbering;
+    std::unique_ptr<NaturalLoops> m_naturalLoops;
+    std::unique_ptr<CFG> m_cfg;
     unsigned m_localVars;
     unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;

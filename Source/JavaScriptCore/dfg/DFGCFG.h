@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAnalysis_h
-#define DFGAnalysis_h
+#ifndef DFGCFG_h
+#define DFGCFG_h
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGBasicBlock.h"
+#include "DFGBlockMapInlines.h"
+#include "DFGBlockSet.h"
+#include "DFGGraph.h"
+
 namespace JSC { namespace DFG {
 
-class Graph;
-
-// Use this as a mixin for DFG analyses. The analysis itself implements a public
-// compute(Graph&) method. Clients call computeIfNecessary() when they want
-// results.
-
-template<typename T>
-class Analysis {
+class CFG {
 public:
-    Analysis()
-        : m_valid(false)
-    {
-    }
-    
-    void invalidate()
-    {
-        m_valid = false;
-    }
-    
-    void computeIfNecessary(Graph& graph)
-    {
-        if (m_valid)
-            return;
-        // It's best to run dependent analyses from this method.
-        static_cast<T*>(this)->computeDependencies(graph);
-        // Set to true early, since the analysis may choose to call its own methods in
-        // compute() and it may want to ASSERT() validity in those methods.
-        m_valid = true;
-        static_cast<T*>(this)->compute(graph);
-    }
-    
-    bool isValid() const { return m_valid; }
+    typedef BasicBlock* Node;
+    typedef BlockSet Set;
+    template<typename T> using Map = BlockMap<T>;
+    typedef BlockList List;
 
-    // Override this to compute any dependent analyses. See
-    // NaturalLoops::computeDependencies(Graph&) for an example. This isn't strictly necessary but
-    // it makes debug dumps in cases of error work a bit better because this analysis wouldn't yet
-    // be pretending to be valid.
-    void computeDependencies(Graph&) { }
+    CFG(Graph& graph)
+        : m_graph(graph)
+    {
+    }
+
+    Node root() { return m_graph.block(0); }
+
+    template<typename T>
+    Map<T> newMap() { return BlockMap<T>(m_graph); }
+
+    DFG::Node::SuccessorsIterable successors(Node node) { return node->successors(); }
+    PredecessorList& predecessors(Node node) { return node->predecessors; }
+
+    unsigned index(Node node) const { return node->index; }
+    Node node(unsigned index) const { return m_graph.block(index); }
+    unsigned numNodes() const { return m_graph.numBlocks(); }
+
+    PointerDump<BasicBlock> dump(Node node) const { return pointerDump(node); }
+
+    void dump(PrintStream& out) const
+    {
+        m_graph.dump(out);
+    }
 
 private:
-    bool m_valid;
+    Graph& m_graph;
 };
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGAnalysis_h
+#endif // DFGCFG_h
 

@@ -30,7 +30,9 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"
+#include "DFGDominators.h"
 #include "DFGGraph.h"
+#include "DFGNaturalLoops.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
 #include <wtf/HashMap.h>
@@ -94,7 +96,7 @@ BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, Basic
     
     for (unsigned predecessorIndex = 0; predecessorIndex < block->predecessors.size(); predecessorIndex++) {
         BasicBlock* predecessor = block->predecessors[predecessorIndex];
-        if (graph.m_dominators.dominates(block, predecessor))
+        if (graph.m_dominators->dominates(block, predecessor))
             continue;
         block->predecessors[predecessorIndex--] = block->predecessors.last();
         block->predecessors.removeLast();
@@ -121,16 +123,16 @@ public:
     
     bool run()
     {
-        m_graph.m_dominators.computeIfNecessary(m_graph);
-        m_graph.m_naturalLoops.computeIfNecessary(m_graph);
+        m_graph.ensureDominators();
+        m_graph.ensureNaturalLoops();
         
-        for (unsigned loopIndex = m_graph.m_naturalLoops.numLoops(); loopIndex--;) {
-            const NaturalLoop& loop = m_graph.m_naturalLoops.loop(loopIndex);
+        for (unsigned loopIndex = m_graph.m_naturalLoops->numLoops(); loopIndex--;) {
+            const NaturalLoop& loop = m_graph.m_naturalLoops->loop(loopIndex);
             BasicBlock* existingPreHeader = 0;
             bool needsNewPreHeader = false;
             for (unsigned predecessorIndex = loop.header()->predecessors.size(); predecessorIndex--;) {
                 BasicBlock* predecessor = loop.header()->predecessors[predecessorIndex];
-                if (m_graph.m_dominators.dominates(loop.header(), predecessor))
+                if (m_graph.m_dominators->dominates(loop.header(), predecessor))
                     continue;
                 if (!existingPreHeader) {
                     existingPreHeader = predecessor;

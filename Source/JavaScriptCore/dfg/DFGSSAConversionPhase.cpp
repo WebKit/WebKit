@@ -54,7 +54,7 @@ public:
         RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
         
         m_graph.clearReplacements();
-        m_graph.m_dominators.computeIfNecessary(m_graph);
+        m_graph.ensureDominators();
         
         if (verbose) {
             dataLog("Graph before SSA transformation:\n");

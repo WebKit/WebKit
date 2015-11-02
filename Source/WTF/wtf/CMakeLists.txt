@@ -16,6 +16,7 @@ set(WTF_HEADERS
     CurrentTime.h
     DataLog.h
     DateMath.h
+    Dominators.h
     DecimalNumber.h
     DeferrableRefCounted.h
     Deque.h

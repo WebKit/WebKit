@@ -30,6 +30,7 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"
+#include "DFGNaturalLoops.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
 
@@ -44,7 +45,7 @@ public:
     
     bool run()
     {
-        m_graph.m_naturalLoops.computeIfNecessary(m_graph);
+        m_graph.ensureNaturalLoops();
         
         // Estimate basic block execution counts based on loop depth.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
@@ -52,7 +53,7 @@ public:
             if (!block)
                 continue;
 
-            block->executionCount = pow(10, m_graph.m_naturalLoops.loopDepth(block));
+            block->executionCount = pow(10, m_graph.m_naturalLoops->loopDepth(block));
         }
         
         // Estimate branch weights based on execution counts. This isn't quite correct. It'll

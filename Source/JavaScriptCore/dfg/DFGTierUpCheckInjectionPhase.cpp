@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
+#include "DFGNaturalLoops.h"
 #include "DFGPhase.h"
 #include "FTLCapabilities.h"
 #include "JSCInlines.h"
@@ -66,8 +67,8 @@ public:
 
         // First we find all the loops that contain a LoopHint for which we cannot OSR enter.
         // We use that information to decide if we need CheckTierUpAndOSREnter or CheckTierUpWithNestedTriggerAndOSREnter.
-        NaturalLoops& naturalLoops = m_graph.m_naturalLoops;
-        naturalLoops.computeIfNecessary(m_graph);
+        m_graph.ensureNaturalLoops();
+        NaturalLoops& naturalLoops = *m_graph.m_naturalLoops;
 
         HashSet<const NaturalLoop*> loopsContainingLoopHintWithoutOSREnter = findLoopsContainingLoopHintWithoutOSREnter(naturalLoops, level);
         

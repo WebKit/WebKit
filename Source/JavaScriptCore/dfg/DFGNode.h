@@ -1279,6 +1279,10 @@ struct Node {
         {
             return iterator(m_terminal, m_terminal->numSuccessors());
         }
+
+        size_t size() const { return m_terminal->numSuccessors(); }
+        BasicBlock* at(size_t index) const { return m_terminal->successor(index); }
+        BasicBlock* operator[](size_t index) const { return at(index); }
         
     private:
         Node* m_terminal;

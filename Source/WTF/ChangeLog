@@ -1,3 +1,75 @@
+2015-11-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Dominators should be factored out of the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=150764
+
+        Reviewed by Geoffrey Garen.
+
+        This takes what used to be DFGDominators.h/DFGDominators.cpp and turns it into a generic
+        algorithm that can take any abstract graph. The idea is that you create Dominators<CFG> and
+        pass it a CFG object, which defines the types of graph nodes and methods for getting
+        successors, predecessors, etc. The DFG now defines a class called CFG, which is a wrapper for
+        DFG::Graph that conforms to the thing that wtf/Dominators.h expects.
+
+        When doing things to graphs, it's common to refer to the things in the graph as "nodes".
+        Because I intend to reuse the CFG abstraction with many graph algorithms, that abstraction uses
+        the term "node" to refer to a DFG basic block. But in Dominators, the method and variable names
+        still use "block". This is because although Dominators are applicable to any kind of directed
+        graph, it's super unlikely that we will ever use them for anything but compilers. Indeed, the
+        only reason why I'm factoring them out of the DFG is so that I can use them with B3 and Air.
+
+        This has the nice side effect that a user of WTF::Dominators<JSC::DFG::CFG> will see familiar
+        terminology like "blocksStrictlyDominatedBy(...)" instead of "nodesStrictlyDominatedBy(...)",
+        which would be super confusing.
+
+        Overall, wtf/Dominators.h is a combination of what used to be in DFGDominators.h,
+        DFGDominators.cpp, DFGNaiveDominators.h, and DFGNaiveDominators.cpp. I only changed code when I
+        had to in order to make it generic.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Dominators.h: Added.
+        (WTF::Dominators::Dominators):
+        (WTF::Dominators::compute):
+        (WTF::Dominators::strictlyDominates):
+        (WTF::Dominators::dominates):
+        (WTF::Dominators::immediateDominatorOf):
+        (WTF::Dominators::forAllStrictDominatorsOf):
+        (WTF::Dominators::forAllDominatorsOf):
+        (WTF::Dominators::forAllBlocksStrictlyDominatedBy):
+        (WTF::Dominators::forAllBlocksDominatedBy):
+        (WTF::Dominators::strictDominatorsOf):
+        (WTF::Dominators::dominatorsOf):
+        (WTF::Dominators::blocksStrictlyDominatedBy):
+        (WTF::Dominators::blocksDominatedBy):
+        (WTF::Dominators::forAllBlocksInDominanceFrontierOf):
+        (WTF::Dominators::dominanceFrontierOf):
+        (WTF::Dominators::forAllBlocksInIteratedDominanceFrontierOf):
+        (WTF::Dominators::forAllBlocksInPrunedIteratedDominanceFrontierOf):
+        (WTF::Dominators::iteratedDominanceFrontierOf):
+        (WTF::Dominators::dump):
+        (WTF::Dominators::LengauerTarjan::LengauerTarjan):
+        (WTF::Dominators::LengauerTarjan::compute):
+        (WTF::Dominators::LengauerTarjan::immediateDominator):
+        (WTF::Dominators::LengauerTarjan::computeDepthFirstPreNumbering):
+        (WTF::Dominators::LengauerTarjan::computeSemiDominatorsAndImplicitImmediateDominators):
+        (WTF::Dominators::LengauerTarjan::computeExplicitImmediateDominators):
+        (WTF::Dominators::LengauerTarjan::link):
+        (WTF::Dominators::LengauerTarjan::eval):
+        (WTF::Dominators::LengauerTarjan::compress):
+        (WTF::Dominators::LengauerTarjan::BlockData::BlockData):
+        (WTF::Dominators::NaiveDominators::NaiveDominators):
+        (WTF::Dominators::NaiveDominators::dominates):
+        (WTF::Dominators::NaiveDominators::dump):
+        (WTF::Dominators::NaiveDominators::pruneDominators):
+        (WTF::Dominators::ValidationContext::ValidationContext):
+        (WTF::Dominators::ValidationContext::reportError):
+        (WTF::Dominators::ValidationContext::handleErrors):
+        (WTF::Dominators::naiveDominates):
+        (WTF::Dominators::forAllBlocksInDominanceFrontierOfImpl):
+        (WTF::Dominators::forAllBlocksInIteratedDominanceFrontierOfImpl):
+        (WTF::Dominators::BlockData::BlockData):
+
 2015-11-01  Darin Adler  <darin@apple.com>
 
         Remove some dead and unneeded code (ScrollbarThemeSafari, RenderThemeSafari, OPENCL, a little color space logic)

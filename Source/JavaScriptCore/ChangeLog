@@ -1,3 +1,115 @@
+2015-11-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Dominators should be factored out of the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=150764
+
+        Reviewed by Geoffrey Garen.
+
+        Factored DFGDominators.h/DFGDominators.cpp into WTF. To do this, I made two changes to the
+        DFG:
+
+        1) DFG now has a CFG abstraction called DFG::CFG. The cool thing about this is that in the
+           future if we wanted to support inverted dominators, we could do it by just creating a
+           DFG::BackwardCFG.
+
+        2) Got rid of DFG::Analysis. From now on, an Analysis being invalidated is expressed by the
+           DFG::Graph having a null pointer for that analysis. When we "run" the analysis, we
+           just instantiate it. This makes it much more natural to integrate WTF::Dominators into
+           the DFG.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAnalysis.h: Removed.
+        * dfg/DFGCFG.h: Added.
+        (JSC::DFG::CFG::CFG):
+        (JSC::DFG::CFG::root):
+        (JSC::DFG::CFG::newMap<T>):
+        (JSC::DFG::CFG::successors):
+        (JSC::DFG::CFG::predecessors):
+        (JSC::DFG::CFG::index):
+        (JSC::DFG::CFG::node):
+        (JSC::DFG::CFG::numNodes):
+        (JSC::DFG::CFG::dump):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::createDumpList):
+        * dfg/DFGDominators.cpp: Removed.
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::Dominators):
+        (JSC::DFG::Dominators::strictlyDominates): Deleted.
+        (JSC::DFG::Dominators::dominates): Deleted.
+        (JSC::DFG::Dominators::immediateDominatorOf): Deleted.
+        (JSC::DFG::Dominators::forAllStrictDominatorsOf): Deleted.
+        (JSC::DFG::Dominators::forAllDominatorsOf): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksStrictlyDominatedBy): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksDominatedBy): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksInDominanceFrontierOf): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksInIteratedDominanceFrontierOf): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksInPrunedIteratedDominanceFrontierOf): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksInDominanceFrontierOfImpl): Deleted.
+        (JSC::DFG::Dominators::forAllBlocksInIteratedDominanceFrontierOfImpl): Deleted.
+        (JSC::DFG::Dominators::BlockData::BlockData): Deleted.
+        * dfg/DFGEdgeDominates.h:
+        (JSC::DFG::EdgeDominates::operator()):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::invalidateCFG):
+        (JSC::DFG::Graph::substituteGetLocal):
+        (JSC::DFG::Graph::handleAssertionFailure):
+        (JSC::DFG::Graph::ensureDominators):
+        (JSC::DFG::Graph::ensurePrePostNumbering):
+        (JSC::DFG::Graph::ensureNaturalLoops):
+        (JSC::DFG::Graph::valueProfileFor):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasDebuggerEnabled):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        (JSC::DFG::LoopPreHeaderCreationPhase::run):
+        * dfg/DFGNaturalLoops.cpp:
+        (JSC::DFG::NaturalLoop::dump):
+        (JSC::DFG::NaturalLoops::NaturalLoops):
+        (JSC::DFG::NaturalLoops::~NaturalLoops):
+        (JSC::DFG::NaturalLoops::loopsOf):
+        (JSC::DFG::NaturalLoops::computeDependencies): Deleted.
+        (JSC::DFG::NaturalLoops::compute): Deleted.
+        * dfg/DFGNaturalLoops.h:
+        (JSC::DFG::NaturalLoops::numLoops):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::SuccessorsIterable::end):
+        (JSC::DFG::Node::SuccessorsIterable::size):
+        (JSC::DFG::Node::SuccessorsIterable::at):
+        (JSC::DFG::Node::SuccessorsIterable::operator[]):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPrePostNumbering.cpp:
+        (JSC::DFG::PrePostNumbering::PrePostNumbering):
+        (JSC::DFG::PrePostNumbering::~PrePostNumbering):
+        (JSC::DFG::PrePostNumbering::compute): Deleted.
+        * dfg/DFGPrePostNumbering.h:
+        (JSC::DFG::PrePostNumbering::preNumber):
+        (JSC::DFG::PrePostNumbering::postNumber):
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSSACalculator.cpp:
+        (JSC::DFG::SSACalculator::nonLocalReachingDef):
+        (JSC::DFG::SSACalculator::reachingDefAtTail):
+        * dfg/DFGSSACalculator.h:
+        (JSC::DFG::SSACalculator::computePhis):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower):
+        (JSC::FTL::DFG::LowerDFGToLLVM::safelyInvalidateAfterTermination):
+        (JSC::FTL::DFG::LowerDFGToLLVM::isValid):
+
 2015-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         B3::reduceStrength's DCE should be more agro and less wrong
