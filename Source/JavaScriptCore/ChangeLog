@@ -1,3 +1,59 @@
+2015-11-02  Mark Lam  <mark.lam@apple.com>
+
+        Snippefy op_add for the baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=150129
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+
+        Performance is neutral for both 32-bit and 64-bit on X86_64.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.h:
+        (JSC::JIT::getOperandConstantInt):
+        - Move getOperandConstantInt() from the JSVALUE64 section to the common section
+          because the snippet needs it.
+
+        * jit/JITAddGenerator.cpp: Added.
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITAddGenerator.h: Added.
+        (JSC::JITAddGenerator::JITAddGenerator):
+        (JSC::JITAddGenerator::endJumpList):
+        (JSC::JITAddGenerator::slowPathJumpList):
+        - JITAddGenerator implements an optimization for the case where 1 of the 2 operands
+          is a constant int32_t.  It does not implement an optimization for the case where
+          both operands are constant int32_t.  This is because:
+          1. For the baseline JIT, the ASTBuilder will fold the 2 constants together.
+          2. For the DFG, the AbstractInterpreter will also fold the 2 constants.
+
+          Hence, such an optimization path (for 2 constant int32_t operands) would never
+          be taken, and is why we won't implement it.
+
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+        - Removed op_add cases.  These are no longer used by the op_add emitters.
+
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitSlow_op_add):
+        - Moved out from the JSVALUE64 section to the common section, and reimplemented
+          using the snippet.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_add): Deleted.
+        (JSC::JIT::emitAdd32Constant): Deleted.
+        (JSC::JIT::emitSlow_op_add): Deleted.
+        - Remove 32-bit specific version of op_add.  The snippet serves both 32-bit
+          and 64-bit implementations.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::getOperandConstantInt):
+        - Move getOperandConstantInt() from the JSVALUE64 section to the common section
+          because the snippet needs it.
+
 2015-11-02  Brian Burg  <bburg@apple.com>
 
         Run sort-Xcode-project-file for the JavaScriptCore project.
@@ -3518,7 +3574,6 @@
         (JSC::GCAwareJITStubRoutineWithExceptionHandler::~GCAwareJITStubRoutineWithExceptionHandler): Deleted.
         * jit/GCAwareJITStubRoutine.h:
 
->>>>>>> .r191351
 2015-10-20  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the build by disabling MAC_GESTURE_EVENTS on 10.9 and 10.10

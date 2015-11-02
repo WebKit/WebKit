@@ -430,6 +430,7 @@ set(JavaScriptCore_SOURCES
     jit/HostCallReturnValue.cpp
     jit/IntrinsicEmitter.cpp
     jit/JIT.cpp
+    jit/JITAddGenerator.cpp
     jit/JITArithmetic.cpp
     jit/JITArithmetic32_64.cpp
     jit/JITCall.cpp

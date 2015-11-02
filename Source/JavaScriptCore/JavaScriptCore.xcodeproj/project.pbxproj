@@ -1924,6 +1924,8 @@
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE0D4A061AB8DD0A002F54BF /* ExecutionTimeLimitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE0D4A041AB8DD0A002F54BF /* ExecutionTimeLimitTest.cpp */; };
 		FE0D4A091ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE0D4A071ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp */; };
+		FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */; settings = {ASSET_TAGS = (); }; };
+		FE1220281BE7F5910039E6F2 /* JITAddGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */; settings = {ASSET_TAGS = (); }; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE1C0FFF1B194FD100B53FCA /* Exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1C0FFE1B194FD100B53FCA /* Exception.cpp */; };
 		FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */; };
@@ -4016,6 +4018,8 @@
 		FE0D4A051AB8DD0A002F54BF /* ExecutionTimeLimitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecutionTimeLimitTest.h; path = API/tests/ExecutionTimeLimitTest.h; sourceTree = "<group>"; };
 		FE0D4A071ABA2437002F54BF /* GlobalContextWithFinalizerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalContextWithFinalizerTest.cpp; path = API/tests/GlobalContextWithFinalizerTest.cpp; sourceTree = "<group>"; };
 		FE0D4A081ABA2437002F54BF /* GlobalContextWithFinalizerTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalContextWithFinalizerTest.h; path = API/tests/GlobalContextWithFinalizerTest.h; sourceTree = "<group>"; };
+		FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITAddGenerator.cpp; sourceTree = "<group>"; };
+		FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITAddGenerator.h; sourceTree = "<group>"; };
 		FE1C0FFC1B193E9800B53FCA /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		FE1C0FFE1B194FD100B53FCA /* Exception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cpp; sourceTree = "<group>"; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
@@ -4651,6 +4655,8 @@
 				DE5A09FF1BA3AC3E003D4424 /* IntrinsicEmitter.cpp */,
 				1429D92D0ED22D7000B89619 /* JIT.cpp */,
 				1429D92E0ED22D7000B89619 /* JIT.h */,
+				FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */,
+				FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */,
 				86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */,
 				A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */,
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
@@ -7242,6 +7248,7 @@
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
+				FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
 				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
@@ -8296,6 +8303,7 @@
 				0F300B7B18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.cpp in Sources */,
 				0F898F311B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.cpp in Sources */,
 				0FC97F3D18202119002C9B26 /* DFGInvalidationPointInjectionPhase.cpp in Sources */,
+				FE1220281BE7F5910039E6F2 /* JITAddGenerator.cpp in Sources */,
 				0FEA0A33170D40BF00BB722C /* DFGJITCode.cpp in Sources */,
 				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,
 				A78A9778179738B8009DF744 /* DFGJITFinalizer.cpp in Sources */,

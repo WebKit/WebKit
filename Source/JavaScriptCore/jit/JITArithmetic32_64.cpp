@@ -480,119 +480,6 @@ void JIT::emitSlow_op_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 // Addition (+)
 
-void JIT::emit_op_add(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-
-    if (!types.first().mightBeNumber() || !types.second().mightBeNumber()) {
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-        slowPathCall.call();
-        return;
-    }
-
-    JumpList notInt32Op1;
-    JumpList notInt32Op2;
-
-    int op;
-    int32_t constant;
-    if (getOperandConstantInt(op1, op2, op, constant)) {
-        emitAdd32Constant(dst, op, constant, op == op1 ? types.first() : types.second());
-        return;
-    }
-
-    emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
-    notInt32Op1.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    notInt32Op2.append(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
-
-    // Int32 case.
-    addSlowCase(branchAdd32(Overflow, regT2, regT0));
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
-
-    if (!supportsFloatingPoint()) {
-        addSlowCase(notInt32Op1);
-        addSlowCase(notInt32Op2);
-        return;
-    }
-    Jump end = jump();
-
-    // Double case.
-    emitBinaryDoubleOp(op_add, dst, op1, op2, types, notInt32Op1, notInt32Op2);
-    end.link(this);
-}
-
-void JIT::emitAdd32Constant(int dst, int op, int32_t constant, ResultType opType)
-{
-    // Int32 case.
-    emitLoad(op, regT1, regT2);
-    Jump notInt32 = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
-    addSlowCase(branchAdd32(Overflow, regT2, Imm32(constant), regT0));
-    emitStoreInt32(dst, regT0, (op == dst));
-
-    // Double case.
-    if (!supportsFloatingPoint()) {
-        addSlowCase(notInt32);
-        return;
-    }
-    Jump end = jump();
-
-    notInt32.link(this);
-    if (!opType.definitelyIsNumber())
-        addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
-    move(Imm32(constant), regT2);
-    convertInt32ToDouble(regT2, fpRegT0);
-    emitLoadDouble(op, fpRegT1);
-    addDouble(fpRegT1, fpRegT0);
-    emitStoreDouble(dst, fpRegT0);
-
-    end.link(this);
-}
-
-void JIT::emitSlow_op_add(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int op1 = currentInstruction[2].u.operand;
-    int op2 = currentInstruction[3].u.operand;
-    OperandTypes types = OperandTypes::fromInt(currentInstruction[4].u.operand);
-
-    RELEASE_ASSERT(types.first().mightBeNumber() && types.second().mightBeNumber());
-
-    int op;
-    int32_t constant;
-    if (getOperandConstantInt(op1, op2, op, constant)) {
-        linkSlowCase(iter); // overflow check
-
-        if (!supportsFloatingPoint())
-            linkSlowCase(iter); // non-sse case
-        else {
-            ResultType opType = op == op1 ? types.first() : types.second();
-            if (!opType.definitelyIsNumber())
-                linkSlowCase(iter); // double check
-        }
-    } else {
-        linkSlowCase(iter); // overflow check
-
-        if (!supportsFloatingPoint()) {
-            linkSlowCase(iter); // int32 check
-            linkSlowCase(iter); // int32 check
-        } else {
-            if (!types.first().definitelyIsNumber())
-                linkSlowCase(iter); // double check
-
-            if (!types.second().definitelyIsNumber()) {
-                linkSlowCase(iter); // int32 check
-                linkSlowCase(iter); // double check
-            }
-        }
-    }
-
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_add);
-    slowPathCall.call();
-}
-
-// Subtraction (-)
-
 void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, OperandTypes types, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters, bool op2IsInRegisters)
 {
     JumpList end;
@@ -628,11 +515,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
             case op_mul:
                 emitLoadDouble(op1, fpRegT2);
                 mulDouble(fpRegT2, fpRegT0);
-                emitStoreDouble(dst, fpRegT0);
-                break;
-            case op_add:
-                emitLoadDouble(op1, fpRegT2);
-                addDouble(fpRegT2, fpRegT0);
                 emitStoreDouble(dst, fpRegT0);
                 break;
             case op_div: {
@@ -724,11 +606,6 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
             case op_mul:
                 emitLoadDouble(op2, fpRegT2);
                 mulDouble(fpRegT2, fpRegT0);
-                emitStoreDouble(dst, fpRegT0);
-                break;
-            case op_add:
-                emitLoadDouble(op2, fpRegT2);
-                addDouble(fpRegT2, fpRegT0);
                 emitStoreDouble(dst, fpRegT0);
                 break;
             case op_div: {

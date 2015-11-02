@@ -403,6 +403,8 @@ namespace JSC {
         void emitGetVirtualRegister(int src, JSValueRegs dst);
         void emitPutVirtualRegister(int dst, JSValueRegs src);
 
+        int32_t getOperandConstantInt(int src);
+
 #if USE(JSVALUE32_64)
         bool getOperandConstantInt(int op1, int op2, int& op, int32_t& constant);
 
@@ -427,7 +429,6 @@ namespace JSC {
         void compileGetByIdHotPath(const Identifier*);
 
         // Arithmetic opcode helpers
-        void emitAdd32Constant(int dst, int op, int32_t constant, ResultType opType);
         void emitSub32Constant(int dst, int op, int32_t constant, ResultType opType);
         void emitBinaryDoubleOp(OpcodeID, int dst, int op1, int op2, OperandTypes, JumpList& notInt32Op1, JumpList& notInt32Op2, bool op1IsInRegisters = true, bool op2IsInRegisters = true);
 
@@ -446,8 +447,6 @@ namespace JSC {
         {
             emitPutVirtualRegister(dst, payload);
         }
-
-        int32_t getOperandConstantInt(int src);
 
         Jump emitJumpIfJSCell(RegisterID);
         Jump emitJumpIfBothJSCells(RegisterID, RegisterID, RegisterID);

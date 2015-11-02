@@ -638,6 +638,7 @@
     <ClCompile Include="..\jit\HostCallReturnValue.cpp" />
     <ClCompile Include="..\jit\IntrinsicEmitter.cpp" />
     <ClCompile Include="..\jit\JIT.cpp" />
+    <ClCompile Include="..\jit\JITAddGenerator.cpp" />
     <ClCompile Include="..\jit\JITArithmetic.cpp" />
     <ClCompile Include="..\jit\JITArithmetic32_64.cpp" />
     <ClCompile Include="..\jit\JITCall.cpp" />
@@ -1455,6 +1456,7 @@
     <ClInclude Include="..\jit\GPRInfo.h" />
     <ClInclude Include="..\jit\HostCallReturnValue.h" />
     <ClInclude Include="..\jit\JIT.h" />
+    <ClInclude Include="..\jit\JITAddGenerator.h" />
     <ClInclude Include="..\jit\JITCode.h" />
     <ClInclude Include="..\jit\JITCompilationEffort.h" />
     <ClInclude Include="..\jit\JITDisassembler.h" />

@@ -975,6 +975,11 @@ inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
     return JITContiguous;
 }
 
+ALWAYS_INLINE int32_t JIT::getOperandConstantInt(int src)
+{
+    return getConstantOperand(src).asInt32();
+}
+
 #if USE(JSVALUE32_64)
 
 inline void JIT::emitLoadTag(int index, RegisterID tag)
@@ -1190,11 +1195,6 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegisters(int src1, RegisterID dst1, int s
 ALWAYS_INLINE void JIT::emitGetVirtualRegisters(VirtualRegister src1, RegisterID dst1, VirtualRegister src2, RegisterID dst2)
 {
     emitGetVirtualRegisters(src1.offset(), dst1, src2.offset(), dst2);
-}
-
-ALWAYS_INLINE int32_t JIT::getOperandConstantInt(int src)
-{
-    return getConstantOperand(src).asInt32();
 }
 
 ALWAYS_INLINE bool JIT::isOperandConstantInt(int src)

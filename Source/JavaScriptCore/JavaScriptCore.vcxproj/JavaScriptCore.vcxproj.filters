@@ -420,6 +420,9 @@
     <ClCompile Include="..\jit\JIT.cpp">
       <Filter>jit</Filter>
     </ClCompile>
+    <ClCompile Include="..\jit\JITAddGenerator.cpp">
+      <Filter>jit</Filter>
+    </ClCompile>
     <ClCompile Include="..\jit\JITArithmetic.cpp">
       <Filter>jit</Filter>
     </ClCompile>
@@ -2490,6 +2493,9 @@
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JIT.h">
+      <Filter>jit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\jit\JITAddGenerator.h">
       <Filter>jit</Filter>
     </ClInclude>
     <ClInclude Include="..\jit\JITCode.h">
