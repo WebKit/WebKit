@@ -139,6 +139,8 @@ webkit.org/b/150367 [ Mavericks ] fast/canvas/webgl/oes-texture-half-float.html 
 
 [ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
+webkit.org/b/150804 storage/indexeddb/modern/idbobjectstore-get-failures.html [ Pass Failure ]
+
 ### END OF (2) Failures without bug reports
 ########################################
 
