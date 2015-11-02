@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2009, 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,157 +63,155 @@ const unsigned char asciiCaseFoldTable[256] = {
     0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff
 };
 
-template<typename CharType> inline bool isASCII(CharType c)
+template<typename CharacterType> inline bool isASCII(CharacterType character)
 {
-    return !(c & ~0x7F);
+    return !(character & ~0x7F);
 }
 
-template<typename CharType> inline bool isASCIIAlpha(CharType c)
+template<typename CharacterType> inline bool isASCIILower(CharacterType character)
 {
-    return (c | 0x20) >= 'a' && (c | 0x20) <= 'z';
+    return character >= 'a' && character <= 'z';
 }
 
-template<typename CharType> inline bool isASCIIDigit(CharType c)
-{
-    return c >= '0' && c <= '9';
-}
-
-template<typename CharType> inline bool isASCIIAlphanumeric(CharType c)
-{
-    return isASCIIDigit(c) || isASCIIAlpha(c);
-}
-
-template<typename CharType> inline bool isASCIIHexDigit(CharType c)
-{
-    return isASCIIDigit(c) || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f');
-}
-
-template<typename CharType> inline bool isASCIILower(CharType c)
-{
-    return c >= 'a' && c <= 'z';
-}
-
-template<typename CharType> inline bool isASCIIBinaryDigit(CharType c)
-{
-    return (c == '0') || (c == '1');
-}
-
-template<typename CharType> inline bool isASCIIOctalDigit(CharType c)
-{
-    return (c >= '0') && (c <= '7');
-}
-
-template<typename CharType> inline bool isASCIIPrintable(CharType c)
-{
-    return c >= ' ' && c <= '~';
-}
-
-/*
- Statistics from a run of Apple's page load test for callers of isASCIISpace:
-
- character          count
- ---------          -----
- non-spaces         689383
- 20  space          294720
- 0A  \n             89059
- 09  \t             28320
- 0D  \r             0
- 0C  \f             0
- 0B  \v             0
- */
-template<typename CharType> inline bool isASCIISpace(CharType c)
-{
-    return c <= ' ' && (c == ' ' || (c <= 0xD && c >= 0x9));
-}
-
-template<typename CharType> inline bool isASCIIUpper(CharType c)
-{
-    return c >= 'A' && c <= 'Z';
-}
-
-template<typename CharType> inline CharType toASCIILower(CharType c)
-{
-    return c | ((c >= 'A' && c <= 'Z') << 5);
-}
-
-template<>
-inline char toASCIILower(char c)
-{
-    return static_cast<char>(asciiCaseFoldTable[static_cast<unsigned char>(c)]);
-}
-
-template<>
-inline LChar toASCIILower(LChar c)
-{
-    return asciiCaseFoldTable[c];
-}
-
-template<typename CharType> inline CharType toASCIILowerUnchecked(CharType character)
+template<typename CharacterType> inline CharacterType toASCIILowerUnchecked(CharacterType character)
 {
     // This function can be used for comparing any input character
     // to a lowercase English character. The isASCIIAlphaCaselessEqual
     // below should be used for regular comparison of ASCII alpha
-    // characters, but switch statements in CSS tokenizer require
+    // characters, but switch statements in CSS tokenizer instead make
     // direct use of this function.
     return character | 0x20;
 }
 
-template<typename CharType> inline CharType toASCIIUpper(CharType c)
+template<typename CharacterType> inline bool isASCIIAlpha(CharacterType character)
 {
-    return c & ~((c >= 'a' && c <= 'z') << 5);
+    return isASCIILower(toASCIILowerUnchecked(character));
 }
 
-template<typename CharType> inline int toASCIIHexValue(CharType c)
+template<typename CharacterType> inline bool isASCIIDigit(CharacterType character)
 {
-    ASSERT(isASCIIHexDigit(c));
-    return c < 'A' ? c - '0' : (c - 'A' + 10) & 0xF;
+    return character >= '0' && character <= '9';
 }
 
-template<typename CharType> inline int toASCIIHexValue(CharType upperValue, CharType lowerValue)
+template<typename CharacterType> inline bool isASCIIAlphanumeric(CharacterType character)
 {
-    ASSERT(isASCIIHexDigit(upperValue) && isASCIIHexDigit(lowerValue));
-    return ((toASCIIHexValue(upperValue) << 4) & 0xF0) | toASCIIHexValue(lowerValue);
+    return isASCIIDigit(character) || isASCIIAlpha(character);
 }
 
-inline char lowerNibbleToASCIIHexDigit(char c)
+template<typename CharacterType> inline bool isASCIIHexDigit(CharacterType character)
 {
-    char nibble = c & 0xF;
-    return nibble < 10 ? '0' + nibble : 'A' + nibble - 10;
+    return isASCIIDigit(character) || (toASCIILowerUnchecked(character) >= 'a' && toASCIILowerUnchecked(character) <= 'f');
 }
 
-inline char upperNibbleToASCIIHexDigit(char c)
+template<typename CharacterType> inline bool isASCIIBinaryDigit(CharacterType character)
 {
-    char nibble = (c >> 4) & 0xF;
-    return nibble < 10 ? '0' + nibble : 'A' + nibble - 10;
+    return character == '0' || character == '1';
 }
 
-template<typename CharType> inline bool isASCIIAlphaCaselessEqual(CharType cssCharacter, char character)
+template<typename CharacterType> inline bool isASCIIOctalDigit(CharacterType character)
 {
-    // This function compares a (preferrably) constant ASCII
-    // lowercase letter to any input character.
-    ASSERT(character >= 'a' && character <= 'z');
-    return LIKELY(toASCIILowerUnchecked(cssCharacter) == character);
+    return character >= '0' && character <= '7';
+}
+
+template<typename CharacterType> inline bool isASCIIPrintable(CharacterType character)
+{
+    return character >= ' ' && character <= '~';
+}
+
+/*
+    Statistics from a run of Apple's page load test for callers of isASCIISpace:
+
+    character          count
+    ---------          -----
+    non-spaces         689383
+    20  space          294720
+    0A  \n             89059
+    09  \t             28320
+    0D  \r             0
+    0C  \f             0
+    0B  \v             0
+
+    Because of those, we first check to quickly return false for non-control characters,
+    then check for space itself to quickly return true for that case, then do the rest.
+*/
+template<typename CharacterType> inline bool isASCIISpace(CharacterType character)
+{
+    return character <= ' ' && (character == ' ' || (character <= 0xD && character >= 0x9));
+}
+
+template<typename CharacterType> inline bool isASCIIUpper(CharacterType character)
+{
+    return character >= 'A' && character <= 'Z';
+}
+
+template<typename CharacterType> inline CharacterType toASCIILower(CharacterType character)
+{
+    return character | (isASCIIUpper(character) << 5);
+}
+
+template<> inline char toASCIILower(char character)
+{
+    return static_cast<char>(asciiCaseFoldTable[static_cast<uint8_t>(character)]);
+}
+
+template<> inline LChar toASCIILower(LChar character)
+{
+    return asciiCaseFoldTable[character];
+}
+
+template<typename CharacterType> inline CharacterType toASCIIUpper(CharacterType character)
+{
+    return character & ~(isASCIILower(character) << 5);
+}
+
+template<typename CharacterType> inline uint8_t toASCIIHexValue(CharacterType character)
+{
+    ASSERT(isASCIIHexDigit(character));
+    return character < 'A' ? character - '0' : (character - 'A' + 10) & 0xF;
+}
+
+template<typename CharacterType> inline uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter)
+{
+    return toASCIIHexValue(firstCharacter) << 4 | toASCIIHexValue(secondCharacter);
+}
+
+inline char lowerNibbleToASCIIHexDigit(uint8_t value)
+{
+    uint8_t nibble = value & 0xF;
+    return nibble + (nibble < 10 ? '0' : 'A' - 10);
+}
+
+inline char upperNibbleToASCIIHexDigit(uint8_t value)
+{
+    uint8_t nibble = value >> 4;
+    return nibble + (nibble < 10 ? '0' : 'A' - 10);
+}
+
+template<typename CharacterType> inline bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
+{
+    ASSERT(isASCIILower(expectedASCIILowercaseLetter));
+    return LIKELY(toASCIILowerUnchecked(inputCharacter) == expectedASCIILowercaseLetter);
 }
 
 }
 
 using WTF::isASCII;
 using WTF::isASCIIAlpha;
+using WTF::isASCIIAlphaCaselessEqual;
 using WTF::isASCIIAlphanumeric;
+using WTF::isASCIIBinaryDigit;
 using WTF::isASCIIDigit;
 using WTF::isASCIIHexDigit;
 using WTF::isASCIILower;
-using WTF::isASCIIBinaryDigit;
 using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
 using WTF::isASCIISpace;
 using WTF::isASCIIUpper;
+using WTF::lowerNibbleToASCIIHexDigit;
 using WTF::toASCIIHexValue;
 using WTF::toASCIILower;
 using WTF::toASCIILowerUnchecked;
 using WTF::toASCIIUpper;
-using WTF::lowerNibbleToASCIIHexDigit;
 using WTF::upperNibbleToASCIIHexDigit;
-using WTF::isASCIIAlphaCaselessEqual;
 
 #endif

@@ -1,3 +1,46 @@
+2015-11-01  Darin Adler  <darin@apple.com>
+
+        ASCIICType refinements
+        https://bugs.webkit.org/show_bug.cgi?id=150787
+
+        Reviewed by Geoffrey Garen.
+
+        Refined ASCIICType.h by using narrower types. The most valuable part of this
+        is the part where the result of toASCIIHexValue is uint8_t instead of int;
+        that's slightly better for RGB values that the compiler needs to know fit
+        into a byte (coming in some Color work I plan to do soon).
+
+        * wtf/ASCIICType.h: Used CharacterType instead of CharType throughout, and
+        also sorted the using declarations at the bottom of the header.
+        (WTF::isASCII): Use the name "character" instead of "c".
+        (WTF::isASCIIAlpha): Ditto. Also use isASCIILower and toASCIILowerUnchecked
+        instead of writing it out.
+        (WTF::isASCIIDigit): Ditto.
+        (WTF::isASCIIAlphanumeric): Ditto.
+        (WTF::isASCIIHexDigit): Ditto. Also use toASCIILowerUnchecked instead of
+        writing it out.
+        (WTF::isASCIILower): Ditto.
+        (WTF::isASCIIBinaryDigit): Ditto. Also removed unneeded parentheses to match
+        the style of the rest of the file.
+        (WTF::isASCIIOctalDigit): Ditto.
+        (WTF::isASCIIPrintable): Ditto.
+        (WTF::isASCIISpace): Ditto.
+        (WTF::isASCIIUpper): Ditto.
+        (WTF::toASCIILower): Ditto. Also use isASCIIUpper instead of writing it out.
+        (WTF::toASCIILowerUnchecked): Tweaked comment.
+        (WTF::toASCIIUpper): Ditto. Also use isASCIILower instead of writing it out.
+        (WTF::toASCIIHexValue): Ditto. Also change return type from int to uint8_t.
+        Also broke a single assertion with && into two separate assertions and got
+        rid of unnnecessary masking with 0xF0 after shifting left. Also renamed
+        arguments for the two argument value so they are more sensible.
+        (WTF::lowerNibbleToASCIIHexDigit): Changed argument type to uint8_t, since
+        this function does not take a character. Also called it "value" instead of "c".
+        Also slightly tweaked how the expression is written.
+        (WTF::upperNibbleToASCIIHexDigit): Ditto. Using the more specific type also
+        got rid of the need to explicitly mask in this function.
+        (WTF::isASCIIAlphaCaselessEqual): Renamed the arguments for greater clarity.
+        With the new clearer argument names, the comment was superfluous.
+
 2015-11-01  Filip Pizlo  <fpizlo@apple.com>
 
         Dominators should be factored out of the DFG
