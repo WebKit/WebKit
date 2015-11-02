@@ -24,14 +24,22 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "TestJSBuiltinConstructorBuiltins.h"
+#include <runtime/Error.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
+// Functions
+
+JSC::EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(JSC::ExecState*);
+
 // Attributes
 
+JSC::EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+JSC::EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
+void setJSTestJSBuiltinConstructorTestAttributeRWCustom(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::JSObject*, JSC::EncodedJSValue, JSC::PropertyName);
 
 class JSTestJSBuiltinConstructorPrototype : public JSC::JSNonFinalObject {
@@ -61,6 +69,23 @@ private:
 
 typedef JSBuiltinConstructor<JSTestJSBuiltinConstructor> JSTestJSBuiltinConstructorConstructor;
 
+/* Hash table for constructor */
+
+static const struct CompactHashIndex JSTestJSBuiltinConstructorTableIndex[4] = {
+    { 0, -1 },
+    { -1, -1 },
+    { 1, -1 },
+    { -1, -1 },
+};
+
+
+static const HashTableValue JSTestJSBuiltinConstructorTableValues[] =
+{
+    { "testAttributeCustom", DontDelete | ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestJSBuiltinConstructorTestAttributeCustom), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "testAttributeRWCustom", DontDelete | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestJSBuiltinConstructorTestAttributeRWCustom), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestJSBuiltinConstructorTestAttributeRWCustom) } },
+};
+
+static const HashTable JSTestJSBuiltinConstructorTable = { 2, 3, true, JSTestJSBuiltinConstructorTableValues, JSTestJSBuiltinConstructorTableIndex };
 template<> void JSTestJSBuiltinConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
     putDirect(vm, vm.propertyNames->prototype, JSTestJSBuiltinConstructor::getPrototype(vm, &globalObject), DontDelete | ReadOnly | DontEnum);
@@ -80,6 +105,9 @@ template<> const ClassInfo JSTestJSBuiltinConstructorConstructor::s_info = { "Te
 static const HashTableValue JSTestJSBuiltinConstructorPrototypeTableValues[] =
 {
     { "constructor", DontEnum | ReadOnly, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestJSBuiltinConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "testAttribute", Accessor | Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testJSBuiltinConstructorTestAttributeCodeGenerator), (intptr_t) (setTestJSBuiltinConstructorTestAttributeCodeGenerator) } },
+    { "testFunction", JSC::Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testJSBuiltinConstructorTestFunctionCodeGenerator), (intptr_t) (0) } },
+    { "testCustomFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction), (intptr_t) (0) } },
 };
 
 const ClassInfo JSTestJSBuiltinConstructorPrototype::s_info = { "TestJSBuiltinConstructorPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorPrototype) };
@@ -90,7 +118,7 @@ void JSTestJSBuiltinConstructorPrototype::finishCreation(VM& vm)
     reifyStaticProperties(vm, JSTestJSBuiltinConstructorPrototypeTableValues, *this);
 }
 
-const ClassInfo JSTestJSBuiltinConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructor) };
+const ClassInfo JSTestJSBuiltinConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, &JSTestJSBuiltinConstructorTable, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructor) };
 
 JSTestJSBuiltinConstructor::JSTestJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }
@@ -111,6 +139,35 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor();
 }
 
+bool JSTestJSBuiltinConstructor::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
+{
+    auto* thisObject = jsCast<JSTestJSBuiltinConstructor*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    if (getStaticValueSlot<JSTestJSBuiltinConstructor, Base>(state, JSTestJSBuiltinConstructorTable, thisObject, propertyName, slot))
+        return true;
+    return false;
+}
+
+EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
+    auto* castedThis = jsCast<JSTestJSBuiltinConstructor*>(slotBase);
+    return JSValue::encode(castedThis->testAttributeCustom(*state));
+}
+
+
+EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, JSObject* slotBase, EncodedJSValue thisValue, PropertyName)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(slotBase);
+    UNUSED_PARAM(thisValue);
+    auto* castedThis = jsCast<JSTestJSBuiltinConstructor*>(slotBase);
+    return JSValue::encode(castedThis->testAttributeRWCustom(*state));
+}
+
+
 EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, JSObject* baseValue, EncodedJSValue, PropertyName)
 {
     JSTestJSBuiltinConstructorPrototype* domObject = jsDynamicCast<JSTestJSBuiltinConstructorPrototype*>(baseValue);
@@ -119,9 +176,31 @@ EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, JSObject*
     return JSValue::encode(JSTestJSBuiltinConstructor::getConstructor(state->vm(), domObject->globalObject()));
 }
 
+void setJSTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, JSObject* baseObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(baseObject);
+    UNUSED_PARAM(thisValue);
+    auto* castedThis = jsCast<JSTestJSBuiltinConstructor*>(baseObject);
+    UNUSED_PARAM(thisValue);
+    UNUSED_PARAM(state);
+    castedThis->setTestAttributeRWCustom(*state, value);
+}
+
+
 JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestJSBuiltinConstructorConstructor>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(ExecState* state)
+{
+    JSValue thisValue = state->thisValue();
+    JSTestJSBuiltinConstructor* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, "TestJSBuiltinConstructor", "testCustomFunction");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestJSBuiltinConstructor::info());
+    return JSValue::encode(castedThis->testCustomFunction(*state));
 }
 
 void JSTestJSBuiltinConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)

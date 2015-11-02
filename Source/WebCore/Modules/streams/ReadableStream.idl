@@ -29,13 +29,14 @@
 
 [
     Conditional=STREAMS_API,
-    JSBuiltinConstructor
+    Constructor,
+    JSBuiltin
 ] interface ReadableStream {
-    [JSBuiltin] Promise cancel([Default=Undefined] optional any reason);
-    [JSBuiltin] Object getReader();
-    [JSBuiltin] Promise pipeTo(any streams, any options);
-    [JSBuiltin] Object pipeThrough(any dest, any options);
-    [JSBuiltin] Object tee();
+    Promise cancel(optional any reason);
+    Object getReader();
+    Promise pipeTo(any streams, any options);
+    Object pipeThrough(any dest, any options);
+    Object tee();
 
-    [JSBuiltin] readonly attribute boolean locked;
+    readonly attribute boolean locked;
 };

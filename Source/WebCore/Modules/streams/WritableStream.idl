@@ -29,13 +29,14 @@
 
 [
     Conditional=STREAMS_API,
-    JSBuiltinConstructor
+    Constructor,
+    JSBuiltin
 ] interface WritableStream { 
-    [JSBuiltin] Promise abort([Default=Undefined] optional any reason);
-    [JSBuiltin] Promise close();
-    [JSBuiltin] Promise write(any chunk);
+    Promise abort(optional any reason);
+    Promise close();
+    Promise write(any chunk);
 
-    [JSBuiltin] readonly attribute Promise closed;
-    [JSBuiltin] readonly attribute Promise ready;
-    [JSBuiltin] readonly attribute DOMString state;
+    readonly attribute Promise closed;
+    readonly attribute Promise ready;
+    readonly attribute DOMString state;
 };

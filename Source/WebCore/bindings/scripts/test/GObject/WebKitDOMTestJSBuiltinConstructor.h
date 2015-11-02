@@ -47,6 +47,36 @@ struct _WebKitDOMTestJSBuiltinConstructorClass {
 WEBKIT_API GType
 webkit_dom_test_js_builtin_constructor_get_type(void);
 
+/**
+ * webkit_dom_test_js_builtin_constructor_test_function:
+ * @self: A #WebKitDOMTestJSBuiltinConstructor
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_js_builtin_constructor_test_function(WebKitDOMTestJSBuiltinConstructor* self);
+
+/**
+ * webkit_dom_test_js_builtin_constructor_get_test_attribute:
+ * @self: A #WebKitDOMTestJSBuiltinConstructor
+ *
+ * Returns: A #gboolean
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API gboolean
+webkit_dom_test_js_builtin_constructor_get_test_attribute(WebKitDOMTestJSBuiltinConstructor* self);
+
+/**
+ * webkit_dom_test_js_builtin_constructor_set_test_attribute:
+ * @self: A #WebKitDOMTestJSBuiltinConstructor
+ * @value: A #gboolean
+ *
+ * Stability: Unstable
+**/
+WEBKIT_API void
+webkit_dom_test_js_builtin_constructor_set_test_attribute(WebKitDOMTestJSBuiltinConstructor* self, gboolean value);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */

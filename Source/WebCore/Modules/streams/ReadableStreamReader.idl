@@ -30,12 +30,12 @@
 [
     Conditional=STREAMS_API,
     CustomConstructor,
-    ImplementationLacksVTable,
+    JSBuiltin,
     NoInterfaceObject
 ] interface ReadableStreamReader {
-    [JSBuiltin] Promise read();
-    [JSBuiltin] Promise cancel([Default=Undefined] optional any reason);
-    [JSBuiltin] void releaseLock();
+    Promise read();
+    Promise cancel(optional any reason);
+    void releaseLock();
 
-    [JSBuiltin] readonly attribute Promise closed;
+    readonly attribute Promise closed;
 };

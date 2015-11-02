@@ -60,6 +60,48 @@
     [super finalize];
 }
 
+- (BOOL)testAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->testAttribute();
+}
+
+- (void)setTestAttribute:(BOOL)newTestAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setTestAttribute(newTestAttribute);
+}
+
+- (BOOL)testAttributeCustom
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->testAttributeCustom();
+}
+
+- (BOOL)testAttributeRWCustom
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->testAttributeRWCustom();
+}
+
+- (void)setTestAttributeRWCustom:(BOOL)newTestAttributeRWCustom
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setTestAttributeRWCustom(newTestAttributeRWCustom);
+}
+
+- (void)testFunction
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->testFunction();
+}
+
+- (void)testCustomFunction
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->testCustomFunction();
+}
+
 @end
 
 WebCore::TestJSBuiltinConstructor* core(DOMTestJSBuiltinConstructor *wrapper)

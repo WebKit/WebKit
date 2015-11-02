@@ -28,4 +28,10 @@
 
 WEBKIT_CLASS_AVAILABLE_MAC(9876_5)
 WEBCORE_EXPORT @interface DOMTestJSBuiltinConstructor : DOMObject
+@property BOOL testAttribute;
+@property (readonly) BOOL testAttributeCustom;
+@property BOOL testAttributeRWCustom;
+
+- (void)testFunction;
+- (void)testCustomFunction;
 @end

@@ -37,6 +37,7 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* getPrototype(JSC::VM&, JSC::JSGlobalObject*);
+    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -49,6 +50,16 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
+
+    // Custom attributes
+    JSC::JSValue testAttributeCustom(JSC::ExecState&) const;
+    JSC::JSValue testAttributeRWCustom(JSC::ExecState&) const;
+    void setTestAttributeRWCustom(JSC::ExecState&, JSC::JSValue);
+
+    // Custom functions
+    JSC::JSValue testCustomFunction(JSC::ExecState&);
+public:
+    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 protected:
     JSTestJSBuiltinConstructor(JSC::Structure*, JSDOMGlobalObject&);
 

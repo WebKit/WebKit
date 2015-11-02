@@ -28,6 +28,7 @@
 
 [
     CustomConstructor,
+    JSBuiltIn,
     NoInterfaceObject
 ] interface TestCustomConstructorWithNoInterfaceObject {
 };

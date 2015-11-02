@@ -30,12 +30,12 @@
 [
     Conditional=STREAMS_API,
     CustomConstructor,
-    ImplementationLacksVTable,
+    JSBuiltin,
     NoInterfaceObject
 ] interface ReadableStreamController {
-    [JSBuiltin] void enqueue([Default=Undefined] optional any chunk);
-    [JSBuiltin] void close();
-    [JSBuiltin] void error([Default=Undefined] optional any error);
+    void enqueue(optional any chunk);
+    void close();
+    void error(optional any error);
 
-    [JSBuiltin] readonly attribute double desiredSize;
+    readonly attribute double desiredSize;
 };

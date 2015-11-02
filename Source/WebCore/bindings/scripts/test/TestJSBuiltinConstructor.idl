@@ -27,7 +27,15 @@
  */
 
 [
-    JSBuiltinConstructor
+    JSBuiltin,
+    Constructor
 ] interface TestJSBuiltinConstructor {
-};
 
+    void testFunction();
+    attribute boolean testAttribute;
+
+    [ Custom ] void testCustomFunction();
+    [ CustomGetter ] readonly attribute boolean testAttributeCustom;
+    [ CustomGetter, CustomSetter ] attribute boolean testAttributeRWCustom;
+
+};
