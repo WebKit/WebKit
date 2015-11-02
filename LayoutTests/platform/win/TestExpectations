@@ -3286,3 +3286,6 @@ webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/constra
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Pass Failure ]
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html [ Pass Failure ]
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Pass Failure ]
+
+webkit.org/b/150684 editing/input/reveal-caret-of-multiline-contenteditable.html [ Pass Failure ]
+webkit.org/b/150684 editing/input/reveal-caret-of-multiline-input.html [ Pass Failure ]
