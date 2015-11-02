@@ -182,8 +182,10 @@ void WebViewTest::quitMainLoopAfterProcessingPendingEvents()
 
 void WebViewTest::wait(double seconds)
 {
-    GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy("WebViewTest wait", [this] { quitMainLoop(); },
-        std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration<double>(seconds)));
+    g_timeout_add(seconds * 1000, [](gpointer userData) -> gboolean {
+        static_cast<WebViewTest*>(userData)->quitMainLoop();
+        return G_SOURCE_REMOVE;
+    }, this);
     g_main_loop_run(m_mainLoop);
 }
 

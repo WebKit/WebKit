@@ -32,23 +32,6 @@
 
 namespace WTF {
 
-GMainLoopSource& GMainLoopSource::create()
-{
-    return *new GMainLoopSource(DeleteOnDestroy);
-}
-
-GMainLoopSource::GMainLoopSource()
-    : m_deleteOnDestroy(DoNotDeleteOnDestroy)
-    , m_status(Ready)
-{
-}
-
-GMainLoopSource::GMainLoopSource(DeleteOnDestroyType deleteOnDestroy)
-    : m_deleteOnDestroy(deleteOnDestroy)
-    , m_status(Ready)
-{
-}
-
 GMainLoopSource::~GMainLoopSource()
 {
     cancel();
@@ -66,10 +49,6 @@ bool GMainLoopSource::isActive() const
 
 void GMainLoopSource::cancel()
 {
-    // Delete-on-destroy GMainLoopSource objects can't be cancelled.
-    if (m_deleteOnDestroy == DeleteOnDestroy)
-        return;
-
     // A valid context should only be present if GMainLoopSource is in the Scheduled or Dispatching state.
     ASSERT(!m_context.source || m_status == Scheduled || m_status == Dispatching);
 
@@ -297,46 +276,6 @@ void GMainLoopSource::scheduleAfterDelay(const char* name, std::function<bool ()
     scheduleTimeoutSource(name, reinterpret_cast<GSourceFunc>(boolSourceCallback), priority, context);
 }
 
-void GMainLoopSource::scheduleAndDeleteOnDestroy(const char* name, std::function<void()>&& function, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().schedule(name, WTF::move(function), priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAndDeleteOnDestroy(const char* name, std::function<bool()>&& function, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().schedule(name, WTF::move(function), priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()>&& function, std::chrono::milliseconds delay, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()>&& function, std::chrono::milliseconds delay, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()>&& function, std::chrono::seconds delay, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()>&& function, std::chrono::seconds delay, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<void()>&& function, std::chrono::microseconds delay, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
-}
-
-void GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy(const char* name, std::function<bool()>&& function, std::chrono::microseconds delay, int priority, std::function<void()>&& destroyFunction, GMainContext* context)
-{
-    create().scheduleAfterDelay(name, WTF::move(function), delay, priority, WTF::move(destroyFunction), context);
-}
-
 bool GMainLoopSource::prepareVoidCallback(Context& context)
 {
     if (!m_context.source)
@@ -369,8 +308,6 @@ void GMainLoopSource::voidCallback()
     }
 
     context.destroySource();
-    if (m_deleteOnDestroy == DeleteOnDestroy)
-        delete this;
 }
 
 bool GMainLoopSource::prepareBoolCallback(Context& context)
@@ -408,11 +345,8 @@ bool GMainLoopSource::boolCallback()
         finishBoolCallback(retval, context);
     }
 
-    if (context.source) {
+    if (context.source)
         context.destroySource();
-        if (m_deleteOnDestroy == DeleteOnDestroy)
-            delete this;
-    }
 
     return retval;
 }

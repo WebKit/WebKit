@@ -1,3 +1,23 @@
+2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] Remove delete on destroy GMainLoopSources
+        https://bugs.webkit.org/show_bug.cgi?id=150771
+
+        Reviewed by Žan Doberšek.
+
+        Delete on destroy sources made the GMainLoopSource implementation
+        more complex and they are currently unused.
+
+        * wtf/glib/GMainLoopSource.cpp:
+        (WTF::GMainLoopSource::boolCallback):
+        (WTF::GMainLoopSource::create): Deleted.
+        (WTF::GMainLoopSource::GMainLoopSource): Deleted.
+        (WTF::GMainLoopSource::cancel): Deleted.
+        (WTF::GMainLoopSource::scheduleAndDeleteOnDestroy): Deleted.
+        (WTF::GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy): Deleted.
+        (WTF::GMainLoopSource::voidCallback): Deleted.
+        * wtf/glib/GMainLoopSource.h:
+
 2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use RunLoop in WorkQueue implementation
