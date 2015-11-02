@@ -1,5 +1,11 @@
 2015-11-02  Brent Fulgham  <bfulgham@apple.com>
 
+        [iOS] Another unreviewed sandbox update.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb: Change copyright.
+
+2015-11-02  Brent Fulgham  <bfulgham@apple.com>
+
         [iOS] Unreviewed sandbox update.
 
         Correcting copyright information.
