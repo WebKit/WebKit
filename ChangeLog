@@ -1,3 +1,9 @@
+2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Bump GTK+ versions numbers.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Generator Syntax
