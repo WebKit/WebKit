@@ -115,9 +115,7 @@ enum MediaControlEvent {
     [RaisesException] boolean attached(Node node);
 
     DOMString visiblePlaceholder(Element element);
-#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
     void selectColorInColorChooser(Element element, DOMString colorValue);
-#endif
     [RaisesException] DOMString[] formControlStateOfPreviousHistoryItem();
     [RaisesException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 

@@ -886,15 +886,13 @@ String Internals::visiblePlaceholder(Element* element)
     return String();
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 void Internals::selectColorInColorChooser(Element* element, const String& colorValue)
 {
     if (!is<HTMLInputElement>(element))
         return;
     auto& inputElement = downcast<HTMLInputElement>(*element);
-    inputElement.selectColorInColorChooser(Color(colorValue));
+    inputElement.selectColor(Color(colorValue));
 }
-#endif
 
 Vector<String> Internals::formControlStateOfPreviousHistoryItem(ExceptionCode& ec)
 {

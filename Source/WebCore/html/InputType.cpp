@@ -874,12 +874,10 @@ bool InputType::isSteppable() const
     return false;
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 bool InputType::isColorControl() const
 {
     return false;
 }
-#endif
 
 bool InputType::shouldRespectHeightAndWidthAttributes()
 {
@@ -1147,6 +1145,15 @@ void InputType::stepUpFromRenderer(int n)
         } else
             applyStep(n, AnyIsDefaultStep, DispatchInputAndChangeEvent, IGNORE_EXCEPTION);
     }
+}
+
+Color InputType::valueAsColor() const
+{
+    return Color::transparent;
+}
+
+void InputType::selectColor(const Color&)
+{
 }
 
 } // namespace WebCore

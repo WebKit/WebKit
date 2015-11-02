@@ -280,10 +280,8 @@ public:
 
     void cacheSelectionInResponseToSetValue(int caretOffset) { cacheSelection(caretOffset, caretOffset, SelectionHasNoDirection); }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    // For test purposes.
-    WEBCORE_EXPORT void selectColorInColorChooser(const Color&);
-#endif
+    Color valueAsColor() const; // Returns transparent color if not type=color.
+    WEBCORE_EXPORT void selectColor(const Color&); // Does nothing if not type=color. Simulates user selection of color; intended for testing.
 
     String defaultToolTip() const;
 

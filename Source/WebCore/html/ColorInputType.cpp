@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,7 +30,9 @@
  */
 
 #include "config.h"
+
 #if ENABLE(INPUT_TYPE_COLOR)
+
 #include "ColorInputType.h"
 
 #include "CSSPropertyNames.h"
@@ -86,7 +89,7 @@ bool ColorInputType::supportsRequired() const
 
 String ColorInputType::fallbackValue() const
 {
-    return String("#000000");
+    return ASCIILiteral("#000000");
 }
 
 String ColorInputType::sanitizeValue(const String& proposedValue) const
@@ -94,7 +97,7 @@ String ColorInputType::sanitizeValue(const String& proposedValue) const
     if (!isValidColorString(proposedValue))
         return fallbackValue();
 
-    return proposedValue.lower();
+    return proposedValue.convertToASCIILowercase();
 }
 
 Color ColorInputType::valueAsColor() const
@@ -227,20 +230,23 @@ Vector<Color> ColorInputType::suggestions() const
 {
     Vector<Color> suggestions;
 #if ENABLE(DATALIST_ELEMENT)
-    HTMLDataListElement* dataList = element().dataList();
-    if (dataList) {
+    if (auto* dataList = element().dataList()) {
         Ref<HTMLCollection> options = dataList->options();
-        for (unsigned i = 0; HTMLOptionElement* option = downcast<HTMLOptionElement>(options->item(i)); ++i) {
-            if (!element().isValidValue(option->value()))
-                continue;
-            Color color(option->value());
-            if (!color.isValid())
-                continue;
-            suggestions.append(color);
+        unsigned length = options->length();
+        suggestions.reserveInitialCapacity(length);
+        for (unsigned i = 0; i != length; ++i) {
+            auto value = downcast<HTMLOptionElement>(*options->item(i)).value();
+            if (isValidColorString(value))
+                suggestions.uncheckedAppend(Color(value));
         }
     }
 #endif
     return suggestions;
+}
+
+void ColorInputType::selectColor(const Color& color)
+{
+    didChooseColor(color);
 }
 
 } // namespace WebCore

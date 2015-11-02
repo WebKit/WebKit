@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,25 +33,24 @@
 #define ColorInputType_h
 
 #if ENABLE(INPUT_TYPE_COLOR)
+
 #include "BaseClickableWithKeyInputType.h"
 #include "ColorChooserClient.h"
 
 namespace WebCore {
 
-class ColorInputType final : public BaseClickableWithKeyInputType, public ColorChooserClient {
+class ColorInputType final : public BaseClickableWithKeyInputType, private ColorChooserClient {
 public:
     explicit ColorInputType(HTMLInputElement& element) : BaseClickableWithKeyInputType(element) { }
     virtual ~ColorInputType();
 
-    // ColorChooserClient implementation.
+private:
     virtual void didChooseColor(const Color&) override;
     virtual void didEndChooser() override;
     virtual IntRect elementRectRelativeToRootView() const override;
     virtual Color currentColor() override;
     virtual bool shouldShowSuggestions() const override;
     virtual Vector<Color> suggestions() const override;
-
-private:
     virtual bool isColorControl() const override;
     virtual const AtomicString& formControlType() const override;
     virtual bool supportsRequired() const override;
@@ -63,8 +63,9 @@ private:
     virtual bool shouldRespectListAttribute() override;
     virtual bool typeMismatchFor(const String&) const override;
     virtual bool shouldResetOnDocumentActivation() override;
+    virtual Color valueAsColor() const override;
+    virtual void selectColor(const Color&) override;
 
-    Color valueAsColor() const;
     void endColorChooser();
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
