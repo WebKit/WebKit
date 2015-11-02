@@ -352,7 +352,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
-    if (hasOverflowClip() && oldStyle && oldStyle->effectiveZoom() != newStyle.effectiveZoom() && layer()) {
+    if (hasOverflowClip() && layer() && oldStyle && oldStyle->effectiveZoom() != newStyle.effectiveZoom()) {
         if (int left = layer()->scrollXOffset()) {
             left = (left / oldStyle->effectiveZoom()) * newStyle.effectiveZoom();
             layer()->scrollToXOffset(left);
@@ -552,7 +552,7 @@ LayoutUnit RenderBox::clientHeight() const
 
 int RenderBox::scrollWidth() const
 {
-    if (hasOverflowClip())
+    if (hasOverflowClip() && layer())
         return layer()->scrollWidth();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
@@ -565,7 +565,7 @@ int RenderBox::scrollWidth() const
 
 int RenderBox::scrollHeight() const
 {
-    if (hasOverflowClip())
+    if (hasOverflowClip() && layer())
         return layer()->scrollHeight();
     // For objects with visible overflow, this matches IE.
     // FIXME: Need to work right with writing modes.
@@ -575,12 +575,12 @@ int RenderBox::scrollHeight() const
 
 int RenderBox::scrollLeft() const
 {
-    return hasOverflowClip() ? layer()->scrollXOffset() : 0;
+    return hasOverflowClip() && layer() ? layer()->scrollXOffset() : 0;
 }
 
 int RenderBox::scrollTop() const
 {
-    return hasOverflowClip() ? layer()->scrollYOffset() : 0;
+    return hasOverflowClip() && layer() ? layer()->scrollYOffset() : 0;
 }
 
 static void setupWheelEventTestTrigger(RenderLayer& layer, Frame* frame)
@@ -597,18 +597,18 @@ static void setupWheelEventTestTrigger(RenderLayer& layer, Frame* frame)
 
 void RenderBox::setScrollLeft(int newLeft)
 {
-    if (hasOverflowClip()) {
-        setupWheelEventTestTrigger(*layer(), document().frame());
-        layer()->scrollToXOffset(newLeft, RenderLayer::ScrollOffsetClamped);
-    }
+    if (!hasOverflowClip() || !layer())
+        return;
+    setupWheelEventTestTrigger(*layer(), document().frame());
+    layer()->scrollToXOffset(newLeft, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::setScrollTop(int newTop)
 {
-    if (hasOverflowClip()) {
-        setupWheelEventTestTrigger(*layer(), document().frame());
-        layer()->scrollToYOffset(newTop, RenderLayer::ScrollOffsetClamped);
-    }
+    if (!hasOverflowClip() || !layer())
+        return;
+    setupWheelEventTestTrigger(*layer(), document().frame());
+    layer()->scrollToYOffset(newTop, RenderLayer::ScrollOffsetClamped);
 }
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -761,13 +761,13 @@ bool RenderBox::fixedElementLaysOutRelativeToFrame(const FrameView& frameView) c
 
 bool RenderBox::includeVerticalScrollbarSize() const
 {
-    return hasOverflowClip() && !layer()->hasOverlayScrollbars()
+    return hasOverflowClip() && layer() && !layer()->hasOverlayScrollbars()
         && (style().overflowY() == OSCROLL || style().overflowY() == OAUTO);
 }
 
 bool RenderBox::includeHorizontalScrollbarSize() const
 {
-    return hasOverflowClip() && !layer()->hasOverlayScrollbars()
+    return hasOverflowClip() && layer() && !layer()->hasOverlayScrollbars()
         && (style().overflowX() == OSCROLL || style().overflowX() == OAUTO);
 }
 
@@ -787,12 +787,12 @@ int RenderBox::intrinsicScrollbarLogicalWidth() const
         return 0;
 
     if (isHorizontalWritingMode() && (style().overflowY() == OSCROLL && !hasVerticalScrollbarWithAutoBehavior())) {
-        ASSERT(layer()->hasVerticalScrollbar());
+        ASSERT(layer() && layer()->hasVerticalScrollbar());
         return verticalScrollbarWidth();
     }
 
     if (!isHorizontalWritingMode() && (style().overflowX() == OSCROLL && !hasHorizontalScrollbarWithAutoBehavior())) {
-        ASSERT(layer()->hasHorizontalScrollbar());
+        ASSERT(layer() && layer()->hasHorizontalScrollbar());
         return horizontalScrollbarHeight();
     }
 
