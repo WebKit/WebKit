@@ -65,7 +65,7 @@ static Vector<std::unique_ptr<char[]>> createArgsArray(const String& prefix, con
     return args;
 }
 
-static void parseAndRemoveEnvironments(Vector<std::unique_ptr<char[]>>&& args)
+static void parseAndRemoveEnvironments(Vector<std::unique_ptr<char[]>>& args)
 {
     // Handle environment variable specified before executable file name only for this process use.
     auto end = args.end();
@@ -135,7 +135,7 @@ void ProcessLauncher::launchProcess()
 #endif
     auto args = createArgsArray(processCmdPrefix, executablePath, String::number(sockets[0]), pluginPath);
 
-    parseAndRemoveEnvironments(WTF::move(args));
+    parseAndRemoveEnvironments(args);
 
     // Do not perform memory allocation in the middle of the fork()
     // exec() below. FastMalloc can potentially deadlock because
