@@ -131,7 +131,7 @@ void JSreadonlyOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     auto* jsreadonly = jsCast<JSreadonly*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsreadonly->impl(), jsreadonly);
+    uncacheWrapper(world, &jsreadonly->wrapped(), jsreadonly);
 }
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* impl)
@@ -160,7 +160,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, readonly* im
 readonly* JSreadonly::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSreadonly*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

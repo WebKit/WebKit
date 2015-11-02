@@ -2004,7 +2004,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
         anyWorldGlobalObject = static_cast<JSDOMWindowShell*>(globalObjectObj)->window();
 
     // Get the frame frome the global object we've settled on.
-    Frame* frame = anyWorldGlobalObject->impl().frame();
+    Frame* frame = anyWorldGlobalObject->wrapped().frame();
     ASSERT(frame->document());
     JSValue result = frame->script().executeScriptInWorld(world->world(), string, true).jsValue();
 

@@ -42,7 +42,7 @@ namespace WebCore {
 
         DECLARE_INFO;
 
-        WorkerGlobalScope& impl() const { return *m_impl; }
+        WorkerGlobalScope& wrapped() const { return *m_wrapped; }
         ScriptExecutionContext* scriptExecutionContext() const;
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
@@ -65,7 +65,7 @@ namespace WebCore {
         void finishCreation(JSC::VM&);
 
     private:
-        RefPtr<WorkerGlobalScope> m_impl;
+        RefPtr<WorkerGlobalScope> m_wrapped;
     };
 
     // Returns a JSWorkerGlobalScope or jsNull()

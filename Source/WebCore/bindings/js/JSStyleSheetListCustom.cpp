@@ -40,7 +40,7 @@ bool JSStyleSheetList::nameGetter(ExecState* exec, PropertyName propertyName, JS
     if (propertyName.isSymbol())
         return false;
 
-    auto* item = impl().getNamedItem(propertyNameToString(propertyName));
+    auto* item = wrapped().getNamedItem(propertyNameToString(propertyName));
     if (!item)
         return false;
 

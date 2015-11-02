@@ -252,7 +252,7 @@ static void addExceptionToConsole(ExecState* exec)
     // JSDOMWindowBase* isn't the right object to represent the currently executing
     // JavaScript. Instead, we should use ExecState, like we do elsewhere.
     JSDOMWindowBase* target = jsCast<JSDOMWindowBase*>(root->globalObject());
-    return BindingSecurity::shouldAllowAccessToDOMWindow(_private->originRootObject->globalObject()->globalExec(), target->impl());
+    return BindingSecurity::shouldAllowAccessToDOMWindow(_private->originRootObject->globalObject()->globalExec(), target->wrapped());
 }
 
 - (JSGlobalContextRef)_globalContextRef
@@ -541,7 +541,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
         if (object->inherits(JSHTMLElement::info())) {
             // Plugin elements cache the instance internally.
-            if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->impl())))
+            if (ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(jsCast<JSHTMLElement*>(object)->wrapped())))
                 return instance->getObject();
         } else if (object->inherits(ObjCRuntimeObject::info())) {
             ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);

@@ -29,7 +29,7 @@ namespace WebCore {
 RefPtr<DOMStringList> JSDOMStringList::toWrapped(ExecState* exec, JSValue value)
 {
     if (value.inherits(JSDOMStringList::info()))
-        return &jsCast<JSDOMStringList*>(asObject(value))->impl();
+        return &jsCast<JSDOMStringList*>(asObject(value))->wrapped();
 
     if (!isJSArray(value))
         return nullptr;

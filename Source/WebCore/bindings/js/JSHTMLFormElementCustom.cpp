@@ -39,7 +39,7 @@ namespace WebCore {
 
 bool JSHTMLFormElement::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    Vector<Ref<Element>> namedItems = impl().namedElements(propertyNameToAtomicString(propertyName));
+    Vector<Ref<Element>> namedItems = wrapped().namedElements(propertyNameToAtomicString(propertyName));
     
     if (namedItems.isEmpty())
         return false;

@@ -44,11 +44,11 @@ TrackBase* toTrack(JSValue value)
 
     JSObject* object = asObject(value);
     if (object->inherits(JSTextTrack::info()))
-        return &jsCast<JSTextTrack*>(object)->impl();
+        return &jsCast<JSTextTrack*>(object)->wrapped();
     if (object->inherits(JSAudioTrack::info()))
-        return &jsCast<JSAudioTrack*>(object)->impl();
+        return &jsCast<JSAudioTrack*>(object)->wrapped();
     if (object->inherits(JSVideoTrack::info()))
-        return &jsCast<JSVideoTrack*>(object)->impl();
+        return &jsCast<JSVideoTrack*>(object)->wrapped();
 
     return 0;
 }

@@ -47,7 +47,7 @@ void JSAudioBufferSourceNode::setBuffer(ExecState& state, JSValue value)
         return;
     }
     
-    if (!impl().setBuffer(buffer))
+    if (!wrapped().setBuffer(buffer))
         state.vm().throwException(&state, createTypeError(&state, "AudioBuffer unsupported number of channels"));
 }
 

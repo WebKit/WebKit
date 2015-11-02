@@ -126,7 +126,7 @@ EncodedJSValue jsTestNodeName(ExecState* state, JSObject* slotBase, EncodedJSVal
             return reportDeprecatedGetterError(*state, "TestNode", "name");
         return throwGetterTypeError(*state, "TestNode", "name");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.name());
     return JSValue::encode(result);
 }
@@ -152,7 +152,7 @@ void setJSTestNodeName(ExecState* state, JSObject* baseObject, EncodedJSValue th
             throwSetterTypeError(*state, "TestNode", "name");
         return;
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return;
@@ -170,7 +170,7 @@ void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
     auto* thisObject = jsCast<JSTestNode*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    thisObject->impl().visitJSEventListeners(visitor);
+    thisObject->wrapped().visitJSEventListeners(visitor);
 }
 
 

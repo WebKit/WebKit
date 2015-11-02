@@ -53,9 +53,9 @@ namespace WebCore {
 
 void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    if (WorkerLocation* location = impl().optionalLocation())
+    if (WorkerLocation* location = wrapped().optionalLocation())
         visitor.addOpaqueRoot(location);
-    if (WorkerNavigator* navigator = impl().optionalNavigator())
+    if (WorkerNavigator* navigator = wrapped().optionalNavigator())
         visitor.addOpaqueRoot(navigator);
 }
 
@@ -80,31 +80,31 @@ JSValue JSWorkerGlobalScope::importScripts(ExecState& state)
     }
     ExceptionCode ec = 0;
 
-    impl().importScripts(urls, ec);
+    wrapped().importScripts(urls, ec);
     setDOMException(&state, ec);
     return jsUndefined();
 }
 
 JSValue JSWorkerGlobalScope::setTimeout(ExecState& state)
 {
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), impl().contentSecurityPolicy());
+    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
     if (state.hadException())
         return jsUndefined();
     if (!action)
         return jsNumber(0);
     int delay = state.argument(1).toInt32(&state);
-    return jsNumber(impl().setTimeout(WTF::move(action), delay));
+    return jsNumber(wrapped().setTimeout(WTF::move(action), delay));
 }
 
 JSValue JSWorkerGlobalScope::setInterval(ExecState& state)
 {
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), impl().contentSecurityPolicy());
+    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
     if (state.hadException())
         return jsUndefined();
     if (!action)
         return jsNumber(0);
     int delay = state.argument(1).toInt32(&state);
-    return jsNumber(impl().setInterval(WTF::move(action), delay));
+    return jsNumber(wrapped().setInterval(WTF::move(action), delay));
 }
 
 } // namespace WebCore

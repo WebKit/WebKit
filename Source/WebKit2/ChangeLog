@@ -1,3 +1,14 @@
+2015-11-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Rename JSDOMWrapper.impl to JSDOMWrapper.wrapped
+        https://bugs.webkit.org/show_bug.cgi?id=150613
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::frameForContext): Renaming impl() to wrapped().
+        (WebKit::WebFrame::counterValue): Ditto.
+
 2015-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Remove support for GSocket main loop sources from GMainLoopSource

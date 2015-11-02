@@ -38,7 +38,7 @@ namespace WebCore {
     
 JSValue JSCustomEvent::detail(ExecState& state) const
 {
-    CustomEvent& event = impl();
+    CustomEvent& event = wrapped();
     
     if (event.detail().hasNoValue())
         return jsNull();

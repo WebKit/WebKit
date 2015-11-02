@@ -40,7 +40,7 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
 
 JSValue JSMockContentFilterSettings::decisionPoint(ExecState&) const
 {
-    DecisionPoint decisionPoint = impl().decisionPoint();
+    DecisionPoint decisionPoint = wrapped().decisionPoint();
     switch (decisionPoint) {
     case DecisionPoint::AfterWillSendRequest:
     case DecisionPoint::AfterRedirect:
@@ -69,7 +69,7 @@ void JSMockContentFilterSettings::setDecisionPoint(ExecState& state, JSValue val
     case DecisionPoint::AfterAddData:
     case DecisionPoint::AfterFinishedAddingData:
     case DecisionPoint::Never:
-        impl().setDecisionPoint(decisionPoint);
+        wrapped().setDecisionPoint(decisionPoint);
         return;
     }
 
@@ -107,7 +107,7 @@ static inline Decision toDecision(ExecState& state, JSValue value)
 
 JSValue JSMockContentFilterSettings::decision(ExecState&) const
 {
-    return toJSValue(impl().decision());
+    return toJSValue(wrapped().decision());
 }
 
 void JSMockContentFilterSettings::setDecision(ExecState& state, JSValue value)
@@ -116,12 +116,12 @@ void JSMockContentFilterSettings::setDecision(ExecState& state, JSValue value)
     if (state.hadException())
         return;
 
-    impl().setDecision(decision);
+    wrapped().setDecision(decision);
 }
 
 JSValue JSMockContentFilterSettings::unblockRequestDecision(ExecState&) const
 {
-    return toJSValue(impl().unblockRequestDecision());
+    return toJSValue(wrapped().unblockRequestDecision());
 }
 
 void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState& state, JSValue value)
@@ -130,7 +130,7 @@ void JSMockContentFilterSettings::setUnblockRequestDecision(ExecState& state, JS
     if (state.hadException())
         return;
 
-    impl().setUnblockRequestDecision(unblockRequestDecision);
+    wrapped().setUnblockRequestDecision(unblockRequestDecision);
 }
 
 }; // namespace WebCore

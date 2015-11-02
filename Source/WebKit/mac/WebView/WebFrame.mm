@@ -2081,7 +2081,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         anyWorldGlobalObject = static_cast<JSDOMWindowShell*>(globalObjectObj)->window();
 
     // Get the frame frome the global object we've settled on.
-    Frame* frame = anyWorldGlobalObject->impl().frame();
+    Frame* frame = anyWorldGlobalObject->wrapped().frame();
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 

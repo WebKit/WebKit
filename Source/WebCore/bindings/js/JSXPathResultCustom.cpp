@@ -33,7 +33,7 @@ namespace WebCore {
 
 void JSXPathResult::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    auto& value = impl().value();
+    auto& value = wrapped().value();
     if (value.isNodeSet()) {
         for (auto& node : value.toNodeSet())
             visitor.addOpaqueRoot(root(node.get()));

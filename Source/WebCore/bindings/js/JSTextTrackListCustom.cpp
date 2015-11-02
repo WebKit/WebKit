@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSTextTrackList::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(impl().element()));
+    visitor.addOpaqueRoot(root(wrapped().element()));
 }
     
 } // namespace WebCore

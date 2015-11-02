@@ -149,9 +149,9 @@ EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, JSObject* slo
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestActiveDOMObject*>(slotBase);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->impl()))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))
         return JSValue::encode(jsUndefined());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.excitingAttr());
     return JSValue::encode(result);
 }
@@ -162,7 +162,7 @@ EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, JSObject*, Enc
     JSTestActiveDOMObject* domObject = jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
     if (!domObject)
         return throwVMTypeError(state);
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, domObject->impl()))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, domObject->wrapped()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(JSTestActiveDOMObject::getConstructor(state->vm(), domObject->globalObject()));
 }
@@ -179,9 +179,9 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestActiveDOMObject", "excitingFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
-    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->impl()))
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))
         return JSValue::encode(jsUndefined());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     Node* nextChild = JSNode::toWrapped(state->argument(0));
@@ -198,7 +198,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(E
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestActiveDOMObject", "postMessage");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     String message = state->argument(0).toString(state)->value(state);
@@ -219,7 +219,7 @@ void JSTestActiveDOMObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
 {
     auto* jsTestActiveDOMObject = jsCast<JSTestActiveDOMObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestActiveDOMObject->impl(), jsTestActiveDOMObject);
+    uncacheWrapper(world, &jsTestActiveDOMObject->wrapped(), jsTestActiveDOMObject);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -269,7 +269,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestActiveDO
 TestActiveDOMObject* JSTestActiveDOMObject::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestActiveDOMObject*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

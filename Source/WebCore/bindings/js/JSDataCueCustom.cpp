@@ -38,12 +38,12 @@ namespace WebCore {
 #if ENABLE(DATACUE_VALUE)
 JSValue JSDataCue::value(ExecState& state) const
 {
-    return impl().value(&state);
+    return wrapped().value(&state);
 }
 
 void JSDataCue::setValue(ExecState& state, JSValue value)
 {
-    impl().setValue(&state, value);
+    wrapped().setValue(&state, value);
 }
 #endif
 

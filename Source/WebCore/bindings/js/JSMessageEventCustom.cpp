@@ -53,7 +53,7 @@ JSValue JSMessageEvent::data(ExecState& state) const
         ASSERT_NOT_REACHED();
     }
 
-    MessageEvent& event = impl();
+    MessageEvent& event = wrapped();
     JSValue result;
     switch (event.dataType()) {
     case MessageEvent::DataTypeScriptValue: {
@@ -78,7 +78,7 @@ JSValue JSMessageEvent::data(ExecState& state) const
 
     case MessageEvent::DataTypeSerializedScriptValue:
         if (RefPtr<SerializedScriptValue> serializedValue = event.dataAsSerializedScriptValue()) {
-            MessagePortArray ports = impl().ports();
+            MessagePortArray ports = wrapped().ports();
             // FIXME: Why does this suppress exceptions?
             result = serializedValue->deserialize(&state, globalObject(), &ports, NonThrowing);
         } else
@@ -124,7 +124,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     if (state.hadException())
         return jsUndefined();
 
-    MessageEvent& event = jsEvent->impl();
+    MessageEvent& event = jsEvent->wrapped();
     event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTF::move(messagePorts));
     jsEvent->m_data.set(state.vm(), jsEvent, dataArg.jsValue());
     return jsUndefined();

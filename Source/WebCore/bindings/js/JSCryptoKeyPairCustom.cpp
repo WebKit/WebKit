@@ -34,8 +34,8 @@ namespace WebCore {
 
 void JSCryptoKeyPair::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(impl().publicKey());
-    visitor.addOpaqueRoot(impl().privateKey());
+    visitor.addOpaqueRoot(wrapped().publicKey());
+    visitor.addOpaqueRoot(wrapped().privateKey());
 }
 
 } // namespace WebCore

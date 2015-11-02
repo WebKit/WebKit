@@ -35,10 +35,10 @@ namespace WebCore {
 
 void JSMessageChannel::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    if (MessagePort* port = impl().port1())
+    if (MessagePort* port = wrapped().port1())
         visitor.addOpaqueRoot(port);
 
-    if (MessagePort* port = impl().port2())
+    if (MessagePort* port = wrapped().port2())
         visitor.addOpaqueRoot(port);
 }
 

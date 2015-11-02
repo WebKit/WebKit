@@ -32,7 +32,7 @@ namespace WebCore {
 
 bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    Frame* frame = impl().frame();
+    Frame* frame = wrapped().frame();
     if (!frame) {
         slot.setUndefined();
         return true;
@@ -73,7 +73,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
 
 bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
-    Frame* frame = impl().frame();
+    Frame* frame = wrapped().frame();
     if (!frame)
         return true;
 
@@ -102,7 +102,7 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->wrapped().frame()))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
@@ -111,7 +111,7 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned p
 {
     JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->wrapped().frame()))
         return false;
     return Base::deletePropertyByIndex(thisObject, exec, propertyName);
 }
@@ -120,7 +120,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     // Only allow the location object to enumerated by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl().frame()))
+    if (!shouldAllowAccessToFrame(exec, thisObject->wrapped().frame()))
         return;
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -134,11 +134,11 @@ bool JSLocation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
 
 JSValue JSLocation::toStringFunction(ExecState& state)
 {
-    Frame* frame = impl().frame();
+    Frame* frame = wrapped().frame();
     if (!frame || !shouldAllowAccessToFrame(&state, frame))
         return jsUndefined();
 
-    return jsStringWithCache(&state, impl().toString());
+    return jsStringWithCache(&state, wrapped().toString());
 }
 
 bool JSLocationPrototype::putDelegate(ExecState* exec, PropertyName propertyName, JSValue, PutPropertySlot&)

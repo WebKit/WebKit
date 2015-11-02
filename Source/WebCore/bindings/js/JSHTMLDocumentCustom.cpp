@@ -81,7 +81,7 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
 
 bool JSHTMLDocument::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    auto& document = impl();
+    auto& document = wrapped();
 
     AtomicStringImpl* atomicPropertyName = propertyName.publicName();
     if (!atomicPropertyName || !document.hasDocumentNamedItem(*atomicPropertyName))
@@ -115,7 +115,7 @@ JSValue JSHTMLDocument::all(ExecState& state) const
     if (v)
         return v;
 
-    return toJS(&state, globalObject(), impl().all());
+    return toJS(&state, globalObject(), wrapped().all());
 }
 
 void JSHTMLDocument::setAll(ExecState& state, JSValue value)
@@ -132,7 +132,7 @@ static Document* findCallingDocument(ExecState& state)
     if (!callerFrame)
         return nullptr;
 
-    return asJSDOMWindow(functor.callerFrame()->lexicalGlobalObject())->impl().document();
+    return asJSDOMWindow(functor.callerFrame()->lexicalGlobalObject())->wrapped().document();
 }
 
 // Custom functions
@@ -141,7 +141,7 @@ JSValue JSHTMLDocument::open(ExecState& state)
 {
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (state.argumentCount() > 2) {
-        if (Frame* frame = impl().frame()) {
+        if (Frame* frame = wrapped().frame()) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame, currentWorld(&state));
             if (wrapper) {
                 JSValue function = wrapper->get(&state, Identifier::fromString(&state, "open"));
@@ -157,10 +157,10 @@ JSValue JSHTMLDocument::open(ExecState& state)
 
     // document.open clobbers the security context of the document and
     // aliases it with the active security context.
-    Document* activeDocument = asJSDOMWindow(state.lexicalGlobalObject())->impl().document();
+    Document* activeDocument = asJSDOMWindow(state.lexicalGlobalObject())->wrapped().document();
 
     // In the case of two parameters or fewer, do a normal document open.
-    impl().open(activeDocument);
+    wrapped().open(activeDocument);
     return this;
 }
 
@@ -168,7 +168,7 @@ enum NewlineRequirement { DoNotAddNewline, DoAddNewline };
 
 static inline void documentWrite(ExecState& state, JSHTMLDocument* thisDocument, NewlineRequirement addNewline)
 {
-    HTMLDocument* document = &thisDocument->impl();
+    HTMLDocument* document = &thisDocument->wrapped();
     // DOM only specifies single string argument, but browsers allow multiple or no arguments.
 
     size_t size = state.argumentCount();

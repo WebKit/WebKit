@@ -53,9 +53,9 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
         return CanvasStyle();
     JSObject* object = asObject(value);
     if (object->inherits(JSCanvasGradient::info()))
-        return CanvasStyle(&jsCast<JSCanvasGradient*>(object)->impl());
+        return CanvasStyle(&jsCast<JSCanvasGradient*>(object)->wrapped());
     if (object->inherits(JSCanvasPattern::info()))
-        return CanvasStyle(&jsCast<JSCanvasPattern*>(object)->impl());
+        return CanvasStyle(&jsCast<JSCanvasPattern*>(object)->wrapped());
     return CanvasStyle();
 }
 
@@ -67,12 +67,12 @@ JSValue JSCanvasRenderingContext2D::commit(ExecState&)
 
 JSValue JSCanvasRenderingContext2D::strokeStyle(ExecState& state) const
 {
-    return toJS(&state, globalObject(), impl().strokeStyle());
+    return toJS(&state, globalObject(), wrapped().strokeStyle());
 }
 
 void JSCanvasRenderingContext2D::setStrokeStyle(ExecState& state, JSValue value)
 {
-    CanvasRenderingContext2D& context = impl();
+    CanvasRenderingContext2D& context = wrapped();
     if (value.isString()) {
         context.setStrokeColor(asString(value)->value(&state));
         return;
@@ -82,12 +82,12 @@ void JSCanvasRenderingContext2D::setStrokeStyle(ExecState& state, JSValue value)
 
 JSValue JSCanvasRenderingContext2D::fillStyle(ExecState& state) const
 {
-    return toJS(&state, globalObject(), impl().fillStyle());
+    return toJS(&state, globalObject(), wrapped().fillStyle());
 }
 
 void JSCanvasRenderingContext2D::setFillStyle(ExecState& state, JSValue value)
 {
-    CanvasRenderingContext2D& context = impl();
+    CanvasRenderingContext2D& context = wrapped();
     if (value.isString()) {
         context.setFillColor(asString(value)->value(&state));
         return;
@@ -97,7 +97,7 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState& state, JSValue value)
 
 JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState& state) const
 {
-    const Vector<float>& dash = impl().getLineDash();
+    const Vector<float>& dash = wrapped().getLineDash();
 
     MarkedArgumentBuffer list;
     Vector<float>::const_iterator end = dash.end();
@@ -121,7 +121,7 @@ void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState& state, JSValue val
         dash.append(elem);
     }
 
-    impl().setWebkitLineDash(dash);
+    wrapped().setWebkitLineDash(dash);
 }
 
 } // namespace WebCore

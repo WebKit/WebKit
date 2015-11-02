@@ -36,7 +36,7 @@ namespace WebCore {
 JSValue JSCharacterData::before(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().before(toNodeOrStringVector(state), ec);
+    wrapped().before(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();
@@ -45,7 +45,7 @@ JSValue JSCharacterData::before(ExecState& state)
 JSValue JSCharacterData::after(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().after(toNodeOrStringVector(state), ec);
+    wrapped().after(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();
@@ -54,7 +54,7 @@ JSValue JSCharacterData::after(ExecState& state)
 JSValue JSCharacterData::replaceWith(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().replaceWith(toNodeOrStringVector(state), ec);
+    wrapped().replaceWith(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();

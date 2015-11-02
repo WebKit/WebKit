@@ -42,7 +42,7 @@ namespace WebCore {
 
 JSC::JSValue JSWorker::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(state, &impl());
+    return handlePostMessage(state, &wrapped());
 }
 
 EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState* exec)
@@ -57,7 +57,7 @@ EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState* exec)
         return JSValue::encode(JSValue());
 
     // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject. 
-    DOMWindow& window = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    DOMWindow& window = asJSDOMWindow(exec->lexicalGlobalObject())->wrapped();
 
     ExceptionCode ec = 0;
     ASSERT(window.document());

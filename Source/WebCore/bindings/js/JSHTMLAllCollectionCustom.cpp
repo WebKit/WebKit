@@ -38,7 +38,7 @@ namespace WebCore {
 
 static JSValue namedItems(ExecState& state, JSHTMLAllCollection* collection, PropertyName propertyName)
 {
-    Vector<Ref<Element>> namedItems = collection->impl().namedItems(propertyNameToAtomicString(propertyName));
+    Vector<Ref<Element>> namedItems = collection->wrapped().namedItems(propertyNameToAtomicString(propertyName));
 
     if (namedItems.isEmpty())
         return jsUndefined();
@@ -58,7 +58,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
     JSHTMLAllCollection* jsCollection = jsCast<JSHTMLAllCollection*>(exec->callee());
-    HTMLAllCollection& collection = jsCollection->impl();
+    HTMLAllCollection& collection = jsCollection->wrapped();
 
     // Also, do we need the TypeError test here ?
 
@@ -101,7 +101,7 @@ bool JSHTMLAllCollection::nameGetter(ExecState* state, PropertyName propertyName
 JSValue JSHTMLAllCollection::item(ExecState& state)
 {
     if (Optional<uint32_t> index = parseIndex(*state.argument(0).toString(&state)->value(&state).impl()))
-        return toJS(&state, globalObject(), impl().item(index.value()));
+        return toJS(&state, globalObject(), wrapped().item(index.value()));
     return namedItems(state, this, Identifier::fromString(&state, state.argument(0).toString(&state)->value(&state)));
 }
 

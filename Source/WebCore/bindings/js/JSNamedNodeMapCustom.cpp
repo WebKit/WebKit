@@ -37,7 +37,7 @@ namespace WebCore {
 
 bool JSNamedNodeMap::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    auto item = impl().getNamedItem(propertyNameToAtomicString(propertyName));
+    auto item = wrapped().getNamedItem(propertyNameToAtomicString(propertyName));
     if (!item)
         return false;
 

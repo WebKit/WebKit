@@ -167,7 +167,7 @@ EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, JSObject* slotBase,
             return reportDeprecatedGetterError(*state, "TestEventConstructor", "attr1");
         return throwGetterTypeError(*state, "TestEventConstructor", "attr1");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.attr1());
     return JSValue::encode(result);
 }
@@ -184,7 +184,7 @@ EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, JSObject* slotBase,
             return reportDeprecatedGetterError(*state, "TestEventConstructor", "attr2");
         return throwGetterTypeError(*state, "TestEventConstructor", "attr2");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.attr2());
     return JSValue::encode(result);
 }
@@ -214,7 +214,7 @@ void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
 {
     auto* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestEventConstructor->impl(), jsTestEventConstructor);
+    uncacheWrapper(world, &jsTestEventConstructor->wrapped(), jsTestEventConstructor);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -264,7 +264,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestEventCon
 TestEventConstructor* JSTestEventConstructor::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestEventConstructor*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

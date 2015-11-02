@@ -103,7 +103,7 @@ JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Docu
 JSValue JSDocument::prepend(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().prepend(toNodeOrStringVector(state), ec);
+    wrapped().prepend(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();
@@ -112,7 +112,7 @@ JSValue JSDocument::prepend(ExecState& state)
 JSValue JSDocument::append(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().append(toNodeOrStringVector(state), ec);
+    wrapped().append(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();

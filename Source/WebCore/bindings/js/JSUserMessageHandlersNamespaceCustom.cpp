@@ -37,7 +37,7 @@ namespace WebCore {
 
 bool JSUserMessageHandlersNamespace::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    if (UserMessageHandler* handler = impl().handler(propertyNameToAtomicString(propertyName), globalObject()->world())) {
+    if (UserMessageHandler* handler = wrapped().handler(propertyNameToAtomicString(propertyName), globalObject()->world())) {
         slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS(exec, globalObject(), handler));
         return true;
     }

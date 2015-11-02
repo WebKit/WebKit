@@ -35,7 +35,7 @@ namespace WebCore {
 
 JSValue JSHTMLInputElement::selectionStart(ExecState& state) const
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         return throwTypeError(&state);
 
@@ -44,7 +44,7 @@ JSValue JSHTMLInputElement::selectionStart(ExecState& state) const
 
 void JSHTMLInputElement::setSelectionStart(ExecState& state, JSValue value)
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         throwTypeError(&state);
 
@@ -53,7 +53,7 @@ void JSHTMLInputElement::setSelectionStart(ExecState& state, JSValue value)
 
 JSValue JSHTMLInputElement::selectionEnd(ExecState& state) const
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         return throwTypeError(&state);
 
@@ -62,7 +62,7 @@ JSValue JSHTMLInputElement::selectionEnd(ExecState& state) const
 
 void JSHTMLInputElement::setSelectionEnd(ExecState& state, JSValue value)
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         throwTypeError(&state);
 
@@ -71,7 +71,7 @@ void JSHTMLInputElement::setSelectionEnd(ExecState& state, JSValue value)
 
 JSValue JSHTMLInputElement::selectionDirection(ExecState& state) const
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         return throwTypeError(&state);
 
@@ -80,7 +80,7 @@ JSValue JSHTMLInputElement::selectionDirection(ExecState& state) const
 
 void JSHTMLInputElement::setSelectionDirection(ExecState& state, JSValue value)
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection()) {
         throwTypeError(&state);
         return;
@@ -91,7 +91,7 @@ void JSHTMLInputElement::setSelectionDirection(ExecState& state, JSValue value)
 
 JSValue JSHTMLInputElement::setSelectionRange(ExecState& state)
 {
-    HTMLInputElement& input = impl();
+    HTMLInputElement& input = wrapped();
     if (!input.canHaveSelection())
         return throwTypeError(&state);
 

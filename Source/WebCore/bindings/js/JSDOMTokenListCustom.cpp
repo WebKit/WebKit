@@ -48,7 +48,7 @@ JSValue JSDOMTokenList::toggle(ExecState& state)
     Optional<bool> force = state.argument(1).isUndefined() ? Nullopt : Optional<bool>(state.uncheckedArgument(1).toBoolean(&state));
     if (UNLIKELY(state.hadException()))
         return jsUndefined();
-    JSValue result = jsBoolean(impl().toggle(token, force, ec));
+    JSValue result = jsBoolean(wrapped().toggle(token, force, ec));
 
     setDOMException(&state, ec);
     return result;

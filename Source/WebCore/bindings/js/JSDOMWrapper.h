@@ -52,16 +52,15 @@ template<typename ImplementationClass> class JSDOMWrapper : public JSDOMObject {
 public:
     typedef JSDOMObject Base;
 
-    ImplementationClass& impl() const { return *m_impl; }
-    ~JSDOMWrapper() { std::exchange(m_impl, nullptr)->deref(); }
+    ImplementationClass& wrapped() const { return const_cast<ImplementationClass&>(m_wrapped.get()); }
 
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(structure, globalObject)
-        , m_impl(&impl.leakRef()) { }
+        , m_wrapped(WTF::move(impl)) { }
 
 private:
-    ImplementationClass* m_impl;
+    Ref<ImplementationClass> m_wrapped;
 };
 
 } // namespace WebCore

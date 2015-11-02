@@ -40,7 +40,7 @@ namespace WebCore {
 
 bool JSHTMLFrameSetElement::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    auto* frameElement = impl().children()->namedItem(propertyNameToAtomicString(propertyName));
+    auto* frameElement = wrapped().children()->namedItem(propertyNameToAtomicString(propertyName));
     if (!is<HTMLFrameElement>(frameElement))
         return false;
 

@@ -33,15 +33,15 @@ namespace WebCore {
 static JSValue namedItems(ExecState& state, JSHTMLFormControlsCollection* collection, PropertyName propertyName)
 {
     const AtomicString& name = propertyNameToAtomicString(propertyName);
-    Vector<Ref<Element>> namedItems = collection->impl().namedItems(name);
+    Vector<Ref<Element>> namedItems = collection->wrapped().namedItems(name);
 
     if (namedItems.isEmpty())
         return jsUndefined();
     if (namedItems.size() == 1)
         return toJS(&state, collection->globalObject(), namedItems[0].ptr());
 
-    ASSERT(collection->impl().type() == FormControls);
-    return toJS(&state, collection->globalObject(), collection->impl().ownerNode().radioNodeList(name).get());
+    ASSERT(collection->wrapped().type() == FormControls);
+    return toJS(&state, collection->globalObject(), collection->wrapped().ownerNode().radioNodeList(name).get());
 }
 
 bool JSHTMLFormControlsCollection::nameGetter(ExecState* state, PropertyName propertyName, JSValue& value)

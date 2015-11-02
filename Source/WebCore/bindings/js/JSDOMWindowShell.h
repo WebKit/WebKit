@@ -48,7 +48,7 @@ namespace WebCore {
 
         DECLARE_INFO;
 
-        DOMWindow& impl() const;
+        DOMWindow& wrapped() const;
 
         static JSDOMWindowShell* create(JSC::VM& vm, PassRefPtr<DOMWindow> window, JSC::Structure* structure, DOMWrapperWorld& world)
         {

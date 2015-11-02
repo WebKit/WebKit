@@ -40,7 +40,7 @@ namespace WebCore {
 
 JSValue JSDeviceOrientationEvent::alpha(ExecState&) const
 {
-    DeviceOrientationEvent& imp = impl();
+    DeviceOrientationEvent& imp = wrapped();
     if (!imp.orientation()->canProvideAlpha())
         return jsNull();
     return jsNumber(imp.orientation()->alpha());
@@ -48,7 +48,7 @@ JSValue JSDeviceOrientationEvent::alpha(ExecState&) const
 
 JSValue JSDeviceOrientationEvent::beta(ExecState&) const
 {
-    DeviceOrientationEvent& imp = impl();
+    DeviceOrientationEvent& imp = wrapped();
     if (!imp.orientation()->canProvideBeta())
         return jsNull();
     return jsNumber(imp.orientation()->beta());
@@ -56,7 +56,7 @@ JSValue JSDeviceOrientationEvent::beta(ExecState&) const
 
 JSValue JSDeviceOrientationEvent::gamma(ExecState&) const
 {
-    DeviceOrientationEvent& imp = impl();
+    DeviceOrientationEvent& imp = wrapped();
     if (!imp.orientation()->canProvideGamma())
         return jsNull();
     return jsNumber(imp.orientation()->gamma());
@@ -65,7 +65,7 @@ JSValue JSDeviceOrientationEvent::gamma(ExecState&) const
 #if PLATFORM(IOS)
 JSValue JSDeviceOrientationEvent::webkitCompassHeading(ExecState&) const
 {
-    DeviceOrientationEvent& imp = impl();
+    DeviceOrientationEvent& imp = wrapped();
     if (!imp.orientation()->canProvideCompassHeading())
         return jsNull();
     return jsNumber(imp.orientation()->compassHeading());
@@ -73,7 +73,7 @@ JSValue JSDeviceOrientationEvent::webkitCompassHeading(ExecState&) const
 
 JSValue JSDeviceOrientationEvent::webkitCompassAccuracy(ExecState&) const
 {
-    DeviceOrientationEvent& imp = impl();
+    DeviceOrientationEvent& imp = wrapped();
     if (!imp.orientation()->canProvideCompassAccuracy())
         return jsNull();
     return jsNumber(imp.orientation()->compassAccuracy());
@@ -83,7 +83,7 @@ JSValue JSDeviceOrientationEvent::webkitCompassAccuracy(ExecState&) const
 #if !PLATFORM(IOS)
 JSValue JSDeviceOrientationEvent::absolute(ExecState&) const
 {
-    DeviceOrientationEvent& imp = impl();
+    DeviceOrientationEvent& imp = wrapped();
     if (!imp.orientation()->canProvideAbsolute())
         return jsNull();
     return jsBoolean(imp.orientation()->absolute());
@@ -114,7 +114,7 @@ JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState& state)
     bool absolute = state.argument(6).toBoolean(&state);
     RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
 #endif
-    impl().initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
+    wrapped().initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
     return jsUndefined();
 }
 

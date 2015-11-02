@@ -42,7 +42,7 @@ void JSBiquadFilterNode::setType(ExecState& state, JSValue value)
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
         uint32_t type = value.toUInt32(&state);
-        if (!impl().setType(type))
+        if (!wrapped().setType(type))
             state.vm().throwException(&state, createTypeError(&state, "Illegal BiquadFilterNode type"));
         return;
     }
@@ -51,7 +51,7 @@ void JSBiquadFilterNode::setType(ExecState& state, JSValue value)
     if (value.isString()) {
         String type = value.toString(&state)->value(&state);
         if (type == "lowpass" || type == "highpass" || type == "bandpass" || type == "lowshelf" || type == "highshelf" || type == "peaking" || type == "notch" || type == "allpass") {
-            impl().setType(type);
+            wrapped().setType(type);
             return;
         }
     }

@@ -37,7 +37,7 @@ namespace WebCore {
 
 JSValue JSDataTransfer::types(ExecState& state) const
 {
-    Vector<String> types = impl().types();
+    Vector<String> types = wrapped().types();
     return types.isEmpty() ? jsNull() : jsArray(&state, globalObject(), types);
 }
 

@@ -462,7 +462,7 @@ EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* state, JSObject* slotBas
             return reportDeprecatedGetterError(*state, "TestInterface", "implementsStr1");
         return throwGetterTypeError(*state, "TestInterface", "implementsStr1");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.implementsStr1());
     return JSValue::encode(result);
 }
@@ -481,7 +481,7 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* state, JSObject* slotBas
             return reportDeprecatedGetterError(*state, "TestInterface", "implementsStr2");
         return throwGetterTypeError(*state, "TestInterface", "implementsStr2");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.implementsStr2());
     return JSValue::encode(result);
 }
@@ -512,7 +512,7 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, JSObject* slotBas
             return reportDeprecatedGetterError(*state, "TestInterface", "implementsNode");
         return throwGetterTypeError(*state, "TestInterface", "implementsNode");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(impl.implementsNode()));
     return JSValue::encode(result);
 }
@@ -555,7 +555,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* state, JSObject* slotB
             return reportDeprecatedGetterError(*state, "TestInterface", "supplementalStr1");
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr1");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, TestSupplemental::supplementalStr1(&impl));
     return JSValue::encode(result);
 }
@@ -574,7 +574,7 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, JSObject* slotB
             return reportDeprecatedGetterError(*state, "TestInterface", "supplementalStr2");
         return throwGetterTypeError(*state, "TestInterface", "supplementalStr2");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, TestSupplemental::supplementalStr2(&impl));
     return JSValue::encode(result);
 }
@@ -605,7 +605,7 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, JSObject* slotB
             return reportDeprecatedGetterError(*state, "TestInterface", "supplementalNode");
         return throwGetterTypeError(*state, "TestInterface", "supplementalNode");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), WTF::getPtr(TestSupplemental::supplementalNode(&impl)));
     return JSValue::encode(result);
 }
@@ -666,7 +666,7 @@ void setJSTestInterfaceImplementsStr2(ExecState* state, JSObject* baseObject, En
             throwSetterTypeError(*state, "TestInterface", "implementsStr2");
         return;
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return;
@@ -702,7 +702,7 @@ void setJSTestInterfaceImplementsNode(ExecState* state, JSObject* baseObject, En
             throwSetterTypeError(*state, "TestInterface", "implementsNode");
         return;
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     Node* nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return;
@@ -737,7 +737,7 @@ void setJSTestInterfaceSupplementalStr2(ExecState* state, JSObject* baseObject, 
             throwSetterTypeError(*state, "TestInterface", "supplementalStr2");
         return;
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     String nativeValue = value.toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return;
@@ -773,7 +773,7 @@ void setJSTestInterfaceSupplementalNode(ExecState* state, JSObject* baseObject, 
             throwSetterTypeError(*state, "TestInterface", "supplementalNode");
         return;
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     Node* nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(state->hadException()))
         return;
@@ -795,7 +795,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "implementsMethod1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     impl.implementsMethod1();
     return JSValue::encode(jsUndefined());
 }
@@ -810,7 +810,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "implementsMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
@@ -861,7 +861,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod1");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     TestSupplemental::supplementalMethod1(&impl);
     return JSValue::encode(jsUndefined());
 }
@@ -876,7 +876,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestInterface", "supplementalMethod2");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     ExceptionCode ec = 0;
@@ -922,7 +922,7 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMetho
 bool JSTestInterfaceOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
-    if (jsTestInterface->impl().hasPendingActivity())
+    if (jsTestInterface->wrapped().hasPendingActivity())
         return true;
     UNUSED_PARAM(visitor);
     return false;
@@ -932,7 +932,7 @@ void JSTestInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     auto* jsTestInterface = jsCast<JSTestInterface*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestInterface->impl(), jsTestInterface);
+    uncacheWrapper(world, &jsTestInterface->wrapped(), jsTestInterface);
 }
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterface* impl)
@@ -961,7 +961,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestInterfac
 TestInterface* JSTestInterface::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestInterface*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

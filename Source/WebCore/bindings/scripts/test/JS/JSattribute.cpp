@@ -122,7 +122,7 @@ EncodedJSValue jsattributeReadonly(ExecState* state, JSObject* slotBase, Encoded
             return reportDeprecatedGetterError(*state, "attribute", "readonly");
         return throwGetterTypeError(*state, "attribute", "readonly");
     }
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.readonly());
     return JSValue::encode(result);
 }
@@ -152,7 +152,7 @@ void JSattributeOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     auto* jsattribute = jsCast<JSattribute*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsattribute->impl(), jsattribute);
+    uncacheWrapper(world, &jsattribute->wrapped(), jsattribute);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -202,7 +202,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, attribute* i
 attribute* JSattribute::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSattribute*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

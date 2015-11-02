@@ -57,7 +57,7 @@ static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginE
 
 static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)
 {
-    HTMLElement& element = jsHTMLElement->impl();
+    HTMLElement& element = jsHTMLElement->wrapped();
     if (!is<HTMLPlugInElement>(element))
         return nullptr;
 
@@ -67,7 +67,7 @@ static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLEleme
 
 JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
 {
-    HTMLElement& element = jsHTMLElement->impl();
+    HTMLElement& element = jsHTMLElement->wrapped();
     if (!is<HTMLPlugInElement>(element))
         return nullptr;
 
@@ -165,7 +165,7 @@ CallType pluginElementGetCallData(JSHTMLElement* element, CallData& callData)
         return CallTypeHost;
     }
     
-    Instance* instance = pluginInstance(element->impl());
+    Instance* instance = pluginInstance(element->wrapped());
     if (!instance || !instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     callData.native.function = callPlugin;

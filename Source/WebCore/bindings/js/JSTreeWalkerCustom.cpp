@@ -27,7 +27,7 @@ namespace WebCore {
 
 void JSTreeWalker::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    if (NodeFilter* filter = impl().filter())
+    if (NodeFilter* filter = wrapped().filter())
         visitor.addOpaqueRoot(filter);
 }
 

@@ -46,7 +46,7 @@ JSValue JSCrypto::getRandomValues(ExecState& state)
         return throwTypeError(&state);
 
     ExceptionCode ec = 0;
-    impl().getRandomValues(arrayBufferView.get(), ec);
+    wrapped().getRandomValues(arrayBufferView.get(), ec);
 
     if (ec) {
         setDOMException(&state, ec);

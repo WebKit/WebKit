@@ -37,7 +37,7 @@ namespace WebCore {
 
 void JSVideoTrackList::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(impl().element()));
+    visitor.addOpaqueRoot(root(wrapped().element()));
 }
 
 } // namespace WebCore

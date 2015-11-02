@@ -48,13 +48,13 @@ namespace WebCore {
 void JSMessagePort::visitAdditionalChildren(SlotVisitor& visitor)
 {
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
-    if (MessagePort* port = impl().locallyEntangledPort())
+    if (MessagePort* port = wrapped().locallyEntangledPort())
         visitor.addOpaqueRoot(port);
 }
 
 JSC::JSValue JSMessagePort::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(state, &impl());
+    return handlePostMessage(state, &wrapped());
 }
 
 void fillMessagePortArray(JSC::ExecState& state, JSC::JSValue value, MessagePortArray& portArray, ArrayBufferArray& arrayBuffers)

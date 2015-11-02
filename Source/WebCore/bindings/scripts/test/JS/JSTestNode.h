@@ -49,9 +49,9 @@ public:
     static JSC::JSValue getConstructor(JSC::VM&, JSC::JSGlobalObject*);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
-    TestNode& impl() const
+    TestNode& wrapped() const
     {
-        return static_cast<TestNode&>(Base::impl());
+        return static_cast<TestNode&>(Base::wrapped());
     }
 protected:
     JSTestNode(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNode>&&);

@@ -68,13 +68,13 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState& state)
         return jsUndefined();
     }
 
-    if (!impl().frame()) {
+    if (!wrapped().frame()) {
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
 
     // We do not need to protect the context (i.e. document) here as UserMediaRequest is observing context destruction and will check validity before resolving/rejecting promise.
-    Document* document = impl().frame()->document();
+    Document* document = wrapped().frame()->document();
 
     RefPtr<NavigatorUserMediaSuccessCallback> successCallback = JSNavigatorUserMediaSuccessCallback::create(asObject(state.uncheckedArgument(1)), globalObject());
     auto resolveCallback = [successCallback, document](const RefPtr<MediaStream>& stream) mutable {

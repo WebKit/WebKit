@@ -174,7 +174,7 @@ void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* st
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (mode.includeDontEnumProperties()) {
-        for (auto& propertyName : thisObject->impl().supportedPropertyNames())
+        for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
             propertyNames.add(Identifier::fromString(state, propertyName));
     }
     Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
@@ -192,7 +192,7 @@ EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(Ex
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestOverrideBuiltins", "namedItem");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestOverrideBuiltins::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     String name = state->argument(0).toString(state)->value(state);
     if (UNLIKELY(state->hadException()))
         return JSValue::encode(jsUndefined());
@@ -211,7 +211,7 @@ void JSTestOverrideBuiltinsOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
 {
     auto* jsTestOverrideBuiltins = jsCast<JSTestOverrideBuiltins*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestOverrideBuiltins->impl(), jsTestOverrideBuiltins);
+    uncacheWrapper(world, &jsTestOverrideBuiltins->wrapped(), jsTestOverrideBuiltins);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -261,7 +261,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestOverride
 TestOverrideBuiltins* JSTestOverrideBuiltins::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestOverrideBuiltins*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

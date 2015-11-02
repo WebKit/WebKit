@@ -421,7 +421,7 @@ sub GenerateGetOwnPropertySlotBody
         if ($indexedGetterFunction->signature->type eq "DOMString") {
             push(@getOwnPropertySlotImpl, "    if (optionalIndex) {\n");
         } else {
-            push(@getOwnPropertySlotImpl, "    if (optionalIndex && optionalIndex.value() < thisObject->impl().length()) {\n");
+            push(@getOwnPropertySlotImpl, "    if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {\n");
         }
         push(@getOwnPropertySlotImpl, "        unsigned index = optionalIndex.value();\n");
         # Assume that if there's a setter, the index will be writable
@@ -1188,9 +1188,9 @@ sub GenerateHeader
 
     if (NeedsImplementationClass($interface)) {
         if ($hasParent) {
-            push(@headerContent, "    $interfaceName& impl() const\n");
+            push(@headerContent, "    $interfaceName& wrapped() const\n");
             push(@headerContent, "    {\n");
-            push(@headerContent, "        return static_cast<$interfaceName&>(Base::impl());\n");
+            push(@headerContent, "        return static_cast<$interfaceName&>(Base::wrapped());\n");
             push(@headerContent, "    }\n");
         }
     }
@@ -1759,9 +1759,9 @@ sub GetIndexedGetterExpression
 {
     my $indexedGetterFunction = shift;
     if ($indexedGetterFunction->signature->type eq "DOMString") {
-        return "jsStringOrUndefined(state, thisObject->impl().item(index))";
+        return "jsStringOrUndefined(state, thisObject->wrapped().item(index))";
     }
-    return "toJS(state, thisObject->globalObject(), thisObject->impl().item(index))";
+    return "toJS(state, thisObject->globalObject(), thisObject->wrapped().item(index))";
 }
 
 sub GenerateImplementation
@@ -2228,7 +2228,7 @@ sub GenerateImplementation
                 if ($indexedGetterFunction->signature->type eq "DOMString") {
                     push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
                 } else {
-                    push(@implContent, "    if (index < thisObject->impl().length()) {\n");
+                    push(@implContent, "    if (index < thisObject->wrapped().length()) {\n");
                 }
                 # Assume that if there's a setter, the index will be writable
                 if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
@@ -2328,9 +2328,9 @@ sub GenerateImplementation
                     AddToImplIncludes("Frame.h");
                     AddToImplIncludes("Settings.h");
                     my $enable_function = ToMethodName($attribute->signature->extendedAttributes->{"EnabledBySetting"}) . "Enabled";
-                    push(@implContent, "    if (!castedThis->impl().frame())\n");
+                    push(@implContent, "    if (!castedThis->wrapped().frame())\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                    push(@implContent, "    Settings& settings = castedThis->impl().frame()->settings();\n");
+                    push(@implContent, "    Settings& settings = castedThis->wrapped().frame()->settings();\n");
                     push(@implContent, "    if (!settings.$enable_function())\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                 }
@@ -2343,7 +2343,7 @@ sub GenerateImplementation
             if ($interface->extendedAttributes->{"CheckSecurity"} &&
                 !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
                 !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
-                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->impl()))\n");
+                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
@@ -2361,7 +2361,7 @@ sub GenerateImplementation
                 my $exceptionCode = $getterExceptions ? "ec" : "0";
                 push(@implContent, "    static NeverDestroyed<const AtomicString> bindingName(\"$interfaceName.$name\", AtomicString::ConstructFromLiteral);\n");
                 push(@implContent, "    if (cursor.isCapturing()) {\n");
-                push(@implContent, "        $memoizedType memoizedResult = castedThis->impl().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
+                push(@implContent, "        $memoizedType memoizedResult = castedThis->wrapped().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
                 push(@implContent, "        cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, $exceptionCode);\n");
                 push(@implContent, "        JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "memoizedResult", "castedThis") . ";\n");
                 push(@implContent, "        setDOMException(state, ec);\n") if $getterExceptions;
@@ -2385,7 +2385,7 @@ sub GenerateImplementation
                 push(@implContent, "    return JSValue::encode(castedThis->$implGetterFunctionName(*state));\n");
             } elsif ($attribute->signature->extendedAttributes->{"CheckSecurityForNode"}) {
                 $implIncludes{"JSDOMBinding.h"} = 1;
-                push(@implContent, "    auto& impl = castedThis->impl();\n");
+                push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                 push(@implContent, "    return JSValue::encode(shouldAllowAccessToNode(state, impl." . $attribute->signature->name . "()) ? " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName()", "castedThis") . " : jsNull());\n");
             } elsif ($type eq "EventHandler") {
                 my $getter = $attribute->signature->extendedAttributes->{"WindowEventHandler"} ? "windowEventHandlerAttribute"
@@ -2393,7 +2393,7 @@ sub GenerateImplementation
                     : "eventHandlerAttribute";
                 my $eventName = EventHandlerAttributeEventName($attribute);
                 push(@implContent, "    UNUSED_PARAM(state);\n");
-                push(@implContent, "    return JSValue::encode($getter(castedThis->impl(), $eventName));\n");
+                push(@implContent, "    return JSValue::encode($getter(castedThis->wrapped(), $eventName));\n");
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $attribute->signature->type;
                 $constructorType =~ s/Constructor$//;
@@ -2421,9 +2421,9 @@ sub GenerateImplementation
                 my @callWithArgs = GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "JSValue::encode(jsUndefined())");
 
                 if ($svgListPropertyType) {
-                    push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $interfaceName, "castedThis->impl().$implGetterFunctionName(" . (join ", ", @callWithArgs) . ")", "castedThis") . ";\n");
+                    push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $interfaceName, "castedThis->wrapped().$implGetterFunctionName(" . (join ", ", @callWithArgs) . ")", "castedThis") . ";\n");
                 } elsif ($svgPropertyOrListPropertyType) {
-                    push(@implContent, "    $svgPropertyOrListPropertyType& impl = castedThis->impl().propertyReference();\n");
+                    push(@implContent, "    $svgPropertyOrListPropertyType& impl = castedThis->wrapped().propertyReference();\n");
                     if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
                         push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl", "castedThis") . ";\n");
                     } else {
@@ -2446,7 +2446,7 @@ sub GenerateImplementation
 
                     unshift(@arguments, @callWithArgs);
                     my $jsType = NativeToJSValue($attribute->signature, 0, $interfaceName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
-                    push(@implContent, "    auto& impl = castedThis->impl();\n") if !$attribute->isStatic;
+                    push(@implContent, "    auto& impl = castedThis->wrapped();\n") if !$attribute->isStatic;
                     if ($codeGenerator->IsSVGAnimatedType($type)) {
                         push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
                         push(@implContent, "    JSValue result = toJS(state, castedThis->globalObject(), obj.get());\n");
@@ -2472,10 +2472,10 @@ sub GenerateImplementation
                 unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "JSValue::encode(jsUndefined())"));
 
                 if ($svgPropertyOrListPropertyType) {
-                    push(@implContent, "    $svgPropertyOrListPropertyType impl(*castedThis->impl());\n");
+                    push(@implContent, "    $svgPropertyOrListPropertyType impl(*castedThis->wrapped());\n");
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 } else {
-                    push(@implContent, "    auto& impl = castedThis->impl();\n");
+                    push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
                 }
 
@@ -2517,7 +2517,7 @@ sub GenerateImplementation
 
             if ($interface->extendedAttributes->{"CheckSecurity"}) {
                 die if !ConstructorShouldBeOnInstance($interface);
-                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, domObject->impl()))\n");
+                push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, domObject->wrapped()))\n");
                 push(@implContent, "        return JSValue::encode(jsUndefined());\n");
             }
 
@@ -2549,9 +2549,9 @@ sub GenerateImplementation
             push(@implContent, "    }\n");
             if ($interface->extendedAttributes->{"CheckSecurity"}) {
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->impl()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
                 } else {
-                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->impl().frame()))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
                 }
                 push(@implContent, "        return;\n");
             }
@@ -2661,9 +2661,9 @@ sub GenerateImplementation
             }
             if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                 if ($interfaceName eq "DOMWindow") {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->impl()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
                 } else {
-                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->impl().frame()))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(state, castedThis->wrapped().frame()))\n");
                 }
                 push(@implContent, "        return;\n");
             }
@@ -2676,13 +2676,13 @@ sub GenerateImplementation
                 # FIXME: Find a way to do this special case without hardcoding the class and attribute names here.
                 if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerGlobalScope")) and $name eq "onerror") {
                     $implIncludes{"JSErrorHandler.h"} = 1;
-                    push(@implContent, "    castedThis->impl().setAttributeEventListener($eventName, createJSErrorHandler(state, value, castedThis));\n");
+                    push(@implContent, "    castedThis->wrapped().setAttributeEventListener($eventName, createJSErrorHandler(state, value, castedThis));\n");
                 } else {
                     $implIncludes{"JSEventListener.h"} = 1;
                     my $setter = $attribute->signature->extendedAttributes->{"WindowEventHandler"} ? "setWindowEventHandlerAttribute"
                         : $attribute->signature->extendedAttributes->{"DocumentEventHandler"} ? "setDocumentEventHandlerAttribute"
                         : "setEventHandlerAttribute";
-                    push(@implContent, "    $setter(*state, *castedThis, castedThis->impl(), $eventName, value);\n");
+                    push(@implContent, "    $setter(*state, *castedThis, castedThis->wrapped(), $eventName, value);\n");
                 }
             } elsif ($attribute->signature->type =~ /Constructor$/) {
                 my $constructorType = $attribute->signature->type;
@@ -2705,18 +2705,18 @@ sub GenerateImplementation
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{"ImplementedAs"} || $name);
                         my $attributeType = $attribute->signature->type;
                         if ($attribute->signature->isNullable) {
-                            push(@implContent, "    RefPtr<${attributeType}> forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
+                            push(@implContent, "    RefPtr<${attributeType}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
                             push(@implContent, "        return;\n");
                             push(@implContent, "    auto& impl = *forwardedImpl;\n");
                         } else {
                             # Attribute is not nullable, the implementation is expected to return a reference.
-                            push(@implContent, "    Ref<${attributeType}> forwardedImpl = castedThis->impl().${implGetterFunctionName}();\n");
+                            push(@implContent, "    Ref<${attributeType}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    auto& impl = forwardedImpl.get();\n");
                         }
                         $attribute = $codeGenerator->GetAttributeFromInterface($interface, $attribute->signature->type, $putForwards);
                     } else {
-                        push(@implContent, "    auto& impl = castedThis->impl();\n");
+                        push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     }
                 }
                 push(@implContent, "    ExceptionCode ec = 0;\n") if $setterRaisesException;
@@ -2823,13 +2823,13 @@ sub GenerateImplementation
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(object);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         if ($indexedGetterFunction) {
-            push(@implContent, "    for (unsigned i = 0, count = thisObject->impl().length(); i < count; ++i)\n");
+            push(@implContent, "    for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)\n");
             push(@implContent, "        propertyNames.add(Identifier::from(state, i));\n");
         }
         if ($namedGetterFunction) {
             # FIXME: We may need to add an IDL extended attribute at some point if an interface needs enumerable named properties.
             push(@implContent, "    if (mode.includeDontEnumProperties()) {\n");
-            push(@implContent, "        for (auto& propertyName : thisObject->impl().supportedPropertyNames())\n");
+            push(@implContent, "        for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())\n");
             push(@implContent, "            propertyNames.add(Identifier::fromString(state, propertyName));\n");
             push(@implContent, "    }\n");
         }
@@ -2930,14 +2930,14 @@ sub GenerateImplementation
 
                 if ($interface->extendedAttributes->{"CheckSecurity"} and
                     !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
-                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->impl()))\n");
+                    push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped()))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                 }
 
                 if ($isCustom) {
                     push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(*state));\n");
                 } else {
-                    push(@implContent, "    auto& impl = castedThis->impl();\n");
+                    push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     if ($svgPropertyType) {
                         push(@implContent, "    if (impl.isReadOnly()) {\n");
                         push(@implContent, "        setDOMException(state, NO_MODIFICATION_ALLOWED_ERR);\n");
@@ -2991,11 +2991,11 @@ sub GenerateImplementation
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
         if ($interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget") {
-            push(@implContent, "    thisObject->impl().visitJSEventListeners(visitor);\n");
+            push(@implContent, "    thisObject->wrapped().visitJSEventListeners(visitor);\n");
         }
         push(@implContent, "    thisObject->visitAdditionalChildren(visitor);\n") if $interface->extendedAttributes->{"JSCustomMarkFunction"};
         if ($interface->extendedAttributes->{"ReportExtraMemoryCost"}) {
-            push(@implContent, "    visitor.reportExtraMemoryVisited(thisObject->impl().memoryCost());\n");
+            push(@implContent, "    visitor.reportExtraMemoryVisited(thisObject->wrapped().memoryCost());\n");
         }
         if ($numCachedAttributes > 0) {
             foreach (@{$interface->attributes}) {
@@ -3037,7 +3037,7 @@ sub GenerateImplementation
         if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
             push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
             $emittedJSCast = 1;
-            push(@implContent, "    if (js${interfaceName}->impl().hasPendingActivity())\n");
+            push(@implContent, "    if (js${interfaceName}->wrapped().hasPendingActivity())\n");
             push(@implContent, "        return true;\n");
         }
         if ($codeGenerator->InheritsExtendedAttribute($interface, "EventTarget")) {
@@ -3045,7 +3045,7 @@ sub GenerateImplementation
                 push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
                 $emittedJSCast = 1;
             }
-            push(@implContent, "    if (js${interfaceName}->impl().isFiringEventListeners())\n");
+            push(@implContent, "    if (js${interfaceName}->wrapped().isFiringEventListeners())\n");
             push(@implContent, "        return true;\n");
         }
         if ($codeGenerator->InheritsInterface($interface, "Node")) {
@@ -3064,34 +3064,34 @@ sub GenerateImplementation
 
             my $rootString;
             if (GetGenerateIsReachable($interface) eq "Impl") {
-                $rootString  = "    ${implType}* root = &js${interfaceName}->impl();\n";
+                $rootString  = "    ${implType}* root = &js${interfaceName}->wrapped();\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplWebGLRenderingContext") {
-                $rootString  = "    WebGLRenderingContextBase* root = WTF::getPtr(js${interfaceName}->impl().context());\n";
+                $rootString  = "    WebGLRenderingContextBase* root = WTF::getPtr(js${interfaceName}->wrapped().context());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplFrame") {
-                $rootString  = "    Frame* root = WTF::getPtr(js${interfaceName}->impl().frame());\n";
+                $rootString  = "    Frame* root = WTF::getPtr(js${interfaceName}->wrapped().frame());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
-                $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->impl().document());\n";
+                $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->wrapped().document());\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplElementRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    Element* element = WTF::getPtr(js${interfaceName}->impl().element());\n";
+                $rootString  = "    Element* element = WTF::getPtr(js${interfaceName}->wrapped().element());\n";
                 $rootString .= "    if (!element)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif ($interfaceName eq "CanvasRenderingContext") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl().canvas());\n";
+                $rootString  = "    void* root = WebCore::root(js${interfaceName}->wrapped().canvas());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot") {
                 $implIncludes{"Element.h"} = 1;
                 $implIncludes{"JSNodeCustom.h"} = 1;
-                $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl().ownerNode());\n";
+                $rootString  = "    void* root = WebCore::root(js${interfaceName}->wrapped().ownerNode());\n";
             } else {
-                $rootString  = "    void* root = WebCore::root(&js${interfaceName}->impl());\n";
+                $rootString  = "    void* root = WebCore::root(&js${interfaceName}->wrapped());\n";
             }
 
             push(@implContent, $rootString);
@@ -3111,7 +3111,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    auto* js${interfaceName} = jsCast<JS${interfaceName}*>(handle.slot()->asCell());\n");
         push(@implContent, "    auto& world = *static_cast<DOMWrapperWorld*>(context);\n");
-        push(@implContent, "    uncacheWrapper(world, &js${interfaceName}->impl(), js${interfaceName});\n");
+        push(@implContent, "    uncacheWrapper(world, &js${interfaceName}->wrapped(), js${interfaceName});\n");
         push(@implContent, "}\n\n");
     }
 
@@ -3206,7 +3206,7 @@ END
         push(@implContent, "$implType* ${className}::toWrapped(JSC::JSValue value)\n");
         push(@implContent, "{\n");
         push(@implContent, "    if (auto* wrapper = " . GetCastingHelperForThisObject($interface) . "(value))\n");
-        push(@implContent, "        return &wrapper->impl();\n");
+        push(@implContent, "        return &wrapper->wrapped();\n");
         push(@implContent, "    return nullptr;\n");
         push(@implContent, "}\n");
     }
@@ -4255,7 +4255,7 @@ sub NativeToJSValue
             if ($selfIsTearOffType) {
                 AddToImplIncludes("SVGMatrixTearOff.h", $conditional);
                 # FIXME: Blink: Don't create a new one everytime we access the matrix property. This means, e.g, === won't work.
-                $value = "SVGMatrixTearOff::create(castedThis->impl(), $value)";
+                $value = "SVGMatrixTearOff::create(castedThis->wrapped(), $value)";
             } else {
                 AddToImplIncludes("SVGStaticPropertyTearOff.h", $conditional);
                 $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$interfaceName, /;

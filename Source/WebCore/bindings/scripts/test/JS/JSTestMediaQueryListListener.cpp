@@ -135,7 +135,7 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestMediaQueryListListener", "method");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestMediaQueryListListener::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     if (!state->argument(0).isFunction())
@@ -156,7 +156,7 @@ void JSTestMediaQueryListListenerOwner::finalize(JSC::Handle<JSC::Unknown> handl
 {
     auto* jsTestMediaQueryListListener = jsCast<JSTestMediaQueryListListener*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestMediaQueryListListener->impl(), jsTestMediaQueryListListener);
+    uncacheWrapper(world, &jsTestMediaQueryListListener->wrapped(), jsTestMediaQueryListListener);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -206,7 +206,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestMediaQue
 TestMediaQueryListListener* JSTestMediaQueryListListener::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestMediaQueryListListener*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

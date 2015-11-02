@@ -42,10 +42,10 @@ namespace WebCore {
 
 bool JSHTMLCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    ASSERT_WITH_MESSAGE(impl().type() != FormControls, "Should call the subclass' nameGetter");
-    ASSERT_WITH_MESSAGE(impl().type() != SelectOptions, "Should call the subclass' nameGetter");
+    ASSERT_WITH_MESSAGE(wrapped().type() != FormControls, "Should call the subclass' nameGetter");
+    ASSERT_WITH_MESSAGE(wrapped().type() != SelectOptions, "Should call the subclass' nameGetter");
 
-    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    auto item = wrapped().namedItem(propertyNameToAtomicString(propertyName));
     if (!item)
         return false;
 

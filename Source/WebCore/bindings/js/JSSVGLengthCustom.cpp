@@ -33,9 +33,9 @@ namespace WebCore {
 
 JSValue JSSVGLength::value(ExecState& state) const
 {
-    SVGLength& podImp = impl().propertyReference();
+    SVGLength& podImp = wrapped().propertyReference();
     ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(impl().contextElement());
+    SVGLengthContext lengthContext(wrapped().contextElement());
     float value = podImp.value(lengthContext, ec);
     if (ec) {
         setDOMException(&state, ec);
@@ -47,7 +47,7 @@ JSValue JSSVGLength::value(ExecState& state) const
 
 void JSSVGLength::setValue(ExecState& state, JSValue value)
 {
-    if (impl().isReadOnly()) {
+    if (wrapped().isReadOnly()) {
         setDOMException(&state, NO_MODIFICATION_ALLOWED_ERR);
         return;
     }
@@ -57,27 +57,27 @@ void JSSVGLength::setValue(ExecState& state, JSValue value)
         return;
     }
 
-    SVGLength& podImp = impl().propertyReference();
+    SVGLength& podImp = wrapped().propertyReference();
 
     ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(impl().contextElement());
+    SVGLengthContext lengthContext(wrapped().contextElement());
     podImp.setValue(value.toFloat(&state), lengthContext, ec);
     if (ec) {
         setDOMException(&state, ec);
         return;
     }
 
-    impl().commitChange();
+    wrapped().commitChange();
 }
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
 {
-    if (impl().isReadOnly()) {
+    if (wrapped().isReadOnly()) {
         setDOMException(&state, NO_MODIFICATION_ALLOWED_ERR);
         return jsUndefined();
     }
 
-    SVGLength& podImp = impl().propertyReference();
+    SVGLength& podImp = wrapped().propertyReference();
 
     if (state.argumentCount() < 1)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
@@ -87,14 +87,14 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(impl().contextElement());
+    SVGLengthContext lengthContext(wrapped().contextElement());
     podImp.convertToSpecifiedUnits(unitType, lengthContext, ec);
     if (ec) {
         setDOMException(&state, ec);
         return jsUndefined();
     }
 
-    impl().commitChange();
+    wrapped().commitChange();
     return jsUndefined();
 }
 

@@ -109,7 +109,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
     }
 
     ExceptionCode ec = 0;
-    impl().executeSQL(sqlStatement, sqlValues, callback.release(), errorCallback.release(), ec);
+    wrapped().executeSQL(sqlStatement, sqlValues, callback.release(), errorCallback.release(), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();

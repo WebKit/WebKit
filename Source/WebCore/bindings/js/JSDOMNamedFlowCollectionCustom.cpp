@@ -38,7 +38,7 @@ using namespace JSC;
 
 bool JSDOMNamedFlowCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    auto item = wrapped().namedItem(propertyNameToAtomicString(propertyName));
     if (!item)
         return false;
 

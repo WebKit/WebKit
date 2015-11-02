@@ -43,7 +43,7 @@ Vector<NodeOrString> toNodeOrStringVector(ExecState& state)
     for (size_t i = 0; i < argumentCount; ++i) {
         JSValue value = state.uncheckedArgument(i);
         if (auto* node = jsDynamicCast<JSNode*>(value))
-            result.uncheckedAppend(&node->impl());
+            result.uncheckedAppend(&node->wrapped());
         else {
             String string = value.toWTFString(&state);
             if (state.hadException())

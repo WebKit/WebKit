@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSWebGLRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(&impl());
+    visitor.addOpaqueRoot(&wrapped());
 }
 
 } // namespace WebCore

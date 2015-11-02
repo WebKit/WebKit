@@ -38,7 +38,7 @@ namespace WebCore {
 JSValue JSCryptoKey::algorithm(JSC::ExecState& state) const
 {
     JSCryptoAlgorithmBuilder builder(&state);
-    impl().buildAlgorithmDescription(builder);
+    wrapped().buildAlgorithmDescription(builder);
     return builder.result();
 }
 

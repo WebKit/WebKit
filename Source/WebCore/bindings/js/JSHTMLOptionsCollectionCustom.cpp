@@ -39,7 +39,7 @@ namespace WebCore {
 
 bool JSHTMLOptionsCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
 {
-    auto item = impl().namedItem(propertyNameToAtomicString(propertyName));
+    auto item = wrapped().namedItem(propertyNameToAtomicString(propertyName));
     if (!item)
         return false;
 
@@ -61,13 +61,13 @@ void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
             newLength = static_cast<unsigned>(lengthValue);
     }
     if (!ec)
-        impl().setLength(newLength, ec);
+        wrapped().setLength(newLength, ec);
     setDOMException(&state, ec);
 }
 
 void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSValue value)
 {
-    selectIndexSetter(&impl().selectElement(), exec, index, value);
+    selectIndexSetter(&wrapped().selectElement(), exec, index, value);
 }
 
 JSValue JSHTMLOptionsCollection::remove(ExecState& state)
@@ -75,9 +75,9 @@ JSValue JSHTMLOptionsCollection::remove(ExecState& state)
     // The argument can be an HTMLOptionElement or an index.
     JSValue argument = state.argument(0);
     if (HTMLOptionElement* option = JSHTMLOptionElement::toWrapped(argument))
-        impl().remove(option);
+        wrapped().remove(option);
     else
-        impl().remove(argument.toInt32(&state));
+        wrapped().remove(argument.toInt32(&state));
     return jsUndefined();
 }
 

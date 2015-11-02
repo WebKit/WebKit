@@ -173,7 +173,7 @@ void reportException(ExecState* exec, Exception* exception, CachedScript* cached
 
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
     if (JSDOMWindow* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
-        if (!window->impl().isCurrentlyDisplayedInFrame())
+        if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
     }
 
@@ -515,12 +515,12 @@ uint64_t toUInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration
 
 DOMWindow& activeDOMWindow(ExecState* exec)
 {
-    return asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+    return asJSDOMWindow(exec->lexicalGlobalObject())->wrapped();
 }
 
 DOMWindow& firstDOMWindow(ExecState* exec)
 {
-    return asJSDOMWindow(exec->vmEntryGlobalObject())->impl();
+    return asJSDOMWindow(exec->vmEntryGlobalObject())->wrapped();
 }
 
 static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocument, SecurityReportingOption reportingOption = ReportSecurityError)

@@ -183,7 +183,7 @@ EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunc
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, "TestCustomNamedGetter", "anotherFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCustomNamedGetter::info());
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, createNotEnoughArgumentsError(state));
     String str = state->argument(0).toString(state)->value(state);
@@ -204,7 +204,7 @@ void JSTestCustomNamedGetterOwner::finalize(JSC::Handle<JSC::Unknown> handle, vo
 {
     auto* jsTestCustomNamedGetter = jsCast<JSTestCustomNamedGetter*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestCustomNamedGetter->impl(), jsTestCustomNamedGetter);
+    uncacheWrapper(world, &jsTestCustomNamedGetter->wrapped(), jsTestCustomNamedGetter);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -254,7 +254,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomNa
 TestCustomNamedGetter* JSTestCustomNamedGetter::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestCustomNamedGetter*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

@@ -47,17 +47,17 @@ JSValue JSSQLResultSetRowList::item(ExecState& state)
         setDOMException(&state, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }
-    if (index < 0 || (unsigned)index >= impl().length()) {
+    if (index < 0 || (unsigned)index >= wrapped().length()) {
         setDOMException(&state, INDEX_SIZE_ERR);
         return jsUndefined();
     }
 
     JSObject* object = constructEmptyObject(&state);
 
-    unsigned numColumns = impl().columnNames().size();
+    unsigned numColumns = wrapped().columnNames().size();
     unsigned valuesIndex = index * numColumns;
     for (unsigned i = 0; i < numColumns; i++) {
-        const SQLValue& value = impl().values()[valuesIndex + i];
+        const SQLValue& value = wrapped().values()[valuesIndex + i];
         JSValue jsValue;
 
         switch (value.type()) {
@@ -74,7 +74,7 @@ JSValue JSSQLResultSetRowList::item(ExecState& state)
             ASSERT_NOT_REACHED();
         }
 
-        object->putDirect(state.vm(), Identifier::fromString(&state, impl().columnNames()[i]), jsValue, DontDelete | ReadOnly);
+        object->putDirect(state.vm(), Identifier::fromString(&state, wrapped().columnNames()[i]), jsValue, DontDelete | ReadOnly);
     }
 
     return object;

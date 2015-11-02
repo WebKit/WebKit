@@ -58,16 +58,16 @@ namespace WebCore {
 
 void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    if (XMLHttpRequestUpload* upload = impl().optionalUpload())
+    if (XMLHttpRequestUpload* upload = wrapped().optionalUpload())
         visitor.addOpaqueRoot(upload);
 
-    if (Document* responseDocument = impl().optionalResponseXML())
+    if (Document* responseDocument = wrapped().optionalResponseXML())
         visitor.addOpaqueRoot(responseDocument);
 
-    if (ArrayBuffer* responseArrayBuffer = impl().optionalResponseArrayBuffer())
+    if (ArrayBuffer* responseArrayBuffer = wrapped().optionalResponseArrayBuffer())
         visitor.addOpaqueRoot(responseArrayBuffer);
 
-    if (Blob* responseBlob = impl().optionalResponseBlob())
+    if (Blob* responseBlob = wrapped().optionalResponseBlob())
         visitor.addOpaqueRoot(responseBlob);
 }
 
@@ -77,7 +77,7 @@ JSValue JSXMLHttpRequest::open(ExecState& state)
     if (state.argumentCount() < 2)
         return state.vm().throwException(&state, createNotEnoughArgumentsError(&state));
 
-    const URL& url = impl().scriptExecutionContext()->completeURL(state.uncheckedArgument(1).toString(&state)->value(&state));
+    const URL& url = wrapped().scriptExecutionContext()->completeURL(state.uncheckedArgument(1).toString(&state)->value(&state));
     String method = state.uncheckedArgument(0).toString(&state)->value(&state);
 
     ExceptionCode ec = 0;
@@ -88,13 +88,13 @@ JSValue JSXMLHttpRequest::open(ExecState& state)
 
             if (!state.argument(4).isUndefined()) {
                 String password = valueToStringWithNullCheck(&state, state.uncheckedArgument(4));
-                impl().open(method, url, async, user, password, ec);
+                wrapped().open(method, url, async, user, password, ec);
             } else
-                impl().open(method, url, async, user, ec);
+                wrapped().open(method, url, async, user, ec);
         } else
-            impl().open(method, url, async, ec);
+            wrapped().open(method, url, async, ec);
     } else
-        impl().open(method, url, ec);
+        wrapped().open(method, url, ec);
 
     setDOMException(&state, ec);
     return jsUndefined();
@@ -138,30 +138,30 @@ private:
 
 JSValue JSXMLHttpRequest::send(ExecState& state)
 {
-    InspectorInstrumentation::willSendXMLHttpRequest(impl().scriptExecutionContext(), impl().url());
+    InspectorInstrumentation::willSendXMLHttpRequest(wrapped().scriptExecutionContext(), wrapped().url());
 
     ExceptionCode ec = 0;
     JSValue val = state.argument(0);
     if (val.isUndefinedOrNull())
-        impl().send(ec);
+        wrapped().send(ec);
     else if (val.inherits(JSDocument::info()))
-        impl().send(JSDocument::toWrapped(val), ec);
+        wrapped().send(JSDocument::toWrapped(val), ec);
     else if (val.inherits(JSBlob::info()))
-        impl().send(JSBlob::toWrapped(val), ec);
+        wrapped().send(JSBlob::toWrapped(val), ec);
     else if (val.inherits(JSDOMFormData::info()))
-        impl().send(JSDOMFormData::toWrapped(val), ec);
+        wrapped().send(JSDOMFormData::toWrapped(val), ec);
     else if (val.inherits(JSArrayBuffer::info()))
-        impl().send(toArrayBuffer(val), ec);
+        wrapped().send(toArrayBuffer(val), ec);
     else if (val.inherits(JSArrayBufferView::info())) {
         RefPtr<ArrayBufferView> view = toArrayBufferView(val);
-        impl().send(view.get(), ec);
+        wrapped().send(view.get(), ec);
     } else
-        impl().send(val.toString(&state)->value(&state), ec);
+        wrapped().send(val.toString(&state)->value(&state), ec);
 
     SendFunctor functor;
     state.iterate(functor);
-    impl().setLastSendLineAndColumnNumber(functor.line(), functor.column());
-    impl().setLastSendURL(functor.url());
+    wrapped().setLastSendLineAndColumnNumber(functor.line(), functor.column());
+    wrapped().setLastSendURL(functor.url());
     setDOMException(&state, ec);
     return jsUndefined();
 }
@@ -169,7 +169,7 @@ JSValue JSXMLHttpRequest::send(ExecState& state)
 JSValue JSXMLHttpRequest::responseText(ExecState& state) const
 {
     ExceptionCode ec = 0;
-    String text = impl().responseText(ec);
+    String text = wrapped().responseText(ec);
     if (ec) {
         setDOMException(&state, ec);
         return jsUndefined();
@@ -180,25 +180,25 @@ JSValue JSXMLHttpRequest::responseText(ExecState& state) const
 JSValue JSXMLHttpRequest::response(ExecState& state) const
 {
     // FIXME: Use CachedAttribute for other types than JSON as well.
-    if (m_response && impl().responseCacheIsValid())
+    if (m_response && wrapped().responseCacheIsValid())
         return m_response.get();
 
-    if (!impl().doneWithoutErrors() && impl().responseTypeCode() > XMLHttpRequest::ResponseTypeText)
+    if (!wrapped().doneWithoutErrors() && wrapped().responseTypeCode() > XMLHttpRequest::ResponseTypeText)
         return jsNull();
 
-    switch (impl().responseTypeCode()) {
+    switch (wrapped().responseTypeCode()) {
     case XMLHttpRequest::ResponseTypeDefault:
     case XMLHttpRequest::ResponseTypeText:
         return responseText(state);
 
     case XMLHttpRequest::ResponseTypeJSON:
         {
-            JSValue value = JSONParse(&state, impl().responseTextIgnoringResponseType());
+            JSValue value = JSONParse(&state, wrapped().responseTextIgnoringResponseType());
             if (!value)
                 value = jsNull();
             m_response.set(state.vm(), this, value);
 
-            impl().didCacheResponseJSON();
+            wrapped().didCacheResponseJSON();
 
             return value;
         }
@@ -206,7 +206,7 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
     case XMLHttpRequest::ResponseTypeDocument:
         {
             ExceptionCode ec = 0;
-            Document* document = impl().responseXML(ec);
+            Document* document = wrapped().responseXML(ec);
             if (ec) {
                 setDOMException(&state, ec);
                 return jsUndefined();
@@ -215,10 +215,10 @@ JSValue JSXMLHttpRequest::response(ExecState& state) const
         }
 
     case XMLHttpRequest::ResponseTypeBlob:
-        return toJS(&state, globalObject(), impl().responseBlob());
+        return toJS(&state, globalObject(), wrapped().responseBlob());
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
-        return toJS(&state, globalObject(), impl().responseArrayBuffer());
+        return toJS(&state, globalObject(), wrapped().responseArrayBuffer());
     }
 
     return jsUndefined();

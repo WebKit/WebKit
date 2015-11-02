@@ -134,7 +134,7 @@ void JSTestCustomConstructorWithNoInterfaceObjectOwner::finalize(JSC::Handle<JSC
 {
     auto* jsTestCustomConstructorWithNoInterfaceObject = jsCast<JSTestCustomConstructorWithNoInterfaceObject*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestCustomConstructorWithNoInterfaceObject->impl(), jsTestCustomConstructorWithNoInterfaceObject);
+    uncacheWrapper(world, &jsTestCustomConstructorWithNoInterfaceObject->wrapped(), jsTestCustomConstructorWithNoInterfaceObject);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -184,7 +184,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestCustomCo
 TestCustomConstructorWithNoInterfaceObject* JSTestCustomConstructorWithNoInterfaceObject::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestCustomConstructorWithNoInterfaceObject*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

@@ -136,7 +136,7 @@ static JSObject* createRotationRateObject(const DeviceMotionData::RotationRate* 
 
 JSValue JSDeviceMotionEvent::acceleration(ExecState& state) const
 {
-    DeviceMotionEvent& imp = impl();
+    DeviceMotionEvent& imp = wrapped();
     if (!imp.deviceMotionData()->acceleration())
         return jsNull();
     return createAccelerationObject(imp.deviceMotionData()->acceleration(), state);
@@ -144,7 +144,7 @@ JSValue JSDeviceMotionEvent::acceleration(ExecState& state) const
 
 JSValue JSDeviceMotionEvent::accelerationIncludingGravity(ExecState& state) const
 {
-    DeviceMotionEvent& imp = impl();
+    DeviceMotionEvent& imp = wrapped();
     if (!imp.deviceMotionData()->accelerationIncludingGravity())
         return jsNull();
     return createAccelerationObject(imp.deviceMotionData()->accelerationIncludingGravity(), state);
@@ -152,7 +152,7 @@ JSValue JSDeviceMotionEvent::accelerationIncludingGravity(ExecState& state) cons
 
 JSValue JSDeviceMotionEvent::rotationRate(ExecState& state) const
 {
-    DeviceMotionEvent& imp = impl();
+    DeviceMotionEvent& imp = wrapped();
     if (!imp.deviceMotionData()->rotationRate())
         return jsNull();
     return createRotationRateObject(imp.deviceMotionData()->rotationRate(), state);
@@ -160,7 +160,7 @@ JSValue JSDeviceMotionEvent::rotationRate(ExecState& state) const
 
 JSValue JSDeviceMotionEvent::interval(ExecState&) const
 {
-    DeviceMotionEvent& imp = impl();
+    DeviceMotionEvent& imp = wrapped();
     if (!imp.deviceMotionData()->canProvideInterval())
         return jsNull();
     return jsNumber(imp.deviceMotionData()->interval());
@@ -189,7 +189,7 @@ JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState& state)
     bool intervalProvided = !state.argument(6).isUndefinedOrNull();
     double interval = state.argument(6).toNumber(&state);
     RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, intervalProvided, interval);
-    impl().initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
+    wrapped().initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
     return jsUndefined();
 }
 

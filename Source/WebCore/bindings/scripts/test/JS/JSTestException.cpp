@@ -139,7 +139,7 @@ EncodedJSValue jsTestExceptionName(ExecState* state, JSObject* slotBase, Encoded
     UNUSED_PARAM(slotBase);
     UNUSED_PARAM(thisValue);
     auto* castedThis = jsCast<JSTestException*>(slotBase);
-    auto& impl = castedThis->impl();
+    auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.name());
     return JSValue::encode(result);
 }
@@ -169,7 +169,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
 {
     auto* jsTestException = jsCast<JSTestException*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestException->impl(), jsTestException);
+    uncacheWrapper(world, &jsTestException->wrapped(), jsTestException);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -219,7 +219,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestExceptio
 TestException* JSTestException::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestException*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

@@ -41,7 +41,7 @@ bool JSStorage::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& 
         return false;
 
     ExceptionCode ec = 0;
-    String item = impl().getItem(propertyNameToString(propertyName), ec);
+    String item = wrapped().getItem(propertyNameToString(propertyName), ec);
     setDOMException(exec, ec);
 
     if (item.isNull())
@@ -69,7 +69,7 @@ bool JSStorage::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
         return Base::deleteProperty(thisObject, exec, propertyName);
 
     ExceptionCode ec = 0;
-    thisObject->impl().removeItem(propertyNameToString(propertyName), ec);
+    thisObject->wrapped().removeItem(propertyNameToString(propertyName), ec);
     setDOMException(exec, ec);
     return true;
 }
@@ -83,12 +83,12 @@ void JSStorage::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
 {
     JSStorage* thisObject = jsCast<JSStorage*>(object);
     ExceptionCode ec = 0;
-    unsigned length = thisObject->impl().length(ec);
+    unsigned length = thisObject->wrapped().length(ec);
     setDOMException(exec, ec);
     if (exec->hadException())
         return;
     for (unsigned i = 0; i < length; ++i) {
-        propertyNames.add(Identifier::fromString(exec, thisObject->impl().key(i, ec)));
+        propertyNames.add(Identifier::fromString(exec, thisObject->wrapped().key(i, ec)));
         setDOMException(exec, ec);
         if (exec->hadException())
             return;
@@ -118,7 +118,7 @@ bool JSStorage::putDelegate(ExecState* exec, PropertyName propertyName, JSValue 
         return true;
 
     ExceptionCode ec = 0;
-    impl().setItem(propertyNameToString(propertyName), stringValue, ec);
+    wrapped().setItem(propertyNameToString(propertyName), stringValue, ec);
     setDOMException(exec, ec);
 
     return true;

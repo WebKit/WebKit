@@ -57,7 +57,7 @@ namespace WebCore {
 
 JSValue JSCommandLineAPIHost::inspectedObject(ExecState& state)
 {
-    CommandLineAPIHost::InspectableObject* object = impl().inspectedObject();
+    CommandLineAPIHost::InspectableObject* object = wrapped().inspectedObject();
     if (!object)
         return jsUndefined();
 
@@ -110,7 +110,7 @@ JSValue JSCommandLineAPIHost::getEventListeners(ExecState& state)
         return jsUndefined();
 
     Vector<EventListenerInfo> listenersArray;
-    impl().getEventListenersImpl(node, listenersArray);
+    wrapped().getEventListenersImpl(node, listenersArray);
 
     JSObject* result = constructEmptyObject(&state);
     for (size_t i = 0; i < listenersArray.size(); ++i) {
@@ -129,7 +129,7 @@ JSValue JSCommandLineAPIHost::inspect(ExecState& state)
     if (state.argumentCount() >= 2) {
         Deprecated::ScriptValue object(state.vm(), state.uncheckedArgument(0));
         Deprecated::ScriptValue hints(state.vm(), state.uncheckedArgument(1));
-        impl().inspectImpl(object.toInspectorValue(&state), hints.toInspectorValue(&state));
+        wrapped().inspectImpl(object.toInspectorValue(&state), hints.toInspectorValue(&state));
     }
 
     return jsUndefined();
@@ -142,7 +142,7 @@ JSValue JSCommandLineAPIHost::databaseId(ExecState& state)
 
     Database* database = JSDatabase::toWrapped(state.uncheckedArgument(0));
     if (database)
-        return jsStringWithCache(&state, impl().databaseIdImpl(database));
+        return jsStringWithCache(&state, wrapped().databaseIdImpl(database));
 
     return jsUndefined();
 }
@@ -154,7 +154,7 @@ JSValue JSCommandLineAPIHost::storageId(ExecState& state)
 
     Storage* storage = JSStorage::toWrapped(state.uncheckedArgument(0));
     if (storage)
-        return jsStringWithCache(&state, impl().storageIdImpl(storage));
+        return jsStringWithCache(&state, wrapped().storageIdImpl(storage));
 
     return jsUndefined();
 }

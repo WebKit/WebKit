@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSAudioTrackList::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(impl().element()));
+    visitor.addOpaqueRoot(root(wrapped().element()));
 }
 
 } // namespace WebCore

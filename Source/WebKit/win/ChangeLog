@@ -1,3 +1,13 @@
+2015-11-02  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Rename JSDOMWrapper.impl to JSDOMWrapper.wrapped
+        https://bugs.webkit.org/show_bug.cgi?id=150613
+
+        Reviewed by Darin Adler.
+
+        * WebFrame.cpp:
+        (WebFrame::stringByEvaluatingJavaScriptInScriptWorld):
+
 2015-10-22  Anders Carlsson  <andersca@apple.com>
 
         Move menu creation to WebView

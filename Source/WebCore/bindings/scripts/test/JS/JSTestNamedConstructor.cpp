@@ -163,7 +163,7 @@ JSValue JSTestNamedConstructor::getNamedConstructor(VM& vm, JSGlobalObject* glob
 bool JSTestNamedConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
-    if (jsTestNamedConstructor->impl().hasPendingActivity())
+    if (jsTestNamedConstructor->wrapped().hasPendingActivity())
         return true;
     UNUSED_PARAM(visitor);
     return false;
@@ -173,7 +173,7 @@ void JSTestNamedConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, voi
 {
     auto* jsTestNamedConstructor = jsCast<JSTestNamedConstructor*>(handle.slot()->asCell());
     auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestNamedConstructor->impl(), jsTestNamedConstructor);
+    uncacheWrapper(world, &jsTestNamedConstructor->wrapped(), jsTestNamedConstructor);
 }
 
 #if ENABLE(BINDING_INTEGRITY)
@@ -223,7 +223,7 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, TestNamedCon
 TestNamedConstructor* JSTestNamedConstructor::toWrapped(JSC::JSValue value)
 {
     if (auto* wrapper = jsDynamicCast<JSTestNamedConstructor*>(value))
-        return &wrapper->impl();
+        return &wrapper->wrapped();
     return nullptr;
 }
 

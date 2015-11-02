@@ -39,7 +39,7 @@ namespace WebCore {
 
 void JSOscillatorNode::setType(ExecState& state, JSValue value)
 {
-    OscillatorNode& imp = impl();
+    OscillatorNode& imp = wrapped();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {

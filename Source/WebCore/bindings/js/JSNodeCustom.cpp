@@ -108,13 +108,13 @@ static inline bool isReachableFromDOM(Node* node, SlotVisitor& visitor)
 bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSNode* jsNode = jsCast<JSNode*>(handle.slot()->asCell());
-    return isReachableFromDOM(&jsNode->impl(), visitor);
+    return isReachableFromDOM(&jsNode->wrapped(), visitor);
 }
 
 JSValue JSNode::insertBefore(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().insertBefore(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
+    bool ok = wrapped().insertBefore(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
     setDOMException(&state, ec);
     if (ok)
         return state.argument(0);
@@ -124,7 +124,7 @@ JSValue JSNode::insertBefore(ExecState& state)
 JSValue JSNode::replaceChild(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().replaceChild(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
+    bool ok = wrapped().replaceChild(JSNode::toWrapped(state.argument(0)), JSNode::toWrapped(state.argument(1)), ec);
     setDOMException(&state, ec);
     if (ok)
         return state.argument(1);
@@ -134,7 +134,7 @@ JSValue JSNode::replaceChild(ExecState& state)
 JSValue JSNode::removeChild(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().removeChild(JSNode::toWrapped(state.argument(0)), ec);
+    bool ok = wrapped().removeChild(JSNode::toWrapped(state.argument(0)), ec);
     setDOMException(&state, ec);
     if (ok)
         return state.argument(0);
@@ -144,7 +144,7 @@ JSValue JSNode::removeChild(ExecState& state)
 JSValue JSNode::appendChild(ExecState& state)
 {
     ExceptionCode ec = 0;
-    bool ok = impl().appendChild(JSNode::toWrapped(state.argument(0)), ec);
+    bool ok = wrapped().appendChild(JSNode::toWrapped(state.argument(0)), ec);
     setDOMException(&state, ec);
     if (ok)
         return state.argument(0);
@@ -160,7 +160,7 @@ JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const
 
 void JSNode::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(impl()));
+    visitor.addOpaqueRoot(root(wrapped()));
 }
 
 static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

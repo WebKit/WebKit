@@ -67,7 +67,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
 
 void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(&impl());
+    visitor.addOpaqueRoot(&wrapped());
 }
 
 JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState* exec)
@@ -99,7 +99,7 @@ JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState* exec)
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
-    WebGL2RenderingContext& context = impl();
+    WebGL2RenderingContext& context = wrapped();
     unsigned pname = exec->uncheckedArgument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();

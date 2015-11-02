@@ -46,7 +46,7 @@ namespace WebCore {
 
 JSValue JSEvent::clipboardData(ExecState& state) const
 {
-    return impl().isClipboardEvent() ? toJS(&state, globalObject(), impl().clipboardData()) : jsUndefined();
+    return wrapped().isClipboardEvent() ? toJS(&state, globalObject(), wrapped().clipboardData()) : jsUndefined();
 }
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \

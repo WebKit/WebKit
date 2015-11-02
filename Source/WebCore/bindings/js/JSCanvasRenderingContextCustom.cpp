@@ -44,7 +44,7 @@ namespace WebCore {
 
 void JSCanvasRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(impl().canvas()));
+    visitor.addOpaqueRoot(root(wrapped().canvas()));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRenderingContext* object)

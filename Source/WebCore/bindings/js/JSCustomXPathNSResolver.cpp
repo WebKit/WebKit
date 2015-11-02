@@ -81,7 +81,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         callType = m_customResolver->methodTable()->getCallData(m_customResolver.get(), callData);
         if (callType == CallTypeNone) {
             // FIXME: <http://webkit.org/b/114312> JSCustomXPathNSResolver::lookupNamespaceURI Console Message should include Line, Column, and SourceURL
-            if (PageConsoleClient* console = m_globalObject->impl().console())
+            if (PageConsoleClient* console = m_globalObject->wrapped().console())
                 console->addMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("XPathNSResolver does not have a lookupNamespaceURI method."));
             return String();
         }

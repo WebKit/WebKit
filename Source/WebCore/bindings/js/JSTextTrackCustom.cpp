@@ -38,7 +38,7 @@ namespace WebCore {
 
 void JSTextTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&impl()));
+    visitor.addOpaqueRoot(root(&wrapped()));
 }
 
 void JSTextTrack::setKind(ExecState& state, JSValue value)
@@ -47,7 +47,7 @@ void JSTextTrack::setKind(ExecState& state, JSValue value)
     auto& string = value.toString(&state)->value(&state);
     if (state.hadException())
         return;
-    impl().setKind(string);
+    wrapped().setKind(string);
 #else
     UNUSED_PARAM(state);
     UNUSED_PARAM(value);
@@ -60,7 +60,7 @@ void JSTextTrack::setLanguage(ExecState& state, JSValue value)
     auto& string = value.toString(&state)->value(&state);
     if (state.hadException())
         return;
-    impl().setLanguage(string);
+    wrapped().setLanguage(string);
 #else
     UNUSED_PARAM(state);
     UNUSED_PARAM(value);

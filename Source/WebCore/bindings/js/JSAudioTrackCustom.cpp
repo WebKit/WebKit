@@ -37,7 +37,7 @@ namespace WebCore {
 
 void JSAudioTrack::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&impl()));
+    visitor.addOpaqueRoot(root(&wrapped()));
 }
 
 void JSAudioTrack::setKind(ExecState& state, JSValue value)
@@ -46,7 +46,7 @@ void JSAudioTrack::setKind(ExecState& state, JSValue value)
     auto& string = value.toString(&state)->value(&state);
     if (state.hadException())
         return;
-    impl().setKind(string);
+    wrapped().setKind(string);
 #else
     UNUSED_PARAM(state);
     UNUSED_PARAM(value);
@@ -59,7 +59,7 @@ void JSAudioTrack::setLanguage(ExecState& state, JSValue value)
     auto& string = value.toString(&state)->value(&state);
     if (state.hadException())
         return;
-    impl().setLanguage(string);
+    wrapped().setLanguage(string);
 #else
     UNUSED_PARAM(state);
     UNUSED_PARAM(value);

@@ -152,7 +152,7 @@ JSValue JSSubtleCrypto::encrypt(ExecState& state)
         return throwTypeError(&state);
 
     if (!key->allows(CryptoKeyUsageEncrypt)) {
-        impl().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'encrypt'"));
+        wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'encrypt'"));
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
@@ -205,7 +205,7 @@ JSValue JSSubtleCrypto::decrypt(ExecState& state)
         return throwTypeError(&state);
 
     if (!key->allows(CryptoKeyUsageDecrypt)) {
-        impl().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'decrypt'"));
+        wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'decrypt'"));
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
@@ -257,7 +257,7 @@ JSValue JSSubtleCrypto::sign(ExecState& state)
         return throwTypeError(&state);
 
     if (!key->allows(CryptoKeyUsageSign)) {
-        impl().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'sign'"));
+        wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'sign'"));
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
@@ -309,7 +309,7 @@ JSValue JSSubtleCrypto::verify(ExecState& state)
         return throwTypeError(&state);
 
     if (!key->allows(CryptoKeyUsageVerify)) {
-        impl().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'verify'"));
+        wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'verify'"));
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
@@ -646,7 +646,7 @@ JSValue JSSubtleCrypto::wrapKey(ExecState& state)
         return throwTypeError(&state);
 
     if (!wrappingKey->allows(CryptoKeyUsageWrapKey)) {
-        impl().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'wrapKey'"));
+        wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'wrapKey'"));
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }
@@ -728,7 +728,7 @@ JSValue JSSubtleCrypto::unwrapKey(ExecState& state)
         return throwTypeError(&state);
 
     if (!unwrappingKey->allows(CryptoKeyUsageUnwrapKey)) {
-        impl().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'unwrapKey'"));
+        wrapped().document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, ASCIILiteral("Key usages do not include 'unwrapKey'"));
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return jsUndefined();
     }

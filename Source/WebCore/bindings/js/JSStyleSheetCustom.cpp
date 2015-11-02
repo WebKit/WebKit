@@ -32,7 +32,7 @@ namespace WebCore {
 
 void JSStyleSheet::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&impl()));
+    visitor.addOpaqueRoot(root(&wrapped()));
 }
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, StyleSheet* styleSheet)

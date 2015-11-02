@@ -53,7 +53,7 @@ static inline bool allowSettingJavascriptURL(ExecState& state, HTMLFrameElement*
 
 void JSHTMLFrameElement::setLocation(ExecState& state, JSValue value)
 {
-    HTMLFrameElement& imp = impl();
+    HTMLFrameElement& imp = wrapped();
     String locationValue = valueToStringWithNullCheck(&state, value);
 
     if (!allowSettingJavascriptURL(state, &imp, locationValue))

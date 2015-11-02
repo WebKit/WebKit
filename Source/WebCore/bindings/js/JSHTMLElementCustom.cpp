@@ -36,7 +36,7 @@ using namespace JSC;
 
 JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) const
 {
-    HTMLElement& element = impl();
+    HTMLElement& element = wrapped();
 
     // The document is put on first, fall back to searching it only after the element and form.
     scope = JSWithScope::create(exec, asObject(toJS(exec, globalObject(), &element.document())), scope);

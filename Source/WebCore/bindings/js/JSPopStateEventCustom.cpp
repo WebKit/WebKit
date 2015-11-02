@@ -56,7 +56,7 @@ JSValue JSPopStateEvent::state(ExecState& state) const
         ASSERT_NOT_REACHED();
     }
 
-    PopStateEvent& event = impl();
+    PopStateEvent& event = wrapped();
 
     if (!event.state().hasNoValue()) {
         // We need to make sure a PopStateEvent does not leak objects in its state property across isolated DOM worlds.

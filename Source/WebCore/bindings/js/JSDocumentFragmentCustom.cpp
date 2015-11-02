@@ -37,7 +37,7 @@ namespace WebCore {
 JSValue JSDocumentFragment::prepend(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().prepend(toNodeOrStringVector(state), ec);
+    wrapped().prepend(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();
@@ -46,7 +46,7 @@ JSValue JSDocumentFragment::prepend(ExecState& state)
 JSValue JSDocumentFragment::append(ExecState& state)
 {
     ExceptionCode ec = 0;
-    impl().append(toNodeOrStringVector(state), ec);
+    wrapped().append(toNodeOrStringVector(state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();

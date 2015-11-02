@@ -57,7 +57,7 @@ namespace WebCore {
 
 void JSCSSRule::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.addOpaqueRoot(root(&impl()));
+    visitor.addOpaqueRoot(root(&wrapped()));
 }
 
 JSValue toJS(ExecState*, JSDOMGlobalObject* globalObject, CSSRule* rule)

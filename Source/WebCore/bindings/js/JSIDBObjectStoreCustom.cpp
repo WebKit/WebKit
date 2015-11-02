@@ -52,7 +52,7 @@ static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
         return JSValue::decode(throwThisTypeError(state, "IDBObjectStore", "put"));
 
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSIDBObjectStore::info());
-    auto& impl = castedThis->impl();
+    auto& wrapped = castedThis->wrapped();
 
     size_t argsCount = state.argumentCount();
     if (UNLIKELY(argsCount < 1))
@@ -64,9 +64,9 @@ static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
     if (argsCount == 1) {
         JSValue result;
         if (overwrite)
-            result = toJS(&state, castedThis->globalObject(), impl.put(state, value, ec).get());
+            result = toJS(&state, castedThis->globalObject(), wrapped.put(state, value, ec).get());
         else
-            result = toJS(&state, castedThis->globalObject(), impl.add(state, value, ec).get());
+            result = toJS(&state, castedThis->globalObject(), wrapped.add(state, value, ec).get());
 
         setDOMException(&state, ec);
         return result;
@@ -75,9 +75,9 @@ static JSValue putOrAdd(JSC::ExecState& state, bool overwrite)
     auto key = state.uncheckedArgument(1);
     JSValue result;
     if (overwrite)
-        result = toJS(&state, castedThis->globalObject(), impl.put(state, value, key, ec).get());
+        result = toJS(&state, castedThis->globalObject(), wrapped.put(state, value, key, ec).get());
     else
-        result = toJS(&state, castedThis->globalObject(), impl.add(state, value, key, ec).get());
+        result = toJS(&state, castedThis->globalObject(), wrapped.add(state, value, key, ec).get());
 
     setDOMException(&state, ec);
     return result;
@@ -127,7 +127,7 @@ JSValue JSIDBObjectStore::createIndex(ExecState& state)
     }
 
     ExceptionCode ec = 0;
-    JSValue result = toJS(&state, globalObject(), impl().createIndex(context, name, keyPath, unique, multiEntry, ec).get());
+    JSValue result = toJS(&state, globalObject(), wrapped().createIndex(context, name, keyPath, unique, multiEntry, ec).get());
     setDOMException(&state, ec);
     return result;
 }

@@ -43,7 +43,7 @@ namespace WebCore {
 
 JSValue JSFileReader::result(ExecState& state) const
 {
-    FileReader& imp = impl();
+    FileReader& imp = wrapped();
     if (imp.readType() == FileReaderLoader::ReadAsArrayBuffer)
         return toJS(&state, globalObject(), WTF::getPtr(imp.arrayBufferResult()));
     return jsOwnedStringOrNull(&state, imp.stringResult());

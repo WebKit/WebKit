@@ -76,7 +76,7 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
     }
 
     ExceptionCode ec = 0;
-    JSValue result = toJS(&state, globalObject(), impl().createObjectStore(name, keyPath, autoIncrement, ec).get());
+    JSValue result = toJS(&state, globalObject(), wrapped().createObjectStore(name, keyPath, autoIncrement, ec).get());
     setDOMException(&state, ec);
     return result;
 }
@@ -113,7 +113,7 @@ JSValue JSIDBDatabase::transaction(ExecState& exec)
     }
 
     ExceptionCode ec = 0;
-    JSValue result = toJS(&exec, globalObject(), impl().transaction(scriptContext, scope, mode, ec).get());
+    JSValue result = toJS(&exec, globalObject(), wrapped().transaction(scriptContext, scope, mode, ec).get());
     setDOMException(&exec, ec);
     return result;
 }

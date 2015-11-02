@@ -369,7 +369,7 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItemType *item, JSC
 JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) const
 {
 #if PLATFORM(IOS)
-    HTMLVideoElement* parent = impl().parentElement();
+    HTMLVideoElement* parent = wrapped().parentElement();
     if (!parent || !parent->player())
         return JSC::jsNull();
 
@@ -394,7 +394,7 @@ JSC::JSValue JSQuickTimePluginReplacement::timedMetaData(JSC::ExecState& state) 
 JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::ExecState& state) const
 {
 #if PLATFORM(IOS)
-    HTMLVideoElement* parent = impl().parentElement();
+    HTMLVideoElement* parent = wrapped().parentElement();
     if (!parent || !parent->player())
         return JSC::jsNull();
 
@@ -416,7 +416,7 @@ JSC::JSValue JSQuickTimePluginReplacement::accessLog(JSC::ExecState& state) cons
 JSC::JSValue JSQuickTimePluginReplacement::errorLog(JSC::ExecState& state) const
 {
 #if PLATFORM(IOS)
-    HTMLVideoElement* parent = impl().parentElement();
+    HTMLVideoElement* parent = wrapped().parentElement();
     if (!parent || !parent->player())
         return JSC::jsNull();
 

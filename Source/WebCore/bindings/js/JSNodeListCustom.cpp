@@ -42,12 +42,12 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.slot()->asCell());
     if (!jsNodeList->hasCustomProperties())
         return false;
-    if (jsNodeList->impl().isLiveNodeList())
-        return visitor.containsOpaqueRoot(root(static_cast<LiveNodeList&>(jsNodeList->impl()).ownerNode()));
-    if (jsNodeList->impl().isChildNodeList())
-        return visitor.containsOpaqueRoot(root(static_cast<ChildNodeList&>(jsNodeList->impl()).ownerNode()));
-    if (jsNodeList->impl().isEmptyNodeList())
-        return visitor.containsOpaqueRoot(root(static_cast<EmptyNodeList&>(jsNodeList->impl()).ownerNode()));
+    if (jsNodeList->wrapped().isLiveNodeList())
+        return visitor.containsOpaqueRoot(root(static_cast<LiveNodeList&>(jsNodeList->wrapped()).ownerNode()));
+    if (jsNodeList->wrapped().isChildNodeList())
+        return visitor.containsOpaqueRoot(root(static_cast<ChildNodeList&>(jsNodeList->wrapped()).ownerNode()));
+    if (jsNodeList->wrapped().isEmptyNodeList())
+        return visitor.containsOpaqueRoot(root(static_cast<EmptyNodeList&>(jsNodeList->wrapped()).ownerNode()));
     return false;
 }
 

@@ -39,7 +39,7 @@ namespace WebCore {
 
 void JSPannerNode::setPanningModel(ExecState& state, JSValue value)
 {
-    PannerNode& imp = impl();
+    PannerNode& imp = wrapped();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {
@@ -63,7 +63,7 @@ void JSPannerNode::setPanningModel(ExecState& state, JSValue value)
 
 void JSPannerNode::setDistanceModel(ExecState& state, JSValue value)
 {
-    PannerNode& imp = impl();
+    PannerNode& imp = wrapped();
 
 #if ENABLE(LEGACY_WEB_AUDIO)
     if (value.isNumber()) {

@@ -63,7 +63,7 @@ EncodedJSValue JSC_HOST_CALL constructJSMutationObserver(ExecState* exec)
 
 bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
-    MutationObserver& observer = jsCast<JSMutationObserver*>(handle.slot()->asCell())->impl();
+    MutationObserver& observer = jsCast<JSMutationObserver*>(handle.slot()->asCell())->wrapped();
     auto observedNodes = observer.getObservedNodes();
     for (auto it = observedNodes.begin(), end = observedNodes.end(); it != end; ++it) {
         if (visitor.containsOpaqueRoot(root(*it)))
