@@ -179,7 +179,7 @@ BubbleQueueView.prototype = {
         this._addBotsHeadingToPopover(queue, content);
         this._addDividerToPopover(content);
 
-        var bots = queue.bots;
+        var bots = queue.bots.slice(0).sort(function(a, b) { return (a.id < b.id) ? -1 : 1; });
         for (var i = 0, end = bots.length; i < end; ++i) {
             var bot = bots[i];
 
