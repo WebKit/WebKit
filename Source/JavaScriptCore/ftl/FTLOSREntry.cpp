@@ -38,7 +38,6 @@
 
 namespace JSC { namespace FTL {
 
-SUPPRESS_ASAN
 void* prepareOSREntry(
     ExecState* exec, CodeBlock* dfgCodeBlock, CodeBlock* entryCodeBlock,
     unsigned bytecodeIndex, unsigned streamIndex)
@@ -72,7 +71,7 @@ void* prepareOSREntry(
         dataLog("    Values at entry: ", values, "\n");
     
     for (int argument = values.numberOfArguments(); argument--;) {
-        JSValue valueOnStack = exec->r(virtualRegisterForArgument(argument).offset()).asanUnsafeJSValue();
+        JSValue valueOnStack = exec->r(virtualRegisterForArgument(argument).offset()).jsValue();
         JSValue reconstructedValue = values.argument(argument);
         if (valueOnStack == reconstructedValue || !argument)
             continue;
