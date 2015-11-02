@@ -50,8 +50,6 @@ class WebProcessPool;
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
 #endif
 
-- (void)_addFontPanelObserver;
-
 @end
 
 #endif

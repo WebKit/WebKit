@@ -1,3 +1,250 @@
+2015-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        Get rid of WKWebView's inner WKView (WKView being inside WKWebView leads to weird API issues)
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView dealloc]):
+        (-[WKWebView allowsLinkPreview]):
+        (-[WKWebView setAllowsLinkPreview:]):
+        (-[WKWebView acceptsFirstResponder]):
+        (-[WKWebView becomeFirstResponder]):
+        (-[WKWebView resignFirstResponder]):
+        (-[WKWebView viewWillStartLiveResize]):
+        (-[WKWebView viewDidEndLiveResize]):
+        (-[WKWebView isFlipped]):
+        (-[WKWebView intrinsicContentSize]):
+        (-[WKWebView prepareContentInRect:]):
+        (-[WKWebView setFrameSize:]):
+        (-[WKWebView renewGState]):
+        (-[WKWebView writeSelectionToPasteboard:types:]):
+        (-[WKWebView centerSelectionInVisibleArea:]):
+        (-[WKWebView validRequestorForSendType:returnType:]):
+        (-[WKWebView readSelectionFromPasteboard:]):
+        (-[WKWebView changeFont:]):
+        (-[WKWebView validateUserInterfaceItem:]):
+        (-[WKWebView startSpeaking:]):
+        (-[WKWebView stopSpeaking:]):
+        (-[WKWebView showGuessPanel:]):
+        (-[WKWebView checkSpelling:]):
+        (-[WKWebView changeSpelling:]):
+        (-[WKWebView toggleContinuousSpellChecking:]):
+        (-[WKWebView isGrammarCheckingEnabled]):
+        (-[WKWebView setGrammarCheckingEnabled:]):
+        (-[WKWebView toggleGrammarChecking:]):
+        (-[WKWebView toggleAutomaticSpellingCorrection:]):
+        (-[WKWebView orderFrontSubstitutionsPanel:]):
+        (-[WKWebView toggleSmartInsertDelete:]):
+        (-[WKWebView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WKWebView setAutomaticQuoteSubstitutionEnabled:]):
+        (-[WKWebView toggleAutomaticQuoteSubstitution:]):
+        (-[WKWebView isAutomaticDashSubstitutionEnabled]):
+        (-[WKWebView setAutomaticDashSubstitutionEnabled:]):
+        (-[WKWebView toggleAutomaticDashSubstitution:]):
+        (-[WKWebView isAutomaticLinkDetectionEnabled]):
+        (-[WKWebView setAutomaticLinkDetectionEnabled:]):
+        (-[WKWebView toggleAutomaticLinkDetection:]):
+        (-[WKWebView isAutomaticTextReplacementEnabled]):
+        (-[WKWebView setAutomaticTextReplacementEnabled:]):
+        (-[WKWebView toggleAutomaticTextReplacement:]):
+        (-[WKWebView uppercaseWord:]):
+        (-[WKWebView lowercaseWord:]):
+        (-[WKWebView capitalizeWord:]):
+        (-[WKWebView _wantsKeyDownForEvent:]):
+        (-[WKWebView scrollWheel:]):
+        (-[WKWebView swipeWithEvent:]):
+        (-[WKWebView mouseMoved:]):
+        (-[WKWebView mouseDown:]):
+        (-[WKWebView mouseUp:]):
+        (-[WKWebView mouseDragged:]):
+        (-[WKWebView mouseEntered:]):
+        (-[WKWebView mouseExited:]):
+        (-[WKWebView otherMouseDown:]):
+        (-[WKWebView otherMouseDragged:]):
+        (-[WKWebView otherMouseUp:]):
+        (-[WKWebView rightMouseDown:]):
+        (-[WKWebView rightMouseDragged:]):
+        (-[WKWebView rightMouseUp:]):
+        (-[WKWebView pressureChangeWithEvent:]):
+        (-[WKWebView acceptsFirstMouse:]):
+        (-[WKWebView shouldDelayWindowOrderingForEvent:]):
+        (-[WKWebView doCommandBySelector:]):
+        (-[WKWebView insertText:]):
+        (-[WKWebView insertText:replacementRange:]):
+        (-[WKWebView inputContext]):
+        (-[WKWebView performKeyEquivalent:]):
+        (-[WKWebView keyUp:]):
+        (-[WKWebView keyDown:]):
+        (-[WKWebView flagsChanged:]):
+        (-[WKWebView setMarkedText:selectedRange:replacementRange:]):
+        (-[WKWebView unmarkText]):
+        (-[WKWebView selectedRange]):
+        (-[WKWebView hasMarkedText]):
+        (-[WKWebView markedRange]):
+        (-[WKWebView attributedSubstringForProposedRange:actualRange:]):
+        (-[WKWebView characterIndexForPoint:]):
+        (-[WKWebView firstRectForCharacterRange:actualRange:]):
+        (-[WKWebView selectedRangeWithCompletionHandler:]):
+        (-[WKWebView markedRangeWithCompletionHandler:]):
+        (-[WKWebView hasMarkedTextWithCompletionHandler:]):
+        (-[WKWebView attributedSubstringForProposedRange:completionHandler:]):
+        (-[WKWebView firstRectForCharacterRange:completionHandler:]):
+        (-[WKWebView characterIndexForPoint:completionHandler:]):
+        (-[WKWebView validAttributesForMarkedText]):
+        (-[WKWebView draggedImage:endedAt:operation:]):
+        (-[WKWebView draggingEntered:]):
+        (-[WKWebView draggingUpdated:]):
+        (-[WKWebView draggingExited:]):
+        (-[WKWebView prepareForDragOperation:]):
+        (-[WKWebView performDragOperation:]):
+        (-[WKWebView _hitTest:dragTypes:]):
+        (-[WKWebView _windowResizeMouseLocationIsInVisibleScrollerThumb:]):
+        (-[WKWebView viewWillMoveToWindow:]):
+        (-[WKWebView viewDidMoveToWindow]):
+        (-[WKWebView drawRect:]):
+        (-[WKWebView isOpaque]):
+        (-[WKWebView mouseDownCanMoveWindow]):
+        (-[WKWebView viewDidHide]):
+        (-[WKWebView viewDidUnhide]):
+        (-[WKWebView viewDidChangeBackingProperties]):
+        (-[WKWebView _activeSpaceDidChange:]):
+        (-[WKWebView accessibilityFocusedUIElement]):
+        (-[WKWebView accessibilityIsIgnored]):
+        (-[WKWebView accessibilityHitTest:]):
+        (-[WKWebView accessibilityAttributeValue:]):
+        (-[WKWebView hitTest:]):
+        (-[WKWebView conversationIdentifier]):
+        (-[WKWebView quickLookWithEvent:]):
+        (-[WKWebView addTrackingRect:owner:userData:assumeInside:]):
+        (-[WKWebView _addTrackingRect:owner:userData:assumeInside:useTrackingNum:]):
+        (-[WKWebView _addTrackingRects:owner:userDataList:assumeInsideList:trackingNums:count:]):
+        (-[WKWebView removeTrackingRect:]):
+        (-[WKWebView _removeTrackingRects:count:]):
+        (-[WKWebView view:stringForToolTip:point:userData:]):
+        (-[WKWebView pasteboardChangedOwner:]):
+        (-[WKWebView pasteboard:provideDataForType:]):
+        (-[WKWebView namesOfPromisedFilesDroppedAtDestination:]):
+        (-[WKWebView wantsUpdateLayer]):
+        (-[WKWebView updateLayer]):
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        (-[WKWebView allowsBackForwardNavigationGestures]):
+        (-[WKWebView smartMagnifyWithEvent:]):
+        (-[WKWebView setMagnification:centeredAtPoint:]):
+        (-[WKWebView setMagnification:]):
+        (-[WKWebView magnification]):
+        (-[WKWebView setAllowsMagnification:]):
+        (-[WKWebView allowsMagnification]):
+        (-[WKWebView magnifyWithEvent:]):
+        (-[WKWebView rotateWithEvent:]):
+        (-[WKWebView _web_superInputContext]):
+        (-[WKWebView _web_superQuickLookWithEvent:]):
+        (-[WKWebView _web_superSwipeWithEvent:]):
+        (-[WKWebView _web_superMagnifyWithEvent:]):
+        (-[WKWebView _web_superSmartMagnifyWithEvent:]):
+        (-[WKWebView _web_superRemoveTrackingRect:]):
+        (-[WKWebView _web_superAccessibilityAttributeValue:]):
+        (-[WKWebView _web_superDoCommandBySelector:]):
+        (-[WKWebView _web_superPerformKeyEquivalent:]):
+        (-[WKWebView _web_superKeyDown:]):
+        (-[WKWebView _web_superHitTest:]):
+        (-[WKWebView _web_immediateActionAnimationControllerForHitTestResultInternal:withType:userData:]):
+        (-[WKWebView _web_prepareForImmediateActionAnimation]):
+        (-[WKWebView _web_cancelImmediateActionAnimation]):
+        (-[WKWebView _web_completeImmediateActionAnimation]):
+        (-[WKWebView _web_didChangeContentSize:]):
+        (-[WKWebView _web_dismissContentRelativeChildWindows]):
+        (-[WKWebView _web_dismissContentRelativeChildWindowsWithAnimation:]):
+        (-[WKWebView _web_gestureEventWasNotHandledByWebCore:]):
+        (-[WKWebView _setEditable:]):
+        (-[WKWebView _remoteObjectRegistry]):
+        (-[WKWebView _layoutMode]):
+        (-[WKWebView _setLayoutMode:]):
+        (-[WKWebView _setViewScale:]):
+        (-[WKWebView _drawsTransparentBackground]):
+        (-[WKWebView _setDrawsTransparentBackground:]):
+        (-[WKWebView _inspectorAttachmentView]):
+        (-[WKWebView _setInspectorAttachmentView:]):
+        (-[WKWebView _windowOcclusionDetectionEnabled]):
+        (-[WKWebView _setWindowOcclusionDetectionEnabled:]):
+        (-[WKWebView _setOverrideDeviceScaleFactor:]):
+        (-[WKWebView _overrideDeviceScaleFactor]):
+        (-[WKWebView _setTopContentInset:]):
+        (-[WKWebView _topContentInset]):
+        (-[WKWebView _pageExtendedBackgroundColor]):
+        (-[WKWebView _immediateActionAnimationControllerForHitTestResult:withType:userData:]):
+        (-[WKWebView _setAutomaticallyAdjustsContentInsets:]):
+        (-[WKWebView _automaticallyAdjustsContentInsets]):
+        (-[WKWebView _setMinimumLayoutWidth:]):
+        (-[WKWebView resizeSubviewsWithOldSize:]): Deleted.
+        (-[WKWebView _ignoresNonWheelEvents]): Deleted.
+        (-[WKWebView _setIgnoresNonWheelEvents:]): Deleted.
+        (-[WKWebView _setIntrinsicContentSize:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _web_superInputContext]):
+        (-[WKView _web_superQuickLookWithEvent:]):
+        (-[WKView _web_superSwipeWithEvent:]):
+        (-[WKView _web_superMagnifyWithEvent:]):
+        (-[WKView _web_superSmartMagnifyWithEvent:]):
+        (-[WKView _web_superRemoveTrackingRect:]):
+        (-[WKView _web_superAccessibilityAttributeValue:]):
+        (-[WKView _web_superDoCommandBySelector:]):
+        (-[WKView _web_superPerformKeyEquivalent:]):
+        (-[WKView _web_superKeyDown:]):
+        (-[WKView _web_superHitTest:]):
+        (-[WKView _web_immediateActionAnimationControllerForHitTestResultInternal:withType:userData:]):
+        (-[WKView _web_prepareForImmediateActionAnimation]):
+        (-[WKView _web_cancelImmediateActionAnimation]):
+        (-[WKView _web_completeImmediateActionAnimation]):
+        (-[WKView _web_didChangeContentSize:]):
+        (-[WKView _web_dismissContentRelativeChildWindows]):
+        (-[WKView _web_dismissContentRelativeChildWindowsWithAnimation:]):
+        (-[WKView _web_gestureEventWasNotHandledByWebCore:]):
+        (-[WKView _superInputContext]): Deleted.
+        (-[WKView _superQuickLookWithEvent:]): Deleted.
+        (-[WKView _superSwipeWithEvent:]): Deleted.
+        (-[WKView _superMagnifyWithEvent:]): Deleted.
+        (-[WKView _superSmartMagnifyWithEvent:]): Deleted.
+        (-[WKView _superRemoveTrackingRect:]): Deleted.
+        (-[WKView _superAccessibilityAttributeValue:]): Deleted.
+        (-[WKView _superDoCommandBySelector:]): Deleted.
+        (-[WKView _superPerformKeyEquivalent:]): Deleted.
+        (-[WKView _superKeyDown:]): Deleted.
+        (-[WKView _superHitTest:]): Deleted.
+        (-[WKView _addFontPanelObserver]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::hitTest):
+        (WebKit::WebViewImpl::updateSecureInputState):
+        (WebKit::WebViewImpl::notifyInputContextAboutDiscardedComposition):
+        (WebKit::WebViewImpl::executeSavedCommandBySelector):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsWithAnimation):
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly):
+        (WebKit::WebViewImpl::quickLookWithEvent):
+        (WebKit::WebViewImpl::prepareForImmediateActionAnimation):
+        (WebKit::WebViewImpl::cancelImmediateActionAnimation):
+        (WebKit::WebViewImpl::completeImmediateActionAnimation):
+        (WebKit::WebViewImpl::didChangeContentSize):
+        (WebKit::WebViewImpl::accessibilityAttributeValue):
+        (WebKit::WebViewImpl::removeTrackingRect):
+        (WebKit::WebViewImpl::swipeWithEvent):
+        (WebKit::WebViewImpl::magnifyWithEvent):
+        (WebKit::WebViewImpl::smartMagnifyWithEvent):
+        (WebKit::WebViewImpl::gestureEventWasNotHandledByWebCore):
+        (WebKit::WebViewImpl::doCommandBySelector):
+        (WebKit::WebViewImpl::inputContext):
+        (WebKit::WebViewImpl::performKeyEquivalent):
+        (WebKit::WebViewImpl::keyDown):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setDragImage):
+        (WebKit::PageClientImpl::intrinsicContentSizeDidChange): Deleted.
+        (WebKit::PageClientImpl::immediateActionAnimationControllerForHitTestResult): Deleted.
+        Plop.
+
 2015-11-02  Anders Carlsson  <andersca@apple.com>
 
         Remove unused API client callback code

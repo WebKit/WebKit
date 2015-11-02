@@ -348,17 +348,9 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
     // FIXME: Silly hack to teach WKTR to respect capturing mouse events outside the WKView.
     // The right solution is just to use NSApplication's built-in event sending methods, 
     // instead of rolling our own algorithm for selecting an event target.
-    // FIXME: This is even worse now, because we need to hit the WKWebView's inner WKView
-    // when using the modern API, so the level of fakery and horror increases.
-    if (!targetView) {
+    if (!targetView)
         targetView = m_testController->mainWebView()->platformView();
-        for (NSView *wkWebViewChild in targetView.subviews) {
-            if ([wkWebViewChild isKindOfClass:[WKView class]]) {
-                targetView = wkWebViewChild;
-                break;
-            }
-        }
-    }
+
     ASSERT(targetView);
     [NSApp _setCurrentEvent:event];
     [targetView mouseUp:event];
@@ -622,7 +614,7 @@ void EventSenderProxy::startAndCancelMouseForceClick()
 void EventSenderProxy::mouseMoveTo(double x, double y)
 {
     NSView *view = m_testController->mainWebView()->platformView();
-    NSPoint position = [view convertPoint:NSMakePoint(x, view.frame.size.height - y) toView:nil];
+    NSPoint position = [view convertPoint:NSMakePoint(x, y) toView:nil];
     m_position.x = position.x;
     m_position.y = position.y;
     NSEvent *event = [NSEvent mouseEventWithType:(m_leftMouseButtonDown ? NSLeftMouseDragged : NSMouseMoved)

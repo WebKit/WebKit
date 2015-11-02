@@ -1274,7 +1274,7 @@ void WebViewImpl::activeSpaceDidChange()
 
 NSView *WebViewImpl::hitTest(CGPoint point)
 {
-    NSView *hitView = [m_view _superHitTest:NSPointFromCGPoint(point)];
+    NSView *hitView = [m_view _web_superHitTest:NSPointFromCGPoint(point)];
     if (hitView && hitView == m_layerHostingView)
         hitView = m_view;
 
@@ -1417,7 +1417,7 @@ void WebViewImpl::updateSecureInputState()
         return;
     }
     // WKView has a single input context for all editable areas (except for plug-ins).
-    NSTextInputContext *context = [m_view _superInputContext];
+    NSTextInputContext *context = [m_view _web_superInputContext];
     bool isInPasswordField = m_page->editorState().isInPasswordField;
 
     if (isInPasswordField) {
@@ -1453,7 +1453,7 @@ void WebViewImpl::notifyInputContextAboutDiscardedComposition()
 
     LOG(TextInput, "-> discardMarkedText");
 
-    [[m_view _superInputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
+    [[m_view _web_superInputContext] discardMarkedText]; // Inform the input method that we won't have an inline input area despite having been asked to.
 }
 
 void WebViewImpl::setPluginComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
@@ -1700,7 +1700,7 @@ bool WebViewImpl::executeSavedCommandBySelector(SEL selector)
     // The sink does two things: 1) Tells us if the responder went unhandled, and
     // 2) prevents any NSBeep; we don't ever want to beep here.
     RetainPtr<WKResponderChainSink> sink = adoptNS([[WKResponderChainSink alloc] initWithResponderChain:m_view]);
-    [m_view _superDoCommandBySelector:selector];
+    [m_view _web_superDoCommandBySelector:selector];
     [sink detach];
     return ![sink didReceiveUnhandledCommand];
 }
@@ -2181,7 +2181,7 @@ void WebViewImpl::setTextIndicatorAnimationProgress(float progress)
 
 void WebViewImpl::dismissContentRelativeChildWindowsWithAnimation(bool animate)
 {
-    [m_view _dismissContentRelativeChildWindowsWithAnimation:animate];
+    [m_view _web_dismissContentRelativeChildWindowsWithAnimation:animate];
 }
 
 void WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly(bool animate)
@@ -2190,7 +2190,7 @@ void WebViewImpl::dismissContentRelativeChildWindowsWithAnimationFromViewOnly(bo
     // We can't invert these because clients can override (and have overridden) _dismissContentRelativeChildWindows, so it needs to be called.
     // For this same reason, this can't be moved to WebViewImpl without care.
     clearTextIndicatorWithAnimation(animate ? WebCore::TextIndicatorWindowDismissalAnimation::FadeOut : WebCore::TextIndicatorWindowDismissalAnimation::None);
-    [m_view _dismissContentRelativeChildWindows];
+    [m_view _web_dismissContentRelativeChildWindows];
 }
 
 void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
@@ -2232,7 +2232,7 @@ void WebViewImpl::quickLookWithEvent(NSEvent *event)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (m_immediateActionGestureRecognizer) {
-        [m_view _superQuickLookWithEvent:event];
+        [m_view _web_superQuickLookWithEvent:event];
         return;
     }
 #endif
@@ -2280,22 +2280,22 @@ void WebViewImpl::didPerformImmediateActionHitTest(const WebHitTestResultData& r
 
 void WebViewImpl::prepareForImmediateActionAnimation()
 {
-    [m_view _prepareForImmediateActionAnimation];
+    [m_view _web_prepareForImmediateActionAnimation];
 }
 
 void WebViewImpl::cancelImmediateActionAnimation()
 {
-    [m_view _cancelImmediateActionAnimation];
+    [m_view _web_cancelImmediateActionAnimation];
 }
 
 void WebViewImpl::completeImmediateActionAnimation()
 {
-    [m_view _completeImmediateActionAnimation];
+    [m_view _web_completeImmediateActionAnimation];
 }
 
 void WebViewImpl::didChangeContentSize(CGSize newSize)
 {
-    [m_view _didChangeContentSize:NSSizeFromCGSize(newSize)];
+    [m_view _web_didChangeContentSize:NSSizeFromCGSize(newSize)];
 }
 
 void WebViewImpl::setIgnoresNonWheelEvents(bool ignoresNonWheelEvents)
@@ -2404,7 +2404,7 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute)
             if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
                 return @YES;
     
-    return [m_view _superAccessibilityAttributeValue:attribute];
+    return [m_view _web_superAccessibilityAttributeValue:attribute];
 }
 
 void WebViewImpl::setPrimaryTrackingArea(NSTrackingArea *trackingArea)
@@ -2455,7 +2455,7 @@ void WebViewImpl::removeTrackingRect(NSTrackingRectTag tag)
     }
 
     if (tag == m_lastToolTipTag) {
-        [m_view _superRemoveTrackingRect:tag];
+        [m_view _web_superRemoveTrackingRect:tag];
         m_lastToolTipTag = 0;
         return;
     }
@@ -3139,7 +3139,7 @@ void WebViewImpl::swipeWithEvent(NSEvent *event)
         return;
 
     if (!m_allowsBackForwardNavigationGestures) {
-        [m_view _superSwipeWithEvent:event];
+        [m_view _web_superSwipeWithEvent:event];
         return;
     }
 
@@ -3148,7 +3148,7 @@ void WebViewImpl::swipeWithEvent(NSEvent *event)
     else if (event.deltaX < 0.0)
         m_page->goForward();
     else
-        [m_view _superSwipeWithEvent:event];
+        [m_view _web_superSwipeWithEvent:event];
 }
 
 void WebViewImpl::magnifyWithEvent(NSEvent *event)
@@ -3158,7 +3158,7 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
         NativeWebGestureEvent webEvent = NativeWebGestureEvent(event, m_view);
         m_page->handleGestureEvent(webEvent);
 #endif
-        [m_view _superMagnifyWithEvent:event];
+        [m_view _web_superMagnifyWithEvent:event];
         return;
     }
 
@@ -3182,7 +3182,7 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
 void WebViewImpl::smartMagnifyWithEvent(NSEvent *event)
 {
     if (!m_allowsMagnification) {
-        [m_view _superSmartMagnifyWithEvent:event];
+        [m_view _web_superSmartMagnifyWithEvent:event];
         return;
     }
 
@@ -3211,7 +3211,7 @@ void WebViewImpl::rotateWithEvent(NSEvent *event)
 
 void WebViewImpl::gestureEventWasNotHandledByWebCore(NSEvent *event)
 {
-    [m_view _gestureEventWasNotHandledByWebCore:event];
+    [m_view _web_gestureEventWasNotHandledByWebCore:event];
 }
 
 void WebViewImpl::gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *event)
@@ -3360,7 +3360,7 @@ void WebViewImpl::doCommandBySelector(SEL selector)
     } else {
         // FIXME: Send the command to Editor synchronously and only send it along the
         // responder chain if it's a selector that does not correspond to an editing command.
-        [m_view _superDoCommandBySelector:selector];
+        [m_view _web_superDoCommandBySelector:selector];
     }
 }
 
@@ -3576,7 +3576,7 @@ NSTextInputContext *WebViewImpl::inputContext()
     if (!m_page->editorState().isContentEditable)
         return nil;
 
-    return [m_view _superInputContext];
+    return [m_view _web_superInputContext];
 }
 
 void WebViewImpl::unmarkText()
@@ -3671,13 +3671,13 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.
     // Don't interpret this event again, avoiding re-entrancy and infinite loops.
     if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
-        return [m_view _superPerformKeyEquivalent:event];
+        return [m_view _web_superPerformKeyEquivalent:event];
 
     if (m_keyDownEventBeingResent) {
         // WebCore has already seen the event, no need for custom processing.
         // Note that we can get multiple events for each event being re-sent. For example, for Cmd+'=' AppKit
         // first performs the original key equivalent, and if that isn't handled, it dispatches a synthetic Cmd+'+'.
-        return [m_view _superPerformKeyEquivalent:event];
+        return [m_view _web_superPerformKeyEquivalent:event];
     }
 
     ASSERT(event == [NSApp currentEvent]);
@@ -3694,7 +3694,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
         return YES;
     }
     
-    return [m_view _superPerformKeyEquivalent:event];
+    return [m_view _web_superPerformKeyEquivalent:event];
 }
 
 void WebViewImpl::keyUp(NSEvent *event)
@@ -3727,7 +3727,7 @@ void WebViewImpl::keyDown(NSEvent *event)
     // there is no range selection).
     // If this is the case we should ignore the key down.
     if (m_keyDownEventBeingResent == event) {
-        [m_view _superKeyDown:event];
+        [m_view _web_superKeyDown:event];
         return;
     }
 
@@ -3831,7 +3831,7 @@ void WebViewImpl::doCommandBySelector(SEL selector)
     } else {
         // FIXME: Send the command to Editor synchronously and only send it along the
         // responder chain if it's a selector that does not correspond to an editing command.
-        [m_view _superDoCommandBySelector:selector];
+        [m_view _web_superDoCommandBySelector:selector];
     }
 }
 
@@ -3908,7 +3908,7 @@ NSTextInputContext *WebViewImpl::inputContext()
     if (!m_page->editorState().isContentEditable)
         return nil;
 
-    return [m_view _superInputContext];
+    return [m_view _web_superInputContext];
 }
 
 NSRange WebViewImpl::selectedRange()
@@ -4110,13 +4110,13 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
     // but both get transformed to a cancelOperation: command, executing which passes an Esc key event to -performKeyEquivalent:.
     // Don't interpret this event again, avoiding re-entrancy and infinite loops.
     if ([[event charactersIgnoringModifiers] isEqualToString:@"\e"] && !([event modifierFlags] & NSDeviceIndependentModifierFlagsMask))
-        return [m_view _superPerformKeyEquivalent:event];
+        return [m_view _web_superPerformKeyEquivalent:event];
 
     if (m_keyDownEventBeingResent) {
         // WebCore has already seen the event, no need for custom processing.
         // Note that we can get multiple events for each event being re-sent. For example, for Cmd+'=' AppKit
         // first performs the original key equivalent, and if that isn't handled, it dispatches a synthetic Cmd+'+'.
-        return [m_view _superPerformKeyEquivalent:event];
+        return [m_view _web_superPerformKeyEquivalent:event];
     }
 
     ASSERT(event == [NSApp currentEvent]);
@@ -4133,7 +4133,7 @@ bool WebViewImpl::performKeyEquivalent(NSEvent *event)
         return true;
     }
     
-    return [m_view _superPerformKeyEquivalent:event];
+    return [m_view _web_superPerformKeyEquivalent:event];
 }
 
 void WebViewImpl::keyUp(NSEvent *event)
@@ -4168,7 +4168,7 @@ void WebViewImpl::keyDown(NSEvent *event)
     // there is no range selection).
     // If this is the case we should ignore the key down.
     if (m_keyDownEventBeingResent == event) {
-        [m_view _superKeyDown:event];
+        [m_view _web_superKeyDown:event];
         return;
     }
 

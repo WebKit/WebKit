@@ -111,9 +111,6 @@ struct PrintInfo;
 
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
-#else
-@property (nonatomic, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents;
-- (void)_setIntrinsicContentSize:(CGSize)intrinsicContentSize;
 #endif
 
 - (WKPageRef)_pageForTesting;

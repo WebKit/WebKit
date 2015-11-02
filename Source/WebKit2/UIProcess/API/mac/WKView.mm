@@ -664,64 +664,6 @@ Some other editing-related methods still unimplemented:
 
 #endif // USE(ASYNC_NSTEXTINPUTCLIENT)
 
-- (NSTextInputContext *)_superInputContext
-{
-    return [super inputContext];
-}
-
-- (void)_superQuickLookWithEvent:(NSEvent *)event
-{
-    [super quickLookWithEvent:event];
-}
-
-- (void)_superSwipeWithEvent:(NSEvent *)event
-{
-    [super swipeWithEvent:event];
-}
-
-- (void)_superMagnifyWithEvent:(NSEvent *)event
-{
-    [super magnifyWithEvent:event];
-}
-
-- (void)_superSmartMagnifyWithEvent:(NSEvent *)event
-{
-    [super smartMagnifyWithEvent:event];
-}
-
-- (void)_superRemoveTrackingRect:(NSTrackingRectTag)tag
-{
-    [super removeTrackingRect:tag];
-}
-
-- (id)_superAccessibilityAttributeValue:(NSString *)attribute
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    return [super accessibilityAttributeValue:attribute];
-#pragma clang diagnostic pop
-}
-
-- (void)_superDoCommandBySelector:(SEL)selector
-{
-    [super doCommandBySelector:selector];
-}
-
-- (BOOL)_superPerformKeyEquivalent:(NSEvent *)event
-{
-    return [super performKeyEquivalent:event];
-}
-
-- (void)_superKeyDown:(NSEvent *)event
-{
-    [super keyDown:event];
-}
-
-- (NSView *)_superHitTest:(NSPoint)point
-{
-    return [super hitTest:point];
-}
-
 - (NSArray *)validAttributesForMarkedText
 {
     return _data->_impl->validAttributesForMarkedText();
@@ -767,11 +709,6 @@ Some other editing-related methods still unimplemented:
 - (BOOL)_windowResizeMouseLocationIsInVisibleScrollerThumb:(NSPoint)point
 {
     return _data->_impl->windowResizeMouseLocationIsInVisibleScrollerThumb(NSPointToCGPoint(point));
-}
-
-- (void)_addFontPanelObserver
-{
-    _data->_impl->startObservingFontPanel();
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -936,6 +873,104 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->thumbnailView();
 }
 #endif // WK_API_ENABLED
+
+- (NSTextInputContext *)_web_superInputContext
+{
+    return [super inputContext];
+}
+
+- (void)_web_superQuickLookWithEvent:(NSEvent *)event
+{
+    [super quickLookWithEvent:event];
+}
+
+- (void)_web_superSwipeWithEvent:(NSEvent *)event
+{
+    [super swipeWithEvent:event];
+}
+
+- (void)_web_superMagnifyWithEvent:(NSEvent *)event
+{
+    [super magnifyWithEvent:event];
+}
+
+- (void)_web_superSmartMagnifyWithEvent:(NSEvent *)event
+{
+    [super smartMagnifyWithEvent:event];
+}
+
+- (void)_web_superRemoveTrackingRect:(NSTrackingRectTag)tag
+{
+    [super removeTrackingRect:tag];
+}
+
+- (id)_web_superAccessibilityAttributeValue:(NSString *)attribute
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return [super accessibilityAttributeValue:attribute];
+#pragma clang diagnostic pop
+}
+
+- (void)_web_superDoCommandBySelector:(SEL)selector
+{
+    [super doCommandBySelector:selector];
+}
+
+- (BOOL)_web_superPerformKeyEquivalent:(NSEvent *)event
+{
+    return [super performKeyEquivalent:event];
+}
+
+- (void)_web_superKeyDown:(NSEvent *)event
+{
+    [super keyDown:event];
+}
+
+- (NSView *)_web_superHitTest:(NSPoint)point
+{
+    return [super hitTest:point];
+}
+
+- (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
+{
+    return [self _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult) withType:type userData:toAPI(userData)];
+}
+
+- (void)_web_prepareForImmediateActionAnimation
+{
+    [self _prepareForImmediateActionAnimation];
+}
+
+- (void)_web_cancelImmediateActionAnimation
+{
+    [self _cancelImmediateActionAnimation];
+}
+
+- (void)_web_completeImmediateActionAnimation
+{
+    [self _completeImmediateActionAnimation];
+}
+
+- (void)_web_didChangeContentSize:(NSSize)newSize
+{
+    [self _didChangeContentSize:newSize];
+}
+
+- (void)_web_dismissContentRelativeChildWindows
+{
+    [self _dismissContentRelativeChildWindows];
+}
+
+- (void)_web_dismissContentRelativeChildWindowsWithAnimation:(BOOL)withAnimation
+{
+    [self _dismissContentRelativeChildWindowsWithAnimation:withAnimation];
+}
+
+- (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event
+{
+    [self _gestureEventWasNotHandledByWebCore:event];
+}
 
 @end
 
@@ -1357,11 +1392,6 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(WTF::Optional<WebCore::Scrol
 - (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback
 {
     _data->_impl->setDidMoveSwipeSnapshotCallback(callback);
-}
-
-- (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData
-{
-    return [self _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult) withType:type userData:toAPI(userData)];
 }
 
 - (id)_immediateActionAnimationControllerForHitTestResult:(WKHitTestResultRef)hitTestResult withType:(uint32_t)type userData:(WKTypeRef)userData

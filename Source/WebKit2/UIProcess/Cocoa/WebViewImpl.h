@@ -52,31 +52,29 @@ OBJC_CLASS _WKThumbnailView;
 
 @protocol WebViewImplDelegate
 
-- (NSTextInputContext *)_superInputContext;
-- (void)_superQuickLookWithEvent:(NSEvent *)event;
-- (void)_superRemoveTrackingRect:(NSTrackingRectTag)tag;
-- (void)_superSwipeWithEvent:(NSEvent *)event;
-- (void)_superMagnifyWithEvent:(NSEvent *)event;
-- (void)_superSmartMagnifyWithEvent:(NSEvent *)event;
-- (id)_superAccessibilityAttributeValue:(NSString *)attribute;
-- (void)_superDoCommandBySelector:(SEL)selector;
-- (BOOL)_superPerformKeyEquivalent:(NSEvent *)event;
-- (void)_superKeyDown:(NSEvent *)event;
-- (NSView *)_superHitTest:(NSPoint)point;
-
-// This is a hack; these things live can live on a category (e.g. WKView (Private)) but WKView itself conforms to this protocol.
-// They're not actually optional.
-@optional
+- (NSTextInputContext *)_web_superInputContext;
+- (void)_web_superQuickLookWithEvent:(NSEvent *)event;
+- (void)_web_superRemoveTrackingRect:(NSTrackingRectTag)tag;
+- (void)_web_superSwipeWithEvent:(NSEvent *)event;
+- (void)_web_superMagnifyWithEvent:(NSEvent *)event;
+- (void)_web_superSmartMagnifyWithEvent:(NSEvent *)event;
+- (id)_web_superAccessibilityAttributeValue:(NSString *)attribute;
+- (void)_web_superDoCommandBySelector:(SEL)selector;
+- (BOOL)_web_superPerformKeyEquivalent:(NSEvent *)event;
+- (void)_web_superKeyDown:(NSEvent *)event;
+- (NSView *)_web_superHitTest:(NSPoint)point;
 
 - (id)_web_immediateActionAnimationControllerForHitTestResultInternal:(API::HitTestResult*)hitTestResult withType:(uint32_t)type userData:(API::Object*)userData;
+- (void)_web_prepareForImmediateActionAnimation;
+- (void)_web_cancelImmediateActionAnimation;
+- (void)_web_completeImmediateActionAnimation;
 
-- (void)_prepareForImmediateActionAnimation;
-- (void)_cancelImmediateActionAnimation;
-- (void)_completeImmediateActionAnimation;
-- (void)_dismissContentRelativeChildWindows;
-- (void)_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
-- (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
-- (void)_didChangeContentSize:(NSSize)newSize;
+- (void)_web_dismissContentRelativeChildWindows;
+- (void)_web_dismissContentRelativeChildWindowsWithAnimation:(BOOL)animate;
+
+- (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
+
+- (void)_web_didChangeContentSize:(NSSize)newSize;
 
 @end
 

@@ -1,3 +1,15 @@
+2015-11-02  Tim Horton  <timothy_horton@apple.com>
+
+        Get rid of WKWebView's inner WKView (WKView being inside WKWebView leads to weird API issues)
+        https://bugs.webkit.org/show_bug.cgi?id=150174
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        Revert some parts of r188828 which no longer apply.
+
 2015-10-30  Dana Burkart  <dburkart@apple.com>
 
         svn-apply should handle unified diffs

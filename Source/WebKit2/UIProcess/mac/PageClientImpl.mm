@@ -358,13 +358,7 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     size.scale(1.0 / m_impl->page().deviceScaleFactor());
     [dragNSImage setSize:size];
 
-#if WK_API_ENABLED
-    if (m_webView) {
-        NSPoint webViewPosition = [m_view convertPoint:clientPosition toView:m_webView];
-        m_impl->dragImageForView(m_webView, dragNSImage.get(), webViewPosition, isLinkDrag);
-    } else
-#endif
-        m_impl->dragImageForView(m_view, dragNSImage.get(), clientPosition, isLinkDrag);
+    m_impl->dragImageForView(m_view, dragNSImage.get(), clientPosition, isLinkDrag);
 }
 
 void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, PassRefPtr<SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL, PassRefPtr<SharedBuffer> archiveBuffer)
@@ -605,13 +599,6 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
 
 void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
 {
-#if WK_API_ENABLED
-    if (m_webView) {
-        [m_webView _setIntrinsicContentSize:intrinsicContentSize];
-        return;
-    }
-#endif
-
     m_impl->setIntrinsicContentSize(intrinsicContentSize);
 }
 
@@ -798,10 +785,6 @@ void PageClientImpl::didPerformImmediateActionHitTest(const WebHitTestResultData
 
 void* PageClientImpl::immediateActionAnimationControllerForHitTestResult(RefPtr<API::HitTestResult> hitTestResult, uint64_t type, RefPtr<API::Object> userData)
 {
-#if WK_API_ENABLED
-    if (m_webView)
-        return [m_webView _immediateActionAnimationControllerForHitTestResult:wrapper(*hitTestResult) withType:(_WKImmediateActionType)type userData:(id)(userData.get())];
-#endif
     return m_impl->immediateActionAnimationControllerForHitTestResult(hitTestResult.get(), type, userData.get());
 }
 
