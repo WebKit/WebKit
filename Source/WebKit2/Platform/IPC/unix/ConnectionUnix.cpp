@@ -390,7 +390,7 @@ bool Connection::open()
 
         ASSERT_NOT_REACHED();
         return GMainLoopSource::Stop;
-    }, socket.get(), G_IO_IN, nullptr, m_connectionQueue->mainContext());
+    }, socket.get(), G_IO_IN, nullptr, m_connectionQueue->runLoop().mainContext());
 #elif PLATFORM(EFL)
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor,
         [protectedThis] {

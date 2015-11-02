@@ -39,7 +39,8 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <wtf/glib/GMainLoopSource.h>
+#include <wtf/Condition.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #elif PLATFORM(EFL)
 #include <DispatchQueueEfl.h>
@@ -74,7 +75,7 @@ public:
     WTF_EXPORT_PRIVATE static void concurrentApply(size_t iterations, const std::function<void (size_t index)>&);
 
 #if PLATFORM(GTK)
-    GMainContext* mainContext() const { return m_eventContext.get(); }
+    RunLoop& runLoop() const { return *m_runLoop; }
 #elif PLATFORM(EFL)
     void registerSocketEventHandler(int, std::function<void ()>);
     void unregisterSocketEventHandler(int);
@@ -103,8 +104,11 @@ private:
 
 #if PLATFORM(GTK)
     ThreadIdentifier m_workQueueThread;
-    GRefPtr<GMainContext> m_eventContext;
-    GRefPtr<GMainLoop> m_eventLoop;
+    Lock m_initializeRunLoopConditionMutex;
+    Condition m_initializeRunLoopCondition;
+    RunLoop* m_runLoop;
+    Lock m_terminateRunLoopConditionMutex;
+    Condition m_terminateRunLoopCondition;
 #elif PLATFORM(EFL)
     RefPtr<DispatchQueue> m_dispatchQueue;
 #elif OS(DARWIN)

@@ -37,11 +37,6 @@ static const size_t kVisualStudioThreadNameLimit = 31;
 
 void WorkQueue::platformInitialize(const char* name, Type, QOS)
 {
-    m_eventContext = adoptGRef(g_main_context_new());
-    ASSERT(m_eventContext);
-    m_eventLoop = adoptGRef(g_main_loop_new(m_eventContext.get(), FALSE));
-    ASSERT(m_eventLoop);
-
     // This name can be com.apple.WebKit.ProcessLauncher or com.apple.CoreIPC.ReceiveQueue.
     // We are using those names for the thread name, but both are longer than 31 characters,
     // which is the limit of Visual Studio for thread names.
@@ -55,47 +50,80 @@ void WorkQueue::platformInitialize(const char* name, Type, QOS)
     if (strlen(threadName) > kVisualStudioThreadNameLimit)
         threadName += strlen(threadName) - kVisualStudioThreadNameLimit;
 
-    GRefPtr<GMainLoop> eventLoop(m_eventLoop.get());
-    m_workQueueThread = createThread(threadName, [eventLoop] {
-        g_main_context_push_thread_default(g_main_loop_get_context(eventLoop.get()));
-        g_main_loop_run(eventLoop.get());
+    LockHolder locker(m_initializeRunLoopConditionMutex);
+    m_workQueueThread = createThread(threadName, [this] {
+        {
+            LockHolder locker(m_initializeRunLoopConditionMutex);
+            m_runLoop = &RunLoop::current();
+            m_initializeRunLoopCondition.notifyOne();
+        }
+        m_runLoop->run();
+        {
+            LockHolder locker(m_terminateRunLoopConditionMutex);
+            m_runLoop = nullptr;
+            m_terminateRunLoopCondition.notifyOne();
+        }
     });
+    m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
 }
 
 void WorkQueue::platformInvalidate()
 {
+    {
+        LockHolder locker(m_terminateRunLoopConditionMutex);
+        if (m_runLoop) {
+            m_runLoop->stop();
+            m_terminateRunLoopCondition.wait(m_terminateRunLoopConditionMutex);
+        }
+    }
+
     if (m_workQueueThread) {
         detachThread(m_workQueueThread);
         m_workQueueThread = 0;
     }
-
-    if (m_eventLoop) {
-        if (g_main_loop_is_running(m_eventLoop.get()))
-            g_main_loop_quit(m_eventLoop.get());
-        else {
-            // The thread hasn't started yet, so schedule a main loop quit to ensure the thread finishes.
-            GMainLoop* eventLoop = m_eventLoop.get();
-            GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] WorkQueue quit main loop", [eventLoop] { g_main_loop_quit(eventLoop); },
-                G_PRIORITY_HIGH, nullptr, m_eventContext.get());
-        }
-        m_eventLoop = nullptr;
-    }
-
-    m_eventContext = nullptr;
 }
 
 void WorkQueue::dispatch(std::function<void ()> function)
 {
-    ref();
-    GMainLoopSource::scheduleAndDeleteOnDestroy("[WebKit] WorkQueue::dispatch", WTF::move(function), G_PRIORITY_DEFAULT,
-        [this] { deref(); }, m_eventContext.get());
+    RefPtr<WorkQueue> protector(this);
+    m_runLoop->dispatch([protector, function] { function(); });
 }
+
+class DispatchAfterContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DispatchAfterContext(WorkQueue& queue, std::function<void ()> function)
+        : m_queue(&queue)
+        , m_function(WTF::move(function))
+    {
+    }
+
+    ~DispatchAfterContext()
+    {
+    }
+
+    void dispatch()
+    {
+        m_function();
+    }
+
+private:
+    RefPtr<WorkQueue> m_queue;
+    std::function<void ()> m_function;
+};
 
 void WorkQueue::dispatchAfter(std::chrono::nanoseconds duration, std::function<void ()> function)
 {
-    ref();
-    GMainLoopSource::scheduleAfterDelayAndDeleteOnDestroy("[WebKit] WorkQueue::dispatchAfter", WTF::move(function),
-        std::chrono::duration_cast<std::chrono::milliseconds>(duration), G_PRIORITY_DEFAULT, [this] { deref(); }, m_eventContext.get());
+    GRefPtr<GSource> source = adoptGRef(g_timeout_source_new(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()));
+    g_source_set_name(source.get(), "[WebKit] WorkQueue dispatchAfter");
+
+    std::unique_ptr<DispatchAfterContext> context = std::make_unique<DispatchAfterContext>(*this, WTF::move(function));
+    g_source_set_callback(source.get(), [](gpointer userData) -> gboolean {
+        std::unique_ptr<DispatchAfterContext> context(static_cast<DispatchAfterContext*>(userData));
+        context->dispatch();
+        return G_SOURCE_REMOVE;
+    }, context.release(), nullptr);
+    g_source_attach(source.get(), m_runLoop->mainContext());
 }
 
 }

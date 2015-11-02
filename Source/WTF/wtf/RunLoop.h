@@ -67,7 +67,11 @@ public:
 #if PLATFORM(COCOA)
     WTF_EXPORT_PRIVATE void runForDuration(double duration);
 #endif
-    
+
+#if USE(GLIB) && !PLATFORM(EFL)
+    WTF_EXPORT_PRIVATE GMainContext* mainContext() const { return m_mainContext.get(); }
+#endif
+
     class TimerBase {
         friend class RunLoop;
     public:

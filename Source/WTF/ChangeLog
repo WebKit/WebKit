@@ -1,3 +1,32 @@
+2015-11-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use RunLoop in WorkQueue implementation
+        https://bugs.webkit.org/show_bug.cgi?id=150770
+
+        Reviewed by Darin Adler.
+
+        Instead of using GMainLoop directly. RunLoop already abstracts the
+        GMainLoop details and uses persistent sources making it more efficient.
+        For the dispatchAfter implementation we use a helper context class
+        and a GSource directly, since we are going to get rid of delete on
+        destroy GMainLoop soon and this is the only place where we still
+        use them.
+
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::mainContext): Return the GMainContext.
+        * wtf/WorkQueue.h:
+        * wtf/glib/WorkQueueGLib.cpp:
+        (WTF::WorkQueue::platformInitialize): The RunLoop needs to be
+        created in the worker thread now, so we now use a mutex to wait
+        until the thread has started and the RunLoop has been created.
+        (WTF::WorkQueue::platformInvalidate): Stop the RunLoop and wait
+        until the thread finishes.
+        (WTF::WorkQueue::dispatch): Use RunLoop::dispatch().
+        (WTF::DispatchAfterContext::DispatchAfterContext):
+        (WTF::DispatchAfterContext::~DispatchAfterContext):
+        (WTF::DispatchAfterContext::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+
 2015-11-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Generator Syntax
