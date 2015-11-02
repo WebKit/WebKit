@@ -1,3 +1,14 @@
+2015-11-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Use convenience function in sandbox profile
+        https://bugs.webkit.org/show_bug.cgi?id=150732
+        <rdar://problem/23287894>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Switch to
+        the 'awd-log-directory' convenience function.
+
 2015-11-01  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix inappropriate move semantics use in parseAndRemoveEnvironments function
