@@ -34,6 +34,7 @@
 #include "FontDescription.h"
 #include "GlyphPage.h"
 #include "HWndDC.h"
+#include "OpenTypeTypes.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <mlang.h>
@@ -63,6 +64,28 @@ void Font::platformInit()
     int iDescent = CGFontGetDescent(font);
     int iLineGap = CGFontGetLeading(font);
     int iCapHeight = CGFontGetCapHeight(font);
+
+    // The Open Font Format describes the OS/2 USE_TYPO_METRICS flag as follows:
+    // "If set, it is strongly recommended to use OS/2.sTypoAscender - OS/2.sTypoDescender+ OS/2.sTypoLineGap as a value for default line spacing for this font."
+    if (CFDataRef os2Table = CGFontCopyTableForTag(m_platformData.cgFont(), 'OS/2')) {
+        // For the structure of the OS/2 table, see
+        // https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6OS2.html
+        const CFIndex fsSelectionOffset = 16 * 2 + 10 + 4 * 4 + 4 * 1;
+        const CFIndex sTypoAscenderOffset = fsSelectionOffset + 3 * 2;
+        const CFIndex sTypoDescenderOffset = sTypoAscenderOffset + 2;
+        const CFIndex sTypoLineGapOffset = sTypoDescenderOffset + 2;
+        if (CFDataGetLength(os2Table) >= sTypoLineGapOffset + 2) {
+            const UInt8* os2Data = CFDataGetBytePtr(os2Table);
+            const unsigned short useTypoMetricsMask = 1 << 7;
+            if (*(reinterpret_cast<const OpenType::UInt16*>(os2Data + fsSelectionOffset)) & useTypoMetricsMask) {
+                iAscent = *(reinterpret_cast<const OpenType::Int16*>(os2Data + sTypoAscenderOffset));
+                iDescent = *(reinterpret_cast<const OpenType::Int16*>(os2Data + sTypoDescenderOffset));
+                iLineGap = *(reinterpret_cast<const OpenType::Int16*>(os2Data + sTypoLineGapOffset));
+            }
+        }
+        CFRelease(os2Table);
+    }
+
     unsigned unitsPerEm = CGFontGetUnitsPerEm(font);
     float pointSize = m_platformData.size();
     float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
