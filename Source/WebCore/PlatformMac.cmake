@@ -270,13 +270,13 @@ list(APPEND WebCore_SOURCES
 
     page/cocoa/UserAgent.mm
     page/cocoa/ResourceUsageOverlayCocoa.mm
+    page/cocoa/SettingsCocoa.mm
 
     page/mac/ChromeMac.mm
     page/mac/DragControllerMac.mm
     page/mac/EventHandlerMac.mm
     page/mac/PageMac.mm
     page/mac/ServicesOverlayController.mm
-    page/mac/SettingsMac.mm
     page/mac/TextIndicatorWindow.mm
     page/mac/UserAgentMac.mm
     page/mac/WheelEventDeltaFilterMac.mm
